@@ -1,40 +1,39 @@
-'From Cuis 6.0 [latest update: #5229] on 6 June 2022 at 12:43:18 pm'!
+'From Cuis 6.0 [latest update: #5234] on 7 June 2022 at 4:13:43 pm'!
 'Description Fix to assertRenamesToWithoutBlanks:'!
-!provides: 'BaseImageTests' 1 292!
+!provides: 'BaseImageTests' 1 293!
 !requires: '__Refactoring-TestData__' 1 0 nil!
-SystemOrganization addCategory: 'BaseImageTests-Collections'!
+SystemOrganization addCategory: 'BaseImageTests-Kernel-Objects'!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Classes'!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Numbers'!
+SystemOrganization addCategory: 'BaseImageTests-Kernel-Text'!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Chronology'!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Methods'!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Processes'!
-SystemOrganization addCategory: 'BaseImageTests-Kernel'!
+SystemOrganization addCategory: 'BaseImageTests-Collections'!
 SystemOrganization addCategory: 'BaseImageTests-Collections-Arrayed'!
+SystemOrganization addCategory: 'BaseImageTests-Collections-Streams'!
 SystemOrganization addCategory: 'BaseImageTests-Exceptions'!
 SystemOrganization addCategory: 'BaseImageTests-Compiler'!
+SystemOrganization addCategory: 'BaseImageTests-System-Support'!
+SystemOrganization addCategory: 'BaseImageTests-System-Text'!
 SystemOrganization addCategory: 'BaseImageTests-System-FileMan'!
 SystemOrganization addCategory: 'BaseImageTests-System-Files'!
-SystemOrganization addCategory: 'BaseImageTests-System'!
 SystemOrganization addCategory: 'BaseImageTests-System-Object Storage'!
-SystemOrganization addCategory: 'BaseImageTests-Graphics Primitives'!
-SystemOrganization addCategory: 'BaseImageTests-Graphics'!
+SystemOrganization addCategory: 'BaseImageTests-Graphics-Primitives'!
+SystemOrganization addCategory: 'BaseImageTests-Graphics-Display Objects'!
+SystemOrganization addCategory: 'BaseImageTests-Graphics-Text'!
+SystemOrganization addCategory: 'BaseImageTests-Graphics-Files'!
 SystemOrganization addCategory: 'BaseImageTests-Morphic-Kernel'!
+SystemOrganization addCategory: 'BaseImageTests-Tools-Browser'!
+SystemOrganization addCategory: 'BaseImageTests-Tools-Changes'!
+SystemOrganization addCategory: 'BaseImageTests-Tools-Syntax Highlighting'!
+SystemOrganization addCategory: 'BaseImageTests-Tools-Debugger'!
 SystemOrganization addCategory: 'BaseImageTests-Tools-Autocompletion'!
 SystemOrganization addCategory: 'BaseImageTests-Tools-Taskbar'!
 SystemOrganization addCategory: 'BaseImageTests-Tools-Testing'!
 SystemOrganization addCategory: 'BaseImageTests-Tools-Code Differ'!
-SystemOrganization addCategory: 'BaseImageTests-Fixed Bugs'!
 SystemOrganization addCategory: 'BaseImageTests-Tools-Refactoring'!
-SystemOrganization addCategory: 'BaseImageTests-Collections-Streams'!
-SystemOrganization addCategory: 'BaseImageTests-System-Support'!
-SystemOrganization addCategory: 'BaseImageTests-Graphics-Primitives'!
-SystemOrganization addCategory: 'BaseImageTests-Graphics-Display Objects'!
-SystemOrganization addCategory: 'BaseImageTests-Kernel-Objects'!
-SystemOrganization addCategory: 'BaseImageTests-Tools-Browser'!
-SystemOrganization addCategory: 'BaseImageTests-Tools-Changes'!
-SystemOrganization addCategory: 'BaseImageTests-Kernel-Text'!
-SystemOrganization addCategory: 'BaseImageTests-Tools-Syntax Highlighting'!
-SystemOrganization addCategory: 'BaseImageTests-Tools-Debugger'!
+SystemOrganization addCategory: 'BaseImageTests-Fixed Bugs'!
 
 
 !classDefinition: #MyResumableTestError category: 'BaseImageTests-Exceptions'!
@@ -507,116 +506,6 @@ TestCase subclass: #SemaphoreTest
 SemaphoreTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #BecomeTest category: 'BaseImageTests-Kernel'!
-TestCase subclass: #BecomeTest
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'BaseImageTests-Kernel'!
-!classDefinition: 'BecomeTest class' category: 'BaseImageTests-Kernel'!
-BecomeTest class
-	instanceVariableNames: ''!
-
-!classDefinition: #BooleanTest category: 'BaseImageTests-Kernel'!
-TestCase subclass: #BooleanTest
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'BaseImageTests-Kernel'!
-!classDefinition: 'BooleanTest class' category: 'BaseImageTests-Kernel'!
-BooleanTest class
-	instanceVariableNames: ''!
-
-!classDefinition: #CharacterSetTest category: 'BaseImageTests-Kernel'!
-TestCase subclass: #CharacterSetTest
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'BaseImageTests-Kernel'!
-!classDefinition: 'CharacterSetTest class' category: 'BaseImageTests-Kernel'!
-CharacterSetTest class
-	instanceVariableNames: ''!
-
-!classDefinition: #CharacterTest category: 'BaseImageTests-Kernel'!
-TestCase subclass: #CharacterTest
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'BaseImageTests-Kernel'!
-!classDefinition: 'CharacterTest class' category: 'BaseImageTests-Kernel'!
-CharacterTest class
-	instanceVariableNames: ''!
-
-!classDefinition: #IfNotNilTests category: 'BaseImageTests-Kernel'!
-TestCase subclass: #IfNotNilTests
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'BaseImageTests-Kernel'!
-!classDefinition: 'IfNotNilTests class' category: 'BaseImageTests-Kernel'!
-IfNotNilTests class
-	instanceVariableNames: ''!
-
-!classDefinition: #SpecialSelectorsTest category: 'BaseImageTests-Kernel'!
-TestCase subclass: #SpecialSelectorsTest
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'BaseImageTests-Kernel'!
-!classDefinition: 'SpecialSelectorsTest class' category: 'BaseImageTests-Kernel'!
-SpecialSelectorsTest class
-	instanceVariableNames: ''!
-
-!classDefinition: #StrikeFontTest category: 'BaseImageTests-Kernel'!
-TestCase subclass: #StrikeFontTest
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'BaseImageTests-Kernel'!
-!classDefinition: 'StrikeFontTest class' category: 'BaseImageTests-Kernel'!
-StrikeFontTest class
-	instanceVariableNames: ''!
-
-!classDefinition: #StringTest category: 'BaseImageTests-Kernel'!
-TestCase subclass: #StringTest
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'BaseImageTests-Kernel'!
-!classDefinition: 'StringTest class' category: 'BaseImageTests-Kernel'!
-StringTest class
-	instanceVariableNames: ''!
-
-!classDefinition: #UnicodeStringsTest category: 'BaseImageTests-Kernel'!
-TestCase subclass: #UnicodeStringsTest
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'BaseImageTests-Kernel'!
-!classDefinition: 'UnicodeStringsTest class' category: 'BaseImageTests-Kernel'!
-UnicodeStringsTest class
-	instanceVariableNames: ''!
-
-!classDefinition: #UnicodeSymbolsTest category: 'BaseImageTests-Kernel'!
-TestCase subclass: #UnicodeSymbolsTest
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'BaseImageTests-Kernel'!
-!classDefinition: 'UnicodeSymbolsTest class' category: 'BaseImageTests-Kernel'!
-UnicodeSymbolsTest class
-	instanceVariableNames: ''!
-
-!classDefinition: #UnicodeTest category: 'BaseImageTests-Kernel'!
-TestCase subclass: #UnicodeTest
-	instanceVariableNames: 'bytesOfExample1'
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'BaseImageTests-Kernel'!
-!classDefinition: 'UnicodeTest class' category: 'BaseImageTests-Kernel'!
-UnicodeTest class
-	instanceVariableNames: ''!
-
 !classDefinition: #ArrayTest category: 'BaseImageTests-Collections-Arrayed'!
 TestCase subclass: #ArrayTest
 	instanceVariableNames: ''
@@ -867,46 +756,6 @@ TestCase subclass: #StandardFileStreamTest
 StandardFileStreamTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #SystemConsistencyTest category: 'BaseImageTests-System'!
-TestCase subclass: #SystemConsistencyTest
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'BaseImageTests-System'!
-!classDefinition: 'SystemConsistencyTest class' category: 'BaseImageTests-System'!
-SystemConsistencyTest class
-	instanceVariableNames: ''!
-
-!classDefinition: #SystemDictionaryTest category: 'BaseImageTests-System'!
-TestCase subclass: #SystemDictionaryTest
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'BaseImageTests-System'!
-!classDefinition: 'SystemDictionaryTest class' category: 'BaseImageTests-System'!
-SystemDictionaryTest class
-	instanceVariableNames: ''!
-
-!classDefinition: #TrieTest category: 'BaseImageTests-System'!
-TestCase subclass: #TrieTest
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'BaseImageTests-System'!
-!classDefinition: 'TrieTest class' category: 'BaseImageTests-System'!
-TrieTest class
-	instanceVariableNames: ''!
-
-!classDefinition: #TrieUnicodeTest category: 'BaseImageTests-System'!
-TestCase subclass: #TrieUnicodeTest
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'BaseImageTests-System'!
-!classDefinition: 'TrieUnicodeTest class' category: 'BaseImageTests-System'!
-TrieUnicodeTest class
-	instanceVariableNames: ''!
-
 !classDefinition: #ReferenceStreamTest category: 'BaseImageTests-System-Object Storage'!
 TestCase subclass: #ReferenceStreamTest
 	instanceVariableNames: ''
@@ -927,24 +776,14 @@ TestCase subclass: #SmartRefStreamTest
 SmartRefStreamTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #BitBltTest category: 'BaseImageTests-Graphics Primitives'!
+!classDefinition: #BitBltTest category: 'BaseImageTests-Graphics-Primitives'!
 TestCase subclass: #BitBltTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
-	category: 'BaseImageTests-Graphics Primitives'!
-!classDefinition: 'BitBltTest class' category: 'BaseImageTests-Graphics Primitives'!
+	category: 'BaseImageTests-Graphics-Primitives'!
+!classDefinition: 'BitBltTest class' category: 'BaseImageTests-Graphics-Primitives'!
 BitBltTest class
-	instanceVariableNames: ''!
-
-!classDefinition: #JpegTest category: 'BaseImageTests-Graphics'!
-TestCase subclass: #JpegTest
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'BaseImageTests-Graphics'!
-!classDefinition: 'JpegTest class' category: 'BaseImageTests-Graphics'!
-JpegTest class
 	instanceVariableNames: ''!
 
 !classDefinition: #AffineTransformationTest category: 'BaseImageTests-Morphic-Kernel'!
@@ -1367,6 +1206,26 @@ TestCase subclass: #WriteStreamTest
 WriteStreamTest class
 	instanceVariableNames: ''!
 
+!classDefinition: #SystemConsistencyTest category: 'BaseImageTests-System-Support'!
+TestCase subclass: #SystemConsistencyTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-System-Support'!
+!classDefinition: 'SystemConsistencyTest class' category: 'BaseImageTests-System-Support'!
+SystemConsistencyTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #SystemDictionaryTest category: 'BaseImageTests-System-Support'!
+TestCase subclass: #SystemDictionaryTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-System-Support'!
+!classDefinition: 'SystemDictionaryTest class' category: 'BaseImageTests-System-Support'!
+SystemDictionaryTest class
+	instanceVariableNames: ''!
+
 !classDefinition: #TranscriptTest category: 'BaseImageTests-System-Support'!
 TestCase subclass: #TranscriptTest
 	instanceVariableNames: ''
@@ -1407,6 +1266,36 @@ TestCase subclass: #GrayFormTest
 GrayFormTest class
 	instanceVariableNames: ''!
 
+!classDefinition: #BecomeTest category: 'BaseImageTests-Kernel-Objects'!
+TestCase subclass: #BecomeTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-Kernel-Objects'!
+!classDefinition: 'BecomeTest class' category: 'BaseImageTests-Kernel-Objects'!
+BecomeTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #BooleanTest category: 'BaseImageTests-Kernel-Objects'!
+TestCase subclass: #BooleanTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-Kernel-Objects'!
+!classDefinition: 'BooleanTest class' category: 'BaseImageTests-Kernel-Objects'!
+BooleanTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #IfNotNilTests category: 'BaseImageTests-Kernel-Objects'!
+TestCase subclass: #IfNotNilTests
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-Kernel-Objects'!
+!classDefinition: 'IfNotNilTests class' category: 'BaseImageTests-Kernel-Objects'!
+IfNotNilTests class
+	instanceVariableNames: ''!
+
 !classDefinition: #ObjectTest category: 'BaseImageTests-Kernel-Objects'!
 TestCase subclass: #ObjectTest
 	instanceVariableNames: ''
@@ -1415,6 +1304,16 @@ TestCase subclass: #ObjectTest
 	category: 'BaseImageTests-Kernel-Objects'!
 !classDefinition: 'ObjectTest class' category: 'BaseImageTests-Kernel-Objects'!
 ObjectTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #SpecialSelectorsTest category: 'BaseImageTests-Kernel-Objects'!
+TestCase subclass: #SpecialSelectorsTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-Kernel-Objects'!
+!classDefinition: 'SpecialSelectorsTest class' category: 'BaseImageTests-Kernel-Objects'!
+SpecialSelectorsTest class
 	instanceVariableNames: ''!
 
 !classDefinition: #WeakMessageSendTest category: 'BaseImageTests-Kernel-Objects'!
@@ -1437,6 +1336,36 @@ TestCase subclass: #MethodReferenceTest
 MethodReferenceTest class
 	instanceVariableNames: ''!
 
+!classDefinition: #CharacterSetTest category: 'BaseImageTests-Kernel-Text'!
+TestCase subclass: #CharacterSetTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-Kernel-Text'!
+!classDefinition: 'CharacterSetTest class' category: 'BaseImageTests-Kernel-Text'!
+CharacterSetTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #CharacterTest category: 'BaseImageTests-Kernel-Text'!
+TestCase subclass: #CharacterTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-Kernel-Text'!
+!classDefinition: 'CharacterTest class' category: 'BaseImageTests-Kernel-Text'!
+CharacterTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #StringTest category: 'BaseImageTests-Kernel-Text'!
+TestCase subclass: #StringTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-Kernel-Text'!
+!classDefinition: 'StringTest class' category: 'BaseImageTests-Kernel-Text'!
+StringTest class
+	instanceVariableNames: ''!
+
 !classDefinition: #SymbolTest category: 'BaseImageTests-Kernel-Text'!
 TestCase subclass: #SymbolTest
 	instanceVariableNames: ''
@@ -1445,6 +1374,36 @@ TestCase subclass: #SymbolTest
 	category: 'BaseImageTests-Kernel-Text'!
 !classDefinition: 'SymbolTest class' category: 'BaseImageTests-Kernel-Text'!
 SymbolTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #UnicodeStringsTest category: 'BaseImageTests-Kernel-Text'!
+TestCase subclass: #UnicodeStringsTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-Kernel-Text'!
+!classDefinition: 'UnicodeStringsTest class' category: 'BaseImageTests-Kernel-Text'!
+UnicodeStringsTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #UnicodeSymbolsTest category: 'BaseImageTests-Kernel-Text'!
+TestCase subclass: #UnicodeSymbolsTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-Kernel-Text'!
+!classDefinition: 'UnicodeSymbolsTest class' category: 'BaseImageTests-Kernel-Text'!
+UnicodeSymbolsTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #UnicodeTest category: 'BaseImageTests-Kernel-Text'!
+TestCase subclass: #UnicodeTest
+	instanceVariableNames: 'bytesOfExample1'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-Kernel-Text'!
+!classDefinition: 'UnicodeTest class' category: 'BaseImageTests-Kernel-Text'!
+UnicodeTest class
 	instanceVariableNames: ''!
 
 !classDefinition: #SHST80RangeTypeTest category: 'BaseImageTests-Tools-Syntax Highlighting'!
@@ -1467,14 +1426,44 @@ TestCase subclass: #DebuggerTest
 DebuggerTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #BecomeTestExperiment category: 'BaseImageTests-Kernel'!
-Object subclass: #BecomeTestExperiment
-	instanceVariableNames: 'a b'
+!classDefinition: #StrikeFontTest category: 'BaseImageTests-Graphics-Text'!
+TestCase subclass: #StrikeFontTest
+	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
-	category: 'BaseImageTests-Kernel'!
-!classDefinition: 'BecomeTestExperiment class' category: 'BaseImageTests-Kernel'!
-BecomeTestExperiment class
+	category: 'BaseImageTests-Graphics-Text'!
+!classDefinition: 'StrikeFontTest class' category: 'BaseImageTests-Graphics-Text'!
+StrikeFontTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #JpegTest category: 'BaseImageTests-Graphics-Files'!
+TestCase subclass: #JpegTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-Graphics-Files'!
+!classDefinition: 'JpegTest class' category: 'BaseImageTests-Graphics-Files'!
+JpegTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #TrieTest category: 'BaseImageTests-System-Text'!
+TestCase subclass: #TrieTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-System-Text'!
+!classDefinition: 'TrieTest class' category: 'BaseImageTests-System-Text'!
+TrieTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #TrieUnicodeTest category: 'BaseImageTests-System-Text'!
+TestCase subclass: #TrieUnicodeTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-System-Text'!
+!classDefinition: 'TrieUnicodeTest class' category: 'BaseImageTests-System-Text'!
+TrieUnicodeTest class
 	instanceVariableNames: ''!
 
 !classDefinition: #ExceptionTester category: 'BaseImageTests-Exceptions'!
@@ -1497,6 +1486,16 @@ Object subclass: #RefactoringClassTestData
 RefactoringClassTestData class
 	instanceVariableNames: ''!
 
+!classDefinition: #BecomeTestExperiment category: 'BaseImageTests-Kernel-Objects'!
+Object subclass: #BecomeTestExperiment
+	instanceVariableNames: 'a b'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-Kernel-Objects'!
+!classDefinition: 'BecomeTestExperiment class' category: 'BaseImageTests-Kernel-Objects'!
+BecomeTestExperiment class
+	instanceVariableNames: ''!
+
 
 !FloatTest commentStamp: 'fbs 3/8/2004 22:13' prior: 0!
 I provide a test suite for Float values. Examine my tests to see how Floats should behave, and see how to use them.!
@@ -1512,12 +1511,6 @@ A SemaphoreTest is sunit test for simple and multiEx semaphores
 
 Instance Variables none; does not have common test fixture accross all tests (because its testing differenct sorts of semaphores (could refactor into muliple testcases if there were more test conditions.
 !
-
-!BecomeTest commentStamp: '<historical>' prior: 0!
-Tests that common uses of #become: and related methods don't crash the system when some method could resume execution on a 'becomed' instance.!
-
-!SpecialSelectorsTest commentStamp: '<historical>' prior: 0!
-Tests for proper behavior of Special Selectors, for example #@!
 
 !DecompilerTests commentStamp: 'sd 9/26/2004 13:24' prior: 0!
 Apparently the decompiler does not really work totally.
@@ -1695,9 +1688,6 @@ This test documents the source pointer address conversion methods for CuisSource
 See class comment there. 
 !
 
-!SystemConsistencyTest commentStamp: '<historical>' prior: 0!
-General system - wide image health tests.!
-
 !AffineTransformationTest commentStamp: '<historical>' prior: 0!
 Tests for AffineTransformation!
 
@@ -1720,6 +1710,9 @@ print: when:.
 Made at Cuis Sprint #1
 !
 
+!SystemConsistencyTest commentStamp: '<historical>' prior: 0!
+General system - wide image health tests.!
+
 !TranscriptTest commentStamp: '<historical>' prior: 0!
 Tests cases for Stream messages: 
 
@@ -1729,6 +1722,12 @@ print: when:.
 
 Made at Cuis Sprint #1
 !
+
+!BecomeTest commentStamp: '<historical>' prior: 0!
+Tests that common uses of #become: and related methods don't crash the system when some method could resume execution on a 'becomed' instance.!
+
+!SpecialSelectorsTest commentStamp: '<historical>' prior: 0!
+Tests for proper behavior of Special Selectors, for example #@!
 
 !BecomeTestExperiment commentStamp: '<historical>' prior: 0!
 To be used by BecomeTest!
@@ -12117,939 +12116,6 @@ testWaitTimeoutMSecs
 	self assert: (Semaphore new signal waitTimeoutMSecs: 50) == false.
 ! !
 
-!BecomeTest methodsFor: 'testing' stamp: 'jmv 1/29/2019 12:03:40'!
-testBecome
-	| e |
-	BecomeTestExperiment twoVars.
-	e _ BecomeTestExperiment new.
-	self should: [ e messStuffUpWBecome ] raise: MethodInCallStackToBecomeInvalid! !
-
-!BecomeTest methodsFor: 'testing' stamp: 'jmv 1/29/2019 12:03:42'!
-testShapeMutation
-	| e |
-	BecomeTestExperiment twoVars.
-	e _ BecomeTestExperiment new.
-	self should: [ e messStuffUp ] raise: MethodInCallStackToBecomeInvalid! !
-
-!BooleanTest methodsFor: 'and tests' stamp: 'HAW 7/8/2018 20:03:35'!
-testAndAndAndAndTrueTable
-
-	self 
-		evaluate: [ :first :second :third :fourth :fifth | 
-			self 
-				assert: (first and: [second] and: [third] and: [fourth] and: [fifth]) 
-				equals: ((((first and: [second]) and: [third]) and: [ fourth ]) and: [ fifth ]) ]
-		forCombinationOf: 5
-		
-	
-	
-	! !
-
-!BooleanTest methodsFor: 'and tests' stamp: 'HAW 7/8/2018 20:03:46'!
-testAndAndAndTrueTable
-
-	self 
-		evaluate: [ :first :second :third :fourth | 
-			self 
-				assert: (first and: [second] and: [third] and: [fourth]) 
-				equals: (((first and: [second]) and: [third]) and: [ fourth ]) ]
-		forCombinationOf: 4
-		
-	
-	
-	! !
-
-!BooleanTest methodsFor: 'and tests' stamp: 'HAW 7/8/2018 20:04:00'!
-testAndAndTrueTable
-
-	self 
-		evaluate: [ :first :second :third | 
-			self 
-				assert: (first and: [second] and: [third]) 
-				equals: ((first and: [second]) and: [third]) ]
-		forCombinationOf: 3
-		
-	
-	
-	! !
-
-!BooleanTest methodsFor: 'or tests' stamp: 'HAW 7/8/2018 20:04:10'!
-testOrOrOrOrTrueTable
-
-	self 
-		evaluate: [ :first :second :third :fourth :fifth | 
-			self 
-				assert: (first or: [second] or: [third] or: [fourth] or: [fifth]) 
-				equals: ((((first or: [second]) or: [third]) or: [ fourth ]) or: [ fifth ]) ]
-		forCombinationOf: 5
-		
-	
-	
-	! !
-
-!BooleanTest methodsFor: 'or tests' stamp: 'HAW 7/8/2018 20:04:18'!
-testOrOrOrTrueTable
-
-	self 
-		evaluate: [ :first :second :third :fourth | 
-			self 
-				assert: (first or: [second] or: [third] or: [fourth]) 
-				equals: (((first or: [second]) or: [third]) or: [ fourth ]) ]
-		forCombinationOf: 4
-		
-	
-	
-	! !
-
-!BooleanTest methodsFor: 'or tests' stamp: 'HAW 7/8/2018 20:04:25'!
-testOrOrTrueTable
-
-	self 
-		evaluate: [ :first :second :third | 
-			self 
-				assert: (first or: [second] or: [third]) 
-				equals: ((first or: [second]) or: [third]) ]
-		forCombinationOf: 3
-		
-	
-	
-	! !
-
-!BooleanTest methodsFor: 'combination generation' stamp: 'HAW 7/8/2018 19:51:52'!
-evaluate: aBlock collectingValuesInto: values at: aPosition 
-	
-	aPosition = 0 
-		ifTrue: [ aBlock valueWithArguments: values ]
-		ifFalse: [ 
-			#(true false) do: [ :value | 
-				values at: aPosition put: value. 
-				self evaluate: aBlock collectingValuesInto: values at: aPosition - 1 ]]! !
-
-!BooleanTest methodsFor: 'combination generation' stamp: 'HAW 7/8/2018 19:50:53'!
-evaluate: aBlock forCombinationOf: aNumberOfValues
-
-	self evaluate: aBlock collectingValuesInto: (Array new: aNumberOfValues) at: aNumberOfValues 
-	! !
-
-!BooleanTest methodsFor: 'testing' stamp: 'jpb 8/2/2019 23:13:00'!
-testIsBoolean
-	self assert: (true is: #Boolean).
-	self assert: (false is: #Boolean).! !
-
-!CharacterSetTest methodsFor: 'testing includes' stamp: 'HAW 6/12/2019 17:32:08'!
-testIncludesReturnsFalseForCharacterNotIncluded
-
-	self deny: ((CharacterSet with: $a) includes: $b)! !
-
-!CharacterSetTest methodsFor: 'testing includes' stamp: 'HAW 6/12/2019 17:31:45'!
-testIncludesReturnsFalseForObjectsThatAreNotCharacters
-
-	self deny: ((CharacterSet with: $a) includes: 1)! !
-
-!CharacterSetTest methodsFor: 'testing includes' stamp: 'HAW 6/12/2019 17:32:24'!
-testIncludesReturnsTrueForCharacterIncluded
-
-	self assert: ((CharacterSet with: $a) includes: $a)! !
-
-!CharacterTest methodsFor: 'testing' stamp: 'jmv 10/6/2010 22:08'!
-testCaseConversion
-	"
-	self new testCaseConversion
-	"
-	self assert: ('año Comé tomá Camión' collect: [ :c | c asLowercase ]) = 'año comé tomá camión'.
-	self assert:('año Comé tomá Camión' collect: [ :c | c asUppercase ]) = 'AÑO COMÉ TOMÁ CAMIÓN'! !
-
-!CharacterTest methodsFor: 'testing' stamp: 'jpb 8/2/2019 23:10:55'!
-testIsCharacter
-	self assert: ($a is: #Character).
-	self assert: ($X is: #Character).
-	self assert: (Character cr is: #Character).! !
-
-!CharacterTest methodsFor: 'testing' stamp: 'jmv 10/6/2010 22:05'!
-testSorting
-	"
-	self new testSorting
-	"
-	self assert: $a < $á.
-	self deny: $a < $Á.
-	self assert: $A < $á.
-	self assert: $A < $Á.
-	self assert: $á < $b.
-	self deny: $á < $B.
-	self assert: $Á < $b.
-	self assert: $Á < $B.! !
-
-!CharacterTest methodsFor: 'testing' stamp: 'jmv 10/6/2010 22:10'!
-testTestingMethods
-	"
-	self new testTestingMethods
-	"
-	self assert:
-		('año Comé tomá Camión' allSatisfy: [ :c |
-			c = $  or: [ c isLetter ]]).
-	self assert:
-		('año comé tomá camión' allSatisfy: [ :c |
-			c = $  or: [ c isLowercase ]]).
-	self assert:
-		('AÑO COMÉ TOMÁ CAMIÓN' allSatisfy: [ :c |
-			c = $  or: [ c isUppercase ]]).
-	self assert:
-		('AaÀàÁáÂâÃãÄäÅåEeÈèÉéÊêËëIiÌìÍíÎîÏïOoÒòÓóÔôÕõÖöUuÙùÚúÛûÜü' allSatisfy: [ :c |
-			c isVowel ]).! !
-
-!CharacterTest methodsFor: 'UTF-8 conversion' stamp: 'jmv 5/26/2022 12:31:12'!
-testFromUtf8
-	"
-	CharacterTest new testFromUtf8
-	"
-	Character utf8BytesAndCodePointAt: 1 in: (ByteArray readHexFrom: '24') into: nil into: [ :codePoint | self assert: codePoint hex = '16r24' ].
-	Character utf8BytesAndCodePointAt: 1 in: (ByteArray readHexFrom: 'C2A2') into: nil into: [ :codePoint | self assert: codePoint hex = '16rA2' ].
-	Character utf8BytesAndCodePointAt: 1 in: (ByteArray readHexFrom: 'E282AC') into: nil into: [ :codePoint | self assert: codePoint hex = '16r20AC' ].
-	Character utf8BytesAndCodePointAt: 1 in: (ByteArray readHexFrom: 'F0A4ADA2') into: nil into: [ :codePoint | self assert: codePoint hex = '16r24B62' ].! !
-
-!CharacterTest methodsFor: 'UTF-8 conversion' stamp: 'jmv 5/5/2022 09:34:34'!
-testSomeLatinCharsFromUtf8
-	"
-	CharacterTest new testSomeLatinCharsFromUtf8
-	"
-	| bytes string |
-	bytes _ ByteArray readHexFrom: 'C3A1C3A5C3A6C3B1C386C2A5C3BC'.
-	string _ String streamContents: [ :strm | | s byteIndex n |
-		s _ bytes size.
-		byteIndex _ 1.
-		[  byteIndex <= s ] whileTrue: [
-			n _ Character utf8BytesAndCodePointAt: byteIndex in: bytes
-				into: nil
-				into: [ :codePoint |
-					strm nextPut: (Character codePoint: codePoint) ].
-			byteIndex _ byteIndex + n
-		]].
-	self assert: string = 'áåæñÆ¥ü'! !
-
-!CharacterTest methodsFor: 'UTF-8 conversion' stamp: 'jmv 9/4/2016 13:11:55'!
-testSomeLatinCharsToUtf8
-	"
-	CharacterTest new testSomeLatinCharsToUtf8
-	"
-	| characters bytes |
-	characters _ 'áåæñÆ¥ü' readStream.
-	bytes _ ByteArray streamContents: [ :strm |
-		[ characters atEnd ] whileFalse: [
-			Character
-				evaluate: [ :byte | strm nextPut: byte ]
-				withUtf8BytesOfUnicodeCodePoint: characters next codePoint ]].
-	self assert: bytes hex = 'C3A1C3A5C3A6C3B1C386C2A5C3BC'! !
-
-!CharacterTest methodsFor: 'UTF-8 conversion' stamp: 'jmv 2/20/2013 20:09'!
-testToUtf8
-	"
-	CharacterTest new testToUtf8
-	"
-	self assert: (Character utf8BytesOfUnicodeCodePoint: 16r0024) hex =  '24'.
-	self assert: (Character utf8BytesOfUnicodeCodePoint: 16r00A2) hex =  'C2A2'.
-	self assert: (Character utf8BytesOfUnicodeCodePoint: 16r20AC) hex = 'E282AC'.
-	self assert: (Character utf8BytesOfUnicodeCodePoint: 16r024B62) hex = 'F0A4ADA2'! !
-
-!IfNotNilTests methodsFor: 'tests' stamp: 'jmv 11/16/2010 08:46'!
-testIfNilIfNotNil0Arg
-
-	self assert: (5@4 ifNil: [#foo] ifNotNil: [#bar]) = #bar.
-	self assert: (nil ifNil: [#foo] ifNotNil: [#bar]) = #foo! !
-
-!IfNotNilTests methodsFor: 'tests' stamp: 'jmv 11/16/2010 08:46'!
-testIfNilIfNotNil0ArgAsVar
-
-	| block1 block2 |
-	block1 := [#foo].
-	block2 := [#bar].
-	self assert: (5@4 ifNil: block1 ifNotNil: block2) = #bar.
-	self assert: (nil ifNil: block1 ifNotNil: block2) = #foo! !
-
-!IfNotNilTests methodsFor: 'tests' stamp: 'jmv 11/16/2010 08:46'!
-testIfNilIfNotNil1Arg
-
-	self assert: (5@4 ifNil: [#foo] ifNotNil: [:a | a printString]) = '5@4'.
-	self assert: (nil ifNil: [#foo] ifNotNil: [:a | a printString]) = #foo! !
-
-!IfNotNilTests methodsFor: 'tests' stamp: 'jmv 11/16/2010 08:46'!
-testIfNilIfNotNil1ArgAsVar
-
-	| block1 block2 |
-	block1 := [#foo].
-	block2 := [:a | a printString].
-	self assert: (5@4 ifNil: block1 ifNotNil: block2) = '5@4'.
-	self assert: (nil ifNil: block1 ifNotNil: block2) = #foo! !
-
-!IfNotNilTests methodsFor: 'tests' stamp: 'jmv 11/16/2010 08:46'!
-testIfNotNil0Arg
-
-	self assert: (5@4 ifNotNil: [#foo]) = #foo.
-	self assert: (nil ifNotNil: [#foo]) = nil! !
-
-!IfNotNilTests methodsFor: 'tests' stamp: 'jmv 11/16/2010 08:46'!
-testIfNotNil0ArgAsVar
-
-	| block |
-	block := [#foo].
-	self assert: (5@4 ifNotNil: block) = #foo.
-	self assert: (nil ifNotNil: block) = nil! !
-
-!IfNotNilTests methodsFor: 'tests' stamp: 'jmv 11/16/2010 08:46'!
-testIfNotNil1Arg
-
-	self assert: (5@4 ifNotNil: [:a | a printString]) = '5@4'.
-	self assert: (nil ifNotNil: [:a | a printString]) = nil! !
-
-!IfNotNilTests methodsFor: 'tests' stamp: 'jmv 11/16/2010 08:46'!
-testIfNotNil1ArgAsVar
-
-	| block |
-	block := [:a | a printString].
-	self assert: (5@4 ifNotNil: block) = '5@4'.
-	self assert: (nil ifNotNil: block) = nil! !
-
-!IfNotNilTests methodsFor: 'tests' stamp: 'jmv 11/16/2010 08:46'!
-testIfNotNilIfNil0Arg
-
-	self assert: (5@4 ifNotNil: [#foo] ifNil: [#bar]) = #foo.
-	self assert: (nil ifNotNil: [#foo] ifNil: [#bar]) = #bar! !
-
-!IfNotNilTests methodsFor: 'tests' stamp: 'jmv 11/16/2010 08:46'!
-testIfNotNilIfNil0ArgAsVar
-
-	| block1 block2 |
-	block1 := [#foo].
-	block2 := [#bar].
-	self assert: (5@4 ifNotNil: block2 ifNil: block1) = #bar.
-	self assert: (nil ifNotNil: block2 ifNil: block1) = #foo! !
-
-!IfNotNilTests methodsFor: 'tests' stamp: 'jmv 11/16/2010 08:46'!
-testIfNotNilIfNil1Arg
-
-	self assert: (5@4 ifNotNil: [:a | a printString] ifNil: [#foo]) = '5@4'.
-	self assert: (nil ifNotNil: [:a | a printString] ifNil: [#foo]) = #foo! !
-
-!IfNotNilTests methodsFor: 'tests' stamp: 'jmv 11/16/2010 08:47'!
-testIfNotNilIfNil1ArgAsVar
-
-	| block1 block2 |
-	block1 := [#foo].
-	block2 := [:a | a printString].
-	self assert: (5@4 ifNotNil: block2 ifNil: block1) = '5@4'.
-	self assert: (nil ifNotNil: block2 ifNil: block1) = #foo! !
-
-!SpecialSelectorsTest methodsFor: 'testing' stamp: 'jmv 6/5/2017 12:17:20'!
-testCollectionAtSymbol
-	self assert: (#(1 2 3) @ #(10 20 30)) class == Array! !
-
-!SpecialSelectorsTest methodsFor: 'testing' stamp: 'jmv 6/5/2017 12:16:49'!
-testNumberAtSymbol
-	self assert: (1@2) class == Point! !
-
-!StrikeFontTest methodsFor: 'testing' stamp: 'jmv 6/11/2020 16:30:55'!
-testBaseAndDerivedFont
-	"
-	StrikeFontTest new testBaseAndDerivedFont
-	"
-
-	| base italic italicItalic boldItalic italicBold boldItalic2 underlined underlinedItalic italicUnderlined struckThrough1 struckThrough2 |
-	base _ FontFamily defaultFamilyPointSize: 14.
-	self assert: base isBaseFont.
-	italic _ base italic.
-	self deny: italic isBaseFont.
-	italicItalic _ italic italic.
-	self assert: italicItalic == italic.
-	boldItalic _ base bold italic.
-	self deny: boldItalic isBaseFont.
-	boldItalic2 _ base boldItalic.
-	italicBold _ italic bold.
-	self assert: boldItalic == italicBold.
-	self assert: boldItalic == boldItalic2.
-	underlined _ base underlined.
-	self deny: underlined isBaseFont.
-	underlinedItalic _ underlined italic.
-	italicUnderlined _ italic underlined.
-	self assert: underlinedItalic == italicUnderlined.
-	struckThrough1 _ base italic underlined bold struckThrough.
-	struckThrough2 _ base bold underlined italic struckThrough.
-	self assert: struckThrough1 == struckThrough2! !
-
-!StrikeFontTest methodsFor: 'testing' stamp: 'jmv 6/11/2020 16:25:48'!
-testBaseAndDerivedFontSanity
-	"
-	StrikeFontTest new testBaseAndDerivedFontSanity
-	"
-
-	StrikeFont allInstances do: [ :f |
-		f isBaseFont 
-			ifTrue: [
-				self assert: (f instVarNamed: 'baseFont') isNil.
-				self assert: f baseFont == f.
-				self assert: (f instVarNamed: 'derivativeFonts') notNil ]
-			ifFalse: [
-				self assert: f baseFont notNil.
-				self assert: (f instVarNamed: 'derivativeFonts') isNil.
-				self assert: (f baseFont emphasized: f emphasis) == f ] ]! !
-
-!StringTest methodsFor: 'UTF-8 conversion' stamp: 'jmv 5/26/2022 12:00:49'!
-testAsUtf8
-	"
-	 StringTest new testAsUtf8
-	"
-	self assert: 'A¢¤' asUtf8Bytes hex = '41C2A2E282AC'! !
-
-!StringTest methodsFor: 'UTF-8 conversion' stamp: 'jmv 5/26/2022 11:59:35'!
-testAsUtf8WithNCRs
-	"
-	 StringTest new testAsUtf8WithNCRs
-	"
-	| stringWithDecimalNCRs stringWithHexNCRs utf8 |
-	utf8 _ ByteArray readHexFrom: ('CE BC 20 CE A8 20 CF 89 20 54 68 65 20 64 65 63 6F 6D 70 6F 73 69 74 69 6F 6E 20 6D 61 70 70 69 6E 67 20 69 73 20 3C EC B8 A0 2C 20 E1 86 B8 3E 2C 20 61 6E 64 20 6E 6F 74 20 3C E1 84 8E 2C 20 E1 85 B3 2C 20 31 31 42 38 3E 2E 0A 3C 70 3E 54 68 65 20 74 69 74 6C 65 20 73 61 79 73 20 E2 80 AB D7 A4 D7 A2 D7 99 D7 9C D7 95 D7 AA 20 D7 94 D7 91 D7 99 D7 A0 D7 90 D7 95 D7 9D 2C 20 57 33 43 E2 80 AC 20 69 6E 20 48 65 62 72 65 77 3C 2F 70 3E 0A 61 62 63 E0 A4 95 E0 A4 96 E0 A5 80 E5 9C 8B E9 9A 9B F0 90 8E 84 F0 90 8E 94 F0 90 8E 98' reject: [ :char  | char isSeparator ]).
-
-	stringWithDecimalNCRs _ String fromUtf8Bytes: utf8 hex: false trimLastNull: false.
-	stringWithHexNCRs _ String fromUtf8Bytes: utf8 hex: true trimLastNull: false.
-
-	self assert: stringWithDecimalNCRs =  '&#956; &#936; ˜ The decomposition mapping is <&#52768;, &#4536;>, and not <&#4366;, &#4467;, 11B8>.
-<p>The title says &#8235;&#1508;&#1506;&#1497;&#1500;&#1493;&#1514; &#1492;&#1489;&#1497;&#1504;&#1488;&#1493;&#1501;, W3C&#8236; in Hebrew</p>
-abc&#2325;&#2326;&#2368;&#22283;&#38555;&#66436;&#66452;&#66456;'.
-
-	self assert: (stringWithDecimalNCRs asUtf8Bytes: true) = utf8.
-
-	self assert: stringWithHexNCRs = '&#x03BC; &#x03A8; ˜ The decomposition mapping is <&#xCE20;, &#x11B8;>, and not <&#x110E;, &#x1173;, 11B8>.
-<p>The title says &#x202B;&#x05E4;&#x05E2;&#x05D9;&#x05DC;&#x05D5;&#x05EA; &#x05D4;&#x05D1;&#x05D9;&#x05E0;&#x05D0;&#x05D5;&#x05DD;, W3C&#x202C; in Hebrew</p>
-abc&#x0915;&#x0916;&#x0940;&#x570B;&#x969B;&#x10384;&#x10394;&#x10398;'.
-
-	self assert: (stringWithHexNCRs asUtf8Bytes: true) = utf8! !
-
-!StringTest methodsFor: 'tests - converting' stamp: 'jmv 9/19/2016 09:55:39'!
-testBase64
-
-	self 
-		assert: 'SGVsbG8gV29ybGQ=' base64Decoded = 'Hello World' asByteArray;
-		assert: 'Hello World' asByteArray base64Encoded = 'SGVsbG8gV29ybGQ=';
-		assert: (String new: 100 withAll: $x) asByteArray base64Encoded  =
-'eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4
-eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eA==' ! !
-
-!StringTest methodsFor: 'testing' stamp: 'HAW 8/3/2018 10:42:26'!
-testAfterBlanksEndsWith
-
-	self assert: (' abc' afterBlanksEndsWith: 'abc').
-	self assert: ('abc' afterBlanksEndsWith: 'abc').
-	
-	self deny: (' ab' afterBlanksEndsWith: 'abc').
-	self deny: (' ab' afterBlanksEndsWith: 'a').
-	self deny: ('' afterBlanksEndsWith: 'abc').
-	self deny: (' a a bc' afterBlanksEndsWith: 'a bc').! !
-
-!StringTest methodsFor: 'testing' stamp: 'jmv 10/6/2010 22:08'!
-testCaseConversion
-	"
-	self new testCaseConversion
-	"
-	self assert: ('año Comé tomá Camión' asLowercase) = 'año comé tomá camión'.
-	self assert: ('año Comé tomá Camión' asUppercase) = 'AÑO COMÉ TOMÁ CAMIÓN'! !
-
-!StringTest methodsFor: 'testing' stamp: 'jmv 9/1/2009 14:12'!
-testEncompassParagraph1
-
-	self assert: ('a' encompassParagraph: (1 to: 0)) = (1 to: 1).
-	self assert: ('a' encompassParagraph: (1 to: 1)) = (1 to: 1).
-	self assert: ('a' encompassParagraph: (2 to: 1)) = (1 to: 1).! !
-
-!StringTest methodsFor: 'testing' stamp: 'jmv 9/1/2009 14:13'!
-testEncompassParagraph2
-
-	self assert: ('ab' encompassParagraph: (1 to: 0)) = (1 to: 2).
-	self assert: ('ab' encompassParagraph: (1 to: 1)) = (1 to: 2).
-	self assert: ('ab' encompassParagraph: (1 to: 2)) = (1 to: 2).
-	self assert: ('ab' encompassParagraph: (2 to: 1)) = (1 to: 2).
-	self assert: ('ab' encompassParagraph: (2 to: 2)) = (1 to: 2).
-	self assert: ('ab' encompassParagraph: (3 to: 2)) = (1 to: 2).! !
-
-!StringTest methodsFor: 'testing' stamp: 'jmv 9/1/2009 14:14'!
-testEncompassParagraph3
-
-self assert: ('a
-' encompassParagraph: (1 to: 0)) = (1 to: 2).
-self assert: ('a
-' encompassParagraph: (1 to: 1)) = (1 to: 2).
-self assert: ('a
-' encompassParagraph: (1 to: 2)) = (1 to: 2).
-self assert: ('a
-' encompassParagraph: (2 to: 1)) = (1 to: 2).
-self assert: ('a
-' encompassParagraph: (2 to: 2)) = (1 to: 2).
-self assert: ('a
-' encompassParagraph: (3 to: 2)) = (3 to: 2).
-
-self assert: ('a
-zcxv' encompassParagraph: (1 to: 0)) = (1 to: 2).
-self assert: ('a
-zcxv' encompassParagraph: (1 to: 1)) = (1 to: 2).
-self assert: ('a
-zxcv' encompassParagraph: (1 to: 2)) = (1 to: 2).
-self assert: ('a
-zxcv' encompassParagraph: (2 to: 1)) = (1 to: 2).
-self assert: ('a
-zxcv' encompassParagraph: (2 to: 2)) = (1 to: 2).
-self assert: ('a
-zxcv' encompassParagraph: (3 to: 2)) = (3 to: 6).! !
-
-!StringTest methodsFor: 'testing' stamp: 'jmv 9/1/2009 14:17'!
-testEncompassParagraph4
-
-self assert: ('
-b' encompassParagraph: (1 to: 0)) = (1 to: 1).
-self assert: ('
-b' encompassParagraph: (1 to: 1)) = (1 to: 1).
-self assert: ('
-b' encompassParagraph: (1 to: 2)) = (1 to: 2).
-self assert: ('
-b' encompassParagraph: (2 to: 1)) = (2 to: 2).
-self assert: ('
-b' encompassParagraph: (2 to: 2)) = (2 to: 2).
-self assert: ('
-b' encompassParagraph: (3 to: 2)) = (2 to: 2).! !
-
-!StringTest methodsFor: 'testing' stamp: 'jmv 9/1/2009 14:22'!
-testEncompassParagraph5
-
-self assert: ('a
-b' encompassParagraph: (1 to: 0)) = (1 to: 2).
-self assert: ('a
-b' encompassParagraph: (1 to: 1)) = (1 to: 2).
-self assert: ('a
-b' encompassParagraph: (1 to: 2)) = (1 to: 2).
-self assert: ('a
-b' encompassParagraph: (1 to: 3)) = (1 to: 3).
-self assert: ('a
-b' encompassParagraph: (2 to: 1)) = (1 to: 2).
-self assert: ('a
-b' encompassParagraph: (2 to: 2)) = (1 to: 2).
-self assert: ('a
-b' encompassParagraph: (2 to: 3)) = (1 to: 3).
-self assert: ('a
-b' encompassParagraph: (3 to: 2)) = (3 to: 3).
-self assert: ('a
-b' encompassParagraph: (3 to: 3)) = (3 to: 3).
-self assert: ('a
-b' encompassParagraph: (4 to: 3)) = (3 to: 3).! !
-
-!StringTest methodsFor: 'testing' stamp: 'HAW 12/29/2020 13:29:16'!
-testFindSelector 
-
-	self assert: #printOn: equals: '"self printOn:' findSelector.
-	self assert: #printOn: equals: 'self printOn:"' findSelector.
-	self assert: #printOn: equals: '"self printOn:"' findSelector.
-	self assert: #printOn: equals: 'self printOn:' findSelector.
-! !
-
-!StringTest methodsFor: 'testing' stamp: 'HAW 8/3/2018 11:03:25'!
-testFirstNoBlankIndex
-
-	self assert: 1 equals: 'abc' firstNoBlankIndex.
-	self assert: 2 equals: ' abc' firstNoBlankIndex.
-	self assert: 0 equals: '' firstNoBlankIndex ! !
-
-!StringTest methodsFor: 'testing' stamp: 'jpb 8/2/2019 23:11:49'!
-testIsString
-	self assert: ('Hello World' is: #String).
-	self assert: ('' is: #String).! !
-
-!StringTest methodsFor: 'testing' stamp: 'HAW 8/3/2018 11:10:05'!
-testLastNoBlankIndex
-
-	self assert: 3 equals: 'abc' lastNoBlankIndex.
-	self assert: 3 equals: 'abc ' lastNoBlankIndex.
-	self assert: 4 equals: ' abc ' lastNoBlankIndex.
-	self assert: 0 equals: '' lastNoBlankIndex ! !
-
-!StringTest methodsFor: 'testing' stamp: 'jmv 12/17/2012 10:51'!
-testLineSeparators
-	"
-	Test that #newLineCharacter is considered a line separator and not a line terminator.
-	This means that the last line never ends with a #newLineCharacter (although it might be empty!!)
-	StringTest new testLineSeparators
-	"
-	| justAnLf linesBounds |
-	linesBounds _ OrderedCollection new.
-	justAnLf _ '
-'.
-	justAnLf lineIndicesDo: [ :start :endWithoutDelimiters :end |
-		linesBounds add: { start . endWithoutDelimiters. end }.
-		].
-
-	self assert: linesBounds size = 2 description: 'There should be two lines.'.
-
-	self assert: linesBounds first first = 1 description: 'First line starts at position 1'.
-	self assert: linesBounds first second = (linesBounds first first-1) description: 'First line is empty'.
-	self assert: linesBounds first third = (linesBounds first second+1) description: 'First line is terminated by ab Lf'.
-
-	self assert: linesBounds second first = ( linesBounds first third+1) description: 'Second line starts after end of first line'.
-	self assert: linesBounds second second = (linesBounds second first-1) description: 'Second line is empty'.
-	self assert: linesBounds second third = (linesBounds second second+0) description: 'Second line is not terminated by ab Lf'.! !
-
-!StringTest methodsFor: 'testing' stamp: 'jmv 10/6/2010 22:03'!
-testSorting
-"
-self new testSorting
-"
-
-	self assert: 'a' < 'á'.
-	self assert: ('a' < 'Á') not.
-	self assert: 'A' < 'á'.
-	self assert: 'A' < 'Á'.
-	self assert: 'á' < 'b'.
-	self assert: ('á' < 'B') not.
-	self assert: 'Á' < 'b'.
-	self assert: 'Á' < 'B'.
-
-	self assert: ('a' caseSensitiveLessOrEqual: 'á').
-	self deny: ('a' caseSensitiveLessOrEqual: 'Á').
-	self assert: ('A' caseSensitiveLessOrEqual: 'á').
-	self assert: ('A' caseSensitiveLessOrEqual: 'Á').
-	self assert: ('á' caseSensitiveLessOrEqual: 'b').
-	self deny: ('á' caseSensitiveLessOrEqual: 'B').
-	self assert: ('Á' caseSensitiveLessOrEqual: 'b').
-	self assert: ('Á' caseSensitiveLessOrEqual: 'B').
-
-	self assert: ('a' caseInsensitiveLessOrEqual: 'á').
-	self assert: ('a' caseInsensitiveLessOrEqual: 'Á').
-	self assert: ('A' caseInsensitiveLessOrEqual: 'á').
-	self assert: ('A' caseInsensitiveLessOrEqual: 'Á').
-	self assert: ('á' caseInsensitiveLessOrEqual: 'b').
-	self assert: ('á' caseInsensitiveLessOrEqual: 'B').
-	self assert: ('Á' caseInsensitiveLessOrEqual: 'b').
-	self assert: ('Á' caseInsensitiveLessOrEqual: 'B').! !
-
-!StringTest methodsFor: 'testing' stamp: 'HAW 8/3/2018 11:00:28'!
-testWithBlanksTrimmed
-
-	self assert: 'abc' equals: ' abc' withBlanksTrimmed.
-	self assert: 'abc' equals: 'abc ' withBlanksTrimmed.
-	self assert: 'abc' equals: ' abc ' withBlanksTrimmed.
-	self assert: 'a b c' equals: ' a b c ' withBlanksTrimmed.
-	self assert: '' equals: '' withBlanksTrimmed.
-	! !
-
-!StringTest methodsFor: 'testing' stamp: 'HAW 8/2/2018 20:35:28'!
-testWithoutLeadingBlanks
-
-	self assert: 'abc' equals: ' abc' withoutLeadingBlanks.
-	self assert: 'abc' equals: 'abc' withoutLeadingBlanks.
-	self assert: '' withoutLeadingBlanks isEmpty
-! !
-
-!StringTest methodsFor: 'testing' stamp: 'HAW 6/8/2019 18:18:47'!
-testWithoutSeparators
-
-	self assert: 'abc' equals: 'abc' withoutSeparators.
-	self assert: 'abc' equals: ' a b c ' withoutSeparators! !
-
-!StringTest methodsFor: 'testing' stamp: 'HAW 8/2/2018 20:35:32'!
-testWithoutTrailingBlanks
-
-	self assert: 'abc' equals: 'abc ' withoutTrailingBlanks.
-	self assert: 'abc' equals: 'abc' withoutTrailingBlanks.
-	self assert: '' withoutTrailingBlanks isEmpty
-! !
-
-!StringTest methodsFor: 'tests - grammar' stamp: 'LC 7/5/2020 16:47:10'!
-testArticle
-	self
-		assert: 'euphemism' withArticle equals: 'a euphemism';
-		assert: 'European' withArticle equals: 'a European';
-		assert: 'Euclidean space' withArticle equals: 'a Euclidean space';
-		assert: 'university' withArticle equals: 'a university';
-		assert: 'anagram' withArticle equals: 'an anagram';
-		assert: 'apple' withArticle equals: 'an apple';
-		assert: 'Ukranian' withArticle equals: 'a Ukranian';
-		assert: 'Argentine' withArticle equals: 'an Argentine';
-		assert: 'user' withArticle equals: 'a user'! !
-
-!UnicodeStringsTest methodsFor: 'testing' stamp: 'jmv 6/2/2022 15:14:24'!
-test01
-
-	| asciiString asciiUtf32String asciiUtf8String latinString latinUtf32String latinUtf8String |
-	asciiString _ 'Hello world'.
-	latinString _ '¡Tomá agüita, Ñandú!!'.
-	asciiUtf8String _ asciiString asUtf8String.
-	latinUtf8String _ latinString asUtf8String.
-	asciiUtf32String _ asciiString asUtf32String.
-	latinUtf32String _ latinString asUtf32String.
-
-	self assert: asciiString hash = asciiUtf8String hash.
-	self assert: asciiString hash = asciiUtf32String hash.
-	self assert: asciiString = asciiUtf8String.
-	self assert: asciiString = asciiUtf32String.
-	self assert: asciiUtf8String = asciiString.
-	self assert: asciiUtf8String = asciiUtf32String.
-	self assert: asciiUtf32String = asciiString.
-	self assert: asciiUtf32String = asciiUtf8String.
-
-	self assert: latinString hash = latinUtf8String hash.
-	self assert: latinString hash = latinUtf32String hash.
-	self assert: latinString = latinUtf8String.
-	self assert: latinString = latinUtf32String.
-	self assert: latinUtf8String = latinString.
-	self assert: latinUtf8String = latinUtf32String.
-	self assert: latinUtf32String = latinString.
-	self assert: latinUtf32String = latinUtf8String.! !
-
-!UnicodeSymbolsTest methodsFor: 'testing' stamp: 'jmv 6/3/2022 11:37:33'!
-test01AsciiSymbolFirst
-	"Try a few things with pure ASCII.
-	Do #asSymbol before doing #asUtf8Symbol. The symbol created will be instance of Symbol."
-	
-	| str symbol utf8 utf8Symbol |
-	str _ 'Stuff', Random next mantissaPart printString.
-	symbol _ str asSymbol.
-	utf8 _ str asUtf8String.
-	utf8Symbol _ utf8 asSymbol.
-
-	self assert: str = str.
-	self assert: str == str.
-	self assert: symbol = symbol.
-	self assert: symbol == symbol.
-	self assert: utf8 = utf8.
-	self assert: utf8 == utf8.
-	self assert: utf8Symbol = utf8Symbol.
-	self assert: utf8Symbol == utf8Symbol.
-
-	self assert: str = symbol.
-	self assert: symbol = str.
-	self assert: utf8 = utf8Symbol.
-	self assert: utf8Symbol = utf8.
-
-	self assert: str = utf8.
-	self assert: utf8 = str.
-	self assert: symbol = utf8Symbol.
-	self assert: utf8Symbol = symbol.
-
-	self assert: str = utf8Symbol.
-	self assert: utf8Symbol = str.
-	self assert: symbol = utf8.
-	self assert: utf8 = symbol.
-
-	self assert: utf8Symbol == symbol.
-	self assert: symbol == utf8Symbol.! !
-
-!UnicodeSymbolsTest methodsFor: 'testing' stamp: 'jmv 6/3/2022 11:37:42'!
-test02LatinSymbolFirst
-	"Try a few things with pure ASCII.
-	Do #asSymbol before doing #asUtf8Symbol. The symbol created will be instance of Symbol."
-	
-	| str symbol utf8 utf8Symbol |
-	str _ '¡Tomá agüita, Ñandú!!', Random next mantissaPart printString.
-	symbol _ str asSymbol.
-	utf8 _ str asUtf8String.
-	utf8Symbol _ utf8 asSymbol.
-
-	self assert: str = str.
-	self assert: str == str.
-	self assert: symbol = symbol.
-	self assert: symbol == symbol.
-	self assert: utf8 = utf8.
-	self assert: utf8 == utf8.
-	self assert: utf8Symbol = utf8Symbol.
-	self assert: utf8Symbol == utf8Symbol.
-
-	self assert: str = symbol.
-	self assert: symbol = str.
-	self assert: utf8 = utf8Symbol.
-	self assert: utf8Symbol = utf8.
-
-	self assert: str = utf8.
-	self assert: utf8 = str.
-	self assert: symbol = utf8Symbol.
-	self assert: utf8Symbol = symbol.
-
-	self assert: str = utf8Symbol.
-	self assert: utf8Symbol = str.
-	self assert: symbol = utf8.
-	self assert: utf8 = symbol.
-
-	self assert: utf8Symbol == symbol.
-	self assert: symbol == utf8Symbol.! !
-
-!UnicodeSymbolsTest methodsFor: 'testing' stamp: 'jmv 6/3/2022 11:38:22'!
-test03AsciiUtf8SymbolFirst
-	"Try a few things with pure ASCII.
-	Do #asSymbol before doing #asUtf8Symbol. The symbol created will be instance of Symbol."
-	
-	| str symbol utf8 utf8Symbol |
-	str _ 'Stuff', Random next mantissaPart printString.
-	utf8 _ str asUtf8String.
-	utf8Symbol _ utf8 asSymbol.
-	symbol _ str asSymbol.
-
-	self assert: str = str.
-	self assert: str == str.
-	self assert: symbol = symbol.
-	self assert: symbol == symbol.
-	self assert: utf8 = utf8.
-	self assert: utf8 == utf8.
-	self assert: utf8Symbol = utf8Symbol.
-	self assert: utf8Symbol == utf8Symbol.
-
-	self assert: str = symbol.
-	self assert: symbol = str.
-	self assert: utf8 = utf8Symbol.
-	self assert: utf8Symbol = utf8.
-
-	self assert: str = utf8.
-	self assert: utf8 = str.
-	self assert: symbol = utf8Symbol.
-	self assert: utf8Symbol = symbol.
-
-	self assert: str = utf8Symbol.
-	self assert: utf8Symbol = str.
-	self assert: symbol = utf8.
-	self assert: utf8 = symbol.
-
-	self assert: utf8Symbol == symbol.
-	self assert: symbol == utf8Symbol.! !
-
-!UnicodeSymbolsTest methodsFor: 'testing' stamp: 'jmv 6/3/2022 11:38:36'!
-test04LatinUtf8SymbolFirst
-	"Try a few things with pure ASCII.
-	Do #asSymbol before doing #asUtf8Symbol. The symbol created will be instance of Symbol."
-	
-	| str symbol utf8 utf8Symbol |
-	str _ '¡Tomá agüita, Ñandú!!', Random next mantissaPart printString.
-	utf8 _ str asUtf8String.
-	utf8Symbol _ utf8 asSymbol.
-	symbol _ str asSymbol.
-
-	self assert: str = str.
-	self assert: str == str.
-	self assert: symbol = symbol.
-	self assert: symbol == symbol.
-	self assert: utf8 = utf8.
-	self assert: utf8 == utf8.
-	self assert: utf8Symbol = utf8Symbol.
-	self assert: utf8Symbol == utf8Symbol.
-
-	self assert: str = symbol.
-	self assert: symbol = str.
-	self assert: utf8 = utf8Symbol.
-	self assert: utf8Symbol = utf8.
-
-	self assert: str = utf8.
-	self assert: utf8 = str.
-	self assert: symbol = utf8Symbol.
-	self assert: utf8Symbol = symbol.
-
-	self assert: str = utf8Symbol.
-	self assert: utf8Symbol = str.
-	self assert: symbol = utf8.
-	self assert: utf8 = symbol.
-
-	self assert: utf8Symbol == symbol.
-	self assert: symbol == utf8Symbol.! !
-
-!UnicodeTest methodsFor: 'set up' stamp: 'jmv 5/31/2016 11:24'!
-setUp
-	"
-	self new setUp
-	"
-
-     bytesOfExample1 := #[16r61 16r62 16r63 16r20 16rC3 16rA0 16rC3 16rA8 16rE2 
-	                              16r82 16rAC 16r20 16rCE 16rB1 16rCE 16rB2 16rCE 16rB3].
-	
-	"see UnicodeNotes.md"
-	
-     "write the bytes of an UFT8 encoded string in binary mode to a file"
-	self class fileName asFileEntry forceWriteStreamDo: [ :stream |
-		stream binary.
-		stream nextPutAll: bytesOfExample1 ]! !
-
-!UnicodeTest methodsFor: 'testing' stamp: 'jmv 10/3/2015 20:03'!
-test1ReadBinary
-	
-	"see UnicodeNotes.md"
-     "
-	self new setUp test1ReadBinary
-	"
-     | content |
-	content := self class fileName asFileEntry binaryContents.
-	self assert: content = bytesOfExample1! !
-
-!UnicodeTest methodsFor: 'testing' stamp: 'jmv 10/3/2015 20:04'!
-test2ReadWithOutBinary
-	
-	"see UnicodeNotes.md"
-     "
-	self new setUp test2ReadWithOutBinary
-	"
-     | content |
-	content := self class fileName asFileEntry textContents.
-	self deny: content = bytesOfExample1! !
-
-!UnicodeTest methodsFor: 'testing' stamp: 'jmv 5/26/2022 12:01:13'!
-test3ReadUtf8
-	
-	"see UnicodeNotes.md"
-     "
-	self new setUp test3ReadUtf8
-	"
-     | content byteArray |
-	byteArray _ self class fileName asFileEntry binaryContents.
-	content := String fromUtf8Bytes: byteArray.
-	self assert: content = 'abc àè¤ ˆ‰Š'! !
-
-!UnicodeTest methodsFor: 'testing' stamp: 'jmv 5/26/2022 12:00:15'!
-test4BackConversion
-	
-	"see UnicodeNotes.md"
-	
-     "
-	self new setUp test4BackConversion
-	"
-     | contentInternalString contentByteArray |
-
-	contentInternalString := String fromUtf8Bytes: self class fileName asFileEntry binaryContents.
-	contentByteArray := self class fileName asFileEntry binaryContents.
-
-	self assert: contentByteArray = (contentInternalString asUtf8Bytes: true)! !
-
-!UnicodeTest methodsFor: 'testing' stamp: 'jmv 5/26/2022 12:00:29'!
-test5ReadWriteUtf8
-	
-	"see UnicodeNotes.md"
-	
-     "
-	self new setUp test5ReadWriteUtf8
-	"
-     | content byteArray byteArray2 |
-
-	"read UTF8 Unicode file into internal string with NCRs"
-	"for NCR see http://en.wikipedia.org/wiki/Numeric_character_reference"
-	
-	byteArray := self class fileName asFileEntry binaryContents.
-	content := String fromUtf8Bytes: byteArray.
-	"NCRs were added to 'content' as needed"
-
-	"write internal string back to UTF8 file with NCRs converted back to UTF8 chars"
-	self class fileName2 asFileEntry forceWriteStreamDo: [ :stream |
-		stream binary.
-		stream nextPutAll: (content asUtf8Bytes: true).  "true means: convert NCRs back to UTF8"
-		].
-
-      "compare the two versions: what is in file 'fileName' with what is in file 'fileName2'"
-	byteArray := self class fileName asFileEntry binaryContents.
-	byteArray2 := self class fileName2 asFileEntry binaryContents.
-	self assert: byteArray = byteArray2! !
-
-!UnicodeTest class methodsFor: 'as yet unclassified' stamp: 'hjh 2/12/2013 19:25'!
-fileName
-	^'UTF8abc-test.txt'! !
-
-!UnicodeTest class methodsFor: 'as yet unclassified' stamp: 'hjh 2/12/2013 21:35'!
-fileName2
-	^'UTF8abc-test2.txt'! !
-
 !ArrayTest methodsFor: 'test - insert:ShiftingRight:' stamp: 'HAW 12/20/2018 14:41:00'!
 testCanNotInsertShiftingRightWhenInsertionPointIsBiggerThanSize
 
@@ -16825,453 +15891,6 @@ testUpToTerminator6TerminatedLongRecords
     fs close.
     path asFileEntry delete.! !
 
-!SystemConsistencyTest methodsFor: 'testing' stamp: 'jmv 5/7/2012 09:35'!
-testMethodsWithUnboundGlobals
-	"
-	SystemConsistencyTest new testMethodsWithUnboundGlobals
-	"
-	self assert: Smalltalk methodsWithUnboundGlobals isEmpty! !
-
-!TrieTest methodsFor: 'aux' stamp: 'jmv 6/21/2011 22:05'!
-assert: subject isEquivalentToDictionary: controlGroup
-	"Test #size, #do:, "
-	| count subjectAsDictionary someRandomString |
-	self assert: subject isEmpty = controlGroup isEmpty.
-	self assert: subject size = controlGroup size.
-	controlGroup keysDo: [ :each |
-		self assert: (subject includesKey: each) ].
-	subject keysDo: [ :each |
-		self assert: (controlGroup includesKey: each) ].
-	controlGroup keysAndValuesDo: [ :k :v |
-		self assert: (subject at: k) = v ].
-	subject keysAndValuesDo: [ :k :v |
-		self assert: (controlGroup at: k) = v ].
-	someRandomString _ 'someRandomStringZZZ'.
-	self assert: (subject includesKey: someRandomString)
-		= (controlGroup includesKey: someRandomString).
-	subjectAsDictionary _ Dictionary new.
-	count _ 0.
-	subject keysAndValuesDo: [ :k :v |
-		subjectAsDictionary at: k put: v.
-		count _ count + 1 ].
-	self assert: subjectAsDictionary size = controlGroup size.
-	self assert: count = controlGroup size.
-	self assert: subjectAsDictionary = controlGroup.! !
-
-!TrieTest methodsFor: 'aux' stamp: 'jmv 6/15/2011 09:58'!
-assert: subject isEquivalentToSet: controlGroup
-	"Test #size, #do:, "
-	| count subjectAsSet someRandomString |
-	self assert: subject isEmpty = controlGroup isEmpty.
-	self assert: subject size = controlGroup size.
-	controlGroup do: [ :each |
-		self assert: (subject includes: each) ].
-	someRandomString _ 'someRandomStringZZZ'.
-	self assert: (subject includes: someRandomString)
-		= (controlGroup includes: someRandomString).
-	subjectAsSet _ Set new.
-	count _ 0.
-	subject do: [ :element |
-		subjectAsSet add: element.
-		count _ count + 1 ].
-	self assert: subjectAsSet size = controlGroup size.
-	self assert: count = controlGroup size.
-	self assert: subjectAsSet = controlGroup.! !
-
-!TrieTest methodsFor: 'aux' stamp: 'jmv 6/22/2011 12:51'!
-assert: subject prefixSelection: aString isEquivalentToSet: controlGroup
-	| selection1 selection2 |
-	selection1 _ OrderedCollection new.
-	subject forPrefix: aString keysAndValuesDo: [ :k :v |
-		selection1 add: k ].
-	selection2 _ (controlGroup select: [ :each |
-		aString isEmpty or: [
-			each asLowercase asUnaccented beginsWith: aString asLowercase asUnaccented]]) asOrderedCollection 
-				sort: [ :a :b | a asLowercase asUnaccented < b asLowercase asUnaccented ].
-	self assert: selection1 = selection2.! !
-
-!TrieTest methodsFor: 'testing' stamp: 'jmv 6/21/2011 22:14'!
-testAllMesssagesLikeDicionary
-	"
-	TrieTest new testAllMesssagesLikeDicionary
-	"
-	| subject  controlGroup allMessages copy c set1 set2 |
-	subject _ Trie new.
-	controlGroup _ Dictionary new.
-	allMessages _ Smalltalk allImplementedMessages.
-	c _ 0.
-	3 timesRepeat: [
-		allMessages do: [ :symbol |
-			subject at: symbol put: c.
-			controlGroup at: symbol put: c.
-			c _ c + 1 ]].
-	self assert: subject isEquivalentToDictionary: controlGroup.
-
-	copy _ Dictionary new.
-	set1 _ Set new.
-	subject keysAndValuesDo: [ :symbol :number |
-		copy at: symbol put: number.
-		set1 add: number ].
-
-	set2 _ Set new.
-	subject do: [ :number |
-		set2 add: number ].
-
-	self assert: subject isEquivalentToDictionary: copy.
-	self assert: copy isEquivalentToDictionary: controlGroup.
-	self assert: set1 = set2! !
-
-!TrieTest methodsFor: 'testing' stamp: 'jmv 6/21/2011 22:01'!
-testAllMesssagesLikeSet
-	"
-	TrieTest new testAllMesssagesLikeSet
-	"
-	| subject  controlGroup allMessages copy|
-	subject _ Trie new.
-	controlGroup _ Set new.
-	allMessages _ Smalltalk allImplementedMessages.
-	3 timesRepeat: [
-		allMessages do: [ :symbol |
-			subject add: symbol.
-			controlGroup add: symbol ]].
-	self assert: subject isEquivalentToSet: controlGroup.
-
-	copy _ Set new.
-	subject do: [ :symbol |
-		copy add: symbol ].
-
-	self assert: subject isEquivalentToSet: copy.
-	self assert: copy isEquivalentToSet: controlGroup.! !
-
-!TrieTest methodsFor: 'testing' stamp: 'HAW 6/12/2019 17:38:28'!
-testIncludesReturnsFalseForObjectsThatAreNotString
-	
-	self deny: ((Trie with: 'hello') includes: 1)
-	! !
-
-!TrieTest methodsFor: 'testing' stamp: 'HAW 6/12/2019 17:38:51'!
-testIncludesReturnsFalseForStringsNotIncluded
-	
-	self deny: ((Trie with: 'hello') includes: 'bye')
-	! !
-
-!TrieTest methodsFor: 'testing' stamp: 'HAW 6/12/2019 17:39:09'!
-testIncludesReturnsTrueForIncludedStrings
-	
-	self assert: ((Trie with: 'hello') includes: 'hello')
-	! !
-
-!TrieTest methodsFor: 'testing' stamp: 'HAW 4/4/2019 08:18:55'!
-testKeyNotFoundSignalTheRightMessage
-
-	self 
-		should: [ Trie new errorKeyNotFound ]
-		raise: Error
-		withMessageText: Dictionary keyNotFoundErrorDescription ! !
-
-!TrieTest methodsFor: 'testing' stamp: 'jmv 6/22/2011 12:30'!
-testPrefixIteration
-	"
-	TrieTest new testPrefixIteration
-	"
-	| subject  controlGroup |
-	subject _ Trie new.
-	controlGroup _ Set new.
-
-	self assert: subject prefixSelection: '' isEquivalentToSet: controlGroup.
-	self assert: subject prefixSelection: 'c' isEquivalentToSet: controlGroup.
-	self assert: subject prefixSelection: 'ca' isEquivalentToSet: controlGroup.
-
-	subject add: 'car'.
-	controlGroup add: 'car'.
-	subject add: 'car'.
-	controlGroup add: 'car'.
-	subject add: 'cat'.
-	controlGroup add: 'cat'.
-	subject add: 'cart'.
-	controlGroup add: 'cart'.
-
-	self assert: subject prefixSelection: '' isEquivalentToSet: controlGroup.
-	self assert: subject prefixSelection: 'c' isEquivalentToSet: controlGroup.
-	self assert: subject prefixSelection: 'ca' isEquivalentToSet: controlGroup.
-	self assert: subject prefixSelection: 'car' isEquivalentToSet: controlGroup.
-	self assert: subject prefixSelection: 'cat' isEquivalentToSet: controlGroup.
-	self assert: subject prefixSelection: 'cart' isEquivalentToSet: controlGroup.
-
-	subject add: 'ñandú'.
-	controlGroup add: 'ñandú'.
-	subject add: 'ñandues'.
-	controlGroup add: 'ñandues'.
-	subject add: 'ÑANDÚSES'.
-	controlGroup add: 'ÑANDÚSES'.
-	
-	self assert: subject prefixSelection: '' isEquivalentToSet: controlGroup.
-	self assert: subject prefixSelection: 'c' isEquivalentToSet: controlGroup.
-	self assert: subject prefixSelection: 'ca' isEquivalentToSet: controlGroup.
-	self assert: subject prefixSelection: 'car' isEquivalentToSet: controlGroup.
-	self assert: subject prefixSelection: 'cat' isEquivalentToSet: controlGroup.
-	self assert: subject prefixSelection: 'cart' isEquivalentToSet: controlGroup.
-	self assert: subject prefixSelection: 'ñ' isEquivalentToSet: controlGroup.
-	self assert: subject prefixSelection: 'ñan' isEquivalentToSet: controlGroup.
-	self assert: subject prefixSelection: 'ñandu' isEquivalentToSet: controlGroup.
-	self assert: subject prefixSelection: 'ñandú' isEquivalentToSet: controlGroup.
-	self assert: subject prefixSelection: 'Ñ' isEquivalentToSet: controlGroup.
-	self assert: subject prefixSelection: 'ÑANDÚ' isEquivalentToSet: controlGroup.! !
-
-!TrieTest methodsFor: 'testing' stamp: 'jmv 6/22/2011 12:50'!
-testPrefixIteration2
-	"
-	TrieTest new testPrefixIteration2
-	"
-	| subject  controlGroup allMsg toAvoid |
-	subject _ Trie new.
-	controlGroup _ Set new.
-
-	allMsg _ Smalltalk allImplementedMessages.
-	toAvoid _ (allMsg asArray collect: [ :each | each asLowercase asUnaccented ]) asBag.
-	allMsg do: [ :symbol |
-		(toAvoid occurrencesOf: symbol) = 1 ifTrue: [
-			subject add: symbol.
-			controlGroup add: symbol ]].
-	
-	self assert: subject prefixSelection: '' isEquivalentToSet: controlGroup.
-	self assert: subject prefixSelection: 'a' isEquivalentToSet: controlGroup.
-	self assert: subject prefixSelection: 'at' isEquivalentToSet: controlGroup.
-	self assert: subject prefixSelection: 'at:' isEquivalentToSet: controlGroup.
-	self assert: subject prefixSelection: 'at:p' isEquivalentToSet: controlGroup.
-	self assert: subject prefixSelection: 'at:pu' isEquivalentToSet: controlGroup.
-	self assert: subject prefixSelection: 'at:put' isEquivalentToSet: controlGroup.
-	self assert: subject prefixSelection: 'at:put:' isEquivalentToSet: controlGroup.
-	self assert: subject prefixSelection: 'at:put:nonExistant:' isEquivalentToSet: controlGroup.! !
-
-!TrieTest methodsFor: 'testing' stamp: 'jmv 6/23/2011 11:02'!
-testRemoveLikeDicionary
-	"
-	TrieTest new testRemoveLikeDicionary
-	"
-	| subject  controlGroup allMessages copy c set1 set2 |
-	subject _ Trie new.
-	controlGroup _ Dictionary new.
-	allMessages _ Smalltalk allImplementedMessages.
-
-	subject at: 'doNotRemove' put: 'this'.
-	controlGroup at: 'doNotRemove' put: 'this'.
-	
-	c _ 0.
-	3 timesRepeat: [
-		allMessages do: [ :symbol |
-			subject at: symbol put: c.
-			controlGroup at: symbol put: c.
-			c _ c + 1 ]].
-
-	subject at: 'doNotRemove2' put: 'this2'.
-	controlGroup at: 'doNotRemove2' put: 'this2'.
-
-	self assert: subject isEquivalentToDictionary: controlGroup.
-	
-	allMessages do: [ :symbol |
-		subject removeKey: symbol.
-		controlGroup removeKey: symbol ].
-
-	copy _ Dictionary new.
-	set1 _ Set new.
-	subject keysAndValuesDo: [ :symbol :number |
-		copy at: symbol put: number.
-		set1 add: number ].
-
-	set2 _ Set new.
-	subject do: [ :number |
-		set2 add: number ].
-
-	self assert: subject isEquivalentToDictionary: copy.
-	self assert: copy isEquivalentToDictionary: controlGroup.
-	self assert: set1 = set2.
-	self assert: subject isEmpty = controlGroup isEmpty.
-
-	subject removeKey: 'doNotRemove'.
-	controlGroup removeKey: 'doNotRemove'.
-
-	self assert: subject isEquivalentToDictionary: controlGroup.
-	self deny: subject isEmpty.
-	self deny: controlGroup isEmpty.
-
-	subject removeKey: 'doNotRemove2'.
-	controlGroup removeKey: 'doNotRemove2'.
-
-	self assert: subject isEquivalentToDictionary: controlGroup.
-	self assert: subject isEmpty.
-	self assert: controlGroup isEmpty.! !
-
-!TrieTest methodsFor: 'testing' stamp: 'jmv 6/22/2011 15:54'!
-testRemoveLikeSet
-	"
-	TrieTest new testRemoveLikeSet
-	"
-	| subject  controlGroup allMessages copy |
-	subject _ Trie new.
-	controlGroup _ Set new.
-	allMessages _ Smalltalk allImplementedMessages.
-
-	subject add: 'doNotRemove'.
-	controlGroup add: 'doNotRemove'.
-	
-	3 timesRepeat: [
-		allMessages do: [ :symbol |
-			subject add: symbol.
-			controlGroup add: symbol ]].
-
-	subject add: 'doNotRemove2'.
-	controlGroup add: 'doNotRemove2'.
-
-	self assert: subject isEquivalentToSet: controlGroup.
-	
-	allMessages do: [ :symbol |
-		subject remove: symbol.
-		controlGroup remove: symbol ].
-
-	copy _ Set new.
-	subject do: [ :symbol |
-		copy add: symbol ].
-
-	self assert: subject isEquivalentToSet: copy.
-	self assert: copy isEquivalentToSet: controlGroup.
-
-	subject remove: 'doNotRemove'.
-	controlGroup remove: 'doNotRemove'.
-
-	self assert: subject isEquivalentToSet: controlGroup.
-	self deny: subject isEmpty.
-	self deny: controlGroup isEmpty.
-
-	subject remove: 'doNotRemove2'.
-	controlGroup remove: 'doNotRemove2'.
-
-	self assert: subject isEquivalentToSet: controlGroup.
-	self assert: subject isEmpty.
-	self assert: controlGroup isEmpty.! !
-
-!TrieTest methodsFor: 'testing' stamp: 'jmv 6/22/2011 15:42'!
-testSetProtocol
-	"
-	TrieTest new testSetProtocol
-	"
-	| subject  controlGroup |
-	subject _ Trie new.
-	controlGroup _ Set new.
-	self assert: subject isEquivalentToSet: controlGroup.
-	
-	subject add: 'car'.
-	controlGroup add: 'car'.
-	self assert: subject isEquivalentToSet: controlGroup.
-
-	subject add: 'car'.
-	controlGroup add: 'car'.
-	self assert: subject isEquivalentToSet: controlGroup.
-
-	subject add: 'cat'.
-	controlGroup add: 'cat'.
-	self assert: subject isEquivalentToSet: controlGroup.
-
-	subject add: 'cart'.
-	controlGroup add: 'cart'.
-	self assert: subject isEquivalentToSet: controlGroup.
-
-	subject add: 'ñandú'.
-	controlGroup add: 'ñandú'.
-	self assert: subject isEquivalentToSet: controlGroup.
-
-	subject add: 'ñandu'.
-	controlGroup add: 'ñandu'.
-	self assert: subject isEquivalentToSet: controlGroup.
-
-	subject add: 'ÑANDÚ'.
-	controlGroup add: 'ÑANDÚ'.
-	self assert: subject isEquivalentToSet: controlGroup.! !
-
-!TrieUnicodeTest methodsFor: 'testing' stamp: 'jmv 6/6/2022 11:47:11'!
-test01
-	| t all |
-	t _ Trie new.
-	t add: #toto.
-	t at: #toton put: 47.
-	t add: 'carrr'.
-	t at: 'car' put: Float pi.
-	t at: 'cat' put: Date today.
-	self assert: (t includesKey: 'car').
-	self deny: (t includes: 'car').
-	self assert: (t includesKey: 'cat').
-	self deny: (t includes: 'cat').
-	self assert: (t includes: #toto).
-	self assert: (t includes: 'toto').
-	all _ Array streamContents: [ :strm |
-		t keysAndValuesDo: [ :k :v | strm nextPut: {k. k class. v. v class} ]].
-	self assert: all size = 5.
-	self assert: (all includes: {#toto. Symbol. #toto. Symbol}).
-	self assert: (all includes: {#toton. Symbol. 47. SmallInteger}).
-	self assert: (all includes: {'carrr'. String. 'carrr'. String}).
-	self assert: (all includes: {'car'. String. Float pi. SmallFloat64}).
-	self assert: (all includes: {'cat'. String. Date today. Date}).! !
-
-!TrieUnicodeTest methodsFor: 'testing' stamp: 'jmv 6/6/2022 12:13:02'!
-test02
-	| t all |
-	t _ Trie new.
-	t add: #toto.
-	t at: #toton put: 47.
-	t add: 'carrrs'.
-	t add: 'carrr' asUtf8String.
-	t at: 'car' asUtf8String put: Float pi.
-	t at: 'cat' put: Date today.
-	self assert: (t includesKey: 'carrrs').
-	self assert: (t includes: 'carrrs').
-	self assert: (t includesKey: 'carrrs' asUtf8String).
-	self assert: (t includes: 'carrrs' asUtf8String).
-	self assert: (t includesKey: 'carrr').
-	self assert: (t includes: 'carrr').
-	self assert: (t includesKey: 'carrr' asUtf8String).
-	self assert: (t includes: 'carrr' asUtf8String).
-	self assert: (t includesKey: 'car').
-	self deny: (t includes: 'car').
-	self assert: (t includesKey: 'cat').
-	self deny: (t includes: 'cat').
-	self assert: (t includes: #toto).
-	self assert: (t includes: 'toto').
-	all _ Array streamContents: [ :strm |
-		t keysAndValuesDo: [ :k :v | strm nextPut: {k. k class. v. v class} ]].
-	self assert: all size = 6.
-	self assert: (all includes: {#toto. Symbol. #toto. Symbol}).
-	self assert: (all includes: {#toton. Symbol. 47. SmallInteger}).
-	self assert: (all includes: {'carrrs'. String. 'carrrs'. String}).
-	self assert: (all includes: {'carrr'. Utf8String. 'carrr'. Utf8String}).
-	self assert: (all includes: {'car'. Utf8String. Float pi. SmallFloat64}).
-	self assert: (all includes: {'cat'. String. Date today. Date}).! !
-
-!TrieUnicodeTest methodsFor: 'testing' stamp: 'jmv 6/6/2022 12:09:17'!
-test03
-	| t all s1 s2 |
-	t _ Trie new.
-	s1 _ ('totoU', Random next mantissaPart printString) asUtf8String asSymbol.
-	t add: s1.
-	s2 _ ('totoUn', Random next mantissaPart printString) asUtf8String asSymbol.
-	t at: s2 put: 47.
-	t add: 'carrr' asUtf8String.
-	t at: 'car' put: Float pi.
-	t at: 'cat' asUtf8String put: Date today.
-	self assert: (t includesKey: 'car').
-	self deny: (t includes: 'car').
-	self assert: (t includesKey: 'cat').
-	self deny: (t includes: 'cat').
-	self assert: (t includes: s1).
-	self assert: (t includes: s1 asString).
-	all _ Array streamContents: [ :strm |
-		t keysAndValuesDo: [ :k :v | strm nextPut: {k. k class. v. v class} ]].
-	self assert: all size = 5.
-	self assert: (all includes: {s1. Utf8Symbol. s1. Utf8Symbol}).
-	self assert: (all includes: {s2. Utf8Symbol. 47. SmallInteger}).
-	self assert: (all includes: {'carrr'. Utf8String. 'carrr'. Utf8String}).
-	self assert: (all includes: {'car'. String. Float pi. SmallFloat64}).
-	self assert: (all includes: {'cat'. Utf8String. Date today. Date}).! !
-
 !ReferenceStreamTest methodsFor: 'testing' stamp: 'jmv 9/25/2012 22:42'!
 testDiskProxy
 	"
@@ -17554,607 +16173,6 @@ testAlphaCompositing2
 		self assert: (result red - mixColor alpha) abs < eps.
 		self assert: result alpha = mixColor alpha.
 	].! !
-
-!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:59:20'!
-test16bpp
-	| form n read |
-	form _ JpegTest lenaColor64 asFormOfDepth: 16.
-	self assert: form nativeDepth = 16.
-	form writeJPEGfileNamed: 'test.jpg'.
-	read _ 'test.jpg' asFileEntry formContents.
-	self assert: read depth = 32.
-
-	n _ form boundingBox width * form boundingBox height * 3.
-	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
-
-!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:59:16'!
-test16bpp61
-	| form n read |
-	form _ (JpegTest lenaColor64 asFormOfDepth: 16) copy: (0@0 extent: 61@61).
-	self assert: form nativeDepth = 16.
-	form writeJPEGfileNamed: 'test.jpg'.
-	read _ 'test.jpg' asFileEntry formContents.
-	self assert: read depth = 32.
-	self assert: read extent = (61@61).
-
-	n _ form boundingBox width * form boundingBox height * 3.
-	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
-
-!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:59:13'!
-test16bpp62
-	| form n read |
-	form _ (JpegTest lenaColor64 asFormOfDepth: 16) copy: (0@0 extent: 62@62).
-	self assert: form nativeDepth = 16.
-	form writeJPEGfileNamed: 'test.jpg'.
-	read _ 'test.jpg' asFileEntry formContents.
-	self assert: read depth = 32.
-	self assert: read extent = (62@62).
-
-	n _ form boundingBox width * form boundingBox height * 3.
-	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
-
-!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:59:10'!
-test16bpp63
-	| form n read |
-	form _ (JpegTest lenaColor64 asFormOfDepth: 16) copy: (0@0 extent: 63@63).
-	self assert: form nativeDepth = 16.
-	form writeJPEGfileNamed: 'test.jpg'.
-	read _ 'test.jpg' asFileEntry formContents.
-	self assert: read depth = 32.
-	self assert: read extent = (63@63).
-
-	n _ form boundingBox width * form boundingBox height * 3.
-	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
-
-!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:59:07'!
-test16bppLE
-	| form n read |
-	form _ JpegTest lenaColor64 asFormOfDepth: -16.
-	self assert: form nativeDepth = -16.
-	form writeJPEGfileNamed: 'test.jpg'.
-	read _ 'test.jpg' asFileEntry formContents.
-	self assert: read depth = 32.
-
-	n _ form boundingBox width * form boundingBox height * 3.
-	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
-
-!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:59:04'!
-test16bppLE61
-	| form n read |
-	form _ (JpegTest lenaColor64 asFormOfDepth: -16) copy: (0@0 extent: 61@61).
-	self assert: form nativeDepth = -16.
-	form writeJPEGfileNamed: 'test.jpg'.
-	read _ 'test.jpg' asFileEntry formContents.
-	self assert: read depth = 32.
-	self assert: read extent = (61@61).
-
-	n _ form boundingBox width * form boundingBox height * 3.
-	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
-
-!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:59:00'!
-test16bppLE62
-	| form n read |
-	form _ (JpegTest lenaColor64 asFormOfDepth: -16) copy: (0@0 extent: 62@62).
-	self assert: form nativeDepth = -16.
-	form writeJPEGfileNamed: 'test.jpg'.
-	read _ 'test.jpg' asFileEntry formContents.
-	self assert: read depth = 32.
-	self assert: read extent = (62@62).
-
-	n _ form boundingBox width * form boundingBox height * 3.
-	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
-
-!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:58:57'!
-test16bppLE63
-	| form n read |
-	form _ (JpegTest lenaColor64 asFormOfDepth: -16) copy: (0@0 extent: 63@63).
-	self assert: form nativeDepth = -16.
-	form writeJPEGfileNamed: 'test.jpg'.
-	read _ 'test.jpg' asFileEntry formContents.
-	self assert: read depth = 32.
-	self assert: read extent = (63@63).
-
-	n _ form boundingBox width * form boundingBox height * 3.
-	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
-
-!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:58:53'!
-test32bpp
-	| form n read |
-	form _ JpegTest lenaColor64.
-	self assert: form depth = 32.
-	form writeJPEGfileNamed: 'test.jpg'.
-	read _ 'test.jpg' asFileEntry formContents.
-	self assert: read depth = 32.
-
-	n _ form boundingBox width * form boundingBox height * 3.
-	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
-
-!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:58:50'!
-test32bpp63
-	| form n read |
-	form _ JpegTest lenaColor64 copy: (0@0 extent: 63@63).
-	self assert: form depth = 32.
-	form writeJPEGfileNamed: 'test.jpg'.
-	read _ 'test.jpg' asFileEntry formContents.
-	self assert: read depth = 32.
-	self assert: read extent = (63@63).
-
-	n _ form boundingBox width * form boundingBox height * 3.
-	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
-
-!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:58:47'!
-test32bppLE63
-	| form n read |
-	form _ JpegTest lenaColor64 copy: (0@0 extent: 63@63).
-	self assert: form depth = 32.
-	form writeJPEGfileNamed: 'test.jpg'.
-	read _ 'test.jpg' asFileEntry formContents.
-	self assert: read depth = 32.
-	self assert: read extent = (63@63).
-
-	n _ form boundingBox width * form boundingBox height * 3.
-	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
-
-!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:58:44'!
-testBA16bpp
-	| form n read bytes |
-	form _ JpegTest lenaColor64 asFormOfDepth: 16.
-	self assert: form nativeDepth = 16.
-	bytes _ JPEGReadWriter2 new compress: form quality: -1 progressiveJPEG: false.
-	read _ Form extent: form extent depth: 16.
-	JPEGReadWriter2 new uncompress: bytes into: read.
-
-	n _ form boundingBox width * form boundingBox height * 3.
-	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
-
-!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:58:41'!
-testBA16bpp61
-	| form n read bytes |
-	form _ (JpegTest lenaColor64 asFormOfDepth: 16) copy: (0@0 extent: 61@61).
-	self assert: form nativeDepth = 16.
-	bytes _ JPEGReadWriter2 new compress: form quality: -1 progressiveJPEG: false.
-	read _ Form extent: form extent depth: 16.
-	JPEGReadWriter2 new uncompress: bytes into: read.
-
-	n _ form boundingBox width * form boundingBox height * 3.
-	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
-
-!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:58:37'!
-testBA16bpp62
-	| form n read bytes |
-	form _ (JpegTest lenaColor64 asFormOfDepth: 16) copy: (0@0 extent: 62@62).
-	self assert: form nativeDepth = 16.
-	bytes _ JPEGReadWriter2 new compress: form quality: -1 progressiveJPEG: false.
-	read _ Form extent: form extent depth: 16.
-	JPEGReadWriter2 new uncompress: bytes into: read.
-
-	n _ form boundingBox width * form boundingBox height * 3.
-	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
-
-!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:58:34'!
-testBA16bpp63
-	| form n read bytes |
-	form _ (JpegTest lenaColor64 asFormOfDepth: 16) copy: (0@0 extent: 63@63).
-	self assert: form nativeDepth = 16.
-	bytes _ JPEGReadWriter2 new compress: form quality: -1 progressiveJPEG: false.
-	read _ Form extent: form extent depth: 16.
-	JPEGReadWriter2 new uncompress: bytes into: read.
-
-	n _ form boundingBox width * form boundingBox height * 3.
-	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
-
-!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:58:31'!
-testBA16bppLE
-	| form n read bytes |
-	form _ JpegTest lenaColor64 asFormOfDepth: -16.
-	self assert: form nativeDepth = -16.
-	bytes _ JPEGReadWriter2 new compress: form quality: -1 progressiveJPEG: false.
-	read _ Form extent: form extent depth: 16.
-	JPEGReadWriter2 new uncompress: bytes into: read.
-
-	n _ form boundingBox width * form boundingBox height * 3.
-	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
-
-!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:58:28'!
-testBA16bppLE61
-	| form n read bytes |
-	form _ (JpegTest lenaColor64 asFormOfDepth: -16) copy: (0@0 extent: 61@61).
-	self assert: form nativeDepth = -16.
-	bytes _ JPEGReadWriter2 new compress: form quality: -1 progressiveJPEG: false.
-	read _ Form extent: form extent depth: 16.
-	JPEGReadWriter2 new uncompress: bytes into: read.
-
-	n _ form boundingBox width * form boundingBox height * 3.
-	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
-
-!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:58:25'!
-testBA16bppLE62
-	| form n read bytes |
-	form _ (JpegTest lenaColor64 asFormOfDepth: -16) copy: (0@0 extent: 62@62).
-	self assert: form nativeDepth = -16.
-	bytes _ JPEGReadWriter2 new compress: form quality: -1 progressiveJPEG: false.
-	read _ Form extent: form extent depth: 16.
-	JPEGReadWriter2 new uncompress: bytes into: read.
-
-	n _ form boundingBox width * form boundingBox height * 3.
-	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
-
-!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:58:20'!
-testBA16bppLE63
-	| form n read bytes |
-	form _ (JpegTest lenaColor64 asFormOfDepth: -16) copy: (0@0 extent: 63@63).
-	self assert: form nativeDepth = -16.
-	bytes _ JPEGReadWriter2 new compress: form quality: -1 progressiveJPEG: false.
-	read _ Form extent: form extent depth: 16.
-	JPEGReadWriter2 new uncompress: bytes into: read.
-
-	n _ form boundingBox width * form boundingBox height * 3.
-	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
-
-!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:58:16'!
-testBA32bpp
-	| form n read bytes |
-	form _ JpegTest lenaColor64.
-	self assert: form depth = 32.
-	bytes _ JPEGReadWriter2 new compress: form quality: -1 progressiveJPEG: false.
-	read _ JPEGReadWriter2 new uncompress: bytes into: nil.
-	self assert: read depth = 32.
-
-	n _ form boundingBox width * form boundingBox height * 3.
-	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
-
-!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:58:07'!
-testBA32bpp63
-	| form n read bytes |
-	form _ JpegTest lenaColor64 copy: (0@0 extent: 63@63).
-	self assert: form depth = 32.
-	bytes _ JPEGReadWriter2 new compress: form quality: -1 progressiveJPEG: false.
-	read _ JPEGReadWriter2 new uncompress: bytes into: nil.
-	self assert: read depth = 32.
-	self assert: read extent = (63@63).
-
-	n _ form boundingBox width * form boundingBox height * 3.
-	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
-
-!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:58:03'!
-testGray
-	| form n read |
-	form _ JpegTest lenaColor64 asGrayForm.
-	self assert: form nativeDepth = -8.
-	form writeJPEGfileNamed: 'test.jpg'.
-	read _ 'test.jpg' asFileEntry formContents.
-	self assert: read nativeDepth = -8.
-
-	n _ form boundingBox width * form boundingBox height.
-	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
-
-!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:58:01'!
-testGray61
-	| form n read |
-	form _ JpegTest lenaColor64 asGrayForm copy: (0@0 extent: 61@61).
-	self assert: form nativeDepth = -8.
-	form writeJPEGfileNamed: 'test.jpg'.
-	read _ 'test.jpg' asFileEntry formContents.
-	self assert: read nativeDepth = -8.
-	self assert: read extent = (61@61).
-
-	n _ form boundingBox width * form boundingBox height.
-	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
-
-!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:57:57'!
-testGray62
-	| form n read |
-	form _ JpegTest lenaColor64 asGrayForm copy: (0@0 extent: 62@62).
-	self assert: form nativeDepth = -8.
-	form writeJPEGfileNamed: 'test.jpg'.
-	read _ 'test.jpg' asFileEntry formContents.
-	self assert: read nativeDepth = -8.
-	self assert: read extent = (62@62).
-
-	n _ form boundingBox width * form boundingBox height.
-	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
-
-!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:57:54'!
-testGray63
-	| form n read |
-	form _ JpegTest lenaColor64 asGrayForm copy: (0@0 extent: 63@63).
-	self assert: form nativeDepth = -8.
-	form writeJPEGfileNamed: 'test.jpg'.
-	read _ 'test.jpg' asFileEntry formContents.
-	self assert: read nativeDepth = -8.
-	self assert: read extent = (63@63).
-
-	n _ form boundingBox width * form boundingBox height.
-	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
-
-!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:57:48'!
-testGrayBA
-	| form n read bytes |
-	form _ JpegTest lenaColor64 asGrayForm.
-	self assert: form nativeDepth = -8.
-	bytes _ JPEGReadWriter2 new compress: form quality: -1 progressiveJPEG: false.
-	read _ JPEGReadWriter2 new uncompress: bytes into: nil.
-	self assert: read nativeDepth = -8.
-
-	n _ form boundingBox width * form boundingBox height.
-	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
-
-!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:57:44'!
-testGrayBA61
-	| form n read bytes |
-	form _ JpegTest lenaColor64 asGrayForm copy: (0@0 extent: 61@61).
-	self assert: form nativeDepth = -8.
-	bytes _ JPEGReadWriter2 new compress: form quality: -1 progressiveJPEG: false.
-	read _ JPEGReadWriter2 new uncompress: bytes into: nil.
-	self assert: read nativeDepth = -8.
-	self assert: read extent = (61@61).
-
-	n _ form boundingBox width * form boundingBox height.
-	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
-
-!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:57:40'!
-testGrayBA62
-	| form n read bytes |
-	form _ JpegTest lenaColor64 asGrayForm copy: (0@0 extent: 62@62).
-	self assert: form nativeDepth = -8.
-	bytes _ JPEGReadWriter2 new compress: form quality: -1 progressiveJPEG: false.
-	read _ JPEGReadWriter2 new uncompress: bytes into: nil.
-	self assert: read nativeDepth = -8.
-	self assert: read extent = (62@62).
-
-	n _ form boundingBox width * form boundingBox height.
-	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
-
-!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:57:35'!
-testGrayBA63
-	| form n read bytes |
-	form _ JpegTest lenaColor64 asGrayForm copy: (0@0 extent: 63@63).
-	self assert: form nativeDepth = -8.
-	bytes _ JPEGReadWriter2 new compress: form quality: -1 progressiveJPEG: false.
-	read _ JPEGReadWriter2 new uncompress: bytes into: nil.
-	self assert: read nativeDepth = -8.
-	self assert: read extent = (63@63).
-
-	n _ form boundingBox width * form boundingBox height.
-	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
-
-!JpegTest class methodsFor: 'test examples' stamp: 'jmv 2/21/2019 16:55:22'!
-lenaColor64
-	"
-	('LenaColor64.bmp' asFileEntry readStreamDo: [ :strm | strm binary. Base64MimeConverter mimeEncode: strm ]) upToEnd
-	JpegTest lenaColor64 display
-	"
-	^Form fromBinaryStream:
-		'Qk02MAAAAAAAADYAAAAoAAAAQAAAAEAAAAABABgAAAAAAAAwAADwCgAA8AoAAAAAAAAAAAAA
-QWCvUXXHUHfGRGi/OTZkIB8tHx0qHx0oISArHh4pIyEtIR8vIB4qHx0pJyQxJB8vNCo9TjpI
-V0NOHR0rHh4qHR4qHR0xISlbJTx/Kzl7IidFMUSPNU6lOlOsPVWtPlaxQFm3Qly4QFu4QFq4
-PVayOlWvP1myRWC3RmO3Um6/XnnJZIHNhJjbmKXhnqvmo67nmKXcKC9TLzlhKzJaLC5RJihG
-ISNAR2ioYJbdQmaxJSxTHiA5IiNCKCtPLC1RJyZDQl+uUXTETnTDRmrAOjtrIyEwIB4qIB4q
-JiQyJCIrJCIvJSExIB4qHRwoJyQyMSg1XkZSUkJUT0FmHRwqHh4uHR0tHR4sHyE6JjJzLD+K
-Jjd6JSlIN06hOlOsPlSsP1a0Qlu4Q1y4Pli3PVe1P1q0QVuzQ1y1R2O6UGrAV3PEZH/OcYrR
-h53dm6rln63moq/naG+gLDZdLzhkJitSJCVGHh80HR4wSG+vSoDJY5TdSnrJISZTJCVEJSdJ
-KzBZKy5VR2S0UHPFUnbIQ2a7MzZzJyM2Hx0qIB4oJCAtJiMvJSItISAuHhwoJiQwNCw4UzxK
-RTQ+JiEsLiY4KSU1HB4uHh8tHh4uHh4wHyVOLT6HL0KLKDJqLzluOVGnO1CpPle0QFq1Q1y5
-OlSxPVexP1m0Q164SWO7SmW7U27AVnPDbIXPfJPWkaXknKvloa7po7HpOUh1KzJVIyhKIidK
-KCtLKS1MMTlgQl6cRXK2VIHEcajtNFKeJStTIihWIyhQMDRgSWm8UnbJVXrKQ2a6Mjl1JiQ6
-IB8pJCM0Hx0pJCAuIyEsIyIwJiMyJyMwJyEyRDVALCg5STlGLCQ2X01WRT5PHR8zHyA0HiAx
-Hx43KTd1L0OTL0SWKSlTOE2gPlSrP1ezP1q1QVq1NlOtPFiyQFu1RF63SmW7Tmq/VnHBX3vJ
-cYrRgZfZk6blorHvo7Ltoa3mMUJ6LDRaMTplOkdyQU99RFJ/R1iHR2OiOlaaSW2vfrHuS37L
-Jzh5JitaJjBiJipRTGy/U3fJUXbHO1+0QkZ1ISEwHx4pHhwnJB8vKCUwIB4rIB8qIh8qJSIu
-MiY2Oy88WkRLXkhQSTdEPTU/Hh4oHiI2HRs0HCA2HR0yICRPLkCHNUmbJCxfNkOHPlOrP1ay
-QFq2P1e0O1WwO1ayQFu0RWC4Sma9U27CXHbHZYDMeZPXiZ7glqjnna7robDrY2ubRl6ZSluH
-SluKRlmISluKSVmGR1aCQVaPOFafRnO+fq7vZZvkMEqTJzd2KzRnISlcTGy+U3bGUHG+RmGx
-Rj9tISArHx8pIyEuJiMzMi06KSY2JCEuIyEvIB0pLyc0HxonSjdEZU9fU0RUUkZUUktfKylM
-NDtvJyM5HR4zHyE7KDh8M0iaLjt7LDZtOE+mPlWuP1i1PFaxOlOsPli0RV22SmO7TGi9Um7C
-X3nJaobRgJjbj6Tjmazrna/qnq7oSk9zR1yaU2maTF6NS16NSFmJRlmHRFOAQVOGUnm/canx
-d6rsc6frPF6sJjt+JjNqLTt2TW7AVHnNVHrMQ2S6MDdnIiEuIR4rIR8rIiEqRC9BJyQyIB0n
-ISAuIB4pLSk2SztJPCo5YEtUVU1lfWiCV1BgFhgoIiNAHB4yICE1ICE1KjFcMUaXKTqAKS1b
-OE6kPFOuPVWwP1ewQFaxQ1y2SGC4S2S7VW/CWHPGZ4LRc47XhZ3gkKfnobDtoLDoprfvIB80
-Q12fTGOZSl6RSV2RRViIRViIRFKAO06BUHK0gLTweqvvfq/uToDMLECBKDNsKjp1Tmy9VnvP
-UnbKP2O4SUp6HiApIiArHx0pICAqNCgyLSo7KCY0JCAuNC4+MSEzTTdHSDZGY0taaFFkGhoq
-X1x1HBwpIydFHhwvHh4xHyE0HiE9KjmBJzZ4JyhLMkiePVOrP1WxPVWxPFavQ123R2C3TGa9
-V3LEWnfIZ4POdI7WhJ/kkqnqobLsprXsbHqpICE4Q1qZSV+VSl6VR1ySSFuLR1eGQlF/PEpz
-P1iUe6nsa6Dpg7Xwap7iME+VKDNmKTZuTWu9UnbIVXfKPmK4Sk2LExgkISAnKCc3Hx8nJB8u
-PS9BJCAuOC8/LSQxOCs7SzZFQjBAZk9bcV1uQzxQT1FtHR8kIyRBHyAzHh0vHyA2ICI3LDdx
-KzZyKi1KMkSYPFGoPFKsP1WsQVmxQ1uzSWK6T2u+VnLCYn7NaofTc5LcgqDljqfon7HtpbLn
-OTtaISM7Lz9vS1+TTWGYSl+URliKQlOEQ1ODRVOAN0l+QmatW4fNfq/sdafoUYDHJSxfJC1i
-S2m6VXfLTXLGQl63bG2TJCE5JCExJCEwIB8wJyMzMCc4IB4rJiIuSThIMSQ0QzFAWURVZlNg
-RTZHYl2DPTpLHR8mKCpHHB4uICAxIiM5Jic+KTFjIihdMDFZO0yYNkmYP1atQliuQViuRl20
-UGq/Vm/BYnzLY3/KaIjTdZXehKPoj6rpoLLsWl+DHR83IyZDPUh2S2CTS2CWR12SSFmKRliK
-RlWFQk95QE13Mk6RPF2jfq/ue6zrZ5fYLUJ7JytTT23AUXLGTnLIQV61XWCRPEBpISErKykz
-LSg8OzBJOi9DKiMuMio+SjtLMCIyRzRDalJgaFJZUVFwOi1FKChFHR4pJShFHRwuHh4wHyEz
-Hh40JipRIiNBLTNiM0ONNkePPlGfQ1muQVesQ1qwT2a4WHLBZH/Jb4vTdJLYfZvgh6LkkKfj
-eoCjIyc+HR46JCZIR1F3RVuTSl+SSVyPSFqNRFKCRVGAP0tzNj9pMUqHLkSBa5rcd6rqcaHh
-TXK1ISE8UG3AU3LHVnTFU23AKipTQDxVIB8pJyQyLyU3KiQ0NCw/KyQyVkBQUz9NVkROSzlH
-SjNAUz1STUJZOzFIICA+Hx8tISQ+Hx8wHx8zHh4wHyA1HyA/IyU+KC9gNkWMOkuYPE6bP1Sk
-RFmsRlutR12uVW68cIjOe5XWgZvdh5/fi5/ZR01qIiE6IylIIyRFJSlNPkBhP1WTSlyORFeM
-P058OUp/Mj5rLDVfKTBWMUBuKjNdV3m7b6TreKbnZJPXPlqZUG7AVHPFUHTHQFqqYWeUKiFD
-JydEKSM1KSU4KyY0Ix8sVz1KXURPJyExb1RbUT1LZExRQz1RXlJrHx4rISE6Hx8yISQ7Hx8w
-HR4wHh4xICE2HyA8HSA6KTJkNkWTOEmYPU+fPFKdSF2vT2OySV2pUmaxaoXEf5fVd4i5TVZ5
-ISEuHyAzISM5ICVEJihKISZIKypEQFKQOUl7MUF0M0B0LDloMTtmND9pO0VvQEhvQklrZYjI
-canvb6Lmc6PkYYzTUW/BVXbIT3PIPFquIytXTERnNjlRKSE4KCQzKSM0IRwocVFPPTA+QTA/
-YUlRY0tdW1ByST1UHR4pHR4rICI3ISI2IiM6Hh0wHh4wHh40ICI5ICI9HiJDICRGICZTNT16
-N0aCOEqLTFusVmm7WGy7XG29XmqlMjdgHxw1ISAzIyI5ICE1IiM6LzVWJilLJCdGIyA9Qlyd
-MD5qNkV3QEt/RlWDSlmFSluISlqFRlN6QUpvYHyzhLXyea3sdqfpcaLoUW/AVHbIUXTGPVqs
-KC1gKipSLClGNi5GJB8tKCExKSEwc1RVRzRCZEhQWUJMX1J6KClaLjBUICAyIiAxIB8xICE2
-IiE4Hx40Hh8xJCY8IyQ8HiA6HyJGHyJLJzRxNEWZPVGmQVeuTGK3X3PGXG/AXnC/UGGqLThw
-HR00IB8xHx83ICA5IiI5MTZbJytNHiE8IyM7WXCvRlmOTWKVTWGQT2GRS1+QT2GQTV2HR1WB
-TFZ9T2WWksD3fLHvfrHwg7DuTm2/VHjMVHjMPVywIydaODZdNTBTLCU3JCAwLCcyKSMwmXJo
-VT5CW0JSSjZGRj5iPT1me4rgISdKHx8uHyAxHB0xHh0zICEyHyA4IyQ+ICM+JCZGIipdLjl7
-MkKQOEyiQVWsRVqxSFyzTWK4VGq/VWy/T2OyQFOfIB42Hh4wHh8zHyA4HR41KzFSJypOJitF
-IiM9W3GvSV6UUGicUGaYTGGUU2eXUGOUTFyKTVuIRlR+QVSBj7v2irv3h7TxhLDuUG/DVXnO
-VnjNS2O2Ky9hPDtlOTxvKyg8NTBHOCo4KiMxVjpETztFRzlJUjVBR0BaKz6AYmGeSGGcHCA9
-HB4uHx8yHR4yHx82IyM+HyE6KClOIidQKzd7LTyIN0eaOU2oQFSsQFaxOk+pNUmfNkqjO0ul
-QlSmR1ajLDl3Hh8xHBwxISE6HSA6JitHLjJVICJAJSZAVmypSWKgT2idTmWYTWScT2WbTmKS
-TV2PSFqMR1aIRliHgrPzirn2irfxjLfyVXXGV3nMUXfLQletQUB0JylWS0iDMSxONSw9JiAt
-OCs8SztFQjBAUz5MQzlKSTlKPlWjcX2zOUp6U1mGISExHx4wHyA4Hh80JilDHyA3JypPJzBo
-LUGQM0WaOEynPlOvQlu3OVKxM0utN024Tlq/cnrQcXzPSVWrQFWdHyVJHR4xHB0wHyE8HCE6
-JSZLGx06JyhDR16aQ2GlTmmkTWScUGaeTGKYUWSXSluRTV6SSluOSV6TcqbthbTzgrHvh7Lv
-UnPFUHPGUnfMPlyxJy9oRkJ4ODpyNy5OOi0+JyExLCczQDE+RDFBQzFDSzxLTjlHREB0hIGs
-d32sKCpaNTZgHhwxIiRHISE4JidCHh41LjBbKjZ8N0mhNkqkPVKvQVezQFayLj+NLDiALz2O
-LjuGJTaAP0upNEOXN0iQMkGGHh8yICA0HR02HSA8ISRGHiI7NTpZOkyAQ2CoTmilTmWfTGGZ
-T2KXTF6SSl2TSV+VS12TRViMYJThgbLwfq3sfq/uTm7DVHTKVXnNP12wJy1iJypcQ0F/PjVY
-Tz1NKCQyKyMzLCQzNys7Pi8+XUJYRkdqHR0uODhVWVyDTmKcR1GHHitRJiRBHyA2JydCGxw1
-LTJlLT2MOEukPE6rPlGyPlS0Q1i1Rly5SV22RluxT2O6WW/Ic4zceILPU2W1RU6aIChMGxwx
-HB0yJCZHIyZGISM+OT5lPkRzRWClTWajUGafT2OcTmCYTGCYUGKYSl6WR1uTRFaMVonVc6fu
-fa3udqnqTm3DUXLIU3bPRF+zJy1gJitfNjdyOjNeLig6PzJCJB4tQS9BUTlIaE1XWEBPLic5
-IixTKSc2NzZMWl6COURyTWGXHhwuHiAzIB83Hxw0KDBsMECSNEiiOUuoQlW1QVe2SV+9UGXA
-VGrDUGW7SmC0Vmq8d4TQiZnaWW68RFSkMTqAHh80HR4xJidLHB4+IyQ/Uld+VVuFP1iaTWSg
-TGWhTmOeTmObSmCYTmGZS1+XTF6TRFeHVoTOYZnleq3ve6rtTm7DUnTITnPIPFiuLCpkKy1l
-Nzt2PTVjNSo8RTlTSjlJNSo5RS45WUNUUUNHHx4uHjFIKyYzMDBWLChEKTFPSF2ZbXSVIR81
-Hx8yIx02MjpyKzyLOkymPU+tQ1e2SF26TmPCUGXCUmi/S2G2OU+kOk6nOEqYZXK8W3G9RFem
-OEeVISNGHx8yISNAHR8+ISM4U1qJQkZrO0uCRmCgT2ikTWOfUWWcSl6WSV2TS16WSluSQ1eI
-T3a+X5fmZ5/oeqvtUHDGUnXJUnbON1OoLC9ePjx3NjduNS5hNyk8SzdLMyQzNy9AVz1JWkRP
-JiEzHx4uIyMzHiIvMD+GJylHIyMxVGWNQVOEPklzHh8wJCE5IildLD2JN0mkQlSxRFm4SF69
-TWO/UGfBUmm/PVOpPFGoNkqgNEimUmnCeI3TRlurPU6eKTV0Hh4zIiQ8ICFBIyQ3V2OYNTdX
-MzlbQFmaUWilT2aiUGWdTGGaSl6VSF6XTV+VSluTSmahYJfkXpXjbaHnUW/CTnHFTnHJN1Kr
-JipdODtvU015SkRwPzVLRDJRNSo3TjpGYEJKSTpWIBwtIB8rIyEvLzhlLzZqSkmDKSVIGh8o
-MUiDh5O/IiVHISM2IydWMD+OOEukP1KvTWPBUWfGUmnDV27HVWvDP1awNkmgNkuiOU+nY3LH
-sLnqTGKxQ1WlL0GNHiFBICA7JCdIHiA5Y3GkIyQ/ISI8QFeWT2mnTWemSmOgSmGcT2SfSl+Y
-SFqQRlmPSFuPXo3VW5XkXpfjUHHFU3XITHHHOFOuJShaMDRlNDV4U0+FSDxLQzpUPTFEKx8s
-SzdDNCczIx0vHh8rIB0rLCs/JyQ7OztoPUuHHR0sKjViZnKpcXuiICAwJCpVKz2OPU+pRVi0
-S1++VGrIYXfQYXjQXHPKSWC7QFSsOU2mPVOugI3WipPOUGW0SFirNkeUJStcHR03JylJLS5J
-VmWbHiA1IiM3QFCISWGbTmqrUWilTWSgTWKeTF+YTF6WS12URVaLUm6rXpbjWpPkT3HFU3bL
-UHTJOlWrJy5gJy5mND+CRUB/RDhSLiM2KyU2PS9BPik7QDJFHh0qHh8sIyEvHRwsJiQxOj1q
-ISY6Hx0uIx4vPUuHaYK/SEp7ISRRMEGVOU2nSFu4U2fCXHLMaXvRZXzOX3XJTWS7Sl62PlOt
-RViwmZ3ggpLRV2q5SFisOEmaJzBwIiI/IiFBQEFiTFKDIiE1IiE2NT5kR1qSUWqnTmaiTGOf
-SmGcS2CbTWGZS1+VSVuSRFWKV4HIXJblUXPIU3nPVHjPOlaqKC1hJjBpKjZ6VFCFX1V2SDln
-MSU6JSExSDpLRjFELCE1JCIuOys6V0FNPjRJMTBLJSM3Hx4vHx4wMTReU2OghJPDKzZnMUGN
-P1KnSV21XXDHZXjOZ3nLZ3vMZXjIU2e7RlmvPE+rRVeyp6rlgI/SVmm2QFKnOEaXKDJzHx8/
-IyFCPD9lPUFqIiE0IiE1LjBKQ1aNUmmnU2qmTWSjS2CbTmSgTWCaSVySTF2VR1iMSFyQVoTK
-TXHGVnrRUnjPPVmsKjBjKDJqLTyANkGMUlaJQkJoNStMJyM5JyIwVT5KVj5LKyc0NSs4Pi8+
-YUdWMCtBHx0tHx8vIB8xHh4uQEqCa4LAe43FKDmCPEueSl6yU2S5UmW5UWC2Wmq1W27AW2u5
-RFSmPU6oT2K8qq7pdILATF6rO0iYLDZ4Ji9nHx8+JSVCPkRpOTxgISA0IiE1Hx4zRlaJTmSf
-T2elTWWjTmWiTGOfTWKdTWScTWKXR1uPR1eKTWKUUHTKU3nPT3LHN1GlJixcKjRtKTZ0PEyJ
-KipRNDVRV1eYaHeoNS5ZNTFBNCY5MCc4LyMzUztJQzJCJSAzICAvIR4vICAxHx8wJzBXWmeb
-cX+3eIG3NkWTQlCgR1epNUKMPkmNWF6eX2GnUVyyOUqaOk2kUGW7rbLtSVSQR1CUU1COJC1g
-HiNKHh46JSQ/SUptNzlfIiA2Hx8wJSU5PENuRliPVGupUmmnTmWhUGeiT2SgS2KeUGWfTF+a
-S12SR1iMTnLIUnfKS23BNU6fJSdTJSxhJzJxKjZ2LjVvJi9kX2+pQ2GxQlekJy9XJCMtMCY5
-Lik7QDE+Nig8IB4rHBwqOzRDHxwuICMyIyM0MDphZHCegY2+cYC3NUWNLDNfKCtUKypLRkNd
-l5nOOUOMMD+KOUugUWi9mKXhM0KCKCpGNzZYQUqIHR83HB4zJyVAT1FyJiVHJiY8Hx4xIiI2
-LC1KRliST2ikTmelUGWgTGShTWOjTWSjTmOgTWSgS2CVSVuQT3HEU3fMTG7CNU6fKCpUKC1f
-KTJqKzZ1Kjd2JzRyVl6RQFOdRV6uNUN8MTJsKCQwPCtHOCo+Tz1SJCAvMio7HhwvMSo3RTdH
-HRwwKSc+TF6ZXHi4iZK+anOxIzBoIiNEHR83JCQ6NzdVJixUOU2hPFCqU2zEgJDabYDEIidS
-ISA5KitIHiA5HyA6IiI3Q0ZxJydHKSc/IB8zICA0IyA1Q1SLSl6WT2enTmalS2SjTGWlSWOi
-S2SfSmObTGObS2CWTnDEUnTIUHXKNk2dKSpUJSpYKTNqKDNxJzNyKjZ2KjiANUONP1ahOUeK
-LzJTMD9+ICY/PjFDMyY3RDJEICAtISAxLyU5Hx8uMSg7KiU9KjBRZ3WxdIW9cYG0aHqxOkyM
-NkWPOkmOQUyYKzV7LTd5S2K5WnPLdYvaeIrXW3HBMT55JSxeKjZyJSdLJCE5Sk16JiZBJyY7
-IB8zIiE0IiE1PkZxR1WITmmoTmenUGimTWWjS2OeUGijTWWfTWWaTmKYUXDCUHPGTm/EM0qX
-KClSJipbKzZsKTRzKjRyKjd4Lj2BNkaNMUCPMkaGKjJhdXurNEOCLytLLSY6SDVEIiAvJSI4
-JSQ1Hh8vLio5LSY8KCU4NkR+UGmmbH+3Z3WshpK5T1+lOEWCPEWBRlabZnjLZn7UZ3/UeI/b
-d43ZhJjiepLhVmiyLDJqHh02JyY/VFmIHB00IiE2IiI3Hx8xIiA0MDBMQVCFT2ahT2ioUWql
-T2afT2efUmqkUWWdT2WcUWaZUXLGUXPDUHHENUqWKChUJipZKzRsKjVxLDZ3LDh6Lz2BNEOR
-MEOWMUaLMEN5MD+JSkiAQ0J6JiQ2Nis7JCAwKSQ3LCU6IB4vIhwtLSQ5JiExIyQtNj95XW6s
-X3azgY29bnynZXSyWmy7XXDBZnnMaYDUdYvbh5vkh5njjJzil6fpj53hNEaQIiU9JCQ8TlWD
-HyA3IiI3JiQ4ISE0IB4yJSI1Q1CESFmRVG6rUmukU2ujUmylVGujUmecTmGTTFuJTnDET3HE
-T2/EOE2aKCZTJitcJzBqKDNvJzJxKTN1NEGKMj2FNEOQMkCDUXK4M0KGP0mMRE+XMjZ4KiM8
-IB8tLSU6JyM1IB8wJCM2JCAxRTdMQThMJzFOUGGeZoC8cYO3ZGqThI+9aHeuWGy1X3XGaH/S
-fpLcip3jjaDklaPmmKbnfI7WLzh3ISA0KihEU1WFGhwvHyA1IyI2ICA0Hx8zIiE0OD9kSFqM
-UWupU2ulU2idUGWbTmGWTl+PU2OWUF+STnDEUXTIS2zAN0yZJiNQKSxdLjdwJDFtLTZyKjV1
-MTl9Lz2GLzyDSV+cYYjXLzt7NkOFPkuSLjx9Ky1ZKCpJKSM5ISAwISAxLig9KyM4HR8vPTBB
-ISAzKDFUS1mYYHe2b2yLc3+vbnyxaHWlX3CyZHfId4vWgpXbjJ7jlKXnl6jrX3TCJCpaIyM4
-SEZgREZsHh4xHh4yJiU4JSQ4Hh0vKig8LCk/RVSHTmGWUGOcUGCWUWObUWWdU2iiVWqlV2ul
-UHHGUnTISWrANEmXJidKIyZWKDBnKzRvJzJsJjFvLzt9MT6FMD19XXCtb53pNU6SPEiEOUSF
-PkaNOkydMTVrLy1RJiQ3Kyc6MSpBKSU2Myg7PjFEICAxISA1LCtESEl2fICVbX+3doS0Y3Kn
-dICxYnKqbH29gZTajp3hipfbhJXaRFimJCpNLy5MR0ZnPEV2ICAvHBsuIyI2JCI2Hh0wISAx
-JSIzQElyRlJ8UWWbV22pVm+rV22nUmekVW2qUmekT3HDUXPGSGm/N02ZJiZLKS5ZKjJoKTRu
-JTFuJDFuKzl8Kzh5LTp2dozFWoXNPVCXOkeJQEiGPEaDVU18S06LPD1yNjBYNi1JKyQ7IiAw
-NCpDIh40JiI6Jh81Mig8U0BUW1V0bXigdoe8c4O1bnyxcH+zcH+veYe3hJDQhJPZfI3PNUKL
-LS1cPDtZT09zQFSYHh0xHB0tIyM2ISE1Hx8yIyMzJCI2MC9LPkhzUGKZWHCrWG+pVm6pVGqn
-WW+oVGqlT3HDTHHERWe8MEWQJSZLKCtcJzBlKjRtKjRuKTRwKjl7KTd2P1mNaazyVXe+SmCi
-O0uMPkuMOUSFRE2KQ0uPPkabMDJgLSlJKyE3KCM3KCU7HR0tMyxKKyk+QTFKLyU8QjdKVlV/
-d4i9fpLFdYW1dYOzan2wc4Cxfou5c4G2XGyrKCxVKipJSEZkSk14XHa+UG6uISlMHx8yIyI2
-Hx4yHyAxIyE0JyI2P0h0S1iOWHCrVWymVGqnVW2pVGmjUGajTXDDT3DCR2m9L0SNJyhMJSpa
-KjNqJzJrKzVwLDdyJzV0KjVsZ3y6SX3lSGq7O1WmMzx5QlKXPU2UPkqJQ06WMjxzQk+SOkaO
-PT9yMCg/MytDIyI1OzFDNClJNi1DPDBHKSU6SkFOOk6Lc4G1c4a8doW3eIe2dYa2eYi2e4y6
-iZa7XG6gPT5lPTpYWWSbTW6+VXO+Y3m/KjRWISA0ISE1ICAzISAyJCI0OTxeTVyXU2elV26p
-V2unVGqmV2ulUmajTnHHTm/ESWq+L0SOKitRJy1cJy9iKjNvKzRuLDd0KjRyKjRshrPtYnzN
-PlKsNEqMMj+CMjx4PE+WOUaIPEiMQU+VPk6PQlOcQESCQ0F8QDZXPTNWKiU8STdMRjZPT0Fe
-MixBHiAyIx4wUlqQa3SrboXBh5bFhJLBe4y8gpHAi5fCj5jGjZjFbnSiMzdjLzVhO0l/T2Sh
-Zn/CLTZXHx4yIiEzIB4xJiM4JiM3TFqXTV2bVWuoU2ilU2mlWWylUWWgT3LFT3HESWm/MkOM
-JidNJyxaKzJlLjdxKTRtKTVxKjZ1MT5yUZPvZpHWOFWhO1ipOUWIOEF+OkV/O06TQVCXPEeK
-QlGSRVScS1WdU1SaRkZ5QThlPTBSWVl4Yk1mSTtYQDRILCY+ISA9KyY+U1qDXm+tg5XHhpfJ
-gI+/g5O/i5nEj5zHk5/MkpzJjZnQWWWXMDp0KTFYOkZ8Zn25P0RiISAzHx4xHx8zICAyO0Fq
-SlqbVGmmUWipUWenUWWkT2KfTW/DTm/DQ2a8LkCIJylQJCpaKDFmKjNsLThtKTVwKTVyUVuO
-cI7XPWzRQF+sNUykN0OFQE+aRk6NNkKFQ1ekRVSgRFGVRVaZTFqfSVeUUVSNVFCHSE6HY2uY
-VleCTVaFWmepXWajZG2tS1CDUlWAYGukb4G9d4u9iZXGhpTCipbCjprFkJ7KlKDNlqLOlZ/I
-mKbPVGWlND5vPUVweIvBHB8xHx4yIiEyJSQ5Kic/SluZT2CfUminUWepTGKgUGakS23BTGy/
-RGa6MUGLJyhQJy5fLDNqLDZwKDNqKDVxJjRwPD95WJPYP1e0PFm6MkaUKzl0PEmMQE+bQE6K
-O0eKQVakQFKfSFObTV+ZUWWrUGSrYGq0am+yamukYHO8VmapX3SuXm+0XGyyXm6zZ3CpYXCu
-XGmhaoCxdYbEhZPIfZPJhJG/jJjDkZzFk5/LlZ/In6fOiZTBXm6cT2GgaHOhQlByIR8yICAy
-ICAzJCE1QENtS1ycVGilUmioU2qqUWWmUHDETnDCRWS4MUKHJyhQKC5fJzJrKDJuKDNsJjJv
-Kzh5KDBqUpXuRGexN0+VMj+CMDl1NkOHNUGERFalVGCnO0yTUGGsS1mgUF+jWmasVGGjYnfB
-YW6wZHSyYHK4ZG+yXHGwYHazaHizZ3i3doO+a3uybXywdH60cXuteZHDiY6/lKLMiZjHiJbD
-jZrEk57Ik5zIoaTNany1X2ylU2GWXG2eIB8xISAzHx8wISA0LCpETFuXUV+aUmmnUWenUmeo
-TG7CT3LHRme6L0CFJidPJSteKjJqKjVvJzFqKDRzJzR5KjVwUIjkN1esLj+EMDuAND19OEaE
-O0aQPEmIRVunQVOgQlaVU2WvTF6dVWOqY3S5ZHW0aHq6XHO6bX+9anq9XXG2an+/aX3Fc4O/
-doW6gou9cH61aXu3c36ucXqncoCwe42/hJHDk6TPkqLQj5rGkJzJlp/KkaHNY3WtiZfCmqLN
-IyQ7ISEzICAyIB8yJSI2ODldTV6fTmKfUmmsUWepS23BUHHER2e5MECFJidPJitdKzRqLTdx
-KTNtKTVyKjd5LTp3aJbiN0+iLDh2Kzd5KzdxMj18NkKJOEWLPk2PSF2pR1mhSVyeUmmyXXKx
-Wm+3b3a0aHq2ZnK4ZHe/eITJYHy9eYjAbYTDaX65g4zCfYzAgou5hY3Ag5C+h466gomxlJTA
-cYK+g5jOk5jOkqPQkaDJk5/Im6TOkZ7Jm6PKr6/VWWOIIyM1HR4wICAyIyE1KCc+R1CGTF2c
-UmmnT2WoSWm7Tm7AQ2G1LTuAKChPKS9dJjBoMDt2LDhzLjp5Kzl+Lj6CaHq7NkeRLDRsLjqA
-NEB/OESKNUWDPUuWMkCIOUiKUWWvS12nU2uvZna5aX2/bn+5cYXIg5LMbnq0donGfIzFe43H
-jJbJpKXNdIe5eI27jZnJmKTRlJ/Ll5vEoqLHdoW5QWS8UmaxcoS9hpvJl6TNmqnSmKPPmKXQ
-n6nPqK7TaGqFIiI0JCM1ISAzIB8zJSM3LCpFTF2cSVuXUGeoS2u8SGi6P1yuLz1/JiZIJChU
-KTFmKzRuKjRxLjl2Kzh7MT+CT3K2OlWgKjVxMDt8KzdvN0WSNkaPMkGBOEmUNkiNOUSGY3Wv
-XW+zWnG4a3zBcoLGeY3IZnu3kY/Ae4bAi5nMkJnQlaLVjJnNmKDQgZXCk6PPmKPLoafPqavQ
-mJu9N1ShRmW6P2CyM0mRUE5yeYKojZi+o7Hal6bRkZzEqq/Ta3KhIB8xISE0IiEzHx8yIyI1
-IyI0PUJoTV6bTWGdSGm8TGq6P1ywLDp8KChIJilVKTFnKTBmKTJnKDNtKzZ2Ljp9R1SOPl2t
-LjdyLzl5NkOBNUORPUqIOEyXN0OJPlCWQlGVOUh8YW+vYHm9bHq7dYG4Znq6fZXLbYe/nJzK
-hZHAkprJlaPTlqHTj6LQl6XQoKzToKrQqK7TsrPQLDdsP1mnRWW4RGO0OFGcJCtWIyI1bnaN
-jJq+srrWqrXbo63Tb3GUIB8xIB8yIB8yIB8yHx8vJiQ2JCM2SFWJSFiRSmm8Smi7QFywLjt9
-JSZJKy9eKjNnLjVsKTJsLDdzMDp8Mz+CMTp+T264Ljl3LTh4MT1/NUODO0eLOUqIQFGTSFyg
-PFCTPEuOO0yTVl+UdIXGb3+5cYrGZH+9e4vIk5rIi5nLoqbXnKnWpavRm6bQpq/aoavToK7U
-v77gaG+TLj55QFurRWK2Q1+wOU+bJCpXIyI3IiE0S0xkmajSoKvPubbOSk5zISEyIB4xISAz
-Hh0vISAyIiEyIiE0KilBTFqVS2m8S2m6QFmqKjd8KSlNJypdKTFmKjNrKDJrKzZwMD19Lj2C
-M0GKN0+UKzh6Ljt4ND2BN0CGNEJ+OEaLQ0+NSViqQVCVRFOaPk+dQlGUUVyccH6ydIfEgJbO
-cIvJiJXLoabTm6zcoazUpq/Wn6nUoazUoqjQsLfblpy9MDNfLz5/P1mpRWCwQl2tO1GdJixZ
-IyE2ISM7KzduO1KjQFWgPlehOE+cIB80Hh4vIB8zISA0Hh4uIR8zHx4xJCM0MjNSTGzASme5
-QF2vLTl9JidLJi5ZKTFlKDFrKzRtLDVxMz58M0KGMUCIMkKMM0SMLj19NUKBMkGFOUSFN0SF
-PEuFPU+WQ1SWRlOXQ1mjRleUSV+nVm2qcX2xfpHHkaLRmKTTiZbHmp/Noa3dmaHLo67XpbLd
-pLHVl6DANDljJi5eM0WKQl2uRGGzRmCwOlGcJStYISA1Ji5bO0+bQV2xO1SkOlWnQFqpLz96
-HR0vHh4vISA0ISAyHyEwHh0wIiM1Kyk6RGi+SGi7PluuLTt9JSdMKS5hLDNnLDVvKTVtLTdy
-NEB+NUSJNEOPNUaOOUmRM0KGMj97NUKDN0OANkF5N0OAOEiIQ1KNQFSbQlWdSVmeTl2dVm2r
-c4K/eICyl5vDmKTTr7Dcpq3ZoKvSo67XoarUt7rakZnAJCpVJS5eKzRqNkeNQFuvRmK2QFyu
-NUybJSpVIiREM0KEQ1ytP1qsPlelPVanPVeqQlquIylOHR0sIB8yIiI0Hx8vISEzICEvIiE0
-Sm7BS2i9PVuwLDp/JidNLDJjKjFlKzVsKjRuKTRsMT9/MUCFMUKKNkWMNEePMkaRLDp+MD16
-OUaGP0qRPkyMOEaKQE6URFaUQUiDSlqiTV6hXHOzcYW8d4u+bIS/jZXEoanTqbHcpq7YoK3X
-oK/boKjHKDFeLThvMDlwKjRtPE2TQF6yRGK3QF2xO1GeJClYLDRtPVOhQlywPlmsOlOkQFur
-OVWlQlqsN1ChIR84Hh4tHyAxHx4yHh0tIB8zHB0rTHDDS2y9PF2vMD2CJihNKS9fLDJlKzVn
-JTBnKzVyLzt8LDyBMkGGM0SLNUeQMkWSPlSeNEOBMz1/NkSBOkeLOUePOkmKQ1CVR1KWTl6i
-TlmSXXGndoO8gpDCeI7Fh5fGgJPJgYu6kKPLqKvJsa/FSFN/LTl2Ljx4MDx6Lzl1NUiQQl6z
-RGO5Ql+yNkuXLTt8Ok2YQVytP1yvPluvQVusP1mpO1apPlurPlusMUSHHR0tHx8tIiE0Hx4y
-ICEvIB8xS23ARWe5P16xLDuAJShLIilXKjFmLTVsJjFsLTh0Lzt8NEGIN0WJNESLNUiTN0eT
-NEiNOlGPPUiLPEWBPEaERFCOQEqMSVaUS1aTTGCUXmyzbnmuZ4K5dou5forAgJLGgZbMfpPB
-h5nFWGOTLz17LDt6MkCBLTx6Ljp5MDt4M0aOQFutRmG1P1mnPVSfOlCbQVuqPlmrP1quPVuu
-PlenO1akPliqPFmoQF2sQmCvN02QHyEwHR0vISA0HR4vHh8uS2/CS2vAPV6yMEGFJihQJy5f
-KzNqKjVwKTVzMTx6MkCHMUCJNESPNUaPNEeSO0uXOUiZPEeYVFyWRFCMPkiHQE2DR1GKQ1eL
-UmCgWGKsWWebZnusboO3dYW8gIzBe47IepHDcYGwRlGJMUCGNESLNEWNOEeLMT+DMD16MDx3
-OUySQVqqQFurOlalQVqnQFqqQVytPFemP1uvQFurPFikPlupO1akPVqpPFmmVHzLh7bzPVGP
-ICAyHRwtICAzICAyTGy+R2i8QGC2LDuEKSxaLDVtLDdzKjVxLTh2NECDNEOLNUaQNkmTOUyY
-NUaSOEuXO02cO0+cO0ucOkubQVCbSVeZVl2WSlmUV2GgaHKrbG6ocX2tb32tZnqwdYO2fJG+
-U2OWMEOML0GLM0aRNEaRN0eSNkeKM0OFLj9/MD18NkqUPlipPFalP1mnQlypQ1+wQ1+vQFus
-QF2wQFysPVmnOlSkOFSkQFuoQGCve63xkb73VX7DIyM8HR8vIiIzISE0SWi8R2W5PVyzMT+D
-JilYKDBqKzRyLTZyLjdzLDl7MD+HOEiROUmVPE6ZN0eVO0yZOEqeOEqcOEqbO06eOEqdNUqf
-PE2aQFOXSFSVUmCbanOfdXuzX3atW2GeRFSONEOSMUaVM0qYN0uYOEmWOkyYOEuYN0mSM0WJ
-M0KELzx7NkiQQFmmP1mnRV+tQmCwQ2O0Q2GxRWS3QWG0P16wPlqrOlenPlupPFupY5Lfibz4
-cqLjM0R7LTlwICE5Hx4xHh4wRmW6SGe6Pl2zLj2CJyxcKjJsKjRwLTh0LDRvLjh3NkOJMkCJ
-N0aPMUWQNUiUO0yYOEuZNkmbO06gOkyeOUueMkebNEudN0ufNkuZMEWTMkeWMUSQNEaOMkOT
-NkiXN0uaNkybNEqbN0yeNUqXMkeUOEyYN0mVMkSNMECELjt8M0aQPlaqQ1+vRmS0RWO2QmK2
-RGS3QmGzQ2O4QmK2P1yvPlusPlysT3bIhrf3iLn3QF2bKzhzMkF9M0B8ISM8Hh8vSmu+R2e6
-RWS6Lz+HKi9iJzFsKjV1JzNzKjRyMTl7NkONOEmTMkSPOEycO0+fOlCfOk2bOE2fOk+hOEqc
-NkmbNkqbOE2hNkueN0qaNEaWNkiWNkqWPE2ZN0mWO06bNUqbNEqcN02fOE6fNUmaNUiWOk6a
-NkqUM0OKMj+CMT5/O02aQ1ywR2a7RGS6SGe7RGe7R2a5R2W6SGi+RWe7QmK0P16vQWCwcKXu
-j7/8YY7VLTt0L0B/NUaFOEqKMkKBIiQ/S26/SGm7RGO4Lj2CJy1eKzVyMTp5LTh1Ljh0MT18
-Lj2GN0iPNUmUOk+dOlGgO0+cPFCdOlCeOU+fPVGhPFGgO1CiN0yfOE2iNkudNUuaOU2bOk+b
-OUyYOU+eOVCfOlGhN0+eOU+fNk2bOE2aOE6aN0yYNkuTOEmNMj9/MD1/Ok6ZR2O2SGjASm3C
-S2vARmu/Q2S6SGi9R2e5RWS3Q2SyQmGvV4TTgrf5eazwNkyGMEJ+NUeEN0mIN0uJNkqLN0iM
-TXHESm/DQGG2LT2AKC5eLTZvMDp3MDt2Lzt1MUB+M0SKO0qQOE6WPFKdOlOePFOfPVSiO1Og
-PFSkPlOkO1KhO1KfN02dOE6fO1GhO1KhOlGfOVKgPFOePFWgOlOgOlKdOlGeOlGeOVKdOlGb
-OVGaOFCZOE+UNEmMNkWDLjx6P1eiR2i5THC/SGzASW7DR2vAR2m9QmW5SGe3RmSyRWSzS3LA
-dqvwgrf4RWqpLkB2N0eANkmFOUyGOk6GN0yHOE+S'
-			base64Decoded asByteArray readStream! !
 
 !AffineTransformationTest methodsFor: 'testing' stamp: 'jmv 1/14/2015 15:11'!
 testComposition
@@ -28082,6 +26100,13 @@ testTabWhenConditionIsTruePutsATabInStream
 	self assert: Character tab asString equals: stream contents 
 	! !
 
+!SystemConsistencyTest methodsFor: 'testing' stamp: 'jmv 5/7/2012 09:35'!
+testMethodsWithUnboundGlobals
+	"
+	SystemConsistencyTest new testMethodsWithUnboundGlobals
+	"
+	self assert: Smalltalk methodsWithUnboundGlobals isEmpty! !
+
 !TranscriptTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:29:18'!
 testNewLineWhenConditionIsFalseDoesNotPutANewLineInStream
 
@@ -28180,6 +26205,213 @@ testIsColorForm
 testIsGrayForm
 	self assert: (GrayForm new is: #GrayForm)! !
 
+!BecomeTest methodsFor: 'testing' stamp: 'jmv 1/29/2019 12:03:40'!
+testBecome
+	| e |
+	BecomeTestExperiment twoVars.
+	e _ BecomeTestExperiment new.
+	self should: [ e messStuffUpWBecome ] raise: MethodInCallStackToBecomeInvalid! !
+
+!BecomeTest methodsFor: 'testing' stamp: 'jmv 1/29/2019 12:03:42'!
+testShapeMutation
+	| e |
+	BecomeTestExperiment twoVars.
+	e _ BecomeTestExperiment new.
+	self should: [ e messStuffUp ] raise: MethodInCallStackToBecomeInvalid! !
+
+!BooleanTest methodsFor: 'and tests' stamp: 'HAW 7/8/2018 20:03:35'!
+testAndAndAndAndTrueTable
+
+	self 
+		evaluate: [ :first :second :third :fourth :fifth | 
+			self 
+				assert: (first and: [second] and: [third] and: [fourth] and: [fifth]) 
+				equals: ((((first and: [second]) and: [third]) and: [ fourth ]) and: [ fifth ]) ]
+		forCombinationOf: 5
+		
+	
+	
+	! !
+
+!BooleanTest methodsFor: 'and tests' stamp: 'HAW 7/8/2018 20:03:46'!
+testAndAndAndTrueTable
+
+	self 
+		evaluate: [ :first :second :third :fourth | 
+			self 
+				assert: (first and: [second] and: [third] and: [fourth]) 
+				equals: (((first and: [second]) and: [third]) and: [ fourth ]) ]
+		forCombinationOf: 4
+		
+	
+	
+	! !
+
+!BooleanTest methodsFor: 'and tests' stamp: 'HAW 7/8/2018 20:04:00'!
+testAndAndTrueTable
+
+	self 
+		evaluate: [ :first :second :third | 
+			self 
+				assert: (first and: [second] and: [third]) 
+				equals: ((first and: [second]) and: [third]) ]
+		forCombinationOf: 3
+		
+	
+	
+	! !
+
+!BooleanTest methodsFor: 'or tests' stamp: 'HAW 7/8/2018 20:04:10'!
+testOrOrOrOrTrueTable
+
+	self 
+		evaluate: [ :first :second :third :fourth :fifth | 
+			self 
+				assert: (first or: [second] or: [third] or: [fourth] or: [fifth]) 
+				equals: ((((first or: [second]) or: [third]) or: [ fourth ]) or: [ fifth ]) ]
+		forCombinationOf: 5
+		
+	
+	
+	! !
+
+!BooleanTest methodsFor: 'or tests' stamp: 'HAW 7/8/2018 20:04:18'!
+testOrOrOrTrueTable
+
+	self 
+		evaluate: [ :first :second :third :fourth | 
+			self 
+				assert: (first or: [second] or: [third] or: [fourth]) 
+				equals: (((first or: [second]) or: [third]) or: [ fourth ]) ]
+		forCombinationOf: 4
+		
+	
+	
+	! !
+
+!BooleanTest methodsFor: 'or tests' stamp: 'HAW 7/8/2018 20:04:25'!
+testOrOrTrueTable
+
+	self 
+		evaluate: [ :first :second :third | 
+			self 
+				assert: (first or: [second] or: [third]) 
+				equals: ((first or: [second]) or: [third]) ]
+		forCombinationOf: 3
+		
+	
+	
+	! !
+
+!BooleanTest methodsFor: 'combination generation' stamp: 'HAW 7/8/2018 19:51:52'!
+evaluate: aBlock collectingValuesInto: values at: aPosition 
+	
+	aPosition = 0 
+		ifTrue: [ aBlock valueWithArguments: values ]
+		ifFalse: [ 
+			#(true false) do: [ :value | 
+				values at: aPosition put: value. 
+				self evaluate: aBlock collectingValuesInto: values at: aPosition - 1 ]]! !
+
+!BooleanTest methodsFor: 'combination generation' stamp: 'HAW 7/8/2018 19:50:53'!
+evaluate: aBlock forCombinationOf: aNumberOfValues
+
+	self evaluate: aBlock collectingValuesInto: (Array new: aNumberOfValues) at: aNumberOfValues 
+	! !
+
+!BooleanTest methodsFor: 'testing' stamp: 'jpb 8/2/2019 23:13:00'!
+testIsBoolean
+	self assert: (true is: #Boolean).
+	self assert: (false is: #Boolean).! !
+
+!IfNotNilTests methodsFor: 'tests' stamp: 'jmv 11/16/2010 08:46'!
+testIfNilIfNotNil0Arg
+
+	self assert: (5@4 ifNil: [#foo] ifNotNil: [#bar]) = #bar.
+	self assert: (nil ifNil: [#foo] ifNotNil: [#bar]) = #foo! !
+
+!IfNotNilTests methodsFor: 'tests' stamp: 'jmv 11/16/2010 08:46'!
+testIfNilIfNotNil0ArgAsVar
+
+	| block1 block2 |
+	block1 := [#foo].
+	block2 := [#bar].
+	self assert: (5@4 ifNil: block1 ifNotNil: block2) = #bar.
+	self assert: (nil ifNil: block1 ifNotNil: block2) = #foo! !
+
+!IfNotNilTests methodsFor: 'tests' stamp: 'jmv 11/16/2010 08:46'!
+testIfNilIfNotNil1Arg
+
+	self assert: (5@4 ifNil: [#foo] ifNotNil: [:a | a printString]) = '5@4'.
+	self assert: (nil ifNil: [#foo] ifNotNil: [:a | a printString]) = #foo! !
+
+!IfNotNilTests methodsFor: 'tests' stamp: 'jmv 11/16/2010 08:46'!
+testIfNilIfNotNil1ArgAsVar
+
+	| block1 block2 |
+	block1 := [#foo].
+	block2 := [:a | a printString].
+	self assert: (5@4 ifNil: block1 ifNotNil: block2) = '5@4'.
+	self assert: (nil ifNil: block1 ifNotNil: block2) = #foo! !
+
+!IfNotNilTests methodsFor: 'tests' stamp: 'jmv 11/16/2010 08:46'!
+testIfNotNil0Arg
+
+	self assert: (5@4 ifNotNil: [#foo]) = #foo.
+	self assert: (nil ifNotNil: [#foo]) = nil! !
+
+!IfNotNilTests methodsFor: 'tests' stamp: 'jmv 11/16/2010 08:46'!
+testIfNotNil0ArgAsVar
+
+	| block |
+	block := [#foo].
+	self assert: (5@4 ifNotNil: block) = #foo.
+	self assert: (nil ifNotNil: block) = nil! !
+
+!IfNotNilTests methodsFor: 'tests' stamp: 'jmv 11/16/2010 08:46'!
+testIfNotNil1Arg
+
+	self assert: (5@4 ifNotNil: [:a | a printString]) = '5@4'.
+	self assert: (nil ifNotNil: [:a | a printString]) = nil! !
+
+!IfNotNilTests methodsFor: 'tests' stamp: 'jmv 11/16/2010 08:46'!
+testIfNotNil1ArgAsVar
+
+	| block |
+	block := [:a | a printString].
+	self assert: (5@4 ifNotNil: block) = '5@4'.
+	self assert: (nil ifNotNil: block) = nil! !
+
+!IfNotNilTests methodsFor: 'tests' stamp: 'jmv 11/16/2010 08:46'!
+testIfNotNilIfNil0Arg
+
+	self assert: (5@4 ifNotNil: [#foo] ifNil: [#bar]) = #foo.
+	self assert: (nil ifNotNil: [#foo] ifNil: [#bar]) = #bar! !
+
+!IfNotNilTests methodsFor: 'tests' stamp: 'jmv 11/16/2010 08:46'!
+testIfNotNilIfNil0ArgAsVar
+
+	| block1 block2 |
+	block1 := [#foo].
+	block2 := [#bar].
+	self assert: (5@4 ifNotNil: block2 ifNil: block1) = #bar.
+	self assert: (nil ifNotNil: block2 ifNil: block1) = #foo! !
+
+!IfNotNilTests methodsFor: 'tests' stamp: 'jmv 11/16/2010 08:46'!
+testIfNotNilIfNil1Arg
+
+	self assert: (5@4 ifNotNil: [:a | a printString] ifNil: [#foo]) = '5@4'.
+	self assert: (nil ifNotNil: [:a | a printString] ifNil: [#foo]) = #foo! !
+
+!IfNotNilTests methodsFor: 'tests' stamp: 'jmv 11/16/2010 08:47'!
+testIfNotNilIfNil1ArgAsVar
+
+	| block1 block2 |
+	block1 := [#foo].
+	block2 := [:a | a printString].
+	self assert: (5@4 ifNotNil: block2 ifNil: block1) = '5@4'.
+	self assert: (nil ifNotNil: block2 ifNil: block1) = #foo! !
+
 !ObjectTest methodsFor: 'error tests' stamp: 'HAW 10/23/2019 09:23:56'!
 testErrorSignalsTheRightException
 
@@ -28209,6 +26441,14 @@ testShouldNotHappenSignalsTheRightError
 		should: [ self shouldNotHappen ]
 		raise: Error
 		withMessageText: self shouldNotHappenErrorMessage ! !
+
+!SpecialSelectorsTest methodsFor: 'testing' stamp: 'jmv 6/5/2017 12:17:20'!
+testCollectionAtSymbol
+	self assert: (#(1 2 3) @ #(10 20 30)) class == Array! !
+
+!SpecialSelectorsTest methodsFor: 'testing' stamp: 'jmv 6/5/2017 12:16:49'!
+testNumberAtSymbol
+	self assert: (1@2) class == Point! !
 
 !WeakMessageSendTest methodsFor: 'testing' stamp: 'jpb 8/2/2019 23:44:58'!
 testIsMessageSend
@@ -28359,6 +26599,397 @@ testReferencesParameterAtReturnsTrueWhenTheParameterIsReferenced
 		classIsMeta: false 
 		methodSymbol: #referencesParameterAt:) referencesParameterAt: 1)! !
 
+!CharacterSetTest methodsFor: 'testing includes' stamp: 'HAW 6/12/2019 17:32:08'!
+testIncludesReturnsFalseForCharacterNotIncluded
+
+	self deny: ((CharacterSet with: $a) includes: $b)! !
+
+!CharacterSetTest methodsFor: 'testing includes' stamp: 'HAW 6/12/2019 17:31:45'!
+testIncludesReturnsFalseForObjectsThatAreNotCharacters
+
+	self deny: ((CharacterSet with: $a) includes: 1)! !
+
+!CharacterSetTest methodsFor: 'testing includes' stamp: 'HAW 6/12/2019 17:32:24'!
+testIncludesReturnsTrueForCharacterIncluded
+
+	self assert: ((CharacterSet with: $a) includes: $a)! !
+
+!CharacterTest methodsFor: 'testing' stamp: 'jmv 10/6/2010 22:08'!
+testCaseConversion
+	"
+	self new testCaseConversion
+	"
+	self assert: ('año Comé tomá Camión' collect: [ :c | c asLowercase ]) = 'año comé tomá camión'.
+	self assert:('año Comé tomá Camión' collect: [ :c | c asUppercase ]) = 'AÑO COMÉ TOMÁ CAMIÓN'! !
+
+!CharacterTest methodsFor: 'testing' stamp: 'jpb 8/2/2019 23:10:55'!
+testIsCharacter
+	self assert: ($a is: #Character).
+	self assert: ($X is: #Character).
+	self assert: (Character cr is: #Character).! !
+
+!CharacterTest methodsFor: 'testing' stamp: 'jmv 10/6/2010 22:05'!
+testSorting
+	"
+	self new testSorting
+	"
+	self assert: $a < $á.
+	self deny: $a < $Á.
+	self assert: $A < $á.
+	self assert: $A < $Á.
+	self assert: $á < $b.
+	self deny: $á < $B.
+	self assert: $Á < $b.
+	self assert: $Á < $B.! !
+
+!CharacterTest methodsFor: 'testing' stamp: 'jmv 10/6/2010 22:10'!
+testTestingMethods
+	"
+	self new testTestingMethods
+	"
+	self assert:
+		('año Comé tomá Camión' allSatisfy: [ :c |
+			c = $  or: [ c isLetter ]]).
+	self assert:
+		('año comé tomá camión' allSatisfy: [ :c |
+			c = $  or: [ c isLowercase ]]).
+	self assert:
+		('AÑO COMÉ TOMÁ CAMIÓN' allSatisfy: [ :c |
+			c = $  or: [ c isUppercase ]]).
+	self assert:
+		('AaÀàÁáÂâÃãÄäÅåEeÈèÉéÊêËëIiÌìÍíÎîÏïOoÒòÓóÔôÕõÖöUuÙùÚúÛûÜü' allSatisfy: [ :c |
+			c isVowel ]).! !
+
+!CharacterTest methodsFor: 'UTF-8 conversion' stamp: 'jmv 5/26/2022 12:31:12'!
+testFromUtf8
+	"
+	CharacterTest new testFromUtf8
+	"
+	Character utf8BytesAndCodePointAt: 1 in: (ByteArray readHexFrom: '24') into: nil into: [ :codePoint | self assert: codePoint hex = '16r24' ].
+	Character utf8BytesAndCodePointAt: 1 in: (ByteArray readHexFrom: 'C2A2') into: nil into: [ :codePoint | self assert: codePoint hex = '16rA2' ].
+	Character utf8BytesAndCodePointAt: 1 in: (ByteArray readHexFrom: 'E282AC') into: nil into: [ :codePoint | self assert: codePoint hex = '16r20AC' ].
+	Character utf8BytesAndCodePointAt: 1 in: (ByteArray readHexFrom: 'F0A4ADA2') into: nil into: [ :codePoint | self assert: codePoint hex = '16r24B62' ].! !
+
+!CharacterTest methodsFor: 'UTF-8 conversion' stamp: 'jmv 5/5/2022 09:34:34'!
+testSomeLatinCharsFromUtf8
+	"
+	CharacterTest new testSomeLatinCharsFromUtf8
+	"
+	| bytes string |
+	bytes _ ByteArray readHexFrom: 'C3A1C3A5C3A6C3B1C386C2A5C3BC'.
+	string _ String streamContents: [ :strm | | s byteIndex n |
+		s _ bytes size.
+		byteIndex _ 1.
+		[  byteIndex <= s ] whileTrue: [
+			n _ Character utf8BytesAndCodePointAt: byteIndex in: bytes
+				into: nil
+				into: [ :codePoint |
+					strm nextPut: (Character codePoint: codePoint) ].
+			byteIndex _ byteIndex + n
+		]].
+	self assert: string = 'áåæñÆ¥ü'! !
+
+!CharacterTest methodsFor: 'UTF-8 conversion' stamp: 'jmv 9/4/2016 13:11:55'!
+testSomeLatinCharsToUtf8
+	"
+	CharacterTest new testSomeLatinCharsToUtf8
+	"
+	| characters bytes |
+	characters _ 'áåæñÆ¥ü' readStream.
+	bytes _ ByteArray streamContents: [ :strm |
+		[ characters atEnd ] whileFalse: [
+			Character
+				evaluate: [ :byte | strm nextPut: byte ]
+				withUtf8BytesOfUnicodeCodePoint: characters next codePoint ]].
+	self assert: bytes hex = 'C3A1C3A5C3A6C3B1C386C2A5C3BC'! !
+
+!CharacterTest methodsFor: 'UTF-8 conversion' stamp: 'jmv 2/20/2013 20:09'!
+testToUtf8
+	"
+	CharacterTest new testToUtf8
+	"
+	self assert: (Character utf8BytesOfUnicodeCodePoint: 16r0024) hex =  '24'.
+	self assert: (Character utf8BytesOfUnicodeCodePoint: 16r00A2) hex =  'C2A2'.
+	self assert: (Character utf8BytesOfUnicodeCodePoint: 16r20AC) hex = 'E282AC'.
+	self assert: (Character utf8BytesOfUnicodeCodePoint: 16r024B62) hex = 'F0A4ADA2'! !
+
+!StringTest methodsFor: 'UTF-8 conversion' stamp: 'jmv 5/26/2022 12:00:49'!
+testAsUtf8
+	"
+	 StringTest new testAsUtf8
+	"
+	self assert: 'A¢¤' asUtf8Bytes hex = '41C2A2E282AC'! !
+
+!StringTest methodsFor: 'UTF-8 conversion' stamp: 'jmv 5/26/2022 11:59:35'!
+testAsUtf8WithNCRs
+	"
+	 StringTest new testAsUtf8WithNCRs
+	"
+	| stringWithDecimalNCRs stringWithHexNCRs utf8 |
+	utf8 _ ByteArray readHexFrom: ('CE BC 20 CE A8 20 CF 89 20 54 68 65 20 64 65 63 6F 6D 70 6F 73 69 74 69 6F 6E 20 6D 61 70 70 69 6E 67 20 69 73 20 3C EC B8 A0 2C 20 E1 86 B8 3E 2C 20 61 6E 64 20 6E 6F 74 20 3C E1 84 8E 2C 20 E1 85 B3 2C 20 31 31 42 38 3E 2E 0A 3C 70 3E 54 68 65 20 74 69 74 6C 65 20 73 61 79 73 20 E2 80 AB D7 A4 D7 A2 D7 99 D7 9C D7 95 D7 AA 20 D7 94 D7 91 D7 99 D7 A0 D7 90 D7 95 D7 9D 2C 20 57 33 43 E2 80 AC 20 69 6E 20 48 65 62 72 65 77 3C 2F 70 3E 0A 61 62 63 E0 A4 95 E0 A4 96 E0 A5 80 E5 9C 8B E9 9A 9B F0 90 8E 84 F0 90 8E 94 F0 90 8E 98' reject: [ :char  | char isSeparator ]).
+
+	stringWithDecimalNCRs _ String fromUtf8Bytes: utf8 hex: false trimLastNull: false.
+	stringWithHexNCRs _ String fromUtf8Bytes: utf8 hex: true trimLastNull: false.
+
+	self assert: stringWithDecimalNCRs =  '&#956; &#936; ˜ The decomposition mapping is <&#52768;, &#4536;>, and not <&#4366;, &#4467;, 11B8>.
+<p>The title says &#8235;&#1508;&#1506;&#1497;&#1500;&#1493;&#1514; &#1492;&#1489;&#1497;&#1504;&#1488;&#1493;&#1501;, W3C&#8236; in Hebrew</p>
+abc&#2325;&#2326;&#2368;&#22283;&#38555;&#66436;&#66452;&#66456;'.
+
+	self assert: (stringWithDecimalNCRs asUtf8Bytes: true) = utf8.
+
+	self assert: stringWithHexNCRs = '&#x03BC; &#x03A8; ˜ The decomposition mapping is <&#xCE20;, &#x11B8;>, and not <&#x110E;, &#x1173;, 11B8>.
+<p>The title says &#x202B;&#x05E4;&#x05E2;&#x05D9;&#x05DC;&#x05D5;&#x05EA; &#x05D4;&#x05D1;&#x05D9;&#x05E0;&#x05D0;&#x05D5;&#x05DD;, W3C&#x202C; in Hebrew</p>
+abc&#x0915;&#x0916;&#x0940;&#x570B;&#x969B;&#x10384;&#x10394;&#x10398;'.
+
+	self assert: (stringWithHexNCRs asUtf8Bytes: true) = utf8! !
+
+!StringTest methodsFor: 'tests - converting' stamp: 'jmv 9/19/2016 09:55:39'!
+testBase64
+
+	self 
+		assert: 'SGVsbG8gV29ybGQ=' base64Decoded = 'Hello World' asByteArray;
+		assert: 'Hello World' asByteArray base64Encoded = 'SGVsbG8gV29ybGQ=';
+		assert: (String new: 100 withAll: $x) asByteArray base64Encoded  =
+'eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4
+eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eA==' ! !
+
+!StringTest methodsFor: 'testing' stamp: 'HAW 8/3/2018 10:42:26'!
+testAfterBlanksEndsWith
+
+	self assert: (' abc' afterBlanksEndsWith: 'abc').
+	self assert: ('abc' afterBlanksEndsWith: 'abc').
+	
+	self deny: (' ab' afterBlanksEndsWith: 'abc').
+	self deny: (' ab' afterBlanksEndsWith: 'a').
+	self deny: ('' afterBlanksEndsWith: 'abc').
+	self deny: (' a a bc' afterBlanksEndsWith: 'a bc').! !
+
+!StringTest methodsFor: 'testing' stamp: 'jmv 10/6/2010 22:08'!
+testCaseConversion
+	"
+	self new testCaseConversion
+	"
+	self assert: ('año Comé tomá Camión' asLowercase) = 'año comé tomá camión'.
+	self assert: ('año Comé tomá Camión' asUppercase) = 'AÑO COMÉ TOMÁ CAMIÓN'! !
+
+!StringTest methodsFor: 'testing' stamp: 'jmv 9/1/2009 14:12'!
+testEncompassParagraph1
+
+	self assert: ('a' encompassParagraph: (1 to: 0)) = (1 to: 1).
+	self assert: ('a' encompassParagraph: (1 to: 1)) = (1 to: 1).
+	self assert: ('a' encompassParagraph: (2 to: 1)) = (1 to: 1).! !
+
+!StringTest methodsFor: 'testing' stamp: 'jmv 9/1/2009 14:13'!
+testEncompassParagraph2
+
+	self assert: ('ab' encompassParagraph: (1 to: 0)) = (1 to: 2).
+	self assert: ('ab' encompassParagraph: (1 to: 1)) = (1 to: 2).
+	self assert: ('ab' encompassParagraph: (1 to: 2)) = (1 to: 2).
+	self assert: ('ab' encompassParagraph: (2 to: 1)) = (1 to: 2).
+	self assert: ('ab' encompassParagraph: (2 to: 2)) = (1 to: 2).
+	self assert: ('ab' encompassParagraph: (3 to: 2)) = (1 to: 2).! !
+
+!StringTest methodsFor: 'testing' stamp: 'jmv 9/1/2009 14:14'!
+testEncompassParagraph3
+
+self assert: ('a
+' encompassParagraph: (1 to: 0)) = (1 to: 2).
+self assert: ('a
+' encompassParagraph: (1 to: 1)) = (1 to: 2).
+self assert: ('a
+' encompassParagraph: (1 to: 2)) = (1 to: 2).
+self assert: ('a
+' encompassParagraph: (2 to: 1)) = (1 to: 2).
+self assert: ('a
+' encompassParagraph: (2 to: 2)) = (1 to: 2).
+self assert: ('a
+' encompassParagraph: (3 to: 2)) = (3 to: 2).
+
+self assert: ('a
+zcxv' encompassParagraph: (1 to: 0)) = (1 to: 2).
+self assert: ('a
+zcxv' encompassParagraph: (1 to: 1)) = (1 to: 2).
+self assert: ('a
+zxcv' encompassParagraph: (1 to: 2)) = (1 to: 2).
+self assert: ('a
+zxcv' encompassParagraph: (2 to: 1)) = (1 to: 2).
+self assert: ('a
+zxcv' encompassParagraph: (2 to: 2)) = (1 to: 2).
+self assert: ('a
+zxcv' encompassParagraph: (3 to: 2)) = (3 to: 6).! !
+
+!StringTest methodsFor: 'testing' stamp: 'jmv 9/1/2009 14:17'!
+testEncompassParagraph4
+
+self assert: ('
+b' encompassParagraph: (1 to: 0)) = (1 to: 1).
+self assert: ('
+b' encompassParagraph: (1 to: 1)) = (1 to: 1).
+self assert: ('
+b' encompassParagraph: (1 to: 2)) = (1 to: 2).
+self assert: ('
+b' encompassParagraph: (2 to: 1)) = (2 to: 2).
+self assert: ('
+b' encompassParagraph: (2 to: 2)) = (2 to: 2).
+self assert: ('
+b' encompassParagraph: (3 to: 2)) = (2 to: 2).! !
+
+!StringTest methodsFor: 'testing' stamp: 'jmv 9/1/2009 14:22'!
+testEncompassParagraph5
+
+self assert: ('a
+b' encompassParagraph: (1 to: 0)) = (1 to: 2).
+self assert: ('a
+b' encompassParagraph: (1 to: 1)) = (1 to: 2).
+self assert: ('a
+b' encompassParagraph: (1 to: 2)) = (1 to: 2).
+self assert: ('a
+b' encompassParagraph: (1 to: 3)) = (1 to: 3).
+self assert: ('a
+b' encompassParagraph: (2 to: 1)) = (1 to: 2).
+self assert: ('a
+b' encompassParagraph: (2 to: 2)) = (1 to: 2).
+self assert: ('a
+b' encompassParagraph: (2 to: 3)) = (1 to: 3).
+self assert: ('a
+b' encompassParagraph: (3 to: 2)) = (3 to: 3).
+self assert: ('a
+b' encompassParagraph: (3 to: 3)) = (3 to: 3).
+self assert: ('a
+b' encompassParagraph: (4 to: 3)) = (3 to: 3).! !
+
+!StringTest methodsFor: 'testing' stamp: 'HAW 12/29/2020 13:29:16'!
+testFindSelector 
+
+	self assert: #printOn: equals: '"self printOn:' findSelector.
+	self assert: #printOn: equals: 'self printOn:"' findSelector.
+	self assert: #printOn: equals: '"self printOn:"' findSelector.
+	self assert: #printOn: equals: 'self printOn:' findSelector.
+! !
+
+!StringTest methodsFor: 'testing' stamp: 'jmv 6/6/2022 16:47:18'!
+testFirstNonSeparator
+
+	self assert: 1 equals: 'abc' firstNonSeparator.
+	self assert: 2 equals: ' abc' firstNonSeparator.
+	self assert: 0 equals: '' firstNonSeparator ! !
+
+!StringTest methodsFor: 'testing' stamp: 'jpb 8/2/2019 23:11:49'!
+testIsString
+	self assert: ('Hello World' is: #String).
+	self assert: ('' is: #String).! !
+
+!StringTest methodsFor: 'testing' stamp: 'jmv 6/6/2022 16:46:49'!
+testLastNonSeparator
+
+	self assert: 3 equals: 'abc' lastNonSeparator.
+	self assert: 3 equals: 'abc ' lastNonSeparator.
+	self assert: 4 equals: ' abc ' lastNonSeparator.
+	self assert: 0 equals: '' lastNonSeparator ! !
+
+!StringTest methodsFor: 'testing' stamp: 'jmv 12/17/2012 10:51'!
+testLineSeparators
+	"
+	Test that #newLineCharacter is considered a line separator and not a line terminator.
+	This means that the last line never ends with a #newLineCharacter (although it might be empty!!)
+	StringTest new testLineSeparators
+	"
+	| justAnLf linesBounds |
+	linesBounds _ OrderedCollection new.
+	justAnLf _ '
+'.
+	justAnLf lineIndicesDo: [ :start :endWithoutDelimiters :end |
+		linesBounds add: { start . endWithoutDelimiters. end }.
+		].
+
+	self assert: linesBounds size = 2 description: 'There should be two lines.'.
+
+	self assert: linesBounds first first = 1 description: 'First line starts at position 1'.
+	self assert: linesBounds first second = (linesBounds first first-1) description: 'First line is empty'.
+	self assert: linesBounds first third = (linesBounds first second+1) description: 'First line is terminated by ab Lf'.
+
+	self assert: linesBounds second first = ( linesBounds first third+1) description: 'Second line starts after end of first line'.
+	self assert: linesBounds second second = (linesBounds second first-1) description: 'Second line is empty'.
+	self assert: linesBounds second third = (linesBounds second second+0) description: 'Second line is not terminated by ab Lf'.! !
+
+!StringTest methodsFor: 'testing' stamp: 'jmv 10/6/2010 22:03'!
+testSorting
+"
+self new testSorting
+"
+
+	self assert: 'a' < 'á'.
+	self assert: ('a' < 'Á') not.
+	self assert: 'A' < 'á'.
+	self assert: 'A' < 'Á'.
+	self assert: 'á' < 'b'.
+	self assert: ('á' < 'B') not.
+	self assert: 'Á' < 'b'.
+	self assert: 'Á' < 'B'.
+
+	self assert: ('a' caseSensitiveLessOrEqual: 'á').
+	self deny: ('a' caseSensitiveLessOrEqual: 'Á').
+	self assert: ('A' caseSensitiveLessOrEqual: 'á').
+	self assert: ('A' caseSensitiveLessOrEqual: 'Á').
+	self assert: ('á' caseSensitiveLessOrEqual: 'b').
+	self deny: ('á' caseSensitiveLessOrEqual: 'B').
+	self assert: ('Á' caseSensitiveLessOrEqual: 'b').
+	self assert: ('Á' caseSensitiveLessOrEqual: 'B').
+
+	self assert: ('a' caseInsensitiveLessOrEqual: 'á').
+	self assert: ('a' caseInsensitiveLessOrEqual: 'Á').
+	self assert: ('A' caseInsensitiveLessOrEqual: 'á').
+	self assert: ('A' caseInsensitiveLessOrEqual: 'Á').
+	self assert: ('á' caseInsensitiveLessOrEqual: 'b').
+	self assert: ('á' caseInsensitiveLessOrEqual: 'B').
+	self assert: ('Á' caseInsensitiveLessOrEqual: 'b').
+	self assert: ('Á' caseInsensitiveLessOrEqual: 'B').! !
+
+!StringTest methodsFor: 'testing' stamp: 'HAW 8/3/2018 11:00:28'!
+testWithBlanksTrimmed
+
+	self assert: 'abc' equals: ' abc' withBlanksTrimmed.
+	self assert: 'abc' equals: 'abc ' withBlanksTrimmed.
+	self assert: 'abc' equals: ' abc ' withBlanksTrimmed.
+	self assert: 'a b c' equals: ' a b c ' withBlanksTrimmed.
+	self assert: '' equals: '' withBlanksTrimmed.
+	! !
+
+!StringTest methodsFor: 'testing' stamp: 'HAW 8/2/2018 20:35:28'!
+testWithoutLeadingBlanks
+
+	self assert: 'abc' equals: ' abc' withoutLeadingBlanks.
+	self assert: 'abc' equals: 'abc' withoutLeadingBlanks.
+	self assert: '' withoutLeadingBlanks isEmpty
+! !
+
+!StringTest methodsFor: 'testing' stamp: 'HAW 6/8/2019 18:18:47'!
+testWithoutSeparators
+
+	self assert: 'abc' equals: 'abc' withoutSeparators.
+	self assert: 'abc' equals: ' a b c ' withoutSeparators! !
+
+!StringTest methodsFor: 'testing' stamp: 'HAW 8/2/2018 20:35:32'!
+testWithoutTrailingBlanks
+
+	self assert: 'abc' equals: 'abc ' withoutTrailingBlanks.
+	self assert: 'abc' equals: 'abc' withoutTrailingBlanks.
+	self assert: '' withoutTrailingBlanks isEmpty
+! !
+
+!StringTest methodsFor: 'tests - grammar' stamp: 'LC 7/5/2020 16:47:10'!
+testArticle
+	self
+		assert: 'euphemism' withArticle equals: 'a euphemism';
+		assert: 'European' withArticle equals: 'a European';
+		assert: 'Euclidean space' withArticle equals: 'a Euclidean space';
+		assert: 'university' withArticle equals: 'a university';
+		assert: 'anagram' withArticle equals: 'an anagram';
+		assert: 'apple' withArticle equals: 'an apple';
+		assert: 'Ukranian' withArticle equals: 'a Ukranian';
+		assert: 'Argentine' withArticle equals: 'an Argentine';
+		assert: 'user' withArticle equals: 'a user'! !
+
 !SymbolTest methodsFor: 'tests - selector validation' stamp: 'RNG 3/29/2020 19:59:47'!
 testIsNotValidBinarySelectorIfItContainsACharacterNotAllowed
 
@@ -28397,6 +27028,288 @@ testIsValidKeywordSelectorIfItContainsKeywordsWithColons
 testIsValidUnarySelectorIfItStartsWithALetterAndDoesNotContainSeparators
 
 	self assert: #t234 isValidSelector! !
+
+!UnicodeStringsTest methodsFor: 'testing' stamp: 'jmv 6/2/2022 15:14:24'!
+test01
+
+	| asciiString asciiUtf32String asciiUtf8String latinString latinUtf32String latinUtf8String |
+	asciiString _ 'Hello world'.
+	latinString _ '¡Tomá agüita, Ñandú!!'.
+	asciiUtf8String _ asciiString asUtf8String.
+	latinUtf8String _ latinString asUtf8String.
+	asciiUtf32String _ asciiString asUtf32String.
+	latinUtf32String _ latinString asUtf32String.
+
+	self assert: asciiString hash = asciiUtf8String hash.
+	self assert: asciiString hash = asciiUtf32String hash.
+	self assert: asciiString = asciiUtf8String.
+	self assert: asciiString = asciiUtf32String.
+	self assert: asciiUtf8String = asciiString.
+	self assert: asciiUtf8String = asciiUtf32String.
+	self assert: asciiUtf32String = asciiString.
+	self assert: asciiUtf32String = asciiUtf8String.
+
+	self assert: latinString hash = latinUtf8String hash.
+	self assert: latinString hash = latinUtf32String hash.
+	self assert: latinString = latinUtf8String.
+	self assert: latinString = latinUtf32String.
+	self assert: latinUtf8String = latinString.
+	self assert: latinUtf8String = latinUtf32String.
+	self assert: latinUtf32String = latinString.
+	self assert: latinUtf32String = latinUtf8String.! !
+
+!UnicodeSymbolsTest methodsFor: 'testing' stamp: 'jmv 6/3/2022 11:37:33'!
+test01AsciiSymbolFirst
+	"Try a few things with pure ASCII.
+	Do #asSymbol before doing #asUtf8Symbol. The symbol created will be instance of Symbol."
+	
+	| str symbol utf8 utf8Symbol |
+	str _ 'Stuff', Random next mantissaPart printString.
+	symbol _ str asSymbol.
+	utf8 _ str asUtf8String.
+	utf8Symbol _ utf8 asSymbol.
+
+	self assert: str = str.
+	self assert: str == str.
+	self assert: symbol = symbol.
+	self assert: symbol == symbol.
+	self assert: utf8 = utf8.
+	self assert: utf8 == utf8.
+	self assert: utf8Symbol = utf8Symbol.
+	self assert: utf8Symbol == utf8Symbol.
+
+	self assert: str = symbol.
+	self assert: symbol = str.
+	self assert: utf8 = utf8Symbol.
+	self assert: utf8Symbol = utf8.
+
+	self assert: str = utf8.
+	self assert: utf8 = str.
+	self assert: symbol = utf8Symbol.
+	self assert: utf8Symbol = symbol.
+
+	self assert: str = utf8Symbol.
+	self assert: utf8Symbol = str.
+	self assert: symbol = utf8.
+	self assert: utf8 = symbol.
+
+	self assert: utf8Symbol == symbol.
+	self assert: symbol == utf8Symbol.! !
+
+!UnicodeSymbolsTest methodsFor: 'testing' stamp: 'jmv 6/3/2022 11:37:42'!
+test02LatinSymbolFirst
+	"Try a few things with pure ASCII.
+	Do #asSymbol before doing #asUtf8Symbol. The symbol created will be instance of Symbol."
+	
+	| str symbol utf8 utf8Symbol |
+	str _ '¡Tomá agüita, Ñandú!!', Random next mantissaPart printString.
+	symbol _ str asSymbol.
+	utf8 _ str asUtf8String.
+	utf8Symbol _ utf8 asSymbol.
+
+	self assert: str = str.
+	self assert: str == str.
+	self assert: symbol = symbol.
+	self assert: symbol == symbol.
+	self assert: utf8 = utf8.
+	self assert: utf8 == utf8.
+	self assert: utf8Symbol = utf8Symbol.
+	self assert: utf8Symbol == utf8Symbol.
+
+	self assert: str = symbol.
+	self assert: symbol = str.
+	self assert: utf8 = utf8Symbol.
+	self assert: utf8Symbol = utf8.
+
+	self assert: str = utf8.
+	self assert: utf8 = str.
+	self assert: symbol = utf8Symbol.
+	self assert: utf8Symbol = symbol.
+
+	self assert: str = utf8Symbol.
+	self assert: utf8Symbol = str.
+	self assert: symbol = utf8.
+	self assert: utf8 = symbol.
+
+	self assert: utf8Symbol == symbol.
+	self assert: symbol == utf8Symbol.! !
+
+!UnicodeSymbolsTest methodsFor: 'testing' stamp: 'jmv 6/3/2022 11:38:22'!
+test03AsciiUtf8SymbolFirst
+	"Try a few things with pure ASCII.
+	Do #asSymbol before doing #asUtf8Symbol. The symbol created will be instance of Symbol."
+	
+	| str symbol utf8 utf8Symbol |
+	str _ 'Stuff', Random next mantissaPart printString.
+	utf8 _ str asUtf8String.
+	utf8Symbol _ utf8 asSymbol.
+	symbol _ str asSymbol.
+
+	self assert: str = str.
+	self assert: str == str.
+	self assert: symbol = symbol.
+	self assert: symbol == symbol.
+	self assert: utf8 = utf8.
+	self assert: utf8 == utf8.
+	self assert: utf8Symbol = utf8Symbol.
+	self assert: utf8Symbol == utf8Symbol.
+
+	self assert: str = symbol.
+	self assert: symbol = str.
+	self assert: utf8 = utf8Symbol.
+	self assert: utf8Symbol = utf8.
+
+	self assert: str = utf8.
+	self assert: utf8 = str.
+	self assert: symbol = utf8Symbol.
+	self assert: utf8Symbol = symbol.
+
+	self assert: str = utf8Symbol.
+	self assert: utf8Symbol = str.
+	self assert: symbol = utf8.
+	self assert: utf8 = symbol.
+
+	self assert: utf8Symbol == symbol.
+	self assert: symbol == utf8Symbol.! !
+
+!UnicodeSymbolsTest methodsFor: 'testing' stamp: 'jmv 6/3/2022 11:38:36'!
+test04LatinUtf8SymbolFirst
+	"Try a few things with pure ASCII.
+	Do #asSymbol before doing #asUtf8Symbol. The symbol created will be instance of Symbol."
+	
+	| str symbol utf8 utf8Symbol |
+	str _ '¡Tomá agüita, Ñandú!!', Random next mantissaPart printString.
+	utf8 _ str asUtf8String.
+	utf8Symbol _ utf8 asSymbol.
+	symbol _ str asSymbol.
+
+	self assert: str = str.
+	self assert: str == str.
+	self assert: symbol = symbol.
+	self assert: symbol == symbol.
+	self assert: utf8 = utf8.
+	self assert: utf8 == utf8.
+	self assert: utf8Symbol = utf8Symbol.
+	self assert: utf8Symbol == utf8Symbol.
+
+	self assert: str = symbol.
+	self assert: symbol = str.
+	self assert: utf8 = utf8Symbol.
+	self assert: utf8Symbol = utf8.
+
+	self assert: str = utf8.
+	self assert: utf8 = str.
+	self assert: symbol = utf8Symbol.
+	self assert: utf8Symbol = symbol.
+
+	self assert: str = utf8Symbol.
+	self assert: utf8Symbol = str.
+	self assert: symbol = utf8.
+	self assert: utf8 = symbol.
+
+	self assert: utf8Symbol == symbol.
+	self assert: symbol == utf8Symbol.! !
+
+!UnicodeTest methodsFor: 'set up' stamp: 'jmv 5/31/2016 11:24'!
+setUp
+	"
+	self new setUp
+	"
+
+     bytesOfExample1 := #[16r61 16r62 16r63 16r20 16rC3 16rA0 16rC3 16rA8 16rE2 
+	                              16r82 16rAC 16r20 16rCE 16rB1 16rCE 16rB2 16rCE 16rB3].
+	
+	"see UnicodeNotes.md"
+	
+     "write the bytes of an UFT8 encoded string in binary mode to a file"
+	self class fileName asFileEntry forceWriteStreamDo: [ :stream |
+		stream binary.
+		stream nextPutAll: bytesOfExample1 ]! !
+
+!UnicodeTest methodsFor: 'testing' stamp: 'jmv 10/3/2015 20:03'!
+test1ReadBinary
+	
+	"see UnicodeNotes.md"
+     "
+	self new setUp test1ReadBinary
+	"
+     | content |
+	content := self class fileName asFileEntry binaryContents.
+	self assert: content = bytesOfExample1! !
+
+!UnicodeTest methodsFor: 'testing' stamp: 'jmv 10/3/2015 20:04'!
+test2ReadWithOutBinary
+	
+	"see UnicodeNotes.md"
+     "
+	self new setUp test2ReadWithOutBinary
+	"
+     | content |
+	content := self class fileName asFileEntry textContents.
+	self deny: content = bytesOfExample1! !
+
+!UnicodeTest methodsFor: 'testing' stamp: 'jmv 5/26/2022 12:01:13'!
+test3ReadUtf8
+	
+	"see UnicodeNotes.md"
+     "
+	self new setUp test3ReadUtf8
+	"
+     | content byteArray |
+	byteArray _ self class fileName asFileEntry binaryContents.
+	content := String fromUtf8Bytes: byteArray.
+	self assert: content = 'abc àè¤ ˆ‰Š'! !
+
+!UnicodeTest methodsFor: 'testing' stamp: 'jmv 5/26/2022 12:00:15'!
+test4BackConversion
+	
+	"see UnicodeNotes.md"
+	
+     "
+	self new setUp test4BackConversion
+	"
+     | contentInternalString contentByteArray |
+
+	contentInternalString := String fromUtf8Bytes: self class fileName asFileEntry binaryContents.
+	contentByteArray := self class fileName asFileEntry binaryContents.
+
+	self assert: contentByteArray = (contentInternalString asUtf8Bytes: true)! !
+
+!UnicodeTest methodsFor: 'testing' stamp: 'jmv 5/26/2022 12:00:29'!
+test5ReadWriteUtf8
+	
+	"see UnicodeNotes.md"
+	
+     "
+	self new setUp test5ReadWriteUtf8
+	"
+     | content byteArray byteArray2 |
+
+	"read UTF8 Unicode file into internal string with NCRs"
+	"for NCR see http://en.wikipedia.org/wiki/Numeric_character_reference"
+	
+	byteArray := self class fileName asFileEntry binaryContents.
+	content := String fromUtf8Bytes: byteArray.
+	"NCRs were added to 'content' as needed"
+
+	"write internal string back to UTF8 file with NCRs converted back to UTF8 chars"
+	self class fileName2 asFileEntry forceWriteStreamDo: [ :stream |
+		stream binary.
+		stream nextPutAll: (content asUtf8Bytes: true).  "true means: convert NCRs back to UTF8"
+		].
+
+      "compare the two versions: what is in file 'fileName' with what is in file 'fileName2'"
+	byteArray := self class fileName asFileEntry binaryContents.
+	byteArray2 := self class fileName2 asFileEntry binaryContents.
+	self assert: byteArray = byteArray2! !
+
+!UnicodeTest class methodsFor: 'as yet unclassified' stamp: 'hjh 2/12/2013 19:25'!
+fileName
+	^'UTF8abc-test.txt'! !
+
+!UnicodeTest class methodsFor: 'as yet unclassified' stamp: 'hjh 2/12/2013 21:35'!
+fileName2
+	^'UTF8abc-test2.txt'! !
 
 !SHST80RangeTypeTest methodsFor: 'tests' stamp: 'HAW 10/5/2020 12:16:37'!
 test00MessagesForTestingAreImplemented
@@ -28629,62 +27542,1091 @@ testMetaclassCategoriesIncludesInstanceCreation
 	
 	self assert: Categorizer instanceCreation equals: categoriesPrompter categories second ! !
 
-!BecomeTestExperiment methodsFor: 'as yet unclassified' stamp: 'jmv 1/11/2019 12:21:36'!
-initialize
-	a _ 1.
-	b _ 2.! !
+!StrikeFontTest methodsFor: 'testing' stamp: 'jmv 6/11/2020 16:30:55'!
+testBaseAndDerivedFont
+	"
+	StrikeFontTest new testBaseAndDerivedFont
+	"
 
-!BecomeTestExperiment methodsFor: 'as yet unclassified' stamp: 'jmv 1/29/2019 10:59:12'!
-messStuffUp
-"In a Workspace
+	| base italic italicItalic boldItalic italicBold boldItalic2 underlined underlinedItalic italicUnderlined struckThrough1 struckThrough2 |
+	base _ FontFamily defaultFamilyPointSize: 14.
+	self assert: base isBaseFont.
+	italic _ base italic.
+	self deny: italic isBaseFont.
+	italicItalic _ italic italic.
+	self assert: italicItalic == italic.
+	boldItalic _ base bold italic.
+	self deny: boldItalic isBaseFont.
+	boldItalic2 _ base boldItalic.
+	italicBold _ italic bold.
+	self assert: boldItalic == italicBold.
+	self assert: boldItalic == boldItalic2.
+	underlined _ base underlined.
+	self deny: underlined isBaseFont.
+	underlinedItalic _ underlined italic.
+	italicUnderlined _ italic underlined.
+	self assert: underlinedItalic == italicUnderlined.
+	struckThrough1 _ base italic underlined bold struckThrough.
+	struckThrough2 _ base bold underlined italic struckThrough.
+	self assert: struckThrough1 == struckThrough2! !
 
-BecomeTestExperiment twoVars.
-e _ BecomeTestExperiment new.
-e messStuffUp.
+!StrikeFontTest methodsFor: 'testing' stamp: 'jmv 6/11/2020 16:25:48'!
+testBaseAndDerivedFontSanity
+	"
+	StrikeFontTest new testBaseAndDerivedFontSanity
+	"
 
-e _ nil. Smalltalk garbageCollect.
-BecomeTestExperiment allInstances
+	StrikeFont allInstances do: [ :f |
+		f isBaseFont 
+			ifTrue: [
+				self assert: (f instVarNamed: 'baseFont') isNil.
+				self assert: f baseFont == f.
+				self assert: (f instVarNamed: 'derivativeFonts') notNil ]
+			ifFalse: [
+				self assert: f baseFont notNil.
+				self assert: (f instVarNamed: 'derivativeFonts') isNil.
+				self assert: (f baseFont emphasized: f emphasis) == f ] ]! !
 
-Processor invalidMethodInStackDueToClass: BecomeTestExperiment
-"
+!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:59:20'!
+test16bpp
+	| form n read |
+	form _ JpegTest lenaColor64 asFormOfDepth: 16.
+	self assert: form nativeDepth = 16.
+	form writeJPEGfileNamed: 'test.jpg'.
+	read _ 'test.jpg' asFileEntry formContents.
+	self assert: read depth = 32.
 
-	BecomeTestExperiment threeVars. "New ivar c is added before a and be"
-	^a + b! !
+	n _ form boundingBox width * form boundingBox height * 3.
+	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
 
-!BecomeTestExperiment methodsFor: 'as yet unclassified' stamp: 'jmv 1/29/2019 10:59:16'!
-messStuffUpWBecome
-"In a Workspace
+!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:59:16'!
+test16bpp61
+	| form n read |
+	form _ (JpegTest lenaColor64 asFormOfDepth: 16) copy: (0@0 extent: 61@61).
+	self assert: form nativeDepth = 16.
+	form writeJPEGfileNamed: 'test.jpg'.
+	read _ 'test.jpg' asFileEntry formContents.
+	self assert: read depth = 32.
+	self assert: read extent = (61@61).
 
-BecomeTestExperiment twoVars.
-e _ BecomeTestExperiment new.
-e messStuffUpWBecome.
+	n _ form boundingBox width * form boundingBox height * 3.
+	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
 
-e _ nil. Smalltalk garbageCollect.
-BecomeTestExperiment allInstances
+!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:59:13'!
+test16bpp62
+	| form n read |
+	form _ (JpegTest lenaColor64 asFormOfDepth: 16) copy: (0@0 extent: 62@62).
+	self assert: form nativeDepth = 16.
+	form writeJPEGfileNamed: 'test.jpg'.
+	read _ 'test.jpg' asFileEntry formContents.
+	self assert: read depth = 32.
+	self assert: read extent = (62@62).
 
-Processor invalidMethodInStackDueToClass: BecomeTestExperiment
-"
+	n _ form boundingBox width * form boundingBox height * 3.
+	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
 
-	self becomeForward: {22}.
-	^a + b! !
+!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:59:10'!
+test16bpp63
+	| form n read |
+	form _ (JpegTest lenaColor64 asFormOfDepth: 16) copy: (0@0 extent: 63@63).
+	self assert: form nativeDepth = 16.
+	form writeJPEGfileNamed: 'test.jpg'.
+	read _ 'test.jpg' asFileEntry formContents.
+	self assert: read depth = 32.
+	self assert: read extent = (63@63).
 
-!BecomeTestExperiment class methodsFor: 'as yet unclassified' stamp: 'jmv 3/8/2019 11:37:17'!
-threeVars
+	n _ form boundingBox width * form boundingBox height * 3.
+	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
 
-	Object subclass: #BecomeTestExperiment
-		instanceVariableNames: 'c a b'
-		classVariableNames: ''
-		poolDictionaries: ''
-		category: 'BaseImageTests-Kernel'! !
+!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:59:07'!
+test16bppLE
+	| form n read |
+	form _ JpegTest lenaColor64 asFormOfDepth: -16.
+	self assert: form nativeDepth = -16.
+	form writeJPEGfileNamed: 'test.jpg'.
+	read _ 'test.jpg' asFileEntry formContents.
+	self assert: read depth = 32.
 
-!BecomeTestExperiment class methodsFor: 'as yet unclassified' stamp: 'jmv 3/8/2019 11:37:22'!
-twoVars
+	n _ form boundingBox width * form boundingBox height * 3.
+	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
 
-	Object subclass: #BecomeTestExperiment
-		instanceVariableNames: 'a b'
-		classVariableNames: ''
-		poolDictionaries: ''
-		category: 'BaseImageTests-Kernel'! !
+!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:59:04'!
+test16bppLE61
+	| form n read |
+	form _ (JpegTest lenaColor64 asFormOfDepth: -16) copy: (0@0 extent: 61@61).
+	self assert: form nativeDepth = -16.
+	form writeJPEGfileNamed: 'test.jpg'.
+	read _ 'test.jpg' asFileEntry formContents.
+	self assert: read depth = 32.
+	self assert: read extent = (61@61).
+
+	n _ form boundingBox width * form boundingBox height * 3.
+	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
+
+!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:59:00'!
+test16bppLE62
+	| form n read |
+	form _ (JpegTest lenaColor64 asFormOfDepth: -16) copy: (0@0 extent: 62@62).
+	self assert: form nativeDepth = -16.
+	form writeJPEGfileNamed: 'test.jpg'.
+	read _ 'test.jpg' asFileEntry formContents.
+	self assert: read depth = 32.
+	self assert: read extent = (62@62).
+
+	n _ form boundingBox width * form boundingBox height * 3.
+	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
+
+!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:58:57'!
+test16bppLE63
+	| form n read |
+	form _ (JpegTest lenaColor64 asFormOfDepth: -16) copy: (0@0 extent: 63@63).
+	self assert: form nativeDepth = -16.
+	form writeJPEGfileNamed: 'test.jpg'.
+	read _ 'test.jpg' asFileEntry formContents.
+	self assert: read depth = 32.
+	self assert: read extent = (63@63).
+
+	n _ form boundingBox width * form boundingBox height * 3.
+	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
+
+!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:58:53'!
+test32bpp
+	| form n read |
+	form _ JpegTest lenaColor64.
+	self assert: form depth = 32.
+	form writeJPEGfileNamed: 'test.jpg'.
+	read _ 'test.jpg' asFileEntry formContents.
+	self assert: read depth = 32.
+
+	n _ form boundingBox width * form boundingBox height * 3.
+	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
+
+!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:58:50'!
+test32bpp63
+	| form n read |
+	form _ JpegTest lenaColor64 copy: (0@0 extent: 63@63).
+	self assert: form depth = 32.
+	form writeJPEGfileNamed: 'test.jpg'.
+	read _ 'test.jpg' asFileEntry formContents.
+	self assert: read depth = 32.
+	self assert: read extent = (63@63).
+
+	n _ form boundingBox width * form boundingBox height * 3.
+	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
+
+!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:58:47'!
+test32bppLE63
+	| form n read |
+	form _ JpegTest lenaColor64 copy: (0@0 extent: 63@63).
+	self assert: form depth = 32.
+	form writeJPEGfileNamed: 'test.jpg'.
+	read _ 'test.jpg' asFileEntry formContents.
+	self assert: read depth = 32.
+	self assert: read extent = (63@63).
+
+	n _ form boundingBox width * form boundingBox height * 3.
+	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
+
+!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:58:44'!
+testBA16bpp
+	| form n read bytes |
+	form _ JpegTest lenaColor64 asFormOfDepth: 16.
+	self assert: form nativeDepth = 16.
+	bytes _ JPEGReadWriter2 new compress: form quality: -1 progressiveJPEG: false.
+	read _ Form extent: form extent depth: 16.
+	JPEGReadWriter2 new uncompress: bytes into: read.
+
+	n _ form boundingBox width * form boundingBox height * 3.
+	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
+
+!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:58:41'!
+testBA16bpp61
+	| form n read bytes |
+	form _ (JpegTest lenaColor64 asFormOfDepth: 16) copy: (0@0 extent: 61@61).
+	self assert: form nativeDepth = 16.
+	bytes _ JPEGReadWriter2 new compress: form quality: -1 progressiveJPEG: false.
+	read _ Form extent: form extent depth: 16.
+	JPEGReadWriter2 new uncompress: bytes into: read.
+
+	n _ form boundingBox width * form boundingBox height * 3.
+	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
+
+!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:58:37'!
+testBA16bpp62
+	| form n read bytes |
+	form _ (JpegTest lenaColor64 asFormOfDepth: 16) copy: (0@0 extent: 62@62).
+	self assert: form nativeDepth = 16.
+	bytes _ JPEGReadWriter2 new compress: form quality: -1 progressiveJPEG: false.
+	read _ Form extent: form extent depth: 16.
+	JPEGReadWriter2 new uncompress: bytes into: read.
+
+	n _ form boundingBox width * form boundingBox height * 3.
+	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
+
+!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:58:34'!
+testBA16bpp63
+	| form n read bytes |
+	form _ (JpegTest lenaColor64 asFormOfDepth: 16) copy: (0@0 extent: 63@63).
+	self assert: form nativeDepth = 16.
+	bytes _ JPEGReadWriter2 new compress: form quality: -1 progressiveJPEG: false.
+	read _ Form extent: form extent depth: 16.
+	JPEGReadWriter2 new uncompress: bytes into: read.
+
+	n _ form boundingBox width * form boundingBox height * 3.
+	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
+
+!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:58:31'!
+testBA16bppLE
+	| form n read bytes |
+	form _ JpegTest lenaColor64 asFormOfDepth: -16.
+	self assert: form nativeDepth = -16.
+	bytes _ JPEGReadWriter2 new compress: form quality: -1 progressiveJPEG: false.
+	read _ Form extent: form extent depth: 16.
+	JPEGReadWriter2 new uncompress: bytes into: read.
+
+	n _ form boundingBox width * form boundingBox height * 3.
+	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
+
+!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:58:28'!
+testBA16bppLE61
+	| form n read bytes |
+	form _ (JpegTest lenaColor64 asFormOfDepth: -16) copy: (0@0 extent: 61@61).
+	self assert: form nativeDepth = -16.
+	bytes _ JPEGReadWriter2 new compress: form quality: -1 progressiveJPEG: false.
+	read _ Form extent: form extent depth: 16.
+	JPEGReadWriter2 new uncompress: bytes into: read.
+
+	n _ form boundingBox width * form boundingBox height * 3.
+	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
+
+!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:58:25'!
+testBA16bppLE62
+	| form n read bytes |
+	form _ (JpegTest lenaColor64 asFormOfDepth: -16) copy: (0@0 extent: 62@62).
+	self assert: form nativeDepth = -16.
+	bytes _ JPEGReadWriter2 new compress: form quality: -1 progressiveJPEG: false.
+	read _ Form extent: form extent depth: 16.
+	JPEGReadWriter2 new uncompress: bytes into: read.
+
+	n _ form boundingBox width * form boundingBox height * 3.
+	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
+
+!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:58:20'!
+testBA16bppLE63
+	| form n read bytes |
+	form _ (JpegTest lenaColor64 asFormOfDepth: -16) copy: (0@0 extent: 63@63).
+	self assert: form nativeDepth = -16.
+	bytes _ JPEGReadWriter2 new compress: form quality: -1 progressiveJPEG: false.
+	read _ Form extent: form extent depth: 16.
+	JPEGReadWriter2 new uncompress: bytes into: read.
+
+	n _ form boundingBox width * form boundingBox height * 3.
+	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
+
+!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:58:16'!
+testBA32bpp
+	| form n read bytes |
+	form _ JpegTest lenaColor64.
+	self assert: form depth = 32.
+	bytes _ JPEGReadWriter2 new compress: form quality: -1 progressiveJPEG: false.
+	read _ JPEGReadWriter2 new uncompress: bytes into: nil.
+	self assert: read depth = 32.
+
+	n _ form boundingBox width * form boundingBox height * 3.
+	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
+
+!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:58:07'!
+testBA32bpp63
+	| form n read bytes |
+	form _ JpegTest lenaColor64 copy: (0@0 extent: 63@63).
+	self assert: form depth = 32.
+	bytes _ JPEGReadWriter2 new compress: form quality: -1 progressiveJPEG: false.
+	read _ JPEGReadWriter2 new uncompress: bytes into: nil.
+	self assert: read depth = 32.
+	self assert: read extent = (63@63).
+
+	n _ form boundingBox width * form boundingBox height * 3.
+	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
+
+!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:58:03'!
+testGray
+	| form n read |
+	form _ JpegTest lenaColor64 asGrayForm.
+	self assert: form nativeDepth = -8.
+	form writeJPEGfileNamed: 'test.jpg'.
+	read _ 'test.jpg' asFileEntry formContents.
+	self assert: read nativeDepth = -8.
+
+	n _ form boundingBox width * form boundingBox height.
+	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
+
+!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:58:01'!
+testGray61
+	| form n read |
+	form _ JpegTest lenaColor64 asGrayForm copy: (0@0 extent: 61@61).
+	self assert: form nativeDepth = -8.
+	form writeJPEGfileNamed: 'test.jpg'.
+	read _ 'test.jpg' asFileEntry formContents.
+	self assert: read nativeDepth = -8.
+	self assert: read extent = (61@61).
+
+	n _ form boundingBox width * form boundingBox height.
+	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
+
+!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:57:57'!
+testGray62
+	| form n read |
+	form _ JpegTest lenaColor64 asGrayForm copy: (0@0 extent: 62@62).
+	self assert: form nativeDepth = -8.
+	form writeJPEGfileNamed: 'test.jpg'.
+	read _ 'test.jpg' asFileEntry formContents.
+	self assert: read nativeDepth = -8.
+	self assert: read extent = (62@62).
+
+	n _ form boundingBox width * form boundingBox height.
+	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
+
+!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:57:54'!
+testGray63
+	| form n read |
+	form _ JpegTest lenaColor64 asGrayForm copy: (0@0 extent: 63@63).
+	self assert: form nativeDepth = -8.
+	form writeJPEGfileNamed: 'test.jpg'.
+	read _ 'test.jpg' asFileEntry formContents.
+	self assert: read nativeDepth = -8.
+	self assert: read extent = (63@63).
+
+	n _ form boundingBox width * form boundingBox height.
+	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
+
+!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:57:48'!
+testGrayBA
+	| form n read bytes |
+	form _ JpegTest lenaColor64 asGrayForm.
+	self assert: form nativeDepth = -8.
+	bytes _ JPEGReadWriter2 new compress: form quality: -1 progressiveJPEG: false.
+	read _ JPEGReadWriter2 new uncompress: bytes into: nil.
+	self assert: read nativeDepth = -8.
+
+	n _ form boundingBox width * form boundingBox height.
+	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
+
+!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:57:44'!
+testGrayBA61
+	| form n read bytes |
+	form _ JpegTest lenaColor64 asGrayForm copy: (0@0 extent: 61@61).
+	self assert: form nativeDepth = -8.
+	bytes _ JPEGReadWriter2 new compress: form quality: -1 progressiveJPEG: false.
+	read _ JPEGReadWriter2 new uncompress: bytes into: nil.
+	self assert: read nativeDepth = -8.
+	self assert: read extent = (61@61).
+
+	n _ form boundingBox width * form boundingBox height.
+	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
+
+!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:57:40'!
+testGrayBA62
+	| form n read bytes |
+	form _ JpegTest lenaColor64 asGrayForm copy: (0@0 extent: 62@62).
+	self assert: form nativeDepth = -8.
+	bytes _ JPEGReadWriter2 new compress: form quality: -1 progressiveJPEG: false.
+	read _ JPEGReadWriter2 new uncompress: bytes into: nil.
+	self assert: read nativeDepth = -8.
+	self assert: read extent = (62@62).
+
+	n _ form boundingBox width * form boundingBox height.
+	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
+
+!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:57:35'!
+testGrayBA63
+	| form n read bytes |
+	form _ JpegTest lenaColor64 asGrayForm copy: (0@0 extent: 63@63).
+	self assert: form nativeDepth = -8.
+	bytes _ JPEGReadWriter2 new compress: form quality: -1 progressiveJPEG: false.
+	read _ JPEGReadWriter2 new uncompress: bytes into: nil.
+	self assert: read nativeDepth = -8.
+	self assert: read extent = (63@63).
+
+	n _ form boundingBox width * form boundingBox height.
+	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
+
+!JpegTest class methodsFor: 'test examples' stamp: 'jmv 2/21/2019 16:55:22'!
+lenaColor64
+	"
+	('LenaColor64.bmp' asFileEntry readStreamDo: [ :strm | strm binary. Base64MimeConverter mimeEncode: strm ]) upToEnd
+	JpegTest lenaColor64 display
+	"
+	^Form fromBinaryStream:
+		'Qk02MAAAAAAAADYAAAAoAAAAQAAAAEAAAAABABgAAAAAAAAwAADwCgAA8AoAAAAAAAAAAAAA
+QWCvUXXHUHfGRGi/OTZkIB8tHx0qHx0oISArHh4pIyEtIR8vIB4qHx0pJyQxJB8vNCo9TjpI
+V0NOHR0rHh4qHR4qHR0xISlbJTx/Kzl7IidFMUSPNU6lOlOsPVWtPlaxQFm3Qly4QFu4QFq4
+PVayOlWvP1myRWC3RmO3Um6/XnnJZIHNhJjbmKXhnqvmo67nmKXcKC9TLzlhKzJaLC5RJihG
+ISNAR2ioYJbdQmaxJSxTHiA5IiNCKCtPLC1RJyZDQl+uUXTETnTDRmrAOjtrIyEwIB4qIB4q
+JiQyJCIrJCIvJSExIB4qHRwoJyQyMSg1XkZSUkJUT0FmHRwqHh4uHR0tHR4sHyE6JjJzLD+K
+Jjd6JSlIN06hOlOsPlSsP1a0Qlu4Q1y4Pli3PVe1P1q0QVuzQ1y1R2O6UGrAV3PEZH/OcYrR
+h53dm6rln63moq/naG+gLDZdLzhkJitSJCVGHh80HR4wSG+vSoDJY5TdSnrJISZTJCVEJSdJ
+KzBZKy5VR2S0UHPFUnbIQ2a7MzZzJyM2Hx0qIB4oJCAtJiMvJSItISAuHhwoJiQwNCw4UzxK
+RTQ+JiEsLiY4KSU1HB4uHh8tHh4uHh4wHyVOLT6HL0KLKDJqLzluOVGnO1CpPle0QFq1Q1y5
+OlSxPVexP1m0Q164SWO7SmW7U27AVnPDbIXPfJPWkaXknKvloa7po7HpOUh1KzJVIyhKIidK
+KCtLKS1MMTlgQl6cRXK2VIHEcajtNFKeJStTIihWIyhQMDRgSWm8UnbJVXrKQ2a6Mjl1JiQ6
+IB8pJCM0Hx0pJCAuIyEsIyIwJiMyJyMwJyEyRDVALCg5STlGLCQ2X01WRT5PHR8zHyA0HiAx
+Hx43KTd1L0OTL0SWKSlTOE2gPlSrP1ezP1q1QVq1NlOtPFiyQFu1RF63SmW7Tmq/VnHBX3vJ
+cYrRgZfZk6blorHvo7Ltoa3mMUJ6LDRaMTplOkdyQU99RFJ/R1iHR2OiOlaaSW2vfrHuS37L
+Jzh5JitaJjBiJipRTGy/U3fJUXbHO1+0QkZ1ISEwHx4pHhwnJB8vKCUwIB4rIB8qIh8qJSIu
+MiY2Oy88WkRLXkhQSTdEPTU/Hh4oHiI2HRs0HCA2HR0yICRPLkCHNUmbJCxfNkOHPlOrP1ay
+QFq2P1e0O1WwO1ayQFu0RWC4Sma9U27CXHbHZYDMeZPXiZ7glqjnna7robDrY2ubRl6ZSluH
+SluKRlmISluKSVmGR1aCQVaPOFafRnO+fq7vZZvkMEqTJzd2KzRnISlcTGy+U3bGUHG+RmGx
+Rj9tISArHx8pIyEuJiMzMi06KSY2JCEuIyEvIB0pLyc0HxonSjdEZU9fU0RUUkZUUktfKylM
+NDtvJyM5HR4zHyE7KDh8M0iaLjt7LDZtOE+mPlWuP1i1PFaxOlOsPli0RV22SmO7TGi9Um7C
+X3nJaobRgJjbj6Tjmazrna/qnq7oSk9zR1yaU2maTF6NS16NSFmJRlmHRFOAQVOGUnm/canx
+d6rsc6frPF6sJjt+JjNqLTt2TW7AVHnNVHrMQ2S6MDdnIiEuIR4rIR8rIiEqRC9BJyQyIB0n
+ISAuIB4pLSk2SztJPCo5YEtUVU1lfWiCV1BgFhgoIiNAHB4yICE1ICE1KjFcMUaXKTqAKS1b
+OE6kPFOuPVWwP1ewQFaxQ1y2SGC4S2S7VW/CWHPGZ4LRc47XhZ3gkKfnobDtoLDoprfvIB80
+Q12fTGOZSl6RSV2RRViIRViIRFKAO06BUHK0gLTweqvvfq/uToDMLECBKDNsKjp1Tmy9VnvP
+UnbKP2O4SUp6HiApIiArHx0pICAqNCgyLSo7KCY0JCAuNC4+MSEzTTdHSDZGY0taaFFkGhoq
+X1x1HBwpIydFHhwvHh4xHyE0HiE9KjmBJzZ4JyhLMkiePVOrP1WxPVWxPFavQ123R2C3TGa9
+V3LEWnfIZ4POdI7WhJ/kkqnqobLsprXsbHqpICE4Q1qZSV+VSl6VR1ySSFuLR1eGQlF/PEpz
+P1iUe6nsa6Dpg7Xwap7iME+VKDNmKTZuTWu9UnbIVXfKPmK4Sk2LExgkISAnKCc3Hx8nJB8u
+PS9BJCAuOC8/LSQxOCs7SzZFQjBAZk9bcV1uQzxQT1FtHR8kIyRBHyAzHh0vHyA2ICI3LDdx
+KzZyKi1KMkSYPFGoPFKsP1WsQVmxQ1uzSWK6T2u+VnLCYn7NaofTc5LcgqDljqfon7HtpbLn
+OTtaISM7Lz9vS1+TTWGYSl+URliKQlOEQ1ODRVOAN0l+QmatW4fNfq/sdafoUYDHJSxfJC1i
+S2m6VXfLTXLGQl63bG2TJCE5JCExJCEwIB8wJyMzMCc4IB4rJiIuSThIMSQ0QzFAWURVZlNg
+RTZHYl2DPTpLHR8mKCpHHB4uICAxIiM5Jic+KTFjIihdMDFZO0yYNkmYP1atQliuQViuRl20
+UGq/Vm/BYnzLY3/KaIjTdZXehKPoj6rpoLLsWl+DHR83IyZDPUh2S2CTS2CWR12SSFmKRliK
+RlWFQk95QE13Mk6RPF2jfq/ue6zrZ5fYLUJ7JytTT23AUXLGTnLIQV61XWCRPEBpISErKykz
+LSg8OzBJOi9DKiMuMio+SjtLMCIyRzRDalJgaFJZUVFwOi1FKChFHR4pJShFHRwuHh4wHyEz
+Hh40JipRIiNBLTNiM0ONNkePPlGfQ1muQVesQ1qwT2a4WHLBZH/Jb4vTdJLYfZvgh6LkkKfj
+eoCjIyc+HR46JCZIR1F3RVuTSl+SSVyPSFqNRFKCRVGAP0tzNj9pMUqHLkSBa5rcd6rqcaHh
+TXK1ISE8UG3AU3LHVnTFU23AKipTQDxVIB8pJyQyLyU3KiQ0NCw/KyQyVkBQUz9NVkROSzlH
+SjNAUz1STUJZOzFIICA+Hx8tISQ+Hx8wHx8zHh4wHyA1HyA/IyU+KC9gNkWMOkuYPE6bP1Sk
+RFmsRlutR12uVW68cIjOe5XWgZvdh5/fi5/ZR01qIiE6IylIIyRFJSlNPkBhP1WTSlyORFeM
+P058OUp/Mj5rLDVfKTBWMUBuKjNdV3m7b6TreKbnZJPXPlqZUG7AVHPFUHTHQFqqYWeUKiFD
+JydEKSM1KSU4KyY0Ix8sVz1KXURPJyExb1RbUT1LZExRQz1RXlJrHx4rISE6Hx8yISQ7Hx8w
+HR4wHh4xICE2HyA8HSA6KTJkNkWTOEmYPU+fPFKdSF2vT2OySV2pUmaxaoXEf5fVd4i5TVZ5
+ISEuHyAzISM5ICVEJihKISZIKypEQFKQOUl7MUF0M0B0LDloMTtmND9pO0VvQEhvQklrZYjI
+canvb6Lmc6PkYYzTUW/BVXbIT3PIPFquIytXTERnNjlRKSE4KCQzKSM0IRwocVFPPTA+QTA/
+YUlRY0tdW1ByST1UHR4pHR4rICI3ISI2IiM6Hh0wHh4wHh40ICI5ICI9HiJDICRGICZTNT16
+N0aCOEqLTFusVmm7WGy7XG29XmqlMjdgHxw1ISAzIyI5ICE1IiM6LzVWJilLJCdGIyA9Qlyd
+MD5qNkV3QEt/RlWDSlmFSluISlqFRlN6QUpvYHyzhLXyea3sdqfpcaLoUW/AVHbIUXTGPVqs
+KC1gKipSLClGNi5GJB8tKCExKSEwc1RVRzRCZEhQWUJMX1J6KClaLjBUICAyIiAxIB8xICE2
+IiE4Hx40Hh8xJCY8IyQ8HiA6HyJGHyJLJzRxNEWZPVGmQVeuTGK3X3PGXG/AXnC/UGGqLThw
+HR00IB8xHx83ICA5IiI5MTZbJytNHiE8IyM7WXCvRlmOTWKVTWGQT2GRS1+QT2GQTV2HR1WB
+TFZ9T2WWksD3fLHvfrHwg7DuTm2/VHjMVHjMPVywIydaODZdNTBTLCU3JCAwLCcyKSMwmXJo
+VT5CW0JSSjZGRj5iPT1me4rgISdKHx8uHyAxHB0xHh0zICEyHyA4IyQ+ICM+JCZGIipdLjl7
+MkKQOEyiQVWsRVqxSFyzTWK4VGq/VWy/T2OyQFOfIB42Hh4wHh8zHyA4HR41KzFSJypOJitF
+IiM9W3GvSV6UUGicUGaYTGGUU2eXUGOUTFyKTVuIRlR+QVSBj7v2irv3h7TxhLDuUG/DVXnO
+VnjNS2O2Ky9hPDtlOTxvKyg8NTBHOCo4KiMxVjpETztFRzlJUjVBR0BaKz6AYmGeSGGcHCA9
+HB4uHx8yHR4yHx82IyM+HyE6KClOIidQKzd7LTyIN0eaOU2oQFSsQFaxOk+pNUmfNkqjO0ul
+QlSmR1ajLDl3Hh8xHBwxISE6HSA6JitHLjJVICJAJSZAVmypSWKgT2idTmWYTWScT2WbTmKS
+TV2PSFqMR1aIRliHgrPzirn2irfxjLfyVXXGV3nMUXfLQletQUB0JylWS0iDMSxONSw9JiAt
+OCs8SztFQjBAUz5MQzlKSTlKPlWjcX2zOUp6U1mGISExHx4wHyA4Hh80JilDHyA3JypPJzBo
+LUGQM0WaOEynPlOvQlu3OVKxM0utN024Tlq/cnrQcXzPSVWrQFWdHyVJHR4xHB0wHyE8HCE6
+JSZLGx06JyhDR16aQ2GlTmmkTWScUGaeTGKYUWSXSluRTV6SSluOSV6TcqbthbTzgrHvh7Lv
+UnPFUHPGUnfMPlyxJy9oRkJ4ODpyNy5OOi0+JyExLCczQDE+RDFBQzFDSzxLTjlHREB0hIGs
+d32sKCpaNTZgHhwxIiRHISE4JidCHh41LjBbKjZ8N0mhNkqkPVKvQVezQFayLj+NLDiALz2O
+LjuGJTaAP0upNEOXN0iQMkGGHh8yICA0HR02HSA8ISRGHiI7NTpZOkyAQ2CoTmilTmWfTGGZ
+T2KXTF6SSl2TSV+VS12TRViMYJThgbLwfq3sfq/uTm7DVHTKVXnNP12wJy1iJypcQ0F/PjVY
+Tz1NKCQyKyMzLCQzNys7Pi8+XUJYRkdqHR0uODhVWVyDTmKcR1GHHitRJiRBHyA2JydCGxw1
+LTJlLT2MOEukPE6rPlGyPlS0Q1i1Rly5SV22RluxT2O6WW/Ic4zceILPU2W1RU6aIChMGxwx
+HB0yJCZHIyZGISM+OT5lPkRzRWClTWajUGafT2OcTmCYTGCYUGKYSl6WR1uTRFaMVonVc6fu
+fa3udqnqTm3DUXLIU3bPRF+zJy1gJitfNjdyOjNeLig6PzJCJB4tQS9BUTlIaE1XWEBPLic5
+IixTKSc2NzZMWl6COURyTWGXHhwuHiAzIB83Hxw0KDBsMECSNEiiOUuoQlW1QVe2SV+9UGXA
+VGrDUGW7SmC0Vmq8d4TQiZnaWW68RFSkMTqAHh80HR4xJidLHB4+IyQ/Uld+VVuFP1iaTWSg
+TGWhTmOeTmObSmCYTmGZS1+XTF6TRFeHVoTOYZnleq3ve6rtTm7DUnTITnPIPFiuLCpkKy1l
+Nzt2PTVjNSo8RTlTSjlJNSo5RS45WUNUUUNHHx4uHjFIKyYzMDBWLChEKTFPSF2ZbXSVIR81
+Hx8yIx02MjpyKzyLOkymPU+tQ1e2SF26TmPCUGXCUmi/S2G2OU+kOk6nOEqYZXK8W3G9RFem
+OEeVISNGHx8yISNAHR8+ISM4U1qJQkZrO0uCRmCgT2ikTWOfUWWcSl6WSV2TS16WSluSQ1eI
+T3a+X5fmZ5/oeqvtUHDGUnXJUnbON1OoLC9ePjx3NjduNS5hNyk8SzdLMyQzNy9AVz1JWkRP
+JiEzHx4uIyMzHiIvMD+GJylHIyMxVGWNQVOEPklzHh8wJCE5IildLD2JN0mkQlSxRFm4SF69
+TWO/UGfBUmm/PVOpPFGoNkqgNEimUmnCeI3TRlurPU6eKTV0Hh4zIiQ8ICFBIyQ3V2OYNTdX
+MzlbQFmaUWilT2aiUGWdTGGaSl6VSF6XTV+VSluTSmahYJfkXpXjbaHnUW/CTnHFTnHJN1Kr
+JipdODtvU015SkRwPzVLRDJRNSo3TjpGYEJKSTpWIBwtIB8rIyEvLzhlLzZqSkmDKSVIGh8o
+MUiDh5O/IiVHISM2IydWMD+OOEukP1KvTWPBUWfGUmnDV27HVWvDP1awNkmgNkuiOU+nY3LH
+sLnqTGKxQ1WlL0GNHiFBICA7JCdIHiA5Y3GkIyQ/ISI8QFeWT2mnTWemSmOgSmGcT2SfSl+Y
+SFqQRlmPSFuPXo3VW5XkXpfjUHHFU3XITHHHOFOuJShaMDRlNDV4U0+FSDxLQzpUPTFEKx8s
+SzdDNCczIx0vHh8rIB0rLCs/JyQ7OztoPUuHHR0sKjViZnKpcXuiICAwJCpVKz2OPU+pRVi0
+S1++VGrIYXfQYXjQXHPKSWC7QFSsOU2mPVOugI3WipPOUGW0SFirNkeUJStcHR03JylJLS5J
+VmWbHiA1IiM3QFCISWGbTmqrUWilTWSgTWKeTF+YTF6WS12URVaLUm6rXpbjWpPkT3HFU3bL
+UHTJOlWrJy5gJy5mND+CRUB/RDhSLiM2KyU2PS9BPik7QDJFHh0qHh8sIyEvHRwsJiQxOj1q
+ISY6Hx0uIx4vPUuHaYK/SEp7ISRRMEGVOU2nSFu4U2fCXHLMaXvRZXzOX3XJTWS7Sl62PlOt
+RViwmZ3ggpLRV2q5SFisOEmaJzBwIiI/IiFBQEFiTFKDIiE1IiE2NT5kR1qSUWqnTmaiTGOf
+SmGcS2CbTWGZS1+VSVuSRFWKV4HIXJblUXPIU3nPVHjPOlaqKC1hJjBpKjZ6VFCFX1V2SDln
+MSU6JSExSDpLRjFELCE1JCIuOys6V0FNPjRJMTBLJSM3Hx4vHx4wMTReU2OghJPDKzZnMUGN
+P1KnSV21XXDHZXjOZ3nLZ3vMZXjIU2e7RlmvPE+rRVeyp6rlgI/SVmm2QFKnOEaXKDJzHx8/
+IyFCPD9lPUFqIiE0IiE1LjBKQ1aNUmmnU2qmTWSjS2CbTmSgTWCaSVySTF2VR1iMSFyQVoTK
+TXHGVnrRUnjPPVmsKjBjKDJqLTyANkGMUlaJQkJoNStMJyM5JyIwVT5KVj5LKyc0NSs4Pi8+
+YUdWMCtBHx0tHx8vIB8xHh4uQEqCa4LAe43FKDmCPEueSl6yU2S5UmW5UWC2Wmq1W27AW2u5
+RFSmPU6oT2K8qq7pdILATF6rO0iYLDZ4Ji9nHx8+JSVCPkRpOTxgISA0IiE1Hx4zRlaJTmSf
+T2elTWWjTmWiTGOfTWKdTWScTWKXR1uPR1eKTWKUUHTKU3nPT3LHN1GlJixcKjRtKTZ0PEyJ
+KipRNDVRV1eYaHeoNS5ZNTFBNCY5MCc4LyMzUztJQzJCJSAzICAvIR4vICAxHx8wJzBXWmeb
+cX+3eIG3NkWTQlCgR1epNUKMPkmNWF6eX2GnUVyyOUqaOk2kUGW7rbLtSVSQR1CUU1COJC1g
+HiNKHh46JSQ/SUptNzlfIiA2Hx8wJSU5PENuRliPVGupUmmnTmWhUGeiT2SgS2KeUGWfTF+a
+S12SR1iMTnLIUnfKS23BNU6fJSdTJSxhJzJxKjZ2LjVvJi9kX2+pQ2GxQlekJy9XJCMtMCY5
+Lik7QDE+Nig8IB4rHBwqOzRDHxwuICMyIyM0MDphZHCegY2+cYC3NUWNLDNfKCtUKypLRkNd
+l5nOOUOMMD+KOUugUWi9mKXhM0KCKCpGNzZYQUqIHR83HB4zJyVAT1FyJiVHJiY8Hx4xIiI2
+LC1KRliST2ikTmelUGWgTGShTWOjTWSjTmOgTWSgS2CVSVuQT3HEU3fMTG7CNU6fKCpUKC1f
+KTJqKzZ1Kjd2JzRyVl6RQFOdRV6uNUN8MTJsKCQwPCtHOCo+Tz1SJCAvMio7HhwvMSo3RTdH
+HRwwKSc+TF6ZXHi4iZK+anOxIzBoIiNEHR83JCQ6NzdVJixUOU2hPFCqU2zEgJDabYDEIidS
+ISA5KitIHiA5HyA6IiI3Q0ZxJydHKSc/IB8zICA0IyA1Q1SLSl6WT2enTmalS2SjTGWlSWOi
+S2SfSmObTGObS2CWTnDEUnTIUHXKNk2dKSpUJSpYKTNqKDNxJzNyKjZ2KjiANUONP1ahOUeK
+LzJTMD9+ICY/PjFDMyY3RDJEICAtISAxLyU5Hx8uMSg7KiU9KjBRZ3WxdIW9cYG0aHqxOkyM
+NkWPOkmOQUyYKzV7LTd5S2K5WnPLdYvaeIrXW3HBMT55JSxeKjZyJSdLJCE5Sk16JiZBJyY7
+IB8zIiE0IiE1PkZxR1WITmmoTmenUGimTWWjS2OeUGijTWWfTWWaTmKYUXDCUHPGTm/EM0qX
+KClSJipbKzZsKTRzKjRyKjd4Lj2BNkaNMUCPMkaGKjJhdXurNEOCLytLLSY6SDVEIiAvJSI4
+JSQ1Hh8vLio5LSY8KCU4NkR+UGmmbH+3Z3WshpK5T1+lOEWCPEWBRlabZnjLZn7UZ3/UeI/b
+d43ZhJjiepLhVmiyLDJqHh02JyY/VFmIHB00IiE2IiI3Hx8xIiA0MDBMQVCFT2ahT2ioUWql
+T2afT2efUmqkUWWdT2WcUWaZUXLGUXPDUHHENUqWKChUJipZKzRsKjVxLDZ3LDh6Lz2BNEOR
+MEOWMUaLMEN5MD+JSkiAQ0J6JiQ2Nis7JCAwKSQ3LCU6IB4vIhwtLSQ5JiExIyQtNj95XW6s
+X3azgY29bnynZXSyWmy7XXDBZnnMaYDUdYvbh5vkh5njjJzil6fpj53hNEaQIiU9JCQ8TlWD
+HyA3IiI3JiQ4ISE0IB4yJSI1Q1CESFmRVG6rUmukU2ujUmylVGujUmecTmGTTFuJTnDET3HE
+T2/EOE2aKCZTJitcJzBqKDNvJzJxKTN1NEGKMj2FNEOQMkCDUXK4M0KGP0mMRE+XMjZ4KiM8
+IB8tLSU6JyM1IB8wJCM2JCAxRTdMQThMJzFOUGGeZoC8cYO3ZGqThI+9aHeuWGy1X3XGaH/S
+fpLcip3jjaDklaPmmKbnfI7WLzh3ISA0KihEU1WFGhwvHyA1IyI2ICA0Hx8zIiE0OD9kSFqM
+UWupU2ulU2idUGWbTmGWTl+PU2OWUF+STnDEUXTIS2zAN0yZJiNQKSxdLjdwJDFtLTZyKjV1
+MTl9Lz2GLzyDSV+cYYjXLzt7NkOFPkuSLjx9Ky1ZKCpJKSM5ISAwISAxLig9KyM4HR8vPTBB
+ISAzKDFUS1mYYHe2b2yLc3+vbnyxaHWlX3CyZHfId4vWgpXbjJ7jlKXnl6jrX3TCJCpaIyM4
+SEZgREZsHh4xHh4yJiU4JSQ4Hh0vKig8LCk/RVSHTmGWUGOcUGCWUWObUWWdU2iiVWqlV2ul
+UHHGUnTISWrANEmXJidKIyZWKDBnKzRvJzJsJjFvLzt9MT6FMD19XXCtb53pNU6SPEiEOUSF
+PkaNOkydMTVrLy1RJiQ3Kyc6MSpBKSU2Myg7PjFEICAxISA1LCtESEl2fICVbX+3doS0Y3Kn
+dICxYnKqbH29gZTajp3hipfbhJXaRFimJCpNLy5MR0ZnPEV2ICAvHBsuIyI2JCI2Hh0wISAx
+JSIzQElyRlJ8UWWbV22pVm+rV22nUmekVW2qUmekT3HDUXPGSGm/N02ZJiZLKS5ZKjJoKTRu
+JTFuJDFuKzl8Kzh5LTp2dozFWoXNPVCXOkeJQEiGPEaDVU18S06LPD1yNjBYNi1JKyQ7IiAw
+NCpDIh40JiI6Jh81Mig8U0BUW1V0bXigdoe8c4O1bnyxcH+zcH+veYe3hJDQhJPZfI3PNUKL
+LS1cPDtZT09zQFSYHh0xHB0tIyM2ISE1Hx8yIyMzJCI2MC9LPkhzUGKZWHCrWG+pVm6pVGqn
+WW+oVGqlT3HDTHHERWe8MEWQJSZLKCtcJzBlKjRtKjRuKTRwKjl7KTd2P1mNaazyVXe+SmCi
+O0uMPkuMOUSFRE2KQ0uPPkabMDJgLSlJKyE3KCM3KCU7HR0tMyxKKyk+QTFKLyU8QjdKVlV/
+d4i9fpLFdYW1dYOzan2wc4Cxfou5c4G2XGyrKCxVKipJSEZkSk14XHa+UG6uISlMHx8yIyI2
+Hx4yHyAxIyE0JyI2P0h0S1iOWHCrVWymVGqnVW2pVGmjUGajTXDDT3DCR2m9L0SNJyhMJSpa
+KjNqJzJrKzVwLDdyJzV0KjVsZ3y6SX3lSGq7O1WmMzx5QlKXPU2UPkqJQ06WMjxzQk+SOkaO
+PT9yMCg/MytDIyI1OzFDNClJNi1DPDBHKSU6SkFOOk6Lc4G1c4a8doW3eIe2dYa2eYi2e4y6
+iZa7XG6gPT5lPTpYWWSbTW6+VXO+Y3m/KjRWISA0ISE1ICAzISAyJCI0OTxeTVyXU2elV26p
+V2unVGqmV2ulUmajTnHHTm/ESWq+L0SOKitRJy1cJy9iKjNvKzRuLDd0KjRyKjRshrPtYnzN
+PlKsNEqMMj+CMjx4PE+WOUaIPEiMQU+VPk6PQlOcQESCQ0F8QDZXPTNWKiU8STdMRjZPT0Fe
+MixBHiAyIx4wUlqQa3SrboXBh5bFhJLBe4y8gpHAi5fCj5jGjZjFbnSiMzdjLzVhO0l/T2Sh
+Zn/CLTZXHx4yIiEzIB4xJiM4JiM3TFqXTV2bVWuoU2ilU2mlWWylUWWgT3LFT3HESWm/MkOM
+JidNJyxaKzJlLjdxKTRtKTVxKjZ1MT5yUZPvZpHWOFWhO1ipOUWIOEF+OkV/O06TQVCXPEeK
+QlGSRVScS1WdU1SaRkZ5QThlPTBSWVl4Yk1mSTtYQDRILCY+ISA9KyY+U1qDXm+tg5XHhpfJ
+gI+/g5O/i5nEj5zHk5/MkpzJjZnQWWWXMDp0KTFYOkZ8Zn25P0RiISAzHx4xHx8zICAyO0Fq
+SlqbVGmmUWipUWenUWWkT2KfTW/DTm/DQ2a8LkCIJylQJCpaKDFmKjNsLThtKTVwKTVyUVuO
+cI7XPWzRQF+sNUykN0OFQE+aRk6NNkKFQ1ekRVSgRFGVRVaZTFqfSVeUUVSNVFCHSE6HY2uY
+VleCTVaFWmepXWajZG2tS1CDUlWAYGukb4G9d4u9iZXGhpTCipbCjprFkJ7KlKDNlqLOlZ/I
+mKbPVGWlND5vPUVweIvBHB8xHx4yIiEyJSQ5Kic/SluZT2CfUminUWepTGKgUGakS23BTGy/
+RGa6MUGLJyhQJy5fLDNqLDZwKDNqKDVxJjRwPD95WJPYP1e0PFm6MkaUKzl0PEmMQE+bQE6K
+O0eKQVakQFKfSFObTV+ZUWWrUGSrYGq0am+yamukYHO8VmapX3SuXm+0XGyyXm6zZ3CpYXCu
+XGmhaoCxdYbEhZPIfZPJhJG/jJjDkZzFk5/LlZ/In6fOiZTBXm6cT2GgaHOhQlByIR8yICAy
+ICAzJCE1QENtS1ycVGilUmioU2qqUWWmUHDETnDCRWS4MUKHJyhQKC5fJzJrKDJuKDNsJjJv
+Kzh5KDBqUpXuRGexN0+VMj+CMDl1NkOHNUGERFalVGCnO0yTUGGsS1mgUF+jWmasVGGjYnfB
+YW6wZHSyYHK4ZG+yXHGwYHazaHizZ3i3doO+a3uybXywdH60cXuteZHDiY6/lKLMiZjHiJbD
+jZrEk57Ik5zIoaTNany1X2ylU2GWXG2eIB8xISAzHx8wISA0LCpETFuXUV+aUmmnUWenUmeo
+TG7CT3LHRme6L0CFJidPJSteKjJqKjVvJzFqKDRzJzR5KjVwUIjkN1esLj+EMDuAND19OEaE
+O0aQPEmIRVunQVOgQlaVU2WvTF6dVWOqY3S5ZHW0aHq6XHO6bX+9anq9XXG2an+/aX3Fc4O/
+doW6gou9cH61aXu3c36ucXqncoCwe42/hJHDk6TPkqLQj5rGkJzJlp/KkaHNY3WtiZfCmqLN
+IyQ7ISEzICAyIB8yJSI2ODldTV6fTmKfUmmsUWepS23BUHHER2e5MECFJidPJitdKzRqLTdx
+KTNtKTVyKjd5LTp3aJbiN0+iLDh2Kzd5KzdxMj18NkKJOEWLPk2PSF2pR1mhSVyeUmmyXXKx
+Wm+3b3a0aHq2ZnK4ZHe/eITJYHy9eYjAbYTDaX65g4zCfYzAgou5hY3Ag5C+h466gomxlJTA
+cYK+g5jOk5jOkqPQkaDJk5/Im6TOkZ7Jm6PKr6/VWWOIIyM1HR4wICAyIyE1KCc+R1CGTF2c
+UmmnT2WoSWm7Tm7AQ2G1LTuAKChPKS9dJjBoMDt2LDhzLjp5Kzl+Lj6CaHq7NkeRLDRsLjqA
+NEB/OESKNUWDPUuWMkCIOUiKUWWvS12nU2uvZna5aX2/bn+5cYXIg5LMbnq0donGfIzFe43H
+jJbJpKXNdIe5eI27jZnJmKTRlJ/Ll5vEoqLHdoW5QWS8UmaxcoS9hpvJl6TNmqnSmKPPmKXQ
+n6nPqK7TaGqFIiI0JCM1ISAzIB8zJSM3LCpFTF2cSVuXUGeoS2u8SGi6P1yuLz1/JiZIJChU
+KTFmKzRuKjRxLjl2Kzh7MT+CT3K2OlWgKjVxMDt8KzdvN0WSNkaPMkGBOEmUNkiNOUSGY3Wv
+XW+zWnG4a3zBcoLGeY3IZnu3kY/Ae4bAi5nMkJnQlaLVjJnNmKDQgZXCk6PPmKPLoafPqavQ
+mJu9N1ShRmW6P2CyM0mRUE5yeYKojZi+o7Hal6bRkZzEqq/Ta3KhIB8xISE0IiEzHx8yIyI1
+IyI0PUJoTV6bTWGdSGm8TGq6P1ywLDp8KChIJilVKTFnKTBmKTJnKDNtKzZ2Ljp9R1SOPl2t
+LjdyLzl5NkOBNUORPUqIOEyXN0OJPlCWQlGVOUh8YW+vYHm9bHq7dYG4Znq6fZXLbYe/nJzK
+hZHAkprJlaPTlqHTj6LQl6XQoKzToKrQqK7TsrPQLDdsP1mnRWW4RGO0OFGcJCtWIyI1bnaN
+jJq+srrWqrXbo63Tb3GUIB8xIB8yIB8yIB8yHx8vJiQ2JCM2SFWJSFiRSmm8Smi7QFywLjt9
+JSZJKy9eKjNnLjVsKTJsLDdzMDp8Mz+CMTp+T264Ljl3LTh4MT1/NUODO0eLOUqIQFGTSFyg
+PFCTPEuOO0yTVl+UdIXGb3+5cYrGZH+9e4vIk5rIi5nLoqbXnKnWpavRm6bQpq/aoavToK7U
+v77gaG+TLj55QFurRWK2Q1+wOU+bJCpXIyI3IiE0S0xkmajSoKvPubbOSk5zISEyIB4xISAz
+Hh0vISAyIiEyIiE0KilBTFqVS2m8S2m6QFmqKjd8KSlNJypdKTFmKjNrKDJrKzZwMD19Lj2C
+M0GKN0+UKzh6Ljt4ND2BN0CGNEJ+OEaLQ0+NSViqQVCVRFOaPk+dQlGUUVyccH6ydIfEgJbO
+cIvJiJXLoabTm6zcoazUpq/Wn6nUoazUoqjQsLfblpy9MDNfLz5/P1mpRWCwQl2tO1GdJixZ
+IyE2ISM7KzduO1KjQFWgPlehOE+cIB80Hh4vIB8zISA0Hh4uIR8zHx4xJCM0MjNSTGzASme5
+QF2vLTl9JidLJi5ZKTFlKDFrKzRtLDVxMz58M0KGMUCIMkKMM0SMLj19NUKBMkGFOUSFN0SF
+PEuFPU+WQ1SWRlOXQ1mjRleUSV+nVm2qcX2xfpHHkaLRmKTTiZbHmp/Noa3dmaHLo67XpbLd
+pLHVl6DANDljJi5eM0WKQl2uRGGzRmCwOlGcJStYISA1Ji5bO0+bQV2xO1SkOlWnQFqpLz96
+HR0vHh4vISA0ISAyHyEwHh0wIiM1Kyk6RGi+SGi7PluuLTt9JSdMKS5hLDNnLDVvKTVtLTdy
+NEB+NUSJNEOPNUaOOUmRM0KGMj97NUKDN0OANkF5N0OAOEiIQ1KNQFSbQlWdSVmeTl2dVm2r
+c4K/eICyl5vDmKTTr7Dcpq3ZoKvSo67XoarUt7rakZnAJCpVJS5eKzRqNkeNQFuvRmK2QFyu
+NUybJSpVIiREM0KEQ1ytP1qsPlelPVanPVeqQlquIylOHR0sIB8yIiI0Hx8vISEzICEvIiE0
+Sm7BS2i9PVuwLDp/JidNLDJjKjFlKzVsKjRuKTRsMT9/MUCFMUKKNkWMNEePMkaRLDp+MD16
+OUaGP0qRPkyMOEaKQE6URFaUQUiDSlqiTV6hXHOzcYW8d4u+bIS/jZXEoanTqbHcpq7YoK3X
+oK/boKjHKDFeLThvMDlwKjRtPE2TQF6yRGK3QF2xO1GeJClYLDRtPVOhQlywPlmsOlOkQFur
+OVWlQlqsN1ChIR84Hh4tHyAxHx4yHh0tIB8zHB0rTHDDS2y9PF2vMD2CJihNKS9fLDJlKzVn
+JTBnKzVyLzt8LDyBMkGGM0SLNUeQMkWSPlSeNEOBMz1/NkSBOkeLOUePOkmKQ1CVR1KWTl6i
+TlmSXXGndoO8gpDCeI7Fh5fGgJPJgYu6kKPLqKvJsa/FSFN/LTl2Ljx4MDx6Lzl1NUiQQl6z
+RGO5Ql+yNkuXLTt8Ok2YQVytP1yvPluvQVusP1mpO1apPlurPlusMUSHHR0tHx8tIiE0Hx4y
+ICEvIB8xS23ARWe5P16xLDuAJShLIilXKjFmLTVsJjFsLTh0Lzt8NEGIN0WJNESLNUiTN0eT
+NEiNOlGPPUiLPEWBPEaERFCOQEqMSVaUS1aTTGCUXmyzbnmuZ4K5dou5forAgJLGgZbMfpPB
+h5nFWGOTLz17LDt6MkCBLTx6Ljp5MDt4M0aOQFutRmG1P1mnPVSfOlCbQVuqPlmrP1quPVuu
+PlenO1akPliqPFmoQF2sQmCvN02QHyEwHR0vISA0HR4vHh8uS2/CS2vAPV6yMEGFJihQJy5f
+KzNqKjVwKTVzMTx6MkCHMUCJNESPNUaPNEeSO0uXOUiZPEeYVFyWRFCMPkiHQE2DR1GKQ1eL
+UmCgWGKsWWebZnusboO3dYW8gIzBe47IepHDcYGwRlGJMUCGNESLNEWNOEeLMT+DMD16MDx3
+OUySQVqqQFurOlalQVqnQFqqQVytPFemP1uvQFurPFikPlupO1akPVqpPFmmVHzLh7bzPVGP
+ICAyHRwtICAzICAyTGy+R2i8QGC2LDuEKSxaLDVtLDdzKjVxLTh2NECDNEOLNUaQNkmTOUyY
+NUaSOEuXO02cO0+cO0ucOkubQVCbSVeZVl2WSlmUV2GgaHKrbG6ocX2tb32tZnqwdYO2fJG+
+U2OWMEOML0GLM0aRNEaRN0eSNkeKM0OFLj9/MD18NkqUPlipPFalP1mnQlypQ1+wQ1+vQFus
+QF2wQFysPVmnOlSkOFSkQFuoQGCve63xkb73VX7DIyM8HR8vIiIzISE0SWi8R2W5PVyzMT+D
+JilYKDBqKzRyLTZyLjdzLDl7MD+HOEiROUmVPE6ZN0eVO0yZOEqeOEqcOEqbO06eOEqdNUqf
+PE2aQFOXSFSVUmCbanOfdXuzX3atW2GeRFSONEOSMUaVM0qYN0uYOEmWOkyYOEuYN0mSM0WJ
+M0KELzx7NkiQQFmmP1mnRV+tQmCwQ2O0Q2GxRWS3QWG0P16wPlqrOlenPlupPFupY5Lfibz4
+cqLjM0R7LTlwICE5Hx4xHh4wRmW6SGe6Pl2zLj2CJyxcKjJsKjRwLTh0LDRvLjh3NkOJMkCJ
+N0aPMUWQNUiUO0yYOEuZNkmbO06gOkyeOUueMkebNEudN0ufNkuZMEWTMkeWMUSQNEaOMkOT
+NkiXN0uaNkybNEqbN0yeNUqXMkeUOEyYN0mVMkSNMECELjt8M0aQPlaqQ1+vRmS0RWO2QmK2
+RGS3QmGzQ2O4QmK2P1yvPlusPlysT3bIhrf3iLn3QF2bKzhzMkF9M0B8ISM8Hh8vSmu+R2e6
+RWS6Lz+HKi9iJzFsKjV1JzNzKjRyMTl7NkONOEmTMkSPOEycO0+fOlCfOk2bOE2fOk+hOEqc
+NkmbNkqbOE2hNkueN0qaNEaWNkiWNkqWPE2ZN0mWO06bNUqbNEqcN02fOE6fNUmaNUiWOk6a
+NkqUM0OKMj+CMT5/O02aQ1ywR2a7RGS6SGe7RGe7R2a5R2W6SGi+RWe7QmK0P16vQWCwcKXu
+j7/8YY7VLTt0L0B/NUaFOEqKMkKBIiQ/S26/SGm7RGO4Lj2CJy1eKzVyMTp5LTh1Ljh0MT18
+Lj2GN0iPNUmUOk+dOlGgO0+cPFCdOlCeOU+fPVGhPFGgO1CiN0yfOE2iNkudNUuaOU2bOk+b
+OUyYOU+eOVCfOlGhN0+eOU+fNk2bOE2aOE6aN0yYNkuTOEmNMj9/MD1/Ok6ZR2O2SGjASm3C
+S2vARmu/Q2S6SGi9R2e5RWS3Q2SyQmGvV4TTgrf5eazwNkyGMEJ+NUeEN0mIN0uJNkqLN0iM
+TXHESm/DQGG2LT2AKC5eLTZvMDp3MDt2Lzt1MUB+M0SKO0qQOE6WPFKdOlOePFOfPVSiO1Og
+PFSkPlOkO1KhO1KfN02dOE6fO1GhO1KhOlGfOVKgPFOePFWgOlOgOlKdOlGeOlGeOVKdOlGb
+OVGaOFCZOE+UNEmMNkWDLjx6P1eiR2i5THC/SGzASW7DR2vAR2m9QmW5SGe3RmSyRWSzS3LA
+dqvwgrf4RWqpLkB2N0eANkmFOUyGOk6GN0yHOE+S'
+			base64Decoded asByteArray readStream! !
+
+!TrieTest methodsFor: 'aux' stamp: 'jmv 6/21/2011 22:05'!
+assert: subject isEquivalentToDictionary: controlGroup
+	"Test #size, #do:, "
+	| count subjectAsDictionary someRandomString |
+	self assert: subject isEmpty = controlGroup isEmpty.
+	self assert: subject size = controlGroup size.
+	controlGroup keysDo: [ :each |
+		self assert: (subject includesKey: each) ].
+	subject keysDo: [ :each |
+		self assert: (controlGroup includesKey: each) ].
+	controlGroup keysAndValuesDo: [ :k :v |
+		self assert: (subject at: k) = v ].
+	subject keysAndValuesDo: [ :k :v |
+		self assert: (controlGroup at: k) = v ].
+	someRandomString _ 'someRandomStringZZZ'.
+	self assert: (subject includesKey: someRandomString)
+		= (controlGroup includesKey: someRandomString).
+	subjectAsDictionary _ Dictionary new.
+	count _ 0.
+	subject keysAndValuesDo: [ :k :v |
+		subjectAsDictionary at: k put: v.
+		count _ count + 1 ].
+	self assert: subjectAsDictionary size = controlGroup size.
+	self assert: count = controlGroup size.
+	self assert: subjectAsDictionary = controlGroup.! !
+
+!TrieTest methodsFor: 'aux' stamp: 'jmv 6/15/2011 09:58'!
+assert: subject isEquivalentToSet: controlGroup
+	"Test #size, #do:, "
+	| count subjectAsSet someRandomString |
+	self assert: subject isEmpty = controlGroup isEmpty.
+	self assert: subject size = controlGroup size.
+	controlGroup do: [ :each |
+		self assert: (subject includes: each) ].
+	someRandomString _ 'someRandomStringZZZ'.
+	self assert: (subject includes: someRandomString)
+		= (controlGroup includes: someRandomString).
+	subjectAsSet _ Set new.
+	count _ 0.
+	subject do: [ :element |
+		subjectAsSet add: element.
+		count _ count + 1 ].
+	self assert: subjectAsSet size = controlGroup size.
+	self assert: count = controlGroup size.
+	self assert: subjectAsSet = controlGroup.! !
+
+!TrieTest methodsFor: 'aux' stamp: 'jmv 6/22/2011 12:51'!
+assert: subject prefixSelection: aString isEquivalentToSet: controlGroup
+	| selection1 selection2 |
+	selection1 _ OrderedCollection new.
+	subject forPrefix: aString keysAndValuesDo: [ :k :v |
+		selection1 add: k ].
+	selection2 _ (controlGroup select: [ :each |
+		aString isEmpty or: [
+			each asLowercase asUnaccented beginsWith: aString asLowercase asUnaccented]]) asOrderedCollection 
+				sort: [ :a :b | a asLowercase asUnaccented < b asLowercase asUnaccented ].
+	self assert: selection1 = selection2.! !
+
+!TrieTest methodsFor: 'testing' stamp: 'jmv 6/21/2011 22:14'!
+testAllMesssagesLikeDicionary
+	"
+	TrieTest new testAllMesssagesLikeDicionary
+	"
+	| subject  controlGroup allMessages copy c set1 set2 |
+	subject _ Trie new.
+	controlGroup _ Dictionary new.
+	allMessages _ Smalltalk allImplementedMessages.
+	c _ 0.
+	3 timesRepeat: [
+		allMessages do: [ :symbol |
+			subject at: symbol put: c.
+			controlGroup at: symbol put: c.
+			c _ c + 1 ]].
+	self assert: subject isEquivalentToDictionary: controlGroup.
+
+	copy _ Dictionary new.
+	set1 _ Set new.
+	subject keysAndValuesDo: [ :symbol :number |
+		copy at: symbol put: number.
+		set1 add: number ].
+
+	set2 _ Set new.
+	subject do: [ :number |
+		set2 add: number ].
+
+	self assert: subject isEquivalentToDictionary: copy.
+	self assert: copy isEquivalentToDictionary: controlGroup.
+	self assert: set1 = set2! !
+
+!TrieTest methodsFor: 'testing' stamp: 'jmv 6/21/2011 22:01'!
+testAllMesssagesLikeSet
+	"
+	TrieTest new testAllMesssagesLikeSet
+	"
+	| subject  controlGroup allMessages copy|
+	subject _ Trie new.
+	controlGroup _ Set new.
+	allMessages _ Smalltalk allImplementedMessages.
+	3 timesRepeat: [
+		allMessages do: [ :symbol |
+			subject add: symbol.
+			controlGroup add: symbol ]].
+	self assert: subject isEquivalentToSet: controlGroup.
+
+	copy _ Set new.
+	subject do: [ :symbol |
+		copy add: symbol ].
+
+	self assert: subject isEquivalentToSet: copy.
+	self assert: copy isEquivalentToSet: controlGroup.! !
+
+!TrieTest methodsFor: 'testing' stamp: 'HAW 6/12/2019 17:38:28'!
+testIncludesReturnsFalseForObjectsThatAreNotString
+	
+	self deny: ((Trie with: 'hello') includes: 1)
+	! !
+
+!TrieTest methodsFor: 'testing' stamp: 'HAW 6/12/2019 17:38:51'!
+testIncludesReturnsFalseForStringsNotIncluded
+	
+	self deny: ((Trie with: 'hello') includes: 'bye')
+	! !
+
+!TrieTest methodsFor: 'testing' stamp: 'HAW 6/12/2019 17:39:09'!
+testIncludesReturnsTrueForIncludedStrings
+	
+	self assert: ((Trie with: 'hello') includes: 'hello')
+	! !
+
+!TrieTest methodsFor: 'testing' stamp: 'HAW 4/4/2019 08:18:55'!
+testKeyNotFoundSignalTheRightMessage
+
+	self 
+		should: [ Trie new errorKeyNotFound ]
+		raise: Error
+		withMessageText: Dictionary keyNotFoundErrorDescription ! !
+
+!TrieTest methodsFor: 'testing' stamp: 'jmv 6/22/2011 12:30'!
+testPrefixIteration
+	"
+	TrieTest new testPrefixIteration
+	"
+	| subject  controlGroup |
+	subject _ Trie new.
+	controlGroup _ Set new.
+
+	self assert: subject prefixSelection: '' isEquivalentToSet: controlGroup.
+	self assert: subject prefixSelection: 'c' isEquivalentToSet: controlGroup.
+	self assert: subject prefixSelection: 'ca' isEquivalentToSet: controlGroup.
+
+	subject add: 'car'.
+	controlGroup add: 'car'.
+	subject add: 'car'.
+	controlGroup add: 'car'.
+	subject add: 'cat'.
+	controlGroup add: 'cat'.
+	subject add: 'cart'.
+	controlGroup add: 'cart'.
+
+	self assert: subject prefixSelection: '' isEquivalentToSet: controlGroup.
+	self assert: subject prefixSelection: 'c' isEquivalentToSet: controlGroup.
+	self assert: subject prefixSelection: 'ca' isEquivalentToSet: controlGroup.
+	self assert: subject prefixSelection: 'car' isEquivalentToSet: controlGroup.
+	self assert: subject prefixSelection: 'cat' isEquivalentToSet: controlGroup.
+	self assert: subject prefixSelection: 'cart' isEquivalentToSet: controlGroup.
+
+	subject add: 'ñandú'.
+	controlGroup add: 'ñandú'.
+	subject add: 'ñandues'.
+	controlGroup add: 'ñandues'.
+	subject add: 'ÑANDÚSES'.
+	controlGroup add: 'ÑANDÚSES'.
+	
+	self assert: subject prefixSelection: '' isEquivalentToSet: controlGroup.
+	self assert: subject prefixSelection: 'c' isEquivalentToSet: controlGroup.
+	self assert: subject prefixSelection: 'ca' isEquivalentToSet: controlGroup.
+	self assert: subject prefixSelection: 'car' isEquivalentToSet: controlGroup.
+	self assert: subject prefixSelection: 'cat' isEquivalentToSet: controlGroup.
+	self assert: subject prefixSelection: 'cart' isEquivalentToSet: controlGroup.
+	self assert: subject prefixSelection: 'ñ' isEquivalentToSet: controlGroup.
+	self assert: subject prefixSelection: 'ñan' isEquivalentToSet: controlGroup.
+	self assert: subject prefixSelection: 'ñandu' isEquivalentToSet: controlGroup.
+	self assert: subject prefixSelection: 'ñandú' isEquivalentToSet: controlGroup.
+	self assert: subject prefixSelection: 'Ñ' isEquivalentToSet: controlGroup.
+	self assert: subject prefixSelection: 'ÑANDÚ' isEquivalentToSet: controlGroup.! !
+
+!TrieTest methodsFor: 'testing' stamp: 'jmv 6/22/2011 12:50'!
+testPrefixIteration2
+	"
+	TrieTest new testPrefixIteration2
+	"
+	| subject  controlGroup allMsg toAvoid |
+	subject _ Trie new.
+	controlGroup _ Set new.
+
+	allMsg _ Smalltalk allImplementedMessages.
+	toAvoid _ (allMsg asArray collect: [ :each | each asLowercase asUnaccented ]) asBag.
+	allMsg do: [ :symbol |
+		(toAvoid occurrencesOf: symbol) = 1 ifTrue: [
+			subject add: symbol.
+			controlGroup add: symbol ]].
+	
+	self assert: subject prefixSelection: '' isEquivalentToSet: controlGroup.
+	self assert: subject prefixSelection: 'a' isEquivalentToSet: controlGroup.
+	self assert: subject prefixSelection: 'at' isEquivalentToSet: controlGroup.
+	self assert: subject prefixSelection: 'at:' isEquivalentToSet: controlGroup.
+	self assert: subject prefixSelection: 'at:p' isEquivalentToSet: controlGroup.
+	self assert: subject prefixSelection: 'at:pu' isEquivalentToSet: controlGroup.
+	self assert: subject prefixSelection: 'at:put' isEquivalentToSet: controlGroup.
+	self assert: subject prefixSelection: 'at:put:' isEquivalentToSet: controlGroup.
+	self assert: subject prefixSelection: 'at:put:nonExistant:' isEquivalentToSet: controlGroup.! !
+
+!TrieTest methodsFor: 'testing' stamp: 'jmv 6/23/2011 11:02'!
+testRemoveLikeDicionary
+	"
+	TrieTest new testRemoveLikeDicionary
+	"
+	| subject  controlGroup allMessages copy c set1 set2 |
+	subject _ Trie new.
+	controlGroup _ Dictionary new.
+	allMessages _ Smalltalk allImplementedMessages.
+
+	subject at: 'doNotRemove' put: 'this'.
+	controlGroup at: 'doNotRemove' put: 'this'.
+	
+	c _ 0.
+	3 timesRepeat: [
+		allMessages do: [ :symbol |
+			subject at: symbol put: c.
+			controlGroup at: symbol put: c.
+			c _ c + 1 ]].
+
+	subject at: 'doNotRemove2' put: 'this2'.
+	controlGroup at: 'doNotRemove2' put: 'this2'.
+
+	self assert: subject isEquivalentToDictionary: controlGroup.
+	
+	allMessages do: [ :symbol |
+		subject removeKey: symbol.
+		controlGroup removeKey: symbol ].
+
+	copy _ Dictionary new.
+	set1 _ Set new.
+	subject keysAndValuesDo: [ :symbol :number |
+		copy at: symbol put: number.
+		set1 add: number ].
+
+	set2 _ Set new.
+	subject do: [ :number |
+		set2 add: number ].
+
+	self assert: subject isEquivalentToDictionary: copy.
+	self assert: copy isEquivalentToDictionary: controlGroup.
+	self assert: set1 = set2.
+	self assert: subject isEmpty = controlGroup isEmpty.
+
+	subject removeKey: 'doNotRemove'.
+	controlGroup removeKey: 'doNotRemove'.
+
+	self assert: subject isEquivalentToDictionary: controlGroup.
+	self deny: subject isEmpty.
+	self deny: controlGroup isEmpty.
+
+	subject removeKey: 'doNotRemove2'.
+	controlGroup removeKey: 'doNotRemove2'.
+
+	self assert: subject isEquivalentToDictionary: controlGroup.
+	self assert: subject isEmpty.
+	self assert: controlGroup isEmpty.! !
+
+!TrieTest methodsFor: 'testing' stamp: 'jmv 6/22/2011 15:54'!
+testRemoveLikeSet
+	"
+	TrieTest new testRemoveLikeSet
+	"
+	| subject  controlGroup allMessages copy |
+	subject _ Trie new.
+	controlGroup _ Set new.
+	allMessages _ Smalltalk allImplementedMessages.
+
+	subject add: 'doNotRemove'.
+	controlGroup add: 'doNotRemove'.
+	
+	3 timesRepeat: [
+		allMessages do: [ :symbol |
+			subject add: symbol.
+			controlGroup add: symbol ]].
+
+	subject add: 'doNotRemove2'.
+	controlGroup add: 'doNotRemove2'.
+
+	self assert: subject isEquivalentToSet: controlGroup.
+	
+	allMessages do: [ :symbol |
+		subject remove: symbol.
+		controlGroup remove: symbol ].
+
+	copy _ Set new.
+	subject do: [ :symbol |
+		copy add: symbol ].
+
+	self assert: subject isEquivalentToSet: copy.
+	self assert: copy isEquivalentToSet: controlGroup.
+
+	subject remove: 'doNotRemove'.
+	controlGroup remove: 'doNotRemove'.
+
+	self assert: subject isEquivalentToSet: controlGroup.
+	self deny: subject isEmpty.
+	self deny: controlGroup isEmpty.
+
+	subject remove: 'doNotRemove2'.
+	controlGroup remove: 'doNotRemove2'.
+
+	self assert: subject isEquivalentToSet: controlGroup.
+	self assert: subject isEmpty.
+	self assert: controlGroup isEmpty.! !
+
+!TrieTest methodsFor: 'testing' stamp: 'jmv 6/22/2011 15:42'!
+testSetProtocol
+	"
+	TrieTest new testSetProtocol
+	"
+	| subject  controlGroup |
+	subject _ Trie new.
+	controlGroup _ Set new.
+	self assert: subject isEquivalentToSet: controlGroup.
+	
+	subject add: 'car'.
+	controlGroup add: 'car'.
+	self assert: subject isEquivalentToSet: controlGroup.
+
+	subject add: 'car'.
+	controlGroup add: 'car'.
+	self assert: subject isEquivalentToSet: controlGroup.
+
+	subject add: 'cat'.
+	controlGroup add: 'cat'.
+	self assert: subject isEquivalentToSet: controlGroup.
+
+	subject add: 'cart'.
+	controlGroup add: 'cart'.
+	self assert: subject isEquivalentToSet: controlGroup.
+
+	subject add: 'ñandú'.
+	controlGroup add: 'ñandú'.
+	self assert: subject isEquivalentToSet: controlGroup.
+
+	subject add: 'ñandu'.
+	controlGroup add: 'ñandu'.
+	self assert: subject isEquivalentToSet: controlGroup.
+
+	subject add: 'ÑANDÚ'.
+	controlGroup add: 'ÑANDÚ'.
+	self assert: subject isEquivalentToSet: controlGroup.! !
+
+!TrieUnicodeTest methodsFor: 'testing' stamp: 'jmv 6/6/2022 11:47:11'!
+test01
+	| t all |
+	t _ Trie new.
+	t add: #toto.
+	t at: #toton put: 47.
+	t add: 'carrr'.
+	t at: 'car' put: Float pi.
+	t at: 'cat' put: Date today.
+	self assert: (t includesKey: 'car').
+	self deny: (t includes: 'car').
+	self assert: (t includesKey: 'cat').
+	self deny: (t includes: 'cat').
+	self assert: (t includes: #toto).
+	self assert: (t includes: 'toto').
+	all _ Array streamContents: [ :strm |
+		t keysAndValuesDo: [ :k :v | strm nextPut: {k. k class. v. v class} ]].
+	self assert: all size = 5.
+	self assert: (all includes: {#toto. Symbol. #toto. Symbol}).
+	self assert: (all includes: {#toton. Symbol. 47. SmallInteger}).
+	self assert: (all includes: {'carrr'. String. 'carrr'. String}).
+	self assert: (all includes: {'car'. String. Float pi. SmallFloat64}).
+	self assert: (all includes: {'cat'. String. Date today. Date}).! !
+
+!TrieUnicodeTest methodsFor: 'testing' stamp: 'jmv 6/6/2022 12:13:02'!
+test02
+	| t all |
+	t _ Trie new.
+	t add: #toto.
+	t at: #toton put: 47.
+	t add: 'carrrs'.
+	t add: 'carrr' asUtf8String.
+	t at: 'car' asUtf8String put: Float pi.
+	t at: 'cat' put: Date today.
+	self assert: (t includesKey: 'carrrs').
+	self assert: (t includes: 'carrrs').
+	self assert: (t includesKey: 'carrrs' asUtf8String).
+	self assert: (t includes: 'carrrs' asUtf8String).
+	self assert: (t includesKey: 'carrr').
+	self assert: (t includes: 'carrr').
+	self assert: (t includesKey: 'carrr' asUtf8String).
+	self assert: (t includes: 'carrr' asUtf8String).
+	self assert: (t includesKey: 'car').
+	self deny: (t includes: 'car').
+	self assert: (t includesKey: 'cat').
+	self deny: (t includes: 'cat').
+	self assert: (t includes: #toto).
+	self assert: (t includes: 'toto').
+	all _ Array streamContents: [ :strm |
+		t keysAndValuesDo: [ :k :v | strm nextPut: {k. k class. v. v class} ]].
+	self assert: all size = 6.
+	self assert: (all includes: {#toto. Symbol. #toto. Symbol}).
+	self assert: (all includes: {#toton. Symbol. 47. SmallInteger}).
+	self assert: (all includes: {'carrrs'. String. 'carrrs'. String}).
+	self assert: (all includes: {'carrr'. Utf8String. 'carrr'. Utf8String}).
+	self assert: (all includes: {'car'. Utf8String. Float pi. SmallFloat64}).
+	self assert: (all includes: {'cat'. String. Date today. Date}).! !
+
+!TrieUnicodeTest methodsFor: 'testing' stamp: 'jmv 6/6/2022 12:09:17'!
+test03
+	| t all s1 s2 |
+	t _ Trie new.
+	s1 _ ('totoU', Random next mantissaPart printString) asUtf8String asSymbol.
+	t add: s1.
+	s2 _ ('totoUn', Random next mantissaPart printString) asUtf8String asSymbol.
+	t at: s2 put: 47.
+	t add: 'carrr' asUtf8String.
+	t at: 'car' put: Float pi.
+	t at: 'cat' asUtf8String put: Date today.
+	self assert: (t includesKey: 'car').
+	self deny: (t includes: 'car').
+	self assert: (t includesKey: 'cat').
+	self deny: (t includes: 'cat').
+	self assert: (t includes: s1).
+	self assert: (t includes: s1 asString).
+	all _ Array streamContents: [ :strm |
+		t keysAndValuesDo: [ :k :v | strm nextPut: {k. k class. v. v class} ]].
+	self assert: all size = 5.
+	self assert: (all includes: {s1. Utf8Symbol. s1. Utf8Symbol}).
+	self assert: (all includes: {s2. Utf8Symbol. 47. SmallInteger}).
+	self assert: (all includes: {'carrr'. Utf8String. 'carrr'. Utf8String}).
+	self assert: (all includes: {'car'. String. Float pi. SmallFloat64}).
+	self assert: (all includes: {'cat'. Utf8String. Date today. Date}).! !
 
 !ExceptionTester methodsFor: 'accessing' stamp: 'dtl 6/1/2004 21:53'!
 basicANSISignaledExceptionTestSelectors
@@ -29312,6 +29254,63 @@ runTest: aSelector
 wantsChangeSetLogging 
 
 	^false! !
+
+!BecomeTestExperiment methodsFor: 'as yet unclassified' stamp: 'jmv 1/11/2019 12:21:36'!
+initialize
+	a _ 1.
+	b _ 2.! !
+
+!BecomeTestExperiment methodsFor: 'as yet unclassified' stamp: 'jmv 1/29/2019 10:59:12'!
+messStuffUp
+"In a Workspace
+
+BecomeTestExperiment twoVars.
+e _ BecomeTestExperiment new.
+e messStuffUp.
+
+e _ nil. Smalltalk garbageCollect.
+BecomeTestExperiment allInstances
+
+Processor invalidMethodInStackDueToClass: BecomeTestExperiment
+"
+
+	BecomeTestExperiment threeVars. "New ivar c is added before a and be"
+	^a + b! !
+
+!BecomeTestExperiment methodsFor: 'as yet unclassified' stamp: 'jmv 1/29/2019 10:59:16'!
+messStuffUpWBecome
+"In a Workspace
+
+BecomeTestExperiment twoVars.
+e _ BecomeTestExperiment new.
+e messStuffUpWBecome.
+
+e _ nil. Smalltalk garbageCollect.
+BecomeTestExperiment allInstances
+
+Processor invalidMethodInStackDueToClass: BecomeTestExperiment
+"
+
+	self becomeForward: {22}.
+	^a + b! !
+
+!BecomeTestExperiment class methodsFor: 'as yet unclassified' stamp: 'jmv 3/8/2019 11:37:17'!
+threeVars
+
+	Object subclass: #BecomeTestExperiment
+		instanceVariableNames: 'c a b'
+		classVariableNames: ''
+		poolDictionaries: ''
+		category: 'BaseImageTests-Kernel'! !
+
+!BecomeTestExperiment class methodsFor: 'as yet unclassified' stamp: 'jmv 3/8/2019 11:37:22'!
+twoVars
+
+	Object subclass: #BecomeTestExperiment
+		instanceVariableNames: 'a b'
+		classVariableNames: ''
+		poolDictionaries: ''
+		category: 'BaseImageTests-Kernel'! !
 
 !BoxedFloat64 methodsFor: '*BaseImageTests-Kernel-Numbers' stamp: 'jmv 2/25/2019 17:20:54'!
 primTestAdd: aNumber
