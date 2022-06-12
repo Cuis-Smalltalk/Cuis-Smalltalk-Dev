@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5234] on 7 June 2022 at 4:13:43 pm'!
-'Description Fix to assertRenamesToWithoutBlanks:'!
-!provides: 'BaseImageTests' 1 293!
+'From Cuis 6.0 [latest update: #5234] on 11 June 2022 at 11:48:46 pm'!
+'Description Inline method and temp var tests'!
+!provides: 'BaseImageTests' 1 294!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Objects'!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Classes'!
@@ -66,104 +66,64 @@ Notification subclass: #MyTestNotification
 MyTestNotification class
 	instanceVariableNames: ''!
 
-!classDefinition: #BinarySearchTest category: 'BaseImageTests-Collections'!
-TestCase subclass: #BinarySearchTest
+!classDefinition: #BecomeTest category: 'BaseImageTests-Kernel-Objects'!
+TestCase subclass: #BecomeTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
-	category: 'BaseImageTests-Collections'!
-!classDefinition: 'BinarySearchTest class' category: 'BaseImageTests-Collections'!
-BinarySearchTest class
+	category: 'BaseImageTests-Kernel-Objects'!
+!classDefinition: 'BecomeTest class' category: 'BaseImageTests-Kernel-Objects'!
+BecomeTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #CollectTest category: 'BaseImageTests-Collections'!
-TestCase subclass: #CollectTest
+!classDefinition: #BooleanTest category: 'BaseImageTests-Kernel-Objects'!
+TestCase subclass: #BooleanTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
-	category: 'BaseImageTests-Collections'!
-!classDefinition: 'CollectTest class' category: 'BaseImageTests-Collections'!
-CollectTest class
+	category: 'BaseImageTests-Kernel-Objects'!
+!classDefinition: 'BooleanTest class' category: 'BaseImageTests-Kernel-Objects'!
+BooleanTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #CollectionTest category: 'BaseImageTests-Collections'!
-TestCase subclass: #CollectionTest
+!classDefinition: #IfNotNilTests category: 'BaseImageTests-Kernel-Objects'!
+TestCase subclass: #IfNotNilTests
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
-	category: 'BaseImageTests-Collections'!
-!classDefinition: 'CollectionTest class' category: 'BaseImageTests-Collections'!
-CollectionTest class
+	category: 'BaseImageTests-Kernel-Objects'!
+!classDefinition: 'IfNotNilTests class' category: 'BaseImageTests-Kernel-Objects'!
+IfNotNilTests class
 	instanceVariableNames: ''!
 
-!classDefinition: #DictionaryTest category: 'BaseImageTests-Collections'!
-TestCase subclass: #DictionaryTest
+!classDefinition: #ObjectTest category: 'BaseImageTests-Kernel-Objects'!
+TestCase subclass: #ObjectTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
-	category: 'BaseImageTests-Collections'!
-!classDefinition: 'DictionaryTest class' category: 'BaseImageTests-Collections'!
-DictionaryTest class
+	category: 'BaseImageTests-Kernel-Objects'!
+!classDefinition: 'ObjectTest class' category: 'BaseImageTests-Kernel-Objects'!
+ObjectTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #IntervalTest category: 'BaseImageTests-Collections'!
-TestCase subclass: #IntervalTest
+!classDefinition: #SpecialSelectorsTest category: 'BaseImageTests-Kernel-Objects'!
+TestCase subclass: #SpecialSelectorsTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
-	category: 'BaseImageTests-Collections'!
-!classDefinition: 'IntervalTest class' category: 'BaseImageTests-Collections'!
-IntervalTest class
+	category: 'BaseImageTests-Kernel-Objects'!
+!classDefinition: 'SpecialSelectorsTest class' category: 'BaseImageTests-Kernel-Objects'!
+SpecialSelectorsTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #OrderedCollectionTest category: 'BaseImageTests-Collections'!
-TestCase subclass: #OrderedCollectionTest
+!classDefinition: #WeakMessageSendTest category: 'BaseImageTests-Kernel-Objects'!
+TestCase subclass: #WeakMessageSendTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
-	category: 'BaseImageTests-Collections'!
-!classDefinition: 'OrderedCollectionTest class' category: 'BaseImageTests-Collections'!
-OrderedCollectionTest class
-	instanceVariableNames: ''!
-
-!classDefinition: #OrderedDictionaryTest category: 'BaseImageTests-Collections'!
-TestCase subclass: #OrderedDictionaryTest
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'BaseImageTests-Collections'!
-!classDefinition: 'OrderedDictionaryTest class' category: 'BaseImageTests-Collections'!
-OrderedDictionaryTest class
-	instanceVariableNames: ''!
-
-!classDefinition: #SequenceableCollectionTest category: 'BaseImageTests-Collections'!
-TestCase subclass: #SequenceableCollectionTest
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'BaseImageTests-Collections'!
-!classDefinition: 'SequenceableCollectionTest class' category: 'BaseImageTests-Collections'!
-SequenceableCollectionTest class
-	instanceVariableNames: ''!
-
-!classDefinition: #TextTest category: 'BaseImageTests-Collections'!
-TestCase subclass: #TextTest
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'BaseImageTests-Collections'!
-!classDefinition: 'TextTest class' category: 'BaseImageTests-Collections'!
-TextTest class
-	instanceVariableNames: ''!
-
-!classDefinition: #WeakIdentitySetTest category: 'BaseImageTests-Collections'!
-TestCase subclass: #WeakIdentitySetTest
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'BaseImageTests-Collections'!
-!classDefinition: 'WeakIdentitySetTest class' category: 'BaseImageTests-Collections'!
-WeakIdentitySetTest class
+	category: 'BaseImageTests-Kernel-Objects'!
+!classDefinition: 'WeakMessageSendTest class' category: 'BaseImageTests-Kernel-Objects'!
+WeakMessageSendTest class
 	instanceVariableNames: ''!
 
 !classDefinition: #BehaviorTest category: 'BaseImageTests-Kernel-Classes'!
@@ -346,6 +306,76 @@ RandomTest subclass: #ParkMiller93RandomTest
 ParkMiller93RandomTest class
 	instanceVariableNames: ''!
 
+!classDefinition: #CharacterSetTest category: 'BaseImageTests-Kernel-Text'!
+TestCase subclass: #CharacterSetTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-Kernel-Text'!
+!classDefinition: 'CharacterSetTest class' category: 'BaseImageTests-Kernel-Text'!
+CharacterSetTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #CharacterTest category: 'BaseImageTests-Kernel-Text'!
+TestCase subclass: #CharacterTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-Kernel-Text'!
+!classDefinition: 'CharacterTest class' category: 'BaseImageTests-Kernel-Text'!
+CharacterTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #StringTest category: 'BaseImageTests-Kernel-Text'!
+TestCase subclass: #StringTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-Kernel-Text'!
+!classDefinition: 'StringTest class' category: 'BaseImageTests-Kernel-Text'!
+StringTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #SymbolTest category: 'BaseImageTests-Kernel-Text'!
+TestCase subclass: #SymbolTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-Kernel-Text'!
+!classDefinition: 'SymbolTest class' category: 'BaseImageTests-Kernel-Text'!
+SymbolTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #UnicodeStringsTest category: 'BaseImageTests-Kernel-Text'!
+TestCase subclass: #UnicodeStringsTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-Kernel-Text'!
+!classDefinition: 'UnicodeStringsTest class' category: 'BaseImageTests-Kernel-Text'!
+UnicodeStringsTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #UnicodeSymbolsTest category: 'BaseImageTests-Kernel-Text'!
+TestCase subclass: #UnicodeSymbolsTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-Kernel-Text'!
+!classDefinition: 'UnicodeSymbolsTest class' category: 'BaseImageTests-Kernel-Text'!
+UnicodeSymbolsTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #UnicodeTest category: 'BaseImageTests-Kernel-Text'!
+TestCase subclass: #UnicodeTest
+	instanceVariableNames: 'bytesOfExample1'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-Kernel-Text'!
+!classDefinition: 'UnicodeTest class' category: 'BaseImageTests-Kernel-Text'!
+UnicodeTest class
+	instanceVariableNames: ''!
+
 !classDefinition: #DateAndTimeTest category: 'BaseImageTests-Kernel-Chronology'!
 TestCase subclass: #DateAndTimeTest
 	instanceVariableNames: ''
@@ -506,6 +536,106 @@ TestCase subclass: #SemaphoreTest
 SemaphoreTest class
 	instanceVariableNames: ''!
 
+!classDefinition: #BinarySearchTest category: 'BaseImageTests-Collections'!
+TestCase subclass: #BinarySearchTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-Collections'!
+!classDefinition: 'BinarySearchTest class' category: 'BaseImageTests-Collections'!
+BinarySearchTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #CollectTest category: 'BaseImageTests-Collections'!
+TestCase subclass: #CollectTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-Collections'!
+!classDefinition: 'CollectTest class' category: 'BaseImageTests-Collections'!
+CollectTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #CollectionTest category: 'BaseImageTests-Collections'!
+TestCase subclass: #CollectionTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-Collections'!
+!classDefinition: 'CollectionTest class' category: 'BaseImageTests-Collections'!
+CollectionTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #DictionaryTest category: 'BaseImageTests-Collections'!
+TestCase subclass: #DictionaryTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-Collections'!
+!classDefinition: 'DictionaryTest class' category: 'BaseImageTests-Collections'!
+DictionaryTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #IntervalTest category: 'BaseImageTests-Collections'!
+TestCase subclass: #IntervalTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-Collections'!
+!classDefinition: 'IntervalTest class' category: 'BaseImageTests-Collections'!
+IntervalTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #OrderedCollectionTest category: 'BaseImageTests-Collections'!
+TestCase subclass: #OrderedCollectionTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-Collections'!
+!classDefinition: 'OrderedCollectionTest class' category: 'BaseImageTests-Collections'!
+OrderedCollectionTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #OrderedDictionaryTest category: 'BaseImageTests-Collections'!
+TestCase subclass: #OrderedDictionaryTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-Collections'!
+!classDefinition: 'OrderedDictionaryTest class' category: 'BaseImageTests-Collections'!
+OrderedDictionaryTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #SequenceableCollectionTest category: 'BaseImageTests-Collections'!
+TestCase subclass: #SequenceableCollectionTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-Collections'!
+!classDefinition: 'SequenceableCollectionTest class' category: 'BaseImageTests-Collections'!
+SequenceableCollectionTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #TextTest category: 'BaseImageTests-Collections'!
+TestCase subclass: #TextTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-Collections'!
+!classDefinition: 'TextTest class' category: 'BaseImageTests-Collections'!
+TextTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #WeakIdentitySetTest category: 'BaseImageTests-Collections'!
+TestCase subclass: #WeakIdentitySetTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-Collections'!
+!classDefinition: 'WeakIdentitySetTest class' category: 'BaseImageTests-Collections'!
+WeakIdentitySetTest class
+	instanceVariableNames: ''!
+
 !classDefinition: #ArrayTest category: 'BaseImageTests-Collections-Arrayed'!
 TestCase subclass: #ArrayTest
 	instanceVariableNames: ''
@@ -534,6 +664,36 @@ TestCase subclass: #Float64ArrayTest
 	category: 'BaseImageTests-Collections-Arrayed'!
 !classDefinition: 'Float64ArrayTest class' category: 'BaseImageTests-Collections-Arrayed'!
 Float64ArrayTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #ReadStreamTest category: 'BaseImageTests-Collections-Streams'!
+TestCase subclass: #ReadStreamTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-Collections-Streams'!
+!classDefinition: 'ReadStreamTest class' category: 'BaseImageTests-Collections-Streams'!
+ReadStreamTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #ReadWriteStreamTest category: 'BaseImageTests-Collections-Streams'!
+TestCase subclass: #ReadWriteStreamTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-Collections-Streams'!
+!classDefinition: 'ReadWriteStreamTest class' category: 'BaseImageTests-Collections-Streams'!
+ReadWriteStreamTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #WriteStreamTest category: 'BaseImageTests-Collections-Streams'!
+TestCase subclass: #WriteStreamTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-Collections-Streams'!
+!classDefinition: 'WriteStreamTest class' category: 'BaseImageTests-Collections-Streams'!
+WriteStreamTest class
 	instanceVariableNames: ''!
 
 !classDefinition: #ExceptionHandlingConditionTest category: 'BaseImageTests-Exceptions'!
@@ -716,6 +876,56 @@ TestCase subclass: #SourceCodeIntervalTest
 SourceCodeIntervalTest class
 	instanceVariableNames: ''!
 
+!classDefinition: #SystemConsistencyTest category: 'BaseImageTests-System-Support'!
+TestCase subclass: #SystemConsistencyTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-System-Support'!
+!classDefinition: 'SystemConsistencyTest class' category: 'BaseImageTests-System-Support'!
+SystemConsistencyTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #SystemDictionaryTest category: 'BaseImageTests-System-Support'!
+TestCase subclass: #SystemDictionaryTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-System-Support'!
+!classDefinition: 'SystemDictionaryTest class' category: 'BaseImageTests-System-Support'!
+SystemDictionaryTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #TranscriptTest category: 'BaseImageTests-System-Support'!
+TestCase subclass: #TranscriptTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-System-Support'!
+!classDefinition: 'TranscriptTest class' category: 'BaseImageTests-System-Support'!
+TranscriptTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #TrieTest category: 'BaseImageTests-System-Text'!
+TestCase subclass: #TrieTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-System-Text'!
+!classDefinition: 'TrieTest class' category: 'BaseImageTests-System-Text'!
+TrieTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #TrieUnicodeTest category: 'BaseImageTests-System-Text'!
+TestCase subclass: #TrieUnicodeTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-System-Text'!
+!classDefinition: 'TrieUnicodeTest class' category: 'BaseImageTests-System-Text'!
+TrieUnicodeTest class
+	instanceVariableNames: ''!
+
 !classDefinition: #FileIOAccessorTest category: 'BaseImageTests-System-FileMan'!
 TestCase subclass: #FileIOAccessorTest
 	instanceVariableNames: ''
@@ -786,6 +996,56 @@ TestCase subclass: #BitBltTest
 BitBltTest class
 	instanceVariableNames: ''!
 
+!classDefinition: #RectangleTest category: 'BaseImageTests-Graphics-Primitives'!
+TestCase subclass: #RectangleTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-Graphics-Primitives'!
+!classDefinition: 'RectangleTest class' category: 'BaseImageTests-Graphics-Primitives'!
+RectangleTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #ColorFormTest category: 'BaseImageTests-Graphics-Display Objects'!
+TestCase subclass: #ColorFormTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-Graphics-Display Objects'!
+!classDefinition: 'ColorFormTest class' category: 'BaseImageTests-Graphics-Display Objects'!
+ColorFormTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #GrayFormTest category: 'BaseImageTests-Graphics-Display Objects'!
+TestCase subclass: #GrayFormTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-Graphics-Display Objects'!
+!classDefinition: 'GrayFormTest class' category: 'BaseImageTests-Graphics-Display Objects'!
+GrayFormTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #StrikeFontTest category: 'BaseImageTests-Graphics-Text'!
+TestCase subclass: #StrikeFontTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-Graphics-Text'!
+!classDefinition: 'StrikeFontTest class' category: 'BaseImageTests-Graphics-Text'!
+StrikeFontTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #JpegTest category: 'BaseImageTests-Graphics-Files'!
+TestCase subclass: #JpegTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-Graphics-Files'!
+!classDefinition: 'JpegTest class' category: 'BaseImageTests-Graphics-Files'!
+JpegTest class
+	instanceVariableNames: ''!
+
 !classDefinition: #AffineTransformationTest category: 'BaseImageTests-Morphic-Kernel'!
 TestCase subclass: #AffineTransformationTest
 	instanceVariableNames: ''
@@ -834,6 +1094,36 @@ TestCase subclass: #WorldTest
 	category: 'BaseImageTests-Morphic-Kernel'!
 !classDefinition: 'WorldTest class' category: 'BaseImageTests-Morphic-Kernel'!
 WorldTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #MethodReferenceTest category: 'BaseImageTests-Tools-Browser'!
+TestCase subclass: #MethodReferenceTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-Tools-Browser'!
+!classDefinition: 'MethodReferenceTest class' category: 'BaseImageTests-Tools-Browser'!
+MethodReferenceTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #SHST80RangeTypeTest category: 'BaseImageTests-Tools-Syntax Highlighting'!
+TestCase subclass: #SHST80RangeTypeTest
+	instanceVariableNames: ''
+	classVariableNames: 'ClassVar1'
+	poolDictionaries: ''
+	category: 'BaseImageTests-Tools-Syntax Highlighting'!
+!classDefinition: 'SHST80RangeTypeTest class' category: 'BaseImageTests-Tools-Syntax Highlighting'!
+SHST80RangeTypeTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #DebuggerTest category: 'BaseImageTests-Tools-Debugger'!
+TestCase subclass: #DebuggerTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-Tools-Debugger'!
+!classDefinition: 'DebuggerTest class' category: 'BaseImageTests-Tools-Debugger'!
+DebuggerTest class
 	instanceVariableNames: ''!
 
 !classDefinition: #SmalltalkCompleterTest category: 'BaseImageTests-Tools-Autocompletion'!
@@ -896,16 +1186,6 @@ TestCase subclass: #DifferenceFinderTest
 DifferenceFinderTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #TestValueWithinFix category: 'BaseImageTests-Fixed Bugs'!
-TestCase subclass: #TestValueWithinFix
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'BaseImageTests-Fixed Bugs'!
-!classDefinition: 'TestValueWithinFix class' category: 'BaseImageTests-Fixed Bugs'!
-TestValueWithinFix class
-	instanceVariableNames: ''!
-
 !classDefinition: #DynamicallyCodeCreationTest category: 'BaseImageTests-Tools-Refactoring'!
 TestCase subclass: #DynamicallyCodeCreationTest
 	instanceVariableNames: 'classCategories setUpAssertionsPassed'
@@ -924,6 +1204,16 @@ DynamicallyCodeCreationTest subclass: #CompilerTest
 	category: 'BaseImageTests-Compiler'!
 !classDefinition: 'CompilerTest class' category: 'BaseImageTests-Compiler'!
 CompilerTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #ChangesTest category: 'BaseImageTests-Tools-Changes'!
+DynamicallyCodeCreationTest subclass: #ChangesTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-Tools-Changes'!
+!classDefinition: 'ChangesTest class' category: 'BaseImageTests-Tools-Changes'!
+ChangesTest class
 	instanceVariableNames: ''!
 
 !classDefinition: #ExtractMethodFinderTest category: 'BaseImageTests-Tools-Refactoring'!
@@ -1004,6 +1294,26 @@ RefactoringTest subclass: #ExtractToTemporaryTest
 	category: 'BaseImageTests-Tools-Refactoring'!
 !classDefinition: 'ExtractToTemporaryTest class' category: 'BaseImageTests-Tools-Refactoring'!
 ExtractToTemporaryTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #InlineMethodTest category: 'BaseImageTests-Tools-Refactoring'!
+RefactoringTest subclass: #InlineMethodTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-Tools-Refactoring'!
+!classDefinition: 'InlineMethodTest class' category: 'BaseImageTests-Tools-Refactoring'!
+InlineMethodTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #InlineTemporaryVariableTest category: 'BaseImageTests-Tools-Refactoring'!
+RefactoringTest subclass: #InlineTemporaryVariableTest
+	instanceVariableNames: 'newVariable'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-Tools-Refactoring'!
+!classDefinition: 'InlineTemporaryVariableTest class' category: 'BaseImageTests-Tools-Refactoring'!
+InlineTemporaryVariableTest class
 	instanceVariableNames: ''!
 
 !classDefinition: #InsertSuperclassTest category: 'BaseImageTests-Tools-Refactoring'!
@@ -1166,304 +1476,24 @@ RefactoringTest subclass: #TemporaryToInstanceVariableTest
 TemporaryToInstanceVariableTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #ChangesTest category: 'BaseImageTests-Tools-Changes'!
-DynamicallyCodeCreationTest subclass: #ChangesTest
+!classDefinition: #TestValueWithinFix category: 'BaseImageTests-Fixed Bugs'!
+TestCase subclass: #TestValueWithinFix
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
-	category: 'BaseImageTests-Tools-Changes'!
-!classDefinition: 'ChangesTest class' category: 'BaseImageTests-Tools-Changes'!
-ChangesTest class
+	category: 'BaseImageTests-Fixed Bugs'!
+!classDefinition: 'TestValueWithinFix class' category: 'BaseImageTests-Fixed Bugs'!
+TestValueWithinFix class
 	instanceVariableNames: ''!
 
-!classDefinition: #ReadStreamTest category: 'BaseImageTests-Collections-Streams'!
-TestCase subclass: #ReadStreamTest
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'BaseImageTests-Collections-Streams'!
-!classDefinition: 'ReadStreamTest class' category: 'BaseImageTests-Collections-Streams'!
-ReadStreamTest class
-	instanceVariableNames: ''!
-
-!classDefinition: #ReadWriteStreamTest category: 'BaseImageTests-Collections-Streams'!
-TestCase subclass: #ReadWriteStreamTest
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'BaseImageTests-Collections-Streams'!
-!classDefinition: 'ReadWriteStreamTest class' category: 'BaseImageTests-Collections-Streams'!
-ReadWriteStreamTest class
-	instanceVariableNames: ''!
-
-!classDefinition: #WriteStreamTest category: 'BaseImageTests-Collections-Streams'!
-TestCase subclass: #WriteStreamTest
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'BaseImageTests-Collections-Streams'!
-!classDefinition: 'WriteStreamTest class' category: 'BaseImageTests-Collections-Streams'!
-WriteStreamTest class
-	instanceVariableNames: ''!
-
-!classDefinition: #SystemConsistencyTest category: 'BaseImageTests-System-Support'!
-TestCase subclass: #SystemConsistencyTest
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'BaseImageTests-System-Support'!
-!classDefinition: 'SystemConsistencyTest class' category: 'BaseImageTests-System-Support'!
-SystemConsistencyTest class
-	instanceVariableNames: ''!
-
-!classDefinition: #SystemDictionaryTest category: 'BaseImageTests-System-Support'!
-TestCase subclass: #SystemDictionaryTest
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'BaseImageTests-System-Support'!
-!classDefinition: 'SystemDictionaryTest class' category: 'BaseImageTests-System-Support'!
-SystemDictionaryTest class
-	instanceVariableNames: ''!
-
-!classDefinition: #TranscriptTest category: 'BaseImageTests-System-Support'!
-TestCase subclass: #TranscriptTest
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'BaseImageTests-System-Support'!
-!classDefinition: 'TranscriptTest class' category: 'BaseImageTests-System-Support'!
-TranscriptTest class
-	instanceVariableNames: ''!
-
-!classDefinition: #RectangleTest category: 'BaseImageTests-Graphics-Primitives'!
-TestCase subclass: #RectangleTest
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'BaseImageTests-Graphics-Primitives'!
-!classDefinition: 'RectangleTest class' category: 'BaseImageTests-Graphics-Primitives'!
-RectangleTest class
-	instanceVariableNames: ''!
-
-!classDefinition: #ColorFormTest category: 'BaseImageTests-Graphics-Display Objects'!
-TestCase subclass: #ColorFormTest
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'BaseImageTests-Graphics-Display Objects'!
-!classDefinition: 'ColorFormTest class' category: 'BaseImageTests-Graphics-Display Objects'!
-ColorFormTest class
-	instanceVariableNames: ''!
-
-!classDefinition: #GrayFormTest category: 'BaseImageTests-Graphics-Display Objects'!
-TestCase subclass: #GrayFormTest
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'BaseImageTests-Graphics-Display Objects'!
-!classDefinition: 'GrayFormTest class' category: 'BaseImageTests-Graphics-Display Objects'!
-GrayFormTest class
-	instanceVariableNames: ''!
-
-!classDefinition: #BecomeTest category: 'BaseImageTests-Kernel-Objects'!
-TestCase subclass: #BecomeTest
-	instanceVariableNames: ''
+!classDefinition: #BecomeTestExperiment category: 'BaseImageTests-Kernel-Objects'!
+Object subclass: #BecomeTestExperiment
+	instanceVariableNames: 'a b'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BaseImageTests-Kernel-Objects'!
-!classDefinition: 'BecomeTest class' category: 'BaseImageTests-Kernel-Objects'!
-BecomeTest class
-	instanceVariableNames: ''!
-
-!classDefinition: #BooleanTest category: 'BaseImageTests-Kernel-Objects'!
-TestCase subclass: #BooleanTest
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'BaseImageTests-Kernel-Objects'!
-!classDefinition: 'BooleanTest class' category: 'BaseImageTests-Kernel-Objects'!
-BooleanTest class
-	instanceVariableNames: ''!
-
-!classDefinition: #IfNotNilTests category: 'BaseImageTests-Kernel-Objects'!
-TestCase subclass: #IfNotNilTests
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'BaseImageTests-Kernel-Objects'!
-!classDefinition: 'IfNotNilTests class' category: 'BaseImageTests-Kernel-Objects'!
-IfNotNilTests class
-	instanceVariableNames: ''!
-
-!classDefinition: #ObjectTest category: 'BaseImageTests-Kernel-Objects'!
-TestCase subclass: #ObjectTest
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'BaseImageTests-Kernel-Objects'!
-!classDefinition: 'ObjectTest class' category: 'BaseImageTests-Kernel-Objects'!
-ObjectTest class
-	instanceVariableNames: ''!
-
-!classDefinition: #SpecialSelectorsTest category: 'BaseImageTests-Kernel-Objects'!
-TestCase subclass: #SpecialSelectorsTest
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'BaseImageTests-Kernel-Objects'!
-!classDefinition: 'SpecialSelectorsTest class' category: 'BaseImageTests-Kernel-Objects'!
-SpecialSelectorsTest class
-	instanceVariableNames: ''!
-
-!classDefinition: #WeakMessageSendTest category: 'BaseImageTests-Kernel-Objects'!
-TestCase subclass: #WeakMessageSendTest
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'BaseImageTests-Kernel-Objects'!
-!classDefinition: 'WeakMessageSendTest class' category: 'BaseImageTests-Kernel-Objects'!
-WeakMessageSendTest class
-	instanceVariableNames: ''!
-
-!classDefinition: #MethodReferenceTest category: 'BaseImageTests-Tools-Browser'!
-TestCase subclass: #MethodReferenceTest
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'BaseImageTests-Tools-Browser'!
-!classDefinition: 'MethodReferenceTest class' category: 'BaseImageTests-Tools-Browser'!
-MethodReferenceTest class
-	instanceVariableNames: ''!
-
-!classDefinition: #CharacterSetTest category: 'BaseImageTests-Kernel-Text'!
-TestCase subclass: #CharacterSetTest
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'BaseImageTests-Kernel-Text'!
-!classDefinition: 'CharacterSetTest class' category: 'BaseImageTests-Kernel-Text'!
-CharacterSetTest class
-	instanceVariableNames: ''!
-
-!classDefinition: #CharacterTest category: 'BaseImageTests-Kernel-Text'!
-TestCase subclass: #CharacterTest
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'BaseImageTests-Kernel-Text'!
-!classDefinition: 'CharacterTest class' category: 'BaseImageTests-Kernel-Text'!
-CharacterTest class
-	instanceVariableNames: ''!
-
-!classDefinition: #StringTest category: 'BaseImageTests-Kernel-Text'!
-TestCase subclass: #StringTest
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'BaseImageTests-Kernel-Text'!
-!classDefinition: 'StringTest class' category: 'BaseImageTests-Kernel-Text'!
-StringTest class
-	instanceVariableNames: ''!
-
-!classDefinition: #SymbolTest category: 'BaseImageTests-Kernel-Text'!
-TestCase subclass: #SymbolTest
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'BaseImageTests-Kernel-Text'!
-!classDefinition: 'SymbolTest class' category: 'BaseImageTests-Kernel-Text'!
-SymbolTest class
-	instanceVariableNames: ''!
-
-!classDefinition: #UnicodeStringsTest category: 'BaseImageTests-Kernel-Text'!
-TestCase subclass: #UnicodeStringsTest
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'BaseImageTests-Kernel-Text'!
-!classDefinition: 'UnicodeStringsTest class' category: 'BaseImageTests-Kernel-Text'!
-UnicodeStringsTest class
-	instanceVariableNames: ''!
-
-!classDefinition: #UnicodeSymbolsTest category: 'BaseImageTests-Kernel-Text'!
-TestCase subclass: #UnicodeSymbolsTest
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'BaseImageTests-Kernel-Text'!
-!classDefinition: 'UnicodeSymbolsTest class' category: 'BaseImageTests-Kernel-Text'!
-UnicodeSymbolsTest class
-	instanceVariableNames: ''!
-
-!classDefinition: #UnicodeTest category: 'BaseImageTests-Kernel-Text'!
-TestCase subclass: #UnicodeTest
-	instanceVariableNames: 'bytesOfExample1'
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'BaseImageTests-Kernel-Text'!
-!classDefinition: 'UnicodeTest class' category: 'BaseImageTests-Kernel-Text'!
-UnicodeTest class
-	instanceVariableNames: ''!
-
-!classDefinition: #SHST80RangeTypeTest category: 'BaseImageTests-Tools-Syntax Highlighting'!
-TestCase subclass: #SHST80RangeTypeTest
-	instanceVariableNames: ''
-	classVariableNames: 'ClassVar1'
-	poolDictionaries: ''
-	category: 'BaseImageTests-Tools-Syntax Highlighting'!
-!classDefinition: 'SHST80RangeTypeTest class' category: 'BaseImageTests-Tools-Syntax Highlighting'!
-SHST80RangeTypeTest class
-	instanceVariableNames: ''!
-
-!classDefinition: #DebuggerTest category: 'BaseImageTests-Tools-Debugger'!
-TestCase subclass: #DebuggerTest
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'BaseImageTests-Tools-Debugger'!
-!classDefinition: 'DebuggerTest class' category: 'BaseImageTests-Tools-Debugger'!
-DebuggerTest class
-	instanceVariableNames: ''!
-
-!classDefinition: #StrikeFontTest category: 'BaseImageTests-Graphics-Text'!
-TestCase subclass: #StrikeFontTest
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'BaseImageTests-Graphics-Text'!
-!classDefinition: 'StrikeFontTest class' category: 'BaseImageTests-Graphics-Text'!
-StrikeFontTest class
-	instanceVariableNames: ''!
-
-!classDefinition: #JpegTest category: 'BaseImageTests-Graphics-Files'!
-TestCase subclass: #JpegTest
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'BaseImageTests-Graphics-Files'!
-!classDefinition: 'JpegTest class' category: 'BaseImageTests-Graphics-Files'!
-JpegTest class
-	instanceVariableNames: ''!
-
-!classDefinition: #TrieTest category: 'BaseImageTests-System-Text'!
-TestCase subclass: #TrieTest
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'BaseImageTests-System-Text'!
-!classDefinition: 'TrieTest class' category: 'BaseImageTests-System-Text'!
-TrieTest class
-	instanceVariableNames: ''!
-
-!classDefinition: #TrieUnicodeTest category: 'BaseImageTests-System-Text'!
-TestCase subclass: #TrieUnicodeTest
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'BaseImageTests-System-Text'!
-!classDefinition: 'TrieUnicodeTest class' category: 'BaseImageTests-System-Text'!
-TrieUnicodeTest class
+!classDefinition: 'BecomeTestExperiment class' category: 'BaseImageTests-Kernel-Objects'!
+BecomeTestExperiment class
 	instanceVariableNames: ''!
 
 !classDefinition: #ExceptionTester category: 'BaseImageTests-Exceptions'!
@@ -1486,16 +1516,12 @@ Object subclass: #RefactoringClassTestData
 RefactoringClassTestData class
 	instanceVariableNames: ''!
 
-!classDefinition: #BecomeTestExperiment category: 'BaseImageTests-Kernel-Objects'!
-Object subclass: #BecomeTestExperiment
-	instanceVariableNames: 'a b'
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'BaseImageTests-Kernel-Objects'!
-!classDefinition: 'BecomeTestExperiment class' category: 'BaseImageTests-Kernel-Objects'!
-BecomeTestExperiment class
-	instanceVariableNames: ''!
 
+!BecomeTest commentStamp: '<historical>' prior: 0!
+Tests that common uses of #become: and related methods don't crash the system when some method could resume execution on a 'becomed' instance.!
+
+!SpecialSelectorsTest commentStamp: '<historical>' prior: 0!
+Tests for proper behavior of Special Selectors, for example #@!
 
 !FloatTest commentStamp: 'fbs 3/8/2004 22:13' prior: 0!
 I provide a test suite for Float values. Examine my tests to see how Floats should behave, and see how to use them.!
@@ -1510,6 +1536,16 @@ I hold test cases for generic Process-related behaviour.!
 A SemaphoreTest is sunit test for simple and multiEx semaphores
 
 Instance Variables none; does not have common test fixture accross all tests (because its testing differenct sorts of semaphores (could refactor into muliple testcases if there were more test conditions.
+!
+
+!WriteStreamTest commentStamp: '<historical>' prior: 0!
+Tests cases for Stream messages: 
+
+nextPutAll: when:
+nextPut: when: 
+print: when:.
+
+Made at Cuis Sprint #1
 !
 
 !DecompilerTests commentStamp: 'sd 9/26/2004 13:24' prior: 0!
@@ -1679,6 +1715,19 @@ WeakSet. #scanFor:.
 WeakSet. #scanForLoadedSymbol:.
 }!
 
+!SystemConsistencyTest commentStamp: '<historical>' prior: 0!
+General system - wide image health tests.!
+
+!TranscriptTest commentStamp: '<historical>' prior: 0!
+Tests cases for Stream messages: 
+
+nextPutAll: when:
+nextPut: when: 
+print: when:.
+
+Made at Cuis Sprint #1
+!
+
 !FileManTest commentStamp: 'jmv 5/31/2016 10:49' prior: 0!
 FileManTest suite run!
 
@@ -1700,35 +1749,6 @@ Tests for MorphicTranslation!
 !TaskbarTest commentStamp: '<historical>' prior: 0!
 Tests for the Taskbar.!
 
-!WriteStreamTest commentStamp: '<historical>' prior: 0!
-Tests cases for Stream messages: 
-
-nextPutAll: when:
-nextPut: when: 
-print: when:.
-
-Made at Cuis Sprint #1
-!
-
-!SystemConsistencyTest commentStamp: '<historical>' prior: 0!
-General system - wide image health tests.!
-
-!TranscriptTest commentStamp: '<historical>' prior: 0!
-Tests cases for Stream messages: 
-
-nextPutAll: when:
-nextPut: when: 
-print: when:.
-
-Made at Cuis Sprint #1
-!
-
-!BecomeTest commentStamp: '<historical>' prior: 0!
-Tests that common uses of #become: and related methods don't crash the system when some method could resume execution on a 'becomed' instance.!
-
-!SpecialSelectorsTest commentStamp: '<historical>' prior: 0!
-Tests for proper behavior of Special Selectors, for example #@!
-
 !BecomeTestExperiment commentStamp: '<historical>' prior: 0!
 To be used by BecomeTest!
 
@@ -1737,737 +1757,254 @@ isResumable
 
 	^true! !
 
-!BinarySearchTest methodsFor: 'testing' stamp: 'sqr 5/25/2016 14:36'!
-testquickFindFirst
+!BecomeTest methodsFor: 'testing' stamp: 'jmv 1/29/2019 12:03:40'!
+testBecome
+	| e |
+	BecomeTestExperiment twoVars.
+	e _ BecomeTestExperiment new.
+	self should: [ e messStuffUpWBecome ] raise: MethodInCallStackToBecomeInvalid! !
 
-	| collection |
-	collection := 1000 to: 2100.
-	collection withIndexDo:
-		[:eachElement :eachIndex |
-			self assert: (collection quickFindFirst: [:one | one >= eachElement]) = eachIndex.
-			self assert: (collection quickFindFirst: [:one | one >= (eachElement - 0.5)]) = eachIndex
-		].
-	self assert: (collection quickFindFirst: [:one | one > 2101]) = 0! !
+!BecomeTest methodsFor: 'testing' stamp: 'jmv 1/29/2019 12:03:42'!
+testShapeMutation
+	| e |
+	BecomeTestExperiment twoVars.
+	e _ BecomeTestExperiment new.
+	self should: [ e messStuffUp ] raise: MethodInCallStackToBecomeInvalid! !
 
-!BinarySearchTest methodsFor: 'testing' stamp: 'sqr 5/25/2016 14:36'!
-testquickFindLast
-
-	| collection |
-	collection := 1000 to: 2100.
-	collection withIndexDo:
-		[:eachElement :eachIndex |
-			self assert: (collection quickFindLast: [:one | one <= eachElement]) = eachIndex.
-			self assert: (collection quickFindLast: [:one | one <= (eachElement + 0.5)]) = eachIndex
-		].
-	self assert: (collection quickFindLast: [:one | one < 0]) = 0! !
-
-!BinarySearchTest methodsFor: 'testing' stamp: 'sqr 5/25/2016 14:46'!
-testquickIndexOf
-
-	| collection |
-	collection := 1000 to: 2100.
-	collection withIndexDo:
-		[:eachElement :eachIndex |
-			self assert: (collection quickIndexOf: eachElement) = eachIndex
-		].
-	self assert: (collection quickIndexOf: 999) = 0.
-	self assert: (collection quickIndexOf: 2101) = 0! !
-
-!BinarySearchTest methodsFor: 'testing' stamp: 'sqr 5/25/2016 15:01'!
-testquickIndexOfWithSemistableOrder
-
-	| collection |
-	collection := SortedCollection
-		sortBlock: [:x :y | x key <= y key].
-	1 to: 1000 do: [:each | collection add: each -> each].
-	1 to: 50 do: [:each | collection add: 42 -> each].
-	self assert: (collection quickIndexOf: 42 -> 6) = 48! !
-
-!CollectTest methodsFor: 'testing' stamp: 'jmv 11/30/2014 11:34'!
-testIdentitySet
-	"
-	CollectTest  new testIdentitySet
-	"
-	| col result |
-	col _ #(1 2 3 1.0 2.0 3.0) asIdentitySet.
-	result _ col collect: [ :elem |  elem yourself ].
-	self assert: result class = IdentitySet.
-	self assert: result = #(1 2 3 1.0 2.0 3.0) asIdentitySet.
-	self assert: result = col! !
-
-!CollectTest methodsFor: 'testing' stamp: 'jmv 11/30/2014 10:51'!
-testOrderedCollection
-	"
-	CollectTest  new testOrderedCollection
-	"
-	| col result |
-	col _ #(1 2 3 4 5) asOrderedCollection.
-	result _ col collect: [ :elem |  elem * 2 ].
-	self assert: result class = OrderedCollection.
-	self assert: result = #(2 4 6 8 10) asOrderedCollection! !
-
-!CollectTest methodsFor: 'testing' stamp: 'jmv 11/30/2014 11:34'!
-testSet
-	"
-	CollectTest  new testSet
-	"
-	| col result |
-	col _ #(1 2 3 1.0 2.0 3.0) asSet.
-	result _ col collect: [ :elem |  elem yourself ].
-	self assert: result class = Set.
-	self assert: result = #(1 2 3) asSet.
-	self assert: result = col! !
-
-!CollectTest methodsFor: 'testing' stamp: 'jmv 11/30/2014 11:01'!
-testSortedCollection
-	"
-	CollectTest  new testSortedCollection
-	"
-	| col result |
-	col _ #(1 2 3 4 5) asSortedCollection: [ :a :b | a > b ].
-	result _ col collect: [ :elem |  elem * 2 ].
-	self assert: result class = OrderedCollection.
-	self assert: result = #(10 8 6 4 2) asOrderedCollection! !
-
-!CollectionTest methodsFor: 'groupBy tests' stamp: 'HAW 7/5/2018 15:14:11'!
-testGroupByHavingSelectsTheResultOfGroupBy
-
-	| collectionToGroupBy groupedByEven |
-	
-	collectionToGroupBy := OrderedCollection with: 1 with: 2 with: 3 with: 4 with: 5.
-	groupedByEven := collectionToGroupBy groupBy: [ :anInteger | anInteger even ] having: [ :group | group size > 2 ].
-	
-	self assert: 1 equals: (groupedByEven size).	
-	self assert: (collectionToGroupBy select: [ :anInteger | anInteger odd ]) equals: (groupedByEven at: false) ! !
-
-!CollectionTest methodsFor: 'groupBy tests' stamp: 'HAW 7/5/2018 15:15:41'!
-testGroupByReturnsADictionaryThatGroupsACollectionByThePluggableKey
-
-	| collectionToGroupBy groupedByEven |
-	
-	collectionToGroupBy := OrderedCollection with: 1 with: 2 with: 3 with: 4 with: 5.
-	groupedByEven := collectionToGroupBy groupBy: [ :anInteger | anInteger even ].
-	
-	self assert: 2 equals: groupedByEven size.
-	self assert: (collectionToGroupBy select: [ :anInteger | anInteger even ]) equals: (groupedByEven at: true).
-	self assert:(collectionToGroupBy select: [ :anInteger | anInteger odd ]) equals: (groupedByEven at: false).! !
-
-!CollectionTest methodsFor: 'average tests' stamp: 'HAW 11/17/2018 11:45:15'!
-testAverageFailsWhenTheCollectionIsEmpty
+!BooleanTest methodsFor: 'and tests' stamp: 'HAW 7/8/2018 20:03:35'!
+testAndAndAndAndTrueTable
 
 	self 
-		should: [ #() average: [ :each | each ] ]
-		raise: Error 
-		description: Collection emptyCollectionDescription! !
-
-!CollectionTest methodsFor: 'average tests' stamp: 'HAW 11/17/2018 11:45:19'!
-testAverageIfEmptyCalculatesItAsUsualWhenTheCollectionIsNotEmpty
-
-	| someNumbers |
+		evaluate: [ :first :second :third :fourth :fifth | 
+			self 
+				assert: (first and: [second] and: [third] and: [fourth] and: [fifth]) 
+				equals: ((((first and: [second]) and: [third]) and: [ fourth ]) and: [ fifth ]) ]
+		forCombinationOf: 5
+		
 	
-	someNumbers _ #(1 5).
-
-	self 
-		assert: (someNumbers average: [ :each | each ] ifEmpty: [ self fail ])
-		equals: someNumbers average! !
-
-!CollectionTest methodsFor: 'average tests' stamp: 'HAW 11/17/2018 11:45:22'!
-testAverageIfEmptyEvaluatesEmptyBlockWhenTheCollectionIsEmpty
-
-	| emptyBlock |
 	
-	emptyBlock _ [ 0 ].
-
-	self 
-		assert: (#() average: [ :each | each asInteger ] ifEmpty: emptyBlock)
-		equals: emptyBlock value! !
-
-!CollectionTest methodsFor: 'average tests' stamp: 'jmv 1/6/2021 11:57:27'!
-testsAverageWorksWithABlock
-
-	self assert: ({ '1' . '2' . '3' } average: [ :each | each asNumber ]) equals: 2! !
-
-!CollectionTest methodsFor: 'as comma separated tests' stamp: 'HAW 3/6/2019 15:11:08'!
-assertAsCommaSeparated: aCollection equals: expectedString 
-	
-	self 
-		assert: (String streamContents: [ :stream | aCollection asCommaSeparated: [ :elem | stream print: elem + 1] on: stream ])
-		equals: expectedString! !
-
-!CollectionTest methodsFor: 'as comma separated tests' stamp: 'HAW 3/6/2019 15:12:31'!
-testAsCommaSeparatedOnWorksAsCommaStringAnd
-
-	self assertAsCommaSeparated: #() equals: ''. 
-	self assertAsCommaSeparated: #(1) equals: '2'.
-	self assertAsCommaSeparated: #(1 2) equals: '2 and 3'. 
-	self assertAsCommaSeparated: #(1 2 3) equals: '2, 3 and 4'.! !
-
-!CollectionTest methodsFor: 'as comma separated tests' stamp: 'HAW 3/6/2019 15:11:51'!
-testAsCommaStringAndDoesNotAddAnythingWhenEmpty
-
-	self assert: #() asCommaStringAnd isEmpty ! !
-
-!CollectionTest methodsFor: 'as comma separated tests' stamp: 'HAW 3/6/2019 15:11:59'!
-testAsCommaStringAndDoesNotAddAnythingWhenHasOneElement
-
-	self assert: #(1) asCommaStringAnd equals: '1' ! !
-
-!CollectionTest methodsFor: 'as comma separated tests' stamp: 'HAW 3/6/2019 15:12:06'!
-testAsCommaStringAndSeparatesWithAndWhenTwoOneElements
-
-	self assert: #(1 2) asCommaStringAnd equals: '1 and 2' ! !
-
-!CollectionTest methodsFor: 'as comma separated tests' stamp: 'HAW 3/6/2019 15:12:21'!
-testAsCommaStringAndSeparatesWithCommaButLastOneWithAndWhenMoreThanTwoElements
-
-	self assert: #(1 2 3) asCommaStringAnd equals: '1, 2 and 3' ! !
-
-!CollectionTest methodsFor: 'flatten tests' stamp: 'GC 5/16/2019 00:08:43'!
-testItMaintainsTheSameCollectionSpecies
-
-	self assert: (OrderedCollection with: 1 with: 2) equals: (OrderedCollection with: 1 with: #(2)) flatten! !
-
-!CollectionTest methodsFor: 'flatten tests' stamp: 'GC 5/15/2019 23:31:15'!
-testWhenCollectionContainsASingleLevelOfElementsItReturnsTheSameCollection
-
-	self assert: #(1 2 3) equals: #(1 2 3) flatten! !
-
-!CollectionTest methodsFor: 'flatten tests' stamp: 'GC 5/16/2019 00:01:02'!
-testWhenCollectionContainsMoreThanTwoLevelsltReturnsTheElementsOfAllNestedCollections
-
-	self assert: #(1 2 3 4 5) equals: #(1 #(2 3) #(4 #(5))) flatten! !
-
-!CollectionTest methodsFor: 'flatten tests' stamp: 'GC 5/16/2019 00:03:22'!
-testWhenCollectionContainsStringCollectionsItDoesNotFlattenTheStrings
-
-	self assert: #('string1' 'string2' 'string3') equals: #('string1' #('string2' 'string3')) flatten! !
-
-!CollectionTest methodsFor: 'flatten tests' stamp: 'GC 5/16/2019 00:02:07'!
-testWhenCollectionContainsStringsItReturnsTheSameCollection
-
-	self assert: #('string1' 'string2' 'string3') equals: #('string1' 'string2' 'string3') flatten! !
-
-!CollectionTest methodsFor: 'flatten tests' stamp: 'GC 5/16/2019 00:03:37'!
-testWhenCollectionContainsTwoLevelsOfElementsItReturnsTheElementsOfAllNestedCollections
-	
-	self assert: #(1 2 3) equals: #(#(1) #(2 3)) flatten
 	! !
 
-!CollectionTest methodsFor: 'flatten tests' stamp: 'GC 5/15/2019 23:24:15'!
-testWhenCollectionIsEmptyItReturnsTheSameCollection
-
-	self assert: #() equals: #() flatten! !
-
-!CollectionTest methodsFor: 'misc tests' stamp: 'jpb 8/2/2019 23:18:50'!
-testIsCollection
-	self assert: (Bag new is: #Collection).! !
-
-!CollectionTest methodsFor: 'misc tests' stamp: 'jmv 6/12/2019 18:22:57'!
-testSetEquality
-	self assert: Set new = IdentitySet new.
-	self assert: Set new hash = IdentitySet new hash.
-	self assert: Dictionary new = IdentityDictionary new.
-	self assert: Dictionary new hash = IdentityDictionary new hash.
-	self assert: Dictionary new = OrderedDictionary new.
-	self assert: Dictionary new hash = OrderedDictionary new hash.
-	self assert: IdentityDictionary new = OrderedDictionary new.
-	self assert: IdentityDictionary new hash = OrderedDictionary new hash.
-
-	self deny: Set new = Dictionary new! !
-
-!DictionaryTest methodsFor: 'tests' stamp: 'jpb 8/2/2019 23:17:49'!
-testIsCollection
-	self assert: (Dictionary new is: #Collection)! !
-
-!DictionaryTest methodsFor: 'tests' stamp: 'HAW 4/4/2019 08:18:05'!
-testKeyNotFoundSignalTheRightMessage
+!BooleanTest methodsFor: 'and tests' stamp: 'HAW 7/8/2018 20:03:46'!
+testAndAndAndTrueTable
 
 	self 
-		should: [ Dictionary new errorKeyNotFound ]
+		evaluate: [ :first :second :third :fourth | 
+			self 
+				assert: (first and: [second] and: [third] and: [fourth]) 
+				equals: (((first and: [second]) and: [third]) and: [ fourth ]) ]
+		forCombinationOf: 4
+		
+	
+	
+	! !
+
+!BooleanTest methodsFor: 'and tests' stamp: 'HAW 7/8/2018 20:04:00'!
+testAndAndTrueTable
+
+	self 
+		evaluate: [ :first :second :third | 
+			self 
+				assert: (first and: [second] and: [third]) 
+				equals: ((first and: [second]) and: [third]) ]
+		forCombinationOf: 3
+		
+	
+	
+	! !
+
+!BooleanTest methodsFor: 'or tests' stamp: 'HAW 7/8/2018 20:04:10'!
+testOrOrOrOrTrueTable
+
+	self 
+		evaluate: [ :first :second :third :fourth :fifth | 
+			self 
+				assert: (first or: [second] or: [third] or: [fourth] or: [fifth]) 
+				equals: ((((first or: [second]) or: [third]) or: [ fourth ]) or: [ fifth ]) ]
+		forCombinationOf: 5
+		
+	
+	
+	! !
+
+!BooleanTest methodsFor: 'or tests' stamp: 'HAW 7/8/2018 20:04:18'!
+testOrOrOrTrueTable
+
+	self 
+		evaluate: [ :first :second :third :fourth | 
+			self 
+				assert: (first or: [second] or: [third] or: [fourth]) 
+				equals: (((first or: [second]) or: [third]) or: [ fourth ]) ]
+		forCombinationOf: 4
+		
+	
+	
+	! !
+
+!BooleanTest methodsFor: 'or tests' stamp: 'HAW 7/8/2018 20:04:25'!
+testOrOrTrueTable
+
+	self 
+		evaluate: [ :first :second :third | 
+			self 
+				assert: (first or: [second] or: [third]) 
+				equals: ((first or: [second]) or: [third]) ]
+		forCombinationOf: 3
+		
+	
+	
+	! !
+
+!BooleanTest methodsFor: 'combination generation' stamp: 'HAW 7/8/2018 19:51:52'!
+evaluate: aBlock collectingValuesInto: values at: aPosition 
+	
+	aPosition = 0 
+		ifTrue: [ aBlock valueWithArguments: values ]
+		ifFalse: [ 
+			#(true false) do: [ :value | 
+				values at: aPosition put: value. 
+				self evaluate: aBlock collectingValuesInto: values at: aPosition - 1 ]]! !
+
+!BooleanTest methodsFor: 'combination generation' stamp: 'HAW 7/8/2018 19:50:53'!
+evaluate: aBlock forCombinationOf: aNumberOfValues
+
+	self evaluate: aBlock collectingValuesInto: (Array new: aNumberOfValues) at: aNumberOfValues 
+	! !
+
+!BooleanTest methodsFor: 'testing' stamp: 'jpb 8/2/2019 23:13:00'!
+testIsBoolean
+	self assert: (true is: #Boolean).
+	self assert: (false is: #Boolean).! !
+
+!IfNotNilTests methodsFor: 'tests' stamp: 'jmv 11/16/2010 08:46'!
+testIfNilIfNotNil0Arg
+
+	self assert: (5@4 ifNil: [#foo] ifNotNil: [#bar]) = #bar.
+	self assert: (nil ifNil: [#foo] ifNotNil: [#bar]) = #foo! !
+
+!IfNotNilTests methodsFor: 'tests' stamp: 'jmv 11/16/2010 08:46'!
+testIfNilIfNotNil0ArgAsVar
+
+	| block1 block2 |
+	block1 := [#foo].
+	block2 := [#bar].
+	self assert: (5@4 ifNil: block1 ifNotNil: block2) = #bar.
+	self assert: (nil ifNil: block1 ifNotNil: block2) = #foo! !
+
+!IfNotNilTests methodsFor: 'tests' stamp: 'jmv 11/16/2010 08:46'!
+testIfNilIfNotNil1Arg
+
+	self assert: (5@4 ifNil: [#foo] ifNotNil: [:a | a printString]) = '5@4'.
+	self assert: (nil ifNil: [#foo] ifNotNil: [:a | a printString]) = #foo! !
+
+!IfNotNilTests methodsFor: 'tests' stamp: 'jmv 11/16/2010 08:46'!
+testIfNilIfNotNil1ArgAsVar
+
+	| block1 block2 |
+	block1 := [#foo].
+	block2 := [:a | a printString].
+	self assert: (5@4 ifNil: block1 ifNotNil: block2) = '5@4'.
+	self assert: (nil ifNil: block1 ifNotNil: block2) = #foo! !
+
+!IfNotNilTests methodsFor: 'tests' stamp: 'jmv 11/16/2010 08:46'!
+testIfNotNil0Arg
+
+	self assert: (5@4 ifNotNil: [#foo]) = #foo.
+	self assert: (nil ifNotNil: [#foo]) = nil! !
+
+!IfNotNilTests methodsFor: 'tests' stamp: 'jmv 11/16/2010 08:46'!
+testIfNotNil0ArgAsVar
+
+	| block |
+	block := [#foo].
+	self assert: (5@4 ifNotNil: block) = #foo.
+	self assert: (nil ifNotNil: block) = nil! !
+
+!IfNotNilTests methodsFor: 'tests' stamp: 'jmv 11/16/2010 08:46'!
+testIfNotNil1Arg
+
+	self assert: (5@4 ifNotNil: [:a | a printString]) = '5@4'.
+	self assert: (nil ifNotNil: [:a | a printString]) = nil! !
+
+!IfNotNilTests methodsFor: 'tests' stamp: 'jmv 11/16/2010 08:46'!
+testIfNotNil1ArgAsVar
+
+	| block |
+	block := [:a | a printString].
+	self assert: (5@4 ifNotNil: block) = '5@4'.
+	self assert: (nil ifNotNil: block) = nil! !
+
+!IfNotNilTests methodsFor: 'tests' stamp: 'jmv 11/16/2010 08:46'!
+testIfNotNilIfNil0Arg
+
+	self assert: (5@4 ifNotNil: [#foo] ifNil: [#bar]) = #foo.
+	self assert: (nil ifNotNil: [#foo] ifNil: [#bar]) = #bar! !
+
+!IfNotNilTests methodsFor: 'tests' stamp: 'jmv 11/16/2010 08:46'!
+testIfNotNilIfNil0ArgAsVar
+
+	| block1 block2 |
+	block1 := [#foo].
+	block2 := [#bar].
+	self assert: (5@4 ifNotNil: block2 ifNil: block1) = #bar.
+	self assert: (nil ifNotNil: block2 ifNil: block1) = #foo! !
+
+!IfNotNilTests methodsFor: 'tests' stamp: 'jmv 11/16/2010 08:46'!
+testIfNotNilIfNil1Arg
+
+	self assert: (5@4 ifNotNil: [:a | a printString] ifNil: [#foo]) = '5@4'.
+	self assert: (nil ifNotNil: [:a | a printString] ifNil: [#foo]) = #foo! !
+
+!IfNotNilTests methodsFor: 'tests' stamp: 'jmv 11/16/2010 08:47'!
+testIfNotNilIfNil1ArgAsVar
+
+	| block1 block2 |
+	block1 := [#foo].
+	block2 := [:a | a printString].
+	self assert: (5@4 ifNotNil: block2 ifNil: block1) = '5@4'.
+	self assert: (nil ifNotNil: block2 ifNil: block1) = #foo! !
+
+!ObjectTest methodsFor: 'error tests' stamp: 'HAW 10/23/2019 09:23:56'!
+testErrorSignalsTheRightException
+
+	| reason |
+	
+	reason :=  'something went wrong'.
+	self 
+		should: [ self error: reason ]
 		raise: Error
-		withMessageText: Dictionary keyNotFoundErrorDescription ! !
+		withMessageText: reason ! !
 
-!IntervalTest methodsFor: 'testing' stamp: 'jmv 12/18/2018 10:56:31'!
-testAt
-	"
-	IntervalTest new testAt
-	"
-	self assert: (2 to: 5 by: 2) first = 2.
-	self assert: ((2 to: 5 by: 2) at: 1) = 2.
-	self assert: ((2 to: 5 by: 2) at: 2) = 4.
-	self assert: (2 to: 5 by: 2) last = 4.
+!ObjectTest methodsFor: 'error tests' stamp: 'HAW 10/23/2019 09:24:03'!
+testShouldNotHappenBecauseSignalsTheRightError
 
-	self assert: (0 to: 2.4 by: 0.1) first = 0.
-	self assert: ((0 to: 2.4 by: 0.1) at: 1) = 0.
-	self assert: (((0 to: 2.4 by: 0.1) at: 2) isWithin: 1 floatsFrom: 0.1).
-	self assert: (((0 to: 2.4 by: 0.1) at: 3) isWithin: 1 floatsFrom: 0.2).
-	self assert: (((0 to: 2.4 by: 0.1) at: 23) isWithin: 1 floatsFrom: 2.2).
-	self assert: ((0 to: 2.4 by: 0.1) at: 24) = 2.3.
-	self assert: ((0 to: 2.4 by: 0.1) at: 25) = 2.4.
-	self assert: (0 to: 2.4 by: 0.1) last = 2.4.! !
-
-!IntervalTest methodsFor: 'testing' stamp: 'jmv 12/18/2018 10:56:59'!
-testFloatInterval
-	"
-	IntervalTest new testFloatInterval
-	"
+	| reason |
 	
-	self assert: (0 to: 2.4 by: 0.1) size = 25.
-	self assert: (0 to: 2.4 by: 0.1) first = 0.
-	self assert: (0 to: 2.4 by: 0.1) last = 2.4.
-
-	2 to: 200 do: [ :n |
-		self assert: (0.0 to: 1.0 count: n) size = n.
-		self assert: (0.0 to: 1.0 count: n) first = 0.0.
-		self assert: ((0.0 to: 1.0 count: n) last isWithin: 1 floatsFrom: 1.0)].
-	2 to: 200 do: [ :n |
-		self assert: (1.0 to: 0.0 count: n) size = n.
-		self assert: (1.0 to: 0.0 count: n) first = 1.0.
-		self assert: ((1.0 to: 0.0 count: n) last isWithin: 1 floatsFrom: 0.0)].! !
-
-!IntervalTest methodsFor: 'testing' stamp: 'HAW 3/17/2019 07:20:11'!
-testFloatToByDo
-	"
-	IntervalTest new testFloatToByDo
-	"
-	| interval toByDo |
-
-	"See comment at #to:by:do:"
-	self shouldFail: [
-		interval _ 0 to: 2.4 by: 0.1.
-		toByDo _ Array streamContents: [ :strm |
-			0 to: 2.4 by: 0.1 do: [ :each |
-				strm nextPut: each ]].
-		self assert: toByDo size = interval size.
-		1 to: toByDo size do: [ :i |
-			self assert: (toByDo at: i) = (interval at: i) ]]! !
-
-!IntervalTest methodsFor: 'testing' stamp: 'jmv 3/27/2016 17:18'!
-testIntegerInterval
-	"
-	IntervalTest new testIntegerInterval
-	"
-	| z |
-	self assert: (2 to: 5 by: 2) size = 2.
-	self assert: (2 to: 5 by: 2) last = 4.
-	z _ 0.
-	(2 to: 5 by: 2) do: [ :i | z _ i ].
-	self assert: z = 4! !
-
-!IntervalTest methodsFor: 'testing' stamp: 'jmv 4/27/2016 14:29'!
-testIntegerToByDo
-	"
-	IntervalTest new testIntegerToByDo
-	"
-	| interval toByDo |
-	interval _ 2 to: 5 by: 2.
-	toByDo _ Array streamContents: [ :strm |
-		2 to: 5 by: 2 do: [ :each |
-			strm nextPut: each ]].
-	self assert: toByDo size = interval size.
-	1 to: toByDo size do: [ :i |
-		self assert: (toByDo at: i) = (interval at: i) ]! !
-
-!IntervalTest methodsFor: 'test - includes' stamp: 'HAW 5/2/2020 11:43:33'!
-testDoesNotIncludeNumbersOutsideTheInInterval
-
-	| from1To10 |
-	
-	from1To10 := 1 to: 10.
-	
-	self deny: (from1To10 includes: 0).
-	self deny: (from1To10 includes: 11)! !
-
-!IntervalTest methodsFor: 'test - includes' stamp: 'HAW 5/2/2020 11:35:03'!
-testDoesNotIncludeObjectsThatAreNotNumbers
-
-	self deny: ((1 to: 10) includes: $a)! !
-
-!IntervalTest methodsFor: 'test - includes' stamp: 'HAW 5/2/2020 11:53:40'!
-testDoesNotIncludedNumbersThatAreInRangeButNotReachedByTheStep
-
-	| from1To10By2 |
-	
-	from1To10By2 := 1 to: 10 by: 2.
-	
-	self deny: (from1To10By2 includes: 0).
-	self deny: (from1To10By2 includes: 2).
-	self deny: (from1To10By2 includes: 6).
-	self deny: (from1To10By2 includes: 10).! !
-
-!IntervalTest methodsFor: 'test - includes' stamp: 'HAW 5/2/2020 11:54:48'!
-testDoesNotIncludedNumbersThatAreInRangeButNotReachedByTheStepWithReversedIntervals
-
-	| from10To1ByMinus2 |
-	
-	from10To1ByMinus2 := 10 to: 1 by: -2.
-	
-	self deny: (from10To1ByMinus2 includes: 0).
-	self deny: (from10To1ByMinus2 includes: 1).
-	self deny: (from10To1ByMinus2 includes: 5).
-	self deny: (from10To1ByMinus2 includes: 9).! !
-
-!IntervalTest methodsFor: 'test - includes' stamp: 'HAW 5/2/2020 11:43:03'!
-testIncludedNumbersRespectAStepDifferentToOne
-
-	| from1To10By2 |
-	
-	from1To10By2 := 1 to: 10 by: 2.
-	
-	self assert: (from1To10By2 includes: 1).
-	self assert: (from1To10By2 includes: 5).
-	self assert: (from1To10By2 includes: 9).! !
-
-!IntervalTest methodsFor: 'test - includes' stamp: 'HAW 5/2/2020 11:55:55'!
-testIncludedNumbersRespectNegativeSteps
-
-	| from10To1ByMinus2 |
-	
-	from10To1ByMinus2 := 10 to: 1 by: -2.
-	
-	self assert: (from10To1ByMinus2 includes: 10).
-	self assert: (from10To1ByMinus2 includes: 6).
-	self assert: (from10To1ByMinus2 includes: 2).! !
-
-!IntervalTest methodsFor: 'test - includes' stamp: 'HAW 5/2/2020 11:43:26'!
-testIncludesNumbersInsideTheInterval
-
-	| from1To10 |
-	
-	from1To10 := 1 to: 10.
-	
-	self assert: (from1To10 includes: 1).
-	self assert: (from1To10 includes: 5).
-	self assert: (from1To10 includes: 10).! !
-
-!IntervalTest methodsFor: 'test - includes' stamp: 'HAW 5/2/2020 11:43:21'!
-testIncludesNumbersInsideTheIntervalEvenForReversedIntervals
-
-	| from10To1 |
-	
-	from10To1 := 10 to: 1 by: -1.
-	
-	self assert: (from10To1 includes: 1).
-	self assert: (from10To1 includes: 5).
-	self assert: (from10To1 includes: 10).! !
-
-!IntervalTest methodsFor: 'test - includes' stamp: 'HAW 5/2/2020 12:01:44'!
-testIntervalWithOneNumberAndNegativeStepBiggerThanOneIncludeOnlyThatNumber
-
-	| from1To1ByMinus2 |
-	
-	from1To1ByMinus2 := 1 to: 1 by: -2.
-	
-	self assert: (from1To1ByMinus2 includes: 1).
-	self deny: (from1To1ByMinus2 includes: -1).
-	self deny: (from1To1ByMinus2 includes: 3).! !
-
-!IntervalTest methodsFor: 'test - includes' stamp: 'HAW 5/2/2020 12:01:54'!
-testIntervalWithOneNumberAndNegativeStepIncludeOnlyThatNumber
-
-	| from1To1ByMinus1 |
-	
-	from1To1ByMinus1 := 1 to: 1 by: -1.
-	
-	self assert: (from1To1ByMinus1 includes: 1).
-	self deny: (from1To1ByMinus1 includes: 0).
-	self deny: (from1To1ByMinus1 includes: 2).! !
-
-!IntervalTest methodsFor: 'test - includes' stamp: 'HAW 5/2/2020 12:00:46'!
-testIntervalWithOneNumberAndStepBiggerThanOneIncludesOnlyTheNumber
-
-	| from1To1By2 |
-	
-	from1To1By2 := 1 to: 1 by: 2.
-	
-	self assert: (from1To1By2 includes: 1).
-	self deny: (from1To1By2 includes: -1).
-	self deny: (from1To1By2 includes: 3).! !
-
-!IntervalTest methodsFor: 'test - includes' stamp: 'HAW 5/2/2020 11:59:06'!
-testIntervalWithOneNumberIncludesOnlyTheNumber
-
-	| from1To1 |
-	
-	from1To1 := 1 to: 1.
-	
-	self assert: (from1To1 includes: 1).
-	self deny: (from1To1 includes: 0).
-	self deny: (from1To1 includes: 2).! !
-
-!OrderedCollectionTest methodsFor: 'tests' stamp: 'jpb 8/2/2019 23:18:24'!
-testIsCollection
-	self assert: (OrderedCollection new is: #Collection).! !
-
-!OrderedCollectionTest methodsFor: 'tests' stamp: 'HAW 5/18/2019 17:01:20'!
-testStreamContentsWorksAsExpected
-
-	| contents |
-	
-	contents := OrderedCollection streamContents: [ :stream | stream nextPut: 1 ].
-	
-	self assert: (OrderedCollection with: 1) equals: contents! !
-
-!OrderedCollectionTest methodsFor: 'tests' stamp: 'HAW 5/18/2019 17:04:16'!
-testWriteStreamOnOrderedCollectionGrowsAsExpected
-
-	| contents |
-	
-	contents := OrderedCollection streamContents: [ :stream | 
-		1 to: 101 do: [ :aNumber | stream nextPut: aNumber ]].
-	
-	1 to: 101 do: [ :aNumber | self assert: aNumber equals: (contents at: aNumber) ]
-	! !
-
-!OrderedDictionaryTest methodsFor: 'tests' stamp: 'jmv 5/25/2018 10:36:59'!
-testOrder
-	| data dict orderingByCollect orderingByDo orderingBySelect aux desiredOrder |
-
-	"Test that #do:, #select: and #collect: iterate in the correct order"
-	dict _ OrderedDictionary new.
-	data _ self sampleData.
-	desiredOrder _ data collect: [ :pair | pair second ].
-	data do: [ :pair |
-		dict at: pair first put: pair second ].
-
-	orderingByDo _ Array streamContents: [ :strm | dict do: [ :each | strm nextPut: each ]].
-	self assert: orderingByDo = desiredOrder.
-
-	aux _ dict select: [ :each | true ].
-	orderingBySelect _ Array streamContents: [ :strm | aux do: [ :each | strm nextPut: each ]].
-	self assert: orderingBySelect = desiredOrder.
-
-	aux _ dict collect: [ :each | each yourself ].
-	orderingByCollect _ Array streamContents: [ :strm | aux do: [ :each | strm nextPut: each ]].
-	self assert: orderingByCollect = desiredOrder.
-
-
-	"Test that order is correct even if different. Also test alternative way to add stuff to dict."
-	dict _ OrderedDictionary new.
-	data _ self sampleData reversed.
-	desiredOrder _ data collect: [ :pair | pair second ].
-	data do: [ :pair |
-		dict add: pair first -> pair second ].
-
-	orderingByDo _ Array streamContents: [ :strm | dict do: [ :each | strm nextPut: each ]].
-	self assert: orderingByDo = desiredOrder.
-
-	aux _ dict select: [ :each | true ].
-	orderingBySelect _ Array streamContents: [ :strm | aux do: [ :each | strm nextPut: each ]].
-	self assert: orderingBySelect = desiredOrder.
-
-	aux _ dict collect: [ :each | each yourself ].
-	orderingByCollect _ Array streamContents: [ :strm | aux do: [ :each | strm nextPut: each ]].
-	self assert: orderingByCollect = desiredOrder.
-! !
-
-!OrderedDictionaryTest methodsFor: 'tests' stamp: 'jmv 5/25/2018 10:41:04'!
-testRemove
-	| data dict dataToRemove desiredOrder orderingByDo |
-
-	"Test that #do:, #select: and #collect: iterate in the correct order"
-	dict _ OrderedDictionary new.
-	data _ self sampleData.
-	dataToRemove _ self sampleData2.
-
-	data do: [ :pair |
-		dict at: pair first put: pair second ].
-	dataToRemove do: [ :pair |
-		dict removeKey: pair first ].
-
-	orderingByDo _ Array streamContents: [ :strm | dict do: [ :each | strm nextPut: each ]].
-
-	desiredOrder _ OrderedCollection new.
-	data do: [ :pair | desiredOrder add: pair second ].
-	dataToRemove do: [ :pair | desiredOrder remove: pair second ].
-	
-	self assert: orderingByDo = desiredOrder asArray.! !
-
-!OrderedDictionaryTest methodsFor: 'aux' stamp: 'jmv 5/25/2018 10:16:25'!
-sampleData
-	^ { {1. 'uno'}. {6. 'seis'}. {8. 'ocho'}. {7. 'siete'}. {2. 'dos'}. {3. 'tres'}. {4. 'cuatro'}. {5. 'cinco'}}! !
-
-!OrderedDictionaryTest methodsFor: 'aux' stamp: 'jmv 5/25/2018 10:16:35'!
-sampleData2
-	^ { {1. 'uno'}. {8. 'ocho'}. {3. 'tres'}}! !
-
-!SequenceableCollectionTest methodsFor: 'tests' stamp: 'HAW 5/25/2019 09:49:41'!
-testCombinationsAtATimeDoShouldEvaluateBlockWithEmptyCollection
-	
-	| combinationWasEmpty |
-	
-	combinationWasEmpty := false.
-	'ab' combinations: 0 atATimeDo: [ :combination | combinationWasEmpty := combination isEmpty ].
-	
-	self assert: combinationWasEmpty! !
-
-!SequenceableCollectionTest methodsFor: 'tests' stamp: 'HAW 5/25/2019 09:59:32'!
-testCombinationsAtATimeDoWorksAsExpected
-	
-	| combinations |
-	 
-	combinations := OrderedCollection new.
-	'abc' combinations: 2 atATimeDo: [ :combination | combinations add: combination copy].
-	
-	self assert: 3 equals: combinations size.
-	self assert: (combinations includes: #($a $b)).
-	self assert: (combinations includes: #($a $c)).
-	self assert: (combinations includes: #($b $c)).! !
-
-!SequenceableCollectionTest methodsFor: 'tests' stamp: 'HAW 3/17/2019 06:33:35'!
-testDoSeparatedByDoesNotValueSeparatedBlockForCollectionsOfOneElement
-
-	| collectionToTraverse traversedElements |
-
-	collectionToTraverse := OrderedCollection with: 1.
-	traversedElements := OrderedCollection new.
-	self shouldntFail: [ collectionToTraverse do: [ :anElement | traversedElements add: anElement ] separatedBy: [ self fail ] ].
-
-	self assert: collectionToTraverse equals: traversedElements! !
-
-!SequenceableCollectionTest methodsFor: 'tests' stamp: 'HAW 3/17/2019 06:38:06'!
-testDoSeparatedByDoesNotValueSeparatedBlockOnLastElement
-
-	| collectionToTraverse traversedElements |
-
-	collectionToTraverse := OrderedCollection with: 1 with: 2.
-	traversedElements := OrderedCollection new.
-
-	self shouldntFail: [ collectionToTraverse do: [ :anElement | traversedElements add: anElement ] separatedBy: [ traversedElements add: $-] ].
-
-	self assert: (OrderedCollection with: 1 with: $- with: 2) equals: traversedElements! !
-
-!SequenceableCollectionTest methodsFor: 'tests' stamp: 'HAW 3/17/2019 06:29:27'!
-testDoSeparatedByDoesNothingForEmptyCollection
-
-	self shouldntFail: [ #() do: [ :anElement | self fail ] separatedBy: [ self fail ] ]! !
-
-!SequenceableCollectionTest methodsFor: 'tests' stamp: 'HAW 5/21/2020 17:00:14'!
-testFirstAvailableReturnsAllObjectsWhenRequestedMoreThanTheSize
-
-	self assert: #(10 20 30) equals: (#(10 20 30) firstAvailable: 4)! !
-
-!SequenceableCollectionTest methodsFor: 'tests' stamp: 'HAW 5/21/2020 17:00:43'!
-testFirstAvailableReturnsAllObjectsWhenRequestedTheReceiversSize
-
-	self assert: #(10 20 30) equals: (#(10 20 30) firstAvailable: 3)! !
-
-!SequenceableCollectionTest methodsFor: 'tests' stamp: 'HAW 5/21/2020 16:58:40'!
-testFirstAvailableReturnsTheFirstRequestedObjectsWhenTheyAreAvailable
-
-	self assert: #(10 20) equals: (#(10 20 30) firstAvailable: 2)! !
-
-!SequenceableCollectionTest methodsFor: 'tests' stamp: 'HAW 5/21/2020 17:03:20'!
-testLastAvailableReturnsAllObjectsWhenRequestedMoreThanTheSize
-
-	self assert: #(10 20 30) equals: (#(10 20 30) lastAvailable: 4)! !
-
-!SequenceableCollectionTest methodsFor: 'tests' stamp: 'HAW 5/21/2020 17:02:57'!
-testLastAvailableReturnsAllObjectsWhenRequestedTheReceiversSize
-
-	self assert: #(10 20 30) equals: (#(10 20 30) lastAvailable: 3)! !
-
-!SequenceableCollectionTest methodsFor: 'tests' stamp: 'HAW 5/21/2020 17:02:27'!
-testLastAvailableReturnsTheLastRequestedObjectsWhenTheyAreAvailable
-
-	self assert: #(20 30) equals: (#(10 20 30) lastAvailable: 2)! !
-
-!SequenceableCollectionTest methodsFor: 'tests' stamp: 'HAW 3/17/2019 06:36:00'!
-testWithIndexDoSeparatedByDoesNotValueSeparatedBlockForCollectionsOfOneElement
-
-	| collectionToTraverse traversedElements |
-
-	collectionToTraverse := OrderedCollection with: $a.
-	traversedElements := OrderedCollection new.
-
-	self shouldntFail: [ collectionToTraverse withIndexDo: [ :anElement :index | traversedElements add: anElement  -> index ] separatedBy: [ self fail ] ].
-
-	self assert: 1 equals: traversedElements size.
-	self assert: $a->1 equals: traversedElements first! !
-
-!SequenceableCollectionTest methodsFor: 'tests' stamp: 'HAW 3/17/2019 06:40:01'!
-testWithIndexDoSeparatedByDoesNotValueSeparatedBlockOnLastElement
-
-	| collectionToTraverse traversedElements |
-
-	collectionToTraverse := OrderedCollection with: $a with: $b.
-	traversedElements := OrderedCollection new.
-
-	collectionToTraverse
-		withIndexDo: [ :anElement :index | traversedElements add: anElement  -> index ]
-		separatedBy: [ traversedElements add: $-].
-
-	self assert: 3 equals: traversedElements size.
-	self assert: $a->1 equals: traversedElements first.
-	self assert: $- equals: traversedElements second.
-	self assert: $b->2 equals: traversedElements third! !
-
-!SequenceableCollectionTest methodsFor: 'tests' stamp: 'HAW 3/17/2019 06:30:18'!
-testWithIndexDoSeparatedByDoesNothingForEmptyCollection
-
-	self shouldntFail: [ #() withIndexDo: [ :anElement :index | self fail ] separatedBy: [ self fail ] ]! !
-
-!TextTest methodsFor: 'testing' stamp: 'jpb 8/2/2019 23:40:53'!
-testIsText
-	self assert: (Text new is: #Text).! !
-
-!WeakIdentitySetTest methodsFor: 'testing' stamp: 'jmv 8/24/2012 08:24'!
-test
-	"
-	(also tests WeakSet a bit)
-	WeakIdentitySetTest new test
-	"
-	| ary1 ary2 count w wi |
-	ary1 _ { 3@4 . 4@5 }.
-	ary2 _ { 13@4 . 14@5 }.
-	w _ WeakSet new.
-	w addAll: ary1.
-	wi _ WeakIdentitySet new.
-	wi addAll: ary2.
-	
-	self assert: w size = 2.
-	count _ 0.
-	w do: [ :each |
-		count _ count + 1.
-		self assert: each class == Point ].
-	self assert: count = 2.
-	self assert: (w includes: ary1 first).
-	self assert: (w includes: ary1 second).
-	self assert: (w includes: 3@4).
-	self assert: (w includes: 4@5).
-
-	self assert: wi size = 2.
-	count _ 0.
-	wi do: [ :each |
-		count _ count + 1.
-		self assert: each class == Point ].
-	self assert: count = 2.
-	self assert: (wi includes: ary2 first).
-	self assert: (wi includes: ary2 second).
-	self deny: (wi includes: 13@4).
-	self deny: (wi includes: 14@5).
-
-	"Now make one element in each disappear"
-	ary1 at: 1 put: 9.
-	ary2 at: 1 put: 99.
-	Smalltalk garbageCollect.
-
-	"A little weird, but yes, elements that disappeared are still counted, but NOT iterated!!"
-	self assert: w size = 2.
-	count _ 0.
-	w do: [ :each |
-		count _ count + 1 ].
-	self assert: count = 1.
-	self deny: (w includes: ary1 first).
-	self assert: (w includes: ary1 second).
-
-	self assert: wi size = 2. 	"A little weird, but yes, elements that disappeared are still counted"
-	count _ 0.
-	wi do: [ :each |
-		count _ count + 1 ].
-	self assert: count = 1.
-	self deny: (wi includes: ary2 first).
-	self assert: (wi includes: ary2 second).! !
+	reason :=  'something went wrong'.
+	self 
+		should: [ self shouldNotHappenBecause: reason ]
+		raise: Error
+		withMessageText: self shouldNotHappenBecauseErrorMessage, reason ! !
+
+!ObjectTest methodsFor: 'error tests' stamp: 'HAW 10/23/2019 09:24:11'!
+testShouldNotHappenSignalsTheRightError
+
+	self 
+		should: [ self shouldNotHappen ]
+		raise: Error
+		withMessageText: self shouldNotHappenErrorMessage ! !
+
+!SpecialSelectorsTest methodsFor: 'testing' stamp: 'jmv 6/5/2017 12:17:20'!
+testCollectionAtSymbol
+	self assert: (#(1 2 3) @ #(10 20 30)) class == Array! !
+
+!SpecialSelectorsTest methodsFor: 'testing' stamp: 'jmv 6/5/2017 12:16:49'!
+testNumberAtSymbol
+	self assert: (1@2) class == Point! !
+
+!WeakMessageSendTest methodsFor: 'testing' stamp: 'jpb 8/2/2019 23:44:58'!
+testIsMessageSend
+	self assert: (WeakMessageSend new is: #MessageSend).! !
 
 !BehaviorTest methodsFor: 'class hierarchy tests' stamp: 'HernanWilkinson 1/19/2017 20:32:36'!
 testAllSuperclassesUpToFailsWhenWantsToStopOnInvalidSuperclass
@@ -8684,6 +8221,718 @@ rngClass
 
 	^ParkMiller93Random! !
 
+!CharacterSetTest methodsFor: 'testing includes' stamp: 'HAW 6/12/2019 17:32:08'!
+testIncludesReturnsFalseForCharacterNotIncluded
+
+	self deny: ((CharacterSet with: $a) includes: $b)! !
+
+!CharacterSetTest methodsFor: 'testing includes' stamp: 'HAW 6/12/2019 17:31:45'!
+testIncludesReturnsFalseForObjectsThatAreNotCharacters
+
+	self deny: ((CharacterSet with: $a) includes: 1)! !
+
+!CharacterSetTest methodsFor: 'testing includes' stamp: 'HAW 6/12/2019 17:32:24'!
+testIncludesReturnsTrueForCharacterIncluded
+
+	self assert: ((CharacterSet with: $a) includes: $a)! !
+
+!CharacterTest methodsFor: 'testing' stamp: 'jmv 10/6/2010 22:08'!
+testCaseConversion
+	"
+	self new testCaseConversion
+	"
+	self assert: ('año Comé tomá Camión' collect: [ :c | c asLowercase ]) = 'año comé tomá camión'.
+	self assert:('año Comé tomá Camión' collect: [ :c | c asUppercase ]) = 'AÑO COMÉ TOMÁ CAMIÓN'! !
+
+!CharacterTest methodsFor: 'testing' stamp: 'jpb 8/2/2019 23:10:55'!
+testIsCharacter
+	self assert: ($a is: #Character).
+	self assert: ($X is: #Character).
+	self assert: (Character cr is: #Character).! !
+
+!CharacterTest methodsFor: 'testing' stamp: 'jmv 10/6/2010 22:05'!
+testSorting
+	"
+	self new testSorting
+	"
+	self assert: $a < $á.
+	self deny: $a < $Á.
+	self assert: $A < $á.
+	self assert: $A < $Á.
+	self assert: $á < $b.
+	self deny: $á < $B.
+	self assert: $Á < $b.
+	self assert: $Á < $B.! !
+
+!CharacterTest methodsFor: 'testing' stamp: 'jmv 10/6/2010 22:10'!
+testTestingMethods
+	"
+	self new testTestingMethods
+	"
+	self assert:
+		('año Comé tomá Camión' allSatisfy: [ :c |
+			c = $  or: [ c isLetter ]]).
+	self assert:
+		('año comé tomá camión' allSatisfy: [ :c |
+			c = $  or: [ c isLowercase ]]).
+	self assert:
+		('AÑO COMÉ TOMÁ CAMIÓN' allSatisfy: [ :c |
+			c = $  or: [ c isUppercase ]]).
+	self assert:
+		('AaÀàÁáÂâÃãÄäÅåEeÈèÉéÊêËëIiÌìÍíÎîÏïOoÒòÓóÔôÕõÖöUuÙùÚúÛûÜü' allSatisfy: [ :c |
+			c isVowel ]).! !
+
+!CharacterTest methodsFor: 'UTF-8 conversion' stamp: 'jmv 5/26/2022 12:31:12'!
+testFromUtf8
+	"
+	CharacterTest new testFromUtf8
+	"
+	Character utf8BytesAndCodePointAt: 1 in: (ByteArray readHexFrom: '24') into: nil into: [ :codePoint | self assert: codePoint hex = '16r24' ].
+	Character utf8BytesAndCodePointAt: 1 in: (ByteArray readHexFrom: 'C2A2') into: nil into: [ :codePoint | self assert: codePoint hex = '16rA2' ].
+	Character utf8BytesAndCodePointAt: 1 in: (ByteArray readHexFrom: 'E282AC') into: nil into: [ :codePoint | self assert: codePoint hex = '16r20AC' ].
+	Character utf8BytesAndCodePointAt: 1 in: (ByteArray readHexFrom: 'F0A4ADA2') into: nil into: [ :codePoint | self assert: codePoint hex = '16r24B62' ].! !
+
+!CharacterTest methodsFor: 'UTF-8 conversion' stamp: 'jmv 5/5/2022 09:34:34'!
+testSomeLatinCharsFromUtf8
+	"
+	CharacterTest new testSomeLatinCharsFromUtf8
+	"
+	| bytes string |
+	bytes _ ByteArray readHexFrom: 'C3A1C3A5C3A6C3B1C386C2A5C3BC'.
+	string _ String streamContents: [ :strm | | s byteIndex n |
+		s _ bytes size.
+		byteIndex _ 1.
+		[  byteIndex <= s ] whileTrue: [
+			n _ Character utf8BytesAndCodePointAt: byteIndex in: bytes
+				into: nil
+				into: [ :codePoint |
+					strm nextPut: (Character codePoint: codePoint) ].
+			byteIndex _ byteIndex + n
+		]].
+	self assert: string = 'áåæñÆ¥ü'! !
+
+!CharacterTest methodsFor: 'UTF-8 conversion' stamp: 'jmv 9/4/2016 13:11:55'!
+testSomeLatinCharsToUtf8
+	"
+	CharacterTest new testSomeLatinCharsToUtf8
+	"
+	| characters bytes |
+	characters _ 'áåæñÆ¥ü' readStream.
+	bytes _ ByteArray streamContents: [ :strm |
+		[ characters atEnd ] whileFalse: [
+			Character
+				evaluate: [ :byte | strm nextPut: byte ]
+				withUtf8BytesOfUnicodeCodePoint: characters next codePoint ]].
+	self assert: bytes hex = 'C3A1C3A5C3A6C3B1C386C2A5C3BC'! !
+
+!CharacterTest methodsFor: 'UTF-8 conversion' stamp: 'jmv 2/20/2013 20:09'!
+testToUtf8
+	"
+	CharacterTest new testToUtf8
+	"
+	self assert: (Character utf8BytesOfUnicodeCodePoint: 16r0024) hex =  '24'.
+	self assert: (Character utf8BytesOfUnicodeCodePoint: 16r00A2) hex =  'C2A2'.
+	self assert: (Character utf8BytesOfUnicodeCodePoint: 16r20AC) hex = 'E282AC'.
+	self assert: (Character utf8BytesOfUnicodeCodePoint: 16r024B62) hex = 'F0A4ADA2'! !
+
+!StringTest methodsFor: 'UTF-8 conversion' stamp: 'jmv 5/26/2022 12:00:49'!
+testAsUtf8
+	"
+	 StringTest new testAsUtf8
+	"
+	self assert: 'A¢¤' asUtf8Bytes hex = '41C2A2E282AC'! !
+
+!StringTest methodsFor: 'UTF-8 conversion' stamp: 'jmv 5/26/2022 11:59:35'!
+testAsUtf8WithNCRs
+	"
+	 StringTest new testAsUtf8WithNCRs
+	"
+	| stringWithDecimalNCRs stringWithHexNCRs utf8 |
+	utf8 _ ByteArray readHexFrom: ('CE BC 20 CE A8 20 CF 89 20 54 68 65 20 64 65 63 6F 6D 70 6F 73 69 74 69 6F 6E 20 6D 61 70 70 69 6E 67 20 69 73 20 3C EC B8 A0 2C 20 E1 86 B8 3E 2C 20 61 6E 64 20 6E 6F 74 20 3C E1 84 8E 2C 20 E1 85 B3 2C 20 31 31 42 38 3E 2E 0A 3C 70 3E 54 68 65 20 74 69 74 6C 65 20 73 61 79 73 20 E2 80 AB D7 A4 D7 A2 D7 99 D7 9C D7 95 D7 AA 20 D7 94 D7 91 D7 99 D7 A0 D7 90 D7 95 D7 9D 2C 20 57 33 43 E2 80 AC 20 69 6E 20 48 65 62 72 65 77 3C 2F 70 3E 0A 61 62 63 E0 A4 95 E0 A4 96 E0 A5 80 E5 9C 8B E9 9A 9B F0 90 8E 84 F0 90 8E 94 F0 90 8E 98' reject: [ :char  | char isSeparator ]).
+
+	stringWithDecimalNCRs _ String fromUtf8Bytes: utf8 hex: false trimLastNull: false.
+	stringWithHexNCRs _ String fromUtf8Bytes: utf8 hex: true trimLastNull: false.
+
+	self assert: stringWithDecimalNCRs =  '&#956; &#936; ˜ The decomposition mapping is <&#52768;, &#4536;>, and not <&#4366;, &#4467;, 11B8>.
+<p>The title says &#8235;&#1508;&#1506;&#1497;&#1500;&#1493;&#1514; &#1492;&#1489;&#1497;&#1504;&#1488;&#1493;&#1501;, W3C&#8236; in Hebrew</p>
+abc&#2325;&#2326;&#2368;&#22283;&#38555;&#66436;&#66452;&#66456;'.
+
+	self assert: (stringWithDecimalNCRs asUtf8Bytes: true) = utf8.
+
+	self assert: stringWithHexNCRs = '&#x03BC; &#x03A8; ˜ The decomposition mapping is <&#xCE20;, &#x11B8;>, and not <&#x110E;, &#x1173;, 11B8>.
+<p>The title says &#x202B;&#x05E4;&#x05E2;&#x05D9;&#x05DC;&#x05D5;&#x05EA; &#x05D4;&#x05D1;&#x05D9;&#x05E0;&#x05D0;&#x05D5;&#x05DD;, W3C&#x202C; in Hebrew</p>
+abc&#x0915;&#x0916;&#x0940;&#x570B;&#x969B;&#x10384;&#x10394;&#x10398;'.
+
+	self assert: (stringWithHexNCRs asUtf8Bytes: true) = utf8! !
+
+!StringTest methodsFor: 'tests - converting' stamp: 'jmv 9/19/2016 09:55:39'!
+testBase64
+
+	self 
+		assert: 'SGVsbG8gV29ybGQ=' base64Decoded = 'Hello World' asByteArray;
+		assert: 'Hello World' asByteArray base64Encoded = 'SGVsbG8gV29ybGQ=';
+		assert: (String new: 100 withAll: $x) asByteArray base64Encoded  =
+'eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4
+eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eA==' ! !
+
+!StringTest methodsFor: 'testing' stamp: 'HAW 8/3/2018 10:42:26'!
+testAfterBlanksEndsWith
+
+	self assert: (' abc' afterBlanksEndsWith: 'abc').
+	self assert: ('abc' afterBlanksEndsWith: 'abc').
+	
+	self deny: (' ab' afterBlanksEndsWith: 'abc').
+	self deny: (' ab' afterBlanksEndsWith: 'a').
+	self deny: ('' afterBlanksEndsWith: 'abc').
+	self deny: (' a a bc' afterBlanksEndsWith: 'a bc').! !
+
+!StringTest methodsFor: 'testing' stamp: 'jmv 10/6/2010 22:08'!
+testCaseConversion
+	"
+	self new testCaseConversion
+	"
+	self assert: ('año Comé tomá Camión' asLowercase) = 'año comé tomá camión'.
+	self assert: ('año Comé tomá Camión' asUppercase) = 'AÑO COMÉ TOMÁ CAMIÓN'! !
+
+!StringTest methodsFor: 'testing' stamp: 'jmv 9/1/2009 14:12'!
+testEncompassParagraph1
+
+	self assert: ('a' encompassParagraph: (1 to: 0)) = (1 to: 1).
+	self assert: ('a' encompassParagraph: (1 to: 1)) = (1 to: 1).
+	self assert: ('a' encompassParagraph: (2 to: 1)) = (1 to: 1).! !
+
+!StringTest methodsFor: 'testing' stamp: 'jmv 9/1/2009 14:13'!
+testEncompassParagraph2
+
+	self assert: ('ab' encompassParagraph: (1 to: 0)) = (1 to: 2).
+	self assert: ('ab' encompassParagraph: (1 to: 1)) = (1 to: 2).
+	self assert: ('ab' encompassParagraph: (1 to: 2)) = (1 to: 2).
+	self assert: ('ab' encompassParagraph: (2 to: 1)) = (1 to: 2).
+	self assert: ('ab' encompassParagraph: (2 to: 2)) = (1 to: 2).
+	self assert: ('ab' encompassParagraph: (3 to: 2)) = (1 to: 2).! !
+
+!StringTest methodsFor: 'testing' stamp: 'jmv 9/1/2009 14:14'!
+testEncompassParagraph3
+
+self assert: ('a
+' encompassParagraph: (1 to: 0)) = (1 to: 2).
+self assert: ('a
+' encompassParagraph: (1 to: 1)) = (1 to: 2).
+self assert: ('a
+' encompassParagraph: (1 to: 2)) = (1 to: 2).
+self assert: ('a
+' encompassParagraph: (2 to: 1)) = (1 to: 2).
+self assert: ('a
+' encompassParagraph: (2 to: 2)) = (1 to: 2).
+self assert: ('a
+' encompassParagraph: (3 to: 2)) = (3 to: 2).
+
+self assert: ('a
+zcxv' encompassParagraph: (1 to: 0)) = (1 to: 2).
+self assert: ('a
+zcxv' encompassParagraph: (1 to: 1)) = (1 to: 2).
+self assert: ('a
+zxcv' encompassParagraph: (1 to: 2)) = (1 to: 2).
+self assert: ('a
+zxcv' encompassParagraph: (2 to: 1)) = (1 to: 2).
+self assert: ('a
+zxcv' encompassParagraph: (2 to: 2)) = (1 to: 2).
+self assert: ('a
+zxcv' encompassParagraph: (3 to: 2)) = (3 to: 6).! !
+
+!StringTest methodsFor: 'testing' stamp: 'jmv 9/1/2009 14:17'!
+testEncompassParagraph4
+
+self assert: ('
+b' encompassParagraph: (1 to: 0)) = (1 to: 1).
+self assert: ('
+b' encompassParagraph: (1 to: 1)) = (1 to: 1).
+self assert: ('
+b' encompassParagraph: (1 to: 2)) = (1 to: 2).
+self assert: ('
+b' encompassParagraph: (2 to: 1)) = (2 to: 2).
+self assert: ('
+b' encompassParagraph: (2 to: 2)) = (2 to: 2).
+self assert: ('
+b' encompassParagraph: (3 to: 2)) = (2 to: 2).! !
+
+!StringTest methodsFor: 'testing' stamp: 'jmv 9/1/2009 14:22'!
+testEncompassParagraph5
+
+self assert: ('a
+b' encompassParagraph: (1 to: 0)) = (1 to: 2).
+self assert: ('a
+b' encompassParagraph: (1 to: 1)) = (1 to: 2).
+self assert: ('a
+b' encompassParagraph: (1 to: 2)) = (1 to: 2).
+self assert: ('a
+b' encompassParagraph: (1 to: 3)) = (1 to: 3).
+self assert: ('a
+b' encompassParagraph: (2 to: 1)) = (1 to: 2).
+self assert: ('a
+b' encompassParagraph: (2 to: 2)) = (1 to: 2).
+self assert: ('a
+b' encompassParagraph: (2 to: 3)) = (1 to: 3).
+self assert: ('a
+b' encompassParagraph: (3 to: 2)) = (3 to: 3).
+self assert: ('a
+b' encompassParagraph: (3 to: 3)) = (3 to: 3).
+self assert: ('a
+b' encompassParagraph: (4 to: 3)) = (3 to: 3).! !
+
+!StringTest methodsFor: 'testing' stamp: 'HAW 12/29/2020 13:29:16'!
+testFindSelector 
+
+	self assert: #printOn: equals: '"self printOn:' findSelector.
+	self assert: #printOn: equals: 'self printOn:"' findSelector.
+	self assert: #printOn: equals: '"self printOn:"' findSelector.
+	self assert: #printOn: equals: 'self printOn:' findSelector.
+! !
+
+!StringTest methodsFor: 'testing' stamp: 'jmv 6/6/2022 16:47:18'!
+testFirstNonSeparator
+
+	self assert: 1 equals: 'abc' firstNonSeparator.
+	self assert: 2 equals: ' abc' firstNonSeparator.
+	self assert: 0 equals: '' firstNonSeparator ! !
+
+!StringTest methodsFor: 'testing' stamp: 'jpb 8/2/2019 23:11:49'!
+testIsString
+	self assert: ('Hello World' is: #String).
+	self assert: ('' is: #String).! !
+
+!StringTest methodsFor: 'testing' stamp: 'jmv 6/6/2022 16:46:49'!
+testLastNonSeparator
+
+	self assert: 3 equals: 'abc' lastNonSeparator.
+	self assert: 3 equals: 'abc ' lastNonSeparator.
+	self assert: 4 equals: ' abc ' lastNonSeparator.
+	self assert: 0 equals: '' lastNonSeparator ! !
+
+!StringTest methodsFor: 'testing' stamp: 'jmv 12/17/2012 10:51'!
+testLineSeparators
+	"
+	Test that #newLineCharacter is considered a line separator and not a line terminator.
+	This means that the last line never ends with a #newLineCharacter (although it might be empty!!)
+	StringTest new testLineSeparators
+	"
+	| justAnLf linesBounds |
+	linesBounds _ OrderedCollection new.
+	justAnLf _ '
+'.
+	justAnLf lineIndicesDo: [ :start :endWithoutDelimiters :end |
+		linesBounds add: { start . endWithoutDelimiters. end }.
+		].
+
+	self assert: linesBounds size = 2 description: 'There should be two lines.'.
+
+	self assert: linesBounds first first = 1 description: 'First line starts at position 1'.
+	self assert: linesBounds first second = (linesBounds first first-1) description: 'First line is empty'.
+	self assert: linesBounds first third = (linesBounds first second+1) description: 'First line is terminated by ab Lf'.
+
+	self assert: linesBounds second first = ( linesBounds first third+1) description: 'Second line starts after end of first line'.
+	self assert: linesBounds second second = (linesBounds second first-1) description: 'Second line is empty'.
+	self assert: linesBounds second third = (linesBounds second second+0) description: 'Second line is not terminated by ab Lf'.! !
+
+!StringTest methodsFor: 'testing' stamp: 'jmv 10/6/2010 22:03'!
+testSorting
+"
+self new testSorting
+"
+
+	self assert: 'a' < 'á'.
+	self assert: ('a' < 'Á') not.
+	self assert: 'A' < 'á'.
+	self assert: 'A' < 'Á'.
+	self assert: 'á' < 'b'.
+	self assert: ('á' < 'B') not.
+	self assert: 'Á' < 'b'.
+	self assert: 'Á' < 'B'.
+
+	self assert: ('a' caseSensitiveLessOrEqual: 'á').
+	self deny: ('a' caseSensitiveLessOrEqual: 'Á').
+	self assert: ('A' caseSensitiveLessOrEqual: 'á').
+	self assert: ('A' caseSensitiveLessOrEqual: 'Á').
+	self assert: ('á' caseSensitiveLessOrEqual: 'b').
+	self deny: ('á' caseSensitiveLessOrEqual: 'B').
+	self assert: ('Á' caseSensitiveLessOrEqual: 'b').
+	self assert: ('Á' caseSensitiveLessOrEqual: 'B').
+
+	self assert: ('a' caseInsensitiveLessOrEqual: 'á').
+	self assert: ('a' caseInsensitiveLessOrEqual: 'Á').
+	self assert: ('A' caseInsensitiveLessOrEqual: 'á').
+	self assert: ('A' caseInsensitiveLessOrEqual: 'Á').
+	self assert: ('á' caseInsensitiveLessOrEqual: 'b').
+	self assert: ('á' caseInsensitiveLessOrEqual: 'B').
+	self assert: ('Á' caseInsensitiveLessOrEqual: 'b').
+	self assert: ('Á' caseInsensitiveLessOrEqual: 'B').! !
+
+!StringTest methodsFor: 'testing' stamp: 'HAW 8/3/2018 11:00:28'!
+testWithBlanksTrimmed
+
+	self assert: 'abc' equals: ' abc' withBlanksTrimmed.
+	self assert: 'abc' equals: 'abc ' withBlanksTrimmed.
+	self assert: 'abc' equals: ' abc ' withBlanksTrimmed.
+	self assert: 'a b c' equals: ' a b c ' withBlanksTrimmed.
+	self assert: '' equals: '' withBlanksTrimmed.
+	! !
+
+!StringTest methodsFor: 'testing' stamp: 'HAW 8/2/2018 20:35:28'!
+testWithoutLeadingBlanks
+
+	self assert: 'abc' equals: ' abc' withoutLeadingBlanks.
+	self assert: 'abc' equals: 'abc' withoutLeadingBlanks.
+	self assert: '' withoutLeadingBlanks isEmpty
+! !
+
+!StringTest methodsFor: 'testing' stamp: 'HAW 6/8/2019 18:18:47'!
+testWithoutSeparators
+
+	self assert: 'abc' equals: 'abc' withoutSeparators.
+	self assert: 'abc' equals: ' a b c ' withoutSeparators! !
+
+!StringTest methodsFor: 'testing' stamp: 'HAW 8/2/2018 20:35:32'!
+testWithoutTrailingBlanks
+
+	self assert: 'abc' equals: 'abc ' withoutTrailingBlanks.
+	self assert: 'abc' equals: 'abc' withoutTrailingBlanks.
+	self assert: '' withoutTrailingBlanks isEmpty
+! !
+
+!StringTest methodsFor: 'tests - grammar' stamp: 'LC 7/5/2020 16:47:10'!
+testArticle
+	self
+		assert: 'euphemism' withArticle equals: 'a euphemism';
+		assert: 'European' withArticle equals: 'a European';
+		assert: 'Euclidean space' withArticle equals: 'a Euclidean space';
+		assert: 'university' withArticle equals: 'a university';
+		assert: 'anagram' withArticle equals: 'an anagram';
+		assert: 'apple' withArticle equals: 'an apple';
+		assert: 'Ukranian' withArticle equals: 'a Ukranian';
+		assert: 'Argentine' withArticle equals: 'an Argentine';
+		assert: 'user' withArticle equals: 'a user'! !
+
+!SymbolTest methodsFor: 'tests - selector validation' stamp: 'RNG 3/29/2020 19:59:47'!
+testIsNotValidBinarySelectorIfItContainsACharacterNotAllowed
+
+	self deny: #'(' isValidSelector! !
+
+!SymbolTest methodsFor: 'tests - selector validation' stamp: 'RNG 3/29/2020 20:01:07'!
+testIsNotValidKeywordSelectorIfItContainsSeparators
+
+	self deny: #'between: and:' isValidSelector! !
+
+!SymbolTest methodsFor: 'tests - selector validation' stamp: 'RNG 3/29/2020 19:52:35'!
+testIsNotValidUnarySelectorIfItContainsCharactersUsedInBinarySelectors
+
+	self deny: #'a+b' isValidSelector! !
+
+!SymbolTest methodsFor: 'tests - selector validation' stamp: 'RNG 3/29/2020 19:51:29'!
+testIsNotValidUnarySelectorIfItStartsWithALetterAndContainsSeparators
+
+	self deny: #'with spaces' isValidSelector! !
+
+!SymbolTest methodsFor: 'tests - selector validation' stamp: 'RNG 3/29/2020 19:53:43'!
+testIsValidBinarySelectorIfItContainsAnAllowedCharacterOrSequenceOfCharacters
+
+	self
+		assert: #+ isValidSelector;
+		assert: #+-+ isValidSelector! !
+
+!SymbolTest methodsFor: 'tests - selector validation' stamp: 'RNG 3/29/2020 20:00:35'!
+testIsValidKeywordSelectorIfItContainsKeywordsWithColons
+
+	self
+		assert: #includes: isValidSelector;
+		assert: #between:and: isValidSelector! !
+
+!SymbolTest methodsFor: 'tests - selector validation' stamp: 'RNG 3/29/2020 19:50:31'!
+testIsValidUnarySelectorIfItStartsWithALetterAndDoesNotContainSeparators
+
+	self assert: #t234 isValidSelector! !
+
+!UnicodeStringsTest methodsFor: 'testing' stamp: 'jmv 6/2/2022 15:14:24'!
+test01
+
+	| asciiString asciiUtf32String asciiUtf8String latinString latinUtf32String latinUtf8String |
+	asciiString _ 'Hello world'.
+	latinString _ '¡Tomá agüita, Ñandú!!'.
+	asciiUtf8String _ asciiString asUtf8String.
+	latinUtf8String _ latinString asUtf8String.
+	asciiUtf32String _ asciiString asUtf32String.
+	latinUtf32String _ latinString asUtf32String.
+
+	self assert: asciiString hash = asciiUtf8String hash.
+	self assert: asciiString hash = asciiUtf32String hash.
+	self assert: asciiString = asciiUtf8String.
+	self assert: asciiString = asciiUtf32String.
+	self assert: asciiUtf8String = asciiString.
+	self assert: asciiUtf8String = asciiUtf32String.
+	self assert: asciiUtf32String = asciiString.
+	self assert: asciiUtf32String = asciiUtf8String.
+
+	self assert: latinString hash = latinUtf8String hash.
+	self assert: latinString hash = latinUtf32String hash.
+	self assert: latinString = latinUtf8String.
+	self assert: latinString = latinUtf32String.
+	self assert: latinUtf8String = latinString.
+	self assert: latinUtf8String = latinUtf32String.
+	self assert: latinUtf32String = latinString.
+	self assert: latinUtf32String = latinUtf8String.! !
+
+!UnicodeSymbolsTest methodsFor: 'testing' stamp: 'jmv 6/3/2022 11:37:33'!
+test01AsciiSymbolFirst
+	"Try a few things with pure ASCII.
+	Do #asSymbol before doing #asUtf8Symbol. The symbol created will be instance of Symbol."
+	
+	| str symbol utf8 utf8Symbol |
+	str _ 'Stuff', Random next mantissaPart printString.
+	symbol _ str asSymbol.
+	utf8 _ str asUtf8String.
+	utf8Symbol _ utf8 asSymbol.
+
+	self assert: str = str.
+	self assert: str == str.
+	self assert: symbol = symbol.
+	self assert: symbol == symbol.
+	self assert: utf8 = utf8.
+	self assert: utf8 == utf8.
+	self assert: utf8Symbol = utf8Symbol.
+	self assert: utf8Symbol == utf8Symbol.
+
+	self assert: str = symbol.
+	self assert: symbol = str.
+	self assert: utf8 = utf8Symbol.
+	self assert: utf8Symbol = utf8.
+
+	self assert: str = utf8.
+	self assert: utf8 = str.
+	self assert: symbol = utf8Symbol.
+	self assert: utf8Symbol = symbol.
+
+	self assert: str = utf8Symbol.
+	self assert: utf8Symbol = str.
+	self assert: symbol = utf8.
+	self assert: utf8 = symbol.
+
+	self assert: utf8Symbol == symbol.
+	self assert: symbol == utf8Symbol.! !
+
+!UnicodeSymbolsTest methodsFor: 'testing' stamp: 'jmv 6/3/2022 11:37:42'!
+test02LatinSymbolFirst
+	"Try a few things with pure ASCII.
+	Do #asSymbol before doing #asUtf8Symbol. The symbol created will be instance of Symbol."
+	
+	| str symbol utf8 utf8Symbol |
+	str _ '¡Tomá agüita, Ñandú!!', Random next mantissaPart printString.
+	symbol _ str asSymbol.
+	utf8 _ str asUtf8String.
+	utf8Symbol _ utf8 asSymbol.
+
+	self assert: str = str.
+	self assert: str == str.
+	self assert: symbol = symbol.
+	self assert: symbol == symbol.
+	self assert: utf8 = utf8.
+	self assert: utf8 == utf8.
+	self assert: utf8Symbol = utf8Symbol.
+	self assert: utf8Symbol == utf8Symbol.
+
+	self assert: str = symbol.
+	self assert: symbol = str.
+	self assert: utf8 = utf8Symbol.
+	self assert: utf8Symbol = utf8.
+
+	self assert: str = utf8.
+	self assert: utf8 = str.
+	self assert: symbol = utf8Symbol.
+	self assert: utf8Symbol = symbol.
+
+	self assert: str = utf8Symbol.
+	self assert: utf8Symbol = str.
+	self assert: symbol = utf8.
+	self assert: utf8 = symbol.
+
+	self assert: utf8Symbol == symbol.
+	self assert: symbol == utf8Symbol.! !
+
+!UnicodeSymbolsTest methodsFor: 'testing' stamp: 'jmv 6/3/2022 11:38:22'!
+test03AsciiUtf8SymbolFirst
+	"Try a few things with pure ASCII.
+	Do #asSymbol before doing #asUtf8Symbol. The symbol created will be instance of Symbol."
+	
+	| str symbol utf8 utf8Symbol |
+	str _ 'Stuff', Random next mantissaPart printString.
+	utf8 _ str asUtf8String.
+	utf8Symbol _ utf8 asSymbol.
+	symbol _ str asSymbol.
+
+	self assert: str = str.
+	self assert: str == str.
+	self assert: symbol = symbol.
+	self assert: symbol == symbol.
+	self assert: utf8 = utf8.
+	self assert: utf8 == utf8.
+	self assert: utf8Symbol = utf8Symbol.
+	self assert: utf8Symbol == utf8Symbol.
+
+	self assert: str = symbol.
+	self assert: symbol = str.
+	self assert: utf8 = utf8Symbol.
+	self assert: utf8Symbol = utf8.
+
+	self assert: str = utf8.
+	self assert: utf8 = str.
+	self assert: symbol = utf8Symbol.
+	self assert: utf8Symbol = symbol.
+
+	self assert: str = utf8Symbol.
+	self assert: utf8Symbol = str.
+	self assert: symbol = utf8.
+	self assert: utf8 = symbol.
+
+	self assert: utf8Symbol == symbol.
+	self assert: symbol == utf8Symbol.! !
+
+!UnicodeSymbolsTest methodsFor: 'testing' stamp: 'jmv 6/3/2022 11:38:36'!
+test04LatinUtf8SymbolFirst
+	"Try a few things with pure ASCII.
+	Do #asSymbol before doing #asUtf8Symbol. The symbol created will be instance of Symbol."
+	
+	| str symbol utf8 utf8Symbol |
+	str _ '¡Tomá agüita, Ñandú!!', Random next mantissaPart printString.
+	utf8 _ str asUtf8String.
+	utf8Symbol _ utf8 asSymbol.
+	symbol _ str asSymbol.
+
+	self assert: str = str.
+	self assert: str == str.
+	self assert: symbol = symbol.
+	self assert: symbol == symbol.
+	self assert: utf8 = utf8.
+	self assert: utf8 == utf8.
+	self assert: utf8Symbol = utf8Symbol.
+	self assert: utf8Symbol == utf8Symbol.
+
+	self assert: str = symbol.
+	self assert: symbol = str.
+	self assert: utf8 = utf8Symbol.
+	self assert: utf8Symbol = utf8.
+
+	self assert: str = utf8.
+	self assert: utf8 = str.
+	self assert: symbol = utf8Symbol.
+	self assert: utf8Symbol = symbol.
+
+	self assert: str = utf8Symbol.
+	self assert: utf8Symbol = str.
+	self assert: symbol = utf8.
+	self assert: utf8 = symbol.
+
+	self assert: utf8Symbol == symbol.
+	self assert: symbol == utf8Symbol.! !
+
+!UnicodeTest methodsFor: 'set up' stamp: 'jmv 5/31/2016 11:24'!
+setUp
+	"
+	self new setUp
+	"
+
+     bytesOfExample1 := #[16r61 16r62 16r63 16r20 16rC3 16rA0 16rC3 16rA8 16rE2 
+	                              16r82 16rAC 16r20 16rCE 16rB1 16rCE 16rB2 16rCE 16rB3].
+	
+	"see UnicodeNotes.md"
+	
+     "write the bytes of an UFT8 encoded string in binary mode to a file"
+	self class fileName asFileEntry forceWriteStreamDo: [ :stream |
+		stream binary.
+		stream nextPutAll: bytesOfExample1 ]! !
+
+!UnicodeTest methodsFor: 'testing' stamp: 'jmv 10/3/2015 20:03'!
+test1ReadBinary
+	
+	"see UnicodeNotes.md"
+     "
+	self new setUp test1ReadBinary
+	"
+     | content |
+	content := self class fileName asFileEntry binaryContents.
+	self assert: content = bytesOfExample1! !
+
+!UnicodeTest methodsFor: 'testing' stamp: 'jmv 10/3/2015 20:04'!
+test2ReadWithOutBinary
+	
+	"see UnicodeNotes.md"
+     "
+	self new setUp test2ReadWithOutBinary
+	"
+     | content |
+	content := self class fileName asFileEntry textContents.
+	self deny: content = bytesOfExample1! !
+
+!UnicodeTest methodsFor: 'testing' stamp: 'jmv 5/26/2022 12:01:13'!
+test3ReadUtf8
+	
+	"see UnicodeNotes.md"
+     "
+	self new setUp test3ReadUtf8
+	"
+     | content byteArray |
+	byteArray _ self class fileName asFileEntry binaryContents.
+	content := String fromUtf8Bytes: byteArray.
+	self assert: content = 'abc àè¤ ˆ‰Š'! !
+
+!UnicodeTest methodsFor: 'testing' stamp: 'jmv 5/26/2022 12:00:15'!
+test4BackConversion
+	
+	"see UnicodeNotes.md"
+	
+     "
+	self new setUp test4BackConversion
+	"
+     | contentInternalString contentByteArray |
+
+	contentInternalString := String fromUtf8Bytes: self class fileName asFileEntry binaryContents.
+	contentByteArray := self class fileName asFileEntry binaryContents.
+
+	self assert: contentByteArray = (contentInternalString asUtf8Bytes: true)! !
+
+!UnicodeTest methodsFor: 'testing' stamp: 'jmv 5/26/2022 12:00:29'!
+test5ReadWriteUtf8
+	
+	"see UnicodeNotes.md"
+	
+     "
+	self new setUp test5ReadWriteUtf8
+	"
+     | content byteArray byteArray2 |
+
+	"read UTF8 Unicode file into internal string with NCRs"
+	"for NCR see http://en.wikipedia.org/wiki/Numeric_character_reference"
+	
+	byteArray := self class fileName asFileEntry binaryContents.
+	content := String fromUtf8Bytes: byteArray.
+	"NCRs were added to 'content' as needed"
+
+	"write internal string back to UTF8 file with NCRs converted back to UTF8 chars"
+	self class fileName2 asFileEntry forceWriteStreamDo: [ :stream |
+		stream binary.
+		stream nextPutAll: (content asUtf8Bytes: true).  "true means: convert NCRs back to UTF8"
+		].
+
+      "compare the two versions: what is in file 'fileName' with what is in file 'fileName2'"
+	byteArray := self class fileName asFileEntry binaryContents.
+	byteArray2 := self class fileName2 asFileEntry binaryContents.
+	self assert: byteArray = byteArray2! !
+
+!UnicodeTest class methodsFor: 'as yet unclassified' stamp: 'hjh 2/12/2013 19:25'!
+fileName
+	^'UTF8abc-test.txt'! !
+
+!UnicodeTest class methodsFor: 'as yet unclassified' stamp: 'hjh 2/12/2013 21:35'!
+fileName2
+	^'UTF8abc-test2.txt'! !
+
 !DateAndTimeTest methodsFor: 'tests' stamp: 'jmv 6/5/2014 14:29'!
 testCreation
 	"
@@ -12116,6 +12365,778 @@ testWaitTimeoutMSecs
 	self assert: (Semaphore new signal waitTimeoutMSecs: 50) == false.
 ! !
 
+!BinarySearchTest methodsFor: 'testing' stamp: 'sqr 5/25/2016 14:36'!
+testquickFindFirst
+
+	| collection |
+	collection := 1000 to: 2100.
+	collection withIndexDo:
+		[:eachElement :eachIndex |
+			self assert: (collection quickFindFirst: [:one | one >= eachElement]) = eachIndex.
+			self assert: (collection quickFindFirst: [:one | one >= (eachElement - 0.5)]) = eachIndex
+		].
+	self assert: (collection quickFindFirst: [:one | one > 2101]) = 0! !
+
+!BinarySearchTest methodsFor: 'testing' stamp: 'sqr 5/25/2016 14:36'!
+testquickFindLast
+
+	| collection |
+	collection := 1000 to: 2100.
+	collection withIndexDo:
+		[:eachElement :eachIndex |
+			self assert: (collection quickFindLast: [:one | one <= eachElement]) = eachIndex.
+			self assert: (collection quickFindLast: [:one | one <= (eachElement + 0.5)]) = eachIndex
+		].
+	self assert: (collection quickFindLast: [:one | one < 0]) = 0! !
+
+!BinarySearchTest methodsFor: 'testing' stamp: 'sqr 5/25/2016 14:46'!
+testquickIndexOf
+
+	| collection |
+	collection := 1000 to: 2100.
+	collection withIndexDo:
+		[:eachElement :eachIndex |
+			self assert: (collection quickIndexOf: eachElement) = eachIndex
+		].
+	self assert: (collection quickIndexOf: 999) = 0.
+	self assert: (collection quickIndexOf: 2101) = 0! !
+
+!BinarySearchTest methodsFor: 'testing' stamp: 'sqr 5/25/2016 15:01'!
+testquickIndexOfWithSemistableOrder
+
+	| collection |
+	collection := SortedCollection
+		sortBlock: [:x :y | x key <= y key].
+	1 to: 1000 do: [:each | collection add: each -> each].
+	1 to: 50 do: [:each | collection add: 42 -> each].
+	self assert: (collection quickIndexOf: 42 -> 6) = 48! !
+
+!CollectTest methodsFor: 'testing' stamp: 'jmv 11/30/2014 11:34'!
+testIdentitySet
+	"
+	CollectTest  new testIdentitySet
+	"
+	| col result |
+	col _ #(1 2 3 1.0 2.0 3.0) asIdentitySet.
+	result _ col collect: [ :elem |  elem yourself ].
+	self assert: result class = IdentitySet.
+	self assert: result = #(1 2 3 1.0 2.0 3.0) asIdentitySet.
+	self assert: result = col! !
+
+!CollectTest methodsFor: 'testing' stamp: 'jmv 11/30/2014 10:51'!
+testOrderedCollection
+	"
+	CollectTest  new testOrderedCollection
+	"
+	| col result |
+	col _ #(1 2 3 4 5) asOrderedCollection.
+	result _ col collect: [ :elem |  elem * 2 ].
+	self assert: result class = OrderedCollection.
+	self assert: result = #(2 4 6 8 10) asOrderedCollection! !
+
+!CollectTest methodsFor: 'testing' stamp: 'jmv 11/30/2014 11:34'!
+testSet
+	"
+	CollectTest  new testSet
+	"
+	| col result |
+	col _ #(1 2 3 1.0 2.0 3.0) asSet.
+	result _ col collect: [ :elem |  elem yourself ].
+	self assert: result class = Set.
+	self assert: result = #(1 2 3) asSet.
+	self assert: result = col! !
+
+!CollectTest methodsFor: 'testing' stamp: 'jmv 11/30/2014 11:01'!
+testSortedCollection
+	"
+	CollectTest  new testSortedCollection
+	"
+	| col result |
+	col _ #(1 2 3 4 5) asSortedCollection: [ :a :b | a > b ].
+	result _ col collect: [ :elem |  elem * 2 ].
+	self assert: result class = OrderedCollection.
+	self assert: result = #(10 8 6 4 2) asOrderedCollection! !
+
+!CollectionTest methodsFor: 'groupBy tests' stamp: 'HAW 7/5/2018 15:14:11'!
+testGroupByHavingSelectsTheResultOfGroupBy
+
+	| collectionToGroupBy groupedByEven |
+	
+	collectionToGroupBy := OrderedCollection with: 1 with: 2 with: 3 with: 4 with: 5.
+	groupedByEven := collectionToGroupBy groupBy: [ :anInteger | anInteger even ] having: [ :group | group size > 2 ].
+	
+	self assert: 1 equals: (groupedByEven size).	
+	self assert: (collectionToGroupBy select: [ :anInteger | anInteger odd ]) equals: (groupedByEven at: false) ! !
+
+!CollectionTest methodsFor: 'groupBy tests' stamp: 'HAW 7/5/2018 15:15:41'!
+testGroupByReturnsADictionaryThatGroupsACollectionByThePluggableKey
+
+	| collectionToGroupBy groupedByEven |
+	
+	collectionToGroupBy := OrderedCollection with: 1 with: 2 with: 3 with: 4 with: 5.
+	groupedByEven := collectionToGroupBy groupBy: [ :anInteger | anInteger even ].
+	
+	self assert: 2 equals: groupedByEven size.
+	self assert: (collectionToGroupBy select: [ :anInteger | anInteger even ]) equals: (groupedByEven at: true).
+	self assert:(collectionToGroupBy select: [ :anInteger | anInteger odd ]) equals: (groupedByEven at: false).! !
+
+!CollectionTest methodsFor: 'average tests' stamp: 'HAW 11/17/2018 11:45:15'!
+testAverageFailsWhenTheCollectionIsEmpty
+
+	self 
+		should: [ #() average: [ :each | each ] ]
+		raise: Error 
+		description: Collection emptyCollectionDescription! !
+
+!CollectionTest methodsFor: 'average tests' stamp: 'HAW 11/17/2018 11:45:19'!
+testAverageIfEmptyCalculatesItAsUsualWhenTheCollectionIsNotEmpty
+
+	| someNumbers |
+	
+	someNumbers _ #(1 5).
+
+	self 
+		assert: (someNumbers average: [ :each | each ] ifEmpty: [ self fail ])
+		equals: someNumbers average! !
+
+!CollectionTest methodsFor: 'average tests' stamp: 'HAW 11/17/2018 11:45:22'!
+testAverageIfEmptyEvaluatesEmptyBlockWhenTheCollectionIsEmpty
+
+	| emptyBlock |
+	
+	emptyBlock _ [ 0 ].
+
+	self 
+		assert: (#() average: [ :each | each asInteger ] ifEmpty: emptyBlock)
+		equals: emptyBlock value! !
+
+!CollectionTest methodsFor: 'average tests' stamp: 'jmv 1/6/2021 11:57:27'!
+testsAverageWorksWithABlock
+
+	self assert: ({ '1' . '2' . '3' } average: [ :each | each asNumber ]) equals: 2! !
+
+!CollectionTest methodsFor: 'as comma separated tests' stamp: 'HAW 3/6/2019 15:11:08'!
+assertAsCommaSeparated: aCollection equals: expectedString 
+	
+	self 
+		assert: (String streamContents: [ :stream | aCollection asCommaSeparated: [ :elem | stream print: elem + 1] on: stream ])
+		equals: expectedString! !
+
+!CollectionTest methodsFor: 'as comma separated tests' stamp: 'HAW 3/6/2019 15:12:31'!
+testAsCommaSeparatedOnWorksAsCommaStringAnd
+
+	self assertAsCommaSeparated: #() equals: ''. 
+	self assertAsCommaSeparated: #(1) equals: '2'.
+	self assertAsCommaSeparated: #(1 2) equals: '2 and 3'. 
+	self assertAsCommaSeparated: #(1 2 3) equals: '2, 3 and 4'.! !
+
+!CollectionTest methodsFor: 'as comma separated tests' stamp: 'HAW 3/6/2019 15:11:51'!
+testAsCommaStringAndDoesNotAddAnythingWhenEmpty
+
+	self assert: #() asCommaStringAnd isEmpty ! !
+
+!CollectionTest methodsFor: 'as comma separated tests' stamp: 'HAW 3/6/2019 15:11:59'!
+testAsCommaStringAndDoesNotAddAnythingWhenHasOneElement
+
+	self assert: #(1) asCommaStringAnd equals: '1' ! !
+
+!CollectionTest methodsFor: 'as comma separated tests' stamp: 'HAW 3/6/2019 15:12:06'!
+testAsCommaStringAndSeparatesWithAndWhenTwoOneElements
+
+	self assert: #(1 2) asCommaStringAnd equals: '1 and 2' ! !
+
+!CollectionTest methodsFor: 'as comma separated tests' stamp: 'HAW 3/6/2019 15:12:21'!
+testAsCommaStringAndSeparatesWithCommaButLastOneWithAndWhenMoreThanTwoElements
+
+	self assert: #(1 2 3) asCommaStringAnd equals: '1, 2 and 3' ! !
+
+!CollectionTest methodsFor: 'flatten tests' stamp: 'GC 5/16/2019 00:08:43'!
+testItMaintainsTheSameCollectionSpecies
+
+	self assert: (OrderedCollection with: 1 with: 2) equals: (OrderedCollection with: 1 with: #(2)) flatten! !
+
+!CollectionTest methodsFor: 'flatten tests' stamp: 'GC 5/15/2019 23:31:15'!
+testWhenCollectionContainsASingleLevelOfElementsItReturnsTheSameCollection
+
+	self assert: #(1 2 3) equals: #(1 2 3) flatten! !
+
+!CollectionTest methodsFor: 'flatten tests' stamp: 'GC 5/16/2019 00:01:02'!
+testWhenCollectionContainsMoreThanTwoLevelsltReturnsTheElementsOfAllNestedCollections
+
+	self assert: #(1 2 3 4 5) equals: #(1 #(2 3) #(4 #(5))) flatten! !
+
+!CollectionTest methodsFor: 'flatten tests' stamp: 'GC 5/16/2019 00:03:22'!
+testWhenCollectionContainsStringCollectionsItDoesNotFlattenTheStrings
+
+	self assert: #('string1' 'string2' 'string3') equals: #('string1' #('string2' 'string3')) flatten! !
+
+!CollectionTest methodsFor: 'flatten tests' stamp: 'GC 5/16/2019 00:02:07'!
+testWhenCollectionContainsStringsItReturnsTheSameCollection
+
+	self assert: #('string1' 'string2' 'string3') equals: #('string1' 'string2' 'string3') flatten! !
+
+!CollectionTest methodsFor: 'flatten tests' stamp: 'GC 5/16/2019 00:03:37'!
+testWhenCollectionContainsTwoLevelsOfElementsItReturnsTheElementsOfAllNestedCollections
+	
+	self assert: #(1 2 3) equals: #(#(1) #(2 3)) flatten
+	! !
+
+!CollectionTest methodsFor: 'flatten tests' stamp: 'GC 5/15/2019 23:24:15'!
+testWhenCollectionIsEmptyItReturnsTheSameCollection
+
+	self assert: #() equals: #() flatten! !
+
+!CollectionTest methodsFor: 'misc tests' stamp: 'jpb 8/2/2019 23:18:50'!
+testIsCollection
+	self assert: (Bag new is: #Collection).! !
+
+!CollectionTest methodsFor: 'misc tests' stamp: 'jmv 6/12/2019 18:22:57'!
+testSetEquality
+	self assert: Set new = IdentitySet new.
+	self assert: Set new hash = IdentitySet new hash.
+	self assert: Dictionary new = IdentityDictionary new.
+	self assert: Dictionary new hash = IdentityDictionary new hash.
+	self assert: Dictionary new = OrderedDictionary new.
+	self assert: Dictionary new hash = OrderedDictionary new hash.
+	self assert: IdentityDictionary new = OrderedDictionary new.
+	self assert: IdentityDictionary new hash = OrderedDictionary new hash.
+
+	self deny: Set new = Dictionary new! !
+
+!DictionaryTest methodsFor: 'tests' stamp: 'jpb 8/2/2019 23:17:49'!
+testIsCollection
+	self assert: (Dictionary new is: #Collection)! !
+
+!DictionaryTest methodsFor: 'tests' stamp: 'HAW 4/4/2019 08:18:05'!
+testKeyNotFoundSignalTheRightMessage
+
+	self 
+		should: [ Dictionary new errorKeyNotFound ]
+		raise: Error
+		withMessageText: Dictionary keyNotFoundErrorDescription ! !
+
+!IntervalTest methodsFor: 'testing' stamp: 'jmv 12/18/2018 10:56:31'!
+testAt
+	"
+	IntervalTest new testAt
+	"
+	self assert: (2 to: 5 by: 2) first = 2.
+	self assert: ((2 to: 5 by: 2) at: 1) = 2.
+	self assert: ((2 to: 5 by: 2) at: 2) = 4.
+	self assert: (2 to: 5 by: 2) last = 4.
+
+	self assert: (0 to: 2.4 by: 0.1) first = 0.
+	self assert: ((0 to: 2.4 by: 0.1) at: 1) = 0.
+	self assert: (((0 to: 2.4 by: 0.1) at: 2) isWithin: 1 floatsFrom: 0.1).
+	self assert: (((0 to: 2.4 by: 0.1) at: 3) isWithin: 1 floatsFrom: 0.2).
+	self assert: (((0 to: 2.4 by: 0.1) at: 23) isWithin: 1 floatsFrom: 2.2).
+	self assert: ((0 to: 2.4 by: 0.1) at: 24) = 2.3.
+	self assert: ((0 to: 2.4 by: 0.1) at: 25) = 2.4.
+	self assert: (0 to: 2.4 by: 0.1) last = 2.4.! !
+
+!IntervalTest methodsFor: 'testing' stamp: 'jmv 12/18/2018 10:56:59'!
+testFloatInterval
+	"
+	IntervalTest new testFloatInterval
+	"
+	
+	self assert: (0 to: 2.4 by: 0.1) size = 25.
+	self assert: (0 to: 2.4 by: 0.1) first = 0.
+	self assert: (0 to: 2.4 by: 0.1) last = 2.4.
+
+	2 to: 200 do: [ :n |
+		self assert: (0.0 to: 1.0 count: n) size = n.
+		self assert: (0.0 to: 1.0 count: n) first = 0.0.
+		self assert: ((0.0 to: 1.0 count: n) last isWithin: 1 floatsFrom: 1.0)].
+	2 to: 200 do: [ :n |
+		self assert: (1.0 to: 0.0 count: n) size = n.
+		self assert: (1.0 to: 0.0 count: n) first = 1.0.
+		self assert: ((1.0 to: 0.0 count: n) last isWithin: 1 floatsFrom: 0.0)].! !
+
+!IntervalTest methodsFor: 'testing' stamp: 'HAW 3/17/2019 07:20:11'!
+testFloatToByDo
+	"
+	IntervalTest new testFloatToByDo
+	"
+	| interval toByDo |
+
+	"See comment at #to:by:do:"
+	self shouldFail: [
+		interval _ 0 to: 2.4 by: 0.1.
+		toByDo _ Array streamContents: [ :strm |
+			0 to: 2.4 by: 0.1 do: [ :each |
+				strm nextPut: each ]].
+		self assert: toByDo size = interval size.
+		1 to: toByDo size do: [ :i |
+			self assert: (toByDo at: i) = (interval at: i) ]]! !
+
+!IntervalTest methodsFor: 'testing' stamp: 'jmv 3/27/2016 17:18'!
+testIntegerInterval
+	"
+	IntervalTest new testIntegerInterval
+	"
+	| z |
+	self assert: (2 to: 5 by: 2) size = 2.
+	self assert: (2 to: 5 by: 2) last = 4.
+	z _ 0.
+	(2 to: 5 by: 2) do: [ :i | z _ i ].
+	self assert: z = 4! !
+
+!IntervalTest methodsFor: 'testing' stamp: 'jmv 4/27/2016 14:29'!
+testIntegerToByDo
+	"
+	IntervalTest new testIntegerToByDo
+	"
+	| interval toByDo |
+	interval _ 2 to: 5 by: 2.
+	toByDo _ Array streamContents: [ :strm |
+		2 to: 5 by: 2 do: [ :each |
+			strm nextPut: each ]].
+	self assert: toByDo size = interval size.
+	1 to: toByDo size do: [ :i |
+		self assert: (toByDo at: i) = (interval at: i) ]! !
+
+!IntervalTest methodsFor: 'test - includes' stamp: 'HAW 5/2/2020 11:43:33'!
+testDoesNotIncludeNumbersOutsideTheInInterval
+
+	| from1To10 |
+	
+	from1To10 := 1 to: 10.
+	
+	self deny: (from1To10 includes: 0).
+	self deny: (from1To10 includes: 11)! !
+
+!IntervalTest methodsFor: 'test - includes' stamp: 'HAW 5/2/2020 11:35:03'!
+testDoesNotIncludeObjectsThatAreNotNumbers
+
+	self deny: ((1 to: 10) includes: $a)! !
+
+!IntervalTest methodsFor: 'test - includes' stamp: 'HAW 5/2/2020 11:53:40'!
+testDoesNotIncludedNumbersThatAreInRangeButNotReachedByTheStep
+
+	| from1To10By2 |
+	
+	from1To10By2 := 1 to: 10 by: 2.
+	
+	self deny: (from1To10By2 includes: 0).
+	self deny: (from1To10By2 includes: 2).
+	self deny: (from1To10By2 includes: 6).
+	self deny: (from1To10By2 includes: 10).! !
+
+!IntervalTest methodsFor: 'test - includes' stamp: 'HAW 5/2/2020 11:54:48'!
+testDoesNotIncludedNumbersThatAreInRangeButNotReachedByTheStepWithReversedIntervals
+
+	| from10To1ByMinus2 |
+	
+	from10To1ByMinus2 := 10 to: 1 by: -2.
+	
+	self deny: (from10To1ByMinus2 includes: 0).
+	self deny: (from10To1ByMinus2 includes: 1).
+	self deny: (from10To1ByMinus2 includes: 5).
+	self deny: (from10To1ByMinus2 includes: 9).! !
+
+!IntervalTest methodsFor: 'test - includes' stamp: 'HAW 5/2/2020 11:43:03'!
+testIncludedNumbersRespectAStepDifferentToOne
+
+	| from1To10By2 |
+	
+	from1To10By2 := 1 to: 10 by: 2.
+	
+	self assert: (from1To10By2 includes: 1).
+	self assert: (from1To10By2 includes: 5).
+	self assert: (from1To10By2 includes: 9).! !
+
+!IntervalTest methodsFor: 'test - includes' stamp: 'HAW 5/2/2020 11:55:55'!
+testIncludedNumbersRespectNegativeSteps
+
+	| from10To1ByMinus2 |
+	
+	from10To1ByMinus2 := 10 to: 1 by: -2.
+	
+	self assert: (from10To1ByMinus2 includes: 10).
+	self assert: (from10To1ByMinus2 includes: 6).
+	self assert: (from10To1ByMinus2 includes: 2).! !
+
+!IntervalTest methodsFor: 'test - includes' stamp: 'HAW 5/2/2020 11:43:26'!
+testIncludesNumbersInsideTheInterval
+
+	| from1To10 |
+	
+	from1To10 := 1 to: 10.
+	
+	self assert: (from1To10 includes: 1).
+	self assert: (from1To10 includes: 5).
+	self assert: (from1To10 includes: 10).! !
+
+!IntervalTest methodsFor: 'test - includes' stamp: 'HAW 5/2/2020 11:43:21'!
+testIncludesNumbersInsideTheIntervalEvenForReversedIntervals
+
+	| from10To1 |
+	
+	from10To1 := 10 to: 1 by: -1.
+	
+	self assert: (from10To1 includes: 1).
+	self assert: (from10To1 includes: 5).
+	self assert: (from10To1 includes: 10).! !
+
+!IntervalTest methodsFor: 'test - includes' stamp: 'HAW 5/2/2020 12:01:44'!
+testIntervalWithOneNumberAndNegativeStepBiggerThanOneIncludeOnlyThatNumber
+
+	| from1To1ByMinus2 |
+	
+	from1To1ByMinus2 := 1 to: 1 by: -2.
+	
+	self assert: (from1To1ByMinus2 includes: 1).
+	self deny: (from1To1ByMinus2 includes: -1).
+	self deny: (from1To1ByMinus2 includes: 3).! !
+
+!IntervalTest methodsFor: 'test - includes' stamp: 'HAW 5/2/2020 12:01:54'!
+testIntervalWithOneNumberAndNegativeStepIncludeOnlyThatNumber
+
+	| from1To1ByMinus1 |
+	
+	from1To1ByMinus1 := 1 to: 1 by: -1.
+	
+	self assert: (from1To1ByMinus1 includes: 1).
+	self deny: (from1To1ByMinus1 includes: 0).
+	self deny: (from1To1ByMinus1 includes: 2).! !
+
+!IntervalTest methodsFor: 'test - includes' stamp: 'HAW 5/2/2020 12:00:46'!
+testIntervalWithOneNumberAndStepBiggerThanOneIncludesOnlyTheNumber
+
+	| from1To1By2 |
+	
+	from1To1By2 := 1 to: 1 by: 2.
+	
+	self assert: (from1To1By2 includes: 1).
+	self deny: (from1To1By2 includes: -1).
+	self deny: (from1To1By2 includes: 3).! !
+
+!IntervalTest methodsFor: 'test - includes' stamp: 'HAW 5/2/2020 11:59:06'!
+testIntervalWithOneNumberIncludesOnlyTheNumber
+
+	| from1To1 |
+	
+	from1To1 := 1 to: 1.
+	
+	self assert: (from1To1 includes: 1).
+	self deny: (from1To1 includes: 0).
+	self deny: (from1To1 includes: 2).! !
+
+!IntervalTest methodsFor: 'tests - includesAll' stamp: 'HAW 6/11/2022 20:08:15'!
+testIncludesAllOfFailsWhenFirstNotIncluded
+
+	self deny: ((3 to: 9 by: 2) includesAllOf: (1 to: 9 by: 2))! !
+
+!IntervalTest methodsFor: 'tests - includesAll' stamp: 'HAW 6/11/2022 20:08:18'!
+testIncludesAllOfFailsWhenLastNotIncluded
+
+	self deny: ((1 to: 7 by: 2) includesAllOf: (1 to: 9 by: 2))! !
+
+!IntervalTest methodsFor: 'tests - includesAll' stamp: 'HAW 6/11/2022 20:08:21'!
+testIncludesAllOfFailsWithOtherTypeOfCollectionWhenElementNotIncluded
+
+	self deny: ((1 to: 9 by: 2) includesAllOf: {1. 3. 5. 6. 7. 9})! !
+
+!IntervalTest methodsFor: 'tests - includesAll' stamp: 'HAW 6/11/2022 20:08:24'!
+testIncludesAllOfIntervalWithIncludedFirstLastAndDifferentIncrement
+
+	self assert: ((1 to: 9 by: 2) includesAllOf: (3 to: 7 by: 4))! !
+
+!IntervalTest methodsFor: 'tests - includesAll' stamp: 'HAW 6/11/2022 20:08:27'!
+testIncludesAllOfIntervalWithIncludedFirstSameLastAndIncrement
+
+	self assert: ((1 to: 10 by: 2) includesAllOf: (3 to: 10 by: 2))! !
+
+!IntervalTest methodsFor: 'tests - includesAll' stamp: 'HAW 6/11/2022 20:08:29'!
+testIncludesAllOfIntervalWithSameFirstIncrementAndIncludedLast
+
+	self assert: ((1 to: 10 by: 2) includesAllOf: (1 to: 7 by: 2))! !
+
+!IntervalTest methodsFor: 'tests - includesAll' stamp: 'HAW 6/11/2022 20:08:32'!
+testIncludesAllOfIntervalWithSameFirstLastAndIncrement
+
+	self assert: ((1 to: 10 by: 2) includesAllOf: (1 to: 10 by: 2))! !
+
+!IntervalTest methodsFor: 'tests - includesAll' stamp: 'HAW 6/11/2022 20:08:35'!
+testIncludesAllOfOtherTypeOfCollection
+
+	self assert: ((1 to: 9 by: 2) includesAllOf: {1. 3. 5. 7. 9})! !
+
+!OrderedCollectionTest methodsFor: 'tests' stamp: 'jpb 8/2/2019 23:18:24'!
+testIsCollection
+	self assert: (OrderedCollection new is: #Collection).! !
+
+!OrderedCollectionTest methodsFor: 'tests' stamp: 'HAW 5/18/2019 17:01:20'!
+testStreamContentsWorksAsExpected
+
+	| contents |
+	
+	contents := OrderedCollection streamContents: [ :stream | stream nextPut: 1 ].
+	
+	self assert: (OrderedCollection with: 1) equals: contents! !
+
+!OrderedCollectionTest methodsFor: 'tests' stamp: 'HAW 5/18/2019 17:04:16'!
+testWriteStreamOnOrderedCollectionGrowsAsExpected
+
+	| contents |
+	
+	contents := OrderedCollection streamContents: [ :stream | 
+		1 to: 101 do: [ :aNumber | stream nextPut: aNumber ]].
+	
+	1 to: 101 do: [ :aNumber | self assert: aNumber equals: (contents at: aNumber) ]
+	! !
+
+!OrderedDictionaryTest methodsFor: 'tests' stamp: 'jmv 5/25/2018 10:36:59'!
+testOrder
+	| data dict orderingByCollect orderingByDo orderingBySelect aux desiredOrder |
+
+	"Test that #do:, #select: and #collect: iterate in the correct order"
+	dict _ OrderedDictionary new.
+	data _ self sampleData.
+	desiredOrder _ data collect: [ :pair | pair second ].
+	data do: [ :pair |
+		dict at: pair first put: pair second ].
+
+	orderingByDo _ Array streamContents: [ :strm | dict do: [ :each | strm nextPut: each ]].
+	self assert: orderingByDo = desiredOrder.
+
+	aux _ dict select: [ :each | true ].
+	orderingBySelect _ Array streamContents: [ :strm | aux do: [ :each | strm nextPut: each ]].
+	self assert: orderingBySelect = desiredOrder.
+
+	aux _ dict collect: [ :each | each yourself ].
+	orderingByCollect _ Array streamContents: [ :strm | aux do: [ :each | strm nextPut: each ]].
+	self assert: orderingByCollect = desiredOrder.
+
+
+	"Test that order is correct even if different. Also test alternative way to add stuff to dict."
+	dict _ OrderedDictionary new.
+	data _ self sampleData reversed.
+	desiredOrder _ data collect: [ :pair | pair second ].
+	data do: [ :pair |
+		dict add: pair first -> pair second ].
+
+	orderingByDo _ Array streamContents: [ :strm | dict do: [ :each | strm nextPut: each ]].
+	self assert: orderingByDo = desiredOrder.
+
+	aux _ dict select: [ :each | true ].
+	orderingBySelect _ Array streamContents: [ :strm | aux do: [ :each | strm nextPut: each ]].
+	self assert: orderingBySelect = desiredOrder.
+
+	aux _ dict collect: [ :each | each yourself ].
+	orderingByCollect _ Array streamContents: [ :strm | aux do: [ :each | strm nextPut: each ]].
+	self assert: orderingByCollect = desiredOrder.
+! !
+
+!OrderedDictionaryTest methodsFor: 'tests' stamp: 'jmv 5/25/2018 10:41:04'!
+testRemove
+	| data dict dataToRemove desiredOrder orderingByDo |
+
+	"Test that #do:, #select: and #collect: iterate in the correct order"
+	dict _ OrderedDictionary new.
+	data _ self sampleData.
+	dataToRemove _ self sampleData2.
+
+	data do: [ :pair |
+		dict at: pair first put: pair second ].
+	dataToRemove do: [ :pair |
+		dict removeKey: pair first ].
+
+	orderingByDo _ Array streamContents: [ :strm | dict do: [ :each | strm nextPut: each ]].
+
+	desiredOrder _ OrderedCollection new.
+	data do: [ :pair | desiredOrder add: pair second ].
+	dataToRemove do: [ :pair | desiredOrder remove: pair second ].
+	
+	self assert: orderingByDo = desiredOrder asArray.! !
+
+!OrderedDictionaryTest methodsFor: 'aux' stamp: 'jmv 5/25/2018 10:16:25'!
+sampleData
+	^ { {1. 'uno'}. {6. 'seis'}. {8. 'ocho'}. {7. 'siete'}. {2. 'dos'}. {3. 'tres'}. {4. 'cuatro'}. {5. 'cinco'}}! !
+
+!OrderedDictionaryTest methodsFor: 'aux' stamp: 'jmv 5/25/2018 10:16:35'!
+sampleData2
+	^ { {1. 'uno'}. {8. 'ocho'}. {3. 'tres'}}! !
+
+!SequenceableCollectionTest methodsFor: 'tests' stamp: 'HAW 5/25/2019 09:49:41'!
+testCombinationsAtATimeDoShouldEvaluateBlockWithEmptyCollection
+	
+	| combinationWasEmpty |
+	
+	combinationWasEmpty := false.
+	'ab' combinations: 0 atATimeDo: [ :combination | combinationWasEmpty := combination isEmpty ].
+	
+	self assert: combinationWasEmpty! !
+
+!SequenceableCollectionTest methodsFor: 'tests' stamp: 'HAW 5/25/2019 09:59:32'!
+testCombinationsAtATimeDoWorksAsExpected
+	
+	| combinations |
+	 
+	combinations := OrderedCollection new.
+	'abc' combinations: 2 atATimeDo: [ :combination | combinations add: combination copy].
+	
+	self assert: 3 equals: combinations size.
+	self assert: (combinations includes: #($a $b)).
+	self assert: (combinations includes: #($a $c)).
+	self assert: (combinations includes: #($b $c)).! !
+
+!SequenceableCollectionTest methodsFor: 'tests' stamp: 'HAW 3/17/2019 06:33:35'!
+testDoSeparatedByDoesNotValueSeparatedBlockForCollectionsOfOneElement
+
+	| collectionToTraverse traversedElements |
+
+	collectionToTraverse := OrderedCollection with: 1.
+	traversedElements := OrderedCollection new.
+	self shouldntFail: [ collectionToTraverse do: [ :anElement | traversedElements add: anElement ] separatedBy: [ self fail ] ].
+
+	self assert: collectionToTraverse equals: traversedElements! !
+
+!SequenceableCollectionTest methodsFor: 'tests' stamp: 'HAW 3/17/2019 06:38:06'!
+testDoSeparatedByDoesNotValueSeparatedBlockOnLastElement
+
+	| collectionToTraverse traversedElements |
+
+	collectionToTraverse := OrderedCollection with: 1 with: 2.
+	traversedElements := OrderedCollection new.
+
+	self shouldntFail: [ collectionToTraverse do: [ :anElement | traversedElements add: anElement ] separatedBy: [ traversedElements add: $-] ].
+
+	self assert: (OrderedCollection with: 1 with: $- with: 2) equals: traversedElements! !
+
+!SequenceableCollectionTest methodsFor: 'tests' stamp: 'HAW 3/17/2019 06:29:27'!
+testDoSeparatedByDoesNothingForEmptyCollection
+
+	self shouldntFail: [ #() do: [ :anElement | self fail ] separatedBy: [ self fail ] ]! !
+
+!SequenceableCollectionTest methodsFor: 'tests' stamp: 'HAW 5/21/2020 17:00:14'!
+testFirstAvailableReturnsAllObjectsWhenRequestedMoreThanTheSize
+
+	self assert: #(10 20 30) equals: (#(10 20 30) firstAvailable: 4)! !
+
+!SequenceableCollectionTest methodsFor: 'tests' stamp: 'HAW 5/21/2020 17:00:43'!
+testFirstAvailableReturnsAllObjectsWhenRequestedTheReceiversSize
+
+	self assert: #(10 20 30) equals: (#(10 20 30) firstAvailable: 3)! !
+
+!SequenceableCollectionTest methodsFor: 'tests' stamp: 'HAW 5/21/2020 16:58:40'!
+testFirstAvailableReturnsTheFirstRequestedObjectsWhenTheyAreAvailable
+
+	self assert: #(10 20) equals: (#(10 20 30) firstAvailable: 2)! !
+
+!SequenceableCollectionTest methodsFor: 'tests' stamp: 'HAW 5/21/2020 17:03:20'!
+testLastAvailableReturnsAllObjectsWhenRequestedMoreThanTheSize
+
+	self assert: #(10 20 30) equals: (#(10 20 30) lastAvailable: 4)! !
+
+!SequenceableCollectionTest methodsFor: 'tests' stamp: 'HAW 5/21/2020 17:02:57'!
+testLastAvailableReturnsAllObjectsWhenRequestedTheReceiversSize
+
+	self assert: #(10 20 30) equals: (#(10 20 30) lastAvailable: 3)! !
+
+!SequenceableCollectionTest methodsFor: 'tests' stamp: 'HAW 5/21/2020 17:02:27'!
+testLastAvailableReturnsTheLastRequestedObjectsWhenTheyAreAvailable
+
+	self assert: #(20 30) equals: (#(10 20 30) lastAvailable: 2)! !
+
+!SequenceableCollectionTest methodsFor: 'tests' stamp: 'HAW 3/17/2019 06:36:00'!
+testWithIndexDoSeparatedByDoesNotValueSeparatedBlockForCollectionsOfOneElement
+
+	| collectionToTraverse traversedElements |
+
+	collectionToTraverse := OrderedCollection with: $a.
+	traversedElements := OrderedCollection new.
+
+	self shouldntFail: [ collectionToTraverse withIndexDo: [ :anElement :index | traversedElements add: anElement  -> index ] separatedBy: [ self fail ] ].
+
+	self assert: 1 equals: traversedElements size.
+	self assert: $a->1 equals: traversedElements first! !
+
+!SequenceableCollectionTest methodsFor: 'tests' stamp: 'HAW 3/17/2019 06:40:01'!
+testWithIndexDoSeparatedByDoesNotValueSeparatedBlockOnLastElement
+
+	| collectionToTraverse traversedElements |
+
+	collectionToTraverse := OrderedCollection with: $a with: $b.
+	traversedElements := OrderedCollection new.
+
+	collectionToTraverse
+		withIndexDo: [ :anElement :index | traversedElements add: anElement  -> index ]
+		separatedBy: [ traversedElements add: $-].
+
+	self assert: 3 equals: traversedElements size.
+	self assert: $a->1 equals: traversedElements first.
+	self assert: $- equals: traversedElements second.
+	self assert: $b->2 equals: traversedElements third! !
+
+!SequenceableCollectionTest methodsFor: 'tests' stamp: 'HAW 3/17/2019 06:30:18'!
+testWithIndexDoSeparatedByDoesNothingForEmptyCollection
+
+	self shouldntFail: [ #() withIndexDo: [ :anElement :index | self fail ] separatedBy: [ self fail ] ]! !
+
+!TextTest methodsFor: 'testing' stamp: 'jpb 8/2/2019 23:40:53'!
+testIsText
+	self assert: (Text new is: #Text).! !
+
+!WeakIdentitySetTest methodsFor: 'testing' stamp: 'jmv 8/24/2012 08:24'!
+test
+	"
+	(also tests WeakSet a bit)
+	WeakIdentitySetTest new test
+	"
+	| ary1 ary2 count w wi |
+	ary1 _ { 3@4 . 4@5 }.
+	ary2 _ { 13@4 . 14@5 }.
+	w _ WeakSet new.
+	w addAll: ary1.
+	wi _ WeakIdentitySet new.
+	wi addAll: ary2.
+	
+	self assert: w size = 2.
+	count _ 0.
+	w do: [ :each |
+		count _ count + 1.
+		self assert: each class == Point ].
+	self assert: count = 2.
+	self assert: (w includes: ary1 first).
+	self assert: (w includes: ary1 second).
+	self assert: (w includes: 3@4).
+	self assert: (w includes: 4@5).
+
+	self assert: wi size = 2.
+	count _ 0.
+	wi do: [ :each |
+		count _ count + 1.
+		self assert: each class == Point ].
+	self assert: count = 2.
+	self assert: (wi includes: ary2 first).
+	self assert: (wi includes: ary2 second).
+	self deny: (wi includes: 13@4).
+	self deny: (wi includes: 14@5).
+
+	"Now make one element in each disappear"
+	ary1 at: 1 put: 9.
+	ary2 at: 1 put: 99.
+	Smalltalk garbageCollect.
+
+	"A little weird, but yes, elements that disappeared are still counted, but NOT iterated!!"
+	self assert: w size = 2.
+	count _ 0.
+	w do: [ :each |
+		count _ count + 1 ].
+	self assert: count = 1.
+	self deny: (w includes: ary1 first).
+	self assert: (w includes: ary1 second).
+
+	self assert: wi size = 2. 	"A little weird, but yes, elements that disappeared are still counted"
+	count _ 0.
+	wi do: [ :each |
+		count _ count + 1 ].
+	self assert: count = 1.
+	self deny: (wi includes: ary2 first).
+	self assert: (wi includes: ary2 second).! !
+
 !ArrayTest methodsFor: 'test - insert:ShiftingRight:' stamp: 'HAW 12/20/2018 14:41:00'!
 testCanNotInsertShiftingRightWhenInsertionPointIsBiggerThanSize
 
@@ -12484,6 +13505,611 @@ testSum
 	self assert: ({0.0. 1.0. Float pi. Float e} asFloat64Array + 1) = ({0.0+1. 1.0+1. Float pi+1. Float e+1} asFloat64Array).
 	a _ {0.0. 1.0. Float pi. Float e} asFloat64Array.
 	self assert: (a + a) = (a * 2 )! !
+
+!ReadStreamTest methodsFor: 'tests' stamp: 'NM 10/25/2021 10:21:47'!
+testUpTo1ShortRecords
+	". this test ensures the upTo: delim method behaves as specified by the ANSI standard:
+	Delimiter is considered a separator (and therefore not required for the last chunk)."
+	| stream |
+	stream _ ReadStream on: 'record-1Xrecord-2Xrecord-incomplete'. 
+	self assert:  ((stream upTo: $X) =  'record-1').
+	self assert:  ((stream upTo: $X) =  'record-2').
+	self assert:  ((stream upTo: $X) =  'record-incomplete').
+	self assert:  ((stream upTo: $X) =  '').
+	". the stream has been all consumed" 
+	self assert:  (stream position = 35). ! !
+
+!ReadStreamTest methodsFor: 'tests' stamp: 'NM 10/25/2021 10:55:33'!
+testUpTo3LongUnterminatedRecord
+	"Long input, no delimiter found, expected to return all the data chunk up to the end of file. "
+	| longString stream read |
+	longString _ (1 to: 100)
+		inject: ''
+		into: [ :prev :each |
+			prev , 'A lot of stuff, needs over 2000 chars!! ' ].
+	stream _ ReadStream on: longString.
+	read _ stream upTo: $X.
+	self assert: read = longString.! !
+
+!ReadStreamTest methodsFor: 'tests' stamp: 'NM 10/25/2021 10:54:11'!
+testUpTo4LongUnterminatedRecord
+	"Big chunk, not delimiter found, expected return all the chunk  "
+	| stuff stream read |
+	stuff _ String streamContents: [ :strm |
+		1
+			to: 5000
+			do: [ :i |
+				i < 3000 ifTrue: [ strm nextPut: $a ].
+				i >= 3000 ifTrue: [ strm nextPut: $b ]]].
+	stream _ ReadStream on: stuff.
+	read _ stream upTo: $X.
+	self assert: read size = 5000.! !
+
+!ReadStreamTest methodsFor: 'tests' stamp: 'NM 10/25/2021 10:58:48'!
+testUpTo5TerminatedAndUnterminatedLongRecords
+	"Two big chunks, one delimiter in the middle, expected to return 
+      the first time a big chunk, the second time the second block up to EOF.  "
+	| stuff stream read |
+	stuff _ String streamContents: [ :strm |
+		1
+			to: 6000
+			do: [ :i |
+				i < 3000 ifTrue: [ strm nextPut: $a ].
+				i = 3000 ifTrue: [ strm nextPut: $X ].
+				i > 3000 ifTrue: [ strm nextPut: $b ]]].
+	stream _ ReadStream on: stuff.
+	" first scan, the delimiter is found but not printed.  "
+	read _ stream upTo: $X.
+	self assert: read size = 2999.
+	self assert: (read at: 1) = $a.
+	" second scan. the delimiter is not found, all second chunk is returned  "
+	read _ stream upTo: $X.
+	self assert: read size = 3000.
+	self assert: (read at: 1) = $b.! !
+
+!ReadStreamTest methodsFor: 'tests' stamp: 'NM 10/25/2021 10:59:51'!
+testUpTo6TerminatedLongRecords
+	"Two big chunks, one delimiter in the middle, one at the end. expected to return 
+      two big chunks in two read, delimiters excluded.  "
+	| stuff stream read |
+	stuff _ String streamContents: [ :strm |
+		1
+			to: 6000
+			do: [ :i |
+				i < 3000 ifTrue: [ strm nextPut: $a ].
+				i = 3000 ifTrue: [ strm nextPut: $X ].
+				((Interval
+					from: 3001
+					to: 5999) includes: i) ifTrue: [ strm nextPut: $b ].
+				i = 6000 ifTrue: [ strm nextPut: $X ]]].
+	stream _ ReadStream on: stuff.
+	" first scan, delimiter is found, return all the block delimiter excluded "
+	read _ stream upTo: $X.
+	self assert: read size = 2999.
+	self assert: (read at: 1) = $a.
+	" second scan, return chunk, delimiter excluded.  "
+	read _ stream upTo: $X.
+	self assert: read size = 2999.
+	self assert: (read at: 1) = $b.! !
+
+!ReadStreamTest methodsFor: 'tests' stamp: 'NM 10/25/2021 11:00:52'!
+testUpToTerminator1ShortRecords
+	"
+	. Read a file stream up to 'delim' in a strict way. 
+	. If delim is found returns everything up to the first occurrence of 'delim' included.
+	. if delim is not found returns nil and set the FileStream position where it was before
+	the call was made. This ensures if another process writes into the file another delim
+	limited token we will fully read it on next upTo call.
+	This means Delimiter is a Terminator: a chunk is only considered well formed if it ends with it.
+	"
+	| stream |
+	stream _ ReadStream on: 'record-1Xrecord-2Xrecord-incomplete'. 
+	self assert:  ((stream upTo: $X delimiterIsTerminator: true) =  'record-1X').
+	self assert:  ((stream upTo: $X delimiterIsTerminator: true) =  'record-2X').
+	self assert:  ((stream upTo: $X delimiterIsTerminator: true) =  nil).
+	". we are not at the end of the stream, but just after the last delim was found.
+	we are ready to receive other delim limitated tokens. if they get written.
+	"
+	self assert:  (stream position = 18).! !
+
+!ReadStreamTest methodsFor: 'tests' stamp: 'NM 10/25/2021 11:01:38'!
+testUpToTerminator3LongUnterminatedRecord
+	"Long input, no delimiter found, expected to return nil. "
+	| longString stream read |
+	longString _ (1 to: 100)
+		inject: ''
+		into: [ :prev :each |
+			prev , 'A lot of stuff, needs over 2000 chars!! ' ].
+	stream _ ReadStream on: longString.
+	read _ stream
+		upTo: $X
+		delimiterIsTerminator: true.
+	self assert: read = nil.! !
+
+!ReadStreamTest methodsFor: 'tests' stamp: 'NM 10/25/2021 11:02:04'!
+testUpToTerminator4LongUnterminatedRecord
+	"Big chunk, not delimiter found, expected return nil  "
+	| stuff stream read |
+	stuff _ String streamContents: [ :strm |
+		1
+			to: 5000
+			do: [ :i |
+				i < 3000 ifTrue: [ strm nextPut: $a ].
+				i >= 3000 ifTrue: [ strm nextPut: $b ]]].
+	stream _ ReadStream on: stuff.
+	read _ stream
+		upTo: $X
+		delimiterIsTerminator: true.
+	self assert: read = nil.! !
+
+!ReadStreamTest methodsFor: 'tests' stamp: 'NM 10/25/2021 11:02:36'!
+testUpToTerminator5TerminatedAndUnterminatedLongRecords
+	"Two big chunks, one delimiter in the middle, expected to return 
+      the first time a big chunk, the second time nil.  "
+	| stuff stream read |
+	stuff _ String streamContents: [ :strm |
+		1
+			to: 6000
+			do: [ :i |
+				i < 3000 ifTrue: [ strm nextPut: $a ].
+				i = 3000 ifTrue: [ strm nextPut: $X ].
+				i > 3000 ifTrue: [ strm nextPut: $b ]]].
+	stream _ ReadStream on: stuff.
+	" first scan, delimiter is found, return all the block delimiter included "
+	read _ stream
+		upTo: $X
+		delimiterIsTerminator: true.
+	self assert: read size = 3000.
+	self assert: (read at: 1) = $a.
+	" second scan, delimiter not found, returns nil  "
+	read _ stream
+		upTo: $X
+		delimiterIsTerminator: true.
+	self assert: read = nil.! !
+
+!ReadStreamTest methodsFor: 'tests' stamp: 'NM 10/25/2021 11:03:06'!
+testUpToTerminator6TerminatedLongRecords
+	"Two big chunks, one delimiter in the middle, one at the end expected to return 
+      two big chunks in two read, delimiters included.  "
+	| stuff stream read |
+	stuff _ String streamContents: [ :strm |
+		1
+			to: 6000
+			do: [ :i |
+				i < 3000 ifTrue: [ strm nextPut: $a ].
+				i = 3000 ifTrue: [ strm nextPut: $X ].
+				((Interval
+					from: 3001
+					to: 5999) includes: i) ifTrue: [ strm nextPut: $b ].
+				i = 6000 ifTrue: [ strm nextPut: $X ]]].
+	stream _ ReadStream on: stuff.
+	" first scan, delimiter is found, return all the block delimiter included "
+	read _ stream
+		upTo: $X
+		delimiterIsTerminator: true.
+	self assert: read size = 3000.
+	self assert: (read at: 1) = $a.
+	" second scan, delimiter found, return chunk, delimiter included   "
+	read _ stream
+		upTo: $X
+		delimiterIsTerminator: true.
+	self assert: read size = 3000.
+	self assert: (read at: 1) = $b.! !
+
+!ReadWriteStreamTest methodsFor: 'tests' stamp: 'NM 10/25/2021 11:06:39'!
+testUpTo1ShortRecords
+	". this test ensures the upTo: delim method behaves as specified by the ANSI standard:
+	Delimiter is considered a separator (and therefore not required for the last chunk)."
+	| stream |
+	stream _ ReadWriteStream on: ''. 
+	stream nextPutAll: 'record-1Xrecord-2Xrecord-incomplete'.
+	stream position: 0.
+	self assert:  ((stream upTo: $X) =  'record-1').
+	self assert:  ((stream upTo: $X) =  'record-2').
+	self assert:  ((stream upTo: $X) =  'record-incomplete').
+	self assert:  ((stream upTo: $X) =  '').
+	". the stream has been all consumed" 
+	self assert:  (stream position = 35). ! !
+
+!ReadWriteStreamTest methodsFor: 'tests' stamp: 'NM 10/25/2021 11:07:32'!
+testUpTo3LongUnterminatedRecord
+	"Long input, no delimiter found, expected to return all the data chunk up to the end of file. "
+	| longString stream read |
+	longString _ (1 to: 100)
+		inject: ''
+		into: [ :prev :each |
+			prev , 'A lot of stuff, needs over 2000 chars!! ' ].
+	stream _ ReadWriteStream on: ''. 
+	stream nextPutAll: longString.
+	stream position: 0.
+	read _ stream upTo: $X.
+	self assert: read = longString.! !
+
+!ReadWriteStreamTest methodsFor: 'tests' stamp: 'NM 10/25/2021 11:08:12'!
+testUpTo4LongUnterminatedRecord
+	"Big chunk, not delimiter found, expected return all the chunk  "
+	| stuff stream read |
+	stuff _ String streamContents: [ :strm |
+		1
+			to: 5000
+			do: [ :i |
+				i < 3000 ifTrue: [ strm nextPut: $a ].
+				i >= 3000 ifTrue: [ strm nextPut: $b ]]].
+	stream _ ReadWriteStream on: ''. 
+	stream nextPutAll: stuff.
+	stream position: 0.
+	read _ stream upTo: $X.
+	self assert: read size = 5000.! !
+
+!ReadWriteStreamTest methodsFor: 'tests' stamp: 'NM 10/25/2021 11:08:41'!
+testUpTo5TerminatedAndUnterminatedLongRecords
+	"Two big chunks, one delimiter in the middle, expected to return 
+      the first time a big chunk, the second time the second block up to EOF.  "
+	| stuff stream read |
+	stuff _ String streamContents: [ :strm |
+		1
+			to: 6000
+			do: [ :i |
+				i < 3000 ifTrue: [ strm nextPut: $a ].
+				i = 3000 ifTrue: [ strm nextPut: $X ].
+				i > 3000 ifTrue: [ strm nextPut: $b ]]].
+	stream _ ReadWriteStream on: ''. 
+	stream nextPutAll: stuff.
+	stream position: 0.
+	" first scan, the delimiter is found but not printed.  "
+	read _ stream upTo: $X.
+	self assert: read size = 2999.
+	self assert: (read at: 1) = $a.
+	" second scan. the delimiter is not found, all second chunk is returned  "
+	read _ stream upTo: $X.
+	self assert: read size = 3000.
+	self assert: (read at: 1) = $b.! !
+
+!ReadWriteStreamTest methodsFor: 'tests' stamp: 'NM 10/25/2021 11:08:54'!
+testUpTo6TerminatedLongRecords
+	"Two big chunks, one delimiter in the middle, one at the end. expected to return 
+      two big chunks in two read, delimiters excluded.  "
+	| stuff stream read |
+	stuff _ String streamContents: [ :strm |
+		1
+			to: 6000
+			do: [ :i |
+				i < 3000 ifTrue: [ strm nextPut: $a ].
+				i = 3000 ifTrue: [ strm nextPut: $X ].
+				((Interval
+					from: 3001
+					to: 5999) includes: i) ifTrue: [ strm nextPut: $b ].
+				i = 6000 ifTrue: [ strm nextPut: $X ]]].
+	stream _ ReadWriteStream on: ''. 
+	stream nextPutAll: stuff.
+	stream position: 0.
+	" first scan, delimiter is found, return all the block delimiter excluded "
+	read _ stream upTo: $X.
+	self assert: read size = 2999.
+	self assert: (read at: 1) = $a.
+	" second scan, return chunk, delimiter excluded.  "
+	read _ stream upTo: $X.
+	self assert: read size = 2999.
+	self assert: (read at: 1) = $b.! !
+
+!ReadWriteStreamTest methodsFor: 'tests' stamp: 'NM 10/25/2021 11:12:06'!
+testUpToTerminator1ShortRecords
+	"
+	. Read a file stream up to 'delim' in a strict way. 
+	. If delim is found returns everything up to the first occurrence of 'delim' included.
+	. if delim is not found returns nil and set the FileStream position where it was before
+	the call was made. This ensures if another process writes into the file another delim
+	limited token we will fully read it on next upTo call.
+	This means Delimiter is a Terminator: a chunk is only considered well formed if it ends with it.
+	"
+	| stream |
+	stream _ ReadWriteStream on: ''. 
+	stream nextPutAll: 'record-1Xrecord-2Xrecord-incomplete'.
+	stream position: 0.
+	self assert:  ((stream upTo: $X delimiterIsTerminator: true) =  'record-1X').
+	self assert:  ((stream upTo: $X delimiterIsTerminator: true) =  'record-2X').
+	self assert:  ((stream upTo: $X delimiterIsTerminator: true) =  nil).
+	". we are not at the end of the stream, but just after the last delim was found.
+	we are ready to receive other delim limitated tokens. if they get written.
+	"
+	self assert:  (stream position = 18).! !
+
+!ReadWriteStreamTest methodsFor: 'tests' stamp: 'NM 10/25/2021 11:12:49'!
+testUpToTerminator3LongUnterminatedRecord
+	"Long input, no delimiter found, expected to return nil. "
+	| longString stream read |
+	longString _ (1 to: 100)
+		inject: ''
+		into: [ :prev :each |
+			prev , 'A lot of stuff, needs over 2000 chars!! ' ].
+	stream _ ReadWriteStream on: ''. 
+	stream nextPutAll: longString.
+	stream position: 0.
+	read _ stream
+		upTo: $X
+		delimiterIsTerminator: true.
+	self assert: read = nil.! !
+
+!ReadWriteStreamTest methodsFor: 'tests' stamp: 'NM 10/25/2021 11:13:03'!
+testUpToTerminator4LongUnterminatedRecord
+	"Big chunk, not delimiter found, expected return nil  "
+	| stuff stream read |
+	stuff _ String streamContents: [ :strm |
+		1
+			to: 5000
+			do: [ :i |
+				i < 3000 ifTrue: [ strm nextPut: $a ].
+				i >= 3000 ifTrue: [ strm nextPut: $b ]]].
+	stream _ ReadWriteStream on: ''. 
+	stream nextPutAll: stuff.
+	stream position: 0.
+	read _ stream
+		upTo: $X
+		delimiterIsTerminator: true.
+	self assert: read = nil.! !
+
+!ReadWriteStreamTest methodsFor: 'tests' stamp: 'NM 10/25/2021 11:13:18'!
+testUpToTerminator5TerminatedAndUnterminatedLongRecords
+	"Two big chunks, one delimiter in the middle, expected to return 
+      the first time a big chunk, the second time nil.  "
+	| stuff stream read |
+	stuff _ String streamContents: [ :strm |
+		1
+			to: 6000
+			do: [ :i |
+				i < 3000 ifTrue: [ strm nextPut: $a ].
+				i = 3000 ifTrue: [ strm nextPut: $X ].
+				i > 3000 ifTrue: [ strm nextPut: $b ]]].
+	stream _ ReadWriteStream on: ''. 
+	stream nextPutAll: stuff.
+	stream position: 0.
+	" first scan, delimiter is found, return all the block delimiter included "
+	read _ stream
+		upTo: $X
+		delimiterIsTerminator: true.
+	self assert: read size = 3000.
+	self assert: (read at: 1) = $a.
+	" second scan, delimiter not found, returns nil  "
+	read _ stream
+		upTo: $X
+		delimiterIsTerminator: true.
+	self assert: read = nil.! !
+
+!ReadWriteStreamTest methodsFor: 'tests' stamp: 'NM 10/25/2021 11:13:33'!
+testUpToTerminator6TerminatedLongRecords
+	"Two big chunks, one delimiter in the middle, one at the end expected to return 
+      two big chunks in two read, delimiters included.  "
+	| stuff stream read |
+	stuff _ String streamContents: [ :strm |
+		1
+			to: 6000
+			do: [ :i |
+				i < 3000 ifTrue: [ strm nextPut: $a ].
+				i = 3000 ifTrue: [ strm nextPut: $X ].
+				((Interval
+					from: 3001
+					to: 5999) includes: i) ifTrue: [ strm nextPut: $b ].
+				i = 6000 ifTrue: [ strm nextPut: $X ]]].
+	stream _ ReadWriteStream on: ''. 
+	stream nextPutAll: stuff.
+	stream position: 0.
+	" first scan, delimiter is found, return all the block delimiter included "
+	read _ stream
+		upTo: $X
+		delimiterIsTerminator: true.
+	self assert: read size = 3000.
+	self assert: (read at: 1) = $a.
+	" second scan, delimiter found, return chunk, delimiter included   "
+	read _ stream
+		upTo: $X
+		delimiterIsTerminator: true.
+	self assert: read size = 3000.
+	self assert: (read at: 1) = $b.! !
+
+!WriteStreamTest methodsFor: 'tests' stamp: 'jpb 8/2/2019 23:49:13'!
+testIsStream
+	self assert: ((WriteStream on: '') is: #Stream).! !
+
+!WriteStreamTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:27:06'!
+testNewLineTabWhenConditionIsFalseDoesNotPutANewLineTabInStream
+
+	| stream |
+
+	stream := WriteStream on: ''.
+	stream newLineTab: 2 when: false.
+	
+	self assert: stream contents isEmpty
+	! !
+
+!WriteStreamTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:28:04'!
+testNewLineTabWhenConditionIsTruePutsANewLineTabInStream
+
+	| stream |
+
+	stream := WriteStream on: ''.
+	stream newLineTab: 2 when: true.
+	
+	self assert: (String streamContents: [ :s | s newLineTab: 2 ]) equals: stream contents 
+	! !
+
+!WriteStreamTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:20:47'!
+testNewLineWhenConditionIsFalseDoesNotPutANewLineInStream
+
+	| stream |
+
+	stream := WriteStream on: ''.
+	stream newLineWhen: false.
+	
+	self assert: stream contents isEmpty
+	! !
+
+!WriteStreamTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:22:05'!
+testNewLineWhenConditionIsTruePutsANewLineInStream
+
+	| stream |
+
+	stream := WriteStream on: ''.
+	stream newLineWhen: true.
+	
+	self assert: Character newLineCharacter asString equals: stream contents 
+	! !
+
+!WriteStreamTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:06:13'!
+testNextPutAllWhenConditionIsFalseDoesNotPutCollectionInStream
+
+	| stream |
+
+	stream := WriteStream on: ''.
+	stream nextPutAll: 'other' when: false.
+	
+	self assert: stream contents isEmpty
+	! !
+
+!WriteStreamTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:06:19'!
+testNextPutAllWhenConditionIsTruePutsCollectionInStream
+
+	| stream |
+	
+	stream := WriteStream on: ''.
+	stream nextPutAll: 'other' when: true.
+	
+	self assert: 'other' equals: stream contents
+	
+	! !
+
+!WriteStreamTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:06:24'!
+testNextPutWhenConditionIsFalseDoesNotPutObjectInStream
+
+	| stream |
+	
+	stream := WriteStream on: ''.
+	stream nextPut: $t when: false.
+	
+	self assert: stream contents isEmpty
+	
+	! !
+
+!WriteStreamTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:06:28'!
+testNextPutWhenConditionIsTruePutsObjectInStream
+
+	| stream |
+	
+	stream := WriteStream on: ''.
+	stream nextPut: $t when: true.
+	
+	self assert: 't' equals: stream contents 
+	
+	! !
+
+!WriteStreamTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:13:06'!
+testPrintWhenConditionIsFalseDoesNotPrintObjectInStream
+
+	| stream |
+	
+	stream := WriteStream on: ''.
+	stream print: Object when: false.
+	
+	self assert: stream contents isEmpty
+	
+	! !
+
+!WriteStreamTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:06:44'!
+testPrintWhenConditionIsTruePrintsObjectInStream
+
+	| stream |
+	
+	stream := WriteStream on: ''.
+	stream print: Object when: true.
+	
+	self assert: Object printString equals: stream contents! !
+
+!WriteStreamTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:42:20'!
+testSpaceManyTimesWhenConditionIsFalseDoesNotPutASpaceInStream
+
+	| stream |
+
+	stream := WriteStream on: ''.
+	stream space: 2 when: false.
+	
+	self assert: stream contents isEmpty
+	! !
+
+!WriteStreamTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:43:01'!
+testSpaceManyTimesWhenConditionIsTruePutSpacesInStream
+
+	| stream |
+
+	stream := WriteStream on: ''.
+	stream space: 2 when: true.
+	
+	self assert: '  ' equals: stream contents 
+	! !
+
+!WriteStreamTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:19:06'!
+testSpaceWhenConditionIsFalseDoesNotPutASpaceInStream
+
+	| stream |
+
+	stream := WriteStream on: ''.
+	stream spaceWhen: false.
+	
+	self assert: stream contents isEmpty
+	! !
+
+!WriteStreamTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:19:50'!
+testSpaceWhenConditionIsTruePutsASpaceInStream
+
+	| stream |
+
+	stream := WriteStream on: ''.
+	stream spaceWhen: true.
+	
+	self assert: ' ' equals: stream contents 
+	! !
+
+!WriteStreamTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:24:34'!
+testTabManyTimesWhenConditionIsFalseDoesNotPutATabInStream
+
+	| stream |
+
+	stream := WriteStream on: ''.
+	stream tab: 2 when: false.
+	
+	self assert: stream contents isEmpty
+	! !
+
+!WriteStreamTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:25:46'!
+testTabManyTimesWhenConditionIsTruePutsTabsInStream
+
+	| stream |
+
+	stream := WriteStream on: ''.
+	stream tab: 2 when: true.
+	
+	self assert: (String streamContents: [ :s | s tab: 2 ]) equals: stream contents 
+	! !
+
+!WriteStreamTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:22:50'!
+testTabWhenConditionIsFalseDoesNotPutATabInStream
+
+	| stream |
+
+	stream := WriteStream on: ''.
+	stream tabWhen: false.
+	
+	self assert: stream contents isEmpty
+	! !
+
+!WriteStreamTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:23:28'!
+testTabWhenConditionIsTruePutsATabInStream
+
+	| stream |
+
+	stream := WriteStream on: ''.
+	stream tabWhen: true.
+	
+	self assert: Character tab asString equals: stream contents 
+	! !
 
 !ExceptionHandlingConditionTest methodsFor: 'exception handling tests' stamp: 'HAW 3/29/2017 13:50:30'!
 testBlockClosuresCanBeUsedAsHandlingCondition
@@ -15181,6 +16807,644 @@ test10AnIntervalEnclosedMultipleBackticksAndParenthesesCanBeExpanded
 
 	self assert: (1 to: sourceCode size) equals: expandedInterval! !
 
+!SourceCodeIntervalTest methodsFor: 'tests - testing' stamp: 'HAW 6/11/2022 20:09:17'!
+test12AnIntervalEndingOnDotExpandsUntilStartOfNextStatementOnSameLine
+
+	| interval sourceCode expectedExpandedInterval expandedInterval |
+	
+	sourceCode := '1 + 2. 3 + 4'.
+	interval := (1 to: 6) asSourceCodeInterval.
+	expandedInterval := interval expandUntilStartOfNextStatementOn: sourceCode.
+	expectedExpandedInterval := (1 to: 7) asSourceCodeInterval.
+	self assert: expectedExpandedInterval equals: expandedInterval.! !
+
+!SourceCodeIntervalTest methodsFor: 'tests - testing' stamp: 'HAW 6/11/2022 20:09:21'!
+test13AnIntervalEndingBeforeDotExpandsUntilStartOfNextStatementOnSameLine
+
+	| interval sourceCode expectedExpandedInterval expandedInterval |
+	
+	sourceCode := '1 + 2. 3 + 4'.
+	interval := (1 to: 5) asSourceCodeInterval.
+	expandedInterval := interval expandUntilStartOfNextStatementOn: sourceCode.
+	expectedExpandedInterval := (1 to: 7) asSourceCodeInterval.
+	self assert: expectedExpandedInterval equals: expandedInterval.! !
+
+!SourceCodeIntervalTest methodsFor: 'tests - testing' stamp: 'HAW 6/11/2022 20:09:24'!
+test14AnIntervalEndingOnEndOfTemporariesDeclarationExpandsUntilStartOfNextStatement
+
+	| interval sourceCode expectedExpandedInterval expandedInterval |
+	
+	sourceCode := '| a  b | 
+		1 + 2. 3 + 4'.
+	interval := (1 to: 8) asSourceCodeInterval.
+	expandedInterval := interval expandUntilStartOfNextStatementOn: sourceCode.
+	expectedExpandedInterval := (1 to:12) asSourceCodeInterval.
+	self assert: expectedExpandedInterval equals: expandedInterval. ! !
+
+!SourceCodeIntervalTest methodsFor: 'tests - testing' stamp: 'HAW 6/11/2022 20:09:30'!
+test15AnIntervalEndingOnLastStatemenWithoutDottIsNotExpanded
+
+	| interval sourceCode expandedInterval |
+	
+	sourceCode := '1 + 2. 
+		^3 + 4'.
+	interval := (1 to: 16) asSourceCodeInterval.
+	expandedInterval := interval expandUntilStartOfNextStatementOn: sourceCode.
+	
+	self assert: interval equals: expandedInterval.! !
+
+!SourceCodeIntervalTest methodsFor: 'tests - testing' stamp: 'HAW 6/11/2022 20:09:32'!
+test16AnIntervalEndingOnLastStatemenWithDotIsNotExpanded
+
+	| interval sourceCode expandedInterval |
+	
+	sourceCode := '1 + 2. 
+		^3 + 4.'.
+	interval := (1 to: 17) asSourceCodeInterval.
+	expandedInterval := interval expandUntilStartOfNextStatementOn: sourceCode.
+	
+	self assert: interval equals: expandedInterval.! !
+
+!SourceCodeIntervalTest methodsFor: 'tests - testing' stamp: 'HAW 6/11/2022 20:09:35'!
+test17AnIntervalEndingBeforeStatementEndCannotBeExpanded
+
+	| interval sourceCode |
+	
+	sourceCode := '1 + 2. 3 + 4'.
+	interval := (1 to: 3) asSourceCodeInterval.
+	self should: [interval expandUntilStartOfNextStatementOn: sourceCode.]
+		raise: Error 
+		withMessageText: [SourceCodeInterval canNotExpandIncompleteStatementError].! !
+
+!SourceCodeIntervalTest methodsFor: 'tests - testing' stamp: 'HAW 6/11/2022 20:09:38'!
+test18AnIntervalEndingAfterLastStatementCannotBeExpanded
+
+	| interval sourceCode |
+	
+	sourceCode := '| a  b | 
+		1 + 2. 3 + 4'.
+	interval := (1 to: 20) asSourceCodeInterval.
+	self should: [interval expandUntilStartOfNextStatementOn: sourceCode.]
+		raise: Error 
+		withMessageText: [SourceCodeInterval canNotExpandIncompleteStatementError].! !
+
+!SourceCodeIntervalTest methodsFor: 'tests - testing' stamp: 'HAW 6/11/2022 20:09:41'!
+test19AnIntervalEndingAfterSourceCodeEndIsNotExpanded
+
+	| interval sourceCode expandedInterval |
+	
+	sourceCode := '1 + 2. 3 + 4'.
+	interval := (1 to: 1000) asSourceCodeInterval.
+	expandedInterval := interval expandUntilStartOfNextStatementOn: sourceCode.
+	
+	self assert: interval equals: expandedInterval.! !
+
+!SourceCodeIntervalTest methodsFor: 'tests - testing' stamp: 'HAW 6/11/2022 20:09:44'!
+test20AnIntervalEndingExpandsUntilStartOfNextStatementOnNextLine
+
+	| interval sourceCode expandedInterval expectedInterval |
+	
+	sourceCode := '1 + 2.
+		3 + 4'.
+	interval := (1 to: 6) asSourceCodeInterval.
+	expandedInterval := interval expandUntilStartOfNextStatementOn: sourceCode.
+	expectedInterval := (1 to: 9) asSourceCodeInterval.
+	
+	self assert: expectedInterval equals: expandedInterval.! !
+
+!SystemConsistencyTest methodsFor: 'testing' stamp: 'jmv 5/7/2012 09:35'!
+testMethodsWithUnboundGlobals
+	"
+	SystemConsistencyTest new testMethodsWithUnboundGlobals
+	"
+	self assert: Smalltalk methodsWithUnboundGlobals isEmpty! !
+
+!TranscriptTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:29:18'!
+testNewLineWhenConditionIsFalseDoesNotPutANewLineInStream
+
+	self assertTranscriptContentsDoesNotChangeAfter: [ Transcript newLineWhen: false ]
+	! !
+
+!TranscriptTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:38:57'!
+testNewLineWhenConditionIsTruePutsANewLineInStream
+
+	self assertTranscriptContentsAdded: '.' after: [ Transcript newLineWhen: true; nextPut: $. ]! !
+
+!TranscriptTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:09:29'!
+testNextPutAllWhenConditionIsFalseDoesNotPutCollectionInStream
+
+	self assertTranscriptContentsDoesNotChangeAfter: [ Transcript nextPutAll: 'other' when: false ]
+	! !
+
+!TranscriptTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:13:47'!
+testNextPutAllWhenConditionIsTruePutsCollectionInStream
+
+	self assertTranscriptContentsAdded: 'other' after: [ Transcript nextPutAll: 'other' when: true ]
+	
+	! !
+
+!TranscriptTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:11:58'!
+testNextPutWhenConditionIsFalseDoesNotPutObjectInStream
+
+	self assertTranscriptContentsDoesNotChangeAfter: [ Transcript nextPut: $t when: false ]
+! !
+
+!TranscriptTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:15:05'!
+testNextPutWhenConditionIsTruePutsObjectInStream
+
+	self assertTranscriptContentsAdded: 't' after: [ Transcript nextPut: $t when: true ]
+	
+	! !
+
+!TranscriptTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:12:44'!
+testPrintWhenConditionIsFalseDoesNotPrintObjectInStream
+
+	self assertTranscriptContentsDoesNotChangeAfter: [ Transcript print: Object when: false ]
+! !
+
+!TranscriptTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:15:34'!
+testPrintWhenConditionIsTruePrintsObjectInStream
+
+	self assertTranscriptContentsAdded: Object printString after: [ Transcript print: Object when: true ]
+	! !
+
+!TranscriptTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:39:29'!
+testSpaceWhenConditionIsFalseDoesNotPutASpaceInStream
+
+	self assertTranscriptContentsDoesNotChangeAfter: [ Transcript spaceWhen: false ]
+	! !
+
+!TranscriptTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:40:09'!
+testSpaceWhenConditionIsTruePutsASpaceInStream
+
+	self assertTranscriptContentsAdded: ' ' after: [ Transcript spaceWhen: true ]
+	! !
+
+!TranscriptTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:40:49'!
+testTabWhenConditionIsFalseDoesNotPutATabInStream
+
+	self assertTranscriptContentsDoesNotChangeAfter: [ Transcript tabWhen: false ]! !
+
+!TranscriptTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:41:35'!
+testTabWhenConditionIsTruePutsATabInStream
+
+	self assertTranscriptContentsAdded: Character tab asString after: [ Transcript tabWhen: true ]! !
+
+!TranscriptTest methodsFor: 'assertions' stamp: 'HAW 3/20/2019 07:14:26'!
+assertTranscriptContentsAdded: expectedAddedString after: aBlock
+	
+	| transcriptContentsBeforeBlockEvaluation |
+	
+	transcriptContentsBeforeBlockEvaluation := Transcript contents.
+	aBlock value.
+	
+	self assert: transcriptContentsBeforeBlockEvaluation, expectedAddedString equals: Transcript contents! !
+
+!TranscriptTest methodsFor: 'assertions' stamp: 'HAW 3/20/2019 07:15:48'!
+assertTranscriptContentsDoesNotChangeAfter: aBlock
+	
+	self assertTranscriptContentsAdded: '' after: aBlock! !
+
+!TrieTest methodsFor: 'aux' stamp: 'jmv 6/21/2011 22:05'!
+assert: subject isEquivalentToDictionary: controlGroup
+	"Test #size, #do:, "
+	| count subjectAsDictionary someRandomString |
+	self assert: subject isEmpty = controlGroup isEmpty.
+	self assert: subject size = controlGroup size.
+	controlGroup keysDo: [ :each |
+		self assert: (subject includesKey: each) ].
+	subject keysDo: [ :each |
+		self assert: (controlGroup includesKey: each) ].
+	controlGroup keysAndValuesDo: [ :k :v |
+		self assert: (subject at: k) = v ].
+	subject keysAndValuesDo: [ :k :v |
+		self assert: (controlGroup at: k) = v ].
+	someRandomString _ 'someRandomStringZZZ'.
+	self assert: (subject includesKey: someRandomString)
+		= (controlGroup includesKey: someRandomString).
+	subjectAsDictionary _ Dictionary new.
+	count _ 0.
+	subject keysAndValuesDo: [ :k :v |
+		subjectAsDictionary at: k put: v.
+		count _ count + 1 ].
+	self assert: subjectAsDictionary size = controlGroup size.
+	self assert: count = controlGroup size.
+	self assert: subjectAsDictionary = controlGroup.! !
+
+!TrieTest methodsFor: 'aux' stamp: 'jmv 6/15/2011 09:58'!
+assert: subject isEquivalentToSet: controlGroup
+	"Test #size, #do:, "
+	| count subjectAsSet someRandomString |
+	self assert: subject isEmpty = controlGroup isEmpty.
+	self assert: subject size = controlGroup size.
+	controlGroup do: [ :each |
+		self assert: (subject includes: each) ].
+	someRandomString _ 'someRandomStringZZZ'.
+	self assert: (subject includes: someRandomString)
+		= (controlGroup includes: someRandomString).
+	subjectAsSet _ Set new.
+	count _ 0.
+	subject do: [ :element |
+		subjectAsSet add: element.
+		count _ count + 1 ].
+	self assert: subjectAsSet size = controlGroup size.
+	self assert: count = controlGroup size.
+	self assert: subjectAsSet = controlGroup.! !
+
+!TrieTest methodsFor: 'aux' stamp: 'jmv 6/22/2011 12:51'!
+assert: subject prefixSelection: aString isEquivalentToSet: controlGroup
+	| selection1 selection2 |
+	selection1 _ OrderedCollection new.
+	subject forPrefix: aString keysAndValuesDo: [ :k :v |
+		selection1 add: k ].
+	selection2 _ (controlGroup select: [ :each |
+		aString isEmpty or: [
+			each asLowercase asUnaccented beginsWith: aString asLowercase asUnaccented]]) asOrderedCollection 
+				sort: [ :a :b | a asLowercase asUnaccented < b asLowercase asUnaccented ].
+	self assert: selection1 = selection2.! !
+
+!TrieTest methodsFor: 'testing' stamp: 'jmv 6/21/2011 22:14'!
+testAllMesssagesLikeDicionary
+	"
+	TrieTest new testAllMesssagesLikeDicionary
+	"
+	| subject  controlGroup allMessages copy c set1 set2 |
+	subject _ Trie new.
+	controlGroup _ Dictionary new.
+	allMessages _ Smalltalk allImplementedMessages.
+	c _ 0.
+	3 timesRepeat: [
+		allMessages do: [ :symbol |
+			subject at: symbol put: c.
+			controlGroup at: symbol put: c.
+			c _ c + 1 ]].
+	self assert: subject isEquivalentToDictionary: controlGroup.
+
+	copy _ Dictionary new.
+	set1 _ Set new.
+	subject keysAndValuesDo: [ :symbol :number |
+		copy at: symbol put: number.
+		set1 add: number ].
+
+	set2 _ Set new.
+	subject do: [ :number |
+		set2 add: number ].
+
+	self assert: subject isEquivalentToDictionary: copy.
+	self assert: copy isEquivalentToDictionary: controlGroup.
+	self assert: set1 = set2! !
+
+!TrieTest methodsFor: 'testing' stamp: 'jmv 6/21/2011 22:01'!
+testAllMesssagesLikeSet
+	"
+	TrieTest new testAllMesssagesLikeSet
+	"
+	| subject  controlGroup allMessages copy|
+	subject _ Trie new.
+	controlGroup _ Set new.
+	allMessages _ Smalltalk allImplementedMessages.
+	3 timesRepeat: [
+		allMessages do: [ :symbol |
+			subject add: symbol.
+			controlGroup add: symbol ]].
+	self assert: subject isEquivalentToSet: controlGroup.
+
+	copy _ Set new.
+	subject do: [ :symbol |
+		copy add: symbol ].
+
+	self assert: subject isEquivalentToSet: copy.
+	self assert: copy isEquivalentToSet: controlGroup.! !
+
+!TrieTest methodsFor: 'testing' stamp: 'HAW 6/12/2019 17:38:28'!
+testIncludesReturnsFalseForObjectsThatAreNotString
+	
+	self deny: ((Trie with: 'hello') includes: 1)
+	! !
+
+!TrieTest methodsFor: 'testing' stamp: 'HAW 6/12/2019 17:38:51'!
+testIncludesReturnsFalseForStringsNotIncluded
+	
+	self deny: ((Trie with: 'hello') includes: 'bye')
+	! !
+
+!TrieTest methodsFor: 'testing' stamp: 'HAW 6/12/2019 17:39:09'!
+testIncludesReturnsTrueForIncludedStrings
+	
+	self assert: ((Trie with: 'hello') includes: 'hello')
+	! !
+
+!TrieTest methodsFor: 'testing' stamp: 'HAW 4/4/2019 08:18:55'!
+testKeyNotFoundSignalTheRightMessage
+
+	self 
+		should: [ Trie new errorKeyNotFound ]
+		raise: Error
+		withMessageText: Dictionary keyNotFoundErrorDescription ! !
+
+!TrieTest methodsFor: 'testing' stamp: 'jmv 6/22/2011 12:30'!
+testPrefixIteration
+	"
+	TrieTest new testPrefixIteration
+	"
+	| subject  controlGroup |
+	subject _ Trie new.
+	controlGroup _ Set new.
+
+	self assert: subject prefixSelection: '' isEquivalentToSet: controlGroup.
+	self assert: subject prefixSelection: 'c' isEquivalentToSet: controlGroup.
+	self assert: subject prefixSelection: 'ca' isEquivalentToSet: controlGroup.
+
+	subject add: 'car'.
+	controlGroup add: 'car'.
+	subject add: 'car'.
+	controlGroup add: 'car'.
+	subject add: 'cat'.
+	controlGroup add: 'cat'.
+	subject add: 'cart'.
+	controlGroup add: 'cart'.
+
+	self assert: subject prefixSelection: '' isEquivalentToSet: controlGroup.
+	self assert: subject prefixSelection: 'c' isEquivalentToSet: controlGroup.
+	self assert: subject prefixSelection: 'ca' isEquivalentToSet: controlGroup.
+	self assert: subject prefixSelection: 'car' isEquivalentToSet: controlGroup.
+	self assert: subject prefixSelection: 'cat' isEquivalentToSet: controlGroup.
+	self assert: subject prefixSelection: 'cart' isEquivalentToSet: controlGroup.
+
+	subject add: 'ñandú'.
+	controlGroup add: 'ñandú'.
+	subject add: 'ñandues'.
+	controlGroup add: 'ñandues'.
+	subject add: 'ÑANDÚSES'.
+	controlGroup add: 'ÑANDÚSES'.
+	
+	self assert: subject prefixSelection: '' isEquivalentToSet: controlGroup.
+	self assert: subject prefixSelection: 'c' isEquivalentToSet: controlGroup.
+	self assert: subject prefixSelection: 'ca' isEquivalentToSet: controlGroup.
+	self assert: subject prefixSelection: 'car' isEquivalentToSet: controlGroup.
+	self assert: subject prefixSelection: 'cat' isEquivalentToSet: controlGroup.
+	self assert: subject prefixSelection: 'cart' isEquivalentToSet: controlGroup.
+	self assert: subject prefixSelection: 'ñ' isEquivalentToSet: controlGroup.
+	self assert: subject prefixSelection: 'ñan' isEquivalentToSet: controlGroup.
+	self assert: subject prefixSelection: 'ñandu' isEquivalentToSet: controlGroup.
+	self assert: subject prefixSelection: 'ñandú' isEquivalentToSet: controlGroup.
+	self assert: subject prefixSelection: 'Ñ' isEquivalentToSet: controlGroup.
+	self assert: subject prefixSelection: 'ÑANDÚ' isEquivalentToSet: controlGroup.! !
+
+!TrieTest methodsFor: 'testing' stamp: 'jmv 6/22/2011 12:50'!
+testPrefixIteration2
+	"
+	TrieTest new testPrefixIteration2
+	"
+	| subject  controlGroup allMsg toAvoid |
+	subject _ Trie new.
+	controlGroup _ Set new.
+
+	allMsg _ Smalltalk allImplementedMessages.
+	toAvoid _ (allMsg asArray collect: [ :each | each asLowercase asUnaccented ]) asBag.
+	allMsg do: [ :symbol |
+		(toAvoid occurrencesOf: symbol) = 1 ifTrue: [
+			subject add: symbol.
+			controlGroup add: symbol ]].
+	
+	self assert: subject prefixSelection: '' isEquivalentToSet: controlGroup.
+	self assert: subject prefixSelection: 'a' isEquivalentToSet: controlGroup.
+	self assert: subject prefixSelection: 'at' isEquivalentToSet: controlGroup.
+	self assert: subject prefixSelection: 'at:' isEquivalentToSet: controlGroup.
+	self assert: subject prefixSelection: 'at:p' isEquivalentToSet: controlGroup.
+	self assert: subject prefixSelection: 'at:pu' isEquivalentToSet: controlGroup.
+	self assert: subject prefixSelection: 'at:put' isEquivalentToSet: controlGroup.
+	self assert: subject prefixSelection: 'at:put:' isEquivalentToSet: controlGroup.
+	self assert: subject prefixSelection: 'at:put:nonExistant:' isEquivalentToSet: controlGroup.! !
+
+!TrieTest methodsFor: 'testing' stamp: 'jmv 6/23/2011 11:02'!
+testRemoveLikeDicionary
+	"
+	TrieTest new testRemoveLikeDicionary
+	"
+	| subject  controlGroup allMessages copy c set1 set2 |
+	subject _ Trie new.
+	controlGroup _ Dictionary new.
+	allMessages _ Smalltalk allImplementedMessages.
+
+	subject at: 'doNotRemove' put: 'this'.
+	controlGroup at: 'doNotRemove' put: 'this'.
+	
+	c _ 0.
+	3 timesRepeat: [
+		allMessages do: [ :symbol |
+			subject at: symbol put: c.
+			controlGroup at: symbol put: c.
+			c _ c + 1 ]].
+
+	subject at: 'doNotRemove2' put: 'this2'.
+	controlGroup at: 'doNotRemove2' put: 'this2'.
+
+	self assert: subject isEquivalentToDictionary: controlGroup.
+	
+	allMessages do: [ :symbol |
+		subject removeKey: symbol.
+		controlGroup removeKey: symbol ].
+
+	copy _ Dictionary new.
+	set1 _ Set new.
+	subject keysAndValuesDo: [ :symbol :number |
+		copy at: symbol put: number.
+		set1 add: number ].
+
+	set2 _ Set new.
+	subject do: [ :number |
+		set2 add: number ].
+
+	self assert: subject isEquivalentToDictionary: copy.
+	self assert: copy isEquivalentToDictionary: controlGroup.
+	self assert: set1 = set2.
+	self assert: subject isEmpty = controlGroup isEmpty.
+
+	subject removeKey: 'doNotRemove'.
+	controlGroup removeKey: 'doNotRemove'.
+
+	self assert: subject isEquivalentToDictionary: controlGroup.
+	self deny: subject isEmpty.
+	self deny: controlGroup isEmpty.
+
+	subject removeKey: 'doNotRemove2'.
+	controlGroup removeKey: 'doNotRemove2'.
+
+	self assert: subject isEquivalentToDictionary: controlGroup.
+	self assert: subject isEmpty.
+	self assert: controlGroup isEmpty.! !
+
+!TrieTest methodsFor: 'testing' stamp: 'jmv 6/22/2011 15:54'!
+testRemoveLikeSet
+	"
+	TrieTest new testRemoveLikeSet
+	"
+	| subject  controlGroup allMessages copy |
+	subject _ Trie new.
+	controlGroup _ Set new.
+	allMessages _ Smalltalk allImplementedMessages.
+
+	subject add: 'doNotRemove'.
+	controlGroup add: 'doNotRemove'.
+	
+	3 timesRepeat: [
+		allMessages do: [ :symbol |
+			subject add: symbol.
+			controlGroup add: symbol ]].
+
+	subject add: 'doNotRemove2'.
+	controlGroup add: 'doNotRemove2'.
+
+	self assert: subject isEquivalentToSet: controlGroup.
+	
+	allMessages do: [ :symbol |
+		subject remove: symbol.
+		controlGroup remove: symbol ].
+
+	copy _ Set new.
+	subject do: [ :symbol |
+		copy add: symbol ].
+
+	self assert: subject isEquivalentToSet: copy.
+	self assert: copy isEquivalentToSet: controlGroup.
+
+	subject remove: 'doNotRemove'.
+	controlGroup remove: 'doNotRemove'.
+
+	self assert: subject isEquivalentToSet: controlGroup.
+	self deny: subject isEmpty.
+	self deny: controlGroup isEmpty.
+
+	subject remove: 'doNotRemove2'.
+	controlGroup remove: 'doNotRemove2'.
+
+	self assert: subject isEquivalentToSet: controlGroup.
+	self assert: subject isEmpty.
+	self assert: controlGroup isEmpty.! !
+
+!TrieTest methodsFor: 'testing' stamp: 'jmv 6/22/2011 15:42'!
+testSetProtocol
+	"
+	TrieTest new testSetProtocol
+	"
+	| subject  controlGroup |
+	subject _ Trie new.
+	controlGroup _ Set new.
+	self assert: subject isEquivalentToSet: controlGroup.
+	
+	subject add: 'car'.
+	controlGroup add: 'car'.
+	self assert: subject isEquivalentToSet: controlGroup.
+
+	subject add: 'car'.
+	controlGroup add: 'car'.
+	self assert: subject isEquivalentToSet: controlGroup.
+
+	subject add: 'cat'.
+	controlGroup add: 'cat'.
+	self assert: subject isEquivalentToSet: controlGroup.
+
+	subject add: 'cart'.
+	controlGroup add: 'cart'.
+	self assert: subject isEquivalentToSet: controlGroup.
+
+	subject add: 'ñandú'.
+	controlGroup add: 'ñandú'.
+	self assert: subject isEquivalentToSet: controlGroup.
+
+	subject add: 'ñandu'.
+	controlGroup add: 'ñandu'.
+	self assert: subject isEquivalentToSet: controlGroup.
+
+	subject add: 'ÑANDÚ'.
+	controlGroup add: 'ÑANDÚ'.
+	self assert: subject isEquivalentToSet: controlGroup.! !
+
+!TrieUnicodeTest methodsFor: 'testing' stamp: 'jmv 6/6/2022 11:47:11'!
+test01
+	| t all |
+	t _ Trie new.
+	t add: #toto.
+	t at: #toton put: 47.
+	t add: 'carrr'.
+	t at: 'car' put: Float pi.
+	t at: 'cat' put: Date today.
+	self assert: (t includesKey: 'car').
+	self deny: (t includes: 'car').
+	self assert: (t includesKey: 'cat').
+	self deny: (t includes: 'cat').
+	self assert: (t includes: #toto).
+	self assert: (t includes: 'toto').
+	all _ Array streamContents: [ :strm |
+		t keysAndValuesDo: [ :k :v | strm nextPut: {k. k class. v. v class} ]].
+	self assert: all size = 5.
+	self assert: (all includes: {#toto. Symbol. #toto. Symbol}).
+	self assert: (all includes: {#toton. Symbol. 47. SmallInteger}).
+	self assert: (all includes: {'carrr'. String. 'carrr'. String}).
+	self assert: (all includes: {'car'. String. Float pi. SmallFloat64}).
+	self assert: (all includes: {'cat'. String. Date today. Date}).! !
+
+!TrieUnicodeTest methodsFor: 'testing' stamp: 'jmv 6/6/2022 12:13:02'!
+test02
+	| t all |
+	t _ Trie new.
+	t add: #toto.
+	t at: #toton put: 47.
+	t add: 'carrrs'.
+	t add: 'carrr' asUtf8String.
+	t at: 'car' asUtf8String put: Float pi.
+	t at: 'cat' put: Date today.
+	self assert: (t includesKey: 'carrrs').
+	self assert: (t includes: 'carrrs').
+	self assert: (t includesKey: 'carrrs' asUtf8String).
+	self assert: (t includes: 'carrrs' asUtf8String).
+	self assert: (t includesKey: 'carrr').
+	self assert: (t includes: 'carrr').
+	self assert: (t includesKey: 'carrr' asUtf8String).
+	self assert: (t includes: 'carrr' asUtf8String).
+	self assert: (t includesKey: 'car').
+	self deny: (t includes: 'car').
+	self assert: (t includesKey: 'cat').
+	self deny: (t includes: 'cat').
+	self assert: (t includes: #toto).
+	self assert: (t includes: 'toto').
+	all _ Array streamContents: [ :strm |
+		t keysAndValuesDo: [ :k :v | strm nextPut: {k. k class. v. v class} ]].
+	self assert: all size = 6.
+	self assert: (all includes: {#toto. Symbol. #toto. Symbol}).
+	self assert: (all includes: {#toton. Symbol. 47. SmallInteger}).
+	self assert: (all includes: {'carrrs'. String. 'carrrs'. String}).
+	self assert: (all includes: {'carrr'. Utf8String. 'carrr'. Utf8String}).
+	self assert: (all includes: {'car'. Utf8String. Float pi. SmallFloat64}).
+	self assert: (all includes: {'cat'. String. Date today. Date}).! !
+
+!TrieUnicodeTest methodsFor: 'testing' stamp: 'jmv 6/6/2022 12:09:17'!
+test03
+	| t all s1 s2 |
+	t _ Trie new.
+	s1 _ ('totoU', Random next mantissaPart printString) asUtf8String asSymbol.
+	t add: s1.
+	s2 _ ('totoUn', Random next mantissaPart printString) asUtf8String asSymbol.
+	t at: s2 put: 47.
+	t add: 'carrr' asUtf8String.
+	t at: 'car' put: Float pi.
+	t at: 'cat' asUtf8String put: Date today.
+	self assert: (t includesKey: 'car').
+	self deny: (t includes: 'car').
+	self assert: (t includesKey: 'cat').
+	self deny: (t includes: 'cat').
+	self assert: (t includes: s1).
+	self assert: (t includes: s1 asString).
+	all _ Array streamContents: [ :strm |
+		t keysAndValuesDo: [ :k :v | strm nextPut: {k. k class. v. v class} ]].
+	self assert: all size = 5.
+	self assert: (all includes: {s1. Utf8Symbol. s1. Utf8Symbol}).
+	self assert: (all includes: {s2. Utf8Symbol. 47. SmallInteger}).
+	self assert: (all includes: {'carrr'. Utf8String. 'carrr'. Utf8String}).
+	self assert: (all includes: {'car'. String. Float pi. SmallFloat64}).
+	self assert: (all includes: {'cat'. Utf8String. Date today. Date}).! !
+
 !FileIOAccessorTest methodsFor: 'private' stamp: 'jmv 5/31/2016 10:30'!
 defaultDirectoryPath
 	^DirectoryEntry currentDirectory pathName! !
@@ -16174,6 +18438,664 @@ testAlphaCompositing2
 		self assert: result alpha = mixColor alpha.
 	].! !
 
+!RectangleTest methodsFor: 'testing' stamp: 'jpb 8/2/2019 23:52:04'!
+testIsRectangle
+	self assert: (Rectangle new is: #Rectangle)! !
+
+!ColorFormTest methodsFor: 'testing' stamp: 'jpb 8/2/2019 23:30:35'!
+testIsColorForm
+	self assert: (ColorForm new is: #ColorForm).! !
+
+!GrayFormTest methodsFor: 'as yet unclassified' stamp: 'jpb 8/2/2019 23:36:06'!
+testIsGrayForm
+	self assert: (GrayForm new is: #GrayForm)! !
+
+!StrikeFontTest methodsFor: 'testing' stamp: 'jmv 6/11/2020 16:30:55'!
+testBaseAndDerivedFont
+	"
+	StrikeFontTest new testBaseAndDerivedFont
+	"
+
+	| base italic italicItalic boldItalic italicBold boldItalic2 underlined underlinedItalic italicUnderlined struckThrough1 struckThrough2 |
+	base _ FontFamily defaultFamilyPointSize: 14.
+	self assert: base isBaseFont.
+	italic _ base italic.
+	self deny: italic isBaseFont.
+	italicItalic _ italic italic.
+	self assert: italicItalic == italic.
+	boldItalic _ base bold italic.
+	self deny: boldItalic isBaseFont.
+	boldItalic2 _ base boldItalic.
+	italicBold _ italic bold.
+	self assert: boldItalic == italicBold.
+	self assert: boldItalic == boldItalic2.
+	underlined _ base underlined.
+	self deny: underlined isBaseFont.
+	underlinedItalic _ underlined italic.
+	italicUnderlined _ italic underlined.
+	self assert: underlinedItalic == italicUnderlined.
+	struckThrough1 _ base italic underlined bold struckThrough.
+	struckThrough2 _ base bold underlined italic struckThrough.
+	self assert: struckThrough1 == struckThrough2! !
+
+!StrikeFontTest methodsFor: 'testing' stamp: 'jmv 6/11/2020 16:25:48'!
+testBaseAndDerivedFontSanity
+	"
+	StrikeFontTest new testBaseAndDerivedFontSanity
+	"
+
+	StrikeFont allInstances do: [ :f |
+		f isBaseFont 
+			ifTrue: [
+				self assert: (f instVarNamed: 'baseFont') isNil.
+				self assert: f baseFont == f.
+				self assert: (f instVarNamed: 'derivativeFonts') notNil ]
+			ifFalse: [
+				self assert: f baseFont notNil.
+				self assert: (f instVarNamed: 'derivativeFonts') isNil.
+				self assert: (f baseFont emphasized: f emphasis) == f ] ]! !
+
+!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:59:20'!
+test16bpp
+	| form n read |
+	form _ JpegTest lenaColor64 asFormOfDepth: 16.
+	self assert: form nativeDepth = 16.
+	form writeJPEGfileNamed: 'test.jpg'.
+	read _ 'test.jpg' asFileEntry formContents.
+	self assert: read depth = 32.
+
+	n _ form boundingBox width * form boundingBox height * 3.
+	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
+
+!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:59:16'!
+test16bpp61
+	| form n read |
+	form _ (JpegTest lenaColor64 asFormOfDepth: 16) copy: (0@0 extent: 61@61).
+	self assert: form nativeDepth = 16.
+	form writeJPEGfileNamed: 'test.jpg'.
+	read _ 'test.jpg' asFileEntry formContents.
+	self assert: read depth = 32.
+	self assert: read extent = (61@61).
+
+	n _ form boundingBox width * form boundingBox height * 3.
+	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
+
+!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:59:13'!
+test16bpp62
+	| form n read |
+	form _ (JpegTest lenaColor64 asFormOfDepth: 16) copy: (0@0 extent: 62@62).
+	self assert: form nativeDepth = 16.
+	form writeJPEGfileNamed: 'test.jpg'.
+	read _ 'test.jpg' asFileEntry formContents.
+	self assert: read depth = 32.
+	self assert: read extent = (62@62).
+
+	n _ form boundingBox width * form boundingBox height * 3.
+	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
+
+!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:59:10'!
+test16bpp63
+	| form n read |
+	form _ (JpegTest lenaColor64 asFormOfDepth: 16) copy: (0@0 extent: 63@63).
+	self assert: form nativeDepth = 16.
+	form writeJPEGfileNamed: 'test.jpg'.
+	read _ 'test.jpg' asFileEntry formContents.
+	self assert: read depth = 32.
+	self assert: read extent = (63@63).
+
+	n _ form boundingBox width * form boundingBox height * 3.
+	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
+
+!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:59:07'!
+test16bppLE
+	| form n read |
+	form _ JpegTest lenaColor64 asFormOfDepth: -16.
+	self assert: form nativeDepth = -16.
+	form writeJPEGfileNamed: 'test.jpg'.
+	read _ 'test.jpg' asFileEntry formContents.
+	self assert: read depth = 32.
+
+	n _ form boundingBox width * form boundingBox height * 3.
+	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
+
+!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:59:04'!
+test16bppLE61
+	| form n read |
+	form _ (JpegTest lenaColor64 asFormOfDepth: -16) copy: (0@0 extent: 61@61).
+	self assert: form nativeDepth = -16.
+	form writeJPEGfileNamed: 'test.jpg'.
+	read _ 'test.jpg' asFileEntry formContents.
+	self assert: read depth = 32.
+	self assert: read extent = (61@61).
+
+	n _ form boundingBox width * form boundingBox height * 3.
+	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
+
+!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:59:00'!
+test16bppLE62
+	| form n read |
+	form _ (JpegTest lenaColor64 asFormOfDepth: -16) copy: (0@0 extent: 62@62).
+	self assert: form nativeDepth = -16.
+	form writeJPEGfileNamed: 'test.jpg'.
+	read _ 'test.jpg' asFileEntry formContents.
+	self assert: read depth = 32.
+	self assert: read extent = (62@62).
+
+	n _ form boundingBox width * form boundingBox height * 3.
+	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
+
+!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:58:57'!
+test16bppLE63
+	| form n read |
+	form _ (JpegTest lenaColor64 asFormOfDepth: -16) copy: (0@0 extent: 63@63).
+	self assert: form nativeDepth = -16.
+	form writeJPEGfileNamed: 'test.jpg'.
+	read _ 'test.jpg' asFileEntry formContents.
+	self assert: read depth = 32.
+	self assert: read extent = (63@63).
+
+	n _ form boundingBox width * form boundingBox height * 3.
+	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
+
+!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:58:53'!
+test32bpp
+	| form n read |
+	form _ JpegTest lenaColor64.
+	self assert: form depth = 32.
+	form writeJPEGfileNamed: 'test.jpg'.
+	read _ 'test.jpg' asFileEntry formContents.
+	self assert: read depth = 32.
+
+	n _ form boundingBox width * form boundingBox height * 3.
+	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
+
+!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:58:50'!
+test32bpp63
+	| form n read |
+	form _ JpegTest lenaColor64 copy: (0@0 extent: 63@63).
+	self assert: form depth = 32.
+	form writeJPEGfileNamed: 'test.jpg'.
+	read _ 'test.jpg' asFileEntry formContents.
+	self assert: read depth = 32.
+	self assert: read extent = (63@63).
+
+	n _ form boundingBox width * form boundingBox height * 3.
+	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
+
+!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:58:47'!
+test32bppLE63
+	| form n read |
+	form _ JpegTest lenaColor64 copy: (0@0 extent: 63@63).
+	self assert: form depth = 32.
+	form writeJPEGfileNamed: 'test.jpg'.
+	read _ 'test.jpg' asFileEntry formContents.
+	self assert: read depth = 32.
+	self assert: read extent = (63@63).
+
+	n _ form boundingBox width * form boundingBox height * 3.
+	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
+
+!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:58:44'!
+testBA16bpp
+	| form n read bytes |
+	form _ JpegTest lenaColor64 asFormOfDepth: 16.
+	self assert: form nativeDepth = 16.
+	bytes _ JPEGReadWriter2 new compress: form quality: -1 progressiveJPEG: false.
+	read _ Form extent: form extent depth: 16.
+	JPEGReadWriter2 new uncompress: bytes into: read.
+
+	n _ form boundingBox width * form boundingBox height * 3.
+	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
+
+!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:58:41'!
+testBA16bpp61
+	| form n read bytes |
+	form _ (JpegTest lenaColor64 asFormOfDepth: 16) copy: (0@0 extent: 61@61).
+	self assert: form nativeDepth = 16.
+	bytes _ JPEGReadWriter2 new compress: form quality: -1 progressiveJPEG: false.
+	read _ Form extent: form extent depth: 16.
+	JPEGReadWriter2 new uncompress: bytes into: read.
+
+	n _ form boundingBox width * form boundingBox height * 3.
+	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
+
+!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:58:37'!
+testBA16bpp62
+	| form n read bytes |
+	form _ (JpegTest lenaColor64 asFormOfDepth: 16) copy: (0@0 extent: 62@62).
+	self assert: form nativeDepth = 16.
+	bytes _ JPEGReadWriter2 new compress: form quality: -1 progressiveJPEG: false.
+	read _ Form extent: form extent depth: 16.
+	JPEGReadWriter2 new uncompress: bytes into: read.
+
+	n _ form boundingBox width * form boundingBox height * 3.
+	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
+
+!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:58:34'!
+testBA16bpp63
+	| form n read bytes |
+	form _ (JpegTest lenaColor64 asFormOfDepth: 16) copy: (0@0 extent: 63@63).
+	self assert: form nativeDepth = 16.
+	bytes _ JPEGReadWriter2 new compress: form quality: -1 progressiveJPEG: false.
+	read _ Form extent: form extent depth: 16.
+	JPEGReadWriter2 new uncompress: bytes into: read.
+
+	n _ form boundingBox width * form boundingBox height * 3.
+	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
+
+!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:58:31'!
+testBA16bppLE
+	| form n read bytes |
+	form _ JpegTest lenaColor64 asFormOfDepth: -16.
+	self assert: form nativeDepth = -16.
+	bytes _ JPEGReadWriter2 new compress: form quality: -1 progressiveJPEG: false.
+	read _ Form extent: form extent depth: 16.
+	JPEGReadWriter2 new uncompress: bytes into: read.
+
+	n _ form boundingBox width * form boundingBox height * 3.
+	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
+
+!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:58:28'!
+testBA16bppLE61
+	| form n read bytes |
+	form _ (JpegTest lenaColor64 asFormOfDepth: -16) copy: (0@0 extent: 61@61).
+	self assert: form nativeDepth = -16.
+	bytes _ JPEGReadWriter2 new compress: form quality: -1 progressiveJPEG: false.
+	read _ Form extent: form extent depth: 16.
+	JPEGReadWriter2 new uncompress: bytes into: read.
+
+	n _ form boundingBox width * form boundingBox height * 3.
+	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
+
+!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:58:25'!
+testBA16bppLE62
+	| form n read bytes |
+	form _ (JpegTest lenaColor64 asFormOfDepth: -16) copy: (0@0 extent: 62@62).
+	self assert: form nativeDepth = -16.
+	bytes _ JPEGReadWriter2 new compress: form quality: -1 progressiveJPEG: false.
+	read _ Form extent: form extent depth: 16.
+	JPEGReadWriter2 new uncompress: bytes into: read.
+
+	n _ form boundingBox width * form boundingBox height * 3.
+	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
+
+!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:58:20'!
+testBA16bppLE63
+	| form n read bytes |
+	form _ (JpegTest lenaColor64 asFormOfDepth: -16) copy: (0@0 extent: 63@63).
+	self assert: form nativeDepth = -16.
+	bytes _ JPEGReadWriter2 new compress: form quality: -1 progressiveJPEG: false.
+	read _ Form extent: form extent depth: 16.
+	JPEGReadWriter2 new uncompress: bytes into: read.
+
+	n _ form boundingBox width * form boundingBox height * 3.
+	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
+
+!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:58:16'!
+testBA32bpp
+	| form n read bytes |
+	form _ JpegTest lenaColor64.
+	self assert: form depth = 32.
+	bytes _ JPEGReadWriter2 new compress: form quality: -1 progressiveJPEG: false.
+	read _ JPEGReadWriter2 new uncompress: bytes into: nil.
+	self assert: read depth = 32.
+
+	n _ form boundingBox width * form boundingBox height * 3.
+	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
+
+!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:58:07'!
+testBA32bpp63
+	| form n read bytes |
+	form _ JpegTest lenaColor64 copy: (0@0 extent: 63@63).
+	self assert: form depth = 32.
+	bytes _ JPEGReadWriter2 new compress: form quality: -1 progressiveJPEG: false.
+	read _ JPEGReadWriter2 new uncompress: bytes into: nil.
+	self assert: read depth = 32.
+	self assert: read extent = (63@63).
+
+	n _ form boundingBox width * form boundingBox height * 3.
+	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
+
+!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:58:03'!
+testGray
+	| form n read |
+	form _ JpegTest lenaColor64 asGrayForm.
+	self assert: form nativeDepth = -8.
+	form writeJPEGfileNamed: 'test.jpg'.
+	read _ 'test.jpg' asFileEntry formContents.
+	self assert: read nativeDepth = -8.
+
+	n _ form boundingBox width * form boundingBox height.
+	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
+
+!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:58:01'!
+testGray61
+	| form n read |
+	form _ JpegTest lenaColor64 asGrayForm copy: (0@0 extent: 61@61).
+	self assert: form nativeDepth = -8.
+	form writeJPEGfileNamed: 'test.jpg'.
+	read _ 'test.jpg' asFileEntry formContents.
+	self assert: read nativeDepth = -8.
+	self assert: read extent = (61@61).
+
+	n _ form boundingBox width * form boundingBox height.
+	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
+
+!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:57:57'!
+testGray62
+	| form n read |
+	form _ JpegTest lenaColor64 asGrayForm copy: (0@0 extent: 62@62).
+	self assert: form nativeDepth = -8.
+	form writeJPEGfileNamed: 'test.jpg'.
+	read _ 'test.jpg' asFileEntry formContents.
+	self assert: read nativeDepth = -8.
+	self assert: read extent = (62@62).
+
+	n _ form boundingBox width * form boundingBox height.
+	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
+
+!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:57:54'!
+testGray63
+	| form n read |
+	form _ JpegTest lenaColor64 asGrayForm copy: (0@0 extent: 63@63).
+	self assert: form nativeDepth = -8.
+	form writeJPEGfileNamed: 'test.jpg'.
+	read _ 'test.jpg' asFileEntry formContents.
+	self assert: read nativeDepth = -8.
+	self assert: read extent = (63@63).
+
+	n _ form boundingBox width * form boundingBox height.
+	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
+
+!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:57:48'!
+testGrayBA
+	| form n read bytes |
+	form _ JpegTest lenaColor64 asGrayForm.
+	self assert: form nativeDepth = -8.
+	bytes _ JPEGReadWriter2 new compress: form quality: -1 progressiveJPEG: false.
+	read _ JPEGReadWriter2 new uncompress: bytes into: nil.
+	self assert: read nativeDepth = -8.
+
+	n _ form boundingBox width * form boundingBox height.
+	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
+
+!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:57:44'!
+testGrayBA61
+	| form n read bytes |
+	form _ JpegTest lenaColor64 asGrayForm copy: (0@0 extent: 61@61).
+	self assert: form nativeDepth = -8.
+	bytes _ JPEGReadWriter2 new compress: form quality: -1 progressiveJPEG: false.
+	read _ JPEGReadWriter2 new uncompress: bytes into: nil.
+	self assert: read nativeDepth = -8.
+	self assert: read extent = (61@61).
+
+	n _ form boundingBox width * form boundingBox height.
+	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
+
+!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:57:40'!
+testGrayBA62
+	| form n read bytes |
+	form _ JpegTest lenaColor64 asGrayForm copy: (0@0 extent: 62@62).
+	self assert: form nativeDepth = -8.
+	bytes _ JPEGReadWriter2 new compress: form quality: -1 progressiveJPEG: false.
+	read _ JPEGReadWriter2 new uncompress: bytes into: nil.
+	self assert: read nativeDepth = -8.
+	self assert: read extent = (62@62).
+
+	n _ form boundingBox width * form boundingBox height.
+	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
+
+!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:57:35'!
+testGrayBA63
+	| form n read bytes |
+	form _ JpegTest lenaColor64 asGrayForm copy: (0@0 extent: 63@63).
+	self assert: form nativeDepth = -8.
+	bytes _ JPEGReadWriter2 new compress: form quality: -1 progressiveJPEG: false.
+	read _ JPEGReadWriter2 new uncompress: bytes into: nil.
+	self assert: read nativeDepth = -8.
+	self assert: read extent = (63@63).
+
+	n _ form boundingBox width * form boundingBox height.
+	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
+
+!JpegTest class methodsFor: 'test examples' stamp: 'jmv 2/21/2019 16:55:22'!
+lenaColor64
+	"
+	('LenaColor64.bmp' asFileEntry readStreamDo: [ :strm | strm binary. Base64MimeConverter mimeEncode: strm ]) upToEnd
+	JpegTest lenaColor64 display
+	"
+	^Form fromBinaryStream:
+		'Qk02MAAAAAAAADYAAAAoAAAAQAAAAEAAAAABABgAAAAAAAAwAADwCgAA8AoAAAAAAAAAAAAA
+QWCvUXXHUHfGRGi/OTZkIB8tHx0qHx0oISArHh4pIyEtIR8vIB4qHx0pJyQxJB8vNCo9TjpI
+V0NOHR0rHh4qHR4qHR0xISlbJTx/Kzl7IidFMUSPNU6lOlOsPVWtPlaxQFm3Qly4QFu4QFq4
+PVayOlWvP1myRWC3RmO3Um6/XnnJZIHNhJjbmKXhnqvmo67nmKXcKC9TLzlhKzJaLC5RJihG
+ISNAR2ioYJbdQmaxJSxTHiA5IiNCKCtPLC1RJyZDQl+uUXTETnTDRmrAOjtrIyEwIB4qIB4q
+JiQyJCIrJCIvJSExIB4qHRwoJyQyMSg1XkZSUkJUT0FmHRwqHh4uHR0tHR4sHyE6JjJzLD+K
+Jjd6JSlIN06hOlOsPlSsP1a0Qlu4Q1y4Pli3PVe1P1q0QVuzQ1y1R2O6UGrAV3PEZH/OcYrR
+h53dm6rln63moq/naG+gLDZdLzhkJitSJCVGHh80HR4wSG+vSoDJY5TdSnrJISZTJCVEJSdJ
+KzBZKy5VR2S0UHPFUnbIQ2a7MzZzJyM2Hx0qIB4oJCAtJiMvJSItISAuHhwoJiQwNCw4UzxK
+RTQ+JiEsLiY4KSU1HB4uHh8tHh4uHh4wHyVOLT6HL0KLKDJqLzluOVGnO1CpPle0QFq1Q1y5
+OlSxPVexP1m0Q164SWO7SmW7U27AVnPDbIXPfJPWkaXknKvloa7po7HpOUh1KzJVIyhKIidK
+KCtLKS1MMTlgQl6cRXK2VIHEcajtNFKeJStTIihWIyhQMDRgSWm8UnbJVXrKQ2a6Mjl1JiQ6
+IB8pJCM0Hx0pJCAuIyEsIyIwJiMyJyMwJyEyRDVALCg5STlGLCQ2X01WRT5PHR8zHyA0HiAx
+Hx43KTd1L0OTL0SWKSlTOE2gPlSrP1ezP1q1QVq1NlOtPFiyQFu1RF63SmW7Tmq/VnHBX3vJ
+cYrRgZfZk6blorHvo7Ltoa3mMUJ6LDRaMTplOkdyQU99RFJ/R1iHR2OiOlaaSW2vfrHuS37L
+Jzh5JitaJjBiJipRTGy/U3fJUXbHO1+0QkZ1ISEwHx4pHhwnJB8vKCUwIB4rIB8qIh8qJSIu
+MiY2Oy88WkRLXkhQSTdEPTU/Hh4oHiI2HRs0HCA2HR0yICRPLkCHNUmbJCxfNkOHPlOrP1ay
+QFq2P1e0O1WwO1ayQFu0RWC4Sma9U27CXHbHZYDMeZPXiZ7glqjnna7robDrY2ubRl6ZSluH
+SluKRlmISluKSVmGR1aCQVaPOFafRnO+fq7vZZvkMEqTJzd2KzRnISlcTGy+U3bGUHG+RmGx
+Rj9tISArHx8pIyEuJiMzMi06KSY2JCEuIyEvIB0pLyc0HxonSjdEZU9fU0RUUkZUUktfKylM
+NDtvJyM5HR4zHyE7KDh8M0iaLjt7LDZtOE+mPlWuP1i1PFaxOlOsPli0RV22SmO7TGi9Um7C
+X3nJaobRgJjbj6Tjmazrna/qnq7oSk9zR1yaU2maTF6NS16NSFmJRlmHRFOAQVOGUnm/canx
+d6rsc6frPF6sJjt+JjNqLTt2TW7AVHnNVHrMQ2S6MDdnIiEuIR4rIR8rIiEqRC9BJyQyIB0n
+ISAuIB4pLSk2SztJPCo5YEtUVU1lfWiCV1BgFhgoIiNAHB4yICE1ICE1KjFcMUaXKTqAKS1b
+OE6kPFOuPVWwP1ewQFaxQ1y2SGC4S2S7VW/CWHPGZ4LRc47XhZ3gkKfnobDtoLDoprfvIB80
+Q12fTGOZSl6RSV2RRViIRViIRFKAO06BUHK0gLTweqvvfq/uToDMLECBKDNsKjp1Tmy9VnvP
+UnbKP2O4SUp6HiApIiArHx0pICAqNCgyLSo7KCY0JCAuNC4+MSEzTTdHSDZGY0taaFFkGhoq
+X1x1HBwpIydFHhwvHh4xHyE0HiE9KjmBJzZ4JyhLMkiePVOrP1WxPVWxPFavQ123R2C3TGa9
+V3LEWnfIZ4POdI7WhJ/kkqnqobLsprXsbHqpICE4Q1qZSV+VSl6VR1ySSFuLR1eGQlF/PEpz
+P1iUe6nsa6Dpg7Xwap7iME+VKDNmKTZuTWu9UnbIVXfKPmK4Sk2LExgkISAnKCc3Hx8nJB8u
+PS9BJCAuOC8/LSQxOCs7SzZFQjBAZk9bcV1uQzxQT1FtHR8kIyRBHyAzHh0vHyA2ICI3LDdx
+KzZyKi1KMkSYPFGoPFKsP1WsQVmxQ1uzSWK6T2u+VnLCYn7NaofTc5LcgqDljqfon7HtpbLn
+OTtaISM7Lz9vS1+TTWGYSl+URliKQlOEQ1ODRVOAN0l+QmatW4fNfq/sdafoUYDHJSxfJC1i
+S2m6VXfLTXLGQl63bG2TJCE5JCExJCEwIB8wJyMzMCc4IB4rJiIuSThIMSQ0QzFAWURVZlNg
+RTZHYl2DPTpLHR8mKCpHHB4uICAxIiM5Jic+KTFjIihdMDFZO0yYNkmYP1atQliuQViuRl20
+UGq/Vm/BYnzLY3/KaIjTdZXehKPoj6rpoLLsWl+DHR83IyZDPUh2S2CTS2CWR12SSFmKRliK
+RlWFQk95QE13Mk6RPF2jfq/ue6zrZ5fYLUJ7JytTT23AUXLGTnLIQV61XWCRPEBpISErKykz
+LSg8OzBJOi9DKiMuMio+SjtLMCIyRzRDalJgaFJZUVFwOi1FKChFHR4pJShFHRwuHh4wHyEz
+Hh40JipRIiNBLTNiM0ONNkePPlGfQ1muQVesQ1qwT2a4WHLBZH/Jb4vTdJLYfZvgh6LkkKfj
+eoCjIyc+HR46JCZIR1F3RVuTSl+SSVyPSFqNRFKCRVGAP0tzNj9pMUqHLkSBa5rcd6rqcaHh
+TXK1ISE8UG3AU3LHVnTFU23AKipTQDxVIB8pJyQyLyU3KiQ0NCw/KyQyVkBQUz9NVkROSzlH
+SjNAUz1STUJZOzFIICA+Hx8tISQ+Hx8wHx8zHh4wHyA1HyA/IyU+KC9gNkWMOkuYPE6bP1Sk
+RFmsRlutR12uVW68cIjOe5XWgZvdh5/fi5/ZR01qIiE6IylIIyRFJSlNPkBhP1WTSlyORFeM
+P058OUp/Mj5rLDVfKTBWMUBuKjNdV3m7b6TreKbnZJPXPlqZUG7AVHPFUHTHQFqqYWeUKiFD
+JydEKSM1KSU4KyY0Ix8sVz1KXURPJyExb1RbUT1LZExRQz1RXlJrHx4rISE6Hx8yISQ7Hx8w
+HR4wHh4xICE2HyA8HSA6KTJkNkWTOEmYPU+fPFKdSF2vT2OySV2pUmaxaoXEf5fVd4i5TVZ5
+ISEuHyAzISM5ICVEJihKISZIKypEQFKQOUl7MUF0M0B0LDloMTtmND9pO0VvQEhvQklrZYjI
+canvb6Lmc6PkYYzTUW/BVXbIT3PIPFquIytXTERnNjlRKSE4KCQzKSM0IRwocVFPPTA+QTA/
+YUlRY0tdW1ByST1UHR4pHR4rICI3ISI2IiM6Hh0wHh4wHh40ICI5ICI9HiJDICRGICZTNT16
+N0aCOEqLTFusVmm7WGy7XG29XmqlMjdgHxw1ISAzIyI5ICE1IiM6LzVWJilLJCdGIyA9Qlyd
+MD5qNkV3QEt/RlWDSlmFSluISlqFRlN6QUpvYHyzhLXyea3sdqfpcaLoUW/AVHbIUXTGPVqs
+KC1gKipSLClGNi5GJB8tKCExKSEwc1RVRzRCZEhQWUJMX1J6KClaLjBUICAyIiAxIB8xICE2
+IiE4Hx40Hh8xJCY8IyQ8HiA6HyJGHyJLJzRxNEWZPVGmQVeuTGK3X3PGXG/AXnC/UGGqLThw
+HR00IB8xHx83ICA5IiI5MTZbJytNHiE8IyM7WXCvRlmOTWKVTWGQT2GRS1+QT2GQTV2HR1WB
+TFZ9T2WWksD3fLHvfrHwg7DuTm2/VHjMVHjMPVywIydaODZdNTBTLCU3JCAwLCcyKSMwmXJo
+VT5CW0JSSjZGRj5iPT1me4rgISdKHx8uHyAxHB0xHh0zICEyHyA4IyQ+ICM+JCZGIipdLjl7
+MkKQOEyiQVWsRVqxSFyzTWK4VGq/VWy/T2OyQFOfIB42Hh4wHh8zHyA4HR41KzFSJypOJitF
+IiM9W3GvSV6UUGicUGaYTGGUU2eXUGOUTFyKTVuIRlR+QVSBj7v2irv3h7TxhLDuUG/DVXnO
+VnjNS2O2Ky9hPDtlOTxvKyg8NTBHOCo4KiMxVjpETztFRzlJUjVBR0BaKz6AYmGeSGGcHCA9
+HB4uHx8yHR4yHx82IyM+HyE6KClOIidQKzd7LTyIN0eaOU2oQFSsQFaxOk+pNUmfNkqjO0ul
+QlSmR1ajLDl3Hh8xHBwxISE6HSA6JitHLjJVICJAJSZAVmypSWKgT2idTmWYTWScT2WbTmKS
+TV2PSFqMR1aIRliHgrPzirn2irfxjLfyVXXGV3nMUXfLQletQUB0JylWS0iDMSxONSw9JiAt
+OCs8SztFQjBAUz5MQzlKSTlKPlWjcX2zOUp6U1mGISExHx4wHyA4Hh80JilDHyA3JypPJzBo
+LUGQM0WaOEynPlOvQlu3OVKxM0utN024Tlq/cnrQcXzPSVWrQFWdHyVJHR4xHB0wHyE8HCE6
+JSZLGx06JyhDR16aQ2GlTmmkTWScUGaeTGKYUWSXSluRTV6SSluOSV6TcqbthbTzgrHvh7Lv
+UnPFUHPGUnfMPlyxJy9oRkJ4ODpyNy5OOi0+JyExLCczQDE+RDFBQzFDSzxLTjlHREB0hIGs
+d32sKCpaNTZgHhwxIiRHISE4JidCHh41LjBbKjZ8N0mhNkqkPVKvQVezQFayLj+NLDiALz2O
+LjuGJTaAP0upNEOXN0iQMkGGHh8yICA0HR02HSA8ISRGHiI7NTpZOkyAQ2CoTmilTmWfTGGZ
+T2KXTF6SSl2TSV+VS12TRViMYJThgbLwfq3sfq/uTm7DVHTKVXnNP12wJy1iJypcQ0F/PjVY
+Tz1NKCQyKyMzLCQzNys7Pi8+XUJYRkdqHR0uODhVWVyDTmKcR1GHHitRJiRBHyA2JydCGxw1
+LTJlLT2MOEukPE6rPlGyPlS0Q1i1Rly5SV22RluxT2O6WW/Ic4zceILPU2W1RU6aIChMGxwx
+HB0yJCZHIyZGISM+OT5lPkRzRWClTWajUGafT2OcTmCYTGCYUGKYSl6WR1uTRFaMVonVc6fu
+fa3udqnqTm3DUXLIU3bPRF+zJy1gJitfNjdyOjNeLig6PzJCJB4tQS9BUTlIaE1XWEBPLic5
+IixTKSc2NzZMWl6COURyTWGXHhwuHiAzIB83Hxw0KDBsMECSNEiiOUuoQlW1QVe2SV+9UGXA
+VGrDUGW7SmC0Vmq8d4TQiZnaWW68RFSkMTqAHh80HR4xJidLHB4+IyQ/Uld+VVuFP1iaTWSg
+TGWhTmOeTmObSmCYTmGZS1+XTF6TRFeHVoTOYZnleq3ve6rtTm7DUnTITnPIPFiuLCpkKy1l
+Nzt2PTVjNSo8RTlTSjlJNSo5RS45WUNUUUNHHx4uHjFIKyYzMDBWLChEKTFPSF2ZbXSVIR81
+Hx8yIx02MjpyKzyLOkymPU+tQ1e2SF26TmPCUGXCUmi/S2G2OU+kOk6nOEqYZXK8W3G9RFem
+OEeVISNGHx8yISNAHR8+ISM4U1qJQkZrO0uCRmCgT2ikTWOfUWWcSl6WSV2TS16WSluSQ1eI
+T3a+X5fmZ5/oeqvtUHDGUnXJUnbON1OoLC9ePjx3NjduNS5hNyk8SzdLMyQzNy9AVz1JWkRP
+JiEzHx4uIyMzHiIvMD+GJylHIyMxVGWNQVOEPklzHh8wJCE5IildLD2JN0mkQlSxRFm4SF69
+TWO/UGfBUmm/PVOpPFGoNkqgNEimUmnCeI3TRlurPU6eKTV0Hh4zIiQ8ICFBIyQ3V2OYNTdX
+MzlbQFmaUWilT2aiUGWdTGGaSl6VSF6XTV+VSluTSmahYJfkXpXjbaHnUW/CTnHFTnHJN1Kr
+JipdODtvU015SkRwPzVLRDJRNSo3TjpGYEJKSTpWIBwtIB8rIyEvLzhlLzZqSkmDKSVIGh8o
+MUiDh5O/IiVHISM2IydWMD+OOEukP1KvTWPBUWfGUmnDV27HVWvDP1awNkmgNkuiOU+nY3LH
+sLnqTGKxQ1WlL0GNHiFBICA7JCdIHiA5Y3GkIyQ/ISI8QFeWT2mnTWemSmOgSmGcT2SfSl+Y
+SFqQRlmPSFuPXo3VW5XkXpfjUHHFU3XITHHHOFOuJShaMDRlNDV4U0+FSDxLQzpUPTFEKx8s
+SzdDNCczIx0vHh8rIB0rLCs/JyQ7OztoPUuHHR0sKjViZnKpcXuiICAwJCpVKz2OPU+pRVi0
+S1++VGrIYXfQYXjQXHPKSWC7QFSsOU2mPVOugI3WipPOUGW0SFirNkeUJStcHR03JylJLS5J
+VmWbHiA1IiM3QFCISWGbTmqrUWilTWSgTWKeTF+YTF6WS12URVaLUm6rXpbjWpPkT3HFU3bL
+UHTJOlWrJy5gJy5mND+CRUB/RDhSLiM2KyU2PS9BPik7QDJFHh0qHh8sIyEvHRwsJiQxOj1q
+ISY6Hx0uIx4vPUuHaYK/SEp7ISRRMEGVOU2nSFu4U2fCXHLMaXvRZXzOX3XJTWS7Sl62PlOt
+RViwmZ3ggpLRV2q5SFisOEmaJzBwIiI/IiFBQEFiTFKDIiE1IiE2NT5kR1qSUWqnTmaiTGOf
+SmGcS2CbTWGZS1+VSVuSRFWKV4HIXJblUXPIU3nPVHjPOlaqKC1hJjBpKjZ6VFCFX1V2SDln
+MSU6JSExSDpLRjFELCE1JCIuOys6V0FNPjRJMTBLJSM3Hx4vHx4wMTReU2OghJPDKzZnMUGN
+P1KnSV21XXDHZXjOZ3nLZ3vMZXjIU2e7RlmvPE+rRVeyp6rlgI/SVmm2QFKnOEaXKDJzHx8/
+IyFCPD9lPUFqIiE0IiE1LjBKQ1aNUmmnU2qmTWSjS2CbTmSgTWCaSVySTF2VR1iMSFyQVoTK
+TXHGVnrRUnjPPVmsKjBjKDJqLTyANkGMUlaJQkJoNStMJyM5JyIwVT5KVj5LKyc0NSs4Pi8+
+YUdWMCtBHx0tHx8vIB8xHh4uQEqCa4LAe43FKDmCPEueSl6yU2S5UmW5UWC2Wmq1W27AW2u5
+RFSmPU6oT2K8qq7pdILATF6rO0iYLDZ4Ji9nHx8+JSVCPkRpOTxgISA0IiE1Hx4zRlaJTmSf
+T2elTWWjTmWiTGOfTWKdTWScTWKXR1uPR1eKTWKUUHTKU3nPT3LHN1GlJixcKjRtKTZ0PEyJ
+KipRNDVRV1eYaHeoNS5ZNTFBNCY5MCc4LyMzUztJQzJCJSAzICAvIR4vICAxHx8wJzBXWmeb
+cX+3eIG3NkWTQlCgR1epNUKMPkmNWF6eX2GnUVyyOUqaOk2kUGW7rbLtSVSQR1CUU1COJC1g
+HiNKHh46JSQ/SUptNzlfIiA2Hx8wJSU5PENuRliPVGupUmmnTmWhUGeiT2SgS2KeUGWfTF+a
+S12SR1iMTnLIUnfKS23BNU6fJSdTJSxhJzJxKjZ2LjVvJi9kX2+pQ2GxQlekJy9XJCMtMCY5
+Lik7QDE+Nig8IB4rHBwqOzRDHxwuICMyIyM0MDphZHCegY2+cYC3NUWNLDNfKCtUKypLRkNd
+l5nOOUOMMD+KOUugUWi9mKXhM0KCKCpGNzZYQUqIHR83HB4zJyVAT1FyJiVHJiY8Hx4xIiI2
+LC1KRliST2ikTmelUGWgTGShTWOjTWSjTmOgTWSgS2CVSVuQT3HEU3fMTG7CNU6fKCpUKC1f
+KTJqKzZ1Kjd2JzRyVl6RQFOdRV6uNUN8MTJsKCQwPCtHOCo+Tz1SJCAvMio7HhwvMSo3RTdH
+HRwwKSc+TF6ZXHi4iZK+anOxIzBoIiNEHR83JCQ6NzdVJixUOU2hPFCqU2zEgJDabYDEIidS
+ISA5KitIHiA5HyA6IiI3Q0ZxJydHKSc/IB8zICA0IyA1Q1SLSl6WT2enTmalS2SjTGWlSWOi
+S2SfSmObTGObS2CWTnDEUnTIUHXKNk2dKSpUJSpYKTNqKDNxJzNyKjZ2KjiANUONP1ahOUeK
+LzJTMD9+ICY/PjFDMyY3RDJEICAtISAxLyU5Hx8uMSg7KiU9KjBRZ3WxdIW9cYG0aHqxOkyM
+NkWPOkmOQUyYKzV7LTd5S2K5WnPLdYvaeIrXW3HBMT55JSxeKjZyJSdLJCE5Sk16JiZBJyY7
+IB8zIiE0IiE1PkZxR1WITmmoTmenUGimTWWjS2OeUGijTWWfTWWaTmKYUXDCUHPGTm/EM0qX
+KClSJipbKzZsKTRzKjRyKjd4Lj2BNkaNMUCPMkaGKjJhdXurNEOCLytLLSY6SDVEIiAvJSI4
+JSQ1Hh8vLio5LSY8KCU4NkR+UGmmbH+3Z3WshpK5T1+lOEWCPEWBRlabZnjLZn7UZ3/UeI/b
+d43ZhJjiepLhVmiyLDJqHh02JyY/VFmIHB00IiE2IiI3Hx8xIiA0MDBMQVCFT2ahT2ioUWql
+T2afT2efUmqkUWWdT2WcUWaZUXLGUXPDUHHENUqWKChUJipZKzRsKjVxLDZ3LDh6Lz2BNEOR
+MEOWMUaLMEN5MD+JSkiAQ0J6JiQ2Nis7JCAwKSQ3LCU6IB4vIhwtLSQ5JiExIyQtNj95XW6s
+X3azgY29bnynZXSyWmy7XXDBZnnMaYDUdYvbh5vkh5njjJzil6fpj53hNEaQIiU9JCQ8TlWD
+HyA3IiI3JiQ4ISE0IB4yJSI1Q1CESFmRVG6rUmukU2ujUmylVGujUmecTmGTTFuJTnDET3HE
+T2/EOE2aKCZTJitcJzBqKDNvJzJxKTN1NEGKMj2FNEOQMkCDUXK4M0KGP0mMRE+XMjZ4KiM8
+IB8tLSU6JyM1IB8wJCM2JCAxRTdMQThMJzFOUGGeZoC8cYO3ZGqThI+9aHeuWGy1X3XGaH/S
+fpLcip3jjaDklaPmmKbnfI7WLzh3ISA0KihEU1WFGhwvHyA1IyI2ICA0Hx8zIiE0OD9kSFqM
+UWupU2ulU2idUGWbTmGWTl+PU2OWUF+STnDEUXTIS2zAN0yZJiNQKSxdLjdwJDFtLTZyKjV1
+MTl9Lz2GLzyDSV+cYYjXLzt7NkOFPkuSLjx9Ky1ZKCpJKSM5ISAwISAxLig9KyM4HR8vPTBB
+ISAzKDFUS1mYYHe2b2yLc3+vbnyxaHWlX3CyZHfId4vWgpXbjJ7jlKXnl6jrX3TCJCpaIyM4
+SEZgREZsHh4xHh4yJiU4JSQ4Hh0vKig8LCk/RVSHTmGWUGOcUGCWUWObUWWdU2iiVWqlV2ul
+UHHGUnTISWrANEmXJidKIyZWKDBnKzRvJzJsJjFvLzt9MT6FMD19XXCtb53pNU6SPEiEOUSF
+PkaNOkydMTVrLy1RJiQ3Kyc6MSpBKSU2Myg7PjFEICAxISA1LCtESEl2fICVbX+3doS0Y3Kn
+dICxYnKqbH29gZTajp3hipfbhJXaRFimJCpNLy5MR0ZnPEV2ICAvHBsuIyI2JCI2Hh0wISAx
+JSIzQElyRlJ8UWWbV22pVm+rV22nUmekVW2qUmekT3HDUXPGSGm/N02ZJiZLKS5ZKjJoKTRu
+JTFuJDFuKzl8Kzh5LTp2dozFWoXNPVCXOkeJQEiGPEaDVU18S06LPD1yNjBYNi1JKyQ7IiAw
+NCpDIh40JiI6Jh81Mig8U0BUW1V0bXigdoe8c4O1bnyxcH+zcH+veYe3hJDQhJPZfI3PNUKL
+LS1cPDtZT09zQFSYHh0xHB0tIyM2ISE1Hx8yIyMzJCI2MC9LPkhzUGKZWHCrWG+pVm6pVGqn
+WW+oVGqlT3HDTHHERWe8MEWQJSZLKCtcJzBlKjRtKjRuKTRwKjl7KTd2P1mNaazyVXe+SmCi
+O0uMPkuMOUSFRE2KQ0uPPkabMDJgLSlJKyE3KCM3KCU7HR0tMyxKKyk+QTFKLyU8QjdKVlV/
+d4i9fpLFdYW1dYOzan2wc4Cxfou5c4G2XGyrKCxVKipJSEZkSk14XHa+UG6uISlMHx8yIyI2
+Hx4yHyAxIyE0JyI2P0h0S1iOWHCrVWymVGqnVW2pVGmjUGajTXDDT3DCR2m9L0SNJyhMJSpa
+KjNqJzJrKzVwLDdyJzV0KjVsZ3y6SX3lSGq7O1WmMzx5QlKXPU2UPkqJQ06WMjxzQk+SOkaO
+PT9yMCg/MytDIyI1OzFDNClJNi1DPDBHKSU6SkFOOk6Lc4G1c4a8doW3eIe2dYa2eYi2e4y6
+iZa7XG6gPT5lPTpYWWSbTW6+VXO+Y3m/KjRWISA0ISE1ICAzISAyJCI0OTxeTVyXU2elV26p
+V2unVGqmV2ulUmajTnHHTm/ESWq+L0SOKitRJy1cJy9iKjNvKzRuLDd0KjRyKjRshrPtYnzN
+PlKsNEqMMj+CMjx4PE+WOUaIPEiMQU+VPk6PQlOcQESCQ0F8QDZXPTNWKiU8STdMRjZPT0Fe
+MixBHiAyIx4wUlqQa3SrboXBh5bFhJLBe4y8gpHAi5fCj5jGjZjFbnSiMzdjLzVhO0l/T2Sh
+Zn/CLTZXHx4yIiEzIB4xJiM4JiM3TFqXTV2bVWuoU2ilU2mlWWylUWWgT3LFT3HESWm/MkOM
+JidNJyxaKzJlLjdxKTRtKTVxKjZ1MT5yUZPvZpHWOFWhO1ipOUWIOEF+OkV/O06TQVCXPEeK
+QlGSRVScS1WdU1SaRkZ5QThlPTBSWVl4Yk1mSTtYQDRILCY+ISA9KyY+U1qDXm+tg5XHhpfJ
+gI+/g5O/i5nEj5zHk5/MkpzJjZnQWWWXMDp0KTFYOkZ8Zn25P0RiISAzHx4xHx8zICAyO0Fq
+SlqbVGmmUWipUWenUWWkT2KfTW/DTm/DQ2a8LkCIJylQJCpaKDFmKjNsLThtKTVwKTVyUVuO
+cI7XPWzRQF+sNUykN0OFQE+aRk6NNkKFQ1ekRVSgRFGVRVaZTFqfSVeUUVSNVFCHSE6HY2uY
+VleCTVaFWmepXWajZG2tS1CDUlWAYGukb4G9d4u9iZXGhpTCipbCjprFkJ7KlKDNlqLOlZ/I
+mKbPVGWlND5vPUVweIvBHB8xHx4yIiEyJSQ5Kic/SluZT2CfUminUWepTGKgUGakS23BTGy/
+RGa6MUGLJyhQJy5fLDNqLDZwKDNqKDVxJjRwPD95WJPYP1e0PFm6MkaUKzl0PEmMQE+bQE6K
+O0eKQVakQFKfSFObTV+ZUWWrUGSrYGq0am+yamukYHO8VmapX3SuXm+0XGyyXm6zZ3CpYXCu
+XGmhaoCxdYbEhZPIfZPJhJG/jJjDkZzFk5/LlZ/In6fOiZTBXm6cT2GgaHOhQlByIR8yICAy
+ICAzJCE1QENtS1ycVGilUmioU2qqUWWmUHDETnDCRWS4MUKHJyhQKC5fJzJrKDJuKDNsJjJv
+Kzh5KDBqUpXuRGexN0+VMj+CMDl1NkOHNUGERFalVGCnO0yTUGGsS1mgUF+jWmasVGGjYnfB
+YW6wZHSyYHK4ZG+yXHGwYHazaHizZ3i3doO+a3uybXywdH60cXuteZHDiY6/lKLMiZjHiJbD
+jZrEk57Ik5zIoaTNany1X2ylU2GWXG2eIB8xISAzHx8wISA0LCpETFuXUV+aUmmnUWenUmeo
+TG7CT3LHRme6L0CFJidPJSteKjJqKjVvJzFqKDRzJzR5KjVwUIjkN1esLj+EMDuAND19OEaE
+O0aQPEmIRVunQVOgQlaVU2WvTF6dVWOqY3S5ZHW0aHq6XHO6bX+9anq9XXG2an+/aX3Fc4O/
+doW6gou9cH61aXu3c36ucXqncoCwe42/hJHDk6TPkqLQj5rGkJzJlp/KkaHNY3WtiZfCmqLN
+IyQ7ISEzICAyIB8yJSI2ODldTV6fTmKfUmmsUWepS23BUHHER2e5MECFJidPJitdKzRqLTdx
+KTNtKTVyKjd5LTp3aJbiN0+iLDh2Kzd5KzdxMj18NkKJOEWLPk2PSF2pR1mhSVyeUmmyXXKx
+Wm+3b3a0aHq2ZnK4ZHe/eITJYHy9eYjAbYTDaX65g4zCfYzAgou5hY3Ag5C+h466gomxlJTA
+cYK+g5jOk5jOkqPQkaDJk5/Im6TOkZ7Jm6PKr6/VWWOIIyM1HR4wICAyIyE1KCc+R1CGTF2c
+UmmnT2WoSWm7Tm7AQ2G1LTuAKChPKS9dJjBoMDt2LDhzLjp5Kzl+Lj6CaHq7NkeRLDRsLjqA
+NEB/OESKNUWDPUuWMkCIOUiKUWWvS12nU2uvZna5aX2/bn+5cYXIg5LMbnq0donGfIzFe43H
+jJbJpKXNdIe5eI27jZnJmKTRlJ/Ll5vEoqLHdoW5QWS8UmaxcoS9hpvJl6TNmqnSmKPPmKXQ
+n6nPqK7TaGqFIiI0JCM1ISAzIB8zJSM3LCpFTF2cSVuXUGeoS2u8SGi6P1yuLz1/JiZIJChU
+KTFmKzRuKjRxLjl2Kzh7MT+CT3K2OlWgKjVxMDt8KzdvN0WSNkaPMkGBOEmUNkiNOUSGY3Wv
+XW+zWnG4a3zBcoLGeY3IZnu3kY/Ae4bAi5nMkJnQlaLVjJnNmKDQgZXCk6PPmKPLoafPqavQ
+mJu9N1ShRmW6P2CyM0mRUE5yeYKojZi+o7Hal6bRkZzEqq/Ta3KhIB8xISE0IiEzHx8yIyI1
+IyI0PUJoTV6bTWGdSGm8TGq6P1ywLDp8KChIJilVKTFnKTBmKTJnKDNtKzZ2Ljp9R1SOPl2t
+LjdyLzl5NkOBNUORPUqIOEyXN0OJPlCWQlGVOUh8YW+vYHm9bHq7dYG4Znq6fZXLbYe/nJzK
+hZHAkprJlaPTlqHTj6LQl6XQoKzToKrQqK7TsrPQLDdsP1mnRWW4RGO0OFGcJCtWIyI1bnaN
+jJq+srrWqrXbo63Tb3GUIB8xIB8yIB8yIB8yHx8vJiQ2JCM2SFWJSFiRSmm8Smi7QFywLjt9
+JSZJKy9eKjNnLjVsKTJsLDdzMDp8Mz+CMTp+T264Ljl3LTh4MT1/NUODO0eLOUqIQFGTSFyg
+PFCTPEuOO0yTVl+UdIXGb3+5cYrGZH+9e4vIk5rIi5nLoqbXnKnWpavRm6bQpq/aoavToK7U
+v77gaG+TLj55QFurRWK2Q1+wOU+bJCpXIyI3IiE0S0xkmajSoKvPubbOSk5zISEyIB4xISAz
+Hh0vISAyIiEyIiE0KilBTFqVS2m8S2m6QFmqKjd8KSlNJypdKTFmKjNrKDJrKzZwMD19Lj2C
+M0GKN0+UKzh6Ljt4ND2BN0CGNEJ+OEaLQ0+NSViqQVCVRFOaPk+dQlGUUVyccH6ydIfEgJbO
+cIvJiJXLoabTm6zcoazUpq/Wn6nUoazUoqjQsLfblpy9MDNfLz5/P1mpRWCwQl2tO1GdJixZ
+IyE2ISM7KzduO1KjQFWgPlehOE+cIB80Hh4vIB8zISA0Hh4uIR8zHx4xJCM0MjNSTGzASme5
+QF2vLTl9JidLJi5ZKTFlKDFrKzRtLDVxMz58M0KGMUCIMkKMM0SMLj19NUKBMkGFOUSFN0SF
+PEuFPU+WQ1SWRlOXQ1mjRleUSV+nVm2qcX2xfpHHkaLRmKTTiZbHmp/Noa3dmaHLo67XpbLd
+pLHVl6DANDljJi5eM0WKQl2uRGGzRmCwOlGcJStYISA1Ji5bO0+bQV2xO1SkOlWnQFqpLz96
+HR0vHh4vISA0ISAyHyEwHh0wIiM1Kyk6RGi+SGi7PluuLTt9JSdMKS5hLDNnLDVvKTVtLTdy
+NEB+NUSJNEOPNUaOOUmRM0KGMj97NUKDN0OANkF5N0OAOEiIQ1KNQFSbQlWdSVmeTl2dVm2r
+c4K/eICyl5vDmKTTr7Dcpq3ZoKvSo67XoarUt7rakZnAJCpVJS5eKzRqNkeNQFuvRmK2QFyu
+NUybJSpVIiREM0KEQ1ytP1qsPlelPVanPVeqQlquIylOHR0sIB8yIiI0Hx8vISEzICEvIiE0
+Sm7BS2i9PVuwLDp/JidNLDJjKjFlKzVsKjRuKTRsMT9/MUCFMUKKNkWMNEePMkaRLDp+MD16
+OUaGP0qRPkyMOEaKQE6URFaUQUiDSlqiTV6hXHOzcYW8d4u+bIS/jZXEoanTqbHcpq7YoK3X
+oK/boKjHKDFeLThvMDlwKjRtPE2TQF6yRGK3QF2xO1GeJClYLDRtPVOhQlywPlmsOlOkQFur
+OVWlQlqsN1ChIR84Hh4tHyAxHx4yHh0tIB8zHB0rTHDDS2y9PF2vMD2CJihNKS9fLDJlKzVn
+JTBnKzVyLzt8LDyBMkGGM0SLNUeQMkWSPlSeNEOBMz1/NkSBOkeLOUePOkmKQ1CVR1KWTl6i
+TlmSXXGndoO8gpDCeI7Fh5fGgJPJgYu6kKPLqKvJsa/FSFN/LTl2Ljx4MDx6Lzl1NUiQQl6z
+RGO5Ql+yNkuXLTt8Ok2YQVytP1yvPluvQVusP1mpO1apPlurPlusMUSHHR0tHx8tIiE0Hx4y
+ICEvIB8xS23ARWe5P16xLDuAJShLIilXKjFmLTVsJjFsLTh0Lzt8NEGIN0WJNESLNUiTN0eT
+NEiNOlGPPUiLPEWBPEaERFCOQEqMSVaUS1aTTGCUXmyzbnmuZ4K5dou5forAgJLGgZbMfpPB
+h5nFWGOTLz17LDt6MkCBLTx6Ljp5MDt4M0aOQFutRmG1P1mnPVSfOlCbQVuqPlmrP1quPVuu
+PlenO1akPliqPFmoQF2sQmCvN02QHyEwHR0vISA0HR4vHh8uS2/CS2vAPV6yMEGFJihQJy5f
+KzNqKjVwKTVzMTx6MkCHMUCJNESPNUaPNEeSO0uXOUiZPEeYVFyWRFCMPkiHQE2DR1GKQ1eL
+UmCgWGKsWWebZnusboO3dYW8gIzBe47IepHDcYGwRlGJMUCGNESLNEWNOEeLMT+DMD16MDx3
+OUySQVqqQFurOlalQVqnQFqqQVytPFemP1uvQFurPFikPlupO1akPVqpPFmmVHzLh7bzPVGP
+ICAyHRwtICAzICAyTGy+R2i8QGC2LDuEKSxaLDVtLDdzKjVxLTh2NECDNEOLNUaQNkmTOUyY
+NUaSOEuXO02cO0+cO0ucOkubQVCbSVeZVl2WSlmUV2GgaHKrbG6ocX2tb32tZnqwdYO2fJG+
+U2OWMEOML0GLM0aRNEaRN0eSNkeKM0OFLj9/MD18NkqUPlipPFalP1mnQlypQ1+wQ1+vQFus
+QF2wQFysPVmnOlSkOFSkQFuoQGCve63xkb73VX7DIyM8HR8vIiIzISE0SWi8R2W5PVyzMT+D
+JilYKDBqKzRyLTZyLjdzLDl7MD+HOEiROUmVPE6ZN0eVO0yZOEqeOEqcOEqbO06eOEqdNUqf
+PE2aQFOXSFSVUmCbanOfdXuzX3atW2GeRFSONEOSMUaVM0qYN0uYOEmWOkyYOEuYN0mSM0WJ
+M0KELzx7NkiQQFmmP1mnRV+tQmCwQ2O0Q2GxRWS3QWG0P16wPlqrOlenPlupPFupY5Lfibz4
+cqLjM0R7LTlwICE5Hx4xHh4wRmW6SGe6Pl2zLj2CJyxcKjJsKjRwLTh0LDRvLjh3NkOJMkCJ
+N0aPMUWQNUiUO0yYOEuZNkmbO06gOkyeOUueMkebNEudN0ufNkuZMEWTMkeWMUSQNEaOMkOT
+NkiXN0uaNkybNEqbN0yeNUqXMkeUOEyYN0mVMkSNMECELjt8M0aQPlaqQ1+vRmS0RWO2QmK2
+RGS3QmGzQ2O4QmK2P1yvPlusPlysT3bIhrf3iLn3QF2bKzhzMkF9M0B8ISM8Hh8vSmu+R2e6
+RWS6Lz+HKi9iJzFsKjV1JzNzKjRyMTl7NkONOEmTMkSPOEycO0+fOlCfOk2bOE2fOk+hOEqc
+NkmbNkqbOE2hNkueN0qaNEaWNkiWNkqWPE2ZN0mWO06bNUqbNEqcN02fOE6fNUmaNUiWOk6a
+NkqUM0OKMj+CMT5/O02aQ1ywR2a7RGS6SGe7RGe7R2a5R2W6SGi+RWe7QmK0P16vQWCwcKXu
+j7/8YY7VLTt0L0B/NUaFOEqKMkKBIiQ/S26/SGm7RGO4Lj2CJy1eKzVyMTp5LTh1Ljh0MT18
+Lj2GN0iPNUmUOk+dOlGgO0+cPFCdOlCeOU+fPVGhPFGgO1CiN0yfOE2iNkudNUuaOU2bOk+b
+OUyYOU+eOVCfOlGhN0+eOU+fNk2bOE2aOE6aN0yYNkuTOEmNMj9/MD1/Ok6ZR2O2SGjASm3C
+S2vARmu/Q2S6SGi9R2e5RWS3Q2SyQmGvV4TTgrf5eazwNkyGMEJ+NUeEN0mIN0uJNkqLN0iM
+TXHESm/DQGG2LT2AKC5eLTZvMDp3MDt2Lzt1MUB+M0SKO0qQOE6WPFKdOlOePFOfPVSiO1Og
+PFSkPlOkO1KhO1KfN02dOE6fO1GhO1KhOlGfOVKgPFOePFWgOlOgOlKdOlGeOlGeOVKdOlGb
+OVGaOFCZOE+UNEmMNkWDLjx6P1eiR2i5THC/SGzASW7DR2vAR2m9QmW5SGe3RmSyRWSzS3LA
+dqvwgrf4RWqpLkB2N0eANkmFOUyGOk6GN0yHOE+S'
+			base64Decoded asByteArray readStream! !
+
 !AffineTransformationTest methodsFor: 'testing' stamp: 'jmv 1/14/2015 15:11'!
 testComposition
 	"
@@ -16603,6 +19525,382 @@ testDoOneCycleWorksWithDeferredQueue
                 finished _ true.
         ] valueWithin: 1 seconds onTimeout: [finished _ false ].
         self assert: finished! !
+
+!MethodReferenceTest methodsFor: 'test actual class' stamp: 'HAW 10/23/2019 21:08:24'!
+testActualClassIfAbsentEvaluatesBlockIfClassDoesNotExist
+
+	self 
+		assert: 1 
+		equals: ((MethodReference 
+			classSymbol: #X_Y_Z 
+			classIsMeta: false 
+			methodSymbol: #xx) actualClassIfAbsent: [ 1])! !
+
+!MethodReferenceTest methodsFor: 'test actual class' stamp: 'HAW 10/23/2019 21:09:29'!
+testActualClassIfAbsentReturnsClassIfClassExists
+
+	self 
+		assert: self class
+		equals: ((MethodReference 
+			class: self class  
+			selector: thisContext selector) actualClassIfAbsent: [ self fail])! !
+
+!MethodReferenceTest methodsFor: 'test actual class' stamp: 'HAW 10/23/2019 21:05:22'!
+testActualClassReturnNilWhenClassDoesNotExist
+
+	self assert: (MethodReference classSymbol: #X_Y_Z classIsMeta: false methodSymbol: #xx) actualClass isNil! !
+
+!MethodReferenceTest methodsFor: 'test actual class' stamp: 'HAW 10/23/2019 21:09:58'!
+testActualClassReturnsClassIfExists
+
+	self 
+		assert: self class
+		equals: (MethodReference 
+			class: self class 
+			selector: thisContext selector) actualClass ! !
+
+!MethodReferenceTest methodsFor: 'test source code' stamp: 'HAW 10/23/2019 21:42:10'!
+testSourceCodeIfAbsentEvaluatesBlockIfClassDoesNotExist
+
+	self 
+		assert: 1
+		equals: ((MethodReference classSymbol: #X_Y_Z classIsMeta: false methodSymbol:#xx) sourceCodeIfAbsent: [ 1 ])! !
+
+!MethodReferenceTest methodsFor: 'test source code' stamp: 'HAW 10/23/2019 21:42:34'!
+testSourceCodeIfAbsentEvaluatesBlockIfMethodDoesNotExist
+
+	self 
+		assert: 1
+		equals: ((MethodReference class: self class selector:#xx) sourceCodeIfAbsent: [ 1 ])! !
+
+!MethodReferenceTest methodsFor: 'test source code' stamp: 'HAW 10/23/2019 21:43:23'!
+testSourceCodeIfAbsentReturnsSourceCodeIfExists
+
+	self 
+		assert: (self class>>thisContext selector) sourceCode
+		equals: ((MethodReference class: self class selector: thisContext selector) sourceCodeIfAbsent: [ self fail ])! !
+
+!MethodReferenceTest methodsFor: 'test source code' stamp: 'HAW 10/23/2019 21:11:15'!
+testSourceCodeReturnsSourceCodeIfMethodExist
+
+	self 
+		assert: (self class compiledMethodAt: thisContext selector) sourceCode
+		equals: (MethodReference 
+			class: self class 
+			selector: thisContext selector) sourceCode ! !
+
+!MethodReferenceTest methodsFor: 'test source code' stamp: 'HAW 10/23/2019 21:39:16'!
+testSourceCodeSignalExceptionIfClassDoesNotExist
+
+	self 
+		should: [ (MethodReference classSymbol: #X_Y_Z classIsMeta: false methodSymbol:#xx) sourceCode ]
+		raise: Error
+		withMessageText: MethodReference classDoesNotExistErrorMessage ! !
+
+!MethodReferenceTest methodsFor: 'test source code' stamp: 'HAW 10/23/2019 21:13:28'!
+testSourceCodeSignalExceptionIfMethodDoesNotExist
+
+	self 
+		should: [ (MethodReference class: self class selector: #xx) sourceCode ]
+		raise: Error
+		withMessageText: Dictionary keyNotFoundErrorDescription ! !
+
+!MethodReferenceTest methodsFor: 'test compiled method' stamp: 'HAW 1/1/2020 19:46:58'!
+testCompiledMethodIfAbsentEvaluatesAbsentBlockWhenActualClassIsNil
+
+	self 
+		assert: 1 
+		equals: ((MethodReference 
+			classSymbol: #X_Y_Z 
+			classIsMeta: false 
+			methodSymbol: #xx) compiledMethodIfAbsent: [ 1])! !
+
+!MethodReferenceTest methodsFor: 'test compiled method' stamp: 'HAW 1/1/2020 19:47:05'!
+testCompiledMethodIfAbsentEvaluatesAbsentBlockWhenSelectorIsNotImplemented
+
+	self 
+		assert: 1 
+		equals: ((MethodReference 
+			classSymbol: self class name
+			classIsMeta: false 
+			methodSymbol: #xx) compiledMethodIfAbsent: [ 1])! !
+
+!MethodReferenceTest methodsFor: 'test compiled method' stamp: 'HAW 1/1/2020 19:47:13'!
+testCompiledMethodIfAbsentReturnsImplementedMethodWhenItExists
+
+	self 
+		assert: thisContext method 
+		equals: ((MethodReference 
+			classSymbol: self class name
+			classIsMeta: false 
+			methodSymbol: thisContext selector) compiledMethodIfAbsent: [ self fail ])! !
+
+!MethodReferenceTest methodsFor: 'test string version' stamp: 'HAW 4/9/2020 15:51:56'!
+test01DefaultStringVersionIsClassAndSelector
+
+	| stringVersion |
+	
+	stringVersion := (MethodReference method: thisContext method) stringVersion.
+	
+	self assert: self class name, ' ', thisContext selector equals: stringVersion! !
+
+!MethodReferenceTest methodsFor: 'test string version' stamp: 'HAW 8/19/2021 15:05:13'!
+test02CanPrefixStringVersion
+
+	| methodReference prefix |
+	
+	prefix := 'a prefix'.
+	methodReference := MethodReference method: thisContext method.
+	methodReference prefixStringVersionWith: prefix.
+	
+	self assert: '[',prefix,'] - ',self class name, ' ', thisContext selector equals: methodReference stringVersion! !
+
+!MethodReferenceTest methodsFor: 'test testing' stamp: 'HAW 1/2/2020 06:49:00'!
+testReferencesParameterAtReturnsFalseWhenInvalid
+
+	self deny: ((MethodReference 
+		classSymbol: #X_Y_Z 
+		classIsMeta: false 
+		methodSymbol: #xx) referencesParameterAt: 1)! !
+
+!MethodReferenceTest methodsFor: 'test testing' stamp: 'HAW 1/2/2020 06:49:03'!
+testReferencesParameterAtReturnsTrueWhenTheParameterIsReferenced
+
+	self assert: ((MethodReference 
+		classSymbol: #MethodReference 
+		classIsMeta: false 
+		methodSymbol: #referencesParameterAt:) referencesParameterAt: 1)! !
+
+!SHST80RangeTypeTest methodsFor: 'tests' stamp: 'HAW 10/5/2020 12:16:37'!
+test00MessagesForTestingAreImplemented
+
+	self assert: (self respondsTo: #_zz).
+	self assert: (self respondsTo: #!!).
+	! !
+
+!SHST80RangeTypeTest methodsFor: 'tests' stamp: 'HAW 10/5/2020 11:56:57'!
+test01TypeOfMessageSentToLiteralNumberAreObtainedCorrectly
+
+	self assertTypesAreValidWhenMessageSendTo: '1'! !
+
+!SHST80RangeTypeTest methodsFor: 'tests' stamp: 'HAW 10/5/2020 11:58:55'!
+test02TypeOfMessageSentToLiteralStringAreObtainedCorrectly
+
+	self assertTypesAreValidWhenMessageSendTo: '''a'''! !
+
+!SHST80RangeTypeTest methodsFor: 'tests' stamp: 'HAW 10/5/2020 11:58:39'!
+test03TypeOfMessageSentToLiteralSymbolAreObtainedCorrectly
+
+	self assertTypesAreValidWhenMessageSendTo: '#a'! !
+
+!SHST80RangeTypeTest methodsFor: 'tests' stamp: 'HAW 10/5/2020 11:59:12'!
+test04TypeOfMessageSentToLiteralArrayAreObtainedCorrectly
+
+	self assertTypesAreValidWhenMessageSendTo: '#(1)'! !
+
+!SHST80RangeTypeTest methodsFor: 'tests' stamp: 'HAW 10/5/2020 11:59:23'!
+test05TypeOfMessageSentToLiteralBraceArrayAreObtainedCorrectly
+
+	self assertTypesAreValidWhenMessageSendTo: '{1}'! !
+
+!SHST80RangeTypeTest methodsFor: 'tests' stamp: 'HAW 10/5/2020 11:59:33'!
+test06TypeOfMessageSentToLiteralBlockAreObtainedCorrectly
+
+	self assertTypesAreValidWhenMessageSendTo: '[1]'! !
+
+!SHST80RangeTypeTest methodsFor: 'tests' stamp: 'HAW 10/5/2020 11:59:42'!
+test07TypeOfMessageSentToLiteralCharacterAreObtainedCorrectly
+
+	self assertTypesAreValidWhenMessageSendTo: '$a'! !
+
+!SHST80RangeTypeTest methodsFor: 'tests' stamp: 'HAW 10/5/2020 11:59:51'!
+test08TypeOfMessageSentToLiteralNilAreObtainedCorrectly
+
+	self assertTypesAreValidWhenMessageSendTo: 'nil'! !
+
+!SHST80RangeTypeTest methodsFor: 'tests' stamp: 'HAW 10/5/2020 11:59:59'!
+test09TypeOfMessageSentToLiteralTrueAreObtainedCorrectly
+
+	self assertTypesAreValidWhenMessageSendTo: 'true'! !
+
+!SHST80RangeTypeTest methodsFor: 'tests' stamp: 'HAW 10/5/2020 12:00:08'!
+test10TypeOfMessageSentToLiteralFalseAreObtainedCorrectly
+
+	self assertTypesAreValidWhenMessageSendTo: 'false'! !
+
+!SHST80RangeTypeTest methodsFor: 'tests' stamp: 'HAW 7/15/2021 10:47:18'!
+test11TypeOfMessageSentToSelfAreObtainedCorrectly
+
+	self 
+		assertTypeOfMessageSend: 'm1 self _zz'
+		is: #undefinedUnary
+		in: Object
+		receiverRange: [ :ranges | ranges penultimate ]
+		messageRange: [ :ranges | ranges last ].
+	self 
+		assertTypeOfMessageSend: 'm1 self size'
+		is: #unary
+		in: Object
+		receiverRange: [ :ranges | ranges penultimate ]
+		messageRange: [ :ranges | ranges last ].
+		
+	"Binary messages have been disabled - Hernan
+	self 
+		assertTypeOfMessageSend: 'm1 self !! 2'
+		is: #undefinedBinary
+		in: Object
+		receiverRange: [ :ranges | ranges antepenultimate ]
+		messageRange: [ :ranges | ranges penultimate ]."
+		
+	self 
+		assertTypeOfMessageSend: 'm1 self = 2'
+		is: #binary
+		in: Object
+		receiverRange: [ :ranges | ranges antepenultimate ]
+		messageRange: [ :ranges | ranges penultimate ].! !
+
+!SHST80RangeTypeTest methodsFor: 'tests' stamp: 'HAW 10/5/2020 12:00:26'!
+test12TypeOfMessageSentToSuperAreObtainedCorrectly
+
+	self assertTypesAreValidWhenMessageSendTo: 'super'! !
+
+!SHST80RangeTypeTest methodsFor: 'tests' stamp: 'HAW 7/15/2021 10:47:00'!
+test13TypesIsUndefinedForAnyMessageSendToSuperFromProtoObject
+
+	self 
+		assertTypeOfMessageSend: 'm1 super size'
+		is: #undefinedUnary
+		in: ProtoObject
+		receiverRange: [ :ranges | ranges penultimate ]
+		messageRange: [ :ranges | ranges last ].
+		
+	"binaryMessages have been disabled - Hernan
+	self 
+		assertTypeOfMessageSend: 'm1 super = 2'
+		is: #undefinedBinary
+		in: ProtoObject
+		receiverRange: [ :ranges | ranges antepenultimate ]
+		messageRange: [ :ranges | ranges penultimate ]."! !
+
+!SHST80RangeTypeTest methodsFor: 'tests' stamp: 'HAW 10/5/2020 12:00:37'!
+test14TypeOfMessageSentToGlobalVarAreObtainedCorrectly
+
+	self assertTypesAreValidWhenMessageSendTo: 'Smalltalk'! !
+
+!SHST80RangeTypeTest methodsFor: 'tests' stamp: 'HAW 10/5/2020 12:24:04'!
+test15TypeOfMessageSentToClassVarAreObtainedCorrectly
+
+	ClassVar1 := 1.
+	self assertTypesAreValidWhenMessageSendTo: 'ClassVar1'! !
+
+!SHST80RangeTypeTest methodsFor: 'assertions' stamp: 'HAW 10/5/2020 12:02:43'!
+assertTypeOfBinaryMessageSend: aSourceCode is: aExpectedType
+
+	self 
+		assertTypeOfMessageSend: aSourceCode 
+		is: aExpectedType 
+		receiverRange: [ :ranges | ranges antepenultimate ]
+		messageRange: [ :ranges | ranges penultimate ]
+! !
+
+!SHST80RangeTypeTest methodsFor: 'assertions' stamp: 'jmv 4/26/2021 19:40:38'!
+assertTypeOfMessageSend: aSourceCode 
+	is: aExpectedType
+	in: aClassOrMetaClass 
+	receiverRange: aReceiverRangeBlock 
+	messageRange: aMessageRangeBlock
+
+	| parser ranges st80RangeType type |
+	
+	parser := SHParserST80 new.
+	ranges := parser
+		workspace: nil;
+		classOrMetaClass: aClassOrMetaClass ;
+		source: aSourceCode;
+		parse;
+		ranges.
+		
+	st80RangeType := SHST80RangeType for: aSourceCode in: aClassOrMetaClass.
+	st80RangeType lastRange: (aReceiverRangeBlock value: ranges).
+	type := st80RangeType ofCurrentRangeOrMessageSendIn: (aMessageRangeBlock value: ranges).
+	
+	self assert: aExpectedType equals: type
+	! !
+
+!SHST80RangeTypeTest methodsFor: 'assertions' stamp: 'HAW 10/5/2020 12:23:51'!
+assertTypeOfMessageSend: aSourceCode 
+	is: aExpectedType 
+	receiverRange: aReceiverRangeBlock 
+	messageRange: aMessageRangeBlock
+
+	self 
+		assertTypeOfMessageSend: aSourceCode 
+		is: aExpectedType
+		in: self class
+		receiverRange: aReceiverRangeBlock 
+		messageRange: aMessageRangeBlock! !
+
+!SHST80RangeTypeTest methodsFor: 'assertions' stamp: 'HAW 10/5/2020 12:02:52'!
+assertTypeOfUnaryMessageSend: aSourceCode is: aExpectedType
+
+	self 
+		assertTypeOfMessageSend: aSourceCode 
+		is: aExpectedType 
+		receiverRange: [ :ranges | ranges penultimate ]
+		messageRange: [ :ranges | ranges last ]
+! !
+
+!SHST80RangeTypeTest methodsFor: 'assertions' stamp: 'HAW 7/15/2021 10:45:30'!
+assertTypesAreValidWhenMessageSendTo: aReceiverAsString
+
+	self assertTypeOfUnaryMessageSend: 'm1 ', aReceiverAsString, ' _zz' is: #undefinedUnary.
+	self assertTypeOfUnaryMessageSend: 'm1 ', aReceiverAsString, ' size' is: #unary.
+
+	" binary messages has beed disabled by now - Hernan
+	self assertTypeOfBinaryMessageSend: 'm1 ', aReceiverAsString, ' !! 2' is: #undefinedBinary.
+	self assertTypeOfBinaryMessageSend: 'm1 ', aReceiverAsString, ' = 2' is: #binary
+	"! !
+
+!SHST80RangeTypeTest methodsFor: 'messages for testing' stamp: 'HAW 10/5/2020 12:15:40'!
+!! something
+
+	"Do not remove this method because it exists for its name to have implementors - Hernan"! !
+
+!SHST80RangeTypeTest methodsFor: 'messages for testing' stamp: 'HAW 10/5/2020 12:15:50'!
+_zz
+
+	"Do not remove this method because it exists for its name to have implementors - Hernan"! !
+
+!DebuggerTest methodsFor: 'tests - method categories' stamp: 'HAW 8/19/2021 15:31:36'!
+testCategoriesAreAddedSortedByAndSeparatedByClass
+
+	| objectCategories protoObjectCategories categoriesPrompter |
+	
+	objectCategories := Object methodCategoriesAsSortedCollection.
+	protoObjectCategories := ProtoObject methodCategoriesAsSortedCollection removeAllFoundIn: objectCategories; yourself.
+	
+	"Test pre-conditions. May seem unnecesary but they are not if we take time into account - Hernan"
+	self assert: ProtoObject equals: Object superclass.
+	self assert: nil equals: ProtoObject superclass.
+	self assert: objectCategories notEmpty.
+	self assert: protoObjectCategories notEmpty.
+	
+	categoriesPrompter := MethodCategoriesPrompter staringFrom: Object rejectingFirst: false.
+	
+	self assert: 2 equals: categoriesPrompter lines size.
+	self assert: 1 equals: categoriesPrompter lines first.
+	self assert: (categoriesPrompter categories copyFrom: 2 to: categoriesPrompter lines second) asArray equals: objectCategories asArray.
+	self assert: (categoriesPrompter categories copyFrom: categoriesPrompter lines second + 1 to: categoriesPrompter categories size) asArray equals: protoObjectCategories asArray.
+	! !
+
+!DebuggerTest methodsFor: 'tests - method categories' stamp: 'HAW 8/19/2021 15:33:48'!
+testMetaclassCategoriesIncludesInstanceCreation
+
+	| categoriesPrompter |
+
+	categoriesPrompter := MethodCategoriesPrompter staringFrom: ProtoObject class rejectingFirst: false.
+	
+	self assert: Categorizer instanceCreation equals: categoriesPrompter categories second ! !
 
 !SmalltalkCompleterTest methodsFor: 'testing' stamp: 'jmv 7/14/2011 14:26'!
 testMessages
@@ -17997,84 +21295,6 @@ testWords
 		self assert: y = ian]
 ! !
 
-!TestValueWithinFix methodsFor: 'tests' stamp: 'jmv 4/17/2013 12:11'!
-testValueWithinNonLocalReturnFixReal
-	"self run: #testValueWithinNonLocalReturnFixReal"
-	"The real test for the fix is just as obscure as the original problem"
-	| startTime |
-	self valueWithinNonLocalReturn.
-	startTime := Time localMillisecondClock.
-	[[] repeat] valueWithin: 100 milliSeconds onTimeout:[ | deltaTime |
-		"This *should* timeout after 100 msecs but the pending process from
-		the previous invokation will signal timeout after 20 msecs already
-		which will in turn cut this invokation short."
-		deltaTime := Time localMillisecondClock - startTime.
-		self deny: deltaTime < 90.
-	].
-! !
-
-!TestValueWithinFix methodsFor: 'tests' stamp: 'ar 8/17/2007 13:38'!
-testValueWithinNonLocalReturnFixSimply
-	"self run: #testValueWithinNonLocalReturnFixSimply"
-	"The simple version to test the fix"
-	self valueWithinNonLocalReturn.
-	self shouldnt:[(Delay forMilliseconds: 50) wait] raise: TimedOut.! !
-
-!TestValueWithinFix methodsFor: 'tests' stamp: 'jmv 5/31/2022 16:44:39'!
-testValueWithinTimingBasic
-	"Test timing of valueWithin:onTimeout:"
-	| time |
-	time := [
-		[1000 milliSeconds asDelay wait]
-			valueWithin: 100 milliSeconds onTimeout: []
-	] durationToRun.
-	self assert: time < 200 milliSeconds.! !
-
-!TestValueWithinFix methodsFor: 'tests' stamp: 'jmv 11/7/2019 18:18:10'!
-testValueWithinTimingNestedInner
-	"Test nested timing of valueWithin:onTimeout:"
-	| time |
-	time := [
-		[
-			[5 seconds asDelay wait]
-				valueWithin: 100 milliSeconds onTimeout: []
-		] valueWithin: 500 milliSeconds onTimeout: []
-	] durationToRun.
-	self assert: time < 200 milliSeconds.! !
-
-!TestValueWithinFix methodsFor: 'tests' stamp: 'ar 12/4/2012 20:35'!
-testValueWithinTimingNestedOuter
-	"Test nested timing of valueWithin:onTimeout:"
-	| time |
-	time := [
-		[
-			3 timesRepeat: [
-				[5 seconds asDelay wait]
-					valueWithin: 100 milliSeconds onTimeout: []]
-		] valueWithin: 150 milliSeconds onTimeout: []
-	] durationToRun.
-	self assert: time > 100 milliSeconds.
-	self assert: time < 200 milliSeconds.
-	! !
-
-!TestValueWithinFix methodsFor: 'tests' stamp: 'jmv 5/31/2022 16:45:10'!
-testValueWithinTimingRepeat
-	"Test timing of valueWithin:onTimeout:"
-	| time |
-	time := [
-		3 timesRepeat: [
-			[500 milliSeconds asDelay wait]
-				valueWithin: 100 milliSeconds onTimeout: []]
-	] durationToRun.
-	self assert: time < 400 milliSeconds.
-! !
-
-!TestValueWithinFix methodsFor: 'tests' stamp: 'ar 8/17/2007 13:37'!
-valueWithinNonLocalReturn
-	"Do a non-local return from a valueWithin: block"
-	[^self] valueWithin: 20 milliSeconds onTimeout:[].
-! !
-
 !DynamicallyCodeCreationTest methodsFor: 'class factory' stamp: 'HAW 12/17/2019 10:31:27'!
 allClassCategoriesOfTestData
 
@@ -18620,6 +21840,317 @@ unusedVariableSource
 	^ 'griffle 
 		| goo |
 		^ nil'! !
+
+!ChangesTest methodsFor: 'assertions' stamp: 'HAW 11/1/2019 17:04:26'!
+assertIsLogged: aString times: stringCount and: aBlock
+
+	| logContent startPosition indexOfSubstring |
+
+	logContent := self userChangesForTestsFile textContents.
+ 
+	startPosition := 1.
+	stringCount <= 0
+		ifTrue: [ self deny: (logContent includesSubString: aString) ]
+		ifFalse:[
+			stringCount timesRepeat: [
+				indexOfSubstring := logContent findString: aString startingAt: startPosition.
+				self assert: indexOfSubstring > 0.
+				startPosition := indexOfSubstring + 1 ].
+			indexOfSubstring := logContent findString: aString startingAt: startPosition.
+			self assert: 0 equals: indexOfSubstring].
+		
+	aBlock value: logContent value: startPosition.
+	
+
+	! !
+
+!ChangesTest methodsFor: 'assertions' stamp: 'HAW 11/1/2019 17:03:04'!
+assertIsLoggedOnce: aString
+
+	self assertIsLoggedOnce: aString and: [:logContents :nextPosition | ] ! !
+
+!ChangesTest methodsFor: 'assertions' stamp: 'HAW 11/1/2019 17:02:33'!
+assertIsLoggedOnce: aString and: aBlock
+
+	self assertIsLogged: aString times: 1 and: aBlock! !
+
+!ChangesTest methodsFor: 'assertions' stamp: 'HAW 11/1/2019 17:03:30'!
+assertIsLoggedTwice: aString
+
+	self assertIsLogged: aString times: 2 and: [:logContents :nextPosition | ] ! !
+
+!ChangesTest methodsFor: 'user changes' stamp: 'jmv 5/16/2022 09:26:36'!
+changeUserChangesFileWhile: aBlock
+
+	^ PreferenceNG
+		withTemporaryValue: self userChangesForTestsFileExtension
+		of: #userChangesFileNameExtension
+		do: aBlock.! !
+
+!ChangesTest methodsFor: 'user changes' stamp: 'HAW 11/1/2019 17:07:57'!
+scanChangesFromFile
+
+	| fileStream changeList |
+
+	fileStream := Smalltalk defaultUserChangesName asFileEntry readStream.
+	changeList := ChangeList new scanFile: fileStream from: 0 to: fileStream size.
+
+	^ changeList changeList.
+! !
+
+!ChangesTest methodsFor: 'user changes' stamp: 'HAW 11/1/2019 17:08:00'!
+userChangesForTestsFile
+
+	^self userChangesForTestsFileName asFileEntry! !
+
+!ChangesTest methodsFor: 'user changes' stamp: 'HAW 11/1/2019 17:08:04'!
+userChangesForTestsFileExtension
+
+	^'.test.changes' ! !
+
+!ChangesTest methodsFor: 'user changes' stamp: 'HAW 11/1/2019 17:08:07'!
+userChangesForTestsFileName
+
+	^(FileIOAccessor default baseNameFor: Smalltalk imageName), self userChangesForTestsFileExtension! !
+
+!ChangesTest methodsFor: 'setUp/tearDown' stamp: 'HAW 12/17/2019 10:36:27'!
+tearDown
+
+	self userChangesForTestsFile delete.
+	super tearDown ! !
+
+!ChangesTest methodsFor: 'test data' stamp: 'HAW 12/17/2019 10:37:01'!
+createTestDataClass
+
+	^ self createClassNamed: self testDataClassName 
+		! !
+
+!ChangesTest methodsFor: 'test data' stamp: 'HAW 11/1/2019 17:08:21'!
+testDataClassName
+
+	^ #LogChangesTestClass__! !
+
+!ChangesTest methodsFor: 'scan tests' stamp: 'HAW 11/1/2019 17:08:27'!
+test01ScanNewClassChange
+
+	| newClass newClassChange |
+
+	self changeUserChangesFileWhile: [
+		newClass := self createTestDataClass.
+		newClassChange := self scanChangesFromFile last.
+
+		self assert: newClassChange changeType equals: #classDefinition.
+		self assert: newClassChange changeClass equals: newClass.
+		self deny: newClassChange stamp isNil.
+		self deny: newClassChange isTestClassChange.
+	] ! !
+
+!ChangesTest methodsFor: 'scan tests' stamp: 'HAW 11/1/2019 17:08:31'!
+test02ScanNewMethodChange
+
+	| newMethodChange newClass |
+
+	self changeUserChangesFileWhile: [
+		newClass := self createTestDataClass.
+		newClass compile: 'm1 ^ 1' classified: 'a-category'.
+
+		newMethodChange := self scanChangesFromFile last.
+
+		self assert: newMethodChange changeType equals: #method.
+		self assert: newMethodChange methodSelector equals: #m1.
+		self assert: newMethodChange changeClass equals: newClass.
+		self assert: newMethodChange prior isNil.
+		self deny: newMethodChange stamp isNil ] ! !
+
+!ChangesTest methodsFor: 'scan tests' stamp: 'HAW 11/1/2019 17:08:34'!
+test03ScanMethodModifiedChange
+
+	| methodModifiedChange newClass |
+
+	self changeUserChangesFileWhile: [
+		newClass := self createTestDataClass.
+		newClass compile: 'm1 ^ 1' classified: 'a-category'.
+		newClass compile: 'm1 ^ 2' classified: 'a-category'.
+
+		methodModifiedChange := self scanChangesFromFile last.
+
+		self assert: methodModifiedChange changeType equals: #method.
+		self assert: methodModifiedChange methodSelector equals: #m1.
+		self assert: methodModifiedChange changeClass equals: newClass.
+		self deny: methodModifiedChange prior isNil.
+		self deny: methodModifiedChange stamp isNil ]
+! !
+
+!ChangesTest methodsFor: 'scan tests' stamp: 'HAW 11/1/2019 17:08:37'!
+test04ScanMethodRemovalChange
+
+	| methodRemovalChange newClass |
+
+	self changeUserChangesFileWhile: [
+		newClass := self createTestDataClass.
+		newClass compile: 'm1 ^ 1' classified: 'a-category'.
+		newClass removeSelector: #m1.
+
+		methodRemovalChange := self scanChangesFromFile last.
+
+		self assert: methodRemovalChange isMethodDeletion.
+		self assert: methodRemovalChange methodSelector equals: #m1.
+		self deny: methodRemovalChange stamp isNil ]
+! !
+
+!ChangesTest methodsFor: 'scan tests' stamp: 'HAW 11/1/2019 17:08:40'!
+test05ScanClassRemovalChange
+
+	| classRemovalChange newClass |
+
+	self changeUserChangesFileWhile: [
+		newClass := self createTestDataClass.
+		newClass removeFromSystem.
+
+		classRemovalChange := self scanChangesFromFile last.
+
+		self assert: classRemovalChange changeType equals: #classRemoval.
+		self assert: classRemovalChange changeClassName equals: self testDataClassName.
+		self assert: classRemovalChange isClassDeletion.
+		self deny: classRemovalChange stamp isNil ]
+
+! !
+
+!ChangesTest methodsFor: 'scan tests' stamp: 'MGD 12/19/2019 19:37:24'!
+test06ScanClassRenamedChange
+
+	| classRenamedChange newClass |
+
+	self changeUserChangesFileWhile: [
+		newClass := self createTestDataClass.
+		newClass rename: #NewTestClass__.
+
+		classRenamedChange := self scanChangesFromFile last.
+
+		self assert: classRenamedChange changeType equals: #classRenamed.
+		self assert: classRenamedChange changeClassName equals: self testDataClassName.
+		self assert: classRenamedChange newClassName equals: #NewTestClass__.
+		self deny: classRenamedChange stamp isNil. ]
+! !
+
+!ChangesTest methodsFor: 'log tests' stamp: 'HAW 10/5/2020 11:33:10'!
+test01AddingAClassShouldBeLogged
+	" Log format expected:
+
+	!!classDefinition: #ClassName category: 'Category' stamp: changeStamp!!
+	Object subclass: #ClassName
+		instanceVariableNames: '...'
+		classVariableNames: '...'
+		poolDictionaries: '....'
+		category: 'Category'!!
+	"
+	| newClass |
+	
+	self changeUserChangesFileWhile: [
+		newClass := self createTestDataClass.
+
+		self assertIsLoggedOnce: '!!classDefinition: #', self testDataClassName, ' category: ''', self classCategoryOfTestData,''' stamp:'.
+		self assertIsLoggedOnce: newClass definition ] ! !
+
+!ChangesTest methodsFor: 'log tests' stamp: 'HAW 11/1/2019 17:08:48'!
+test02AddingANewMethodShouldBeLogged
+	" Log format expected:
+
+	!!Class methodsFor: 'category' stamp: 'author stamp'!!
+	methodSourceCode
+	"
+	| aClass |
+	
+	self changeUserChangesFileWhile: [
+		aClass := self createTestDataClass.
+		aClass compile: 'm1 ^ 1' classified: 'a-category'.
+
+		self assertIsLoggedOnce: '!!', self testDataClassName, ' methodsFor: ''a-category'' stamp:'.
+		self assertIsLoggedOnce: 'm1 ^ 1'] 
+! !
+
+!ChangesTest methodsFor: 'log tests' stamp: 'HAW 11/1/2019 17:08:50'!
+test03ChangingAMethodShouldBeLogged
+	" Log format expected:
+
+	!!Class methodsFor: 'category' stamp: 'author stamp'!!
+	newMethodSourceCode
+	"
+	| aClass |
+	
+	self changeUserChangesFileWhile: [
+		aClass := self createTestDataClass.
+		aClass compile: 'm1 ^ 1' classified: 'a-category'.
+		aClass compile: 'm1 ^ 2' classified: 'a-category'.
+
+		self assertIsLoggedTwice: '!!', self testDataClassName , ' methodsFor: ''a-category'' stamp:'.
+		self assertIsLoggedOnce: 'prior: '.
+		self assertIsLoggedOnce: 'm1 ^ 2' ] ! !
+
+!ChangesTest methodsFor: 'log tests' stamp: 'HAW 11/1/2019 17:08:53'!
+test04RemovingAMethodShouldBeLogged
+	" Log format expected:
+
+	!!methodRemoval: #ClassName selector stamp: changeStamp!!
+	methodSourceCode
+	"
+	| newClass methodSource readStream |
+
+	self changeUserChangesFileWhile: [
+		newClass := self createTestDataClass.
+		newClass compile: 'm1 ^ 1' classified: 'a-category'.
+		newClass removeSelector: #m1.
+
+		self 
+			assertIsLoggedOnce: '!!methodRemoval: ',self testDataClassName, ' #m1 stamp:'
+			and: [ :logContents :nextPosition |
+				readStream := ReadStream on: logContents.
+		 		readStream position: nextPosition.
+				readStream nextLine.
+				methodSource := readStream nextLine.
+		
+				self assert: 'm1 ^ 1!!' equals: methodSource ]]! !
+
+!ChangesTest methodsFor: 'log tests' stamp: 'HAW 11/1/2019 17:08:56'!
+test05RemovingAClassShouldBeLogged
+	" Log format expected:
+
+	!!classRemoval: #ClassName stamp: changeStamp!!
+	classDefinitionMessage
+	"
+	| newClass definition loggedDefinition readStream |
+
+	self changeUserChangesFileWhile: [
+		newClass := self createTestDataClass.
+		definition := newClass definition.
+		newClass removeFromSystem.
+
+		self 
+			assertIsLoggedOnce: '!!classRemoval: #', self testDataClassName, ' stamp:'
+			and: [ :logContents :nextPosition |
+				readStream := ReadStream on: logContents.
+		 		readStream position: nextPosition.
+				readStream nextLine.
+				loggedDefinition := readStream upToEnd.
+				
+				self assert: definition,'!!' equals: loggedDefinition ]]! !
+
+!ChangesTest methodsFor: 'log tests' stamp: 'MGD 3/30/2020 17:00:58'!
+test06RenamingAClassShouldBeLogged
+	" Log format expected:
+
+	!!classRenamed: #OldName as: #NewName stamp  stamp:!!
+	Smalltalk renameClassNamed: #OldName as: #NewName
+	"
+	| newClass |
+
+	self changeUserChangesFileWhile: [
+		newClass := self createTestDataClass.
+		newClass rename: #NewTestClass__.
+
+		self assertIsLoggedOnce: '!!classRenamed: #', self testDataClassName, ' as: #NewTestClass__ stamp:'.
+		self assertIsLoggedOnce: 'Smalltalk renameClassNamed: #', self testDataClassName, ' as: #NewTestClass__'.
+	]! !
 
 !ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 9/5/2021 22:02:42'!
 test01FindsSelectionOnSourceMethod
@@ -21784,6 +25315,1468 @@ test25CannotExtractArgumentNamesFromMethodSignature
 	self 
 		assertCreation: [ ExtractToTemporary named: newVariable at: intervalToExtract from: methodToRefactor ]
 		failsWith: [ SourceCodeOfTemporaryToBeExtractedPrecondition errorMessageForExtractingPartOfMethodSignature ]! !
+
+!InlineMethodTest methodsFor: 'refactoring helpers' stamp: 'FB 11/3/2021 19:50:39'!
+messageNodeReferenceOf: anImplementor inMethod: aMethodName atIndex: aSourceCodeIndex
+
+	| nodeToInline methodNode sourceCodeRange nodeAndRange |
+	
+	methodNode := (anImplementor >> aMethodName asSymbol) methodNode.
+	nodeAndRange := (methodNode
+		parseNodesPathAt: aSourceCodeIndex ifAbsent: [self fail]) first.
+	nodeToInline := nodeAndRange key.
+	(nodeToInline isKindOf: MessageNode ) ifFalse: [self failWith: 'There is no message node at the selected
+		class, method and index'].
+	sourceCodeRange := nodeAndRange value.
+	
+	^MessageNodeReference messageNode: nodeToInline selector: methodNode selector
+		class: anImplementor completeSourceRange: sourceCodeRange .! !
+
+!InlineMethodTest methodsFor: 'tests - validations' stamp: 'FB 4/8/2022 23:51:52'!
+test12CanNotInlineMethodAccessingPrivateVariablesNotVisibleToSender
+
+	| methodToInlineSource methodToInlineSelector nodeToInline methodWithUsageSelector methodWithUsageSource
+	 implementorClass senderClass |
+	
+	implementorClass  := self createClassNamed: self implementorClass.
+	implementorClass addInstVarName: 'y'.
+	senderClass  := self createClassNamed: self senderClass.
+	methodToInlineSelector := 'm1' asSymbol.
+	methodToInlineSource := methodToInlineSelector, ' y := 10. ^y.'.
+	implementorClass compile: methodToInlineSource.
+	
+	methodWithUsageSelector := 'm2' asSymbol.
+	methodWithUsageSource := methodWithUsageSelector, ' ^', implementorClass name, ' new ', methodToInlineSelector. 
+	senderClass compile: methodWithUsageSource.
+	
+	nodeToInline := self messageNodeReferenceOf: senderClass inMethod: methodWithUsageSelector atIndex: 42. 
+	self assertCreation: [
+		InlineMethod 
+		from: implementorClass >> methodToInlineSelector 
+		intoSendersAndUsages: (Array with: nodeToInline)
+		removeMethod: false.	
+	] failsWith: [InlineMethod methodAccessPrivateVariablesNotVisibleToSenderErrorMessage ]! !
+
+!InlineMethodTest methodsFor: 'tests - validations' stamp: 'FB 11/3/2021 23:50:29'!
+test13CanNotInlineMethodWithMultipleReturns
+
+	| methodToInlineSource methodToInlineSelector nodeToInline methodWithUsageSelector methodWithUsageSource
+	 implementorClass senderClass |
+	
+	implementorClass  := self createClassNamed: self implementorClass.
+	senderClass  := self createClassNamed: self senderClass.
+	methodToInlineSelector := 'm1' asSymbol.
+	methodToInlineSource := methodToInlineSelector, ' | y | y := 10. (y > 9) ifTrue: [^y]. ^20.'.
+	implementorClass compile: methodToInlineSource.
+	
+	methodWithUsageSelector := 'm2' asSymbol.
+	methodWithUsageSource := methodWithUsageSelector, ' ^', implementorClass name, ' new ', methodToInlineSelector. 
+	senderClass compile: methodWithUsageSource.
+	
+	nodeToInline := self messageNodeReferenceOf: senderClass inMethod: methodWithUsageSelector atIndex: 42. 
+	self assertCreation: [
+		InlineMethod 
+		from: implementorClass >> methodToInlineSelector 
+		intoSendersAndUsages: (Array with: nodeToInline)
+		removeMethod: false.
+	] failsWith: [InlineMethod methodHasMultipleReturnsErrorMessage]! !
+
+!InlineMethodTest methodsFor: 'tests - validations' stamp: 'FB 11/3/2021 23:50:36'!
+test14CanNotInlineMethodWithExplicitAndImplicitReturns
+
+	| methodToInlineSource methodToInlineSelector nodeToInline methodWithUsageSelector methodWithUsageSource
+	 implementorClass senderClass |
+	
+	implementorClass  := self createClassNamed: self implementorClass.
+	senderClass  := self createClassNamed: self senderClass.
+	methodToInlineSelector := 'm1' asSymbol.
+	methodToInlineSource := methodToInlineSelector, ' | y | y := 10. (y > 9) ifTrue: [^y]'. "Implicit ^self"
+	implementorClass compile: methodToInlineSource.
+	
+	methodWithUsageSelector := 'm2' asSymbol.
+	methodWithUsageSource := methodWithUsageSelector, ' ^', implementorClass name, ' new ', methodToInlineSelector. 
+	senderClass compile: methodWithUsageSource.
+	
+	nodeToInline := self messageNodeReferenceOf: senderClass inMethod: methodWithUsageSelector atIndex: 42. 
+	self assertCreation: [
+		InlineMethod 
+		from: implementorClass >> methodToInlineSelector 
+		intoSendersAndUsages: (Array with: nodeToInline)
+		removeMethod: false.
+	] failsWith: [InlineMethod methodHasMultipleReturnsErrorMessage]! !
+
+!InlineMethodTest methodsFor: 'tests - validations' stamp: 'FB 4/14/2022 15:23:05'!
+test24CanNotInlineCascadingMessageSend
+
+	| methodToInlineSource methodToInlineSelector nodeToInline methodWithUsageSelector  
+		methodWithUsagesSource implementorAndSenderClass |
+	 
+	implementorAndSenderClass  := self createClassNamed: self implementorClass.
+	methodToInlineSelector := 'm2' asSymbol.
+	methodToInlineSource := methodToInlineSelector, ' ^5'.
+	implementorAndSenderClass compile: methodToInlineSource.
+	
+	methodWithUsageSelector := 'm3' asSymbol.
+	methodWithUsagesSource := methodWithUsageSelector, ' self m1 ; m2.'.
+	
+	implementorAndSenderClass compile: methodWithUsagesSource.
+	
+	nodeToInline := self messageNodeReferenceOf: implementorAndSenderClass inMethod: methodWithUsageSelector atIndex: 15.
+	
+	self assertCreation: [
+		InlineMethod 
+		from: implementorAndSenderClass >> methodToInlineSelector 
+		intoSendersAndUsages: (Array with: nodeToInline)
+		removeMethod: false.
+	] failsWith: [InlineMethod messageSendCanNotBeCascadeErrorMessage ]! !
+
+!InlineMethodTest methodsFor: 'tests - validations' stamp: 'FB 5/21/2022 17:10:00'!
+test25CanNotInlineMethodFromAnotherClassReferencingSuper
+
+	| methodToInlineSource methodToInlineSelector nodeToInline methodWithUsageSelector methodWithUsageSource
+	 implementorClass senderClass |
+	
+	implementorClass  := self createClassNamed: self implementorClass.
+	senderClass  := self createClassNamed: self senderClass.
+	methodToInlineSelector := 'm1' asSymbol.
+	methodToInlineSource := methodToInlineSelector, ' | y z | y := 10. super m3. ^y.'.
+	implementorClass compile: methodToInlineSource.
+	
+	methodWithUsageSelector := 'm2' asSymbol.
+	methodWithUsageSource := methodWithUsageSelector, ' | t y | ^', implementorClass name, ' new ', methodToInlineSelector. 
+	senderClass compile: methodWithUsageSource.
+	
+	nodeToInline := self messageNodeReferenceOf: senderClass inMethod: methodWithUsageSelector atIndex: 51. 
+	
+	self assertCreation: [
+		InlineMethod 
+		from: implementorClass >> methodToInlineSelector 
+		intoSendersAndUsages: (Array with: nodeToInline)
+		removeMethod: false.
+	] failsWith: [InlineMethod methodToInlineReferencesSuperErrorMessage ]! !
+
+!InlineMethodTest methodsFor: 'tests - validations' stamp: 'FB 5/21/2022 17:22:49'!
+test26CanNotInlineMethodFromAnotherClassReferencingSelfWhenReceiverIsNotAVariable
+
+	| methodToInlineSource methodToInlineSelector nodeToInline methodWithUsageSelector methodWithUsageSource
+	 implementorClass senderClass |
+	
+	implementorClass  := self createClassNamed: self implementorClass.
+	senderClass  := self createClassNamed: self senderClass.
+	methodToInlineSelector := 'm1' asSymbol.
+	methodToInlineSource := methodToInlineSelector, ' | y z | y := 10. self m3. ^y.'.
+	implementorClass compile: methodToInlineSource.
+	
+	methodWithUsageSelector := 'm2' asSymbol.
+	methodWithUsageSource := methodWithUsageSelector, ' | t y | ^', implementorClass name, ' new ', methodToInlineSelector. 
+	senderClass compile: methodWithUsageSource.
+	
+	nodeToInline := self messageNodeReferenceOf: senderClass inMethod: methodWithUsageSelector atIndex: 51. 
+	
+	self assertCreation: [
+		InlineMethod 
+		from: implementorClass >> methodToInlineSelector 
+		intoSendersAndUsages: (Array with: nodeToInline)
+		removeMethod: false.
+	] failsWith: [InlineMethod methodToInlineReferencesSelfErrorMessage]! !
+
+!InlineMethodTest methodsFor: 'tests - successful' stamp: 'FB 11/3/2021 19:40:24'!
+test01InlineMethodOfSameClassWithoutReturnValue
+
+	| implementorAndSenderClass methodToInlineSource methodToInlineSelector 
+		nodeToInline methodWithUsageSelector methodWithUsageSource expectedNewSourceCode refactoring |
+	
+	implementorAndSenderClass  := self createClassNamed: self implementorClass.
+	methodToInlineSelector := 'm1' asSymbol.
+	methodToInlineSource := methodToInlineSelector, ' self doSomething.'.
+	implementorAndSenderClass compile: methodToInlineSource.
+	
+	methodWithUsageSelector := 'm2' asSymbol.
+	methodWithUsageSource := methodWithUsageSelector, ' | t | self m1. ^t'. 
+	implementorAndSenderClass compile: methodWithUsageSource.
+	
+	nodeToInline := self messageNodeReferenceOf: implementorAndSenderClass inMethod: methodWithUsageSelector atIndex: 15. 
+	
+	refactoring := InlineMethod 
+		from: implementorAndSenderClass >> methodToInlineSelector
+		intoSendersAndUsages: (Array with: nodeToInline)
+		removeMethod: false.
+	
+	refactoring apply.
+	
+	expectedNewSourceCode := methodWithUsageSelector,' | t | self doSomething. ^t'.
+	self assert: expectedNewSourceCode equals: (implementorAndSenderClass >> methodWithUsageSelector) sourceCode! !
+
+!InlineMethodTest methodsFor: 'tests - successful' stamp: 'FB 11/3/2021 23:47:31'!
+test02InlineMethodOfSameClassWithParametersAndWithoutReturnValue
+
+	| implementorAndSenderClass methodToInlineSource methodToInlineSelector 
+		nodeToInline methodWithUsageSelector methodWithUsageSource expectedNewSourceCode refactoring |
+	
+	implementorAndSenderClass  := self createClassNamed: self implementorClass.
+	methodToInlineSelector := 'm1:with:' asSymbol.
+	methodToInlineSource := 'm1: firstParam with: secondParam
+	self use: firstParam. 
+	self doSomethingWithParam: firstParam andParam: secondParam.'.
+	implementorAndSenderClass compile: methodToInlineSource.
+	
+	methodWithUsageSelector := 'm2' asSymbol.
+	methodWithUsageSource := methodWithUsageSelector, ' | t | self m1: 5 with: ''aString''.
+	 ^t'. 
+	implementorAndSenderClass compile: methodWithUsageSource.
+	
+	nodeToInline := self messageNodeReferenceOf: implementorAndSenderClass inMethod: methodWithUsageSelector atIndex: 15. 
+	
+	refactoring := InlineMethod 
+		from: implementorAndSenderClass >> methodToInlineSelector
+		intoSendersAndUsages: (Array with: nodeToInline)
+		removeMethod: false.
+	
+	refactoring apply.
+	
+	expectedNewSourceCode := methodWithUsageSelector,' | t | self use: 5.
+self doSomethingWithParam: 5 andParam: ''aString''.
+	 ^t'.
+	self assert: expectedNewSourceCode equals: (implementorAndSenderClass >> methodWithUsageSelector) sourceCode! !
+
+!InlineMethodTest methodsFor: 'tests - successful' stamp: 'FB 11/3/2021 23:47:48'!
+test03InlineMethodOfSameClassReturningConstantLiteral
+
+	| implementorAndSenderClass methodToInlineSource methodToInlineSelector 
+		nodeToInline methodWithUsageSelector methodWithUsageSource expectedNewSourceCode refactoring |
+	
+	implementorAndSenderClass  := self createClassNamed: self implementorClass.
+	methodToInlineSelector := 'm1' asSymbol.
+	methodToInlineSource := methodToInlineSelector, ' ^10.'.
+	implementorAndSenderClass compile: methodToInlineSource.
+	
+	methodWithUsageSelector := 'm2' asSymbol.
+	methodWithUsageSource := methodWithUsageSelector, ' | t | t := self m1. ^t'. 
+	implementorAndSenderClass compile: methodWithUsageSource.
+	
+	nodeToInline := self messageNodeReferenceOf: implementorAndSenderClass inMethod: methodWithUsageSelector atIndex: 20. 
+	
+	refactoring := InlineMethod 
+		from: implementorAndSenderClass >> methodToInlineSelector 
+		intoSendersAndUsages: (Array with: nodeToInline)
+		removeMethod: false.
+	
+	refactoring apply.
+	
+	expectedNewSourceCode := methodWithUsageSelector,' | t | t := 10. ^t'.
+	self assert: expectedNewSourceCode equals: (implementorAndSenderClass >> methodWithUsageSelector) sourceCode! !
+
+!InlineMethodTest methodsFor: 'tests - successful' stamp: 'FB 11/3/2021 23:47:57'!
+test04InlineMethodOfSameClassWithMultipleStatementsAndReturn
+
+	| implementorAndSenderClass methodToInlineSource methodToInlineSelector 
+		nodeToInline methodWithUsageSelector methodWithUsageSource expectedNewSourceCode refactoring |
+	
+	implementorAndSenderClass  := self createClassNamed: self implementorClass.
+	methodToInlineSelector := 'm1' asSymbol.
+	methodToInlineSource := methodToInlineSelector, ' self m3.
+self m4: 5.
+ ^10.'.
+	implementorAndSenderClass compile: methodToInlineSource.
+	
+	methodWithUsageSelector := 'm2' asSymbol.
+	methodWithUsageSource := methodWithUsageSelector, ' | t | t := self m1. ^t'. 
+	implementorAndSenderClass compile: methodWithUsageSource.
+	
+	nodeToInline := self messageNodeReferenceOf: implementorAndSenderClass inMethod: methodWithUsageSelector atIndex: 20. 
+	
+	refactoring := InlineMethod 
+		from: implementorAndSenderClass >> methodToInlineSelector 
+		intoSendersAndUsages: (Array with: nodeToInline)
+		removeMethod: false.
+	
+	refactoring apply.
+	
+	expectedNewSourceCode := methodWithUsageSelector,' | t | self m3.
+self m4: 5.
+t := 10. ^t'.
+	self assert: expectedNewSourceCode equals: (implementorAndSenderClass >> methodWithUsageSelector) sourceCode! !
+
+!InlineMethodTest methodsFor: 'tests - successful' stamp: 'FB 11/3/2021 23:48:05'!
+test05InlineMethodOfSameClassWithUnusedReturn
+
+	| implementorAndSenderClass methodToInlineSource methodToInlineSelector 
+		nodeToInline methodWithUsageSelector methodWithUsageSource expectedNewSourceCode refactoring |
+	
+	implementorAndSenderClass  := self createClassNamed: self implementorClass.
+	methodToInlineSelector := 'm1' asSymbol.
+	methodToInlineSource := methodToInlineSelector, ' self m3. ^10.'.
+	implementorAndSenderClass compile: methodToInlineSource.
+	
+	methodWithUsageSelector := 'm2' asSymbol.
+	methodWithUsageSource := methodWithUsageSelector, ' self m1. ^20'. 
+	implementorAndSenderClass compile: methodWithUsageSource.
+	
+	nodeToInline := self messageNodeReferenceOf: implementorAndSenderClass inMethod: methodWithUsageSelector atIndex: 9. 
+	
+	refactoring := InlineMethod 
+		from: implementorAndSenderClass >> methodToInlineSelector 
+		intoSendersAndUsages: (Array with: nodeToInline)
+		removeMethod: false.
+	
+	refactoring apply.
+	
+	expectedNewSourceCode := methodWithUsageSelector,' self m3. ^20'.
+	self assert: expectedNewSourceCode equals: (implementorAndSenderClass >> methodWithUsageSelector) sourceCode! !
+
+!InlineMethodTest methodsFor: 'tests - successful' stamp: 'FB 11/3/2021 23:48:13'!
+test06InlineMethodOfSameClassThatDeclaresTemporaryVariables
+
+	| implementorAndSenderClass methodToInlineSource methodToInlineSelector 
+		nodeToInline methodWithUsageSelector methodWithUsageSource expectedNewSourceCode refactoring |
+	
+	implementorAndSenderClass  := self createClassNamed: self implementorClass.
+	methodToInlineSelector := 'm1' asSymbol.
+	methodToInlineSource := methodToInlineSelector, ' | y z | y := 10. self m3. ^y.'.
+	implementorAndSenderClass compile: methodToInlineSource.
+	
+	methodWithUsageSelector := 'm2' asSymbol.
+	methodWithUsageSource := methodWithUsageSelector, ' | t | t := self m1. ^20'. 
+	implementorAndSenderClass compile: methodWithUsageSource.
+	
+	nodeToInline := self messageNodeReferenceOf: implementorAndSenderClass inMethod: methodWithUsageSelector atIndex: 20. 
+	
+	refactoring := InlineMethod 
+		from: implementorAndSenderClass >> methodToInlineSelector 
+		intoSendersAndUsages: (Array with: nodeToInline)
+		removeMethod: false.
+	
+	refactoring apply.
+	
+	expectedNewSourceCode := methodWithUsageSelector,' | t y z | y := 10.
+self m3.
+t := y. ^20'.
+	self assert: expectedNewSourceCode equals: (implementorAndSenderClass >> methodWithUsageSelector) sourceCode! !
+
+!InlineMethodTest methodsFor: 'tests - successful' stamp: 'FB 11/3/2021 23:49:35'!
+test07InlineMethodOfSameClassThatDeclaresTemporaryVariablesAlreadyDeclared
+
+	| implementorAndSenderClass methodToInlineSource methodToInlineSelector 
+		nodeToInline methodWithUsageSelector methodWithUsageSource expectedNewSourceCode refactoring |
+	
+	implementorAndSenderClass  := self createClassNamed: self implementorClass.
+	methodToInlineSelector := 'm1' asSymbol.
+	methodToInlineSource := methodToInlineSelector, ' | y z | y := 10. self m3. ^y.'.
+	implementorAndSenderClass compile: methodToInlineSource.
+	
+	methodWithUsageSelector := 'm2' asSymbol.
+	methodWithUsageSource := methodWithUsageSelector, ' | t y | t := self m1. ^20'. 
+	implementorAndSenderClass compile: methodWithUsageSource.
+	
+	nodeToInline := self messageNodeReferenceOf: implementorAndSenderClass inMethod: methodWithUsageSelector atIndex: 22. 
+	
+	refactoring := InlineMethod 
+		from: implementorAndSenderClass >> methodToInlineSelector 
+		intoSendersAndUsages: (Array with: nodeToInline)
+		removeMethod: false.
+	
+	refactoring apply.
+	
+	expectedNewSourceCode := methodWithUsageSelector,' | t y y1 z | y1 := 10.
+self m3.
+t := y1. ^20'.
+	self assert: expectedNewSourceCode equals: (implementorAndSenderClass >> methodWithUsageSelector) sourceCode! !
+
+!InlineMethodTest methodsFor: 'tests - successful' stamp: 'FB 11/3/2021 23:49:44'!
+test08InlineMethodDeclaresVariablesInClosestScope
+
+	| implementorAndSenderClass methodToInlineSource methodToInlineSelector 
+		nodeToInline methodWithUsageSelector methodWithUsageSource expectedNewSourceCode refactoring |
+	
+	implementorAndSenderClass  := self createClassNamed: self implementorClass.
+	methodToInlineSelector := 'm1' asSymbol.
+	methodToInlineSource := methodToInlineSelector, ' | y z | y := 10. self m3. ^y.'.
+	implementorAndSenderClass compile: methodToInlineSource.
+	
+	methodWithUsageSelector := 'm2' asSymbol.
+	methodWithUsageSource := methodWithUsageSelector, ' | t y | t := [self m1]. ^20'. 
+	implementorAndSenderClass compile: methodWithUsageSource.
+	
+	nodeToInline := self messageNodeReferenceOf: implementorAndSenderClass inMethod: methodWithUsageSelector atIndex: 22. 
+	
+	refactoring := InlineMethod 
+		from: implementorAndSenderClass >> methodToInlineSelector 
+		intoSendersAndUsages: (Array with: nodeToInline)
+		removeMethod: false.
+	
+	refactoring apply.
+	
+	expectedNewSourceCode := methodWithUsageSelector,' | t y | t := [| y1 z |
+y1 := 10.
+self m3.
+y1.]. ^20'.
+	self assert: expectedNewSourceCode equals: (implementorAndSenderClass >> methodWithUsageSelector) sourceCode! !
+
+!InlineMethodTest methodsFor: 'tests - successful' stamp: 'FB 5/21/2022 16:52:43'!
+test09InlineMethodReturnedInFullClosureKeepsTheReturnSymbol
+
+	| implementorAndSenderClass methodToInlineSource methodToInlineSelector 
+		nodeToInline methodWithUsageSelector methodWithUsageSource expectedNewSourceCode refactoring |
+	
+	implementorAndSenderClass  := self createClassNamed: self implementorClass.
+	methodToInlineSelector := 'm1' asSymbol.
+	methodToInlineSource := methodToInlineSelector, ' | y z | y := 10. ^y.'.
+	implementorAndSenderClass compile: methodToInlineSource.
+	
+	methodWithUsageSelector := 'm2' asSymbol.
+	methodWithUsageSource := methodWithUsageSelector, ' | t y | t := [^self m1]. ^20'. 
+	implementorAndSenderClass compile: methodWithUsageSource.
+	
+	nodeToInline := self messageNodeReferenceOf: implementorAndSenderClass inMethod: methodWithUsageSelector atIndex: 23. 
+	
+	refactoring := InlineMethod 
+		from: implementorAndSenderClass >> methodToInlineSelector 
+		intoSendersAndUsages: (Array with: nodeToInline)
+		removeMethod: false.
+	
+	refactoring apply.
+	
+	expectedNewSourceCode := methodWithUsageSelector,' | t y | t := [| y1 z |
+y1 := 10.
+^y1.]. ^20'.
+	self assert: expectedNewSourceCode equals: (implementorAndSenderClass >> methodWithUsageSelector) sourceCode! !
+
+!InlineMethodTest methodsFor: 'tests - successful' stamp: 'FB 5/21/2022 15:33:15'!
+test10InlineMethodOfAnotherClass
+
+	| methodToInlineSource methodToInlineSelector nodeToInline methodWithUsageSelector methodWithUsageSource
+	 expectedNewSourceCode refactoring implementorClass senderClass |
+	
+	implementorClass  := self createClassNamed: self implementorClass.
+	senderClass  := self createClassNamed: self senderClass.
+	methodToInlineSelector := 'm1' asSymbol.
+	methodToInlineSource := methodToInlineSelector, ' | y z | y := 10. ^y.'.
+	implementorClass compile: methodToInlineSource.
+	
+	methodWithUsageSelector := 'm2' asSymbol.
+	methodWithUsageSource := methodWithUsageSelector, ' | t y | ^', implementorClass name, ' new ', methodToInlineSelector. 
+	senderClass compile: methodWithUsageSource.
+	
+	nodeToInline := self messageNodeReferenceOf: senderClass inMethod: methodWithUsageSelector atIndex: 51. 
+	
+	refactoring := InlineMethod 
+		from: implementorClass >> methodToInlineSelector 
+		intoSendersAndUsages: (Array with: nodeToInline)
+		removeMethod: false.
+	
+	refactoring apply.
+	
+	expectedNewSourceCode := methodWithUsageSelector,' | t y y1 z | y1 := 10.
+^y1.'.
+	self assert: expectedNewSourceCode equals: (senderClass >> methodWithUsageSelector) sourceCode! !
+
+!InlineMethodTest methodsFor: 'tests - successful' stamp: 'FB 5/21/2022 18:00:21'!
+test11InlineClassMethodOfAnotherClass
+
+	| methodToInlineSource methodToInlineSelector nodeToInline methodWithUsageSelector methodWithUsageSource
+	 expectedNewSourceCode refactoring implementorClass senderClass |
+	
+	implementorClass  := self createClassNamed: self implementorClass.
+	senderClass  := self createClassNamed: self senderClass.
+	methodToInlineSelector := 'm1' asSymbol.
+	methodToInlineSource := methodToInlineSelector, ' | y z | y := 10. self m3. ^y.'.
+	implementorClass compile: methodToInlineSource.
+	
+	methodWithUsageSelector := 'm2' asSymbol.
+	methodWithUsageSource := methodWithUsageSelector, ' | t y | ^', implementorClass name, ' ', methodToInlineSelector. 
+	senderClass compile: methodWithUsageSource.
+	
+	nodeToInline := self messageNodeReferenceOf: senderClass inMethod: methodWithUsageSelector atIndex: 46. 
+	
+	refactoring := InlineMethod 
+		from: implementorClass >> methodToInlineSelector 
+		intoSendersAndUsages: (Array with: nodeToInline)
+		removeMethod: false.
+	
+	refactoring apply.
+	
+	expectedNewSourceCode := methodWithUsageSelector,' | t y y1 z | y1 := 10.
+',  implementorClass name, ' m3.
+^y1.'.
+	self assert: expectedNewSourceCode equals: (senderClass >> methodWithUsageSelector) sourceCode! !
+
+!InlineMethodTest methodsFor: 'tests - successful' stamp: 'FB 11/4/2021 22:06:01'!
+test15InlineUsagesOnSameClase
+
+	| methodToInlineSource methodToInlineSelector nodeToInline1 nodeToInline2 methodWithUsagesSelector methodWithUsagesSource
+	 implementorClass senderClass expectedNewSourceCode refactoring |
+	
+	implementorClass  := self createClassNamed: self implementorClass.
+	senderClass  := self createClassNamed: self senderClass.
+	methodToInlineSelector := 'm1' asSymbol.
+	methodToInlineSource := methodToInlineSelector, ' | y z | y := 10. self m3. ^y.'.
+	implementorClass compile: methodToInlineSource.
+	
+	methodWithUsagesSelector := 'm2' asSymbol.
+	methodWithUsagesSource := methodWithUsagesSelector, ' | t y | t := self m1. y := self m1. ^20'.  
+	senderClass compile: methodWithUsagesSource.
+	
+	nodeToInline1 := self messageNodeReferenceOf: senderClass inMethod: methodWithUsagesSelector atIndex: 22.
+	nodeToInline2 := self messageNodeReferenceOf: senderClass inMethod: methodWithUsagesSelector atIndex: 35.
+	
+	refactoring := InlineMethod 
+		from: implementorClass >> methodToInlineSelector 
+		intoSendersAndUsages: (Array with: nodeToInline1 with: nodeToInline2)
+		removeMethod: false.
+	
+	refactoring apply.
+	
+	expectedNewSourceCode := methodWithUsagesSelector,' | t y y1 z y2 z1 | y1 := 10.
+self m3.
+t := y1. y2 := 10.
+self m3.
+y := y2. ^20'.
+	self assert: expectedNewSourceCode equals: (senderClass >> methodWithUsagesSelector) sourceCode! !
+
+!InlineMethodTest methodsFor: 'tests - successful' stamp: 'FB 11/6/2021 16:27:57'!
+test16InlineUsageAndRemoveMethod
+
+	| methodToInlineSource methodToInlineSelector nodeToInline1 methodWithUsagesSelector methodWithUsagesSource
+	 implementorClass senderClass expectedNewSourceCode refactoring |
+	
+	implementorClass  := self createClassNamed: self implementorClass.
+	senderClass  := self createClassNamed: self senderClass.
+	methodToInlineSelector := 'm1' asSymbol.
+	methodToInlineSource := methodToInlineSelector, ' | y z | y := 10. self m3. ^y.'.
+	implementorClass compile: methodToInlineSource.
+	
+	methodWithUsagesSelector := 'm2' asSymbol.
+	methodWithUsagesSource := methodWithUsagesSelector, ' | t y | t := self m1. ^20'.  
+	senderClass compile: methodWithUsagesSource.
+	
+	nodeToInline1 := self messageNodeReferenceOf: senderClass inMethod: methodWithUsagesSelector atIndex: 22.
+	
+	refactoring := InlineMethod 
+		from: implementorClass >> methodToInlineSelector 
+		intoSendersAndUsages: (Array with: nodeToInline1)
+		removeMethod: true.
+	
+	refactoring apply.
+	
+	expectedNewSourceCode := methodWithUsagesSelector,' | t y y1 z | y1 := 10.
+self m3.
+t := y1. ^20'.
+	self assert: expectedNewSourceCode equals: (senderClass >> methodWithUsagesSelector) sourceCode.
+	self deny: (implementorClass canUnderstand: methodToInlineSelector).! !
+
+!InlineMethodTest methodsFor: 'tests - successful' stamp: 'FB 11/14/2021 20:52:41'!
+test17InlineMethodWithASingleReturnLineWhenResultIsNotAssigned
+
+	| methodToInlineSource methodToInlineSelector nodeToInline methodWithUsagesSelector methodWithUsagesSource
+	 implementorClass senderClass expectedNewSourceCode refactoring |
+	
+	implementorClass  := self createClassNamed: self implementorClass.
+	senderClass  := self createClassNamed: self senderClass.
+	methodToInlineSelector := 'm1' asSymbol.
+	methodToInlineSource := methodToInlineSelector, ' ^1.'.
+	implementorClass compile: methodToInlineSource.
+	
+	methodWithUsagesSelector := 'm2' asSymbol.
+	methodWithUsagesSource := methodWithUsagesSelector, ' self m1. ^20'.
+	senderClass compile: methodWithUsagesSource.
+	
+	nodeToInline := self messageNodeReferenceOf: senderClass inMethod: methodWithUsagesSelector atIndex: 10.
+	
+	refactoring := InlineMethod 
+		from: implementorClass >> methodToInlineSelector 
+		intoSendersAndUsages: (Array with: nodeToInline)
+		removeMethod: true.
+	
+	refactoring apply.
+	
+	expectedNewSourceCode := methodWithUsagesSelector,' ^20'.
+	self assert: expectedNewSourceCode equals: (senderClass >> methodWithUsagesSelector) sourceCode.! !
+
+!InlineMethodTest methodsFor: 'tests - successful' stamp: 'FB 11/21/2021 20:54:13'!
+test18InlineMethodUsedInLastStatementOfClosure
+
+	| methodToInlineSource methodToInlineSelector nodeToInline methodWithUsagesSelector methodWithUsagesSource
+	 implementorClass senderClass expectedNewSourceCode refactoring |
+	
+	implementorClass  := self createClassNamed: self implementorClass.
+	senderClass  := self createClassNamed: self senderClass.
+	methodToInlineSelector := 'm1' asSymbol.
+	methodToInlineSource := methodToInlineSelector, ' | x y | x := 1. y := 2. ^x + y.'.
+	implementorClass compile: methodToInlineSource.
+	
+	methodWithUsagesSelector := 'm2' asSymbol.
+	methodWithUsagesSource := methodWithUsagesSelector, ' | b | b := [1 + self m1]. ^b value'.
+	senderClass compile: methodWithUsagesSource.
+	
+	nodeToInline := self messageNodeReferenceOf: senderClass inMethod: methodWithUsagesSelector atIndex: 26.
+	
+	refactoring := InlineMethod 
+		from: implementorClass >> methodToInlineSelector 
+		intoSendersAndUsages: (Array with: nodeToInline)
+		removeMethod: true.
+	
+	refactoring apply.
+	
+	expectedNewSourceCode := methodWithUsagesSelector,' | b | b := [| x y |
+x := 1.
+y := 2.
+1 + (x + y).]. ^b value'.
+	self assert: expectedNewSourceCode equals: (senderClass >> methodWithUsagesSelector) sourceCode.! !
+
+!InlineMethodTest methodsFor: 'tests - successful' stamp: 'FB 11/21/2021 20:54:28'!
+test19InlineMethodIndentation
+
+	| methodToInlineSource methodToInlineSelector nodeToInline methodWithUsagesSelector methodWithUsagesSource
+	 implementorClass senderClass expectedNewSourceCode refactoring |
+	
+	implementorClass  := self createClassNamed: self implementorClass.
+	senderClass  := self createClassNamed: self senderClass.
+	methodToInlineSelector := 'm1' asSymbol.
+	methodToInlineSource := methodToInlineSelector, ' | x y | 
+		x := 1.
+		y := 2.
+		^x + y.'.
+	implementorClass compile: methodToInlineSource.
+	
+	methodWithUsagesSelector := 'm2' asSymbol.
+	methodWithUsagesSource := methodWithUsagesSelector, ' | b |
+		b := [
+			1 + self m1
+		].
+		^b value'.
+	senderClass compile: methodWithUsagesSource.
+	
+	nodeToInline := self messageNodeReferenceOf: senderClass inMethod: methodWithUsagesSelector atIndex: 32.
+	
+	refactoring := InlineMethod 
+		from: implementorClass >> methodToInlineSelector 
+		intoSendersAndUsages: (Array with: nodeToInline)
+		removeMethod: true.
+	
+	refactoring apply.
+	
+	expectedNewSourceCode := methodWithUsagesSelector,' | b |
+		b := [
+			| x y |
+			x := 1.
+			y := 2.
+			1 + (x + y).
+		].
+		^b value'.
+	self assert: expectedNewSourceCode equals: (senderClass >> methodWithUsagesSelector) sourceCode.! !
+
+!InlineMethodTest methodsFor: 'tests - successful' stamp: 'FB 11/21/2021 19:39:11'!
+test20InlineMethodUsedInReturn
+
+	| methodToInlineSource methodToInlineSelector nodeToInline methodWithUsagesSelector methodWithUsagesSource
+	 implementorClass senderClass expectedNewSourceCode refactoring |
+	
+	implementorClass  := self createClassNamed: self implementorClass.
+	senderClass  := self createClassNamed: self senderClass.
+	methodToInlineSelector := 'm1' asSymbol.
+	methodToInlineSource := methodToInlineSelector, '^5'.
+	implementorClass compile: methodToInlineSource.
+	
+	methodWithUsagesSelector := 'm2' asSymbol.
+	methodWithUsagesSource := methodWithUsagesSelector, ' ^3 * self m1'.
+	senderClass compile: methodWithUsagesSource.
+	
+	nodeToInline := self messageNodeReferenceOf: senderClass inMethod: methodWithUsagesSelector atIndex: 14.
+	
+	refactoring := InlineMethod 
+		from: implementorClass >> methodToInlineSelector 
+		intoSendersAndUsages: (Array with: nodeToInline)
+		removeMethod: true.
+	
+	refactoring apply.
+	
+	expectedNewSourceCode := methodWithUsagesSelector,' ^3 * 5.'.
+	self assert: expectedNewSourceCode equals: (senderClass >> methodWithUsagesSelector) sourceCode.! !
+
+!InlineMethodTest methodsFor: 'tests - successful' stamp: 'FB 11/21/2021 20:30:17'!
+test21InlineMethodAddsParenthesesWhenNeeded
+
+	| methodToInlineSource methodToInlineSelector nodeToInline methodWithUsagesSelector methodWithUsagesSource
+	 implementorClass senderClass expectedNewSourceCode refactoring |
+	
+	implementorClass  := self createClassNamed: self implementorClass.
+	senderClass  := self createClassNamed: self senderClass.
+	methodToInlineSelector := 'm1' asSymbol.
+	methodToInlineSource := methodToInlineSelector, '^5 + 10'.
+	implementorClass compile: methodToInlineSource.
+	
+	methodWithUsagesSelector := 'm2' asSymbol.
+	methodWithUsagesSource := methodWithUsagesSelector, ' ^3 * self m1'.
+	senderClass compile: methodWithUsagesSource.
+	
+	nodeToInline := self messageNodeReferenceOf: senderClass inMethod: methodWithUsagesSelector atIndex: 14.
+	
+	refactoring := InlineMethod 
+		from: implementorClass >> methodToInlineSelector 
+		intoSendersAndUsages: (Array with: nodeToInline)
+		removeMethod: true.
+	
+	refactoring apply.
+	
+	expectedNewSourceCode := methodWithUsagesSelector,' ^3 * (5 + 10).'.
+	self assert: expectedNewSourceCode equals: (senderClass >> methodWithUsagesSelector) sourceCode.! !
+
+!InlineMethodTest methodsFor: 'tests - successful' stamp: 'FB 4/8/2022 23:52:48'!
+test22InlineMethodOnSeveralSenders
+
+	| methodToInlineSource methodToInlineSelector nodeToInline1 nodeToInline2 methodWithUsageSelector1 methodWithUsageSelector2 
+		methodWithUsagesSource methodWithUsagesSource2 implementorClass senderClass expectedNewSourceCode1 expectedNewSourceCode2 refactoring  |
+	 
+	implementorClass  := self createClassNamed: self implementorClass.
+	senderClass  := self createClassNamed: self senderClass.
+	methodToInlineSelector := 'm1' asSymbol.
+	methodToInlineSource := methodToInlineSelector, ' ^1.'.
+	implementorClass compile: methodToInlineSource.
+	
+	methodWithUsageSelector1 := 'm2' asSymbol.
+	methodWithUsagesSource := methodWithUsageSelector1, ' ^self m1.'.
+	methodWithUsageSelector2 := 'm3' asSymbol.
+	methodWithUsagesSource2 := methodWithUsageSelector2, ' ^self m1.'.
+	senderClass compile: methodWithUsagesSource.
+	senderClass compile: methodWithUsagesSource2.
+	
+	nodeToInline1 := self messageNodeReferenceOf: senderClass inMethod: methodWithUsageSelector1 atIndex: 10.
+	nodeToInline2 := self messageNodeReferenceOf: senderClass inMethod: methodWithUsageSelector2 atIndex: 10.
+	
+	refactoring := InlineMethod 
+		from: implementorClass >> methodToInlineSelector 
+		intoSendersAndUsages: (Array with: nodeToInline1 with: nodeToInline2)
+		removeMethod: true.
+	
+	refactoring apply.
+	
+	expectedNewSourceCode1 := methodWithUsageSelector1,' ^1.'.
+	self assert: expectedNewSourceCode1 equals: (senderClass >> methodWithUsageSelector1) sourceCode.
+	
+	expectedNewSourceCode2 := methodWithUsageSelector2,' ^1.'.
+	self assert: expectedNewSourceCode2 equals: (senderClass >> methodWithUsageSelector2) sourceCode.! !
+
+!InlineMethodTest methodsFor: 'tests - successful' stamp: 'FB 4/9/2022 00:03:03'!
+test23InlineMethodFromSameClassAccessingPrivateVariables
+
+	| methodToInlineSource methodToInlineSelector nodeToInline methodWithUsageSelector  
+		methodWithUsagesSource implementorAndSenderClass expectedNewSourceCode refactoring  |
+	 
+	implementorAndSenderClass  := self createClassNamed: self implementorClass.
+	implementorAndSenderClass addInstVarName: 'y'.
+	methodToInlineSelector := 'm1' asSymbol.
+	methodToInlineSource := methodToInlineSelector, ' y := 1. ^y.'.
+	implementorAndSenderClass compile: methodToInlineSource.
+	
+	methodWithUsageSelector := 'm2' asSymbol.
+	methodWithUsagesSource := methodWithUsageSelector, ' ^self m1.'.
+	
+	implementorAndSenderClass compile: methodWithUsagesSource.
+	
+	nodeToInline := self messageNodeReferenceOf: implementorAndSenderClass inMethod: methodWithUsageSelector atIndex: 10.
+	
+	refactoring := InlineMethod 
+		from: implementorAndSenderClass >> methodToInlineSelector 
+		intoSendersAndUsages: (Array with: nodeToInline)
+		removeMethod: true.
+	
+	refactoring apply.
+	
+	expectedNewSourceCode := methodWithUsageSelector,' y := 1.
+^y.'.
+	self assert: expectedNewSourceCode equals: (implementorAndSenderClass >> methodWithUsageSelector) sourceCode.! !
+
+!InlineMethodTest methodsFor: 'tests - successful' stamp: 'FB 5/21/2022 17:35:15'!
+test27InlineMethodFromAnotherClassReferencingSelfWhenReceiverIsAVariable
+
+	| methodToInlineSource methodToInlineSelector nodeToInline methodWithUsageSelector methodWithUsageSource
+	 implementorClass senderClass expectedNewSourceCode refactoring |
+	
+	implementorClass  := self createClassNamed: self implementorClass.
+	senderClass  := self createClassNamed: self senderClass.
+	methodToInlineSelector := 'm1' asSymbol.
+	methodToInlineSource := methodToInlineSelector, ' | y | y := 10. self m3. ^y.'.
+	implementorClass compile: methodToInlineSource.
+	
+	methodWithUsageSelector := 'm2' asSymbol.
+	methodWithUsageSource := methodWithUsageSelector, ' | t | t := ', implementorClass name, ' new . ',
+	 '^ t ', methodToInlineSelector. 
+	senderClass compile: methodWithUsageSource.
+	
+	nodeToInline := self messageNodeReferenceOf: senderClass inMethod: methodWithUsageSelector atIndex: 58. 
+	refactoring := InlineMethod 
+		from: implementorClass >> methodToInlineSelector 
+		intoSendersAndUsages: (Array with: nodeToInline)
+		removeMethod: false.
+		
+	refactoring apply.
+	
+	expectedNewSourceCode := methodWithUsageSelector, ' | t y | t := ', implementorClass name, ' new . y := 10.
+t m3.
+^y.'.
+	self assert: expectedNewSourceCode equals: (senderClass >> methodWithUsageSelector) sourceCode.! !
+
+!InlineMethodTest methodsFor: 'tests - successful' stamp: 'FB 5/25/2022 20:43:16'!
+test28InlineMethodWithReturnUsedInSenderReturningImplicitSelf
+
+	| implementorAndSenderClass methodToInlineSource methodToInlineSelector 
+		nodeToInline methodWithUsageSelector methodWithUsageSource expectedNewSourceCode refactoring |
+	
+	implementorAndSenderClass  := self createClassNamed: self implementorClass.
+	methodToInlineSelector := 'm1' asSymbol.
+	methodToInlineSource := methodToInlineSelector, ' ^ 2 asString'.
+	implementorAndSenderClass compile: methodToInlineSource.
+	
+	methodWithUsageSelector := 'm2' asSymbol.
+	methodWithUsageSource := methodWithUsageSelector, ' self ' , methodToInlineSelector. 
+	implementorAndSenderClass compile: methodWithUsageSource.
+	
+	nodeToInline := self messageNodeReferenceOf: implementorAndSenderClass inMethod: methodWithUsageSelector atIndex: 9. 
+	
+	refactoring := InlineMethod 
+		from: implementorAndSenderClass >> methodToInlineSelector 
+		intoSendersAndUsages: (Array with: nodeToInline)
+		removeMethod: false.
+	
+	refactoring apply.
+	
+	expectedNewSourceCode := methodWithUsageSelector,'  2 asString.'.
+	self assert: expectedNewSourceCode equals: (implementorAndSenderClass >> methodWithUsageSelector) sourceCode! !
+
+!InlineMethodTest methodsFor: 'class factory' stamp: 'FB 11/22/2021 17:09:44'!
+anotherSenderClass
+
+	^#AnotherSenderOfMethodToInlineClass! !
+
+!InlineMethodTest methodsFor: 'class factory' stamp: 'FB 6/26/2021 19:23:34'!
+implementorClass
+
+	^#ImplementorOfMethodToInlineClass! !
+
+!InlineMethodTest methodsFor: 'class factory' stamp: 'FB 9/16/2021 23:31:21'!
+senderClass
+
+	^#SenderOfMethodToInlineClass! !
+
+!InlineTemporaryVariableTest methodsFor: 'class factory' stamp: 'FB 7/12/2020 14:20:19'!
+classToRefactor
+
+	^#ClassWithMethodToInlineTemporaryVariable! !
+
+!InlineTemporaryVariableTest methodsFor: 'tests - successful' stamp: 'FB 11/21/2020 18:07:04'!
+test03RefactoringRemovesUnusedTemporaryVariableDeclaration
+
+	|classToRefactor originalSource methodToRefactorName refactoring tempVarToInline expectedSourceCode |
+	
+	classToRefactor  := self createClassNamed: self classToRefactor.
+	tempVarToInline := 't1'.
+	methodToRefactorName := 'm1'.
+	originalSource := methodToRefactorName , ' |', tempVarToInline,'| ^nil.'.
+	classToRefactor compile: originalSource.
+	expectedSourceCode := methodToRefactorName, ' ^nil.'.
+	
+	refactoring := InlineTemporaryVariable named: tempVarToInline atUsageInterval: (5 to: 6)
+		 inMethod: classToRefactor >> methodToRefactorName asSymbol.
+	
+	refactoring apply.
+	
+	self assert: expectedSourceCode
+		equals: ((classToRefactor >> methodToRefactorName asSymbol)) sourceCode.! !
+
+!InlineTemporaryVariableTest methodsFor: 'tests - successful' stamp: 'FB 11/21/2020 18:07:44'!
+test04AssignmentToVariableToInlineIsDeleted
+
+	|classToRefactor originalSource methodToRefactorName tempVarToInline refactoring expectedNewSourceCode |
+	
+	classToRefactor  := self createClassNamed: self classToRefactor.
+	tempVarToInline := 't1'.
+	methodToRefactorName := 'm1'.
+	originalSource := methodToRefactorName,' | t1 | t1 := 2. ^nil.'.
+	classToRefactor compile: originalSource.
+	
+	refactoring := InlineTemporaryVariable named: tempVarToInline atUsageInterval: (11 to: 12)
+		 inMethod: classToRefactor >> methodToRefactorName asSymbol.
+	
+	refactoring apply.
+	
+	expectedNewSourceCode := methodToRefactorName,' ^nil.'.
+	self assert: expectedNewSourceCode equals: (classToRefactor >> methodToRefactorName asSymbol) sourceCode! !
+
+!InlineTemporaryVariableTest methodsFor: 'tests - successful' stamp: 'FB 12/4/2020 09:24:05'!
+test05RefactoringScopeIsBetweenAssignments
+
+	|classToRefactor originalSource methodToRefactorName tempVarToInline refactoring expectedNewSourceCode |
+	
+	classToRefactor  := self createClassNamed: self classToRefactor.
+	tempVarToInline := 't1'.
+	methodToRefactorName := 'm1'.
+	originalSource := methodToRefactorName,' | t1 | t1 := 1. t1 := 2. t1 := 3. ^nil.'.
+	classToRefactor compile: originalSource.
+	
+	refactoring := InlineTemporaryVariable named: tempVarToInline atUsageInterval: (20 to: 21)
+		 inMethod: classToRefactor >> methodToRefactorName asSymbol.
+	
+	refactoring apply.
+	
+	expectedNewSourceCode := methodToRefactorName,' | t1 | t1 := 1. t1 := 3. ^nil.'.
+	self assert: expectedNewSourceCode equals: (classToRefactor >> methodToRefactorName asSymbol) sourceCode! !
+
+!InlineTemporaryVariableTest methodsFor: 'tests - successful' stamp: 'FB 2/15/2021 17:58:26'!
+test06InlinedVariableUsagesAreReplacedWithTheVariablesValue
+
+	|classToRefactor originalSource methodToRefactorName tempVarToInline refactoring expectedNewSourceCode |
+	
+	classToRefactor  := self createClassNamed: self classToRefactor.
+	tempVarToInline := 't1'.
+	methodToRefactorName := 'm1'.
+	originalSource := methodToRefactorName,' | t1 | t1 := self m1: 1. self m2: t1'.
+	classToRefactor compile: originalSource.
+	
+	refactoring := InlineTemporaryVariable named: tempVarToInline atUsageInterval: (11 to: 12)
+		 inMethod: classToRefactor >> methodToRefactorName asSymbol.
+	
+	refactoring apply.
+	
+	expectedNewSourceCode := methodToRefactorName,' self m2: self m1: 1'.
+	self assert: expectedNewSourceCode equals: (classToRefactor >> methodToRefactorName asSymbol) sourceCode! !
+
+!InlineTemporaryVariableTest methodsFor: 'tests - successful' stamp: 'FB 2/15/2021 18:05:02'!
+test07RefactoringDoesNotAddParenthesesWhenTempIsLiteralAndReferenceIsReceiverOfUnaryMessage
+
+	|classToRefactor originalSource methodToRefactorName tempVarToInline refactoring expectedNewSourceCode |
+	
+	classToRefactor  := self createClassNamed: self classToRefactor.
+	tempVarToInline := 't1'.
+	methodToRefactorName := 'm1'.
+	originalSource := methodToRefactorName,' | t1 | t1 := 1. ^t1 abs'.
+	classToRefactor compile: originalSource.
+	
+	refactoring := InlineTemporaryVariable named: tempVarToInline atUsageInterval: (11 to: 12)
+		 inMethod: classToRefactor >> methodToRefactorName asSymbol.
+	
+	refactoring apply.
+	
+	expectedNewSourceCode := methodToRefactorName,' ^1 abs'.
+	self assert: expectedNewSourceCode equals: (classToRefactor >> methodToRefactorName asSymbol) sourceCode! !
+
+!InlineTemporaryVariableTest methodsFor: 'tests - successful' stamp: 'FB 2/15/2021 18:05:24'!
+test08RefactoringDoesNotAddParenthesesWhenTempIsLiteralAndReferenceIsArgumentOfBinaryMessage
+
+	|classToRefactor originalSource methodToRefactorName tempVarToInline refactoring expectedNewSourceCode |
+	
+	classToRefactor  := self createClassNamed: self classToRefactor.
+	tempVarToInline := 't1'.
+	methodToRefactorName := 'm1'.
+	originalSource := methodToRefactorName,' | t1 | t1 := 1. ^5 * t1'.
+	classToRefactor compile: originalSource.
+	
+	refactoring := InlineTemporaryVariable named: tempVarToInline atUsageInterval: (11 to: 12)
+		 inMethod: classToRefactor >> methodToRefactorName asSymbol.
+	
+	refactoring apply.
+	
+	expectedNewSourceCode := methodToRefactorName,' ^5 * 1'.
+	self assert: expectedNewSourceCode equals: (classToRefactor >> methodToRefactorName asSymbol) sourceCode! !
+
+!InlineTemporaryVariableTest methodsFor: 'tests - successful' stamp: 'FB 2/15/2021 18:06:27'!
+test09RefactoringAddsParenthesesWhenTempIsBinaryAndReferenceIsArgumentOfBinaryMessage
+
+	|classToRefactor originalSource methodToRefactorName tempVarToInline refactoring expectedNewSourceCode |
+	
+	classToRefactor  := self createClassNamed: self classToRefactor.
+	tempVarToInline := 't1'.
+	methodToRefactorName := 'm1'.
+	originalSource := methodToRefactorName,' | t1 | t1 := 1 + 2. ^5 * t1'.
+	classToRefactor compile: originalSource.
+	
+	refactoring := InlineTemporaryVariable named: tempVarToInline atUsageInterval: (11 to: 12)
+		 inMethod: classToRefactor >> methodToRefactorName asSymbol.
+	
+	refactoring apply.
+	
+	expectedNewSourceCode := methodToRefactorName,' ^5 * (1 + 2)'.
+	self assert: expectedNewSourceCode equals: (classToRefactor >> methodToRefactorName asSymbol) sourceCode! !
+
+!InlineTemporaryVariableTest methodsFor: 'tests - successful' stamp: 'FB 2/15/2021 18:06:31'!
+test10RefactoringDoesNotAddParenthesesWhenTempIsBinaryAndReferenceIsReceiverOfBinaryMessage
+
+	|classToRefactor originalSource methodToRefactorName tempVarToInline refactoring expectedNewSourceCode |
+	
+	classToRefactor  := self createClassNamed: self classToRefactor.
+	tempVarToInline := 't1'.
+	methodToRefactorName := 'm1'.
+	originalSource := methodToRefactorName,' | t1 | t1 := 1 + 2. ^t1 * 5'.
+	classToRefactor compile: originalSource.
+	
+	refactoring := InlineTemporaryVariable named: tempVarToInline atUsageInterval: (11 to: 12)
+		 inMethod: classToRefactor >> methodToRefactorName asSymbol.
+	
+	refactoring apply.
+	
+	expectedNewSourceCode := methodToRefactorName,' ^1 + 2 * 5'.
+	self assert: expectedNewSourceCode equals: (classToRefactor >> methodToRefactorName asSymbol) sourceCode! !
+
+!InlineTemporaryVariableTest methodsFor: 'tests - successful' stamp: 'FB 2/15/2021 18:10:13'!
+test11RefactoringAddsParenthesesWhenTempIsBinaryAndReferenceIsReceiverOfUnaryMessage
+
+	|classToRefactor originalSource methodToRefactorName tempVarToInline refactoring expectedNewSourceCode |
+	
+	classToRefactor  := self createClassNamed: self classToRefactor.
+	tempVarToInline := 't1'.
+	methodToRefactorName := 'm1'.
+	originalSource := methodToRefactorName,' | t1 | t1 := 1 - 2. ^t1 abs'.
+	classToRefactor compile: originalSource.
+	
+	refactoring := InlineTemporaryVariable named: tempVarToInline atUsageInterval: (11 to: 12)
+		 inMethod: classToRefactor >> methodToRefactorName asSymbol.
+	
+	refactoring apply.
+	
+	expectedNewSourceCode := methodToRefactorName,' ^(1 - 2) abs'.
+	self assert: expectedNewSourceCode equals: (classToRefactor >> methodToRefactorName asSymbol) sourceCode! !
+
+!InlineTemporaryVariableTest methodsFor: 'tests - successful' stamp: 'FB 2/20/2021 16:43:27'!
+test12RefactoringAddsParenthesesWhenTempIsBinaryAndReferenceIsPartOfMessageWhereReceiverIsAnotherReferenceToTemp
+
+	|classToRefactor originalSource methodToRefactorName tempVarToInline refactoring expectedNewSourceCode |
+	
+	classToRefactor  := self createClassNamed: self classToRefactor.
+	tempVarToInline := 't1'.
+	methodToRefactorName := 'm1'.
+	originalSource := methodToRefactorName,' | t1 | t1 := 1 * 5. ^t1 + t1 + t1'.
+	classToRefactor compile: originalSource.
+	
+	refactoring := InlineTemporaryVariable named: tempVarToInline atUsageInterval: (11 to: 12)
+		 inMethod: classToRefactor >> methodToRefactorName asSymbol.
+	
+	refactoring apply.
+	
+	expectedNewSourceCode := methodToRefactorName,' ^1 * 5 + (1 * 5) + (1 * 5)'.
+	self assert: expectedNewSourceCode equals: (classToRefactor >> methodToRefactorName asSymbol) sourceCode! !
+
+!InlineTemporaryVariableTest methodsFor: 'tests - successful' stamp: 'FB 2/16/2021 20:30:24'!
+test13RefactoringDoesNotAddParenthesesWhenTempIsBinaryAndReferenceIsArgumentOfKeywordMessage
+
+	|classToRefactor originalSource methodToRefactorName tempVarToInline refactoring expectedNewSourceCode |
+	
+	classToRefactor  := self createClassNamed: self classToRefactor.
+	tempVarToInline := 't1'.
+	methodToRefactorName := 'm1'.
+	originalSource := methodToRefactorName,' | t1 | t1 := 1 + 2. ^self m2: t1'.
+	classToRefactor compile: originalSource.
+	
+	refactoring := InlineTemporaryVariable named: tempVarToInline atUsageInterval: (11 to: 12)
+		 inMethod: classToRefactor >> methodToRefactorName asSymbol.
+	
+	refactoring apply.
+	
+	expectedNewSourceCode := methodToRefactorName,' ^self m2: 1 + 2'.
+	self assert: expectedNewSourceCode equals: (classToRefactor >> methodToRefactorName asSymbol) sourceCode! !
+
+!InlineTemporaryVariableTest methodsFor: 'tests - successful' stamp: 'FB 2/16/2021 20:29:05'!
+test14RefactoringAddsParenthesesWhenTempIsKeywordMessageAndReferenceIsReceiverOfBinaryMessage
+
+	|classToRefactor originalSource methodToRefactorName tempVarToInline refactoring expectedNewSourceCode |
+	
+	classToRefactor  := self createClassNamed: self classToRefactor.
+	tempVarToInline := 't1'.
+	methodToRefactorName := 'm1'.
+	originalSource := methodToRefactorName,' | t1 | t1 := self m2: 5. ^t1 * 2'.
+	classToRefactor compile: originalSource.
+	
+	refactoring := InlineTemporaryVariable named: tempVarToInline atUsageInterval: (11 to: 12)
+		 inMethod: classToRefactor >> methodToRefactorName asSymbol.
+	
+	refactoring apply.
+	
+	expectedNewSourceCode := methodToRefactorName,' ^(self m2: 5) * 2'.
+	self assert: expectedNewSourceCode equals: (classToRefactor >> methodToRefactorName asSymbol) sourceCode! !
+
+!InlineTemporaryVariableTest methodsFor: 'tests - successful' stamp: 'FB 2/16/2021 21:03:38'!
+test15RefactoringDoesNotAddParenthesesWhenTempIsKeywordMessageAndReferenceIsArgumentOfBinaryMessage
+
+	|classToRefactor originalSource methodToRefactorName tempVarToInline refactoring expectedNewSourceCode |
+	
+	classToRefactor  := self createClassNamed: self classToRefactor.
+	tempVarToInline := 't1'.
+	methodToRefactorName := 'm1'.
+	originalSource := methodToRefactorName,' | t1 | t1 := self m2: 5. ^2 * t1'.
+	classToRefactor compile: originalSource.
+	
+	refactoring := InlineTemporaryVariable named: tempVarToInline atUsageInterval: (11 to: 12)
+		 inMethod: classToRefactor >> methodToRefactorName asSymbol.
+	
+	refactoring apply.
+	
+	expectedNewSourceCode := methodToRefactorName,' ^2 * self m2: 5'.
+	self assert: expectedNewSourceCode equals: (classToRefactor >> methodToRefactorName asSymbol) sourceCode! !
+
+!InlineTemporaryVariableTest methodsFor: 'tests - successful' stamp: 'FB 2/20/2021 16:37:35'!
+test16RefactoringAddsParenthesesWhenTempIsKeywordAndReferenceIsPartOfMessageWhereArgumentIsAnotherReferenceToTemp
+
+	|classToRefactor originalSource methodToRefactorName tempVarToInline refactoring expectedNewSourceCode |
+	
+	classToRefactor  := self createClassNamed: self classToRefactor.
+	tempVarToInline := 't1'.
+	methodToRefactorName := 'm1'.
+	originalSource := methodToRefactorName,' | t1 | t1 := self m2: 5. ^t1 + t1 + 2 + t1 + t1'.
+	classToRefactor compile: originalSource.
+	
+	refactoring := InlineTemporaryVariable named: tempVarToInline atUsageInterval: (11 to: 12)
+		 inMethod: classToRefactor >> methodToRefactorName asSymbol.
+	
+	refactoring apply.
+	
+	expectedNewSourceCode := methodToRefactorName,' ^(self m2: 5) + (self m2: 5) + 2 + (self m2: 5) + self m2: 5'.
+	self assert: expectedNewSourceCode equals: (classToRefactor >> methodToRefactorName asSymbol) sourceCode! !
+
+!InlineTemporaryVariableTest methodsFor: 'tests - successful' stamp: 'FB 2/20/2021 19:56:15'!
+test17RefactoringDoesNotAddParenthesesWhenBothValueAndReferenceAlreadyHaveThem
+
+	|classToRefactor originalSource methodToRefactorName tempVarToInline refactoring expectedNewSourceCode |
+	
+	classToRefactor  := self createClassNamed: self classToRefactor.
+	tempVarToInline := 't1'.
+	methodToRefactorName := 'm1'.
+	originalSource := methodToRefactorName,' | t1 | t1 := (1 + 2). ^t1 + t1'.
+	classToRefactor compile: originalSource.
+	
+	refactoring := InlineTemporaryVariable named: tempVarToInline atUsageInterval: (11 to: 12)
+		 inMethod: classToRefactor >> methodToRefactorName asSymbol.
+	
+	refactoring apply.
+	
+	expectedNewSourceCode := methodToRefactorName,' ^(1 + 2) + (1 + 2)'.
+	self assert: expectedNewSourceCode equals: (classToRefactor >> methodToRefactorName asSymbol) sourceCode! !
+
+!InlineTemporaryVariableTest methodsFor: 'tests - successful' stamp: 'FB 3/10/2021 19:03:50'!
+test18RefactoringInlinesUsageOnNextAssignment
+
+	|classToRefactor originalSource methodToRefactorName tempVarToInline refactoring expectedNewSourceCode |
+	
+	classToRefactor  := self createClassNamed: self classToRefactor.
+	tempVarToInline := 't1'.
+	methodToRefactorName := 'm1'.
+	originalSource := methodToRefactorName,' | t1 t2 | t1 := 2 * 3. t2 := 5 * t1. t1 := 3 + t1'.
+	classToRefactor compile: originalSource.
+	
+	refactoring := InlineTemporaryVariable named: tempVarToInline atUsageInterval: (14 to: 15)
+		 inMethod: classToRefactor >> methodToRefactorName asSymbol.
+	
+	refactoring apply.
+	
+	expectedNewSourceCode := methodToRefactorName,' | t1 t2 | t2 := 5 * (2 * 3). t1 := 3 + (2 * 3)'.
+	self assert: expectedNewSourceCode equals: (classToRefactor >> methodToRefactorName asSymbol) sourceCode ! !
+
+!InlineTemporaryVariableTest methodsFor: 'tests - successful' stamp: 'FB 4/24/2021 18:16:08'!
+test20RefactoringBlockTemporaryDoesNotChangeFollowingBlocksDeclaringTemporaryWithSameName
+
+	| classToRefactor originalSource methodToRefactorName tempVarToInline refactoring expectedNewSourceCode |
+	
+	classToRefactor  := self createClassNamed: self classToRefactor.
+	tempVarToInline := 't'.
+	methodToRefactorName := 'm1'.
+	originalSource := methodToRefactorName,' | b1 b2| b1 := [ | t | t := 2. ^t * 2]. b2 := [ | t | t := 10. ^t+1]'.
+	classToRefactor compile: originalSource.
+	
+	refactoring := InlineTemporaryVariable named: tempVarToInline atUsageInterval: (23 to: 24)
+		 inMethod: classToRefactor >> methodToRefactorName asSymbol.
+	
+	refactoring apply.
+	
+	expectedNewSourceCode := methodToRefactorName,' | b1 b2| b1 := [ ^2 * 2]. b2 := [ | t | t := 10. ^t+1]'.
+	self assert: expectedNewSourceCode equals: (classToRefactor >> methodToRefactorName asSymbol) sourceCode
+
+	
+! !
+
+!InlineTemporaryVariableTest methodsFor: 'tests - successful' stamp: 'FB 4/24/2021 18:16:29'!
+test21RefactoringBlockTemporaryDoesNotChangePreviousBlocksDeclaringTemporaryWithSameName
+
+	| classToRefactor originalSource methodToRefactorName tempVarToInline refactoring expectedNewSourceCode |
+	
+	classToRefactor  := self createClassNamed: self classToRefactor.
+	tempVarToInline := 't'.
+	methodToRefactorName := 'm1'.
+	originalSource := methodToRefactorName,' | b1 b2| b1 := [ | t | t := 2. ^t * 2]. b2 := [ | t | t := 10. ^t+1]'.
+	classToRefactor compile: originalSource.
+	
+	refactoring := InlineTemporaryVariable named: tempVarToInline atUsageInterval: (58 to: 59)
+		 inMethod: classToRefactor >> methodToRefactorName asSymbol.
+	
+	refactoring apply.
+	
+	expectedNewSourceCode := methodToRefactorName,' | b1 b2| b1 := [ | t | t := 2. ^t * 2]. b2 := [ ^10+1]'.
+	self assert: expectedNewSourceCode equals: (classToRefactor >> methodToRefactorName asSymbol) sourceCode
+
+	
+! !
+
+!InlineTemporaryVariableTest methodsFor: 'tests - successful' stamp: 'FB 4/29/2021 21:08:23'!
+test22RefactoringNestedBlockTemporaryDoesNotChangeFollowingBlocksDeclaringTemporaryWithSameName
+
+	| classToRefactor originalSource methodToRefactorName tempVarToInline refactoring expectedNewSourceCode |
+	
+	classToRefactor  := self createClassNamed: self classToRefactor.
+	tempVarToInline := 't'.
+	methodToRefactorName := 'm1'.
+	originalSource := methodToRefactorName,' | b1 b2| b1 := [ | b3 | b3 := [ | t | t := 2. ^t * 2]. ^b3 ]. b2 := [ | t | t := 10. ^t+1]'.
+	classToRefactor compile: originalSource.
+	
+	refactoring := InlineTemporaryVariable named: tempVarToInline atUsageInterval: (38 to: 39)
+		 inMethod: classToRefactor >> methodToRefactorName asSymbol.
+	
+	refactoring apply.
+	
+	expectedNewSourceCode := methodToRefactorName,' | b1 b2| b1 := [ | b3 | b3 := [ ^2 * 2]. ^b3 ]. b2 := [ | t | t := 10. ^t+1]'.
+	self assert: expectedNewSourceCode equals: (classToRefactor >> methodToRefactorName asSymbol) sourceCode
+
+	
+! !
+
+!InlineTemporaryVariableTest methodsFor: 'tests - successful' stamp: 'FB 5/2/2021 19:16:02'!
+test23RefactoringBlockTemporaryFromDeclarationDoesNotChangePreviousBlocksDeclaringTemporaryWithSameName
+
+	| classToRefactor originalSource methodToRefactorName tempVarToInline refactoring expectedNewSourceCode |
+	
+	classToRefactor  := self createClassNamed: self classToRefactor.
+	tempVarToInline := 't'.
+	methodToRefactorName := 'm1'.
+	originalSource := methodToRefactorName,' | b1 b2| b1 := [ | t | t := 2. ^t * 2]. b2 := [ | t | t := 10. ^t+1]'.
+	classToRefactor compile: originalSource.
+	
+	refactoring := InlineTemporaryVariable named: tempVarToInline atUsageInterval: (54 to: 55)
+		 inMethod: classToRefactor >> methodToRefactorName asSymbol.
+	
+	refactoring apply.
+	
+	expectedNewSourceCode := methodToRefactorName,' | b1 b2| b1 := [ | t | t := 2. ^t * 2]. b2 := [ ^10+1]'.
+	self assert: expectedNewSourceCode equals: (classToRefactor >> methodToRefactorName asSymbol) sourceCode
+
+	
+! !
+
+!InlineTemporaryVariableTest methodsFor: 'tests - successful' stamp: 'FB 5/2/2021 19:25:41'!
+test24RefactoringOnlyRemovesDeclarationOfInlinedTemporary
+
+	| classToRefactor originalSource methodToRefactorName tempVarToInline refactoring expectedNewSourceCode |
+	
+	classToRefactor  := self createClassNamed: self classToRefactor.
+	tempVarToInline := 't2'.
+	methodToRefactorName := 'm1'.
+	originalSource := methodToRefactorName,' | b1 b2| b1 := [ | t | t := 2. ^t * 2]. b2 := [ | t t2 t3 | t := 10. ^t+1]'.
+	classToRefactor compile: originalSource.
+	
+	refactoring := InlineTemporaryVariable named: tempVarToInline atUsageInterval: (56 to: 57)
+		 inMethod: classToRefactor >> methodToRefactorName asSymbol.
+	
+	refactoring apply.
+	
+	expectedNewSourceCode := methodToRefactorName,' | b1 b2| b1 := [ | t | t := 2. ^t * 2]. b2 := [ | t t3 | t := 10. ^t+1]'.
+	self assert: expectedNewSourceCode equals: (classToRefactor >> methodToRefactorName asSymbol) sourceCode
+
+	
+! !
+
+!InlineTemporaryVariableTest methodsFor: 'tests - successful' stamp: 'FB 12/21/2021 20:27:55'!
+test26RefactoringAddsParenthesesWhenTempIsKeywordMessageAndReferenceIsArgumentOfKeywordMessage
+
+	|classToRefactor originalSource methodToRefactorName tempVarToInline refactoring expectedNewSourceCode |
+	
+	classToRefactor  := self createClassNamed: self classToRefactor.
+	tempVarToInline := 't1'.
+	methodToRefactorName := 'm1'.
+	originalSource := methodToRefactorName,' | t1 | t1 := self m2: 5. ^t1 do: 10'.
+	classToRefactor compile: originalSource.
+	
+	refactoring := InlineTemporaryVariable named: tempVarToInline atUsageInterval: (11 to: 12)
+		 inMethod: classToRefactor >> methodToRefactorName asSymbol.
+	
+	refactoring apply.
+	
+	expectedNewSourceCode := methodToRefactorName,' ^(self m2: 5) do: 10'.
+	self assert: expectedNewSourceCode equals: (classToRefactor >> methodToRefactorName asSymbol) sourceCode
+	
+	
+! !
+
+!InlineTemporaryVariableTest methodsFor: 'tests - successful' stamp: 'FB 12/28/2021 19:55:21'!
+test27RefactoringIsAllowedWhenVariableIsUsedInBlockButThereAreNoMoreAssignments
+
+	|classToRefactor originalSource methodToRefactorName tempVarToInline refactoring expectedNewSourceCode |
+	
+	classToRefactor  := self createClassNamed: self classToRefactor.
+	tempVarToInline := 't1'.
+	methodToRefactorName := 'm1'.
+	originalSource := methodToRefactorName,' | t1 b | t1 := 2. b := [5 * t1]. ^b value.'.
+	classToRefactor compile: originalSource.
+	
+	refactoring := InlineTemporaryVariable named: tempVarToInline atUsageInterval: (13 to: 14)
+		 inMethod: classToRefactor >> methodToRefactorName asSymbol.
+	
+	refactoring apply.
+	
+	expectedNewSourceCode := methodToRefactorName,' | b | b := [5 * 2]. ^b value.'.
+	self assert: expectedNewSourceCode equals: (classToRefactor >> methodToRefactorName asSymbol) sourceCode
+	
+	
+! !
+
+!InlineTemporaryVariableTest methodsFor: 'tests - successful' stamp: 'FB 3/19/2022 13:23:51'!
+test29InlineReferenceAtEndOfMethodWithoutStatementEndingCharacter
+
+	|classToRefactor originalSource methodToRefactorName tempVarToInline refactoring expectedNewSourceCode |
+	
+	classToRefactor  := self createClassNamed: self classToRefactor.
+	tempVarToInline := 'a'.
+	methodToRefactorName := 'm1'.
+	originalSource := methodToRefactorName,' | a | a := 1. ^self printOn: a'.
+	classToRefactor compile: originalSource.
+	
+	refactoring := InlineTemporaryVariable named: tempVarToInline atUsageInterval: (6 to: 6)
+		 inMethod: classToRefactor >> methodToRefactorName asSymbol.
+	
+	refactoring apply.
+	
+	expectedNewSourceCode := methodToRefactorName,' ^self printOn: 1'.
+	self assert: expectedNewSourceCode equals: (classToRefactor >> methodToRefactorName asSymbol) sourceCode
+	
+	
+! !
+
+!InlineTemporaryVariableTest methodsFor: 'tests - successful' stamp: 'FB 3/19/2022 13:26:10'!
+test30InlineFromReferenceLocatedAfterAssignment
+
+	|classToRefactor originalSource methodToRefactorName tempVarToInline refactoring expectedNewSourceCode |
+	
+	classToRefactor  := self createClassNamed: self classToRefactor.
+	tempVarToInline := 'a'.
+	methodToRefactorName := 'm1'.
+	originalSource := methodToRefactorName,' | a | a := 1. self printOn: a. ^a'.
+	classToRefactor compile: originalSource.
+	
+	refactoring := InlineTemporaryVariable named: tempVarToInline atUsageInterval: (36 to: 36)
+		 inMethod: classToRefactor >> methodToRefactorName asSymbol.
+	
+	refactoring apply.
+	
+	expectedNewSourceCode := methodToRefactorName,' self printOn: 1. ^1'.
+	self assert: expectedNewSourceCode equals: (classToRefactor >> methodToRefactorName asSymbol) sourceCode
+	
+	
+! !
+
+!InlineTemporaryVariableTest methodsFor: 'tests - successful' stamp: 'FB 4/3/2022 23:28:22'!
+test31InlineTemporaryUsedAfterAssignmentInBlock
+
+	|classToRefactor originalSource methodToRefactorName tempVarToInline refactoring expectedNewSourceCode |
+	
+	classToRefactor  := self createClassNamed: self classToRefactor.
+	tempVarToInline := 't1'.
+	methodToRefactorName := 'm1'.
+	originalSource := methodToRefactorName,' | b t1 | b := [ t1 := 30. ^t1]. ^t1'.
+	classToRefactor compile: originalSource.
+	
+	refactoring := InlineTemporaryVariable named: tempVarToInline atUsageInterval: (21 to: 22)
+		 inMethod: classToRefactor >> methodToRefactorName asSymbol.
+	
+	refactoring apply.
+	
+	expectedNewSourceCode := methodToRefactorName,' | b t1 | b := [ ^30]. ^t1'.
+	self assert: expectedNewSourceCode equals: (classToRefactor >> methodToRefactorName asSymbol) sourceCode
+	
+	
+! !
+
+!InlineTemporaryVariableTest methodsFor: 'tests - validations' stamp: 'FB 12/28/2021 20:02:39'!
+test01VariableToInlineCanNotBeEmpty
+
+	|classToRefactor originalSource methodToRefactorName tempVarToInline |
+	
+	classToRefactor  := self createClassNamed: self classToRefactor.
+	tempVarToInline := ' '.
+	methodToRefactorName := 'm1'.
+	originalSource := methodToRefactorName , ' |', tempVarToInline,'| ^nil.'.
+	classToRefactor compile: originalSource.
+	
+	self assertCreation: [InlineTemporaryVariable named: tempVarToInline atUsageInterval: (5 to: 6)
+		 inMethod: classToRefactor >> methodToRefactorName asSymbol.]
+	 failsWith: [InlineTemporaryVariable selectionIsNotATemporaryVariableErrorMessage].! !
+
+!InlineTemporaryVariableTest methodsFor: 'tests - validations' stamp: 'FB 12/28/2021 20:02:39'!
+test02VariableToInlineMustExistInSelector
+
+	|classToRefactor originalSource methodToRefactorName tempVarToInline |
+	
+	classToRefactor  := self createClassNamed: self classToRefactor.
+	tempVarToInline := 't1'.
+	methodToRefactorName := 'm1'.
+	originalSource := methodToRefactorName,' | |  ^nil.'.
+	classToRefactor compile: originalSource.
+	
+	self assertCreation: [InlineTemporaryVariable named: tempVarToInline atUsageInterval: (5 to: 6)
+		 inMethod: classToRefactor >> methodToRefactorName asSymbol.]
+	 failsWith: [InlineTemporaryVariable selectionIsNotATemporaryVariableErrorMessage].! !
+
+!InlineTemporaryVariableTest methodsFor: 'tests - validations' stamp: 'FB 3/25/2021 21:08:20'!
+test19CanNotRefactorTemporaryWhenUsedInBlockSurroundedWithAssignments
+
+	| classToRefactor originalSource methodToRefactorName tempVarToInline refactoring |
+	
+	classToRefactor  := self createClassNamed: self classToRefactor.
+	tempVarToInline := 't1'.
+	methodToRefactorName := 'm1'.
+	originalSource := methodToRefactorName,' | t1 b| t1 := 2. b := [5 * t1]. t1 := 3. ^b value.'.
+	classToRefactor compile: originalSource.
+	
+	refactoring := InlineTemporaryVariable named: tempVarToInline atUsageInterval: (12 to: 13)
+		 inMethod: classToRefactor >> methodToRefactorName asSymbol.
+	
+	[refactoring apply] on: Error
+		do: [:error | self assert: InlineTemporaryVariable temporaryUsedInBlockSurroundedWithAssignmentsErrorMessage equals: error messageText ]
+	
+	
+! !
+
+!InlineTemporaryVariableTest methodsFor: 'tests - validations' stamp: 'FB 12/21/2021 19:36:22'!
+test25CanNotRefactorTemporaryFromDeclarationWhenThereAreMultipleAssignments
+
+	| classToRefactor originalSource methodToRefactorName tempVarToInline refactoring |
+	
+	classToRefactor  := self createClassNamed: self classToRefactor.
+	tempVarToInline := 't1'.
+	methodToRefactorName := 'm1'.
+	originalSource := methodToRefactorName,' | t1 b| t1 := 2. b := 5 * t1. t1 := 3. ^b value.'.
+	classToRefactor compile: originalSource.
+	
+	refactoring := InlineTemporaryVariable named: tempVarToInline atUsageInterval: (6 to: 7)
+		 inMethod: classToRefactor >> methodToRefactorName asSymbol.
+	
+	[refactoring apply] on: Error
+		do: [:error | self assert: InlineTemporaryVariable moreThanOneAssignmentErrorMessage equals: error messageText ]
+	
+	
+! !
+
+!InlineTemporaryVariableTest methodsFor: 'tests - validations' stamp: 'FB 1/8/2022 13:07:57'!
+test28CanNotRefactorTemporaryFromDeclarationWhenVariableIsReferencedButNotAssigned
+
+	| classToRefactor originalSource methodToRefactorName tempVarToInline refactoring |
+	
+	classToRefactor  := self createClassNamed: self classToRefactor.
+	tempVarToInline := 't1'.
+	methodToRefactorName := 'm1'.
+	originalSource := methodToRefactorName,' | t1 b | b := 5 * t1. ^b value.'.
+	classToRefactor compile: originalSource.
+	
+	refactoring := InlineTemporaryVariable named: tempVarToInline atUsageInterval: (6 to: 7)
+		 inMethod: classToRefactor >> methodToRefactorName asSymbol.
+	
+	[refactoring apply] on: Error
+		do: [:error | self assert: InlineTemporaryVariable assignmentNotFoundErrorMessage equals: error messageText ]
+	
+	
+! !
 
 !InsertSuperclassTest methodsFor: 'tests' stamp: 'HAW 8/13/2018 18:01:00'!
 test01ChangesTheSuperclassOfTheClassToRefactor
@@ -25184,3449 +30177,140 @@ methodNodeIn: aClass named: aSelector
 
 	^ aClass compiledMethodAt: aSelector :: methodNode.! !
 
-!ChangesTest methodsFor: 'assertions' stamp: 'HAW 11/1/2019 17:04:26'!
-assertIsLogged: aString times: stringCount and: aBlock
-
-	| logContent startPosition indexOfSubstring |
-
-	logContent := self userChangesForTestsFile textContents.
- 
-	startPosition := 1.
-	stringCount <= 0
-		ifTrue: [ self deny: (logContent includesSubString: aString) ]
-		ifFalse:[
-			stringCount timesRepeat: [
-				indexOfSubstring := logContent findString: aString startingAt: startPosition.
-				self assert: indexOfSubstring > 0.
-				startPosition := indexOfSubstring + 1 ].
-			indexOfSubstring := logContent findString: aString startingAt: startPosition.
-			self assert: 0 equals: indexOfSubstring].
-		
-	aBlock value: logContent value: startPosition.
-	
-
-	! !
-
-!ChangesTest methodsFor: 'assertions' stamp: 'HAW 11/1/2019 17:03:04'!
-assertIsLoggedOnce: aString
-
-	self assertIsLoggedOnce: aString and: [:logContents :nextPosition | ] ! !
-
-!ChangesTest methodsFor: 'assertions' stamp: 'HAW 11/1/2019 17:02:33'!
-assertIsLoggedOnce: aString and: aBlock
-
-	self assertIsLogged: aString times: 1 and: aBlock! !
-
-!ChangesTest methodsFor: 'assertions' stamp: 'HAW 11/1/2019 17:03:30'!
-assertIsLoggedTwice: aString
-
-	self assertIsLogged: aString times: 2 and: [:logContents :nextPosition | ] ! !
-
-!ChangesTest methodsFor: 'user changes' stamp: 'jmv 5/16/2022 09:26:36'!
-changeUserChangesFileWhile: aBlock
-
-	^ PreferenceNG
-		withTemporaryValue: self userChangesForTestsFileExtension
-		of: #userChangesFileNameExtension
-		do: aBlock.! !
-
-!ChangesTest methodsFor: 'user changes' stamp: 'HAW 11/1/2019 17:07:57'!
-scanChangesFromFile
-
-	| fileStream changeList |
-
-	fileStream := Smalltalk defaultUserChangesName asFileEntry readStream.
-	changeList := ChangeList new scanFile: fileStream from: 0 to: fileStream size.
-
-	^ changeList changeList.
+!TestValueWithinFix methodsFor: 'tests' stamp: 'jmv 4/17/2013 12:11'!
+testValueWithinNonLocalReturnFixReal
+	"self run: #testValueWithinNonLocalReturnFixReal"
+	"The real test for the fix is just as obscure as the original problem"
+	| startTime |
+	self valueWithinNonLocalReturn.
+	startTime := Time localMillisecondClock.
+	[[] repeat] valueWithin: 100 milliSeconds onTimeout:[ | deltaTime |
+		"This *should* timeout after 100 msecs but the pending process from
+		the previous invokation will signal timeout after 20 msecs already
+		which will in turn cut this invokation short."
+		deltaTime := Time localMillisecondClock - startTime.
+		self deny: deltaTime < 90.
+	].
 ! !
 
-!ChangesTest methodsFor: 'user changes' stamp: 'HAW 11/1/2019 17:08:00'!
-userChangesForTestsFile
+!TestValueWithinFix methodsFor: 'tests' stamp: 'ar 8/17/2007 13:38'!
+testValueWithinNonLocalReturnFixSimply
+	"self run: #testValueWithinNonLocalReturnFixSimply"
+	"The simple version to test the fix"
+	self valueWithinNonLocalReturn.
+	self shouldnt:[(Delay forMilliseconds: 50) wait] raise: TimedOut.! !
 
-	^self userChangesForTestsFileName asFileEntry! !
+!TestValueWithinFix methodsFor: 'tests' stamp: 'jmv 5/31/2022 16:44:39'!
+testValueWithinTimingBasic
+	"Test timing of valueWithin:onTimeout:"
+	| time |
+	time := [
+		[1000 milliSeconds asDelay wait]
+			valueWithin: 100 milliSeconds onTimeout: []
+	] durationToRun.
+	self assert: time < 200 milliSeconds.! !
 
-!ChangesTest methodsFor: 'user changes' stamp: 'HAW 11/1/2019 17:08:04'!
-userChangesForTestsFileExtension
+!TestValueWithinFix methodsFor: 'tests' stamp: 'jmv 11/7/2019 18:18:10'!
+testValueWithinTimingNestedInner
+	"Test nested timing of valueWithin:onTimeout:"
+	| time |
+	time := [
+		[
+			[5 seconds asDelay wait]
+				valueWithin: 100 milliSeconds onTimeout: []
+		] valueWithin: 500 milliSeconds onTimeout: []
+	] durationToRun.
+	self assert: time < 200 milliSeconds.! !
 
-	^'.test.changes' ! !
+!TestValueWithinFix methodsFor: 'tests' stamp: 'ar 12/4/2012 20:35'!
+testValueWithinTimingNestedOuter
+	"Test nested timing of valueWithin:onTimeout:"
+	| time |
+	time := [
+		[
+			3 timesRepeat: [
+				[5 seconds asDelay wait]
+					valueWithin: 100 milliSeconds onTimeout: []]
+		] valueWithin: 150 milliSeconds onTimeout: []
+	] durationToRun.
+	self assert: time > 100 milliSeconds.
+	self assert: time < 200 milliSeconds.
+	! !
 
-!ChangesTest methodsFor: 'user changes' stamp: 'HAW 11/1/2019 17:08:07'!
-userChangesForTestsFileName
-
-	^(FileIOAccessor default baseNameFor: Smalltalk imageName), self userChangesForTestsFileExtension! !
-
-!ChangesTest methodsFor: 'setUp/tearDown' stamp: 'HAW 12/17/2019 10:36:27'!
-tearDown
-
-	self userChangesForTestsFile delete.
-	super tearDown ! !
-
-!ChangesTest methodsFor: 'test data' stamp: 'HAW 12/17/2019 10:37:01'!
-createTestDataClass
-
-	^ self createClassNamed: self testDataClassName 
-		! !
-
-!ChangesTest methodsFor: 'test data' stamp: 'HAW 11/1/2019 17:08:21'!
-testDataClassName
-
-	^ #LogChangesTestClass__! !
-
-!ChangesTest methodsFor: 'scan tests' stamp: 'HAW 11/1/2019 17:08:27'!
-test01ScanNewClassChange
-
-	| newClass newClassChange |
-
-	self changeUserChangesFileWhile: [
-		newClass := self createTestDataClass.
-		newClassChange := self scanChangesFromFile last.
-
-		self assert: newClassChange changeType equals: #classDefinition.
-		self assert: newClassChange changeClass equals: newClass.
-		self deny: newClassChange stamp isNil.
-		self deny: newClassChange isTestClassChange.
-	] ! !
-
-!ChangesTest methodsFor: 'scan tests' stamp: 'HAW 11/1/2019 17:08:31'!
-test02ScanNewMethodChange
-
-	| newMethodChange newClass |
-
-	self changeUserChangesFileWhile: [
-		newClass := self createTestDataClass.
-		newClass compile: 'm1 ^ 1' classified: 'a-category'.
-
-		newMethodChange := self scanChangesFromFile last.
-
-		self assert: newMethodChange changeType equals: #method.
-		self assert: newMethodChange methodSelector equals: #m1.
-		self assert: newMethodChange changeClass equals: newClass.
-		self assert: newMethodChange prior isNil.
-		self deny: newMethodChange stamp isNil ] ! !
-
-!ChangesTest methodsFor: 'scan tests' stamp: 'HAW 11/1/2019 17:08:34'!
-test03ScanMethodModifiedChange
-
-	| methodModifiedChange newClass |
-
-	self changeUserChangesFileWhile: [
-		newClass := self createTestDataClass.
-		newClass compile: 'm1 ^ 1' classified: 'a-category'.
-		newClass compile: 'm1 ^ 2' classified: 'a-category'.
-
-		methodModifiedChange := self scanChangesFromFile last.
-
-		self assert: methodModifiedChange changeType equals: #method.
-		self assert: methodModifiedChange methodSelector equals: #m1.
-		self assert: methodModifiedChange changeClass equals: newClass.
-		self deny: methodModifiedChange prior isNil.
-		self deny: methodModifiedChange stamp isNil ]
+!TestValueWithinFix methodsFor: 'tests' stamp: 'jmv 5/31/2022 16:45:10'!
+testValueWithinTimingRepeat
+	"Test timing of valueWithin:onTimeout:"
+	| time |
+	time := [
+		3 timesRepeat: [
+			[500 milliSeconds asDelay wait]
+				valueWithin: 100 milliSeconds onTimeout: []]
+	] durationToRun.
+	self assert: time < 400 milliSeconds.
 ! !
 
-!ChangesTest methodsFor: 'scan tests' stamp: 'HAW 11/1/2019 17:08:37'!
-test04ScanMethodRemovalChange
-
-	| methodRemovalChange newClass |
-
-	self changeUserChangesFileWhile: [
-		newClass := self createTestDataClass.
-		newClass compile: 'm1 ^ 1' classified: 'a-category'.
-		newClass removeSelector: #m1.
-
-		methodRemovalChange := self scanChangesFromFile last.
-
-		self assert: methodRemovalChange isMethodDeletion.
-		self assert: methodRemovalChange methodSelector equals: #m1.
-		self deny: methodRemovalChange stamp isNil ]
+!TestValueWithinFix methodsFor: 'tests' stamp: 'ar 8/17/2007 13:37'!
+valueWithinNonLocalReturn
+	"Do a non-local return from a valueWithin: block"
+	[^self] valueWithin: 20 milliSeconds onTimeout:[].
 ! !
 
-!ChangesTest methodsFor: 'scan tests' stamp: 'HAW 11/1/2019 17:08:40'!
-test05ScanClassRemovalChange
-
-	| classRemovalChange newClass |
-
-	self changeUserChangesFileWhile: [
-		newClass := self createTestDataClass.
-		newClass removeFromSystem.
-
-		classRemovalChange := self scanChangesFromFile last.
-
-		self assert: classRemovalChange changeType equals: #classRemoval.
-		self assert: classRemovalChange changeClassName equals: self testDataClassName.
-		self assert: classRemovalChange isClassDeletion.
-		self deny: classRemovalChange stamp isNil ]
-
-! !
-
-!ChangesTest methodsFor: 'scan tests' stamp: 'MGD 12/19/2019 19:37:24'!
-test06ScanClassRenamedChange
-
-	| classRenamedChange newClass |
-
-	self changeUserChangesFileWhile: [
-		newClass := self createTestDataClass.
-		newClass rename: #NewTestClass__.
-
-		classRenamedChange := self scanChangesFromFile last.
-
-		self assert: classRenamedChange changeType equals: #classRenamed.
-		self assert: classRenamedChange changeClassName equals: self testDataClassName.
-		self assert: classRenamedChange newClassName equals: #NewTestClass__.
-		self deny: classRenamedChange stamp isNil. ]
-! !
-
-!ChangesTest methodsFor: 'log tests' stamp: 'HAW 10/5/2020 11:33:10'!
-test01AddingAClassShouldBeLogged
-	" Log format expected:
-
-	!!classDefinition: #ClassName category: 'Category' stamp: changeStamp!!
-	Object subclass: #ClassName
-		instanceVariableNames: '...'
-		classVariableNames: '...'
-		poolDictionaries: '....'
-		category: 'Category'!!
-	"
-	| newClass |
-	
-	self changeUserChangesFileWhile: [
-		newClass := self createTestDataClass.
-
-		self assertIsLoggedOnce: '!!classDefinition: #', self testDataClassName, ' category: ''', self classCategoryOfTestData,''' stamp:'.
-		self assertIsLoggedOnce: newClass definition ] ! !
-
-!ChangesTest methodsFor: 'log tests' stamp: 'HAW 11/1/2019 17:08:48'!
-test02AddingANewMethodShouldBeLogged
-	" Log format expected:
-
-	!!Class methodsFor: 'category' stamp: 'author stamp'!!
-	methodSourceCode
-	"
-	| aClass |
-	
-	self changeUserChangesFileWhile: [
-		aClass := self createTestDataClass.
-		aClass compile: 'm1 ^ 1' classified: 'a-category'.
-
-		self assertIsLoggedOnce: '!!', self testDataClassName, ' methodsFor: ''a-category'' stamp:'.
-		self assertIsLoggedOnce: 'm1 ^ 1'] 
-! !
-
-!ChangesTest methodsFor: 'log tests' stamp: 'HAW 11/1/2019 17:08:50'!
-test03ChangingAMethodShouldBeLogged
-	" Log format expected:
-
-	!!Class methodsFor: 'category' stamp: 'author stamp'!!
-	newMethodSourceCode
-	"
-	| aClass |
-	
-	self changeUserChangesFileWhile: [
-		aClass := self createTestDataClass.
-		aClass compile: 'm1 ^ 1' classified: 'a-category'.
-		aClass compile: 'm1 ^ 2' classified: 'a-category'.
-
-		self assertIsLoggedTwice: '!!', self testDataClassName , ' methodsFor: ''a-category'' stamp:'.
-		self assertIsLoggedOnce: 'prior: '.
-		self assertIsLoggedOnce: 'm1 ^ 2' ] ! !
-
-!ChangesTest methodsFor: 'log tests' stamp: 'HAW 11/1/2019 17:08:53'!
-test04RemovingAMethodShouldBeLogged
-	" Log format expected:
-
-	!!methodRemoval: #ClassName selector stamp: changeStamp!!
-	methodSourceCode
-	"
-	| newClass methodSource readStream |
-
-	self changeUserChangesFileWhile: [
-		newClass := self createTestDataClass.
-		newClass compile: 'm1 ^ 1' classified: 'a-category'.
-		newClass removeSelector: #m1.
-
-		self 
-			assertIsLoggedOnce: '!!methodRemoval: ',self testDataClassName, ' #m1 stamp:'
-			and: [ :logContents :nextPosition |
-				readStream := ReadStream on: logContents.
-		 		readStream position: nextPosition.
-				readStream nextLine.
-				methodSource := readStream nextLine.
-		
-				self assert: 'm1 ^ 1!!' equals: methodSource ]]! !
-
-!ChangesTest methodsFor: 'log tests' stamp: 'HAW 11/1/2019 17:08:56'!
-test05RemovingAClassShouldBeLogged
-	" Log format expected:
-
-	!!classRemoval: #ClassName stamp: changeStamp!!
-	classDefinitionMessage
-	"
-	| newClass definition loggedDefinition readStream |
-
-	self changeUserChangesFileWhile: [
-		newClass := self createTestDataClass.
-		definition := newClass definition.
-		newClass removeFromSystem.
-
-		self 
-			assertIsLoggedOnce: '!!classRemoval: #', self testDataClassName, ' stamp:'
-			and: [ :logContents :nextPosition |
-				readStream := ReadStream on: logContents.
-		 		readStream position: nextPosition.
-				readStream nextLine.
-				loggedDefinition := readStream upToEnd.
-				
-				self assert: definition,'!!' equals: loggedDefinition ]]! !
-
-!ChangesTest methodsFor: 'log tests' stamp: 'MGD 3/30/2020 17:00:58'!
-test06RenamingAClassShouldBeLogged
-	" Log format expected:
-
-	!!classRenamed: #OldName as: #NewName stamp  stamp:!!
-	Smalltalk renameClassNamed: #OldName as: #NewName
-	"
-	| newClass |
-
-	self changeUserChangesFileWhile: [
-		newClass := self createTestDataClass.
-		newClass rename: #NewTestClass__.
-
-		self assertIsLoggedOnce: '!!classRenamed: #', self testDataClassName, ' as: #NewTestClass__ stamp:'.
-		self assertIsLoggedOnce: 'Smalltalk renameClassNamed: #', self testDataClassName, ' as: #NewTestClass__'.
-	]! !
-
-!ReadStreamTest methodsFor: 'tests' stamp: 'NM 10/25/2021 10:21:47'!
-testUpTo1ShortRecords
-	". this test ensures the upTo: delim method behaves as specified by the ANSI standard:
-	Delimiter is considered a separator (and therefore not required for the last chunk)."
-	| stream |
-	stream _ ReadStream on: 'record-1Xrecord-2Xrecord-incomplete'. 
-	self assert:  ((stream upTo: $X) =  'record-1').
-	self assert:  ((stream upTo: $X) =  'record-2').
-	self assert:  ((stream upTo: $X) =  'record-incomplete').
-	self assert:  ((stream upTo: $X) =  '').
-	". the stream has been all consumed" 
-	self assert:  (stream position = 35). ! !
-
-!ReadStreamTest methodsFor: 'tests' stamp: 'NM 10/25/2021 10:55:33'!
-testUpTo3LongUnterminatedRecord
-	"Long input, no delimiter found, expected to return all the data chunk up to the end of file. "
-	| longString stream read |
-	longString _ (1 to: 100)
-		inject: ''
-		into: [ :prev :each |
-			prev , 'A lot of stuff, needs over 2000 chars!! ' ].
-	stream _ ReadStream on: longString.
-	read _ stream upTo: $X.
-	self assert: read = longString.! !
-
-!ReadStreamTest methodsFor: 'tests' stamp: 'NM 10/25/2021 10:54:11'!
-testUpTo4LongUnterminatedRecord
-	"Big chunk, not delimiter found, expected return all the chunk  "
-	| stuff stream read |
-	stuff _ String streamContents: [ :strm |
-		1
-			to: 5000
-			do: [ :i |
-				i < 3000 ifTrue: [ strm nextPut: $a ].
-				i >= 3000 ifTrue: [ strm nextPut: $b ]]].
-	stream _ ReadStream on: stuff.
-	read _ stream upTo: $X.
-	self assert: read size = 5000.! !
-
-!ReadStreamTest methodsFor: 'tests' stamp: 'NM 10/25/2021 10:58:48'!
-testUpTo5TerminatedAndUnterminatedLongRecords
-	"Two big chunks, one delimiter in the middle, expected to return 
-      the first time a big chunk, the second time the second block up to EOF.  "
-	| stuff stream read |
-	stuff _ String streamContents: [ :strm |
-		1
-			to: 6000
-			do: [ :i |
-				i < 3000 ifTrue: [ strm nextPut: $a ].
-				i = 3000 ifTrue: [ strm nextPut: $X ].
-				i > 3000 ifTrue: [ strm nextPut: $b ]]].
-	stream _ ReadStream on: stuff.
-	" first scan, the delimiter is found but not printed.  "
-	read _ stream upTo: $X.
-	self assert: read size = 2999.
-	self assert: (read at: 1) = $a.
-	" second scan. the delimiter is not found, all second chunk is returned  "
-	read _ stream upTo: $X.
-	self assert: read size = 3000.
-	self assert: (read at: 1) = $b.! !
-
-!ReadStreamTest methodsFor: 'tests' stamp: 'NM 10/25/2021 10:59:51'!
-testUpTo6TerminatedLongRecords
-	"Two big chunks, one delimiter in the middle, one at the end. expected to return 
-      two big chunks in two read, delimiters excluded.  "
-	| stuff stream read |
-	stuff _ String streamContents: [ :strm |
-		1
-			to: 6000
-			do: [ :i |
-				i < 3000 ifTrue: [ strm nextPut: $a ].
-				i = 3000 ifTrue: [ strm nextPut: $X ].
-				((Interval
-					from: 3001
-					to: 5999) includes: i) ifTrue: [ strm nextPut: $b ].
-				i = 6000 ifTrue: [ strm nextPut: $X ]]].
-	stream _ ReadStream on: stuff.
-	" first scan, delimiter is found, return all the block delimiter excluded "
-	read _ stream upTo: $X.
-	self assert: read size = 2999.
-	self assert: (read at: 1) = $a.
-	" second scan, return chunk, delimiter excluded.  "
-	read _ stream upTo: $X.
-	self assert: read size = 2999.
-	self assert: (read at: 1) = $b.! !
-
-!ReadStreamTest methodsFor: 'tests' stamp: 'NM 10/25/2021 11:00:52'!
-testUpToTerminator1ShortRecords
-	"
-	. Read a file stream up to 'delim' in a strict way. 
-	. If delim is found returns everything up to the first occurrence of 'delim' included.
-	. if delim is not found returns nil and set the FileStream position where it was before
-	the call was made. This ensures if another process writes into the file another delim
-	limited token we will fully read it on next upTo call.
-	This means Delimiter is a Terminator: a chunk is only considered well formed if it ends with it.
-	"
-	| stream |
-	stream _ ReadStream on: 'record-1Xrecord-2Xrecord-incomplete'. 
-	self assert:  ((stream upTo: $X delimiterIsTerminator: true) =  'record-1X').
-	self assert:  ((stream upTo: $X delimiterIsTerminator: true) =  'record-2X').
-	self assert:  ((stream upTo: $X delimiterIsTerminator: true) =  nil).
-	". we are not at the end of the stream, but just after the last delim was found.
-	we are ready to receive other delim limitated tokens. if they get written.
-	"
-	self assert:  (stream position = 18).! !
-
-!ReadStreamTest methodsFor: 'tests' stamp: 'NM 10/25/2021 11:01:38'!
-testUpToTerminator3LongUnterminatedRecord
-	"Long input, no delimiter found, expected to return nil. "
-	| longString stream read |
-	longString _ (1 to: 100)
-		inject: ''
-		into: [ :prev :each |
-			prev , 'A lot of stuff, needs over 2000 chars!! ' ].
-	stream _ ReadStream on: longString.
-	read _ stream
-		upTo: $X
-		delimiterIsTerminator: true.
-	self assert: read = nil.! !
-
-!ReadStreamTest methodsFor: 'tests' stamp: 'NM 10/25/2021 11:02:04'!
-testUpToTerminator4LongUnterminatedRecord
-	"Big chunk, not delimiter found, expected return nil  "
-	| stuff stream read |
-	stuff _ String streamContents: [ :strm |
-		1
-			to: 5000
-			do: [ :i |
-				i < 3000 ifTrue: [ strm nextPut: $a ].
-				i >= 3000 ifTrue: [ strm nextPut: $b ]]].
-	stream _ ReadStream on: stuff.
-	read _ stream
-		upTo: $X
-		delimiterIsTerminator: true.
-	self assert: read = nil.! !
-
-!ReadStreamTest methodsFor: 'tests' stamp: 'NM 10/25/2021 11:02:36'!
-testUpToTerminator5TerminatedAndUnterminatedLongRecords
-	"Two big chunks, one delimiter in the middle, expected to return 
-      the first time a big chunk, the second time nil.  "
-	| stuff stream read |
-	stuff _ String streamContents: [ :strm |
-		1
-			to: 6000
-			do: [ :i |
-				i < 3000 ifTrue: [ strm nextPut: $a ].
-				i = 3000 ifTrue: [ strm nextPut: $X ].
-				i > 3000 ifTrue: [ strm nextPut: $b ]]].
-	stream _ ReadStream on: stuff.
-	" first scan, delimiter is found, return all the block delimiter included "
-	read _ stream
-		upTo: $X
-		delimiterIsTerminator: true.
-	self assert: read size = 3000.
-	self assert: (read at: 1) = $a.
-	" second scan, delimiter not found, returns nil  "
-	read _ stream
-		upTo: $X
-		delimiterIsTerminator: true.
-	self assert: read = nil.! !
-
-!ReadStreamTest methodsFor: 'tests' stamp: 'NM 10/25/2021 11:03:06'!
-testUpToTerminator6TerminatedLongRecords
-	"Two big chunks, one delimiter in the middle, one at the end expected to return 
-      two big chunks in two read, delimiters included.  "
-	| stuff stream read |
-	stuff _ String streamContents: [ :strm |
-		1
-			to: 6000
-			do: [ :i |
-				i < 3000 ifTrue: [ strm nextPut: $a ].
-				i = 3000 ifTrue: [ strm nextPut: $X ].
-				((Interval
-					from: 3001
-					to: 5999) includes: i) ifTrue: [ strm nextPut: $b ].
-				i = 6000 ifTrue: [ strm nextPut: $X ]]].
-	stream _ ReadStream on: stuff.
-	" first scan, delimiter is found, return all the block delimiter included "
-	read _ stream
-		upTo: $X
-		delimiterIsTerminator: true.
-	self assert: read size = 3000.
-	self assert: (read at: 1) = $a.
-	" second scan, delimiter found, return chunk, delimiter included   "
-	read _ stream
-		upTo: $X
-		delimiterIsTerminator: true.
-	self assert: read size = 3000.
-	self assert: (read at: 1) = $b.! !
-
-!ReadWriteStreamTest methodsFor: 'tests' stamp: 'NM 10/25/2021 11:06:39'!
-testUpTo1ShortRecords
-	". this test ensures the upTo: delim method behaves as specified by the ANSI standard:
-	Delimiter is considered a separator (and therefore not required for the last chunk)."
-	| stream |
-	stream _ ReadWriteStream on: ''. 
-	stream nextPutAll: 'record-1Xrecord-2Xrecord-incomplete'.
-	stream position: 0.
-	self assert:  ((stream upTo: $X) =  'record-1').
-	self assert:  ((stream upTo: $X) =  'record-2').
-	self assert:  ((stream upTo: $X) =  'record-incomplete').
-	self assert:  ((stream upTo: $X) =  '').
-	". the stream has been all consumed" 
-	self assert:  (stream position = 35). ! !
-
-!ReadWriteStreamTest methodsFor: 'tests' stamp: 'NM 10/25/2021 11:07:32'!
-testUpTo3LongUnterminatedRecord
-	"Long input, no delimiter found, expected to return all the data chunk up to the end of file. "
-	| longString stream read |
-	longString _ (1 to: 100)
-		inject: ''
-		into: [ :prev :each |
-			prev , 'A lot of stuff, needs over 2000 chars!! ' ].
-	stream _ ReadWriteStream on: ''. 
-	stream nextPutAll: longString.
-	stream position: 0.
-	read _ stream upTo: $X.
-	self assert: read = longString.! !
-
-!ReadWriteStreamTest methodsFor: 'tests' stamp: 'NM 10/25/2021 11:08:12'!
-testUpTo4LongUnterminatedRecord
-	"Big chunk, not delimiter found, expected return all the chunk  "
-	| stuff stream read |
-	stuff _ String streamContents: [ :strm |
-		1
-			to: 5000
-			do: [ :i |
-				i < 3000 ifTrue: [ strm nextPut: $a ].
-				i >= 3000 ifTrue: [ strm nextPut: $b ]]].
-	stream _ ReadWriteStream on: ''. 
-	stream nextPutAll: stuff.
-	stream position: 0.
-	read _ stream upTo: $X.
-	self assert: read size = 5000.! !
-
-!ReadWriteStreamTest methodsFor: 'tests' stamp: 'NM 10/25/2021 11:08:41'!
-testUpTo5TerminatedAndUnterminatedLongRecords
-	"Two big chunks, one delimiter in the middle, expected to return 
-      the first time a big chunk, the second time the second block up to EOF.  "
-	| stuff stream read |
-	stuff _ String streamContents: [ :strm |
-		1
-			to: 6000
-			do: [ :i |
-				i < 3000 ifTrue: [ strm nextPut: $a ].
-				i = 3000 ifTrue: [ strm nextPut: $X ].
-				i > 3000 ifTrue: [ strm nextPut: $b ]]].
-	stream _ ReadWriteStream on: ''. 
-	stream nextPutAll: stuff.
-	stream position: 0.
-	" first scan, the delimiter is found but not printed.  "
-	read _ stream upTo: $X.
-	self assert: read size = 2999.
-	self assert: (read at: 1) = $a.
-	" second scan. the delimiter is not found, all second chunk is returned  "
-	read _ stream upTo: $X.
-	self assert: read size = 3000.
-	self assert: (read at: 1) = $b.! !
-
-!ReadWriteStreamTest methodsFor: 'tests' stamp: 'NM 10/25/2021 11:08:54'!
-testUpTo6TerminatedLongRecords
-	"Two big chunks, one delimiter in the middle, one at the end. expected to return 
-      two big chunks in two read, delimiters excluded.  "
-	| stuff stream read |
-	stuff _ String streamContents: [ :strm |
-		1
-			to: 6000
-			do: [ :i |
-				i < 3000 ifTrue: [ strm nextPut: $a ].
-				i = 3000 ifTrue: [ strm nextPut: $X ].
-				((Interval
-					from: 3001
-					to: 5999) includes: i) ifTrue: [ strm nextPut: $b ].
-				i = 6000 ifTrue: [ strm nextPut: $X ]]].
-	stream _ ReadWriteStream on: ''. 
-	stream nextPutAll: stuff.
-	stream position: 0.
-	" first scan, delimiter is found, return all the block delimiter excluded "
-	read _ stream upTo: $X.
-	self assert: read size = 2999.
-	self assert: (read at: 1) = $a.
-	" second scan, return chunk, delimiter excluded.  "
-	read _ stream upTo: $X.
-	self assert: read size = 2999.
-	self assert: (read at: 1) = $b.! !
-
-!ReadWriteStreamTest methodsFor: 'tests' stamp: 'NM 10/25/2021 11:12:06'!
-testUpToTerminator1ShortRecords
-	"
-	. Read a file stream up to 'delim' in a strict way. 
-	. If delim is found returns everything up to the first occurrence of 'delim' included.
-	. if delim is not found returns nil and set the FileStream position where it was before
-	the call was made. This ensures if another process writes into the file another delim
-	limited token we will fully read it on next upTo call.
-	This means Delimiter is a Terminator: a chunk is only considered well formed if it ends with it.
-	"
-	| stream |
-	stream _ ReadWriteStream on: ''. 
-	stream nextPutAll: 'record-1Xrecord-2Xrecord-incomplete'.
-	stream position: 0.
-	self assert:  ((stream upTo: $X delimiterIsTerminator: true) =  'record-1X').
-	self assert:  ((stream upTo: $X delimiterIsTerminator: true) =  'record-2X').
-	self assert:  ((stream upTo: $X delimiterIsTerminator: true) =  nil).
-	". we are not at the end of the stream, but just after the last delim was found.
-	we are ready to receive other delim limitated tokens. if they get written.
-	"
-	self assert:  (stream position = 18).! !
-
-!ReadWriteStreamTest methodsFor: 'tests' stamp: 'NM 10/25/2021 11:12:49'!
-testUpToTerminator3LongUnterminatedRecord
-	"Long input, no delimiter found, expected to return nil. "
-	| longString stream read |
-	longString _ (1 to: 100)
-		inject: ''
-		into: [ :prev :each |
-			prev , 'A lot of stuff, needs over 2000 chars!! ' ].
-	stream _ ReadWriteStream on: ''. 
-	stream nextPutAll: longString.
-	stream position: 0.
-	read _ stream
-		upTo: $X
-		delimiterIsTerminator: true.
-	self assert: read = nil.! !
-
-!ReadWriteStreamTest methodsFor: 'tests' stamp: 'NM 10/25/2021 11:13:03'!
-testUpToTerminator4LongUnterminatedRecord
-	"Big chunk, not delimiter found, expected return nil  "
-	| stuff stream read |
-	stuff _ String streamContents: [ :strm |
-		1
-			to: 5000
-			do: [ :i |
-				i < 3000 ifTrue: [ strm nextPut: $a ].
-				i >= 3000 ifTrue: [ strm nextPut: $b ]]].
-	stream _ ReadWriteStream on: ''. 
-	stream nextPutAll: stuff.
-	stream position: 0.
-	read _ stream
-		upTo: $X
-		delimiterIsTerminator: true.
-	self assert: read = nil.! !
-
-!ReadWriteStreamTest methodsFor: 'tests' stamp: 'NM 10/25/2021 11:13:18'!
-testUpToTerminator5TerminatedAndUnterminatedLongRecords
-	"Two big chunks, one delimiter in the middle, expected to return 
-      the first time a big chunk, the second time nil.  "
-	| stuff stream read |
-	stuff _ String streamContents: [ :strm |
-		1
-			to: 6000
-			do: [ :i |
-				i < 3000 ifTrue: [ strm nextPut: $a ].
-				i = 3000 ifTrue: [ strm nextPut: $X ].
-				i > 3000 ifTrue: [ strm nextPut: $b ]]].
-	stream _ ReadWriteStream on: ''. 
-	stream nextPutAll: stuff.
-	stream position: 0.
-	" first scan, delimiter is found, return all the block delimiter included "
-	read _ stream
-		upTo: $X
-		delimiterIsTerminator: true.
-	self assert: read size = 3000.
-	self assert: (read at: 1) = $a.
-	" second scan, delimiter not found, returns nil  "
-	read _ stream
-		upTo: $X
-		delimiterIsTerminator: true.
-	self assert: read = nil.! !
-
-!ReadWriteStreamTest methodsFor: 'tests' stamp: 'NM 10/25/2021 11:13:33'!
-testUpToTerminator6TerminatedLongRecords
-	"Two big chunks, one delimiter in the middle, one at the end expected to return 
-      two big chunks in two read, delimiters included.  "
-	| stuff stream read |
-	stuff _ String streamContents: [ :strm |
-		1
-			to: 6000
-			do: [ :i |
-				i < 3000 ifTrue: [ strm nextPut: $a ].
-				i = 3000 ifTrue: [ strm nextPut: $X ].
-				((Interval
-					from: 3001
-					to: 5999) includes: i) ifTrue: [ strm nextPut: $b ].
-				i = 6000 ifTrue: [ strm nextPut: $X ]]].
-	stream _ ReadWriteStream on: ''. 
-	stream nextPutAll: stuff.
-	stream position: 0.
-	" first scan, delimiter is found, return all the block delimiter included "
-	read _ stream
-		upTo: $X
-		delimiterIsTerminator: true.
-	self assert: read size = 3000.
-	self assert: (read at: 1) = $a.
-	" second scan, delimiter found, return chunk, delimiter included   "
-	read _ stream
-		upTo: $X
-		delimiterIsTerminator: true.
-	self assert: read size = 3000.
-	self assert: (read at: 1) = $b.! !
-
-!WriteStreamTest methodsFor: 'tests' stamp: 'jpb 8/2/2019 23:49:13'!
-testIsStream
-	self assert: ((WriteStream on: '') is: #Stream).! !
-
-!WriteStreamTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:27:06'!
-testNewLineTabWhenConditionIsFalseDoesNotPutANewLineTabInStream
-
-	| stream |
-
-	stream := WriteStream on: ''.
-	stream newLineTab: 2 when: false.
-	
-	self assert: stream contents isEmpty
-	! !
-
-!WriteStreamTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:28:04'!
-testNewLineTabWhenConditionIsTruePutsANewLineTabInStream
-
-	| stream |
-
-	stream := WriteStream on: ''.
-	stream newLineTab: 2 when: true.
-	
-	self assert: (String streamContents: [ :s | s newLineTab: 2 ]) equals: stream contents 
-	! !
-
-!WriteStreamTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:20:47'!
-testNewLineWhenConditionIsFalseDoesNotPutANewLineInStream
-
-	| stream |
-
-	stream := WriteStream on: ''.
-	stream newLineWhen: false.
-	
-	self assert: stream contents isEmpty
-	! !
-
-!WriteStreamTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:22:05'!
-testNewLineWhenConditionIsTruePutsANewLineInStream
-
-	| stream |
-
-	stream := WriteStream on: ''.
-	stream newLineWhen: true.
-	
-	self assert: Character newLineCharacter asString equals: stream contents 
-	! !
-
-!WriteStreamTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:06:13'!
-testNextPutAllWhenConditionIsFalseDoesNotPutCollectionInStream
-
-	| stream |
-
-	stream := WriteStream on: ''.
-	stream nextPutAll: 'other' when: false.
-	
-	self assert: stream contents isEmpty
-	! !
-
-!WriteStreamTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:06:19'!
-testNextPutAllWhenConditionIsTruePutsCollectionInStream
-
-	| stream |
-	
-	stream := WriteStream on: ''.
-	stream nextPutAll: 'other' when: true.
-	
-	self assert: 'other' equals: stream contents
-	
-	! !
-
-!WriteStreamTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:06:24'!
-testNextPutWhenConditionIsFalseDoesNotPutObjectInStream
-
-	| stream |
-	
-	stream := WriteStream on: ''.
-	stream nextPut: $t when: false.
-	
-	self assert: stream contents isEmpty
-	
-	! !
-
-!WriteStreamTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:06:28'!
-testNextPutWhenConditionIsTruePutsObjectInStream
-
-	| stream |
-	
-	stream := WriteStream on: ''.
-	stream nextPut: $t when: true.
-	
-	self assert: 't' equals: stream contents 
-	
-	! !
-
-!WriteStreamTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:13:06'!
-testPrintWhenConditionIsFalseDoesNotPrintObjectInStream
-
-	| stream |
-	
-	stream := WriteStream on: ''.
-	stream print: Object when: false.
-	
-	self assert: stream contents isEmpty
-	
-	! !
-
-!WriteStreamTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:06:44'!
-testPrintWhenConditionIsTruePrintsObjectInStream
-
-	| stream |
-	
-	stream := WriteStream on: ''.
-	stream print: Object when: true.
-	
-	self assert: Object printString equals: stream contents! !
-
-!WriteStreamTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:42:20'!
-testSpaceManyTimesWhenConditionIsFalseDoesNotPutASpaceInStream
-
-	| stream |
-
-	stream := WriteStream on: ''.
-	stream space: 2 when: false.
-	
-	self assert: stream contents isEmpty
-	! !
-
-!WriteStreamTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:43:01'!
-testSpaceManyTimesWhenConditionIsTruePutSpacesInStream
-
-	| stream |
-
-	stream := WriteStream on: ''.
-	stream space: 2 when: true.
-	
-	self assert: '  ' equals: stream contents 
-	! !
-
-!WriteStreamTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:19:06'!
-testSpaceWhenConditionIsFalseDoesNotPutASpaceInStream
-
-	| stream |
-
-	stream := WriteStream on: ''.
-	stream spaceWhen: false.
-	
-	self assert: stream contents isEmpty
-	! !
-
-!WriteStreamTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:19:50'!
-testSpaceWhenConditionIsTruePutsASpaceInStream
-
-	| stream |
-
-	stream := WriteStream on: ''.
-	stream spaceWhen: true.
-	
-	self assert: ' ' equals: stream contents 
-	! !
-
-!WriteStreamTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:24:34'!
-testTabManyTimesWhenConditionIsFalseDoesNotPutATabInStream
-
-	| stream |
-
-	stream := WriteStream on: ''.
-	stream tab: 2 when: false.
-	
-	self assert: stream contents isEmpty
-	! !
-
-!WriteStreamTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:25:46'!
-testTabManyTimesWhenConditionIsTruePutsTabsInStream
-
-	| stream |
-
-	stream := WriteStream on: ''.
-	stream tab: 2 when: true.
-	
-	self assert: (String streamContents: [ :s | s tab: 2 ]) equals: stream contents 
-	! !
-
-!WriteStreamTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:22:50'!
-testTabWhenConditionIsFalseDoesNotPutATabInStream
-
-	| stream |
-
-	stream := WriteStream on: ''.
-	stream tabWhen: false.
-	
-	self assert: stream contents isEmpty
-	! !
-
-!WriteStreamTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:23:28'!
-testTabWhenConditionIsTruePutsATabInStream
-
-	| stream |
-
-	stream := WriteStream on: ''.
-	stream tabWhen: true.
-	
-	self assert: Character tab asString equals: stream contents 
-	! !
-
-!SystemConsistencyTest methodsFor: 'testing' stamp: 'jmv 5/7/2012 09:35'!
-testMethodsWithUnboundGlobals
-	"
-	SystemConsistencyTest new testMethodsWithUnboundGlobals
-	"
-	self assert: Smalltalk methodsWithUnboundGlobals isEmpty! !
-
-!TranscriptTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:29:18'!
-testNewLineWhenConditionIsFalseDoesNotPutANewLineInStream
-
-	self assertTranscriptContentsDoesNotChangeAfter: [ Transcript newLineWhen: false ]
-	! !
-
-!TranscriptTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:38:57'!
-testNewLineWhenConditionIsTruePutsANewLineInStream
-
-	self assertTranscriptContentsAdded: '.' after: [ Transcript newLineWhen: true; nextPut: $. ]! !
-
-!TranscriptTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:09:29'!
-testNextPutAllWhenConditionIsFalseDoesNotPutCollectionInStream
-
-	self assertTranscriptContentsDoesNotChangeAfter: [ Transcript nextPutAll: 'other' when: false ]
-	! !
-
-!TranscriptTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:13:47'!
-testNextPutAllWhenConditionIsTruePutsCollectionInStream
-
-	self assertTranscriptContentsAdded: 'other' after: [ Transcript nextPutAll: 'other' when: true ]
-	
-	! !
-
-!TranscriptTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:11:58'!
-testNextPutWhenConditionIsFalseDoesNotPutObjectInStream
-
-	self assertTranscriptContentsDoesNotChangeAfter: [ Transcript nextPut: $t when: false ]
-! !
-
-!TranscriptTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:15:05'!
-testNextPutWhenConditionIsTruePutsObjectInStream
-
-	self assertTranscriptContentsAdded: 't' after: [ Transcript nextPut: $t when: true ]
-	
-	! !
-
-!TranscriptTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:12:44'!
-testPrintWhenConditionIsFalseDoesNotPrintObjectInStream
-
-	self assertTranscriptContentsDoesNotChangeAfter: [ Transcript print: Object when: false ]
-! !
-
-!TranscriptTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:15:34'!
-testPrintWhenConditionIsTruePrintsObjectInStream
-
-	self assertTranscriptContentsAdded: Object printString after: [ Transcript print: Object when: true ]
-	! !
-
-!TranscriptTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:39:29'!
-testSpaceWhenConditionIsFalseDoesNotPutASpaceInStream
-
-	self assertTranscriptContentsDoesNotChangeAfter: [ Transcript spaceWhen: false ]
-	! !
-
-!TranscriptTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:40:09'!
-testSpaceWhenConditionIsTruePutsASpaceInStream
-
-	self assertTranscriptContentsAdded: ' ' after: [ Transcript spaceWhen: true ]
-	! !
-
-!TranscriptTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:40:49'!
-testTabWhenConditionIsFalseDoesNotPutATabInStream
-
-	self assertTranscriptContentsDoesNotChangeAfter: [ Transcript tabWhen: false ]! !
-
-!TranscriptTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:41:35'!
-testTabWhenConditionIsTruePutsATabInStream
-
-	self assertTranscriptContentsAdded: Character tab asString after: [ Transcript tabWhen: true ]! !
-
-!TranscriptTest methodsFor: 'assertions' stamp: 'HAW 3/20/2019 07:14:26'!
-assertTranscriptContentsAdded: expectedAddedString after: aBlock
-	
-	| transcriptContentsBeforeBlockEvaluation |
-	
-	transcriptContentsBeforeBlockEvaluation := Transcript contents.
-	aBlock value.
-	
-	self assert: transcriptContentsBeforeBlockEvaluation, expectedAddedString equals: Transcript contents! !
-
-!TranscriptTest methodsFor: 'assertions' stamp: 'HAW 3/20/2019 07:15:48'!
-assertTranscriptContentsDoesNotChangeAfter: aBlock
-	
-	self assertTranscriptContentsAdded: '' after: aBlock! !
-
-!RectangleTest methodsFor: 'testing' stamp: 'jpb 8/2/2019 23:52:04'!
-testIsRectangle
-	self assert: (Rectangle new is: #Rectangle)! !
-
-!ColorFormTest methodsFor: 'testing' stamp: 'jpb 8/2/2019 23:30:35'!
-testIsColorForm
-	self assert: (ColorForm new is: #ColorForm).! !
-
-!GrayFormTest methodsFor: 'as yet unclassified' stamp: 'jpb 8/2/2019 23:36:06'!
-testIsGrayForm
-	self assert: (GrayForm new is: #GrayForm)! !
-
-!BecomeTest methodsFor: 'testing' stamp: 'jmv 1/29/2019 12:03:40'!
-testBecome
-	| e |
-	BecomeTestExperiment twoVars.
-	e _ BecomeTestExperiment new.
-	self should: [ e messStuffUpWBecome ] raise: MethodInCallStackToBecomeInvalid! !
-
-!BecomeTest methodsFor: 'testing' stamp: 'jmv 1/29/2019 12:03:42'!
-testShapeMutation
-	| e |
-	BecomeTestExperiment twoVars.
-	e _ BecomeTestExperiment new.
-	self should: [ e messStuffUp ] raise: MethodInCallStackToBecomeInvalid! !
-
-!BooleanTest methodsFor: 'and tests' stamp: 'HAW 7/8/2018 20:03:35'!
-testAndAndAndAndTrueTable
-
-	self 
-		evaluate: [ :first :second :third :fourth :fifth | 
-			self 
-				assert: (first and: [second] and: [third] and: [fourth] and: [fifth]) 
-				equals: ((((first and: [second]) and: [third]) and: [ fourth ]) and: [ fifth ]) ]
-		forCombinationOf: 5
-		
-	
-	
-	! !
-
-!BooleanTest methodsFor: 'and tests' stamp: 'HAW 7/8/2018 20:03:46'!
-testAndAndAndTrueTable
-
-	self 
-		evaluate: [ :first :second :third :fourth | 
-			self 
-				assert: (first and: [second] and: [third] and: [fourth]) 
-				equals: (((first and: [second]) and: [third]) and: [ fourth ]) ]
-		forCombinationOf: 4
-		
-	
-	
-	! !
-
-!BooleanTest methodsFor: 'and tests' stamp: 'HAW 7/8/2018 20:04:00'!
-testAndAndTrueTable
-
-	self 
-		evaluate: [ :first :second :third | 
-			self 
-				assert: (first and: [second] and: [third]) 
-				equals: ((first and: [second]) and: [third]) ]
-		forCombinationOf: 3
-		
-	
-	
-	! !
-
-!BooleanTest methodsFor: 'or tests' stamp: 'HAW 7/8/2018 20:04:10'!
-testOrOrOrOrTrueTable
-
-	self 
-		evaluate: [ :first :second :third :fourth :fifth | 
-			self 
-				assert: (first or: [second] or: [third] or: [fourth] or: [fifth]) 
-				equals: ((((first or: [second]) or: [third]) or: [ fourth ]) or: [ fifth ]) ]
-		forCombinationOf: 5
-		
-	
-	
-	! !
-
-!BooleanTest methodsFor: 'or tests' stamp: 'HAW 7/8/2018 20:04:18'!
-testOrOrOrTrueTable
-
-	self 
-		evaluate: [ :first :second :third :fourth | 
-			self 
-				assert: (first or: [second] or: [third] or: [fourth]) 
-				equals: (((first or: [second]) or: [third]) or: [ fourth ]) ]
-		forCombinationOf: 4
-		
-	
-	
-	! !
-
-!BooleanTest methodsFor: 'or tests' stamp: 'HAW 7/8/2018 20:04:25'!
-testOrOrTrueTable
-
-	self 
-		evaluate: [ :first :second :third | 
-			self 
-				assert: (first or: [second] or: [third]) 
-				equals: ((first or: [second]) or: [third]) ]
-		forCombinationOf: 3
-		
-	
-	
-	! !
-
-!BooleanTest methodsFor: 'combination generation' stamp: 'HAW 7/8/2018 19:51:52'!
-evaluate: aBlock collectingValuesInto: values at: aPosition 
-	
-	aPosition = 0 
-		ifTrue: [ aBlock valueWithArguments: values ]
-		ifFalse: [ 
-			#(true false) do: [ :value | 
-				values at: aPosition put: value. 
-				self evaluate: aBlock collectingValuesInto: values at: aPosition - 1 ]]! !
-
-!BooleanTest methodsFor: 'combination generation' stamp: 'HAW 7/8/2018 19:50:53'!
-evaluate: aBlock forCombinationOf: aNumberOfValues
-
-	self evaluate: aBlock collectingValuesInto: (Array new: aNumberOfValues) at: aNumberOfValues 
-	! !
-
-!BooleanTest methodsFor: 'testing' stamp: 'jpb 8/2/2019 23:13:00'!
-testIsBoolean
-	self assert: (true is: #Boolean).
-	self assert: (false is: #Boolean).! !
-
-!IfNotNilTests methodsFor: 'tests' stamp: 'jmv 11/16/2010 08:46'!
-testIfNilIfNotNil0Arg
-
-	self assert: (5@4 ifNil: [#foo] ifNotNil: [#bar]) = #bar.
-	self assert: (nil ifNil: [#foo] ifNotNil: [#bar]) = #foo! !
-
-!IfNotNilTests methodsFor: 'tests' stamp: 'jmv 11/16/2010 08:46'!
-testIfNilIfNotNil0ArgAsVar
-
-	| block1 block2 |
-	block1 := [#foo].
-	block2 := [#bar].
-	self assert: (5@4 ifNil: block1 ifNotNil: block2) = #bar.
-	self assert: (nil ifNil: block1 ifNotNil: block2) = #foo! !
-
-!IfNotNilTests methodsFor: 'tests' stamp: 'jmv 11/16/2010 08:46'!
-testIfNilIfNotNil1Arg
-
-	self assert: (5@4 ifNil: [#foo] ifNotNil: [:a | a printString]) = '5@4'.
-	self assert: (nil ifNil: [#foo] ifNotNil: [:a | a printString]) = #foo! !
-
-!IfNotNilTests methodsFor: 'tests' stamp: 'jmv 11/16/2010 08:46'!
-testIfNilIfNotNil1ArgAsVar
-
-	| block1 block2 |
-	block1 := [#foo].
-	block2 := [:a | a printString].
-	self assert: (5@4 ifNil: block1 ifNotNil: block2) = '5@4'.
-	self assert: (nil ifNil: block1 ifNotNil: block2) = #foo! !
-
-!IfNotNilTests methodsFor: 'tests' stamp: 'jmv 11/16/2010 08:46'!
-testIfNotNil0Arg
-
-	self assert: (5@4 ifNotNil: [#foo]) = #foo.
-	self assert: (nil ifNotNil: [#foo]) = nil! !
-
-!IfNotNilTests methodsFor: 'tests' stamp: 'jmv 11/16/2010 08:46'!
-testIfNotNil0ArgAsVar
-
-	| block |
-	block := [#foo].
-	self assert: (5@4 ifNotNil: block) = #foo.
-	self assert: (nil ifNotNil: block) = nil! !
-
-!IfNotNilTests methodsFor: 'tests' stamp: 'jmv 11/16/2010 08:46'!
-testIfNotNil1Arg
-
-	self assert: (5@4 ifNotNil: [:a | a printString]) = '5@4'.
-	self assert: (nil ifNotNil: [:a | a printString]) = nil! !
-
-!IfNotNilTests methodsFor: 'tests' stamp: 'jmv 11/16/2010 08:46'!
-testIfNotNil1ArgAsVar
-
-	| block |
-	block := [:a | a printString].
-	self assert: (5@4 ifNotNil: block) = '5@4'.
-	self assert: (nil ifNotNil: block) = nil! !
-
-!IfNotNilTests methodsFor: 'tests' stamp: 'jmv 11/16/2010 08:46'!
-testIfNotNilIfNil0Arg
-
-	self assert: (5@4 ifNotNil: [#foo] ifNil: [#bar]) = #foo.
-	self assert: (nil ifNotNil: [#foo] ifNil: [#bar]) = #bar! !
-
-!IfNotNilTests methodsFor: 'tests' stamp: 'jmv 11/16/2010 08:46'!
-testIfNotNilIfNil0ArgAsVar
-
-	| block1 block2 |
-	block1 := [#foo].
-	block2 := [#bar].
-	self assert: (5@4 ifNotNil: block2 ifNil: block1) = #bar.
-	self assert: (nil ifNotNil: block2 ifNil: block1) = #foo! !
-
-!IfNotNilTests methodsFor: 'tests' stamp: 'jmv 11/16/2010 08:46'!
-testIfNotNilIfNil1Arg
-
-	self assert: (5@4 ifNotNil: [:a | a printString] ifNil: [#foo]) = '5@4'.
-	self assert: (nil ifNotNil: [:a | a printString] ifNil: [#foo]) = #foo! !
-
-!IfNotNilTests methodsFor: 'tests' stamp: 'jmv 11/16/2010 08:47'!
-testIfNotNilIfNil1ArgAsVar
-
-	| block1 block2 |
-	block1 := [#foo].
-	block2 := [:a | a printString].
-	self assert: (5@4 ifNotNil: block2 ifNil: block1) = '5@4'.
-	self assert: (nil ifNotNil: block2 ifNil: block1) = #foo! !
-
-!ObjectTest methodsFor: 'error tests' stamp: 'HAW 10/23/2019 09:23:56'!
-testErrorSignalsTheRightException
-
-	| reason |
-	
-	reason :=  'something went wrong'.
-	self 
-		should: [ self error: reason ]
-		raise: Error
-		withMessageText: reason ! !
-
-!ObjectTest methodsFor: 'error tests' stamp: 'HAW 10/23/2019 09:24:03'!
-testShouldNotHappenBecauseSignalsTheRightError
-
-	| reason |
-	
-	reason :=  'something went wrong'.
-	self 
-		should: [ self shouldNotHappenBecause: reason ]
-		raise: Error
-		withMessageText: self shouldNotHappenBecauseErrorMessage, reason ! !
-
-!ObjectTest methodsFor: 'error tests' stamp: 'HAW 10/23/2019 09:24:11'!
-testShouldNotHappenSignalsTheRightError
-
-	self 
-		should: [ self shouldNotHappen ]
-		raise: Error
-		withMessageText: self shouldNotHappenErrorMessage ! !
-
-!SpecialSelectorsTest methodsFor: 'testing' stamp: 'jmv 6/5/2017 12:17:20'!
-testCollectionAtSymbol
-	self assert: (#(1 2 3) @ #(10 20 30)) class == Array! !
-
-!SpecialSelectorsTest methodsFor: 'testing' stamp: 'jmv 6/5/2017 12:16:49'!
-testNumberAtSymbol
-	self assert: (1@2) class == Point! !
-
-!WeakMessageSendTest methodsFor: 'testing' stamp: 'jpb 8/2/2019 23:44:58'!
-testIsMessageSend
-	self assert: (WeakMessageSend new is: #MessageSend).! !
-
-!MethodReferenceTest methodsFor: 'test actual class' stamp: 'HAW 10/23/2019 21:08:24'!
-testActualClassIfAbsentEvaluatesBlockIfClassDoesNotExist
-
-	self 
-		assert: 1 
-		equals: ((MethodReference 
-			classSymbol: #X_Y_Z 
-			classIsMeta: false 
-			methodSymbol: #xx) actualClassIfAbsent: [ 1])! !
-
-!MethodReferenceTest methodsFor: 'test actual class' stamp: 'HAW 10/23/2019 21:09:29'!
-testActualClassIfAbsentReturnsClassIfClassExists
-
-	self 
-		assert: self class
-		equals: ((MethodReference 
-			class: self class  
-			selector: thisContext selector) actualClassIfAbsent: [ self fail])! !
-
-!MethodReferenceTest methodsFor: 'test actual class' stamp: 'HAW 10/23/2019 21:05:22'!
-testActualClassReturnNilWhenClassDoesNotExist
-
-	self assert: (MethodReference classSymbol: #X_Y_Z classIsMeta: false methodSymbol: #xx) actualClass isNil! !
-
-!MethodReferenceTest methodsFor: 'test actual class' stamp: 'HAW 10/23/2019 21:09:58'!
-testActualClassReturnsClassIfExists
-
-	self 
-		assert: self class
-		equals: (MethodReference 
-			class: self class 
-			selector: thisContext selector) actualClass ! !
-
-!MethodReferenceTest methodsFor: 'test source code' stamp: 'HAW 10/23/2019 21:42:10'!
-testSourceCodeIfAbsentEvaluatesBlockIfClassDoesNotExist
-
-	self 
-		assert: 1
-		equals: ((MethodReference classSymbol: #X_Y_Z classIsMeta: false methodSymbol:#xx) sourceCodeIfAbsent: [ 1 ])! !
-
-!MethodReferenceTest methodsFor: 'test source code' stamp: 'HAW 10/23/2019 21:42:34'!
-testSourceCodeIfAbsentEvaluatesBlockIfMethodDoesNotExist
-
-	self 
-		assert: 1
-		equals: ((MethodReference class: self class selector:#xx) sourceCodeIfAbsent: [ 1 ])! !
-
-!MethodReferenceTest methodsFor: 'test source code' stamp: 'HAW 10/23/2019 21:43:23'!
-testSourceCodeIfAbsentReturnsSourceCodeIfExists
-
-	self 
-		assert: (self class>>thisContext selector) sourceCode
-		equals: ((MethodReference class: self class selector: thisContext selector) sourceCodeIfAbsent: [ self fail ])! !
-
-!MethodReferenceTest methodsFor: 'test source code' stamp: 'HAW 10/23/2019 21:11:15'!
-testSourceCodeReturnsSourceCodeIfMethodExist
-
-	self 
-		assert: (self class compiledMethodAt: thisContext selector) sourceCode
-		equals: (MethodReference 
-			class: self class 
-			selector: thisContext selector) sourceCode ! !
-
-!MethodReferenceTest methodsFor: 'test source code' stamp: 'HAW 10/23/2019 21:39:16'!
-testSourceCodeSignalExceptionIfClassDoesNotExist
-
-	self 
-		should: [ (MethodReference classSymbol: #X_Y_Z classIsMeta: false methodSymbol:#xx) sourceCode ]
-		raise: Error
-		withMessageText: MethodReference classDoesNotExistErrorMessage ! !
-
-!MethodReferenceTest methodsFor: 'test source code' stamp: 'HAW 10/23/2019 21:13:28'!
-testSourceCodeSignalExceptionIfMethodDoesNotExist
-
-	self 
-		should: [ (MethodReference class: self class selector: #xx) sourceCode ]
-		raise: Error
-		withMessageText: Dictionary keyNotFoundErrorDescription ! !
-
-!MethodReferenceTest methodsFor: 'test compiled method' stamp: 'HAW 1/1/2020 19:46:58'!
-testCompiledMethodIfAbsentEvaluatesAbsentBlockWhenActualClassIsNil
-
-	self 
-		assert: 1 
-		equals: ((MethodReference 
-			classSymbol: #X_Y_Z 
-			classIsMeta: false 
-			methodSymbol: #xx) compiledMethodIfAbsent: [ 1])! !
-
-!MethodReferenceTest methodsFor: 'test compiled method' stamp: 'HAW 1/1/2020 19:47:05'!
-testCompiledMethodIfAbsentEvaluatesAbsentBlockWhenSelectorIsNotImplemented
-
-	self 
-		assert: 1 
-		equals: ((MethodReference 
-			classSymbol: self class name
-			classIsMeta: false 
-			methodSymbol: #xx) compiledMethodIfAbsent: [ 1])! !
-
-!MethodReferenceTest methodsFor: 'test compiled method' stamp: 'HAW 1/1/2020 19:47:13'!
-testCompiledMethodIfAbsentReturnsImplementedMethodWhenItExists
-
-	self 
-		assert: thisContext method 
-		equals: ((MethodReference 
-			classSymbol: self class name
-			classIsMeta: false 
-			methodSymbol: thisContext selector) compiledMethodIfAbsent: [ self fail ])! !
-
-!MethodReferenceTest methodsFor: 'test string version' stamp: 'HAW 4/9/2020 15:51:56'!
-test01DefaultStringVersionIsClassAndSelector
-
-	| stringVersion |
-	
-	stringVersion := (MethodReference method: thisContext method) stringVersion.
-	
-	self assert: self class name, ' ', thisContext selector equals: stringVersion! !
-
-!MethodReferenceTest methodsFor: 'test string version' stamp: 'HAW 8/19/2021 15:05:13'!
-test02CanPrefixStringVersion
-
-	| methodReference prefix |
-	
-	prefix := 'a prefix'.
-	methodReference := MethodReference method: thisContext method.
-	methodReference prefixStringVersionWith: prefix.
-	
-	self assert: '[',prefix,'] - ',self class name, ' ', thisContext selector equals: methodReference stringVersion! !
-
-!MethodReferenceTest methodsFor: 'test testing' stamp: 'HAW 1/2/2020 06:49:00'!
-testReferencesParameterAtReturnsFalseWhenInvalid
-
-	self deny: ((MethodReference 
-		classSymbol: #X_Y_Z 
-		classIsMeta: false 
-		methodSymbol: #xx) referencesParameterAt: 1)! !
-
-!MethodReferenceTest methodsFor: 'test testing' stamp: 'HAW 1/2/2020 06:49:03'!
-testReferencesParameterAtReturnsTrueWhenTheParameterIsReferenced
-
-	self assert: ((MethodReference 
-		classSymbol: #MethodReference 
-		classIsMeta: false 
-		methodSymbol: #referencesParameterAt:) referencesParameterAt: 1)! !
-
-!CharacterSetTest methodsFor: 'testing includes' stamp: 'HAW 6/12/2019 17:32:08'!
-testIncludesReturnsFalseForCharacterNotIncluded
-
-	self deny: ((CharacterSet with: $a) includes: $b)! !
-
-!CharacterSetTest methodsFor: 'testing includes' stamp: 'HAW 6/12/2019 17:31:45'!
-testIncludesReturnsFalseForObjectsThatAreNotCharacters
-
-	self deny: ((CharacterSet with: $a) includes: 1)! !
-
-!CharacterSetTest methodsFor: 'testing includes' stamp: 'HAW 6/12/2019 17:32:24'!
-testIncludesReturnsTrueForCharacterIncluded
-
-	self assert: ((CharacterSet with: $a) includes: $a)! !
-
-!CharacterTest methodsFor: 'testing' stamp: 'jmv 10/6/2010 22:08'!
-testCaseConversion
-	"
-	self new testCaseConversion
-	"
-	self assert: ('año Comé tomá Camión' collect: [ :c | c asLowercase ]) = 'año comé tomá camión'.
-	self assert:('año Comé tomá Camión' collect: [ :c | c asUppercase ]) = 'AÑO COMÉ TOMÁ CAMIÓN'! !
-
-!CharacterTest methodsFor: 'testing' stamp: 'jpb 8/2/2019 23:10:55'!
-testIsCharacter
-	self assert: ($a is: #Character).
-	self assert: ($X is: #Character).
-	self assert: (Character cr is: #Character).! !
-
-!CharacterTest methodsFor: 'testing' stamp: 'jmv 10/6/2010 22:05'!
-testSorting
-	"
-	self new testSorting
-	"
-	self assert: $a < $á.
-	self deny: $a < $Á.
-	self assert: $A < $á.
-	self assert: $A < $Á.
-	self assert: $á < $b.
-	self deny: $á < $B.
-	self assert: $Á < $b.
-	self assert: $Á < $B.! !
-
-!CharacterTest methodsFor: 'testing' stamp: 'jmv 10/6/2010 22:10'!
-testTestingMethods
-	"
-	self new testTestingMethods
-	"
-	self assert:
-		('año Comé tomá Camión' allSatisfy: [ :c |
-			c = $  or: [ c isLetter ]]).
-	self assert:
-		('año comé tomá camión' allSatisfy: [ :c |
-			c = $  or: [ c isLowercase ]]).
-	self assert:
-		('AÑO COMÉ TOMÁ CAMIÓN' allSatisfy: [ :c |
-			c = $  or: [ c isUppercase ]]).
-	self assert:
-		('AaÀàÁáÂâÃãÄäÅåEeÈèÉéÊêËëIiÌìÍíÎîÏïOoÒòÓóÔôÕõÖöUuÙùÚúÛûÜü' allSatisfy: [ :c |
-			c isVowel ]).! !
-
-!CharacterTest methodsFor: 'UTF-8 conversion' stamp: 'jmv 5/26/2022 12:31:12'!
-testFromUtf8
-	"
-	CharacterTest new testFromUtf8
-	"
-	Character utf8BytesAndCodePointAt: 1 in: (ByteArray readHexFrom: '24') into: nil into: [ :codePoint | self assert: codePoint hex = '16r24' ].
-	Character utf8BytesAndCodePointAt: 1 in: (ByteArray readHexFrom: 'C2A2') into: nil into: [ :codePoint | self assert: codePoint hex = '16rA2' ].
-	Character utf8BytesAndCodePointAt: 1 in: (ByteArray readHexFrom: 'E282AC') into: nil into: [ :codePoint | self assert: codePoint hex = '16r20AC' ].
-	Character utf8BytesAndCodePointAt: 1 in: (ByteArray readHexFrom: 'F0A4ADA2') into: nil into: [ :codePoint | self assert: codePoint hex = '16r24B62' ].! !
-
-!CharacterTest methodsFor: 'UTF-8 conversion' stamp: 'jmv 5/5/2022 09:34:34'!
-testSomeLatinCharsFromUtf8
-	"
-	CharacterTest new testSomeLatinCharsFromUtf8
-	"
-	| bytes string |
-	bytes _ ByteArray readHexFrom: 'C3A1C3A5C3A6C3B1C386C2A5C3BC'.
-	string _ String streamContents: [ :strm | | s byteIndex n |
-		s _ bytes size.
-		byteIndex _ 1.
-		[  byteIndex <= s ] whileTrue: [
-			n _ Character utf8BytesAndCodePointAt: byteIndex in: bytes
-				into: nil
-				into: [ :codePoint |
-					strm nextPut: (Character codePoint: codePoint) ].
-			byteIndex _ byteIndex + n
-		]].
-	self assert: string = 'áåæñÆ¥ü'! !
-
-!CharacterTest methodsFor: 'UTF-8 conversion' stamp: 'jmv 9/4/2016 13:11:55'!
-testSomeLatinCharsToUtf8
-	"
-	CharacterTest new testSomeLatinCharsToUtf8
-	"
-	| characters bytes |
-	characters _ 'áåæñÆ¥ü' readStream.
-	bytes _ ByteArray streamContents: [ :strm |
-		[ characters atEnd ] whileFalse: [
-			Character
-				evaluate: [ :byte | strm nextPut: byte ]
-				withUtf8BytesOfUnicodeCodePoint: characters next codePoint ]].
-	self assert: bytes hex = 'C3A1C3A5C3A6C3B1C386C2A5C3BC'! !
-
-!CharacterTest methodsFor: 'UTF-8 conversion' stamp: 'jmv 2/20/2013 20:09'!
-testToUtf8
-	"
-	CharacterTest new testToUtf8
-	"
-	self assert: (Character utf8BytesOfUnicodeCodePoint: 16r0024) hex =  '24'.
-	self assert: (Character utf8BytesOfUnicodeCodePoint: 16r00A2) hex =  'C2A2'.
-	self assert: (Character utf8BytesOfUnicodeCodePoint: 16r20AC) hex = 'E282AC'.
-	self assert: (Character utf8BytesOfUnicodeCodePoint: 16r024B62) hex = 'F0A4ADA2'! !
-
-!StringTest methodsFor: 'UTF-8 conversion' stamp: 'jmv 5/26/2022 12:00:49'!
-testAsUtf8
-	"
-	 StringTest new testAsUtf8
-	"
-	self assert: 'A¢¤' asUtf8Bytes hex = '41C2A2E282AC'! !
-
-!StringTest methodsFor: 'UTF-8 conversion' stamp: 'jmv 5/26/2022 11:59:35'!
-testAsUtf8WithNCRs
-	"
-	 StringTest new testAsUtf8WithNCRs
-	"
-	| stringWithDecimalNCRs stringWithHexNCRs utf8 |
-	utf8 _ ByteArray readHexFrom: ('CE BC 20 CE A8 20 CF 89 20 54 68 65 20 64 65 63 6F 6D 70 6F 73 69 74 69 6F 6E 20 6D 61 70 70 69 6E 67 20 69 73 20 3C EC B8 A0 2C 20 E1 86 B8 3E 2C 20 61 6E 64 20 6E 6F 74 20 3C E1 84 8E 2C 20 E1 85 B3 2C 20 31 31 42 38 3E 2E 0A 3C 70 3E 54 68 65 20 74 69 74 6C 65 20 73 61 79 73 20 E2 80 AB D7 A4 D7 A2 D7 99 D7 9C D7 95 D7 AA 20 D7 94 D7 91 D7 99 D7 A0 D7 90 D7 95 D7 9D 2C 20 57 33 43 E2 80 AC 20 69 6E 20 48 65 62 72 65 77 3C 2F 70 3E 0A 61 62 63 E0 A4 95 E0 A4 96 E0 A5 80 E5 9C 8B E9 9A 9B F0 90 8E 84 F0 90 8E 94 F0 90 8E 98' reject: [ :char  | char isSeparator ]).
-
-	stringWithDecimalNCRs _ String fromUtf8Bytes: utf8 hex: false trimLastNull: false.
-	stringWithHexNCRs _ String fromUtf8Bytes: utf8 hex: true trimLastNull: false.
-
-	self assert: stringWithDecimalNCRs =  '&#956; &#936; ˜ The decomposition mapping is <&#52768;, &#4536;>, and not <&#4366;, &#4467;, 11B8>.
-<p>The title says &#8235;&#1508;&#1506;&#1497;&#1500;&#1493;&#1514; &#1492;&#1489;&#1497;&#1504;&#1488;&#1493;&#1501;, W3C&#8236; in Hebrew</p>
-abc&#2325;&#2326;&#2368;&#22283;&#38555;&#66436;&#66452;&#66456;'.
-
-	self assert: (stringWithDecimalNCRs asUtf8Bytes: true) = utf8.
-
-	self assert: stringWithHexNCRs = '&#x03BC; &#x03A8; ˜ The decomposition mapping is <&#xCE20;, &#x11B8;>, and not <&#x110E;, &#x1173;, 11B8>.
-<p>The title says &#x202B;&#x05E4;&#x05E2;&#x05D9;&#x05DC;&#x05D5;&#x05EA; &#x05D4;&#x05D1;&#x05D9;&#x05E0;&#x05D0;&#x05D5;&#x05DD;, W3C&#x202C; in Hebrew</p>
-abc&#x0915;&#x0916;&#x0940;&#x570B;&#x969B;&#x10384;&#x10394;&#x10398;'.
-
-	self assert: (stringWithHexNCRs asUtf8Bytes: true) = utf8! !
-
-!StringTest methodsFor: 'tests - converting' stamp: 'jmv 9/19/2016 09:55:39'!
-testBase64
-
-	self 
-		assert: 'SGVsbG8gV29ybGQ=' base64Decoded = 'Hello World' asByteArray;
-		assert: 'Hello World' asByteArray base64Encoded = 'SGVsbG8gV29ybGQ=';
-		assert: (String new: 100 withAll: $x) asByteArray base64Encoded  =
-'eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4
-eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eA==' ! !
-
-!StringTest methodsFor: 'testing' stamp: 'HAW 8/3/2018 10:42:26'!
-testAfterBlanksEndsWith
-
-	self assert: (' abc' afterBlanksEndsWith: 'abc').
-	self assert: ('abc' afterBlanksEndsWith: 'abc').
-	
-	self deny: (' ab' afterBlanksEndsWith: 'abc').
-	self deny: (' ab' afterBlanksEndsWith: 'a').
-	self deny: ('' afterBlanksEndsWith: 'abc').
-	self deny: (' a a bc' afterBlanksEndsWith: 'a bc').! !
-
-!StringTest methodsFor: 'testing' stamp: 'jmv 10/6/2010 22:08'!
-testCaseConversion
-	"
-	self new testCaseConversion
-	"
-	self assert: ('año Comé tomá Camión' asLowercase) = 'año comé tomá camión'.
-	self assert: ('año Comé tomá Camión' asUppercase) = 'AÑO COMÉ TOMÁ CAMIÓN'! !
-
-!StringTest methodsFor: 'testing' stamp: 'jmv 9/1/2009 14:12'!
-testEncompassParagraph1
-
-	self assert: ('a' encompassParagraph: (1 to: 0)) = (1 to: 1).
-	self assert: ('a' encompassParagraph: (1 to: 1)) = (1 to: 1).
-	self assert: ('a' encompassParagraph: (2 to: 1)) = (1 to: 1).! !
-
-!StringTest methodsFor: 'testing' stamp: 'jmv 9/1/2009 14:13'!
-testEncompassParagraph2
-
-	self assert: ('ab' encompassParagraph: (1 to: 0)) = (1 to: 2).
-	self assert: ('ab' encompassParagraph: (1 to: 1)) = (1 to: 2).
-	self assert: ('ab' encompassParagraph: (1 to: 2)) = (1 to: 2).
-	self assert: ('ab' encompassParagraph: (2 to: 1)) = (1 to: 2).
-	self assert: ('ab' encompassParagraph: (2 to: 2)) = (1 to: 2).
-	self assert: ('ab' encompassParagraph: (3 to: 2)) = (1 to: 2).! !
-
-!StringTest methodsFor: 'testing' stamp: 'jmv 9/1/2009 14:14'!
-testEncompassParagraph3
-
-self assert: ('a
-' encompassParagraph: (1 to: 0)) = (1 to: 2).
-self assert: ('a
-' encompassParagraph: (1 to: 1)) = (1 to: 2).
-self assert: ('a
-' encompassParagraph: (1 to: 2)) = (1 to: 2).
-self assert: ('a
-' encompassParagraph: (2 to: 1)) = (1 to: 2).
-self assert: ('a
-' encompassParagraph: (2 to: 2)) = (1 to: 2).
-self assert: ('a
-' encompassParagraph: (3 to: 2)) = (3 to: 2).
-
-self assert: ('a
-zcxv' encompassParagraph: (1 to: 0)) = (1 to: 2).
-self assert: ('a
-zcxv' encompassParagraph: (1 to: 1)) = (1 to: 2).
-self assert: ('a
-zxcv' encompassParagraph: (1 to: 2)) = (1 to: 2).
-self assert: ('a
-zxcv' encompassParagraph: (2 to: 1)) = (1 to: 2).
-self assert: ('a
-zxcv' encompassParagraph: (2 to: 2)) = (1 to: 2).
-self assert: ('a
-zxcv' encompassParagraph: (3 to: 2)) = (3 to: 6).! !
-
-!StringTest methodsFor: 'testing' stamp: 'jmv 9/1/2009 14:17'!
-testEncompassParagraph4
-
-self assert: ('
-b' encompassParagraph: (1 to: 0)) = (1 to: 1).
-self assert: ('
-b' encompassParagraph: (1 to: 1)) = (1 to: 1).
-self assert: ('
-b' encompassParagraph: (1 to: 2)) = (1 to: 2).
-self assert: ('
-b' encompassParagraph: (2 to: 1)) = (2 to: 2).
-self assert: ('
-b' encompassParagraph: (2 to: 2)) = (2 to: 2).
-self assert: ('
-b' encompassParagraph: (3 to: 2)) = (2 to: 2).! !
-
-!StringTest methodsFor: 'testing' stamp: 'jmv 9/1/2009 14:22'!
-testEncompassParagraph5
-
-self assert: ('a
-b' encompassParagraph: (1 to: 0)) = (1 to: 2).
-self assert: ('a
-b' encompassParagraph: (1 to: 1)) = (1 to: 2).
-self assert: ('a
-b' encompassParagraph: (1 to: 2)) = (1 to: 2).
-self assert: ('a
-b' encompassParagraph: (1 to: 3)) = (1 to: 3).
-self assert: ('a
-b' encompassParagraph: (2 to: 1)) = (1 to: 2).
-self assert: ('a
-b' encompassParagraph: (2 to: 2)) = (1 to: 2).
-self assert: ('a
-b' encompassParagraph: (2 to: 3)) = (1 to: 3).
-self assert: ('a
-b' encompassParagraph: (3 to: 2)) = (3 to: 3).
-self assert: ('a
-b' encompassParagraph: (3 to: 3)) = (3 to: 3).
-self assert: ('a
-b' encompassParagraph: (4 to: 3)) = (3 to: 3).! !
-
-!StringTest methodsFor: 'testing' stamp: 'HAW 12/29/2020 13:29:16'!
-testFindSelector 
-
-	self assert: #printOn: equals: '"self printOn:' findSelector.
-	self assert: #printOn: equals: 'self printOn:"' findSelector.
-	self assert: #printOn: equals: '"self printOn:"' findSelector.
-	self assert: #printOn: equals: 'self printOn:' findSelector.
-! !
-
-!StringTest methodsFor: 'testing' stamp: 'jmv 6/6/2022 16:47:18'!
-testFirstNonSeparator
-
-	self assert: 1 equals: 'abc' firstNonSeparator.
-	self assert: 2 equals: ' abc' firstNonSeparator.
-	self assert: 0 equals: '' firstNonSeparator ! !
-
-!StringTest methodsFor: 'testing' stamp: 'jpb 8/2/2019 23:11:49'!
-testIsString
-	self assert: ('Hello World' is: #String).
-	self assert: ('' is: #String).! !
-
-!StringTest methodsFor: 'testing' stamp: 'jmv 6/6/2022 16:46:49'!
-testLastNonSeparator
-
-	self assert: 3 equals: 'abc' lastNonSeparator.
-	self assert: 3 equals: 'abc ' lastNonSeparator.
-	self assert: 4 equals: ' abc ' lastNonSeparator.
-	self assert: 0 equals: '' lastNonSeparator ! !
-
-!StringTest methodsFor: 'testing' stamp: 'jmv 12/17/2012 10:51'!
-testLineSeparators
-	"
-	Test that #newLineCharacter is considered a line separator and not a line terminator.
-	This means that the last line never ends with a #newLineCharacter (although it might be empty!!)
-	StringTest new testLineSeparators
-	"
-	| justAnLf linesBounds |
-	linesBounds _ OrderedCollection new.
-	justAnLf _ '
-'.
-	justAnLf lineIndicesDo: [ :start :endWithoutDelimiters :end |
-		linesBounds add: { start . endWithoutDelimiters. end }.
-		].
-
-	self assert: linesBounds size = 2 description: 'There should be two lines.'.
-
-	self assert: linesBounds first first = 1 description: 'First line starts at position 1'.
-	self assert: linesBounds first second = (linesBounds first first-1) description: 'First line is empty'.
-	self assert: linesBounds first third = (linesBounds first second+1) description: 'First line is terminated by ab Lf'.
-
-	self assert: linesBounds second first = ( linesBounds first third+1) description: 'Second line starts after end of first line'.
-	self assert: linesBounds second second = (linesBounds second first-1) description: 'Second line is empty'.
-	self assert: linesBounds second third = (linesBounds second second+0) description: 'Second line is not terminated by ab Lf'.! !
-
-!StringTest methodsFor: 'testing' stamp: 'jmv 10/6/2010 22:03'!
-testSorting
-"
-self new testSorting
+!BecomeTestExperiment methodsFor: 'as yet unclassified' stamp: 'jmv 1/11/2019 12:21:36'!
+initialize
+	a _ 1.
+	b _ 2.! !
+
+!BecomeTestExperiment methodsFor: 'as yet unclassified' stamp: 'jmv 1/29/2019 10:59:12'!
+messStuffUp
+"In a Workspace
+
+BecomeTestExperiment twoVars.
+e _ BecomeTestExperiment new.
+e messStuffUp.
+
+e _ nil. Smalltalk garbageCollect.
+BecomeTestExperiment allInstances
+
+Processor invalidMethodInStackDueToClass: BecomeTestExperiment
 "
 
-	self assert: 'a' < 'á'.
-	self assert: ('a' < 'Á') not.
-	self assert: 'A' < 'á'.
-	self assert: 'A' < 'Á'.
-	self assert: 'á' < 'b'.
-	self assert: ('á' < 'B') not.
-	self assert: 'Á' < 'b'.
-	self assert: 'Á' < 'B'.
-
-	self assert: ('a' caseSensitiveLessOrEqual: 'á').
-	self deny: ('a' caseSensitiveLessOrEqual: 'Á').
-	self assert: ('A' caseSensitiveLessOrEqual: 'á').
-	self assert: ('A' caseSensitiveLessOrEqual: 'Á').
-	self assert: ('á' caseSensitiveLessOrEqual: 'b').
-	self deny: ('á' caseSensitiveLessOrEqual: 'B').
-	self assert: ('Á' caseSensitiveLessOrEqual: 'b').
-	self assert: ('Á' caseSensitiveLessOrEqual: 'B').
-
-	self assert: ('a' caseInsensitiveLessOrEqual: 'á').
-	self assert: ('a' caseInsensitiveLessOrEqual: 'Á').
-	self assert: ('A' caseInsensitiveLessOrEqual: 'á').
-	self assert: ('A' caseInsensitiveLessOrEqual: 'Á').
-	self assert: ('á' caseInsensitiveLessOrEqual: 'b').
-	self assert: ('á' caseInsensitiveLessOrEqual: 'B').
-	self assert: ('Á' caseInsensitiveLessOrEqual: 'b').
-	self assert: ('Á' caseInsensitiveLessOrEqual: 'B').! !
-
-!StringTest methodsFor: 'testing' stamp: 'HAW 8/3/2018 11:00:28'!
-testWithBlanksTrimmed
-
-	self assert: 'abc' equals: ' abc' withBlanksTrimmed.
-	self assert: 'abc' equals: 'abc ' withBlanksTrimmed.
-	self assert: 'abc' equals: ' abc ' withBlanksTrimmed.
-	self assert: 'a b c' equals: ' a b c ' withBlanksTrimmed.
-	self assert: '' equals: '' withBlanksTrimmed.
-	! !
-
-!StringTest methodsFor: 'testing' stamp: 'HAW 8/2/2018 20:35:28'!
-testWithoutLeadingBlanks
-
-	self assert: 'abc' equals: ' abc' withoutLeadingBlanks.
-	self assert: 'abc' equals: 'abc' withoutLeadingBlanks.
-	self assert: '' withoutLeadingBlanks isEmpty
-! !
-
-!StringTest methodsFor: 'testing' stamp: 'HAW 6/8/2019 18:18:47'!
-testWithoutSeparators
-
-	self assert: 'abc' equals: 'abc' withoutSeparators.
-	self assert: 'abc' equals: ' a b c ' withoutSeparators! !
-
-!StringTest methodsFor: 'testing' stamp: 'HAW 8/2/2018 20:35:32'!
-testWithoutTrailingBlanks
-
-	self assert: 'abc' equals: 'abc ' withoutTrailingBlanks.
-	self assert: 'abc' equals: 'abc' withoutTrailingBlanks.
-	self assert: '' withoutTrailingBlanks isEmpty
-! !
-
-!StringTest methodsFor: 'tests - grammar' stamp: 'LC 7/5/2020 16:47:10'!
-testArticle
-	self
-		assert: 'euphemism' withArticle equals: 'a euphemism';
-		assert: 'European' withArticle equals: 'a European';
-		assert: 'Euclidean space' withArticle equals: 'a Euclidean space';
-		assert: 'university' withArticle equals: 'a university';
-		assert: 'anagram' withArticle equals: 'an anagram';
-		assert: 'apple' withArticle equals: 'an apple';
-		assert: 'Ukranian' withArticle equals: 'a Ukranian';
-		assert: 'Argentine' withArticle equals: 'an Argentine';
-		assert: 'user' withArticle equals: 'a user'! !
-
-!SymbolTest methodsFor: 'tests - selector validation' stamp: 'RNG 3/29/2020 19:59:47'!
-testIsNotValidBinarySelectorIfItContainsACharacterNotAllowed
-
-	self deny: #'(' isValidSelector! !
-
-!SymbolTest methodsFor: 'tests - selector validation' stamp: 'RNG 3/29/2020 20:01:07'!
-testIsNotValidKeywordSelectorIfItContainsSeparators
-
-	self deny: #'between: and:' isValidSelector! !
-
-!SymbolTest methodsFor: 'tests - selector validation' stamp: 'RNG 3/29/2020 19:52:35'!
-testIsNotValidUnarySelectorIfItContainsCharactersUsedInBinarySelectors
-
-	self deny: #'a+b' isValidSelector! !
-
-!SymbolTest methodsFor: 'tests - selector validation' stamp: 'RNG 3/29/2020 19:51:29'!
-testIsNotValidUnarySelectorIfItStartsWithALetterAndContainsSeparators
-
-	self deny: #'with spaces' isValidSelector! !
-
-!SymbolTest methodsFor: 'tests - selector validation' stamp: 'RNG 3/29/2020 19:53:43'!
-testIsValidBinarySelectorIfItContainsAnAllowedCharacterOrSequenceOfCharacters
-
-	self
-		assert: #+ isValidSelector;
-		assert: #+-+ isValidSelector! !
-
-!SymbolTest methodsFor: 'tests - selector validation' stamp: 'RNG 3/29/2020 20:00:35'!
-testIsValidKeywordSelectorIfItContainsKeywordsWithColons
-
-	self
-		assert: #includes: isValidSelector;
-		assert: #between:and: isValidSelector! !
-
-!SymbolTest methodsFor: 'tests - selector validation' stamp: 'RNG 3/29/2020 19:50:31'!
-testIsValidUnarySelectorIfItStartsWithALetterAndDoesNotContainSeparators
-
-	self assert: #t234 isValidSelector! !
-
-!UnicodeStringsTest methodsFor: 'testing' stamp: 'jmv 6/2/2022 15:14:24'!
-test01
-
-	| asciiString asciiUtf32String asciiUtf8String latinString latinUtf32String latinUtf8String |
-	asciiString _ 'Hello world'.
-	latinString _ '¡Tomá agüita, Ñandú!!'.
-	asciiUtf8String _ asciiString asUtf8String.
-	latinUtf8String _ latinString asUtf8String.
-	asciiUtf32String _ asciiString asUtf32String.
-	latinUtf32String _ latinString asUtf32String.
-
-	self assert: asciiString hash = asciiUtf8String hash.
-	self assert: asciiString hash = asciiUtf32String hash.
-	self assert: asciiString = asciiUtf8String.
-	self assert: asciiString = asciiUtf32String.
-	self assert: asciiUtf8String = asciiString.
-	self assert: asciiUtf8String = asciiUtf32String.
-	self assert: asciiUtf32String = asciiString.
-	self assert: asciiUtf32String = asciiUtf8String.
-
-	self assert: latinString hash = latinUtf8String hash.
-	self assert: latinString hash = latinUtf32String hash.
-	self assert: latinString = latinUtf8String.
-	self assert: latinString = latinUtf32String.
-	self assert: latinUtf8String = latinString.
-	self assert: latinUtf8String = latinUtf32String.
-	self assert: latinUtf32String = latinString.
-	self assert: latinUtf32String = latinUtf8String.! !
-
-!UnicodeSymbolsTest methodsFor: 'testing' stamp: 'jmv 6/3/2022 11:37:33'!
-test01AsciiSymbolFirst
-	"Try a few things with pure ASCII.
-	Do #asSymbol before doing #asUtf8Symbol. The symbol created will be instance of Symbol."
-	
-	| str symbol utf8 utf8Symbol |
-	str _ 'Stuff', Random next mantissaPart printString.
-	symbol _ str asSymbol.
-	utf8 _ str asUtf8String.
-	utf8Symbol _ utf8 asSymbol.
-
-	self assert: str = str.
-	self assert: str == str.
-	self assert: symbol = symbol.
-	self assert: symbol == symbol.
-	self assert: utf8 = utf8.
-	self assert: utf8 == utf8.
-	self assert: utf8Symbol = utf8Symbol.
-	self assert: utf8Symbol == utf8Symbol.
-
-	self assert: str = symbol.
-	self assert: symbol = str.
-	self assert: utf8 = utf8Symbol.
-	self assert: utf8Symbol = utf8.
-
-	self assert: str = utf8.
-	self assert: utf8 = str.
-	self assert: symbol = utf8Symbol.
-	self assert: utf8Symbol = symbol.
-
-	self assert: str = utf8Symbol.
-	self assert: utf8Symbol = str.
-	self assert: symbol = utf8.
-	self assert: utf8 = symbol.
-
-	self assert: utf8Symbol == symbol.
-	self assert: symbol == utf8Symbol.! !
-
-!UnicodeSymbolsTest methodsFor: 'testing' stamp: 'jmv 6/3/2022 11:37:42'!
-test02LatinSymbolFirst
-	"Try a few things with pure ASCII.
-	Do #asSymbol before doing #asUtf8Symbol. The symbol created will be instance of Symbol."
-	
-	| str symbol utf8 utf8Symbol |
-	str _ '¡Tomá agüita, Ñandú!!', Random next mantissaPart printString.
-	symbol _ str asSymbol.
-	utf8 _ str asUtf8String.
-	utf8Symbol _ utf8 asSymbol.
-
-	self assert: str = str.
-	self assert: str == str.
-	self assert: symbol = symbol.
-	self assert: symbol == symbol.
-	self assert: utf8 = utf8.
-	self assert: utf8 == utf8.
-	self assert: utf8Symbol = utf8Symbol.
-	self assert: utf8Symbol == utf8Symbol.
-
-	self assert: str = symbol.
-	self assert: symbol = str.
-	self assert: utf8 = utf8Symbol.
-	self assert: utf8Symbol = utf8.
-
-	self assert: str = utf8.
-	self assert: utf8 = str.
-	self assert: symbol = utf8Symbol.
-	self assert: utf8Symbol = symbol.
-
-	self assert: str = utf8Symbol.
-	self assert: utf8Symbol = str.
-	self assert: symbol = utf8.
-	self assert: utf8 = symbol.
-
-	self assert: utf8Symbol == symbol.
-	self assert: symbol == utf8Symbol.! !
-
-!UnicodeSymbolsTest methodsFor: 'testing' stamp: 'jmv 6/3/2022 11:38:22'!
-test03AsciiUtf8SymbolFirst
-	"Try a few things with pure ASCII.
-	Do #asSymbol before doing #asUtf8Symbol. The symbol created will be instance of Symbol."
-	
-	| str symbol utf8 utf8Symbol |
-	str _ 'Stuff', Random next mantissaPart printString.
-	utf8 _ str asUtf8String.
-	utf8Symbol _ utf8 asSymbol.
-	symbol _ str asSymbol.
-
-	self assert: str = str.
-	self assert: str == str.
-	self assert: symbol = symbol.
-	self assert: symbol == symbol.
-	self assert: utf8 = utf8.
-	self assert: utf8 == utf8.
-	self assert: utf8Symbol = utf8Symbol.
-	self assert: utf8Symbol == utf8Symbol.
-
-	self assert: str = symbol.
-	self assert: symbol = str.
-	self assert: utf8 = utf8Symbol.
-	self assert: utf8Symbol = utf8.
-
-	self assert: str = utf8.
-	self assert: utf8 = str.
-	self assert: symbol = utf8Symbol.
-	self assert: utf8Symbol = symbol.
-
-	self assert: str = utf8Symbol.
-	self assert: utf8Symbol = str.
-	self assert: symbol = utf8.
-	self assert: utf8 = symbol.
-
-	self assert: utf8Symbol == symbol.
-	self assert: symbol == utf8Symbol.! !
-
-!UnicodeSymbolsTest methodsFor: 'testing' stamp: 'jmv 6/3/2022 11:38:36'!
-test04LatinUtf8SymbolFirst
-	"Try a few things with pure ASCII.
-	Do #asSymbol before doing #asUtf8Symbol. The symbol created will be instance of Symbol."
-	
-	| str symbol utf8 utf8Symbol |
-	str _ '¡Tomá agüita, Ñandú!!', Random next mantissaPart printString.
-	utf8 _ str asUtf8String.
-	utf8Symbol _ utf8 asSymbol.
-	symbol _ str asSymbol.
-
-	self assert: str = str.
-	self assert: str == str.
-	self assert: symbol = symbol.
-	self assert: symbol == symbol.
-	self assert: utf8 = utf8.
-	self assert: utf8 == utf8.
-	self assert: utf8Symbol = utf8Symbol.
-	self assert: utf8Symbol == utf8Symbol.
-
-	self assert: str = symbol.
-	self assert: symbol = str.
-	self assert: utf8 = utf8Symbol.
-	self assert: utf8Symbol = utf8.
-
-	self assert: str = utf8.
-	self assert: utf8 = str.
-	self assert: symbol = utf8Symbol.
-	self assert: utf8Symbol = symbol.
-
-	self assert: str = utf8Symbol.
-	self assert: utf8Symbol = str.
-	self assert: symbol = utf8.
-	self assert: utf8 = symbol.
-
-	self assert: utf8Symbol == symbol.
-	self assert: symbol == utf8Symbol.! !
-
-!UnicodeTest methodsFor: 'set up' stamp: 'jmv 5/31/2016 11:24'!
-setUp
-	"
-	self new setUp
-	"
-
-     bytesOfExample1 := #[16r61 16r62 16r63 16r20 16rC3 16rA0 16rC3 16rA8 16rE2 
-	                              16r82 16rAC 16r20 16rCE 16rB1 16rCE 16rB2 16rCE 16rB3].
-	
-	"see UnicodeNotes.md"
-	
-     "write the bytes of an UFT8 encoded string in binary mode to a file"
-	self class fileName asFileEntry forceWriteStreamDo: [ :stream |
-		stream binary.
-		stream nextPutAll: bytesOfExample1 ]! !
-
-!UnicodeTest methodsFor: 'testing' stamp: 'jmv 10/3/2015 20:03'!
-test1ReadBinary
-	
-	"see UnicodeNotes.md"
-     "
-	self new setUp test1ReadBinary
-	"
-     | content |
-	content := self class fileName asFileEntry binaryContents.
-	self assert: content = bytesOfExample1! !
-
-!UnicodeTest methodsFor: 'testing' stamp: 'jmv 10/3/2015 20:04'!
-test2ReadWithOutBinary
-	
-	"see UnicodeNotes.md"
-     "
-	self new setUp test2ReadWithOutBinary
-	"
-     | content |
-	content := self class fileName asFileEntry textContents.
-	self deny: content = bytesOfExample1! !
-
-!UnicodeTest methodsFor: 'testing' stamp: 'jmv 5/26/2022 12:01:13'!
-test3ReadUtf8
-	
-	"see UnicodeNotes.md"
-     "
-	self new setUp test3ReadUtf8
-	"
-     | content byteArray |
-	byteArray _ self class fileName asFileEntry binaryContents.
-	content := String fromUtf8Bytes: byteArray.
-	self assert: content = 'abc àè¤ ˆ‰Š'! !
-
-!UnicodeTest methodsFor: 'testing' stamp: 'jmv 5/26/2022 12:00:15'!
-test4BackConversion
-	
-	"see UnicodeNotes.md"
-	
-     "
-	self new setUp test4BackConversion
-	"
-     | contentInternalString contentByteArray |
-
-	contentInternalString := String fromUtf8Bytes: self class fileName asFileEntry binaryContents.
-	contentByteArray := self class fileName asFileEntry binaryContents.
-
-	self assert: contentByteArray = (contentInternalString asUtf8Bytes: true)! !
-
-!UnicodeTest methodsFor: 'testing' stamp: 'jmv 5/26/2022 12:00:29'!
-test5ReadWriteUtf8
-	
-	"see UnicodeNotes.md"
-	
-     "
-	self new setUp test5ReadWriteUtf8
-	"
-     | content byteArray byteArray2 |
-
-	"read UTF8 Unicode file into internal string with NCRs"
-	"for NCR see http://en.wikipedia.org/wiki/Numeric_character_reference"
-	
-	byteArray := self class fileName asFileEntry binaryContents.
-	content := String fromUtf8Bytes: byteArray.
-	"NCRs were added to 'content' as needed"
-
-	"write internal string back to UTF8 file with NCRs converted back to UTF8 chars"
-	self class fileName2 asFileEntry forceWriteStreamDo: [ :stream |
-		stream binary.
-		stream nextPutAll: (content asUtf8Bytes: true).  "true means: convert NCRs back to UTF8"
-		].
-
-      "compare the two versions: what is in file 'fileName' with what is in file 'fileName2'"
-	byteArray := self class fileName asFileEntry binaryContents.
-	byteArray2 := self class fileName2 asFileEntry binaryContents.
-	self assert: byteArray = byteArray2! !
-
-!UnicodeTest class methodsFor: 'as yet unclassified' stamp: 'hjh 2/12/2013 19:25'!
-fileName
-	^'UTF8abc-test.txt'! !
-
-!UnicodeTest class methodsFor: 'as yet unclassified' stamp: 'hjh 2/12/2013 21:35'!
-fileName2
-	^'UTF8abc-test2.txt'! !
-
-!SHST80RangeTypeTest methodsFor: 'tests' stamp: 'HAW 10/5/2020 12:16:37'!
-test00MessagesForTestingAreImplemented
-
-	self assert: (self respondsTo: #_zz).
-	self assert: (self respondsTo: #!!).
-	! !
-
-!SHST80RangeTypeTest methodsFor: 'tests' stamp: 'HAW 10/5/2020 11:56:57'!
-test01TypeOfMessageSentToLiteralNumberAreObtainedCorrectly
-
-	self assertTypesAreValidWhenMessageSendTo: '1'! !
-
-!SHST80RangeTypeTest methodsFor: 'tests' stamp: 'HAW 10/5/2020 11:58:55'!
-test02TypeOfMessageSentToLiteralStringAreObtainedCorrectly
-
-	self assertTypesAreValidWhenMessageSendTo: '''a'''! !
-
-!SHST80RangeTypeTest methodsFor: 'tests' stamp: 'HAW 10/5/2020 11:58:39'!
-test03TypeOfMessageSentToLiteralSymbolAreObtainedCorrectly
-
-	self assertTypesAreValidWhenMessageSendTo: '#a'! !
-
-!SHST80RangeTypeTest methodsFor: 'tests' stamp: 'HAW 10/5/2020 11:59:12'!
-test04TypeOfMessageSentToLiteralArrayAreObtainedCorrectly
-
-	self assertTypesAreValidWhenMessageSendTo: '#(1)'! !
-
-!SHST80RangeTypeTest methodsFor: 'tests' stamp: 'HAW 10/5/2020 11:59:23'!
-test05TypeOfMessageSentToLiteralBraceArrayAreObtainedCorrectly
-
-	self assertTypesAreValidWhenMessageSendTo: '{1}'! !
-
-!SHST80RangeTypeTest methodsFor: 'tests' stamp: 'HAW 10/5/2020 11:59:33'!
-test06TypeOfMessageSentToLiteralBlockAreObtainedCorrectly
-
-	self assertTypesAreValidWhenMessageSendTo: '[1]'! !
-
-!SHST80RangeTypeTest methodsFor: 'tests' stamp: 'HAW 10/5/2020 11:59:42'!
-test07TypeOfMessageSentToLiteralCharacterAreObtainedCorrectly
-
-	self assertTypesAreValidWhenMessageSendTo: '$a'! !
-
-!SHST80RangeTypeTest methodsFor: 'tests' stamp: 'HAW 10/5/2020 11:59:51'!
-test08TypeOfMessageSentToLiteralNilAreObtainedCorrectly
-
-	self assertTypesAreValidWhenMessageSendTo: 'nil'! !
-
-!SHST80RangeTypeTest methodsFor: 'tests' stamp: 'HAW 10/5/2020 11:59:59'!
-test09TypeOfMessageSentToLiteralTrueAreObtainedCorrectly
-
-	self assertTypesAreValidWhenMessageSendTo: 'true'! !
-
-!SHST80RangeTypeTest methodsFor: 'tests' stamp: 'HAW 10/5/2020 12:00:08'!
-test10TypeOfMessageSentToLiteralFalseAreObtainedCorrectly
-
-	self assertTypesAreValidWhenMessageSendTo: 'false'! !
-
-!SHST80RangeTypeTest methodsFor: 'tests' stamp: 'HAW 7/15/2021 10:47:18'!
-test11TypeOfMessageSentToSelfAreObtainedCorrectly
-
-	self 
-		assertTypeOfMessageSend: 'm1 self _zz'
-		is: #undefinedUnary
-		in: Object
-		receiverRange: [ :ranges | ranges penultimate ]
-		messageRange: [ :ranges | ranges last ].
-	self 
-		assertTypeOfMessageSend: 'm1 self size'
-		is: #unary
-		in: Object
-		receiverRange: [ :ranges | ranges penultimate ]
-		messageRange: [ :ranges | ranges last ].
-		
-	"Binary messages have been disabled - Hernan
-	self 
-		assertTypeOfMessageSend: 'm1 self !! 2'
-		is: #undefinedBinary
-		in: Object
-		receiverRange: [ :ranges | ranges antepenultimate ]
-		messageRange: [ :ranges | ranges penultimate ]."
-		
-	self 
-		assertTypeOfMessageSend: 'm1 self = 2'
-		is: #binary
-		in: Object
-		receiverRange: [ :ranges | ranges antepenultimate ]
-		messageRange: [ :ranges | ranges penultimate ].! !
-
-!SHST80RangeTypeTest methodsFor: 'tests' stamp: 'HAW 10/5/2020 12:00:26'!
-test12TypeOfMessageSentToSuperAreObtainedCorrectly
-
-	self assertTypesAreValidWhenMessageSendTo: 'super'! !
-
-!SHST80RangeTypeTest methodsFor: 'tests' stamp: 'HAW 7/15/2021 10:47:00'!
-test13TypesIsUndefinedForAnyMessageSendToSuperFromProtoObject
-
-	self 
-		assertTypeOfMessageSend: 'm1 super size'
-		is: #undefinedUnary
-		in: ProtoObject
-		receiverRange: [ :ranges | ranges penultimate ]
-		messageRange: [ :ranges | ranges last ].
-		
-	"binaryMessages have been disabled - Hernan
-	self 
-		assertTypeOfMessageSend: 'm1 super = 2'
-		is: #undefinedBinary
-		in: ProtoObject
-		receiverRange: [ :ranges | ranges antepenultimate ]
-		messageRange: [ :ranges | ranges penultimate ]."! !
-
-!SHST80RangeTypeTest methodsFor: 'tests' stamp: 'HAW 10/5/2020 12:00:37'!
-test14TypeOfMessageSentToGlobalVarAreObtainedCorrectly
-
-	self assertTypesAreValidWhenMessageSendTo: 'Smalltalk'! !
-
-!SHST80RangeTypeTest methodsFor: 'tests' stamp: 'HAW 10/5/2020 12:24:04'!
-test15TypeOfMessageSentToClassVarAreObtainedCorrectly
-
-	ClassVar1 := 1.
-	self assertTypesAreValidWhenMessageSendTo: 'ClassVar1'! !
-
-!SHST80RangeTypeTest methodsFor: 'assertions' stamp: 'HAW 10/5/2020 12:02:43'!
-assertTypeOfBinaryMessageSend: aSourceCode is: aExpectedType
-
-	self 
-		assertTypeOfMessageSend: aSourceCode 
-		is: aExpectedType 
-		receiverRange: [ :ranges | ranges antepenultimate ]
-		messageRange: [ :ranges | ranges penultimate ]
-! !
-
-!SHST80RangeTypeTest methodsFor: 'assertions' stamp: 'jmv 4/26/2021 19:40:38'!
-assertTypeOfMessageSend: aSourceCode 
-	is: aExpectedType
-	in: aClassOrMetaClass 
-	receiverRange: aReceiverRangeBlock 
-	messageRange: aMessageRangeBlock
-
-	| parser ranges st80RangeType type |
-	
-	parser := SHParserST80 new.
-	ranges := parser
-		workspace: nil;
-		classOrMetaClass: aClassOrMetaClass ;
-		source: aSourceCode;
-		parse;
-		ranges.
-		
-	st80RangeType := SHST80RangeType for: aSourceCode in: aClassOrMetaClass.
-	st80RangeType lastRange: (aReceiverRangeBlock value: ranges).
-	type := st80RangeType ofCurrentRangeOrMessageSendIn: (aMessageRangeBlock value: ranges).
-	
-	self assert: aExpectedType equals: type
-	! !
-
-!SHST80RangeTypeTest methodsFor: 'assertions' stamp: 'HAW 10/5/2020 12:23:51'!
-assertTypeOfMessageSend: aSourceCode 
-	is: aExpectedType 
-	receiverRange: aReceiverRangeBlock 
-	messageRange: aMessageRangeBlock
-
-	self 
-		assertTypeOfMessageSend: aSourceCode 
-		is: aExpectedType
-		in: self class
-		receiverRange: aReceiverRangeBlock 
-		messageRange: aMessageRangeBlock! !
-
-!SHST80RangeTypeTest methodsFor: 'assertions' stamp: 'HAW 10/5/2020 12:02:52'!
-assertTypeOfUnaryMessageSend: aSourceCode is: aExpectedType
-
-	self 
-		assertTypeOfMessageSend: aSourceCode 
-		is: aExpectedType 
-		receiverRange: [ :ranges | ranges penultimate ]
-		messageRange: [ :ranges | ranges last ]
-! !
-
-!SHST80RangeTypeTest methodsFor: 'assertions' stamp: 'HAW 7/15/2021 10:45:30'!
-assertTypesAreValidWhenMessageSendTo: aReceiverAsString
-
-	self assertTypeOfUnaryMessageSend: 'm1 ', aReceiverAsString, ' _zz' is: #undefinedUnary.
-	self assertTypeOfUnaryMessageSend: 'm1 ', aReceiverAsString, ' size' is: #unary.
-
-	" binary messages has beed disabled by now - Hernan
-	self assertTypeOfBinaryMessageSend: 'm1 ', aReceiverAsString, ' !! 2' is: #undefinedBinary.
-	self assertTypeOfBinaryMessageSend: 'm1 ', aReceiverAsString, ' = 2' is: #binary
-	"! !
-
-!SHST80RangeTypeTest methodsFor: 'messages for testing' stamp: 'HAW 10/5/2020 12:15:40'!
-!! something
-
-	"Do not remove this method because it exists for its name to have implementors - Hernan"! !
-
-!SHST80RangeTypeTest methodsFor: 'messages for testing' stamp: 'HAW 10/5/2020 12:15:50'!
-_zz
-
-	"Do not remove this method because it exists for its name to have implementors - Hernan"! !
-
-!DebuggerTest methodsFor: 'tests - method categories' stamp: 'HAW 8/19/2021 15:31:36'!
-testCategoriesAreAddedSortedByAndSeparatedByClass
-
-	| objectCategories protoObjectCategories categoriesPrompter |
-	
-	objectCategories := Object methodCategoriesAsSortedCollection.
-	protoObjectCategories := ProtoObject methodCategoriesAsSortedCollection removeAllFoundIn: objectCategories; yourself.
-	
-	"Test pre-conditions. May seem unnecesary but they are not if we take time into account - Hernan"
-	self assert: ProtoObject equals: Object superclass.
-	self assert: nil equals: ProtoObject superclass.
-	self assert: objectCategories notEmpty.
-	self assert: protoObjectCategories notEmpty.
-	
-	categoriesPrompter := MethodCategoriesPrompter staringFrom: Object rejectingFirst: false.
-	
-	self assert: 2 equals: categoriesPrompter lines size.
-	self assert: 1 equals: categoriesPrompter lines first.
-	self assert: (categoriesPrompter categories copyFrom: 2 to: categoriesPrompter lines second) asArray equals: objectCategories asArray.
-	self assert: (categoriesPrompter categories copyFrom: categoriesPrompter lines second + 1 to: categoriesPrompter categories size) asArray equals: protoObjectCategories asArray.
-	! !
-
-!DebuggerTest methodsFor: 'tests - method categories' stamp: 'HAW 8/19/2021 15:33:48'!
-testMetaclassCategoriesIncludesInstanceCreation
-
-	| categoriesPrompter |
-
-	categoriesPrompter := MethodCategoriesPrompter staringFrom: ProtoObject class rejectingFirst: false.
-	
-	self assert: Categorizer instanceCreation equals: categoriesPrompter categories second ! !
-
-!StrikeFontTest methodsFor: 'testing' stamp: 'jmv 6/11/2020 16:30:55'!
-testBaseAndDerivedFont
-	"
-	StrikeFontTest new testBaseAndDerivedFont
-	"
-
-	| base italic italicItalic boldItalic italicBold boldItalic2 underlined underlinedItalic italicUnderlined struckThrough1 struckThrough2 |
-	base _ FontFamily defaultFamilyPointSize: 14.
-	self assert: base isBaseFont.
-	italic _ base italic.
-	self deny: italic isBaseFont.
-	italicItalic _ italic italic.
-	self assert: italicItalic == italic.
-	boldItalic _ base bold italic.
-	self deny: boldItalic isBaseFont.
-	boldItalic2 _ base boldItalic.
-	italicBold _ italic bold.
-	self assert: boldItalic == italicBold.
-	self assert: boldItalic == boldItalic2.
-	underlined _ base underlined.
-	self deny: underlined isBaseFont.
-	underlinedItalic _ underlined italic.
-	italicUnderlined _ italic underlined.
-	self assert: underlinedItalic == italicUnderlined.
-	struckThrough1 _ base italic underlined bold struckThrough.
-	struckThrough2 _ base bold underlined italic struckThrough.
-	self assert: struckThrough1 == struckThrough2! !
-
-!StrikeFontTest methodsFor: 'testing' stamp: 'jmv 6/11/2020 16:25:48'!
-testBaseAndDerivedFontSanity
-	"
-	StrikeFontTest new testBaseAndDerivedFontSanity
-	"
-
-	StrikeFont allInstances do: [ :f |
-		f isBaseFont 
-			ifTrue: [
-				self assert: (f instVarNamed: 'baseFont') isNil.
-				self assert: f baseFont == f.
-				self assert: (f instVarNamed: 'derivativeFonts') notNil ]
-			ifFalse: [
-				self assert: f baseFont notNil.
-				self assert: (f instVarNamed: 'derivativeFonts') isNil.
-				self assert: (f baseFont emphasized: f emphasis) == f ] ]! !
-
-!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:59:20'!
-test16bpp
-	| form n read |
-	form _ JpegTest lenaColor64 asFormOfDepth: 16.
-	self assert: form nativeDepth = 16.
-	form writeJPEGfileNamed: 'test.jpg'.
-	read _ 'test.jpg' asFileEntry formContents.
-	self assert: read depth = 32.
-
-	n _ form boundingBox width * form boundingBox height * 3.
-	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
-
-!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:59:16'!
-test16bpp61
-	| form n read |
-	form _ (JpegTest lenaColor64 asFormOfDepth: 16) copy: (0@0 extent: 61@61).
-	self assert: form nativeDepth = 16.
-	form writeJPEGfileNamed: 'test.jpg'.
-	read _ 'test.jpg' asFileEntry formContents.
-	self assert: read depth = 32.
-	self assert: read extent = (61@61).
-
-	n _ form boundingBox width * form boundingBox height * 3.
-	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
-
-!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:59:13'!
-test16bpp62
-	| form n read |
-	form _ (JpegTest lenaColor64 asFormOfDepth: 16) copy: (0@0 extent: 62@62).
-	self assert: form nativeDepth = 16.
-	form writeJPEGfileNamed: 'test.jpg'.
-	read _ 'test.jpg' asFileEntry formContents.
-	self assert: read depth = 32.
-	self assert: read extent = (62@62).
-
-	n _ form boundingBox width * form boundingBox height * 3.
-	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
-
-!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:59:10'!
-test16bpp63
-	| form n read |
-	form _ (JpegTest lenaColor64 asFormOfDepth: 16) copy: (0@0 extent: 63@63).
-	self assert: form nativeDepth = 16.
-	form writeJPEGfileNamed: 'test.jpg'.
-	read _ 'test.jpg' asFileEntry formContents.
-	self assert: read depth = 32.
-	self assert: read extent = (63@63).
-
-	n _ form boundingBox width * form boundingBox height * 3.
-	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
-
-!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:59:07'!
-test16bppLE
-	| form n read |
-	form _ JpegTest lenaColor64 asFormOfDepth: -16.
-	self assert: form nativeDepth = -16.
-	form writeJPEGfileNamed: 'test.jpg'.
-	read _ 'test.jpg' asFileEntry formContents.
-	self assert: read depth = 32.
-
-	n _ form boundingBox width * form boundingBox height * 3.
-	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
-
-!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:59:04'!
-test16bppLE61
-	| form n read |
-	form _ (JpegTest lenaColor64 asFormOfDepth: -16) copy: (0@0 extent: 61@61).
-	self assert: form nativeDepth = -16.
-	form writeJPEGfileNamed: 'test.jpg'.
-	read _ 'test.jpg' asFileEntry formContents.
-	self assert: read depth = 32.
-	self assert: read extent = (61@61).
-
-	n _ form boundingBox width * form boundingBox height * 3.
-	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
-
-!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:59:00'!
-test16bppLE62
-	| form n read |
-	form _ (JpegTest lenaColor64 asFormOfDepth: -16) copy: (0@0 extent: 62@62).
-	self assert: form nativeDepth = -16.
-	form writeJPEGfileNamed: 'test.jpg'.
-	read _ 'test.jpg' asFileEntry formContents.
-	self assert: read depth = 32.
-	self assert: read extent = (62@62).
-
-	n _ form boundingBox width * form boundingBox height * 3.
-	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
-
-!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:58:57'!
-test16bppLE63
-	| form n read |
-	form _ (JpegTest lenaColor64 asFormOfDepth: -16) copy: (0@0 extent: 63@63).
-	self assert: form nativeDepth = -16.
-	form writeJPEGfileNamed: 'test.jpg'.
-	read _ 'test.jpg' asFileEntry formContents.
-	self assert: read depth = 32.
-	self assert: read extent = (63@63).
-
-	n _ form boundingBox width * form boundingBox height * 3.
-	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
-
-!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:58:53'!
-test32bpp
-	| form n read |
-	form _ JpegTest lenaColor64.
-	self assert: form depth = 32.
-	form writeJPEGfileNamed: 'test.jpg'.
-	read _ 'test.jpg' asFileEntry formContents.
-	self assert: read depth = 32.
-
-	n _ form boundingBox width * form boundingBox height * 3.
-	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
-
-!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:58:50'!
-test32bpp63
-	| form n read |
-	form _ JpegTest lenaColor64 copy: (0@0 extent: 63@63).
-	self assert: form depth = 32.
-	form writeJPEGfileNamed: 'test.jpg'.
-	read _ 'test.jpg' asFileEntry formContents.
-	self assert: read depth = 32.
-	self assert: read extent = (63@63).
-
-	n _ form boundingBox width * form boundingBox height * 3.
-	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
-
-!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:58:47'!
-test32bppLE63
-	| form n read |
-	form _ JpegTest lenaColor64 copy: (0@0 extent: 63@63).
-	self assert: form depth = 32.
-	form writeJPEGfileNamed: 'test.jpg'.
-	read _ 'test.jpg' asFileEntry formContents.
-	self assert: read depth = 32.
-	self assert: read extent = (63@63).
-
-	n _ form boundingBox width * form boundingBox height * 3.
-	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
-
-!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:58:44'!
-testBA16bpp
-	| form n read bytes |
-	form _ JpegTest lenaColor64 asFormOfDepth: 16.
-	self assert: form nativeDepth = 16.
-	bytes _ JPEGReadWriter2 new compress: form quality: -1 progressiveJPEG: false.
-	read _ Form extent: form extent depth: 16.
-	JPEGReadWriter2 new uncompress: bytes into: read.
-
-	n _ form boundingBox width * form boundingBox height * 3.
-	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
-
-!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:58:41'!
-testBA16bpp61
-	| form n read bytes |
-	form _ (JpegTest lenaColor64 asFormOfDepth: 16) copy: (0@0 extent: 61@61).
-	self assert: form nativeDepth = 16.
-	bytes _ JPEGReadWriter2 new compress: form quality: -1 progressiveJPEG: false.
-	read _ Form extent: form extent depth: 16.
-	JPEGReadWriter2 new uncompress: bytes into: read.
-
-	n _ form boundingBox width * form boundingBox height * 3.
-	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
-
-!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:58:37'!
-testBA16bpp62
-	| form n read bytes |
-	form _ (JpegTest lenaColor64 asFormOfDepth: 16) copy: (0@0 extent: 62@62).
-	self assert: form nativeDepth = 16.
-	bytes _ JPEGReadWriter2 new compress: form quality: -1 progressiveJPEG: false.
-	read _ Form extent: form extent depth: 16.
-	JPEGReadWriter2 new uncompress: bytes into: read.
-
-	n _ form boundingBox width * form boundingBox height * 3.
-	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
-
-!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:58:34'!
-testBA16bpp63
-	| form n read bytes |
-	form _ (JpegTest lenaColor64 asFormOfDepth: 16) copy: (0@0 extent: 63@63).
-	self assert: form nativeDepth = 16.
-	bytes _ JPEGReadWriter2 new compress: form quality: -1 progressiveJPEG: false.
-	read _ Form extent: form extent depth: 16.
-	JPEGReadWriter2 new uncompress: bytes into: read.
-
-	n _ form boundingBox width * form boundingBox height * 3.
-	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
-
-!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:58:31'!
-testBA16bppLE
-	| form n read bytes |
-	form _ JpegTest lenaColor64 asFormOfDepth: -16.
-	self assert: form nativeDepth = -16.
-	bytes _ JPEGReadWriter2 new compress: form quality: -1 progressiveJPEG: false.
-	read _ Form extent: form extent depth: 16.
-	JPEGReadWriter2 new uncompress: bytes into: read.
-
-	n _ form boundingBox width * form boundingBox height * 3.
-	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
-
-!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:58:28'!
-testBA16bppLE61
-	| form n read bytes |
-	form _ (JpegTest lenaColor64 asFormOfDepth: -16) copy: (0@0 extent: 61@61).
-	self assert: form nativeDepth = -16.
-	bytes _ JPEGReadWriter2 new compress: form quality: -1 progressiveJPEG: false.
-	read _ Form extent: form extent depth: 16.
-	JPEGReadWriter2 new uncompress: bytes into: read.
-
-	n _ form boundingBox width * form boundingBox height * 3.
-	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
-
-!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:58:25'!
-testBA16bppLE62
-	| form n read bytes |
-	form _ (JpegTest lenaColor64 asFormOfDepth: -16) copy: (0@0 extent: 62@62).
-	self assert: form nativeDepth = -16.
-	bytes _ JPEGReadWriter2 new compress: form quality: -1 progressiveJPEG: false.
-	read _ Form extent: form extent depth: 16.
-	JPEGReadWriter2 new uncompress: bytes into: read.
-
-	n _ form boundingBox width * form boundingBox height * 3.
-	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
-
-!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:58:20'!
-testBA16bppLE63
-	| form n read bytes |
-	form _ (JpegTest lenaColor64 asFormOfDepth: -16) copy: (0@0 extent: 63@63).
-	self assert: form nativeDepth = -16.
-	bytes _ JPEGReadWriter2 new compress: form quality: -1 progressiveJPEG: false.
-	read _ Form extent: form extent depth: 16.
-	JPEGReadWriter2 new uncompress: bytes into: read.
-
-	n _ form boundingBox width * form boundingBox height * 3.
-	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
-
-!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:58:16'!
-testBA32bpp
-	| form n read bytes |
-	form _ JpegTest lenaColor64.
-	self assert: form depth = 32.
-	bytes _ JPEGReadWriter2 new compress: form quality: -1 progressiveJPEG: false.
-	read _ JPEGReadWriter2 new uncompress: bytes into: nil.
-	self assert: read depth = 32.
-
-	n _ form boundingBox width * form boundingBox height * 3.
-	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
-
-!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:58:07'!
-testBA32bpp63
-	| form n read bytes |
-	form _ JpegTest lenaColor64 copy: (0@0 extent: 63@63).
-	self assert: form depth = 32.
-	bytes _ JPEGReadWriter2 new compress: form quality: -1 progressiveJPEG: false.
-	read _ JPEGReadWriter2 new uncompress: bytes into: nil.
-	self assert: read depth = 32.
-	self assert: read extent = (63@63).
-
-	n _ form boundingBox width * form boundingBox height * 3.
-	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
-
-!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:58:03'!
-testGray
-	| form n read |
-	form _ JpegTest lenaColor64 asGrayForm.
-	self assert: form nativeDepth = -8.
-	form writeJPEGfileNamed: 'test.jpg'.
-	read _ 'test.jpg' asFileEntry formContents.
-	self assert: read nativeDepth = -8.
-
-	n _ form boundingBox width * form boundingBox height.
-	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
-
-!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:58:01'!
-testGray61
-	| form n read |
-	form _ JpegTest lenaColor64 asGrayForm copy: (0@0 extent: 61@61).
-	self assert: form nativeDepth = -8.
-	form writeJPEGfileNamed: 'test.jpg'.
-	read _ 'test.jpg' asFileEntry formContents.
-	self assert: read nativeDepth = -8.
-	self assert: read extent = (61@61).
-
-	n _ form boundingBox width * form boundingBox height.
-	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
-
-!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:57:57'!
-testGray62
-	| form n read |
-	form _ JpegTest lenaColor64 asGrayForm copy: (0@0 extent: 62@62).
-	self assert: form nativeDepth = -8.
-	form writeJPEGfileNamed: 'test.jpg'.
-	read _ 'test.jpg' asFileEntry formContents.
-	self assert: read nativeDepth = -8.
-	self assert: read extent = (62@62).
-
-	n _ form boundingBox width * form boundingBox height.
-	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
-
-!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:57:54'!
-testGray63
-	| form n read |
-	form _ JpegTest lenaColor64 asGrayForm copy: (0@0 extent: 63@63).
-	self assert: form nativeDepth = -8.
-	form writeJPEGfileNamed: 'test.jpg'.
-	read _ 'test.jpg' asFileEntry formContents.
-	self assert: read nativeDepth = -8.
-	self assert: read extent = (63@63).
-
-	n _ form boundingBox width * form boundingBox height.
-	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
-
-!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:57:48'!
-testGrayBA
-	| form n read bytes |
-	form _ JpegTest lenaColor64 asGrayForm.
-	self assert: form nativeDepth = -8.
-	bytes _ JPEGReadWriter2 new compress: form quality: -1 progressiveJPEG: false.
-	read _ JPEGReadWriter2 new uncompress: bytes into: nil.
-	self assert: read nativeDepth = -8.
-
-	n _ form boundingBox width * form boundingBox height.
-	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
-
-!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:57:44'!
-testGrayBA61
-	| form n read bytes |
-	form _ JpegTest lenaColor64 asGrayForm copy: (0@0 extent: 61@61).
-	self assert: form nativeDepth = -8.
-	bytes _ JPEGReadWriter2 new compress: form quality: -1 progressiveJPEG: false.
-	read _ JPEGReadWriter2 new uncompress: bytes into: nil.
-	self assert: read nativeDepth = -8.
-	self assert: read extent = (61@61).
-
-	n _ form boundingBox width * form boundingBox height.
-	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
-
-!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:57:40'!
-testGrayBA62
-	| form n read bytes |
-	form _ JpegTest lenaColor64 asGrayForm copy: (0@0 extent: 62@62).
-	self assert: form nativeDepth = -8.
-	bytes _ JPEGReadWriter2 new compress: form quality: -1 progressiveJPEG: false.
-	read _ JPEGReadWriter2 new uncompress: bytes into: nil.
-	self assert: read nativeDepth = -8.
-	self assert: read extent = (62@62).
-
-	n _ form boundingBox width * form boundingBox height.
-	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
-
-!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:57:35'!
-testGrayBA63
-	| form n read bytes |
-	form _ JpegTest lenaColor64 asGrayForm copy: (0@0 extent: 63@63).
-	self assert: form nativeDepth = -8.
-	bytes _ JPEGReadWriter2 new compress: form quality: -1 progressiveJPEG: false.
-	read _ JPEGReadWriter2 new uncompress: bytes into: nil.
-	self assert: read nativeDepth = -8.
-	self assert: read extent = (63@63).
-
-	n _ form boundingBox width * form boundingBox height.
-	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
-
-!JpegTest class methodsFor: 'test examples' stamp: 'jmv 2/21/2019 16:55:22'!
-lenaColor64
-	"
-	('LenaColor64.bmp' asFileEntry readStreamDo: [ :strm | strm binary. Base64MimeConverter mimeEncode: strm ]) upToEnd
-	JpegTest lenaColor64 display
-	"
-	^Form fromBinaryStream:
-		'Qk02MAAAAAAAADYAAAAoAAAAQAAAAEAAAAABABgAAAAAAAAwAADwCgAA8AoAAAAAAAAAAAAA
-QWCvUXXHUHfGRGi/OTZkIB8tHx0qHx0oISArHh4pIyEtIR8vIB4qHx0pJyQxJB8vNCo9TjpI
-V0NOHR0rHh4qHR4qHR0xISlbJTx/Kzl7IidFMUSPNU6lOlOsPVWtPlaxQFm3Qly4QFu4QFq4
-PVayOlWvP1myRWC3RmO3Um6/XnnJZIHNhJjbmKXhnqvmo67nmKXcKC9TLzlhKzJaLC5RJihG
-ISNAR2ioYJbdQmaxJSxTHiA5IiNCKCtPLC1RJyZDQl+uUXTETnTDRmrAOjtrIyEwIB4qIB4q
-JiQyJCIrJCIvJSExIB4qHRwoJyQyMSg1XkZSUkJUT0FmHRwqHh4uHR0tHR4sHyE6JjJzLD+K
-Jjd6JSlIN06hOlOsPlSsP1a0Qlu4Q1y4Pli3PVe1P1q0QVuzQ1y1R2O6UGrAV3PEZH/OcYrR
-h53dm6rln63moq/naG+gLDZdLzhkJitSJCVGHh80HR4wSG+vSoDJY5TdSnrJISZTJCVEJSdJ
-KzBZKy5VR2S0UHPFUnbIQ2a7MzZzJyM2Hx0qIB4oJCAtJiMvJSItISAuHhwoJiQwNCw4UzxK
-RTQ+JiEsLiY4KSU1HB4uHh8tHh4uHh4wHyVOLT6HL0KLKDJqLzluOVGnO1CpPle0QFq1Q1y5
-OlSxPVexP1m0Q164SWO7SmW7U27AVnPDbIXPfJPWkaXknKvloa7po7HpOUh1KzJVIyhKIidK
-KCtLKS1MMTlgQl6cRXK2VIHEcajtNFKeJStTIihWIyhQMDRgSWm8UnbJVXrKQ2a6Mjl1JiQ6
-IB8pJCM0Hx0pJCAuIyEsIyIwJiMyJyMwJyEyRDVALCg5STlGLCQ2X01WRT5PHR8zHyA0HiAx
-Hx43KTd1L0OTL0SWKSlTOE2gPlSrP1ezP1q1QVq1NlOtPFiyQFu1RF63SmW7Tmq/VnHBX3vJ
-cYrRgZfZk6blorHvo7Ltoa3mMUJ6LDRaMTplOkdyQU99RFJ/R1iHR2OiOlaaSW2vfrHuS37L
-Jzh5JitaJjBiJipRTGy/U3fJUXbHO1+0QkZ1ISEwHx4pHhwnJB8vKCUwIB4rIB8qIh8qJSIu
-MiY2Oy88WkRLXkhQSTdEPTU/Hh4oHiI2HRs0HCA2HR0yICRPLkCHNUmbJCxfNkOHPlOrP1ay
-QFq2P1e0O1WwO1ayQFu0RWC4Sma9U27CXHbHZYDMeZPXiZ7glqjnna7robDrY2ubRl6ZSluH
-SluKRlmISluKSVmGR1aCQVaPOFafRnO+fq7vZZvkMEqTJzd2KzRnISlcTGy+U3bGUHG+RmGx
-Rj9tISArHx8pIyEuJiMzMi06KSY2JCEuIyEvIB0pLyc0HxonSjdEZU9fU0RUUkZUUktfKylM
-NDtvJyM5HR4zHyE7KDh8M0iaLjt7LDZtOE+mPlWuP1i1PFaxOlOsPli0RV22SmO7TGi9Um7C
-X3nJaobRgJjbj6Tjmazrna/qnq7oSk9zR1yaU2maTF6NS16NSFmJRlmHRFOAQVOGUnm/canx
-d6rsc6frPF6sJjt+JjNqLTt2TW7AVHnNVHrMQ2S6MDdnIiEuIR4rIR8rIiEqRC9BJyQyIB0n
-ISAuIB4pLSk2SztJPCo5YEtUVU1lfWiCV1BgFhgoIiNAHB4yICE1ICE1KjFcMUaXKTqAKS1b
-OE6kPFOuPVWwP1ewQFaxQ1y2SGC4S2S7VW/CWHPGZ4LRc47XhZ3gkKfnobDtoLDoprfvIB80
-Q12fTGOZSl6RSV2RRViIRViIRFKAO06BUHK0gLTweqvvfq/uToDMLECBKDNsKjp1Tmy9VnvP
-UnbKP2O4SUp6HiApIiArHx0pICAqNCgyLSo7KCY0JCAuNC4+MSEzTTdHSDZGY0taaFFkGhoq
-X1x1HBwpIydFHhwvHh4xHyE0HiE9KjmBJzZ4JyhLMkiePVOrP1WxPVWxPFavQ123R2C3TGa9
-V3LEWnfIZ4POdI7WhJ/kkqnqobLsprXsbHqpICE4Q1qZSV+VSl6VR1ySSFuLR1eGQlF/PEpz
-P1iUe6nsa6Dpg7Xwap7iME+VKDNmKTZuTWu9UnbIVXfKPmK4Sk2LExgkISAnKCc3Hx8nJB8u
-PS9BJCAuOC8/LSQxOCs7SzZFQjBAZk9bcV1uQzxQT1FtHR8kIyRBHyAzHh0vHyA2ICI3LDdx
-KzZyKi1KMkSYPFGoPFKsP1WsQVmxQ1uzSWK6T2u+VnLCYn7NaofTc5LcgqDljqfon7HtpbLn
-OTtaISM7Lz9vS1+TTWGYSl+URliKQlOEQ1ODRVOAN0l+QmatW4fNfq/sdafoUYDHJSxfJC1i
-S2m6VXfLTXLGQl63bG2TJCE5JCExJCEwIB8wJyMzMCc4IB4rJiIuSThIMSQ0QzFAWURVZlNg
-RTZHYl2DPTpLHR8mKCpHHB4uICAxIiM5Jic+KTFjIihdMDFZO0yYNkmYP1atQliuQViuRl20
-UGq/Vm/BYnzLY3/KaIjTdZXehKPoj6rpoLLsWl+DHR83IyZDPUh2S2CTS2CWR12SSFmKRliK
-RlWFQk95QE13Mk6RPF2jfq/ue6zrZ5fYLUJ7JytTT23AUXLGTnLIQV61XWCRPEBpISErKykz
-LSg8OzBJOi9DKiMuMio+SjtLMCIyRzRDalJgaFJZUVFwOi1FKChFHR4pJShFHRwuHh4wHyEz
-Hh40JipRIiNBLTNiM0ONNkePPlGfQ1muQVesQ1qwT2a4WHLBZH/Jb4vTdJLYfZvgh6LkkKfj
-eoCjIyc+HR46JCZIR1F3RVuTSl+SSVyPSFqNRFKCRVGAP0tzNj9pMUqHLkSBa5rcd6rqcaHh
-TXK1ISE8UG3AU3LHVnTFU23AKipTQDxVIB8pJyQyLyU3KiQ0NCw/KyQyVkBQUz9NVkROSzlH
-SjNAUz1STUJZOzFIICA+Hx8tISQ+Hx8wHx8zHh4wHyA1HyA/IyU+KC9gNkWMOkuYPE6bP1Sk
-RFmsRlutR12uVW68cIjOe5XWgZvdh5/fi5/ZR01qIiE6IylIIyRFJSlNPkBhP1WTSlyORFeM
-P058OUp/Mj5rLDVfKTBWMUBuKjNdV3m7b6TreKbnZJPXPlqZUG7AVHPFUHTHQFqqYWeUKiFD
-JydEKSM1KSU4KyY0Ix8sVz1KXURPJyExb1RbUT1LZExRQz1RXlJrHx4rISE6Hx8yISQ7Hx8w
-HR4wHh4xICE2HyA8HSA6KTJkNkWTOEmYPU+fPFKdSF2vT2OySV2pUmaxaoXEf5fVd4i5TVZ5
-ISEuHyAzISM5ICVEJihKISZIKypEQFKQOUl7MUF0M0B0LDloMTtmND9pO0VvQEhvQklrZYjI
-canvb6Lmc6PkYYzTUW/BVXbIT3PIPFquIytXTERnNjlRKSE4KCQzKSM0IRwocVFPPTA+QTA/
-YUlRY0tdW1ByST1UHR4pHR4rICI3ISI2IiM6Hh0wHh4wHh40ICI5ICI9HiJDICRGICZTNT16
-N0aCOEqLTFusVmm7WGy7XG29XmqlMjdgHxw1ISAzIyI5ICE1IiM6LzVWJilLJCdGIyA9Qlyd
-MD5qNkV3QEt/RlWDSlmFSluISlqFRlN6QUpvYHyzhLXyea3sdqfpcaLoUW/AVHbIUXTGPVqs
-KC1gKipSLClGNi5GJB8tKCExKSEwc1RVRzRCZEhQWUJMX1J6KClaLjBUICAyIiAxIB8xICE2
-IiE4Hx40Hh8xJCY8IyQ8HiA6HyJGHyJLJzRxNEWZPVGmQVeuTGK3X3PGXG/AXnC/UGGqLThw
-HR00IB8xHx83ICA5IiI5MTZbJytNHiE8IyM7WXCvRlmOTWKVTWGQT2GRS1+QT2GQTV2HR1WB
-TFZ9T2WWksD3fLHvfrHwg7DuTm2/VHjMVHjMPVywIydaODZdNTBTLCU3JCAwLCcyKSMwmXJo
-VT5CW0JSSjZGRj5iPT1me4rgISdKHx8uHyAxHB0xHh0zICEyHyA4IyQ+ICM+JCZGIipdLjl7
-MkKQOEyiQVWsRVqxSFyzTWK4VGq/VWy/T2OyQFOfIB42Hh4wHh8zHyA4HR41KzFSJypOJitF
-IiM9W3GvSV6UUGicUGaYTGGUU2eXUGOUTFyKTVuIRlR+QVSBj7v2irv3h7TxhLDuUG/DVXnO
-VnjNS2O2Ky9hPDtlOTxvKyg8NTBHOCo4KiMxVjpETztFRzlJUjVBR0BaKz6AYmGeSGGcHCA9
-HB4uHx8yHR4yHx82IyM+HyE6KClOIidQKzd7LTyIN0eaOU2oQFSsQFaxOk+pNUmfNkqjO0ul
-QlSmR1ajLDl3Hh8xHBwxISE6HSA6JitHLjJVICJAJSZAVmypSWKgT2idTmWYTWScT2WbTmKS
-TV2PSFqMR1aIRliHgrPzirn2irfxjLfyVXXGV3nMUXfLQletQUB0JylWS0iDMSxONSw9JiAt
-OCs8SztFQjBAUz5MQzlKSTlKPlWjcX2zOUp6U1mGISExHx4wHyA4Hh80JilDHyA3JypPJzBo
-LUGQM0WaOEynPlOvQlu3OVKxM0utN024Tlq/cnrQcXzPSVWrQFWdHyVJHR4xHB0wHyE8HCE6
-JSZLGx06JyhDR16aQ2GlTmmkTWScUGaeTGKYUWSXSluRTV6SSluOSV6TcqbthbTzgrHvh7Lv
-UnPFUHPGUnfMPlyxJy9oRkJ4ODpyNy5OOi0+JyExLCczQDE+RDFBQzFDSzxLTjlHREB0hIGs
-d32sKCpaNTZgHhwxIiRHISE4JidCHh41LjBbKjZ8N0mhNkqkPVKvQVezQFayLj+NLDiALz2O
-LjuGJTaAP0upNEOXN0iQMkGGHh8yICA0HR02HSA8ISRGHiI7NTpZOkyAQ2CoTmilTmWfTGGZ
-T2KXTF6SSl2TSV+VS12TRViMYJThgbLwfq3sfq/uTm7DVHTKVXnNP12wJy1iJypcQ0F/PjVY
-Tz1NKCQyKyMzLCQzNys7Pi8+XUJYRkdqHR0uODhVWVyDTmKcR1GHHitRJiRBHyA2JydCGxw1
-LTJlLT2MOEukPE6rPlGyPlS0Q1i1Rly5SV22RluxT2O6WW/Ic4zceILPU2W1RU6aIChMGxwx
-HB0yJCZHIyZGISM+OT5lPkRzRWClTWajUGafT2OcTmCYTGCYUGKYSl6WR1uTRFaMVonVc6fu
-fa3udqnqTm3DUXLIU3bPRF+zJy1gJitfNjdyOjNeLig6PzJCJB4tQS9BUTlIaE1XWEBPLic5
-IixTKSc2NzZMWl6COURyTWGXHhwuHiAzIB83Hxw0KDBsMECSNEiiOUuoQlW1QVe2SV+9UGXA
-VGrDUGW7SmC0Vmq8d4TQiZnaWW68RFSkMTqAHh80HR4xJidLHB4+IyQ/Uld+VVuFP1iaTWSg
-TGWhTmOeTmObSmCYTmGZS1+XTF6TRFeHVoTOYZnleq3ve6rtTm7DUnTITnPIPFiuLCpkKy1l
-Nzt2PTVjNSo8RTlTSjlJNSo5RS45WUNUUUNHHx4uHjFIKyYzMDBWLChEKTFPSF2ZbXSVIR81
-Hx8yIx02MjpyKzyLOkymPU+tQ1e2SF26TmPCUGXCUmi/S2G2OU+kOk6nOEqYZXK8W3G9RFem
-OEeVISNGHx8yISNAHR8+ISM4U1qJQkZrO0uCRmCgT2ikTWOfUWWcSl6WSV2TS16WSluSQ1eI
-T3a+X5fmZ5/oeqvtUHDGUnXJUnbON1OoLC9ePjx3NjduNS5hNyk8SzdLMyQzNy9AVz1JWkRP
-JiEzHx4uIyMzHiIvMD+GJylHIyMxVGWNQVOEPklzHh8wJCE5IildLD2JN0mkQlSxRFm4SF69
-TWO/UGfBUmm/PVOpPFGoNkqgNEimUmnCeI3TRlurPU6eKTV0Hh4zIiQ8ICFBIyQ3V2OYNTdX
-MzlbQFmaUWilT2aiUGWdTGGaSl6VSF6XTV+VSluTSmahYJfkXpXjbaHnUW/CTnHFTnHJN1Kr
-JipdODtvU015SkRwPzVLRDJRNSo3TjpGYEJKSTpWIBwtIB8rIyEvLzhlLzZqSkmDKSVIGh8o
-MUiDh5O/IiVHISM2IydWMD+OOEukP1KvTWPBUWfGUmnDV27HVWvDP1awNkmgNkuiOU+nY3LH
-sLnqTGKxQ1WlL0GNHiFBICA7JCdIHiA5Y3GkIyQ/ISI8QFeWT2mnTWemSmOgSmGcT2SfSl+Y
-SFqQRlmPSFuPXo3VW5XkXpfjUHHFU3XITHHHOFOuJShaMDRlNDV4U0+FSDxLQzpUPTFEKx8s
-SzdDNCczIx0vHh8rIB0rLCs/JyQ7OztoPUuHHR0sKjViZnKpcXuiICAwJCpVKz2OPU+pRVi0
-S1++VGrIYXfQYXjQXHPKSWC7QFSsOU2mPVOugI3WipPOUGW0SFirNkeUJStcHR03JylJLS5J
-VmWbHiA1IiM3QFCISWGbTmqrUWilTWSgTWKeTF+YTF6WS12URVaLUm6rXpbjWpPkT3HFU3bL
-UHTJOlWrJy5gJy5mND+CRUB/RDhSLiM2KyU2PS9BPik7QDJFHh0qHh8sIyEvHRwsJiQxOj1q
-ISY6Hx0uIx4vPUuHaYK/SEp7ISRRMEGVOU2nSFu4U2fCXHLMaXvRZXzOX3XJTWS7Sl62PlOt
-RViwmZ3ggpLRV2q5SFisOEmaJzBwIiI/IiFBQEFiTFKDIiE1IiE2NT5kR1qSUWqnTmaiTGOf
-SmGcS2CbTWGZS1+VSVuSRFWKV4HIXJblUXPIU3nPVHjPOlaqKC1hJjBpKjZ6VFCFX1V2SDln
-MSU6JSExSDpLRjFELCE1JCIuOys6V0FNPjRJMTBLJSM3Hx4vHx4wMTReU2OghJPDKzZnMUGN
-P1KnSV21XXDHZXjOZ3nLZ3vMZXjIU2e7RlmvPE+rRVeyp6rlgI/SVmm2QFKnOEaXKDJzHx8/
-IyFCPD9lPUFqIiE0IiE1LjBKQ1aNUmmnU2qmTWSjS2CbTmSgTWCaSVySTF2VR1iMSFyQVoTK
-TXHGVnrRUnjPPVmsKjBjKDJqLTyANkGMUlaJQkJoNStMJyM5JyIwVT5KVj5LKyc0NSs4Pi8+
-YUdWMCtBHx0tHx8vIB8xHh4uQEqCa4LAe43FKDmCPEueSl6yU2S5UmW5UWC2Wmq1W27AW2u5
-RFSmPU6oT2K8qq7pdILATF6rO0iYLDZ4Ji9nHx8+JSVCPkRpOTxgISA0IiE1Hx4zRlaJTmSf
-T2elTWWjTmWiTGOfTWKdTWScTWKXR1uPR1eKTWKUUHTKU3nPT3LHN1GlJixcKjRtKTZ0PEyJ
-KipRNDVRV1eYaHeoNS5ZNTFBNCY5MCc4LyMzUztJQzJCJSAzICAvIR4vICAxHx8wJzBXWmeb
-cX+3eIG3NkWTQlCgR1epNUKMPkmNWF6eX2GnUVyyOUqaOk2kUGW7rbLtSVSQR1CUU1COJC1g
-HiNKHh46JSQ/SUptNzlfIiA2Hx8wJSU5PENuRliPVGupUmmnTmWhUGeiT2SgS2KeUGWfTF+a
-S12SR1iMTnLIUnfKS23BNU6fJSdTJSxhJzJxKjZ2LjVvJi9kX2+pQ2GxQlekJy9XJCMtMCY5
-Lik7QDE+Nig8IB4rHBwqOzRDHxwuICMyIyM0MDphZHCegY2+cYC3NUWNLDNfKCtUKypLRkNd
-l5nOOUOMMD+KOUugUWi9mKXhM0KCKCpGNzZYQUqIHR83HB4zJyVAT1FyJiVHJiY8Hx4xIiI2
-LC1KRliST2ikTmelUGWgTGShTWOjTWSjTmOgTWSgS2CVSVuQT3HEU3fMTG7CNU6fKCpUKC1f
-KTJqKzZ1Kjd2JzRyVl6RQFOdRV6uNUN8MTJsKCQwPCtHOCo+Tz1SJCAvMio7HhwvMSo3RTdH
-HRwwKSc+TF6ZXHi4iZK+anOxIzBoIiNEHR83JCQ6NzdVJixUOU2hPFCqU2zEgJDabYDEIidS
-ISA5KitIHiA5HyA6IiI3Q0ZxJydHKSc/IB8zICA0IyA1Q1SLSl6WT2enTmalS2SjTGWlSWOi
-S2SfSmObTGObS2CWTnDEUnTIUHXKNk2dKSpUJSpYKTNqKDNxJzNyKjZ2KjiANUONP1ahOUeK
-LzJTMD9+ICY/PjFDMyY3RDJEICAtISAxLyU5Hx8uMSg7KiU9KjBRZ3WxdIW9cYG0aHqxOkyM
-NkWPOkmOQUyYKzV7LTd5S2K5WnPLdYvaeIrXW3HBMT55JSxeKjZyJSdLJCE5Sk16JiZBJyY7
-IB8zIiE0IiE1PkZxR1WITmmoTmenUGimTWWjS2OeUGijTWWfTWWaTmKYUXDCUHPGTm/EM0qX
-KClSJipbKzZsKTRzKjRyKjd4Lj2BNkaNMUCPMkaGKjJhdXurNEOCLytLLSY6SDVEIiAvJSI4
-JSQ1Hh8vLio5LSY8KCU4NkR+UGmmbH+3Z3WshpK5T1+lOEWCPEWBRlabZnjLZn7UZ3/UeI/b
-d43ZhJjiepLhVmiyLDJqHh02JyY/VFmIHB00IiE2IiI3Hx8xIiA0MDBMQVCFT2ahT2ioUWql
-T2afT2efUmqkUWWdT2WcUWaZUXLGUXPDUHHENUqWKChUJipZKzRsKjVxLDZ3LDh6Lz2BNEOR
-MEOWMUaLMEN5MD+JSkiAQ0J6JiQ2Nis7JCAwKSQ3LCU6IB4vIhwtLSQ5JiExIyQtNj95XW6s
-X3azgY29bnynZXSyWmy7XXDBZnnMaYDUdYvbh5vkh5njjJzil6fpj53hNEaQIiU9JCQ8TlWD
-HyA3IiI3JiQ4ISE0IB4yJSI1Q1CESFmRVG6rUmukU2ujUmylVGujUmecTmGTTFuJTnDET3HE
-T2/EOE2aKCZTJitcJzBqKDNvJzJxKTN1NEGKMj2FNEOQMkCDUXK4M0KGP0mMRE+XMjZ4KiM8
-IB8tLSU6JyM1IB8wJCM2JCAxRTdMQThMJzFOUGGeZoC8cYO3ZGqThI+9aHeuWGy1X3XGaH/S
-fpLcip3jjaDklaPmmKbnfI7WLzh3ISA0KihEU1WFGhwvHyA1IyI2ICA0Hx8zIiE0OD9kSFqM
-UWupU2ulU2idUGWbTmGWTl+PU2OWUF+STnDEUXTIS2zAN0yZJiNQKSxdLjdwJDFtLTZyKjV1
-MTl9Lz2GLzyDSV+cYYjXLzt7NkOFPkuSLjx9Ky1ZKCpJKSM5ISAwISAxLig9KyM4HR8vPTBB
-ISAzKDFUS1mYYHe2b2yLc3+vbnyxaHWlX3CyZHfId4vWgpXbjJ7jlKXnl6jrX3TCJCpaIyM4
-SEZgREZsHh4xHh4yJiU4JSQ4Hh0vKig8LCk/RVSHTmGWUGOcUGCWUWObUWWdU2iiVWqlV2ul
-UHHGUnTISWrANEmXJidKIyZWKDBnKzRvJzJsJjFvLzt9MT6FMD19XXCtb53pNU6SPEiEOUSF
-PkaNOkydMTVrLy1RJiQ3Kyc6MSpBKSU2Myg7PjFEICAxISA1LCtESEl2fICVbX+3doS0Y3Kn
-dICxYnKqbH29gZTajp3hipfbhJXaRFimJCpNLy5MR0ZnPEV2ICAvHBsuIyI2JCI2Hh0wISAx
-JSIzQElyRlJ8UWWbV22pVm+rV22nUmekVW2qUmekT3HDUXPGSGm/N02ZJiZLKS5ZKjJoKTRu
-JTFuJDFuKzl8Kzh5LTp2dozFWoXNPVCXOkeJQEiGPEaDVU18S06LPD1yNjBYNi1JKyQ7IiAw
-NCpDIh40JiI6Jh81Mig8U0BUW1V0bXigdoe8c4O1bnyxcH+zcH+veYe3hJDQhJPZfI3PNUKL
-LS1cPDtZT09zQFSYHh0xHB0tIyM2ISE1Hx8yIyMzJCI2MC9LPkhzUGKZWHCrWG+pVm6pVGqn
-WW+oVGqlT3HDTHHERWe8MEWQJSZLKCtcJzBlKjRtKjRuKTRwKjl7KTd2P1mNaazyVXe+SmCi
-O0uMPkuMOUSFRE2KQ0uPPkabMDJgLSlJKyE3KCM3KCU7HR0tMyxKKyk+QTFKLyU8QjdKVlV/
-d4i9fpLFdYW1dYOzan2wc4Cxfou5c4G2XGyrKCxVKipJSEZkSk14XHa+UG6uISlMHx8yIyI2
-Hx4yHyAxIyE0JyI2P0h0S1iOWHCrVWymVGqnVW2pVGmjUGajTXDDT3DCR2m9L0SNJyhMJSpa
-KjNqJzJrKzVwLDdyJzV0KjVsZ3y6SX3lSGq7O1WmMzx5QlKXPU2UPkqJQ06WMjxzQk+SOkaO
-PT9yMCg/MytDIyI1OzFDNClJNi1DPDBHKSU6SkFOOk6Lc4G1c4a8doW3eIe2dYa2eYi2e4y6
-iZa7XG6gPT5lPTpYWWSbTW6+VXO+Y3m/KjRWISA0ISE1ICAzISAyJCI0OTxeTVyXU2elV26p
-V2unVGqmV2ulUmajTnHHTm/ESWq+L0SOKitRJy1cJy9iKjNvKzRuLDd0KjRyKjRshrPtYnzN
-PlKsNEqMMj+CMjx4PE+WOUaIPEiMQU+VPk6PQlOcQESCQ0F8QDZXPTNWKiU8STdMRjZPT0Fe
-MixBHiAyIx4wUlqQa3SrboXBh5bFhJLBe4y8gpHAi5fCj5jGjZjFbnSiMzdjLzVhO0l/T2Sh
-Zn/CLTZXHx4yIiEzIB4xJiM4JiM3TFqXTV2bVWuoU2ilU2mlWWylUWWgT3LFT3HESWm/MkOM
-JidNJyxaKzJlLjdxKTRtKTVxKjZ1MT5yUZPvZpHWOFWhO1ipOUWIOEF+OkV/O06TQVCXPEeK
-QlGSRVScS1WdU1SaRkZ5QThlPTBSWVl4Yk1mSTtYQDRILCY+ISA9KyY+U1qDXm+tg5XHhpfJ
-gI+/g5O/i5nEj5zHk5/MkpzJjZnQWWWXMDp0KTFYOkZ8Zn25P0RiISAzHx4xHx8zICAyO0Fq
-SlqbVGmmUWipUWenUWWkT2KfTW/DTm/DQ2a8LkCIJylQJCpaKDFmKjNsLThtKTVwKTVyUVuO
-cI7XPWzRQF+sNUykN0OFQE+aRk6NNkKFQ1ekRVSgRFGVRVaZTFqfSVeUUVSNVFCHSE6HY2uY
-VleCTVaFWmepXWajZG2tS1CDUlWAYGukb4G9d4u9iZXGhpTCipbCjprFkJ7KlKDNlqLOlZ/I
-mKbPVGWlND5vPUVweIvBHB8xHx4yIiEyJSQ5Kic/SluZT2CfUminUWepTGKgUGakS23BTGy/
-RGa6MUGLJyhQJy5fLDNqLDZwKDNqKDVxJjRwPD95WJPYP1e0PFm6MkaUKzl0PEmMQE+bQE6K
-O0eKQVakQFKfSFObTV+ZUWWrUGSrYGq0am+yamukYHO8VmapX3SuXm+0XGyyXm6zZ3CpYXCu
-XGmhaoCxdYbEhZPIfZPJhJG/jJjDkZzFk5/LlZ/In6fOiZTBXm6cT2GgaHOhQlByIR8yICAy
-ICAzJCE1QENtS1ycVGilUmioU2qqUWWmUHDETnDCRWS4MUKHJyhQKC5fJzJrKDJuKDNsJjJv
-Kzh5KDBqUpXuRGexN0+VMj+CMDl1NkOHNUGERFalVGCnO0yTUGGsS1mgUF+jWmasVGGjYnfB
-YW6wZHSyYHK4ZG+yXHGwYHazaHizZ3i3doO+a3uybXywdH60cXuteZHDiY6/lKLMiZjHiJbD
-jZrEk57Ik5zIoaTNany1X2ylU2GWXG2eIB8xISAzHx8wISA0LCpETFuXUV+aUmmnUWenUmeo
-TG7CT3LHRme6L0CFJidPJSteKjJqKjVvJzFqKDRzJzR5KjVwUIjkN1esLj+EMDuAND19OEaE
-O0aQPEmIRVunQVOgQlaVU2WvTF6dVWOqY3S5ZHW0aHq6XHO6bX+9anq9XXG2an+/aX3Fc4O/
-doW6gou9cH61aXu3c36ucXqncoCwe42/hJHDk6TPkqLQj5rGkJzJlp/KkaHNY3WtiZfCmqLN
-IyQ7ISEzICAyIB8yJSI2ODldTV6fTmKfUmmsUWepS23BUHHER2e5MECFJidPJitdKzRqLTdx
-KTNtKTVyKjd5LTp3aJbiN0+iLDh2Kzd5KzdxMj18NkKJOEWLPk2PSF2pR1mhSVyeUmmyXXKx
-Wm+3b3a0aHq2ZnK4ZHe/eITJYHy9eYjAbYTDaX65g4zCfYzAgou5hY3Ag5C+h466gomxlJTA
-cYK+g5jOk5jOkqPQkaDJk5/Im6TOkZ7Jm6PKr6/VWWOIIyM1HR4wICAyIyE1KCc+R1CGTF2c
-UmmnT2WoSWm7Tm7AQ2G1LTuAKChPKS9dJjBoMDt2LDhzLjp5Kzl+Lj6CaHq7NkeRLDRsLjqA
-NEB/OESKNUWDPUuWMkCIOUiKUWWvS12nU2uvZna5aX2/bn+5cYXIg5LMbnq0donGfIzFe43H
-jJbJpKXNdIe5eI27jZnJmKTRlJ/Ll5vEoqLHdoW5QWS8UmaxcoS9hpvJl6TNmqnSmKPPmKXQ
-n6nPqK7TaGqFIiI0JCM1ISAzIB8zJSM3LCpFTF2cSVuXUGeoS2u8SGi6P1yuLz1/JiZIJChU
-KTFmKzRuKjRxLjl2Kzh7MT+CT3K2OlWgKjVxMDt8KzdvN0WSNkaPMkGBOEmUNkiNOUSGY3Wv
-XW+zWnG4a3zBcoLGeY3IZnu3kY/Ae4bAi5nMkJnQlaLVjJnNmKDQgZXCk6PPmKPLoafPqavQ
-mJu9N1ShRmW6P2CyM0mRUE5yeYKojZi+o7Hal6bRkZzEqq/Ta3KhIB8xISE0IiEzHx8yIyI1
-IyI0PUJoTV6bTWGdSGm8TGq6P1ywLDp8KChIJilVKTFnKTBmKTJnKDNtKzZ2Ljp9R1SOPl2t
-LjdyLzl5NkOBNUORPUqIOEyXN0OJPlCWQlGVOUh8YW+vYHm9bHq7dYG4Znq6fZXLbYe/nJzK
-hZHAkprJlaPTlqHTj6LQl6XQoKzToKrQqK7TsrPQLDdsP1mnRWW4RGO0OFGcJCtWIyI1bnaN
-jJq+srrWqrXbo63Tb3GUIB8xIB8yIB8yIB8yHx8vJiQ2JCM2SFWJSFiRSmm8Smi7QFywLjt9
-JSZJKy9eKjNnLjVsKTJsLDdzMDp8Mz+CMTp+T264Ljl3LTh4MT1/NUODO0eLOUqIQFGTSFyg
-PFCTPEuOO0yTVl+UdIXGb3+5cYrGZH+9e4vIk5rIi5nLoqbXnKnWpavRm6bQpq/aoavToK7U
-v77gaG+TLj55QFurRWK2Q1+wOU+bJCpXIyI3IiE0S0xkmajSoKvPubbOSk5zISEyIB4xISAz
-Hh0vISAyIiEyIiE0KilBTFqVS2m8S2m6QFmqKjd8KSlNJypdKTFmKjNrKDJrKzZwMD19Lj2C
-M0GKN0+UKzh6Ljt4ND2BN0CGNEJ+OEaLQ0+NSViqQVCVRFOaPk+dQlGUUVyccH6ydIfEgJbO
-cIvJiJXLoabTm6zcoazUpq/Wn6nUoazUoqjQsLfblpy9MDNfLz5/P1mpRWCwQl2tO1GdJixZ
-IyE2ISM7KzduO1KjQFWgPlehOE+cIB80Hh4vIB8zISA0Hh4uIR8zHx4xJCM0MjNSTGzASme5
-QF2vLTl9JidLJi5ZKTFlKDFrKzRtLDVxMz58M0KGMUCIMkKMM0SMLj19NUKBMkGFOUSFN0SF
-PEuFPU+WQ1SWRlOXQ1mjRleUSV+nVm2qcX2xfpHHkaLRmKTTiZbHmp/Noa3dmaHLo67XpbLd
-pLHVl6DANDljJi5eM0WKQl2uRGGzRmCwOlGcJStYISA1Ji5bO0+bQV2xO1SkOlWnQFqpLz96
-HR0vHh4vISA0ISAyHyEwHh0wIiM1Kyk6RGi+SGi7PluuLTt9JSdMKS5hLDNnLDVvKTVtLTdy
-NEB+NUSJNEOPNUaOOUmRM0KGMj97NUKDN0OANkF5N0OAOEiIQ1KNQFSbQlWdSVmeTl2dVm2r
-c4K/eICyl5vDmKTTr7Dcpq3ZoKvSo67XoarUt7rakZnAJCpVJS5eKzRqNkeNQFuvRmK2QFyu
-NUybJSpVIiREM0KEQ1ytP1qsPlelPVanPVeqQlquIylOHR0sIB8yIiI0Hx8vISEzICEvIiE0
-Sm7BS2i9PVuwLDp/JidNLDJjKjFlKzVsKjRuKTRsMT9/MUCFMUKKNkWMNEePMkaRLDp+MD16
-OUaGP0qRPkyMOEaKQE6URFaUQUiDSlqiTV6hXHOzcYW8d4u+bIS/jZXEoanTqbHcpq7YoK3X
-oK/boKjHKDFeLThvMDlwKjRtPE2TQF6yRGK3QF2xO1GeJClYLDRtPVOhQlywPlmsOlOkQFur
-OVWlQlqsN1ChIR84Hh4tHyAxHx4yHh0tIB8zHB0rTHDDS2y9PF2vMD2CJihNKS9fLDJlKzVn
-JTBnKzVyLzt8LDyBMkGGM0SLNUeQMkWSPlSeNEOBMz1/NkSBOkeLOUePOkmKQ1CVR1KWTl6i
-TlmSXXGndoO8gpDCeI7Fh5fGgJPJgYu6kKPLqKvJsa/FSFN/LTl2Ljx4MDx6Lzl1NUiQQl6z
-RGO5Ql+yNkuXLTt8Ok2YQVytP1yvPluvQVusP1mpO1apPlurPlusMUSHHR0tHx8tIiE0Hx4y
-ICEvIB8xS23ARWe5P16xLDuAJShLIilXKjFmLTVsJjFsLTh0Lzt8NEGIN0WJNESLNUiTN0eT
-NEiNOlGPPUiLPEWBPEaERFCOQEqMSVaUS1aTTGCUXmyzbnmuZ4K5dou5forAgJLGgZbMfpPB
-h5nFWGOTLz17LDt6MkCBLTx6Ljp5MDt4M0aOQFutRmG1P1mnPVSfOlCbQVuqPlmrP1quPVuu
-PlenO1akPliqPFmoQF2sQmCvN02QHyEwHR0vISA0HR4vHh8uS2/CS2vAPV6yMEGFJihQJy5f
-KzNqKjVwKTVzMTx6MkCHMUCJNESPNUaPNEeSO0uXOUiZPEeYVFyWRFCMPkiHQE2DR1GKQ1eL
-UmCgWGKsWWebZnusboO3dYW8gIzBe47IepHDcYGwRlGJMUCGNESLNEWNOEeLMT+DMD16MDx3
-OUySQVqqQFurOlalQVqnQFqqQVytPFemP1uvQFurPFikPlupO1akPVqpPFmmVHzLh7bzPVGP
-ICAyHRwtICAzICAyTGy+R2i8QGC2LDuEKSxaLDVtLDdzKjVxLTh2NECDNEOLNUaQNkmTOUyY
-NUaSOEuXO02cO0+cO0ucOkubQVCbSVeZVl2WSlmUV2GgaHKrbG6ocX2tb32tZnqwdYO2fJG+
-U2OWMEOML0GLM0aRNEaRN0eSNkeKM0OFLj9/MD18NkqUPlipPFalP1mnQlypQ1+wQ1+vQFus
-QF2wQFysPVmnOlSkOFSkQFuoQGCve63xkb73VX7DIyM8HR8vIiIzISE0SWi8R2W5PVyzMT+D
-JilYKDBqKzRyLTZyLjdzLDl7MD+HOEiROUmVPE6ZN0eVO0yZOEqeOEqcOEqbO06eOEqdNUqf
-PE2aQFOXSFSVUmCbanOfdXuzX3atW2GeRFSONEOSMUaVM0qYN0uYOEmWOkyYOEuYN0mSM0WJ
-M0KELzx7NkiQQFmmP1mnRV+tQmCwQ2O0Q2GxRWS3QWG0P16wPlqrOlenPlupPFupY5Lfibz4
-cqLjM0R7LTlwICE5Hx4xHh4wRmW6SGe6Pl2zLj2CJyxcKjJsKjRwLTh0LDRvLjh3NkOJMkCJ
-N0aPMUWQNUiUO0yYOEuZNkmbO06gOkyeOUueMkebNEudN0ufNkuZMEWTMkeWMUSQNEaOMkOT
-NkiXN0uaNkybNEqbN0yeNUqXMkeUOEyYN0mVMkSNMECELjt8M0aQPlaqQ1+vRmS0RWO2QmK2
-RGS3QmGzQ2O4QmK2P1yvPlusPlysT3bIhrf3iLn3QF2bKzhzMkF9M0B8ISM8Hh8vSmu+R2e6
-RWS6Lz+HKi9iJzFsKjV1JzNzKjRyMTl7NkONOEmTMkSPOEycO0+fOlCfOk2bOE2fOk+hOEqc
-NkmbNkqbOE2hNkueN0qaNEaWNkiWNkqWPE2ZN0mWO06bNUqbNEqcN02fOE6fNUmaNUiWOk6a
-NkqUM0OKMj+CMT5/O02aQ1ywR2a7RGS6SGe7RGe7R2a5R2W6SGi+RWe7QmK0P16vQWCwcKXu
-j7/8YY7VLTt0L0B/NUaFOEqKMkKBIiQ/S26/SGm7RGO4Lj2CJy1eKzVyMTp5LTh1Ljh0MT18
-Lj2GN0iPNUmUOk+dOlGgO0+cPFCdOlCeOU+fPVGhPFGgO1CiN0yfOE2iNkudNUuaOU2bOk+b
-OUyYOU+eOVCfOlGhN0+eOU+fNk2bOE2aOE6aN0yYNkuTOEmNMj9/MD1/Ok6ZR2O2SGjASm3C
-S2vARmu/Q2S6SGi9R2e5RWS3Q2SyQmGvV4TTgrf5eazwNkyGMEJ+NUeEN0mIN0uJNkqLN0iM
-TXHESm/DQGG2LT2AKC5eLTZvMDp3MDt2Lzt1MUB+M0SKO0qQOE6WPFKdOlOePFOfPVSiO1Og
-PFSkPlOkO1KhO1KfN02dOE6fO1GhO1KhOlGfOVKgPFOePFWgOlOgOlKdOlGeOlGeOVKdOlGb
-OVGaOFCZOE+UNEmMNkWDLjx6P1eiR2i5THC/SGzASW7DR2vAR2m9QmW5SGe3RmSyRWSzS3LA
-dqvwgrf4RWqpLkB2N0eANkmFOUyGOk6GN0yHOE+S'
-			base64Decoded asByteArray readStream! !
-
-!TrieTest methodsFor: 'aux' stamp: 'jmv 6/21/2011 22:05'!
-assert: subject isEquivalentToDictionary: controlGroup
-	"Test #size, #do:, "
-	| count subjectAsDictionary someRandomString |
-	self assert: subject isEmpty = controlGroup isEmpty.
-	self assert: subject size = controlGroup size.
-	controlGroup keysDo: [ :each |
-		self assert: (subject includesKey: each) ].
-	subject keysDo: [ :each |
-		self assert: (controlGroup includesKey: each) ].
-	controlGroup keysAndValuesDo: [ :k :v |
-		self assert: (subject at: k) = v ].
-	subject keysAndValuesDo: [ :k :v |
-		self assert: (controlGroup at: k) = v ].
-	someRandomString _ 'someRandomStringZZZ'.
-	self assert: (subject includesKey: someRandomString)
-		= (controlGroup includesKey: someRandomString).
-	subjectAsDictionary _ Dictionary new.
-	count _ 0.
-	subject keysAndValuesDo: [ :k :v |
-		subjectAsDictionary at: k put: v.
-		count _ count + 1 ].
-	self assert: subjectAsDictionary size = controlGroup size.
-	self assert: count = controlGroup size.
-	self assert: subjectAsDictionary = controlGroup.! !
-
-!TrieTest methodsFor: 'aux' stamp: 'jmv 6/15/2011 09:58'!
-assert: subject isEquivalentToSet: controlGroup
-	"Test #size, #do:, "
-	| count subjectAsSet someRandomString |
-	self assert: subject isEmpty = controlGroup isEmpty.
-	self assert: subject size = controlGroup size.
-	controlGroup do: [ :each |
-		self assert: (subject includes: each) ].
-	someRandomString _ 'someRandomStringZZZ'.
-	self assert: (subject includes: someRandomString)
-		= (controlGroup includes: someRandomString).
-	subjectAsSet _ Set new.
-	count _ 0.
-	subject do: [ :element |
-		subjectAsSet add: element.
-		count _ count + 1 ].
-	self assert: subjectAsSet size = controlGroup size.
-	self assert: count = controlGroup size.
-	self assert: subjectAsSet = controlGroup.! !
-
-!TrieTest methodsFor: 'aux' stamp: 'jmv 6/22/2011 12:51'!
-assert: subject prefixSelection: aString isEquivalentToSet: controlGroup
-	| selection1 selection2 |
-	selection1 _ OrderedCollection new.
-	subject forPrefix: aString keysAndValuesDo: [ :k :v |
-		selection1 add: k ].
-	selection2 _ (controlGroup select: [ :each |
-		aString isEmpty or: [
-			each asLowercase asUnaccented beginsWith: aString asLowercase asUnaccented]]) asOrderedCollection 
-				sort: [ :a :b | a asLowercase asUnaccented < b asLowercase asUnaccented ].
-	self assert: selection1 = selection2.! !
-
-!TrieTest methodsFor: 'testing' stamp: 'jmv 6/21/2011 22:14'!
-testAllMesssagesLikeDicionary
-	"
-	TrieTest new testAllMesssagesLikeDicionary
-	"
-	| subject  controlGroup allMessages copy c set1 set2 |
-	subject _ Trie new.
-	controlGroup _ Dictionary new.
-	allMessages _ Smalltalk allImplementedMessages.
-	c _ 0.
-	3 timesRepeat: [
-		allMessages do: [ :symbol |
-			subject at: symbol put: c.
-			controlGroup at: symbol put: c.
-			c _ c + 1 ]].
-	self assert: subject isEquivalentToDictionary: controlGroup.
-
-	copy _ Dictionary new.
-	set1 _ Set new.
-	subject keysAndValuesDo: [ :symbol :number |
-		copy at: symbol put: number.
-		set1 add: number ].
-
-	set2 _ Set new.
-	subject do: [ :number |
-		set2 add: number ].
-
-	self assert: subject isEquivalentToDictionary: copy.
-	self assert: copy isEquivalentToDictionary: controlGroup.
-	self assert: set1 = set2! !
-
-!TrieTest methodsFor: 'testing' stamp: 'jmv 6/21/2011 22:01'!
-testAllMesssagesLikeSet
-	"
-	TrieTest new testAllMesssagesLikeSet
-	"
-	| subject  controlGroup allMessages copy|
-	subject _ Trie new.
-	controlGroup _ Set new.
-	allMessages _ Smalltalk allImplementedMessages.
-	3 timesRepeat: [
-		allMessages do: [ :symbol |
-			subject add: symbol.
-			controlGroup add: symbol ]].
-	self assert: subject isEquivalentToSet: controlGroup.
-
-	copy _ Set new.
-	subject do: [ :symbol |
-		copy add: symbol ].
-
-	self assert: subject isEquivalentToSet: copy.
-	self assert: copy isEquivalentToSet: controlGroup.! !
-
-!TrieTest methodsFor: 'testing' stamp: 'HAW 6/12/2019 17:38:28'!
-testIncludesReturnsFalseForObjectsThatAreNotString
-	
-	self deny: ((Trie with: 'hello') includes: 1)
-	! !
-
-!TrieTest methodsFor: 'testing' stamp: 'HAW 6/12/2019 17:38:51'!
-testIncludesReturnsFalseForStringsNotIncluded
-	
-	self deny: ((Trie with: 'hello') includes: 'bye')
-	! !
-
-!TrieTest methodsFor: 'testing' stamp: 'HAW 6/12/2019 17:39:09'!
-testIncludesReturnsTrueForIncludedStrings
-	
-	self assert: ((Trie with: 'hello') includes: 'hello')
-	! !
-
-!TrieTest methodsFor: 'testing' stamp: 'HAW 4/4/2019 08:18:55'!
-testKeyNotFoundSignalTheRightMessage
-
-	self 
-		should: [ Trie new errorKeyNotFound ]
-		raise: Error
-		withMessageText: Dictionary keyNotFoundErrorDescription ! !
-
-!TrieTest methodsFor: 'testing' stamp: 'jmv 6/22/2011 12:30'!
-testPrefixIteration
-	"
-	TrieTest new testPrefixIteration
-	"
-	| subject  controlGroup |
-	subject _ Trie new.
-	controlGroup _ Set new.
-
-	self assert: subject prefixSelection: '' isEquivalentToSet: controlGroup.
-	self assert: subject prefixSelection: 'c' isEquivalentToSet: controlGroup.
-	self assert: subject prefixSelection: 'ca' isEquivalentToSet: controlGroup.
-
-	subject add: 'car'.
-	controlGroup add: 'car'.
-	subject add: 'car'.
-	controlGroup add: 'car'.
-	subject add: 'cat'.
-	controlGroup add: 'cat'.
-	subject add: 'cart'.
-	controlGroup add: 'cart'.
-
-	self assert: subject prefixSelection: '' isEquivalentToSet: controlGroup.
-	self assert: subject prefixSelection: 'c' isEquivalentToSet: controlGroup.
-	self assert: subject prefixSelection: 'ca' isEquivalentToSet: controlGroup.
-	self assert: subject prefixSelection: 'car' isEquivalentToSet: controlGroup.
-	self assert: subject prefixSelection: 'cat' isEquivalentToSet: controlGroup.
-	self assert: subject prefixSelection: 'cart' isEquivalentToSet: controlGroup.
-
-	subject add: 'ñandú'.
-	controlGroup add: 'ñandú'.
-	subject add: 'ñandues'.
-	controlGroup add: 'ñandues'.
-	subject add: 'ÑANDÚSES'.
-	controlGroup add: 'ÑANDÚSES'.
-	
-	self assert: subject prefixSelection: '' isEquivalentToSet: controlGroup.
-	self assert: subject prefixSelection: 'c' isEquivalentToSet: controlGroup.
-	self assert: subject prefixSelection: 'ca' isEquivalentToSet: controlGroup.
-	self assert: subject prefixSelection: 'car' isEquivalentToSet: controlGroup.
-	self assert: subject prefixSelection: 'cat' isEquivalentToSet: controlGroup.
-	self assert: subject prefixSelection: 'cart' isEquivalentToSet: controlGroup.
-	self assert: subject prefixSelection: 'ñ' isEquivalentToSet: controlGroup.
-	self assert: subject prefixSelection: 'ñan' isEquivalentToSet: controlGroup.
-	self assert: subject prefixSelection: 'ñandu' isEquivalentToSet: controlGroup.
-	self assert: subject prefixSelection: 'ñandú' isEquivalentToSet: controlGroup.
-	self assert: subject prefixSelection: 'Ñ' isEquivalentToSet: controlGroup.
-	self assert: subject prefixSelection: 'ÑANDÚ' isEquivalentToSet: controlGroup.! !
-
-!TrieTest methodsFor: 'testing' stamp: 'jmv 6/22/2011 12:50'!
-testPrefixIteration2
-	"
-	TrieTest new testPrefixIteration2
-	"
-	| subject  controlGroup allMsg toAvoid |
-	subject _ Trie new.
-	controlGroup _ Set new.
-
-	allMsg _ Smalltalk allImplementedMessages.
-	toAvoid _ (allMsg asArray collect: [ :each | each asLowercase asUnaccented ]) asBag.
-	allMsg do: [ :symbol |
-		(toAvoid occurrencesOf: symbol) = 1 ifTrue: [
-			subject add: symbol.
-			controlGroup add: symbol ]].
-	
-	self assert: subject prefixSelection: '' isEquivalentToSet: controlGroup.
-	self assert: subject prefixSelection: 'a' isEquivalentToSet: controlGroup.
-	self assert: subject prefixSelection: 'at' isEquivalentToSet: controlGroup.
-	self assert: subject prefixSelection: 'at:' isEquivalentToSet: controlGroup.
-	self assert: subject prefixSelection: 'at:p' isEquivalentToSet: controlGroup.
-	self assert: subject prefixSelection: 'at:pu' isEquivalentToSet: controlGroup.
-	self assert: subject prefixSelection: 'at:put' isEquivalentToSet: controlGroup.
-	self assert: subject prefixSelection: 'at:put:' isEquivalentToSet: controlGroup.
-	self assert: subject prefixSelection: 'at:put:nonExistant:' isEquivalentToSet: controlGroup.! !
-
-!TrieTest methodsFor: 'testing' stamp: 'jmv 6/23/2011 11:02'!
-testRemoveLikeDicionary
-	"
-	TrieTest new testRemoveLikeDicionary
-	"
-	| subject  controlGroup allMessages copy c set1 set2 |
-	subject _ Trie new.
-	controlGroup _ Dictionary new.
-	allMessages _ Smalltalk allImplementedMessages.
-
-	subject at: 'doNotRemove' put: 'this'.
-	controlGroup at: 'doNotRemove' put: 'this'.
-	
-	c _ 0.
-	3 timesRepeat: [
-		allMessages do: [ :symbol |
-			subject at: symbol put: c.
-			controlGroup at: symbol put: c.
-			c _ c + 1 ]].
-
-	subject at: 'doNotRemove2' put: 'this2'.
-	controlGroup at: 'doNotRemove2' put: 'this2'.
-
-	self assert: subject isEquivalentToDictionary: controlGroup.
-	
-	allMessages do: [ :symbol |
-		subject removeKey: symbol.
-		controlGroup removeKey: symbol ].
-
-	copy _ Dictionary new.
-	set1 _ Set new.
-	subject keysAndValuesDo: [ :symbol :number |
-		copy at: symbol put: number.
-		set1 add: number ].
-
-	set2 _ Set new.
-	subject do: [ :number |
-		set2 add: number ].
-
-	self assert: subject isEquivalentToDictionary: copy.
-	self assert: copy isEquivalentToDictionary: controlGroup.
-	self assert: set1 = set2.
-	self assert: subject isEmpty = controlGroup isEmpty.
-
-	subject removeKey: 'doNotRemove'.
-	controlGroup removeKey: 'doNotRemove'.
-
-	self assert: subject isEquivalentToDictionary: controlGroup.
-	self deny: subject isEmpty.
-	self deny: controlGroup isEmpty.
-
-	subject removeKey: 'doNotRemove2'.
-	controlGroup removeKey: 'doNotRemove2'.
-
-	self assert: subject isEquivalentToDictionary: controlGroup.
-	self assert: subject isEmpty.
-	self assert: controlGroup isEmpty.! !
-
-!TrieTest methodsFor: 'testing' stamp: 'jmv 6/22/2011 15:54'!
-testRemoveLikeSet
-	"
-	TrieTest new testRemoveLikeSet
-	"
-	| subject  controlGroup allMessages copy |
-	subject _ Trie new.
-	controlGroup _ Set new.
-	allMessages _ Smalltalk allImplementedMessages.
-
-	subject add: 'doNotRemove'.
-	controlGroup add: 'doNotRemove'.
-	
-	3 timesRepeat: [
-		allMessages do: [ :symbol |
-			subject add: symbol.
-			controlGroup add: symbol ]].
-
-	subject add: 'doNotRemove2'.
-	controlGroup add: 'doNotRemove2'.
-
-	self assert: subject isEquivalentToSet: controlGroup.
-	
-	allMessages do: [ :symbol |
-		subject remove: symbol.
-		controlGroup remove: symbol ].
-
-	copy _ Set new.
-	subject do: [ :symbol |
-		copy add: symbol ].
-
-	self assert: subject isEquivalentToSet: copy.
-	self assert: copy isEquivalentToSet: controlGroup.
-
-	subject remove: 'doNotRemove'.
-	controlGroup remove: 'doNotRemove'.
-
-	self assert: subject isEquivalentToSet: controlGroup.
-	self deny: subject isEmpty.
-	self deny: controlGroup isEmpty.
-
-	subject remove: 'doNotRemove2'.
-	controlGroup remove: 'doNotRemove2'.
-
-	self assert: subject isEquivalentToSet: controlGroup.
-	self assert: subject isEmpty.
-	self assert: controlGroup isEmpty.! !
-
-!TrieTest methodsFor: 'testing' stamp: 'jmv 6/22/2011 15:42'!
-testSetProtocol
-	"
-	TrieTest new testSetProtocol
-	"
-	| subject  controlGroup |
-	subject _ Trie new.
-	controlGroup _ Set new.
-	self assert: subject isEquivalentToSet: controlGroup.
-	
-	subject add: 'car'.
-	controlGroup add: 'car'.
-	self assert: subject isEquivalentToSet: controlGroup.
-
-	subject add: 'car'.
-	controlGroup add: 'car'.
-	self assert: subject isEquivalentToSet: controlGroup.
-
-	subject add: 'cat'.
-	controlGroup add: 'cat'.
-	self assert: subject isEquivalentToSet: controlGroup.
-
-	subject add: 'cart'.
-	controlGroup add: 'cart'.
-	self assert: subject isEquivalentToSet: controlGroup.
-
-	subject add: 'ñandú'.
-	controlGroup add: 'ñandú'.
-	self assert: subject isEquivalentToSet: controlGroup.
-
-	subject add: 'ñandu'.
-	controlGroup add: 'ñandu'.
-	self assert: subject isEquivalentToSet: controlGroup.
-
-	subject add: 'ÑANDÚ'.
-	controlGroup add: 'ÑANDÚ'.
-	self assert: subject isEquivalentToSet: controlGroup.! !
-
-!TrieUnicodeTest methodsFor: 'testing' stamp: 'jmv 6/6/2022 11:47:11'!
-test01
-	| t all |
-	t _ Trie new.
-	t add: #toto.
-	t at: #toton put: 47.
-	t add: 'carrr'.
-	t at: 'car' put: Float pi.
-	t at: 'cat' put: Date today.
-	self assert: (t includesKey: 'car').
-	self deny: (t includes: 'car').
-	self assert: (t includesKey: 'cat').
-	self deny: (t includes: 'cat').
-	self assert: (t includes: #toto).
-	self assert: (t includes: 'toto').
-	all _ Array streamContents: [ :strm |
-		t keysAndValuesDo: [ :k :v | strm nextPut: {k. k class. v. v class} ]].
-	self assert: all size = 5.
-	self assert: (all includes: {#toto. Symbol. #toto. Symbol}).
-	self assert: (all includes: {#toton. Symbol. 47. SmallInteger}).
-	self assert: (all includes: {'carrr'. String. 'carrr'. String}).
-	self assert: (all includes: {'car'. String. Float pi. SmallFloat64}).
-	self assert: (all includes: {'cat'. String. Date today. Date}).! !
-
-!TrieUnicodeTest methodsFor: 'testing' stamp: 'jmv 6/6/2022 12:13:02'!
-test02
-	| t all |
-	t _ Trie new.
-	t add: #toto.
-	t at: #toton put: 47.
-	t add: 'carrrs'.
-	t add: 'carrr' asUtf8String.
-	t at: 'car' asUtf8String put: Float pi.
-	t at: 'cat' put: Date today.
-	self assert: (t includesKey: 'carrrs').
-	self assert: (t includes: 'carrrs').
-	self assert: (t includesKey: 'carrrs' asUtf8String).
-	self assert: (t includes: 'carrrs' asUtf8String).
-	self assert: (t includesKey: 'carrr').
-	self assert: (t includes: 'carrr').
-	self assert: (t includesKey: 'carrr' asUtf8String).
-	self assert: (t includes: 'carrr' asUtf8String).
-	self assert: (t includesKey: 'car').
-	self deny: (t includes: 'car').
-	self assert: (t includesKey: 'cat').
-	self deny: (t includes: 'cat').
-	self assert: (t includes: #toto).
-	self assert: (t includes: 'toto').
-	all _ Array streamContents: [ :strm |
-		t keysAndValuesDo: [ :k :v | strm nextPut: {k. k class. v. v class} ]].
-	self assert: all size = 6.
-	self assert: (all includes: {#toto. Symbol. #toto. Symbol}).
-	self assert: (all includes: {#toton. Symbol. 47. SmallInteger}).
-	self assert: (all includes: {'carrrs'. String. 'carrrs'. String}).
-	self assert: (all includes: {'carrr'. Utf8String. 'carrr'. Utf8String}).
-	self assert: (all includes: {'car'. Utf8String. Float pi. SmallFloat64}).
-	self assert: (all includes: {'cat'. String. Date today. Date}).! !
-
-!TrieUnicodeTest methodsFor: 'testing' stamp: 'jmv 6/6/2022 12:09:17'!
-test03
-	| t all s1 s2 |
-	t _ Trie new.
-	s1 _ ('totoU', Random next mantissaPart printString) asUtf8String asSymbol.
-	t add: s1.
-	s2 _ ('totoUn', Random next mantissaPart printString) asUtf8String asSymbol.
-	t at: s2 put: 47.
-	t add: 'carrr' asUtf8String.
-	t at: 'car' put: Float pi.
-	t at: 'cat' asUtf8String put: Date today.
-	self assert: (t includesKey: 'car').
-	self deny: (t includes: 'car').
-	self assert: (t includesKey: 'cat').
-	self deny: (t includes: 'cat').
-	self assert: (t includes: s1).
-	self assert: (t includes: s1 asString).
-	all _ Array streamContents: [ :strm |
-		t keysAndValuesDo: [ :k :v | strm nextPut: {k. k class. v. v class} ]].
-	self assert: all size = 5.
-	self assert: (all includes: {s1. Utf8Symbol. s1. Utf8Symbol}).
-	self assert: (all includes: {s2. Utf8Symbol. 47. SmallInteger}).
-	self assert: (all includes: {'carrr'. Utf8String. 'carrr'. Utf8String}).
-	self assert: (all includes: {'car'. String. Float pi. SmallFloat64}).
-	self assert: (all includes: {'cat'. Utf8String. Date today. Date}).! !
+	BecomeTestExperiment threeVars. "New ivar c is added before a and be"
+	^a + b! !
+
+!BecomeTestExperiment methodsFor: 'as yet unclassified' stamp: 'jmv 1/29/2019 10:59:16'!
+messStuffUpWBecome
+"In a Workspace
+
+BecomeTestExperiment twoVars.
+e _ BecomeTestExperiment new.
+e messStuffUpWBecome.
+
+e _ nil. Smalltalk garbageCollect.
+BecomeTestExperiment allInstances
+
+Processor invalidMethodInStackDueToClass: BecomeTestExperiment
+"
+
+	self becomeForward: {22}.
+	^a + b! !
+
+!BecomeTestExperiment class methodsFor: 'as yet unclassified' stamp: 'jmv 3/8/2019 11:37:17'!
+threeVars
+
+	Object subclass: #BecomeTestExperiment
+		instanceVariableNames: 'c a b'
+		classVariableNames: ''
+		poolDictionaries: ''
+		category: 'BaseImageTests-Kernel'! !
+
+!BecomeTestExperiment class methodsFor: 'as yet unclassified' stamp: 'jmv 3/8/2019 11:37:22'!
+twoVars
+
+	Object subclass: #BecomeTestExperiment
+		instanceVariableNames: 'a b'
+		classVariableNames: ''
+		poolDictionaries: ''
+		category: 'BaseImageTests-Kernel'! !
 
 !ExceptionTester methodsFor: 'accessing' stamp: 'dtl 6/1/2004 21:53'!
 basicANSISignaledExceptionTestSelectors
@@ -29254,63 +30938,6 @@ runTest: aSelector
 wantsChangeSetLogging 
 
 	^false! !
-
-!BecomeTestExperiment methodsFor: 'as yet unclassified' stamp: 'jmv 1/11/2019 12:21:36'!
-initialize
-	a _ 1.
-	b _ 2.! !
-
-!BecomeTestExperiment methodsFor: 'as yet unclassified' stamp: 'jmv 1/29/2019 10:59:12'!
-messStuffUp
-"In a Workspace
-
-BecomeTestExperiment twoVars.
-e _ BecomeTestExperiment new.
-e messStuffUp.
-
-e _ nil. Smalltalk garbageCollect.
-BecomeTestExperiment allInstances
-
-Processor invalidMethodInStackDueToClass: BecomeTestExperiment
-"
-
-	BecomeTestExperiment threeVars. "New ivar c is added before a and be"
-	^a + b! !
-
-!BecomeTestExperiment methodsFor: 'as yet unclassified' stamp: 'jmv 1/29/2019 10:59:16'!
-messStuffUpWBecome
-"In a Workspace
-
-BecomeTestExperiment twoVars.
-e _ BecomeTestExperiment new.
-e messStuffUpWBecome.
-
-e _ nil. Smalltalk garbageCollect.
-BecomeTestExperiment allInstances
-
-Processor invalidMethodInStackDueToClass: BecomeTestExperiment
-"
-
-	self becomeForward: {22}.
-	^a + b! !
-
-!BecomeTestExperiment class methodsFor: 'as yet unclassified' stamp: 'jmv 3/8/2019 11:37:17'!
-threeVars
-
-	Object subclass: #BecomeTestExperiment
-		instanceVariableNames: 'c a b'
-		classVariableNames: ''
-		poolDictionaries: ''
-		category: 'BaseImageTests-Kernel'! !
-
-!BecomeTestExperiment class methodsFor: 'as yet unclassified' stamp: 'jmv 3/8/2019 11:37:22'!
-twoVars
-
-	Object subclass: #BecomeTestExperiment
-		instanceVariableNames: 'a b'
-		classVariableNames: ''
-		poolDictionaries: ''
-		category: 'BaseImageTests-Kernel'! !
 
 !BoxedFloat64 methodsFor: '*BaseImageTests-Kernel-Numbers' stamp: 'jmv 2/25/2019 17:20:54'!
 primTestAdd: aNumber
