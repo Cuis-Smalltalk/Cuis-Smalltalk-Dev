@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5234] on 11 June 2022 at 11:48:46 pm'!
+'From Cuis 6.0 [latest update: #5297] on 15 June 2022 at 4:46:41 pm'!
 'Description Inline method and temp var tests'!
-!provides: 'BaseImageTests' 1 294!
+!provides: 'BaseImageTests' 1 296!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Objects'!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Classes'!
@@ -8386,6 +8386,18 @@ testAfterBlanksEndsWith
 	self deny: ('' afterBlanksEndsWith: 'abc').
 	self deny: (' a a bc' afterBlanksEndsWith: 'a bc').! !
 
+!StringTest methodsFor: 'testing' stamp: 'jmv 6/12/2022 17:22:34'!
+testBeginsWith
+
+	self assert: ('Elvis' beginsWith: 'El').
+	self deny: ('Elvis' beginsWith: 'Paul').
+	self assert: ('Elvis' beginsWith: 'El' asUtf8String).
+	self deny: ('Elvis' beginsWith: 'Paul' asUtf8String).
+	self assert: ('Elvis' asUtf8String beginsWith: 'El').
+	self deny: ('Elvis' asUtf8String beginsWith: 'Paul').
+	self assert: ('Elvis' asUtf8String beginsWith: 'El' asUtf8String).
+	self deny: ('Elvis' asUtf8String beginsWith: 'Paul' asUtf8String).! !
+
 !StringTest methodsFor: 'testing' stamp: 'jmv 10/6/2010 22:08'!
 testCaseConversion
 	"
@@ -8534,29 +8546,20 @@ testLineSeparators
 	self assert: linesBounds second second = (linesBounds second first-1) description: 'Second line is empty'.
 	self assert: linesBounds second third = (linesBounds second second+0) description: 'Second line is not terminated by ab Lf'.! !
 
-!StringTest methodsFor: 'testing' stamp: 'jmv 10/6/2010 22:03'!
+!StringTest methodsFor: 'testing' stamp: 'jmv 6/15/2022 16:46:27'!
 testSorting
 "
 self new testSorting
 "
 
 	self assert: 'a' < 'á'.
-	self assert: ('a' < 'Á') not.
+	self deny: 'a' < 'Á'.
 	self assert: 'A' < 'á'.
 	self assert: 'A' < 'Á'.
 	self assert: 'á' < 'b'.
-	self assert: ('á' < 'B') not.
+	self deny: 'á' < 'B'.
 	self assert: 'Á' < 'b'.
 	self assert: 'Á' < 'B'.
-
-	self assert: ('a' caseSensitiveLessOrEqual: 'á').
-	self deny: ('a' caseSensitiveLessOrEqual: 'Á').
-	self assert: ('A' caseSensitiveLessOrEqual: 'á').
-	self assert: ('A' caseSensitiveLessOrEqual: 'Á').
-	self assert: ('á' caseSensitiveLessOrEqual: 'b').
-	self deny: ('á' caseSensitiveLessOrEqual: 'B').
-	self assert: ('Á' caseSensitiveLessOrEqual: 'b').
-	self assert: ('Á' caseSensitiveLessOrEqual: 'B').
 
 	self assert: ('a' caseInsensitiveLessOrEqual: 'á').
 	self assert: ('a' caseInsensitiveLessOrEqual: 'Á').
@@ -8584,6 +8587,18 @@ testWithoutLeadingBlanks
 	self assert: 'abc' equals: 'abc' withoutLeadingBlanks.
 	self assert: '' withoutLeadingBlanks isEmpty
 ! !
+
+!StringTest methodsFor: 'testing' stamp: 'jmv 6/12/2022 17:21:18'!
+testWithoutPrefix
+
+	self assert: ('Elvis' withoutPrefix: 'El') = 'vis'.
+	self assert: ('Elvis' withoutPrefix: 'Paul') isNil.
+	self assert: ('Elvis' withoutPrefix: 'El' asUtf8String) = 'vis'.
+	self assert: ('Elvis' withoutPrefix: 'Paul' asUtf8String) isNil.
+	self assert: ('Elvis' asUtf8String withoutPrefix: 'El') = 'vis'.
+	self assert: ('Elvis' asUtf8String withoutPrefix: 'Paul') isNil.
+	self assert: ('Elvis' asUtf8String withoutPrefix: 'El' asUtf8String) = 'vis'.
+	self assert: ('Elvis' asUtf8String withoutPrefix: 'Paul' asUtf8String) isNil.! !
 
 !StringTest methodsFor: 'testing' stamp: 'HAW 6/8/2019 18:18:47'!
 testWithoutSeparators
@@ -8679,6 +8694,426 @@ test01
 	self assert: latinUtf8String = latinUtf32String.
 	self assert: latinUtf32String = latinString.
 	self assert: latinUtf32String = latinUtf8String.! !
+
+!UnicodeStringsTest methodsFor: 'testing' stamp: 'jmv 6/10/2022 14:48:28'!
+test02
+
+	| asciiString asciiUtf32String asciiUtf8String latinString latinUtf32String latinUtf8String |
+	asciiString _ 'Hello world'.
+	latinString _ '¡Tomá agüita, Ñandú!!'.
+	asciiUtf8String _ asciiString asUtf8String.
+	latinUtf8String _ latinString asUtf8String.
+	asciiUtf32String _ asciiString asUtf32String.
+	latinUtf32String _ latinString asUtf32String.
+
+	self assert: (asciiString sameAs: asciiUtf8String).
+	self assert: (asciiString sameAs: asciiUtf32String).
+	self assert: (asciiUtf8String sameAs: asciiString).
+	self assert: (asciiUtf8String sameAs: asciiUtf32String).
+	self assert: (asciiUtf32String sameAs: asciiString).
+	self assert: (asciiUtf32String sameAs: asciiUtf8String).
+
+	self assert: (latinString sameAs: latinUtf8String).
+	self assert: (latinString sameAs: latinUtf32String).
+	self assert: (latinUtf8String sameAs: latinString).
+	self assert: (latinUtf8String sameAs: latinUtf32String).
+	self assert: (latinUtf32String sameAs: latinString).
+	self assert: (latinUtf32String sameAs: latinUtf8String).! !
+
+!UnicodeStringsTest methodsFor: 'testing' stamp: 'jmv 6/10/2022 14:48:17'!
+test03
+
+	| asciiString asciiUtf32String asciiUtf8String latinString latinUtf32String latinUtf8String |
+	asciiString _ 'Hello world'.
+	latinString _ '¡Tomá agüita, Ñandú!!'.
+	asciiUtf8String _ asciiString asLowercase asUtf8String.
+	latinUtf8String _ latinString asLowercase asUtf8String.
+	asciiUtf32String _ asciiString asLowercase asUtf32String.
+	latinUtf32String _ latinString asLowercase asUtf32String.
+
+	self assert: (asciiString sameAs: asciiUtf8String).
+	self assert: (asciiString sameAs: asciiUtf32String).
+	self assert: (asciiUtf8String sameAs: asciiString).
+	self assert: (asciiUtf8String sameAs: asciiUtf32String).
+	self assert: (asciiUtf32String sameAs: asciiString).
+	self assert: (asciiUtf32String sameAs: asciiUtf8String).
+
+	self assert: (latinString sameAs: latinUtf8String).
+	self assert: (latinString sameAs: latinUtf32String).
+	self assert: (latinUtf8String sameAs: latinString).
+	self assert: (latinUtf8String sameAs: latinUtf32String).
+	self assert: (latinUtf32String sameAs: latinString).
+	self assert: (latinUtf32String sameAs: latinUtf8String).! !
+
+!UnicodeStringsTest methodsFor: 'testing' stamp: 'jmv 6/10/2022 14:48:11'!
+test04
+
+	| asciiString asciiUtf32String asciiUtf8String latinString latinUtf32String latinUtf8String |
+	asciiString _ 'Hello world'.
+	latinString _ '¡Tomá agüita, Ñandú!!'.
+	asciiUtf8String _ asciiString asUtf8String.
+	latinUtf8String _ latinString asUtf8String.
+	asciiUtf32String _ asciiString asUtf32String.
+	latinUtf32String _ latinString asUtf32String.
+	asciiString _ asciiString asLowercase.
+	latinString _ latinString asLowercase.
+
+	self assert: (asciiString sameAs: asciiUtf8String).
+	self assert: (asciiString sameAs: asciiUtf32String).
+	self assert: (asciiUtf8String sameAs: asciiString).
+	self assert: (asciiUtf8String sameAs: asciiUtf32String).
+	self assert: (asciiUtf32String sameAs: asciiString).
+	self assert: (asciiUtf32String sameAs: asciiUtf8String).
+
+	self assert: (latinString sameAs: latinUtf8String).
+	self assert: (latinString sameAs: latinUtf32String).
+	self assert: (latinUtf8String sameAs: latinString).
+	self assert: (latinUtf8String sameAs: latinUtf32String).
+	self assert: (latinUtf32String sameAs: latinString).
+	self assert: (latinUtf32String sameAs: latinUtf8String).! !
+
+!UnicodeStringsTest methodsFor: 'testing' stamp: 'jmv 6/10/2022 14:55:55'!
+test05Utf32
+
+	self deny: (Utf32String fromUtf8Bytes: #[64 65 66]) isLastSeparator.
+	self assert: (Utf32String fromUtf8Bytes: #[64 65 66 32]) isLastSeparator.
+	self assert: (Utf32String fromUtf8Bytes: #[64 65 66 9]) isLastSeparator.
+	self assert: (Utf32String fromUtf8Bytes: #[64 65 66 10]) isLastSeparator.
+	self assert: (Utf32String fromUtf8Bytes: #[64 65 66 13]) isLastSeparator.
+	self assert: (Utf32String fromUtf8Bytes: #[64 65 66 12]) isLastSeparator.
+	self assert: (Utf32String fromUtf8Bytes: #[64 65 66 194 133]) isLastSeparator.
+	self assert: (Utf32String fromUtf8Bytes: #[64 65 66 226 128 168 ]) isLastSeparator.
+	self assert: (Utf32String fromUtf8Bytes: #[64 65 66 226 128 169 ]) isLastSeparator.
+
+	self deny: (Utf32String fromUtf8Bytes: #[64 65 66]) isLastLineSeparator.
+	self assert: (Utf32String fromUtf8Bytes: #[64 65 66 10]) isLastLineSeparator.
+	self assert: (Utf32String fromUtf8Bytes: #[64 65 66 13]) isLastLineSeparator.
+	self assert: (Utf32String fromUtf8Bytes: #[64 65 66 12]) isLastLineSeparator.
+	self assert: (Utf32String fromUtf8Bytes: #[64 65 66 194 133]) isLastLineSeparator.
+	self assert: (Utf32String fromUtf8Bytes: #[64 65 66 226 128 168 ]) isLastLineSeparator.
+	self assert: (Utf32String fromUtf8Bytes: #[64 65 66 226 128 169 ]) isLastLineSeparator.! !
+
+!UnicodeStringsTest methodsFor: 'testing' stamp: 'jmv 6/10/2022 14:55:31'!
+test05Utf8
+
+	self deny: (Utf8String fromUtf8Bytes: #[64 65 66]) isLastSeparator.
+	self assert: (Utf8String fromUtf8Bytes: #[64 65 66 32]) isLastSeparator.
+	self assert: (Utf8String fromUtf8Bytes: #[64 65 66 9]) isLastSeparator.
+	self assert: (Utf8String fromUtf8Bytes: #[64 65 66 10]) isLastSeparator.
+	self assert: (Utf8String fromUtf8Bytes: #[64 65 66 13]) isLastSeparator.
+	self assert: (Utf8String fromUtf8Bytes: #[64 65 66 12]) isLastSeparator.
+	self assert: (Utf8String fromUtf8Bytes: #[64 65 66 194 133]) isLastSeparator.
+	self assert: (Utf8String fromUtf8Bytes: #[64 65 66 226 128 168 ]) isLastSeparator.
+	self assert: (Utf8String fromUtf8Bytes: #[64 65 66 226 128 169 ]) isLastSeparator.
+
+	self deny: (Utf8String fromUtf8Bytes: #[64 65 66]) isLastLineSeparator.
+	self assert: (Utf8String fromUtf8Bytes: #[64 65 66 10]) isLastLineSeparator.
+	self assert: (Utf8String fromUtf8Bytes: #[64 65 66 13]) isLastLineSeparator.
+	self assert: (Utf8String fromUtf8Bytes: #[64 65 66 12]) isLastLineSeparator.
+	self assert: (Utf8String fromUtf8Bytes: #[64 65 66 194 133]) isLastLineSeparator.
+	self assert: (Utf8String fromUtf8Bytes: #[64 65 66 226 128 168 ]) isLastLineSeparator.
+	self assert: (Utf8String fromUtf8Bytes: #[64 65 66 226 128 169 ]) isLastLineSeparator.! !
+
+!UnicodeStringsTest methodsFor: 'testing' stamp: 'jmv 6/10/2022 15:09:16'!
+test06isAscii
+
+	| asciiString asciiUtf32String asciiUtf8String latinString latinUtf32String latinUtf8String |
+	asciiString _ 'Hello world'.
+	latinString _ '¡Tomá agüita, Ñandú!!'.
+	asciiUtf8String _ asciiString asUtf8String.
+	latinUtf8String _ latinString asUtf8String.
+	asciiUtf32String _ asciiString asUtf32String.
+	latinUtf32String _ latinString asUtf32String.
+
+	self assert: asciiString isAscii.
+	self assert: asciiUtf8String isAscii.
+	self assert: asciiUtf32String isAscii.
+	self deny: latinString isAscii.
+	self deny: latinUtf8String isAscii.
+	self deny: latinUtf32String isAscii.
+
+	self assert: asciiString asLowercase isAscii.
+	self assert: asciiUtf8String asLowercase isAscii.
+	self assert: asciiUtf32String asLowercase isAscii.
+	self deny: latinString asLowercase isAscii.
+	self deny: latinUtf8String asLowercase isAscii.
+	self deny: latinUtf32String asLowercase isAscii.! !
+
+!UnicodeStringsTest methodsFor: 'testing' stamp: 'jmv 6/10/2022 15:16:27'!
+test07
+	| s |
+
+	self assert: ('Hello World' copyReplaceFrom: 3 to: 4 with: '') =  'Heo World'.
+	self assert: ('Hello World' asUtf8String copyReplaceFrom: 3 to: 4 with: '') =  'Heo World'.
+	self assert: ('Hello World' asUtf32String copyReplaceFrom: 3 to: 4 with: '') =  'Heo World'.
+
+	s _ '¿El Ñandú toma agüita?'.
+	self assert: (s copyReplaceFrom: 3 to: 4 with: 'xxx') =  '¿ExxxÑandú toma agüita?'.
+	self assert: (s copyReplaceFrom: 3 to: 2 with: 'xxx') =  '¿Exxxl Ñandú toma agüita?'.
+	self assert: (s copyReplaceFrom: 1 to: 2 with: 'xxx') =  'xxxl Ñandú toma agüita?'.
+	self assert: (s copyReplaceFrom: s size to: s size with: 'xxx') =  '¿El Ñandú toma agüitaxxx'.
+	self assert: (s copyReplaceFrom: s size to: 2 with: 'xxx') =  '¿El Ñandú toma agüitaxxxl Ñandú toma agüita?'.
+
+	s _ '¿El Ñandú toma agüita?' asUtf8String.
+	self assert: (s copyReplaceFrom: 3 to: 4 with: 'xxx') =  '¿ExxxÑandú toma agüita?'.
+	self assert: (s copyReplaceFrom: 3 to: 2 with: 'xxx') =  '¿Exxxl Ñandú toma agüita?'.
+	self assert: (s copyReplaceFrom: 1 to: 2 with: 'xxx') =  'xxxl Ñandú toma agüita?'.
+	self assert: (s copyReplaceFrom: s size to: s size with: 'xxx') =  '¿El Ñandú toma agüitaxxx'.
+	self assert: (s copyReplaceFrom: s size to: 2 with: 'xxx') =  '¿El Ñandú toma agüitaxxxl Ñandú toma agüita?'.! !
+
+!UnicodeStringsTest methodsFor: 'testing' stamp: 'jmv 6/10/2022 16:06:56'!
+test08a
+"Need a similar test for non-ascii stuff. But we also need to implement the correct behavior!!"
+
+	| asciiString0 asciiString1 asciiString2 |
+	asciiString0 _ 'Helle world!!'.
+	asciiString1 _ 'Hello world'.
+	asciiString2 _ 'Hellu world!!'.
+
+	self deny: asciiString0 < asciiString0.
+	self assert: asciiString0 < asciiString1.
+	self assert: asciiString0 < asciiString2.
+	self deny: asciiString1 < asciiString0.
+	self deny: asciiString1 < asciiString1.
+	self assert: asciiString1 < asciiString2.
+	self deny: asciiString2 < asciiString0.
+	self deny: asciiString2 < asciiString1.
+	self deny: asciiString2 < asciiString2.
+
+	self assert: asciiString0 <= asciiString0.
+	self assert: asciiString0 <= asciiString1.
+	self assert: asciiString0 <= asciiString2.
+	self deny: asciiString1 <= asciiString0.
+	self assert: asciiString1 <= asciiString1.
+	self assert: asciiString1 <= asciiString2.
+	self deny: asciiString2 <= asciiString0.
+	self deny: asciiString2 <= asciiString1.
+	self assert: asciiString2 <= asciiString2.
+
+	self deny: asciiString0 > asciiString0.
+	self deny: asciiString0 > asciiString1.
+	self deny: asciiString0 > asciiString2.
+	self assert: asciiString1 > asciiString0.
+	self deny: asciiString1 > asciiString1.
+	self deny: asciiString1 > asciiString2.
+	self assert: asciiString2 > asciiString0.
+	self assert: asciiString2 > asciiString1.
+	self deny: asciiString2 > asciiString2.
+
+	self assert: asciiString0 >= asciiString0.
+	self deny: asciiString0 >= asciiString1.
+	self deny: asciiString0 >= asciiString2.
+	self assert: asciiString1 >= asciiString0.
+	self assert: asciiString1 >= asciiString1.
+	self deny: asciiString1 >= asciiString2.
+	self assert: asciiString2 >= asciiString0.
+	self assert: asciiString2 >= asciiString1.
+	self assert: asciiString2 >= asciiString2.! !
+
+!UnicodeStringsTest methodsFor: 'testing' stamp: 'jmv 6/10/2022 16:06:52'!
+test08b
+"Need a similar test for non-ascii stuff. But we also need to implement the correct behavior!!"
+
+	| asciiString0 asciiString1 asciiString2 asciiUtf8String0 asciiUtf8String1 asciiUtf8String2 |
+	asciiString0 _ 'Helle world!!'.
+	asciiString1 _ 'Hello world'.
+	asciiString2 _ 'Hellu world!!'.
+	asciiUtf8String0 _ asciiString0 asUtf8String.
+	asciiUtf8String1 _ asciiString1 asUtf8String.
+	asciiUtf8String2 _ asciiString2 asUtf8String.
+
+	self deny: asciiString0 < asciiUtf8String0.
+	self assert: asciiString0 < asciiUtf8String1.
+	self assert: asciiString0 < asciiUtf8String2.
+	self deny: asciiString1 < asciiUtf8String0.
+	self deny: asciiString1 < asciiUtf8String1.
+	self assert: asciiString1 < asciiUtf8String2.
+	self deny: asciiString2 < asciiUtf8String0.
+	self deny: asciiString2 < asciiUtf8String1.
+	self deny: asciiString2 < asciiUtf8String2.
+
+	self assert: asciiString0 <= asciiUtf8String0.
+	self assert: asciiString0 <= asciiUtf8String1.
+	self assert: asciiString0 <= asciiUtf8String2.
+	self deny: asciiString1 <= asciiUtf8String0.
+	self assert: asciiString1 <= asciiUtf8String1.
+	self assert: asciiString1 <= asciiUtf8String2.
+	self deny: asciiString2 <= asciiUtf8String0.
+	self deny: asciiString2 <= asciiUtf8String1.
+	self assert: asciiString2 <= asciiUtf8String2.
+
+	self deny: asciiString0 > asciiUtf8String0.
+	self deny: asciiString0 > asciiUtf8String1.
+	self deny: asciiString0 > asciiUtf8String2.
+	self assert: asciiString1 > asciiUtf8String0.
+	self deny: asciiString1 > asciiUtf8String1.
+	self deny: asciiString1 > asciiUtf8String2.
+	self assert: asciiString2 > asciiUtf8String0.
+	self assert: asciiString2 > asciiUtf8String1.
+	self deny: asciiString2 > asciiUtf8String2.
+
+	self assert: asciiString0 >= asciiUtf8String0.
+	self deny: asciiString0 >= asciiUtf8String1.
+	self deny: asciiString0 >= asciiUtf8String2.
+	self assert: asciiString1 >= asciiUtf8String0.
+	self assert: asciiString1 >= asciiUtf8String1.
+	self deny: asciiString1 >= asciiUtf8String2.
+	self assert: asciiString2 >= asciiUtf8String0.
+	self assert: asciiString2 >= asciiUtf8String1.
+	self assert: asciiString2 >= asciiUtf8String2.! !
+
+!UnicodeStringsTest methodsFor: 'testing' stamp: 'jmv 6/10/2022 16:06:45'!
+test08c
+"Need a similar test for non-ascii stuff. But we also need to implement the correct behavior!!"
+
+	| asciiString0 asciiString1 asciiString2 asciiUtf8String0 asciiUtf8String1 asciiUtf8String2 |
+	asciiString0 _ 'Helle world!!'.
+	asciiString1 _ 'Hello world'.
+	asciiString2 _ 'Hellu world!!'.
+	asciiUtf8String0 _ asciiString0 asUtf8String.
+	asciiUtf8String1 _ asciiString1 asUtf8String.
+	asciiUtf8String2 _ asciiString2 asUtf8String.
+
+	self deny: asciiUtf8String0 < asciiString0.
+	self assert: asciiUtf8String0 < asciiString1.
+	self assert: asciiUtf8String0 < asciiString2.
+	self deny: asciiUtf8String1 < asciiString0.
+	self deny: asciiUtf8String1 < asciiString1.
+	self assert: asciiUtf8String1 < asciiString2.
+	self deny: asciiUtf8String2 < asciiString0.
+	self deny: asciiUtf8String2 < asciiString1.
+	self deny: asciiUtf8String2 < asciiString2.
+
+	self assert: asciiUtf8String0 <= asciiString0.
+	self assert: asciiUtf8String0 <= asciiString1.
+	self assert: asciiUtf8String0 <= asciiString2.
+	self deny: asciiUtf8String1 <= asciiString0.
+	self assert: asciiUtf8String1 <= asciiString1.
+	self assert: asciiUtf8String1 <= asciiString2.
+	self deny: asciiUtf8String2 <= asciiString0.
+	self deny: asciiUtf8String2 <= asciiString1.
+	self assert: asciiUtf8String2 <= asciiString2.
+
+	self deny: asciiUtf8String0 > asciiString0.
+	self deny: asciiUtf8String0 > asciiString1.
+	self deny: asciiUtf8String0 > asciiString2.
+	self assert: asciiUtf8String1 > asciiString0.
+	self deny: asciiUtf8String1 > asciiString1.
+	self deny: asciiUtf8String1 > asciiString2.
+	self assert: asciiUtf8String2 > asciiString0.
+	self assert: asciiUtf8String2 > asciiString1.
+	self deny: asciiUtf8String2 > asciiString2.
+
+	self assert: asciiUtf8String0 >= asciiString0.
+	self deny: asciiUtf8String0 >= asciiString1.
+	self deny: asciiUtf8String0 >= asciiString2.
+	self assert: asciiUtf8String1 >= asciiString0.
+	self assert: asciiUtf8String1 >= asciiString1.
+	self deny: asciiUtf8String1 >= asciiString2.
+	self assert: asciiUtf8String2 >= asciiString0.
+	self assert: asciiUtf8String2 >= asciiString1.
+	self assert: asciiUtf8String2 >= asciiString2.! !
+
+!UnicodeStringsTest methodsFor: 'testing' stamp: 'jmv 6/10/2022 16:06:48'!
+test08d
+"Need a similar test for non-ascii stuff. But we also need to implement the correct behavior!!"
+
+	| asciiString0 asciiString1 asciiString2 asciiUtf8String0 asciiUtf8String1 asciiUtf8String2 |
+	asciiString0 _ 'Helle world!!'.
+	asciiString1 _ 'Hello world'.
+	asciiString2 _ 'Hellu world!!'.
+	asciiUtf8String0 _ asciiString0 asUtf8String.
+	asciiUtf8String1 _ asciiString1 asUtf8String.
+	asciiUtf8String2 _ asciiString2 asUtf8String.
+
+	self deny: asciiUtf8String0 < asciiUtf8String0.
+	self assert: asciiUtf8String0 < asciiUtf8String1.
+	self assert: asciiUtf8String0 < asciiUtf8String2.
+	self deny: asciiUtf8String1 < asciiUtf8String0.
+	self deny: asciiUtf8String1 < asciiUtf8String1.
+	self assert: asciiUtf8String1 < asciiUtf8String2.
+	self deny: asciiUtf8String2 < asciiUtf8String0.
+	self deny: asciiUtf8String2 < asciiUtf8String1.
+	self deny: asciiUtf8String2 < asciiUtf8String2.
+
+	self assert: asciiUtf8String0 <= asciiUtf8String0.
+	self assert: asciiUtf8String0 <= asciiUtf8String1.
+	self assert: asciiUtf8String0 <= asciiUtf8String2.
+	self deny: asciiUtf8String1 <= asciiUtf8String0.
+	self assert: asciiUtf8String1 <= asciiUtf8String1.
+	self assert: asciiUtf8String1 <= asciiUtf8String2.
+	self deny: asciiUtf8String2 <= asciiUtf8String0.
+	self deny: asciiUtf8String2 <= asciiUtf8String1.
+	self assert: asciiUtf8String2 <= asciiUtf8String2.
+
+	self deny: asciiUtf8String0 > asciiUtf8String0.
+	self deny: asciiUtf8String0 > asciiUtf8String1.
+	self deny: asciiUtf8String0 > asciiUtf8String2.
+	self assert: asciiUtf8String1 > asciiUtf8String0.
+	self deny: asciiUtf8String1 > asciiUtf8String1.
+	self deny: asciiUtf8String1 > asciiUtf8String2.
+	self assert: asciiUtf8String2 > asciiUtf8String0.
+	self assert: asciiUtf8String2 > asciiUtf8String1.
+	self deny: asciiUtf8String2 > asciiUtf8String2.
+
+	self assert: asciiUtf8String0 >= asciiUtf8String0.
+	self deny: asciiUtf8String0 >= asciiUtf8String1.
+	self deny: asciiUtf8String0 >= asciiUtf8String2.
+	self assert: asciiUtf8String1 >= asciiUtf8String0.
+	self assert: asciiUtf8String1 >= asciiUtf8String1.
+	self deny: asciiUtf8String1 >= asciiUtf8String2.
+	self assert: asciiUtf8String2 >= asciiUtf8String0.
+	self assert: asciiUtf8String2 >= asciiUtf8String1.
+	self assert: asciiUtf8String2 >= asciiUtf8String2.! !
+
+!UnicodeStringsTest methodsFor: 'testing' stamp: 'jmv 6/15/2022 15:59:38'!
+test09
+
+	self assert: 'Hello ñandú' = 'Hello ñandú'.
+	self deny: 'Hello ñandú' = 'hello ñandú'.
+	self assert: ('Hello ñandú' sameAs: 'hello ñandú').
+
+	self assert: 'Hello ñandú' asUtf8String = 'Hello ñandú' asUtf8String.
+	self deny: 'Hello ñandú' asUtf8String = 'hello ñandú' asUtf8String.
+	self assert: ('Hello ñandú' asUtf8String sameAs: 'hello ñandú' asUtf8String).
+
+	self assert: 'Hello ñandú' asUtf8String bytes = 'Hello ñandú' asUtf8String bytes.
+	self deny: 'Hello ñandú' asUtf8String bytes = 'hello ñandú' asUtf8String bytes.! !
+
+!UnicodeStringsTest methodsFor: 'testing' stamp: 'jmv 6/15/2022 16:09:01'!
+test10
+
+	self assert: ('ñandúX' findString: 'X' startingAt: 1) = 6.
+	self assert: ('ñandúX' asUtf8String findString: 'X' startingAt: 1) = 6.
+	
+	self assert: ('ñandúX' findString: 'X' startingAt: 7 caseSensitive: false) = 0.
+	self assert: ('ñandúX' asUtf8String findString: 'X' startingAt: 7 caseSensitive: false) = 0.
+	self assert: ('ñandúX' findString: 'X' startingAt: 7 caseSensitive: true) = 0.
+	self assert: ('ñandúX' asUtf8String findString: 'X' startingAt: 7 caseSensitive: true) = 0.
+	self assert: ('ñandúX' findString: 'x' startingAt: 1 caseSensitive: true) = 0.
+	self assert: ('ñandúX' asUtf8String findString: 'x' startingAt: 1 caseSensitive: true) = 0.! !
+
+!UnicodeStringsTest methodsFor: 'testing' stamp: 'jmv 6/15/2022 16:17:35'!
+test11
+	self assert: ('ñandúes' indexOfSubCollection: 'úe' startingAt: 1 ifAbsent: []) = 5.
+	self assert: ('ñandúes' asUtf8String indexOfSubCollection: 'úe' startingAt: 1 ifAbsent: []) = 5.
+	self assert: ('ñandúes' indexOfSubCollection: 'úe' startingAt: 6 ifAbsent: []) = nil.
+	self assert: ('ñandúes' asUtf8String indexOfSubCollection: 'úe' startingAt: 6 ifAbsent: []) = nil.! !
+
+!UnicodeStringsTest methodsFor: 'testing' stamp: 'jmv 6/15/2022 16:20:03'!
+test12
+	self deny: ('ñandúes' is: 'úe' substringAt: 4).
+	self assert: ('ñandúes' is: 'úe' substringAt: 5).
+	self deny: ('ñandúes' is: 'úe' substringAt: 6).
+	self deny: ('ñandúes' is: 'úe' asUtf8String substringAt: 4).
+	self assert: ('ñandúes' is: 'úe' asUtf8String substringAt: 5).
+	self deny: ('ñandúes' is: 'úe' asUtf8String substringAt: 6).
+	self deny: ('ñandúes' asUtf8String is: 'úe' substringAt: 4).
+	self assert: ('ñandúes'asUtf8String  is: 'úe' substringAt: 5).
+	self deny: ('ñandúes' asUtf8String is: 'úe' substringAt: 6).
+	self deny: ('ñandúes' asUtf8String is: 'úe' asUtf8String substringAt: 4).
+	self assert: ('ñandúes'asUtf8String  is: 'úe' asUtf8String substringAt: 5).
+	self deny: ('ñandúes' asUtf8String is: 'úe' asUtf8String substringAt: 6).! !
 
 !UnicodeSymbolsTest methodsFor: 'testing' stamp: 'jmv 6/3/2022 11:37:33'!
 test01AsciiSymbolFirst
