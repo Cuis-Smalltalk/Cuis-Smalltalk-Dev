@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5297] on 15 June 2022 at 4:46:41 pm'!
+'From Cuis 6.0 [latest update: #5298] on 15 June 2022 at 5:17:28 pm'!
 'Description Inline method and temp var tests'!
-!provides: 'BaseImageTests' 1 296!
+!provides: 'BaseImageTests' 1 297!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Objects'!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Classes'!
@@ -17907,10 +17907,10 @@ directoryEntryForTest
 randomFileName
 	^100000 atRandom asString, '.fmtst'! !
 
-!FileManTest methodsFor: 'testing' stamp: 'jmv 5/31/2016 10:49'!
+!FileManTest methodsFor: 'testing' stamp: 'jmv 6/15/2022 17:16:47'!
 testAbsolutePath
 	"FileManTest debug: #testAbsolutePath"
-	| dirEntry dirEntry1 dirEntry2 dirEntry3 dirEntry4 |
+	| dirEntry dirEntry1 dirEntry2 dirEntry3 |
 	dirEntry := '/' asDirectoryEntry.
 	self should: [dirEntry = ':' asDirectoryEntry].
 	self should: [dirEntry = '\' asDirectoryEntry].
@@ -17925,18 +17925,7 @@ testAbsolutePath
 
 	dirEntry3 := 'C:/temp/b' asDirectoryEntry.
 	self should: [dirEntry3 = 'C:\temp\b' asDirectoryEntry].
-	self should: [dirEntry3 = 'C::temp:b' asDirectoryEntry].
-
-	"Platform specific path tests"
-	FileIOAccessor default onMacClassic ifTrue: [
-	dirEntry4 := 'Macintosh HD:tmp' asDirectoryEntry.
-	self should: [dirEntry4 = 'Macintosh HD/tmp' asDirectoryEntry].
-	self should: [dirEntry4 = 'Macintosh HD\tmp' asDirectoryEntry].
-	].
-	
-	
-	
-	! !
+	self should: [dirEntry3 = 'C::temp:b' asDirectoryEntry].! !
 
 !FileManTest methodsFor: 'testing' stamp: 'jmv 5/31/2016 10:49'!
 testAtPut
@@ -18038,7 +18027,7 @@ testFileContents
 	file2 delete.
 	self should: [file2 exists not]! !
 
-!FileManTest methodsFor: 'testing' stamp: 'jmv 5/31/2016 10:49'!
+!FileManTest methodsFor: 'testing' stamp: 'jmv 6/15/2022 17:16:57'!
 testIsAbsolutePathName
 	"
 	FileManTest debug: #testIsAbsolutePathName
@@ -18048,8 +18037,6 @@ testIsAbsolutePathName
 	self assert: '/temp/a' isAbsolutePathName.
 	Smalltalk platformName = 'Win32' ifTrue: [
 		self assert: 'C:/temp/b' isAbsolutePathName ].
-	FileIOAccessor default onMacClassic ifTrue: [
-		self assert: 'Macintosh HD/tmp' isAbsolutePathName ].
 	
 	self deny: './' isAbsolutePathName.
 	self deny: '../' isAbsolutePathName.
