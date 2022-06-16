@@ -2,7 +2,7 @@
 
 !MethodNode methodsFor: 'accessing' stamp: 'FB 6/12/2022 18:56:52'!
 statements
-	
+
 	^block statements.! !
 
 
@@ -22,7 +22,7 @@ declareNecessaryTemporaries
 			]
 			ifFalse: [
 				self replaceRange: (positionToInsertTemporaries to: positionToInsertTemporaries)
-				withNewSourceCode: '| ',  temporariesString, ' |', Character newLineCharacter asString, Character tab asString 
+				withNewSourceCode: '| ',  temporariesString, ' |', Character newLineCharacter asString, Character tab asString
 				inMethod: sender
 			]
 	]! !
@@ -38,7 +38,7 @@ buildInlinedSourceCodeStatementsFrom: statementsToInline withParametersFrom: aMe
 
 	self declareTemporariesIfNeededFor: aMessageNodeReference.
 	argumentsAndTemporariesReplacements := self replacementsMapForMessageSend: aMessageNodeReference.
-	
+
 	indentation := self indentationUpTo: aMessageNodeReference completeSourceRange first in: aMessageNodeReference compiledMethod sourceCode.
 	inlinedStatements := (statementsToInline collect: [:aStatementToInline |
 		self sourceCodeOfImplementorStatement: aStatementToInline withReplacements: argumentsAndTemporariesReplacements removingReturn: removeReturn
@@ -72,7 +72,7 @@ indentationUpTo: anIndex in: aSourceCode
 inlineMessageSend: aMessageNodeReference
 
 	| statementsToInline |
-	
+
 	statementsToInline := self removeReturnSelfStatementIfNeeded: (methodToInline methodNode block statements).
 	statementsToInline isEmpty ifTrue: [^self].
 	statementsToInline last isReturn
@@ -88,20 +88,20 @@ inlineMessageSend: aMessageNodeReference
 on: anEditor for: aSelectionInterval of: aMethodToRefactor
 
 	| noTempFoundBlock tempToInline usageInterval |
-	
+
 	noTempFoundBlock := [
 		"This case will usually end in a failure because a temporary variable is not related to the selected interval"
 		tempToInline := anEditor wordUnder: aSelectionInterval first.
 		usageInterval := aSelectionInterval.
 	].
 
-	anEditor 
+	anEditor
 		withNodeUnderCursorDo: [:aNode | | methodNode sourceRanges |
 			methodNode :=aMethodToRefactor methodNode.
 			sourceRanges := methodNode completeSourceRanges.
-			aNode isVariableNode 
+			aNode isVariableNode
 				ifTrue: [
-					tempToInline := aNode name.	
+					tempToInline := aNode name.
 					usageInterval := self findLeftmostSourceRangeOfNode: aNode inside: aSelectionInterval using: sourceRanges.
 				]
 				ifFalse: [ | assignmentNodeAndRange |
@@ -110,7 +110,7 @@ on: anEditor for: aSelectionInterval of: aMethodToRefactor
 						ifNone: [noTempFoundBlock value].
 					tempToInline ifNil: [
 						tempToInline := assignmentNodeAndRange key variable name.
-						usageInterval := self findLeftmostSourceRangeOfNode: assignmentNodeAndRange key variable 
+						usageInterval := self findLeftmostSourceRangeOfNode: assignmentNodeAndRange key variable
 							inside: assignmentNodeAndRange value using: sourceRanges.
 					]
 				]
@@ -118,7 +118,6 @@ on: anEditor for: aSelectionInterval of: aMethodToRefactor
 		ifAbsent: [
 			noTempFoundBlock value.
 		].
-	
+
 	^self new initializeOn: anEditor codeProvider forTemporary: tempToInline
 		at: usageInterval of: aMethodToRefactor ! !
-
