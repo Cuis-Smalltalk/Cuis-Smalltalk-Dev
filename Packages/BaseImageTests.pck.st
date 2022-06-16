@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5298] on 15 June 2022 at 5:17:28 pm'!
-'Description Inline method and temp var tests'!
-!provides: 'BaseImageTests' 1 297!
+'From Cuis 6.0 [latest update: #5300] on 16 June 2022 at 2:43:37 pm'!
+'Description Inline method test fixes'!
+!provides: 'BaseImageTests' 1 298!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Objects'!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Classes'!
@@ -26104,7 +26104,7 @@ self m3.
 t := y1. ^20'.
 	self assert: expectedNewSourceCode equals: (implementorAndSenderClass >> methodWithUsageSelector) sourceCode! !
 
-!InlineMethodTest methodsFor: 'tests - successful' stamp: 'FB 11/3/2021 23:49:44'!
+!InlineMethodTest methodsFor: 'tests - successful' stamp: 'FB 6/12/2022 19:27:55'!
 test08InlineMethodDeclaresVariablesInClosestScope
 
 	| implementorAndSenderClass methodToInlineSource methodToInlineSelector 
@@ -26129,12 +26129,12 @@ test08InlineMethodDeclaresVariablesInClosestScope
 	refactoring apply.
 	
 	expectedNewSourceCode := methodWithUsageSelector,' | t y | t := [| y1 z |
-y1 := 10.
+	y1 := 10.
 self m3.
 y1.]. ^20'.
 	self assert: expectedNewSourceCode equals: (implementorAndSenderClass >> methodWithUsageSelector) sourceCode! !
 
-!InlineMethodTest methodsFor: 'tests - successful' stamp: 'FB 5/21/2022 16:52:43'!
+!InlineMethodTest methodsFor: 'tests - successful' stamp: 'FB 6/12/2022 19:27:59'!
 test09InlineMethodReturnedInFullClosureKeepsTheReturnSymbol
 
 	| implementorAndSenderClass methodToInlineSource methodToInlineSelector 
@@ -26159,7 +26159,7 @@ test09InlineMethodReturnedInFullClosureKeepsTheReturnSymbol
 	refactoring apply.
 	
 	expectedNewSourceCode := methodWithUsageSelector,' | t y | t := [| y1 z |
-y1 := 10.
+	y1 := 10.
 ^y1.]. ^20'.
 	self assert: expectedNewSourceCode equals: (implementorAndSenderClass >> methodWithUsageSelector) sourceCode! !
 
@@ -26314,7 +26314,7 @@ test17InlineMethodWithASingleReturnLineWhenResultIsNotAssigned
 	expectedNewSourceCode := methodWithUsagesSelector,' ^20'.
 	self assert: expectedNewSourceCode equals: (senderClass >> methodWithUsagesSelector) sourceCode.! !
 
-!InlineMethodTest methodsFor: 'tests - successful' stamp: 'FB 11/21/2021 20:54:13'!
+!InlineMethodTest methodsFor: 'tests - successful' stamp: 'FB 6/12/2022 19:28:03'!
 test18InlineMethodUsedInLastStatementOfClosure
 
 	| methodToInlineSource methodToInlineSelector nodeToInline methodWithUsagesSelector methodWithUsagesSource
@@ -26340,12 +26340,12 @@ test18InlineMethodUsedInLastStatementOfClosure
 	refactoring apply.
 	
 	expectedNewSourceCode := methodWithUsagesSelector,' | b | b := [| x y |
-x := 1.
+	x := 1.
 y := 2.
 1 + (x + y).]. ^b value'.
 	self assert: expectedNewSourceCode equals: (senderClass >> methodWithUsagesSelector) sourceCode.! !
 
-!InlineMethodTest methodsFor: 'tests - successful' stamp: 'FB 11/21/2021 20:54:28'!
+!InlineMethodTest methodsFor: 'tests - successful' stamp: 'FB 6/12/2022 19:28:17'!
 test19InlineMethodIndentation
 
 	| methodToInlineSource methodToInlineSelector nodeToInline methodWithUsagesSelector methodWithUsagesSource
@@ -26380,7 +26380,7 @@ test19InlineMethodIndentation
 	expectedNewSourceCode := methodWithUsagesSelector,' | b |
 		b := [
 			| x y |
-			x := 1.
+				x := 1.
 			y := 2.
 			1 + (x + y).
 		].
