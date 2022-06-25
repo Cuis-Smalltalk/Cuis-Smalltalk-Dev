@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5300] on 16 June 2022 at 2:43:37 pm'!
+'From Cuis 6.0 [latest update: #5319] on 24 June 2022 at 9:24:56 pm'!
 'Description Inline method test fixes'!
-!provides: 'BaseImageTests' 1 298!
+!provides: 'BaseImageTests' 1 299!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Objects'!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Classes'!
@@ -19936,17 +19936,19 @@ testTransform
 	self assert: ((MorphicTranslation withTranslation: -2) transform: (4@ 2)) = (2@0).
 	self assert: ((MorphicTranslation withTranslation: -4) transform: (2@ 2)) = (-2@ -2)! !
 
-!WorldTest methodsFor: 'tests' stamp: 'jmv 10/24/2020 15:58:12'!
+!WorldTest methodsFor: 'tests' stamp: 'jmv 6/24/2022 21:24:22'!
 testDoOneCycleWorksWithDeferredQueue
         "Ensure that nested doOneCycles don't break deferred UI messages"
         | finished |
         [
-                UISupervisor whenUIinSafeState:[ UISupervisor ui doOneCycleNow ].
-                UISupervisor whenUIinSafeState: nil "whatever".
-                UISupervisor ui doOneCycleNow.
-                finished _ true.
-        ] valueWithin: 1 seconds onTimeout: [finished _ false ].
-        self assert: finished! !
+		[
+	                UISupervisor whenUIinSafeState: [ UISupervisor ui doOneCycleNow ].
+	                UISupervisor whenUIinSafeState: nil "whatever".
+	                UISupervisor ui doOneCycleNow.
+	                finished _ true.
+	        ] valueWithin: 1 seconds onTimeout: [finished _ false ].
+	        self assert: finished
+	] forkAt: Processor userInterruptPriority.! !
 
 !MethodReferenceTest methodsFor: 'test actual class' stamp: 'HAW 10/23/2019 21:08:24'!
 testActualClassIfAbsentEvaluatesBlockIfClassDoesNotExist
@@ -30622,33 +30624,35 @@ testValueWithinNonLocalReturnFixSimply
 	self valueWithinNonLocalReturn.
 	self shouldnt:[(Delay forMilliseconds: 50) wait] raise: TimedOut.! !
 
-!TestValueWithinFix methodsFor: 'tests' stamp: 'jmv 5/31/2022 16:44:39'!
+!TestValueWithinFix methodsFor: 'tests' stamp: 'KenD 6/24/2022 21:29:49'!
 testValueWithinTimingBasic
 	"Test timing of valueWithin:onTimeout:"
 	| time |
-	time := [
+	[time := [
 		[1000 milliSeconds asDelay wait]
 			valueWithin: 100 milliSeconds onTimeout: []
 	] durationToRun.
-	self assert: time < 200 milliSeconds.! !
+	self assert: time < 200 milliSeconds.
+	] forkAt: Processor userInterruptPriority.! !
 
-!TestValueWithinFix methodsFor: 'tests' stamp: 'jmv 11/7/2019 18:18:10'!
+!TestValueWithinFix methodsFor: 'tests' stamp: 'KenD 6/24/2022 21:29:29'!
 testValueWithinTimingNestedInner
 	"Test nested timing of valueWithin:onTimeout:"
 	| time |
-	time := [
+	[time := [
 		[
 			[5 seconds asDelay wait]
 				valueWithin: 100 milliSeconds onTimeout: []
 		] valueWithin: 500 milliSeconds onTimeout: []
 	] durationToRun.
-	self assert: time < 200 milliSeconds.! !
+	self assert: time < 200 milliSeconds.
+	] forkAt: Processor userInterruptPriority.! !
 
-!TestValueWithinFix methodsFor: 'tests' stamp: 'ar 12/4/2012 20:35'!
+!TestValueWithinFix methodsFor: 'tests' stamp: 'KenD 6/24/2022 21:30:07'!
 testValueWithinTimingNestedOuter
 	"Test nested timing of valueWithin:onTimeout:"
 	| time |
-	time := [
+	[time := [
 		[
 			3 timesRepeat: [
 				[5 seconds asDelay wait]
@@ -30657,18 +30661,20 @@ testValueWithinTimingNestedOuter
 	] durationToRun.
 	self assert: time > 100 milliSeconds.
 	self assert: time < 200 milliSeconds.
+	] forkAt: Processor userInterruptPriority.
 	! !
 
-!TestValueWithinFix methodsFor: 'tests' stamp: 'jmv 5/31/2022 16:45:10'!
+!TestValueWithinFix methodsFor: 'tests' stamp: 'KenD 6/24/2022 21:30:22'!
 testValueWithinTimingRepeat
 	"Test timing of valueWithin:onTimeout:"
 	| time |
-	time := [
+	[time := [
 		3 timesRepeat: [
 			[500 milliSeconds asDelay wait]
 				valueWithin: 100 milliSeconds onTimeout: []]
 	] durationToRun.
 	self assert: time < 400 milliSeconds.
+	] forkAt: Processor userInterruptPriority.
 ! !
 
 !TestValueWithinFix methodsFor: 'tests' stamp: 'ar 8/17/2007 13:37'!
