@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5319] on 24 June 2022 at 9:24:56 pm'!
+'From Cuis 6.0 [latest update: #5322] on 27 June 2022 at 12:32:36 pm'!
 'Description Inline method test fixes'!
-!provides: 'BaseImageTests' 1 299!
+!provides: 'BaseImageTests' 1 300!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Objects'!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Classes'!
@@ -2369,6 +2369,11 @@ verify: aFloat isWithin: anInteger floatsAwayFrom: anotherFloat
 verify: aFloat isWithinOneFloatAwayFrom: anotherFloat
 
 	self verify: aFloat isWithin: 1 floatsAwayFrom: anotherFloat! !
+
+!AbstractNumberTest class methodsFor: 'testing' stamp: 'jmv 6/27/2022 12:17:34'!
+isAbstract
+
+	^self subclasses notEmpty! !
 
 !FloatTest methodsFor: 'tests - arithmetic' stamp: 'jmv 2/21/2019 17:38:32'!
 testAdd
@@ -21871,6 +21876,11 @@ tearDown
 classCategoryOfTestData
 	
 	^ '__Refactoring-TestData__'! !
+
+!DynamicallyCodeCreationTest class methodsFor: 'testing' stamp: 'jmv 6/27/2022 12:18:52'!
+isAbstract
+
+	^self subclasses notEmpty! !
 
 !CompilerTest methodsFor: 'emulating' stamp: 'HAW 12/17/2019 11:00:59'!
 correctFrom: start to: end with: aReplacement
