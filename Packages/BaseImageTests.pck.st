@@ -1,6 +1,6 @@
 'From Cuis 6.0 [latest update: #5322] on 27 June 2022 at 12:32:36 pm'!
 'Description Inline method test fixes'!
-!provides: 'BaseImageTests' 1 300!
+!provides: 'BaseImageTests' 1 301!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Objects'!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Classes'!
@@ -22316,7 +22316,7 @@ assertIsLoggedTwice: aString
 !ChangesTest methodsFor: 'user changes' stamp: 'jmv 5/16/2022 09:26:36'!
 changeUserChangesFileWhile: aBlock
 
-	^ PreferenceNG
+	^ Preferences
 		withTemporaryValue: self userChangesForTestsFileExtension
 		of: #userChangesFileNameExtension
 		do: aBlock.! !
@@ -25357,7 +25357,7 @@ assertExtracting: codeToExtract from: sourceCodeOfMethodToRefactor toVariableNam
 
 	applyRefactoring := [ actualSourceCodeAfterRefactoring := (ExtractToTemporary named: newVariable at: intervalToExtract from: methodToRefactor) apply ].
 	
-	PreferenceNG
+	Preferences
 		withTemporaryValue: leftArrowAssignmentPreference
 		of: #leftArrowAssignmentsInGeneratedCode
 		do: applyRefactoring.
@@ -31665,7 +31665,7 @@ primTestTruncated
 	<primitive: 551>
 	^ #fail! !
 
-!PreferenceNG class methodsFor: '*BaseImageTests' stamp: 'jmv 5/16/2022 08:57:42'!
+!PreferenceSet methodsFor: '*BaseImageTests' stamp: 'jmv 5/16/2022 08:57:42'!
 withTemporaryValue: temporaryValue of: aPreferenceName do: aBlock
 	"Allows to execute a piece of code with a temporary value of the given preference. Useful for testing purposes."
 	
