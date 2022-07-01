@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5322] on 27 June 2022 at 12:32:36 pm'!
+'From Cuis 6.0 [latest update: #5344] on 1 July 2022 at 8:28:57 pm'!
 'Description Inline method test fixes'!
-!provides: 'BaseImageTests' 1 301!
+!provides: 'BaseImageTests' 1 302!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Objects'!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Classes'!
@@ -12435,7 +12435,7 @@ testProcessFaithfulTermination
 	process terminate.
 	self assert: process isTerminated! !
 
-!ProcessTest methodsFor: 'tests' stamp: 'jmv 4/13/2021 14:03:54'!
+!ProcessTest methodsFor: 'tests' stamp: 'jmv 7/1/2022 19:56:21'!
 testTerminateInEnsure
 	"As shown in
 	Martin McClure's 'Threads, Critical Sections, and Termination' (Smalltalks 2019 conference)
@@ -12443,8 +12443,7 @@ testTerminateInEnsure
 	at 23:17
 	self new testTerminateInEnsure
 	"
-	| process count random delay |
-	random _ Random new.
+	| process count delay |
 	10 timesRepeat: [
 		process _ [
 			count _ 0.
@@ -12455,14 +12454,15 @@ testTerminateInEnsure
 				count _ count + 1]
 			] newProcess.
 		process resumeAt: Processor activeProcess priority - 1.
-		delay _ (random next * 100) asInteger + 10. 									"avoid 0-ms delay"
-		(Delay forMilliseconds: delay) wait.
+		delay _ Delay forMilliseconds: 10.
+		[ count isNil ] whileTrue: [
+			delay wait ].
 		self assert: process isTerminated not.
 		process terminate.
 		process priority: Processor activeProcess priority + 1.
 		self
 			assert: process isTerminated;
-			assert: count equals: 11 ]! !
+			assert: count equalsExpected: 11 ]! !
 
 !ProcessTest methodsFor: 'tests' stamp: 'jar 1/17/2022 18:02:13'!
 testTerminateInTerminate
@@ -12484,14 +12484,13 @@ testTerminateInTerminate
 	self assert: terminator isTerminated. 
 	self assert: unwound! !
 
-!ProcessTest methodsFor: 'tests' stamp: 'jmv 4/13/2021 14:13:35'!
+!ProcessTest methodsFor: 'tests' stamp: 'jmv 7/1/2022 19:56:26'!
 testValueEnsured
 	"Based on #testTerminateInEnsure
 	Tweaked to raise likelihood of failure, besides testing #valueEnsured
 	self new testValueEnsured
 	"
-	| process count random delay |
-	random _ Random new.
+	| process count delay |
 	100 timesRepeat: [
 		process _ [
 			count _ 0.
@@ -12502,14 +12501,15 @@ testValueEnsured
 				count _ count + 1 ] valueEnsured
 			] newProcess.
 		process resumeAt: Processor activeProcess priority - 1.
-		delay _ (random next * 10) asInteger + 10. 									"avoid 0-ms delay"
-		(Delay forMilliseconds: delay) wait.
+		delay _ Delay forMilliseconds: 10.
+		[ count isNil ] whileTrue: [
+			delay wait ].
 		self assert: process isTerminated not.
 		process terminate.
 		process priority: Processor activeProcess priority + 1.
 		self
 			assert: process isTerminated;
-			assert: count equals: 11 ]! !
+			assert: count equalsExpected: 11 ]! !
 
 !ProcessorTest methodsFor: 'as yet unclassified' stamp: 'jmv 4/17/2013 12:08'!
 testGrabProcessor
@@ -18605,7 +18605,7 @@ testSortedCollection
 	newInstance _ ReferenceStream unStream: (ReferenceStream streamedRepresentationOf: oldInstance).
 	self assert: newInstance asArray = oldInstance asArray! !
 
-!ReferenceStreamTest methodsFor: 'testing' stamp: 'jmv 8/21/2012 17:02'!
+!ReferenceStreamTest methodsFor: 'testing' stamp: 'jmv 7/1/2022 20:23:32'!
 testWeakDumps
 	"Test that if we serialize a model with weak references to views, only the model is serialized and not the views.
 	
@@ -18622,7 +18622,7 @@ testWeakDumps
 	refStream _ ReferenceStream on: (DummyStream on: nil).
 	refStream nextPut: oldInstance.
 	self deny: (refStream references keys anySatisfy: [ :dumpedObject | dumpedObject isKindOf: Morph ]).
-	window delete! !
+	UISupervisor whenUIinSafeState: [window delete].! !
 
 !SmartRefStreamTest methodsFor: 'testing' stamp: 'jmv 9/25/2012 22:42'!
 testDiskProxy
@@ -18647,7 +18647,7 @@ testSortedCollection
 	newInstance _ SmartRefStream unStream: (SmartRefStream streamedRepresentationOf: oldInstance).
 	self assert: newInstance asArray = oldInstance asArray! !
 
-!SmartRefStreamTest methodsFor: 'testing' stamp: 'jmv 8/21/2012 17:00'!
+!SmartRefStreamTest methodsFor: 'testing' stamp: 'jmv 7/1/2022 20:23:37'!
 testWeakDumps
 	"Test that if we serialize a model with weak references to views, only the model is serialized and not the views.
 	
@@ -18664,7 +18664,7 @@ testWeakDumps
 	refStream _ SmartRefStream on: (DummyStream on: nil).
 	refStream nextPut: oldInstance.
 	self deny: (refStream references keys anySatisfy: [ :dumpedObject | dumpedObject isKindOf: Morph ]).
-	window delete! !
+	UISupervisor whenUIinSafeState: [window delete].! !
 
 !BitBltTest methodsFor: 'bugs' stamp: 'jmv 3/11/2010 08:40'!
 testAllAlphasRgbAdd
@@ -19631,7 +19631,7 @@ testInverseTransformation
 	self assert: ((inverse internalizeDelta: 3@4) - (forward externalizeDelta: 3@4)) r < 0.0001.
 	self assert: ((inverse internalizeScalar: 7) - (forward externalizeScalar: 7)) abs < 0.0001.! !
 
-!LayoutMorphTest methodsFor: 'tests' stamp: 'jmv 5/23/2022 11:29:37'!
+!LayoutMorphTest methodsFor: 'tests' stamp: 'jmv 7/1/2022 20:28:15'!
 testLayout1
 	"
 	self new testLayout1
@@ -19673,11 +19673,12 @@ testLayout1
 	pane openInWorld: UISupervisor ui; morphExtent: 408@300.
 	Processor activeProcess animatedUI
 		ifNotNil: [ :ui | ui doOneCycleNow]
-		ifNil: [ | updated |
+		ifNil: [ | updated d |
 			updated _ false.
+			d _ Delay forMilliseconds: 10.
 			UISupervisor whenUIinSafeState: [ updated _ true ].
 			[updated] whileFalse: [
-				Processor yield ]].
+				d wait ]].
 
 	self assert: row1 morphWidth = (pane morphWidth - 10).
 	self assert: r1c1 morphWidth = 10.
@@ -19710,7 +19711,7 @@ testLayout1
 
 	pane delete! !
 
-!LayoutMorphTest methodsFor: 'tests' stamp: 'jmv 5/23/2022 11:29:45'!
+!LayoutMorphTest methodsFor: 'tests' stamp: 'jmv 7/1/2022 20:28:20'!
 testLayout2
 	"
 	self new testLayout2
@@ -19731,11 +19732,12 @@ testLayout2
 	pane openInWorld: UISupervisor ui; morphExtent: 400@300.
 	Processor activeProcess animatedUI
 		ifNotNil: [ :ui | ui doOneCycleNow]
-		ifNil: [ | updated |
+		ifNil: [ | updated d |
 			updated _ false.
+			d _ Delay forMilliseconds: 10.
 			UISupervisor whenUIinSafeState: [ updated _ true ].
 			[updated] whileFalse: [
-				Processor yield ]].
+				d wait ]].
 
 	self assert: row morphWidth = (pane morphWidth - 10).
 	self assert: row morphHeight = 261.
@@ -19751,7 +19753,7 @@ testLayout2
 
 	pane delete! !
 
-!LayoutMorphTest methodsFor: 'tests' stamp: 'jmv 5/23/2022 11:29:28'!
+!LayoutMorphTest methodsFor: 'tests' stamp: 'jmv 7/1/2022 20:28:25'!
 testLayout3
 	"
 	self new testLayout3
@@ -19780,11 +19782,12 @@ testLayout3
 	pane openInWorld: UISupervisor ui; morphExtent: 400@300.
 	Processor activeProcess animatedUI
 		ifNotNil: [ :ui | ui doOneCycleNow]
-		ifNil: [ | updated |
+		ifNil: [ | updated d |
 			updated _ false.
+			d _ Delay forMilliseconds: 10.
 			UISupervisor whenUIinSafeState: [ updated _ true ].
 			[updated] whileFalse: [
-				Processor yield ]].
+				d wait ]].
 
 	self assert: row displayBounds left = (pane displayBounds left + 5).
 	self assert: row morphWidth = (pane morphWidth - 10).
