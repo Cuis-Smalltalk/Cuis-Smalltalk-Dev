@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5344] on 1 July 2022 at 8:28:57 pm'!
+'From Cuis 6.0 [latest update: #5349] on 4 July 2022 at 10:22:51 am'!
 'Description Inline method test fixes'!
-!provides: 'BaseImageTests' 1 302!
+!provides: 'BaseImageTests' 1 304!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Objects'!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Classes'!
@@ -16879,6 +16879,49 @@ testItEnumeratesAllTheParseNodesPresentInAMethodNode
 	}.
 
 	self assert: (enumeratedNodes includesAllOf: nodesToBeEnumerated)! !
+
+!ParserTest methodsFor: 'test' stamp: 'jmv 7/4/2022 10:21:47'!
+testMulticharBinarySelectors
+	| result expression |
+	self assert: (Compiler evaluate: '3+4') = 7.
+
+	expression _ '1@-2'.
+	Preferences
+		withTemporaryValue: #st80
+		of: #atMinusDigitMeaning
+		do: [ result _ Compiler evaluate: expression].
+	self assert: result x = 1.
+	self assert: result y = 2 negated.
+	Preferences
+		withTemporaryValue: #disabled
+		of: #atMinusDigitMeaning
+		do: [ result _ Compiler evaluate: expression].
+	self assert: result = nil.
+	Preferences
+		withTemporaryValue: #ansiSmalltalk
+		of: #atMinusDigitMeaning
+		do: [ result _ [Compiler evaluate: expression] on: MessageNotUnderstood do: [#dnu]].
+	self assert: result = #dnu.
+
+	expression _ '1@-2.'.
+
+	Preferences
+		withTemporaryValue: #st80
+		of: #atMinusDigitMeaning
+		do: [ result _ [Compiler evaluate: expression] on: MessageNotUnderstood do: [#dnu]].
+	self assert: result isPoint.
+	self assert: result x = 1.
+	self assert: result y = 2 negated.
+	Preferences
+		withTemporaryValue: #disabled
+		of: #atMinusDigitMeaning
+		do: [ result _ [Compiler evaluate: expression] on: MessageNotUnderstood do: [#dnu]].
+	self assert: result = nil.
+	Preferences
+		withTemporaryValue: #ansiSmalltalk
+		of: #atMinusDigitMeaning
+		do: [ result _ [Compiler evaluate: expression] on: MessageNotUnderstood do: [#dnu]].
+	self assert: result = #dnu.! !
 
 !ParserTest methodsFor: 'test' stamp: 'HAW 2/29/2020 18:09:57'!
 testRangesAreOkWhenReturningAVariableWithoutSpaceAfterThat
