@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5349] on 4 July 2022 at 10:22:51 am'!
+'From Cuis 6.0 [latest update: #5353] on 5 July 2022 at 4:44:37 pm'!
 'Description Inline method test fixes'!
-!provides: 'BaseImageTests' 1 304!
+!provides: 'BaseImageTests' 1 305!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Objects'!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Classes'!
@@ -8249,25 +8249,25 @@ testCaseConversion
 	self assert: ('año Comé tomá Camión' collect: [ :c | c asLowercase ]) = 'año comé tomá camión'.
 	self assert:('año Comé tomá Camión' collect: [ :c | c asUppercase ]) = 'AÑO COMÉ TOMÁ CAMIÓN'! !
 
-!CharacterTest methodsFor: 'testing' stamp: 'jpb 8/2/2019 23:10:55'!
+!CharacterTest methodsFor: 'testing' stamp: 'jmv 7/5/2022 15:56:54'!
 testIsCharacter
-	self assert: ($a is: #Character).
-	self assert: ($X is: #Character).
-	self assert: (Character cr is: #Character).! !
+	self assert: $a isCharacter.
+	self assert: $X isCharacter.
+	self assert: Character cr isCharacter.! !
 
-!CharacterTest methodsFor: 'testing' stamp: 'jmv 10/6/2010 22:05'!
+!CharacterTest methodsFor: 'testing' stamp: 'jmv 7/5/2022 16:43:11'!
 testSorting
 	"
 	self new testSorting
 	"
-	self assert: $a < $á.
-	self deny: $a < $Á.
-	self assert: $A < $á.
-	self assert: $A < $Á.
-	self assert: $á < $b.
-	self deny: $á < $B.
-	self assert: $Á < $b.
-	self assert: $Á < $B.! !
+	self assert: $a asCharacter < $á asCharacter.
+	self deny: $a asCharacter < $Á asCharacter.
+	self assert: $A asCharacter < $á asCharacter.
+	self assert: $A asCharacter < $Á asCharacter.
+	self assert: $á asCharacter < $b asCharacter.
+	self deny: $á asCharacter < $B asCharacter.
+	self assert: $Á asCharacter < $b asCharacter.
+	self assert: $Á asCharacter < $B asCharacter.! !
 
 !CharacterTest methodsFor: 'testing' stamp: 'jmv 10/6/2010 22:10'!
 testTestingMethods
@@ -8297,13 +8297,13 @@ testFromUtf8
 	Character utf8BytesAndCodePointAt: 1 in: (ByteArray readHexFrom: 'E282AC') into: nil into: [ :codePoint | self assert: codePoint hex = '16r20AC' ].
 	Character utf8BytesAndCodePointAt: 1 in: (ByteArray readHexFrom: 'F0A4ADA2') into: nil into: [ :codePoint | self assert: codePoint hex = '16r24B62' ].! !
 
-!CharacterTest methodsFor: 'UTF-8 conversion' stamp: 'jmv 5/5/2022 09:34:34'!
+!CharacterTest methodsFor: 'UTF-8 conversion' stamp: 'jmv 7/5/2022 16:43:46'!
 testSomeLatinCharsFromUtf8
 	"
 	CharacterTest new testSomeLatinCharsFromUtf8
 	"
 	| bytes string |
-	bytes _ ByteArray readHexFrom: 'C3A1C3A5C3A6C3B1C386C2A5C3BC'.
+	bytes _ ByteArray readHexFrom: 'C3A141C3A541C3A641C3B141C38641C2A541C3BC'.
 	string _ String streamContents: [ :strm | | s byteIndex n |
 		s _ bytes size.
 		byteIndex _ 1.
@@ -8314,21 +8314,21 @@ testSomeLatinCharsFromUtf8
 					strm nextPut: (Character codePoint: codePoint) ].
 			byteIndex _ byteIndex + n
 		]].
-	self assert: string = 'áåæñÆ¥ü'! !
+	self assert: string = 'áAåAæAñAÆA¥Aü'! !
 
-!CharacterTest methodsFor: 'UTF-8 conversion' stamp: 'jmv 9/4/2016 13:11:55'!
+!CharacterTest methodsFor: 'UTF-8 conversion' stamp: 'jmv 7/5/2022 16:43:56'!
 testSomeLatinCharsToUtf8
 	"
 	CharacterTest new testSomeLatinCharsToUtf8
 	"
 	| characters bytes |
-	characters _ 'áåæñÆ¥ü' readStream.
+	characters _ 'áAåAæAñAÆA¥Aü' readStream.
 	bytes _ ByteArray streamContents: [ :strm |
 		[ characters atEnd ] whileFalse: [
 			Character
 				evaluate: [ :byte | strm nextPut: byte ]
 				withUtf8BytesOfUnicodeCodePoint: characters next codePoint ]].
-	self assert: bytes hex = 'C3A1C3A5C3A6C3B1C386C2A5C3BC'! !
+	self assert: bytes hex = 'C3A141C3A541C3A641C3B141C38641C2A541C3BC'! !
 
 !CharacterTest methodsFor: 'UTF-8 conversion' stamp: 'jmv 2/20/2013 20:09'!
 testToUtf8
@@ -8513,10 +8513,10 @@ testFirstNonSeparator
 	self assert: 2 equals: ' abc' firstNonSeparator.
 	self assert: 0 equals: '' firstNonSeparator ! !
 
-!StringTest methodsFor: 'testing' stamp: 'jpb 8/2/2019 23:11:49'!
+!StringTest methodsFor: 'testing' stamp: 'jmv 7/5/2022 16:02:31'!
 testIsString
-	self assert: ('Hello World' is: #String).
-	self assert: ('' is: #String).! !
+	self assert: ('Hello World' isString).
+	self assert: ('' isString).! !
 
 !StringTest methodsFor: 'testing' stamp: 'jmv 6/6/2022 16:46:49'!
 testLastNonSeparator
@@ -8551,29 +8551,29 @@ testLineSeparators
 	self assert: linesBounds second second = (linesBounds second first-1) description: 'Second line is empty'.
 	self assert: linesBounds second third = (linesBounds second second+0) description: 'Second line is not terminated by ab Lf'.! !
 
-!StringTest methodsFor: 'testing' stamp: 'jmv 6/15/2022 16:46:27'!
+!StringTest methodsFor: 'testing' stamp: 'jmv 7/5/2022 16:42:37'!
 testSorting
 "
 self new testSorting
 "
 
-	self assert: 'a' < 'á'.
-	self deny: 'a' < 'Á'.
-	self assert: 'A' < 'á'.
-	self assert: 'A' < 'Á'.
-	self assert: 'á' < 'b'.
-	self deny: 'á' < 'B'.
-	self assert: 'Á' < 'b'.
-	self assert: 'Á' < 'B'.
+	self assert: 'a' asByteString < 'á' asByteString.
+	self deny: 'a' asByteString < 'Á' asByteString.
+	self assert: 'A' asByteString < 'á' asByteString.
+	self assert: 'A' asByteString < 'Á' asByteString.
+	self assert: 'á' asByteString < 'b' asByteString.
+	self deny: 'á' asByteString < 'B' asByteString.
+	self assert: 'Á' asByteString < 'b' asByteString.
+	self assert: 'Á' asByteString < 'B' asByteString.
 
-	self assert: ('a' caseInsensitiveLessOrEqual: 'á').
-	self assert: ('a' caseInsensitiveLessOrEqual: 'Á').
-	self assert: ('A' caseInsensitiveLessOrEqual: 'á').
-	self assert: ('A' caseInsensitiveLessOrEqual: 'Á').
-	self assert: ('á' caseInsensitiveLessOrEqual: 'b').
-	self assert: ('á' caseInsensitiveLessOrEqual: 'B').
-	self assert: ('Á' caseInsensitiveLessOrEqual: 'b').
-	self assert: ('Á' caseInsensitiveLessOrEqual: 'B').! !
+	self assert: ('a' asByteString caseInsensitiveLessOrEqual: 'á' asByteString).
+	self assert: ('a' asByteString caseInsensitiveLessOrEqual: 'Á' asByteString).
+	self assert: ('A' asByteString caseInsensitiveLessOrEqual: 'á' asByteString).
+	self assert: ('A' asByteString caseInsensitiveLessOrEqual: 'Á' asByteString).
+	self assert: ('á' asByteString caseInsensitiveLessOrEqual: 'b' asByteString).
+	self assert: ('á' asByteString caseInsensitiveLessOrEqual: 'B' asByteString).
+	self assert: ('Á' asByteString caseInsensitiveLessOrEqual: 'b' asByteString).
+	self assert: ('Á' asByteString caseInsensitiveLessOrEqual: 'B' asByteString).! !
 
 !StringTest methodsFor: 'testing' stamp: 'HAW 8/3/2018 11:00:28'!
 testWithBlanksTrimmed
@@ -16840,7 +16840,7 @@ testMirrorPerform
 	stackpAfter := thisContext stackPtr.
 	self assert: stackpBefore = stackpAfter "Make sure primitives pop all their arguments"! !
 
-!MirrorPrimitiveTests methodsFor: 'tests' stamp: 'jmv 12/28/2013 19:06'!
+!MirrorPrimitiveTests methodsFor: 'tests' stamp: 'jmv 7/5/2022 16:01:51'!
 testMirrorSize
 	| stackpBefore stackpAfter |
 
@@ -16849,7 +16849,7 @@ testMirrorSize
 
 	stackpBefore := thisContext stackPtr.
 	self assert: (thisContext objectSize: #(1 2 3)) = 3.
-	self assert: (thisContext objectSize: '123') = 3.
+	self assert: (thisContext objectSize: '123' asByteString) = 3.
 	self assert: (thisContext objectSize: nil) = 0.
 	self assert: (thisContext objectSize: 1) = 0.
 	stackpAfter := thisContext stackPtr.
@@ -20463,16 +20463,16 @@ test006_AutocompletesMessagesFor_Nil_WithSelectorsFromUndefinedObject
 		assertEntriesWhenBrowsing: 'm1 1 < nil '
 		areUnaryAndBinarySelectorsOf: UndefinedObject.	! !
 
-!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'HAW 5/2/2020 23:36:47'!
+!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'jmv 7/5/2022 16:26:48'!
 test007_AutocompletesMessagesFor_Characters_WithSelectorsFromCharacter
 	
 	self
 		assertEntriesWhenBrowsing: 'm1 $a '
-		areSelectorsOf: Character.
+		areSelectorsOf: $m class.
 	
 	self
 		assertEntriesWhenBrowsing: 'm1 1 < $a '
-		areUnaryAndBinarySelectorsOf: Character.	! !
+		areUnaryAndBinarySelectorsOf: $m class.	! !
 
 !SmalltalkCompleterTest methodsFor: 'tests' stamp: 'HAW 5/2/2020 21:15:01'!
 test008_AutocompletesMessagesFor_Numbers_WithSelectorsFromTheirClass
@@ -20485,16 +20485,16 @@ test008_AutocompletesMessagesFor_Numbers_WithSelectorsFromTheirClass
 		assertEntriesWhenBrowsing: 'm1 1 < 1 '
 		areUnaryAndBinarySelectorsOf: SmallInteger.	! !
 
-!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'HAW 5/2/2020 21:15:25'!
+!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'jmv 7/5/2022 16:27:59'!
 test009_AutocompletesMessagesFor_Strings_WithSelectorsFromString
 	
 	self
 		assertEntriesWhenBrowsing: 'm1 ''a'' '
-		areSelectorsOf: String.
+		areSelectorsOf: 'm' class.
 	
 	self
 		assertEntriesWhenBrowsing: 'm1 1 < ''a'' '
-		areUnaryAndBinarySelectorsOf: String.	! !
+		areUnaryAndBinarySelectorsOf: 'm' class	! !
 
 !SmalltalkCompleterTest methodsFor: 'tests' stamp: 'HAW 5/2/2020 23:37:45'!
 test010_AutocompletesMessagesFor_Symbols_WithSelectorsFromSymbol
