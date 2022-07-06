@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5353] on 5 July 2022 at 4:44:37 pm'!
+'From Cuis 6.0 [latest update: #5360] on 6 July 2022 at 9:36:52 am'!
 'Description Inline method test fixes'!
-!provides: 'BaseImageTests' 1 305!
+!provides: 'BaseImageTests' 1 308!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Objects'!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Classes'!
@@ -344,6 +344,16 @@ TestCase subclass: #SymbolTest
 	category: 'BaseImageTests-Kernel-Text'!
 !classDefinition: 'SymbolTest class' category: 'BaseImageTests-Kernel-Text'!
 SymbolTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #UnicodeCodePointTest category: 'BaseImageTests-Kernel-Text'!
+TestCase subclass: #UnicodeCodePointTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-Kernel-Text'!
+!classDefinition: 'UnicodeCodePointTest class' category: 'BaseImageTests-Kernel-Text'!
+UnicodeCodePointTest class
 	instanceVariableNames: ''!
 
 !classDefinition: #UnicodeStringsTest category: 'BaseImageTests-Kernel-Text'!
@@ -8370,15 +8380,17 @@ abc&#x0915;&#x0916;&#x0940;&#x570B;&#x969B;&#x10384;&#x10394;&#x10398;'.
 
 	self assert: (stringWithHexNCRs asUtf8Bytes: true) = utf8! !
 
-!StringTest methodsFor: 'tests - converting' stamp: 'jmv 9/19/2016 09:55:39'!
+!StringTest methodsFor: 'tests - converting' stamp: 'jmv 7/5/2022 21:05:36'!
 testBase64
 
+	| bytes |
+	bytes _ ('Hello World' collect: [ :char | char asciiValue ]) asByteArray.
 	self 
-		assert: 'SGVsbG8gV29ybGQ=' base64Decoded = 'Hello World' asByteArray;
-		assert: 'Hello World' asByteArray base64Encoded = 'SGVsbG8gV29ybGQ=';
+		assert: 'SGVsbG8gV29ybGQ=' base64Decoded = bytes;
+		assert: bytes base64Encoded = 'SGVsbG8gV29ybGQ=';
 		assert: (String new: 100 withAll: $x) asByteArray base64Encoded  =
 'eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4
-eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eA==' ! !
+eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eA=='! !
 
 !StringTest methodsFor: 'testing' stamp: 'HAW 8/3/2018 10:42:26'!
 testAfterBlanksEndsWith
@@ -8670,6 +8682,38 @@ testIsValidKeywordSelectorIfItContainsKeywordsWithColons
 testIsValidUnarySelectorIfItStartsWithALetterAndDoesNotContainSeparators
 
 	self assert: #t234 isValidSelector! !
+
+!UnicodeCodePointTest methodsFor: 'testing' stamp: 'jmv 7/6/2022 09:31:50'!
+testCompareIsTransitive
+	| c1 c2 c3 |
+	1 to: 512 by: 8 do: [ :n1 |
+		c1 _ UnicodeCodePoint codePoint: n1.
+		1 to: 512 by: 8 do: [ :n2 |
+			c2 _ UnicodeCodePoint codePoint: n2.
+			1 to: 512 by: 8 do: [ :n3 |
+				c3 _ UnicodeCodePoint codePoint: n3.
+				(c1 < c2) & (c2 < c3) ifTrue: [ self assert: (c1 < c3) ]]]]! !
+
+!UnicodeCodePointTest methodsFor: 'testing' stamp: 'jmv 7/6/2022 09:23:47'!
+testCompareWithCharacters
+	| c1 c2 |
+	1 to: 255 do: [ :n1 |
+		c1 _ Character numericValue: n1.
+		1 to: 255 do: [ :n2 |
+			c2 _ Character numericValue: n2.
+			self assert: (c1 < c2) = (c1 < c2 asUnicodeCodePoint).
+			self assert: (c1 < c2) = (c1 asUnicodeCodePoint < c2).
+			self assert: (c1 < c2) = (c1 asUnicodeCodePoint < c2 asUnicodeCodePoint).
+			self assert: (c1 <= c2) = (c1 <= c2 asUnicodeCodePoint).
+			self assert: (c1 <= c2) = (c1 asUnicodeCodePoint <= c2).
+			self assert: (c1 <= c2) = (c1 asUnicodeCodePoint <= c2 asUnicodeCodePoint).
+			self assert: (c1 > c2) = (c1 > c2 asUnicodeCodePoint).
+			self assert: (c1 > c2) = (c1 asUnicodeCodePoint > c2).
+			self assert: (c1 > c2) = (c1 asUnicodeCodePoint > c2 asUnicodeCodePoint).
+			self assert: (c1 >= c2) = (c1 >= c2 asUnicodeCodePoint).
+			self assert: (c1 >= c2) = (c1 asUnicodeCodePoint >= c2).
+			self assert: (c1 >= c2) = (c1 asUnicodeCodePoint >= c2 asUnicodeCodePoint).
+			]]! !
 
 !UnicodeStringsTest methodsFor: 'testing' stamp: 'jmv 6/2/2022 15:14:24'!
 test01
@@ -9271,6 +9315,10 @@ test04LatinUtf8SymbolFirst
 
 	self assert: utf8Symbol == symbol.
 	self assert: symbol == utf8Symbol.! !
+
+!UnicodeSymbolsTest methodsFor: 'testing' stamp: 'jmv 7/5/2022 20:57:42'!
+testSerialization
+	(Object unStream: (ReferenceStream streamedRepresentationOf: 'hello' asUtf8String asSymbol)) = 'hello' asUtf8String asSymbol! !
 
 !UnicodeTest methodsFor: 'set up' stamp: 'jmv 5/31/2016 11:24'!
 setUp
@@ -14346,16 +14394,16 @@ testUpToTerminator6TerminatedLongRecords
 	self assert: read size = 3000.
 	self assert: (read at: 1) = $b.! !
 
-!WriteStreamTest methodsFor: 'tests' stamp: 'jpb 8/2/2019 23:49:13'!
+!WriteStreamTest methodsFor: 'tests' stamp: 'jmv 7/5/2022 21:09:16'!
 testIsStream
-	self assert: ((WriteStream on: '') is: #Stream).! !
+	self assert: (String writeStream is: #Stream).! !
 
 !WriteStreamTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:27:06'!
 testNewLineTabWhenConditionIsFalseDoesNotPutANewLineTabInStream
 
 	| stream |
 
-	stream := WriteStream on: ''.
+	stream := String writeStream.
 	stream newLineTab: 2 when: false.
 	
 	self assert: stream contents isEmpty
@@ -14366,7 +14414,7 @@ testNewLineTabWhenConditionIsTruePutsANewLineTabInStream
 
 	| stream |
 
-	stream := WriteStream on: ''.
+	stream := String writeStream.
 	stream newLineTab: 2 when: true.
 	
 	self assert: (String streamContents: [ :s | s newLineTab: 2 ]) equals: stream contents 
@@ -14377,7 +14425,7 @@ testNewLineWhenConditionIsFalseDoesNotPutANewLineInStream
 
 	| stream |
 
-	stream := WriteStream on: ''.
+	stream := String writeStream.
 	stream newLineWhen: false.
 	
 	self assert: stream contents isEmpty
@@ -14388,7 +14436,7 @@ testNewLineWhenConditionIsTruePutsANewLineInStream
 
 	| stream |
 
-	stream := WriteStream on: ''.
+	stream := String writeStream.
 	stream newLineWhen: true.
 	
 	self assert: Character newLineCharacter asString equals: stream contents 
@@ -14399,7 +14447,7 @@ testNextPutAllWhenConditionIsFalseDoesNotPutCollectionInStream
 
 	| stream |
 
-	stream := WriteStream on: ''.
+	stream := String writeStream.
 	stream nextPutAll: 'other' when: false.
 	
 	self assert: stream contents isEmpty
@@ -14410,7 +14458,7 @@ testNextPutAllWhenConditionIsTruePutsCollectionInStream
 
 	| stream |
 	
-	stream := WriteStream on: ''.
+	stream := String writeStream.
 	stream nextPutAll: 'other' when: true.
 	
 	self assert: 'other' equals: stream contents
@@ -14422,7 +14470,7 @@ testNextPutWhenConditionIsFalseDoesNotPutObjectInStream
 
 	| stream |
 	
-	stream := WriteStream on: ''.
+	stream := String writeStream.
 	stream nextPut: $t when: false.
 	
 	self assert: stream contents isEmpty
@@ -14434,7 +14482,7 @@ testNextPutWhenConditionIsTruePutsObjectInStream
 
 	| stream |
 	
-	stream := WriteStream on: ''.
+	stream := String writeStream.
 	stream nextPut: $t when: true.
 	
 	self assert: 't' equals: stream contents 
@@ -14446,7 +14494,7 @@ testPrintWhenConditionIsFalseDoesNotPrintObjectInStream
 
 	| stream |
 	
-	stream := WriteStream on: ''.
+	stream := String writeStream.
 	stream print: Object when: false.
 	
 	self assert: stream contents isEmpty
@@ -14458,7 +14506,7 @@ testPrintWhenConditionIsTruePrintsObjectInStream
 
 	| stream |
 	
-	stream := WriteStream on: ''.
+	stream := String writeStream.
 	stream print: Object when: true.
 	
 	self assert: Object printString equals: stream contents! !
@@ -14468,7 +14516,7 @@ testSpaceManyTimesWhenConditionIsFalseDoesNotPutASpaceInStream
 
 	| stream |
 
-	stream := WriteStream on: ''.
+	stream := String writeStream.
 	stream space: 2 when: false.
 	
 	self assert: stream contents isEmpty
@@ -14479,7 +14527,7 @@ testSpaceManyTimesWhenConditionIsTruePutSpacesInStream
 
 	| stream |
 
-	stream := WriteStream on: ''.
+	stream := String writeStream.
 	stream space: 2 when: true.
 	
 	self assert: '  ' equals: stream contents 
@@ -14490,7 +14538,7 @@ testSpaceWhenConditionIsFalseDoesNotPutASpaceInStream
 
 	| stream |
 
-	stream := WriteStream on: ''.
+	stream := String writeStream.
 	stream spaceWhen: false.
 	
 	self assert: stream contents isEmpty
@@ -14501,7 +14549,7 @@ testSpaceWhenConditionIsTruePutsASpaceInStream
 
 	| stream |
 
-	stream := WriteStream on: ''.
+	stream := String writeStream.
 	stream spaceWhen: true.
 	
 	self assert: ' ' equals: stream contents 
@@ -14512,7 +14560,7 @@ testTabManyTimesWhenConditionIsFalseDoesNotPutATabInStream
 
 	| stream |
 
-	stream := WriteStream on: ''.
+	stream := String writeStream.
 	stream tab: 2 when: false.
 	
 	self assert: stream contents isEmpty
@@ -14523,7 +14571,7 @@ testTabManyTimesWhenConditionIsTruePutsTabsInStream
 
 	| stream |
 
-	stream := WriteStream on: ''.
+	stream := String writeStream.
 	stream tab: 2 when: true.
 	
 	self assert: (String streamContents: [ :s | s tab: 2 ]) equals: stream contents 
@@ -14534,7 +14582,7 @@ testTabWhenConditionIsFalseDoesNotPutATabInStream
 
 	| stream |
 
-	stream := WriteStream on: ''.
+	stream := String writeStream.
 	stream tabWhen: false.
 	
 	self assert: stream contents isEmpty
@@ -14545,7 +14593,7 @@ testTabWhenConditionIsTruePutsATabInStream
 
 	| stream |
 
-	stream := WriteStream on: ''.
+	stream := String writeStream.
 	stream tabWhen: true.
 	
 	self assert: Character tab asString equals: stream contents 
@@ -17844,15 +17892,15 @@ testSetProtocol
 	controlGroup add: 'ÑANDÚ'.
 	self assert: subject isEquivalentToSet: controlGroup.! !
 
-!TrieUnicodeTest methodsFor: 'testing' stamp: 'jmv 6/6/2022 11:47:11'!
+!TrieUnicodeTest methodsFor: 'testing' stamp: 'jmv 7/6/2022 08:11:26'!
 test01
 	| t all |
 	t _ Trie new.
 	t add: #toto.
 	t at: #toton put: 47.
-	t add: 'carrr'.
-	t at: 'car' put: Float pi.
-	t at: 'cat' put: Date today.
+	t add: 'carrr' asByteString.
+	t at: 'car' asByteString put: Float pi.
+	t at: 'cat' asByteString put: Date today.
 	self assert: (t includesKey: 'car').
 	self deny: (t includes: 'car').
 	self assert: (t includesKey: 'cat').
@@ -17862,22 +17910,22 @@ test01
 	all _ Array streamContents: [ :strm |
 		t keysAndValuesDo: [ :k :v | strm nextPut: {k. k class. v. v class} ]].
 	self assert: all size = 5.
-	self assert: (all includes: {#toto. Symbol. #toto. Symbol}).
-	self assert: (all includes: {#toton. Symbol. 47. SmallInteger}).
+	self assert: (all includes: {#toto. #toto class. #toto. #toto class}).
+	self assert: (all includes: {#toton. #toton class. 47. SmallInteger}).
 	self assert: (all includes: {'carrr'. String. 'carrr'. String}).
 	self assert: (all includes: {'car'. String. Float pi. SmallFloat64}).
 	self assert: (all includes: {'cat'. String. Date today. Date}).! !
 
-!TrieUnicodeTest methodsFor: 'testing' stamp: 'jmv 6/6/2022 12:13:02'!
+!TrieUnicodeTest methodsFor: 'testing' stamp: 'jmv 7/6/2022 08:11:26'!
 test02
 	| t all |
 	t _ Trie new.
 	t add: #toto.
 	t at: #toton put: 47.
-	t add: 'carrrs'.
+	t add: 'carrrs' asByteString.
 	t add: 'carrr' asUtf8String.
 	t at: 'car' asUtf8String put: Float pi.
-	t at: 'cat' put: Date today.
+	t at: 'cat' asByteString put: Date today.
 	self assert: (t includesKey: 'carrrs').
 	self assert: (t includes: 'carrrs').
 	self assert: (t includesKey: 'carrrs' asUtf8String).
@@ -17895,14 +17943,14 @@ test02
 	all _ Array streamContents: [ :strm |
 		t keysAndValuesDo: [ :k :v | strm nextPut: {k. k class. v. v class} ]].
 	self assert: all size = 6.
-	self assert: (all includes: {#toto. Symbol. #toto. Symbol}).
-	self assert: (all includes: {#toton. Symbol. 47. SmallInteger}).
+	self assert: (all includes: {#toto. #toto class. #toto. #toto class}).
+	self assert: (all includes: {#toton. #toton class. 47. SmallInteger}).
 	self assert: (all includes: {'carrrs'. String. 'carrrs'. String}).
 	self assert: (all includes: {'carrr'. Utf8String. 'carrr'. Utf8String}).
 	self assert: (all includes: {'car'. Utf8String. Float pi. SmallFloat64}).
 	self assert: (all includes: {'cat'. String. Date today. Date}).! !
 
-!TrieUnicodeTest methodsFor: 'testing' stamp: 'jmv 6/6/2022 12:09:17'!
+!TrieUnicodeTest methodsFor: 'testing' stamp: 'jmv 7/6/2022 08:11:53'!
 test03
 	| t all s1 s2 |
 	t _ Trie new.
@@ -17911,7 +17959,7 @@ test03
 	s2 _ ('totoUn', Random next mantissaPart printString) asUtf8String asSymbol.
 	t at: s2 put: 47.
 	t add: 'carrr' asUtf8String.
-	t at: 'car' put: Float pi.
+	t at: 'car' asByteString put: Float pi.
 	t at: 'cat' asUtf8String put: Date today.
 	self assert: (t includesKey: 'car').
 	self deny: (t includes: 'car').
@@ -20377,14 +20425,14 @@ testMetaclassCategoriesIncludesInstanceCreation
 	
 	self assert: Categorizer instanceCreation equals: categoriesPrompter categories second ! !
 
-!SmalltalkCompleterTest methodsFor: 'testing' stamp: 'jmv 7/14/2011 14:26'!
+!SmalltalkCompleterTest methodsFor: 'testing' stamp: 'jmv 7/5/2022 23:08:14'!
 testMessages
 	"
 	SmalltalkCompleterTest new testMessages
 	"
 	| fromSmalltalk fromUCompleter |
 	fromSmalltalk _ Smalltalk allImplementedMessages.
-	fromUCompleter _ Symbol allInstances select: [ :s |
+	fromUCompleter _ Symbol allSymbols select: [ :s |
 		SmalltalkCompleter isThereAnImplementorOf: s].
 	self assert: fromSmalltalk = fromUCompleter asSet! !
 
