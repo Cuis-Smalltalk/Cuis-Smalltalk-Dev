@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5360] on 6 July 2022 at 9:36:52 am'!
+'From Cuis 6.0 [latest update: #5388] on 11 July 2022 at 8:32:01 pm'!
 'Description Inline method test fixes'!
-!provides: 'BaseImageTests' 1 308!
+!provides: 'BaseImageTests' 1 309!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Objects'!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Classes'!
@@ -17443,6 +17443,30 @@ test20AnIntervalEndingExpandsUntilStartOfNextStatementOnNextLine
 	
 	self assert: expectedInterval equals: expandedInterval.! !
 
+!SourceCodeIntervalTest methodsFor: 'tests - testing' stamp: 'FB 7/4/2022 21:13:38'!
+test21ExpandIntervalToEndOfStatement
+
+	| interval sourceCode expandedInterval expectedInterval |
+	
+	sourceCode := '1 + 2. ^2'.
+	interval := (1 to: 2) asSourceCodeInterval.
+	expandedInterval := interval expandUntilStatementEndOn: sourceCode.
+	expectedInterval := (1 to: 6) asSourceCodeInterval.
+	
+	self assert: expectedInterval equals: expandedInterval.! !
+
+!SourceCodeIntervalTest methodsFor: 'tests - testing' stamp: 'FB 7/4/2022 21:15:10'!
+test22ExpandIntervalToEndOfStatementWhenNoDotIsPresent
+
+	| interval sourceCode expandedInterval expectedInterval |
+	
+	sourceCode := '1 + 2'.
+	interval := (1 to: 2) asSourceCodeInterval.
+	expandedInterval := interval expandUntilStatementEndOn: sourceCode.
+	expectedInterval := (1 to: 5) asSourceCodeInterval.
+	
+	self assert: expectedInterval equals: expandedInterval.! !
+
 !SystemConsistencyTest methodsFor: 'testing' stamp: 'jmv 5/7/2012 09:35'!
 testMethodsWithUnboundGlobals
 	"
@@ -26125,7 +26149,7 @@ self m4: 5.
 t := 10. ^t'.
 	self assert: expectedNewSourceCode equals: (implementorAndSenderClass >> methodWithUsageSelector) sourceCode! !
 
-!InlineMethodTest methodsFor: 'tests - successful' stamp: 'FB 11/3/2021 23:48:05'!
+!InlineMethodTest methodsFor: 'tests - successful' stamp: 'FB 7/4/2022 19:44:38'!
 test05InlineMethodOfSameClassWithUnusedReturn
 
 	| implementorAndSenderClass methodToInlineSource methodToInlineSelector 
@@ -26149,7 +26173,8 @@ test05InlineMethodOfSameClassWithUnusedReturn
 	
 	refactoring apply.
 	
-	expectedNewSourceCode := methodWithUsageSelector,' self m3. ^20'.
+	expectedNewSourceCode := methodWithUsageSelector,' self m3.
+10. ^20'.
 	self assert: expectedNewSourceCode equals: (implementorAndSenderClass >> methodWithUsageSelector) sourceCode! !
 
 !InlineMethodTest methodsFor: 'tests - successful' stamp: 'FB 11/3/2021 23:48:13'!
@@ -26392,8 +26417,8 @@ t := y1. ^20'.
 	self assert: expectedNewSourceCode equals: (senderClass >> methodWithUsagesSelector) sourceCode.
 	self deny: (implementorClass canUnderstand: methodToInlineSelector).! !
 
-!InlineMethodTest methodsFor: 'tests - successful' stamp: 'FB 11/14/2021 20:52:41'!
-test17InlineMethodWithASingleReturnLineWhenResultIsNotAssigned
+!InlineMethodTest methodsFor: 'tests - successful' stamp: 'FB 6/29/2022 20:52:09'!
+test17InlineMethodWithASingleReturnLineWhenLiteralResultIsNotAssigned
 
 	| methodToInlineSource methodToInlineSelector nodeToInline methodWithUsagesSelector methodWithUsagesSource
 	 implementorClass senderClass expectedNewSourceCode refactoring |
@@ -26417,7 +26442,7 @@ test17InlineMethodWithASingleReturnLineWhenResultIsNotAssigned
 	
 	refactoring apply.
 	
-	expectedNewSourceCode := methodWithUsagesSelector,' ^20'.
+	expectedNewSourceCode := methodWithUsagesSelector,' 1. ^20'.
 	self assert: expectedNewSourceCode equals: (senderClass >> methodWithUsagesSelector) sourceCode.! !
 
 !InlineMethodTest methodsFor: 'tests - successful' stamp: 'FB 6/12/2022 19:28:03'!
@@ -26493,7 +26518,7 @@ test19InlineMethodIndentation
 		^b value'.
 	self assert: expectedNewSourceCode equals: (senderClass >> methodWithUsagesSelector) sourceCode.! !
 
-!InlineMethodTest methodsFor: 'tests - successful' stamp: 'FB 11/21/2021 19:39:11'!
+!InlineMethodTest methodsFor: 'tests - successful' stamp: 'FB 7/4/2022 20:01:39'!
 test20InlineMethodUsedInReturn
 
 	| methodToInlineSource methodToInlineSelector nodeToInline methodWithUsagesSelector methodWithUsagesSource
@@ -26502,7 +26527,7 @@ test20InlineMethodUsedInReturn
 	implementorClass  := self createClassNamed: self implementorClass.
 	senderClass  := self createClassNamed: self senderClass.
 	methodToInlineSelector := 'm1' asSymbol.
-	methodToInlineSource := methodToInlineSelector, '^5'.
+	methodToInlineSource := methodToInlineSelector, ' ^5'.
 	implementorClass compile: methodToInlineSource.
 	
 	methodWithUsagesSelector := 'm2' asSymbol.
@@ -26518,10 +26543,10 @@ test20InlineMethodUsedInReturn
 	
 	refactoring apply.
 	
-	expectedNewSourceCode := methodWithUsagesSelector,' ^3 * 5.'.
+	expectedNewSourceCode := methodWithUsagesSelector,' ^3 * 5'.
 	self assert: expectedNewSourceCode equals: (senderClass >> methodWithUsagesSelector) sourceCode.! !
 
-!InlineMethodTest methodsFor: 'tests - successful' stamp: 'FB 11/21/2021 20:30:17'!
+!InlineMethodTest methodsFor: 'tests - successful' stamp: 'FB 7/4/2022 20:01:53'!
 test21InlineMethodAddsParenthesesWhenNeeded
 
 	| methodToInlineSource methodToInlineSelector nodeToInline methodWithUsagesSelector methodWithUsagesSource
@@ -26546,7 +26571,7 @@ test21InlineMethodAddsParenthesesWhenNeeded
 	
 	refactoring apply.
 	
-	expectedNewSourceCode := methodWithUsagesSelector,' ^3 * (5 + 10).'.
+	expectedNewSourceCode := methodWithUsagesSelector,' ^3 * (5 + 10)'.
 	self assert: expectedNewSourceCode equals: (senderClass >> methodWithUsagesSelector) sourceCode.! !
 
 !InlineMethodTest methodsFor: 'tests - successful' stamp: 'FB 4/8/2022 23:52:48'!
@@ -26644,7 +26669,7 @@ t m3.
 ^y.'.
 	self assert: expectedNewSourceCode equals: (senderClass >> methodWithUsageSelector) sourceCode.! !
 
-!InlineMethodTest methodsFor: 'tests - successful' stamp: 'FB 5/25/2022 20:43:16'!
+!InlineMethodTest methodsFor: 'tests - successful' stamp: 'FB 7/4/2022 20:02:04'!
 test28InlineMethodWithReturnUsedInSenderReturningImplicitSelf
 
 	| implementorAndSenderClass methodToInlineSource methodToInlineSelector 
@@ -26668,8 +26693,120 @@ test28InlineMethodWithReturnUsedInSenderReturningImplicitSelf
 	
 	refactoring apply.
 	
-	expectedNewSourceCode := methodWithUsageSelector,'  2 asString.'.
+	expectedNewSourceCode := methodWithUsageSelector,'  2 asString'.
 	self assert: expectedNewSourceCode equals: (implementorAndSenderClass >> methodWithUsageSelector) sourceCode! !
+
+!InlineMethodTest methodsFor: 'tests - successful' stamp: 'FB 6/29/2022 19:27:41'!
+test29InlineMethodWithASingleReturnLineWhenNonLiteralResultIsNotAssigned
+
+	| methodToInlineSource methodToInlineSelector nodeToInline methodWithUsagesSelector methodWithUsagesSource
+	 implementorClass senderClass expectedNewSourceCode refactoring |
+	
+	implementorClass  := self createClassNamed: self implementorClass.
+	senderClass  := self createClassNamed: self senderClass.
+	methodToInlineSelector := 'm1' asSymbol.
+	methodToInlineSource := methodToInlineSelector, ' ^self doSomething.'.
+	implementorClass compile: methodToInlineSource.
+	
+	methodWithUsagesSelector := 'm2' asSymbol.
+	methodWithUsagesSource := methodWithUsagesSelector, ' self m1. ^20'.
+	senderClass compile: methodWithUsagesSource.
+	
+	nodeToInline := self messageNodeReferenceOf: senderClass inMethod: methodWithUsagesSelector atIndex: 10.
+	
+	refactoring := InlineMethod 
+		from: implementorClass >> methodToInlineSelector 
+		intoSendersAndUsages: (Array with: nodeToInline)
+		removeMethod: true.
+	
+	refactoring apply.
+	
+	expectedNewSourceCode := methodWithUsagesSelector,' self doSomething. ^20'.
+	self assert: expectedNewSourceCode equals: (senderClass >> methodWithUsagesSelector) sourceCode.! !
+
+!InlineMethodTest methodsFor: 'tests - successful' stamp: 'FB 6/29/2022 19:48:13'!
+test30InlineMethodUsedInBrace
+
+	| methodToInlineSource methodToInlineSelector nodeToInline methodWithUsagesSelector methodWithUsagesSource
+	 implementorClass senderClass expectedNewSourceCode refactoring |
+	
+	implementorClass  := self createClassNamed: self implementorClass.
+	senderClass  := self createClassNamed: self senderClass.
+	methodToInlineSelector := 'm1' asSymbol.
+	methodToInlineSource := methodToInlineSelector, ' ^10'.
+	implementorClass compile: methodToInlineSource.
+	
+	methodWithUsagesSelector := 'm2' asSymbol.
+	methodWithUsagesSource := methodWithUsagesSelector, ' ^self m2: { 2. self m1. 4 }'.
+	senderClass compile: methodWithUsagesSource.
+	
+	nodeToInline := self messageNodeReferenceOf: senderClass inMethod: methodWithUsagesSelector atIndex: 24.
+	
+	refactoring := InlineMethod 
+		from: implementorClass >> methodToInlineSelector 
+		intoSendersAndUsages: (Array with: nodeToInline)
+		removeMethod: true.
+	
+	refactoring apply.
+	
+	expectedNewSourceCode := methodWithUsagesSelector,' ^self m2: { 2. 10. 4 }'.
+	self assert: expectedNewSourceCode equals: (senderClass >> methodWithUsagesSelector) sourceCode.! !
+
+!InlineMethodTest methodsFor: 'tests - successful' stamp: 'FB 7/4/2022 20:18:46'!
+test31InlineMethodUsedInBraceAddingParentheses
+
+	| methodToInlineSource methodToInlineSelector nodeToInline methodWithUsagesSelector methodWithUsagesSource
+	 implementorClass senderClass expectedNewSourceCode refactoring |
+	
+	implementorClass  := self createClassNamed: self implementorClass.
+	senderClass  := self createClassNamed: self senderClass.
+	methodToInlineSelector := 'm1' asSymbol.
+	methodToInlineSource := methodToInlineSelector, ' ^10 + 5'.
+	implementorClass compile: methodToInlineSource.
+	
+	methodWithUsagesSelector := 'm2' asSymbol.
+	methodWithUsagesSource := methodWithUsagesSelector, ' ^self m2: { 2. self m1 * 3. 4 }'.
+	senderClass compile: methodWithUsagesSource.
+	
+	nodeToInline := self messageNodeReferenceOf: senderClass inMethod: methodWithUsagesSelector atIndex: 24.
+	
+	refactoring := InlineMethod 
+		from: implementorClass >> methodToInlineSelector 
+		intoSendersAndUsages: (Array with: nodeToInline)
+		removeMethod: true.
+	
+	refactoring apply.
+	
+	expectedNewSourceCode := methodWithUsagesSelector,' ^self m2: { 2. (10 + 5) * 3. 4 }'.
+	self assert: expectedNewSourceCode equals: (senderClass >> methodWithUsagesSelector) sourceCode.! !
+
+!InlineMethodTest methodsFor: 'tests - successful' stamp: 'FB 7/4/2022 20:47:48'!
+test32InlineMethodUsedReturningWithDotInMessageNode
+
+	| methodToInlineSource methodToInlineSelector nodeToInline methodWithUsagesSelector methodWithUsagesSource
+	 implementorClass senderClass expectedNewSourceCode refactoring |
+	
+	implementorClass  := self createClassNamed: self implementorClass.
+	senderClass  := self createClassNamed: self senderClass.
+	methodToInlineSelector := 'm1' asSymbol.
+	methodToInlineSource := methodToInlineSelector, ' ^10.'.
+	implementorClass compile: methodToInlineSource.
+	
+	methodWithUsagesSelector := 'm2' asSymbol.
+	methodWithUsagesSource := methodWithUsagesSelector, ' self m1 + 10. ^20.'.
+	senderClass compile: methodWithUsagesSource.
+	
+	nodeToInline := self messageNodeReferenceOf: senderClass inMethod: methodWithUsagesSelector atIndex: 10.
+	
+	refactoring := InlineMethod 
+		from: implementorClass >> methodToInlineSelector 
+		intoSendersAndUsages: (Array with: nodeToInline)
+		removeMethod: true.
+	
+	refactoring apply.
+	
+	expectedNewSourceCode := methodWithUsagesSelector,' 10 + 10. ^20.'.
+	self assert: expectedNewSourceCode equals: (senderClass >> methodWithUsagesSelector) sourceCode.! !
 
 !InlineMethodTest methodsFor: 'class factory' stamp: 'FB 11/22/2021 17:09:44'!
 anotherSenderClass
