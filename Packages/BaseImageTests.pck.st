@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5388] on 11 July 2022 at 8:32:01 pm'!
+'From Cuis 6.0 [latest update: #5392] on 12 July 2022 at 3:12:51 pm'!
 'Description Inline method test fixes'!
-!provides: 'BaseImageTests' 1 309!
+!provides: 'BaseImageTests' 1 310!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Objects'!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Classes'!
@@ -19746,7 +19746,7 @@ testInverseTransformation
 	self assert: ((inverse internalizeDelta: 3@4) - (forward externalizeDelta: 3@4)) r < 0.0001.
 	self assert: ((inverse internalizeScalar: 7) - (forward externalizeScalar: 7)) abs < 0.0001.! !
 
-!LayoutMorphTest methodsFor: 'tests' stamp: 'jmv 7/1/2022 20:28:15'!
+!LayoutMorphTest methodsFor: 'tests' stamp: 'jmv 7/12/2022 15:12:08'!
 testLayout1
 	"
 	self new testLayout1
@@ -19786,7 +19786,7 @@ testLayout1
 			layoutSpec: (LayoutSpec fixedWidth: 30 proportionalHeight: 1.0).
 	pane addMorph: row3 layoutSpec: (LayoutSpec fixedHeight: 60).
 	pane openInWorld: UISupervisor ui; morphExtent: 408@300.
-	Processor activeProcess animatedUI
+	(UISupervisor animatedUIOf: Processor activeProcess)
 		ifNotNil: [ :ui | ui doOneCycleNow]
 		ifNil: [ | updated d |
 			updated _ false.
@@ -19826,7 +19826,7 @@ testLayout1
 
 	pane delete! !
 
-!LayoutMorphTest methodsFor: 'tests' stamp: 'jmv 7/1/2022 20:28:20'!
+!LayoutMorphTest methodsFor: 'tests' stamp: 'jmv 7/12/2022 15:12:18'!
 testLayout2
 	"
 	self new testLayout2
@@ -19845,7 +19845,7 @@ testLayout2
 			layoutSpec: (LayoutSpec fixedWidth: 30 proportionalHeight: 0.7 offAxisEdgeWeight: #center).
 	pane addMorph: row layoutSpec: (LayoutSpec proportionalHeight: 0.9).
 	pane openInWorld: UISupervisor ui; morphExtent: 400@300.
-	Processor activeProcess animatedUI
+	(UISupervisor animatedUIOf: Processor activeProcess)
 		ifNotNil: [ :ui | ui doOneCycleNow]
 		ifNil: [ | updated d |
 			updated _ false.
@@ -19868,7 +19868,7 @@ testLayout2
 
 	pane delete! !
 
-!LayoutMorphTest methodsFor: 'tests' stamp: 'jmv 7/1/2022 20:28:25'!
+!LayoutMorphTest methodsFor: 'tests' stamp: 'jmv 7/12/2022 15:12:23'!
 testLayout3
 	"
 	self new testLayout3
@@ -19895,7 +19895,7 @@ testLayout3
 			layoutSpec: (LayoutSpec fixedWidth: 30 proportionalHeight: 1.0).
 	pane addMorph: row layoutSpec: (LayoutSpec fixedHeight: 200).
 	pane openInWorld: UISupervisor ui; morphExtent: 400@300.
-	Processor activeProcess animatedUI
+	(UISupervisor animatedUIOf: Processor activeProcess)
 		ifNotNil: [ :ui | ui doOneCycleNow]
 		ifNil: [ | updated d |
 			updated _ false.
