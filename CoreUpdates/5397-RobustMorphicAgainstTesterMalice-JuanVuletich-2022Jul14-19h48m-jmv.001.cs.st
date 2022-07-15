@@ -107,7 +107,8 @@ doOneCycleNow
 	activeHand _ self hands first.
 	"Run any deferred UI messages that were enqueued during this cycle before the inter cycle pause."
 	self runDeferredUIMessages.
-	lastCycleHadAnyEvent _ hadAny.! !
+	lastCycleHadAnyEvent _ hadAny.
+	^hadAny! !
 
 
 !MorphicCanvas methodsFor: 'morphic' stamp: 'jmv 7/14/2022 20:00:31'!
