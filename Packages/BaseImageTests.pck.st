@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5392] on 12 July 2022 at 3:12:51 pm'!
+'From Cuis 6.0 [latest update: #5397] on 14 July 2022 at 9:52:10 pm'!
 'Description Inline method test fixes'!
-!provides: 'BaseImageTests' 1 310!
+!provides: 'BaseImageTests' 1 311!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Objects'!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Classes'!
@@ -21281,13 +21281,13 @@ isAbstract
 
 	^DynamicTypingSmalltalkCompleter isForCurrentTypeSystem not! !
 
-!TaskbarTest methodsFor: 'Running' stamp: 'jmv 10/24/2020 15:55:32'!
+!TaskbarTest methodsFor: 'Running' stamp: 'jmv 7/14/2022 21:51:15'!
 setUp
 
 	needsDelete _ UISupervisor ui taskbar isNil.
 	taskbar _ UISupervisor ui hideTaskbar; showTaskbar; taskbar.
 	taskbar screenSizeChanged.
-	taskbar world runStepMethods! !
+	"taskbar world runStepMethods"! !
 
 !TaskbarTest methodsFor: 'Running' stamp: 'jmv 12/28/2017 16:12:13'!
 tearDown
