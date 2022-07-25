@@ -1,160 +1,244 @@
-'From Cuis 6.0 [latest update: #5041] on 16 January 2022 at 1:01:33 am'!
+'From Cuis 6.0 [latest update: #5299] on 18 June 2022 at 11:53:03 am'!
 'Description '!
-!provides: 'Printf' 1 39!
-SystemOrganization addCategory: #Printf!
+!provides: 'Printf' 1 40!
+SystemOrganization addCategory: 'Printf'!
 
 
-!classDefinition: #Printf category: #Printf!
-Object subclass: #Printf
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Printf'!
-!classDefinition: 'Printf class' category: #Printf!
-Printf class
-	instanceVariableNames: ''!
-
-!classDefinition: #PrintfFormatDescriptor category: #Printf!
-Object subclass: #PrintfFormatDescriptor
-	instanceVariableNames: 'flush width precision'
-	classVariableNames: 'Flags Operators'
-	poolDictionaries: ''
-	category: 'Printf'!
-!classDefinition: 'PrintfFormatDescriptor class' category: #Printf!
-PrintfFormatDescriptor class
-	instanceVariableNames: ''!
-
-!classDefinition: #PrintfCharacterFormatDescriptor category: #Printf!
-PrintfFormatDescriptor subclass: #PrintfCharacterFormatDescriptor
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Printf'!
-!classDefinition: 'PrintfCharacterFormatDescriptor class' category: #Printf!
-PrintfCharacterFormatDescriptor class
-	instanceVariableNames: ''!
-
-!classDefinition: #PrintfNumberFormatDescriptor category: #Printf!
-PrintfFormatDescriptor subclass: #PrintfNumberFormatDescriptor
-	instanceVariableNames: 'operator padding radix space thousandSeparate'
-	classVariableNames: 'Base Cased DecimalSeparator Radix ThousandSeparator UserDecimalSeparator UserThousandSeparator'
-	poolDictionaries: ''
-	category: 'Printf'!
-!classDefinition: 'PrintfNumberFormatDescriptor class' category: #Printf!
-PrintfNumberFormatDescriptor class
-	instanceVariableNames: ''!
-
-!classDefinition: #PrintfFloatFormatDescriptor category: #Printf!
-PrintfNumberFormatDescriptor subclass: #PrintfFloatFormatDescriptor
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Printf'!
-!classDefinition: 'PrintfFloatFormatDescriptor class' category: #Printf!
-PrintfFloatFormatDescriptor class
-	instanceVariableNames: ''!
-
-!classDefinition: #PrintfNumberHolderDescriptor category: #Printf!
-PrintfFormatDescriptor subclass: #PrintfNumberHolderDescriptor
-	instanceVariableNames: 'value'
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Printf'!
-!classDefinition: 'PrintfNumberHolderDescriptor class' category: #Printf!
-PrintfNumberHolderDescriptor class
-	instanceVariableNames: ''!
-
-!classDefinition: #PrintfStringFormatDescriptor category: #Printf!
-PrintfFormatDescriptor subclass: #PrintfStringFormatDescriptor
-	instanceVariableNames: 'widthDescriptor'
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Printf'!
-!classDefinition: 'PrintfStringFormatDescriptor class' category: #Printf!
-PrintfStringFormatDescriptor class
-	instanceVariableNames: ''!
-
-!classDefinition: #PrintStringFormatDescriptor category: #Printf!
-PrintfStringFormatDescriptor subclass: #PrintStringFormatDescriptor
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Printf'!
-!classDefinition: 'PrintStringFormatDescriptor class' category: #Printf!
-PrintStringFormatDescriptor class
-	instanceVariableNames: ''!
-
-!classDefinition: #PrintfFormatString category: #Printf!
-Object subclass: #PrintfFormatString
-	instanceVariableNames: 'format string outputStream'
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Printf'!
-!classDefinition: 'PrintfFormatString class' category: #Printf!
-PrintfFormatString class
-	instanceVariableNames: ''!
-
-!classDefinition: #PrintfFormatStringTest category: #Printf!
+!classDefinition: #PrintfFormatStringTest category: 'Printf'!
 TestCase subclass: #PrintfFormatStringTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Printf'!
-!classDefinition: 'PrintfFormatStringTest class' category: #Printf!
+!classDefinition: 'PrintfFormatStringTest class' category: 'Printf'!
 PrintfFormatStringTest class
 	instanceVariableNames: ''!
 
+!classDefinition: #Printf category: 'Printf'!
+Object subclass: #Printf
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Printf'!
+!classDefinition: 'Printf class' category: 'Printf'!
+Printf class
+	instanceVariableNames: ''!
 
-!PrintfFormatDescriptor methodsFor: 'printing' stamp: 'NM 8/16/2021 14:09:40'!
-printOn: aStream
-	aStream nextPut: $%.
-	flush == #leftFlush ifTrue: [aStream nextPut: $-]
+!classDefinition: #PrintfFormatDescriptor category: 'Printf'!
+Object subclass: #PrintfFormatDescriptor
+	instanceVariableNames: 'flush width precision'
+	classVariableNames: 'Flags Operators'
+	poolDictionaries: ''
+	category: 'Printf'!
+!classDefinition: 'PrintfFormatDescriptor class' category: 'Printf'!
+PrintfFormatDescriptor class
+	instanceVariableNames: ''!
+
+!classDefinition: #PrintfCharacterFormatDescriptor category: 'Printf'!
+PrintfFormatDescriptor subclass: #PrintfCharacterFormatDescriptor
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Printf'!
+!classDefinition: 'PrintfCharacterFormatDescriptor class' category: 'Printf'!
+PrintfCharacterFormatDescriptor class
+	instanceVariableNames: ''!
+
+!classDefinition: #PrintfNumberFormatDescriptor category: 'Printf'!
+PrintfFormatDescriptor subclass: #PrintfNumberFormatDescriptor
+	instanceVariableNames: 'operator padding radix space thousandSeparate'
+	classVariableNames: 'Base Cased DecimalSeparator Radix ThousandSeparator UserDecimalSeparator UserThousandSeparator'
+	poolDictionaries: ''
+	category: 'Printf'!
+!classDefinition: 'PrintfNumberFormatDescriptor class' category: 'Printf'!
+PrintfNumberFormatDescriptor class
+	instanceVariableNames: ''!
+
+!classDefinition: #PrintfFloatFormatDescriptor category: 'Printf'!
+PrintfNumberFormatDescriptor subclass: #PrintfFloatFormatDescriptor
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Printf'!
+!classDefinition: 'PrintfFloatFormatDescriptor class' category: 'Printf'!
+PrintfFloatFormatDescriptor class
+	instanceVariableNames: ''!
+
+!classDefinition: #PrintfNumberHolderDescriptor category: 'Printf'!
+PrintfFormatDescriptor subclass: #PrintfNumberHolderDescriptor
+	instanceVariableNames: 'value'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Printf'!
+!classDefinition: 'PrintfNumberHolderDescriptor class' category: 'Printf'!
+PrintfNumberHolderDescriptor class
+	instanceVariableNames: ''!
+
+!classDefinition: #PrintfStringFormatDescriptor category: 'Printf'!
+PrintfFormatDescriptor subclass: #PrintfStringFormatDescriptor
+	instanceVariableNames: 'widthDescriptor'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Printf'!
+!classDefinition: 'PrintfStringFormatDescriptor class' category: 'Printf'!
+PrintfStringFormatDescriptor class
+	instanceVariableNames: ''!
+
+!classDefinition: #PrintStringFormatDescriptor category: 'Printf'!
+PrintfStringFormatDescriptor subclass: #PrintStringFormatDescriptor
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Printf'!
+!classDefinition: 'PrintStringFormatDescriptor class' category: 'Printf'!
+PrintStringFormatDescriptor class
+	instanceVariableNames: ''!
+
+!classDefinition: #PrintfFormatString category: 'Printf'!
+Object subclass: #PrintfFormatString
+	instanceVariableNames: 'format string outputStream'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Printf'!
+!classDefinition: 'PrintfFormatString class' category: 'Printf'!
+PrintfFormatString class
+	instanceVariableNames: ''!
+
+
+!PrintfFormatStringTest methodsFor: 'as yet unclassified' stamp: 'NM 1/15/2022 17:22:03'!
+test100_ThousandSeparator
+       ". small numbers are ignored "
+	self assert: (('%_d' printf: {123}) = '123' ) .
+	self assert: (('%_d' printf: {1234}) = '1_234' ) .
+	self assert: (('%_d' printf: {12345678}) = '12_345_678' ) .
+	". very large numbers must be ok "
+	self assert: (('%_d' printf: {123456789123456789}) = '123_456_789_123_456_789' ) .   
+	
 	! !
 
-!PrintfCharacterFormatDescriptor methodsFor: 'printing' stamp: 'NM 8/16/2021 14:23:11'!
-printOn: aStream
-	super printOn: aStream.
-	self printWidthOn: aStream.
-	aStream nextPut: $c
+!PrintfFormatStringTest methodsFor: 'as yet unclassified' stamp: 'NM 1/15/2022 17:24:52'!
+test101_LargeFloat
+       ". this test was added to remember there is an ugly bug here "
+	self assert: ('%.2f' printf: {1.1}) = '1.10' .  
+	self assert: ('%.2f' printf: {12.1}) = '12.10' .  
+	self assert: ('%.2f' printf: {123.1}) = '123.10' . 
+       self assert: ('%.2f' printf: {1234.1}) = '1234.10' .	  
+	self assert: ('%.2f' printf: {12345.1}) = '12345.10' . 
+	self assert: ('%.2f' printf: {123456.1}) = '123456.10' .  
+	". from here on it is broken " 
+	self assert: ('%.2f' printf: {1234567.1}) = '1234567.10'.     ". gives wrongly 1.23"
+	self assert: ('%.2f' printf: {12345678.1}) = '12345678.10'.  ". gives wrongly 1.23"
+
 	! !
 
-!PrintfNumberFormatDescriptor methodsFor: 'printing' stamp: 'NM 1/15/2022 15:26:57'!
-printOn: aStream
-	Transcript log: '---> called NumFormDescriptor >> printOn: '.
-	super printOn: aStream.
-	thousandSeparate ifTrue: [ aStream nextPut: $_ ]. 
-	padding == $0 ifTrue: [aStream nextPut: $0].
-	radix ifTrue: [aStream nextPut: $#].
-	space ifTrue: [aStream nextPut: $ ].
-	self printWidthOn: aStream.
-	aStream nextPut: operator
+!PrintfFormatStringTest methodsFor: 'as yet unclassified' stamp: 'NM 1/15/2022 22:26:12'!
+test102_FloatsWithThousandSeparator
+       ". Testing the print of floating points with thousand separator "
+	self assert: (('%_0.2f' printf: {1234}) = '1_234.00' ) .
+	self assert: (('%_0.2f' printf: {1234.1}) = '1_234.10' ) .
+	self assert: (('%_0.2f' printf: {1234.12}) = '1_234.12' ) .
+	self assert: (('%_0.2f' printf: {1234.123}) = '1_234.12' ) .
+	". digit limiting is by trucation "
+	self assert: (('%_0.2f' printf: {1234.123}) = '1_234.12' ) .
+	self assert: (('%_0.2f' printf: {1234.127}) = '1_234.12' ) .! !
+
+!PrintfFormatStringTest methodsFor: 'as yet unclassified' stamp: 'NM 1/16/2022 00:24:24'!
+test103_UserDefinedThousandAndDecimals
+       ". If the user set nothing number are formatted like this "
+	self assert: (('%_0.2f' printf: {1234.567}) = '1_234.56'  ). 
+	". the underscore may not be liked but it can be userful to re-parse the number,
+	  Perl, Ruby, and recently Python recognize '123_123.12' numbers literals 
+	. here we format the number in the US standard way.
+	"
+	PrintfNumberFormatDescriptor setUserThousandSeparatorTo: $, .
+	self assert: (('%_0.2f' printf: {1234.567}) = '1,234.56'  ).
+	". now let's print the number in the way it is considered 'normal' in Italy, for example " 
+	PrintfNumberFormatDescriptor setUserThousandSeparatorTo: $. .
+	PrintfNumberFormatDescriptor setUserDecimalSeparatorTo: $, .
+	self assert: (('%_0.2f' printf: {1234.567}) = '1.234,56'  ).
+	". and let's put back the default configuaration, since the other test expect that " 
+	PrintfNumberFormatDescriptor setUserThousandSeparatorTo: nil .
+	PrintfNumberFormatDescriptor setUserDecimalSeparatorTo: nil .
+	self assert: (('%_0.2f' printf: {1234.567}) = '1_234.56'  ). 
 	! !
 
-!PrintfStringFormatDescriptor methodsFor: 'printing' stamp: 'NM 8/16/2021 14:40:01'!
-printOn: aStream
-	super printOn: aStream.
-	self printWidthOn: aStream.
-	aStream nextPut: $s
+!PrintfFormatStringTest methodsFor: 'as yet unclassified' stamp: 'NM 8/30/2021 18:39:08'!
+testFprintf
+	| stream expected |
+	stream := String new writeStream.
+	expected := 'Here is a long string "hello world" and the same shortened "hello w       " with left flush.\The new line has a number "42.0"\and a 0-padded limited precision one "0000042.12345".' withNewLines.
+	self assert: expected size equals: (stream f: 'Here is a %s string "%s" and the same shortened "%-14.7s" with left flush.\nThe new line has a number "%e"
+and a 0-padded limited precision one "%013.5e".'
+		printf: #('long' 'hello world' 'hello world' 42.0 42.1234567)).
+	self assert: expected equals: stream contents
 	! !
 
-!PrintStringFormatDescriptor methodsFor: 'printing' stamp: 'NM 8/16/2021 14:41:41'!
-printOn: aStream
-	aStream nextPut: $%.
-	flush == #leftFlush ifTrue: [aStream nextPut: $-].
-	self printWidthOn: aStream.
-	aStream nextPut: $p
+!PrintfFormatStringTest methodsFor: 'as yet unclassified' stamp: 'NM 8/16/2021 14:47:49'!
+testManyArguments
+
+	self assert: 'Here is a long string "hello world" and the same shortened "hello w       " with left flush.
+The new line has a number "42.0" and a 0-padded limited precision one "0000042.12345".' equals: ('Here is a %s string "%s" and the same shortened "%-14.7s" with left flush.\nThe new line has a number "%e" and a 0-padded limited precision one "%013.5e".'
+		printf: #('long' 'hello world' 'hello world' 42.0 42.1234567))
+		! !
+
+!PrintfFormatStringTest methodsFor: 'as yet unclassified' stamp: 'NM 8/16/2021 14:48:00'!
+testOneExponent
+
+	self assert: 'Here is a number "42.0".' equals: ('Here is a number "%e".' printf: 42.0).
 	! !
 
-!PrintfFormatString methodsFor: 'initialize-release' stamp: 'NM 8/30/2021 18:32:22'!
-setFormat: aString
-	| formatStream |
-	"copy actual formatstrings to format"
-	"copy any nonformating text to string"
-	outputStream := (String new: 20) writeStream.
-	formatStream := ((aString copyReplaceAll: '\n' with: (String with: Character newLineCharacter))
-		copyReplaceAll: '\t'
-		with: (String with: Character tab)) readStream.
-	self collectFormatDescriptorsAndStrings: formatStream
+!PrintfFormatStringTest methodsFor: 'as yet unclassified' stamp: 'NM 8/16/2021 14:48:09'!
+testOneExponentAndOneInteger
+
+	self assert: 'Here is a float "42.0" and an integer "42".' equals: ('Here is a float "%e" and an integer "%d".' printf: #(42.0 42)).
+	! !
+
+!PrintfFormatStringTest methodsFor: 'as yet unclassified' stamp: 'NM 8/16/2021 14:48:18'!
+testOneExponentWithLength
+
+	self assert: 'Here is a string "0000042.12345".' equals: ('Here is a string "%013.5e".' printf: 42.1234567).
+	! !
+
+!PrintfFormatStringTest methodsFor: 'as yet unclassified' stamp: 'NM 8/16/2021 14:48:26'!
+testOneInteger
+
+	self assert: 'Here is a number "42".' equals: ('Here is a number "%d".' printf: 42).
+	! !
+
+!PrintfFormatStringTest methodsFor: 'as yet unclassified' stamp: 'NM 8/16/2021 14:48:37'!
+testOneIntegerWithLength
+
+	self assert: 'Here is a string "0000042".' equals: ('Here is a string "%07.7d".' printf: 42).
+	! !
+
+!PrintfFormatStringTest methodsFor: 'as yet unclassified' stamp: 'NM 8/16/2021 14:48:47'!
+testOnePrintPointer
+
+	self assert: 'Here is a pointer "0x12345678".' equals: ('Here is a pointer "%p".' printf: 16r12345678)
+	! !
+
+!PrintfFormatStringTest methodsFor: 'as yet unclassified' stamp: 'NM 8/16/2021 14:48:57'!
+testOnePrintString
+
+	self assert: 'Here is a point "3@4".' equals: ('Here is a point "%P".' printf: 3@4)
+	! !
+
+!PrintfFormatStringTest methodsFor: 'as yet unclassified' stamp: 'NM 8/16/2021 14:49:08'!
+testOneString
+
+	self assert: 'Here is a string "hello world".' equals: ('Here is a string "%s".' printf: 'hello world')
+	! !
+
+!PrintfFormatStringTest methodsFor: 'as yet unclassified' stamp: 'NM 8/16/2021 14:49:19'!
+testOneStringWithLength
+
+	self assert:  'Here is a string "hello world" and another shortened "hello w       ".' equals: ('Here is a string "%s" and another shortened "%-14.7s".' printf: #('hello world' 'hello world'))
+	! !
+
+!PrintfFormatStringTest methodsFor: 'as yet unclassified' stamp: 'NM 8/16/2021 14:49:28'!
+testReturnValue
+
+	self assert: 6+8 equals: ((PrintfFormatString new setFormat: 'hello %ld') printf: {12345678})
 	! !
 
 !Printf methodsFor: 'documentation' stamp: 'NM 1/16/2022 00:42:53'!
@@ -264,6 +348,12 @@ readme
 
 
 "! !
+
+!PrintfFormatDescriptor methodsFor: 'printing' stamp: 'NM 8/16/2021 14:09:40'!
+printOn: aStream
+	aStream nextPut: $%.
+	flush == #leftFlush ifTrue: [aStream nextPut: $-]
+	! !
 
 !PrintfFormatDescriptor methodsFor: 'printing' stamp: 'NM 8/16/2021 14:09:52'!
 printWidthOn: aStream
@@ -465,9 +555,28 @@ initialize
 	
 	! !
 
+!PrintfCharacterFormatDescriptor methodsFor: 'printing' stamp: 'NM 8/16/2021 14:23:11'!
+printOn: aStream
+	super printOn: aStream.
+	self printWidthOn: aStream.
+	aStream nextPut: $c
+	! !
+
 !PrintfCharacterFormatDescriptor methodsFor: 'rendering' stamp: 'NM 8/16/2021 14:23:00'!
 applyOperator: object
 	^ String with: object asCharacter
+	! !
+
+!PrintfNumberFormatDescriptor methodsFor: 'printing' stamp: 'NM 1/15/2022 15:26:57'!
+printOn: aStream
+	Transcript log: '---> called NumFormDescriptor >> printOn: '.
+	super printOn: aStream.
+	thousandSeparate ifTrue: [ aStream nextPut: $_ ]. 
+	padding == $0 ifTrue: [aStream nextPut: $0].
+	radix ifTrue: [aStream nextPut: $#].
+	space ifTrue: [aStream nextPut: $ ].
+	self printWidthOn: aStream.
+	aStream nextPut: operator
 	! !
 
 !PrintfNumberFormatDescriptor methodsFor: 'private' stamp: 'NM 8/16/2021 14:31:04'!
@@ -697,14 +806,14 @@ addThousandSeparator: numberString
 	^ self formatWithUserPreferences: out . 	
 	! !
 
-!PrintfFloatFormatDescriptor methodsFor: 'rendering' stamp: 'NM 1/15/2022 22:31:19'!
+!PrintfFloatFormatDescriptor methodsFor: 'rendering' stamp: 'NM 6/18/2022 11:52:41'!
 applyOperator: object 
 	"Number is the only valid class"
 	| string out |
 	string := self zeroPaddedStringOfBase: (('aA' includes: operator)
 												ifTrue: [16]
 												ifFalse: [10])
-				forFloat: object asFloat.
+				forFloat: object asNumber .
 	string := string copyFrom: 1 to: ((string indexOf: $.) + (precision = 0
 						ifTrue: [-1]
 						ifFalse: [self precision]) min: string size).
@@ -784,6 +893,13 @@ value
 	^value
 	! !
 
+!PrintfStringFormatDescriptor methodsFor: 'printing' stamp: 'NM 8/16/2021 14:40:01'!
+printOn: aStream
+	super printOn: aStream.
+	self printWidthOn: aStream.
+	aStream nextPut: $s
+	! !
+
 !PrintfStringFormatDescriptor methodsFor: 'printing' stamp: 'NM 8/16/2021 14:40:11'!
 printWidthOn: aStream
 	widthDescriptor ifNotNil: [aStream nextPutAll: '.*']
@@ -805,9 +921,29 @@ widthDescriptor: aPrintfNumberFormatDescriptor
 	widthDescriptor := aPrintfNumberFormatDescriptor
 	! !
 
+!PrintStringFormatDescriptor methodsFor: 'printing' stamp: 'NM 8/16/2021 14:41:41'!
+printOn: aStream
+	aStream nextPut: $%.
+	flush == #leftFlush ifTrue: [aStream nextPut: $-].
+	self printWidthOn: aStream.
+	aStream nextPut: $p
+	! !
+
 !PrintStringFormatDescriptor methodsFor: 'rendering' stamp: 'NM 8/16/2021 14:41:55'!
 applyOperator: object
 	^ object printLeanString
+	! !
+
+!PrintfFormatString methodsFor: 'initialize-release' stamp: 'NM 8/30/2021 18:32:22'!
+setFormat: aString
+	| formatStream |
+	"copy actual formatstrings to format"
+	"copy any nonformating text to string"
+	outputStream := (String new: 20) writeStream.
+	formatStream := ((aString copyReplaceAll: '\n' with: (String with: Character newLineCharacter))
+		copyReplaceAll: '\t'
+		with: (String with: Character tab)) readStream.
+	self collectFormatDescriptorsAndStrings: formatStream
 	! !
 
 !PrintfFormatString methodsFor: 'private' stamp: 'NM 8/16/2021 14:45:45'!
@@ -949,142 +1085,6 @@ examples
 	self inform: ('Here is a %s string "%s" and the same shortened "%-14.7s" with left flush.\nThe new line has a number "%e" and a 0-padded limited precision one "%013.5e".'
 		printf: ((Array with: 'long' with: 'hello world' with: 'hello world' with: 42.0) copyWith: 42.1234567)).
 		! !
-
-!PrintfFormatStringTest methodsFor: 'as yet unclassified' stamp: 'NM 1/15/2022 17:22:03'!
-test100_ThousandSeparator
-       ". small numbers are ignored "
-	self assert: (('%_d' printf: {123}) = '123' ) .
-	self assert: (('%_d' printf: {1234}) = '1_234' ) .
-	self assert: (('%_d' printf: {12345678}) = '12_345_678' ) .
-	". very large numbers must be ok "
-	self assert: (('%_d' printf: {123456789123456789}) = '123_456_789_123_456_789' ) .   
-	
-	! !
-
-!PrintfFormatStringTest methodsFor: 'as yet unclassified' stamp: 'NM 1/15/2022 17:24:52'!
-test101_LargeFloat
-       ". this test was added to remember there is an ugly bug here "
-	self assert: ('%.2f' printf: {1.1}) = '1.10' .  
-	self assert: ('%.2f' printf: {12.1}) = '12.10' .  
-	self assert: ('%.2f' printf: {123.1}) = '123.10' . 
-       self assert: ('%.2f' printf: {1234.1}) = '1234.10' .	  
-	self assert: ('%.2f' printf: {12345.1}) = '12345.10' . 
-	self assert: ('%.2f' printf: {123456.1}) = '123456.10' .  
-	". from here on it is broken " 
-	self assert: ('%.2f' printf: {1234567.1}) = '1234567.10'.     ". gives wrongly 1.23"
-	self assert: ('%.2f' printf: {12345678.1}) = '12345678.10'.  ". gives wrongly 1.23"
-
-	! !
-
-!PrintfFormatStringTest methodsFor: 'as yet unclassified' stamp: 'NM 1/15/2022 22:26:12'!
-test102_FloatsWithThousandSeparator
-       ". Testing the print of floating points with thousand separator "
-	self assert: (('%_0.2f' printf: {1234}) = '1_234.00' ) .
-	self assert: (('%_0.2f' printf: {1234.1}) = '1_234.10' ) .
-	self assert: (('%_0.2f' printf: {1234.12}) = '1_234.12' ) .
-	self assert: (('%_0.2f' printf: {1234.123}) = '1_234.12' ) .
-	". digit limiting is by trucation "
-	self assert: (('%_0.2f' printf: {1234.123}) = '1_234.12' ) .
-	self assert: (('%_0.2f' printf: {1234.127}) = '1_234.12' ) .! !
-
-!PrintfFormatStringTest methodsFor: 'as yet unclassified' stamp: 'NM 1/16/2022 00:24:24'!
-test103_UserDefinedThousandAndDecimals
-       ". If the user set nothing number are formatted like this "
-	self assert: (('%_0.2f' printf: {1234.567}) = '1_234.56'  ). 
-	". the underscore may not be liked but it can be userful to re-parse the number,
-	  Perl, Ruby, and recently Python recognize '123_123.12' numbers literals 
-	. here we format the number in the US standard way.
-	"
-	PrintfNumberFormatDescriptor setUserThousandSeparatorTo: $, .
-	self assert: (('%_0.2f' printf: {1234.567}) = '1,234.56'  ).
-	". now let's print the number in the way it is considered 'normal' in Italy, for example " 
-	PrintfNumberFormatDescriptor setUserThousandSeparatorTo: $. .
-	PrintfNumberFormatDescriptor setUserDecimalSeparatorTo: $, .
-	self assert: (('%_0.2f' printf: {1234.567}) = '1.234,56'  ).
-	". and let's put back the default configuaration, since the other test expect that " 
-	PrintfNumberFormatDescriptor setUserThousandSeparatorTo: nil .
-	PrintfNumberFormatDescriptor setUserDecimalSeparatorTo: nil .
-	self assert: (('%_0.2f' printf: {1234.567}) = '1_234.56'  ). 
-	! !
-
-!PrintfFormatStringTest methodsFor: 'as yet unclassified' stamp: 'NM 8/30/2021 18:39:08'!
-testFprintf
-	| stream expected |
-	stream := String new writeStream.
-	expected := 'Here is a long string "hello world" and the same shortened "hello w       " with left flush.\The new line has a number "42.0"\and a 0-padded limited precision one "0000042.12345".' withNewLines.
-	self assert: expected size equals: (stream f: 'Here is a %s string "%s" and the same shortened "%-14.7s" with left flush.\nThe new line has a number "%e"
-and a 0-padded limited precision one "%013.5e".'
-		printf: #('long' 'hello world' 'hello world' 42.0 42.1234567)).
-	self assert: expected equals: stream contents
-	! !
-
-!PrintfFormatStringTest methodsFor: 'as yet unclassified' stamp: 'NM 8/16/2021 14:47:49'!
-testManyArguments
-
-	self assert: 'Here is a long string "hello world" and the same shortened "hello w       " with left flush.
-The new line has a number "42.0" and a 0-padded limited precision one "0000042.12345".' equals: ('Here is a %s string "%s" and the same shortened "%-14.7s" with left flush.\nThe new line has a number "%e" and a 0-padded limited precision one "%013.5e".'
-		printf: #('long' 'hello world' 'hello world' 42.0 42.1234567))
-		! !
-
-!PrintfFormatStringTest methodsFor: 'as yet unclassified' stamp: 'NM 8/16/2021 14:48:00'!
-testOneExponent
-
-	self assert: 'Here is a number "42.0".' equals: ('Here is a number "%e".' printf: 42.0).
-	! !
-
-!PrintfFormatStringTest methodsFor: 'as yet unclassified' stamp: 'NM 8/16/2021 14:48:09'!
-testOneExponentAndOneInteger
-
-	self assert: 'Here is a float "42.0" and an integer "42".' equals: ('Here is a float "%e" and an integer "%d".' printf: #(42.0 42)).
-	! !
-
-!PrintfFormatStringTest methodsFor: 'as yet unclassified' stamp: 'NM 8/16/2021 14:48:18'!
-testOneExponentWithLength
-
-	self assert: 'Here is a string "0000042.12345".' equals: ('Here is a string "%013.5e".' printf: 42.1234567).
-	! !
-
-!PrintfFormatStringTest methodsFor: 'as yet unclassified' stamp: 'NM 8/16/2021 14:48:26'!
-testOneInteger
-
-	self assert: 'Here is a number "42".' equals: ('Here is a number "%d".' printf: 42).
-	! !
-
-!PrintfFormatStringTest methodsFor: 'as yet unclassified' stamp: 'NM 8/16/2021 14:48:37'!
-testOneIntegerWithLength
-
-	self assert: 'Here is a string "0000042".' equals: ('Here is a string "%07.7d".' printf: 42).
-	! !
-
-!PrintfFormatStringTest methodsFor: 'as yet unclassified' stamp: 'NM 8/16/2021 14:48:47'!
-testOnePrintPointer
-
-	self assert: 'Here is a pointer "0x12345678".' equals: ('Here is a pointer "%p".' printf: 16r12345678)
-	! !
-
-!PrintfFormatStringTest methodsFor: 'as yet unclassified' stamp: 'NM 8/16/2021 14:48:57'!
-testOnePrintString
-
-	self assert: 'Here is a point "3@4".' equals: ('Here is a point "%P".' printf: 3@4)
-	! !
-
-!PrintfFormatStringTest methodsFor: 'as yet unclassified' stamp: 'NM 8/16/2021 14:49:08'!
-testOneString
-
-	self assert: 'Here is a string "hello world".' equals: ('Here is a string "%s".' printf: 'hello world')
-	! !
-
-!PrintfFormatStringTest methodsFor: 'as yet unclassified' stamp: 'NM 8/16/2021 14:49:19'!
-testOneStringWithLength
-
-	self assert:  'Here is a string "hello world" and another shortened "hello w       ".' equals: ('Here is a string "%s" and another shortened "%-14.7s".' printf: #('hello world' 'hello world'))
-	! !
-
-!PrintfFormatStringTest methodsFor: 'as yet unclassified' stamp: 'NM 8/16/2021 14:49:28'!
-testReturnValue
-
-	self assert: 6+8 equals: ((PrintfFormatString new setFormat: 'hello %ld') printf: {12345678})
-	! !
 
 !Object methodsFor: '*Printf' stamp: 'NM 8/16/2021 15:08:36'!
 asArgumentArrayForFormatString
