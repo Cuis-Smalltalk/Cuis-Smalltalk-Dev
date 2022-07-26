@@ -53,9 +53,7 @@ Cuis is the common name of a [small animal](https://en.wikipedia.org/wiki/Southe
 ## Setting up Cuis in your machine
 [(back to ToC)](#table-of-contents)
 
-The quickest way to try Cuis (on Windows or MacOS) is by following [Getting started using Mac Finder or Windows Explorer](Documentation/GettingStarted-NoCommandLine.md) .
-
-If you are on a Linux system, or have git available and are comfortable with it, follow [Setting up and starting Cuis Smalltalk](Documentation/GettingStarted.md) .
+Follow [Setting up and starting Cuis Smalltalk](Documentation/GettingStarted.md) .
 
 ## Learning about Cuis Smalltalk
 [(back to ToC)](#table-of-contents)
