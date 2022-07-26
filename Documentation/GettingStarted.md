@@ -81,6 +81,7 @@ Drag Squeak.app to your MyProject folder
 ## For 64 bits Windows ##
 
 Note: User the Git Bash commandline, not the regular Windows commandline
+
 Note: For 32 bits Windows, use ```*_win32x86_*``` vm and the ```*-32.image``` Cuis image.
 
 ### Get and set up an appropriate VM ###
