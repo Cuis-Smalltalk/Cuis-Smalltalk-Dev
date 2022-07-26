@@ -1,10 +1,10 @@
 # Setting up and starting Cuis Smalltalk #
 
-Cuis Smalltalk is available in 64 bits and 32 bits variants. It also available in the older 32 bits V3 (pre Spur) image format. All three of them share the full source code and have essentially the same behavior, providing full portability for your code between them. These instructions are for the recommended format for each system, although most systems support all of them. 
-
 These instructions assume you have the Git code versioning system installed in your system. If you don't have it installed, please install it before you begin. Using Git makes it easy to keep your Cuis updated. It also lets you publish your own code packages. If you are on Windows or Mac, and prefer not using the command line, you might follow [Getting started using Mac Finder or Windows Explorer](GettingStarted-NoCommandLine.md).
 
 If you want to ask any question, or contribute back to the community, please subscribe to the Cuis development mail list at http://cuis-smalltalk.org/mailman/listinfo/cuis-dev_cuis-smalltalk.org , and email us there.
+
+Cuis Smalltalk is available in 64 bits and 32 bits variants. It also available in the older 32 bits V3 (pre Spur) image format. All three of them share the full source code and have essentially the same behavior, providing full portability for your code between them. These instructions are for the recommended format for each system, although most systems support all of them. 
 
 ## For all systems: Create project folder and add Cuis Smalltalk ##
 
@@ -78,8 +78,9 @@ Drag Squeak.app to your MyProject folder
 ./Squeak.app/Contents/MacOS/Squeak Cuis-Smalltalk-Dev/Cuis6.0-5399.image
 ```
 
-## For 64 bits Windows (Git Bash) ##
+## For 64 bits Windows ##
 
+Note: User the Git Bash commandline, not the regular Windows commandline
 Note: For 32 bits Windows, use ```*_win32x86_*``` vm and the ```*-32.image``` Cuis image.
 
 ### Get and set up an appropriate VM ###
