@@ -1,12 +1,10 @@
 # Setting up and starting Cuis Smalltalk #
 
-Cuis Smalltalk is available in 64 bits and 32 bits variants. It also available in the 32 bits V3 (pre Spur) image format. All three of them share the full source code and have essentially the same behavior, providing full portability for your code between them. These instructions are for the recommended format for each system, although most systems support all of them. 
+Cuis Smalltalk is available in 64 bits and 32 bits variants. It also available in the older 32 bits V3 (pre Spur) image format. All three of them share the full source code and have essentially the same behavior, providing full portability for your code between them. These instructions are for the recommended format for each system, although most systems support all of them. 
 
-In general, we recommend using VMs from [OpenSmalltalk GitHub releases](https://github.com/OpenSmalltalk/opensmalltalk-vm/releases/latest). In addition, the [SqueakJS](https://squeak.js.org) JavaScript Squeak VM that can run Cuis.
+These instructions assume you have the Git code versioning system installed in your system. If you don't have it installed, please install it before you begin. Using Git makes it easy to keep your Cuis updated. It also lets you publish your own code packages. If you are on Windows or Mac, and prefer not using the command line, you might follow [Getting started using Mac Finder or Windows Explorer](GettingStarted-NoCommandLine.md).
 
-These instructions assume you have the Git code versioning system installed in your system. This has the advantage to set you up to easily contribute code back to Cuis packages, using Git pull requests. If you prefer not to use Git, see details at the end of this document. If you are on Windows or Mac, and prefer not using the command line, you might follow [Getting started using Mac Finder or Windows Explorer](GettingStarted-NoCommandLine.md).
-
-If you want to contribute back to the community, you can do pull requests to this repo and/or alternatively subscribe to the Cuis development mail list at http://cuis-smalltalk.org/mailman/listinfo/cuis-dev_cuis-smalltalk.org , and email your code there.
+If you want to ask any question, or contribute back to the community, please subscribe to the Cuis development mail list at http://cuis-smalltalk.org/mailman/listinfo/cuis-dev_cuis-smalltalk.org , and email us there.
 
 ## For all systems: Create project folder and add Cuis Smalltalk ##
 

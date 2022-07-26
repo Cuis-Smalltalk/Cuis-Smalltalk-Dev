@@ -1,6 +1,8 @@
 # Quick setup for MacOS and Windows #
 
-What follows are instructions for setting up Cuis on Windows or Mac OS X without using Git or the command line. If you are comfortable with Git, please see [Getting started using Git Bash](GettingStarted.md). This document describes the simplest way to run Cuis on your computer.
+What follows are instructions for setting up Cuis on Windows or Mac OS X without using Git or the command line. It is the simplest way to run Cuis on your computer. The downside is that it doesn't allow updating Cuis later: you'll need to repeat the procedure.
+
+If you plan to keep using Cuis, it is better to follow [Getting started using Git Bash](GettingStarted.md). This way you can pull the git repo to get new updates, or publish your own code packages on GitHub.
 
 ## On Windows ##
 * Create a new folder in your machine using Windows Explorer (don't use an existing folder)
