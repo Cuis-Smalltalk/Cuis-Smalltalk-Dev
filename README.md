@@ -31,7 +31,7 @@ Cuis assumes very little on the underlying platform, and this lets it run out-of
 ## The Philosophy behind Cuis
 [(back to ToC)](#table-of-contents)
 
-What sets Cuis apart from the other members of the Squeak family is the focus on Smalltalk-80 and an active attitude towards system complexity:
+What sets Cuis apart from the other members of the Squeak family is the focus on the original values of the Smalltalk project at Xerox PARC, and an active attitude towards system complexity:
 
 Unbound complexity growth, together with development strategies focused only in the short term, are the worst long term enemies of all software systems. As systems grow older, they usually become more complex. New features are added as layers on top of whatever is below, sometimes without really understanding it, and almost always without modifying it. Complexity and size grow without control. Evolution slows down. Understanding the system becomes harder every day. Bugs are harder to fix. Codebases become huge for no clear reason. At some point, the system can't evolve anymore and becomes "legacy code".
 
@@ -41,7 +41,7 @@ This presentation by Rich Hickey, ["Simple made Easy"](http://www.infoq.com/pres
 
 We follow a set of ideas that started with Jean Piaget's [Constructivism](https://en.wikipedia.org/wiki/Constructivism_(philosophy_of_education)), and were further developed in Seymour Papert's [Mathland](https://en.wikipedia.org/wiki/Experiential_learning). These lead to Alan Kay's Learning Research Group's [Personal Computer for Children of All Ages](http://www.vpri.org/pdf/hc_pers_comp_for_children.pdf), [Personal Dynamic Media](http://www.vpri.org/pdf/m1977001_dynamedia.pdf), i.e. the [Dynabook](http://www.vpri.org/pdf/hc_what_Is_a_dynabook.pdf) and to [Smalltalk-80](https://en.wikipedia.org/wiki/Smalltalk). To us, a Smalltalk system is a Dynabook. A place to experiment and learn, and a medium to express and register the knlowledge we acquire. We understand software development as the activity of learning and documenting knowledge, for us and others to use, and also to be run on a computer. The fact that the computer run is useful, is a consequence of the knowledge being sound and relevant. (Just making it work is _not_ the important part!)
 
-Cuis Smalltalk is our attempt at this challenge. Furthermore, we believe we are doing something else that no other Smalltalk, commercial or open source, does. We attempt to give the true Smalltalk-80 experience, and keep Smalltalk-80 not as legacy software historic significance, but as a live, evolving system. We feel we are the keepers of the Smalltalk-80 heritage, and enablers of the Dynabook experience.
+Cuis Smalltalk is our attempt at this challenge. Furthermore, we believe we are doing something else that no other Smalltalk, commercial or open source, does. We attempt to give a true Smalltalk-80 experience, and keep Smalltalk-80 not just as legacy software historic significance, but as a live, evolving system. We feel we are the keepers of this Smalltalk heritage, and enablers of the Dynabook experience.
 
 Cuis is continuously evolving towards simplicity. Each release is better (i.e. simpler) than the previous one. At the same time, features are enhanced, and any reported bugs fixed. We also adopt recent enhancements from Squeak and share our work with the wider Squeak and Smalltalk community.
 
