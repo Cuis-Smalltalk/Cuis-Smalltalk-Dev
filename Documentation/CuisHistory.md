@@ -41,7 +41,7 @@ http://lists.squeakfoundation.org/pipermail/squeak-dev/2012-May/164142.html
 https://github.com/Cuis-Smalltalk/Cuis-Smalltalk-Dev  
 Adopting GitHub as our code repository greately eases project managing, gives us wider visibility, and protects the future of the project.
 
-## 2016-11-7 - Cuis 5.0 ##
+## 2016-11-7 - Cuis 5.0 - Spur Image Format ##
 The [OpenSmalltalk](http://www.opensmalltalk.org) project keeps developing modern VMs for Open Source Smalltalk systems. We add Cuis images in the new Spur 32 and 64 bits formats to be used with them, in addition to the existing V3 32 bit image for existing VMs. Cuis is the only Smalltalk system that runs with exactly the same source code for the whole system, on 32 and 64 bits, and with many VM flavors and platforms, including:
 - Cog Spur 64 (High Performance 64 bits, jitted, for Intel)  
 - Cog Spur 32 (High Performance 32 bits, jitted, for Intel)  
@@ -53,11 +53,14 @@ So we can run in at least one VM flavor in MacOS, Linux (Intel, ARM), Windows an
 
 All this also means that we don't need to maintain forked code bases to support this wide array of VMs and platforms. Developers of applications and tools need to focus on a single code base and always get platform independence for free.   
 
-## 2019-05-10 TrueType font support ##
+## 2019-05-10 - TrueType font support ##
 100% Smalltalk code. No need for FreeType or any other external library. https://lists.cuis.st/mailman/archives/cuis-dev/2019-May/000184.html
 
-## 2020, 2021 Vector Graphics ##
+## 2020, 2021 - Vector Graphics ##
 Work on Morphic 3, a redesign of Morphic to make it independent of pixel resolution, and a Vector Graphics backend to replace BitBlt started at the same time as the Cuis project. See https://github.com/Cuis-Smalltalk/Cuis-Smalltalk-Dev/blob/master/Documentation/VectorGraphicsAndMorphic3.md . The redesign of Morphic to use floating point local coordinates, and affine transformations as the location for Morphs was done in the Cuis image. The experiments with VectorGraphics were done separatedly. During 2020 and 2021, the implementation of the VectorGraphics Morphic Canvas and Engine matured, and they were added as optional packages to the main Cuis Smalltalk repo. Later, the VectorEngine was added to the official OpenSmalltalk VMs. VectorGraphics became reliable and performant, and can now be used as the main UI for Cuis and applications developed with it.
 
-## 2022-05-10 ## Unicode
+## 2021-12-31 - Cuis 6.0 ##
+The hierarchy of fundamentel Morph classes was reorganized, to make it more meaningful. As this may significantly affect compatibility, a new major version release was done.
+
+## 2022-05-10 - Unicode ##
 Unicode support in Text Editors, Files and Smalltalk selectors and variables. https://lists.cuis.st/mailman/archives/cuis-dev/2022-May/005654.html . Now, after selecting 'Preferences / Use Unicode text', the full range of Unicode characters can be used anywhere, and files are saved in Utf-8 format, including Smalltalk code.
