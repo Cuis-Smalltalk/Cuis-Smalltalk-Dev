@@ -1,8 +1,8 @@
 # A short history of Cuis #
 
-The project is led by Juan Vuletich, who started it 15 years ago, after leading the development of an OS/2 specific VM for Squeak, and leading several Squeak projects. The focus has always been to develop a general purpose Smalltalk system that doesn't include application specific code by default, so it doesn't mandate extra burden on the developer. A friendly and enthusiastic community has formed around it, developing additional code packages and applications.
+The project is led by Juan Vuletich, who started it 18 years ago, after leading the development of an OS/2 specific VM for Squeak, and leading several Squeak projects. The focus has always been to develop a general purpose Smalltalk system that doesn't include application specific code by default, so it doesn't mandate extra burden on the developer. A friendly and enthusiastic community has formed around it, developing additional code packages and applications.
 
-Some landmarks in the project were:
+Some landmarks in the project are:
 
 ## September, 2004 - Etoys free Morphic ##
 This is the point where the Smalltalk image that would later be called Cuis started to diverge from Squeak 3.7. The initial objective was to remove Etoys and other applications, resulting in a bare Morphic Smalltalk system that would not include any application specific code. Work started on September 2004, shortly after Squeak 3.7 was released.  
@@ -49,6 +49,15 @@ The [OpenSmalltalk](http://www.opensmalltalk.org) project keeps developing moder
 - V3 Classic Interpreter (32 bits, portable code. Runs on any processor)  
 - SqueakJS (32 bits, runs in a web browser on any platform)  
 
-So we can run in at least one VM flavor in MacOS, Linux (Intel, ARM), Windows and Web Browsers. With some effort it is possible to run on Android, IOS, RISC OS. In the past, we have also ran on Solaris, OS/2, and bare metal.  
+So we can run in at least one VM flavor in MacOS, Linux (Intel, ARM), Windows and Web Browsers. With some effort it is possible to run on Android, IOS, RISC OS. In the past, we have also ran on Solaris, OS/2, and bare metal.
 
 All this also means that we don't need to maintain forked code bases to support this wide array of VMs and platforms. Developers of applications and tools need to focus on a single code base and always get platform independence for free.   
+
+## 2019-05-10 TrueType font support ##
+100% Smalltalk code. No need for FreeType or any other external library. https://lists.cuis.st/mailman/archives/cuis-dev/2019-May/000184.html
+
+## 2020, 2021 Vector Graphics ##
+Work on Morphic 3, a redesign of Morphic to make it independent of pixel resolution, and a Vector Graphics backend to replace BitBlt started at the same time as the Cuis project. See https://github.com/Cuis-Smalltalk/Cuis-Smalltalk-Dev/blob/master/Documentation/VectorGraphicsAndMorphic3.md . The redesign of Morphic to use floating point local coordinates, and affine transformations as the location for Morphs was done in the Cuis image. The experiments with VectorGraphics were done separatedly. During 2020 and 2021, the implementation of the VectorGraphics Morphic Canvas and Engine matured, and they were added as optional packages to the main Cuis Smalltalk repo. Later, the VectorEngine was added to the official OpenSmalltalk VMs. VectorGraphics became reliable and performant, and can now be used as the main UI for Cuis and applications developed with it.
+
+## 2022-05-10 ## Unicode
+Unicode support in Text Editors, Files and Smalltalk selectors and variables. https://lists.cuis.st/mailman/archives/cuis-dev/2022-May/005654.html . Now, after selecting 'Preferences / Use Unicode text', the full range of Unicode characters can be used anywhere, and files are saved in Utf-8 format, including Smalltalk code.
