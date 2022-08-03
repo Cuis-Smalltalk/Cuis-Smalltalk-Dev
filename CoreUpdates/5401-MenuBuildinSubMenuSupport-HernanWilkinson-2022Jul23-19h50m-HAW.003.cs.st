@@ -72,11 +72,11 @@ addGroupSeparationTo: aMenuMorph
 !DynamicMenuBuilder methodsFor: 'building - private' stamp: 'HAW 7/25/2022 07:20:26'!
 addGroupedItemsFrom: anItemsDefinition toMenu: aMenu 
 
-	| groups |
+	| theGroups |
 	
-	groups := anItemsDefinition groupBy: [ :item | item at: #itemGroup ].
-	groups keys asSortedCollection 
-		do: [ :group | self addItemsOfGroup: (groups at: group) to: aMenu ]
+	theGroups := anItemsDefinition groupBy: [ :item | item at: #itemGroup ].
+	theGroups keys asSortedCollection 
+		do: [ :group | self addItemsOfGroup: (theGroups at: group) to: aMenu ]
 		separatedBy: [ self addGroupSeparationTo: aMenu ].
 ! !
 
