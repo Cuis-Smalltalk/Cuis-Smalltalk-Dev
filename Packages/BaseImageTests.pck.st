@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5397] on 14 July 2022 at 9:52:10 pm'!
+'From Cuis 6.0 [latest update: #5438] on 5 August 2022 at 3:59:47 pm'!
 'Description Inline method test fixes'!
-!provides: 'BaseImageTests' 1 311!
+!provides: 'BaseImageTests' 1 312!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Objects'!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Classes'!
@@ -9412,6 +9412,34 @@ test5ReadWriteUtf8
 	byteArray := self class fileName asFileEntry binaryContents.
 	byteArray2 := self class fileName2 asFileEntry binaryContents.
 	self assert: byteArray = byteArray2! !
+
+!UnicodeTest methodsFor: 'testing' stamp: 'jmv 8/5/2022 15:17:52'!
+testTextConcatenation
+	"
+	UnicodeTest new testTextConcatenation
+	"
+
+	| s1 s2 u1 u2 |
+	s1 _ 'Hello' asByteString.
+	s2 _ ' world' asByteString.
+	u1 _ s1 asUtf8String.
+	u2 _ s2 asUtf8String.
+
+	self assert: s1, u2 equalsExpected: s1, s2.
+	self assert: u1, s2 equalsExpected: s1, s2.
+	self assert: u1, u2 equalsExpected: s1, s2.
+
+	self assert: s1, u2 bold equalsExpected: s1, s2 bold.
+	self assert: u1, s2 bold equalsExpected: s1, s2 bold.
+	self assert: u1, u2 bold equalsExpected: s1, s2 bold.
+
+	self assert: s1 bold, u2 equalsExpected: s1 bold, s2.
+	self assert: u1 bold, s2 equalsExpected: s1 bold, s2.
+	self assert: u1 bold, u2 equalsExpected: s1 bold, s2.
+
+	self assert: s1, u2 bold equalsExpected: s1, s2 bold.
+	self assert: u1, s2 bold equalsExpected: s1, s2 bold.
+	self assert: u1, u2 bold equalsExpected: s1, s2 bold.! !
 
 !UnicodeTest class methodsFor: 'as yet unclassified' stamp: 'hjh 2/12/2013 19:25'!
 fileName
