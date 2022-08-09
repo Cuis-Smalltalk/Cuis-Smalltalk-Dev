@@ -10,21 +10,31 @@ http://lists.squeakfoundation.org/pipermail/squeak-dev/2005-February/087571.html
 http://lists.squeakfoundation.org/pipermail/squeak-dev/2005-February/087756.html  
 http://lists.squeakfoundation.org/pipermail/squeak-dev/2005-February/088763.html  
 http://lists.squeakfoundation.org/pipermail/squeak-dev/2005-February/088787.html  
-http://www.jvuletich.org/Squeak/EToysFreeMorphic/EtoysFreeMorphic.html  
+http://www.jvuletich.org/Squeak/EToysFreeMorphic/EtoysFreeMorphic.html
 
 ## 2007-04-26 - Cheap, High Quality Fonts in Squeak ##
-Until this moment, Squeak only had 1 bit bitmap fonts that used to look reasonably good on cathode ray displays, but looked extremely pixelated on any modern display. I (Juan) developed the techniques to allow high quality, anti-aliased, sub-pixel rendered bitmap fonts using only the existing VM support, including colored and alpha-blended text. I also built several font sets, that were enhanced over time. This work was developed for my forked Squeak image, but was also adopted by Squeak and Pharo.  
-http://www.jvuletich.org/issues/Issue0010.htm  
+Until this moment, Squeak only had 1 bit bitmap fonts that used to look reasonably good on cathode ray displays, but looked extremely pixelated on any modern display. I (Juan) developed the techniques to allow high quality, anti-aliased, sub-pixel rendered bitmap fonts using only the existing VM support, including colored and alpha-blended text. I also built several font sets, that were enhanced over time. This work was developed for my forked Squeak image, but was also adopted by Squeak and Pharo.
+http://www.jvuletich.org/issues/Issue0010.htm
 http://lists.squeakfoundation.org/pipermail/squeak-dev/2007-April/115930.html  
-http://lists.squeakfoundation.org/pipermail/squeak-dev/2007-April/115948.html  
+http://lists.squeakfoundation.org/pipermail/squeak-dev/2007-April/115948.html
+
+## 2007-12-12- Morphic 3 presentation at the Smalltalks 2007 conference ##
+The Cuis project was started to make Morphic 3 possible. Morphic 3 is a VectorGraphics based redesign of the Morphic framework, using only Floating Point local coordinates, Vector Graphics and high quality rendering.
+At the first Smalltalks conference in Buenos Aires, I (Juan) presented the preliminary results of three years of intense research and development.
+Videos and additional details at:
+http://www.jvuletich.org/Morphic3/Smalltalks2007/Smalltalks2007.html
 
 ## 2009-03-27 - Cuis 1.0 ##
-[Ann] Cuis: A new Squeak distribution  
+[Ann] Cuis: A new Squeak distribution
 When it started to be clear that neither Squeak nor Pharo would rebase their projects on my reduced kernel image, I (Juan) decided to turn it into an Open Source, Community Maintained, Smalltalk system, independent of all others.
-http://lists.squeakfoundation.org/pipermail/squeak-dev/2009-March/134986.html  
+http://lists.squeakfoundation.org/pipermail/squeak-dev/2009-March/134986.html
+
+## 2009-11-21 - The Cuis and Morphic 3 projects ##
+First public presentation of Cuis at the Smalltalks conference in Buenos Aires. I also showed Morphic 3 and LightWidgets.
+https://www.youtube.com/watch?v=G8HniJhVxlA
 
 ## 2010-01-4 - Cuis 2.0 ##
-Support for true BlockClosures. Requires a closures-enabled VM.  
+Support for true BlockClosures. Requires a closures-enabled VM.
 When full block closures were implemented in Squeak, and support added to the VM, we ported them to Cuis. At the same time, Cuis kept advancing towards our objectives, and many parts of the system continued to be cleaned and simplified.
 
 ## 2011-01-14 - Cuis 3.0 ##

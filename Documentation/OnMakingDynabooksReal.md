@@ -1,4 +1,4 @@
-# Configuring a Dynabook #
+# Making Dynabooks Real #
 
 A great email message from Alan Kay on the Dynabook. Alan is the father of Smalltalk and the idea of a Personal Computer. The Dynabook is central to Alan's vision on how to help people learn and think better. It is still unrealized, and it is still a central inspiration for Cuis Smalltalk.  
 
