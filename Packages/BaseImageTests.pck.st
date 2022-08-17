@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5457] on 17 August 2022 at 11:34:30 am'!
+'From Cuis 6.0 [latest update: #5458] on 17 August 2022 at 1:24:56 pm'!
 'Description Inline method test fixes'!
-!provides: 'BaseImageTests' 1 313!
+!provides: 'BaseImageTests' 1 314!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Objects'!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Classes'!
@@ -12484,7 +12484,7 @@ aux8D: anArray semaphore: semaphore
 		anArray at: 3 put: true].
 	^anArray at: 4 put: true! !
 
-!ProcessTest methodsFor: 'tests' stamp: 'jar 8/17/2022 11:00:19'!
+!ProcessTest methodsFor: 'tests' stamp: 'jmv 8/17/2022 13:21:12'!
 testAtomicSuspend
 	"Test atomic suspend of foreign processes"
 
@@ -12493,7 +12493,8 @@ testAtomicSuspend
 	p := [sema wait] newProcess.
 	p resume.
 	Processor yield.
-	self shouldnt: [list := p suspendPrimitivelyOrFail] raise: Error.
+	Smalltalk processSuspensionUnblocks ifFalse: [
+		self shouldnt: [list := p suspendPrimitivelyOrFail] raise: Error ].
 	self assert: list == nil.
 ! !
 
@@ -12863,7 +12864,7 @@ testSemaInCriticalWait	"self run: #testSemaInCriticalWait"
 	p terminate.
 	self assert:[(s instVarNamed: #excessSignals) = 0]! !
 
-!SemaphoreTest methodsFor: 'testing' stamp: 'jar 8/15/2022 18:28:35'!
+!SemaphoreTest methodsFor: 'testing' stamp: 'jmv 8/17/2022 13:24:01'!
 testSuspendAndResume
 	"Test the semantics of suspending and resuming a process blocked on a semaphore;
 	Note the difference between #suspend and #suspendAndUnblock.
@@ -12876,7 +12877,10 @@ testSuspendAndResume
 	"suspend removes p from the semaphore but backs up its pc;
 	hence when resumed p reenters the wait state"
 	Processor yield.
-	self assert: p isBlocked.
+	"VMs older than 2022, where #processSuspensionUnblocks answers true,
+	have this incorrect behavior (primitive 88 instead of the corrected 578)"
+	Smalltalk processSuspensionUnblocks ifFalse: [
+		self assert: p isBlocked ].
 	
 	p _ [Semaphore new wait] newProcess.
 	p resume. Processor yield.
