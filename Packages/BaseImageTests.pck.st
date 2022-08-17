@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5438] on 5 August 2022 at 3:59:47 pm'!
+'From Cuis 6.0 [latest update: #5457] on 17 August 2022 at 11:34:30 am'!
 'Description Inline method test fixes'!
-!provides: 'BaseImageTests' 1 312!
+!provides: 'BaseImageTests' 1 313!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Objects'!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Classes'!
@@ -12484,7 +12484,7 @@ aux8D: anArray semaphore: semaphore
 		anArray at: 3 put: true].
 	^anArray at: 4 put: true! !
 
-!ProcessTest methodsFor: 'tests' stamp: 'jmv 11/4/2011 22:17'!
+!ProcessTest methodsFor: 'tests' stamp: 'jar 8/17/2022 11:00:19'!
 testAtomicSuspend
 	"Test atomic suspend of foreign processes"
 
@@ -12494,7 +12494,7 @@ testAtomicSuspend
 	p resume.
 	Processor yield.
 	self shouldnt: [list := p suspendPrimitivelyOrFail] raise: Error.
-	self assert: list == sema.
+	self assert: list == nil.
 ! !
 
 !ProcessTest methodsFor: 'tests' stamp: 'jar 2/1/2022 20:33:44'!
@@ -12540,7 +12540,7 @@ testTerminateInEnsure
 			assert: process isTerminated;
 			assert: count equalsExpected: 11 ]! !
 
-!ProcessTest methodsFor: 'tests' stamp: 'jar 1/17/2022 18:02:13'!
+!ProcessTest methodsFor: 'tests' stamp: 'jar 8/15/2022 14:03:00'!
 testTerminateInTerminate
 	"Terminating a terminator process should unwind both the terminator and its terminatee process"
 	
@@ -12551,14 +12551,30 @@ testTerminateInTerminate
 	terminatee resume. Processor yield.
 	self assert: terminatee isSuspended.
 	self assert: terminator isSuspended.
-	"run terminator and stop inside #terminate, e.g. before executing #suspend in #terminate" 
-	[[:ctx | ctx selectorToSendOrSelf = #suspend] value: terminator suspendedContext] 
-		whileFalse: [terminator step]. 
+	"run terminator and stop inside #terminate" 
+	[[:ctx | ctx selectorToSendOrSelf = #bottomContext] value: terminator suspendedContext] 
+		whileFalse: [terminator step].
 	self assert: terminator isSuspended.
 	terminator terminate.
 	self assert: terminatee isTerminated. 
 	self assert: terminator isTerminated. 
 	self assert: unwound! !
+
+!ProcessTest methodsFor: 'tests' stamp: 'jar 8/15/2022 17:51:47'!
+testTerminateWithDelayInUnwind
+	"Test the process that invoked the termination of another process waits
+	for the other process to finish unwinding."
+	
+	"Insert delay into the unwind block to force rescheduling"
+	
+	| delay p |
+	delay _ Delay forMilliseconds: 10.
+	p _ [[Processor activeProcess suspend] ensure: [delay wait]] newProcess.
+	p resume.
+	Processor yield.
+	self assert: p isSuspended.
+	p terminate.
+	self assert: p isTerminated! !
 
 !ProcessTest methodsFor: 'tests' stamp: 'jmv 7/1/2022 19:56:26'!
 testValueEnsured
@@ -12846,6 +12862,29 @@ testSemaInCriticalWait	"self run: #testSemaInCriticalWait"
 	self assert:[p suspendingList == s].
 	p terminate.
 	self assert:[(s instVarNamed: #excessSignals) = 0]! !
+
+!SemaphoreTest methodsFor: 'testing' stamp: 'jar 8/15/2022 18:28:35'!
+testSuspendAndResume
+	"Test the semantics of suspending and resuming a process blocked on a semaphore;
+	Note the difference between #suspend and #suspendAndUnblock.
+	Note: this test will fail when run with older VMs without primitive suspend 578."
+
+	| p |
+	p _ [Semaphore new wait] newProcess.
+	p resume. Processor yield.
+	p suspend; resume.
+	"suspend removes p from the semaphore but backs up its pc;
+	hence when resumed p reenters the wait state"
+	Processor yield.
+	self assert: p isBlocked.
+	
+	p _ [Semaphore new wait] newProcess.
+	p resume. Processor yield.
+	p suspendAndUnblock; resume.
+	"suspendAndUnblock just removes p from the semaphore;
+	hence when resumed p simply proceeds"
+	Processor yield.
+	self assert: p isTerminated! !
 
 !SemaphoreTest methodsFor: 'testing' stamp: 'jmv 11/4/2011 22:12'!
 testWaitAndWaitTimeoutTogether
