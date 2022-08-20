@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5458] on 17 August 2022 at 1:24:56 pm'!
-'Description Inline method test fixes'!
-!provides: 'BaseImageTests' 1 314!
+'From Cuis 6.0 [latest update: #5461] on 20 August 2022 at 5:24:44 pm'!
+'Description Inline method and inline temp test fixes'!
+!provides: 'BaseImageTests' 1 315!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Objects'!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Classes'!
@@ -27424,6 +27424,28 @@ test31InlineTemporaryUsedAfterAssignmentInBlock
 	
 ! !
 
+!InlineTemporaryVariableTest methodsFor: 'tests - successful' stamp: 'FB 8/18/2022 19:05:35'!
+test32InlineTemporaryAfterBlockWhenNotReferencedByIt
+
+	|classToRefactor originalSource methodToRefactorName tempVarToInline refactoring expectedNewSourceCode |
+	
+	classToRefactor  := self createClassNamed: self classToRefactor.
+	tempVarToInline := 't2'.
+	methodToRefactorName := 'm1'.
+	originalSource := methodToRefactorName,' | b t1 t2 | b := [ t1 := 30. 15.]. t2 := 20. ^b2 value: 10 + t2'.
+	classToRefactor compile: originalSource.
+	
+	refactoring := InlineTemporaryVariable named: tempVarToInline atUsageInterval: (40 to: 41)
+		 inMethod: classToRefactor >> methodToRefactorName asSymbol.
+	
+	refactoring apply.
+	
+	expectedNewSourceCode := methodToRefactorName,' | b t1 | b := [ t1 := 30. 15.]. ^b2 value: 10 + 20'.
+	self assert: expectedNewSourceCode equals: (classToRefactor >> methodToRefactorName asSymbol) sourceCode
+	
+	
+! !
+
 !InlineTemporaryVariableTest methodsFor: 'tests - validations' stamp: 'FB 12/28/2021 20:02:39'!
 test01VariableToInlineCanNotBeEmpty
 
@@ -27454,8 +27476,8 @@ test02VariableToInlineMustExistInSelector
 		 inMethod: classToRefactor >> methodToRefactorName asSymbol.]
 	 failsWith: [InlineTemporaryVariable selectionIsNotATemporaryVariableErrorMessage].! !
 
-!InlineTemporaryVariableTest methodsFor: 'tests - validations' stamp: 'FB 3/25/2021 21:08:20'!
-test19CanNotRefactorTemporaryWhenUsedInBlockSurroundedWithAssignments
+!InlineTemporaryVariableTest methodsFor: 'tests - validations' stamp: 'FB 7/12/2022 19:02:45'!
+test19CanNotRefactorTemporaryWhenAssignedAfterBeingReferencedInBlock
 
 	| classToRefactor originalSource methodToRefactorName tempVarToInline refactoring |
 	
@@ -27468,13 +27490,15 @@ test19CanNotRefactorTemporaryWhenUsedInBlockSurroundedWithAssignments
 	refactoring := InlineTemporaryVariable named: tempVarToInline atUsageInterval: (12 to: 13)
 		 inMethod: classToRefactor >> methodToRefactorName asSymbol.
 	
-	[refactoring apply] on: Error
-		do: [:error | self assert: InlineTemporaryVariable temporaryUsedInBlockSurroundedWithAssignmentsErrorMessage equals: error messageText ]
+	[refactoring apply. self fail] 
+		on: Error
+		do: [:error | self assert: InlineTemporaryVariable temporaryAssignedAfterUsedInBlockErrorMessage 
+			equals: error messageText ]
 	
 	
 ! !
 
-!InlineTemporaryVariableTest methodsFor: 'tests - validations' stamp: 'FB 12/21/2021 19:36:22'!
+!InlineTemporaryVariableTest methodsFor: 'tests - validations' stamp: 'FB 7/12/2022 18:07:21'!
 test25CanNotRefactorTemporaryFromDeclarationWhenThereAreMultipleAssignments
 
 	| classToRefactor originalSource methodToRefactorName tempVarToInline refactoring |
@@ -27488,13 +27512,15 @@ test25CanNotRefactorTemporaryFromDeclarationWhenThereAreMultipleAssignments
 	refactoring := InlineTemporaryVariable named: tempVarToInline atUsageInterval: (6 to: 7)
 		 inMethod: classToRefactor >> methodToRefactorName asSymbol.
 	
-	[refactoring apply] on: Error
-		do: [:error | self assert: InlineTemporaryVariable moreThanOneAssignmentErrorMessage equals: error messageText ]
+	[refactoring apply. self fail.] 
+		on: Error
+		do: [:error | self assert: InlineTemporaryVariable moreThanOneAssignmentErrorMessage 
+			equals: error messageText ]
 	
 	
 ! !
 
-!InlineTemporaryVariableTest methodsFor: 'tests - validations' stamp: 'FB 1/8/2022 13:07:57'!
+!InlineTemporaryVariableTest methodsFor: 'tests - validations' stamp: 'FB 7/12/2022 18:07:26'!
 test28CanNotRefactorTemporaryFromDeclarationWhenVariableIsReferencedButNotAssigned
 
 	| classToRefactor originalSource methodToRefactorName tempVarToInline refactoring |
@@ -27508,8 +27534,10 @@ test28CanNotRefactorTemporaryFromDeclarationWhenVariableIsReferencedButNotAssign
 	refactoring := InlineTemporaryVariable named: tempVarToInline atUsageInterval: (6 to: 7)
 		 inMethod: classToRefactor >> methodToRefactorName asSymbol.
 	
-	[refactoring apply] on: Error
-		do: [:error | self assert: InlineTemporaryVariable assignmentNotFoundErrorMessage equals: error messageText ]
+	[refactoring apply. self fail.] 
+		on: Error
+		do: [:error | self assert: InlineTemporaryVariable assignmentNotFoundErrorMessage 
+			equals: error messageText ]
 	
 	
 ! !
