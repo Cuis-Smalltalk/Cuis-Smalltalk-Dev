@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5461] on 20 August 2022 at 5:24:44 pm'!
+'From Cuis 6.0 [latest update: #5467] on 22 August 2022 at 2:39:41 pm'!
 'Description Inline method and inline temp test fixes'!
-!provides: 'BaseImageTests' 1 315!
+!provides: 'BaseImageTests' 1 316!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Objects'!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Classes'!
@@ -12604,14 +12604,12 @@ testValueEnsured
 			assert: process isTerminated;
 			assert: count equalsExpected: 11 ]! !
 
-!ProcessorTest methodsFor: 'as yet unclassified' stamp: 'jmv 4/17/2013 12:08'!
+!ProcessorTest methodsFor: 'as yet unclassified' stamp: 'jmv 8/22/2022 14:38:31'!
 testGrabProcessor
 	"
 	ProcessorTest new testGrabProcessor
 	"
-	| done consistentState tries updates observations timeForAThousand iterationsFor50MSecs semaphore waitStart waited totalWait |
-	timeForAThousand _ [ self wasteTime: 1000 ] timeToRun.
-	iterationsFor50MSecs _ 50 * 1000 // timeForAThousand.
+	| done consistentState tries updates observations semaphore waitStart waited totalWait delay |
 	consistentState _ true.
 	tries _ 50.
 	updates _ 0.
@@ -12622,7 +12620,7 @@ testGrabProcessor
 			semaphore wait.
 			[
 				consistentState _ false.
-				self wasteTime: iterationsFor50MSecs atRandom.	"process for some time between 0 and 50 mSecs"
+				self wasteTime: 50 atRandom.	"process for some time between 0 and 50 mSecs"
 				updates _ updates + 1.
 				consistentState _ true
 			] grabProcessor
@@ -12630,12 +12628,13 @@ testGrabProcessor
 		done _ true
 	] forkAt: Processor activeProcess priority -1.
 
+	delay _ Delay forMilliseconds: 5.
 	observations _ 0.
 	totalWait _ 0.
 	[ done ] whileFalse: [
 		semaphore signal.
 		waitStart _ Time localMillisecondClock.
-		(Delay forMilliseconds: 25) wait.
+		delay wait.
 		waited _ Time localMillisecondClock - waitStart.
 		totalWait _ totalWait + waited.
 		observations _ observations + 1.
@@ -12648,68 +12647,16 @@ testGrabProcessor
 	self
 		assert: observations = tries
 		description: 'Too few observations done. It seems as if the low priority process was was never suspended'.
-	"Min observed value is 26. Mean seems to be around 32. Max observed value was 52"
 	self
-		assert: (1.0 * totalWait / observations) < 60
+		assert: (1.0 * totalWait / observations) < 40	"Mean value should be around 25"
 		description: 'The low priority process was not preempted at the end of #grabProcessor'! !
 
-!ProcessorTest methodsFor: 'as yet unclassified' stamp: 'jmv 4/17/2013 12:08'!
+!ProcessorTest methodsFor: 'as yet unclassified' stamp: 'jmv 8/22/2022 14:36:30'!
 testGrabProcessorOnlyForNoTimeout
 	"
 	ProcessorTest new testGrabProcessorOnlyForNoTimeout
 	"
-	| done consistentState tries updates observations timeForAThousand iterationsFor50MSecs semaphore waitStart waited totalWait |
-	timeForAThousand _ [ self wasteTime: 1000 ] timeToRun.
-	iterationsFor50MSecs _ 50 * 1000 // timeForAThousand.
-	consistentState _ true.
-	tries _ 50.
-	updates _ 0.
-	done _ false.
-	semaphore _ Semaphore new.
-	[
-		tries timesRepeat: [
-			semaphore wait.
-			[
-				consistentState _ false.
-				self wasteTime: iterationsFor50MSecs atRandom.	"process for some time between 0 and 50 mSecs"
-				updates _ updates + 1.
-				consistentState _ true
-			] grabProcessorOnlyFor: 1000
-		].
-		done _ true
-	] forkAt: Processor activeProcess priority -1.
-
-	observations _ 0.
-	totalWait _ 0.
-	[ done ] whileFalse: [
-		semaphore signal.
-		waitStart _ Time localMillisecondClock.
-		(Delay forMilliseconds: 25) wait.
-		waited _ Time localMillisecondClock - waitStart.
-		totalWait _ totalWait + waited.
-		observations _ observations + 1.
-		self assert: consistentState description: 'The low priority process was preempted in inconsistent state!!'.
-	].
-
-	self
-		assert: (updates = tries)
-		description: 'Too few updates done. It seems as if the low priority process was not allowed to finish processing'.
-	self
-		assert: (observations = tries)
-		description: 'Too few observations done. It seems as if the low priority process was was never suspended'.
-	"Min observed value is 26. Mean seems to be around 32. Max observed value was 52"
-	self
-		assert: (1.0 * totalWait / observations) <60
-		description: 'The low priority process was not preempted right after #grabProcessor'! !
-
-!ProcessorTest methodsFor: 'as yet unclassified' stamp: 'jmv 4/17/2013 12:08'!
-testGrabProcessorOnlyForTimeout
-	"
-	1 to: 40 do: [ :i | i print. ProcessorTest new testGrabProcessorOnlyForTimeout ]
-	"
-	| done consistentState tries updates observations timeForAThousand iterationsFor50MSecs semaphore waitStart waited totalWait consistentCount inconsistentCount |
-	timeForAThousand _ [ self wasteTime: 1000 ] timeToRun.
-	iterationsFor50MSecs _ 50 * 1000 // timeForAThousand.
+	| done consistentState tries updates observations semaphore waitStart waited totalWait delay consistentCount inconsistentCount |
 	consistentState _ true.
 	tries _ 50.
 	updates _ 0.
@@ -12722,7 +12669,65 @@ testGrabProcessorOnlyForTimeout
 			semaphore wait.
 			[
 				consistentState _ false.
-				self wasteTime: iterationsFor50MSecs atRandom.	"process for some time between 0 and 50 mSecs"
+				self wasteTime: 50 atRandom.	"process for some time between 0 and 50 mSecs"
+				updates _ updates + 1.
+				consistentState _ true
+			] grabProcessorOnlyFor: 1000
+		].
+		done _ true
+	] forkAt: Processor activeProcess priority -1.
+
+	delay _ Delay forMilliseconds: 5.
+	observations _ 0.
+	totalWait _ 0.
+	[ done ] whileFalse: [
+		semaphore signal.
+		waitStart _ Time localMillisecondClock.
+		delay wait.
+		waited _ Time localMillisecondClock - waitStart.
+		totalWait _ totalWait + waited.
+		observations _ observations + 1.
+		consistentState
+			ifTrue: [ consistentCount _ consistentCount + 1 ]
+			ifFalse: [ inconsistentCount _ inconsistentCount + 1 ].
+		self assert: consistentState description: 'The low priority process was preempted in inconsistent state!!'.
+	].
+
+	self
+		assert: (updates = tries)
+		description: 'Too few updates done. It seems as if the low priority process was not allowed to finish processing'.
+	self
+		assert: (observations = tries)
+		description: 'Too few observations done. It seems as if the low priority process was was never suspended'.
+	self
+		assert: (1.0 * totalWait / observations) < 40	"Mean value should be around 25"
+		description: 'The low priority process was not preempted right after #grabProcessor'.
+	self
+		assert: consistentCount = tries
+		description: 'Should have finished without timeout every time'.
+	self
+		assert: inconsistentCount = 0
+		description: 'Should have never timeout-ed'! !
+
+!ProcessorTest methodsFor: 'as yet unclassified' stamp: 'jmv 8/22/2022 14:37:17'!
+testGrabProcessorOnlyForTimeout
+	"
+	1 to: 40 do: [ :i | i print. ProcessorTest new testGrabProcessorOnlyForTimeout ]
+	"
+	| done consistentState tries updates observations semaphore waitStart waited totalWait consistentCount inconsistentCount delay |
+	consistentState _ true.
+	tries _ 50.
+	updates _ 0.
+	consistentCount _ 0.
+	inconsistentCount _ 0.
+	done _ false.
+	semaphore _ Semaphore new.
+	[
+		tries timesRepeat: [
+			semaphore wait.
+			[
+				consistentState _ false.
+				self wasteTime: 50 atRandom.	"process for some time between 0 and 50 mSecs"
 				updates _ updates + 1.
 				consistentState _ true
 			] grabProcessorOnlyFor: 25 							"About half the time should preempt it before it finishes"
@@ -12730,12 +12735,13 @@ testGrabProcessorOnlyForTimeout
 		done _ true
 	] forkAt: Processor activeProcess priority -1.
 
+	delay _ Delay forMilliseconds: 5.
 	observations _ 0.
 	totalWait _ 0.
 	[ done ] whileFalse: [
 		semaphore signal.
 		waitStart _ Time localMillisecondClock.
-		(Delay forMilliseconds: 15) wait.
+		delay wait.
 		waited _ Time localMillisecondClock - waitStart.
 		totalWait _ totalWait + waited.
 		observations _ observations + 1.
@@ -12743,7 +12749,7 @@ testGrabProcessorOnlyForTimeout
 			ifTrue: [ consistentCount _ consistentCount + 1 ]
 			ifFalse: [ inconsistentCount _ inconsistentCount + 1 ].
 		"If it needs time to finish, at low priority, allow for it."
-		[ consistentState ] whileFalse: [ (Delay forMilliseconds: 2) wait ].
+		[ consistentState ] whileFalse: [ delay wait ].
 	].
 
 	self
@@ -12753,23 +12759,21 @@ testGrabProcessorOnlyForTimeout
 		assert: observations = tries
 		description: 'Too few observations done. It seems as if the low priority process was was never suspended'.
 	self
-		assert: (1.0 * totalWait / observations) < 40	"Mean value should be around 25"
+		assert: (1.0 * totalWait / observations) < 40									"Mean value should be around 25"
 		description: 'The low priority process was not preempted after the tiemout'.
 	self
-		assert: consistentCount > 3
+		assert: consistentCount > 10    									"Expected value is around 25"
 		description: 'It seems the low priority process finished always before the timeout'.
 	self
-		assert: inconsistentCount > 5
+		assert: inconsistentCount > 10   									"Expected value is around 25"
 		description: 'It seems the low priority process was not preempted at the timeout'! !
 
-!ProcessorTest methodsFor: 'as yet unclassified' stamp: 'jmv 4/17/2013 12:08'!
+!ProcessorTest methodsFor: 'as yet unclassified' stamp: 'jmv 8/22/2022 14:38:58'!
 testValueUnpreemptively
 	"
 	ProcessorTest new testValueUnpreemptively
 	"
-	| done consistentState tries updates observations timeForAThousand iterationsFor50MSecs semaphore waitStart waited totalWait |
-	timeForAThousand _ [ self wasteTime: 1000 ] timeToRun.
-	iterationsFor50MSecs _ 50 * 1000 // timeForAThousand.
+	| done consistentState tries updates observations semaphore waitStart waited totalWait delay |
 	consistentState _ true.
 	tries _ 50.
 	updates _ 0.
@@ -12780,7 +12784,7 @@ testValueUnpreemptively
 			semaphore wait.
 			[
 				consistentState _ false.
-				self wasteTime: iterationsFor50MSecs atRandom.	"process for some time between 0 and 50 mSecs"
+				self wasteTime: 50 atRandom.	"process for some time between 0 and 50 mSecs"
 				updates _ updates + 1.
 				consistentState _ true
 			] valueUnpreemptively
@@ -12788,12 +12792,13 @@ testValueUnpreemptively
 		done _ true
 	] forkAt: Processor activeProcess priority -1.
 
+	delay _ Delay forMilliseconds: 5.
 	observations _ 0.
 	totalWait _ 0.
 	[ done ] whileFalse: [
 		semaphore signal.
 		waitStart _ Time localMillisecondClock.
-		(Delay forMilliseconds: 25) wait.
+		delay wait.
 		waited _ Time localMillisecondClock - waitStart.
 		totalWait _ totalWait + waited.
 		observations _ observations + 1.
@@ -12806,14 +12811,16 @@ testValueUnpreemptively
 	self
 		assert: observations = tries
 		description: 'Too few observations done. It seems as if the low priority process was was never suspended'.
-	"Min observed value is 26. Mean seems to be around 32. Max observed value was 52"
 	self
-		assert: (1.0 * totalWait / observations) < 60
+		assert: (1.0 * totalWait / observations) < 40	"Mean value should be around 25"
 		description: 'The low priority process was not preempted at the end of #grabProcessor'! !
 
-!ProcessorTest methodsFor: 'private' stamp: 'jmv 9/22/2009 09:42'!
-wasteTime: iterations
-	iterations timesRepeat: [1.23 asString asNumber]! !
+!ProcessorTest methodsFor: 'private' stamp: 'jmv 8/22/2022 14:20:49'!
+wasteTime: milliseconds
+	| t0 |
+	t0 _ Time localMillisecondClock.
+	[ t0 + milliseconds > Time localMillisecondClock ] whileTrue: [
+		1.23 asString asNumber ]! !
 
 !SemaphoreTest methodsFor: 'private' stamp: 'tlk 5/5/2006 13:26'!
 criticalError
