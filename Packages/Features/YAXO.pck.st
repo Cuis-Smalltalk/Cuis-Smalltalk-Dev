@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4894] on 28 September 2021 at 5:03:58 pm'!
+'From Cuis 6.0 [latest update: #5467] on 5 September 2022 at 4:21:43 pm'!
 'Description '!
-!provides: 'YAXO' 1 19!
+!provides: 'YAXO' 1 20!
 SystemOrganization addCategory: 'YAXO'!
 
 
@@ -260,25 +260,6 @@ token stream is used by XMLparser to generate XMLdocument tree!
 name
 	^name! !
 
-!SAXHandler methodsFor: 'lexical' stamp: 'mir 8/11/2000 18:52'!
-comment: commentString
-	"This call corresponds to the Java SAX ext call
-	comment(char[] ch, int start, int length)."! !
-
-!XMLNode methodsFor: 'printing' stamp: 'mir 1/17/2002 15:45'!
-printOn: stream
-	self printXMLOn: (XMLWriter on: stream)! !
-
-!XMLElement methodsFor: 'accessing' stamp: 'sd 5/25/2003 18:25'!
-name
-	^ self qualifiedName! !
-
-!XMLWriter methodsFor: 'writing xml' stamp: 'mir 12/8/2000 17:56'!
-comment: aString
-	self startComment.
-	self stream nextPutAll: aString.
-	self endComment! !
-
 !DTDEntityDeclaration methodsFor: 'accessing' stamp: 'mir 1/17/2002 15:25'!
 name: aString
 	name _ aString asSymbol! !
@@ -401,6 +382,11 @@ initialize
 !DTDParameterEntityDeclaration class methodsFor: 'accessing' stamp: 'mir 11/16/2000 20:27'!
 leadIn
 	^'%'! !
+
+!SAXHandler methodsFor: 'lexical' stamp: 'mir 8/11/2000 18:52'!
+comment: commentString
+	"This call corresponds to the Java SAX ext call
+	comment(char[] ch, int start, int length)."! !
 
 !SAXHandler methodsFor: 'lexical' stamp: 'mir 8/11/2000 18:53'!
 endEntity: entityName
@@ -837,6 +823,10 @@ validateAttributes: attributeList
 					ifTrue: [self parseError: 'Attributes ' , attrName , ' and ' , alias , ':' , localName , ' are aliased to namespace ' , (self namespaceURIOf: namespace) ]]]]! !
 
 !XMLNode methodsFor: 'printing' stamp: 'mir 1/17/2002 15:45'!
+printOn: stream
+	self printXMLOn: (XMLWriter on: stream)! !
+
+!XMLNode methodsFor: 'printing' stamp: 'mir 1/17/2002 15:45'!
 printXMLOn: writer
 	self subclassResponsibility! !
 
@@ -1054,9 +1044,9 @@ attributes
 characterData
 	^self contentString! !
 
-!XMLElement methodsFor: 'accessing' stamp: 'mir 1/18/2001 16:27'!
+!XMLElement methodsFor: 'accessing' stamp: 'jmv 9/3/2022 22:56:43'!
 contentString
-	^(self contents size == 1
+	^(self contents size = 1
 		and: [self contents first isKindOf: XMLStringNode])
 		ifTrue: [self contents first string]
 		ifFalse: ['']! !
@@ -1069,6 +1059,10 @@ contentStringAt: entityName
 contents
 	contents ifNil: [contents _ OrderedCollection new].
 	^contents! !
+
+!XMLElement methodsFor: 'accessing' stamp: 'sd 5/25/2003 18:25'!
+name
+	^ self qualifiedName! !
 
 !XMLElement methodsFor: 'accessing' stamp: 'sd 5/25/2003 18:25'!
 tag
@@ -1333,27 +1327,27 @@ next
 			^nextChar].
 	! !
 
-!XMLTokenizer methodsFor: 'streaming' stamp: 'jmv 12/12/2017 22:05:08'!
+!XMLTokenizer methodsFor: 'streaming' stamp: 'jmv 9/3/2022 23:02:39'!
 nextTrimmedBlanksUpTo: delimiter
 	| resultStream nextChar |
 	resultStream := WriteStream on: (String new: 10).
 	nextChar := nil.
-	[(nextChar := self next) == delimiter]
+	[(nextChar := self next) = delimiter]
 		whileFalse: [
 			nextChar isSeparator ifFalse: [
 				resultStream nextPut: nextChar]].
-	nextChar == delimiter
+	nextChar = delimiter
 		ifFalse: [self parseError: 'XML no delimiting ' , delimiter printString , ' found'].
 	^resultStream contents
 ! !
 
-!XMLTokenizer methodsFor: 'streaming' stamp: 'mir 5/14/2003 18:44'!
+!XMLTokenizer methodsFor: 'streaming' stamp: 'jmv 9/3/2022 23:00:39'!
 nextUpTo: delimiter
 	| resultStream nextChar |
 	resultStream _ WriteStream on: (String new: 10).
-	[self atEnd or: [(nextChar _ self next) == delimiter]]
+	[self atEnd or: [(nextChar _ self next) = delimiter]]
 		whileFalse: [resultStream nextPut: nextChar].
-	nextChar == delimiter
+	nextChar = delimiter
 		ifFalse: [self parseError: 'XML no delimiting ' , delimiter printString , ' found'].
 	^resultStream contents
 ! !
@@ -1406,13 +1400,13 @@ skipSeparators
 			self checkNestedStream.
 			self skipSeparators]! !
 
-!XMLTokenizer methodsFor: 'streaming' stamp: 'mir 1/16/2002 10:42'!
+!XMLTokenizer methodsFor: 'streaming' stamp: 'jmv 9/3/2022 23:01:00'!
 skipUpTo: delimiter
 	| nextChar |
 	self unpeek.
-	[self atEnd or: [(nextChar _ self next) == delimiter]]
+	[self atEnd or: [(nextChar _ self next) = delimiter]]
 		whileFalse: [].
-	nextChar == delimiter
+	nextChar = delimiter
 		ifFalse: [self parseError: 'XML no delimiting ' , delimiter printString , ' found']
 ! !
 
@@ -1429,23 +1423,23 @@ unpeek
 			self stream skip: -1.
 			peekChar _ nil]! !
 
-!XMLTokenizer methodsFor: 'tokenizing' stamp: 'jmv 9/27/2021 15:52:14'!
+!XMLTokenizer methodsFor: 'tokenizing' stamp: 'jmv 9/3/2022 22:42:37'!
 checkAndExpandReference: parsingContext
 	| referenceString nextChar |
 	nextChar _ self peek.
 	self validating
 		ifFalse: [^nil].
-	nextChar == $&
+	nextChar = $&
 		ifTrue: [
 			self next.
-			self peek == $# ifTrue: [
+			self peek = $# ifTrue: [
 				^self pushStream: (ReadStream on: self nextCharReference asString)].
 			referenceString _ self nextLiteral.
-			self next == $;
+			self next = $;
 				ifFalse: [self errorExpected: ';'].
 			self handleEntity: referenceString in: parsingContext ]
 		ifFalse: [
-			((nextChar == $%
+			((nextChar = $%
 				and: [self parsingMarkup])
 				and: [parsingContext == #entityValue])
 				ifTrue: [
@@ -1463,13 +1457,13 @@ conditionalInclude: conditionalKeyword
 		ifTrue: [^false].
 	^self conditionalInclude: (self parameterEntity: conditionalKeyword) value! !
 
-!XMLTokenizer methodsFor: 'tokenizing' stamp: 'mir 6/5/2003 16:32'!
+!XMLTokenizer methodsFor: 'tokenizing' stamp: 'jmv 9/3/2022 22:37:32'!
 nextAttributeInto: attributes namespaces: namespaces
 
 	| attrName attrValue |
 	attrName _ self nextName.
 	self skipSeparators.
-	self next == $=
+	self next = $=
 		ifFalse: [self errorExpected: '='].
 	self skipSeparators.
 	attrValue _ self nextAttributeValue.
@@ -1481,27 +1475,27 @@ nextAttributeInto: attributes namespaces: namespaces
 			ifFalse: [namespaces at: attrName put: attrValue]]
 		ifFalse: [attributes at: attrName put: attrValue]! !
 
-!XMLTokenizer methodsFor: 'tokenizing' stamp: 'jmv 9/27/2021 15:53:46'!
+!XMLTokenizer methodsFor: 'tokenizing' stamp: 'jmv 9/3/2022 22:59:22'!
 nextAttributeValue
 	| delimiterChar attributeValueStream nextChar nextPeek referenceString entity entityValue c |
 	delimiterChar _ self next.
-	(delimiterChar == $"
-		or: [delimiterChar == $'])
+	(delimiterChar = $"
+		or: [delimiterChar = $'])
 		ifFalse: [self errorExpected: 'Attribute value delimiter expected.'].
 	attributeValueStream _ attributeBuffer reset.
 	[
 		nextPeek _ nextChar _ self next.
 		nextChar ifNil: [self errorExpected: 'Character expected.'].
-		nextChar == $&
+		nextChar = $&
 			ifTrue: [
-				self peek == $#
+				self peek = $#
 					ifTrue: [
 						nextPeek _ nil.
 						nextChar _ self nextCharReference]
 					ifFalse: [
 						referenceString _ self nextLiteral.
 						c _ self next.
-						c == $;
+						c = $;
 							ifFalse: [
 								"self errorExpected: ';'" "Just ignore errors. consider badformed xml as a simple literal string"
 								attributeValueStream
@@ -1524,7 +1518,7 @@ nextAttributeValue
 											ifFalse: [
 												self pushStream: (ReadStream on: entityValue asString).
 												nextPeek _ nextChar _ self next]]]]].
-		nextPeek == delimiterChar
+		nextPeek = delimiterChar
 	]
 		whileFalse: [
 			nextChar ifNotNil: [
@@ -1543,7 +1537,7 @@ nextCDataContent
 	self handleCData: cdata
 ! !
 
-!XMLTokenizer methodsFor: 'tokenizing' stamp: 'mir 12/6/2000 14:29'!
+!XMLTokenizer methodsFor: 'tokenizing' stamp: 'jmv 9/3/2022 22:43:37'!
 nextCDataOrConditional
 
 	| nextChar conditionalKeyword |
@@ -1551,54 +1545,54 @@ nextCDataOrConditional
 	self next.
 	self skipSeparators.
 	nextChar _ self peek.
-	nextChar == $%
+	nextChar = $%
 		ifTrue: [
 			self checkAndExpandReference: (self parsingMarkup ifTrue: [#dtd] ifFalse: [#content]).
 			conditionalKeyword _ self nextLiteral.
 			self skipSeparators.
-			^self next == $[
+			^self next = $[
 				ifTrue: [
 						self skipSeparators.
 						self nextIncludeSection: (self conditionalInclude: conditionalKeyword)]
 				ifFalse: [self errorExpected: '[' ]].
 
-	nextChar == $C
+	nextChar = $C
 		ifTrue: [
 			^self nextLiteral = 'CDATA'
-				ifTrue: [self peek == $[
+				ifTrue: [self peek = $[
 							ifTrue: [self nextCDataContent]
 							ifFalse: [self errorExpected: '[' ]]
 				ifFalse: [self errorExpected: 'CData']].
 	self errorExpected: 'CData or declaration'
 ! !
 
-!XMLTokenizer methodsFor: 'tokenizing' stamp: 'jmv 9/27/2021 15:39:57'!
+!XMLTokenizer methodsFor: 'tokenizing' stamp: 'jmv 9/3/2022 22:42:01'!
 nextCharReference
 	"See http://en.wikipedia.org/wiki/Numeric_character_reference
 	Note: If the NCR can not be represented as a Cuis Character, answer a String with an NCR."
 	| base asciiCodeOrCodePoint |
 
-	self next == $#
+	self next = $#
 		ifFalse: [self errorExpected: 'character reference'].
-	base _ self peek == $x
+	base _ self peek = $x
 		ifTrue: [
 			self next.
 			16]
 		ifFalse: [10].
 
 	asciiCodeOrCodePoint _ [self readNumberBase: base] on: Error do: [:ex | self errorExpected: 'Number.'].
-	self next == $;
+	self next = $;
 		ifFalse: [self errorExpected: '";"'].
 
 	^(Character codePoint: asciiCodeOrCodePoint trySimilar: true) ifNil: [
 		String streamContents: [ :strm | String addUnicodeCodePoint: asciiCodeOrCodePoint to: strm hex: (base=16) ]].! !
 
-!XMLTokenizer methodsFor: 'tokenizing' stamp: 'mir 11/28/2000 17:54'!
+!XMLTokenizer methodsFor: 'tokenizing' stamp: 'jmv 9/3/2022 22:38:15'!
 nextComment
 	| string |
 	"Skip first -"
 	self next.
-	self next == $-
+	self next = $-
 		ifFalse: [self errorExpected: 'second comment $-'].
 	string _ self nextUpToAll: '-->'.
 	self handleComment: string! !
@@ -1625,42 +1619,42 @@ nextEntity
 		ifTrue: [self nextNode]
 		ifFalse: [self nextPCData]! !
 
-!XMLTokenizer methodsFor: 'tokenizing' stamp: 'jmv 9/27/2021 15:54:29'!
+!XMLTokenizer methodsFor: 'tokenizing' stamp: 'jmv 9/3/2022 23:00:03'!
 nextEntityValue
 	| delimiterChar entityValueStream nextChar nextPeek referenceString entity entityValue |
 	delimiterChar _ self next.
-	(delimiterChar == $"
-		or: [delimiterChar == $'])
+	(delimiterChar = $"
+		or: [delimiterChar = $'])
 		ifFalse: [self errorExpected: 'Entity value delimiter expected.'].
 
 	entityValueStream _ WriteStream on: (String new).
 	[
 	nextPeek _ nextChar _ self peek.
 	nextChar ifNil: [self errorExpected: 'Character expected.'].
-	nextChar == $&
+	nextChar = $&
 		ifTrue: [
 			self next.
-			self peek == $#
+			self peek = $#
 				ifTrue: [
 					nextPeek _ nil.
 					nextChar _ self nextCharReference]
 				ifFalse: [
 					referenceString _ self nextLiteral.
-					self next == $;
+					self next = $;
 						ifFalse: [self errorExpected: ';'].
 					entity _ self entity: referenceString.
 					entityValue _ entity valueForContext: #entityValue.
 					self pushStream: (ReadStream on: entityValue asString).
 					nextPeek _ nextChar _ self next]]
 		ifFalse: [
-			nextChar == $%
+			nextChar = $%
 				ifTrue: [
 					self skipSeparators.
 					referenceString _ self nextLiteral.
 					nextChar _ self handleEntity: referenceString in: #entityValue.
 					nextPeek _ nextChar _ self next]
 				ifFalse: [self next]].
-	nextPeek == delimiterChar]
+	nextPeek = delimiterChar]
 		whileFalse: [
 			nextChar ifNotNil: [
 				nextChar isString
@@ -1679,20 +1673,20 @@ nextIncludeSection: parseSection
 		ifTrue: [
 			self pushStream: (ReadStream on: section)]! !
 
-!XMLTokenizer methodsFor: 'tokenizing' stamp: 'jmv 9/27/2021 15:55:03'!
+!XMLTokenizer methodsFor: 'tokenizing' stamp: 'jmv 9/3/2022 22:40:04'!
 nextLiteral
 	| resultStream nextChar resultString |
 	resultStream _ (String new: 10) writeStream.
 	((nextChar _ self peek) isLetter
-		or: [nextChar == $_])
+		or: [nextChar = $_])
 		ifFalse: [self errorExpected: 'Name literal.'].
 	[nextChar _ self peek.
 	(LiteralChars at: nextChar asciiValue+1)
 		ifTrue: [
-			nextChar == $&
+			nextChar = $&
 				ifTrue: [
 					nextChar _ self next.
-					self peek == $#
+					self peek = $#
 						ifTrue: [resultStream nextPutAll: self nextCharReference asString]
 						ifFalse: [^resultStream contents]]
 				ifFalse: [
@@ -1702,11 +1696,11 @@ nextLiteral
 				ifTrue: [self errorExpected: 'Name literal']
 				ifFalse: [^resultString]]] repeat! !
 
-!XMLTokenizer methodsFor: 'tokenizing' stamp: 'mir 3/14/2003 23:10'!
+!XMLTokenizer methodsFor: 'tokenizing' stamp: 'jmv 9/3/2022 22:40:10'!
 nextName
 	| nextChar |
 	nameBuffer reset.
-	self peek == $.
+	self peek = $.
 		ifTrue: [self malformedError: 'Character expected.'].
 	[(nextChar _ self peek)
 		ifNil: [self errorExpected: 'Character expected.'].
@@ -1715,25 +1709,25 @@ nextName
 	^self fastStreamStringContents: nameBuffer
 "	^nameBuffer contents"! !
 
-!XMLTokenizer methodsFor: 'tokenizing' stamp: 'mir 11/28/2000 17:52'!
+!XMLTokenizer methodsFor: 'tokenizing' stamp: 'jmv 9/3/2022 22:40:23'!
 nextNode
 	| nextChar |
 	"Skip < "
 	self next.
 	nextChar _ self peek.
-	nextChar == $!! ifTrue: [
+	nextChar = $!! ifTrue: [
 		"Skip !!"
 		self next.
 		nextChar _ self peek.
-		nextChar == $- ifTrue: [^self nextComment].
-		nextChar == $[ ifTrue: [^self nextCDataOrConditional].
+		nextChar = $- ifTrue: [^self nextComment].
+		nextChar = $[ ifTrue: [^self nextCDataOrConditional].
 		^self parsingMarkup
 			ifTrue: [self nextMarkupDeclaration]
 			ifFalse: [self nextDocType]].
-	nextChar == $? ifTrue: [^self nextPI].
+	nextChar = $? ifTrue: [^self nextPI].
 	^self nextTag! !
 
-!XMLTokenizer methodsFor: 'tokenizing' stamp: 'jmv 9/27/2021 15:50:20'!
+!XMLTokenizer methodsFor: 'tokenizing' stamp: 'jmv 9/3/2022 22:43:20'!
 nextPCData
 	| resultStream nextChar referenceString entity entityValue nextPeek p |
 	resultStream _ (String new: 10) writeStream.
@@ -1741,7 +1735,7 @@ nextPCData
 		ifFalse: [
 			[
 				p _ self peek.
-				p isNil or: [p == $<]
+				p isNil or: [p = $<]
 				]
 				whileFalse: [resultStream nextPut: self next].
 			^self handlePCData: resultStream contents].
@@ -1749,16 +1743,16 @@ nextPCData
 	[
 	nextPeek _ nextChar _ self peek.
 	nextChar ifNil: [self errorExpected: 'Character expected.'].
-	nextChar == $&
+	nextChar = $&
 		ifTrue: [
 			self next.
-			self peek == $#
+			self peek = $#
 				ifTrue: [
 					nextPeek _ nil.
 					nextChar _ self nextCharReference]
 				ifFalse: [
 					referenceString _ self nextLiteral.
-					self next == $;
+					self next = $;
 						ifFalse: [self errorExpected: ';'].
 					entity _ self entity: referenceString.
 					entityValue _ entity valueForContext: #content.
@@ -1773,8 +1767,8 @@ nextPCData
 								ifFalse: [
 									self pushStream: (ReadStream on: entityValue asString).
 									nextPeek _ nextChar _ self peek]]]]
-		ifFalse: [nextPeek == $< ifFalse: [self next]].
-	nextPeek == $<]
+		ifFalse: [nextPeek = $< ifFalse: [self next]].
+	nextPeek = $<]
 		whileFalse: [
 			nextChar ifNotNil: [
 				nextChar isString
@@ -1802,7 +1796,7 @@ nextPubidLiteral
 nextSystemLiteral
 	^self nextAttributeValue! !
 
-!XMLTokenizer methodsFor: 'tokenizing' stamp: 'mir 6/5/2003 22:37'!
+!XMLTokenizer methodsFor: 'tokenizing' stamp: 'jmv 9/3/2022 22:40:54'!
 nextTag
 	| tagName attributes nextChar namespaces |
 	(self peek = $/)
@@ -1811,12 +1805,12 @@ nextTag
 	self skipSeparators.
 	attributes _ Dictionary new: 33.
 	namespaces _ Dictionary new: 5.
-	[(nextChar _ self peek) == $> or: [nextChar == $/]] whileFalse: [
+	[(nextChar _ self peek) = $> or: [nextChar = $/]] whileFalse: [
 		self checkAndExpandReference: #content.
 		self nextAttributeInto: attributes namespaces: namespaces.
 		self skipSeparators.].
 	self handleStartTag: tagName attributes: attributes namespaces: namespaces.
-	self next == $/
+	self next = $/
 		ifTrue: [
 			self handleEndTag: tagName.
 			self next].
@@ -1835,17 +1829,17 @@ nextWhitespace
 	resultString _ resultStream contents.
 	resultString isEmpty ifFalse: [self handleWhitespace: resultString].! !
 
-!XMLTokenizer methodsFor: 'tokenizing' stamp: 'mir 6/5/2003 14:52'!
+!XMLTokenizer methodsFor: 'tokenizing' stamp: 'jmv 9/3/2022 22:41:29'!
 nextXMLDecl
-	| attributes nextChar namespaces |
+	| attributes namespaces |
 	self skipSeparators.
 	attributes _ Dictionary new.
 	namespaces _ Dictionary new.
-	[(nextChar _ self peek) == $?] whileFalse: [
+	[self peek = $?] whileFalse: [
 		self nextAttributeInto: attributes namespaces: namespaces.
 		self skipSeparators.].
 	self next.
-	self next == $>
+	self next = $>
 		ifFalse: [self errorExpected: '> expected.'].
 	self handleXMLDecl: attributes namespaces: namespaces! !
 
@@ -1865,35 +1859,35 @@ nextDocType
 			^self nextDocTypeDecl].
 	self errorExpected: 'markup declaration, not ' , declType printString! !
 
-!XMLTokenizer methodsFor: 'tokenizing dtd' stamp: 'mir 1/17/2002 17:29'!
+!XMLTokenizer methodsFor: 'tokenizing dtd' stamp: 'jmv 9/3/2022 22:42:58'!
 nextDocTypeDecl
 	| nextChar |
 	self skipSeparators.
 	self nextLiteral.
 	self skipSeparators.
-	self peek == $[
+	self peek = $[
 		ifFalse: [[nextChar _ self peek.
-				nextChar == $> or: [nextChar == $[ ]] whileFalse: [self next]].
-	self peek == $[
+				nextChar = $> or: [nextChar = $[ ]] whileFalse: [self next]].
+	self peek = $[
 		ifTrue: [
 			self next.
 			[self skipSeparators.
-			self peek == $]] whileFalse: [
+			self peek = $]] whileFalse: [
 				self checkAndExpandReference: #dtd.
 				self nextNode].
-			self next == $] 
+			self next = $] 
 				ifFalse: [self errorExpected: ']' ]].
 	self skipSeparators.
-	self next == $>
+	self next = $>
 		ifFalse: [self errorExpected: '>' ].
 
 	self endParsingMarkup! !
 
-!XMLTokenizer methodsFor: 'tokenizing dtd' stamp: 'mir 1/17/2002 14:24'!
+!XMLTokenizer methodsFor: 'tokenizing dtd' stamp: 'jmv 9/3/2022 22:38:53'!
 nextEntityDeclaration
 	| entityName entityDef referenceClass reference |
 	self skipSeparators.
-	referenceClass _ self peek == $%
+	referenceClass _ self peek = $%
 		ifTrue: [
 			self next.
 			self skipSeparators.
@@ -1901,7 +1895,7 @@ nextEntityDeclaration
 		ifFalse: [DTDEntityDeclaration].
 	entityName _ self nextLiteral.
 	self skipSeparators.
-	entityDef _ (self peek == $" or: [self peek == $'])
+	entityDef _ (self peek = $" or: [self peek = $'])
 		ifTrue: [self nextEntityValue]
 		ifFalse: [self nextExternalId].
 	self skipUpTo: $>.
@@ -1909,7 +1903,7 @@ nextEntityDeclaration
 	reference registerIn: self.
 	^reference! !
 
-!XMLTokenizer methodsFor: 'tokenizing dtd' stamp: 'jmv 10/27/2015 18:09'!
+!XMLTokenizer methodsFor: 'tokenizing dtd' stamp: 'jmv 9/3/2022 22:39:10'!
 nextExternalId
 	| extDefType systemId entry |
 	extDefType _ self nextLiteral.
@@ -1918,7 +1912,7 @@ nextExternalId
 			self skipSeparators.
 			self nextPubidLiteral.
 			self skipSeparators.
-			self peek == $>
+			self peek = $>
 				ifFalse: [
 					systemId _ self nextSystemLiteral]].
 
@@ -2546,6 +2540,12 @@ cdata: aString
 	self startCData.
 	self stream nextPutAll: aString.
 	self endCData! !
+
+!XMLWriter methodsFor: 'writing xml' stamp: 'mir 12/8/2000 17:56'!
+comment: aString
+	self startComment.
+	self stream nextPutAll: aString.
+	self endComment! !
 
 !XMLWriter methodsFor: 'writing xml' stamp: 'mir 12/8/2000 17:56'!
 endEmptyTag: tagName
