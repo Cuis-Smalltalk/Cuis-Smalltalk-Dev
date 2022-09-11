@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5478] on 11 September 2022 at 6:32:03 pm'!
-'Description Inline temp test fixes'!
-!provides: 'BaseImageTests' 1 317!
+'From Cuis 6.0 [latest update: #5479] on 11 September 2022 at 6:53:07 pm'!
+'Description Inline method test fixes'!
+!provides: 'BaseImageTests' 1 318!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Objects'!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Classes'!
@@ -26554,7 +26554,7 @@ y := 2.
 1 + (x + y).]. ^b value'.
 	self assert: expectedNewSourceCode equals: (senderClass >> methodWithUsagesSelector) sourceCode.! !
 
-!InlineMethodTest methodsFor: 'tests - successful' stamp: 'FB 6/12/2022 19:28:17'!
+!InlineMethodTest methodsFor: 'tests - successful' stamp: 'FB 9/2/2022 18:31:08'!
 test19InlineMethodIndentation
 
 	| methodToInlineSource methodToInlineSelector nodeToInline methodWithUsagesSelector methodWithUsagesSource
@@ -26589,7 +26589,7 @@ test19InlineMethodIndentation
 	expectedNewSourceCode := methodWithUsagesSelector,' | b |
 		b := [
 			| x y |
-				x := 1.
+	x := 1.
 			y := 2.
 			1 + (x + y).
 		].
