@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5467] on 22 August 2022 at 2:39:41 pm'!
-'Description Inline method and inline temp test fixes'!
-!provides: 'BaseImageTests' 1 316!
+'From Cuis 6.0 [latest update: #5478] on 11 September 2022 at 6:32:03 pm'!
+'Description Inline temp test fixes'!
+!provides: 'BaseImageTests' 1 317!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Objects'!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Classes'!
@@ -26884,6 +26884,34 @@ test32InlineMethodUsedReturningWithDotInMessageNode
 	refactoring apply.
 	
 	expectedNewSourceCode := methodWithUsagesSelector,' 10 + 10. ^20.'.
+	self assert: expectedNewSourceCode equals: (senderClass >> methodWithUsagesSelector) sourceCode.! !
+
+!InlineMethodTest methodsFor: 'tests - successful' stamp: 'FB 8/27/2022 21:07:50'!
+test33InlineMethodReturningMessageNodeDoesNotAddParenthesesWhenNotNeeded
+
+	| methodToInlineSource methodToInlineSelector nodeToInline methodWithUsagesSelector methodWithUsagesSource
+	 implementorClass senderClass expectedNewSourceCode refactoring |
+	
+	implementorClass  := self createClassNamed: self implementorClass.
+	senderClass  := self createClassNamed: self senderClass.
+	methodToInlineSelector := 'm1' asSymbol.
+	methodToInlineSource := methodToInlineSelector, '^5 + 10'.
+	implementorClass compile: methodToInlineSource.
+	
+	methodWithUsagesSelector := 'm2' asSymbol.
+	methodWithUsagesSource := methodWithUsagesSelector, ' | res | res := self m1. ^res'.
+	senderClass compile: methodWithUsagesSource.
+	
+	nodeToInline := self messageNodeReferenceOf: senderClass inMethod: methodWithUsagesSelector atIndex: 24.
+	
+	refactoring := InlineMethod 
+		from: implementorClass >> methodToInlineSelector 
+		intoSendersAndUsages: (Array with: nodeToInline)
+		removeMethod: true.
+	
+	refactoring apply.
+	
+	expectedNewSourceCode := methodWithUsagesSelector,' | res | res := 5 + 10. ^res'.
 	self assert: expectedNewSourceCode equals: (senderClass >> methodWithUsagesSelector) sourceCode.! !
 
 !InlineMethodTest methodsFor: 'class factory' stamp: 'FB 11/22/2021 17:09:44'!
