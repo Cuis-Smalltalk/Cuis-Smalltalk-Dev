@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5479] on 11 September 2022 at 6:53:07 pm'!
-'Description Inline method test fixes'!
-!provides: 'BaseImageTests' 1 318!
+'From Cuis 6.0 [latest update: #5481] on 12 September 2022 at 11:58:43 am'!
+'Description Inline temp new test'!
+!provides: 'BaseImageTests' 1 319!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Objects'!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Classes'!
@@ -27459,8 +27459,8 @@ test31InlineTemporaryUsedAfterAssignmentInBlock
 	
 ! !
 
-!InlineTemporaryVariableTest methodsFor: 'tests - successful' stamp: 'FB 8/18/2022 19:05:35'!
-test32InlineTemporaryAfterBlockWhenNotReferencedByIt
+!InlineTemporaryVariableTest methodsFor: 'tests - successful' stamp: 'FB 9/11/2022 20:39:21'!
+test32InlineTemporaryUsedAfterBlockWhenNotReferencedByIt
 
 	|classToRefactor originalSource methodToRefactorName tempVarToInline refactoring expectedNewSourceCode |
 	
@@ -27477,8 +27477,6 @@ test32InlineTemporaryAfterBlockWhenNotReferencedByIt
 	
 	expectedNewSourceCode := methodToRefactorName,' | b t1 | b := [ t1 := 30. 15.]. ^b2 value: 10 + 20'.
 	self assert: expectedNewSourceCode equals: (classToRefactor >> methodToRefactorName asSymbol) sourceCode
-	
-	
 ! !
 
 !InlineTemporaryVariableTest methodsFor: 'tests - validations' stamp: 'FB 12/28/2021 20:02:39'!
@@ -27572,6 +27570,28 @@ test28CanNotRefactorTemporaryFromDeclarationWhenVariableIsReferencedButNotAssign
 	[refactoring apply. self fail.] 
 		on: Error
 		do: [:error | self assert: InlineTemporaryVariable assignmentNotFoundErrorMessage 
+			equals: error messageText ]
+	
+	
+! !
+
+!InlineTemporaryVariableTest methodsFor: 'tests - validations' stamp: 'FB 9/11/2022 20:27:01'!
+test33InlineTemporaryFromReferenceAfterAssignmentInBlock
+
+	|classToRefactor originalSource methodToRefactorName tempVarToInline refactoring |
+	
+	classToRefactor  := self createClassNamed: self classToRefactor.
+	tempVarToInline := 'a'.
+	methodToRefactorName := 'm1'.
+	originalSource := methodToRefactorName,' | a | a := 1. 10 > 9 ifTrue: [a := 10]. ^a.'.
+	classToRefactor compile: originalSource.
+	
+	refactoring := InlineTemporaryVariable named: tempVarToInline atUsageInterval: (45 to: 45)
+		 inMethod: classToRefactor >> methodToRefactorName asSymbol.
+	
+	[refactoring apply. self fail.] 
+		on: Error
+		do: [:error | self assert: InlineTemporaryVariable temporaryIsAssignedInBlockBeforeReferenceErrorMessage 
 			equals: error messageText ]
 	
 	
