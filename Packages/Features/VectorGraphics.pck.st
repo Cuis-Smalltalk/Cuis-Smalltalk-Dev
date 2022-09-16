@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5171] on 15 June 2022 at 12:29:27 pm'!
+'From Cuis 6.0 [latest update: #5485] on 16 September 2022 at 9:49:17 am'!
 'Description '!
-!provides: 'VectorGraphics' 1 355!
+!provides: 'VectorGraphics' 1 356!
 !requires: 'Cuis-Base' 60 5160 nil!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: 'VectorGraphics-Kernel'!
@@ -1023,13 +1023,18 @@ fileReaderServicesForFileEntry: filename suffix: suffix
 
 	^#()! !
 
-!TrueTypeFontFamily class methodsFor: 'instance creation' stamp: 'jmv 6/14/2020 01:04:18'!
-read: aDirectoryEntry
+!TrueTypeFontFamily class methodsFor: 'instance creation' stamp: 'jmv 9/16/2022 09:33:12'!
+readAdditionalFonts
+
+	^TrueTypeFontFamily readAllTrueTypeFontsIn: DirectoryEntry smalltalkImageDirectory / 'TrueTypeFonts'! !
+
+!TrueTypeFontFamily class methodsFor: 'instance creation' stamp: 'jmv 9/16/2022 09:32:30'!
+readAllTrueTypeFontsIn: aDirectoryEntry
 	"
 	TrueTypeFontFamily read: '/home/juan/Downloads/DejaVu2.37/dejavu-fonts-ttf-2.37/ttf/' asDirectoryEntry
 	"
 	| readFamilyNames |
-	readFamilyNames _ TTFontDescription read: aDirectoryEntry.
+	readFamilyNames _ TTFontDescription readTrueTypeFontsIn: aDirectoryEntry.
 	readFamilyNames do: [ :familyName |
 		| ttDescriptions baseTTDescription family |
 		ttDescriptions _ TTFontDescription withFamilyName: familyName.
@@ -1040,11 +1045,6 @@ read: aDirectoryEntry
 				family addTTFontDescription: ttfDesc ]].
 		FontFamily addFamily: family ].
 	^readFamilyNames! !
-
-!TrueTypeFontFamily class methodsFor: 'instance creation' stamp: 'jmv 6/14/2020 01:02:48'!
-readAdditionalFonts
-
-	^TrueTypeFontFamily read: DirectoryEntry smalltalkImageDirectory / 'TrueTypeFonts'! !
 
 !TrueTypeFontFamily class methodsFor: 'instance creation' stamp: 'jmv 5/11/2022 10:25:29'!
 readTrueTypeFontEntry: ttFontFileEntry
@@ -3973,7 +3973,7 @@ privateFrameReverseGlobalRect: rect borderWidth: borderWidth
 		combinationRule: Form reverse;
 		frameRect: rect borderWidth: borderWidth! !
 
-!VectorCanvas class methodsFor: 'class initialization' stamp: 'jmv 2/21/2022 12:17:18'!
+!VectorCanvas class methodsFor: 'class initialization' stamp: 'jmv 9/16/2022 09:33:17'!
 initialize
 	| family folder |
 	(Smalltalk at: #VectorEngineWithPlugin) isPluginAvailable ifFalse: [
@@ -3981,7 +3981,7 @@ initialize
 	UISupervisor whenUIinSafeState: [
 		(FontFamily familyNamed: FontFamily defaultFamilyName) isTrueTypeFontFamily ifFalse: [
 			folder _ DirectoryEntry smalltalkImageDirectory / 'TrueTypeFonts' / 'DejaVu' / 'DejaVuSans'.
-			family _ FontFamily familyNamed: (TrueTypeFontFamily read: folder) anyOne.
+			family _ FontFamily familyNamed: (TrueTypeFontFamily readAllTrueTypeFontsIn: folder) anyOne.
 			PreferenceSet setDefaultFont: family familyName.
 			FontFamily enableTrueTypeFontsOnly ].
 		(VectorEngineWithPlugin isPluginAvailable
@@ -7015,8 +7015,8 @@ widthOfUtf8Byte1: aByte1 b2: aByte2OrNil b3: aByte3OrNil b4: aByte4OrNil useST80
 	advanceWidth _ contourDataForUtf8 at: i.
 	^ advanceWidth / letterMTopSideBearing.! !
 
-!TTFontDescription class methodsFor: 'instance creation' stamp: 'jmv 6/16/2020 18:35:35'!
-read: aDirectoryEntry
+!TTFontDescription class methodsFor: 'instance creation' stamp: 'jmv 9/16/2022 09:35:56'!
+readTrueTypeFontsIn: aDirectoryEntry
 	"
 	TTFontDescription read: DirectoryEntry smalltalkImageDirectory / 'TrueTypeFonts'
 	"
@@ -7030,6 +7030,14 @@ read: aDirectoryEntry
 			(Descriptions at: ttf familyName ifAbsentPut: [ Dictionary new]) at: ttf emphasis put: ttf.
 			readFamilyNames add: ttf familyName ]
 		matches: [ :file | '*.ttf' match: file name ].
+	aDirectoryEntry
+		allFilesDo: [ :file | | ttc |
+			ttc _ TTFontReader readTTCFrom: file binaryContents.
+			ttc do: [ :eachTtf |
+				eachTtf folderName: file parent name.
+				(Descriptions at: eachTtf familyName ifAbsentPut: [ Dictionary new]) at: eachTtf emphasis put: eachTtf.
+				readFamilyNames add: eachTtf familyName ]]
+		matches: [ :file | '*.ttc' match: file name ].
 	^readFamilyNames! !
 
 !TTFontDescription class methodsFor: 'instance accessing' stamp: 'jmv 5/7/2019 09:18:33'!
@@ -7541,6 +7549,35 @@ readFrom: fontData fromOffset: offset
 	Correct this before making any use of the kernPairs data."
 	fontDescription setKernPairs: kernPairs.! !
 
+!TTFontReader methodsFor: 'public' stamp: 'jmv 9/16/2022 09:20:19'!
+readTTCFrom: fontData
+	"
+	Answer an Array of TTFontDescription.
+	Note: The purpose of TTC is completely defeated: there will be no memory savings, as each
+		TTFontDescription will include the glyph data for all the glyphs it includes.
+		Actually sharing glyph data between TTFontDescriptions needs some work (jmv, 16-Sep-2022).
+	https://docs.fileformat.com/font/ttc/
+	https://docs.microsoft.com/en-us/typography/opentype/spec/otff#font-collections
+	"
+	| offset tag majorVersion minorVersion numFonts fontDescriptions |
+	tag _ fontData copyFrom: 1 to: 4.
+	tag = `'ttcf' asUtf8Bytes` ifFalse: [
+		^self error:'This TTF Collection does not have a correct header'].
+	majorVersion _ fontData unsignedShortAt: 5 bigEndian: true.
+	minorVersion _ fontData unsignedShortAt: 7 bigEndian: true.
+	numFonts _ fontData unsignedLongAt: 9 bigEndian: true.
+	(majorVersion = 1 and: [ minorVersion = 0 ]) ifFalse: [
+		^self error:'This TTF Collection has an unsupported header version'].
+	fontDescriptions _ Array new: numFonts.
+	1 to: numFonts do: [ :i |
+		fontDescription _ TTFontDescription new.
+		offset _ fontData unsignedLongAt: i*4+9 bigEndian: true.
+		self readFrom: fontData fromOffset: offset.
+		fontDescriptions at: i put: fontDescription.
+		fontDescription _ nil. "To avoid any confusion"
+	].
+	^fontDescriptions! !
+
 !TTFontReader methodsFor: 'public' stamp: 'jmv 1/18/2020 15:13:49'!
 readTTFFrom: aByteArray
 	"Read the raw font byte data"
@@ -7752,6 +7789,11 @@ readGlyphYCoords: entry glyph: glyph nContours: nContours flags: flags endPoints
 			contour points at: (j - startPoint + 1) putY: yValue.
 		].
 		startPoint _ endPoint + 1 ]! !
+
+!TTFontReader class methodsFor: 'instance creation' stamp: 'jmv 9/16/2022 09:13:36'!
+readTTCFrom: aByteArray
+
+	^self new readTTCFrom: aByteArray! !
 
 !TTFontReader class methodsFor: 'instance creation' stamp: 'jmv 1/18/2020 14:18:14'!
 readTTFFrom: aByteArray
@@ -8123,6 +8165,12 @@ widthIn: aTTFontDescription useST80Glyphs: aBoolean
 
 	^ aTTFontDescription widthOfCharacter: self useST80Glyphs: aBoolean! !
 
+!UnicodeCodePoint methodsFor: '*VectorGraphics-TrueType' stamp: 'jmv 5/5/2022 12:04:16'!
+widthIn: aTTFontDescription useST80Glyphs: aBoolean
+	"Double dispatch"
+
+	^ aTTFontDescription widthOfCodePoint: value useST80Glyphs: aBoolean! !
+
 !String methodsFor: '*VectorGraphics-displaying' stamp: 'jmv 5/2/2022 17:00:10'!
 displayOnBitBltCanvasEngine: engine from: startIndex to: stopIndex at: p font: aTrueTypeFont color: color
 	"Double Dispatch"
@@ -8148,12 +8196,6 @@ displayOnVectorEngine: engine from: startIndex to: stopIndex at: p font: aTrueTy
 		color: color
 		scale: aTrueTypeFont pointSize
 		preventMirroring: true.! !
-
-!UnicodeCodePoint methodsFor: '*VectorGraphics-TrueType' stamp: 'jmv 5/5/2022 12:04:16'!
-widthIn: aTTFontDescription useST80Glyphs: aBoolean
-	"Double dispatch"
-
-	^ aTTFontDescription widthOfCodePoint: value useST80Glyphs: aBoolean! !
 
 !Utf32String methodsFor: '*VectorGraphics-displaying' stamp: 'jmv 5/5/2022 10:49:46'!
 displayOnBitBltCanvasEngine: engine from: startIndex to: stopIndex at: p font: aTrueTypeFont color: color
