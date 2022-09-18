@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5485] on 16 September 2022 at 9:49:17 am'!
+'From Cuis 6.0 [latest update: #5485] on 18 September 2022 at 6:57:32 pm'!
 'Description '!
-!provides: 'VectorGraphics' 1 356!
+!provides: 'VectorGraphics' 1 357!
 !requires: 'Cuis-Base' 60 5160 nil!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: 'VectorGraphics-Kernel'!
@@ -1014,11 +1014,11 @@ isTrueTypeFontFamily
 baseTTFontDescription: aTTFontDescription
 	^ self new baseTTFontDescription: aTTFontDescription! !
 
-!TrueTypeFontFamily class methodsFor: 'instance creation' stamp: 'KenD 4/22/2020 14:29:05'!
+!TrueTypeFontFamily class methodsFor: 'instance creation' stamp: 'jmv 9/18/2022 18:55:19'!
 fileReaderServicesForFileEntry: filename suffix: suffix
 	"FileList buttons that read a TrueType font on contents."
 
-	(#( 'ttf' ) includes: suffix) ifTrue: [
+	(#( 'ttf' 'ttc') includes: suffix) ifTrue: [
 		^ { self serviceReadTTFont } ].
 
 	^#()! !
@@ -1046,23 +1046,28 @@ readAllTrueTypeFontsIn: aDirectoryEntry
 		FontFamily addFamily: family ].
 	^readFamilyNames! !
 
-!TrueTypeFontFamily class methodsFor: 'instance creation' stamp: 'jmv 5/11/2022 10:25:29'!
+!TrueTypeFontFamily class methodsFor: 'instance creation' stamp: 'jmv 9/18/2022 18:54:37'!
 readTrueTypeFontEntry: ttFontFileEntry
 
-	| ttFontDescription familyName ttFontFamily |
-	ttFontDescription := TTFontReader readTTFFrom: ttFontFileEntry binaryContents.
-	familyName := ttFontDescription familyName.
-	ttFontFamily := FontFamily familyNamed: familyName.
-	ttFontFamily
-		ifNil: [ FontFamily addFamily: (self new baseTTFontDescription: ttFontDescription ) ]
-		ifNotNil: [ :fam |
-			ttFontDescription emphasis = 0
-				ifTrue: [fam baseTTFontDescription: ttFontDescription]
-				ifFalse: [fam addTTFontDescription: ttFontDescription].
-			fam clearCache ].
-	familyName = FontFamily defaultFamilyName ifTrue: [
-		PreferenceSet setDefaultFont:	 familyName ].
-	('loaded font ', familyName) print.! !
+	| bytes tag ttFontDescriptions familyName ttFontFamily |
+	bytes _ ttFontFileEntry binaryContents.
+	tag _ bytes copyFrom: 1 to: 4.
+	tag = `'ttcf' asUtf8Bytes`
+		ifTrue: [ ttFontDescriptions _ TTFontReader readTTCFrom: bytes ]
+		ifFalse: [ ttFontDescriptions _ {TTFontReader readTTFFrom: bytes} ].
+	ttFontDescriptions do: [ :ttFontDescription |
+		familyName _ ttFontDescription familyName.
+		ttFontFamily _ FontFamily familyNamed: familyName.
+		ttFontFamily
+			ifNil: [ FontFamily addFamily: (self new baseTTFontDescription: ttFontDescription ) ]
+			ifNotNil: [ :fam |
+				ttFontDescription emphasis = 0
+					ifTrue: [fam baseTTFontDescription: ttFontDescription]
+					ifFalse: [fam addTTFontDescription: ttFontDescription].
+				fam clearCache ].
+		familyName = FontFamily defaultFamilyName ifTrue: [
+			PreferenceSet setDefaultFont:	 familyName ].
+		('loaded font ', familyName) print ].! !
 
 !TrueTypeFontFamily class methodsFor: 'instance creation' stamp: 'jmv 7/18/2021 20:39:48'!
 serviceReadTTFont
