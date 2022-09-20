@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5036] on 3 January 2022 at 10:38:50 pm'!
+'From Cuis 6.0 [latest update: #5492] on 20 September 2022 at 3:46:44 pm'!
 'Description Tool for downloading Cuis packages from the internet.'!
-!provides: 'PackageDownloader' 1 39!
+!provides: 'PackageDownloader' 1 40!
 !requires: 'WebClient' 1 22 nil!
 !requires: 'JSON' 1 19 nil!
 SystemOrganization addCategory: 'PackageDownloader'!
@@ -157,7 +157,7 @@ filterString: aString
 	self currentIndex: nil.
 	self changed: #packageListNames! !
 
-!PackageDownloaderWindow methodsFor: 'accessing' stamp: 'MM 11/25/2021 21:23:05'!
+!PackageDownloaderWindow methodsFor: 'accessing' stamp: 'MM 9/19/2022 21:44:37'!
 filteredPackageList
 
 	| packageList |
@@ -166,7 +166,7 @@ filteredPackageList
 	
 	^ filterString isEmpty
 		ifTrue: [packageList]
-		ifFalse: [packageList select: [:package | package packageName includesSubstring: filterString caseSensitive: false]]! !
+		ifFalse: [packageList select: [:package | package packageName includesSubstring: filterString asString caseSensitive: false]]! !
 
 !PackageDownloaderWindow methodsFor: 'accessing' stamp: 'MM 11/25/2021 21:23:05'!
 getFilter
