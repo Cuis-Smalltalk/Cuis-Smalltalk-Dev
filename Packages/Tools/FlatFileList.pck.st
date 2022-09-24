@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5069] on 9 May 2022 at 5:59:48 pm'!
+'From Cuis 6.0 [latest update: #5492] on 24 September 2022 at 9:25:37 am'!
 'Description Flat file browser tool. Alternative to Cuis default FileList tool.'!
-!provides: 'FlatFileList' 1 42!
+!provides: 'FlatFileList' 1 43!
 SystemOrganization addCategory: 'FlatFileList'!
 
 
@@ -372,9 +372,10 @@ open
 
 	^ self open: (FlatFileList new currentDirectory: DirectoryEntry currentDirectory) label: 'File browser'.! !
 
-!FlatFileListWindow class methodsFor: 'as yet unclassified' stamp: 'MM 5/7/2022 21:21:37'!
-worldMenuForOpenGroup
+!FlatFileListWindow class methodsFor: 'as yet unclassified' stamp: 'MM 9/24/2022 09:24:30'!
+worldMenuOptions
 	^ `{{
+			#submenuOf -> TheWorldMenu openLabel.
 			#itemGroup 		-> 		40.
 			#itemOrder 		-> 		10.
 			#label 			->			'Flat File List'.
