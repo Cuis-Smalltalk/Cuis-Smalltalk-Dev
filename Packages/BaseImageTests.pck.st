@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5481] on 12 September 2022 at 11:58:43 am'!
+'From Cuis 6.0 [latest update: #5495] on 18 October 2022 at 3:47:39 pm'!
 'Description Inline temp new test'!
-!provides: 'BaseImageTests' 1 319!
+!provides: 'BaseImageTests' 1 320!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Objects'!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Classes'!
@@ -8643,6 +8643,21 @@ testArticle
 		assert: 'Ukranian' withArticle equals: 'a Ukranian';
 		assert: 'Argentine' withArticle equals: 'an Argentine';
 		assert: 'user' withArticle equals: 'a user'! !
+
+!SymbolTest methodsFor: 'tests - isTestSelector' stamp: 'HAW 10/16/2022 09:21:30'!
+testIsNotTestSelectorWhenHasParameters
+
+	self deny: #test01: isTestSelector! !
+
+!SymbolTest methodsFor: 'tests - isTestSelector' stamp: 'HAW 10/16/2022 09:20:06'!
+testIsNotTestSelectorWhenItDoesNotStartsWithTest
+
+	self deny: #tes01 isTestSelector! !
+
+!SymbolTest methodsFor: 'tests - isTestSelector' stamp: 'HAW 10/16/2022 09:21:13'!
+testIsTestSelectorWhenStartsWithTestAndHasNoParameters
+
+	self assert: #test01 isTestSelector! !
 
 !SymbolTest methodsFor: 'tests - selector validation' stamp: 'RNG 3/29/2020 19:59:47'!
 testIsNotValidBinarySelectorIfItContainsACharacterNotAllowed
