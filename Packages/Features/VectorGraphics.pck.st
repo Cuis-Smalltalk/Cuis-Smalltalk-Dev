@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5485] on 18 September 2022 at 6:57:32 pm'!
+'From Cuis 6.0 [latest update: #5503] on 21 October 2022 at 10:55:07 am'!
 'Description '!
-!provides: 'VectorGraphics' 1 357!
+!provides: 'VectorGraphics' 1 358!
 !requires: 'Cuis-Base' 60 5160 nil!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: 'VectorGraphics-Kernel'!
@@ -682,14 +682,6 @@ family: aTrueTypeFontFamily ttFontDescription: aTTFontDescription pointSize: aNu
 	baseFont _ nil.
 	derivativeFonts _ emphasis = 0 ifTrue: [Dictionary new].! !
 
-!TrueTypeFont methodsFor: 'initialization' stamp: 'jmv 6/15/2022 12:27:30'!
-resetAssignmentGlyph
-	"Uses ST80 glyphs:"
-	(emphasis anyMask: 64) ifTrue: [
-		"Re-cache glyphs that could have changed"
-		glyphForms at: $_ numericValue + 1 put: nil.
-		glyphFormsByUtf8 at: $_ numericValue + 1 put: nil ].! !
-
 !TrueTypeFont methodsFor: 'accessing' stamp: 'jmv 3/2/2020 17:25:54'!
 ascent
 	^ttFontDescription ascent * pointSize / ttFontDescription letterMTopSideBearing * 1.0! !
@@ -733,22 +725,21 @@ scrollbarThickness
 "self forwarding: #pointSize printOneStack: true."
 	^pointSize! !
 
-!TrueTypeFont methodsFor: 'accessing' stamp: 'jmv 3/13/2022 19:03:59'!
+!TrueTypeFont methodsFor: 'accessing' stamp: 'jmv 10/20/2022 17:24:15'!
 widthOf: aCharacter
 
-	^ (ttFontDescription widthOf: aCharacter useST80Glyphs: self isST80Glyphs) * pointSize! !
+	^ (ttFontDescription widthOf: aCharacter) * pointSize! !
 
-!TrueTypeFont methodsFor: 'accessing' stamp: 'jmv 5/5/2022 12:04:37'!
+!TrueTypeFont methodsFor: 'accessing' stamp: 'jmv 10/20/2022 17:25:12'!
 widthOfCodePoint: aNumber
 
-	^ (ttFontDescription widthOfCodePoint: aNumber useST80Glyphs: self isST80Glyphs) * pointSize! !
+	^ (ttFontDescription widthOfCodePoint: aNumber) * pointSize! !
 
-!TrueTypeFont methodsFor: 'accessing' stamp: 'jmv 5/5/2022 11:41:15'!
+!TrueTypeFont methodsFor: 'accessing' stamp: 'jmv 10/20/2022 17:25:36'!
 widthOfUtf8Byte1: aByte1 b2: aByte2OrNil b3: aByte3OrNil b4: aByte4OrNil
 
 	^ (ttFontDescription
-		widthOfUtf8Byte1: aByte1 b2: aByte2OrNil b3: aByte3OrNil b4: aByte4OrNil
-		useST80Glyphs: self isST80Glyphs)
+		widthOfUtf8Byte1: aByte1 b2: aByte2OrNil b3: aByte3OrNil b4: aByte4OrNil)
 			* pointSize! !
 
 !TrueTypeFont methodsFor: 'displaying' stamp: 'jmv 5/2/2022 16:41:54'!
@@ -770,10 +761,6 @@ isBold
 isItalic
 	^self emphasis allMask: 2! !
 
-!TrueTypeFont methodsFor: 'testing' stamp: 'jmv 1/26/2020 09:45:41'!
-isST80Glyphs
-	^emphasis allMask: 64! !
-
 !TrueTypeFont methodsFor: 'testing' stamp: 'jmv 5/13/2019 23:37:58'!
 isStruckThrough
 	^emphasis allMask: 8! !
@@ -790,7 +777,7 @@ isSuperscript
 isUnderlined
 	^emphasis allMask: 4! !
 
-!TrueTypeFont methodsFor: 'glyph access' stamp: 'jmv 3/17/2020 22:59:51'!
+!TrueTypeFont methodsFor: 'glyph access' stamp: 'jmv 10/20/2022 17:19:11'!
 glyphAt: aCharacter
 	"Needed only for BitBltCanvasEngine"
 
@@ -798,7 +785,7 @@ glyphAt: aCharacter
 	index _ aCharacter numericValue + 1.
 	^ (glyphForms at: index) ifNil: [
 		| formGlyph |
-		formGlyph _ (ttFontDescription formGlyphFor: aCharacter useST80Glyphs: self isST80Glyphs pixelSize: pointSize)
+		formGlyph _ (ttFontDescription formGlyphFor: aCharacter pixelSize: pointSize)
 			ifNil: [#absentGlyph]
 			ifNotNil: [ :theGlyph |
 				(emphasis allMask: 4) ifTrue: [
@@ -809,7 +796,7 @@ glyphAt: aCharacter
 		glyphForms at: index put: formGlyph.
 		formGlyph ]! !
 
-!TrueTypeFont methodsFor: 'glyph access' stamp: 'jmv 3/26/2021 10:40:47'!
+!TrueTypeFont methodsFor: 'glyph access' stamp: 'jmv 10/20/2022 17:20:48'!
 glyphAtUtf8Byte1: byte1 byte2: byte2OrNil byte3: byte3OrNil byte4: byte4OrNil
 	"Needed only for BitBltCanvasEngine"
 
@@ -833,8 +820,7 @@ glyphAtUtf8Byte1: byte1 byte2: byte2OrNil byte3: byte3OrNil byte4: byte4OrNil
 		formGlyph _ (ttFontDescription
 				formGlyphForUtf8Byte1: byte1 byte2: byte2OrNil
 				byte3: byte3OrNil byte4: byte4OrNil
-				pixelSize: pointSize
-				useST80Glyphs: self isST80Glyphs)
+				pixelSize: pointSize)
 			ifNil: [#absentGlyph]
 			ifNotNil: [ :theGlyph |
 				(emphasis allMask: 4) ifTrue: [
@@ -845,12 +831,12 @@ glyphAtUtf8Byte1: byte1 byte2: byte2OrNil byte3: byte3OrNil byte4: byte4OrNil
 		lastArray at: lastIndex put: formGlyph.
 		formGlyph ]! !
 
-!TrueTypeFont methodsFor: 'emphasis' stamp: 'jmv 6/15/2022 12:27:40'!
+!TrueTypeFont methodsFor: 'emphasis' stamp: 'jmv 10/20/2022 17:10:41'!
 addEmphasis: code
 	"Set the integer code for emphasis. See senders."
 
 	emphasis _ code.
-	(emphasis anyMask: 4+8+64) ifTrue: [
+	(emphasis anyMask: 4+8) ifTrue: [
 		"They need to be recreated"
 		glyphForms _ Array new: 256.
 		glyphFormsByUtf8 _ Array new: 256 ].! !
@@ -949,13 +935,6 @@ releaseCachedState
 !TrueTypeFont class methodsFor: 'instance creation' stamp: 'jmv 5/7/2019 09:25:01'!
 family: aTrueTypeFontFamily ttFontDescription: aTTFontDescription pointSize: aNumber
 	^ self new family: aTrueTypeFontFamily ttFontDescription: aTTFontDescription pointSize: aNumber! !
-
-!TrueTypeFont class methodsFor: 'initialization' stamp: 'jmv 3/21/2020 10:22:09'!
-assignmentGlyphSelectorPreferenceChanged
-	| selector |
-	selector _ Preferences at: #assignmentGlyphSelector.
-	TTFontDescription allInstancesDo: [ :ttFontDescription | ttFontDescription perform: selector ].
-	self allInstancesDo: [ :each | each resetAssignmentGlyph ]! !
 
 !TrueTypeFontFamily methodsFor: 'initialization' stamp: 'jmv 5/7/2019 09:13:51'!
 addTTFontDescription: aTTFontDescription
@@ -4403,8 +4382,8 @@ Display forceToScreen
 	currentX _ toPoint x.
 	currentY _ toPoint y.! !
 
-!VectorEngine methodsFor: 'text and multi paths' stamp: 'jmv 5/13/2021 14:31:14'!
-displayString: aString from: startIndex to: stopIndex at: aPoint trueTypeFont: aTTFontDescription useST80Glyphs: aBoolean color: aColor scale: scale preventMirroring: doPreventMirroring
+!VectorEngine methodsFor: 'text and multi paths' stamp: 'jmv 10/20/2022 17:08:24'!
+displayString: aString from: startIndex to: stopIndex at: aPoint trueTypeFont: aTTFontDescription color: aColor scale: scale preventMirroring: doPreventMirroring
 	"TrueType assumes a Math like coordinate system (Y increasing upwards).
 	But Display and Form Y coordinates in Cuis increase downwards, as it is done in most computer hardware and software.
 	If doPreventMirroring is true, ensure that glyphs don't look mirrored, by having a negative y scale."
@@ -4421,10 +4400,6 @@ displayString: aString from: startIndex to: stopIndex at: aPoint trueTypeFont: a
 		nextGlyphY _ aPoint y.
 		startIndex to: stopIndex do: [ :charIndex | | iso8859s15 i |
 			iso8859s15 _ (aString at: charIndex) iso8859s15Code.
-			aBoolean ifTrue: [
-				iso8859s15 = 95 ifTrue: [ iso8859s15 _ 28 ].												"If underscore, use left arrow"
-				iso8859s15 = 94 ifTrue: [ iso8859s15 _ 30 ].												"If caret, use up arrow"
-				].
 			i _ contourDataIndexes at: iso8859s15 + 1.
 			advanceWidth _ contourData at: i. i _ i + 1.
 			boundsLeft _ contourData at: i. i _ i + 1.
@@ -4458,8 +4433,8 @@ displayString: aString from: startIndex to: stopIndex at: aPoint trueTypeFont: a
 	].
 	^ nextGlyphX@nextGlyphY! !
 
-!VectorEngine methodsFor: 'text and multi paths' stamp: 'jmv 5/13/2021 14:31:23'!
-displayUtf32: aWordArray from: startIndex to: stopIndex at: aPoint trueTypeFont: aTTFontDescription useST80Glyphs: aBoolean color: aColor scale: scale preventMirroring: doPreventMirroring
+!VectorEngine methodsFor: 'text and multi paths' stamp: 'jmv 10/20/2022 17:11:40'!
+displayUtf32: aWordArray from: startIndex to: stopIndex at: aPoint trueTypeFont: aTTFontDescription color: aColor scale: scale preventMirroring: doPreventMirroring
 	"TrueType assumes a Math like coordinate system (Y increasing upwards).
 	But Display and Form Y coordinates in Cuis increase downwards, as it is done in most computer hardware and software.
 	If doPreventMirroring is true, ensure that glyphs don't look mirrored, by having a negative y scale."
@@ -4476,10 +4451,6 @@ displayUtf32: aWordArray from: startIndex to: stopIndex at: aPoint trueTypeFont:
 		nextGlyphY _ aPoint y.
 		startIndex to: stopIndex do: [ :utf32Index | | utf32 utf8Byte1 uft8Byte2 utf8Byte3 utf8Byte4 i |
 			utf32 _ aWordArray at: utf32Index.
-			aBoolean ifTrue: [
-				utf32 = 95 ifTrue: [ utf32 _ 8592 ].												"If underscore, use left arrow"
-				utf32 = 94 ifTrue: [ utf32 _ 8593 ].												"If caret, use up arrow"
-				].
 			utf32 <= 16r7F
 				ifTrue: [
 					utf8Byte1 _ utf32.
@@ -4543,8 +4514,8 @@ displayUtf32: aWordArray from: startIndex to: stopIndex at: aPoint trueTypeFont:
 	].
 	^ nextGlyphX@nextGlyphY! !
 
-!VectorEngine methodsFor: 'text and multi paths' stamp: 'jmv 5/13/2021 14:31:31'!
-displayUtf8: aByteArray fromByte: byteStartIndex toByte: byteStopIndex at: aPoint trueTypeFont: aTTFontDescription useST80Glyphs: aBoolean color: aColor scale: scale preventMirroring: doPreventMirroring
+!VectorEngine methodsFor: 'text and multi paths' stamp: 'jmv 10/20/2022 17:12:35'!
+displayUtf8: aByteArray fromByte: byteStartIndex toByte: byteStopIndex at: aPoint trueTypeFont: aTTFontDescription color: aColor scale: scale preventMirroring: doPreventMirroring
 	"TrueType assumes a Math like coordinate system (Y increasing upwards).
 	But Display and Form Y coordinates in Cuis increase downwards, as it is done in most computer hardware and software.
 	If doPreventMirroring is true, ensure that glyphs don't look mirrored, by having a negative y scale."
@@ -4563,15 +4534,6 @@ displayUtf8: aByteArray fromByte: byteStartIndex toByte: byteStopIndex at: aPoin
 		byteStartIndex to: byteStopIndex do: [ :byteIndex | | byte i |
 			byte _ aByteArray at: byteIndex.
 			i _ contourDataIndexes at: baseIndex + byte + 1.
-			aBoolean ifTrue: [
-				byte = 95 ifTrue: [
-					i _ contourDataIndexes at: 226 + 1.
-					i _ contourDataIndexes at: 134 - i + 1.
-					i _ contourDataIndexes at: 144 - i + 1 ].
-				byte = 94 ifTrue: [ 
-					i _ contourDataIndexes at: 226 + 1.
-					i _ contourDataIndexes at: 134 - i + 1.
-					i _ contourDataIndexes at: 145 - i + 1 ]].
 			i < 0
 				ifTrue: [ baseIndex _ i negated ]
 				ifFalse: [
@@ -5543,8 +5505,8 @@ quadraticBezierFromX: xFrom y: yFrom toX: xTo y: yTo controlX: xControl y: yCont
 		controlX: xControl asFloat y: yControl asFloat
 		edgeCounts: edgeCounts alphaMask: alphaMask contour: contour! !
 
-!VectorEngineWithPlugin methodsFor: 'text and multi paths' stamp: 'jmv 8/10/2021 12:06:05'!
-displayString: aString from: startIndex to: stopIndex at: aPoint trueTypeFont: aTTFontDescription useST80Glyphs: aBoolean color: aColor scale: scale preventMirroring: doPreventMirroring
+!VectorEngineWithPlugin methodsFor: 'text and multi paths' stamp: 'jmv 10/20/2022 17:08:43'!
+displayString: aString from: startIndex to: stopIndex at: aPoint trueTypeFont: aTTFontDescription color: aColor scale: scale preventMirroring: doPreventMirroring
 	"TrueType assumes a Math like coordinate system (Y increasing upwards).
 	But Display and Form Y coordinates in Cuis increase downwards, as it is done in most computer hardware and software.
 	If doPreventMirroring is true, ensure that glyphs don't look mirrored, by having a negative y scale."
@@ -5565,14 +5527,14 @@ displayString: aString from: startIndex to: stopIndex at: aPoint trueTypeFont: a
 			scalex: sx y: sy
 			contourData: contourData
 			contourDataIndexes: contourDataIndexes
-			useST80Glyphs: aBoolean
+			useST80Glyphs: false
 			edgeCounts: edgeCounts
 			alphaMask: alphaMask
 		].
 	^ nextGlyphX @ nextGlyphY! !
 
-!VectorEngineWithPlugin methodsFor: 'text and multi paths' stamp: 'jmv 8/10/2021 12:06:05'!
-displayUtf32: aWordArray from: startIndex to: stopIndex at: aPoint trueTypeFont: aTTFontDescription useST80Glyphs: aBoolean color: aColor scale: scale preventMirroring: doPreventMirroring
+!VectorEngineWithPlugin methodsFor: 'text and multi paths' stamp: 'jmv 10/20/2022 17:11:58'!
+displayUtf32: aWordArray from: startIndex to: stopIndex at: aPoint trueTypeFont: aTTFontDescription color: aColor scale: scale preventMirroring: doPreventMirroring
 	"TrueType assumes a Math like coordinate system (Y increasing upwards).
 	But Display and Form Y coordinates in Cuis increase downwards, as it is done in most computer hardware and software.
 	If doPreventMirroring is true, ensure that glyphs don't look mirrored, by having a negative y scale."
@@ -5593,14 +5555,14 @@ displayUtf32: aWordArray from: startIndex to: stopIndex at: aPoint trueTypeFont:
 			scalex: sx y: sy
 			contourData: contourData
 			contourDataIndexes: contourDataIndexes
-			useST80Glyphs: aBoolean
+			useST80Glyphs: false
 			edgeCounts: edgeCounts
 			alphaMask: alphaMask
 		].
 	^ nextGlyphX @ nextGlyphY! !
 
-!VectorEngineWithPlugin methodsFor: 'text and multi paths' stamp: 'jmv 8/10/2021 12:06:05'!
-displayUtf8: aByteArray fromByte: byteStartIndex toByte: byteStopIndex at: aPoint trueTypeFont: aTTFontDescription useST80Glyphs: aBoolean color: aColor scale: scale preventMirroring: doPreventMirroring
+!VectorEngineWithPlugin methodsFor: 'text and multi paths' stamp: 'jmv 10/20/2022 17:12:49'!
+displayUtf8: aByteArray fromByte: byteStartIndex toByte: byteStopIndex at: aPoint trueTypeFont: aTTFontDescription color: aColor scale: scale preventMirroring: doPreventMirroring
 	"TrueType assumes a Math like coordinate system (Y increasing upwards).
 	But Display and Form Y coordinates in Cuis increase downwards, as it is done in most computer hardware and software.
 	If doPreventMirroring is true, ensure that glyphs don't look mirrored, by having a negative y scale."
@@ -5621,7 +5583,7 @@ displayUtf8: aByteArray fromByte: byteStartIndex toByte: byteStopIndex at: aPoin
 			scalex: sx y: sy
 			contourData: contourData
 			contourDataIndexes: contourDataIndexes
-			useST80Glyphs: aBoolean
+			useST80Glyphs: false
 			edgeCounts: edgeCounts
 			alphaMask: alphaMask
 		].
@@ -6753,7 +6715,7 @@ appendGlyphDataTo: stream glyphsArray: glyphsArray indexes: indexes base: baseIn
 								indexes at: baseIndex + index put: stream position+1.
 								glyphOrArrayOrNil addGlyphDataTo: stream tx: nil ]]]].! !
 
-!TTFontDescription methodsFor: 'private-initialization' stamp: 'jmv 5/12/2022 09:46:33'!
+!TTFontDescription methodsFor: 'private-initialization' stamp: 'jmv 10/20/2022 17:04:16'!
 glyphsByIso8859s15: array8 glyphsByUtf8Bytes: arrayUtf8 unknownGlyph: theUnknownGlyph scaleArrowGlyphs: arrowGlyphs
 
 	| mGlyph glyph tx |
@@ -6775,7 +6737,6 @@ glyphsByIso8859s15: array8 glyphsByUtf8Bytes: arrayUtf8 unknownGlyph: theUnknown
 						tx _ AffineTransformation withScale: letterMTopSideBearing asFloat / arrowGlyphs second topSideBearing].
 					contourDataIndexesByIso8859s15 at: index put: stream position+1.
 					glyph addGlyphDataTo: stream tx: tx ]]].
-	self perform: (Preferences at: #assignmentGlyphSelector).
 
 	"This takes a significant amout of space."
 	(Preferences at: #loadOnlyLatinGlyphData) ifFalse: [
@@ -6818,19 +6779,6 @@ setStrings: anArray
 	trademark := anArray at: 8.
 ! !
 
-!TTFontDescription methodsFor: 'private-initialization' stamp: 'jmv 3/26/2021 10:10:38'!
-useAlwaysLeftArrow
-	"Not only when Smalltalk glyphs requested."
-	| arrowIndex |
-	arrowIndex _ contourDataIndexesByIso8859s15 at: Character arrowLeft numericValue + 1.
-	arrowIndex = 1 ifFalse: [	"If font doesn't include the arrow, don't do substitution."
-		contourDataIndexesByIso8859s15 at: $_ numericValue + 1 put: arrowIndex ].! !
-
-!TTFontDescription methodsFor: 'private-initialization' stamp: 'jmv 3/26/2021 10:10:06'!
-useLeftArrow
-	"When Smalltalk glyphs requested.
-	Nothing to do, here."! !
-
 !TTFontDescription methodsFor: 'testing' stamp: 'jmv 5/12/2022 10:34:30'!
 includesAscii
 	"Answer true if we include the basic ASCII characters.
@@ -6853,15 +6801,12 @@ emphasis
 	('*Italic*' match: subfamilyName) ifTrue: [ emphasis := emphasis bitOr: 2 ].
 	^ emphasis! !
 
-!TTFontDescription methodsFor: 'conversion' stamp: 'jmv 4/21/2022 13:36:45'!
-formGlyphFor: aCharacter useST80Glyphs: aBoolean pixelSize: pixelSize
+!TTFontDescription methodsFor: 'conversion' stamp: 'jmv 10/20/2022 17:09:17'!
+formGlyphFor: aCharacter pixelSize: pixelSize
 	"Needed only for BitBltCanvasEngine"
 	| toPixelsScale formWidth formHeight leftPixelOffset topPixelOffset xtraSpaceForAntiAliasingAndRounding horizontalStrokesAtPixelCenter form canvas advanceWidth boundsBottom boundsLeft boundsRight boundsTop i iso8859s15Code |
 
 	iso8859s15Code _ aCharacter iso8859s15Code.
-	(aBoolean and: [`{$_ . $^}` statePointsTo: aCharacter]) ifTrue: [
-		aCharacter = $_ ifTrue: [ iso8859s15Code _ Character arrowLeft iso8859s15Code ].
-		aCharacter = $^ ifTrue: [ iso8859s15Code _ Character arrowUp iso8859s15Code ]].
 	i _ contourDataIndexesByIso8859s15 at: iso8859s15Code + 1.
 	
 	advanceWidth _ contourDataForIso8859s15 at: i. i _ i + 1.
@@ -6892,7 +6837,6 @@ formGlyphFor: aCharacter useST80Glyphs: aBoolean pixelSize: pixelSize
 			to: 1
 			at: leftPixelOffset negated@(topPixelOffset - horizontalStrokesAtPixelCenter)
 			trueTypeFont: self
-			useST80Glyphs: aBoolean
 			color: Color black
 			scale: 1.0 * pixelSize
 			preventMirroring: true.
@@ -6902,8 +6846,8 @@ formGlyphFor: aCharacter useST80Glyphs: aBoolean pixelSize: pixelSize
 		topOffset: topPixelOffset
 		advanceWidth: (advanceWidth * toPixelsScale)! !
 
-!TTFontDescription methodsFor: 'conversion' stamp: 'jmv 6/15/2022 11:01:49'!
-formGlyphForUtf8Byte1: aByte1 byte2: aByte2OrNil byte3: aByte3OrNil byte4: aByte4OrNil pixelSize: pixelSize useST80Glyphs: aBoolean
+!TTFontDescription methodsFor: 'conversion' stamp: 'jmv 10/20/2022 17:13:15'!
+formGlyphForUtf8Byte1: aByte1 byte2: aByte2OrNil byte3: aByte3OrNil byte4: aByte4OrNil pixelSize: pixelSize
 	"Needed only for BitBltCanvasEngine"
 	| byte1 byte2OrNil byte3OrNil byte4OrNil utf8ByteArray toPixelsScale formWidth formHeight leftPixelOffset topPixelOffset xtraSpaceForAntiAliasingAndRounding horizontalStrokesAtPixelCenter form canvas advanceWidth boundsBottom boundsLeft boundsRight boundsTop i |
 
@@ -6911,9 +6855,6 @@ formGlyphForUtf8Byte1: aByte1 byte2: aByte2OrNil byte3: aByte3OrNil byte4: aByte
 	byte2OrNil _ aByte2OrNil.
 	byte3OrNil _ aByte3OrNil.
 	byte4OrNil _ aByte4OrNil.
-	aBoolean ifTrue: [
-		byte1 = `$_ numericValue` ifTrue: [ byte1 _ 226. byte2OrNil _ 134. byte3OrNil _ 144 ].
-		byte1 = `$^numericValue` ifTrue: [ byte1 _ 226. byte2OrNil _ 134. byte3OrNil _ 145 ]].
 	i _ contourDataIndexesByUtf8 at: byte1 + 1.
 	utf8ByteArray _ ByteArray with: byte1.
 	byte2OrNil notNil ifTrue: [
@@ -6957,7 +6898,6 @@ formGlyphForUtf8Byte1: aByte1 byte2: aByte2OrNil byte3: aByte3OrNil byte4: aByte
 			toByte: utf8ByteArray size
 			at: leftPixelOffset negated@(topPixelOffset - horizontalStrokesAtPixelCenter)
 			trueTypeFont: self
-			useST80Glyphs: aBoolean
 			color: Color black
 			scale: 1.0 * pixelSize
 			preventMirroring: true.
@@ -6967,47 +6907,37 @@ formGlyphForUtf8Byte1: aByte1 byte2: aByte2OrNil byte3: aByte3OrNil byte4: aByte
 		topOffset: topPixelOffset
 		advanceWidth: (advanceWidth * toPixelsScale)! !
 
-!TTFontDescription methodsFor: 'glyph properties' stamp: 'jmv 5/4/2022 12:42:10'!
-widthOf: aCharacter useST80Glyphs: aBoolean
+!TTFontDescription methodsFor: 'glyph properties' stamp: 'jmv 10/20/2022 17:15:18'!
+widthOf: aCharacter
 	"Double dispatch"
 
-	^aCharacter widthIn: self useST80Glyphs: aBoolean.! !
+	^aCharacter widthIn: self! !
 
-!TTFontDescription methodsFor: 'glyph properties' stamp: 'jmv 5/4/2022 12:35:25'!
-widthOfCharacter: aCharacter useST80Glyphs: aBoolean
+!TTFontDescription methodsFor: 'glyph properties' stamp: 'jmv 10/20/2022 17:22:46'!
+widthOfCharacter: aCharacter
 
 	| i iso8859s15Code advanceWidth |
 	iso8859s15Code _ aCharacter iso8859s15Code.
-	aBoolean ifTrue: [
-		iso8859s15Code = `$_ numericValue` ifTrue: [ iso8859s15Code _ `Character arrowLeft iso8859s15Code`].
-		iso8859s15Code = `$^ numericValue` ifTrue: [ iso8859s15Code _ `Character arrowUp iso8859s15Code` ]].
 	i _ contourDataIndexesByIso8859s15 at: iso8859s15Code + 1.
 	advanceWidth _ contourDataForIso8859s15 at: i.
 	^ advanceWidth / letterMTopSideBearing! !
 
-!TTFontDescription methodsFor: 'glyph properties' stamp: 'jmv 5/5/2022 12:07:41'!
-widthOfCodePoint: aNumber useST80Glyphs: aBoolean
+!TTFontDescription methodsFor: 'glyph properties' stamp: 'jmv 10/20/2022 17:14:43'!
+widthOfCodePoint: aNumber
 
 	Character
 		evaluateOnce: [ :byte1 :byte2OrNil :byte3OrNil :byte4OrNil |
-			^self widthOfUtf8Byte1: byte1 b2: byte2OrNil b3: byte3OrNil b4: byte4OrNil useST80Glyphs: aBoolean ]
+			^self widthOfUtf8Byte1: byte1 b2: byte2OrNil b3: byte3OrNil b4: byte4OrNil ]
 		withUtf8BytesOfUnicodeCodePoint: aNumber.! !
 
-!TTFontDescription methodsFor: 'glyph properties' stamp: 'jmv 5/9/2022 15:32:27'!
-widthOfUtf8Byte1: aByte1 b2: aByte2OrNil b3: aByte3OrNil b4: aByte4OrNil useST80Glyphs: aBoolean
+!TTFontDescription methodsFor: 'glyph properties' stamp: 'jmv 10/20/2022 17:14:12'!
+widthOfUtf8Byte1: aByte1 b2: aByte2OrNil b3: aByte3OrNil b4: aByte4OrNil
 
 	| byte1 byte2 byte3 byte4 i advanceWidth |
 	byte1 _ aByte1.
 	byte2 _ aByte2OrNil.
 	byte3 _ aByte3OrNil.
 	byte4 _ aByte4OrNil.
-	aBoolean ifTrue: [ "Assumes that $_ and $^are ASCII, and use just one byte"
-		byte1 = `$_ codePoint` ifTrue: [
-			"(String with: Character arrowLeft) asUtf8"
-			byte1 _ 226. byte2 _ 134. byte3 _ 144 ].
-		byte1 = `$^ codePoint` ifTrue: [
-			"(String with: Character arrowUp) asUtf8"
-			byte1 _ 226. byte2 _ 134. byte3 _ 145 ]].
 	i _ contourDataIndexesByUtf8 at: byte1 + 1.
 	byte2 notNil ifTrue: [
 		i _ contourDataIndexesByUtf8 at: i negated + byte2 + 1.
@@ -8164,17 +8094,17 @@ value: aNumber
 maskFor: left with: right
 	^(left bitShift: 12) + right! !
 
-!Character methodsFor: '*VectorGraphics-TrueType' stamp: 'jmv 5/4/2022 12:45:53'!
-widthIn: aTTFontDescription useST80Glyphs: aBoolean
+!Character methodsFor: '*VectorGraphics-TrueType' stamp: 'jmv 10/20/2022 17:23:12'!
+widthIn: aTTFontDescription
 	"Double dispatch"
 
-	^ aTTFontDescription widthOfCharacter: self useST80Glyphs: aBoolean! !
+	^ aTTFontDescription widthOfCharacter: self! !
 
-!UnicodeCodePoint methodsFor: '*VectorGraphics-TrueType' stamp: 'jmv 5/5/2022 12:04:16'!
-widthIn: aTTFontDescription useST80Glyphs: aBoolean
+!UnicodeCodePoint methodsFor: '*VectorGraphics-TrueType' stamp: 'jmv 10/20/2022 17:15:00'!
+widthIn: aTTFontDescription
 	"Double dispatch"
 
-	^ aTTFontDescription widthOfCodePoint: value useST80Glyphs: aBoolean! !
+	^ aTTFontDescription widthOfCodePoint: value! !
 
 !String methodsFor: '*VectorGraphics-displaying' stamp: 'jmv 5/2/2022 17:00:10'!
 displayOnBitBltCanvasEngine: engine from: startIndex to: stopIndex at: p font: aTrueTypeFont color: color
@@ -8188,7 +8118,7 @@ displayOnBitBltCanvasEngine: engine from: startIndex to: stopIndex at: p font: a
 		trueTypeFont: aTrueTypeFont
 		color: color.! !
 
-!String methodsFor: '*VectorGraphics-displaying' stamp: 'jmv 5/2/2022 17:00:16'!
+!String methodsFor: '*VectorGraphics-displaying' stamp: 'jmv 10/20/2022 17:18:25'!
 displayOnVectorEngine: engine from: startIndex to: stopIndex at: p font: aTrueTypeFont color: color
 	"Double Dispatch"
 	^ engine 
@@ -8197,7 +8127,6 @@ displayOnVectorEngine: engine from: startIndex to: stopIndex at: p font: aTrueTy
 		to: stopIndex
 		at: p
 		trueTypeFont: aTrueTypeFont fontDescription
-		useST80Glyphs: aTrueTypeFont isST80Glyphs
 		color: color
 		scale: aTrueTypeFont pointSize
 		preventMirroring: true.! !
@@ -8213,7 +8142,7 @@ displayOnBitBltCanvasEngine: engine from: startIndex to: stopIndex at: p font: a
 		trueTypeFont: aTrueTypeFont
 		color: color.! !
 
-!Utf32String methodsFor: '*VectorGraphics-displaying' stamp: 'jmv 5/5/2022 10:49:52'!
+!Utf32String methodsFor: '*VectorGraphics-displaying' stamp: 'jmv 10/20/2022 17:19:43'!
 displayOnVectorEngine: engine from: startIndex to: stopIndex at: p font: aTrueTypeFont color: color
 
 	^engine
@@ -8221,7 +8150,6 @@ displayOnVectorEngine: engine from: startIndex to: stopIndex at: p font: aTrueTy
 		from: startIndex to: stopIndex
 		at: p
 		trueTypeFont: aTrueTypeFont fontDescription
-		useST80Glyphs: aTrueTypeFont isST80Glyphs
 		color: color
 		scale: aTrueTypeFont pointSize
 		preventMirroring: true
@@ -8342,7 +8270,7 @@ displayOnBitBltCanvasEngine: engine from: startIndex to: stopIndex at: p font: a
 		trueTypeFont: aTrueTypeFont
 		color: color.! !
 
-!Utf8String methodsFor: '*VectorGraphics-displaying' stamp: 'jmv 5/5/2022 16:58:23'!
+!Utf8String methodsFor: '*VectorGraphics-displaying' stamp: 'jmv 10/20/2022 17:20:21'!
 displayOnVectorEngine: engine from: startIndex to: stopIndex at: p font: aTrueTypeFont color: color
 
 	| byteStartIndex byteStopIndex |
@@ -8353,7 +8281,6 @@ displayOnVectorEngine: engine from: startIndex to: stopIndex at: p font: aTrueTy
 		fromByte: byteStartIndex toByte: byteStopIndex
 		at: p
 		trueTypeFont: aTrueTypeFont fontDescription
-		useST80Glyphs: aTrueTypeFont isST80Glyphs
 		color: color
 		scale: aTrueTypeFont pointSize
 		preventMirroring: true
