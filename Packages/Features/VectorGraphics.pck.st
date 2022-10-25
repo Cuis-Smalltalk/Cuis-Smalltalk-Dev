@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5503] on 21 October 2022 at 10:55:07 am'!
+'From Cuis 6.0 [latest update: #5507] on 25 October 2022 at 12:34:35 pm'!
 'Description '!
-!provides: 'VectorGraphics' 1 358!
+!provides: 'VectorGraphics' 1 359!
 !requires: 'Cuis-Base' 60 5160 nil!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: 'VectorGraphics-Kernel'!
@@ -3957,10 +3957,10 @@ privateFrameReverseGlobalRect: rect borderWidth: borderWidth
 		combinationRule: Form reverse;
 		frameRect: rect borderWidth: borderWidth! !
 
-!VectorCanvas class methodsFor: 'class initialization' stamp: 'jmv 9/16/2022 09:33:17'!
+!VectorCanvas class methodsFor: 'class initialization' stamp: 'jmv 10/25/2022 11:12:59'!
 initialize
 	| family folder |
-	(Smalltalk at: #VectorEngineWithPlugin) isPluginAvailable ifFalse: [
+	VectorEngineWithPlugin isPluginAvailable ifFalse: [
 		Feature require: 'VectorEngineInSmalltalk' ].
 	UISupervisor whenUIinSafeState: [
 		(FontFamily familyNamed: FontFamily defaultFamilyName) isTrueTypeFontFamily ifFalse: [
@@ -3969,7 +3969,16 @@ initialize
 			PreferenceSet setDefaultFont: family familyName.
 			FontFamily enableTrueTypeFontsOnly ].
 		(VectorEngineWithPlugin isPluginAvailable
-			ifTrue: [ MorphicCanvas activeSubclass: VectorCanvas ]
+			ifTrue: [
+				"VectorEnginePlugin is still slow to make fills of rectangles (world background, window background)
+				For instance, these methods
+				#blendFillOnlyWPOTAt:antiAliasAlphaByte:
+				#blendFillOnlyWPOTLeft:top:right:bottom:targetBits:morphIds:edgeCounts:alphaMask:
+				could keep computed values from previous pixel, and reuse them most times.
+				"
+				MorphicCanvas activeSubclass: HybridCanvas
+				"MorphicCanvas activeSubclass: VectorCanvas"
+				]
 			ifFalse: [
 				'VectorEnginePlugin (VM plugin) is not available. HybridCanvas will be activated.' print.
 				MorphicCanvas activeSubclass: HybridCanvas ]) ].! !
@@ -4992,23 +5001,27 @@ experimentHopsPerPixel3
 defaultAntiAliasingWidth
 	self subclassResponsibility! !
 
-!VectorEngine class methodsFor: 'instance creation' stamp: 'jmv 1/17/2022 13:04:14'!
+!VectorEngine class methodsFor: 'instance creation' stamp: 'jmv 10/25/2022 11:01:47'!
 onForm: aForm subPixelAntiAliasing: aBoolean
 	"nil means use default kind of anti aliasing
 	Use the VectorEnginePlugin if available."
 
-	| doSubPixelAntiAliasing |
-	doSubPixelAntiAliasing _ aBoolean ifNil: [
-		"Assume high resolution implies high DPI"
-		Display width > 1920 ].
-	^(VectorEngineWithPlugin isPluginAvailable
-		ifTrue: [ doSubPixelAntiAliasing
-			ifTrue: [VectorEngineWithPluginSubPixel]
-			ifFalse: [VectorEngineWithPluginWholePixel]]
-		ifFalse: [ doSubPixelAntiAliasing
-			ifTrue: [Smalltalk at: #VectorEngineSubPixel]
-			ifFalse: [Smalltalk at: #VectorEngineWholePixel]])
-				new initializeOnForm: aForm.! !
+	| engineClass doSubPixelAntiAliasing |
+	self hasSubclasses
+		ifFalse: [
+			engineClass _ self ]
+		ifTrue: [
+			doSubPixelAntiAliasing _ aBoolean ifNil: [
+				"Assume high resolution implies high DPI"
+				Display width > 1920 ].
+			engineClass _ VectorEngineWithPlugin isPluginAvailable
+				ifTrue: [ doSubPixelAntiAliasing
+					ifTrue: [VectorEngineWithPluginSubPixel]
+					ifFalse: [VectorEngineWithPluginWholePixel]]
+				ifFalse: [ doSubPixelAntiAliasing
+					ifTrue: [Smalltalk at: #VectorEngineSubPixel]
+					ifFalse: [Smalltalk at: #VectorEngineWholePixel]]].
+		^engineClass 	new initializeOnForm: aForm.! !
 
 !VectorEngineBoundsFinder methodsFor: 'accessing' stamp: 'jmv 11/17/2020 10:04:59'!
 currentMorph: aMorph! !
