@@ -1,7 +1,6 @@
-'From Cuis 5.0 [latest update: #4911] on 12 October 2021 at 10:46:22 am'!
+'From Cuis 5.0 [latest update: #4911] on 26 October 2022 at 10:46:22 am'!
 'Description '!
-!provides: 'VectorEnginePlugin' 1 31!
-!requires: 'VectorGraphics' 1 201 nil!
+!provides: 'VectorEnginePlugin' 1 32!
 !requires: 'VMMaker' 1 7 nil!
 SystemOrganization addCategory: 'VectorEnginePlugin'!
 

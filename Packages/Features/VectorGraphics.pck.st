@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5507] on 25 October 2022 at 12:34:35 pm'!
+'From Cuis 6.0 [latest update: #5513] on 28 October 2022 at 3:58:55 pm'!
 'Description '!
-!provides: 'VectorGraphics' 1 359!
+!provides: 'VectorGraphics' 1 360!
 !requires: 'Cuis-Base' 60 5160 nil!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: 'VectorGraphics-Kernel'!
@@ -7018,7 +7018,7 @@ getTableDirEntry: tagString from: fontData offset: offset
 		pos := pos+16].
 	^nil! !
 
-!TTFontReader methodsFor: 'processing' stamp: 'jmv 5/12/2022 14:47:22'!
+!TTFontReader methodsFor: 'processing' stamp: 'jmv 10/28/2022 15:58:16'!
 mapAndStoreGlyphsUsing: characterMap
 	"
 	https://developer.apple.com/fonts/TrueType-Reference-Manual/RM07/appendixB.html
@@ -7077,6 +7077,7 @@ mapAndStoreGlyphsUsing: characterMap
 	Character separators do: [ :s |
 		glyphsByIso5559s15 at: s codePoint +1 put: spaceGlyph.
 		glyphsByUTF8 at: s codePoint +1 put: spaceGlyph.
+		1 to: 4 do: [ :i |			glyphsByUTF8 at: 28+i put: (FallbackArrowGlyphs at: i) ].
 	].
 	glyphsByIso5559s15 at: 13 +1 put: carriageReturn.
 	glyphsByUTF8 at: 13 +1 put: carriageReturn.

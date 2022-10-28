@@ -1,7 +1,6 @@
-'From Cuis 6.0 [latest update: #5043] on 17 January 2022 at 1:11:07 pm'!
+'From Cuis 6.0 [latest update: #5043] on 26 October 2022 at 1:11:07 pm'!
 'Description '!
-!provides: 'VectorEngineInSmalltalk' 1 1!
-!requires: 'VectorGraphics' 1 333!
+!provides: 'VectorEngineInSmalltalk' 1 2!
 SystemOrganization addCategory: 'VectorEngineInSmalltalk'!
 
 
