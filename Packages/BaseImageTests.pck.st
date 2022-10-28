@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5495] on 18 October 2022 at 3:47:39 pm'!
+'From Cuis 6.0 [latest update: #5543] on 28 October 2022 at 8:40:30 pm'!
 'Description Inline temp new test'!
-!provides: 'BaseImageTests' 1 320!
+!provides: 'BaseImageTests' 1 321!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Objects'!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Classes'!
@@ -1034,16 +1034,6 @@ TestCase subclass: #GrayFormTest
 	category: 'BaseImageTests-Graphics-Display Objects'!
 !classDefinition: 'GrayFormTest class' category: 'BaseImageTests-Graphics-Display Objects'!
 GrayFormTest class
-	instanceVariableNames: ''!
-
-!classDefinition: #StrikeFontTest category: 'BaseImageTests-Graphics-Text'!
-TestCase subclass: #StrikeFontTest
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'BaseImageTests-Graphics-Text'!
-!classDefinition: 'StrikeFontTest class' category: 'BaseImageTests-Graphics-Text'!
-StrikeFontTest class
 	instanceVariableNames: ''!
 
 !classDefinition: #JpegTest category: 'BaseImageTests-Graphics-Files'!
@@ -8256,8 +8246,8 @@ testCaseConversion
 	"
 	self new testCaseConversion
 	"
-	self assert: ('aÒo ComÈ tom· CamiÛn' collect: [ :c | c asLowercase ]) = 'aÒo comÈ tom· camiÛn'.
-	self assert:('aÒo ComÈ tom· CamiÛn' collect: [ :c | c asUppercase ]) = 'A—O COM… TOM¡ CAMI”N'! !
+	self assert: ('a√±o Com√© tom√° Cami√≥n' collect: [ :c | c asLowercase ]) = 'a√±o com√© tom√° cami√≥n'.
+	self assert:('a√±o Com√© tom√° Cami√≥n' collect: [ :c | c asUppercase ]) = 'A√ëO COM√â TOM√Å CAMI√ìN'! !
 
 !CharacterTest methodsFor: 'testing' stamp: 'jmv 7/5/2022 15:56:54'!
 testIsCharacter
@@ -8270,14 +8260,14 @@ testSorting
 	"
 	self new testSorting
 	"
-	self assert: $a asCharacter < $· asCharacter.
-	self deny: $a asCharacter < $¡ asCharacter.
-	self assert: $A asCharacter < $· asCharacter.
-	self assert: $A asCharacter < $¡ asCharacter.
-	self assert: $· asCharacter < $b asCharacter.
-	self deny: $· asCharacter < $B asCharacter.
-	self assert: $¡ asCharacter < $b asCharacter.
-	self assert: $¡ asCharacter < $B asCharacter.! !
+	self assert: $a asCharacter < $√° asCharacter.
+	self deny: $a asCharacter < $√Å asCharacter.
+	self assert: $A asCharacter < $√° asCharacter.
+	self assert: $A asCharacter < $√Å asCharacter.
+	self assert: $√° asCharacter < $b asCharacter.
+	self deny: $√° asCharacter < $B asCharacter.
+	self assert: $√Å asCharacter < $b asCharacter.
+	self assert: $√Å asCharacter < $B asCharacter.! !
 
 !CharacterTest methodsFor: 'testing' stamp: 'jmv 10/6/2010 22:10'!
 testTestingMethods
@@ -8285,16 +8275,16 @@ testTestingMethods
 	self new testTestingMethods
 	"
 	self assert:
-		('aÒo ComÈ tom· CamiÛn' allSatisfy: [ :c |
+		('a√±o Com√© tom√° Cami√≥n' allSatisfy: [ :c |
 			c = $  or: [ c isLetter ]]).
 	self assert:
-		('aÒo comÈ tom· camiÛn' allSatisfy: [ :c |
+		('a√±o com√© tom√° cami√≥n' allSatisfy: [ :c |
 			c = $  or: [ c isLowercase ]]).
 	self assert:
-		('A—O COM… TOM¡ CAMI”N' allSatisfy: [ :c |
+		('A√ëO COM√â TOM√Å CAMI√ìN' allSatisfy: [ :c |
 			c = $  or: [ c isUppercase ]]).
 	self assert:
-		('Aa¿‡¡·¬‚√„ƒ‰≈ÂEe»Ë…È ÍÀÎIiÃÏÕÌŒÓœÔOo“Ú”Û‘Ù’ı÷ˆUuŸ˘⁄˙€˚‹¸' allSatisfy: [ :c |
+		('Aa√Ä√†√Å√°√Ç√¢√É√£√Ñ√§√Ö√•Ee√à√®√â√©√ä√™√ã√´Ii√å√¨√ç√≠√é√Æ√è√ØOo√í√≤√ì√≥√î√¥√ï√µ√ñ√∂Uu√ô√π√ö√∫√õ√ª√ú√º' allSatisfy: [ :c |
 			c isVowel ]).! !
 
 !CharacterTest methodsFor: 'UTF-8 conversion' stamp: 'jmv 5/26/2022 12:31:12'!
@@ -8324,7 +8314,7 @@ testSomeLatinCharsFromUtf8
 					strm nextPut: (Character codePoint: codePoint) ].
 			byteIndex _ byteIndex + n
 		]].
-	self assert: string = '·AÂAÊAÒA∆A•A¸'! !
+	self assert: string = '√°A√•A√¶A√±A√ÜA¬•A√º'! !
 
 !CharacterTest methodsFor: 'UTF-8 conversion' stamp: 'jmv 7/5/2022 16:43:56'!
 testSomeLatinCharsToUtf8
@@ -8332,7 +8322,7 @@ testSomeLatinCharsToUtf8
 	CharacterTest new testSomeLatinCharsToUtf8
 	"
 	| characters bytes |
-	characters _ '·AÂAÊAÒA∆A•A¸' readStream.
+	characters _ '√°A√•A√¶A√±A√ÜA¬•A√º' readStream.
 	bytes _ ByteArray streamContents: [ :strm |
 		[ characters atEnd ] whileFalse: [
 			Character
@@ -8355,30 +8345,7 @@ testAsUtf8
 	"
 	 StringTest new testAsUtf8
 	"
-	self assert: 'A¢§' asUtf8Bytes hex = '41C2A2E282AC'! !
-
-!StringTest methodsFor: 'UTF-8 conversion' stamp: 'jmv 5/26/2022 11:59:35'!
-testAsUtf8WithNCRs
-	"
-	 StringTest new testAsUtf8WithNCRs
-	"
-	| stringWithDecimalNCRs stringWithHexNCRs utf8 |
-	utf8 _ ByteArray readHexFrom: ('CE BC 20 CE A8 20 CF 89 20 54 68 65 20 64 65 63 6F 6D 70 6F 73 69 74 69 6F 6E 20 6D 61 70 70 69 6E 67 20 69 73 20 3C EC B8 A0 2C 20 E1 86 B8 3E 2C 20 61 6E 64 20 6E 6F 74 20 3C E1 84 8E 2C 20 E1 85 B3 2C 20 31 31 42 38 3E 2E 0A 3C 70 3E 54 68 65 20 74 69 74 6C 65 20 73 61 79 73 20 E2 80 AB D7 A4 D7 A2 D7 99 D7 9C D7 95 D7 AA 20 D7 94 D7 91 D7 99 D7 A0 D7 90 D7 95 D7 9D 2C 20 57 33 43 E2 80 AC 20 69 6E 20 48 65 62 72 65 77 3C 2F 70 3E 0A 61 62 63 E0 A4 95 E0 A4 96 E0 A5 80 E5 9C 8B E9 9A 9B F0 90 8E 84 F0 90 8E 94 F0 90 8E 98' reject: [ :char  | char isSeparator ]).
-
-	stringWithDecimalNCRs _ String fromUtf8Bytes: utf8 hex: false trimLastNull: false.
-	stringWithHexNCRs _ String fromUtf8Bytes: utf8 hex: true trimLastNull: false.
-
-	self assert: stringWithDecimalNCRs =  '&#956; &#936; ò The decomposition mapping is <&#52768;, &#4536;>, and not <&#4366;, &#4467;, 11B8>.
-<p>The title says &#8235;&#1508;&#1506;&#1497;&#1500;&#1493;&#1514; &#1492;&#1489;&#1497;&#1504;&#1488;&#1493;&#1501;, W3C&#8236; in Hebrew</p>
-abc&#2325;&#2326;&#2368;&#22283;&#38555;&#66436;&#66452;&#66456;'.
-
-	self assert: (stringWithDecimalNCRs asUtf8Bytes: true) = utf8.
-
-	self assert: stringWithHexNCRs = '&#x03BC; &#x03A8; ò The decomposition mapping is <&#xCE20;, &#x11B8;>, and not <&#x110E;, &#x1173;, 11B8>.
-<p>The title says &#x202B;&#x05E4;&#x05E2;&#x05D9;&#x05DC;&#x05D5;&#x05EA; &#x05D4;&#x05D1;&#x05D9;&#x05E0;&#x05D0;&#x05D5;&#x05DD;, W3C&#x202C; in Hebrew</p>
-abc&#x0915;&#x0916;&#x0940;&#x570B;&#x969B;&#x10384;&#x10394;&#x10398;'.
-
-	self assert: (stringWithHexNCRs asUtf8Bytes: true) = utf8! !
+	self assert: 'A¬¢‚Ç¨' asUtf8Bytes hex = '41C2A2E282AC'! !
 
 !StringTest methodsFor: 'tests - converting' stamp: 'jmv 7/5/2022 21:05:36'!
 testBase64
@@ -8420,8 +8387,8 @@ testCaseConversion
 	"
 	self new testCaseConversion
 	"
-	self assert: ('aÒo ComÈ tom· CamiÛn' asLowercase) = 'aÒo comÈ tom· camiÛn'.
-	self assert: ('aÒo ComÈ tom· CamiÛn' asUppercase) = 'A—O COM… TOM¡ CAMI”N'! !
+	self assert: ('a√±o Com√© tom√° Cami√≥n' asLowercase) = 'a√±o com√© tom√° cami√≥n'.
+	self assert: ('a√±o Com√© tom√° Cami√≥n' asUppercase) = 'A√ëO COM√â TOM√Å CAMI√ìN'! !
 
 !StringTest methodsFor: 'testing' stamp: 'jmv 9/1/2009 14:12'!
 testEncompassParagraph1
@@ -8569,23 +8536,23 @@ testSorting
 self new testSorting
 "
 
-	self assert: 'a' asByteString < '·' asByteString.
-	self deny: 'a' asByteString < '¡' asByteString.
-	self assert: 'A' asByteString < '·' asByteString.
-	self assert: 'A' asByteString < '¡' asByteString.
-	self assert: '·' asByteString < 'b' asByteString.
-	self deny: '·' asByteString < 'B' asByteString.
-	self assert: '¡' asByteString < 'b' asByteString.
-	self assert: '¡' asByteString < 'B' asByteString.
+	self assert: 'a' asByteString < '√°' asByteString.
+	self deny: 'a' asByteString < '√Å' asByteString.
+	self assert: 'A' asByteString < '√°' asByteString.
+	self assert: 'A' asByteString < '√Å' asByteString.
+	self assert: '√°' asByteString < 'b' asByteString.
+	self deny: '√°' asByteString < 'B' asByteString.
+	self assert: '√Å' asByteString < 'b' asByteString.
+	self assert: '√Å' asByteString < 'B' asByteString.
 
-	self assert: ('a' asByteString caseInsensitiveLessOrEqual: '·' asByteString).
-	self assert: ('a' asByteString caseInsensitiveLessOrEqual: '¡' asByteString).
-	self assert: ('A' asByteString caseInsensitiveLessOrEqual: '·' asByteString).
-	self assert: ('A' asByteString caseInsensitiveLessOrEqual: '¡' asByteString).
-	self assert: ('·' asByteString caseInsensitiveLessOrEqual: 'b' asByteString).
-	self assert: ('·' asByteString caseInsensitiveLessOrEqual: 'B' asByteString).
-	self assert: ('¡' asByteString caseInsensitiveLessOrEqual: 'b' asByteString).
-	self assert: ('¡' asByteString caseInsensitiveLessOrEqual: 'B' asByteString).! !
+	self assert: ('a' asByteString caseInsensitiveLessOrEqual: '√°' asByteString).
+	self assert: ('a' asByteString caseInsensitiveLessOrEqual: '√Å' asByteString).
+	self assert: ('A' asByteString caseInsensitiveLessOrEqual: '√°' asByteString).
+	self assert: ('A' asByteString caseInsensitiveLessOrEqual: '√Å' asByteString).
+	self assert: ('√°' asByteString caseInsensitiveLessOrEqual: 'b' asByteString).
+	self assert: ('√°' asByteString caseInsensitiveLessOrEqual: 'B' asByteString).
+	self assert: ('√Å' asByteString caseInsensitiveLessOrEqual: 'b' asByteString).
+	self assert: ('√Å' asByteString caseInsensitiveLessOrEqual: 'B' asByteString).! !
 
 !StringTest methodsFor: 'testing' stamp: 'HAW 8/3/2018 11:00:28'!
 testWithBlanksTrimmed
@@ -8735,7 +8702,7 @@ test01
 
 	| asciiString asciiUtf32String asciiUtf8String latinString latinUtf32String latinUtf8String |
 	asciiString _ 'Hello world'.
-	latinString _ '°Tom· ag¸ita, —and˙!!'.
+	latinString _ '¬°Tom√° ag√ºita, √ëand√∫!!'.
 	asciiUtf8String _ asciiString asUtf8String.
 	latinUtf8String _ latinString asUtf8String.
 	asciiUtf32String _ asciiString asUtf32String.
@@ -8764,7 +8731,7 @@ test02
 
 	| asciiString asciiUtf32String asciiUtf8String latinString latinUtf32String latinUtf8String |
 	asciiString _ 'Hello world'.
-	latinString _ '°Tom· ag¸ita, —and˙!!'.
+	latinString _ '¬°Tom√° ag√ºita, √ëand√∫!!'.
 	asciiUtf8String _ asciiString asUtf8String.
 	latinUtf8String _ latinString asUtf8String.
 	asciiUtf32String _ asciiString asUtf32String.
@@ -8789,7 +8756,7 @@ test03
 
 	| asciiString asciiUtf32String asciiUtf8String latinString latinUtf32String latinUtf8String |
 	asciiString _ 'Hello world'.
-	latinString _ '°Tom· ag¸ita, —and˙!!'.
+	latinString _ '¬°Tom√° ag√ºita, √ëand√∫!!'.
 	asciiUtf8String _ asciiString asLowercase asUtf8String.
 	latinUtf8String _ latinString asLowercase asUtf8String.
 	asciiUtf32String _ asciiString asLowercase asUtf32String.
@@ -8814,7 +8781,7 @@ test04
 
 	| asciiString asciiUtf32String asciiUtf8String latinString latinUtf32String latinUtf8String |
 	asciiString _ 'Hello world'.
-	latinString _ '°Tom· ag¸ita, —and˙!!'.
+	latinString _ '¬°Tom√° ag√ºita, √ëand√∫!!'.
 	asciiUtf8String _ asciiString asUtf8String.
 	latinUtf8String _ latinString asUtf8String.
 	asciiUtf32String _ asciiString asUtf32String.
@@ -8883,7 +8850,7 @@ test06isAscii
 
 	| asciiString asciiUtf32String asciiUtf8String latinString latinUtf32String latinUtf8String |
 	asciiString _ 'Hello world'.
-	latinString _ '°Tom· ag¸ita, —and˙!!'.
+	latinString _ '¬°Tom√° ag√ºita, √ëand√∫!!'.
 	asciiUtf8String _ asciiString asUtf8String.
 	latinUtf8String _ latinString asUtf8String.
 	asciiUtf32String _ asciiString asUtf32String.
@@ -8911,19 +8878,19 @@ test07
 	self assert: ('Hello World' asUtf8String copyReplaceFrom: 3 to: 4 with: '') =  'Heo World'.
 	self assert: ('Hello World' asUtf32String copyReplaceFrom: 3 to: 4 with: '') =  'Heo World'.
 
-	s _ 'øEl —and˙ toma ag¸ita?'.
-	self assert: (s copyReplaceFrom: 3 to: 4 with: 'xxx') =  'øExxx—and˙ toma ag¸ita?'.
-	self assert: (s copyReplaceFrom: 3 to: 2 with: 'xxx') =  'øExxxl —and˙ toma ag¸ita?'.
-	self assert: (s copyReplaceFrom: 1 to: 2 with: 'xxx') =  'xxxl —and˙ toma ag¸ita?'.
-	self assert: (s copyReplaceFrom: s size to: s size with: 'xxx') =  'øEl —and˙ toma ag¸itaxxx'.
-	self assert: (s copyReplaceFrom: s size to: 2 with: 'xxx') =  'øEl —and˙ toma ag¸itaxxxl —and˙ toma ag¸ita?'.
+	s _ '¬øEl √ëand√∫ toma ag√ºita?'.
+	self assert: (s copyReplaceFrom: 3 to: 4 with: 'xxx') =  '¬øExxx√ëand√∫ toma ag√ºita?'.
+	self assert: (s copyReplaceFrom: 3 to: 2 with: 'xxx') =  '¬øExxxl √ëand√∫ toma ag√ºita?'.
+	self assert: (s copyReplaceFrom: 1 to: 2 with: 'xxx') =  'xxxl √ëand√∫ toma ag√ºita?'.
+	self assert: (s copyReplaceFrom: s size to: s size with: 'xxx') =  '¬øEl √ëand√∫ toma ag√ºitaxxx'.
+	self assert: (s copyReplaceFrom: s size to: 2 with: 'xxx') =  '¬øEl √ëand√∫ toma ag√ºitaxxxl √ëand√∫ toma ag√ºita?'.
 
-	s _ 'øEl —and˙ toma ag¸ita?' asUtf8String.
-	self assert: (s copyReplaceFrom: 3 to: 4 with: 'xxx') =  'øExxx—and˙ toma ag¸ita?'.
-	self assert: (s copyReplaceFrom: 3 to: 2 with: 'xxx') =  'øExxxl —and˙ toma ag¸ita?'.
-	self assert: (s copyReplaceFrom: 1 to: 2 with: 'xxx') =  'xxxl —and˙ toma ag¸ita?'.
-	self assert: (s copyReplaceFrom: s size to: s size with: 'xxx') =  'øEl —and˙ toma ag¸itaxxx'.
-	self assert: (s copyReplaceFrom: s size to: 2 with: 'xxx') =  'øEl —and˙ toma ag¸itaxxxl —and˙ toma ag¸ita?'.! !
+	s _ '¬øEl √ëand√∫ toma ag√ºita?' asUtf8String.
+	self assert: (s copyReplaceFrom: 3 to: 4 with: 'xxx') =  '¬øExxx√ëand√∫ toma ag√ºita?'.
+	self assert: (s copyReplaceFrom: 3 to: 2 with: 'xxx') =  '¬øExxxl √ëand√∫ toma ag√ºita?'.
+	self assert: (s copyReplaceFrom: 1 to: 2 with: 'xxx') =  'xxxl √ëand√∫ toma ag√ºita?'.
+	self assert: (s copyReplaceFrom: s size to: s size with: 'xxx') =  '¬øEl √ëand√∫ toma ag√ºitaxxx'.
+	self assert: (s copyReplaceFrom: s size to: 2 with: 'xxx') =  '¬øEl √ëand√∫ toma ag√ºitaxxxl √ëand√∫ toma ag√ºita?'.! !
 
 !UnicodeStringsTest methodsFor: 'testing' stamp: 'jmv 6/10/2022 16:06:56'!
 test08a
@@ -9133,51 +9100,51 @@ test08d
 !UnicodeStringsTest methodsFor: 'testing' stamp: 'jmv 6/15/2022 15:59:38'!
 test09
 
-	self assert: 'Hello Òand˙' = 'Hello Òand˙'.
-	self deny: 'Hello Òand˙' = 'hello Òand˙'.
-	self assert: ('Hello Òand˙' sameAs: 'hello Òand˙').
+	self assert: 'Hello √±and√∫' = 'Hello √±and√∫'.
+	self deny: 'Hello √±and√∫' = 'hello √±and√∫'.
+	self assert: ('Hello √±and√∫' sameAs: 'hello √±and√∫').
 
-	self assert: 'Hello Òand˙' asUtf8String = 'Hello Òand˙' asUtf8String.
-	self deny: 'Hello Òand˙' asUtf8String = 'hello Òand˙' asUtf8String.
-	self assert: ('Hello Òand˙' asUtf8String sameAs: 'hello Òand˙' asUtf8String).
+	self assert: 'Hello √±and√∫' asUtf8String = 'Hello √±and√∫' asUtf8String.
+	self deny: 'Hello √±and√∫' asUtf8String = 'hello √±and√∫' asUtf8String.
+	self assert: ('Hello √±and√∫' asUtf8String sameAs: 'hello √±and√∫' asUtf8String).
 
-	self assert: 'Hello Òand˙' asUtf8String bytes = 'Hello Òand˙' asUtf8String bytes.
-	self deny: 'Hello Òand˙' asUtf8String bytes = 'hello Òand˙' asUtf8String bytes.! !
+	self assert: 'Hello √±and√∫' asUtf8String bytes = 'Hello √±and√∫' asUtf8String bytes.
+	self deny: 'Hello √±and√∫' asUtf8String bytes = 'hello √±and√∫' asUtf8String bytes.! !
 
 !UnicodeStringsTest methodsFor: 'testing' stamp: 'jmv 6/15/2022 16:09:01'!
 test10
 
-	self assert: ('Òand˙X' findString: 'X' startingAt: 1) = 6.
-	self assert: ('Òand˙X' asUtf8String findString: 'X' startingAt: 1) = 6.
+	self assert: ('√±and√∫X' findString: 'X' startingAt: 1) = 6.
+	self assert: ('√±and√∫X' asUtf8String findString: 'X' startingAt: 1) = 6.
 	
-	self assert: ('Òand˙X' findString: 'X' startingAt: 7 caseSensitive: false) = 0.
-	self assert: ('Òand˙X' asUtf8String findString: 'X' startingAt: 7 caseSensitive: false) = 0.
-	self assert: ('Òand˙X' findString: 'X' startingAt: 7 caseSensitive: true) = 0.
-	self assert: ('Òand˙X' asUtf8String findString: 'X' startingAt: 7 caseSensitive: true) = 0.
-	self assert: ('Òand˙X' findString: 'x' startingAt: 1 caseSensitive: true) = 0.
-	self assert: ('Òand˙X' asUtf8String findString: 'x' startingAt: 1 caseSensitive: true) = 0.! !
+	self assert: ('√±and√∫X' findString: 'X' startingAt: 7 caseSensitive: false) = 0.
+	self assert: ('√±and√∫X' asUtf8String findString: 'X' startingAt: 7 caseSensitive: false) = 0.
+	self assert: ('√±and√∫X' findString: 'X' startingAt: 7 caseSensitive: true) = 0.
+	self assert: ('√±and√∫X' asUtf8String findString: 'X' startingAt: 7 caseSensitive: true) = 0.
+	self assert: ('√±and√∫X' findString: 'x' startingAt: 1 caseSensitive: true) = 0.
+	self assert: ('√±and√∫X' asUtf8String findString: 'x' startingAt: 1 caseSensitive: true) = 0.! !
 
 !UnicodeStringsTest methodsFor: 'testing' stamp: 'jmv 6/15/2022 16:17:35'!
 test11
-	self assert: ('Òand˙es' indexOfSubCollection: '˙e' startingAt: 1 ifAbsent: []) = 5.
-	self assert: ('Òand˙es' asUtf8String indexOfSubCollection: '˙e' startingAt: 1 ifAbsent: []) = 5.
-	self assert: ('Òand˙es' indexOfSubCollection: '˙e' startingAt: 6 ifAbsent: []) = nil.
-	self assert: ('Òand˙es' asUtf8String indexOfSubCollection: '˙e' startingAt: 6 ifAbsent: []) = nil.! !
+	self assert: ('√±and√∫es' indexOfSubCollection: '√∫e' startingAt: 1 ifAbsent: []) = 5.
+	self assert: ('√±and√∫es' asUtf8String indexOfSubCollection: '√∫e' startingAt: 1 ifAbsent: []) = 5.
+	self assert: ('√±and√∫es' indexOfSubCollection: '√∫e' startingAt: 6 ifAbsent: []) = nil.
+	self assert: ('√±and√∫es' asUtf8String indexOfSubCollection: '√∫e' startingAt: 6 ifAbsent: []) = nil.! !
 
 !UnicodeStringsTest methodsFor: 'testing' stamp: 'jmv 6/15/2022 16:20:03'!
 test12
-	self deny: ('Òand˙es' is: '˙e' substringAt: 4).
-	self assert: ('Òand˙es' is: '˙e' substringAt: 5).
-	self deny: ('Òand˙es' is: '˙e' substringAt: 6).
-	self deny: ('Òand˙es' is: '˙e' asUtf8String substringAt: 4).
-	self assert: ('Òand˙es' is: '˙e' asUtf8String substringAt: 5).
-	self deny: ('Òand˙es' is: '˙e' asUtf8String substringAt: 6).
-	self deny: ('Òand˙es' asUtf8String is: '˙e' substringAt: 4).
-	self assert: ('Òand˙es'asUtf8String  is: '˙e' substringAt: 5).
-	self deny: ('Òand˙es' asUtf8String is: '˙e' substringAt: 6).
-	self deny: ('Òand˙es' asUtf8String is: '˙e' asUtf8String substringAt: 4).
-	self assert: ('Òand˙es'asUtf8String  is: '˙e' asUtf8String substringAt: 5).
-	self deny: ('Òand˙es' asUtf8String is: '˙e' asUtf8String substringAt: 6).! !
+	self deny: ('√±and√∫es' is: '√∫e' substringAt: 4).
+	self assert: ('√±and√∫es' is: '√∫e' substringAt: 5).
+	self deny: ('√±and√∫es' is: '√∫e' substringAt: 6).
+	self deny: ('√±and√∫es' is: '√∫e' asUtf8String substringAt: 4).
+	self assert: ('√±and√∫es' is: '√∫e' asUtf8String substringAt: 5).
+	self deny: ('√±and√∫es' is: '√∫e' asUtf8String substringAt: 6).
+	self deny: ('√±and√∫es' asUtf8String is: '√∫e' substringAt: 4).
+	self assert: ('√±and√∫es'asUtf8String  is: '√∫e' substringAt: 5).
+	self deny: ('√±and√∫es' asUtf8String is: '√∫e' substringAt: 6).
+	self deny: ('√±and√∫es' asUtf8String is: '√∫e' asUtf8String substringAt: 4).
+	self assert: ('√±and√∫es'asUtf8String  is: '√∫e' asUtf8String substringAt: 5).
+	self deny: ('√±and√∫es' asUtf8String is: '√∫e' asUtf8String substringAt: 6).! !
 
 !UnicodeSymbolsTest methodsFor: 'testing' stamp: 'jmv 6/3/2022 11:37:33'!
 test01AsciiSymbolFirst
@@ -9223,7 +9190,7 @@ test02LatinSymbolFirst
 	Do #asSymbol before doing #asUtf8Symbol. The symbol created will be instance of Symbol."
 	
 	| str symbol utf8 utf8Symbol |
-	str _ '°Tom· ag¸ita, —and˙!!', Random next mantissaPart printString.
+	str _ '¬°Tom√° ag√ºita, √ëand√∫!!', Random next mantissaPart printString.
 	symbol _ str asSymbol.
 	utf8 _ str asUtf8String.
 	utf8Symbol _ utf8 asSymbol.
@@ -9299,7 +9266,7 @@ test04LatinUtf8SymbolFirst
 	Do #asSymbol before doing #asUtf8Symbol. The symbol created will be instance of Symbol."
 	
 	| str symbol utf8 utf8Symbol |
-	str _ '°Tom· ag¸ita, —and˙!!', Random next mantissaPart printString.
+	str _ '¬°Tom√° ag√ºita, √ëand√∫!!', Random next mantissaPart printString.
 	utf8 _ str asUtf8String.
 	utf8Symbol _ utf8 asSymbol.
 	symbol _ str asSymbol.
@@ -9383,50 +9350,35 @@ test3ReadUtf8
      | content byteArray |
 	byteArray _ self class fileName asFileEntry binaryContents.
 	content := String fromUtf8Bytes: byteArray.
-	self assert: content = 'abc ‡Ë§ àâä'! !
+	self assert: content = 'abc √†√®‚Ç¨ Œ±Œ≤Œ≥'! !
 
-!UnicodeTest methodsFor: 'testing' stamp: 'jmv 5/26/2022 12:00:15'!
+!UnicodeTest methodsFor: 'testing' stamp: 'jmv 10/28/2022 18:44:48'!
 test4BackConversion
-	
 	"see UnicodeNotes.md"
-	
-     "
+	"
 	self new setUp test4BackConversion
 	"
-     | contentInternalString contentByteArray |
+	| contentInternalString contentByteArray |
+	contentInternalString _ String fromUtf8Bytes: self class fileName asFileEntry binaryContents.
+	contentByteArray _ self class fileName asFileEntry binaryContents.
+	self assert: contentByteArray = contentInternalString asUtf8Bytes.! !
 
-	contentInternalString := String fromUtf8Bytes: self class fileName asFileEntry binaryContents.
-	contentByteArray := self class fileName asFileEntry binaryContents.
-
-	self assert: contentByteArray = (contentInternalString asUtf8Bytes: true)! !
-
-!UnicodeTest methodsFor: 'testing' stamp: 'jmv 5/26/2022 12:00:29'!
+!UnicodeTest methodsFor: 'testing' stamp: 'jmv 10/28/2022 18:45:42'!
 test5ReadWriteUtf8
-	
 	"see UnicodeNotes.md"
-	
-     "
+	"
 	self new setUp test5ReadWriteUtf8
 	"
-     | content byteArray byteArray2 |
-
-	"read UTF8 Unicode file into internal string with NCRs"
-	"for NCR see http://en.wikipedia.org/wiki/Numeric_character_reference"
-	
-	byteArray := self class fileName asFileEntry binaryContents.
-	content := String fromUtf8Bytes: byteArray.
-	"NCRs were added to 'content' as needed"
-
-	"write internal string back to UTF8 file with NCRs converted back to UTF8 chars"
+	| content byteArray byteArray2 |
+	byteArray _ self class fileName asFileEntry binaryContents.
+	content _ String fromUtf8Bytes: byteArray.
 	self class fileName2 asFileEntry forceWriteStreamDo: [ :stream |
 		stream binary.
-		stream nextPutAll: (content asUtf8Bytes: true).  "true means: convert NCRs back to UTF8"
-		].
-
-      "compare the two versions: what is in file 'fileName' with what is in file 'fileName2'"
-	byteArray := self class fileName asFileEntry binaryContents.
-	byteArray2 := self class fileName2 asFileEntry binaryContents.
-	self assert: byteArray = byteArray2! !
+		stream nextPutAll: content asUtf8Bytes ].
+	"compare the two versions: what is in file 'fileName' with what is in file 'fileName2'"
+	byteArray _ self class fileName asFileEntry binaryContents.
+	byteArray2 _ self class fileName2 asFileEntry binaryContents.
+	self assert: byteArray = byteArray2.! !
 
 !UnicodeTest methodsFor: 'testing' stamp: 'jmv 8/5/2022 15:17:52'!
 testTextConcatenation
@@ -17819,12 +17771,12 @@ testPrefixIteration
 	self assert: subject prefixSelection: 'cat' isEquivalentToSet: controlGroup.
 	self assert: subject prefixSelection: 'cart' isEquivalentToSet: controlGroup.
 
-	subject add: 'Òand˙'.
-	controlGroup add: 'Òand˙'.
-	subject add: 'Òandues'.
-	controlGroup add: 'Òandues'.
-	subject add: '—AND⁄SES'.
-	controlGroup add: '—AND⁄SES'.
+	subject add: '√±and√∫'.
+	controlGroup add: '√±and√∫'.
+	subject add: '√±andues'.
+	controlGroup add: '√±andues'.
+	subject add: '√ëAND√öSES'.
+	controlGroup add: '√ëAND√öSES'.
 	
 	self assert: subject prefixSelection: '' isEquivalentToSet: controlGroup.
 	self assert: subject prefixSelection: 'c' isEquivalentToSet: controlGroup.
@@ -17832,12 +17784,12 @@ testPrefixIteration
 	self assert: subject prefixSelection: 'car' isEquivalentToSet: controlGroup.
 	self assert: subject prefixSelection: 'cat' isEquivalentToSet: controlGroup.
 	self assert: subject prefixSelection: 'cart' isEquivalentToSet: controlGroup.
-	self assert: subject prefixSelection: 'Ò' isEquivalentToSet: controlGroup.
-	self assert: subject prefixSelection: 'Òan' isEquivalentToSet: controlGroup.
-	self assert: subject prefixSelection: 'Òandu' isEquivalentToSet: controlGroup.
-	self assert: subject prefixSelection: 'Òand˙' isEquivalentToSet: controlGroup.
-	self assert: subject prefixSelection: '—' isEquivalentToSet: controlGroup.
-	self assert: subject prefixSelection: '—AND⁄' isEquivalentToSet: controlGroup.! !
+	self assert: subject prefixSelection: '√±' isEquivalentToSet: controlGroup.
+	self assert: subject prefixSelection: '√±an' isEquivalentToSet: controlGroup.
+	self assert: subject prefixSelection: '√±andu' isEquivalentToSet: controlGroup.
+	self assert: subject prefixSelection: '√±and√∫' isEquivalentToSet: controlGroup.
+	self assert: subject prefixSelection: '√ë' isEquivalentToSet: controlGroup.
+	self assert: subject prefixSelection: '√ëAND√ö' isEquivalentToSet: controlGroup.! !
 
 !TrieTest methodsFor: 'testing' stamp: 'jmv 6/22/2011 12:50'!
 testPrefixIteration2
@@ -17997,16 +17949,16 @@ testSetProtocol
 	controlGroup add: 'cart'.
 	self assert: subject isEquivalentToSet: controlGroup.
 
-	subject add: 'Òand˙'.
-	controlGroup add: 'Òand˙'.
+	subject add: '√±and√∫'.
+	controlGroup add: '√±and√∫'.
 	self assert: subject isEquivalentToSet: controlGroup.
 
-	subject add: 'Òandu'.
-	controlGroup add: 'Òandu'.
+	subject add: '√±andu'.
+	controlGroup add: '√±andu'.
 	self assert: subject isEquivalentToSet: controlGroup.
 
-	subject add: '—AND⁄'.
-	controlGroup add: '—AND⁄'.
+	subject add: '√ëAND√ö'.
+	controlGroup add: '√ëAND√ö'.
 	self assert: subject isEquivalentToSet: controlGroup.! !
 
 !TrieUnicodeTest methodsFor: 'testing' stamp: 'jmv 7/6/2022 08:11:26'!
@@ -19084,51 +19036,6 @@ testIsColorForm
 !GrayFormTest methodsFor: 'as yet unclassified' stamp: 'jpb 8/2/2019 23:36:06'!
 testIsGrayForm
 	self assert: (GrayForm new is: #GrayForm)! !
-
-!StrikeFontTest methodsFor: 'testing' stamp: 'jmv 6/11/2020 16:30:55'!
-testBaseAndDerivedFont
-	"
-	StrikeFontTest new testBaseAndDerivedFont
-	"
-
-	| base italic italicItalic boldItalic italicBold boldItalic2 underlined underlinedItalic italicUnderlined struckThrough1 struckThrough2 |
-	base _ FontFamily defaultFamilyPointSize: 14.
-	self assert: base isBaseFont.
-	italic _ base italic.
-	self deny: italic isBaseFont.
-	italicItalic _ italic italic.
-	self assert: italicItalic == italic.
-	boldItalic _ base bold italic.
-	self deny: boldItalic isBaseFont.
-	boldItalic2 _ base boldItalic.
-	italicBold _ italic bold.
-	self assert: boldItalic == italicBold.
-	self assert: boldItalic == boldItalic2.
-	underlined _ base underlined.
-	self deny: underlined isBaseFont.
-	underlinedItalic _ underlined italic.
-	italicUnderlined _ italic underlined.
-	self assert: underlinedItalic == italicUnderlined.
-	struckThrough1 _ base italic underlined bold struckThrough.
-	struckThrough2 _ base bold underlined italic struckThrough.
-	self assert: struckThrough1 == struckThrough2! !
-
-!StrikeFontTest methodsFor: 'testing' stamp: 'jmv 6/11/2020 16:25:48'!
-testBaseAndDerivedFontSanity
-	"
-	StrikeFontTest new testBaseAndDerivedFontSanity
-	"
-
-	StrikeFont allInstances do: [ :f |
-		f isBaseFont 
-			ifTrue: [
-				self assert: (f instVarNamed: 'baseFont') isNil.
-				self assert: f baseFont == f.
-				self assert: (f instVarNamed: 'derivativeFonts') notNil ]
-			ifFalse: [
-				self assert: f baseFont notNil.
-				self assert: (f instVarNamed: 'derivativeFonts') isNil.
-				self assert: (f baseFont emphasized: f emphasis) == f ] ]! !
 
 !JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:59:20'!
 test16bpp
