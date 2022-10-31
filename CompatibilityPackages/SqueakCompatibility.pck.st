@@ -1,6 +1,6 @@
 'From Cuis 5.0 [latest update: #4972] on 9 November 2021 at 6:22:14 pm'!
 'Description Various code used in Squeak which is not in Cuis.'!
-!provides: 'SqueakCompatibility' 1 33!
+!provides: 'SqueakCompatibility' 1 34!
 !requires: 'Cuis-Base' 42 2658 nil!
 SystemOrganization addCategory: 'SqueakCompatibility'!
 
@@ -56,7 +56,7 @@ ByteString class
 	instanceVariableNames: ''!
 
 !classDefinition: #MultiByteFileStream category: 'SqueakCompatibility'!
-StandardFileStream subclass: #MultiByteFileStream
+UniFileStream subclass: #MultiByteFileStream
 	instanceVariableNames: 'lineEndConvention'
 	classVariableNames: ''
 	poolDictionaries: ''
@@ -903,7 +903,7 @@ deleteFileNamed: localFileName ifAbsent: failBlock
 	If the first deletion attempt fails do a GC to force finalization of any lost references. ar 3/21/98 17:53"
 	| fullName |
 	fullName _ self fullNameFor: localFileName.
-	(StandardFileStream 
+	(UniFileStream 
 		retryWithGC:[self primDeleteFileNamed: (self fullNameFor: localFileName)]
 		until:[:result| result notNil]
 		forFileNamed: fullName) ifNil: [
@@ -970,7 +970,7 @@ rename: oldFileName toBe: newFileName
 	"Modified for retry after GC ar 3/21/98 18:09"
 	oldName _ self fullNameFor: oldFileName.
 	newName _ self fullNameFor: newFileName.
-	(StandardFileStream 
+	(UniFileStream 
 		retryWithGC:[self primRename: oldName to: newName]
 		until:[:result| result notNil]
 		forFileNamed: oldName) ifNotNil: [ ^self].
@@ -2284,11 +2284,11 @@ crtab: anInteger
 nl
 	self newLine ! !
 
-!StandardFileStream methodsFor: '*squeakCompatibility' stamp: 'jmv 4/2/2016 23:38'!
+!UniFileStream methodsFor: '*squeakCompatibility' stamp: 'jmv 4/2/2016 23:38'!
 lineEndConvention: aSymbol
 	"ignore it"! !
 
-!StandardFileStream class methodsFor: '*squeakCompatibility' stamp: 'jmv 5/31/2016 12:38'!
+!UniFileStream class methodsFor: '*squeakCompatibility' stamp: 'jmv 5/31/2016 12:38'!
 forceNewFileNamed: aFilename
 	^ aFilename asFileEntry forceWriteStream! !
 
