@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4871] on 21 September 2021 at 3:24:03 pm'!
+'From Cuis 6.0 [latest update: #5544] on 31 October 2022 at 11:51:18 am'!
 'Description '!
-!provides: 'Compression' 1 30!
+!provides: 'Compression' 1 32!
 SystemOrganization addCategory: 'Compression-System'!
 SystemOrganization addCategory: 'Compression-Archives'!
 
@@ -380,24 +380,6 @@ Their data comes from external file streams.!
 ZipStringMember instances are used to represent files that are going to be written to a ZipArchive.
 Their data comes from in-image strings, though.!
 
-!ZipEncoderNode methodsFor: 'printing' stamp: 'ar 12/26/1999 10:46'!
-printOn: aStream
-	super printOn: aStream.
-	aStream nextPut:$(;
-		nextPutAll:'value = '; print: value;
-		nextPutAll:', freq = '; print: frequency;
-		nextPutAll:', bitLength = '; print: bitLength;
-		nextPutAll:', code = '; print: code;
-		nextPutAll:', height = '; print: height; 
-	nextPut:$).! !
-
-!ArchiveMember methodsFor: 'printing' stamp: 'nk 12/20/2002 15:11'!
-printOn: aStream
-	super printOn: aStream.
-	aStream nextPut: $(;
-		nextPutAll: self fileName;
-		nextPut: $)! !
-
 !GZipConstants class methodsFor: 'pool initialization' stamp: 'ar 5/18/2003 19:00'!
 gzipMagic
 	^GZipMagic! !
@@ -601,9 +583,9 @@ nextBits: n
 	bitPos _ bitPos - n.
 	^bits! !
 
-!InflateStream methodsFor: 'bit access' stamp: 'ar 12/5/1998 14:54'!
+!InflateStream methodsFor: 'bit access' stamp: 'jmv 10/31/2022 11:46:44'!
 nextByte
-	^source byteAt: (sourcePos _ sourcePos + 1)! !
+	^source at: (sourcePos _ sourcePos + 1)! !
 
 !InflateStream methodsFor: 'bit access' stamp: 'ar 12/4/1998 02:01'!
 nextSingleBits: n
@@ -939,7 +921,7 @@ decodeValueFrom: table
 			bitsNeeded > MaxBits ifTrue:[^self error:'Invalid huffman table entry']].
 	^value! !
 
-!InflateStream methodsFor: 'inflating' stamp: 'yo 5/9/2014 15:19'!
+!InflateStream methodsFor: 'inflating' stamp: 'jmv 10/31/2022 11:46:15'!
 decompressBlock: llTable with: dTable
 	"Process the compressed data in the block.
 	llTable is the huffman table for literal/length codes
@@ -952,7 +934,7 @@ decompressBlock: llTable with: dTable
 		oldPos _ sourcePos.
 		value _ self decodeValueFrom: llTable.
 		value < 256 ifTrue:[ "A literal"
-			collection byteAt: (readLimit _ readLimit + 1) put: value.
+			collection at: (readLimit _ readLimit + 1) put: value.
 		] ifFalse: ["length/distance or end of block"
 			value = 256 ifTrue:["End of block"
 				state _ state bitAnd: StateNoMoreData.
@@ -1190,7 +1172,7 @@ initialize
 					((281 to: 288) collect:[:i| 8]).
 	FixedDistCodes _ ((1 to: 32) collect:[:i| 5]).! !
 
-!FastInflateStream methodsFor: 'inflating' stamp: 'yo 5/9/2014 15:19'!
+!FastInflateStream methodsFor: 'inflating' stamp: 'jmv 10/31/2022 11:46:21'!
 decompressBlock: llTable with: dTable
 	"Process the compressed data in the block.
 	llTable is the huffman table for literal/length codes
@@ -1204,7 +1186,7 @@ decompressBlock: llTable with: dTable
 		oldPos _ sourcePos.
 		value _ self decodeValueFrom: llTable.
 		value < 256 ifTrue:[ "A literal"
-			collection byteAt: (readLimit _ readLimit + 1) put: value.
+			collection at: (readLimit _ readLimit + 1) put: value.
 		] ifFalse: ["length/distance or end of block"
 			value = 256 ifTrue:["End of block"
 				state _ state bitAnd: StateNoMoreData.
@@ -1507,7 +1489,7 @@ deflateBlock
 		self moveContentsToFront].
 ! !
 
-!DeflateStream methodsFor: 'deflating' stamp: 'ar 12/29/1999 18:05'!
+!DeflateStream methodsFor: 'deflating' stamp: 'jmv 10/31/2022 11:46:48'!
 deflateBlock: lastIndex chainLength: chainLength goodMatch: goodMatch
 	"Continue deflating the receiver's collection from blockPosition to lastIndex.
 	Note that lastIndex must be at least MaxMatch away from the end of collection"
@@ -1555,7 +1537,7 @@ deflateBlock: lastIndex chainLength: chainLength goodMatch: goodMatch
 			"Either the next match is better than the current one or we didn't
 			have a good match after all (e.g., current match length < MinMatch).
 			Output a single literal."
-			flushNeeded _ self encodeLiteral: (collection byteAt: (here + 1)).
+			flushNeeded _ self encodeLiteral: (collection at: (here + 1)).
 			here _ here + 1.
 			(here <= lastIndex and:[flushNeeded not]) ifTrue:[
 				"Cache the results for the next round"
@@ -1644,10 +1626,10 @@ updateHash: nextValue
 	Return the new updated hash value."
 	^((hashValue bitShift: HashShift) bitXor: nextValue) bitAnd: HashMask.! !
 
-!DeflateStream methodsFor: 'deflating' stamp: 'ar 12/29/1999 17:47'!
+!DeflateStream methodsFor: 'deflating' stamp: 'jmv 10/31/2022 11:46:52'!
 updateHashAt: here
 	"Update the hash value at position here (one based)"
-	^self updateHash: (collection byteAt: here)! !
+	^self updateHash: (collection at: here)! !
 
 !DeflateStream methodsFor: 'deflating' stamp: 'ar 12/28/1999 17:43'!
 validateMatchAt: pos from: startPos to: endPos
@@ -1716,27 +1698,34 @@ next: bytes putAll: aCollection startingAt: startPos
 		ifTrue:[^self nextPutAll: aCollection].
 	^self nextPutAll: (aCollection copyFrom: startPos to: startPos + bytes - 1)! !
 
-!DeflateStream methodsFor: 'accessing' stamp: 'ar 12/29/1999 17:33'!
-nextPutAll: aCollection
-	| start count max |
-	aCollection species = collection species
-		ifFalse:[
-			aCollection do:[:ch| self nextPut: ch].
-			^aCollection].
+!DeflateStream methodsFor: 'accessing' stamp: 'jmv 10/31/2022 11:04:48'!
+nextPut: aByteOrCharacter
+	"To add Characters, we take the UTF-8 bytes"
+	aByteOrCharacter isCharacter ifTrue: [
+		^self nextPutAll: aByteOrCharacter asString ].
+	^super nextPut: aByteOrCharacter! !
+
+!DeflateStream methodsFor: 'accessing' stamp: 'jmv 10/31/2022 11:04:35'!
+nextPutAll: bytesOrString
+	"To add Strings, we take the UTF-8 bytes"
+	| bytes start count max |
+	bytes _ bytesOrString isString
+		ifTrue: [ bytesOrString asUtf8Bytes ]
+		ifFalse: [ bytesOrString asByteArray ].
 	start _ 1.
-	count _ aCollection size.
+	count _ bytes size.
 	[count = 0] whileFalse:[
 		position = writeLimit ifTrue:[self deflateBlock].
 		max _ writeLimit - position.
 		max > count ifTrue:[max _ count].
 		collection replaceFrom: position+1
 			to: position+max
-			with: aCollection
+			with: bytes
 			startingAt: start.
 		start _ start + max.
 		count _ count - max.
 		position _ position + max].
-	^aCollection! !
+	^bytes! !
 
 !DeflateStream methodsFor: 'accessing' stamp: 'ar 12/28/1999 17:35'!
 pastEndPut: anObject
@@ -1804,15 +1793,13 @@ initializeNewBlock
 	litCount _ 0.
 	matchCount _ 0.! !
 
-!ZipWriteStream methodsFor: 'initialization' stamp: 'ar 2/24/2001 19:43'!
+!ZipWriteStream methodsFor: 'initialization' stamp: 'jmv 10/31/2022 10:54:29'!
 on: aCollectionOrStream
 	crc _ 16rFFFFFFFF.
 	crcPosition _ 1.
 	bytesWritten _ 0.
 	encoder _ ZipEncoder on: aCollectionOrStream.
-	encoder isBinary
-		ifTrue:[super on: ByteArray new]
-		ifFalse:[super on: String new].
+	super on: ByteArray new.
 	self writeHeader.
 ! !
 
@@ -2188,7 +2175,7 @@ updateCrc
 updateCrc: oldCrc from: start to: stop in: aCollection
 	^self class updateCrc: oldCrc from: start to: stop in: aCollection! !
 
-!ZipWriteStream methodsFor: 'stored blocks' stamp: 'ar 1/2/2000 16:36'!
+!ZipWriteStream methodsFor: 'stored blocks' stamp: 'jmv 10/31/2022 11:46:56'!
 sendStoredBlock
 	"Send an uncompressed block"
 	| inBytes |
@@ -2198,7 +2185,7 @@ sendStoredBlock
 	encoder nextBits: 16 put: (inBytes bitXor: 16rFFFF).
 	encoder flushBits.
 	1 to: inBytes do:[:i|
-		encoder nextBytePut: (collection byteAt: blockStart+i)].! !
+		encoder nextBytePut: (collection at: blockStart+i)].! !
 
 !ZipWriteStream methodsFor: 'stored blocks' stamp: 'ar 12/30/1999 00:42'!
 storedBlockSize
@@ -2252,7 +2239,7 @@ compressAndDecompress: aFile using: tempName stats: stats
 	fileSize _ aFile size.
 	(fileSize < 1"00000" "or:[fileSize > 1000000]") ifTrue:[aFile close. ^nil].
 	Transcript newLine; show:'Testing ', aFile name,' ... '.
-	tempFile _ StandardFileStream new open: tempName forWrite: true.
+	tempFile _ UniFileStream new open: tempName forWrite: true.
 	'Compressing ', aFile name,'...' displayProgressAt: Sensor mousePoint
 		from: 1 to: aFile size during:[:barBlock|
 			result _ self regressionCompress: aFile into: tempFile notifiying: barBlock stats: stats].
@@ -2314,15 +2301,15 @@ regressionCompress: aFile into: tempFile notifiying: progressBarBlock stats: sta
 	tempFile nextPutAll: encoded contents.
 	^true! !
 
-!ZipWriteStream class methodsFor: 'regression test' stamp: 'jmv 7/17/2017 15:52:23'!
+!ZipWriteStream class methodsFor: 'regression test' stamp: 'jmv 10/31/2022 11:22:09'!
 regressionDecompress: aFile from: tempFile notifying: progressBarBlock stats: stats
 	"Validate aFile as decompressed from tempFile"
 	| unzip rawSize compressedSize buffer1 buffer2 |
 	rawSize _ aFile size.
 	compressedSize _ tempFile size.
-	aFile ascii.
+	aFile binary.
 	aFile position: 0.
-	tempFile ascii.
+	tempFile binary.
 	tempFile position: 0.
 	buffer1 _ ByteArray new: 4096.
 	buffer2 _ buffer1 copy.
@@ -2370,7 +2357,7 @@ regressionTestFrom: fd using: tempName stats: stats
 		file _ nil.
 		fullName _ (fd // fName) pathName.
 		fullName = tempName ifFalse: [
-			file _ StandardFileStream new
+			file _ UniFileStream new
 				open: fullName
 				forWrite: false ].
 		self
@@ -2456,13 +2443,13 @@ initializeCrcTable
   16r2D02EF8D
 ).! !
 
-!ZipWriteStream class methodsFor: 'crc' stamp: 'nk 2/17/2004 16:50'!
+!ZipWriteStream class methodsFor: 'crc' stamp: 'jmv 10/31/2022 11:47:03'!
 updateCrc: oldCrc from: start to: stop in: aCollection
 	| newCrc |
 	<primitive: 'primitiveUpdateGZipCrc32' module: 'ZipPlugin'>
 	newCrc _ oldCrc.
 	start to: stop do:[:i|
-		newCrc _ (CrcTable at: ((newCrc bitXor: (aCollection byteAt: i)) 
+		newCrc _ (CrcTable at: ((newCrc bitXor: (aCollection at: i)) 
 				bitAnd: 255) + 1) bitXor: (newCrc bitShift: -8).
 	].
 	^newCrc! !
@@ -2533,7 +2520,7 @@ writeHeader
 	encoder nextBits: 8 put: 120. "deflate method with 15bit window size"
 	encoder nextBits: 8 put: 94. "checksum; no preset; fast (flevel=1) compression"! !
 
-!ZLibWriteStream class methodsFor: 'crc' stamp: 'ar 4/14/2010 19:50'!
+!ZLibWriteStream class methodsFor: 'crc' stamp: 'jmv 10/31/2022 11:47:07'!
 updateAdler32: adler from: start to: stop in: aCollection
 	"Update crc using the Adler32 checksum technique from RFC1950"
 "
@@ -2552,7 +2539,7 @@ updateAdler32: adler from: start to: stop in: aCollection
 	s1 := adler bitAnd: 16rFFFF.
 	s2 := (adler bitShift: -16) bitAnd: 16rFFFF.
 	start to: stop do: [ :n | | b |
-		b := aCollection byteAt: n.
+		b := aCollection at: n.
 		s1 := (s1 + b) \\ 65521.
 		s2 := (s2 + s1) \\ 65521. ].
 	^(s2 bitShift: 16) + s1! !
@@ -2576,7 +2563,7 @@ nextBits: nBits put: value
 		bitBuffer _ bitBuffer bitShift: -8.
 		bitPosition _ bitPosition - 8].! !
 
-!ZipEncoder methodsFor: 'accessing' stamp: 'ar 1/2/2000 16:34'!
+!ZipEncoder methodsFor: 'accessing' stamp: 'jmv 10/31/2022 11:46:26'!
 nextBytePut: anObject 
 	"Primitive. Insert the argument at the next position in the Stream
 	represented by the receiver. Fail if the collection of this stream is not an
@@ -2590,7 +2577,7 @@ nextBytePut: anObject
 		ifTrue: [^ self pastEndPut: anObject]
 		ifFalse: 
 			[position _ position + 1.
-			^collection byteAt: position put: anObject]! !
+			^collection at: position put: anObject]! !
 
 !ZipEncoder methodsFor: 'initialization' stamp: 'sd 1/30/2004 15:24'!
 close
@@ -2616,14 +2603,12 @@ flushBits
 		bitPosition _ bitPosition - 8].
 	bitPosition _ 0.! !
 
-!ZipEncoder methodsFor: 'initialization' stamp: 'jmv 2/17/2010 22:09'!
+!ZipEncoder methodsFor: 'initialization' stamp: 'jmv 10/31/2022 10:53:38'!
 on: aCollectionOrStream
 	(aCollectionOrStream is: #Stream)
 		ifTrue:[encodedStream _ aCollectionOrStream]
 		ifFalse:[	encodedStream _ WriteStream on: aCollectionOrStream].
-	encodedStream isBinary
-		ifTrue:[super on: (ByteArray new: 4096)]
-		ifFalse:[super on: (String new: 4096)].
+	super on: (ByteArray new: 4096).
 	bitPosition _ bitBuffer _ 0.! !
 
 !ZipEncoder methodsFor: 'private' stamp: 'ar 1/2/2000 16:38'!
@@ -2687,11 +2672,6 @@ sendBlock: literalStream with: distanceStream with: litTree with: distTree
 !CRCError methodsFor: 'as yet unclassified' stamp: 'nk 3/7/2004 15:56'!
 isResumable
 	^true! !
-
-!GZipSurrogateStream methodsFor: 'as yet unclassified' stamp: 'RAA 6/23/2000 08:41'!
-ascii
-
-	self bufferStream ascii! !
 
 !GZipSurrogateStream methodsFor: 'as yet unclassified' stamp: 'RAA 6/23/2000 08:42'!
 binary
@@ -2878,6 +2858,17 @@ timeStamp
 	self bufferStream nextChunkPut:	"double string quotes and !!s"
 		(String streamContents: [:s | Smalltalk timeStamp: s]) printString.
 	self bufferStream newLine! !
+
+!ZipEncoderNode methodsFor: 'printing' stamp: 'ar 12/26/1999 10:46'!
+printOn: aStream
+	super printOn: aStream.
+	aStream nextPut:$(;
+		nextPutAll:'value = '; print: value;
+		nextPutAll:', freq = '; print: frequency;
+		nextPutAll:', bitLength = '; print: bitLength;
+		nextPutAll:', code = '; print: code;
+		nextPutAll:', height = '; print: height; 
+	nextPut:$).! !
 
 !ZipEncoderNode methodsFor: 'accessing' stamp: 'ar 12/25/1999 19:41'!
 bitLength
@@ -3622,6 +3613,13 @@ isZipArchive: aStreamOrFileName
 	stream ~= aStreamOrFileName ifTrue: [stream close].
 	^ eocdPosition > 0! !
 
+!ArchiveMember methodsFor: 'printing' stamp: 'nk 12/20/2002 15:11'!
+printOn: aStream
+	super printOn: aStream.
+	aStream nextPut: $(;
+		nextPutAll: self fileName;
+		nextPut: $)! !
+
 !ArchiveMember methodsFor: 'initialization' stamp: 'ar 3/2/2001 18:46'!
 close
 ! !
@@ -4078,19 +4076,19 @@ writeLocalFileHeaderTo: aStream
 	aStream nextPutAll: fileName asByteArray.
 	aStream nextPutAll: localExtraField asByteArray! !
 
-!ZipArchiveMember methodsFor: 'reading' stamp: 'ar 2/27/2001 14:30'!
+!ZipArchiveMember methodsFor: 'reading' stamp: 'jmv 10/31/2022 10:46:31'!
 contentStream
 	"Answer my contents as a string."
 	| s |
-	s _ RWBinaryOrTextStream on: (String new: self uncompressedSize).
+	s _ RWBinaryOrTextStream on: (ByteArray new: self uncompressedSize).
 	self extractTo: s.
 	^s reset! !
 
-!ZipArchiveMember methodsFor: 'reading' stamp: 'jmv 10/8/2017 17:07:26'!
+!ZipArchiveMember methodsFor: 'reading' stamp: 'jmv 10/31/2022 10:46:38'!
 contents
 	"Answer my contents as a string."
 	| s |
-	s _ RWBinaryOrTextStream on: (String new: self uncompressedSize).
+	s _ RWBinaryOrTextStream on: (ByteArray new: self uncompressedSize).
 	self extractTo: s.
 	s useCharacters.
 	^s contents! !
@@ -4668,7 +4666,7 @@ writeOnGZIPByteStream: aStream
 	
 	aStream nextPutAllWordArray: self! !
 
-!String methodsFor: '*Compression' stamp: 'jmv 9/5/2016 22:13:54'!
+!ByteArray methodsFor: '*Compression' stamp: 'jmv 10/31/2022 11:43:39'!
 unzipped
 	|  magic1 magic2 |
 	magic1 _ (self at: 1) numericValue.
@@ -4726,21 +4724,7 @@ isZipArchive
 	self position: self position - 4. "rewind"
 	^ (ZipArchive validSignatures includes: sig)! !
 
-!FileStream methodsFor: '*Compression' stamp: 'jmv 6/10/2013 20:39'!
-viewGZipContents
-	"View the contents of a gzipped file"
-
-	|  stringContents |
-	self binary.
-	stringContents _ self contentsOfEntireFile.
-	stringContents _ (GZipReadStream on: stringContents) upToEnd.
-	stringContents _ stringContents asString withCuisLineEndings.
-
-	Workspace new
-		contents: stringContents;
-		openLabel: 'Decompressed contents of: ', self localName! !
-
-!StandardFileStream methodsFor: '*Compression' stamp: 'HAW 1/2/2019 18:57:48'!
+!UniFileStream methodsFor: '*Compression' stamp: 'HAW 1/2/2019 18:57:48'!
 compressFile
 	"Write a new file that has the data in me compressed in GZip format."
 	|  zipped buffer |
@@ -4759,6 +4743,20 @@ compressFile
 			zipped close.
 			self close ].
 	 ^zipped! !
+
+!UniFileStream methodsFor: '*Compression' stamp: 'jmv 6/10/2013 20:39'!
+viewGZipContents
+	"View the contents of a gzipped file"
+
+	|  stringContents |
+	self binary.
+	stringContents _ self contentsOfEntireFile.
+	stringContents _ (GZipReadStream on: stringContents) upToEnd.
+	stringContents _ stringContents asString withCuisLineEndings.
+
+	Workspace new
+		contents: stringContents;
+		openLabel: 'Decompressed contents of: ', self localName! !
 
 !CodeFileBrowserWindow class methodsFor: '*Compression' stamp: 'jmv 3/24/2020 11:20:46'!
 browseMCZFile: aFileEntry

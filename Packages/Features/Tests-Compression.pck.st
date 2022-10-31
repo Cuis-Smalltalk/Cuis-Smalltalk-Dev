@@ -1,32 +1,32 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3622] on 21 February 2019 at 5:17:32 pm'!
+'From Cuis 6.0 [latest update: #5544] on 31 October 2022 at 11:51:22 am'!
 'Description '!
-!provides: 'Tests-Compression' 1 1!
+!provides: 'Tests-Compression' 1 2!
 !requires: 'Compression' 1 22 nil!
-SystemOrganization addCategory: #'Tests-Compression'!
+SystemOrganization addCategory: 'Tests-Compression'!
 
 
-!classDefinition: #ZipCrcTests category: #'Tests-Compression'!
+!classDefinition: #ZipCrcTests category: 'Tests-Compression'!
 TestCase subclass: #ZipCrcTests
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Tests-Compression'!
-!classDefinition: 'ZipCrcTests class' category: #'Tests-Compression'!
+!classDefinition: 'ZipCrcTests class' category: 'Tests-Compression'!
 ZipCrcTests class
 	instanceVariableNames: ''!
 
 
-!ZipCrcTests methodsFor: 'tests' stamp: 'ar 2/29/2004 04:43'!
+!ZipCrcTests methodsFor: 'tests' stamp: 'jmv 10/31/2022 11:47:11'!
 testInvalidGZipCrc
 	"See that a wrong CRC raises an appropriate error"
 	| reader writer bytes crcByte |
-	writer := GZipWriteStream on: String new.
+	writer := GZipWriteStream on: ByteArray new.
 	writer nextPutAll: 'Hello World'.
 	writer close.
 
 	bytes := writer encodedStream contents.
-	crcByte := bytes byteAt: bytes size-5. "before the length"
-	bytes byteAt: bytes size-5 put: (crcByte + 1 bitAnd: 255).
+	crcByte := bytes at: bytes size-5. "before the length"
+	bytes at: bytes size-5 put: (crcByte + 1 bitAnd: 255).
 
 	reader := GZipReadStream on: bytes.
 	self should:[reader upToEnd] raise: CRCError.
@@ -38,17 +38,17 @@ testInvalidGZipCrc
 	self should:[reader next: 100] raise: CRCError.
 ! !
 
-!ZipCrcTests methodsFor: 'tests' stamp: 'ar 2/29/2004 04:43'!
+!ZipCrcTests methodsFor: 'tests' stamp: 'jmv 10/31/2022 11:47:14'!
 testInvalidZLibCrc
 	"See that a wrong CRC raises an appropriate error"
 	| reader writer bytes crcByte |
-	writer := ZLibWriteStream on: String new.
+	writer := ZLibWriteStream on: ByteArray new.
 	writer nextPutAll: 'Hello World'.
 	writer close.
 
 	bytes := writer encodedStream contents.
-	crcByte := bytes byteAt: bytes size-2.
-	bytes byteAt: bytes size-2 put: (crcByte + 1 bitAnd: 255).
+	crcByte := bytes at: bytes size-2.
+	bytes at: bytes size-2 put: (crcByte + 1 bitAnd: 255).
 
 	reader := ZLibReadStream on: bytes.
 	self should:[reader upToEnd] raise: CRCError.
@@ -60,11 +60,11 @@ testInvalidZLibCrc
 	self should:[reader next: 100] raise: CRCError.
 ! !
 
-!ZipCrcTests methodsFor: 'tests' stamp: 'nk 3/7/2004 18:37'!
+!ZipCrcTests methodsFor: 'tests' stamp: 'jmv 10/31/2022 10:44:31'!
 testInvalidZipCrc
 	"See that a wrong CRC raises an appropriate error"
 	| reader writer bytes |
-	writer := ZipWriteStream on: String new.
+	writer := ZipWriteStream on: ByteArray new.
 	writer nextPutAll: 'Hello World'.
 	writer close.
 
@@ -83,11 +83,11 @@ testInvalidZipCrc
 	self should:[reader next: 100] raise: CRCError.
 ! !
 
-!ZipCrcTests methodsFor: 'tests' stamp: 'ar 2/29/2004 04:42'!
+!ZipCrcTests methodsFor: 'tests' stamp: 'jmv 10/31/2022 10:43:33'!
 testMissingGZipCrc
 	"See that the lack of a CRC raises an appropriate error"
 	| reader writer bytes |
-	writer := GZipWriteStream on: String new.
+	writer := GZipWriteStream on: ByteArray new.
 	writer nextPutAll: 'Hello World'.
 	writer close.
 
@@ -104,11 +104,11 @@ testMissingGZipCrc
 	self should:[reader next: 100] raise: CRCError.
 ! !
 
-!ZipCrcTests methodsFor: 'tests' stamp: 'ar 2/29/2004 04:42'!
+!ZipCrcTests methodsFor: 'tests' stamp: 'jmv 10/31/2022 10:42:47'!
 testMissingZLibCrc
 	"See that the lack of a CRC raises an appropriate error"
 	| reader writer bytes |
-	writer := ZLibWriteStream on: String new.
+	writer := ZLibWriteStream on: ByteArray new.
 	writer nextPutAll: 'Hello World'.
 	writer close.
 
@@ -125,11 +125,11 @@ testMissingZLibCrc
 	self should:[reader next: 100] raise: CRCError.
 ! !
 
-!ZipCrcTests methodsFor: 'tests' stamp: 'nk 3/7/2004 18:49'!
+!ZipCrcTests methodsFor: 'tests' stamp: 'jmv 10/31/2022 11:05:45'!
 testMissingZipCrc
 	"See that the lack of a CRC does not raise an error"
 	| reader writer bytes readBytes |
-	writer := ZipWriteStream on: String new.
+	writer := ZipWriteStream on: ByteArray new.
 	writer nextPutAll: 'Hello World'.
 	writer close.
 
@@ -137,7 +137,7 @@ testMissingZipCrc
 
 	reader := ZipReadStream on: bytes.
 	self shouldnt:[readBytes _ reader upToEnd] raise: CRCError.
-	self assert: readBytes = 'Hello World'.
+	self assert: readBytes = 'Hello World' asUtf8Bytes.
 
 	reader := ZipReadStream on: bytes.
 	self shouldnt:[reader contents] raise: CRCError.
@@ -146,37 +146,37 @@ testMissingZipCrc
 	self shouldnt:[reader next: 100] raise: CRCError.
 ! !
 
-!ZipCrcTests methodsFor: 'tests' stamp: 'ar 2/29/2004 04:42'!
+!ZipCrcTests methodsFor: 'tests' stamp: 'jmv 10/31/2022 11:07:05'!
 testValidGZipCrc
 	| reader writer bytes |
-	writer := GZipWriteStream on: String new.
+	writer := GZipWriteStream on: ByteArray new.
 	writer nextPutAll: 'Hello World'.
 	writer close.
 
 	bytes := writer encodedStream contents.
 	reader := GZipReadStream on: bytes.
-	self assert: reader upToEnd = 'Hello World'.! !
+	self assert: reader upToEnd = 'Hello World' asUtf8Bytes.! !
 
-!ZipCrcTests methodsFor: 'tests' stamp: 'nk 3/7/2004 18:46'!
+!ZipCrcTests methodsFor: 'tests' stamp: 'jmv 10/31/2022 11:06:59'!
 testValidZLibCrc
 	| reader writer bytes |
-	writer := ZLibWriteStream on: String new.
+	writer := ZLibWriteStream on: ByteArray new.
 	writer nextPutAll: 'Hello World'.
 	writer close.
 
 	bytes := writer encodedStream contents.
 	reader := ZLibReadStream on: bytes.
-	self assert: reader upToEnd = 'Hello World'.
+	self assert: reader upToEnd = 'Hello World' asUtf8Bytes.
 	
 	bytes := writer encodedStream contents.
 	reader := ZLibReadStream on: bytes.
-	self assert: (reader next: 100) = 'Hello World'.! !
+	self assert: (reader next: 100) = 'Hello World' asUtf8Bytes.! !
 
-!ZipCrcTests methodsFor: 'tests' stamp: 'nk 3/7/2004 18:43'!
+!ZipCrcTests methodsFor: 'tests' stamp: 'jmv 10/31/2022 11:05:59'!
 testValidZipCrc
 	"See that a correct CRC does not raise an error and that we can read what we wrote."
 	| reader writer bytes readBytes |
-	writer := ZipWriteStream on: String new.
+	writer := ZipWriteStream on: ByteArray new.
 	writer nextPutAll: 'Hello World'.
 	writer close.
 
@@ -185,19 +185,19 @@ testValidZipCrc
 	reader := ZipReadStream on: bytes.
 	reader expectedCrc: writer crc.
 	self shouldnt:[ readBytes _ reader upToEnd] raise: CRCError.
-	self assert: readBytes = 'Hello World'.
+	self assert: readBytes = 'Hello World' asUtf8Bytes.
 
 	reader := ZipReadStream on: bytes.
 	reader expectedCrc: writer crc.
 	self shouldnt:[ readBytes _ reader contents] raise: CRCError.
-	self assert: readBytes = 'Hello World'.
+	self assert: readBytes = 'Hello World' asUtf8Bytes.
 
 	reader := ZipReadStream on: bytes.
 	reader expectedCrc: writer crc.
 	self shouldnt:[ readBytes _ reader next: 11 ] raise: CRCError.
-	self assert: readBytes = 'Hello World'.
+	self assert: readBytes = 'Hello World' asUtf8Bytes.
 	
 	reader := ZipReadStream on: bytes.
 	reader expectedCrc: writer crc.
 	self shouldnt:[ readBytes _ reader next: 100 ] raise: CRCError.
-	self assert: readBytes = 'Hello World'.! !
+	self assert: readBytes = 'Hello World' asUtf8Bytes.! !
