@@ -1,6 +1,6 @@
 'From Cuis 4.2 of 25 July 2013 [latest update: #2358] on 16 January 2017 at 12:09:03.493729 am'!
 'Description Load all packages included with Cuis and all packages in the Cuis GitGub organization'!
-!provides: 'AllPackages' 1 2!
+!provides: 'AllPackages' 1 3!
 !requires: 'CorePackages' 1 0 nil!
 !requires: 'OpenCL' 1 0 nil!
 !requires: 'Amqp' 1 0 nil!
@@ -29,7 +29,6 @@
 !requires: 'Aconcagua' 1 0 nil!
 !requires: 'Avatar' 1 0 nil!
 !requires: 'BouncingAtoms' 1 0 nil!
-!requires: 'Dice' 1 0 nil!
 !requires: 'Pen' 1 0 nil!
 !requires: 'ImageProcessing' 1 0 nil!
 !requires: 'LinearAlgebra' 1 0 nil!
@@ -50,6 +49,5 @@
 !requires: 'StyledTextInstaller' 1 0 nil!
 !requires: 'StyledTextNotebook' 1 0 nil!
 !requires: 'StyledTextWiki' 1 0 nil!
-!requires: 'VectorGraphics' 1 0 nil!
 !requires: 'UI-Components' 1 0 nil!
 !requires: 'UI-Tools' 1 0 nil!
