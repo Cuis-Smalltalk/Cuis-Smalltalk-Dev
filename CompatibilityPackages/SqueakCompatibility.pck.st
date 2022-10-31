@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4972] on 9 November 2021 at 6:22:14 pm'!
+'From Cuis 6.0 [latest update: #5546] on 31 October 2022 at 6:11:27 pm'!
 'Description Various code used in Squeak which is not in Cuis.'!
-!provides: 'SqueakCompatibility' 1 34!
+!provides: 'SqueakCompatibility' 1 35!
 !requires: 'Cuis-Base' 42 2658 nil!
 SystemOrganization addCategory: 'SqueakCompatibility'!
 
@@ -392,46 +392,6 @@ an entry in a directory; a reference to a directory.!
 !DirectoryEntryFile commentStamp: '<historical>' prior: 0!
 an entry in a directory; a reference to a file.!
 
-!FileDirectory class methodsFor: 'name utilities' stamp: 'jmv 4/19/2015 08:41'!
-startUp
-
-	Smalltalk openSourceFiles! !
-
-!FileDirectory class methodsFor: 'cacher state access' stamp: 'jmv 6/17/2015 11:05'!
-releaseClassCachedState
-
-	DirectoryClass _ nil.
-	ImageDirectory _ nil.
-	VMDirectory _ nil.
-	CurrentDirectory _ nil! !
-
-!FileDirectory class methodsFor: 'system start up' stamp: 'jmv 2/15/2008 00:45'!
-shutDown
-
-	Smalltalk closeSourceFiles.
-! !
-
-!FileDirectory methodsFor: 'printing' stamp: 'jm 12/4/97 19:41'!
-printOn: aStream 
-	"Refer to the comment in Object|printOn:."
-
-	aStream nextPutAll: self class name.
-	aStream nextPutAll: ' on '.
-	pathName printOn: aStream.
-! !
-
-!SqDirectoryEntry methodsFor: 'access' stamp: 'ls 7/15/1998 21:37'!
-name
-	"name of the entry"
-	^name! !
-
-!SqDirectoryEntry methodsFor: 'access' stamp: 'cmm 8/29/2007 17:44'!
-printOn: aStream 
-	super printOn: aStream.
-	aStream
-		space ;
-		nextPutAll: self name! !
-
 !KlattResonatorIndices class methodsFor: 'pool initialization' stamp: 'ar 5/18/2003 20:17'!
 initialize
 	"KlattResonatorIndices initialize"
@@ -576,6 +536,15 @@ pathName: badPathName
 !InvalidDirectoryError class methodsFor: 'exceptionInstantiator' stamp: 'ar 5/30/2001 20:49'!
 pathName: badPathName
 	^self new pathName: badPathName! !
+
+!FileDirectory methodsFor: 'printing' stamp: 'jm 12/4/97 19:41'!
+printOn: aStream 
+	"Refer to the comment in Object|printOn:."
+
+	aStream nextPutAll: self class name.
+	aStream nextPutAll: ' on '.
+	pathName printOn: aStream.
+! !
 
 !FileDirectory methodsFor: 'comparing' stamp: 'jmv 1/11/2015 21:03'!
 = aDirectory
@@ -1411,6 +1380,25 @@ splitName: fullName to: pathAndNameBlock
 
 	^ pathAndNameBlock value: dirName value: localName! !
 
+!FileDirectory class methodsFor: 'name utilities' stamp: 'jmv 4/19/2015 08:41'!
+startUp
+
+	Smalltalk openSourceFiles! !
+
+!FileDirectory class methodsFor: 'cacher state access' stamp: 'jmv 6/17/2015 11:05'!
+releaseClassCachedState
+
+	DirectoryClass _ nil.
+	ImageDirectory _ nil.
+	VMDirectory _ nil.
+	CurrentDirectory _ nil! !
+
+!FileDirectory class methodsFor: 'system start up' stamp: 'jmv 2/15/2008 00:45'!
+shutDown
+
+	Smalltalk closeSourceFiles.
+! !
+
 !FileDirectory class methodsFor: 'private' stamp: 'jmv 4/19/2015 08:34'!
 activeDirectoryClass
 	"Return the concrete FileDirectory subclass for the platform on which we are currently running."
@@ -1939,6 +1927,18 @@ modificationTime
 	"time the entry was last modified"
 	^modificationTime! !
 
+!SqDirectoryEntry methodsFor: 'access' stamp: 'ls 7/15/1998 21:37'!
+name
+	"name of the entry"
+	^name! !
+
+!SqDirectoryEntry methodsFor: 'access' stamp: 'cmm 8/29/2007 17:44'!
+printOn: aStream 
+	super printOn: aStream.
+	aStream
+		space ;
+		nextPutAll: self name! !
+
 !SqDirectoryEntry methodsFor: 'access' stamp: 'cmm 1/25/2011 13:16'!
 size
 	"For API compatibility with byte objects (for streaming api)."
@@ -2012,17 +2012,6 @@ ifNotNilDo: ifNotNilBlock
 isCharacter
 	^false! !
 
-!UndefinedObject methodsFor: '*squeakCompatibility' stamp: 'jmv 3/1/2010 09:59'!
-environment
-	"Necessary to support disjoint class hierarchies."
-
-	^Smalltalk		"No environments in Cuis..."! !
-
-!Behavior methodsFor: '*squeakCompatibility' stamp: 'jmv 11/1/2011 23:15'!
-environment
-	"Return the environment in which the receiver is visible"
-	^Smalltalk! !
-
 !Float methodsFor: '*squeakCompatibility' stamp: 'KenD 8/26/2016 15:08:16'!
 printOn: aStream base: base digitCount: numDigits
 
@@ -2044,6 +2033,17 @@ printOn: aStream base: base nDigits: numDigits
 !Time class methodsFor: '*squeakCompatibility' stamp: 'jmv 11/9/2021 18:17:03'!
 totalSeconds
 	^self localSecondClock ! !
+
+!UndefinedObject methodsFor: '*squeakCompatibility' stamp: 'jmv 3/1/2010 09:59'!
+environment
+	"Necessary to support disjoint class hierarchies."
+
+	^Smalltalk		"No environments in Cuis..."! !
+
+!Behavior methodsFor: '*squeakCompatibility' stamp: 'jmv 11/1/2011 23:15'!
+environment
+	"Return the environment in which the receiver is visible"
+	^Smalltalk! !
 
 !Character methodsFor: '*squeakCompatibility' stamp: 'jmv 9/6/2016 10:27:29'!
 asInteger
@@ -2074,6 +2074,34 @@ value
 	^self numericValue! !
 
 !Character class methodsFor: '*squeakCompatibility' stamp: 'jmv 9/6/2016 10:26:47'!
+value: anInteger
+	"Answer the Character whose value is anInteger."
+
+	^ self numericValue: anInteger! !
+
+!UnicodeCodePoint methodsFor: '*squeakCompatibility' stamp: 'jmv 10/31/2022 17:42:45'!
+asInteger
+	^self codePoint! !
+
+!UnicodeCodePoint methodsFor: '*squeakCompatibility' stamp: 'jmv 10/31/2022 17:41:55'!
+asUnicode
+	"Answer the unicode encoding of the receiver"
+	"self leadingChar = 0 ifTrue: [^ self asInteger].
+	^self encodedCharSet charsetClass convertToUnicode: self charCode"
+	^self asInteger! !
+
+!UnicodeCodePoint methodsFor: '*squeakCompatibility' stamp: 'jmv 10/31/2022 17:43:02'!
+between: min and: max 
+	"Answer whether the receiver is less than or equal to the argument, max, 
+	and greater than or equal to the argument, min."
+
+	^self codePoint >= min codePoint and: [self codePoint <= max codePoint]! !
+
+!UnicodeCodePoint methodsFor: '*squeakCompatibility' stamp: 'jmv 10/31/2022 17:43:17'!
+value
+	^self numericValue! !
+
+!UnicodeCodePoint class methodsFor: '*squeakCompatibility' stamp: 'jmv 10/31/2022 17:44:39'!
 value: anInteger
 	"Answer the Character whose value is anInteger."
 
@@ -2201,6 +2229,85 @@ lf
 	^self lfString! !
 
 !Symbol methodsFor: '*squeakCompatibility' stamp: 'hjh 5/9/2015 17:37'!
+value: anObject 
+	^anObject perform: self.! !
+
+!Utf8String methodsFor: '*squeakCompatibility' stamp: 'jmv 10/31/2022 17:46:17'!
+asInteger 
+	"From Squeak 5.3" 	
+	^self asIntegerSigned: true
+
+	! !
+
+!Utf8String methodsFor: '*squeakCompatibility' stamp: 'jmv 10/31/2022 17:46:22'!
+asIntegerSigned: signed
+	"From Squeak 5.3 "
+	"Return the first decimal integer I can find or nil."
+	| index character size result negative |
+	index := 0.
+	size := self size.
+	"Find the first character between $0 and $9."
+	[ (index := index + 1) > size or: [ (self at: index) isDigit ] ] whileFalse.
+	index > size ifTrue: [ ^nil ].
+	negative := signed and: [ index > 1 and: [ (self at: index - 1) == $- ] ].
+	"Parse the number."
+	size - index > 15 ifTrue: [
+		negative ifTrue: [ index := index - 1 ].
+		^Integer readFrom: (
+			ReadStream
+				on: self
+				from: index
+				to: size) ].
+	result := (self at: index) digitValue.
+	[ (index := index + 1) <= size
+		and: [ (character := self at: index) isDigit ] ]  whileTrue: [
+		result := result * 10 + character digitValue ].
+	negative ifTrue: [ ^result negated ].
+	^result! !
+
+!Utf8String methodsFor: '*squeakCompatibility' stamp: 'jmv 10/31/2022 17:46:26'!
+subStrings: separators 
+	"Answer an array containing the substrings in the receiver separated 
+	by the elements of separators."
+	| char result sourceStream subString |
+	#Collectn.
+	"Changed 2000/04/08 For ANSI <readableString> protocol."
+	(separators isString or:[separators allSatisfy: [:element | element isCharacter]]) ifFalse:
+		[^ self error: 'separators must be Characters.'].
+	sourceStream := ReadStream on: self.
+	result := OrderedCollection new.
+	subString := String new.
+	[sourceStream atEnd]
+		whileFalse: 
+			[char := sourceStream next.
+			(separators includes: char)
+				ifTrue: [subString notEmpty
+						ifTrue: 
+							[result add: subString copy.
+							subString := String new]]
+				ifFalse: [subString := subString , (String with: char)]].
+	subString notEmpty ifTrue: [result add: subString copy].
+	^ result asArray! !
+
+!Utf8String methodsFor: '*squeakCompatibility' stamp: 'jmv 10/31/2022 17:46:30'!
+withCRs
+	"Return a copy of the receiver in which backslash (\) characters have been replaced with carriage returns."
+
+	^ self collect: [ :c | c = $\ ifTrue: [ Character cr ] ifFalse: [ c ]].! !
+
+!Utf8String class methodsFor: '*squeakCompatibility' stamp: 'jmv 10/31/2022 18:06:21'!
+cr
+	^self crString! !
+
+!Utf8String class methodsFor: '*squeakCompatibility' stamp: 'jmv 10/31/2022 18:06:25'!
+crlf
+	^self crlfString! !
+
+!Utf8String class methodsFor: '*squeakCompatibility' stamp: 'jmv 10/31/2022 18:06:29'!
+lf
+	^self lfString! !
+
+!Utf8Symbol methodsFor: '*squeakCompatibility' stamp: 'jmv 10/31/2022 18:05:42'!
 value: anObject 
 	^anObject perform: self.! !
 
