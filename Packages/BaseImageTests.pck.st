@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5543] on 28 October 2022 at 8:40:30 pm'!
+'From Cuis 6.0 [latest update: #5546] on 2 November 2022 at 3:15:55 pm'!
 'Description Inline temp new test'!
-!provides: 'BaseImageTests' 1 321!
+!provides: 'BaseImageTests' 1 322!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Objects'!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Classes'!
@@ -544,6 +544,16 @@ TestCase subclass: #SemaphoreTest
 	category: 'BaseImageTests-Kernel-Processes'!
 !classDefinition: 'SemaphoreTest class' category: 'BaseImageTests-Kernel-Processes'!
 SemaphoreTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #BagTest category: 'BaseImageTests-Collections'!
+TestCase subclass: #BagTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-Collections'!
+!classDefinition: 'BagTest class' category: 'BaseImageTests-Collections'!
+BagTest class
 	instanceVariableNames: ''!
 
 !classDefinition: #BinarySearchTest category: 'BaseImageTests-Collections'!
@@ -12897,6 +12907,31 @@ testWaitTimeoutMSecs
 	"Ensure that a signaled waitTimeoutMSecs: returns false from the wait"
 	self assert: (Semaphore new signal waitTimeoutMSecs: 50) == false.
 ! !
+
+!BagTest methodsFor: 'tests' stamp: 'jmv 11/2/2022 15:11:59'!
+testProduct
+
+	| bag |	
+	bag _ Bag new.
+	bag add: 3; add: 4; add: 4; add: 5.
+	self assert: (bag product: [ :v | v ]) = 240.
+	self assert: (bag product: [ :v | v-1 ]) = 72.! !
+
+!BagTest methodsFor: 'tests' stamp: 'HAW 11/1/2022 23:15:57'!
+testSumIfEmptyEvalsIfEmptyBlockWhenEmpty
+
+	self assert: 'empty' equals: (Bag new sum: [:each | 1 ] ifEmpty: [ 'empty' ])! !
+
+!BagTest methodsFor: 'tests' stamp: 'HAW 11/1/2022 23:18:12'!
+testSumIfEmptyEvalsSumBlockForEachElementSumingTheResult
+
+	| bag |
+	
+	bag := Bag new.
+	bag add: 'hello'; add: 'hello'.
+	bag add: 'bye'.
+	
+	self assert: 3 equals: (bag sum: [ :aString | aString = 'hello' ifTrue: [ 2 ] ifFalse: [ -1 ]] ifEmpty: [ self fail ])! !
 
 !BinarySearchTest methodsFor: 'testing' stamp: 'sqr 5/25/2016 14:36'!
 testquickFindFirst
