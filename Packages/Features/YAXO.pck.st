@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5467] on 5 September 2022 at 4:21:43 pm'!
+'From Cuis 6.0 [latest update: #5542] on 1 November 2022 at 9:10:37 pm'!
 'Description '!
-!provides: 'YAXO' 1 20!
+!provides: 'YAXO' 1 21!
 SystemOrganization addCategory: 'YAXO'!
 
 
@@ -1566,10 +1566,9 @@ nextCDataOrConditional
 	self errorExpected: 'CData or declaration'
 ! !
 
-!XMLTokenizer methodsFor: 'tokenizing' stamp: 'jmv 9/3/2022 22:42:01'!
+!XMLTokenizer methodsFor: 'tokenizing' stamp: 'jmv 11/1/2022 21:09:52'!
 nextCharReference
-	"See http://en.wikipedia.org/wiki/Numeric_character_reference
-	Note: If the NCR can not be represented as a Cuis Character, answer a String with an NCR."
+	"See http://en.wikipedia.org/wiki/Numeric_character_reference"
 	| base asciiCodeOrCodePoint |
 
 	self next = $#
@@ -1584,8 +1583,7 @@ nextCharReference
 	self next = $;
 		ifFalse: [self errorExpected: '";"'].
 
-	^(Character codePoint: asciiCodeOrCodePoint trySimilar: true) ifNil: [
-		String streamContents: [ :strm | String addUnicodeCodePoint: asciiCodeOrCodePoint to: strm hex: (base=16) ]].! !
+	^UnicodeCodePoint codePoint: asciiCodeOrCodePoint! !
 
 !XMLTokenizer methodsFor: 'tokenizing' stamp: 'jmv 9/3/2022 22:38:15'!
 nextComment
