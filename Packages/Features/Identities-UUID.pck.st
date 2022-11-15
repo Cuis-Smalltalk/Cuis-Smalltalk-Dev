@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4972] on 9 November 2021 at 6:22:00 pm'!
+'From Cuis 6.0 [latest update: #5552] on 15 November 2022 at 10:49:23 am'!
 'Description Code was filed out from Squeak 4.5 and ported to Cuis with few changes by David Graham.'!
-!provides: 'Identities-UUID' 1 9!
+!provides: 'Identities-UUID' 1 10!
 !requires: 'Sound' 1 3 nil!
 SystemOrganization addCategory: 'Identities-UUID'!
 
@@ -46,10 +46,6 @@ printOn: aStream
 	self asString printOn: aStream.
 	aStream nextPutAll: ')'! !
 
-!UUIDGenerator class methodsFor: 'class initialization' stamp: 'CdG 11/19/2002 21:07'!
-startUp
-	Default := nil! !
-
 !UUID methodsFor: 'printing' stamp: 'ar 2/8/2004 12:16'!
 printString
 	^self asString! !
@@ -81,22 +77,18 @@ printString
 
 	^(self < aMagnitude) not! !
 
-!UUID methodsFor: 'converting' stamp: 'ar 2/8/2004 12:16'!
+!UUID methodsFor: 'converting' stamp: 'jmv 11/15/2022 10:40:59'!
 asString
-	| result data |
-	data := String new: 36.
-	result := WriteStream on: data.
-	1 to: 4 do:[:i| self printHexAt: i to: result].
-	result nextPut: $-.
-	5 to: 6 do:[:i| self printHexAt: i to: result].
-	result nextPut: $-.
-	7 to: 8 do:[:i| self printHexAt: i to: result].
-	result nextPut: $-.
-	9 to: 10 do:[:i| self printHexAt: i to: result].
-	result nextPut: $-.
-	11 to: 16 do:[:i| self printHexAt: i to: result].
-	^data.
-	! !
+	^String streamContents: [ :result |
+		1 to: 4 do:[:i| self printHexAt: i to: result].
+		result nextPut: $-.
+		5 to: 6 do:[:i| self printHexAt: i to: result].
+		result nextPut: $-.
+		7 to: 8 do:[:i| self printHexAt: i to: result].
+		result nextPut: $-.
+		9 to: 10 do:[:i| self printHexAt: i to: result].
+		result nextPut: $-.
+		11 to: 16 do:[:i| self printHexAt: i to: result]].! !
 
 !UUID methodsFor: 'converting' stamp: 'JMM 11/22/2001 13:09'!
 asUUID: aString
@@ -108,19 +100,6 @@ asUUID: aString
 		self at: i put: byte].
 	^self
 ! !
-
-!UUID methodsFor: 'converting' stamp: 'JMM 11/22/2001 13:13'!
-createStringStartingAt: index for: bytes
-
-	| results candidate data |
-	data := String new: bytes*2.
-	results := WriteStream on: data.
-	index to: index+bytes -1 do: 
-		[:i |
-		candidate := ((self at: i) printStringBase: 16) last: 2.
-		candidate first = $r ifTrue: [candidate := String with: $0 with: candidate last].
-		results nextPutAll: candidate].
-	^data asLowercase! !
 
 !UUID methodsFor: 'converting' stamp: 'ar 2/8/2004 12:16'!
 printHexAt: index to: aStream
@@ -299,6 +278,10 @@ semaphoreForGenerator: aSema
 !UUIDGenerator class methodsFor: 'class initialization' stamp: 'CdG 11/19/2002 21:06'!
 initialize
 	Smalltalk addToStartUpList: self after: nil.! !
+
+!UUIDGenerator class methodsFor: 'class initialization' stamp: 'CdG 11/19/2002 21:07'!
+startUp
+	Default := nil! !
 
 !UUIDGenerator class methodsFor: 'instance creation' stamp: 'JMM 11/22/2001 13:41'!
 default
