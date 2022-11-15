@@ -1,9 +1,19 @@
-'From Cuis 6.0 [latest update: #5399] on 29 July 2022 at 1:42:26 pm'!
+'From Cuis 6.0 [latest update: #5552] on 5 November 2022 at 8:43:24 pm'!
 'Description Utility library for tracing the sending of messages.'!
-!provides: 'MessageTracer' 1 22!
+!provides: 'MessageTracer' 1 35!
 SystemOrganization addCategory: 'MessageTracer-Tests'!
 SystemOrganization addCategory: 'MessageTracer'!
 
+
+!classDefinition: #MessageTracerWindow category: 'MessageTracer'!
+SystemWindow subclass: #MessageTracerWindow
+	instanceVariableNames: 'messageListIndex tracedMessage'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'MessageTracer'!
+!classDefinition: 'MessageTracerWindow class' category: 'MessageTracer'!
+MessageTracerWindow class
+	instanceVariableNames: ''!
 
 !classDefinition: #MessageTracerTestSubject category: 'MessageTracer-Tests'!
 Object subclass: #MessageTracerTestSubject
@@ -36,6 +46,9 @@ TracedMethodWrapper class
 	instanceVariableNames: ''!
 
 
+!MessageTracerWindow commentStamp: '<historical>' prior: 0!
+A morphic tool for managing traced messages.!
+
 !MessageTracer commentStamp: 'MM 7/29/2022 12:51:13' prior: 0!
 I provide an api for tracing the sending of messages.
 
@@ -66,6 +79,87 @@ MessageTracerTestSubject trace: #fib:.
 subject fib: 10.
 
 MessageTracerTestSubject untrace: #fib:.!
+
+!MessageTracerWindow methodsFor: 'actions' stamp: 'MM 11/5/2022 20:20:08'!
+browseSelectedMessage
+
+	tracedMessage ifNotNil: [
+	.	BrowserWindow fullOnClass: tracedMessage compiledMethod methodClass 
+						selector: tracedMessage compiledMethod selector]! !
+
+!MessageTracerWindow methodsFor: 'actions' stamp: 'MM 11/5/2022 20:25:25'!
+untraceAll
+	model untraceAll.
+	self changed: #messageList! !
+
+!MessageTracerWindow methodsFor: 'actions' stamp: 'MM 11/5/2022 20:27:32'!
+untraceSelectedMessage
+
+	model untrace: 	tracedMessage.
+	self changed: #messageList! !
+
+!MessageTracerWindow methodsFor: 'initialization' stamp: 'MM 11/5/2022 18:51:06'!
+initialize
+	super initialize.
+	
+	messageListIndex _ 0.! !
+
+!MessageTracerWindow methodsFor: 'GUI building' stamp: 'MM 11/5/2022 20:43:11'!
+buildMorphicWindow
+
+	| messageList actionsRow |
+	
+	messageList _ PluggableListMorph
+					model: self
+					listGetter: #messageList
+					indexGetter: #messageListIndex
+					indexSetter: #messageListIndex:.
+					
+	layoutMorph addMorphUseAll: messageList.
+	
+	actionsRow _ LayoutMorph newRow.
+	
+	actionsRow addMorph: (PluggableButtonMorph model: self action: #browseSelectedMessage label: 'Browse').
+	actionsRow addMorph: (PluggableButtonMorph model: self action: #untraceSelectedMessage label: 'Untrace').
+	actionsRow addMorph: (PluggableButtonMorph model: self action: #untraceAll label: 'Untrace all').
+	layoutMorph addMorph: actionsRow fixedHeight: 30.! !
+
+!MessageTracerWindow methodsFor: 'GUI building' stamp: 'MM 11/5/2022 18:59:20'!
+initialExtent
+
+	^ 400@300! !
+
+!MessageTracerWindow methodsFor: 'GUI building' stamp: 'MM 11/5/2022 20:41:23'!
+update: anObject
+
+	self changed: #messageList! !
+
+!MessageTracerWindow methodsFor: 'accessing' stamp: 'MM 11/5/2022 19:03:32'!
+messageList
+	^ model tracing collect: [:traceWrapper | 
+		traceWrapper compiledMethod methodClass name asString , '>>', traceWrapper selector asString]! !
+
+!MessageTracerWindow methodsFor: 'accessing' stamp: 'MM 11/5/2022 18:51:14'!
+messageListIndex
+	"Answer the value of messageListIndex"
+
+	^ messageListIndex! !
+
+!MessageTracerWindow methodsFor: 'accessing' stamp: 'MM 11/5/2022 20:16:34'!
+messageListIndex: anObject
+	"Set the value of messageListIndex"
+
+	messageListIndex := anObject.
+	tracedMessage _ nil.
+	
+	anObject ifNotNil: [
+		anObject isZero ifFalse: [ 
+			tracedMessage _ model tracing at: anObject]]
+			! !
+
+!MessageTracerWindow class methodsFor: 'as yet unclassified' stamp: 'MM 11/5/2022 18:56:30'!
+open
+	^ self open: MessageTracer singleton label: 'Tracing'! !
 
 !MessageTracerTestSubject methodsFor: 'as yet unclassified' stamp: 'MM 6/17/2022 13:33:48'!
 add: x to: y
@@ -105,49 +199,107 @@ outputStream: anObject
 
 	outputStream := anObject! !
 
-!MessageTracer methodsFor: 'api' stamp: 'MM 6/17/2022 13:01:41'!
-trace: aClass selector: selector
+!MessageTracer methodsFor: 'api' stamp: 'MM 11/5/2022 20:32:36'!
+toggleTrace: aCompiledMethod
 
-	|methodWrapper compiledMethod |
-	
-	compiledMethod _ aClass compiledMethodAt: selector.
+	(aCompiledMethod isKindOf: TracedMethodWrapper)
+		ifTrue: [self untrace: aCompiledMethod]
+		ifFalse: [self trace: aCompiledMethod]! !
+
+!MessageTracer methodsFor: 'api' stamp: 'MM 11/5/2022 20:40:43'!
+trace: aCompiledMethod
+
+	|methodWrapper  |
 	
 	"If breakpoint already installed, setup and enable."
-	compiledMethod class isCompiledMethodClass ifFalse: [
-		(compiledMethod isKindOf: TracedMethodWrapper)
+	aCompiledMethod class isCompiledMethodClass ifFalse: [
+		(aCompiledMethod isKindOf: TracedMethodWrapper)
 			ifTrue: [
-				compiledMethod when: #around; enable.
+				aCompiledMethod when: #around; enable.
 				^ self]].
 		
 	"Install a new trace wrapper"
-	methodWrapper _ TracedMethodWrapper on: aClass selector: selector.
+	methodWrapper _ TracedMethodWrapper on: aCompiledMethod methodClass selector: aCompiledMethod selector.
 	methodWrapper		install.
-	tracing add: methodWrapper! !
+	tracing add: methodWrapper.
+	self changed.! !
 
-!MessageTracer methodsFor: 'api' stamp: 'MM 6/17/2022 13:03:39'!
+!MessageTracer methodsFor: 'api' stamp: 'MM 11/5/2022 18:12:34'!
+trace: aClass selector: selector
+
+	|compiledMethod |
+	
+	compiledMethod _ aClass compiledMethodAt: selector.
+	
+	^ self trace: compiledMethod! !
+
+!MessageTracer methodsFor: 'api' stamp: 'MM 11/5/2022 20:40:54'!
+untrace: aCompiledMethod
+
+	aCompiledMethod class isCompiledMethodClass ifFalse: [
+		(aCompiledMethod isKindOf: TracedMethodWrapper)
+			ifTrue: [
+				aCompiledMethod uninstall.
+				tracing remove: aCompiledMethod.
+				self changed.
+				^ self]]! !
+
+!MessageTracer methodsFor: 'api' stamp: 'MM 11/5/2022 20:21:48'!
 untrace: aClass selector: selector
 
 	|compiledMethod |
 	
 	compiledMethod _ aClass compiledMethodAt: selector.
 	
-	compiledMethod class isCompiledMethodClass ifFalse: [
-		(compiledMethod isKindOf: TracedMethodWrapper)
-			ifTrue: [
-				compiledMethod uninstall.
-				tracing remove: compiledMethod.
-				^ self]]! !
+	^ self untrace: compiledMethod! !
 
-!MessageTracer methodsFor: 'api' stamp: 'MM 6/17/2022 13:45:08'!
+!MessageTracer methodsFor: 'api' stamp: 'MM 11/5/2022 20:42:06'!
 untraceAll
 	tracing do: [:tracedMethod |
 		tracedMethod uninstall].
-	tracing _ OrderedCollection new! !
+	tracing _ OrderedCollection new.
+	self changed.! !
 
 !MessageTracer methodsFor: 'initialization' stamp: 'MM 6/17/2022 12:54:23'!
 initialize
 	tracing _ OrderedCollection new.
 	outputStream _ Transcript! !
+
+!MessageTracer methodsFor: 'as yet unclassified' stamp: 'MM 11/5/2022 18:21:00'!
+tracing
+	^ tracing! !
+
+!MessageTracer class methodsFor: 'as yet unclassified' stamp: 'MM 11/5/2022 18:41:23'!
+messageListMenuOptions
+	
+	^`{
+			{
+				#itemGroup 			-> 		25.
+				#itemOrder 			-> 		30.
+				#label 			-> 		'toggle tracing'.
+				#object -> #model.
+				#selector 			-> 		#toggleMessageTracing.
+				#icon 			-> 		#debugIcon
+			} asDictionary.
+			
+			{
+				#itemGroup -> 25.
+				#itemOrder -> 30.
+				#label -> 'show traced'.
+				#object -> #model.
+				#selector -> #showTracedMessages.
+				#icon -> #displayIcon.
+			} asDictionary.
+			
+			{
+				#itemGroup -> 25.
+				#itemOrder -> 30.
+				#object -> MessageTracer.
+				#label -> 'untrace all'.
+				#selector -> #untraceAll.
+				#icon -> #debugIcon.
+			} asDictionary.
+		}`! !
 
 !MessageTracer class methodsFor: 'as yet unclassified' stamp: 'MM 6/17/2022 12:35:28'!
 outputStream
@@ -157,10 +309,30 @@ outputStream
 singleton
 	^ singleton ifNil: [singleton _ self new]! !
 
+!MessageTracer class methodsFor: 'api' stamp: 'MM 11/5/2022 20:33:11'!
+toggleTrace: aCompiledMethod
+
+	self singleton toggleTrace: aCompiledMethod! !
+
+!MessageTracer class methodsFor: 'api' stamp: 'MM 11/5/2022 18:25:04'!
+trace: aCompiledMethod
+
+	self singleton trace: aCompiledMethod! !
+
 !MessageTracer class methodsFor: 'api' stamp: 'MM 6/17/2022 12:53:20'!
 trace: aClass selector: aSelector
 
 	self singleton trace: aClass selector: aSelector! !
+
+!MessageTracer class methodsFor: 'api' stamp: 'MM 11/5/2022 18:21:23'!
+tracing
+
+	^ self singleton tracing! !
+
+!MessageTracer class methodsFor: 'api' stamp: 'MM 11/5/2022 20:22:24'!
+untrace: aCompiledMethod
+
+	self singleton untrace: aCompiledMethod! !
 
 !MessageTracer class methodsFor: 'api' stamp: 'MM 6/17/2022 13:02:37'!
 untrace: aClass selector: aSelector
@@ -287,6 +459,11 @@ run: aSelector with: arguments in: aReceiver
 	
 	^ result! !
 
+!TracedMethodWrapper methodsFor: 'as yet unclassified' stamp: 'MM 11/5/2022 19:02:39'!
+compiledMethod
+
+	^ compiledMethod! !
+
 !TracedMethodWrapper methodsFor: 'as yet unclassified' stamp: 'MM 6/17/2022 12:59:50'!
 disable
 	enabled _ false! !
@@ -299,6 +476,23 @@ when: aSymbol
 !TracedMethodWrapper class methodsFor: 'as yet unclassified' stamp: 'MM 6/17/2022 12:03:49'!
 on: aClass selector: selector
 	^ self new initialize: aClass selector: selector! !
+
+!Browser methodsFor: '*MessageTracer' stamp: 'MM 11/5/2022 20:14:34'!
+showTracedMessages
+
+	MessageTracerWindow open! !
+
+!Browser methodsFor: '*MessageTracer' stamp: 'MM 11/5/2022 20:32:53'!
+toggleMessageTracing
+
+	"Start or stop tracing current selected method"
+
+	| selectedMethod |
+	
+	self selectedClassOrMetaClass ifNil: [ ^self].
+	
+	selectedMethod := self selectedClassOrMetaClass >> self selectedMessageName.
+	MessageTracer toggleTrace: selectedMethod! !
 
 !Behavior methodsFor: '*MessageTracer' stamp: 'MM 6/17/2022 13:35:02'!
 trace: aSelector
