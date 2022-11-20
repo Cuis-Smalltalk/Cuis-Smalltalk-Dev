@@ -9,7 +9,7 @@ isDirty
 !PluggableTextModel methodsFor: 'testing' stamp: 'SSC 11/12/2022 19:25:43'!
 isDirty
 
-	textGetter ifNil: [ super isDirty ].
+	textGetter ifNil: [ ^super isDirty ].
 	^((textProvider perform: textGetter) = (CodeProvider normalizeCodeForCodeFiles: actualContents)) not.! !
 
 
