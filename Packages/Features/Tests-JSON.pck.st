@@ -1,7 +1,7 @@
-'From Cuis 5.0 [latest update: #4415] on 22 October 2020 at 9:27:20 pm'!
+'From Cuis 6.0 [latest update: #5557] on 24 November 2022 at 8:43:15 am'!
 'Description '!
-!provides: 'Tests-JSON' 1 0!
-!requires: 'JSON' 1 19 nil!
+!provides: 'Tests-JSON' 1 2!
+!requires: 'JSON' 1 24 nil!
 SystemOrganization addCategory: 'Tests-JSON'!
 
 
@@ -133,12 +133,10 @@ testMissingCtorNoMap
 		should: [Json new readFrom: '@Missing[]' readStream]
 		raise: JsonSyntaxError! !
 
-!JsonTests methodsFor: 'as yet unclassified' stamp: 'jmv 8/28/2013 12:29'!
+!JsonTests methodsFor: 'as yet unclassified' stamp: 'KenD 11/24/2022 08:29:42'!
 testStringWithUnicode
 	| unicodeString |
-	unicodeString _ '(Unicode value: 16r263A)' asString.
-	unicodeString _ String streamContents: [ :strm |
-		String addUnicodeCodePoint: 16r263A to: strm hex: true ].
+	unicodeString _ Utf8String with: (UnicodeCodePoint codePoint: 16r263A).
 	self json: '"\u263A"' equals: unicodeString.
 	self json: '"', unicodeString, '"' equals: unicodeString.
 	self render: unicodeString equals: '"', unicodeString, '"'! !

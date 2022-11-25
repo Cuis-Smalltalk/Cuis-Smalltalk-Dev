@@ -1,6 +1,7 @@
-'From Cuis 5.0 [latest update: #4415] on 22 October 2020 at 9:27:24 pm'!
+'From Cuis 6.0 [latest update: #5559] on 25 November 2022 at 12:48:20 pm'!
 'Description '!
-!provides: 'JSON' 1 19!
+!provides: 'JSON' 1 25!
+!requires: 'Cuis-Base' 60 5557 nil!
 SystemOrganization addCategory: 'JSON'!
 
 
@@ -41,16 +42,16 @@ Class Json signals instances of me when an input stream contains invalid JSON in
 !Json commentStamp: '<historical>' prior: 0!
 This class reads and writes JSON format data - strings, numbers, boolean, nil, arrays and dictionaries. See http://www.json.org . It has been extended with syntax for invoking a prearranged list of constructors on read objects.!
 
-!JsonObject methodsFor: 'accessing' stamp: 'rh 2/27/2010 00:03'!
-name
-"override 'cause Object defines this"
-	^self at: 'name'! !
-
 !JsonObject methodsFor: 'accessing' stamp: 'rh 2/19/2010 21:34'!
 at: aKey
 
 	"make it work more like javascript objects"
 	^ self at: aKey ifAbsent: [nil]! !
+
+!JsonObject methodsFor: 'accessing' stamp: 'rh 2/27/2010 00:03'!
+name
+"override 'cause Object defines this"
+	^self at: 'name'! !
 
 !JsonObject methodsFor: 'accessing' stamp: 'rh 2/27/2010 00:04'!
 value
@@ -79,31 +80,31 @@ fromAssociations: collectionOfAssociations
 		result at: each key put: each value ].
 	^ result! !
 
-!Json methodsFor: 'private' stamp: 'Igor.Stasenko 4/7/2010 01:19'!
+!Json methodsFor: 'private' stamp: 'KenD 11/23/2022 15:10:58'!
 consume: aString returning: anObject
-	aString do: [:c | stream next == c ifFalse: [JsonSyntaxError signal: 'Expected ''', aString, ''''] ].
+	aString do: [:c | stream next = c ifFalse: [JsonSyntaxError signal: 'Expected ''', aString, ''''] ].
 	^ anObject! !
 
-!Json methodsFor: 'private' stamp: 'jmv 8/28/2013 12:15'!
+!Json methodsFor: 'private' stamp: 'KenD 11/23/2022 15:11:16'!
 interpretStringEscapeTo: aStream
 	| c |
 	c _ stream next.
-	c == $b ifTrue: [
+	c = $b ifTrue: [
 		aStream nextPut: Character backspace.
 		^ self ].
-	c == $n ifTrue: [
+	c = $n ifTrue: [
 		aStream nextPut: Character lf.
 		^ self ].
-	c == $f ifTrue: [
+	c = $f ifTrue: [
 		aStream nextPut: Character newPage.
 		^ self ].
-	c == $r ifTrue: [
+	c = $r ifTrue: [
 		aStream nextPut: Character cr.
 		^ self ].
-	c == $t ifTrue: [
+	c = $t ifTrue: [
 		aStream nextPut: Character tab.
 		^ self ].
-	c == $u ifTrue: [
+	c = $u ifTrue: [
 		self unescapeUnicodeTo: aStream.
 		^ self ].
 	aStream nextPut: c! !
@@ -124,14 +125,14 @@ readArray
 	] repeat.
 ! !
 
-!Json methodsFor: 'private' stamp: 'Igor.Stasenko 4/7/2010 01:20'!
+!Json methodsFor: 'private' stamp: 'KenD 11/23/2022 15:11:36'!
 readConstructor
 	| s c v ctor |
 	s := WriteStream on: ''.
 	[
 		c := stream peek.
 		c ifNil: [JsonSyntaxError signal: 'Premature EOF reading constructor name'].
-		((c == $.) or: [c isLetter])
+		((c = $.) or: [c isLetter])
 			ifTrue: [s nextPut: c. stream next]
 			ifFalse: [
 				v := self readAny.
@@ -182,43 +183,43 @@ readNumber
 	^Number readFrom: stream
 	"! !
 
-!Json methodsFor: 'private' stamp: 'jmv 8/28/2013 12:18'!
+!Json methodsFor: 'private' stamp: 'KenD 11/23/2022 15:39:37'!
 readString
 	| s c |
 	s _ WriteStream on: ''.
 	[
 	c _ stream next.
-	c == $\
+	c = $\
 		ifTrue: [ self interpretStringEscapeTo: s ]
 		ifFalse: [
-			c == $" ifTrue: [ ^ s contents ].
+			c = $" ifTrue: [ ^ s contents ].
 			s nextPut: c ]] repeat! !
 
-!Json methodsFor: 'private' stamp: 'Igor.Stasenko 4/7/2010 01:22'!
+!Json methodsFor: 'private' stamp: 'KenD 11/23/2022 15:12:09'!
 skipComment
-	stream peek == $/ ifTrue: [
+	stream peek = $/ ifTrue: [
 		stream next.
-		stream peek == $/
+		stream peek = $/
 			ifTrue: [self skipToEndOfLine]
-			ifFalse: [stream peek == $*
+			ifFalse: [stream peek = $*
 						ifTrue: [stream next. self skipCommentBody]
 						ifFalse: [JsonSyntaxError signal: 'Invalid comment syntax']]]
 ! !
 
-!Json methodsFor: 'private' stamp: 'Igor.Stasenko 4/7/2010 01:22'!
+!Json methodsFor: 'private' stamp: 'KenD 11/23/2022 15:12:18'!
 skipCommentBody
 	[
-		[stream next == $*] whileFalse.
-		stream peek == $/
+		[stream next = $*] whileFalse.
+		stream peek = $/
 	] whileFalse.
 	stream next. "skip that last slash"
 	self skipWhitespace.! !
 
-!Json methodsFor: 'private' stamp: 'Igor.Stasenko 4/7/2010 01:24'!
+!Json methodsFor: 'private' stamp: 'KenD 11/23/2022 15:12:30'!
 skipToEndOfLine
 	| cr lf |
 	cr := Character cr. lf := Character lf.
-	[ | c | (c := stream peek) == cr or: [ c == lf]] whileFalse: [stream next].
+	[ | c | (c := stream peek) = cr or: [ c = lf]] whileFalse: [stream next].
 	self skipWhitespace! !
 
 !Json methodsFor: 'private' stamp: 'Igor.Stasenko 4/7/2010 01:24'!
@@ -226,12 +227,13 @@ skipWhitespace
 	[stream peek isSeparator] whileTrue: [stream next].
 	self skipComment.! !
 
-!Json methodsFor: 'private' stamp: 'jmv 8/28/2013 12:17'!
+!Json methodsFor: 'private' stamp: 'KenD 11/24/2022 08:15:33'!
 unescapeUnicodeTo: aStream
+	"Next 4 chars from `stream` are hex unicode point value"
 	| string codePoint |
-	string _ (String with: stream next with: stream next with: stream next with: stream next) asUppercase.
-	codePoint _ Integer readFrom: string readStream base: 16.
-	String addUnicodeCodePoint: codePoint to: aStream hex: true! !
+	string _ String newFrom: {stream next. stream next. stream next. stream next.}.
+	codePoint _ Integer readFrom: string asUppercase readStream base: 16.
+	aStream nextPut: (UnicodeCodePoint codePoint: codePoint) ! !
 
 !Json methodsFor: 'accessing' stamp: 'tonyg 11/29/2005 11:40'!
 ctorMap
@@ -260,25 +262,25 @@ stream: aStream
 	stream reset
 	"! !
 
-!Json methodsFor: 'parsing' stamp: 'jmv 8/8/2018 13:21:08'!
+!Json methodsFor: 'parsing' stamp: 'KenD 11/23/2022 15:13:04'!
 readAny
 	"This is the main entry point for the JSON parser. See also readFrom: on the class side."
 	| c |
 	self skipWhitespace.
 	c := stream peek.
-	c == ${ ifTrue: [stream next. ^ self readDictionary].
-	c == $[ ifTrue: [stream next. ^ self readArray].
-	c == $" ifTrue: [stream next. ^ self readString].
-	c == $t ifTrue: [^ self consume: 'true' returning: true].
-	c == $f ifTrue: [^ self consume: 'false' returning: false].
-	c == $n ifTrue: [^ self consume: 'null' returning: nil].
-	c == $@ ifTrue: [stream next. ^ self readConstructor].
-	c == $- ifTrue: [ 	"Negative number or '-Infinity' - > Float negativeInfinity "
+	c = ${ ifTrue: [stream next. ^ self readDictionary].
+	c = $[ ifTrue: [stream next. ^ self readArray].
+	c = $" ifTrue: [stream next. ^ self readString].
+	c = $t ifTrue: [^ self consume: 'true' returning: true].
+	c = $f ifTrue: [^ self consume: 'false' returning: false].
+	c = $n ifTrue: [^ self consume: 'null' returning: nil].
+	c = $@ ifTrue: [stream next. ^ self readConstructor].
+	c = $- ifTrue: [ 	"Negative number or '-Infinity' - > Float negativeInfinity "
 		stream next.
 		^ self readAny negated ].
 	(Json numbersMayContain: c) ifTrue: [^ self readNumber].
-	c == $N ifTrue: [^ self consume: 'NaN' returning: Float nan].
-	c == $I ifTrue: [^ self consume: 'Infinity' returning: Float infinity].
+	c = $N ifTrue: [^ self consume: 'NaN' returning: Float nan].
+	c = $I ifTrue: [^ self consume: 'Infinity' returning: Float infinity].
 	JsonSyntaxError signal: 'Unknown Json input'! !
 
 !Json methodsFor: 'parsing' stamp: 'jmv 1/18/2017 16:52:22'!
@@ -290,12 +292,10 @@ readFrom: aStream
 	self stream: aStream.
 	^ self readAny! !
 
-!Json class methodsFor: 'as yet unclassified' stamp: 'ul 11/9/2010 04:07'!
+!Json class methodsFor: 'as yet unclassified' stamp: 'KenD 11/24/2022 08:39:30'!
 escapeForCharacter: c
 	
-	| asciiValue |
-	(asciiValue := c asciiValue) < 128
-		ifTrue: [ ^escapeArray at: asciiValue + 1 ].
+	(c asciiValue) ifNotNil:  [ ^escapeArray at: (c asciiValue) + 1 ].
 	^nil! !
 
 !Json class methodsFor: 'as yet unclassified' stamp: 'ul 11/4/2008 06:23'!
@@ -373,10 +373,6 @@ jsonWriteOn: aStream
 jsonWriteOn: aStream
 	aStream nextPutAll: 'true'! !
 
-!UndefinedObject methodsFor: '*JSON-writing' stamp: 'tonyg 8/17/2005 00:45'!
-jsonWriteOn: aWriteStream 
-	aWriteStream nextPutAll: 'null'! !
-
 !Number methodsFor: '*JSON-writing' stamp: 'ul 11/4/2008 04:46'!
 jsonWriteOn: aWriteStream 
 
@@ -392,6 +388,10 @@ jsonWriteOn: aStream
 	self key asString jsonWriteOn: aStream.
 	aStream nextPut: $:; space.
 	self value jsonWriteOn: aStream.! !
+
+!UndefinedObject methodsFor: '*JSON-writing' stamp: 'tonyg 8/17/2005 00:45'!
+jsonWriteOn: aWriteStream 
+	aWriteStream nextPutAll: 'null'! !
 
 !Collection methodsFor: '*JSON' stamp: 'jmv 5/17/2016 13:11'!
 jsonObjectWriteOn: aStream
@@ -434,7 +434,7 @@ jsonWriteOn: aStream
 
 	aStream nextPut: $]! !
 
-!String methodsFor: '*JSON-writing' stamp: 'ul 11/9/2010 04:07'!
+!CharacterSequence methodsFor: '*JSON-writing' stamp: 'jmv 11/25/2022 12:38:09'!
 jsonWriteOn: aStream
 
 	aStream nextPut: $".
