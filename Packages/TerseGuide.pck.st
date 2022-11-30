@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5044] on 18 January 2022 at 9:43:48 am'!
+'From Cuis 6.0 [latest update: #5566] on 30 November 2022 at 10:33:30 am'!
 'Description Add ability to dynamically add topic pages from other sources.'!
-!provides: 'TerseGuide' 1 143!
+!provides: 'TerseGuide' 1 144!
 SystemOrganization addCategory: 'TerseGuide'!
 
 
@@ -1154,7 +1154,7 @@ DirectoryEntry vmDirectory.							"answer the VM directory"
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'jmv 6/11/2020 17:04:45'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'KenD 11/28/2022 13:50:54'!
 font
 	"Fonts"
 	^
@@ -1164,7 +1164,7 @@ Cuis includes by default one StrikeFont, but can also use TrueType fonts.
 To add additional included fonts
 "
 
-FontFamily readAdditionalTrueTypeFonts.
+TrueTypeFontFamily readAdditionalFonts.
 
 FontFamily familyNames.				"list the installed fonts"
 
