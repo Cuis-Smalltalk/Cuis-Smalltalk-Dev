@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5546] on 2 November 2022 at 3:15:55 pm'!
+'From Cuis 6.0 [latest update: #5571] on 5 December 2022 at 5:53:54 pm'!
 'Description Inline temp new test'!
-!provides: 'BaseImageTests' 1 322!
+!provides: 'BaseImageTests' 1 323!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Objects'!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Classes'!
@@ -354,6 +354,16 @@ TestCase subclass: #UnicodeCodePointTest
 	category: 'BaseImageTests-Kernel-Text'!
 !classDefinition: 'UnicodeCodePointTest class' category: 'BaseImageTests-Kernel-Text'!
 UnicodeCodePointTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #UnicodeNormalizationTest category: 'BaseImageTests-Kernel-Text'!
+TestCase subclass: #UnicodeNormalizationTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-Kernel-Text'!
+!classDefinition: 'UnicodeNormalizationTest class' category: 'BaseImageTests-Kernel-Text'!
+UnicodeNormalizationTest class
 	instanceVariableNames: ''!
 
 !classDefinition: #UnicodeStringsTest category: 'BaseImageTests-Kernel-Text'!
@@ -8706,6 +8716,45 @@ testCompareWithCharacters
 			self assert: (c1 >= c2) = (c1 asUnicodeCodePoint >= c2).
 			self assert: (c1 >= c2) = (c1 asUnicodeCodePoint >= c2 asUnicodeCodePoint).
 			]]! !
+
+!UnicodeNormalizationTest methodsFor: 'tests' stamp: 'jmv 12/5/2022 11:54:43'!
+testCanonicalComposites
+	"Examples from
+	https://unicode.org/reports/tr15/#Norm_Forms
+	"
+
+	(Utf8String codePoints: #(16r00C5)) decomposedNormalization asUtf32Words asArray = #(16r0041 16r030A).
+	(Utf8String codePoints: #(16r00C5)) composedNormalization asUtf32Words asArray = #(16r00C5).
+
+	(Utf8String codePoints: #(16r00F4)) decomposedNormalization asUtf32Words asArray = #(16r006F 16r0302).
+	(Utf8String codePoints: #(16r00F4)) composedNormalization asUtf32Words asArray = #(16r00F4).! !
+
+!UnicodeNormalizationTest methodsFor: 'tests' stamp: 'jmv 12/5/2022 11:58:40'!
+testMultipleCombiningMarks
+	"Examples from
+	https://unicode.org/reports/tr15/#Norm_Forms
+	"
+
+	(Utf8String codePoints: #(16r1E69)) decomposedNormalization asUtf32Words asArray = #(16r0073 16r0323 16r0307).
+	(Utf8String codePoints: #(16r1E69)) composedNormalization asUtf32Words asArray = #(16r1E69).
+
+	(Utf8String codePoints: #(16r1E0B 16r0323)) decomposedNormalization asUtf32Words asArray = #(16r0064 16r0323 16r0307).
+	(Utf8String codePoints: #(16r1E0B 16r0323)) composedNormalization asUtf32Words asArray = #(16r1E0D 16r0307).
+
+	(Utf8String codePoints: #(16r0071 16r0307 16r0323)) decomposedNormalization asUtf32Words asArray = #(16r0071 16r0323 16r0307).
+	(Utf8String codePoints: #(16r0071 16r0307 16r0323)) composedNormalization asUtf32Words asArray = #(16r0071 16r0323 16r0307).! !
+
+!UnicodeNormalizationTest methodsFor: 'tests' stamp: 'jmv 12/5/2022 11:52:25'!
+testSingletons
+	"Examples from
+	https://unicode.org/reports/tr15/#Norm_Forms
+	"
+
+	(Utf8String codePoints: #(16r212B)) decomposedNormalization asUtf32Words asArray = #(16r0041 16r030A).
+	(Utf8String codePoints: #(16r212B)) composedNormalization asUtf32Words asArray = #(16r00C5).
+
+	(Utf8String codePoints: #(16r2126)) decomposedNormalization asUtf32Words asArray = #(16r03A9).
+	(Utf8String codePoints: #(16r2126)) composedNormalization asUtf32Words asArray = #(16r03A9).! !
 
 !UnicodeStringsTest methodsFor: 'testing' stamp: 'jmv 6/2/2022 15:14:24'!
 test01
