@@ -7,5 +7,8 @@ be separated by periods, with no exclamation points (!!).
 Be sure to put any further comments in double-quotes, like this one."
 TTFontDescription initialize.
 TrueTypeFontFamily readTrueTypeFontEntry: DirectoryEntry smalltalkImageDirectory / 'TrueTypeFonts'/ 'DejaVu' / 'DejaVuSans' // 'DejaVuSans.ttf'.
+TrueTypeFontFamily readTrueTypeFontEntry: DirectoryEntry smalltalkImageDirectory / 'TrueTypeFonts'/ 'DejaVu' / 'DejaVuSans' // 'DejaVuSans-Oblique.ttf'.
+TrueTypeFontFamily readTrueTypeFontEntry: DirectoryEntry smalltalkImageDirectory / 'TrueTypeFonts'/ 'DejaVu' / 'DejaVuSans' // 'DejaVuSans-Bold.ttf'.
+TrueTypeFontFamily readTrueTypeFontEntry: DirectoryEntry smalltalkImageDirectory / 'TrueTypeFonts'/ 'DejaVu' / 'DejaVuSans' // 'DejaVuSans-BoldOblique.ttf'.
 [(Delay forSeconds: 1) wait. Smalltalk garbageCollect] fork!
 
