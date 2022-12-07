@@ -1,6 +1,6 @@
 'From Cuis 6.0 [latest update: #5553] on 15 November 2022 at 11:20:39 am'!
 'Description Various code used in Squeak which is not in Cuis.'!
-!provides: 'SqueakCompatibility' 1 36!
+!provides: 'SqueakCompatibility' 1 37!
 !requires: 'Cuis-Base' 42 2658 nil!
 SystemOrganization addCategory: 'SqueakCompatibility'!
 SystemOrganization addCategory: 'SqueakCompatibility-System-Files'!
@@ -3305,18 +3305,14 @@ crlf
 lf
 	^self lfString! !
 
-!Symbol methodsFor: '*squeakCompatibility' stamp: 'hjh 5/9/2015 17:37'!
-value: anObject 
-	^anObject perform: self.! !
-
-!Utf8String methodsFor: '*squeakCompatibility' stamp: 'jmv 10/31/2022 17:46:17'!
+!UnicodeString methodsFor: '*squeakCompatibility' stamp: 'jmv 10/31/2022 17:46:17'!
 asInteger 
 	"From Squeak 5.3" 	
 	^self asIntegerSigned: true
 
 	! !
 
-!Utf8String methodsFor: '*squeakCompatibility' stamp: 'jmv 10/31/2022 17:46:22'!
+!UnicodeString methodsFor: '*squeakCompatibility' stamp: 'jmv 10/31/2022 17:46:22'!
 asIntegerSigned: signed
 	"From Squeak 5.3 "
 	"Return the first decimal integer I can find or nil."
@@ -3342,7 +3338,7 @@ asIntegerSigned: signed
 	negative ifTrue: [ ^result negated ].
 	^result! !
 
-!Utf8String methodsFor: '*squeakCompatibility' stamp: 'jmv 10/31/2022 17:46:26'!
+!UnicodeString methodsFor: '*squeakCompatibility' stamp: 'jmv 10/31/2022 17:46:26'!
 subStrings: separators 
 	"Answer an array containing the substrings in the receiver separated 
 	by the elements of separators."
@@ -3366,27 +3362,23 @@ subStrings: separators
 	subString notEmpty ifTrue: [result add: subString copy].
 	^ result asArray! !
 
-!Utf8String methodsFor: '*squeakCompatibility' stamp: 'jmv 10/31/2022 17:46:30'!
+!UnicodeString methodsFor: '*squeakCompatibility' stamp: 'jmv 10/31/2022 17:46:30'!
 withCRs
 	"Return a copy of the receiver in which backslash (\) characters have been replaced with carriage returns."
 
 	^ self collect: [ :c | c = $\ ifTrue: [ Character cr ] ifFalse: [ c ]].! !
 
-!Utf8String class methodsFor: '*squeakCompatibility' stamp: 'jmv 10/31/2022 18:06:21'!
+!UnicodeString class methodsFor: '*squeakCompatibility' stamp: 'jmv 10/31/2022 18:06:21'!
 cr
 	^self crString! !
 
-!Utf8String class methodsFor: '*squeakCompatibility' stamp: 'jmv 10/31/2022 18:06:25'!
+!UnicodeString class methodsFor: '*squeakCompatibility' stamp: 'jmv 10/31/2022 18:06:25'!
 crlf
 	^self crlfString! !
 
-!Utf8String class methodsFor: '*squeakCompatibility' stamp: 'jmv 10/31/2022 18:06:29'!
+!UnicodeString class methodsFor: '*squeakCompatibility' stamp: 'jmv 10/31/2022 18:06:29'!
 lf
 	^self lfString! !
-
-!Utf8Symbol methodsFor: '*squeakCompatibility' stamp: 'jmv 10/31/2022 18:05:42'!
-value: anObject 
-	^anObject perform: self.! !
 
 !CompiledMethod methodsFor: '*squeakCompatibility' stamp: 'NS 12/12/2003 15:18'!
 isAbstract
