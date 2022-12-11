@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5582] on 7 December 2022 at 12:34:30 pm'!
+'From Cuis 6.0 [latest update: #5591] on 11 December 2022 at 7:36:30 pm'!
 'Description Inline temp new test'!
-!provides: 'BaseImageTests' 1 324!
+!provides: 'BaseImageTests' 1 325!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Objects'!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Classes'!
@@ -8717,44 +8717,44 @@ testCompareWithCharacters
 			self assert: (c1 >= c2) = (c1 asUnicodeCodePoint >= c2 asUnicodeCodePoint).
 			]]! !
 
-!UnicodeNormalizationTest methodsFor: 'tests' stamp: 'jmv 12/7/2022 11:08:19'!
+!UnicodeNormalizationTest methodsFor: 'tests' stamp: 'jmv 12/11/2022 19:35:18'!
 testCanonicalComposites
 	"Examples from
 	https://unicode.org/reports/tr15/#Norm_Forms
 	"
 
-	self assert: (UnicodeString fromCodePoints: #(16r00C5)) cannonicalDecomposition asCodePoints asArray = #(16r0041 16r030A).
-	self assert: (UnicodeString fromCodePoints: #(16r00C5)) cannonicalComposition asCodePoints asArray = #(16r00C5).
+	self assert: (UnicodeString fromCodePoints: #(16r00C5)) canonicalDecomposition asCodePoints asArray = #(16r0041 16r030A).
+	self assert: (UnicodeString fromCodePoints: #(16r00C5)) canonicalComposition asCodePoints asArray = #(16r00C5).
 
-	self assert: (UnicodeString fromCodePoints: #(16r00F4)) cannonicalDecomposition asCodePoints asArray = #(16r006F 16r0302).
-	self assert: (UnicodeString fromCodePoints: #(16r00F4)) cannonicalComposition asCodePoints asArray = #(16r00F4).! !
+	self assert: (UnicodeString fromCodePoints: #(16r00F4)) canonicalDecomposition asCodePoints asArray = #(16r006F 16r0302).
+	self assert: (UnicodeString fromCodePoints: #(16r00F4)) canonicalComposition asCodePoints asArray = #(16r00F4).! !
 
-!UnicodeNormalizationTest methodsFor: 'tests' stamp: 'jmv 12/7/2022 11:10:02'!
+!UnicodeNormalizationTest methodsFor: 'tests' stamp: 'jmv 12/11/2022 19:35:28'!
 testMultipleCombiningMarks
 	"Examples from
 	https://unicode.org/reports/tr15/#Norm_Forms
 	"
 
-	self assert: (UnicodeString fromCodePoints: #(16r1E69)) cannonicalDecomposition asCodePoints asArray = #(16r0073 16r0323 16r0307).
-	self assert: (UnicodeString fromCodePoints: #(16r1E69)) cannonicalComposition asCodePoints asArray = #(16r1E69).
+	self assert: (UnicodeString fromCodePoints: #(16r1E69)) canonicalDecomposition asCodePoints asArray = #(16r0073 16r0323 16r0307).
+	self assert: (UnicodeString fromCodePoints: #(16r1E69)) canonicalComposition asCodePoints asArray = #(16r1E69).
 
-	self assert: (UnicodeString fromCodePoints: #(16r1E0B 16r0323)) cannonicalDecomposition asCodePoints asArray = #(16r0064 16r0323 16r0307).
-	self assert: (UnicodeString fromCodePoints: #(16r1E0B 16r0323)) cannonicalComposition asCodePoints asArray = #(16r1E0D 16r0307).
+	self assert: (UnicodeString fromCodePoints: #(16r1E0B 16r0323)) canonicalDecomposition asCodePoints asArray = #(16r0064 16r0323 16r0307).
+	self assert: (UnicodeString fromCodePoints: #(16r1E0B 16r0323)) canonicalComposition asCodePoints asArray = #(16r1E0D 16r0307).
 
-	self assert: (UnicodeString fromCodePoints: #(16r0071 16r0307 16r0323)) cannonicalDecomposition asCodePoints asArray = #(16r0071 16r0323 16r0307).
-	self assert: (UnicodeString fromCodePoints: #(16r0071 16r0307 16r0323)) cannonicalComposition asCodePoints asArray = #(16r0071 16r0323 16r0307).! !
+	self assert: (UnicodeString fromCodePoints: #(16r0071 16r0307 16r0323)) canonicalDecomposition asCodePoints asArray = #(16r0071 16r0323 16r0307).
+	self assert: (UnicodeString fromCodePoints: #(16r0071 16r0307 16r0323)) canonicalComposition asCodePoints asArray = #(16r0071 16r0323 16r0307).! !
 
-!UnicodeNormalizationTest methodsFor: 'tests' stamp: 'jmv 12/7/2022 11:10:36'!
+!UnicodeNormalizationTest methodsFor: 'tests' stamp: 'jmv 12/11/2022 19:35:36'!
 testSingletons
 	"Examples from
 	https://unicode.org/reports/tr15/#Norm_Forms
 	"
 
-	self assert: (UnicodeString fromCodePoints: #(16r212B)) cannonicalDecomposition asCodePoints asArray = #(16r0041 16r030A).
-	self assert: (UnicodeString fromCodePoints: #(16r212B)) cannonicalComposition asCodePoints asArray = #(16r00C5).
+	self assert: (UnicodeString fromCodePoints: #(16r212B)) canonicalDecomposition asCodePoints asArray = #(16r0041 16r030A).
+	self assert: (UnicodeString fromCodePoints: #(16r212B)) canonicalComposition asCodePoints asArray = #(16r00C5).
 
-	self assert: (UnicodeString fromCodePoints: #(16r2126)) cannonicalDecomposition asCodePoints asArray = #(16r03A9).
-	self assert: (UnicodeString fromCodePoints: #(16r2126)) cannonicalComposition asCodePoints asArray = #(16r03A9).! !
+	self assert: (UnicodeString fromCodePoints: #(16r2126)) canonicalDecomposition asCodePoints asArray = #(16r03A9).
+	self assert: (UnicodeString fromCodePoints: #(16r2126)) canonicalComposition asCodePoints asArray = #(16r03A9).! !
 
 !UnicodeStringsTest methodsFor: 'testing' stamp: 'jmv 12/7/2022 11:39:26'!
 test01
@@ -16553,7 +16553,7 @@ blockingClasses
 
 	^ #(CompiledMethod)! !
 
-!DecompilerTests methodsFor: 'utilities' stamp: 'jmv 9/24/2020 16:56:42'!
+!DecompilerTests methodsFor: 'utilities' stamp: 'jmv 12/11/2022 19:36:11'!
 checkDecompileMethod: oldMethod
 	
 	| cls selector oldMethodNode methodNode newMethod oldCodeString newCodeString |
@@ -16584,7 +16584,7 @@ checkDecompileMethod: oldMethod
 							in: cls
 							method: newMethod) decompileString.
 		"Decompiler might move temp declarations (keeping valid, equivalent code) and therefore affect the temp numbering.
-		Make temp numbering cannonical in decompiler code, to avoid bogus failures"
+		Make temp numbering canonical in decompiler code, to avoid bogus failures"
 		oldCodeString _ self withFixedTempNumbering: oldCodeString.
 		newCodeString _ self withFixedTempNumbering: newCodeString.
 		"(DifferenceFinder displayPatchFrom: oldCodeString to: newCodeString tryWords: true)
