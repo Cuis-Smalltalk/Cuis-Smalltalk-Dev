@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4486] on 8 December 2020 at 4:37:02 pm'!
+'From Cuis 6.0 [latest update: #5600] on 19 December 2022 at 3:13:49 pm'!
 'Description '!
-!provides: 'Graphics-Files-Additional' 1 24!
+!provides: 'Graphics-Files-Additional' 1 25!
 !requires: 'Compression' 1 nil nil!
 SystemOrganization addCategory: 'Graphics-Files-Additional'!
 
@@ -170,12 +170,6 @@ Structure:
 I hold the logical structure of the TIFF, but I do not preserve the physical structure (specific offsets) of the file I was parsed from (except for the offsets of the pixel data.)
 
 See TIFFReader (and future TIFFWriter) for more information about the structure into which I fit.!
-
-!TIFFField methodsFor: 'printing' stamp: 'mrm 7/31/2001 21:51'!
-printOn: aStream
-
-	super printOn: aStream.
-	values printOn: aStream.! !
 
 !PNGReadWriter methodsFor: 'pixel copies' stamp: 'DSM 3/26/2000 21:32'!
 copyPixels: y
@@ -1295,13 +1289,14 @@ processInterlaced
 	].
 	z atEnd ifFalse:[self error:'Unexpected data'].! !
 
-!PNGReadWriter methodsFor: 'chunks' stamp: 'jmv 2/29/2016 11:19'!
+!PNGReadWriter methodsFor: 'chunks' stamp: 'jmv 12/19/2022 15:07:35'!
 processNextChunk
 
-	| length chunkType crc chunkCrc |
+	| length chunkType crc chunkCrc chunkTypeBytes |
 
 	length _ self nextUnsignedInt32.
-	chunkType _ (self next: 4) asString.
+	chunkTypeBytes _ self next: 4.
+	chunkType _ chunkTypeBytes asString.
 
 	"If someone appended garbage at the end of the file, don't let that bite us."
 	fileSize - self position < length ifTrue: [
@@ -1311,7 +1306,7 @@ processNextChunk
 
 	chunk _ self next: length.
 	chunkCrc := self nextUnsignedInt32 bitXor: 16rFFFFFFFF.
-	crc := self updateCrc: 16rFFFFFFFF from: 1 to: 4 in: chunkType.
+	crc := self updateCrc: 16rFFFFFFFF from: 1 to: 4 in: chunkTypeBytes.
 	crc := self updateCrc: crc from: 1 to: length in: chunk.
 	crc = chunkCrc ifFalse:[
 		self error: 'PNGReadWriter crc error in chunk ', chunkType.
@@ -1554,6 +1549,12 @@ understandsImageFormat
 	"Check for little-endian header."
 	^ (self hasMagicNumber: 
 		(ByteArray with: 16r49 with: 16r49 with: 16r2A with: 16r00) ).! !
+
+!TIFFField methodsFor: 'printing' stamp: 'mrm 7/31/2001 21:51'!
+printOn: aStream
+
+	super printOn: aStream.
+	values printOn: aStream.! !
 
 !TIFFField methodsFor: 'private' stamp: 'mrm 7/28/2001 13:47'!
 isSingleValued
