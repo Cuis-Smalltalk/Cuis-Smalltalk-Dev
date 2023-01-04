@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5542] on 1 November 2022 at 9:10:37 pm'!
+'From Cuis 6.0 [latest update: #5622] on 4 January 2023 at 1:00:49 pm'!
 'Description '!
-!provides: 'YAXO' 1 21!
+!provides: 'YAXO' 1 22!
 SystemOrganization addCategory: 'YAXO'!
 
 
@@ -207,7 +207,7 @@ XMLStringNode class
 !classDefinition: #XMLTokenizer category: 'YAXO'!
 Object subclass: #XMLTokenizer
 	instanceVariableNames: 'stream nestedStreams entities externalEntities parameterEntities parsingMarkup markedPosition peekChar validating nameBuffer attributeBuffer'
-	classVariableNames: 'CharEscapes DigitTable LiteralChars NameDelimiters SeparatorTable'
+	classVariableNames: 'CharEscapes DigitTable LiteralChars NameDelimiters'
 	poolDictionaries: ''
 	category: 'YAXO'!
 !classDefinition: 'XMLTokenizer class' category: 'YAXO'!
@@ -1389,12 +1389,11 @@ pushStream: newStream
 	self nestedStreams addLast: self stream.
 	self stream: newStream! !
 
-!XMLTokenizer methodsFor: 'streaming' stamp: 'mir 3/14/2003 22:54'!
+!XMLTokenizer methodsFor: 'streaming' stamp: 'jmv 1/4/2023 12:44:39'!
 skipSeparators
 	| nextChar |
-	[((nextChar _ self peek) == nil)
-		or: [SeparatorTable at: nextChar asciiValue+1]]
-		whileFalse: [self next].
+	[ ((nextChar _ self peek) ~~ nil) and: [nextChar isSeparator] ]
+		whileTrue: [self next].
 	(nestedStreams == nil or: [self atEnd not])
 		ifFalse: [
 			self checkNestedStream.
@@ -1814,13 +1813,12 @@ nextTag
 			self next].
 	! !
 
-!XMLTokenizer methodsFor: 'tokenizing' stamp: 'mu 11/9/2005 09:43'!
+!XMLTokenizer methodsFor: 'tokenizing' stamp: 'jmv 1/4/2023 12:43:59'!
 nextWhitespace
 	| nextChar resultStream resultString|
 	resultStream _ (String new: 10) writeStream.
-	[((nextChar _ self peek) == nil)
-		or: [SeparatorTable at: nextChar asciiValue+1 ifAbsent:[true]]]
-		whileFalse: [resultStream nextPut: nextChar. self next].
+	[ ((nextChar _ self peek) ~~ nil) and: [nextChar isSeparator] ]
+		whileTrue: [resultStream nextPut: nextChar. self next].
 	(nestedStreams == nil or: [self atEnd not])
 		ifFalse: [self checkNestedStream.
 				self nextWhitespace].
@@ -2270,17 +2268,13 @@ exampleAddressBookWithDTD
 	[tokenizer next notNil]
 		whileTrue: []! !
 
-!XMLTokenizer class methodsFor: 'class initialization' stamp: 'mir 3/14/2003 22:54'!
+!XMLTokenizer class methodsFor: 'class initialization' stamp: 'jmv 1/4/2023 12:44:51'!
 initialize
 	"XMLTokenizer initialize"
 
 	| nameDelimiters |
 
 	CharEscapes _ #( $& $" $' $> $< ) asSet.
-
-	SeparatorTable  _ Array new: 256.
-	SeparatorTable atAllPut: true.
-	#(9 10 12 13 32) do: [:each | SeparatorTable at: each+1 put: false].
 
 	LiteralChars _ Array new: 256.
 	LiteralChars atAllPut: false.
@@ -2580,18 +2574,20 @@ endTag: tagName xmlns: xmlns
 flush
 	self stream flush! !
 
-!XMLWriter methodsFor: 'writing xml' stamp: 'ar 12/15/2002 15:56'!
+!XMLWriter methodsFor: 'writing xml' stamp: 'jmv 1/4/2023 11:00:54'!
 pcData: aString
 	| lastIndex nextIndex |
 	lastIndex := 1.
 	"Unroll the first search to avoid copying"
-	nextIndex := String findFirstInString: aString inSet: XMLTranslationMap startingAt: lastIndex.
-	nextIndex = 0 ifTrue:[^self stream nextPutAll: aString].
-	[self stream nextPutAll: (aString copyFrom: lastIndex to: nextIndex-1).
-	self stream nextPutAll: (XMLTranslation at: (aString at: nextIndex)).
-	lastIndex := nextIndex + 1.
-	nextIndex := String findFirstInString: aString inSet: XMLTranslationMap startingAt: lastIndex.
-	nextIndex = 0] whileFalse.
+	nextIndex := aString indexOfAnyOf: XMLTranslationMap startingAt: lastIndex ifAbsent: 0.
+	nextIndex = 0 ifTrue: [^self stream nextPutAll: aString].
+	[
+		self stream nextPutAll: (aString copyFrom: lastIndex to: nextIndex-1).
+		self stream nextPutAll: (XMLTranslation at: (aString at: nextIndex)).
+		lastIndex := nextIndex + 1.
+		nextIndex := aString indexOfAnyOf: XMLTranslationMap startingAt: lastIndex ifAbsent: 0.
+		nextIndex = 0
+	] whileFalse.
 	self stream nextPutAll: (aString copyFrom: lastIndex to: aString size).! !
 
 !XMLWriter methodsFor: 'writing xml' stamp: 'mir 12/11/2000 16:12'!
@@ -2783,7 +2779,7 @@ initialize
 	canonical _ false.
 	scope := XMLNamespaceScope new! !
 
-!XMLWriter class methodsFor: 'class initialization' stamp: 'ar 12/13/2002 01:04'!
+!XMLWriter class methodsFor: 'class initialization' stamp: 'jmv 1/4/2023 12:49:06'!
 initialize
 	"XMLWriter initialize"
 
@@ -2797,8 +2793,8 @@ initialize
 		at: $> put: '&gt;';
 "		at: $' put: '&apos;'; "
 		at: $" put: '&quot;'.
-	XMLTranslationMap := ByteArray new: 256.
-	XMLTranslation keysDo:[:ch| XMLTranslationMap at: ch asciiValue+1 put: 1].
+	XMLTranslationMap := CharacterSet new.
+	XMLTranslation keysDo: [ :ch | XMLTranslationMap add: ch ].
 ! !
 
 !XMLWriter class methodsFor: 'instance creation' stamp: 'jmv 2/2/2014 00:42'!
