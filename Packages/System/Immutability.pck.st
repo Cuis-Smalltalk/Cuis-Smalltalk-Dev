@@ -1,6 +1,6 @@
 'From Cuis 5.0 [latest update: #3826] on 12 July 2019 at 2:38:19 pm'!
 'Description First version. See message #beImmutable and ImmutableTest'!
-!provides: 'Immutability' 1 2!
+!provides: 'Immutability' 1 3!
 SystemOrganization addCategory: #Immutability!
 
 
@@ -229,8 +229,8 @@ setIsReadOnlyObject: aBoolean
 	^self primitiveFailed
 	! !
 
-!String methodsFor: '*Immutability' stamp: 'HAW 7/12/2019 12:46:06'!
-at: index put: aCharacter 
+!String methodsFor: '*Immutability' stamp: 'jmv 1/4/2023 17:29:26'!
+at: index put: aCharacter
 	"Primitive. Store the Character in the field of the receiver indicated by
 	the index. Fail if the index is not an Integer or is out of bounds, or if
 	the argument is not a Character. Essential. See Object documentation
@@ -238,14 +238,20 @@ at: index put: aCharacter
 
 	<primitive: 64>
 
-	self isImmutable 
+	self isImmutable
 		ifTrue: [ ^ self modificationForbiddenFor: #at:put: index: index value: aCharacter ].
 
-	(aCharacter is: #Character)
+	aCharacter isCharacter
 		ifTrue: [	
-			index isInteger
-				ifTrue: [self errorSubscriptBounds: index]
-				ifFalse: [self errorNonIntegerIndex]]
+			(aCharacter is: #Character)
+				ifFalse: [
+					aCharacter asCharacter
+						ifNotNil: [ :ch | ^self at: index put: ch ]
+						ifNil: [self error: 'String only store code points in the ISO 8859-15 set']]
+				ifTrue: [
+					index isInteger
+						ifTrue: [self errorSubscriptBounds: index]
+						ifFalse: [self errorNonIntegerIndex]]]
 		ifFalse: [self error: 'Strings only store Characters']! !
 
 !OrderedCollection methodsFor: '*Immutability' stamp: 'HAW 7/4/2019 15:39:31'!

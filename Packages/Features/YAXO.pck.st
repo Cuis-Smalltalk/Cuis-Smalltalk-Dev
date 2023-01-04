@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5622] on 4 January 2023 at 1:00:49 pm'!
+'From Cuis 6.0 [latest update: #5621] on 4 January 2023 at 6:40:46 pm'!
 'Description '!
-!provides: 'YAXO' 1 22!
+!provides: 'YAXO' 1 23!
 SystemOrganization addCategory: 'YAXO'!
 
 
@@ -1899,7 +1899,7 @@ nextEntityDeclaration
 	reference registerIn: self.
 	^reference! !
 
-!XMLTokenizer methodsFor: 'tokenizing dtd' stamp: 'jmv 9/3/2022 22:39:10'!
+!XMLTokenizer methodsFor: 'tokenizing dtd' stamp: 'jmv 1/4/2023 16:58:15'!
 nextExternalId
 	| extDefType systemId entry |
 	extDefType _ self nextLiteral.
@@ -1921,7 +1921,7 @@ nextExternalId
 		ifNil: [^nil].
 
 	"The rest of this method only applies if we're reading aFileStream"
-	(self topStream isKindOf: FileStream)
+	(self topStream isFileStream)
 		ifFalse: [^''].
 	entry _ self topStream directory // systemId.
 	^entry exists

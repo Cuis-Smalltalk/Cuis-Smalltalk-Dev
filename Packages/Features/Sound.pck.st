@@ -1,470 +1,470 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3695] on 11 April 2019 at 3:36:06 pm'!
+'From Cuis 6.0 [latest update: #5621] on 4 January 2023 at 6:40:23 pm'!
 'Description '!
-!provides: 'Sound' 1 23!
-!requires: 'Collections-CompactArrays' 1 2 nil!
+!provides: 'Sound' 1 24!
 !requires: 'Compression' 1 nil nil!
-SystemOrganization addCategory: #'Sound-Synthesis'!
-SystemOrganization addCategory: #'Sound-Scores'!
-SystemOrganization addCategory: #'Sound-System-Support'!
+!requires: 'Collections-CompactArrays' 1 2 nil!
+SystemOrganization addCategory: 'Sound-Synthesis'!
+SystemOrganization addCategory: 'Sound-Scores'!
+SystemOrganization addCategory: 'Sound-System-Support'!
 
 
-!classDefinition: #SoundBuffer category: #'Sound-Synthesis'!
+!classDefinition: #SoundBuffer category: 'Sound-Synthesis'!
 ArrayedCollection variableWordSubclass: #SoundBuffer
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Sound-Synthesis'!
-!classDefinition: 'SoundBuffer class' category: #'Sound-Synthesis'!
+!classDefinition: 'SoundBuffer class' category: 'Sound-Synthesis'!
 SoundBuffer class
 	instanceVariableNames: ''!
 
-!classDefinition: #Sonogram category: #'Sound-Synthesis'!
+!classDefinition: #Sonogram category: 'Sound-Synthesis'!
 ImageMorph subclass: #Sonogram
 	instanceVariableNames: 'lastX scrollDelta columnForm minVal maxVal pixValMap'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Sound-Synthesis'!
-!classDefinition: 'Sonogram class' category: #'Sound-Synthesis'!
+!classDefinition: 'Sonogram class' category: 'Sound-Synthesis'!
 Sonogram class
 	instanceVariableNames: ''!
 
-!classDefinition: #AIFFFileReader category: #'Sound-Synthesis'!
+!classDefinition: #AIFFFileReader category: 'Sound-Synthesis'!
 Object subclass: #AIFFFileReader
 	instanceVariableNames: 'in fileType channelCount frameCount bitsPerSample samplingRate channelData channelDataOffset markers pitch gain isLooped skipDataChunk mergeIfStereo'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Sound-Synthesis'!
-!classDefinition: 'AIFFFileReader class' category: #'Sound-Synthesis'!
+!classDefinition: 'AIFFFileReader class' category: 'Sound-Synthesis'!
 AIFFFileReader class
 	instanceVariableNames: ''!
 
-!classDefinition: #AbstractSound category: #'Sound-Synthesis'!
+!classDefinition: #AbstractSound category: 'Sound-Synthesis'!
 Object subclass: #AbstractSound
 	instanceVariableNames: 'envelopes mSecsSinceStart samplesUntilNextControl scaledVol scaledVolIncr scaledVolLimit'
 	classVariableNames: 'FloatScaleFactor MaxScaledValue PitchesForBottomOctave ScaleFactor Sounds TopOfBottomOctave UnloadedSnd'
 	poolDictionaries: ''
 	category: 'Sound-Synthesis'!
-!classDefinition: 'AbstractSound class' category: #'Sound-Synthesis'!
+!classDefinition: 'AbstractSound class' category: 'Sound-Synthesis'!
 AbstractSound class
 	instanceVariableNames: ''!
 
-!classDefinition: #FMSound category: #'Sound-Synthesis'!
+!classDefinition: #FMSound category: 'Sound-Synthesis'!
 AbstractSound subclass: #FMSound
 	instanceVariableNames: 'initialCount count waveTable scaledWaveTableSize scaledIndex scaledIndexIncr modulation multiplier normalizedModulation scaledOffsetIndex scaledOffsetIndexIncr'
 	classVariableNames: 'SineTable'
 	poolDictionaries: ''
 	category: 'Sound-Synthesis'!
-!classDefinition: 'FMSound class' category: #'Sound-Synthesis'!
+!classDefinition: 'FMSound class' category: 'Sound-Synthesis'!
 FMSound class
 	instanceVariableNames: ''!
 
-!classDefinition: #FMBassoonSound category: #'Sound-Synthesis'!
+!classDefinition: #FMBassoonSound category: 'Sound-Synthesis'!
 FMSound subclass: #FMBassoonSound
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Sound-Synthesis'!
-!classDefinition: 'FMBassoonSound class' category: #'Sound-Synthesis'!
+!classDefinition: 'FMBassoonSound class' category: 'Sound-Synthesis'!
 FMBassoonSound class
 	instanceVariableNames: ''!
 
-!classDefinition: #FMClarinetSound category: #'Sound-Synthesis'!
+!classDefinition: #FMClarinetSound category: 'Sound-Synthesis'!
 FMSound subclass: #FMClarinetSound
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Sound-Synthesis'!
-!classDefinition: 'FMClarinetSound class' category: #'Sound-Synthesis'!
+!classDefinition: 'FMClarinetSound class' category: 'Sound-Synthesis'!
 FMClarinetSound class
 	instanceVariableNames: ''!
 
-!classDefinition: #UnloadedSound category: #'Sound-Synthesis'!
+!classDefinition: #UnloadedSound category: 'Sound-Synthesis'!
 FMSound subclass: #UnloadedSound
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Sound-Synthesis'!
-!classDefinition: 'UnloadedSound class' category: #'Sound-Synthesis'!
+!classDefinition: 'UnloadedSound class' category: 'Sound-Synthesis'!
 UnloadedSound class
 	instanceVariableNames: ''!
 
-!classDefinition: #LoopedSampledSound category: #'Sound-Synthesis'!
+!classDefinition: #LoopedSampledSound category: 'Sound-Synthesis'!
 AbstractSound subclass: #LoopedSampledSound
 	instanceVariableNames: 'initialCount count releaseCount sampleCountForRelease leftSamples rightSamples originalSamplingRate perceivedPitch gain firstSample lastSample loopEnd scaledLoopLength scaledIndex scaledIndexIncr'
 	classVariableNames: 'FloatLoopIndexScaleFactor LoopIndexFractionMask LoopIndexScaleFactor'
 	poolDictionaries: ''
 	category: 'Sound-Synthesis'!
-!classDefinition: 'LoopedSampledSound class' category: #'Sound-Synthesis'!
+!classDefinition: 'LoopedSampledSound class' category: 'Sound-Synthesis'!
 LoopedSampledSound class
 	instanceVariableNames: ''!
 
-!classDefinition: #MixedSound category: #'Sound-Synthesis'!
+!classDefinition: #MixedSound category: 'Sound-Synthesis'!
 AbstractSound subclass: #MixedSound
 	instanceVariableNames: 'sounds leftVols rightVols soundDone'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Sound-Synthesis'!
-!classDefinition: 'MixedSound class' category: #'Sound-Synthesis'!
+!classDefinition: 'MixedSound class' category: 'Sound-Synthesis'!
 MixedSound class
 	instanceVariableNames: ''!
 
-!classDefinition: #PluckedSound category: #'Sound-Synthesis'!
+!classDefinition: #PluckedSound category: 'Sound-Synthesis'!
 AbstractSound subclass: #PluckedSound
 	instanceVariableNames: 'initialCount count ring scaledIndex scaledIndexIncr scaledIndexLimit'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Sound-Synthesis'!
-!classDefinition: 'PluckedSound class' category: #'Sound-Synthesis'!
+!classDefinition: 'PluckedSound class' category: 'Sound-Synthesis'!
 PluckedSound class
 	instanceVariableNames: ''!
 
-!classDefinition: #QueueSound category: #'Sound-Synthesis'!
+!classDefinition: #QueueSound category: 'Sound-Synthesis'!
 AbstractSound subclass: #QueueSound
 	instanceVariableNames: 'startTime sounds currentSound done'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Sound-Synthesis'!
-!classDefinition: 'QueueSound class' category: #'Sound-Synthesis'!
+!classDefinition: 'QueueSound class' category: 'Sound-Synthesis'!
 QueueSound class
 	instanceVariableNames: ''!
 
-!classDefinition: #RepeatingSound category: #'Sound-Synthesis'!
+!classDefinition: #RepeatingSound category: 'Sound-Synthesis'!
 AbstractSound subclass: #RepeatingSound
 	instanceVariableNames: 'sound iterationCount iteration samplesPerIteration'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Sound-Synthesis'!
-!classDefinition: 'RepeatingSound class' category: #'Sound-Synthesis'!
+!classDefinition: 'RepeatingSound class' category: 'Sound-Synthesis'!
 RepeatingSound class
 	instanceVariableNames: ''!
 
-!classDefinition: #RestSound category: #'Sound-Synthesis'!
+!classDefinition: #RestSound category: 'Sound-Synthesis'!
 AbstractSound subclass: #RestSound
 	instanceVariableNames: 'initialCount count'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Sound-Synthesis'!
-!classDefinition: 'RestSound class' category: #'Sound-Synthesis'!
+!classDefinition: 'RestSound class' category: 'Sound-Synthesis'!
 RestSound class
 	instanceVariableNames: ''!
 
-!classDefinition: #ReverbSound category: #'Sound-Synthesis'!
+!classDefinition: #ReverbSound category: 'Sound-Synthesis'!
 AbstractSound subclass: #ReverbSound
 	instanceVariableNames: 'sound tapDelays tapGains tapCount bufferSize bufferIndex leftBuffer rightBuffer'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Sound-Synthesis'!
-!classDefinition: 'ReverbSound class' category: #'Sound-Synthesis'!
+!classDefinition: 'ReverbSound class' category: 'Sound-Synthesis'!
 ReverbSound class
 	instanceVariableNames: ''!
 
-!classDefinition: #SampledSound category: #'Sound-Synthesis'!
+!classDefinition: #SampledSound category: 'Sound-Synthesis'!
 AbstractSound subclass: #SampledSound
 	instanceVariableNames: 'initialCount count samples originalSamplingRate samplesSize scaledIndex indexHighBits scaledIncrement'
 	classVariableNames: 'CoffeeCupClink DefaultSampleTable IncrementFractionBits IncrementScaleFactor NominalSamplePitch ScaledIndexOverflow SoundLibrary'
 	poolDictionaries: ''
 	category: 'Sound-Synthesis'!
-!classDefinition: 'SampledSound class' category: #'Sound-Synthesis'!
+!classDefinition: 'SampledSound class' category: 'Sound-Synthesis'!
 SampledSound class
 	instanceVariableNames: ''!
 
-!classDefinition: #SequentialSound category: #'Sound-Synthesis'!
+!classDefinition: #SequentialSound category: 'Sound-Synthesis'!
 AbstractSound subclass: #SequentialSound
 	instanceVariableNames: 'sounds currentIndex'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Sound-Synthesis'!
-!classDefinition: 'SequentialSound class' category: #'Sound-Synthesis'!
+!classDefinition: 'SequentialSound class' category: 'Sound-Synthesis'!
 SequentialSound class
 	instanceVariableNames: ''!
 
-!classDefinition: #StreamingMonoSound category: #'Sound-Synthesis'!
+!classDefinition: #StreamingMonoSound category: 'Sound-Synthesis'!
 AbstractSound subclass: #StreamingMonoSound
 	instanceVariableNames: 'stream volume repeat headerStart audioDataStart streamSamplingRate totalSamples codec mixer leftoverSamples lastBufferMSecs mutex'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Sound-Synthesis'!
-!classDefinition: 'StreamingMonoSound class' category: #'Sound-Synthesis'!
+!classDefinition: 'StreamingMonoSound class' category: 'Sound-Synthesis'!
 StreamingMonoSound class
 	instanceVariableNames: ''!
 
-!classDefinition: #ScorePlayer category: #'Sound-Scores'!
+!classDefinition: #ScorePlayer category: 'Sound-Scores'!
 AbstractSound subclass: #ScorePlayer
 	instanceVariableNames: 'score instruments overallVolume leftVols rightVols muted rate tempo secsPerTick done repeat ticksSinceStart ticksClockIncr trackEventIndex tempoMapIndex activeSounds activeMIDINotes midiPort midiPlayerProcess durationInTicks'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Sound-Scores'!
-!classDefinition: 'ScorePlayer class' category: #'Sound-Scores'!
+!classDefinition: 'ScorePlayer class' category: 'Sound-Scores'!
 ScorePlayer class
 	instanceVariableNames: ''!
 
-!classDefinition: #CompressedSoundData category: #'Sound-Synthesis'!
+!classDefinition: #CompressedSoundData category: 'Sound-Synthesis'!
 Object subclass: #CompressedSoundData
 	instanceVariableNames: 'channels soundClassName codecName loopEnd loopLength perceivedPitch samplingRate gain firstSample cachedSound'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Sound-Synthesis'!
-!classDefinition: 'CompressedSoundData class' category: #'Sound-Synthesis'!
+!classDefinition: 'CompressedSoundData class' category: 'Sound-Synthesis'!
 CompressedSoundData class
 	instanceVariableNames: ''!
 
-!classDefinition: #Envelope category: #'Sound-Synthesis'!
+!classDefinition: #Envelope category: 'Sound-Synthesis'!
 Object subclass: #Envelope
 	instanceVariableNames: 'points loopStartIndex loopEndIndex loopStartMSecs loopMSecs target updateSelector loopEndMSecs endMSecs scale decayScale lastValue currValue valueIncr nextRecomputeTime noChangesDuringLoop'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Sound-Synthesis'!
-!classDefinition: 'Envelope class' category: #'Sound-Synthesis'!
+!classDefinition: 'Envelope class' category: 'Sound-Synthesis'!
 Envelope class
 	instanceVariableNames: ''!
 
-!classDefinition: #PitchEnvelope category: #'Sound-Synthesis'!
+!classDefinition: #PitchEnvelope category: 'Sound-Synthesis'!
 Envelope subclass: #PitchEnvelope
 	instanceVariableNames: 'centerPitch'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Sound-Synthesis'!
-!classDefinition: 'PitchEnvelope class' category: #'Sound-Synthesis'!
+!classDefinition: 'PitchEnvelope class' category: 'Sound-Synthesis'!
 PitchEnvelope class
 	instanceVariableNames: ''!
 
-!classDefinition: #RandomEnvelope category: #'Sound-Synthesis'!
+!classDefinition: #RandomEnvelope category: 'Sound-Synthesis'!
 Envelope subclass: #RandomEnvelope
 	instanceVariableNames: 'rand lowLimit highLimit delta'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Sound-Synthesis'!
-!classDefinition: 'RandomEnvelope class' category: #'Sound-Synthesis'!
+!classDefinition: 'RandomEnvelope class' category: 'Sound-Synthesis'!
 RandomEnvelope class
 	instanceVariableNames: ''!
 
-!classDefinition: #VolumeEnvelope category: #'Sound-Synthesis'!
+!classDefinition: #VolumeEnvelope category: 'Sound-Synthesis'!
 Envelope subclass: #VolumeEnvelope
 	instanceVariableNames: 'targetVol mSecsForChange'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Sound-Synthesis'!
-!classDefinition: 'VolumeEnvelope class' category: #'Sound-Synthesis'!
+!classDefinition: 'VolumeEnvelope class' category: 'Sound-Synthesis'!
 VolumeEnvelope class
 	instanceVariableNames: ''!
 
-!classDefinition: #SampledInstrument category: #'Sound-Synthesis'!
+!classDefinition: #SampledInstrument category: 'Sound-Synthesis'!
 Object subclass: #SampledInstrument
 	instanceVariableNames: 'sustainedSoft sustainedLoud staccatoSoft staccatoLoud sustainedThreshold loudThreshold'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Sound-Synthesis'!
-!classDefinition: 'SampledInstrument class' category: #'Sound-Synthesis'!
+!classDefinition: 'SampledInstrument class' category: 'Sound-Synthesis'!
 SampledInstrument class
 	instanceVariableNames: ''!
 
-!classDefinition: #SoundCodec category: #'Sound-Synthesis'!
+!classDefinition: #SoundCodec category: 'Sound-Synthesis'!
 Object subclass: #SoundCodec
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Sound-Synthesis'!
-!classDefinition: 'SoundCodec class' category: #'Sound-Synthesis'!
+!classDefinition: 'SoundCodec class' category: 'Sound-Synthesis'!
 SoundCodec class
 	instanceVariableNames: ''!
 
-!classDefinition: #ADPCMCodec category: #'Sound-Synthesis'!
+!classDefinition: #ADPCMCodec category: 'Sound-Synthesis'!
 SoundCodec subclass: #ADPCMCodec
 	instanceVariableNames: 'predicted index deltaSignMask deltaValueMask deltaValueHighBit frameSizeMask currentByte bitPosition byteIndex encodedBytes samples rightSamples sampleIndex bitsPerSample stepSizeTable indexTable'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Sound-Synthesis'!
-!classDefinition: 'ADPCMCodec class' category: #'Sound-Synthesis'!
+!classDefinition: 'ADPCMCodec class' category: 'Sound-Synthesis'!
 ADPCMCodec class
 	instanceVariableNames: ''!
 
-!classDefinition: #GSMCodec category: #'Sound-Synthesis'!
+!classDefinition: #GSMCodec category: 'Sound-Synthesis'!
 SoundCodec subclass: #GSMCodec
 	instanceVariableNames: 'encodeState decodeState'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Sound-Synthesis'!
-!classDefinition: 'GSMCodec class' category: #'Sound-Synthesis'!
+!classDefinition: 'GSMCodec class' category: 'Sound-Synthesis'!
 GSMCodec class
 	instanceVariableNames: ''!
 
-!classDefinition: #MuLawCodec category: #'Sound-Synthesis'!
+!classDefinition: #MuLawCodec category: 'Sound-Synthesis'!
 SoundCodec subclass: #MuLawCodec
 	instanceVariableNames: ''
 	classVariableNames: 'DecodingTable'
 	poolDictionaries: ''
 	category: 'Sound-Synthesis'!
-!classDefinition: 'MuLawCodec class' category: #'Sound-Synthesis'!
+!classDefinition: 'MuLawCodec class' category: 'Sound-Synthesis'!
 MuLawCodec class
 	instanceVariableNames: ''!
 
-!classDefinition: #SoundPlayer category: #'Sound-Synthesis'!
+!classDefinition: #SoundPlayer category: 'Sound-Synthesis'!
 Object subclass: #SoundPlayer
 	instanceVariableNames: ''
 	classVariableNames: 'ActiveSounds Buffer BufferIndex BufferMSecs LastBuffer PlayerProcess PlayerSemaphore ReadyForBuffer ReverbState SamplingRate SoundJustStarted SoundSupported Stereo UseReadySemaphore UseReverb'
 	poolDictionaries: ''
 	category: 'Sound-Synthesis'!
-!classDefinition: 'SoundPlayer class' category: #'Sound-Synthesis'!
+!classDefinition: 'SoundPlayer class' category: 'Sound-Synthesis'!
 SoundPlayer class
 	instanceVariableNames: ''!
 
-!classDefinition: #SoundRecorder category: #'Sound-Synthesis'!
+!classDefinition: #SoundRecorder category: 'Sound-Synthesis'!
 Object subclass: #SoundRecorder
 	instanceVariableNames: 'stereo samplingRate recordLevel recordedBuffers recordedSound recordProcess bufferAvailableSema paused meteringBuffer meterLevel soundPlaying currentBuffer nextIndex codec desiredSampleRate'
 	classVariableNames: 'CanRecordWhilePlaying RecorderActive'
 	poolDictionaries: ''
 	category: 'Sound-Synthesis'!
-!classDefinition: 'SoundRecorder class' category: #'Sound-Synthesis'!
+!classDefinition: 'SoundRecorder class' category: 'Sound-Synthesis'!
 SoundRecorder class
 	instanceVariableNames: ''!
 
-!classDefinition: #SoundInputStream category: #'Sound-Synthesis'!
+!classDefinition: #SoundInputStream category: 'Sound-Synthesis'!
 SoundRecorder subclass: #SoundInputStream
 	instanceVariableNames: 'bufferSize mutex'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Sound-Synthesis'!
-!classDefinition: 'SoundInputStream class' category: #'Sound-Synthesis'!
+!classDefinition: 'SoundInputStream class' category: 'Sound-Synthesis'!
 SoundInputStream class
 	instanceVariableNames: ''!
 
-!classDefinition: #AbstractScoreEvent category: #'Sound-Scores'!
+!classDefinition: #AbstractScoreEvent category: 'Sound-Scores'!
 Object subclass: #AbstractScoreEvent
 	instanceVariableNames: 'time'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Sound-Scores'!
-!classDefinition: 'AbstractScoreEvent class' category: #'Sound-Scores'!
+!classDefinition: 'AbstractScoreEvent class' category: 'Sound-Scores'!
 AbstractScoreEvent class
 	instanceVariableNames: ''!
 
-!classDefinition: #ControlChangeEvent category: #'Sound-Scores'!
+!classDefinition: #ControlChangeEvent category: 'Sound-Scores'!
 AbstractScoreEvent subclass: #ControlChangeEvent
 	instanceVariableNames: 'control value channel'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Sound-Scores'!
-!classDefinition: 'ControlChangeEvent class' category: #'Sound-Scores'!
+!classDefinition: 'ControlChangeEvent class' category: 'Sound-Scores'!
 ControlChangeEvent class
 	instanceVariableNames: ''!
 
-!classDefinition: #NoteEvent category: #'Sound-Scores'!
+!classDefinition: #NoteEvent category: 'Sound-Scores'!
 AbstractScoreEvent subclass: #NoteEvent
 	instanceVariableNames: 'duration midiKey velocity channel'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Sound-Scores'!
-!classDefinition: 'NoteEvent class' category: #'Sound-Scores'!
+!classDefinition: 'NoteEvent class' category: 'Sound-Scores'!
 NoteEvent class
 	instanceVariableNames: ''!
 
-!classDefinition: #PitchBendEvent category: #'Sound-Scores'!
+!classDefinition: #PitchBendEvent category: 'Sound-Scores'!
 AbstractScoreEvent subclass: #PitchBendEvent
 	instanceVariableNames: 'bend channel'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Sound-Scores'!
-!classDefinition: 'PitchBendEvent class' category: #'Sound-Scores'!
+!classDefinition: 'PitchBendEvent class' category: 'Sound-Scores'!
 PitchBendEvent class
 	instanceVariableNames: ''!
 
-!classDefinition: #ProgramChangeEvent category: #'Sound-Scores'!
+!classDefinition: #ProgramChangeEvent category: 'Sound-Scores'!
 AbstractScoreEvent subclass: #ProgramChangeEvent
 	instanceVariableNames: 'program channel'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Sound-Scores'!
-!classDefinition: 'ProgramChangeEvent class' category: #'Sound-Scores'!
+!classDefinition: 'ProgramChangeEvent class' category: 'Sound-Scores'!
 ProgramChangeEvent class
 	instanceVariableNames: ''!
 
-!classDefinition: #TempoEvent category: #'Sound-Scores'!
+!classDefinition: #TempoEvent category: 'Sound-Scores'!
 AbstractScoreEvent subclass: #TempoEvent
 	instanceVariableNames: 'tempo'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Sound-Scores'!
-!classDefinition: 'TempoEvent class' category: #'Sound-Scores'!
+!classDefinition: 'TempoEvent class' category: 'Sound-Scores'!
 TempoEvent class
 	instanceVariableNames: ''!
 
-!classDefinition: #MIDIFileReader category: #'Sound-Scores'!
+!classDefinition: #MIDIFileReader category: 'Sound-Scores'!
 Object subclass: #MIDIFileReader
 	instanceVariableNames: 'stream fileType trackCount ticksPerQuarter tracks trackInfo tempoMap strings track trackStream activeEvents maxNoteTicks'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Sound-Scores'!
-!classDefinition: 'MIDIFileReader class' category: #'Sound-Scores'!
+!classDefinition: 'MIDIFileReader class' category: 'Sound-Scores'!
 MIDIFileReader class
 	instanceVariableNames: ''!
 
-!classDefinition: #MIDIInputParser category: #'Sound-Scores'!
+!classDefinition: #MIDIInputParser category: 'Sound-Scores'!
 Object subclass: #MIDIInputParser
 	instanceVariableNames: 'cmdActionTable midiPort received rawDataBuffer sysExBuffer ignoreSysEx startTime timeNow state lastSelector lastCmdByte argByte1 argByte2'
 	classVariableNames: 'DefaultMidiTable'
 	poolDictionaries: ''
 	category: 'Sound-Scores'!
-!classDefinition: 'MIDIInputParser class' category: #'Sound-Scores'!
+!classDefinition: 'MIDIInputParser class' category: 'Sound-Scores'!
 MIDIInputParser class
 	instanceVariableNames: ''!
 
-!classDefinition: #MIDIScore category: #'Sound-Scores'!
+!classDefinition: #MIDIScore category: 'Sound-Scores'!
 Object subclass: #MIDIScore
 	instanceVariableNames: 'tracks trackInfo tempoMap ticksPerQuarterNote'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Sound-Scores'!
-!classDefinition: 'MIDIScore class' category: #'Sound-Scores'!
+!classDefinition: 'MIDIScore class' category: 'Sound-Scores'!
 MIDIScore class
 	instanceVariableNames: ''!
 
-!classDefinition: #MIDISynth category: #'Sound-Scores'!
+!classDefinition: #MIDISynth category: 'Sound-Scores'!
 Object subclass: #MIDISynth
 	instanceVariableNames: 'midiParser channels process'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Sound-Scores'!
-!classDefinition: 'MIDISynth class' category: #'Sound-Scores'!
+!classDefinition: 'MIDISynth class' category: 'Sound-Scores'!
 MIDISynth class
 	instanceVariableNames: ''!
 
-!classDefinition: #MIDISynthChannel category: #'Sound-Scores'!
+!classDefinition: #MIDISynthChannel category: 'Sound-Scores'!
 Object subclass: #MIDISynthChannel
 	instanceVariableNames: 'instrument muted masterVolume channelVolume pan pitchBend activeSounds'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Sound-Scores'!
-!classDefinition: 'MIDISynthChannel class' category: #'Sound-Scores'!
+!classDefinition: 'MIDISynthChannel class' category: 'Sound-Scores'!
 MIDISynthChannel class
 	instanceVariableNames: ''!
 
-!classDefinition: #SimpleMIDIPort category: #'Sound-Scores'!
+!classDefinition: #SimpleMIDIPort category: 'Sound-Scores'!
 Object subclass: #SimpleMIDIPort
 	instanceVariableNames: 'portNumber accessSema lastCommandByteOut'
 	classVariableNames: 'DefaultPortNumber InterfaceClockRate'
 	poolDictionaries: ''
 	category: 'Sound-Scores'!
-!classDefinition: 'SimpleMIDIPort class' category: #'Sound-Scores'!
+!classDefinition: 'SimpleMIDIPort class' category: 'Sound-Scores'!
 SimpleMIDIPort class
 	instanceVariableNames: ''!
 
-!classDefinition: #Beeper category: #'Sound-System-Support'!
+!classDefinition: #Beeper category: 'Sound-System-Support'!
 Object subclass: #Beeper
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Sound-System-Support'!
-!classDefinition: 'Beeper class' category: #'Sound-System-Support'!
+!classDefinition: 'Beeper class' category: 'Sound-System-Support'!
 Beeper class
 	instanceVariableNames: 'default'!
 
-!classDefinition: #SoundSystem category: #'Sound-System-Support'!
+!classDefinition: #SoundSystem category: 'Sound-System-Support'!
 Object subclass: #SoundSystem
 	instanceVariableNames: ''
 	classVariableNames: 'Default'
 	poolDictionaries: ''
 	category: 'Sound-System-Support'!
-!classDefinition: 'SoundSystem class' category: #'Sound-System-Support'!
+!classDefinition: 'SoundSystem class' category: 'Sound-System-Support'!
 SoundSystem class
 	instanceVariableNames: ''!
 
@@ -667,200 +667,6 @@ The idea is that as much sound playing as possible should go through this facade
 
 Two basic subclasses exist at the time of this writing, the BaseSoundSystem which represents the standard Squeak sound system, and the DummySoundSystem which is a dummy implementation that can be used when there is no sound card available, or when the base sound system isn't in the image, or when you simply don't want to use the available sound card.!
 
-!SoundBuffer class methodsFor: 'class initialization' stamp: 'jmv 2/25/2016 10:33'!
-startUp
-	"Check if the word order has changed from the last save."
-
-	| la |
-	la _ ShortIntegerArray classPool at: #LastSaveOrder.
-	((la at: 2) = 42 and: [(la at: 1) = 13]) 
-		ifTrue: [
-			self allInstancesDo: [ :each | 
-				BitBlt swapHalvesIn32BitWords: each ]]
-			"Reverse the two 16-bit halves."
-			"Another reversal happened automatically which reversed the bytes."! !
-
-!AbstractSound methodsFor: 'copying' stamp: 'jmv 5/14/2015 09:55'!
-postCopy
-	"A sound should copy all of the state needed to play itself, allowing two copies of a sound to play at the same time. These semantics require a recursive copy but only down to the level of immutable data. For example, a SampledSound need not copy its sample buffer. Subclasses overriding this method should include a resend to super."
-
-	self copyEnvelopes! !
-
-!FMSound methodsFor: 'storing' stamp: 'jmv 3/13/2012 12:34'!
-storeOn: strm
-	| env |
-	strm nextPutAll: '(((FMSound';
-		nextPutAll: ' pitch: '; print: self pitch;
-		nextPutAll: ' dur: '; print: self duration;
-		nextPutAll: ' loudness: '; print: self loudness; nextPutAll: ')';
-		nextPutAll: ' modulation: '; print: self modulation;
-		nextPutAll: ' ratio: '; print: self ratio; nextPutAll: ')'.
-	1 to: envelopes size do:
-		[:i | env _ envelopes at: i.
-		strm newLine; nextPutAll: '    addEnvelope: '. env storeOn: strm.
-		i < envelopes size ifTrue: [strm nextPutAll: ';']].
-	strm  nextPutAll: ')'.
-! !
-
-!LoopedSampledSound methodsFor: 'disk i/o' stamp: 'tk 9/25/2000 12:06'!
-objectForDataStream: refStrm
-    "Answer an object to store on a data stream, a copy of myself whose SampleBuffers have been converted into ByteArrays."
-
-	refStrm replace: leftSamples with: leftSamples asByteArray.
-	refStrm replace: rightSamples with: rightSamples asByteArray.
-	"substitution will be made in DataStream nextPut:"
-	^ self
-! !
-
-!MixedSound methodsFor: 'copying' stamp: 'jmv 5/14/2015 09:57'!
-postCopy
-	"Copy my component sounds."
-
-	super postCopy.
-	self copySounds! !
-
-!PluckedSound methodsFor: 'copying' stamp: 'jmv 5/14/2015 09:56'!
-postCopy
-
-	super postCopy.
-	self copyRing
-! !
-
-!RepeatingSound methodsFor: 'copying' stamp: 'jmv 5/14/2015 09:58'!
-postCopy
-	"Copy my component sound."
-
-	super postCopy.
-	self copySound
-! !
-
-!ReverbSound methodsFor: 'copying' stamp: 'jmv 5/14/2015 09:58'!
-postCopy
-	"Copy my component sound."
-
-	super postCopy.
-	self copySound
-! !
-
-!SequentialSound methodsFor: 'copying' stamp: 'jmv 5/14/2015 09:58'!
-postCopy
-	"Copy my component sounds."
-
-	super postCopy.
-	self copySounds
-! !
-
-!ScorePlayer methodsFor: 'copying' stamp: 'jmv 5/14/2015 09:58'!
-postCopy
-	"Copy my component sounds."
-
-	super postCopy.
-	self copySounds
-! !
-
-!Envelope methodsFor: 'accessing' stamp: 'jm 8/13/1998 17:03'!
-name
-
-	^ self updateSelector allButLast
-! !
-
-!Envelope methodsFor: 'storing' stamp: 'di 2/1/98 15:45'!
-storeOn: strm
-	strm nextPutAll: '((' , self class name;
-		nextPutAll: ' points: '; store: (points collect: [:p | p x @ (p y roundTo: 0.00001)]);
-		nextPutAll: ' loopStart: '; print: loopStartIndex;
-		nextPutAll: ' loopEnd: '; print: loopEndIndex; nextPutAll: ')';
-		nextPutAll: ' updateSelector: '; store: self updateSelector; nextPutAll: ';';
-		nextPutAll: ' scale: '; print: scale; nextPutAll: ')'.
-! !
-
-!RandomEnvelope methodsFor: 'envelope compatibility' stamp: 'jm 1/14/1999 13:17'!
-name
-
-	^ 'random ', updateSelector
-! !
-
-!SoundPlayer class methodsFor: 'snapshotting' stamp: 'jm 5/8/1998 18:48'!
-shutDown
-	"Stop player process, for example before snapshotting."
-
-	self stopPlayerProcess.
-	ReverbState _ nil.
-! !
-
-!SoundPlayer class methodsFor: 'snapshotting' stamp: 'jm 7/11/97 12:17'!
-startUp
-	"Start up the player process."
-
-	SoundPlayer initialize.
-	SoundPlayer
-		startPlayerProcessBufferSize: (BufferMSecs * SamplingRate) // 1000
-		rate: SamplingRate
-		stereo: Stereo.
-! !
-
-!ControlChangeEvent methodsFor: 'printing' stamp: 'sma 6/1/2000 09:34'!
-printOn: aStream
-	aStream
-		nextPut: $(;
-		print: time;
-		nextPutAll: ': ctrl[';
-		print: control;
-		nextPutAll: ']=';
-		print: value;
-		nextPut: $)! !
-
-!NoteEvent methodsFor: 'printing' stamp: 'jm 1/3/98 08:59'!
-printOn: aStream
-
-	aStream nextPut: $(.
-	time printOn: aStream.
-	aStream nextPutAll: ': '.
-	aStream nextPutAll: self keyName.
-	aStream space.
-	duration printOn: aStream.
-	aStream nextPut: $).
-! !
-
-!PitchBendEvent methodsFor: 'printing' stamp: 'jm 9/10/1998 09:42'!
-printOn: aStream
-
-	aStream nextPut: $(.
-	time printOn: aStream.
-	aStream nextPutAll: ': bend '.
-	bend printOn: aStream.
-	aStream nextPut: $).
-! !
-
-!ProgramChangeEvent methodsFor: 'printing' stamp: 'jm 9/10/1998 08:28'!
-printOn: aStream
-
-	aStream nextPut: $(.
-	time printOn: aStream.
-	aStream nextPutAll: ': prog '.
-	program printOn: aStream.
-	aStream nextPut: $).
-! !
-
-!TempoEvent methodsFor: 'as yet unclassified' stamp: 'jm 9/10/1998 08:37'!
-printOn: aStream
-
-	aStream nextPut: $(.
-	time printOn: aStream.
-	aStream nextPutAll: ': tempo '.
-	((120.0 * (500000.0 / tempo)) roundTo: 0.01) printOn: aStream.
-	aStream nextPut: $).
-! !
-
-!SoundSystem class methodsFor: 'as yet unclassified' stamp: 'jmv 6/7/2013 22:05'!
-shutDown
-	SoundPlayer shutDown! !
-
-!SoundSystem methodsFor: 'misc' stamp: 'jmv 6/7/2013 21:58'!
-shutDown
-	SoundPlayer shutDown
-! !
-
 !SoundBuffer methodsFor: 'utilities' stamp: 'jm 8/15/1998 13:03'!
 asByteArray
 	"Answer a ByteArray containing my sample data serialized in most-significant byte first order."
@@ -992,7 +798,7 @@ normalized: percentOfFullVolume
 	1 to: self size do: [:i | self at: i put: (mult * (self at: i)) asInteger].
 ! !
 
-!SoundBuffer methodsFor: 'utilities' stamp: 'jmv 2/26/2016 17:09'!
+!SoundBuffer methodsFor: 'utilities' stamp: 'jmv 1/4/2023 16:58:59'!
 saveAsAIFFFileSamplingRate: rate on: aBinaryStream
 	"Store this mono sound buffer in AIFF file format with the given sampling rate on the given stream."
 
@@ -1012,7 +818,7 @@ saveAsAIFFFileSamplingRate: rate on: aBinaryStream
 	aBinaryStream nextSignedInt32Put: 0 bigEndian: true.
 	aBinaryStream nextSignedInt32Put: 0 bigEndian: true.
 
-	(aBinaryStream isKindOf: StandardFileStream) ifTrue: [
+	(aBinaryStream isFileStream) ifTrue: [
 		"optimization: write sound buffer directly to file"
 		swapBytes _ Smalltalk isLittleEndian.
 		swapBytes ifTrue: [self reverseEndianness].  "make big endian"
@@ -1159,6 +965,19 @@ writeOnGZIPByteStream: aStream
 initialize
 	"SoundBuffer initialize"
 	Smalltalk addToStartUpList: self! !
+
+!SoundBuffer class methodsFor: 'class initialization' stamp: 'jmv 2/25/2016 10:33'!
+startUp
+	"Check if the word order has changed from the last save."
+
+	| la |
+	la _ ShortIntegerArray classPool at: #LastSaveOrder.
+	((la at: 2) = 42 and: [(la at: 1) = 13]) 
+		ifTrue: [
+			self allInstancesDo: [ :each | 
+				BitBlt swapHalvesIn32BitWords: each ]]
+			"Reverse the two 16-bit halves."
+			"Another reversal happened automatically which reversed the bytes."! !
 
 !SoundBuffer class methodsFor: 'instance creation' stamp: 'RAA 12/30/2000 18:20'!
 averageEvery: nSamples from: anotherBuffer upTo: inCount
@@ -1668,6 +1487,12 @@ copyEnvelopes
 	envelopes _ envelopes collect: [:e | e copy target: self].
 ! !
 
+!AbstractSound methodsFor: 'copying' stamp: 'jmv 5/14/2015 09:55'!
+postCopy
+	"A sound should copy all of the state needed to play itself, allowing two copies of a sound to play at the same time. These semantics require a recursive copy but only down to the level of immutable data. For example, a SampledSound need not copy its sample buffer. Subclasses overriding this method should include a resend to super."
+
+	self copyEnvelopes! !
+
 !AbstractSound methodsFor: 'copying' stamp: 'di 3/4/1999 21:29'!
 sounds
 	"Allows simple sounds to behave as, eg, sequential sounds"
@@ -2160,7 +1985,7 @@ storeExtendedFloat: aNumber on: aBinaryStream
 	aBinaryStream nextUnsignedInt32Put: mantissa >> 32 bigEndian: true.
 	aBinaryStream nextUnsignedInt32Put: (mantissa bitAnd: 16rFFFFFFFF) bigEndian: true.! !
 
-!AbstractSound methodsFor: 'file i/o' stamp: 'jmv 7/17/2017 15:39:47'!
+!AbstractSound methodsFor: 'file i/o' stamp: 'jmv 1/4/2023 16:59:09'!
 storeSampleCount: samplesToStore bigEndian: bigEndianFlag on: aBinaryStream
 	"Store my samples on the given stream at the current SoundPlayer sampling rate. If bigFlag is true, then each 16-bit sample is stored most-significant byte first (AIFF files), otherwise it is stored least-significant byte first (WAV files). If self isStereo is true, both channels are stored, creating a stereo file. Otherwise, only the left channel is stored, creating a mono file."
 
@@ -2179,7 +2004,7 @@ storeSampleCount: samplesToStore bigEndian: bigEndianFlag on: aBinaryStream
 				self isStereo
 					ifTrue: [out _ stereoBuffer]
 					ifFalse: [out _ stereoBuffer extractLeftChannel].
-				(aBinaryStream isKindOf: StandardFileStream)
+				(aBinaryStream isFileStream)
 					ifTrue: [  "optimization for files: write sound buffer directly to file"
 						aBinaryStream next: (out size // 2) putAll: out startingAt: 1]  "size in words"
 					ifFalse: [  "for non-file streams:"
@@ -3657,6 +3482,22 @@ translatedPrimitives
 	).
 ! !
 
+!FMSound methodsFor: 'storing' stamp: 'jmv 3/13/2012 12:34'!
+storeOn: strm
+	| env |
+	strm nextPutAll: '(((FMSound';
+		nextPutAll: ' pitch: '; print: self pitch;
+		nextPutAll: ' dur: '; print: self duration;
+		nextPutAll: ' loudness: '; print: self loudness; nextPutAll: ')';
+		nextPutAll: ' modulation: '; print: self modulation;
+		nextPutAll: ' ratio: '; print: self ratio; nextPutAll: ')'.
+	1 to: envelopes size do:
+		[:i | env _ envelopes at: i.
+		strm newLine; nextPutAll: '    addEnvelope: '. env storeOn: strm.
+		i < envelopes size ifTrue: [strm nextPutAll: ';']].
+	strm  nextPutAll: ')'.
+! !
+
 !FMSound methodsFor: 'accessing' stamp: 'jm 3/26/98 10:45'!
 duration
 
@@ -4236,6 +4077,16 @@ comeFullyUpOnReload: smartRefStream
 
 ! !
 
+!LoopedSampledSound methodsFor: 'disk i/o' stamp: 'tk 9/25/2000 12:06'!
+objectForDataStream: refStrm
+    "Answer an object to store on a data stream, a copy of myself whose SampleBuffers have been converted into ByteArrays."
+
+	refStrm replace: leftSamples with: leftSamples asByteArray.
+	refStrm replace: rightSamples with: rightSamples asByteArray.
+	"substitution will be made in DataStream nextPut:"
+	^ self
+! !
+
 !LoopedSampledSound methodsFor: 'initialization' stamp: 'jm 10/14/1998 16:04'!
 addReleaseEnvelope
 	"Add a simple release envelope to this sound."
@@ -4669,7 +4520,7 @@ stopAfterMSecs: mSecs
 	count _ (mSecs * self samplingRate) // 1000.
 ! !
 
-!LoopedSampledSound methodsFor: 'file i/o' stamp: 'jmv 2/26/2016 16:05'!
+!LoopedSampledSound methodsFor: 'file i/o' stamp: 'jmv 1/4/2023 16:59:16'!
 storeSampleCount: samplesToStore bigEndian: bigEndianFlag on: aBinaryStream
 	"Store my samples on the given stream at the current SoundPlayer sampling rate. If bigFlag is true, then each 16-bit sample is stored most-significant byte first (AIFF files), otherwise it is stored least-significant byte first (WAV files)."
 
@@ -4677,7 +4528,7 @@ storeSampleCount: samplesToStore bigEndian: bigEndianFlag on: aBinaryStream
 		^ super storeSampleCount: samplesToStore bigEndian: bigEndianFlag on: aBinaryStream].
 
 	"optimization: if I'm not stereo and sampling rates match, just store my buffer"
-	(aBinaryStream isKindOf: StandardFileStream)
+	(aBinaryStream isFileStream)
 		ifTrue: [  "optimization for files: write sound buffer directly to file"
 			aBinaryStream next: (leftSamples size // 2) putAll: leftSamples startingAt: 1]  "size in words"
 		ifFalse: [  "for non-file streams:"
@@ -4733,6 +4584,13 @@ copySounds
 	leftVols _ leftVols copy.
 	rightVols _ rightVols copy.
 ! !
+
+!MixedSound methodsFor: 'copying' stamp: 'jmv 5/14/2015 09:57'!
+postCopy
+	"Copy my component sounds."
+
+	super postCopy.
+	self copySounds! !
 
 !MixedSound methodsFor: 'composition'!
 + aSound
@@ -4853,6 +4711,13 @@ copyRing
 	"Private!! Support for copying"
 
 	ring _ ring copy.
+! !
+
+!PluckedSound methodsFor: 'copying' stamp: 'jmv 5/14/2015 09:56'!
+postCopy
+
+	super postCopy.
+	self copyRing
 ! !
 
 !PluckedSound methodsFor: 'accessing' stamp: 'jm 8/17/1998 14:07'!
@@ -5067,6 +4932,14 @@ copySound
 	sound _ sound copy.
 ! !
 
+!RepeatingSound methodsFor: 'copying' stamp: 'jmv 5/14/2015 09:58'!
+postCopy
+	"Copy my component sound."
+
+	super postCopy.
+	self copySound
+! !
+
 !RepeatingSound methodsFor: 'sound generation' stamp: 'jm 11/25/97 13:40'!
 doControl
 
@@ -5250,6 +5123,14 @@ copySound
 	sound _ sound copy.
 	leftBuffer _ leftBuffer copy.
 	rightBuffer _ rightBuffer copy.
+! !
+
+!ReverbSound methodsFor: 'copying' stamp: 'jmv 5/14/2015 09:58'!
+postCopy
+	"Copy my component sound."
+
+	super postCopy.
+	self copySound
 ! !
 
 !ReverbSound methodsFor: 'private' stamp: 'ar 2/3/2001 15:55'!
@@ -5553,7 +5434,7 @@ setSamples: anArray samplingRate: rate
 	self reset.
 ! !
 
-!SampledSound methodsFor: 'file i/o' stamp: 'jmv 2/26/2016 16:05'!
+!SampledSound methodsFor: 'file i/o' stamp: 'jmv 1/4/2023 16:59:23'!
 storeSampleCount: samplesToStore bigEndian: bigEndianFlag on: aBinaryStream
 	"Store my samples on the given stream at the current SoundPlayer sampling rate. If bigFlag is true, then each 16-bit sample is stored most-significant byte first (AIFF files), otherwise it is stored least-significant byte first (WAV files)."
 
@@ -5561,7 +5442,7 @@ storeSampleCount: samplesToStore bigEndian: bigEndianFlag on: aBinaryStream
 		^ super storeSampleCount: samplesToStore bigEndian: bigEndianFlag on: aBinaryStream].
 
 	"optimization: if sampling rates match, just store my buffer"
-	(aBinaryStream isKindOf: StandardFileStream)
+	(aBinaryStream isFileStream)
 		ifTrue: [  "optimization for files: write sound buffer directly to file"
 			aBinaryStream next: (samples size // 2) putAll: samples startingAt: 1]  "size in words"
 		ifFalse: [  "for non-file streams:"
@@ -6066,6 +5947,14 @@ copySounds
 	sounds _ sounds collect: [:s | s copy].
 ! !
 
+!SequentialSound methodsFor: 'copying' stamp: 'jmv 5/14/2015 09:58'!
+postCopy
+	"Copy my component sounds."
+
+	super postCopy.
+	self copySounds
+! !
+
 !SequentialSound methodsFor: 'copying' stamp: 'jmv 8/5/2011 16:00'!
 transformSounds: tfmBlock
 	"Private!! Support for copying. Copy my component sounds."
@@ -6295,7 +6184,7 @@ loadFromLeftovers: aSoundBuffer sampleCount: sampleCount
 	^ n
 ! !
 
-!StreamingMonoSound methodsFor: 'private' stamp: 'pb 5/25/2016 01:51'!
+!StreamingMonoSound methodsFor: 'private' stamp: 'jmv 1/4/2023 17:00:02'!
 positionCodecTo: desiredSampleIndex
 	"Position to the closest frame before the given sample index when using a codec. If using the ADPCM codec, try to ensure that it is in sync with the compressed sample stream."
 
@@ -6312,7 +6201,7 @@ positionCodecTo: desiredSampleIndex
 	desiredPosition _ audioDataStart + (desiredFrameIndex * codec bytesPerEncodedFrame).
 
 	"copy stream and codec"
-	(stream isKindOf: FileStream)
+	(stream isFileStream)
 		ifTrue: [tmpStream _ (stream name asFileEntry readStream ) binary]
 		ifFalse: [tmpStream _ "stream deepCopy" stream contents readStream].	"To kill #deepCopy. Not sure if right, though (jmv)"
 	tmpCodec _ codec copy reset.
@@ -6334,7 +6223,7 @@ positionCodecTo: desiredSampleIndex
 
 	codec _ tmpCodec.
 	stream position: tmpStream position.
-	(tmpStream isKindOf: FileStream) ifTrue: [tmpStream close].! !
+	(tmpStream isFileStream) ifTrue: [tmpStream close].! !
 
 !StreamingMonoSound methodsFor: 'private' stamp: 'jm 11/16/2001 10:23'!
 readAIFFHeader
@@ -6545,6 +6434,14 @@ copySounds
 	rightVols _ rightVols copy.
 	muted _ muted copy.
 	self reset.
+! !
+
+!ScorePlayer methodsFor: 'copying' stamp: 'jmv 5/14/2015 09:58'!
+postCopy
+	"Copy my component sounds."
+
+	super postCopy.
+	self copySounds
 ! !
 
 !ScorePlayer methodsFor: 'volume' stamp: 'jmv 12/30/2009 11:33'!
@@ -7439,6 +7336,12 @@ loopStartIndex
 	^ loopStartIndex
 ! !
 
+!Envelope methodsFor: 'accessing' stamp: 'jm 8/13/1998 17:03'!
+name
+
+	^ self updateSelector allButLast
+! !
+
 !Envelope methodsFor: 'accessing' stamp: 'jm 2/4/98 17:24'!
 points
 
@@ -7478,6 +7381,16 @@ updateSelector: aSymbol
 !Envelope methodsFor: 'accessing' stamp: 'jm 8/13/1998 18:13'!
 volume: aNumber
 	"Set the maximum volume of a volume-controlling envelope. This default implementation does nothing."
+! !
+
+!Envelope methodsFor: 'storing' stamp: 'di 2/1/98 15:45'!
+storeOn: strm
+	strm nextPutAll: '((' , self class name;
+		nextPutAll: ' points: '; store: (points collect: [:p | p x @ (p y roundTo: 0.00001)]);
+		nextPutAll: ' loopStart: '; print: loopStartIndex;
+		nextPutAll: ' loopEnd: '; print: loopEndIndex; nextPutAll: ')';
+		nextPutAll: ' updateSelector: '; store: self updateSelector; nextPutAll: ';';
+		nextPutAll: ' scale: '; print: scale; nextPutAll: ')'.
 ! !
 
 !Envelope methodsFor: 'private' stamp: 'jm 11/26/97 09:03'!
@@ -7798,6 +7711,12 @@ duration
 !RandomEnvelope methodsFor: 'envelope compatibility' stamp: 'jm 8/13/1998 17:25'!
 duration: seconds
 	"Do nothing."
+! !
+
+!RandomEnvelope methodsFor: 'envelope compatibility' stamp: 'jm 1/14/1999 13:17'!
+name
+
+	^ 'random ', updateSelector
 ! !
 
 !RandomEnvelope methodsFor: 'envelope compatibility' stamp: 'jm 8/13/1998 17:30'!
@@ -9351,6 +9270,25 @@ initialize
 				lastEncodedNeg _ encoded]].
 ! !
 
+!SoundPlayer class methodsFor: 'snapshotting' stamp: 'jm 5/8/1998 18:48'!
+shutDown
+	"Stop player process, for example before snapshotting."
+
+	self stopPlayerProcess.
+	ReverbState _ nil.
+! !
+
+!SoundPlayer class methodsFor: 'snapshotting' stamp: 'jm 7/11/97 12:17'!
+startUp
+	"Start up the player process."
+
+	SoundPlayer initialize.
+	SoundPlayer
+		startPlayerProcessBufferSize: (BufferMSecs * SamplingRate) // 1000
+		rate: SamplingRate
+		stereo: Stereo.
+! !
+
 !SoundPlayer class methodsFor: 'snapshotting' stamp: 'ar 2/4/2001 17:59'!
 startUpWithSound: aSound
 	"Start up the player process."
@@ -10652,6 +10590,17 @@ outputOnMidiPort: aMidiPort
 	"Output this event to the given MIDI port. This default implementation does nothing."
 ! !
 
+!ControlChangeEvent methodsFor: 'printing' stamp: 'sma 6/1/2000 09:34'!
+printOn: aStream
+	aStream
+		nextPut: $(;
+		print: time;
+		nextPutAll: ': ctrl[';
+		print: control;
+		nextPutAll: ']=';
+		print: value;
+		nextPut: $)! !
+
 !ControlChangeEvent methodsFor: 'accessing' stamp: 'jm 9/10/1998 07:47'!
 channel
 
@@ -10721,6 +10670,18 @@ keyName
 	pitchName _ #(c cs d ef e f fs g af a bf b) at: (midiKey \\ 12) + 1.
 	octave _ (#(-1 0 1 2 3 4 5 6 7 8 9) at: (midiKey // 12) + 1) printString.
 	^ pitchName, octave
+! !
+
+!NoteEvent methodsFor: 'printing' stamp: 'jm 1/3/98 08:59'!
+printOn: aStream
+
+	aStream nextPut: $(.
+	time printOn: aStream.
+	aStream nextPutAll: ': '.
+	aStream nextPutAll: self keyName.
+	aStream space.
+	duration printOn: aStream.
+	aStream nextPut: $).
 ! !
 
 !NoteEvent methodsFor: 'accessing' stamp: 'jm 12/30/97 22:02'!
@@ -10820,6 +10781,16 @@ isNoteEvent
 	^ true
 ! !
 
+!PitchBendEvent methodsFor: 'printing' stamp: 'jm 9/10/1998 09:42'!
+printOn: aStream
+
+	aStream nextPut: $(.
+	time printOn: aStream.
+	aStream nextPutAll: ': bend '.
+	bend printOn: aStream.
+	aStream nextPut: $).
+! !
+
 !PitchBendEvent methodsFor: 'accessing' stamp: 'jm 9/10/1998 07:49'!
 bend
 
@@ -10866,6 +10837,16 @@ outputOnMidiPort: aMidiPort
 		channel: channel
 		byte: (bend bitAnd: 16r7F)
 		byte: (bend bitShift: -7).
+! !
+
+!ProgramChangeEvent methodsFor: 'printing' stamp: 'jm 9/10/1998 08:28'!
+printOn: aStream
+
+	aStream nextPut: $(.
+	time printOn: aStream.
+	aStream nextPutAll: ': prog '.
+	program printOn: aStream.
+	aStream nextPut: $).
 ! !
 
 !ProgramChangeEvent methodsFor: 'accessing' stamp: 'jm 9/10/1998 07:47'!
@@ -10919,6 +10900,16 @@ outputOnMidiPort: aMidiPort
 isTempoEvent
 
 	^ true
+! !
+
+!TempoEvent methodsFor: 'as yet unclassified' stamp: 'jm 9/10/1998 08:37'!
+printOn: aStream
+
+	aStream nextPut: $(.
+	time printOn: aStream.
+	aStream nextPutAll: ': tempo '.
+	((120.0 * (500000.0 / tempo)) roundTo: 0.01) printOn: aStream.
+	aStream nextPut: $).
 ! !
 
 !TempoEvent methodsFor: 'as yet unclassified' stamp: 'jm 12/30/97 10:09'!
@@ -12782,6 +12773,11 @@ randomBitsFromSoundInput: bitCount
 sampledSoundChoices
 	^ SampledSound soundNames! !
 
+!SoundSystem methodsFor: 'misc' stamp: 'jmv 6/7/2013 21:58'!
+shutDown
+	SoundPlayer shutDown
+! !
+
 !SoundSystem methodsFor: 'misc' stamp: 'jmv 8/9/2018 11:33:08'!
 soundNameFromUser
 	"Pop up a list of available sound names and answer the one the user chooses, or nil if no choice made"
@@ -12836,6 +12832,10 @@ playSoundNamedOrBeep: soundName
 
 	Preferences soundsEnabled ifTrue: [
 		^self playSoundNamed: soundName]! !
+
+!SoundSystem class methodsFor: 'as yet unclassified' stamp: 'jmv 6/7/2013 22:05'!
+shutDown
+	SoundPlayer shutDown! !
 
 !SoundSystem class methodsFor: 'class initialization' stamp: 'jmv 6/7/2013 22:03'!
 default

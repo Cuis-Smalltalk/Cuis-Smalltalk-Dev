@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5202] on 26 May 2022 at 12:47:34 pm'!
+'From Cuis 6.0 [latest update: #5621] on 4 January 2023 at 6:36:15 pm'!
 'Description '!
-!provides: 'ExtendedClipboard' 1 13!
+!provides: 'ExtendedClipboard' 1 14!
 !requires: 'FFI' 1 nil nil!
 !requires: 'Graphics-Files-Additional' 1 nil nil!
 SystemOrganization addCategory: 'ExtendedClipboard'!
@@ -228,10 +228,10 @@ fromRefStreamBytes: bytes
 fromTIFFBytes: bytes
 	^ (TIFFReadWriter on: bytes readStream) nextImage! !
 
-!ExtendedClipboardInterface methodsFor: 'object from raw data' stamp: 'jmv 5/26/2022 11:58:51'!
-fromUTF8Bytes: bytes
+!ExtendedClipboardInterface methodsFor: 'object from raw data' stamp: 'jmv 1/4/2023 18:25:24'!
+fromUTF8Bytes: utf8Bytes
 
-	^(String fromUtf8Bytes: bytes hex: false trimLastNull: true) withCuisLineEndings! !
+	^(UnicodeString fromUtf8Bytes: utf8Bytes) withCuisLineEndings! !
 
 !ExtendedClipboardInterface methodsFor: 'initialization' stamp: 'tak 5/16/2007 12:03'!
 initialize

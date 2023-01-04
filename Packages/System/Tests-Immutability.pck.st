@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4415] on 22 October 2020 at 9:11:52 pm'!
+'From Cuis 6.0 [latest update: #5621] on 4 January 2023 at 6:02:26 pm'!
 'Description '!
-!provides: 'Tests-Immutability' 1 0!
+!provides: 'Tests-Immutability' 1 1!
 !requires: 'Immutability' 1 2 nil!
 SystemOrganization addCategory: 'Tests-Immutability'!
 
@@ -336,12 +336,12 @@ test19StringsCanBeImmutable
 			self assert: testObject == modificationForbidden object ]		
 	! !
 
-!ImmutabilityTest methodsFor: 'tests' stamp: 'HAW 7/4/2019 15:51:39'!
+!ImmutabilityTest methodsFor: 'tests' stamp: 'jmv 1/4/2023 17:31:00'!
 test20retryModificationWorksAsExpectedWithStrings
 
 	| testObject newValue |
 	
-	testObject := 'aString'.
+	testObject := 'aString' asByteString.
 	testObject beImmutable.
 	newValue := $x.
 	
