@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5621] on 4 January 2023 at 6:36:15 pm'!
+'From Cuis 6.0 [latest update: #5623] on 6 January 2023 at 2:25:08 pm'!
 'Description '!
-!provides: 'ExtendedClipboard' 1 14!
+!provides: 'ExtendedClipboard' 1 15!
 !requires: 'FFI' 1 nil nil!
 !requires: 'Graphics-Files-Additional' 1 nil nil!
 SystemOrganization addCategory: 'ExtendedClipboard'!
@@ -154,13 +154,13 @@ fields
 } BITMAP"
 ! !
 
-!ExtendedClipboardInterface methodsFor: 'private' stamp: 'jmv 1/18/2011 23:45'!
+!ExtendedClipboardInterface methodsFor: 'private' stamp: 'jmv 1/6/2023 14:12:07'!
 addClipboardData: data dataFormat: aFormat
 	clipboard = 0 ifTrue: [
 		"Should never happen!!"
 		self error: 'broken clipboard'.
 		^self].
-	self primAddClipboardData: clipboard data: data dataFormat: aFormat! !
+	self primAddClipboardData: clipboard data: data dataFormat: aFormat asUtf8BytesOrByteString.! !
 
 !ExtendedClipboardInterface methodsFor: 'private' stamp: 'jmv 1/18/2011 14:47'!
 clearClipboard
@@ -177,10 +177,10 @@ getClipboardFormat: formatNumber
 	clipboard = 0 ifTrue: [^nil].
 	^ self primGetClipboardFormat: clipboard formatNumber: formatNumber! !
 
-!ExtendedClipboardInterface methodsFor: 'private' stamp: 'jmv 1/18/2011 14:47'!
+!ExtendedClipboardInterface methodsFor: 'private' stamp: 'jmv 1/6/2023 14:12:42'!
 readClipboardData: format
 	^clipboard = 0 ifFalse: [
-		self primReadClipboardData: clipboard format: format ]! !
+		self primReadClipboardData: clipboard format: format  asUtf8BytesOrByteString ]! !
 
 !ExtendedClipboardInterface methodsFor: 'testing' stamp: 'jmv 11/12/2013 08:50'!
 canImportRTF
@@ -211,10 +211,6 @@ fromISO8859Bytes: bytes
 !ExtendedClipboardInterface methodsFor: 'object from raw data' stamp: 'jmv 12/21/2013 09:30'!
 fromJPEGBytes: bytes
 	^ (JPEGReadWriter2 onBinaryStream: bytes readStream) nextImage! !
-
-!ExtendedClipboardInterface methodsFor: 'object from raw data' stamp: 'jmv 1/26/2011 10:25'!
-fromMacRomanBytes: bytes
-	^ (bytes collect: [ :c | Character macRomanToLatin1: c]) asString! !
 
 !ExtendedClipboardInterface methodsFor: 'object from raw data' stamp: 'jmv 12/21/2013 09:31'!
 fromPNGBytes: bytes
@@ -351,14 +347,13 @@ retrieveId
 			^ bytes asString ].
 	^ nil! !
 
-!ExtendedClipboardMacInterface methodsFor: 'api - retrieve' stamp: 'jmv 11/12/2013 08:53'!
+!ExtendedClipboardMacInterface methodsFor: 'api - retrieve' stamp: 'jmv 1/6/2023 14:15:22'!
 retrieveObject
 	| conversion bytes |
 	self readPrimAvailableFormats do: [ :format |
 		conversion _ format caseOf: {
 			"Unformatted plain text"
 			[ 'public.utf8-plain-text' ] -> [ #fromUTF8Bytes: ].
-			[ 'com.apple.traditional-mac-plain-text' ] -> [ #fromMacRomanBytes: ].
 			"Bitmap images (not sure if all of them are actually used in this platform)"
 			[ 'public.png' ] -> [ #fromPNGBytes: ].
 			[ 'public.tiff' ] -> [ #fromTIFFBytes: ].
