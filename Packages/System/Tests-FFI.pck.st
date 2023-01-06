@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4415] on 22 October 2020 at 9:09:44 pm'!
+'From Cuis 6.0 [latest update: #5623] on 6 January 2023 at 1:47:03 pm'!
 'Description '!
-!provides: 'Tests-FFI' 1 0!
+!provides: 'Tests-FFI' 1 1!
 !requires: 'FFI' 1 33 nil!
 SystemOrganization addCategory: 'Tests-FFI'!
 
@@ -165,19 +165,19 @@ testConstructedShortCall
 	result := meth invokeWithArguments: (Array with: $A with: 65 with: 65.0 with: true).
 	self assert: result = 130.! !
 
-!FFIPluginTests methodsFor: 'simple tests' stamp: 'jmv 9/5/2016 21:13:23'!
+!FFIPluginTests methodsFor: 'simple tests' stamp: 'jmv 1/6/2023 10:36:34'!
 testGenericCharCall
 	"Test using generic FFI spec"
 	| result |
-	result := FFITestLibrary ffiTestChar: $A with: 65 with: 65.0 with: true.
+	result := FFITestLibrary ffiTestChar: $A asCharacter with: 65 with: 65.0 with: true.
 	self assert: result class = Character.
 	self assert: result numericValue = 130! !
 
-!FFIPluginTests methodsFor: 'simple tests' stamp: 'ar 8/14/2006 19:17'!
+!FFIPluginTests methodsFor: 'simple tests' stamp: 'jmv 1/6/2023 10:55:08'!
 testGenericDoubleCall
 	"Test using generic FFI spec"
 	| result |
-	result := FFITestLibrary ffiTestDoubles: $A with: 65.0.
+	result := FFITestLibrary ffiTestDoubles: $A asCharacter with: 65.0.
 	self assert: result = 130.0! !
 
 !FFIPluginTests methodsFor: 'simple tests' stamp: 'djm 5/6/2014 02:52'!
@@ -187,18 +187,18 @@ testGenericDoubleCall2
 	result := FFITestLibrary ffiTestDoubles9: 1.0 d: 2.0 d: 3.0 d: 4.0 d: 5.0 d: 6.0 d: 7.0 d: 8.0 d: 9.0.
 	self assert: result = 45.0! !
 
-!FFIPluginTests methodsFor: 'simple tests' stamp: 'ar 8/14/2006 19:17'!
+!FFIPluginTests methodsFor: 'simple tests' stamp: 'jmv 1/6/2023 10:55:25'!
 testGenericFloatCall
 	"Test using generic FFI spec"
 	| result |
-	result := FFITestLibrary ffiTestFloats: $A with: 65.0.
+	result := FFITestLibrary ffiTestFloats: $A asCharacter with: 65.0.
 	self assert: result = 130.0! !
 
-!FFIPluginTests methodsFor: 'simple tests' stamp: 'ar 8/14/2006 19:17'!
+!FFIPluginTests methodsFor: 'simple tests' stamp: 'jmv 1/6/2023 10:55:32'!
 testGenericIntCall
 	"Test using generic FFI spec"
 	| result |
-	result := FFITestLibrary ffiTestInt: $A with: 65 with: 65.0 with: true.
+	result := FFITestLibrary ffiTestInt: $A asCharacter with: 65 with: 65.0 with: true.
 	self assert: result = 130.! !
 
 !FFIPluginTests methodsFor: 'simple tests' stamp: 'jmv 2/20/2019 00:15:10'!
@@ -218,54 +218,54 @@ testGenericMixedFloatsAndDouble
 	result := FFITestLibrary ffiTestMixedFloatsAndDouble: 1.2 with: 3.4 with: 5.6 with: 7.8.
 	self assert: (1.2 + 3.4 + 5.6 + 7.8 - result) abs < 1.0e-6! !
 
-!FFIPluginTests methodsFor: 'simple tests' stamp: 'ar 8/14/2006 19:17'!
+!FFIPluginTests methodsFor: 'simple tests' stamp: 'jmv 1/6/2023 10:24:01'!
 testGenericPrintString
 	"Test using generic FFI spec"
 	| result |
-	result := FFITestLibrary ffiPrintString:'Hello World!!'.
+	result := FFITestLibrary ffiPrintString:'Hello World!!' asUtf8BytesOrByteString.
 	self assert: result = 'Hello World!!'.! !
 
-!FFIPluginTests methodsFor: 'simple tests' stamp: 'ar 8/14/2006 19:18'!
+!FFIPluginTests methodsFor: 'simple tests' stamp: 'jmv 1/6/2023 10:53:52'!
 testGenericShortCall
 	"Test using generic FFI spec"
 	| result |
-	result := FFITestLibrary ffiTestShort: $A with: 65 with: 65.0 with: true.
+	result := FFITestLibrary ffiTestShort: $A asCharacter with: 65 with: 65.0 with: true.
 	self assert: result = 130.! !
 
-!FFIPluginTests methodsFor: 'simple tests' stamp: 'jmv 9/5/2016 21:13:31'!
+!FFIPluginTests methodsFor: 'simple tests' stamp: 'jmv 1/6/2023 10:36:42'!
 testLibraryCharCall
 	"Test using call from ExternalLibrary"
 	| result |
-	result := FFITestLibrary new ffiTestChar: $A with: 65 with: 65.0 with: true.
+	result := FFITestLibrary new ffiTestChar: $A asCharacter with: 65 with: 65.0 with: true.
 	self assert: result class = Character.
 	self assert: result numericValue = 130! !
 
-!FFIPluginTests methodsFor: 'simple tests' stamp: 'ar 8/14/2006 19:17'!
+!FFIPluginTests methodsFor: 'simple tests' stamp: 'jmv 1/6/2023 10:55:43'!
 testLibraryDoubleCall
 	"Test using call from ExternalLibrary"
 	| result |
-	result := FFITestLibrary new ffiTestDoubles: $A with: 65.0.
+	result := FFITestLibrary new ffiTestDoubles: $A asCharacter with: 65.0.
 	self assert: result = 130.0! !
 
-!FFIPluginTests methodsFor: 'simple tests' stamp: 'ar 8/14/2006 19:17'!
+!FFIPluginTests methodsFor: 'simple tests' stamp: 'jmv 1/6/2023 10:55:53'!
 testLibraryFloatCall
 	"Test using call from ExternalLibrary"
 	| result |
-	result := FFITestLibrary new ffiTestFloats: $A with: 65.0.
+	result := FFITestLibrary new ffiTestFloats: $A asCharacter with: 65.0.
 	self assert: result = 130.0! !
 
-!FFIPluginTests methodsFor: 'simple tests' stamp: 'ar 8/14/2006 19:17'!
+!FFIPluginTests methodsFor: 'simple tests' stamp: 'jmv 1/6/2023 10:56:03'!
 testLibraryIntCall
 	"Test using call from ExternalLibrary"
 	| result |
-	result := FFITestLibrary new ffiTestInt: $A with: 65 with: 65.0 with: true.
+	result := FFITestLibrary new ffiTestInt: $A asCharacter with: 65 with: 65.0 with: true.
 	self assert: result = 130.! !
 
-!FFIPluginTests methodsFor: 'simple tests' stamp: 'ar 8/14/2006 19:17'!
+!FFIPluginTests methodsFor: 'simple tests' stamp: 'jmv 1/6/2023 10:24:06'!
 testLibraryPrintString
 	"Test using call from ExternalLibrary"
 	| result |
-	result := FFITestLibrary new ffiPrintString:'Hello World!!'.
+	result := FFITestLibrary new ffiPrintString:'Hello World!!' asUtf8BytesOrByteString.
 	self assert: result = 'Hello World!!'.! !
 
 !FFIPluginTests methodsFor: 'simple tests' stamp: 'djm 5/6/2014 01:54'!
@@ -295,21 +295,21 @@ testUlongRange
 	self shouldnt:[result := FFITestLibrary ffiTestUlong: 3103854339 with: 3103854339 with: 3103854339 with: 3103854339] raise: Error.
 	self should: result =  1912741382.! !
 
-!FFIPluginTests methodsFor: 'other tests' stamp: 'EstebanLorenzano 8/31/2015 11:24'!
+!FFIPluginTests methodsFor: 'other tests' stamp: 'jmv 1/6/2023 10:59:00'!
 testLoadSymbolFromModule
 	| address |
 	
 	"Ok"
-	address := ExternalAddress loadSymbol: 'ffiTestFloats' module: FFITestLibrary moduleName.
+	address := ExternalAddress loadSymbol: 'ffiTestFloats' asUtf8BytesOrByteString module: FFITestLibrary moduleName asUtf8BytesOrByteString.
 	self deny: address isNil.
 	self deny: address isNull.
 	"Symbol does not exists"
 	self 
-		should: [ ExternalAddress loadSymbol: 'ffi_does_not_exist' module: FFITestLibrary moduleName ]
+		should: [ ExternalAddress loadSymbol: 'ffi_does_not_exist' asUtf8BytesOrByteString module: FFITestLibrary moduleName asUtf8BytesOrByteString ]
 		raise: Error.
 	"Module does not exists"
 	self 
-		should: [ ExternalAddress loadSymbol: 'ffiTestFloats' module: 'NonExistingModule' ]
+		should: [ ExternalAddress loadSymbol: 'ffiTestFloats' asUtf8BytesOrByteString module: 'NonExistingModule' asUtf8BytesOrByteString ]
 		raise: Error.		! !
 
 !FFIPluginTests methodsFor: 'structure tests' stamp: 'KenD 2/4/2019 15:36:17'!
@@ -420,9 +420,9 @@ testSmallStructureReturn
 	self assert: pt1 x = 3.
 	self assert: pt1 y = 4.! !
 
-!FFITestLibrary methodsFor: 'primitives' stamp: 'ar 8/29/2011 21:59'!
+!FFITestLibrary methodsFor: 'primitives' stamp: 'jmv 1/6/2023 10:52:11'!
 ffiPrintString: aString
-	"FFITestLibrary new ffiPrintString: 'Hello'"
+	"FFITestLibrary new ffiPrintString: 'Hello' asUtf8BytesOrByteString"
 	<cdecl: char* 'ffiPrintString' (char *)>
 	^self externalCallFailed! !
 
@@ -461,9 +461,9 @@ ffiTestShort: c1 with: c2 with: c3 with: c4
 	<cdecl: short 'ffiTestShorts' (short short short short)>
 	^self externalCallFailed! !
 
-!FFITestLibrary class methodsFor: 'primitives' stamp: 'ar 8/14/2006 19:27'!
+!FFITestLibrary class methodsFor: 'primitives' stamp: 'jmv 1/6/2023 10:52:16'!
 ffiPrintString: aString
-	"FFITestLibrary ffiPrintString: 'Hello'"
+	"FFITestLibrary ffiPrintString: 'Hello' asUtf8BytesOrByteString"
 	<cdecl: char* 'ffiPrintString' (char *) module:'SqueakFFIPrims'>
 	^self externalCallFailed! !
 
