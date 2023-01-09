@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5621] on 4 January 2023 at 6:40:46 pm'!
+'From Cuis 6.0 [latest update: #5625] on 8 January 2023 at 9:00:13 pm'!
 'Description '!
-!provides: 'YAXO' 1 23!
+!provides: 'YAXO' 1 24!
 SystemOrganization addCategory: 'YAXO'!
 
 
@@ -1327,30 +1327,26 @@ next
 			^nextChar].
 	! !
 
-!XMLTokenizer methodsFor: 'streaming' stamp: 'jmv 9/3/2022 23:02:39'!
+!XMLTokenizer methodsFor: 'streaming' stamp: 'jmv 1/8/2023 20:45:19'!
 nextTrimmedBlanksUpTo: delimiter
-	| resultStream nextChar |
-	resultStream := WriteStream on: (String new: 10).
-	nextChar := nil.
-	[(nextChar := self next) = delimiter]
-		whileFalse: [
-			nextChar isSeparator ifFalse: [
-				resultStream nextPut: nextChar]].
-	nextChar = delimiter
-		ifFalse: [self parseError: 'XML no delimiting ' , delimiter printString , ' found'].
-	^resultStream contents
-! !
+	| nextChar |
+	^UnicodeString streamContents: [ :strm |
+		nextChar := nil.
+		[(nextChar := self next) = delimiter]
+			whileFalse: [
+				nextChar isSeparator ifFalse: [
+					strm nextPut: nextChar]].
+		nextChar = delimiter
+			ifFalse: [self parseError: 'XML no delimiting ' , delimiter printString , ' found']].! !
 
-!XMLTokenizer methodsFor: 'streaming' stamp: 'jmv 9/3/2022 23:00:39'!
+!XMLTokenizer methodsFor: 'streaming' stamp: 'jmv 1/8/2023 20:49:37'!
 nextUpTo: delimiter
-	| resultStream nextChar |
-	resultStream _ WriteStream on: (String new: 10).
-	[self atEnd or: [(nextChar _ self next) = delimiter]]
-		whileFalse: [resultStream nextPut: nextChar].
-	nextChar = delimiter
-		ifFalse: [self parseError: 'XML no delimiting ' , delimiter printString , ' found'].
-	^resultStream contents
-! !
+	| nextChar |
+	^UnicodeString streamContents: [ :strm |
+		[self atEnd or: [(nextChar _ self next) = delimiter]]
+			whileFalse: [strm nextPut: nextChar].
+		nextChar = delimiter
+			ifFalse: [self parseError: 'XML no delimiting ' , delimiter printString , ' found']].! !
 
 !XMLTokenizer methodsFor: 'streaming' stamp: 'mir 1/9/2002 15:29'!
 nextUpToAll: delimitingString
@@ -1474,7 +1470,7 @@ nextAttributeInto: attributes namespaces: namespaces
 			ifFalse: [namespaces at: attrName put: attrValue]]
 		ifFalse: [attributes at: attrName put: attrValue]! !
 
-!XMLTokenizer methodsFor: 'tokenizing' stamp: 'jmv 9/3/2022 22:59:22'!
+!XMLTokenizer methodsFor: 'tokenizing' stamp: 'jmv 1/8/2023 16:39:15'!
 nextAttributeValue
 	| delimiterChar attributeValueStream nextChar nextPeek referenceString entity entityValue c |
 	delimiterChar _ self next.
@@ -1524,8 +1520,7 @@ nextAttributeValue
 				nextChar isString
 					ifFalse: [attributeValueStream nextPut: nextChar]
 					ifTrue: [attributeValueStream nextPutAll: nextChar]]].
-	^self fastStreamStringContents: attributeValueStream
-"	^attributeValueStream contents"! !
+	^attributeValueStream contents! !
 
 !XMLTokenizer methodsFor: 'tokenizing' stamp: 'mir 1/17/2002 17:00'!
 nextCDataContent
@@ -1616,48 +1611,46 @@ nextEntity
 		ifTrue: [self nextNode]
 		ifFalse: [self nextPCData]! !
 
-!XMLTokenizer methodsFor: 'tokenizing' stamp: 'jmv 9/3/2022 23:00:03'!
+!XMLTokenizer methodsFor: 'tokenizing' stamp: 'jmv 1/8/2023 17:00:29'!
 nextEntityValue
-	| delimiterChar entityValueStream nextChar nextPeek referenceString entity entityValue |
+	| delimiterChar nextChar nextPeek referenceString entity entityValue |
 	delimiterChar _ self next.
 	(delimiterChar = $"
 		or: [delimiterChar = $'])
 		ifFalse: [self errorExpected: 'Entity value delimiter expected.'].
-
-	entityValueStream _ WriteStream on: (String new).
-	[
-	nextPeek _ nextChar _ self peek.
-	nextChar ifNil: [self errorExpected: 'Character expected.'].
-	nextChar = $&
-		ifTrue: [
-			self next.
-			self peek = $#
-				ifTrue: [
-					nextPeek _ nil.
-					nextChar _ self nextCharReference]
-				ifFalse: [
-					referenceString _ self nextLiteral.
-					self next = $;
-						ifFalse: [self errorExpected: ';'].
-					entity _ self entity: referenceString.
-					entityValue _ entity valueForContext: #entityValue.
-					self pushStream: (ReadStream on: entityValue asString).
-					nextPeek _ nextChar _ self next]]
-		ifFalse: [
-			nextChar = $%
-				ifTrue: [
-					self skipSeparators.
-					referenceString _ self nextLiteral.
-					nextChar _ self handleEntity: referenceString in: #entityValue.
-					nextPeek _ nextChar _ self next]
-				ifFalse: [self next]].
-	nextPeek = delimiterChar]
-		whileFalse: [
-			nextChar ifNotNil: [
-				nextChar isString
-					ifFalse: [entityValueStream nextPut: nextChar]
-					ifTrue: [entityValueStream nextPutAll: nextChar]]].
-	^entityValueStream contents! !
+	^UnicodeString streamContents: [ :strm |
+		[
+		nextPeek _ nextChar _ self peek.
+		nextChar ifNil: [self errorExpected: 'Character expected.'].
+		nextChar = $&
+			ifTrue: [
+				self next.
+				self peek = $#
+					ifTrue: [
+						nextPeek _ nil.
+						nextChar _ self nextCharReference]
+					ifFalse: [
+						referenceString _ self nextLiteral.
+						self next = $;
+							ifFalse: [self errorExpected: ';'].
+						entity _ self entity: referenceString.
+						entityValue _ entity valueForContext: #entityValue.
+						self pushStream: (ReadStream on: entityValue asString).
+						nextPeek _ nextChar _ self next]]
+			ifFalse: [
+				nextChar = $%
+					ifTrue: [
+						self skipSeparators.
+						referenceString _ self nextLiteral.
+						nextChar _ self handleEntity: referenceString in: #entityValue.
+						nextPeek _ nextChar _ self next]
+					ifFalse: [self next]].
+		nextPeek = delimiterChar]
+			whileFalse: [
+				nextChar ifNotNil: [
+					nextChar isString
+						ifFalse: [strm nextPut: nextChar]
+						ifTrue: [strm nextPutAll: nextChar]]]].! !
 
 !XMLTokenizer methodsFor: 'tokenizing' stamp: 'mir 6/28/2001 16:38'!
 nextIncludeSection: parseSection
@@ -1670,41 +1663,47 @@ nextIncludeSection: parseSection
 		ifTrue: [
 			self pushStream: (ReadStream on: section)]! !
 
-!XMLTokenizer methodsFor: 'tokenizing' stamp: 'jmv 9/3/2022 22:40:04'!
+!XMLTokenizer methodsFor: 'tokenizing' stamp: 'jmv 1/8/2023 16:56:39'!
 nextLiteral
-	| resultStream nextChar resultString |
-	resultStream _ (String new: 10) writeStream.
+	| continue nextChar resultString |
 	((nextChar _ self peek) isLetter
 		or: [nextChar = $_])
 		ifFalse: [self errorExpected: 'Name literal.'].
-	[nextChar _ self peek.
-	(LiteralChars at: nextChar asciiValue+1)
-		ifTrue: [
-			nextChar = $&
+	continue _ true.
+	resultString _ UnicodeString streamContents: [ :strm |
+		[
+			nextChar _ self peek.
+			(nextChar asciiValue notNil and: [LiteralChars at: nextChar asciiValue+1])
 				ifTrue: [
-					nextChar _ self next.
-					self peek = $#
-						ifTrue: [resultStream nextPutAll: self nextCharReference asString]
-						ifFalse: [^resultStream contents]]
+					nextChar = $&
+						ifTrue: [
+							nextChar _ self next.
+							self peek = $#
+								ifTrue: [strm nextPutAll: self nextCharReference asString]
+								ifFalse: [continue _ false]]
+						ifFalse: [
+							strm nextPut: self next]]
 				ifFalse: [
-					resultStream nextPut: self next]]
-		ifFalse: [resultString _ resultStream contents.
-			resultString isEmpty
-				ifTrue: [self errorExpected: 'Name literal']
-				ifFalse: [^resultString]]] repeat! !
+					continue _ false].
+			continue ] whileTrue.
+	].
+	resultString isEmpty
+		ifTrue: [self errorExpected: 'Name literal'].
+	^resultString! !
 
-!XMLTokenizer methodsFor: 'tokenizing' stamp: 'jmv 9/3/2022 22:40:10'!
+!XMLTokenizer methodsFor: 'tokenizing' stamp: 'jmv 1/8/2023 16:27:53'!
 nextName
 	| nextChar |
 	nameBuffer reset.
 	self peek = $.
 		ifTrue: [self malformedError: 'Character expected.'].
-	[(nextChar _ self peek)
-		ifNil: [self errorExpected: 'Character expected.'].
-	NameDelimiters at: nextChar asciiValue] whileFalse: [
-			nameBuffer nextPut: self next].
-	^self fastStreamStringContents: nameBuffer
-"	^nameBuffer contents"! !
+	[
+		(nextChar _ self peek)
+			ifNil: [self errorExpected: 'Character expected.'].
+		nextChar asciiValue ifNil: [false] ifNotNil: [:a | NameDelimiters at: a]
+	] whileFalse: [
+		nameBuffer nextPut: self next].
+	^nameBuffer contents! !
 
 !XMLTokenizer methodsFor: 'tokenizing' stamp: 'jmv 9/3/2022 22:40:23'!
 nextNode
@@ -1724,54 +1723,55 @@ nextNode
 	nextChar = $? ifTrue: [^self nextPI].
 	^self nextTag! !
 
-!XMLTokenizer methodsFor: 'tokenizing' stamp: 'jmv 9/3/2022 22:43:20'!
+!XMLTokenizer methodsFor: 'tokenizing' stamp: 'jmv 1/8/2023 20:31:36'!
 nextPCData
-	| resultStream nextChar referenceString entity entityValue nextPeek p |
-	resultStream _ (String new: 10) writeStream.
+	| nextChar referenceString entity entityValue nextPeek p result |
 	self validating
 		ifFalse: [
-			[
-				p _ self peek.
-				p isNil or: [p = $<]
-				]
-				whileFalse: [resultStream nextPut: self next].
-			^self handlePCData: resultStream contents].
+			result _ UnicodeString streamContents: [ :strm |
+				[
+					p _ self peek.
+					p isNil or: [p = $<]
+					]
+					whileFalse: [strm nextPut: self next]].
+			^self handlePCData: result].
 
-	[
-	nextPeek _ nextChar _ self peek.
-	nextChar ifNil: [self errorExpected: 'Character expected.'].
-	nextChar = $&
-		ifTrue: [
-			self next.
-			self peek = $#
-				ifTrue: [
-					nextPeek _ nil.
-					nextChar _ self nextCharReference]
-				ifFalse: [
-					referenceString _ self nextLiteral.
-					self next = $;
-						ifFalse: [self errorExpected: ';'].
-					entity _ self entity: referenceString.
-					entityValue _ entity valueForContext: #content.
-					(self class isCharEscape: entityValue)
-						ifTrue: [
-							nextPeek _ nil.
-							nextChar _ entityValue]
-						ifFalse: [
-							entityValue _ entityValue asString.
-							entityValue isEmpty
-								ifTrue: [nextPeek _ nextChar _ nil]
-								ifFalse: [
-									self pushStream: (ReadStream on: entityValue asString).
-									nextPeek _ nextChar _ self peek]]]]
-		ifFalse: [nextPeek = $< ifFalse: [self next]].
-	nextPeek = $<]
-		whileFalse: [
-			nextChar ifNotNil: [
-				nextChar isString
-					ifFalse: [resultStream nextPut: nextChar]
-					ifTrue: [resultStream nextPutAll: nextChar]]].
-	self handlePCData: resultStream contents! !
+	result _ UnicodeString streamContents: [ :strm |
+		[
+		nextPeek _ nextChar _ self peek.
+		nextChar ifNil: [self errorExpected: 'Character expected.'].
+		nextChar = $&
+			ifTrue: [
+				self next.
+				self peek = $#
+					ifTrue: [
+						nextPeek _ nil.
+						nextChar _ self nextCharReference]
+					ifFalse: [
+						referenceString _ self nextLiteral.
+						self next = $;
+							ifFalse: [self errorExpected: ';'].
+						entity _ self entity: referenceString.
+						entityValue _ entity valueForContext: #content.
+						(self class isCharEscape: entityValue)
+							ifTrue: [
+								nextPeek _ nil.
+								nextChar _ entityValue]
+							ifFalse: [
+								entityValue _ entityValue asString.
+								entityValue isEmpty
+									ifTrue: [nextPeek _ nextChar _ nil]
+									ifFalse: [
+										self pushStream: (ReadStream on: entityValue asString).
+										nextPeek _ nextChar _ self peek]]]]
+			ifFalse: [nextPeek = $< ifFalse: [self next]].
+		nextPeek = $<]
+			whileFalse: [
+				nextChar ifNotNil: [
+					nextChar isString
+						ifFalse: [strm nextPut: nextChar]
+						ifTrue: [strm nextPutAll: nextChar]]]].
+	self handlePCData: result! !
 
 !XMLTokenizer methodsFor: 'tokenizing' stamp: 'mir 1/17/2002 13:00'!
 nextPI
@@ -1813,16 +1813,16 @@ nextTag
 			self next].
 	! !
 
-!XMLTokenizer methodsFor: 'tokenizing' stamp: 'jmv 1/4/2023 12:43:59'!
+!XMLTokenizer methodsFor: 'tokenizing' stamp: 'jmv 1/8/2023 16:44:23'!
 nextWhitespace
-	| nextChar resultStream resultString|
-	resultStream _ (String new: 10) writeStream.
-	[ ((nextChar _ self peek) ~~ nil) and: [nextChar isSeparator] ]
-		whileTrue: [resultStream nextPut: nextChar. self next].
-	(nestedStreams == nil or: [self atEnd not])
-		ifFalse: [self checkNestedStream.
-				self nextWhitespace].
-	resultString _ resultStream contents.
+	| nextChar resultString|
+	resultString _ UnicodeString streamContents: [ :strm |
+		[ ((nextChar _ self peek) ~~ nil) and: [nextChar isSeparator] ]
+			whileTrue: [strm nextPut: nextChar. self next].
+		(nestedStreams == nil or: [self atEnd not])
+			ifFalse: [self checkNestedStream.
+					self nextWhitespace].
+	].
 	resultString isEmpty ifFalse: [self handleWhitespace: resultString].! !
 
 !XMLTokenizer methodsFor: 'tokenizing' stamp: 'jmv 9/3/2022 22:41:29'!
@@ -1946,16 +1946,6 @@ skipMarkupDeclaration
 endParsingMarkup
 	parsingMarkup _ false! !
 
-!XMLTokenizer methodsFor: 'private' stamp: 'mir 3/14/2003 23:09'!
-fastStreamStringContents: writeStream
-	| newSize |
-	newSize _ writeStream position.
-	^(String new: newSize)
-		replaceFrom: 1
-		to: newSize
-		with: writeStream originalContents
-		startingAt: 1! !
-
 !XMLTokenizer methodsFor: 'private' stamp: 'mir 12/7/2000 16:46'!
 log: aString
 	"Transcript show: aString; cr"! !
@@ -1969,7 +1959,7 @@ nestedStreams
 parsingMarkup
 	^parsingMarkup! !
 
-!XMLTokenizer methodsFor: 'private' stamp: 'mu 11/14/2005 14:12'!
+!XMLTokenizer methodsFor: 'private' stamp: 'jmv 1/8/2023 16:23:35'!
 readNumberBase: base
 	"Read a hex number from stream until encountering $; "
 
@@ -1982,12 +1972,12 @@ readNumberBase: base
 	].
 
 	value _ 0.
-	digit _ DigitTable at: self peek asciiValue.
+	digit _ self peek asciiValue ifNil: [-1] ifNotNil: [:a | DigitTable at: a].
 	digit < 0
 		ifTrue: [self error: 'At least one digit expected here'].
 	self next.
 	value _ digit.
-	[digit _ DigitTable at: self peek asciiValue.
+	[digit _ self peek asciiValue ifNil: [-1] ifNotNil: [:a | DigitTable at: a].
 	digit < 0
 		ifTrue: [^value]
 		ifFalse: [
@@ -2139,12 +2129,12 @@ handleXMLDecl: attributes namespaces: namespaces
 	attributes keysAndValuesDo: [:key :value |
 		self log: key , '->' , value]! !
 
-!XMLTokenizer methodsFor: 'initialization' stamp: 'mir 3/14/2003 19:27'!
+!XMLTokenizer methodsFor: 'initialization' stamp: 'jmv 1/8/2023 20:54:04'!
 initialize
 	parsingMarkup _ false.
 	validating _ false.
-	attributeBuffer _ WriteStream on: (String new: 128).
-	nameBuffer _ WriteStream on: (String new: 128)! !
+	attributeBuffer _ UnicodeString writeStream.
+	nameBuffer _ UnicodeString writeStream.! !
 
 !XMLTokenizer methodsFor: 'accessing' stamp: 'mir 6/28/2001 16:51'!
 parseStream: aStream
