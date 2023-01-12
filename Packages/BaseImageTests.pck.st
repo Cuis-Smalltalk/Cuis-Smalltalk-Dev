@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5591] on 11 December 2022 at 7:36:30 pm'!
+'From Cuis 6.0 [latest update: #5629] on 12 January 2023 at 12:57:56 pm'!
 'Description Inline temp new test'!
-!provides: 'BaseImageTests' 1 325!
+!provides: 'BaseImageTests' 1 326!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Objects'!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Classes'!
@@ -17540,10 +17540,10 @@ testNewLineWhenConditionIsFalseDoesNotPutANewLineInStream
 	self assertTranscriptContentsDoesNotChangeAfter: [ Transcript newLineWhen: false ]
 	! !
 
-!TranscriptTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:38:57'!
+!TranscriptTest methodsFor: 'tests' stamp: 'jmv 1/12/2023 12:56:56'!
 testNewLineWhenConditionIsTruePutsANewLineInStream
 
-	self assertTranscriptContentsAdded: '.' after: [ Transcript newLineWhen: true; nextPut: $. ]! !
+	self assertTranscriptContentsAdded: String newLineString, '.' after: [ Transcript newLineWhen: true; nextPut: $. ]! !
 
 !TranscriptTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:09:29'!
 testNextPutAllWhenConditionIsFalseDoesNotPutCollectionInStream
