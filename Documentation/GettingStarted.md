@@ -31,6 +31,8 @@ cd MyProject/Cuis-Smalltalk-Dev
 ./statusAllRepos.sh
 ```
 
+At the time of writing this, the VM dowload links below refered to the latest VM release available from https://github.com/OpenSmalltalk/opensmalltalk-vm/releases. If not anymore, then use the corresponding link for the latest version.
+
 ## For 64 bits Linux running on AMD/Intel x64 hardware ##
 
 Note: For 32 bits Linux on Intel/AMD, use ```*_linux32x86_*``` vm and the ```*-32.image``` Cuis image.
