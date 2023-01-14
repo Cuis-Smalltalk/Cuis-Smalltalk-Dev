@@ -4,7 +4,10 @@ What follows are instructions for setting up Cuis on Windows or Mac OS X without
 
 If you plan to keep using Cuis, it is better to follow [Getting started using Git Bash](GettingStarted.md). This way you can pull the git repo to get new updates, or publish your own code packages on GitHub.
 
+At the time of writing this, the VM dowload links below refered to the latest VM release available from https://github.com/OpenSmalltalk/opensmalltalk-vm/releases. If not anymore, use the corresponding link from the latest version. 
+
 ## On Windows ##
+Note: For 32 bits Windows, use ```*_win32x86_*``` vm and the ```*-32.image``` Cuis image.
 * Create a new folder in your machine using Windows Explorer (don't use an existing folder)
 * download [`master.zip`](https://github.com/Cuis-Smalltalk/Cuis-Smalltalk-Dev/archive/master.zip), saving it to that folder.
 * extract the contents of the zip file right there ("extract here")
