@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5621] on 4 January 2023 at 6:40:23 pm'!
+'From Cuis 6.0 [latest update: #5635] on 18 January 2023 at 10:49:16 am'!
 'Description '!
-!provides: 'Sound' 1 24!
+!provides: 'Sound' 1 25!
 !requires: 'Compression' 1 nil nil!
 !requires: 'Collections-CompactArrays' 1 2 nil!
 SystemOrganization addCategory: 'Sound-Synthesis'!
@@ -9421,11 +9421,11 @@ stereo
 	^ Stereo
 ! !
 
-!SoundPlayer class methodsFor: 'playing' stamp: 'ar 2/1/2001 15:20'!
+!SoundPlayer class methodsFor: 'playing' stamp: 'jmv 1/18/2023 10:04:30'!
 canStartPlayer
 	"Some platforms do no support simultaneous record and play. If this is one of those platforms, return false if there is a running SoundRecorder."
 
-	Preferences canRecordWhilePlaying ifTrue: [^ true].
+	SoundRecorder canRecordWhilePlaying ifTrue: [^ true].
 	SoundRecorder anyActive ifTrue:[^false].
 	^ true
 ! !
@@ -9897,7 +9897,7 @@ hasRecordedSound
 
 	^ self recordedSound notNil! !
 
-!SoundRecorder methodsFor: 'recording controls' stamp: 'jmv 3/1/2010 14:07'!
+!SoundRecorder methodsFor: 'recording controls' stamp: 'jmv 1/18/2023 10:04:46'!
 pause
 	"Go into pause mode. The record level continues to be updated, but no sound is recorded."
 
@@ -9912,7 +9912,7 @@ pause
 		soundPlaying _ nil].
 	"Note: there can be problems if canRecordWhilePlaying is true. Recorders which only pause will inhibit other recorders from recording. I chose to make #stopPlaying unconditional in a subclass. The same might be appropriate here at the expense of making recorders resumable"
 
-	Preferences canRecordWhilePlaying ifFalse: [self stopRecording].
+	SoundRecorder canRecordWhilePlaying ifFalse: [self stopRecording].
 ! !
 
 !SoundRecorder methodsFor: 'recording controls' stamp: 'jm 10/17/97 14:53'!
@@ -9924,24 +9924,24 @@ playback
 	soundPlaying play.
 ! !
 
-!SoundRecorder methodsFor: 'recording controls' stamp: 'RAA 8/13/2000 11:41'!
+!SoundRecorder methodsFor: 'recording controls' stamp: 'jmv 1/18/2023 10:05:19'!
 resumeRecording
 	"Continue recording from the point at which it was last paused."
 
 	self flag: #bob.
 	"Note: If canRecordWhilePlaying is true, then recordings may never get started (at least by this method). One possibility, used in a subclass, is to make the #startPlaying unconditional. Another would be to use #startPlaying instead of #resumePlaying in appropriate cases"
 
-	Preferences canRecordWhilePlaying ifFalse: [self startRecording].
+	SoundRecorder canRecordWhilePlaying ifFalse: [self startRecording].
 	paused _ false.
 ! !
 
-!SoundRecorder methodsFor: 'recording controls' stamp: 'jmv 10/8/2012 22:13'!
+!SoundRecorder methodsFor: 'recording controls' stamp: 'jmv 1/18/2023 10:05:27'!
 startRecording
 	"Turn of the sound input driver and start the recording process. Initially, recording is paused."
 
 	| semaIndex |
 	recordLevel ifNil: [recordLevel _ 0.5].  "lazy initialization"
-	Preferences canRecordWhilePlaying ifFalse: [SoundPlayer shutDown].
+	SoundRecorder canRecordWhilePlaying ifFalse: [SoundPlayer shutDown].
 	recordProcess ifNotNil: [self stopRecording].
 	paused _ true.
 	meteringBuffer _ SoundBuffer newMonoSampleCount: 1024.
@@ -10429,19 +10429,20 @@ anyActive
 	"Return true if any sound recorder is actively recording"
 	^RecorderActive == true! !
 
-!SoundRecorder class methodsFor: 'accessing' stamp: 'RAA 8/7/2000 19:23'!
+!SoundRecorder class methodsFor: 'accessing' stamp: 'jmv 1/18/2023 10:04:16'!
 canRecordWhilePlaying
 	"Return true if this platform supports simultaneous sound recording and playback."
 
-	^Preferences canRecordWhilePlaying.		"now in preferences"
-! !
+	^CanRecordWhilePlaying! !
 
-!SoundRecorder class methodsFor: 'class initialization' stamp: 'RAA 8/7/2000 19:23'!
+!SoundRecorder class methodsFor: 'class initialization' stamp: 'jmv 1/18/2023 10:04:04'!
 initialize
-	"SoundRecorder initialize"
+	"
+	SoundRecorder initialize
+	"
 	"Details: Some computers cannot record and playback sound at the same time. If CanRecordWhilePlaying is false, then the SoundRecorder alternates between recording and playing. If it is true, sounds can be playing during recording."
 
-	CanRecordWhilePlaying _ #ignoredNowInPreferences.
+	CanRecordWhilePlaying _ true. "Until proven otherwise!!"
 ! !
 
 !SoundInputStream methodsFor: 'private' stamp: 'jm 9/8/1999 15:24'!
