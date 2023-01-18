@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5635] on 18 January 2023 at 10:49:16 am'!
+'From Cuis 6.0 [latest update: #5635] on 18 January 2023 at 3:41:50 pm'!
 'Description '!
-!provides: 'Sound' 1 25!
+!provides: 'Sound' 1 26!
 !requires: 'Compression' 1 nil nil!
 !requires: 'Collections-CompactArrays' 1 2 nil!
 SystemOrganization addCategory: 'Sound-Synthesis'!
@@ -9497,15 +9497,16 @@ waitUntilDonePlaying: aSound
 		whileTrue: [(Delay forMilliseconds: 100) wait].
 ! !
 
-!SoundPlayer class methodsFor: 'initialization' stamp: 'jm 1/14/1999 13:13'!
+!SoundPlayer class methodsFor: 'initialization' stamp: 'jmv 1/18/2023 15:10:15'!
 initialize
 	"SoundPlayer initialize; shutDown; startUp"
 	"Details: BufferMSecs represents a tradeoff between latency and quality. If BufferMSecs is too low, the sound will not play smoothly, especially during long-running primitives such as large BitBlts. If BufferMSecs is too high, there will be a long time lag between when a sound buffer is submitted to be played and when that sound is actually heard. BufferMSecs is typically in the range 50-200."
 
-	SamplingRate _ 22050.
-	BufferMSecs _ 120.
+"see useShortBuffer"
+	SamplingRate _ 44100.
+	BufferMSecs _ 60.
 	Stereo _ true.
-	UseReverb ifNil: [UseReverb _ true].
+	UseReverb _ false.
 ! !
 
 !SoundPlayer class methodsFor: 'initialization' stamp: 'ar 1/24/2002 18:40'!
