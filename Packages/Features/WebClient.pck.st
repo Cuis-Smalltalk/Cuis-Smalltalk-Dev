@@ -1,4 +1,4 @@
-'From Cuis 6.0 [latest update: #5202] on 26 May 2022 at 12:53:53 pm'!
+'From Cuis 6.0 [latest update: #5642] on 20 January 2023 at 3:45:42 pm'!
 'Description Description - This package is a port and refactoring of WebClient from http://ss3.gemstone.com/ss/WebClient.html with moderate changes by David Graham, Nicola Mingotti and Juan Vuletich.
 	- WebClient-Core-ul.100
 	- WebClient-Help-ar.10
@@ -6,7 +6,7 @@
 - Hernan Wilkinson: 
   - Added useDebugErrorHandler and debugErrorHandler to be able to debug a http request
   - Changed exampleDoIt to support Smalltalk expresions in the URL using GET'!
-!provides: 'WebClient' 1 23!
+!provides: 'WebClient' 1 24!
 !requires: 'Network-Kernel' 1 2 nil!
 !requires: 'Identities-UUID' 1 7 nil!
 !requires: 'Cryptography-DigitalSignatures' 1 7 nil!
@@ -2736,7 +2736,7 @@ initialize
 	httpOnly := false.
 ! !
 
-!WebCookie methodsFor: 'initialize' stamp: 'DSG 3/28/2015 16:36'!
+!WebCookie methodsFor: 'initialize' stamp: 'jmv 1/10/2023 14:58:08'!
 readExpiryFrom: aString
 	"Read a cookie expiry date from the given string.
 	The expiration date is specified in the 'Wdy, DD-Mon-YYYY HH:MM:SS GMT' format."
@@ -2746,8 +2746,8 @@ readExpiryFrom: aString
 		tokens := aString withBlanksTrimmed.
 		(tokens copyAfterLast: Character space) = 'GMT'
 			ifFalse:[^DateAndTime new].
-		tokens := (tokens copyAfter: Character space) copyUpToLast: Character space.
-		(DateAndTime readFrom: tokens readStream) utcOffset: Duration zero.
+		tokens := ((tokens copyAfter: Character space) copyUpToLast: Character space), '+00:00'.
+		DateAndTime readFrom: tokens readStream.
 	] on: Error do:[:ex| ex return: DateAndTime new].! !
 
 !WebCookie methodsFor: 'initialize' stamp: 'jmv 6/25/2017 19:15:38'!
@@ -3097,13 +3097,13 @@ getContent
 
 	^self getContentWithProgress: nil! !
 
-!WebMessage methodsFor: 'private' stamp: 'jmv 6/25/2017 19:43:27'!
+!WebMessage methodsFor: 'private' stamp: 'jmv 1/19/2023 14:47:16'!
 getContentWithProgress: progressBlockOrNil
 	"Reads available content and returns it."
 
 	| length result |
 	length := self contentLength.
-	result := (stream isBinary ifTrue:[ ByteArray ] ifFalse: [ String ])
+	result := (stream isBinary ifTrue: [ ByteArray ] ifFalse: [ String ])
 		streamContents: [ :outputStream | 
 			self 
 				streamFrom: stream
@@ -3112,7 +3112,7 @@ getContentWithProgress: progressBlockOrNil
 				progress: progressBlockOrNil ]
 		estimatedSize: (length ifNil: [ 1000 ]).
 	(self headerAt: 'content-encoding') = 'gzip' ifFalse: [ ^result ].
-	^(GZipReadStream on: result) upToEnd! !
+	^UnicodeString fromUtf8Bytes: (GZipReadStream on: result asByteArray) upToEnd! !
 
 !WebMessage methodsFor: 'testing' stamp: 'pmm 6/19/2010 08:05'!
 isPersistent
@@ -5559,7 +5559,7 @@ readFrame
 
 	^self readFrameFrom: stream! !
 
-!WebSocket07 methodsFor: 'read/write' stamp: 'jmv 5/26/2022 12:06:53'!
+!WebSocket07 methodsFor: 'read/write' stamp: 'jmv 1/10/2023 17:07:10'!
 readFrameFrom: aStream
 	"Reads one frame worth of data"
 
@@ -5587,7 +5587,7 @@ readFrameFrom: aStream
 	aStream next: length into: payload.
 
 	"Unmask payload"
-	mask ifNotNil:[self xor: payload with: mask].
+	mask ifNotNil:[self xor: payload with: mask asByteArray].
 
 	"First see if this is a control frame which can be inserted into fragmented messages."
 	opcode >= 8 ifTrue:[^self handleControl: payload type: opcode].
@@ -5635,7 +5635,7 @@ send: data code: opcode final: isFinal
 
 	^self send: data code: opcode final: isFinal mask: self masking! !
 
-!WebSocket07 methodsFor: 'read/write' stamp: 'jmv 4/11/2019 15:34:42'!
+!WebSocket07 methodsFor: 'read/write' stamp: 'jmv 1/10/2023 17:08:28'!
 send: data code: opcode final: isFinal mask: doMask
 	"Sends unfragmented data using the given opcode"
 
@@ -5662,7 +5662,7 @@ send: data code: opcode final: isFinal mask: doMask
 		byte2 := byte2 bitOr: 128. "Mask = 1"
 		mask := ByteArray new: 4.
 		1 to: 4 do:[:i| mask at: i put: 256 atRandom-1].
-		copy := data copy.
+		copy := data copy asByteArray.
 		self xor: copy with: mask.
 	] ifFalse:[
 		copy := data.
@@ -5674,7 +5674,7 @@ send: data code: opcode final: isFinal mask: doMask
 	stream nextPutAll: copy.
 	stream flush.! !
 
-!WebSocket07 methodsFor: 'read/write' stamp: 'ar 9/26/2011 13:09'!
+!WebSocket07 methodsFor: 'read/write' stamp: 'jmv 1/10/2023 14:50:06'!
 xor: data with: mask
 	"XOR all the data using the given mask bytes.
 
@@ -5683,7 +5683,7 @@ xor: data with: mask
 	"This would be much faster w/ BitBlt but data may not be 
 	4-byte aligned and so BB will barf."
 	1 to: data size do:[:i|
-		data byteAt: i put: ((data byteAt: i) bitXor: (mask byteAt: i-1 \\ 4 + 1)).
+		data at: i put: ((data at: i) bitXor: (mask at: i-1 \\ 4 + 1)).
 	].
 ! !
 
@@ -6072,15 +6072,15 @@ jsonArray: anArray on: stream
 	stream nextPut:$].
 ! !
 
-!WebUtils class methodsFor: 'json-encode' stamp: 'ar 2/10/2012 13:39'!
+!WebUtils class methodsFor: 'json-encode' stamp: 'jmv 1/10/2023 14:13:13'!
 jsonChar: aCharacter on: stream
 	"Writes a single encoded character"
 
-	| ascii |
-	ascii := aCharacter asciiValue.
+	| codePoint |
+	codePoint _ aCharacter codePoint.
 
-	ascii < 32 ifTrue:["Control character"
-		ascii caseOf: {
+	codePoint < 32 ifTrue:["Control character"
+		codePoint caseOf: {
 			[13]	-> [^stream nextPutAll: '\r'].
 			[12]	-> [^stream nextPutAll: '\f'].
 			[10]	-> [^stream nextPutAll: '\n'].
@@ -6088,18 +6088,18 @@ jsonChar: aCharacter on: stream
 			[8]		-> [^stream nextPutAll: '\b'].
 		} otherwise:[
 			^stream nextPutAll: '\u'; nextPutAll: 
-				((ascii printStringBase: 16) padded: #left to: 4 with: $0)
+				((codePoint printStringBase: 16) padded: #left to: 4 with: $0)
 		].
 	].
 
-	(ascii >= 32 and:[ascii <=127]) ifTrue:["Ascii character"
-		(ascii = 34 or:[ascii = 92 or:[ascii = 47]]) ifTrue:[stream nextPut: $\].
+	(codePoint >= 32 and:[codePoint <=127]) ifTrue:["Ascii character"
+		(codePoint = 34 or:[codePoint = 92 or:[codePoint = 47]]) ifTrue:[stream nextPut: $\].
 		^stream nextPut: aCharacter
 	].
-
+"just 16 bits??????"
 	"Encode other characters (control chars, accents, umlauts, unicode)"
 	stream nextPutAll:  
-		'\u', (((ascii bitAnd: 16rFFFF) printStringBase: 16) padded: #left to: 4 with: $0).
+		'\u', (((codePoint bitAnd: 16rFFFF) printStringBase: 16) padded: #left to: 4 with: $0).
 ! !
 
 !WebUtils class methodsFor: 'json-encode' stamp: 'ar 2/10/2012 13:41'!
@@ -6173,19 +6173,14 @@ jsonArrayFrom: stream
 
 	^result contents! !
 
-!WebUtils class methodsFor: 'json-decode' stamp: 'jmv 6/26/2017 19:52:56'!
+!WebUtils class methodsFor: 'json-decode' stamp: 'jmv 1/10/2023 14:08:23'!
 jsonCharFrom: stream on: writeStream
 	"Decodes a backslash-escaped character"
 
 	| ch decoded |
-	ch := stream next.
-	ch = $u ifTrue: [
-		String
-			addUnicodeCodePoint: (Integer readFrom: (stream next: 4) readStream base: 16)
-			to: writeStream
-			hex: true.
-		^ self ].
+	ch _ stream next.
 	decoded _ ch caseOf: {
+		[$u] 	-> 	[UnicodeCodePoint codePoint: (Integer readFrom: (stream next: 4) readStream base: 16)].
 		[$r] 	-> 	[Character cr].
 		[$n] 	-> 	[Character lf].
 		[$t] 	-> 	[Character tab].
