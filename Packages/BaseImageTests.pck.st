@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5629] on 12 January 2023 at 12:57:56 pm'!
+'From Cuis 6.0 [latest update: #5644] on 20 January 2023 at 8:10:26 pm'!
 'Description Inline temp new test'!
-!provides: 'BaseImageTests' 1 326!
+!provides: 'BaseImageTests' 1 327!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Objects'!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Classes'!
@@ -18034,13 +18034,13 @@ test02
 	self assert: (all includes: {'car'. UnicodeString. Float pi. SmallFloat64}).
 	self assert: (all includes: {'cat'. String. Date today. Date}).! !
 
-!TrieUnicodeTest methodsFor: 'testing' stamp: 'jmv 12/7/2022 11:46:28'!
+!TrieUnicodeTest methodsFor: 'testing' stamp: 'jmv 1/20/2023 19:51:57'!
 test03
 	| t all s1 s2 |
 	t _ Trie new.
 	s1 _ ('totoU' asByteString, Random next mantissaPart printString) asUnicodeString asSymbol.
 	t add: s1.
-	s2 _ ('totoUn' asByteString, Random next mantissaPart printString) asUnicodeString asSymbol.
+	s2 _ ('totóUn' asByteString, Random next mantissaPart printString) asUnicodeString asSymbol.
 	t at: s2 put: 47.
 	t add: 'carrr' asUnicodeString.
 	t at: 'car' asByteString put: Float pi.
@@ -18054,7 +18054,7 @@ test03
 	all _ Array streamContents: [ :strm |
 		t keysAndValuesDo: [ :k :v | strm nextPut: {k. k class. v. v class} ]].
 	self assert: all size = 5.
-	self assert: (all includes: {s1. UnicodeSymbol. s1. UnicodeSymbol}).
+	self assert: (all includes: {s1. Symbol. s1. Symbol}).
 	self assert: (all includes: {s2. UnicodeSymbol. 47. SmallInteger}).
 	self assert: (all includes: {'carrr'. UnicodeString. 'carrr'. UnicodeString}).
 	self assert: (all includes: {'car'. String. Float pi. SmallFloat64}).
