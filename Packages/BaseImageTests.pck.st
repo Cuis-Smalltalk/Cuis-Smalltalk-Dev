@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5644] on 20 January 2023 at 8:10:26 pm'!
+'From Cuis 6.0 [latest update: #5644] on 21 January 2023 at 12:21:15 pm'!
 'Description Inline temp new test'!
-!provides: 'BaseImageTests' 1 327!
+!provides: 'BaseImageTests' 1 328!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Objects'!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Classes'!
@@ -10412,35 +10412,6 @@ testSchedulerTermination
 	"will give process a chance to continue and horribly screw up"
 	self assert: gotHere not.! !
 
-!ProcessTerminateBug methodsFor: 'tests' stamp: 'jar 5/23/2021 18:56:29'!
-testTerminateEnsureAsTopContext
-	"Test #ensure unwind block is executed even when #ensure context is on stack's top."
-
-	| p1 p2 p3 x1 x2 x3 |
-	x1 _ x2 _ x3 _ false.
-	
-	"p1 is at the beginning of the ensure block; the unwind block hasn't run yet"
-	p1 _ [[] ensure: [x1 _ x1 not]] newProcess.
-	[[:ctx | ctx isUnwindContext and: [(ctx tempAt: 2) isNil]] value: p1 suspendedContext] whileFalse: [p1 step].
-
-	"p2 has already set complete to true (tempAt: 2) but the unwind block hasn't run yet"
-	p2 _ [[] ensure: [x2 _ x2 not]] newProcess.
-	[[:ctx | ctx isUnwindContext and: [(ctx tempAt: 2) notNil]] value: p2 suspendedContext] whileFalse: [p2 step].
-
-	"p3 has already set complete to true AND the unwind block has run already run;
-	we have to verify the unwind block is not executed again during termination"
-	p3 _ [[] ensure: [x3 _ x3 not]] newProcess.
-	[[:ctx | ctx isUnwindContext and: [ctx willReturn]] value: p3 suspendedContext] whileFalse: [p3 step].
-
-	"make sure all processes are running and only the p3's unwind block has finished"
-	self deny: p1 isTerminated | p2 isTerminated | p3 isTerminated.
-	self deny: x1 | x2.
-	self assert: x3. "p3 has already run its unwind block; we test it won't run it again"
-	"terminate all processes and verify all unwind blocks have finished correctly"
-	p1 terminate. p2 terminate. p3 terminate.
-	self assert: p1 isTerminated & p2 isTerminated & p3 isTerminated.
-	self assert: x1 & x2 & x3! !
-
 !ProcessTerminateBug methodsFor: 'tests' stamp: 'jmv 4/28/2021 16:12:51'!
 testTerminationDuringNestedUnwind1
 	"Terminate suspended process.
@@ -12469,6 +12440,137 @@ testProcessFaithfulTermination
 	process terminate.
 	self assert: process isTerminated! !
 
+!ProcessTest methodsFor: 'tests' stamp: 'jar 1/19/2023 19:04:07'!
+testRevisedSuspendExpectations
+	"Test revised suspend expectations vs. pre-2022 VM's suspend"
+
+	| sema p list |
+	sema _ Semaphore new.
+	p _ [sema critical:[]] newProcess.
+	p priority: Processor activePriority + 1.
+	p resume.
+	list _ p suspend. "this is a list the process p was waiting on prior to being suspended"
+
+	Smalltalk processSuspensionUnblocks 
+		ifFalse: [ "this is the newer, post-2022 suspend semantics"
+			self assert: p suspendingList isNil.
+			self assert: list isNil.
+			self assert: p suspendedContext selectorToSendOrSelf = #wait
+			"note the list has been cleared and the pc moved back before the wait"
+			]
+		ifTrue: [ "this is the older, pre-2022 suspend semantics"
+			self assert: p suspendingList isNil.
+			self assert: list = sema.
+			self deny: p suspendedContext selectorToSendOrSelf = #wait
+			"note the list confirms that process p was waitng on a semaphore"
+			]! !
+
+!ProcessTest methodsFor: 'tests' stamp: 'jar 1/19/2023 17:56:59'!
+testTerminateByHighestPriorityProcess
+	"Test temination by a highest priority process."
+
+	| p q |
+	p _ [Semaphore new wait] newProcess.
+	p resume. Processor yield.
+	self assert: p isBlocked.
+
+	q _ [p terminate] newProcess.
+	q priority: Processor highestPriority.
+	q resume.
+	self assert: p isTerminated.
+	self assert: q isTerminated! !
+
+!ProcessTest methodsFor: 'tests' stamp: 'jar 1/19/2023 17:45:30'!
+testTerminateEnsureAsStackTop
+	"Test #ensure unwind block is executed even when #ensure context is on stack's top."
+
+	| p1 p2 p3 x1 x2 x3 |
+	x1 _ x2 _ x3 _ false.
+	
+	"p1 is at the beginning of the ensure block; the unwind block hasn't run yet"
+	p1 _ [[] ensure: [x1 _ x1 not]] newProcess.
+	[[:ctx | ctx isUnwindContext and: [(ctx tempAt: 2) isNil]] value: p1 suspendedContext] whileFalse: [p1 step].
+
+	"p2 has already set complete to true (tempAt: 2) but the unwind block hasn't run yet"
+	p2 _ [[] ensure: [x2 _ x2 not]] newProcess.
+	[[:ctx | ctx isUnwindContext and: [(ctx tempAt: 2) notNil]] value: p2 suspendedContext] whileFalse: [p2 step].
+
+	"p3 has already set complete to true AND the unwind block has run already run;
+	we have to verify the unwind block is not executed again during termination"
+	p3 _ [[] ensure: [x3 _ x3 not]] newProcess.
+	[[:ctx | ctx isUnwindContext and: [ctx willReturn]] value: p3 suspendedContext] whileFalse: [p3 step].
+
+	"make sure all processes are running and only the p3's unwind block has finished"
+	self deny: p1 isTerminated | p2 isTerminated | p3 isTerminated.
+	self deny: x1 | x2.
+	self assert: x3. "p3 has already run its unwind block; we test it won't run it again"
+	"terminate all processes and verify all unwind blocks have finished correctly"
+	p1 terminate. p2 terminate. p3 terminate.
+	self assert: p1 isTerminated & p2 isTerminated & p3 isTerminated.
+	self assert: x1 & x2 & x3! !
+
+!ProcessTest methodsFor: 'tests' stamp: 'jar 1/19/2023 18:01:37'!
+testTerminateEnsureOnTopOfEnsure
+	"Test two ensure contexts on top of each other unwind correctly, i.e. that
+	both their unwind blocks get executed."
+	
+	| beenHere beenHereToo bottom p top |
+	beenHere _ beenHereToo _ false.
+	bottom _ ContextPart contextEnsure: [beenHereToo _ true].
+	top _ ContextPart contextEnsure: [Processor activeProcess suspend. beenHere _ true].
+	top privSender: bottom.
+	p _ Process forContext: top priority: Processor activeProcess priority.
+	p resume.
+	Processor yield.
+	self assert: p isSuspended. 
+	p terminate.
+	self assert: beenHere & beenHereToo.
+	self assert: p isTerminated
+
+! !
+
+!ProcessTest methodsFor: 'tests' stamp: 'jar 1/19/2023 18:05:42'!
+testTerminateHandlingUnwindError
+	"Test an error inside an unwind block is handled correctly."
+	
+	"Workspace example:
+		[ [[Processor activeProcess terminate] ensure: [1/0]] on: ZeroDivide do: [] ] fork
+	
+	ZeroDivide error should get caught by the handler without opening the Debugger.
+	
+	To model this example as a test case we have to keep in mind that an error signal 
+	in one thread cannot be caught in a different thread: if process 'p' signals an error
+	it won't be searching for a handler in the thread that sent 'p terminate' message.
+	So we can't do something like:
+		p := [ [ [Semaphore new wait] ensure: [1/0] ] on: ZeroDivide do: [] ] newProcess.
+		p resume. Processor yield.
+		self shouldnt: [p terminate] raise: Error
+	Instead, in order to catch the situation the ZeroDivide error is not caught within 'p',
+	we try to catch the UnhandledError raised in 'p' indicating the ZeroDivide has been
+	missed.	"
+	
+	| p error unwindBlock |
+	unwindBlock _ [[1/0] on: UnhandledError do: [error _ true]].
+	p _ [ [ [Semaphore new wait] ensure: unwindBlock ] on: ZeroDivide do: [] ] newProcess.
+	p resume. Processor yield.
+	self assert: p isBlocked. 
+	error _ false.
+	p terminate.
+	self deny: error.
+	self assert: p isTerminated! !
+
+!ProcessTest methodsFor: 'tests' stamp: 'jar 1/19/2023 18:07:54'!
+testTerminateHighestPriorityProcess
+	"Test termination of a highest priority process."
+	
+	| p |
+	p _ [Semaphore new wait] newProcess.
+	p priority: Processor highestPriority.
+	p resume.
+	self assert: p isBlocked.
+	p terminate.
+	self assert: p isTerminated! !
+
 !ProcessTest methodsFor: 'tests' stamp: 'jmv 7/1/2022 19:56:21'!
 testTerminateInEnsure
 	"As shown in
@@ -12498,7 +12600,7 @@ testTerminateInEnsure
 			assert: process isTerminated;
 			assert: count equalsExpected: 11 ]! !
 
-!ProcessTest methodsFor: 'tests' stamp: 'jar 8/15/2022 14:03:00'!
+!ProcessTest methodsFor: 'tests' stamp: 'jar 1/19/2023 17:34:01'!
 testTerminateInTerminate
 	"Terminating a terminator process should unwind both the terminator and its terminatee process"
 	
@@ -12510,13 +12612,74 @@ testTerminateInTerminate
 	self assert: terminatee isSuspended.
 	self assert: terminator isSuspended.
 	"run terminator and stop inside #terminate" 
-	[[:ctx | ctx selectorToSendOrSelf = #bottomContext] value: terminator suspendedContext] 
-		whileFalse: [terminator step].
+	[terminator suspendedContext selectorToSendOrSelf = #bottomContext] whileFalse: [terminator step].
 	self assert: terminator isSuspended.
+	self deny: unwound.
 	terminator terminate.
 	self assert: terminatee isTerminated. 
 	self assert: terminator isTerminated. 
 	self assert: unwound! !
+
+!ProcessTest methodsFor: 'tests' stamp: 'jar 1/19/2023 18:14:14'!
+testTerminateNiledSuspendedContextProcess
+	"Test a process with niled suspendedContext terminates correctly."
+	
+	| p |
+	p _ [] newProcess.
+	self assert: p isSuspended.
+	p suspendedContext: nil.
+	p terminate.
+	self assert: p isTerminated! !
+
+!ProcessTest methodsFor: 'tests' stamp: 'jar 1/19/2023 18:14:03'!
+testTerminateSingleEnsure
+	"Test a stack consisting of a single ensure context unwinds correctly."
+	
+	| beenHere p singleton |
+	beenHere _ false.
+	singleton _ ContextPart contextEnsure: [beenHere _ true].
+	p _ Process forContext: singleton priority: Processor activeProcess priority.
+	self assert: p isSuspended. 
+	self assert: p suspendedContext sender isNil. 
+	p terminate.
+	self assert: beenHere.
+	self assert: p isTerminated! !
+
+!ProcessTest methodsFor: 'tests' stamp: 'jar 1/19/2023 18:30:25'!
+testTerminateTerminatingProcessAfterUnwindStarted
+	"Terminating a terminatee process after the terminator process restarted the terminatee
+	 process should unwind the terminatee process and let the terminator process terminate."
+	
+	"Such a situation may occur e.g. when a terminating process encounters an error and
+	 opens a debugger (or calls another recovery machinery). In such case it's legitimate
+	 to terminate the terminating process again (by closing the debugger or as a termination
+	 by another recovery tool).
+
+	 Note: this is a different situation than in 'testTerminateTerminatingProcess' where
+	 the second termination is invoked 'too early' and may cause unpredictable outcome."
+	
+	| terminator terminatee unwound unwindBlock |
+	unwound _ false.
+	unwindBlock _ [Processor activeProcess suspend. unwound _ true].
+	terminatee _ [[Semaphore new wait] ensure: unwindBlock] newProcess.
+	terminatee resume. Processor yield.
+	terminator _ [terminatee terminate] newProcess.
+	self assert: terminatee isBlocked.
+	self assert: terminator isSuspended.
+	terminator resume.
+	Processor yield.
+	"terminator starts terminatee's unwind and gets blocked on a semaphore"
+	self assert: terminator isBlocked.
+	self assert: terminatee isReady.
+	Processor yield.
+	"terminatee resumes and stops at unwindBlock's #suspend"
+	self assert: terminatee isSuspended.
+	self assert: terminator isBlocked.
+	terminatee terminate.
+	"terminatee finishes unwinding and terminates which unblocks the terminator"
+	self assert: terminatee isTerminated. 
+	self assert: unwound.
+	self assert: terminator isTerminated! !
 
 !ProcessTest methodsFor: 'tests' stamp: 'jar 8/15/2022 17:51:47'!
 testTerminateWithDelayInUnwind
@@ -12815,6 +12978,42 @@ testSemaAfterCriticalWait	"self run: #testSemaAfterCriticalWait"
 	p terminate.
 	self assert: [ (s instVarNamed: #excessSignals) = 1 ]! !
 
+!SemaphoreTest methodsFor: 'testing' stamp: 'jar 1/19/2023 19:31:21'!
+testSemaAfterCriticalWaitSuspended
+	"Test whether a semaphore that has just left the wait in Semaphore>>critical: but 	has
+	 been suspended before termination, leaves it with signaling the associated semaphore."
+	| s p |
+	s _ Semaphore new.
+	p _ [s critical:[]] newProcess.
+	p priority: Processor activePriority-1.
+	p resume.
+	"wait until p entered the critical section"
+	[p suspendingList == s] whileFalse: [(Delay forMilliseconds: 10) wait].
+	"Now that p entered it, signal the semaphore. p now 'owns' the semaphore
+	but since we are running at higher priority than p it will not get to do
+	anything."
+	s signal.
+	self assert: p suspendingList class == LinkedList.
+	p suspend.
+	self assert: p suspendingList == nil.
+	p terminate.
+	self assert: 1 equals: (s instVarNamed: #excessSignals)! !
+
+!SemaphoreTest methodsFor: 'testing' stamp: 'jar 1/19/2023 19:22:07'!
+testSemaInCriticalEnsureArgument	
+	"Test whether a process that is in an ensure argument block but has yet to evaluate the signal
+	leaves it with signaling the associated semaphore."
+	
+	| terminatee sema |
+	sema _ Semaphore forMutualExclusion.
+	terminatee _ [sema critical: []] newProcess.
+	self assert: terminatee isSuspended.
+	[terminatee suspendedContext selectorToSendOrSelf = #signal] whileFalse: [terminatee step].
+	self assert: terminatee isSuspended.
+	terminatee terminate.
+	self assert: terminatee isTerminated. 
+	self assert: 1 equals: (sema instVarNamed: #excessSignals)! !
+
 !SemaphoreTest methodsFor: 'testing' stamp: 'jmv 6/15/2009 21:17'!
 testSemaInCriticalWait	"self run: #testSemaInCriticalWait"
 	"This tests whether a semaphore that has entered the wait in Semaphore>>critical:
@@ -12853,6 +13052,18 @@ testSuspendAndResume
 	hence when resumed p simply proceeds"
 	Processor yield.
 	self assert: p isTerminated! !
+
+!SemaphoreTest methodsFor: 'testing' stamp: 'jar 1/19/2023 19:33:10'!
+testUnwindSemaInCriticalWait	
+	"Test whether a process that has entered the wait in Semaphore>>critical:
+	leaves it without signaling the associated semaphore."	
+	| s p |
+	s _ Semaphore new.
+	p _ [[] ensure: [s critical:[]]] newProcess.
+	p resume. Processor yield.
+	self assert: p suspendingList == s.
+	p terminate.
+	self assert: 0 equals: (s instVarNamed: #excessSignals)! !
 
 !SemaphoreTest methodsFor: 'testing' stamp: 'jmv 11/4/2011 22:12'!
 testWaitAndWaitTimeoutTogether
