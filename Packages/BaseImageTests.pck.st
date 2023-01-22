@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5644] on 21 January 2023 at 12:21:15 pm'!
+'From Cuis 6.0 [latest update: #5645] on 22 January 2023 at 2:05:03 pm'!
 'Description Inline temp new test'!
-!provides: 'BaseImageTests' 1 328!
+!provides: 'BaseImageTests' 1 329!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Objects'!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Classes'!
@@ -12426,6 +12426,75 @@ testAtomicSuspend
 	self assert: list == nil.
 ! !
 
+!ProcessTest methodsFor: 'tests' stamp: 'jar 1/21/2023 16:35:35'!
+testIsTerminated
+	"Test semantics of isTerminated.
+	 A process is considered terminated if the suspendedContext has no unexecuted code left,
+	 a situation tested by the Context >> #isDone method."
+	
+	"Note: If the suspended context's pc is anywhere but the last instruction, the process is NOT
+	 considered terminated regardless of the status of the sender chain contexts, while on the
+	 other hand if the suspended context's pc is nil, the process IS considered terminated
+	 regardless of the 	status of the sender chain contexts. In all other cases the sender chain
+	 is checked recursively for any unexecuted code.
+	
+	See https://lists.cuis.st/mailman/archives/cuis-dev/2023-January/006822.html"
+	
+	| p ctx bottom |
+	"let's create a test process consisting of a bottom context only:"
+	ctx _ [4] asContext.
+	p _ Process forContext: ctx priority: Processor activePriority.
+
+	"initial situation: pc = startpc, sender = nil"
+	self deny: p isTerminated.
+	ctx pc: ctx endpc. "pc points to the last instruction now"
+	self assert: p isTerminated.
+	ctx pc: nil.
+	self assert: p isTerminated.
+
+	"let's add a new bottom context..."
+	bottom _ [2] asContext.
+	ctx privSender: bottom.
+
+	"... and reset ctx pc:"
+	ctx pc: ctx startpc.
+	self deny: p isTerminated.
+	ctx pc: ctx endpc.
+	self deny: p isTerminated.
+	ctx pc: nil.
+	self assert: p isTerminated.
+
+	"let's point bottom's pc to its last instruction..."
+	bottom pc: bottom endpc.
+
+	"... and reset ctx pc again:"
+	ctx pc: ctx startpc.
+	self deny: p isTerminated.
+	ctx pc: ctx endpc.
+	self assert: p isTerminated.
+	ctx pc: nil.
+	self assert: p isTerminated.
+
+	"let's nil bottom's pc..."
+	bottom pc: nil.
+
+	"... and reset ctx pc one more time:"
+	ctx pc: ctx startpc.
+	self deny: p isTerminated.
+	ctx pc: ctx endpc.
+	self assert: p isTerminated.
+	ctx pc: nil.
+	self assert: p isTerminated.
+	
+	"let's test boundary situations:"
+	ctx pc: ctx startpc.
+	self deny: p isTerminated.
+	p suspendedContext: nil.
+	self assert: p isTerminated.
+
+	"... and the active process is never considered terminated"
+	self deny: Processor activeProcess isTerminated! !
+
 !ProcessTest methodsFor: 'tests' stamp: 'jar 2/1/2022 20:33:44'!
 testProcessFaithfulTermination
 	"When terminating a process, unwind blocks should be evaluated as if they were executed by the process being terminated."
@@ -12630,6 +12699,23 @@ testTerminateNiledSuspendedContextProcess
 	p suspendedContext: nil.
 	p terminate.
 	self assert: p isTerminated! !
+
+!ProcessTest methodsFor: 'tests' stamp: 'jar 1/22/2023 14:01:18'!
+testTerminateProcessTerminatedViaNiledPc
+	"Terminating a terminated process may still run unexecuted unwinds."
+	
+	| terminatee unwound |
+	unwound _ false.
+	terminatee _ [[Processor activeProcess suspend] ensure: [unwound _ true]] newProcess.
+	terminatee resume. Processor yield.
+	self assert: terminatee isSuspended.
+	self deny: unwound.
+	terminatee suspendedContext pc: nil.
+	self assert: terminatee isTerminated.
+	self deny: unwound.
+	terminatee terminate.
+	self assert: terminatee isTerminated. 
+	self assert: unwound! !
 
 !ProcessTest methodsFor: 'tests' stamp: 'jar 1/19/2023 18:14:03'!
 testTerminateSingleEnsure
@@ -13027,7 +13113,7 @@ testSemaInCriticalWait	"self run: #testSemaInCriticalWait"
 	p terminate.
 	self assert:[(s instVarNamed: #excessSignals) = 0]! !
 
-!SemaphoreTest methodsFor: 'testing' stamp: 'jmv 8/17/2022 13:24:01'!
+!SemaphoreTest methodsFor: 'testing' stamp: 'jar 1/21/2023 20:55:46'!
 testSuspendAndResume
 	"Test the semantics of suspending and resuming a process blocked on a semaphore;
 	Note the difference between #suspend and #suspendAndUnblock.
@@ -13040,10 +13126,14 @@ testSuspendAndResume
 	"suspend removes p from the semaphore but backs up its pc;
 	hence when resumed p reenters the wait state"
 	Processor yield.
+
 	"VMs older than 2022, where #processSuspensionUnblocks answers true,
 	have this incorrect behavior (primitive 88 instead of the corrected 578)"
-	Smalltalk processSuspensionUnblocks ifFalse: [
-		self assert: p isBlocked ].
+	Smalltalk processSuspensionUnblocks
+		ifTrue: [self assert: p isTerminated]
+		ifFalse: [	
+			self assert: p isBlocked.
+			p terminate].
 	
 	p _ [Semaphore new wait] newProcess.
 	p resume. Processor yield.
