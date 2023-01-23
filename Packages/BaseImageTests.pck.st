@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5645] on 22 January 2023 at 2:05:03 pm'!
+'From Cuis 6.0 [latest update: #5649] on 23 January 2023 at 11:23:06 am'!
 'Description Inline temp new test'!
-!provides: 'BaseImageTests' 1 329!
+!provides: 'BaseImageTests' 1 330!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Objects'!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Classes'!
@@ -12700,9 +12700,10 @@ testTerminateNiledSuspendedContextProcess
 	p terminate.
 	self assert: p isTerminated! !
 
-!ProcessTest methodsFor: 'tests' stamp: 'jar 1/22/2023 14:01:18'!
+!ProcessTest methodsFor: 'tests' stamp: 'jar 1/22/2023 19:59:08'!
 testTerminateProcessTerminatedViaNiledPc
-	"Terminating a terminated process may still run unexecuted unwinds."
+	"Terminating a terminated process may still run unexecuted unwinds.
+	See https://lists.cuis.st/mailman/archives/cuis-dev/2023-January/006825.html"
 	
 	| terminatee unwound |
 	unwound _ false.
