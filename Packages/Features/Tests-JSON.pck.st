@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5557] on 24 November 2022 at 8:43:15 am'!
+'From Cuis 6.0 [latest update: #5649] on 23 January 2023 at 5:31:00 pm'!
 'Description '!
-!provides: 'Tests-JSON' 1 3!
+!provides: 'Tests-JSON' 1 4!
 !requires: 'JSON' 1 24 nil!
 SystemOrganization addCategory: 'Tests-JSON'!
 
@@ -153,13 +153,15 @@ testWriteAssociation
 	
 	! !
 
-!JsonTests methodsFor: 'as yet unclassified' stamp: 'jmv 9/5/2016 16:53:37'!
+!JsonTests methodsFor: 'as yet unclassified' stamp: 'jmv 1/10/2023 13:55:28'!
 testWriteString
 	self render: '"' equals: '"\""'.
 	self render: '\' equals: '"\\"'.
 	self render: 'hi' equals: '"hi"'.
 	self render: ({$a. Character lf. $b} as: String) equals: '"a\nb"'.
-	self render: ({$a. Character numericValue: 4. $b} as: String) equals: '"a\u0004b"'.! !
+	self render: ({$a. Character numericValue: 4. $b} as: String) equals: '"a\u0004b"'.
+	self render: 'agüita' equals: '"agüita"'.
+	self render: 'ñandú' equals: '"ñandú"'.! !
 
 !JsonDummyTestObject methodsFor: 'as yet unclassified' stamp: 'tonyg 11/29/2005 17:56'!
 = other
