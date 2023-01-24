@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5649] on 23 January 2023 at 11:23:06 am'!
+'From Cuis 6.0 [latest update: #5652] on 24 January 2023 at 3:40:25 pm'!
 'Description Inline temp new test'!
-!provides: 'BaseImageTests' 1 330!
+!provides: 'BaseImageTests' 1 331!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Objects'!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Classes'!
@@ -4376,12 +4376,11 @@ assertIsPositiveZero: aFloat
 	"Assert that aFloat is Float zero (the positive one)"
 	self assert: aFloat hex = 0.0 hex! !
 
-!FloatTest methodsFor: 'helpers' stamp: 'jmv 10/15/2019 16:41:28'!
+!FloatTest methodsFor: 'helpers' stamp: 'jmv 1/24/2023 15:34:34'!
 expectedFailures
-	"See https://github.com/OpenSmalltalk/opensmalltalk-vm/issues/383"
-	^ (`{'Win32'.  'Mac OS' }` includes: Smalltalk platformName)
-		ifTrue: [#(testTimesTwoPowerGradualUnderflow)]
-		ifFalse: [#()]! !
+	Smalltalk platformName = 'Mac OS' ifTrue: [
+		^#(testE testExp testPrimExpAndLn testNaNPropagationUnary) ].
+	^#().! !
 
 !FloatTest methodsFor: 'tests - primitives' stamp: 'jmv 2/27/2019 15:25:35'!
 testPrimAdd
@@ -12509,6 +12508,55 @@ testProcessFaithfulTermination
 	process terminate.
 	self assert: process isTerminated! !
 
+!ProcessTest methodsFor: 'tests' stamp: 'jar 1/22/2023 18:58:45'!
+testResumeTerminatingProcess
+	"An attempt to resume a terminating process should probably raise an error, possibly via the VM;
+	leave this test as an expected failure for the moment."
+
+	| terminatee terminator unwound |
+	unwound _ false.
+	terminatee _ [[Processor activeProcess suspend] ensure: [unwound _ unwound not]] newProcess.
+	terminatee priority: Processor activePriority + 1. 
+	terminatee resume.
+	terminator _ [terminatee terminate] newProcess.
+	terminator priority: Processor activePriority + 1. 
+	self assert: terminatee isSuspended.
+	self assert: terminator isSuspended. 
+	"run terminator and stop inside #terminate"
+	[terminator suspendedContext selectorToSendOrSelf = #bottomContext] whileFalse: [terminator step].
+	self assert: terminatee suspendedContext isNil.
+	self deny: unwound.
+	self assert: terminator isSuspended.
+	"resuming the terminatee process should causes the VM to raise an error while its suspended context is nil"
+	self should: [terminatee resume] raise: Error.
+	self assert: terminatee suspendedContext isNil.
+	self deny: unwound.
+	self assert: terminator isSuspended.
+	"now let the terminator finish its interrupted termination of the terminatee process"
+	terminator resume.
+	self assert: terminatee isTerminated.
+	self assert: unwound.
+	self assert: terminator isTerminated
+
+"
+this test passes for this version of #terminate:
+
+	self isActiveProcess ifTrue: [
+		^(thisContext unwindAndStop: self) jump].
+
+	[	| terminator |
+		self suspendAndReleaseCriticalSection.
+		suspendedContext ifNotNil: [:ctx |
+			suspendedContext _ nil.
+			terminator _ Semaphore new.
+			ctx bottomContext insertSender: (ContextPart contextEnsure: [terminator signal]).
+			self suspendedContext: (ctx unwindAndStop: self);
+				priority: Processor activePriority;
+				resume.
+			terminator wait]
+	] valueEnsured
+"! !
+
 !ProcessTest methodsFor: 'tests' stamp: 'jar 1/19/2023 19:04:07'!
 testRevisedSuspendExpectations
 	"Test revised suspend expectations vs. pre-2022 VM's suspend"
@@ -12732,6 +12780,55 @@ testTerminateSingleEnsure
 	self assert: beenHere.
 	self assert: p isTerminated! !
 
+!ProcessTest methodsFor: 'tests' stamp: 'jar 1/22/2023 18:56:16'!
+testTerminateTerminatingProcess
+	"An attempt to terminate a terminating process should probably raise an error or silently do nothing;
+	leave this test as an expected failure for the moment."
+
+	| terminatee terminator unwound |
+	unwound _ false.
+	terminatee _ [[Processor activeProcess suspend] ensure: [unwound _ unwound not]] newProcess.
+	terminatee priority: Processor activePriority + 1. 
+	terminatee resume.
+	terminator _ [terminatee terminate] newProcess.
+	terminator priority: Processor activePriority + 1. 
+	self assert: terminatee isSuspended.
+	self assert: terminator isSuspended. 
+	"run terminator and stop inside #terminate"
+	[terminator suspendedContext selectorToSendOrSelf = #bottomContext] whileFalse: [terminator step].
+	self assert: terminatee suspendedContext isNil.
+	self deny: unwound.
+	self assert: terminator isSuspended.
+	"terminating the terminatee process again should make no difference while its suspended context is nil"
+	terminatee terminate.
+	self assert: terminatee suspendedContext isNil.
+	self deny: unwound.
+	self assert: terminator isSuspended.
+	"now let the terminator finish its interrupted termination of the terminatee process"
+	terminator resume.
+	self assert: terminatee isTerminated.
+	self assert: unwound.
+	self assert: terminator isTerminated
+
+"
+this test passes for this version of #terminate:
+
+	self isActiveProcess ifTrue: [
+		^(thisContext unwindAndStop: self) jump].
+
+	[	| terminator |
+		self suspendAndReleaseCriticalSection.
+		suspendedContext ifNotNil: [:ctx |
+			suspendedContext _ nil.
+			terminator _ Semaphore new.
+			ctx bottomContext insertSender: (ContextPart contextEnsure: [terminator signal]).
+			self suspendedContext: (ctx unwindAndStop: self);
+				priority: Processor activePriority;
+				resume.
+			terminator wait]
+	] valueEnsured
+"! !
+
 !ProcessTest methodsFor: 'tests' stamp: 'jar 1/19/2023 18:30:25'!
 testTerminateTerminatingProcessAfterUnwindStarted
 	"Terminating a terminatee process after the terminator process restarted the terminatee
@@ -12810,6 +12907,12 @@ testValueEnsured
 		self
 			assert: process isTerminated;
 			assert: count equalsExpected: 11 ]! !
+
+!ProcessTest methodsFor: 'failing' stamp: 'jar 1/24/2023 09:38:36'!
+expectedFailures
+	"These should have a proper fix."
+
+	^#(testResumeTerminatingProcess testTerminateTerminatingProcess)! !
 
 !ProcessorTest methodsFor: 'as yet unclassified' stamp: 'jmv 8/22/2022 14:38:31'!
 testGrabProcessor
