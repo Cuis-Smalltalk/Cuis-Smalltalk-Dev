@@ -1,0 +1,52 @@
+'From Haver 6.0 [latest update: #5660] on 13 February 2023 at 10:27:39 pm'!
+
+!SystemDictionary methodsFor: 'startup' stamp: 'KLG 2/13/2023 22:26:11'!
+processCommandLineArguments
+	"
+	Smalltalk processCommandLineArguments
+
+	Note: By default, any exceptions thrown during the evaluation of arguments are simply ignored.
+	To ease debugging, use the -e argument: Do Not Ignore Exceptions. 
+	For example:
+		squeak Cuis.image -e -s myScript.st
+	If ``myScript.st`` contains an error, a Debugger will pop up.
+	
+	See comment at
+		processCommandLineOption:optionArgument:raiseExceptions:
+	See displayCommandLineUsageOn:
+	"
+	| optionString optionCharacter optionArgument optionIndex nextOptionIndex optionLastParameterIndex raiseExceptions dashFinder |
+
+	"Any command line argument that starts with $- is an Option.
+	NonOption arguments are parameters for the preceding Option."
+	raiseExceptions _ false.
+	startUpScriptArguments _ #().
+	dashFinder _ [ :any | any notEmpty and: [ any first = $- ] ].
+	optionIndex _ startUpArguments findFirst: dashFinder startingAt: 1.
+	[ optionIndex > 0 ] whileTrue: [
+		"Find parameters for this option"
+		nextOptionIndex _ startUpArguments findFirst: dashFinder startingAt: optionIndex+1.
+		optionLastParameterIndex _ nextOptionIndex = 0
+			ifTrue: [startUpArguments size]
+			ifFalse: [nextOptionIndex-1].
+		optionString _ startUpArguments at: optionIndex.
+		optionString size > 1 ifTrue: [
+			optionCharacter _ optionString second.
+			optionCharacter = $- "Including    --    as an option means 'ignore everything after here'"
+				ifTrue: [^self].
+			optionCharacter = $e
+				ifTrue: [ raiseExceptions _ true ]
+				ifFalse: [
+					"Handle both    -rRequiredFeature2    and    -r RequiredFeature2"
+					optionString size > 2
+						ifTrue: [
+							optionArgument _ optionString copyFrom: 3 to: optionString size.
+							startUpScriptArguments _ startUpArguments copyFrom: optionIndex+1 to: optionLastParameterIndex ]
+						ifFalse: [
+							optionArgument _ optionLastParameterIndex > optionIndex ifTrue: [startUpArguments at: optionIndex+1].
+							startUpScriptArguments _ startUpArguments copyFrom: optionIndex+2 to: optionLastParameterIndex ].
+					self processCommandLineOption: optionCharacter optionArgument: optionArgument raiseExceptions: raiseExceptions.
+					startUpScriptArguments _ #() ]
+			].
+		optionIndex _ nextOptionIndex ].! !
+
