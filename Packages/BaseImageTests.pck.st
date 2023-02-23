@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5652] on 24 January 2023 at 3:40:25 pm'!
+'From Cuis 6.0 [latest update: #5663] on 23 February 2023 at 4:31:14 pm'!
 'Description Inline temp new test'!
-!provides: 'BaseImageTests' 1 331!
+!provides: 'BaseImageTests' 1 332!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Objects'!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Classes'!
@@ -9134,6 +9134,50 @@ test12
 	self deny: ('ñandúes' asUnicodeString is: 'úe' asUnicodeString substringAt: 4).
 	self assert: ('ñandúes'asUnicodeString  is: 'úe' asUnicodeString substringAt: 5).
 	self deny: ('ñandúes' asUnicodeString is: 'úe' asUnicodeString substringAt: 6).! !
+
+!UnicodeStringsTest methodsFor: 'testing' stamp: 'jmv 2/23/2023 14:00:34'!
+testAtPut
+	| a b c |
+	a _ 'Agüita'.
+
+	b _ a copy.
+	self assert: a = b.
+	self assert: a hash = b hash.
+
+	c _ b at: 1 put: $Ñ.
+	self assert: c = $Ñ.
+	self deny: a = b.
+	self deny: a hash = b hash.
+	self assert: a size = b size.
+	self assert: (b at: 1) = $Ñ.
+	self assert: b = 'Ñgüita'.
+
+	b _ a copy.
+	c _ b at: 3 put: $u.
+	self assert: c = $u.
+	self deny: a = b.
+	self deny: a hash = b hash.
+	self assert: a size = b size.
+	self assert: (b at: 3) = $u.
+	self assert: b = 'Aguita'.
+
+	b _ a copy.
+	c _ b at: b size put: $á.
+	self assert: c = $á.
+	self deny: a = b.
+	self deny: a hash = b hash.
+	self assert: a size = b size.
+	self assert: b last = $á.
+	self assert: b = 'Agüitá'.
+
+	b _ a copy.
+	c _ b at: b size put: $π.
+	self assert: c = $π.
+	self deny: a = b.
+	self deny: a hash = b hash.
+	self assert: a size = b size.
+	self assert: b last = $π.
+	self assert: b = 'Agüitπ'.! !
 
 !UnicodeSymbolsTest methodsFor: 'testing' stamp: 'jmv 12/7/2022 11:44:28'!
 test01AsciiSymbolFirst
