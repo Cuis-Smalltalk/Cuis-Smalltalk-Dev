@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5663] on 23 February 2023 at 4:31:14 pm'!
+'From Cuis 6.0 [latest update: #5667] on 24 February 2023 at 7:41:20 am'!
 'Description Inline temp new test'!
-!provides: 'BaseImageTests' 1 332!
+!provides: 'BaseImageTests' 1 333!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Objects'!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Classes'!
@@ -12552,10 +12552,13 @@ testProcessFaithfulTermination
 	process terminate.
 	self assert: process isTerminated! !
 
-!ProcessTest methodsFor: 'tests' stamp: 'jar 1/22/2023 18:58:45'!
+!ProcessTest methodsFor: 'tests' stamp: 'jar 1/30/2023 13:58:49'!
 testResumeTerminatingProcess
-	"An attempt to resume a terminating process should probably raise an error, possibly via the VM;
-	leave this test as an expected failure for the moment."
+	"An attempt to resume a terminating process in the middle of preparing its suspended context should raise an error;
+	one possible solution is to nil the suspended context of the terminating process while executing the vulnerable code"
+	
+	"Note: another solution could be to run the vulnerable part of the code in #terminate using #valueUnpreemptively;
+	currently, however, #valueUnpreemptively is affected by the #priority: bug described here: 	http://lists.squeakfoundation.org/pipermail/squeak-dev/2021-December/217473.html"
 
 	| terminatee terminator unwound |
 	unwound _ false.
@@ -12580,26 +12583,7 @@ testResumeTerminatingProcess
 	terminator resume.
 	self assert: terminatee isTerminated.
 	self assert: unwound.
-	self assert: terminator isTerminated
-
-"
-this test passes for this version of #terminate:
-
-	self isActiveProcess ifTrue: [
-		^(thisContext unwindAndStop: self) jump].
-
-	[	| terminator |
-		self suspendAndReleaseCriticalSection.
-		suspendedContext ifNotNil: [:ctx |
-			suspendedContext _ nil.
-			terminator _ Semaphore new.
-			ctx bottomContext insertSender: (ContextPart contextEnsure: [terminator signal]).
-			self suspendedContext: (ctx unwindAndStop: self);
-				priority: Processor activePriority;
-				resume.
-			terminator wait]
-	] valueEnsured
-"! !
+	self assert: terminator isTerminated! !
 
 !ProcessTest methodsFor: 'tests' stamp: 'jar 1/19/2023 19:04:07'!
 testRevisedSuspendExpectations
@@ -12824,10 +12808,13 @@ testTerminateSingleEnsure
 	self assert: beenHere.
 	self assert: p isTerminated! !
 
-!ProcessTest methodsFor: 'tests' stamp: 'jar 1/22/2023 18:56:16'!
+!ProcessTest methodsFor: 'tests' stamp: 'jar 1/30/2023 14:03:24'!
 testTerminateTerminatingProcess
-	"An attempt to terminate a terminating process should probably raise an error or silently do nothing;
-	leave this test as an expected failure for the moment."
+	"An attempt to terminate a terminating process in the middle of preparing its suspended context should do nothing;
+	one possible solution is to nil the suspended context of the terminating process while executing the vulnerable code"
+	
+	"Note: another solution could be to run the vulnerable part of the code in #terminate using #valueUnpreemptively;
+	currently, however, #valueUnpreemptively is affected by the #priority: bug described here: 	http://lists.squeakfoundation.org/pipermail/squeak-dev/2021-December/217473.html"
 
 	| terminatee terminator unwound |
 	unwound _ false.
@@ -12852,26 +12839,7 @@ testTerminateTerminatingProcess
 	terminator resume.
 	self assert: terminatee isTerminated.
 	self assert: unwound.
-	self assert: terminator isTerminated
-
-"
-this test passes for this version of #terminate:
-
-	self isActiveProcess ifTrue: [
-		^(thisContext unwindAndStop: self) jump].
-
-	[	| terminator |
-		self suspendAndReleaseCriticalSection.
-		suspendedContext ifNotNil: [:ctx |
-			suspendedContext _ nil.
-			terminator _ Semaphore new.
-			ctx bottomContext insertSender: (ContextPart contextEnsure: [terminator signal]).
-			self suspendedContext: (ctx unwindAndStop: self);
-				priority: Processor activePriority;
-				resume.
-			terminator wait]
-	] valueEnsured
-"! !
+	self assert: terminator isTerminated! !
 
 !ProcessTest methodsFor: 'tests' stamp: 'jar 1/19/2023 18:30:25'!
 testTerminateTerminatingProcessAfterUnwindStarted
@@ -12951,12 +12919,6 @@ testValueEnsured
 		self
 			assert: process isTerminated;
 			assert: count equalsExpected: 11 ]! !
-
-!ProcessTest methodsFor: 'failing' stamp: 'jar 1/24/2023 09:38:36'!
-expectedFailures
-	"These should have a proper fix."
-
-	^#(testResumeTerminatingProcess testTerminateTerminatingProcess)! !
 
 !ProcessorTest methodsFor: 'as yet unclassified' stamp: 'jmv 8/22/2022 14:38:31'!
 testGrabProcessor
@@ -13194,13 +13156,13 @@ testCriticalIfError
 	[lock critical: [self criticalError ifError:[]]] forkAt: Processor userInterruptPriority.
 	self assert: lock isSignaled! !
 
-!SemaphoreTest methodsFor: 'testing' stamp: 'jmv 6/15/2009 21:24'!
-testSemaAfterCriticalWait	"self run: #testSemaAfterCriticalWait"
+!SemaphoreTest methodsFor: 'testing' stamp: 'jar 1/30/2023 11:10:11'!
+testSemaAfterCriticalWait
 	"This tests whether a semaphore that has just left the wait in Semaphore>>critical:
 	leaves it with signaling the associated semaphore."
 	| s p |
-	s := Semaphore new.
-	p := [ s critical: []] newProcess.
+	s _ Semaphore new.
+	p _ [s critical: []] newProcess.
 	p priority: Processor activePriority-1.
 	p resume.
 	"wait until p entered the critical section"
@@ -13210,7 +13172,63 @@ testSemaAfterCriticalWait	"self run: #testSemaAfterCriticalWait"
 	anything."
 	s signal.
 	p terminate.
-	self assert: [ (s instVarNamed: #excessSignals) = 1 ]! !
+	self assert: 1 equals: (s instVarNamed: #excessSignals)! !
+
+!SemaphoreTest methodsFor: 'testing' stamp: 'jar 1/30/2023 11:08:29'!
+testSemaAfterCriticalWait2
+	"This tests whether a semaphore that has just left the wait in Semaphore>>critical:
+	leaves it with signaling the associated semaphore."
+	| s p beenHere |
+	s _ Semaphore new. beenHere _ false.
+	p _ [s critical: [beenHere _ true]] newProcess.
+	p priority: Processor activePriority-1.
+	p resume.
+	"wait until p entered the critical section"
+	[ p suspendingList == s ] whileFalse: [ (Delay forMilliseconds: 10) wait ].
+	"Now that p entered it, signal the semaphore. p now 'owns' the semaphore
+	but since we are running at higher priority than p it will not get to do
+	anything."
+	s signal.
+	p terminate.
+	self assert: 1 equals: (s instVarNamed: #excessSignals).
+	self deny: beenHere! !
+
+!SemaphoreTest methodsFor: 'testing' stamp: 'jar 1/30/2023 11:11:06'!
+testSemaAfterCriticalWaitInEnsure
+	"This tests whether a semaphore that has just left the wait in Semaphore>>critical:
+	leaves it with signaling the associated semaphore."
+	| s p |
+	s _ Semaphore new.
+	p _ [[] ensure: [s critical: []]] newProcess.
+	p priority: Processor activePriority-1.
+	p resume.
+	"wait until p entered the critical section"
+	[ p suspendingList == s ] whileFalse: [ (Delay forMilliseconds: 10) wait ].
+	"Now that p entered it, signal the semaphore. p now 'owns' the semaphore
+	but since we are running at higher priority than p it will not get to do
+	anything."
+	s signal.
+	p terminate.
+	self assert: 1 equals: (s instVarNamed: #excessSignals)! !
+
+!SemaphoreTest methodsFor: 'testing' stamp: 'jar 1/30/2023 11:09:30'!
+testSemaAfterCriticalWaitInEnsure2
+	"This tests whether a semaphore that has just left the wait in Semaphore>>critical:
+	leaves it with signaling the associated semaphore."
+	| s p beenHere |
+	s _ Semaphore new. beenHere _ false.
+	p _ [[] ensure: [s critical: [beenHere _ true]]] newProcess.
+	p priority: Processor activePriority-1.
+	p resume.
+	"wait until p entered the critical section"
+	[ p suspendingList == s ] whileFalse: [ (Delay forMilliseconds: 10) wait ].
+	"Now that p entered it, signal the semaphore. p now 'owns' the semaphore
+	but since we are running at higher priority than p it will not get to do
+	anything."
+	s signal.
+	p terminate.
+	self assert: 1 equals: (s instVarNamed: #excessSignals).
+	self assert: beenHere! !
 
 !SemaphoreTest methodsFor: 'testing' stamp: 'jar 1/19/2023 19:31:21'!
 testSemaAfterCriticalWaitSuspended
@@ -13248,18 +13266,59 @@ testSemaInCriticalEnsureArgument
 	self assert: terminatee isTerminated. 
 	self assert: 1 equals: (sema instVarNamed: #excessSignals)! !
 
-!SemaphoreTest methodsFor: 'testing' stamp: 'jmv 6/15/2009 21:17'!
-testSemaInCriticalWait	"self run: #testSemaInCriticalWait"
+!SemaphoreTest methodsFor: 'testing' stamp: 'jar 1/30/2023 11:12:24'!
+testSemaInCriticalWait
 	"This tests whether a semaphore that has entered the wait in Semaphore>>critical:
 	leaves it without signaling the associated semaphore."
 	| s p |
-	s := Semaphore new.
-	p := [s critical:[]] newProcess.
+	s _ Semaphore new.
+	p _ [s critical: []] newProcess.
 	p resume.
 	Processor yield.
-	self assert:[p suspendingList == s].
+	self assert: s equals: p suspendingList.
 	p terminate.
-	self assert:[(s instVarNamed: #excessSignals) = 0]! !
+	self assert: 0 equals: (s instVarNamed: #excessSignals)! !
+
+!SemaphoreTest methodsFor: 'testing' stamp: 'jar 1/30/2023 11:14:02'!
+testSemaInCriticalWait2
+	"This tests whether a semaphore that has entered the wait in Semaphore>>critical:
+	leaves it without signaling the associated semaphore."
+	| s p beenHere |
+	s _ Semaphore new. beenHere _ false.
+	p _ [s critical: [beenHere _ true]] newProcess.
+	p resume.
+	Processor yield.
+	self assert: s equals: p suspendingList.
+	p terminate.
+	self assert: 0 equals: (s instVarNamed: #excessSignals).
+	self deny: beenHere! !
+
+!SemaphoreTest methodsFor: 'testing' stamp: 'jar 1/30/2023 11:12:55'!
+testSemaInCriticalWaitInEnsure
+	"This tests whether a semaphore that has entered the wait in Semaphore>>critical:
+	leaves it without signaling the associated semaphore."
+	| s p |
+	s _ Semaphore new.
+	p _ [[] ensure: [s critical: []]] newProcess.
+	p resume.
+	Processor yield.
+	self assert: s equals: p suspendingList.
+	p terminate.
+	self assert: 0 equals: (s instVarNamed: #excessSignals)! !
+
+!SemaphoreTest methodsFor: 'testing' stamp: 'jar 1/30/2023 11:14:34'!
+testSemaInCriticalWaitInEnsure2
+	"This tests whether a semaphore that has entered the wait in Semaphore>>critical:
+	leaves it without signaling the associated semaphore."
+	| s p beenHere |
+	s _ Semaphore new. beenHere _ false.
+	p _ [[] ensure: [s critical: [beenHere _ true]]] newProcess.
+	p resume.
+	Processor yield.
+	self assert: s equals: p suspendingList.
+	p terminate.
+	self assert: 0 equals: (s instVarNamed: #excessSignals).
+	self deny: beenHere! !
 
 !SemaphoreTest methodsFor: 'testing' stamp: 'jar 1/21/2023 20:55:46'!
 testSuspendAndResume
@@ -13290,18 +13349,6 @@ testSuspendAndResume
 	hence when resumed p simply proceeds"
 	Processor yield.
 	self assert: p isTerminated! !
-
-!SemaphoreTest methodsFor: 'testing' stamp: 'jar 1/19/2023 19:33:10'!
-testUnwindSemaInCriticalWait	
-	"Test whether a process that has entered the wait in Semaphore>>critical:
-	leaves it without signaling the associated semaphore."	
-	| s p |
-	s _ Semaphore new.
-	p _ [[] ensure: [s critical:[]]] newProcess.
-	p resume. Processor yield.
-	self assert: p suspendingList == s.
-	p terminate.
-	self assert: 0 equals: (s instVarNamed: #excessSignals)! !
 
 !SemaphoreTest methodsFor: 'testing' stamp: 'jmv 11/4/2011 22:12'!
 testWaitAndWaitTimeoutTogether
