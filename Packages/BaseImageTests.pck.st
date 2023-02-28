@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5667] on 24 February 2023 at 7:41:20 am'!
+'From Cuis 6.0 [latest update: #5668] on 28 February 2023 at 12:07:01 pm'!
 'Description Inline temp new test'!
-!provides: 'BaseImageTests' 1 333!
+!provides: 'BaseImageTests' 1 334!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Objects'!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Classes'!
@@ -4146,7 +4146,7 @@ testNaNPropagationBinary
 					c _ [ op1 perform: sel with: op2 ] on: Error do: [ #error ].
 					self assert: (c isNumber not or: [c isNaN]) ]]]].! !
 
-!FloatTest methodsFor: 'tests - NaN behavior' stamp: 'jmv 8/1/2019 18:39:54'!
+!FloatTest methodsFor: 'tests - NaN behavior' stamp: 'jmv 2/28/2023 12:06:10'!
 testNaNPropagationUnary
 	"Any operation should propagate NaN"
 	| s a c |
@@ -4156,7 +4156,7 @@ testNaNPropagationUnary
 	s addAll: BoxedFloat64 selectors.
 	s addAll: SmallFloat64 selectors.
 	s _ s select: [ :sel | sel numArgs = 0 ].
-	s removeAll: #(#asIEEE32BitWord #byteSize #hash #identityHash #mantissaBits #signBit #smoothStep #exponentBits #imaginary #exponent primTestExponent).
+	s removeAll: #(#asIEEE32BitWord #byteSize #hash #identityHash #mantissaBits #signBit #exponentBits #exponent primTestExponent #fractionPart).
 	a _ s asArray sort.
 	a do: [ :sel |
 		c _ [ Float nan perform: sel ] on: Error do: [ #error ].
