@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5668] on 28 February 2023 at 12:07:01 pm'!
+'From Cuis 6.0 [latest update: #5670] on 28 February 2023 at 1:13:42 pm'!
 'Description Inline temp new test'!
-!provides: 'BaseImageTests' 1 334!
+!provides: 'BaseImageTests' 1 335!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Objects'!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Classes'!
@@ -12891,6 +12891,23 @@ testTerminateWithDelayInUnwind
 	Processor yield.
 	self assert: p isSuspended.
 	p terminate.
+	self assert: p isTerminated! !
+
+!ProcessTest methodsFor: 'tests' stamp: 'jar 2/6/2023 00:19:12'!
+testTerminateWithNiledUnwindBlock
+	"Test termination of a process containing an unwind block equal to nil.
+	
+	Workspace example:
+	p := [[Processor activeProcess suspend] ensure: nil] fork.
+	[p terminate] fork
+	"
+	
+	| p |
+	p _ [[Semaphore new wait] ensure: nil] newProcess.
+	p priority: Processor activePriority + 1.
+	p resume.
+	self assert: p isBlocked.
+	[p terminate] forkAt: Processor activePriority + 1.
 	self assert: p isTerminated! !
 
 !ProcessTest methodsFor: 'tests' stamp: 'jmv 7/1/2022 19:56:26'!
