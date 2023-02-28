@@ -1,16 +1,16 @@
-'From Cuis 5.0 [latest update: #4140] on 8 May 2020 at 3:32:04 pm'!
+'From Cuis 6.0 [latest update: #5668] on 28 February 2023 at 11:46:27 am'!
 'Description '!
-!provides: 'Complex' 1 7!
-SystemOrganization addCategory: #Complex!
+!provides: 'Complex' 1 8!
+SystemOrganization addCategory: 'Complex'!
 
 
-!classDefinition: #Complex category: #Complex!
+!classDefinition: #Complex category: 'Complex'!
 Object subclass: #Complex
 	instanceVariableNames: 'real imaginary'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Complex'!
-!classDefinition: 'Complex class' category: #Complex!
+!classDefinition: 'Complex class' category: 'Complex'!
 Complex class
 	instanceVariableNames: ''!
 
@@ -676,10 +676,13 @@ new
 one
 	^ self real: 1 imaginary: 0! !
 
-!Complex class methodsFor: 'instance creation' stamp: 'jmv 5/6/2020 16:32:23'!
+!Complex class methodsFor: 'instance creation' stamp: 'jmv 2/28/2023 11:37:34'!
 real: realPart imaginary: imaginaryPart
 
 	"This implementation allows reducing Complex to Integer or Fraction, avoiding instances of Complex where the imaginary part is zero. It is currently disabled."
+	"Given that in Math, Complex is an extension of Real (and not of Integer or Rational), consistency with Floats is most important. And Floats don't reduce to Integer (it would be a huge mistake to do that). That's why this code would only go back if the imaginary part is not Float: doing it for Complex with Float parts would be the same as converting 0.0 to 0.
+	doing it differently for Complex with Float parts than Complex with Integer parts only would not be simpler. It would be more complicated, and need this extra explanation to make sense.
+	Hence, this code is disabled. Instances of Complex are not reduced to Number."
 	"
 	^ (imaginaryPart isFloat not and: [ imaginaryPart isZero ])
 		ifTrue: [ realPart ]
@@ -687,7 +690,7 @@ real: realPart imaginary: imaginaryPart
 	"
 
 	"We allow for instances of Complex that actually just real numbers"
-	^ self basicReal: realPart imaginary: imaginaryPart! !
+	^ self basicReal: realPart imaginary: imaginaryPart.! !
 
 !Complex class methodsFor: 'instance creation' stamp: 'nice 9/18/2008 22:50'!
 zero
@@ -701,15 +704,84 @@ infinity
 nan
 	^ (1 + 1 i) * Float nan! !
 
+!Number methodsFor: '*Complex' stamp: 'jmv 2/28/2023 11:44:03'!
+arg
+	"Answer the argument of the receiver (see Complex | arg).
+	Note: #argument and #phase assume the convention of 0+0i having argument=0"
+	
+	self isZero ifTrue: [self error: 'Zero (0 + 0 i) does not have an argument.'].
+	^self < 0
+		ifFalse: [0]
+		ifTrue: [Float pi]! !
+
+!Number methodsFor: '*Complex' stamp: 'jmv 2/28/2023 11:44:12'!
+argument
+	"Compatibility with Complex numbers.
+	Answer the argument of the receiver (see Complex | argument).
+	Answer is in (-Pi .. +Pi]
+	Note: Assume the convention of 0+0i having argument=0"
+
+	^self < 0
+		ifFalse: [0]
+		ifTrue: [Float pi]! !
+
 !Number methodsFor: '*Complex' stamp: 'jmv 5/20/2018 20:33:20'!
 asComplex
 	"Answer a Complex number that represents value of the the receiver."
 
 	^ Complex basicReal: self imaginary: 0! !
 
+!Number methodsFor: '*Complex' stamp: 'jmv 2/28/2023 11:32:36'!
+complexConjugate
+	"Return the complex conjugate of this complex number."
+
+	^self! !
+
 !Number methodsFor: '*Complex' stamp: 'mk 10/27/2003 18:17'!
 i
 	^ Complex real: 0 imaginary: self! !
+
+!Number methodsFor: '*Complex' stamp: 'jmv 2/28/2023 11:44:56'!
+imaginary
+	"Compatibility with Complex numbers"
+	^ 0! !
+
+!Number methodsFor: '*Complex' stamp: 'jmv 2/28/2023 11:45:00'!
+magnitude
+	"Compatibility with Complex numbers"
+	^self abs! !
+
+!Number methodsFor: '*Complex' stamp: 'jmv 2/28/2023 11:44:52'!
+phase
+	"Compatibility with Complex numbers.
+	Answer the argument of the receiver.
+	Answer is in (-Pi .. +Pi]
+	Note: Assume the convention of 0+0i having argument=0"
+
+	^ self argument! !
+
+!Number methodsFor: '*Complex' stamp: 'jmv 2/28/2023 11:45:04'!
+real
+	"Compatibility with Complex numbers"
+	^ self! !
+
+!Number methodsFor: '*Complex' stamp: 'jmv 2/28/2023 11:32:12'!
+squaredNorm
+	"Answer the square of receiver norm."
+
+	^self squared! !
+
+!BoxedFloat64 methodsFor: '*Complex' stamp: 'jmv 2/28/2023 11:43:51'!
+arg
+	"Compatibility with Complex numbers."
+	self isNaN ifTrue: [^self].
+	^super arg! !
+
+!BoxedFloat64 methodsFor: '*Complex' stamp: 'jmv 2/28/2023 11:44:22'!
+argument
+	"Compatibility with Complex numbers."
+	self isNaN ifTrue: [^self].
+	^super argument! !
 
 !NegativePowerError methodsFor: '*Complex' stamp: 'jmv 6/25/2019 18:53:10'!
 defaultAction
