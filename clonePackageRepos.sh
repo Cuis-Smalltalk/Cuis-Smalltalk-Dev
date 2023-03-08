@@ -21,3 +21,4 @@ git clone https://github.com/Cuis-Smalltalk/firmata.git
 git clone https://github.com/Cuis-Smalltalk/VMMaker.git
 git clone https://github.com/Cuis-Smalltalk/Learning-Cuis.git
 git clone https://github.com/Cuis-Smalltalk/TheCuisBook.git
+git clone https://github.com/Cuis-Smalltalk/AnimatedGIF.git
