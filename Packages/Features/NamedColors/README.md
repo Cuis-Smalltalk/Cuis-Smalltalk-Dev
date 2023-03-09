@@ -1,6 +1,6 @@
 Cuis-NamedColors
 ================
-Tested in Cuis 4.2 rev 3319
+Tested in Cuis 6.0 rev 5671
 
 Packages extend Color class to support choice of color naming "standards".
 
@@ -12,7 +12,7 @@ Each package loads one color dictionary.
 	CSS2-ColorNames.pck.st		-- W3C Standard
 	CSS3-ColorNames.pck.st		-- W3C Standard
 	
-To use these packages use Cuise version 4.2 or higher.
+To use these packages use Cuise version 6.0 or higher.
 ````Smalltalk
 	Feature require: 'Color-Extras'. "in Cuis-Smalltalk-Dev/Packages"
 	Feature require: 'XKCD-NamedColors'.
@@ -36,17 +36,18 @@ To set the Color name->color dictionary to the dictionary of your choice:
 ````
 Likewise for other dictionaries.  Look in Color>><NAME>ColorDictionary
 
-If you load Morphic-Misc1, there is an ImagePallet.
+If you load UI-Tools, there is an Color Palette
 ````Smalltalk
- 	Feature require: #'Morphic-Misc1'.
-	ImagePallet useCSS3ColorDict.  
-	ImagePallet useCrayonColorDict.
-	ImagePallet useXKCDColorDict.  
-	ImagePallet namedColors.
+	Feature require: 'UI-Tools'.
+	ImagePickerPanel useCSS3ColorDict.   
+	ImagePickerPanel namedColors openInWorld.
 ````
-You can then select a morph to get its halo handles, open a menu, select Show DropTarget for Me.
-Then click on a color from the color pallet and drop it on the drop target to change its target morph's color.
-Where there is more than one color selectior, you can choose (e.g. #color:).
+
+You can then select a morph to get its halo handles, 
+open a menu, 
+click on the push-pin to keep the menu around, 
+and drag a color from the palette onto a color menu item 
+(e.g. Color or BorderColor) to change its color.
 
 
 Using Color>>setColorNamesDict: you can make and use your own dictionaries of color names.
