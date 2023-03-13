@@ -746,11 +746,6 @@ imaginary
 	"Compatibility with Complex numbers"
 	^ 0! !
 
-!Number methodsFor: '*Complex' stamp: 'jmv 2/28/2023 11:45:00'!
-magnitude
-	"Compatibility with Complex numbers"
-	^self abs! !
-
 !Number methodsFor: '*Complex' stamp: 'jmv 2/28/2023 11:44:52'!
 phase
 	"Compatibility with Complex numbers.
