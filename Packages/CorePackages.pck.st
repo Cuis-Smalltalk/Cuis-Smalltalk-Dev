@@ -21,7 +21,6 @@
 !requires: 'Tests-Cryptography-DigitalSignatures' 1 0 nil!
 !requires: 'Tests-Identities-UUID' 1 0 nil!
 !requires: 'Tests-JSON' 1 0 nil!
-!requires: 'Tests-WebClient-SqueakSSL' 1 0 nil!
 !requires: 'Tests-WebClient' 1 0 nil!
 !requires: 'Tests-YAXO' 1 0 nil!
 !requires: 'Wallpaper' 1 0 nil!
