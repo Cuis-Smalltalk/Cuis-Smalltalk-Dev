@@ -9,7 +9,7 @@ echo "Installing VM $VM_VERSION for $RUNNER_OS"
 installVmLinux() {
   sudo apt-get update
   sudo apt-get install pulseaudio
-  VM_FILENAME="squeak.cog.spur_linux64x64_itimer_$VM_VERSION"
+  VM_FILENAME="squeak.cog.spur_linux64x64_itimer"
 
   wget "$BASE_VM_DOWNLOAD_PATH/$VM_FILENAME.tar.gz"
   tar -xvzf "$VM_FILENAME.tar.gz"
@@ -17,7 +17,7 @@ installVmLinux() {
 }
 
 installVmMacOS() {
-  VM_FILENAME="squeak.cog.spur_macos64x64_$VM_VERSION"
+  VM_FILENAME="squeak.cog.spur_macos64x64"
 
   wget "$BASE_VM_DOWNLOAD_PATH/$VM_FILENAME.dmg"
   sudo hdiutil attach "$VM_FILENAME.dmg"
