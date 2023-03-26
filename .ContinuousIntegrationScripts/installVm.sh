@@ -13,7 +13,7 @@ installVmLinux() {
 
   wget "$BASE_VM_DOWNLOAD_PATH/$VM_FILENAME.tar.gz"
   tar -xvzf "$VM_FILENAME.tar.gz"
-  sqcogspur64linux/bin/squeak --version
+  sqcogspur64linux/squeak --version
 }
 
 installVmMacOS() {
