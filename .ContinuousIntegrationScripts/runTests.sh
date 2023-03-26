@@ -6,7 +6,7 @@ IMAGE_FILE="$(ls | grep 'Cuis6.0-[0-9]\+.image')"
 RUN_TESTS_SCRIPT_FILEPATH=".ContinuousIntegrationScripts/runTests.st"
 
 runTestsOnLinux() {
-  /home/runner/work/Cuis-Smalltalk-Dev/Cuis-Smalltalk-Dev/sqcogspur64linux/bin/squeak -vm-display-null "$IMAGE_FILE" -s "$RUN_TESTS_SCRIPT_FILEPATH"
+  /home/runner/work/Cuis-Smalltalk-Dev/Cuis-Smalltalk-Dev/sqcogspur64linux/squeak -vm-display-null "$IMAGE_FILE" -s "$RUN_TESTS_SCRIPT_FILEPATH"
 }
 
 runTestsOnMacOS() {
