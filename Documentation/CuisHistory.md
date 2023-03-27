@@ -74,3 +74,6 @@ The hierarchy of fundamentel Morph classes was reorganized, to make it more mean
 
 ## 2022-05-10 - Unicode ##
 Unicode support in Text Editors, Files and Smalltalk selectors and variables. https://lists.cuis.st/mailman/archives/cuis-dev/2022-May/005654.html . Now, after selecting 'Preferences / Use Unicode text', the full range of Unicode characters can be used anywhere, and files are saved in Utf-8 format, including Smalltalk code.
+
+## 2022-11-09 - Unicode by default ##
+All code files are UTF-8. All Strings and code in the image can hold Unicode. All text is rasterized by our Vector Graphics engine from TrueType font definitions.

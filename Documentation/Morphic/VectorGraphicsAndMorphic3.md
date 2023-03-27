@@ -4,6 +4,8 @@ One of the original goals of the Cuis project was to enable the evolution of the
 
 ## Current status
 
+The text that follows is outdated. VectorGraphics is enabled by default! This text will be updated.
+
 By default, Cuis still uses BitBltCanvas and BitBltEngine, and the only geometric transformation supported is MorphicTranslation.
 
 But the Cuis repo includes VectorGraphics.pck.st. This includes VectorCanvas and VectorEngine. So, with an updated Cuis setup do:
