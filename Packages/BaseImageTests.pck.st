@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5670] on 28 February 2023 at 1:13:42 pm'!
+'From Cuis 6.0 [latest update: #5733] on 29 March 2023 at 12:40:49 pm'!
 'Description Inline temp new test'!
-!provides: 'BaseImageTests' 1 335!
+!provides: 'BaseImageTests' 1 336!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Objects'!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Classes'!
@@ -11369,27 +11369,27 @@ test4BTerminate
 	self assert: a first & a second & a third.
 	self deny: a fourth.! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/29/2021 13:15:59'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 3/29/2023 12:40:11'!
 test4CResume
 	"Resume runnable process.
 	Test all nested unwind blocks are correctly unwound; 
 	all unwind blocks halfway 	through their execution should be completed."
 
 	| p a |
-	a _ Array new: 4 withAll: false.
+	a := Array new: 4 withAll: false.
 	p := [
 			self aux4C: a
 		] newProcess.
 	p resume.
 	Processor yield.
 	"make sure p is runnable and none of the unwind blocks has finished yet"
-	self assert: p isReady.
-	a noneSatisfy: [ :b | b ].
+	self assert: p isReady description: 'Aux process should have yielded and become ready'.
+	self assert: (a noneSatisfy: [ :b | b ]) description: 'Aux process should have yielded before modifying state'.
 	"now let the process run and make sure all unwind blocks have finished"
 	[ p isReady ] whileTrue: [ Processor yield ].
-	self assert: p isTerminated.
-	self assert: a first & a second & a third.
-	self deny: a fourth.! !
+	self assert: p isTerminated description: 'Aux process should have finished running'.
+	self assert: a first & a second & a third description: 'Array with wrong contents: ', a printString.
+	self deny: a fourth description: 'Last element should have not been updated'.! !
 
 !ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/29/2021 11:21:49'!
 test4CTerminate
