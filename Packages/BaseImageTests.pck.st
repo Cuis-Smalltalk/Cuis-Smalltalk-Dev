@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5753] on 4 April 2023 at 5:05:43 pm'!
+'From Cuis 6.0 [latest update: #5755] on 7 April 2023 at 10:47:17 am'!
 'Description Inline temp new test'!
-!provides: 'BaseImageTests' 1 339!
+!provides: 'BaseImageTests' 1 340!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Objects'!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Classes'!
@@ -10752,7 +10752,7 @@ testUnwindFromForeignProcess
 	self shouldnt: [process terminate] raise: BlockCannotReturn.
 	self assert: sema isSignaled! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/4/2023 16:16:58'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/7/2023 10:36:45'!
 test1AResume
 	"Resume suspended process.
 	Test all nested unwind blocks are correctly unwound; 
@@ -10767,7 +10767,7 @@ test1AResume
 	p resume.
 	"Usually #resume returns before actually resuming the process.
 	But sometimes it may have actually activated it."
-	s first ifFalse: [
+	[s first] whileFalse: [
 		Processor yield ].
 	"make sure p is suspended and none of the unwind blocks has finished yet"
 	self assert: p isSuspended description: 'assert #1 failed'.
@@ -10779,7 +10779,7 @@ test1AResume
 	self assert: a first & a third & a fourth description: 'assert #4 failed'.
 	self deny: a second description: 'assert #5 failed'.! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/4/2023 16:17:04'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/7/2023 10:37:00'!
 test1ATerminate
 	"Terminate suspended process.
 	Test all nested unwind blocks are correctly unwound; 
@@ -10794,7 +10794,7 @@ test1ATerminate
 	p resume.
 	"Usually #resume returns before actually resuming the process.
 	But sometimes it may have actually activated it."
-	s first ifFalse: [
+	[s first] whileFalse: [
 		Processor yield ].
 	"make sure p is suspended and none of the unwind blocks has finished yet"
 	self assert: p isSuspended description: 'assert #1 failed'.
@@ -10805,7 +10805,7 @@ test1ATerminate
 	self assert: a first & a third description: 'assert #4 failed'.
 	self deny: a second | a fourth description: 'assert #5 failed'.! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/4/2023 16:17:38'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/7/2023 10:37:10'!
 test1BResume
 	"Resume suspended process.
 	Test all nested unwind blocks are correctly unwound; 
@@ -10820,7 +10820,7 @@ test1BResume
 	p resume.
 	"Usually #resume returns before actually resuming the process.
 	But sometimes it may have actually activated it."
-	s first ifFalse: [
+	[s first] whileFalse: [
 		Processor yield ].
 	"make sure p is suspended and none of the unwind blocks has finished yet"
 	self assert: p isSuspended description: 'assert #1 failed'.
@@ -10831,7 +10831,7 @@ test1BResume
 	self assert: p isTerminated description: 'assert #3 failed'.
 	self assert: a first & a second & a third & a fourth description: 'assert #4 failed'.! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/4/2023 16:18:18'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/7/2023 10:37:16'!
 test1BTerminate
 	"Terminate suspended process.
 	Test all nested unwind blocks are correctly unwound; 
@@ -10846,7 +10846,7 @@ test1BTerminate
 	p resume.
 	"Usually #resume returns before actually resuming the process.
 	But sometimes it may have actually activated it."
-	s first ifFalse: [
+	[s first] whileFalse: [
 		Processor yield ].
 	"make sure p is suspended and none of the unwind blocks has finished yet"
 	self assert: p isSuspended description: 'assert #1 failed'.
@@ -10857,7 +10857,7 @@ test1BTerminate
 	self assert: a first & a second & a third description: 'assert #4 failed'.
 	self deny: a fourth description: 'assert #5 failed'.! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/4/2023 16:18:43'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/7/2023 10:37:22'!
 test1CResume
 	"Resume suspended process.
 	Test all nested unwind blocks are correctly unwound; 
@@ -10872,7 +10872,7 @@ test1CResume
 	p resume.
 	"Usually #resume returns before actually resuming the process.
 	But sometimes it may have actually activated it."
-	s first ifFalse: [
+	[s first] whileFalse: [
 		Processor yield ].
 	"make sure p is suspended and none of the unwind blocks has finished yet"
 	self assert: p isSuspended description: 'assert #1 failed'.
@@ -10884,7 +10884,7 @@ test1CResume
 	self assert: a first & a second & a third description: 'assert #4 failed'.
 	self deny: a fourth description: 'assert #5 failed'.! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/4/2023 16:19:03'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/7/2023 10:37:29'!
 test1CTerminate
 	"Terminate suspended process.
 	Test all nested unwind blocks are correctly unwound; 
@@ -10899,7 +10899,7 @@ test1CTerminate
 	p resume.
 	"Usually #resume returns before actually resuming the process.
 	But sometimes it may have actually activated it."
-	s first ifFalse: [
+	[s first] whileFalse: [
 		Processor yield ].
 	"make sure p is suspended and none of the unwind blocks has finished yet"
 	self assert: p isSuspended description: 'assert #1 failed'.
@@ -10910,7 +10910,7 @@ test1CTerminate
 	self assert: a first & a second & a third description: 'assert #4 failed'.
 	self deny: a fourth description: 'assert #5 failed'.! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/4/2023 16:19:19'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/7/2023 10:37:34'!
 test1DResume
 	"Resume suspended process.
 	Test all nested unwind blocks are correctly unwound; 
@@ -10925,7 +10925,7 @@ test1DResume
 	p resume.
 	"Usually #resume returns before actually resuming the process.
 	But sometimes it may have actually activated it."
-	s first ifFalse: [
+	[s first] whileFalse: [
 		Processor yield ].
 	"make sure p is suspended and none of the unwind blocks has finished yet"
 	self assert: p isSuspended description: 'assert #1 failed'.
@@ -10936,7 +10936,7 @@ test1DResume
 	self assert: p isTerminated description: 'assert #3 failed'.
 	self assert: a first & a second & a third & a fourth description: 'assert #4 failed'.! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/4/2023 16:19:38'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/7/2023 10:37:39'!
 test1DTerminate
 	"Terminate suspended process.
 	Test all nested unwind blocks are correctly unwound; 
@@ -10951,7 +10951,7 @@ test1DTerminate
 	p resume.
 	"Usually #resume returns before actually resuming the process.
 	But sometimes it may have actually activated it."
-	s first ifFalse: [
+	[s first] whileFalse: [
 		Processor yield ].
 	"make sure p is suspended and none of the unwind blocks has finished yet"
 	self assert: p isSuspended description: 'assert #1 failed'.
@@ -10962,7 +10962,7 @@ test1DTerminate
 	self assert: a first & a second & a third description: 'assert #4 failed'.
 	self deny: a fourth description: 'assert #5 failed'.! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/4/2023 16:19:55'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/7/2023 10:37:45'!
 test2AResume
 	"Resume suspended process.
 	Test all nested unwind blocks are correctly unwound; 
@@ -10977,7 +10977,7 @@ test2AResume
 	p resume.
 	"Usually #resume returns before actually resuming the process.
 	But sometimes it may have actually activated it."
-	s first ifFalse: [
+	[s first] whileFalse: [
 		Processor yield ].
 	"make sure p is suspended and none of the unwind blocks has finished yet"
 	self assert: p isSuspended description: 'assert #1 failed'.
@@ -10989,7 +10989,7 @@ test2AResume
 	self assert: a first & a third & a fourth description: 'assert #4 failed'.
 	self deny: a second description: 'assert #5 failed'.! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/4/2023 16:20:10'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/7/2023 10:37:51'!
 test2ATerminate
 	"Terminate suspended process.
 	Test all nested unwind blocks are correctly unwound; 
@@ -11004,7 +11004,7 @@ test2ATerminate
 	p resume.
 	"Usually #resume returns before actually resuming the process.
 	But sometimes it may have actually activated it."
-	s first ifFalse: [
+	[s first] whileFalse: [
 		Processor yield ].
 	"make sure p is suspended and none of the unwind blocks has finished yet"
 	self assert: p isSuspended description: 'assert #1 failed'.
@@ -11015,7 +11015,7 @@ test2ATerminate
 	self assert: a first & a third description: 'assert #4 failed'.
 	self deny: a second | a fourth description: 'assert #5 failed'.! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/4/2023 16:20:27'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/7/2023 10:37:55'!
 test2BResume
 	"Resume suspended process.
 	Test all nested unwind blocks are correctly unwound; 
@@ -11030,7 +11030,7 @@ test2BResume
 	p resume.
 	"Usually #resume returns before actually resuming the process.
 	But sometimes it may have actually activated it."
-	s first ifFalse: [
+	[s first] whileFalse: [
 		Processor yield ].
 	"make sure p is suspended and none of the unwind blocks has finished yet"
 	self assert: p isSuspended description: 'assert #1 failed'.
@@ -11041,7 +11041,7 @@ test2BResume
 	self assert: p isTerminated description: 'assert #3 failed'.
 	self assert: a first & a second & a third & a fourth description: 'assert #4 failed'.! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/4/2023 16:20:43'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/7/2023 10:38:00'!
 test2BTerminate
 	"Terminate suspended process.
 	Test all nested unwind blocks are correctly unwound; 
@@ -11056,7 +11056,7 @@ test2BTerminate
 	p resume.
 	"Usually #resume returns before actually resuming the process.
 	But sometimes it may have actually activated it."
-	s first ifFalse: [
+	[s first] whileFalse: [
 		Processor yield ].
 	"make sure p is suspended and none of the unwind blocks has finished yet"
 	self assert: p isSuspended description: 'assert #1 failed'.
@@ -11067,7 +11067,7 @@ test2BTerminate
 	self assert: a first & a second & a third description: 'assert #4 failed'.
 	self deny: a fourth description: 'assert #5 failed'.! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/4/2023 16:20:57'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/7/2023 10:38:05'!
 test2CResume
 	"Resume suspended process.
 	Test all nested unwind blocks are correctly unwound; 
@@ -11082,7 +11082,7 @@ test2CResume
 	p resume.
 	"Usually #resume returns before actually resuming the process.
 	But sometimes it may have actually activated it."
-	s first ifFalse: [
+	[s first] whileFalse: [
 		Processor yield ].
 	"make sure p is suspended and none of the unwind blocks has finished yet"
 	self assert: p isSuspended description: 'assert #1 failed'.
@@ -11094,7 +11094,7 @@ test2CResume
 	self assert: a first & a second & a third description: 'assert #4 failed'.
 	self deny: a fourth description: 'assert #5 failed'.! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/4/2023 16:21:33'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/7/2023 10:38:10'!
 test2CTerminate
 	"Terminate suspended process.
 	Test all nested unwind blocks are correctly unwound; 
@@ -11109,7 +11109,7 @@ test2CTerminate
 	p resume.
 	"Usually #resume returns before actually resuming the process.
 	But sometimes it may have actually activated it."
-	s first ifFalse: [
+	[s first] whileFalse: [
 		Processor yield ].
 	"make sure p is suspended and none of the unwind blocks has finished yet"
 	self assert: p isSuspended description: 'assert #1 failed'.
@@ -11120,7 +11120,7 @@ test2CTerminate
 	self assert: a first & a second & a third description: 'assert #4 failed'.
 	self deny: a fourth description: 'assert #5 failed'.! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/4/2023 16:21:48'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/7/2023 10:38:15'!
 test2DResume
 	"Resume suspended process.
 	Test all nested unwind blocks are correctly unwound; 
@@ -11135,7 +11135,7 @@ test2DResume
 	p resume.
 	"Usually #resume returns before actually resuming the process.
 	But sometimes it may have actually activated it."
-	s first ifFalse: [
+	[s first] whileFalse: [
 		Processor yield ].
 	"make sure p is suspended and none of the unwind blocks has finished yet"
 	self assert: p isSuspended description: 'assert #1 failed'.
@@ -11146,7 +11146,7 @@ test2DResume
 	self assert: p isTerminated description: 'assert #3 failed'.
 	self assert: a first & a second & a third & a fourth description: 'assert #4 failed'.! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/4/2023 16:22:03'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/7/2023 10:38:18'!
 test2DTerminate
 	"Terminate suspended process.
 	Test all nested unwind blocks are correctly unwound; 
@@ -11161,7 +11161,7 @@ test2DTerminate
 	p resume.
 	"Usually #resume returns before actually resuming the process.
 	But sometimes it may have actually activated it."
-	s first ifFalse: [
+	[s first] whileFalse: [
 		Processor yield ].
 	"make sure p is suspended and none of the unwind blocks has finished yet"
 	self assert: p isSuspended description: 'assert #1 failed'.
@@ -11172,7 +11172,7 @@ test2DTerminate
 	self assert: a first & a second & a third description: 'assert #4 failed'.
 	self deny: a fourth description: 'assert #5 failed'.! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/4/2023 16:22:52'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/7/2023 10:38:22'!
 test3AResume
 	"Resume runnable process.
 	Test all nested unwind blocks are correctly unwound; 
@@ -11187,7 +11187,7 @@ test3AResume
 	p resume.
 	"Usually #resume returns before actually resuming the process.
 	But sometimes it may have actually activated it."
-	s first ifFalse: [
+	[s first] whileFalse: [
 		Processor yield ].
 	"make sure p is runnable and none of the unwind blocks has finished yet"
 	self assert: p isReady description: 'assert #1 failed'.
@@ -11198,7 +11198,7 @@ test3AResume
 	self assert: a first & a third & a fourth description: 'assert #4 failed'.
 	self deny: a second description: 'assert #5 failed'.! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/4/2023 16:23:08'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/7/2023 10:38:27'!
 test3ATerminate
 	"Terminate runnable process.
 	Test all nested unwind blocks are correctly unwound; 
@@ -11213,7 +11213,7 @@ test3ATerminate
 	p resume.
 	"Usually #resume returns before actually resuming the process.
 	But sometimes it may have actually activated it."
-	s first ifFalse: [
+	[s first] whileFalse: [
 		Processor yield ].
 	"make sure p is runnable and none of the unwind blocks has finished yet"
 	self assert: p isReady description: 'assert #1 failed'.
@@ -11224,7 +11224,7 @@ test3ATerminate
 	self assert: a first & a third description: 'assert #3 failed'.
 	self deny: a second | a fourth description: 'assert #4 failed'.! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/4/2023 16:25:46'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/7/2023 10:38:31'!
 test3BResume
 	"Resume runnable process.
 	Test all nested unwind blocks are correctly unwound; 
@@ -11239,7 +11239,7 @@ test3BResume
 	p resume.
 	"Usually #resume returns before actually resuming the process.
 	But sometimes it may have actually activated it."
-	s first ifFalse: [
+	[s first] whileFalse: [
 		Processor yield ].
 	"make sure p is runnable and none of the unwind blocks has finished yet"
 	self assert: p isReady description: 'assert #1 failed'.
@@ -11249,7 +11249,7 @@ test3BResume
 	self assert: p isTerminated description: 'assert #3 failed'.
 	self assert: a first & a second & a third & a fourth description: 'assert #4 failed'.! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/4/2023 16:26:00'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/7/2023 10:38:35'!
 test3BTerminate
 	"Terminate runnable process.
 	Test all nested unwind blocks are correctly unwound; 
@@ -11264,7 +11264,7 @@ test3BTerminate
 	p resume.
 	"Usually #resume returns before actually resuming the process.
 	But sometimes it may have actually activated it."
-	s first ifFalse: [
+	[s first] whileFalse: [
 		Processor yield ].
 	"make sure p is runnable and none of the unwind blocks has finished yet"
 	self assert: p isReady description: 'assert #1 failed'.
@@ -11275,7 +11275,7 @@ test3BTerminate
 	self assert: a first & a second & a third description: 'assert #4 failed'.
 	self deny: a fourth description: 'assert #5 failed'.! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/4/2023 16:26:16'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/7/2023 10:38:39'!
 test3CResume
 	"Resume runnable process.
 	Test all nested unwind blocks are correctly unwound; 
@@ -11290,7 +11290,7 @@ test3CResume
 	p resume.
 	"Usually #resume returns before actually resuming the process.
 	But sometimes it may have actually activated it."
-	s first ifFalse: [
+	[s first] whileFalse: [
 		Processor yield ].
 	"make sure p is runnable and none of the unwind blocks has finished yet"
 	self assert: p isReady description: 'assert #1 failed'.
@@ -11301,7 +11301,7 @@ test3CResume
 	self assert: a first & a second & a third description: 'assert #4 failed'.
 	self deny: a fourth description: 'assert #5 failed'.! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/4/2023 16:26:34'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/7/2023 10:38:44'!
 test3CTerminate
 	"Terminate runnable process.
 	Test all nested unwind blocks are correctly unwound; 
@@ -11316,7 +11316,7 @@ test3CTerminate
 	p resume.
 	"Usually #resume returns before actually resuming the process.
 	But sometimes it may have actually activated it."
-	s first ifFalse: [
+	[s first] whileFalse: [
 		Processor yield ].
 	"make sure p is runnable and none of the unwind blocks has finished yet"
 	self assert: p isReady description: 'assert #1 failed'.
@@ -11327,7 +11327,7 @@ test3CTerminate
 	self assert: a first & a second & a third description: 'assert #4 failed'.
 	self deny: a fourth description: 'assert #5 failed'.! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/4/2023 16:26:47'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/7/2023 10:38:52'!
 test3DResume
 	"Resume runnable process.
 	Test all nested unwind blocks are correctly unwound; 
@@ -11342,7 +11342,7 @@ test3DResume
 	p resume.
 	"Usually #resume returns before actually resuming the process.
 	But sometimes it may have actually activated it."
-	s first ifFalse: [
+	[s first] whileFalse: [
 		Processor yield ].
 	"make sure p is runnable and none of the unwind blocks has finished yet"
 	self assert: p isReady description: 'assert #1 failed'.
@@ -11352,7 +11352,7 @@ test3DResume
 	self assert: p isTerminated description: 'assert #3 failed'.
 	self assert: a first & a second & a third & a fourth description: 'assert #4 failed'.! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/4/2023 16:27:02'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/7/2023 10:38:58'!
 test3DTerminate
 	"Terminate runnable process.
 	Test all nested unwind blocks are correctly unwound; 
@@ -11367,7 +11367,7 @@ test3DTerminate
 	p resume.
 	"Usually #resume returns before actually resuming the process.
 	But sometimes it may have actually activated it."
-	s first ifFalse: [
+	[s first] whileFalse: [
 		Processor yield ].
 	"make sure p is runnable and none of the unwind blocks has finished yet"
 	self assert: p isReady description: 'assert #1 failed'.
@@ -11378,7 +11378,7 @@ test3DTerminate
 	self assert: a first & a second & a third description: 'assert #4 failed'.
 	self deny: a fourth description: 'assert #5 failed'.! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/4/2023 16:27:26'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/7/2023 10:39:03'!
 test4AResume
 	"Resume runnable process.
 	Test all nested unwind blocks are correctly unwound; 
@@ -11393,7 +11393,7 @@ test4AResume
 	p resume.
 	"Usually #resume returns before actually resuming the process.
 	But sometimes it may have actually activated it."
-	s first ifFalse: [
+	[s first] whileFalse: [
 		Processor yield ].
 	"make sure p is runnable and none of the unwind blocks has finished yet"
 	self assert: p isReady description: 'assert #1 failed'.
@@ -11404,7 +11404,7 @@ test4AResume
 	self assert: a first & a third & a fourth description: 'assert #4 failed'.
 	self deny: a second description: 'assert #5 failed'.! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/4/2023 16:27:40'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/7/2023 10:39:08'!
 test4ATerminate
 	"Terminate runnable process.
 	Test all nested unwind blocks are correctly unwound; 
@@ -11419,7 +11419,7 @@ test4ATerminate
 	p resume.
 	"Usually #resume returns before actually resuming the process.
 	But sometimes it may have actually activated it."
-	s first ifFalse: [
+	[s first] whileFalse: [
 		Processor yield ].
 	"make sure p is runnable and none of the unwind blocks has finished yet"
 	self assert: p isReady description: 'assert #1 failed'.
@@ -11430,7 +11430,7 @@ test4ATerminate
 	self assert: a first & a third description: 'assert #4 failed'.
 	self deny: a second | a fourth description: 'assert #5 failed'.! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/4/2023 16:27:53'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/7/2023 10:39:12'!
 test4BResume
 	"Resume runnable process.
 	Test all nested unwind blocks are correctly unwound; 
@@ -11445,7 +11445,7 @@ test4BResume
 	p resume.
 	"Usually #resume returns before actually resuming the process.
 	But sometimes it may have actually activated it."
-	s first ifFalse: [
+	[s first] whileFalse: [
 		Processor yield ].
 	"make sure p is runnable and none of the unwind blocks has finished yet"
 	self assert: p isReady description: 'assert #1 failed'.
@@ -11455,7 +11455,7 @@ test4BResume
 	self assert: p isTerminated description: 'assert #3 failed'.
 	self assert: a first & a second & a third & a fourth description: 'assert #4 failed'.! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/4/2023 16:28:10'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/7/2023 10:39:17'!
 test4BTerminate
 	"Terminate runnable process.
 	Test all nested unwind blocks are correctly unwound; 
@@ -11470,7 +11470,7 @@ test4BTerminate
 	p resume.
 	"Usually #resume returns before actually resuming the process.
 	But sometimes it may have actually activated it."
-	s first ifFalse: [
+	[s first] whileFalse: [
 		Processor yield ].
 	"make sure p is runnable and none of the unwind blocks has finished yet"
 	self assert: p isReady description: 'assert #1 failed'.
@@ -11481,7 +11481,7 @@ test4BTerminate
 	self assert: a first & a second & a third description: 'assert #4 failed'.
 	self deny: a fourth description: 'assert #5 failed'.! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/4/2023 16:28:23'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/7/2023 10:39:22'!
 test4CResume
 	"Resume runnable process.
 	Test all nested unwind blocks are correctly unwound; 
@@ -11496,7 +11496,7 @@ test4CResume
 	p resume.
 	"Usually #resume returns before actually resuming the process.
 	But sometimes it may have actually activated it."
-	s first ifFalse: [
+	[s first] whileFalse: [
 		Processor yield ].
 	"make sure p is runnable and none of the unwind blocks has finished yet"
 	self assert: p isReady description: 'Aux process should have yielded and become ready'.
@@ -11507,7 +11507,7 @@ test4CResume
 	self assert: a first & a second & a third description: 'Array with wrong contents: ', a printString.
 	self deny: a fourth description: 'Last element should have not been updated'.! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/4/2023 16:28:43'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/7/2023 10:39:27'!
 test4CTerminate
 	"Terminate runnable process.
 	Test all nested unwind blocks are correctly unwound; 
@@ -11522,7 +11522,7 @@ test4CTerminate
 	p resume.
 	"Usually #resume returns before actually resuming the process.
 	But sometimes it may have actually activated it."
-	s first ifFalse: [
+	[s first] whileFalse: [
 		Processor yield ].
 	"make sure p is runnable and none of the unwind blocks has finished yet"
 	self assert: p isReady description: 'assert #1 failed'.
@@ -11533,7 +11533,7 @@ test4CTerminate
 	self assert: a first & a second & a third description: 'assert #4 failed'.
 	self deny: a fourth description: 'assert #5 failed'.! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/4/2023 16:29:06'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/7/2023 10:39:31'!
 test4DResume
 	"Resume runnable process.
 	Test all nested unwind blocks are correctly unwound; 
@@ -11548,7 +11548,7 @@ test4DResume
 	p resume.
 	"Usually #resume returns before actually resuming the process.
 	But sometimes it may have actually activated it."
-	s first ifFalse: [
+	[s first] whileFalse: [
 		Processor yield ].
 	"make sure p is runnable and none of the unwind blocks has finished yet"
 	self assert: p isReady description: 'assert #1 failed'.
@@ -11558,7 +11558,7 @@ test4DResume
 	self assert: p isTerminated description: 'assert #3 failed'.
 	self assert: a first & a second & a third & a fourth description: 'assert #4 failed'.! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/4/2023 16:29:30'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/7/2023 10:45:08'!
 test4DTerminate
 	"Terminate runnable process.
 	Test all nested unwind blocks are correctly unwound; 
@@ -11573,7 +11573,7 @@ test4DTerminate
 	p resume.
 	"Usually #resume returns before actually resuming the process.
 	But sometimes it may have actually activated it."
-	s first ifFalse: [
+	[s first] whileFalse: [
 		Processor yield ].
 	"make sure p is runnable and none of the unwind blocks has finished yet"
 	self assert: p isReady description: 'assert #1 failed'.
@@ -11728,7 +11728,7 @@ test6DTerminate
 	self assert: a first & a second & a third.
 	self deny: a fourth.! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/4/2023 16:37:58'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/7/2023 10:45:13'!
 test7AResume
 	"Terminate blocked process.
 	Test all nested unwind blocks are correctly unwound; 
@@ -11744,7 +11744,7 @@ test7AResume
 	p resume.
 	"Usually #resume returns before actually resuming the process.
 	But sometimes it may have actually activated it."
-	s first ifFalse: [
+	[s first] whileFalse: [
 		Processor yield ].
 	"make sure p is blocked and none of the unwind blocks has finished yet"
 	self assert: p isBlocked description: 'assert #1 failed'.
@@ -11756,7 +11756,7 @@ test7AResume
 	self assert: a first & a third & a fourth description: 'assert #4 failed'.
 	self deny: a second description: 'assert #5 failed'.! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/4/2023 16:38:21'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/7/2023 10:45:17'!
 test7ATerminate
 	"Terminate blocked process.
 	Test all nested unwind blocks are correctly unwound; 
@@ -11772,7 +11772,7 @@ test7ATerminate
 	p resume.
 	"Usually #resume returns before actually resuming the process.
 	But sometimes it may have actually activated it."
-	s first ifFalse: [
+	[s first] whileFalse: [
 		Processor yield ].
 	"make sure p is blocked and none of the unwind blocks has finished yet"
 	self assert: p isBlocked description: 'assert #1 failed'.
@@ -11783,7 +11783,7 @@ test7ATerminate
 	self assert: a first & a third description: 'assert #4 failed'.
 	self deny: a second | a fourth description: 'assert #5 failed'.! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/4/2023 16:38:35'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/7/2023 10:45:21'!
 test7BResume
 	"Terminate blocked process.
 	Test all nested unwind blocks are correctly unwound; 
@@ -11799,7 +11799,7 @@ test7BResume
 	p resume.
 	"Usually #resume returns before actually resuming the process.
 	But sometimes it may have actually activated it."
-	s first ifFalse: [
+	[s first] whileFalse: [
 		Processor yield ].
 	"make sure p is blocked and none of the unwind blocks has finished yet"
 	self assert: p isBlocked description: 'assert #1 failed'.
@@ -11810,7 +11810,7 @@ test7BResume
 	self assert: p isTerminated description: 'assert #3 failed'.
 	self assert: a first & a second & a third & a fourth description: 'assert #4 failed'.! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/4/2023 16:38:52'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/7/2023 10:45:25'!
 test7BTerminate
 	"Terminate blocked process.
 	Test all nested unwind blocks are correctly unwound; 
@@ -11826,7 +11826,7 @@ test7BTerminate
 	p resume.
 	"Usually #resume returns before actually resuming the process.
 	But sometimes it may have actually activated it."
-	s first ifFalse: [
+	[s first] whileFalse: [
 		Processor yield ].
 	"make sure p is blocked and none of the unwind blocks has finished yet"
 	self assert: p isBlocked description: 'assert #1 failed'.
@@ -11837,7 +11837,7 @@ test7BTerminate
 	self assert: a first & a second & a third description: 'assert #4 failed'.
 	self deny: a fourth description: 'assert #5 failed'.! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/4/2023 16:39:12'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/7/2023 10:45:31'!
 test7CResume
 	"Terminate blocked process.
 	Test all nested unwind blocks are correctly unwound; 
@@ -11853,7 +11853,7 @@ test7CResume
 	p resume.
 	"Usually #resume returns before actually resuming the process.
 	But sometimes it may have actually activated it."
-	s first ifFalse: [
+	[s first] whileFalse: [
 		Processor yield ].
 	"make sure p is blocked and none of the unwind blocks has finished yet"
 	self assert: p isBlocked description: 'assert #1 failed'.
@@ -11865,7 +11865,7 @@ test7CResume
 	self assert: a first & a second & a third description: 'assert #4 failed'.
 	self deny: a fourth description: 'assert #5 failed'.! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/4/2023 16:39:51'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/7/2023 10:45:35'!
 test7CTerminate
 	"Terminate blocked process.
 	Test all nested unwind blocks are correctly unwound; 
@@ -11881,7 +11881,7 @@ test7CTerminate
 	p resume.
 	"Usually #resume returns before actually resuming the process.
 	But sometimes it may have actually activated it."
-	s first ifFalse: [
+	[s first] whileFalse: [
 		Processor yield ].
 	"make sure p is blocked and none of the unwind blocks has finished yet"
 	self assert: p isBlocked description: 'assert #1 failed'.
@@ -11892,7 +11892,7 @@ test7CTerminate
 	self assert: a first & a second & a third description: 'assert #4 failed'.
 	self deny: a fourth description: 'assert #5 failed'.! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/4/2023 16:40:06'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/7/2023 10:45:39'!
 test7DResume
 	"Terminate blocked process.
 	Test all nested unwind blocks are correctly unwound; 
@@ -11908,7 +11908,7 @@ test7DResume
 	p resume.
 	"Usually #resume returns before actually resuming the process.
 	But sometimes it may have actually activated it."
-	s first ifFalse: [
+	[s first] whileFalse: [
 		Processor yield ].
 	"make sure p is blocked and none of the unwind blocks has finished yet"
 	self assert: p isBlocked description: 'assert #1 failed'.
@@ -11919,7 +11919,7 @@ test7DResume
 	self assert: p isTerminated description: 'assert #3 failed'.
 	self assert: a first & a second & a third & a fourth description: 'assert #4 failed'.! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/4/2023 16:40:24'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/7/2023 10:45:44'!
 test7DTerminate
 	"Terminate blocked process.
 	Test all nested unwind blocks are correctly unwound; 
@@ -11935,7 +11935,7 @@ test7DTerminate
 	p resume.
 	"Usually #resume returns before actually resuming the process.
 	But sometimes it may have actually activated it."
-	s first ifFalse: [
+	[s first] whileFalse: [
 		Processor yield ].
 	"make sure p is blocked and none of the unwind blocks has finished yet"
 	self assert: p isBlocked description: 'assert #1 failed'.
@@ -11946,7 +11946,7 @@ test7DTerminate
 	self assert: a first & a second & a third description: 'assert #4 failed'.
 	self deny: a fourth description: 'assert #5 failed'.! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/4/2023 16:41:05'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/7/2023 10:45:48'!
 test8AResume
 	"Terminate blocked process.
 	Test all nested unwind blocks are correctly unwound; 
@@ -11962,7 +11962,7 @@ test8AResume
 	p resume.
 	"Usually #resume returns before actually resuming the process.
 	But sometimes it may have actually activated it."
-	s first ifFalse: [
+	[s first] whileFalse: [
 		Processor yield ].
 	"make sure p is blocked and none of the unwind blocks has finished yet"
 	self assert: p isBlocked description: 'assert #1 failed'.
@@ -11974,7 +11974,7 @@ test8AResume
 	self assert: a first & a third & a fourth description: 'assert #4 failed'.
 	self deny: a second description: 'assert #5 failed'.! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/4/2023 16:41:39'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/7/2023 10:45:53'!
 test8ATerminate
 	"Terminate blocked process.
 	Test all nested unwind blocks are correctly unwound; 
@@ -11990,7 +11990,7 @@ test8ATerminate
 	p resume.
 	"Usually #resume returns before actually resuming the process.
 	But sometimes it may have actually activated it."
-	s first ifFalse: [
+	[s first] whileFalse: [
 		Processor yield ].
 	"make sure p is blocked and none of the unwind blocks has finished yet"
 	self assert: p isBlocked description: 'assert #1 failed'.
@@ -12001,7 +12001,7 @@ test8ATerminate
 	self assert: a first & a third description: 'assert #4 failed'.
 	self deny: a second | a fourth description: 'assert #5 failed'.! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/4/2023 16:41:53'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/7/2023 10:45:57'!
 test8BResume
 	"Terminate blocked process.
 	Test all nested unwind blocks are correctly unwound; 
@@ -12017,7 +12017,7 @@ test8BResume
 	p resume.
 	"Usually #resume returns before actually resuming the process.
 	But sometimes it may have actually activated it."
-	s first ifFalse: [
+	[s first] whileFalse: [
 		Processor yield ].
 	"make sure p is blocked and none of the unwind blocks has finished yet"
 	self assert: p isBlocked description: 'assert #1 failed'.
@@ -12028,7 +12028,7 @@ test8BResume
 	self assert: p isTerminated description: 'assert #3 failed'.
 	self assert: a first & a second & a third & a fourth description: 'assert #4 failed'.! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/4/2023 16:42:11'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/7/2023 10:46:01'!
 test8BTerminate
 	"Terminate blocked process.
 	Test all nested unwind blocks are correctly unwound; 
@@ -12044,7 +12044,7 @@ test8BTerminate
 	p resume.
 	"Usually #resume returns before actually resuming the process.
 	But sometimes it may have actually activated it."
-	s first ifFalse: [
+	[s first] whileFalse: [
 		Processor yield ].
 	"make sure p is blocked and none of the unwind blocks has finished yet"
 	self assert: p isBlocked description: 'assert #1 failed'.
@@ -12055,7 +12055,7 @@ test8BTerminate
 	self assert: a first & a second & a third description: 'assert #4 failed'.
 	self deny: a fourth description: 'assert #5 failed'.! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/4/2023 16:42:24'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/7/2023 10:46:05'!
 test8CResume
 	"Terminate blocked process.
 	Test all nested unwind blocks are correctly unwound; 
@@ -12071,7 +12071,7 @@ test8CResume
 	p resume.
 	"Usually #resume returns before actually resuming the process.
 	But sometimes it may have actually activated it."
-	s first ifFalse: [
+	[s first] whileFalse: [
 		Processor yield ].
 	"make sure p is blocked and none of the unwind blocks has finished yet"
 	self assert: p isBlocked description: 'assert #1 failed'.
@@ -12083,7 +12083,7 @@ test8CResume
 	self assert: a first & a second & a third description: 'assert #4 failed'.
 	self deny: a fourth description: 'assert #5 failed'.! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/4/2023 16:42:38'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/7/2023 10:46:09'!
 test8CTerminate
 	"Terminate blocked process.
 	Test all nested unwind blocks are correctly unwound; 
@@ -12099,7 +12099,7 @@ test8CTerminate
 	p resume.
 	"Usually #resume returns before actually resuming the process.
 	But sometimes it may have actually activated it."
-	s first ifFalse: [
+	[s first] whileFalse: [
 		Processor yield ].
 	"make sure p is blocked and none of the unwind blocks has finished yet"
 	self assert: p isBlocked description: 'assert #1 failed'.
@@ -12110,7 +12110,7 @@ test8CTerminate
 	self assert: a first & a second & a third description: 'assert #4 failed'.
 	self deny: a fourth description: 'assert #5 failed'.! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/4/2023 16:42:55'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/7/2023 10:46:13'!
 test8DResume
 	"Terminate blocked process.
 	Test all nested unwind blocks are correctly unwound; 
@@ -12126,7 +12126,7 @@ test8DResume
 	p resume.
 	"Usually #resume returns before actually resuming the process.
 	But sometimes it may have actually activated it."
-	s first ifFalse: [
+	[s first] whileFalse: [
 		Processor yield ].
 	"make sure p is blocked and none of the unwind blocks has finished yet"
 	self assert: p isBlocked description: 'assert #1 failed'.
@@ -12137,7 +12137,7 @@ test8DResume
 	self assert: p isTerminated description: 'assert #3 failed'.
 	self assert: a first & a second & a third & a fourth description: 'assert #4 failed'.! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/4/2023 16:43:10'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/7/2023 10:46:17'!
 test8DTerminate
 	"Terminate blocked process.
 	Test all nested unwind blocks are correctly unwound; 
@@ -12153,7 +12153,7 @@ test8DTerminate
 	p resume.
 	"Usually #resume returns before actually resuming the process.
 	But sometimes it may have actually activated it."
-	s first ifFalse: [
+	[s first] whileFalse: [
 		Processor yield ].
 	"make sure p is blocked and none of the unwind blocks has finished yet"
 	self assert: p isBlocked description: 'assert #1 failed'.
