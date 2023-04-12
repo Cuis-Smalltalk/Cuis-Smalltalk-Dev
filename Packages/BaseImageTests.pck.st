@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5755] on 7 April 2023 at 10:47:17 am'!
+'From Cuis 6.0 [latest update: #5764] on 12 April 2023 at 7:41:28 pm'!
 'Description Inline temp new test'!
-!provides: 'BaseImageTests' 1 340!
+!provides: 'BaseImageTests' 1 341!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Objects'!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Classes'!
@@ -13498,55 +13498,83 @@ testSemaInCriticalEnsureArgument
 	self assert: terminatee isTerminated. 
 	self assert: 1 equals: (sema instVarNamed: #excessSignals)! !
 
-!SemaphoreTest methodsFor: 'testing' stamp: 'jar 1/30/2023 11:12:24'!
+!SemaphoreTest methodsFor: 'testing' stamp: 'jmv 4/12/2023 19:38:41'!
 testSemaInCriticalWait
 	"This tests whether a semaphore that has entered the wait in Semaphore>>critical:
 	leaves it without signaling the associated semaphore."
-	| s p |
-	s _ Semaphore new.
-	p _ [s critical: []] newProcess.
+	| sentinel s p |
+	sentinel := Array with: false.
+	s := Semaphore new.
+	p := [
+		sentinel at: 1 put: true.
+		s critical: []] newProcess.
 	p resume.
-	Processor yield.
+	"Usually #resume returns before actually resuming the process.
+	But sometimes it may have actually activated it.
+	Call #yield the number of times required to get where we need."
+	[sentinel first] whileFalse: [
+		Processor yield ].
 	self assert: s equals: p suspendingList.
 	p terminate.
 	self assert: 0 equals: (s instVarNamed: #excessSignals)! !
 
-!SemaphoreTest methodsFor: 'testing' stamp: 'jar 1/30/2023 11:14:02'!
+!SemaphoreTest methodsFor: 'testing' stamp: 'jmv 4/12/2023 19:39:32'!
 testSemaInCriticalWait2
 	"This tests whether a semaphore that has entered the wait in Semaphore>>critical:
 	leaves it without signaling the associated semaphore."
-	| s p beenHere |
-	s _ Semaphore new. beenHere _ false.
-	p _ [s critical: [beenHere _ true]] newProcess.
+	| sentinel s p beenHere |
+	sentinel := Array with: false.
+	s := Semaphore new. beenHere := false.
+	p := [
+		sentinel at: 1 put: true.
+		s critical: [beenHere := true]] newProcess.
 	p resume.
-	Processor yield.
+	"Usually #resume returns before actually resuming the process.
+	But sometimes it may have actually activated it.
+	Call #yield the number of times required to get where we need."
+	[sentinel first] whileFalse: [
+		Processor yield ].
 	self assert: s equals: p suspendingList.
 	p terminate.
 	self assert: 0 equals: (s instVarNamed: #excessSignals).
 	self deny: beenHere! !
 
-!SemaphoreTest methodsFor: 'testing' stamp: 'jar 1/30/2023 11:12:55'!
+!SemaphoreTest methodsFor: 'testing' stamp: 'jmv 4/12/2023 19:38:37'!
 testSemaInCriticalWaitInEnsure
 	"This tests whether a semaphore that has entered the wait in Semaphore>>critical:
 	leaves it without signaling the associated semaphore."
-	| s p |
-	s _ Semaphore new.
-	p _ [[] ensure: [s critical: []]] newProcess.
+	| sentinel s p |
+	sentinel := Array with: false.
+	s := Semaphore new.
+	p := [[] ensure: [
+			sentinel at: 1 put: true.
+			s critical: []]] newProcess.
 	p resume.
-	Processor yield.
+	"Usually #resume returns before actually resuming the process.
+	But sometimes it may have actually activated it.
+	Call #yield the number of times required to get where we need."
+	[sentinel first] whileFalse: [
+		Processor yield ].
 	self assert: s equals: p suspendingList.
 	p terminate.
 	self assert: 0 equals: (s instVarNamed: #excessSignals)! !
 
-!SemaphoreTest methodsFor: 'testing' stamp: 'jar 1/30/2023 11:14:34'!
+!SemaphoreTest methodsFor: 'testing' stamp: 'jmv 4/12/2023 19:40:03'!
 testSemaInCriticalWaitInEnsure2
 	"This tests whether a semaphore that has entered the wait in Semaphore>>critical:
 	leaves it without signaling the associated semaphore."
-	| s p beenHere |
-	s _ Semaphore new. beenHere _ false.
-	p _ [[] ensure: [s critical: [beenHere _ true]]] newProcess.
+	| sentinel s p beenHere |
+	sentinel := Array with: false.
+	s := Semaphore new. beenHere := false.
+	p := [[] ensure: [
+			sentinel at: 1 put: true.
+			s critical: [beenHere := true]]] newProcess.
 	p resume.
-	Processor yield.
+	"Usually #resume returns before actually resuming the process.
+	But sometimes it may have actually activated it.
+	Call #yield the number of times required to get where we need."
+	[sentinel first] whileFalse: [
+		Processor yield ].
 	self assert: s equals: p suspendingList.
 	p terminate.
 	self assert: 0 equals: (s instVarNamed: #excessSignals).
