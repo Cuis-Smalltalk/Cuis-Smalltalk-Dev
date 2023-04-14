@@ -1,12 +1,9 @@
-'From Cuis 6.0 [latest update: #5642] on 20 January 2023 at 3:45:42 pm'!
-'Description Description - This package is a port and refactoring of WebClient from http://ss3.gemstone.com/ss/WebClient.html with moderate changes by David Graham, Nicola Mingotti and Juan Vuletich.
+'From Cuis 6.0 [latest update: #5766] on 14 April 2023 at 12:58:48 pm'!
+'Description Description - This package is a port and refactoring of WebClient from http://ss3.gemstone.com/ss/WebClient.html with moderate changes by David Graham, Nicola Mingotti, Juan Vuletich and Hernan Wilkinson.
 	- WebClient-Core-ul.100
 	- WebClient-Help-ar.10
-	- WebClient-Tests-topa.48
-- Hernan Wilkinson: 
-  - Added useDebugErrorHandler and debugErrorHandler to be able to debug a http request
-  - Changed exampleDoIt to support Smalltalk expresions in the URL using GET'!
-!provides: 'WebClient' 1 24!
+	- WebClient-Tests-topa.48'!
+!provides: 'WebClient' 1 26!
 !requires: 'Network-Kernel' 1 2 nil!
 !requires: 'Identities-UUID' 1 7 nil!
 !requires: 'Cryptography-DigitalSignatures' 1 7 nil!
@@ -578,7 +575,7 @@ initialize
 	readBuf := ByteArray new: 4096.
 ! !
 
-!SecureSocket methodsFor: 'connect' stamp: 'ar 6/17/2012 11:05'!
+!SecureSocket methodsFor: 'connect' stamp: 'jmv 4/13/2023 15:49:41'!
 sslAccept: certName
 	"Perform the SSL server handshake. This method uses all the common SocketStream methods to adhere to the various timeout/signalling settings of SocketStream. It only installs the SSL instance after the handshake is complete."
 
@@ -594,7 +591,7 @@ sslAccept: certName
 		result := squeakSSL accept: inbuf from: 1 to: inbuf size into: sendBuf.
 
 		"Check for errors first"
-		result < -1 ifTrue:[^self error: 'SSL accept failed with code: ', result].
+		result < -1 ifTrue:[^self error: 'SSL accept failed with code: ', result printString].
 
 		"If a token has been produced in the handshake, send it to the remote"
 		result > 0 ifTrue:[self sendData: (sendBuf copyFrom: 1 to: result)].
@@ -613,7 +610,7 @@ sslConnect
 
 	self sslConnectTo: nil! !
 
-!SecureSocket methodsFor: 'connect' stamp: 'ul 10/15/2014 19:27'!
+!SecureSocket methodsFor: 'connect' stamp: 'jmv 4/13/2023 15:49:46'!
 sslConnectTo: serverName
 	"Perform the SSL client handshake. This method uses all the common SocketStream methods to adhere to the various timeout/signalling settings of SocketStream. It only installs the SSL instance after the handshake is complete. If serverName is not nil, then try to use it for SNI."
 
@@ -625,7 +622,7 @@ sslConnectTo: serverName
 	[[result := squeakSSL connect: inbuf from: 1 to: inbuf size into: sendBuf.
 	result = 0] whileFalse:[
 		"Check for errors first"
-		result < -1 ifTrue:[^self error: 'SSL connect failed with code: ', result].
+		result < -1 ifTrue:[^self error: 'SSL connect failed with code: ', result printString].
 
 		"If a token has been produced in the handshake, send it to the remote"
 		result > 0 ifTrue:[self sendData: (sendBuf copyFrom: 1 to: result)].
@@ -930,7 +927,7 @@ initialize
 	certIssues := 0.
 ! !
 
-!SecureSocketStream methodsFor: 'initialize' stamp: 'ar 11/17/2011 17:10'!
+!SecureSocketStream methodsFor: 'initialize' stamp: 'jmv 4/13/2023 15:49:51'!
 sslAccept: certName
 	"Perform the SSL server handshake. This method uses all the common SocketStream methods to adhere to the various timeout/signalling settings of SocketStream. It only installs the SSL instance after the handshake is complete."
 
@@ -947,7 +944,7 @@ sslAccept: certName
 		result := squeakSSL accept: inbuf from: 1 to: inbuf size into: sendBuf.
 
 		"Check for errors first"
-		result < -1 ifTrue:[^self error: 'SSL accept failed with code: ', result].
+		result < -1 ifTrue:[^self error: 'SSL accept failed with code: ', result printString].
 
 		"If a token has been produced in the handshake, send it to the remote"
 		result > 0 ifTrue:[
@@ -1809,12 +1806,13 @@ initialize
 	debugLog := DebugLog.
 ! !
 
-!WebClient methodsFor: 'initialize' stamp: 'ar 7/25/2010 15:36'!
+!WebClient methodsFor: 'initialize' stamp: 'jmv 4/13/2023 15:19:00'!
 initializeFromUrl: urlString
 	"Initialize the client from a url string"
 
-	| urlStream serverAndPort userAndPass |
-	urlStream := urlString readStream.
+	| percentEscapedUrl urlStream serverAndPort userAndPass |
+	percentEscapedUrl := urlString percentEscapeUrl.
+	urlStream := percentEscapedUrl readStream.
 	scheme := (urlStream upToAll: '://') asLowercase.
 	(scheme = 'http' or:[scheme = 'https'])
 		ifFalse:[self error: 'Unsupported scheme: ', scheme].
@@ -3097,7 +3095,7 @@ getContent
 
 	^self getContentWithProgress: nil! !
 
-!WebMessage methodsFor: 'private' stamp: 'jmv 1/19/2023 14:47:16'!
+!WebMessage methodsFor: 'private' stamp: 'jmv 4/13/2023 21:59:33'!
 getContentWithProgress: progressBlockOrNil
 	"Reads available content and returns it."
 
@@ -3112,7 +3110,7 @@ getContentWithProgress: progressBlockOrNil
 				progress: progressBlockOrNil ]
 		estimatedSize: (length ifNil: [ 1000 ]).
 	(self headerAt: 'content-encoding') = 'gzip' ifFalse: [ ^result ].
-	^UnicodeString fromUtf8Bytes: (GZipReadStream on: result asByteArray) upToEnd! !
+	^UnicodeString fromBytesStream: (GZipReadStream on: result asByteArray)! !
 
 !WebMessage methodsFor: 'testing' stamp: 'pmm 6/19/2010 08:05'!
 isPersistent
@@ -3516,16 +3514,17 @@ initialize
 	protocol := 'HTTP/1.1'.
 	headers := OrderedCollection new.! !
 
-!WebRequest methodsFor: 'initialize' stamp: 'ar 9/4/2010 11:09'!
+!WebRequest methodsFor: 'initialize' stamp: 'jmv 4/13/2023 15:19:08'!
 initializeFromUrl: urlString
 	"Initialize the client from a http url or string"
 
-	| urlStream |
-	urlStream := urlString readStream.
+	| percentEscapedUrl urlStream |
+	percentEscapedUrl := urlString percentEscapeUrl.
+	urlStream := percentEscapedUrl readStream.
 	"Skip past scheme if present"
 	urlStream upToAll: '://'.
 	urlStream atEnd 
-		ifTrue:[rawUrl := urlString]
+		ifTrue:[rawUrl := percentEscapedUrl]
 		ifFalse:[rawUrl := urlStream upTo: $/; upToEnd].
 	(rawUrl beginsWith: '/') ifFalse:[rawUrl := '/', rawUrl].
 ! !
@@ -3611,11 +3610,11 @@ server: aWebServer
 
 	server := aWebServer! !
 
-!WebRequest methodsFor: 'accessing' stamp: 'DSG 5/24/2012 21:18'!
+!WebRequest methodsFor: 'accessing' stamp: 'jmv 4/13/2023 12:21:21'!
 url
 	"The url without fragment or arguments"
 
-	^((rawUrl copyUpTo: $#) copyUpTo: $?) unescapePercents! !
+	^((rawUrl copyUpTo: $#) copyUpTo: $?)! !
 
 !WebRequest methodsFor: 'responses' stamp: 'jmv 5/26/2022 12:07:45'!
 send200Response: aString
@@ -4088,25 +4087,25 @@ addService: entryPoint action: aBlockOrMessage
 		action: aBlockOrMessage 
 		methods: self defaultHttpMethods.! !
 
-!WebServer methodsFor: 'services' stamp: 'ar 5/11/2010 20:10'!
+!WebServer methodsFor: 'services' stamp: 'jmv 4/13/2023 15:21:51'!
 addService: entryPoint action: aBlockOrMessage methods: methods
 	"Add a service to the web server. The service is specified by an entryPoint, 
 	denoting the url under which the service can be requested 
 	(such as /my/great/service) and an action which is a message 
 	send taking a single argument, the WebRequest.
-	
+
 	The list of methods describes what HTTP methods the given url supports."
 
-	mutex critical:[
-		entryPoints at: entryPoint asLowercase put: {methods. aBlockOrMessage}.
+	mutex critical: [
+		entryPoints at: entryPoint percentEscapeUrl asLowercase put: {methods. aBlockOrMessage}.
 	].! !
 
-!WebServer methodsFor: 'services' stamp: 'ar 2/22/2010 02:52'!
+!WebServer methodsFor: 'services' stamp: 'jmv 4/13/2023 15:22:01'!
 removeService: entryPoint 
 	"Remove a service from the HTTP service provider.  See #addService:action:"
 
-	mutex critical:[
-		entryPoints removeKey: entryPoint asLowercase ifAbsent: [].
+	mutex critical: [
+		entryPoints removeKey: entryPoint percentEscapeUrl asLowercase ifAbsent: [].
 	].! !
 
 !WebServer methodsFor: 'handling' stamp: 'ul 7/3/2014 23:56'!
@@ -4134,21 +4133,22 @@ dispatchRequest: request
 
 	^self dispatchRequest: request url: request url! !
 
-!WebServer methodsFor: 'handling' stamp: 'HAW 5/6/2020 09:47:55'!
+!WebServer methodsFor: 'handling' stamp: 'jmv 4/13/2023 15:21:56'!
 dispatchRequest: request url: dispatchUrl
 	"Look up the handler for a given url and dispatch to it"
 
 	| entryUrl action |
+
 	"Handle TRACE requests right away"
-	request method = 'TRACE' ifTrue:[
+	request method = 'TRACE' ifTrue: [
 		^request send200Response: request asString contentType: 'message/http'.
 	].
 
 	"Look up the entry point for the request"
 	action := nil.
-	entryUrl := dispatchUrl asLowercase.
+	entryUrl := dispatchUrl percentEscapeUrl asLowercase.
 	(entryUrl beginsWith: '/') ifFalse:[entryUrl := '/', entryUrl].
-	mutex critical:[
+	mutex critical: [
 		[entryUrl notEmpty and:[action == nil]] whileTrue: [
 			action := entryPoints at: entryUrl ifAbsent:[nil].
 			entryUrl := entryUrl copyUpToLast: $/.
@@ -4157,28 +4157,27 @@ dispatchRequest: request url: dispatchUrl
 	].
 
 	"Handle OPTIONS requests"
-	request method = 'OPTIONS' ifTrue:[
+	request method = 'OPTIONS' ifTrue: [
 		"HEAD, TRACE, and OPTIONS are always supported"
 		request sendOptionsResponse: self builtinHttpMethods,
 			(action ifNil:[self defaultHttpMethods] ifNotNil:[action first])
 	].
 
 	"Handle 404 not found"
-	action ifNil:[^request send404Response].
+	action ifNil: [^request send404Response].
 
 	"Handle 405 method not allowed"
 	(request method = 'HEAD' "builtin" 
-		or:[(action at: 1) includes: request method]) ifFalse:[
+		or: [(action at: 1) includes: request method]) ifFalse:[
 			^request send405Response: self builtinHttpMethods, action first.
 		].
 
 	^[self invokeAction: (action at: 2) request: request] 
 		on: Error 
-		do:[:ex|
+		do: [ :ex|
 			errorHandler 
 				ifNil:[self handleError: ex request: request]
-				ifNotNil:[errorHandler value: ex value: request]].
-! !
+				ifNotNil:[errorHandler value: ex value: request]].! !
 
 !WebServer methodsFor: 'handling' stamp: 'ar 7/29/2010 18:46'!
 handleConnectionFrom: aSocket
@@ -5050,7 +5049,7 @@ exampleSSL: certName
 	server addService: '/' action:[:req| self browseRequest: req].
 ! !
 
-!WebServer class methodsFor: 'examples' stamp: 'ar 2/25/2010 03:28'!
+!WebServer class methodsFor: 'examples' stamp: 'jmv 4/13/2023 15:12:52'!
 exampleSession		"WebServer exampleSession"
 	"This example uses a simple session cookie to avoid 
 	authentication for every request."
@@ -5077,7 +5076,7 @@ exampleSession		"WebServer exampleSession"
 		"Check if we have a valid session cookie. If not redirect to login."
 		(server sessionAt: (req cookieAt: 'session')) notNil
 			ifTrue:[self browseRequest: req]
-			ifFalse:[req send302Response: '/login?url=', req url encodeForHTTP]].
+			ifFalse:[req send302Response: '/login?url=', req url percentEscapeUrlField]].
 ! !
 
 !WebServer class methodsFor: 'accessing' stamp: 'ar 2/23/2010 09:29'!
@@ -5826,7 +5825,7 @@ encodeMultipartForm: fieldMap boundary: boundary
 	].
 ! !
 
-!WebUtils class methodsFor: 'decoding' stamp: 'jmv 5/19/2015 23:52'!
+!WebUtils class methodsFor: 'decoding' stamp: 'jmv 4/13/2023 15:14:07'!
 encodeUrlEncodedForm: fieldMap
 	"Encodes the fieldsMap in the form of var1=val1&var2=val2.
 	The fieldMap can be EITHER an array of associations OR a Dictionary of 
@@ -5837,10 +5836,10 @@ encodeUrlEncodedForm: fieldMap
 	associations := (fieldMap isKindOf: Dictionary) ifTrue:[fieldMap associations] ifFalse:[fieldMap].
 	^String streamContents:[:s|
 		associations do:[:assoc|
-			s nextPutAll: assoc key encodeForHTTP.
+			s nextPutAll: assoc key percentEscapeUrlField.
 			assoc value ifNotNil:[
 				s nextPutAll: '='.
-				s nextPutAll: assoc value asString encodeForHTTP
+				s nextPutAll: assoc value asString percentEscapeUrlField
 			].
 		] separatedBy:[s nextPutAll:'&'].
 	].! !
@@ -5959,7 +5958,7 @@ hmacSha1: message key: signKey
 		(key with: opad collect:[:b1 :b2| b1 bitXor: b2]), 
 		(self sha1Hash: (key with: ipad collect:[:b1 :b2| b1 bitXor: b2]), message)! !
 
-!WebUtils class methodsFor: 'oauth' stamp: 'jmv 6/25/2017 19:16:16'!
+!WebUtils class methodsFor: 'oauth' stamp: 'jmv 4/13/2023 15:14:25'!
 oAuthSign: webRequest url: requestUrl extra: postFields using: params
 	"Sign the given webRequest using the set of oauth parameters provided"
 
@@ -6014,14 +6013,14 @@ oAuthSign: webRequest url: requestUrl extra: postFields using: params
 		normalized do:[:assoc|
 			s nextPutAll: assoc key.
 			s nextPutAll: '='.
-			s nextPutAll: assoc value encodeForHTTP.
+			s nextPutAll: assoc value percentEscapeUrlField.
 		] separatedBy:[s nextPutAll: '&'].
 	].
 
 	baseUrl := (requestUrl copyUpTo: $?) copyUpTo: $#.
 	baseString := webRequest method, 
-		'&', baseUrl encodeForHTTP, 
-		'&',  query encodeForHTTP.
+		'&', baseUrl percentEscapeUrlField, 
+		'&',  query percentEscapeUrlField.
 
 	key := (params at: 'oauth_consumer_secret'), 
 			'&', (params at: 'oauth_token_secret' ifAbsent:['']).
@@ -6037,8 +6036,8 @@ oAuthSign: webRequest url: requestUrl extra: postFields using: params
 		they do NOT go into the OAuth header field."
 		normalized do:[:assoc|
 			(extraKeys includes: assoc key) 
-				ifFalse:[ s nextPutAll: assoc key, '="', assoc value encodeForHTTP, '",']].
-		s nextPutAll: 'oauth_signature="', signature encodeForHTTP, '"'.
+				ifFalse:[ s nextPutAll: assoc key, '="', assoc value percentEscapeUrlField, '",']].
+		s nextPutAll: 'oauth_signature="', signature percentEscapeUrlField, '"'.
 	].
 
 	webRequest headerAt: 'Authorization' put: header.! !
@@ -6408,12 +6407,6 @@ platformName
 
 	^Smalltalk getSystemAttribute: 1001! !
 
-!WebUtils class methodsFor: 'misc' stamp: 'DSG 3/28/2015 19:59'!
-urlEncode: urlString
-	"For backwards compatibility only. Use 'urlString urlEncoded' if you can."
-
-	^urlString encodeForHTTP! !
-
 !WebUtils class methodsFor: 'misc' stamp: 'ar 11/17/2011 10:06'!
 vmVersion	
 	"Return a string identifying the interpreter version"
@@ -6661,7 +6654,7 @@ readHeadersFrom: aStream
 	].
 	^headers! !
 
-!SqueakSSL methodsFor: 'convenience' stamp: 'ar 7/18/2010 20:42'!
+!SqueakSSL methodsFor: 'convenience' stamp: 'jmv 4/13/2023 15:50:00'!
 accept
 	"Convenience API. Perform an SSL server handshake.
 	Raises an error if something goes wrong."
@@ -6678,14 +6671,14 @@ accept
 		result := self accept: inbuf from: 1 to: count into: outbuf.
 
 		"Check for errors first"
-		result < -1 ifTrue:[^self error: 'SSL accept failed with code: ', result].
+		result < -1 ifTrue:[^self error: 'SSL accept failed with code: ', result printString].
 
 		"If a token has been produced in the handshake, send it to the remote"
 		result > 0 ifTrue:[self writeData: outbuf count: result].
 	].
 ! !
 
-!SqueakSSL methodsFor: 'convenience' stamp: 'ar 7/16/2010 23:10'!
+!SqueakSSL methodsFor: 'convenience' stamp: 'jmv 4/13/2023 15:50:14'!
 connect
 	"Convenience API. Perform an SSL client handshake. 
 	Raises an error if something goes wrong."
@@ -6700,7 +6693,7 @@ connect
 	[result := self connect: inbuf from: 1 to: count into: outbuf.
 	result = 0] whileFalse:[
 		"Check for errors first"
-		result < -1 ifTrue:[^self error: 'SSL connect failed with code: ', result].
+		result < -1 ifTrue:[^self error: 'SSL connect failed with code: ', result printString].
 
 		"If a token has been produced in the handshake, send it to the remote"
 		result > 0 ifTrue:[self writeData: outbuf count: result].
@@ -7049,7 +7042,7 @@ writeData: aBuffer count: count
 
 	writeBlock value: aBuffer value: count! !
 
-!SqueakSSL class methodsFor: 'utilities' stamp: 'ar 8/7/2010 12:36'!
+!SqueakSSL class methodsFor: 'utilities' stamp: 'jmv 4/13/2023 15:50:09'!
 checkCert: certName
 	"Attempt to verify the cert with the given name by performing 
 	an SSL handshake. Raises an error if there is an issue with the cert,
@@ -7067,9 +7060,9 @@ checkCert: certName
 	result := 0.
 	[result := sslClient connect: inbuf from: 1 to: result into: outbuf.
 	result = 0] whileFalse:[
-		result < -1 ifTrue:[^self error: 'SSL handshake failed (client code: ', result, ')'].
+		result < -1 ifTrue:[^self error: 'SSL handshake failed (client code: ', result printString, ')'].
 		result := sslServer accept: outbuf from: 1 to: result into: inbuf.
-		result < -1 ifTrue:[^self error: 'SSL handshake failed (server code: ', result, ')'].
+		result < -1 ifTrue:[^self error: 'SSL handshake failed (server code: ', result printString, ')'].
 	].
 
 	"Handshake complete. Check the cert status"
@@ -7292,31 +7285,79 @@ secureSocketStream
 numericValue
 	"Shouldn't be needed!!"! !
 
-!String methodsFor: '*WebClient' stamp: 'jmv 6/26/2017 19:36:20'!
-encodeForHTTP! !
+!String methodsFor: '*WebClient' stamp: 'jmv 4/13/2023 15:11:45'!
+percentEscapeUrl
+	"Answer an instance of String where all characters are ASCII.
+	If we contain any ASCII character that is invalid in an URL, parentEscape it
+	If we contain any non-ASCII character, percentEscape its UTF-8 bytes.
+	See https://en.wikipedia.org/wiki/URL_encoding"
 
-!String methodsFor: '*WebClient' stamp: 'jmv 9/5/2016 20:49:10'!
-unescapePercents
-	"change each %XY substring to the character with ASCII value XY in hex.  This is the opposite of #encodeForHTTP"
-	| ans c asciiVal pos oldPos specialChars |
-	ans _ WriteStream on: String new.
-	oldPos _ 1.
-	specialChars _ '+%' asCharacterSet.
+	| badChars |
+	badChars := String invalidAsciiInUrls.
+	(self isAscii and: [(self indexOfAnyOf: badChars) = 0]) ifTrue: [
+		^self ].
+	^String percentEscapingNonAsciiAndThoseIn: badChars bytes: self asUtf8Bytes! !
 
-	[pos _ self indexOfAnyOf: specialChars startingAt: oldPos ifAbsent: [ 0 ]. pos > 0 ]
-	whileTrue: [
-		ans nextPutAll: (self copyFrom: oldPos to: pos - 1).
-		c _ self at: pos.
-		c = $+ ifTrue: [ans nextPut: $ ] ifFalse: [
-			(c = $% and: [pos + 2 <= self size]) ifTrue: [
-				asciiVal _ (self at: pos+1) asUppercase digitValue * 16 +
-					(self at: pos+2) asUppercase digitValue.
-				pos _ pos + 2.
-				asciiVal > 255 ifTrue: [^self].	"not really an escaped string"
-				ans nextPut: (Character numericValue: asciiVal)]
-			ifFalse: [ans nextPut: c]].
-		oldPos _ pos+1].
-	ans nextPutAll: (self copyFrom: oldPos to: self size).
-	^ ans contents! !
+!String methodsFor: '*WebClient' stamp: 'jmv 4/13/2023 15:09:29'!
+percentEscapeUrlField
+	"Answer an instance of String where all characters are ASCII.
+	If we contain any ASCII character that is invalid in an URL field, parentEscape it
+	If we contain any non-ASCII character, percentEscape its UTF-8 bytes.
+	See https://en.wikipedia.org/wiki/URL_encoding"
+
+	| badChars |
+	badChars := String invalidAsciiInUrlFields.
+	(self isAscii and: [(self indexOfAnyOf: badChars) = 0]) ifTrue: [
+		^self ].
+	^String percentEscapingNonAsciiAndThoseIn: badChars bytes: self asUtf8Bytes! !
+
+!String class methodsFor: '*WebClient' stamp: 'jmv 4/13/2023 15:10:15'!
+invalidAsciiInUrlFields
+	"Answer a CharacterSet with all ASCII characters that are invalid in an URL field.
+	See https://en.wikipedia.org/wiki/URL_encoding
+	Do include Reserved Characters (i.e. Characters that are used to form URLs)
+	This is appropriate to prepare any ASCII String to be used as a field name or value in an URL.
+	See senders.	"
+
+	^`CharacterSet newFrom: 
+		(((0 to: 127) collect: [ :i | Character asciiValue: i ]) reject: [ :c | c isAlphaNumeric  | ('.-_' includes: c)])`! !
+
+!String class methodsFor: '*WebClient' stamp: 'jmv 4/13/2023 15:10:21'!
+invalidAsciiInUrls
+	"Answer a CharacterSet with all ASCII characters that are invalid in an URL.
+	See https://en.wikipedia.org/wiki/URL_encoding
+	Do not include Reserved Characters (i.e. Characters that are used to form URLs)
+	This is appropriate for preparing a complete URL to be sent to network primitives.
+	See senders.	"
+
+	^`CharacterSet newFrom: 
+		((0 to: 31) collect: [ :i | Character asciiValue: i ]),
+		{Character space. $". $<. $>. $\. $^. $`. ${. $|. $}. Character asciiValue: 127}`.! !
+
+!UnicodeString methodsFor: '*WebClient' stamp: 'jmv 4/13/2023 15:11:39'!
+percentEscapeUrl
+	"Answer an instance of String where all characters are ASCII.
+	If we contain any ASCII character that is invalid in an URL, parentEscape it
+	If we contain any non-ASCII character, percentEscape its UTF-8 bytes.
+	See https://en.wikipedia.org/wiki/URL_encoding"
+
+	| badChars |
+	badChars := String invalidAsciiInUrls.
+	(self isAscii and: [(bytes indexOfAnyOf: badChars startingAt: 1 ifAbsent: 0) = 0]) ifTrue: [
+		^self asByteString ].
+	^String percentEscapingNonAsciiAndThoseIn: badChars bytes: self asUtf8Bytes! !
+
+!UnicodeString methodsFor: '*WebClient' stamp: 'jmv 4/13/2023 15:09:27'!
+percentEscapeUrlField
+	"Answer an instance of String where all characters are ASCII.
+	If we contain any ASCII character that is invalid in an URL field, parentEscape it
+	If we contain any non-ASCII character, percentEscape its UTF-8 bytes.
+	See https://en.wikipedia.org/wiki/URL_encoding"
+
+	| badChars |
+	badChars := String invalidAsciiInUrlFields.
+	(self isAscii and: [(bytes indexOfAnyOf: badChars startingAt: 1 ifAbsent: 0) = 0]) ifTrue: [
+		^self asByteString ].
+	^String percentEscapingNonAsciiAndThoseIn: badChars bytes: self asUtf8Bytes! !
 WebClient initialize!
 WebMessage initialize!

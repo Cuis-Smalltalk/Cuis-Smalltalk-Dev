@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5764] on 12 April 2023 at 7:41:28 pm'!
+'From Cuis 6.0 [latest update: #5766] on 14 April 2023 at 12:49:41 pm'!
 'Description Inline temp new test'!
-!provides: 'BaseImageTests' 1 341!
+!provides: 'BaseImageTests' 1 342!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Objects'!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Classes'!
@@ -9178,6 +9178,16 @@ testAtPut
 	self assert: a size = b size.
 	self assert: b last = $π.
 	self assert: b = 'Agüitπ'.! !
+
+!UnicodeStringsTest methodsFor: 'testing' stamp: 'jmv 4/14/2023 10:21:49'!
+testfromBytesStream
+
+	| s large |
+	s := 'αℤ⇉⊕§☃§'.
+	self assert: s = (UnicodeString fromBytesStream: s asUtf8Bytes readStream).
+	large := UnicodeString streamContents: [ :strm |
+		1000 timesRepeat: [ strm nextPutAll: s ]].
+	self assert: large = (UnicodeString fromBytesStream: large asUtf8Bytes readStream).! !
 
 !UnicodeSymbolsTest methodsFor: 'testing' stamp: 'jmv 12/7/2022 11:44:28'!
 test01AsciiSymbolFirst

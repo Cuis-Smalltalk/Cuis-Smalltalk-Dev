@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5642] on 20 January 2023 at 3:47:56 pm'!
+'From Cuis 6.0 [latest update: #5766] on 14 April 2023 at 1:00:02 pm'!
 'Description '!
-!provides: 'Tests-WebClient' 1 3!
+!provides: 'Tests-WebClient' 1 4!
 !requires: 'WebClient' 1 19 nil!
 SystemOrganization addCategory: 'Tests-WebClient'!
 
@@ -256,11 +256,10 @@ testMultiFrameDecrypt
 	self assert: decrypted = 'More data is coming'.
 ! !
 
-!SqueakSSLTest methodsFor: 'tests' stamp: 'ar 6/17/2012 12:17'!
+!SqueakSSLTest methodsFor: 'tests' stamp: 'jmv 4/13/2023 15:52:08'!
 testSSLSockets
-
 	"Connect client and server"
-	| client listener server sema |
+	| client listener server sema connectProcess |
 	[listener := SecureSocket newTCP.
 	listener listenOn: self port backlogSize: 4.
 	client := SecureSocket newTCP.
@@ -269,20 +268,21 @@ testSSLSockets
 
 	"Perform SSL handshake"
 	sema := Semaphore new.
-	[client sslConnect.
-	sema signal] fork.
+	[connectProcess := Processor activeProcess.
+	 client sslConnect.
+	 sema signal] fork.
 	server sslAccept: self certName.
 	sema wait.
 
 	"Send data"
 	client sendData: 'Hello World'.
 	server waitForDataFor: 1.
-	self assert: server receiveData = 'Hello World'.
-	] ensure:[
-		listener ifNotNil:[listener destroy].
-		client ifNotNil:[client destroy].
-		server ifNotNil:[server destroy].
-	].! !
+	self assert: server receiveData = 'Hello World']
+		ensure:
+			[listener ifNotNil:[listener destroy].
+			client ifNotNil:[client destroy].
+			server ifNotNil:[server destroy].
+			connectProcess ifNotNil: [connectProcess terminate]]! !
 
 !SqueakSSLTest methodsFor: 'tests' stamp: 'ar 7/18/2010 14:58'!
 testSingleByteDecrypt
@@ -782,7 +782,7 @@ testHmacSha1
 
 	self assert: (WebUtils hmacSha1: message key: key) base64Encoded = '8wUi7m5HFQy76nowoCThusfgB+Q='! !
 
-!WebClientServerTest methodsFor: 'tests - oauth' stamp: 'jmv 1/20/2023 14:44:49'!
+!WebClientServerTest methodsFor: 'tests - oauth' stamp: 'jmv 4/13/2023 15:47:22'!
 testSignOAuthGet
 	"Ensure that we can sign a request correctly using OAuth.
 	Example values taken from 
@@ -796,7 +796,7 @@ testSignOAuthGet
 				url: 'http://host.net/resource'
 				using: self oAuthParams.
 	self assert: (request headerAt: 'Authorization')
-		equals: ( 'OAuth oauth_consumer_key="abcd",oauth_nonce="FWNkVaRJVzE",oauth_signature_method="HMAC-SHA1",oauth_timestamp="1281668113",oauth_token="ijkl",oauth_version="1.0",oauth_signature="Ik8+QQzTcYrUY66FxoCHxa4abjo="'  withLineEndings: String crString). "encodeForHTTP ?"! !
+		equals: ( 'OAuth oauth_consumer_key="abcd",oauth_nonce="FWNkVaRJVzE",oauth_signature_method="HMAC-SHA1",oauth_timestamp="1281668113",oauth_token="ijkl",oauth_version="1.0",oauth_signature="dSI3zjYnriSnaB787UH2NDcS8Ss%3D"'  withLineEndings: String crString).! !
 
 !WebClientServerTest methodsFor: 'tests - oauth' stamp: 'ar 8/23/2010 22:04'!
 testSignOAuthGetDupFields
@@ -942,7 +942,7 @@ testDigestAuth
 	self assert: (reqHeader beginsWith: 'Digest ').
 ! !
 
-!WebClientServerTest methodsFor: 'tests - redirect' stamp: 'ar 5/7/2010 20:29'!
+!WebClientServerTest methodsFor: 'tests - redirect' stamp: 'jmv 4/13/2023 15:12:42'!
 testAuthRedirectSession
 	"Run a test for a full auth-redirect-cookie loop"
 
@@ -956,7 +956,7 @@ testAuthRedirectSession
 	server addService: '/action' action:[:req | 
 		(server sessionAt: (req cookieAt: 'session')) ifNil:[
 			firstRedirect := true.
-			req send302Response: '/login?url=', req rawUrl encodeForHTTP.
+			req send302Response: '/login?url=', req rawUrl percentEscapeUrlField.
 		] ifNotNil:[
 			finalUrl := req url.
 			finalFields := req fields.
@@ -1024,7 +1024,7 @@ testNo302Redirect
 
 ! !
 
-!WebClientServerTest methodsFor: 'tests - redirect' stamp: 'ar 2/10/2012 13:21'!
+!WebClientServerTest methodsFor: 'tests - redirect' stamp: 'jmv 4/13/2023 15:43:55'!
 testPersistentAuthRedirectSession
 	"Run a test for a full auth-redirect-cookie loop.
 	Ensure that the connection is persistent for the entire loop."
@@ -1034,12 +1034,12 @@ testPersistentAuthRedirectSession
 		server authenticate: req realm: 'test' methods: #(digest) do:[ | id |
 			loginOK := true.
 			server sessionAt: (id := UUID new hex) put: ''.
-			req send302Response: (req fields at: 'url' ifAbsent:['/']) unescapePercents
+			req send302Response: (req fields at: 'url' ifAbsent:['/'])
 				do:[:reply| reply setCookie: 'session' value: id path: '/']]].
 	server addService: '/action' action:[:req | 
 		(server sessionAt: (req cookieAt: 'session')) ifNil:[
 			firstRedirect := true.
-			req send302Response: '/login?url=', req rawUrl encodeForHTTP.
+			req send302Response: '/login?url=', req rawUrl percentEscapeUrlField.
 		] ifNotNil:[
 			finalUrl := req url.
 			finalFields := req fields.
@@ -1967,21 +1967,47 @@ testTransientPostContent
 	self assert: resp content = 'hello'.
 ! !
 
-!WebClientServerTest methodsFor: 'tests - misc' stamp: 'ar 9/4/2010 11:35'!
+!WebClientServerTest methodsFor: 'tests - misc' stamp: 'jmv 4/13/2023 15:25:43'!
 testUrlEncoding
 	"Test the default URL encoding behavior"
+
 	| resp |
 	server addService: '/hello world' action:[:req|
-		req send200Response: 'ok'.
-	].
+		req send200Response: 'ok' ].
+
 	resp := WebClient httpGet: self localHostUrl, '/hello%20world'.
 	self assert: resp code = 200.
 	self assert: resp content = 'ok'.
 
-	resp := WebClient httpGet: (WebUtils urlEncode: self localHostUrl, '/hello world').
+	resp := WebClient httpGet: (self localHostUrl, '/hello world') percentEscapeUrl.
 	self assert: resp code = 200.
 	self assert: resp content = 'ok'.
-! !
+
+	resp := WebClient httpGet: self localHostUrl, '/hello world'.
+	self assert: resp code = 200.
+	self assert: resp content = 'ok'.! !
+
+!WebClientServerTest methodsFor: 'tests - misc' stamp: 'jmv 4/13/2023 15:26:29'!
+testUrlEncodingUnicode
+	"Test the default URL encoding behavior with Unicode characters.
+	Original example is
+	'https://www.example.com/düsseldorf?neighbourhood=Lörick'
+	"
+	| resp |
+	server addService: '/düsseldorf' action:[:req|
+		req send200Response: 'ok' ].
+
+	resp := WebClient httpGet: self localHostUrl, '/d%C3%BCsseldorf?neighbourhood=L%C3%B6rick'.
+	self assert: resp code = 200.
+	self assert: resp content = 'ok'.
+
+	resp := WebClient httpGet: (self localHostUrl, '/düsseldorf?neighbourhood=Lörick') percentEscapeUrl.
+	self assert: resp code = 200.
+	self assert: resp content = 'ok'.
+
+	resp := WebClient httpGet: self localHostUrl, '/düsseldorf?neighbourhood=Lörick'.
+	self assert: resp code = 200.
+	self assert: resp content = 'ok'.! !
 
 !WebClientServerTest methodsFor: 'tests - fields' stamp: 'jmv 1/10/2023 14:45:36'!
 testGetFields
