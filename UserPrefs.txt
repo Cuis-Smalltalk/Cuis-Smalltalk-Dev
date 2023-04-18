@@ -1,1 +1,1 @@
-defaultFontSize:=18
+defaultFontSize=18
