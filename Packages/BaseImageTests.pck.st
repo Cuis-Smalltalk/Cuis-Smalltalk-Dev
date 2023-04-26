@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5766] on 14 April 2023 at 12:49:41 pm'!
+'From Cuis 6.0 [latest update: #5780] on 26 April 2023 at 3:13:36 pm'!
 'Description Inline temp new test'!
-!provides: 'BaseImageTests' 1 342!
+!provides: 'BaseImageTests' 1 343!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Objects'!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Classes'!
@@ -26236,31 +26236,16 @@ setUp
 	super setUp.
 	classToRefactor _ self createClassNamed: self classToRefactorName! !
 
-!ExtractToTemporaryTest methodsFor: 'test helpers' stamp: 'RNG 3/24/2020 22:42:02'!
+!ExtractToTemporaryTest methodsFor: 'test helpers' stamp: 'jmv 4/26/2023 15:10:28'!
 assertExtracting: codeToExtract from: sourceCodeOfMethodToRefactor toVariableNamed: newVariable updatesTo: sourceCodeAfterRefactoring
 
-	self
-		assertExtracting: codeToExtract
-		from: sourceCodeOfMethodToRefactor
-		toVariableNamed: newVariable
-		updatesTo: sourceCodeAfterRefactoring
-		usingLeftArrowAssignment: true! !
-
-!ExtractToTemporaryTest methodsFor: 'test helpers' stamp: 'jmv 5/16/2022 08:58:01'!
-assertExtracting: codeToExtract from: sourceCodeOfMethodToRefactor toVariableNamed: newVariable updatesTo: sourceCodeAfterRefactoring usingLeftArrowAssignment: leftArrowAssignmentPreference
-
-	| intervalToExtract methodToRefactor actualSourceCodeAfterRefactoring applyRefactoring |
+	| intervalToExtract methodToRefactor actualSourceCodeAfterRefactoring |
 	classToRefactor compile: sourceCodeOfMethodToRefactor.
-	intervalToExtract _ self intervalOf: codeToExtract locatedIn: sourceCodeOfMethodToRefactor.
-	methodToRefactor _ classToRefactor >> #m1.
+	intervalToExtract := self intervalOf: codeToExtract locatedIn: sourceCodeOfMethodToRefactor.
+	methodToRefactor := classToRefactor >> #m1.
 
-	applyRefactoring := [ actualSourceCodeAfterRefactoring := (ExtractToTemporary named: newVariable at: intervalToExtract from: methodToRefactor) apply ].
+	actualSourceCodeAfterRefactoring := (ExtractToTemporary named: newVariable at: intervalToExtract from: methodToRefactor) apply.
 	
-	Preferences
-		withTemporaryValue: leftArrowAssignmentPreference
-		of: #leftArrowAssignmentsInGeneratedCode
-		do: applyRefactoring.
-
 	self assert: sourceCodeAfterRefactoring equals: actualSourceCodeAfterRefactoring! !
 
 !ExtractToTemporaryTest methodsFor: 'test helpers' stamp: 'RNG 5/8/2020 21:06:24'!
@@ -26270,140 +26255,140 @@ intervalOf: aPieceOfSourceCode locatedIn: sourceCode
 	interval _ sourceCode intervalOfSubCollection: aPieceOfSourceCode.
 	^ (interval first to: interval last - 1) asSourceCodeInterval! !
 
-!ExtractToTemporaryTest methodsFor: 'tests - successful' stamp: 'RNG 2/25/2020 16:28:15'!
+!ExtractToTemporaryTest methodsFor: 'tests - successful' stamp: 'jmv 4/26/2023 15:11:11'!
 test12ItIsPossibleToExtractASingleLiteralFromAMethodWithoutAnyTempsOrArguments
 
 	| sourceCode sourceCodeAfterRefactoring |
-	sourceCode _ 'm1
+	sourceCode := 'm1
 
 	^ 42'.
-	sourceCodeAfterRefactoring _ 'm1
-
-	| new |
-	new _ 42.
-	^ new'.
-
-	self assertExtracting: '42' from: sourceCode toVariableNamed: 'new' updatesTo: sourceCodeAfterRefactoring! !
-
-!ExtractToTemporaryTest methodsFor: 'tests - successful' stamp: 'RNG 2/25/2020 16:32:52'!
-test13ItIsPossibleToExtractASingleExpressionFromAMethodThatHasAlreadyOtherTemporary
-
-	| sourceCode sourceCodeAfterRefactoring |
-	sourceCode _ 'm1
-
-	| four |
-	four _ 4.
-	^ four + 2'.
-	sourceCodeAfterRefactoring _ 'm1
-
-	| four two |
-	four _ 4.
-	two _ 2.
-	^ four + two'.
-
-	self assertExtracting: '2' from: sourceCode toVariableNamed: 'two' updatesTo: sourceCodeAfterRefactoring! !
-
-!ExtractToTemporaryTest methodsFor: 'tests - successful' stamp: 'RNG 3/24/2020 18:04:28'!
-test14ItIsPossibleToExtractASingleExpressionFromAMethodThatHasAnEmptyTemporariesDeclaration
-
-	| sourceCode sourceCodeAfterRefactoring |
-	sourceCode _ 'm1
-
-	| |
-	^ 3 factorial'.
-	sourceCodeAfterRefactoring _ 'm1
-
-	| f |
-	f _ 3 factorial.
-	^ f'.
-
-	self assertExtracting: '3 factorial' from: sourceCode toVariableNamed: 'f' updatesTo: sourceCodeAfterRefactoring! !
-
-!ExtractToTemporaryTest methodsFor: 'tests - successful' stamp: 'RNG 3/24/2020 22:43:08'!
-test15ItIsPossibleToExtractCodeAndGenerateAssignmentUsingAnsiAssignmentStyle
-
-	| sourceCode sourceCodeAfterRefactoring |
-	sourceCode _ 'm1
-
-	^ 42'.
-	sourceCodeAfterRefactoring _ 'm1
+	sourceCodeAfterRefactoring := 'm1
 
 	| new |
 	new := 42.
 	^ new'.
 
-	self assertExtracting: '42' from: sourceCode toVariableNamed: 'new' updatesTo: sourceCodeAfterRefactoring usingLeftArrowAssignment: false! !
+	self assertExtracting: '42' from: sourceCode toVariableNamed: 'new' updatesTo: sourceCodeAfterRefactoring! !
 
-!ExtractToTemporaryTest methodsFor: 'tests - successful' stamp: 'RNG 5/4/2020 19:30:06'!
+!ExtractToTemporaryTest methodsFor: 'tests - successful' stamp: 'jmv 4/26/2023 15:11:38'!
+test13ItIsPossibleToExtractASingleExpressionFromAMethodThatHasAlreadyOtherTemporary
+
+	| sourceCode sourceCodeAfterRefactoring |
+	sourceCode := 'm1
+
+	| four |
+	four := 4.
+	^ four + 2'.
+	sourceCodeAfterRefactoring := 'm1
+
+	| four two |
+	four := 4.
+	two := 2.
+	^ four + two'.
+
+	self assertExtracting: '2' from: sourceCode toVariableNamed: 'two' updatesTo: sourceCodeAfterRefactoring! !
+
+!ExtractToTemporaryTest methodsFor: 'tests - successful' stamp: 'jmv 4/26/2023 15:11:50'!
+test14ItIsPossibleToExtractASingleExpressionFromAMethodThatHasAnEmptyTemporariesDeclaration
+
+	| sourceCode sourceCodeAfterRefactoring |
+	sourceCode := 'm1
+
+	| |
+	^ 3 factorial'.
+	sourceCodeAfterRefactoring := 'm1
+
+	| f |
+	f := 3 factorial.
+	^ f'.
+
+	self assertExtracting: '3 factorial' from: sourceCode toVariableNamed: 'f' updatesTo: sourceCodeAfterRefactoring! !
+
+!ExtractToTemporaryTest methodsFor: 'tests - successful' stamp: 'jmv 4/26/2023 15:10:45'!
+test15ItIsPossibleToExtractCodeAndGenerateAssignmentUsingAnsiAssignmentStyle
+
+	| sourceCode sourceCodeAfterRefactoring |
+	sourceCode := 'm1
+
+	^ 42'.
+	sourceCodeAfterRefactoring := 'm1
+
+	| new |
+	new := 42.
+	^ new'.
+
+	self assertExtracting: '42' from: sourceCode toVariableNamed: 'new' updatesTo: sourceCodeAfterRefactoring! !
+
+!ExtractToTemporaryTest methodsFor: 'tests - successful' stamp: 'jmv 4/26/2023 15:11:59'!
 test16ItIsPossibleToExtractASingleLiteralFromABlockWithoutAnyTempsOrArguments
 
 	| sourceCode sourceCodeAfterRefactoring |
-	sourceCode _ 'm1
+	sourceCode := 'm1
 
 	^ [ self m2 ]'.
-	sourceCodeAfterRefactoring _ 'm1
+	sourceCodeAfterRefactoring := 'm1
 
 	^ [ | new |
-	new _ self m2 ]'.
+	new := self m2 ]'.
 
 	self assertExtracting: 'self m2' from: sourceCode toVariableNamed: 'new' updatesTo: sourceCodeAfterRefactoring! !
 
-!ExtractToTemporaryTest methodsFor: 'tests - successful' stamp: 'RNG 4/12/2020 23:32:37'!
+!ExtractToTemporaryTest methodsFor: 'tests - successful' stamp: 'jmv 4/26/2023 15:12:04'!
 test19ItIsPossibleToExtractAnIntervalWithSomeExtraSpaces
 
 	| sourceCode sourceCodeAfterRefactoring |
-	sourceCode _ 'm1
+	sourceCode := 'm1
 
 	^ 42'.
-	sourceCodeAfterRefactoring _ 'm1
+	sourceCodeAfterRefactoring := 'm1
 
 	| new |
-	new _ 42.
+	new := 42.
 	^ new'.
 
 	self assertExtracting: ' 42' from: sourceCode toVariableNamed: 'new' updatesTo: sourceCodeAfterRefactoring! !
 
-!ExtractToTemporaryTest methodsFor: 'tests - successful' stamp: 'RNG 4/24/2020 20:56:58'!
+!ExtractToTemporaryTest methodsFor: 'tests - successful' stamp: 'jmv 4/26/2023 15:12:09'!
 test20ItIsPossibleToExtractAnEmptyBlock
 
 	| sourceCode sourceCodeAfterRefactoring |
-	sourceCode _ 'm1
+	sourceCode := 'm1
 
 	^ []'.
-	sourceCodeAfterRefactoring _ 'm1
+	sourceCodeAfterRefactoring := 'm1
 
 	| new |
-	new _ [].
+	new := [].
 	^ new'.
 
 	self assertExtracting: '[]' from: sourceCode toVariableNamed: 'new' updatesTo: sourceCodeAfterRefactoring! !
 
-!ExtractToTemporaryTest methodsFor: 'tests - successful' stamp: 'RNG 4/25/2020 13:24:55'!
+!ExtractToTemporaryTest methodsFor: 'tests - successful' stamp: 'jmv 4/26/2023 15:12:14'!
 test22ItIsPossibleToExtractACascadeExpression
 
 	| sourceCode sourceCodeAfterRefactoring |
-	sourceCode _ 'm1
+	sourceCode := 'm1
 
 	^ 3 factorial; yourself'.
-	sourceCodeAfterRefactoring _ 'm1
+	sourceCodeAfterRefactoring := 'm1
 
 	| new |
-	new _ 3 factorial; yourself.
+	new := 3 factorial; yourself.
 	^ new'.
 
 	self assertExtracting: '3 factorial; yourself' from: sourceCode toVariableNamed: 'new' updatesTo: sourceCodeAfterRefactoring! !
 
-!ExtractToTemporaryTest methodsFor: 'tests - successful' stamp: 'RNG 5/4/2020 19:11:34'!
+!ExtractToTemporaryTest methodsFor: 'tests - successful' stamp: 'jmv 4/26/2023 15:12:18'!
 test24WhenExtractingAnEntireStatementItOnlyGeneratesTheVariableAssignment
 
 	| sourceCode sourceCodeAfterRefactoring |
-	sourceCode _ 'm1
+	sourceCode := 'm1
 
 	self run'.
-	sourceCodeAfterRefactoring _ 'm1
+	sourceCodeAfterRefactoring := 'm1
 
 	| action |
-	action _ self run'.
+	action := self run'.
 
 	self assertExtracting: 'self run' from: sourceCode toVariableNamed: 'action' updatesTo: sourceCodeAfterRefactoring! !
 
