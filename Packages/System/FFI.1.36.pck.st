@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5791] on 7 May 2023 at 6:23:09 pm'!
+'From Cuis 6.0 [latest update: #5623] on 6 January 2023 at 1:46:49 pm'!
 'Description '!
-!provides: 'FFI' 1 37!
+!provides: 'FFI' 1 36!
 SystemOrganization addCategory: 'FFI-Pools'!
 SystemOrganization addCategory: 'FFI-Kernel'!
 
@@ -624,7 +624,7 @@ setExtent: extent depth: bitsPerPixel bits: aPointer
 	self setExtent: extent depth: bitsPerPixel.
 	self setManualSurfacePointer: aPointer.! !
 
-!ExternalForm methodsFor: 'initialization' stamp: 'jmv 5/7/2023 10:42:41'!
+!ExternalForm methodsFor: 'initialization' stamp: 'jmv 12/22/2016 16:04:33'!
 setManualSurfacePointer: newPointer "ExternalStructure, ExternalAddress, or nil"
 	"Set the memory-location of the image data.  It is OK to set a NULL pointer; in this case, any attempt to BitBlt to or from the form will result in a primitive-failure."
 	| integer |
@@ -640,8 +640,8 @@ setManualSurfacePointer: newPointer "ExternalStructure, ExternalAddress, or nil"
 	 if you get a MNU for #getHandle here, you should update your code 
 	 to pass in either an ExternalStructure or an ExternalAddress."
 	integer := Smalltalk wordSize caseOf: {
-			[ 4 ] -> [ pointer getHandle uint32At: 1 bigEndian: Smalltalk isBigEndian ].
-			[ 8 ] -> [ pointer getHandle uint64At: 1 bigEndian: Smalltalk isBigEndian ]
+			[ 4 ] -> [ pointer getHandle unsignedLongAt: 1 bigEndian: Smalltalk isBigEndian ].
+			[ 8 ] -> [ pointer getHandle unsignedLong64At: 1 bigEndian: Smalltalk isBigEndian ]
 		}
 		otherwise: [ self error ].
 	self primManualSurface: bits setPointer: integer! !
@@ -2161,7 +2161,7 @@ externalCallFailed
 	errCode := ExternalFunction getLastError. "this allows us to look at the actual error code"
 	^self error: (ExternalFunction errorMessageFor: errCode).! !
 
-!SequenceableCollection methodsFor: '*FFI-Kernel' stamp: 'jmv 5/7/2023 10:42:19'!
+!SequenceableCollection methodsFor: '*FFI-Kernel' stamp: 'jmv 12/26/2016 10:45:56'!
 asMachineWordArray
 	"Answer an IntegerArray or Bytearray with the elements are the elements of the receiver stored as machine words,
 	suitable for FFI."
@@ -2169,9 +2169,9 @@ asMachineWordArray
 	| answer |
 	Smalltalk wordSize = 4 ifTrue: [
 		^self as: IntegerArray ].
-	answer := ByteArray new: self size * Smalltalk wordSize.
+	answer _ ByteArray new: self size * Smalltalk wordSize.
 	1 to: self size do: [ :i |
-		answer uint64At: i-1*Smalltalk wordSize+1 put: (self at: i) bigEndian: Smalltalk isBigEndian ].
+		answer unsignedLong64At: i-1*Smalltalk wordSize+1 put: (self at: i) bigEndian: Smalltalk isBigEndian ].
 	^answer! !
 
 !ByteArray methodsFor: '*FFI-Kernel' stamp: 'EstebanLorenzano 11/4/2016 14:53'!

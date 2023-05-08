@@ -1,9 +1,9 @@
-'From Cuis 6.0 [latest update: #5795] on 7 May 2023 at 7:09:33 pm'!
+'From Cuis 6.0 [latest update: #5791] on 7 May 2023 at 6:21:20 pm'!
 'Description Description - This package is a port and refactoring of WebClient from http://ss3.gemstone.com/ss/WebClient.html with moderate changes by David Graham, Nicola Mingotti, Juan Vuletich and Hernan Wilkinson.
 	- WebClient-Core-ul.100
 	- WebClient-Help-ar.10
 	- WebClient-Tests-topa.48'!
-!provides: 'WebClient' 1 28!
+!provides: 'WebClient' 1 27!
 !requires: 'Network-Kernel' 1 2 nil!
 !requires: 'Identities-UUID' 1 7 nil!
 !requires: 'Cryptography-DigitalSignatures' 1 7 nil!
@@ -5634,7 +5634,7 @@ send: data code: opcode final: isFinal
 
 	^self send: data code: opcode final: isFinal mask: self masking! !
 
-!WebSocket07 methodsFor: 'read/write' stamp: 'jmv 5/7/2023 18:59:40'!
+!WebSocket07 methodsFor: 'read/write' stamp: 'jmv 1/10/2023 17:08:28'!
 send: data code: opcode final: isFinal mask: doMask
 	"Sends unfragmented data using the given opcode"
 
@@ -5646,12 +5646,12 @@ send: data code: opcode final: isFinal mask: doMask
 			byte2 := 127.
 			xLength := ByteArray new: 8.
 			(WriteStream on: xLength)
-				nextUint32Put: data size >> 32 bigEndian: true;
-				nextUint32Put: (data size bitAnd: 16rFFFFFFFF) bigEndian: true.
+				nextUnsignedInt32Put: data size >> 32 bigEndian: true;
+				nextUnsignedInt32Put: (data size bitAnd: 16rFFFFFFFF) bigEndian: true.
 		] ifFalse:[
 			byte2 := 126.
 			xLength := ByteArray new: 2.
-			(WriteStream on: xLength) nextUint16Put: data size bigEndian: true.
+			(WriteStream on: xLength) nextUnsignedInt16Put: data size bigEndian: true.
 		].
 	] ifFalse:[
 		byte2 := data size.

@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5795] on 7 May 2023 at 7:04:16 pm'!
+'From Cuis 5.0 [latest update: #4415] on 22 October 2020 at 4:15:33 pm'!
 'Description '!
-!provides: 'Collections-CompactArrays' 1 14!
+!provides: 'Collections-CompactArrays' 1 13!
 SystemOrganization addCategory: 'Collections-CompactArrays'!
 
 
@@ -88,6 +88,39 @@ ShortWordArrays store 16-bit unsigned Integer values, between 0 and 16rFFFF.!
 
 !ShortRunArray commentStamp: '<historical>' prior: 0!
 This class is run-length encoded representation of short integer (e.g., 16bit signed integer values)!
+
+!ShortIntegerArray class methodsFor: 'class initialization' stamp: 'jmv 12/18/2015 15:29'!
+initClassCachedState
+	"Check if the word order has changed from the last save"
+
+	((LastSaveOrder at: 1) = 42 and:[(LastSaveOrder at: 2) = 13]) 
+		ifTrue:[^self]. "Okay"
+	((LastSaveOrder at: 2) = 42 and:[(LastSaveOrder at: 1) = 13]) 
+		ifTrue:[^self swapShortObjects]. "Reverse guys"
+	^self error:'This must never happen'! !
+
+!ShortRunArray class methodsFor: 'class initialization' stamp: 'jmv 12/18/2015 15:29'!
+initClassCachedState
+	"Check if the word order has changed from the last save"
+
+	((LastSaveOrder valueAtRun: 1) = 42 and:[(LastSaveOrder lengthAtRun: 1) = 3]) 
+		ifTrue:[^self]. "Okay"
+	((LastSaveOrder lengthAtRun: 1) = 42 and:[(LastSaveOrder valueAtRun: 1) = 3]) 
+		ifTrue:[^self swapRuns]. "Reverse guys"
+	^self error:'This must never happen'! !
+
+!ShortRunArray methodsFor: 'printing' stamp: 'ar 11/3/1998 17:41'!
+printOn: aStream
+	aStream nextPutAll: self class name; nextPutAll:' ( '.
+	self lengthsAndValuesDo:[:runLength :runValue |
+		aStream
+			nextPutAll:' (';
+			print: runLength;
+			space;
+			print: runValue;
+			nextPut:$).
+	].
+	aStream nextPutAll:' )'.! !
 
 !Float32PointArray methodsFor: 'accessing' stamp: 'jmv 2/28/2020 12:11:30'!
 at: index
@@ -291,31 +324,21 @@ restoreEndianness
 	].
 ! !
 
-!ShortIntegerArray methodsFor: 'objects from disk' stamp: 'jmv 5/7/2023 19:01:19'!
+!ShortIntegerArray methodsFor: 'objects from disk' stamp: 'jmv 2/26/2016 17:08'!
 writeOn: aStream 
 
 	| w |
-	aStream nextInt32Put: self basicSize bigEndian: true.
+	aStream nextSignedInt32Put: self basicSize bigEndian: true.
 
 	1 to: self basicSize do: [ :i |
-		w := self basicAt: i.
+		w _ self basicAt: i.
 		Smalltalk isLittleEndian
-			ifFalse: [ aStream nextUint32Put: w bigEndian: true ]
+			ifFalse: [ aStream nextUnsignedInt32Put: w bigEndian: true ]
 			ifTrue: [ aStream
 				nextPut: (w digitAt: 2);
 				nextPut: (w digitAt: 1);
 				nextPut: (w digitAt: 4);
 				nextPut: (w digitAt: 3) ]].! !
-
-!ShortIntegerArray class methodsFor: 'class initialization' stamp: 'jmv 12/18/2015 15:29'!
-initClassCachedState
-	"Check if the word order has changed from the last save"
-
-	((LastSaveOrder at: 1) = 42 and:[(LastSaveOrder at: 2) = 13]) 
-		ifTrue:[^self]. "Okay"
-	((LastSaveOrder at: 2) = 42 and:[(LastSaveOrder at: 1) = 13]) 
-		ifTrue:[^self swapShortObjects]. "Reverse guys"
-	^self error:'This must never happen'! !
 
 !ShortIntegerArray class methodsFor: 'class initialization' stamp: 'jmv 12/12/2014 16:56'!
 initialize
@@ -401,19 +424,6 @@ at: index put: value
 	"Store the given 16-bit unsigned integer at the given index in the receiver."
 
 	^self unsignedAt: index put: value! !
-
-!ShortRunArray methodsFor: 'printing' stamp: 'ar 11/3/1998 17:41'!
-printOn: aStream
-	aStream nextPutAll: self class name; nextPutAll:' ( '.
-	self lengthsAndValuesDo:[:runLength :runValue |
-		aStream
-			nextPutAll:' (';
-			print: runLength;
-			space;
-			print: runValue;
-			nextPut:$).
-	].
-	aStream nextPutAll:' )'.! !
 
 !ShortRunArray methodsFor: 'accessing' stamp: 'ar 11/3/1998 17:26'!
 at: index
@@ -559,16 +569,6 @@ setRuns: runArray values: valueArray
 		value _ valueArray at: i.
 		self setRunAt: i toLength: runLength value: value.
 	].! !
-
-!ShortRunArray class methodsFor: 'class initialization' stamp: 'jmv 12/18/2015 15:29'!
-initClassCachedState
-	"Check if the word order has changed from the last save"
-
-	((LastSaveOrder valueAtRun: 1) = 42 and:[(LastSaveOrder lengthAtRun: 1) = 3]) 
-		ifTrue:[^self]. "Okay"
-	((LastSaveOrder lengthAtRun: 1) = 42 and:[(LastSaveOrder valueAtRun: 1) = 3]) 
-		ifTrue:[^self swapRuns]. "Reverse guys"
-	^self error:'This must never happen'! !
 
 !ShortRunArray class methodsFor: 'class initialization' stamp: 'jmv 12/12/2014 16:56'!
 initialize

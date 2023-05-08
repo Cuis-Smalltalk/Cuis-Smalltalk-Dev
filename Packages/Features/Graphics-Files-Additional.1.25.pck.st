@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5795] on 7 May 2023 at 7:06:39 pm'!
+'From Cuis 6.0 [latest update: #5600] on 19 December 2022 at 3:13:49 pm'!
 'Description '!
-!provides: 'Graphics-Files-Additional' 1 27!
+!provides: 'Graphics-Files-Additional' 1 25!
 !requires: 'Compression' 1 nil nil!
 SystemOrganization addCategory: 'Graphics-Files-Additional'!
 
@@ -999,7 +999,7 @@ nextPutImage: aForm interlace: aMethod filter: aFilterType
 updateCrc: oldCrc from: start to: stop in: aCollection
 	^ZipWriteStream updateCrc: oldCrc from: start to: stop in: aCollection! !
 
-!PNGReadWriter methodsFor: 'writing' stamp: 'jmv 5/7/2023 18:57:39'!
+!PNGReadWriter methodsFor: 'writing' stamp: 'jmv 2/26/2016 17:06'!
 writeChunk: crcStream
 	| bytes length crc debug |
 	debug := self debugging.
@@ -1013,9 +1013,9 @@ writeChunk: crcStream
 			nextPutAll: (bytes copyFrom: 1 to: 4) asString;
 			nextPutAll: ' len='; print: length;
 			nextPutAll: ' crc=0x'; nextPutAll: crc printStringHex  ].
-	stream nextUint32Put: length-4 bigEndian: true. "exclude chunk name"
+	stream nextUnsignedInt32Put: length-4 bigEndian: true. "exclude chunk name"
 	stream next: length putAll: bytes startingAt: 1.
-	stream nextUint32Put: crc bigEndian: true.
+	stream nextUnsignedInt32Put: crc bigEndian: true.
 	debug ifTrue: [ Transcript nextPutAll: ' afterPos='; print: stream position ].
 	crcStream resetToStart.! !
 
@@ -1051,12 +1051,12 @@ writeIENDChunkOn: aStream
 	"Write the IEND chunk"
 	aStream nextPutAll: 'IEND' asByteArray.! !
 
-!PNGReadWriter methodsFor: 'writing' stamp: 'jmv 5/7/2023 19:01:35'!
+!PNGReadWriter methodsFor: 'writing' stamp: 'jmv 2/26/2016 17:06'!
 writeIHDRChunkOn: aStream
 	"Write the IHDR chunk"
 	aStream nextPutAll: 'IHDR' asByteArray.
-	aStream nextInt32Put: width bigEndian: true.
-	aStream nextInt32Put: height bigEndian: true.
+	aStream nextSignedInt32Put: width bigEndian: true.
+	aStream nextSignedInt32Put: height bigEndian: true.
 	aStream nextPut: bitsPerChannel.
 	aStream nextPut: colorType.
 	aStream nextPut: 0. "compression"
@@ -1165,7 +1165,7 @@ writeType6DataOn: zStream
 		zStream nextPutAll: scanline.
 	]! !
 
-!PNGReadWriter methodsFor: 'chunks' stamp: 'jmv 5/7/2023 10:43:29'!
+!PNGReadWriter methodsFor: 'chunks' stamp: 'ar 2/10/2004 23:55'!
 processBackgroundChunk
 
 	| val red green blue max |
@@ -1175,16 +1175,16 @@ processBackgroundChunk
 		backColor := palette at: chunk first + 1.
 		^self
 	].
-	max := (2 raisedTo: bitsPerChannel) - 1.
+	max _ (2 raisedTo: bitsPerChannel) - 1.
 	(colorType = 0 or: [colorType = 4]) ifTrue: [
-		val := chunk uint16At: 1 bigEndian: true.
+		val _ chunk unsignedShortAt: 1 bigEndian: true.
 		backColor := Color gray: val / max.
 		^self
 	].
 	(colorType = 2 or: [colorType = 6]) ifTrue: [
-		red := chunk uint16At: 1 bigEndian: true.
-		green := chunk uint16At: 3 bigEndian: true.
-		blue := chunk uint16At: 5 bigEndian: true.
+		red _ chunk unsignedShortAt: 1 bigEndian: true.
+		green _ chunk unsignedShortAt: 3 bigEndian: true.
+		blue _ chunk unsignedShortAt: 5 bigEndian: true.
 		backColor := Color r: red/max g: green/max b: blue/max.
 		^self
 	].
@@ -1228,28 +1228,28 @@ processIDATChunk
 		ifFalse: [ self processInterlaced ]
 ! !
 
-!PNGReadWriter methodsFor: 'chunks' stamp: 'jmv 5/7/2023 10:41:51'!
+!PNGReadWriter methodsFor: 'chunks' stamp: 'jmv 5/13/2016 15:04'!
 processIHDRChunk
-	width := chunk int32At: 1 bigEndian: true.
-	height := chunk int32At: 5 bigEndian: true.
-	bitsPerChannel := chunk at: 9.
-	colorType := chunk at: 10.
+	width _ chunk longAt: 1 bigEndian: true.
+	height _ chunk longAt: 5 bigEndian: true.
+	bitsPerChannel _ chunk at: 9.
+	colorType _ chunk at: 10.
 	"compression _ chunk at: 11." "TODO - validate compression"
 	"filterMethod _ chunk at: 12." "TODO - validate filterMethod"
-	interlaceMethod := chunk at: 13. "TODO - validate interlace method"
+	interlaceMethod _ chunk at: 13. "TODO - validate interlace method"
 	(#(2 4 6) includes: colorType)
-		ifTrue: [depth := 32].
+		ifTrue: [depth _ 32].
 	(colorType = 0 and: [ bitsPerChannel = 8 ]) ifTrue: [
-		depth := 8.
-		palette := nil.		"Meaning: 'please use a GrayForm'"
+		depth _ 8.
+		palette _ nil.		"Meaning: 'please use a GrayForm'"
 	] ifFalse: [
 		(#(0 3) includes: colorType) ifTrue: [
-			depth := bitsPerChannel min: 8.
+			depth _ bitsPerChannel min: 8.
 			colorType = 0 ifTrue: [ "grayscale"
 				palette := self grayColorsFor: depth ]]].
-	bitsPerPixel := (BPP at: colorType+1) at: bitsPerChannel highBit.
-	bytesPerScanline := width * bitsPerPixel + 7 // 8.
-	rowSize := width * depth + 31 >> 5.
+	bitsPerPixel _ (BPP at: colorType+1) at: bitsPerChannel highBit.
+	bytesPerScanline _ width * bitsPerPixel + 7 // 8.
+	rowSize _ width * depth + 31 >> 5.
 ! !
 
 !PNGReadWriter methodsFor: 'chunks' stamp: 'nice 12/26/2009 19:05'!
@@ -1289,14 +1289,14 @@ processInterlaced
 	].
 	z atEnd ifFalse:[self error:'Unexpected data'].! !
 
-!PNGReadWriter methodsFor: 'chunks' stamp: 'jmv 5/7/2023 10:29:28'!
+!PNGReadWriter methodsFor: 'chunks' stamp: 'jmv 12/19/2022 15:07:35'!
 processNextChunk
 
 	| length chunkType crc chunkCrc chunkTypeBytes |
 
-	length := self nextUint32.
-	chunkTypeBytes := self next: 4.
-	chunkType := chunkTypeBytes asString.
+	length _ self nextUnsignedInt32.
+	chunkTypeBytes _ self next: 4.
+	chunkType _ chunkTypeBytes asString.
 
 	"If someone appended garbage at the end of the file, don't let that bite us."
 	fileSize - self position < length ifTrue: [
@@ -1304,8 +1304,8 @@ processNextChunk
 		stream setToEnd.
 		^self ].
 
-	chunk := self next: length.
-	chunkCrc := self nextUint32 bitXor: 16rFFFFFFFF.
+	chunk _ self next: length.
+	chunkCrc := self nextUnsignedInt32 bitXor: 16rFFFFFFFF.
 	crc := self updateCrc: 16rFFFFFFFF from: 1 to: 4 in: chunkTypeBytes.
 	crc := self updateCrc: crc from: 1 to: length in: chunk.
 	crc = chunkCrc ifFalse:[
@@ -1326,7 +1326,7 @@ processNextChunk
 		chunks, stitch them all together first. later,
 		if memory is an issue, we need to figure out how
 		to do this on the fly---"
-		globalDataChunk := globalDataChunk ifNil: [chunk] ifNotNil:
+		globalDataChunk _ globalDataChunk ifNil: [chunk] ifNotNil:
 			[globalDataChunk,chunk].
 		^self
 	].
@@ -1403,12 +1403,12 @@ processSBITChunk
 		depth := 16.
 	].! !
 
-!PNGReadWriter methodsFor: 'chunks' stamp: 'jmv 5/7/2023 10:43:41'!
+!PNGReadWriter methodsFor: 'chunks' stamp: 'jmv 1/18/2017 11:52:19'!
 processTransparencyChunk
 
 	"Transcript show: '  TRANSPARENCY ',chunk printString."
 	colorType = 0 ifTrue: [
-		transparentPixelValue := chunk uint16At: 1 bigEndian: true.
+		transparentPixelValue _ chunk unsignedShortAt: 1 bigEndian: true.
 		bitsPerChannel <= 8
 			ifTrue: [
 				"If palette is nil, we are building a GrayForm from a grayscale 8bpp file. Ignore any transparency chunk!!"
@@ -1419,10 +1419,10 @@ processTransparencyChunk
 		^ self ].
 	colorType = 2 ifTrue: [
 		| red green blue |
-		red := chunk uint16At: 1 bigEndian: true.
-		green := chunk uint16At: 3 bigEndian: true.
-		blue := chunk uint16At: 5 bigEndian: true.
-		transparentPixelValue := bitsPerChannel <= 8
+		red _ chunk unsignedShortAt: 1 bigEndian: true.
+		green _ chunk unsignedShortAt: 3 bigEndian: true.
+		blue _ chunk unsignedShortAt: 5 bigEndian: true.
+		transparentPixelValue _ bitsPerChannel <= 8
 			ifTrue: [ 16rFF00 + red << 8 + green << 8 + blue ]
 			ifFalse: [ red << 16 + green << 16 + blue ].
 		^ self ].
@@ -1566,17 +1566,17 @@ isSingleValued
 		ifTrue: [self error: 'Field not single-valued that should be.'].
 	^ singleValued.! !
 
-!TIFFField methodsFor: 'private' stamp: 'jmv 5/7/2023 10:32:03'!
+!TIFFField methodsFor: 'private' stamp: 'jmv 2/29/2016 11:22'!
 parseFrom: aTIFFStream
 	"Fill in my state with the results from parsing the given TIFFStream from its current position. Leave the stream positioned after the field, which will be the beginning of the next field, if any. Answer nil if the field has an unknown tag, otherwise answer self."
 
 	| selector |
-	tag := aTIFFStream nextUint16.
+	tag _ aTIFFStream nextUnsignedInt16.
 	(TagSymbols includesKey: tag) 
 		ifFalse: [aTIFFStream skip: 10. "Move past the type, count, and value/offset."
 				^ nil].
-	type := aTIFFStream nextUint16.
-	selector := ValueReaderSelectors 
+	type _ aTIFFStream nextUnsignedInt16.
+	selector _ ValueReaderSelectors 
 		at: type 
 		ifAbsent: "Can't read this type, ignore the field."
 			[aTIFFStream skip: 8. "Move past the value/offset."
@@ -1606,23 +1606,23 @@ read: count charsFrom: aTIFFStream
 				strings add: ((String new: size) replaceFrom: 1 to: size with: oneString) ]].
 	^ strings asArray! !
 
-!TIFFField methodsFor: 'private-value reading' stamp: 'jmv 5/7/2023 10:29:33'!
+!TIFFField methodsFor: 'private-value reading' stamp: 'jmv 2/29/2016 11:19'!
 readAsciiValuesFrom: aTIFFStream
 	"Read the count long and count number of characters from aTIFFStream at its current position according to my type. Store the result as one or more Strings in my array of values, using the NUL character to detect separation between strings. Leave aTIFFStream positioned eight bytes past its starting position."
 
 	| count |
-	count := aTIFFStream nextUint32.
-	values := (count <= 4) "Offset is immediate data, not pointer to data."
+	count _ aTIFFStream nextUnsignedInt32.
+	values _ (count <= 4) "Offset is immediate data, not pointer to data."
 		ifTrue: [self readImmediate: count charsFrom: aTIFFStream.]
 		ifFalse: [self readIndirect: count charsFrom: aTIFFStream.].! !
 
-!TIFFField methodsFor: 'private-value reading' stamp: 'jmv 5/7/2023 10:29:36'!
+!TIFFField methodsFor: 'private-value reading' stamp: 'jmv 2/29/2016 11:19'!
 readByteValuesFrom: aTIFFStream
 	"Read the count long and count number of bytes from aTIFFStream at its current position according to my type. Store the result as my array of values. Leave aTIFFStream positioned eight bytes past its starting position."
 
 	| count |
-	count := aTIFFStream nextUint32.
-	values := Array new: count.
+	count _ aTIFFStream nextUnsignedInt32.
+	values _ Array new: count.
 	(count <= 4) "Offset is immediate data, not pointer to data."
 		ifTrue: [self readImmediate: count bytesFrom: aTIFFStream.]
 		ifFalse: [self readIndirect: count bytesFrom: aTIFFStream.].
@@ -1646,105 +1646,105 @@ readImmediate: count charsFrom: aTIFFStream
 	aTIFFStream position: position + 4.
 	^ result.! !
 
-!TIFFField methodsFor: 'private-value reading' stamp: 'jmv 5/7/2023 10:29:40'!
+!TIFFField methodsFor: 'private-value reading' stamp: 'jmv 2/29/2016 11:19'!
 readImmediate: count longsFrom: aTIFFStream
 	"Put the next count 32-bit longs in aTIFFStream into my values array, starting from values at: 1. Leave aTIFFStream positioned four bytes past its starting position. Count must be <= 1."
 	| position |
-	position := aTIFFStream position.
-	1 to: count do: [:i | values at: i put: aTIFFStream nextUint32].
+	position _ aTIFFStream position.
+	1 to: count do: [:i | values at: i put: aTIFFStream nextUnsignedInt32].
 	aTIFFStream position: position + 4.
 	! !
 
-!TIFFField methodsFor: 'private-value reading' stamp: 'jmv 5/7/2023 10:32:08'!
+!TIFFField methodsFor: 'private-value reading' stamp: 'jmv 2/29/2016 11:21'!
 readImmediate: count shortsFrom: aTIFFStream
 	"Put the next count 16-bit shorts in aTIFFStream into my values array, starting from values at: 1. Leave aTIFFStream positioned four bytes past its starting position. Count must be <= 2."
 	| position |
-	position := aTIFFStream position.
-	1 to: count do: [:i | values at: i put: aTIFFStream nextUint16].
+	position _ aTIFFStream position.
+	1 to: count do: [:i | values at: i put: aTIFFStream nextUnsignedInt16].
 	aTIFFStream position: position + 4.
 	! !
 
-!TIFFField methodsFor: 'private-value reading' stamp: 'jmv 5/7/2023 10:29:44'!
+!TIFFField methodsFor: 'private-value reading' stamp: 'jmv 2/29/2016 11:19'!
 readIndirect: count bytesFrom: aTIFFStream
 	"Read a long offset from aTIFFStream, then read count bytes from that offset in aTIFFStream into my values array, starting from values at: 1. Leave aTIFFStream positioned four bytes past its starting position."
 	| offset position |
-	offset := aTIFFStream nextUint32.
-	position := aTIFFStream position.
+	offset _ aTIFFStream nextUnsignedInt32.
+	position _ aTIFFStream position.
 	aTIFFStream position: offset.
 	1 to: count do: [:i | values at: i put: aTIFFStream nextByte].
 	aTIFFStream position: position.! !
 
-!TIFFField methodsFor: 'private-value reading' stamp: 'jmv 5/7/2023 10:29:47'!
+!TIFFField methodsFor: 'private-value reading' stamp: 'jmv 2/29/2016 11:19'!
 readIndirect: count charsFrom: aTIFFStream
 	"Read a long offset from aTIFFStream, then read count bytes from that offset in aTIFFStream and return them as an Array of Strings, using NUL as the separating character between strings. Leave aTIFFStream positioned four bytes past its starting position."
 	| offset position result |
-	offset := aTIFFStream nextUint32.
-	position := aTIFFStream position.
+	offset _ aTIFFStream nextUnsignedInt32.
+	position _ aTIFFStream position.
 	aTIFFStream position: offset.
-	result := self read: count charsFrom: aTIFFStream.
+	result _ self read: count charsFrom: aTIFFStream.
 	aTIFFStream position: position.
 	^ result.! !
 
-!TIFFField methodsFor: 'private-value reading' stamp: 'jmv 5/7/2023 10:29:52'!
+!TIFFField methodsFor: 'private-value reading' stamp: 'jmv 2/29/2016 11:20'!
 readIndirect: count longsFrom: aTIFFStream
 	"Read a 32-bit offset from aTIFFStream, then read count 32-bit longs from that offset in aTIFFStream into my values array, starting from values at: 1. Leave aTIFFStream positioned four bytes past its starting position."
 	| offset position |
-	offset := aTIFFStream nextUint32.
-	position := aTIFFStream position.
+	offset _ aTIFFStream nextUnsignedInt32.
+	position _ aTIFFStream position.
 	aTIFFStream position: offset.
-	1 to: count do: [:i | values at: i put: aTIFFStream nextUint32].
+	1 to: count do: [:i | values at: i put: aTIFFStream nextUnsignedInt32].
 	aTIFFStream position: position.! !
 
-!TIFFField methodsFor: 'private-value reading' stamp: 'jmv 5/7/2023 10:29:59'!
+!TIFFField methodsFor: 'private-value reading' stamp: 'jmv 2/29/2016 11:20'!
 readIndirect: count rationalsFrom: aTIFFStream
 	"Read a 32-bit offset from aTIFFStream, then read count 32-bit longs from that offset in aTIFFStream into my values array, starting from values at: 1. Leave aTIFFStream positioned four bytes past its starting position."
 	| offset position |
-	offset := aTIFFStream nextUint32.
-	position := aTIFFStream position.
+	offset _ aTIFFStream nextUnsignedInt32.
+	position _ aTIFFStream position.
 	aTIFFStream position: offset.
-	1 to: count do: [:i | values at: i put: (aTIFFStream nextUint32 / aTIFFStream nextUint32)].
+	1 to: count do: [:i | values at: i put: (aTIFFStream nextUnsignedInt32 / aTIFFStream nextUnsignedInt32)].
 	aTIFFStream position: position.! !
 
-!TIFFField methodsFor: 'private-value reading' stamp: 'jmv 5/7/2023 10:32:11'!
+!TIFFField methodsFor: 'private-value reading' stamp: 'jmv 2/29/2016 11:21'!
 readIndirect: count shortsFrom: aTIFFStream
 	"Read a long offset from aTIFFStream, then read count 16-bit shorts from that offset in aTIFFStream into my values array, starting from values at: 1. Leave aTIFFStream positioned four bytes past its starting position."
 	| offset position |
-	offset := aTIFFStream nextUint32.
-	position := aTIFFStream position.
+	offset _ aTIFFStream nextUnsignedInt32.
+	position _ aTIFFStream position.
 	aTIFFStream position: offset.
-	1 to: count do: [:i | values at: i put: aTIFFStream nextUint16].
+	1 to: count do: [:i | values at: i put: aTIFFStream nextUnsignedInt16].
 	aTIFFStream position: position.! !
 
-!TIFFField methodsFor: 'private-value reading' stamp: 'jmv 5/7/2023 10:30:06'!
+!TIFFField methodsFor: 'private-value reading' stamp: 'jmv 2/29/2016 11:20'!
 readLongValuesFrom: aTIFFStream
 	"Read the 32-bit count and count number of 32-bit values from aTIFFStream at its current position according to my type. Store the result as my array of values. Leave aTIFFStream positioned eight bytes past its starting position."
 
 	| count |
-	count := aTIFFStream nextUint32.
-	values := Array new: count.
+	count _ aTIFFStream nextUnsignedInt32.
+	values _ Array new: count.
 	(count <= 1) "Offset is immediate data, not pointer to data."
 		ifTrue: [self readImmediate: count longsFrom: aTIFFStream.]
 		ifFalse: [self readIndirect: count longsFrom: aTIFFStream.].
 ! !
 
-!TIFFField methodsFor: 'private-value reading' stamp: 'jmv 5/7/2023 10:30:09'!
+!TIFFField methodsFor: 'private-value reading' stamp: 'jmv 2/29/2016 11:20'!
 readRationalValuesFrom: aTIFFStream
 	"Read the 32-bit count and count number of 64-bit rational values from aTIFFStream at its current position according to my type. Store the result as my array of values. Leave aTIFFStream positioned eight bytes past its starting position."
 
 	| count |
-	count := aTIFFStream nextUint32.
-	values := Array new: count.
+	count _ aTIFFStream nextUnsignedInt32.
+	values _ Array new: count.
 	"Can't fit even one rational into 32 bits, so always indirect, never immediate."
 	self readIndirect: count rationalsFrom: aTIFFStream.
 ! !
 
-!TIFFField methodsFor: 'private-value reading' stamp: 'jmv 5/7/2023 10:30:13'!
+!TIFFField methodsFor: 'private-value reading' stamp: 'jmv 2/29/2016 11:20'!
 readShortValuesFrom: aTIFFStream
 	"Read the 32-bit count and count number of 16-bit shorts from aTIFFStream at its current position according to my type. Store the result as my array of values. Leave aTIFFStream positioned eight bytes past its starting position."
 
 	| count |
-	count := aTIFFStream nextUint32.
-	values := Array new: count.
+	count _ aTIFFStream nextUnsignedInt32.
+	values _ Array new: count.
 	(count <= 2) "Offset is immediate data, not pointer to data."
 		ifTrue: [self readImmediate: count shortsFrom: aTIFFStream.]
 		ifFalse: [self readIndirect: count shortsFrom: aTIFFStream.].
@@ -1945,15 +1945,15 @@ at: tagSymbol
 			[TIFFField defaultFor: tagSymbol]. "Raises error if no default."
 	^ field value.! !
 
-!TIFFImageFileDirectory methodsFor: 'private' stamp: 'jmv 5/7/2023 10:32:15'!
+!TIFFImageFileDirectory methodsFor: 'private' stamp: 'jmv 2/29/2016 11:22'!
 parseFrom: aTIFFStream
 	"Blow away any former state I had and parse a new collection of fields from the given stream.
 	Leave the stream positioned at the end of the IFD, just before the pointer to the next IFD."
 	| fieldCount field |
-	fieldCount := aTIFFStream nextUint16.
-	fields := (Dictionary new: fieldCount).
+	fieldCount _ aTIFFStream nextUnsignedInt16.
+	fields _ (Dictionary new: fieldCount).
 	fieldCount timesRepeat: 
-		[field := TIFFField parseFrom: aTIFFStream.
+		[field _ TIFFField parseFrom: aTIFFStream.
 		field isNil ifFalse: [fields at: field tagSymbol put: field] ].
 ! !
 
@@ -1974,25 +1974,25 @@ positionStreamToStripNum: anInteger
 	stream position: ((structure at: #StripOffsets) at: anInteger).
 	stream newStrip! !
 
-!TIFFReader methodsFor: 'private' stamp: 'jmv 5/7/2023 10:32:19'!
+!TIFFReader methodsFor: 'private' stamp: 'jmv 7/26/2016 15:55:59'!
 readGray16PixelsInto: aShortWordMatrix
 	"Replace the given Form's pixel values with pixel values from my TIFFStream. aForm must have the correct extent.
 	Handles 16 bit pixels on source, float as destination."
 
 	| elements totalPixels pixelsPerStrip currentStripNum pixel | 
-	elements := aShortWordMatrix elements.
-	totalPixels := elements size.
-	pixelsPerStrip := aShortWordMatrix extent x * (structure at: #RowsPerStrip).
-	currentStripNum := 0.
+	elements _ aShortWordMatrix elements.
+	totalPixels _ elements size.
+	pixelsPerStrip _ aShortWordMatrix extent x * (structure at: #RowsPerStrip).
+	currentStripNum _ 0.
 
 	1 to: totalPixels do: [ :pixNum |
 		(pixNum-1 \\ aShortWordMatrix width = 0) ifTrue: [
 			(pixNum - 1 \\ pixelsPerStrip = 0) ifTrue: [
 				"Time to go to next strip"
-				currentStripNum := currentStripNum + 1.
+				currentStripNum _ currentStripNum + 1.
 				self positionStreamToStripNum: currentStripNum ]].
 
-		pixel := stream nextUint16.
+		pixel _ stream nextUnsignedInt16.
 		elements at: pixNum put: pixel ]! !
 
 !TIFFReader methodsFor: 'private' stamp: 'jmv 5/12/2016 18:27'!
@@ -2332,17 +2332,17 @@ nextByteInBody
 		^self nextLZWUncompressedByte ].
 	^ stream next! !
 
-!TIFFStream methodsFor: 'TIFF type access' stamp: 'jmv 5/7/2023 18:50:59'!
-nextUint16
+!TIFFStream methodsFor: 'TIFF type access' stamp: 'jmv 2/29/2016 11:21'!
+nextUnsignedInt16
 	"Read a 16-bit unsigned quantity from the stream."
 
-	^ stream nextUint16BigEndian: bigEndian! !
+	^ stream nextUnsignedInt16BigEndian: bigEndian! !
 
-!TIFFStream methodsFor: 'TIFF type access' stamp: 'jmv 5/7/2023 18:56:26'!
-nextUint32
+!TIFFStream methodsFor: 'TIFF type access' stamp: 'jmv 2/29/2016 11:18'!
+nextUnsignedInt32
 	"Read a 32-bit unsigned quantity from the stream."
 
-	^ stream nextUint32BigEndian: bigEndian! !
+	^ stream nextUnsignedInt32BigEndian: bigEndian! !
 
 !TIFFStream methodsFor: 'stream access' stamp: 'mrm 7/22/2001 20:23'!
 next: anInteger
@@ -2431,35 +2431,35 @@ parseFrom: aTIFFStream
 	self parseIFDsFrom: aTIFFStream.
 	aTIFFStream compressionType: (self at: #Compression)! !
 
-!TIFFStructure methodsFor: 'parsing' stamp: 'jmv 5/7/2023 10:30:17'!
+!TIFFStructure methodsFor: 'parsing' stamp: 'jmv 2/29/2016 11:20'!
 parseIFDsFrom: aTIFFStream
 	"Read as many image file directories as aTIFFStream contains, and put them into my state. Per the TIFF spec, there must be at least one IFD."
 
 	| ifd ifdPosition |
 	aTIFFStream position: 4. "Offset in header of pointer to first IFD."
-	ifdPosition := aTIFFStream nextUint32.
+	ifdPosition _ aTIFFStream nextUnsignedInt32.
 	[ifdPosition = 0] 
 		whileFalse: [
 			aTIFFStream position: ifdPosition.
-			ifd := TIFFImageFileDirectory parseFrom: aTIFFStream.
+			ifd _ TIFFImageFileDirectory parseFrom: aTIFFStream.
 			imageFileDirectories add: ifd.
-			ifdPosition := aTIFFStream nextUint32].
+			ifdPosition _ aTIFFStream nextUnsignedInt32].
 ! !
 
-!TIFFStructure methodsFor: 'parsing' stamp: 'jmv 5/7/2023 10:32:24'!
+!TIFFStructure methodsFor: 'parsing' stamp: 'jmv 5/9/2016 17:00'!
 validateHeaderOf: aTIFFStream
 	"Report an error if the header of the given stream is not valid, 
 	or does not match the endian-ness of the TIFFStream."
 
 	| expectedWord douglasAdams |
-	expectedWord := aTIFFStream isBigEndian 
+	expectedWord _ aTIFFStream isBigEndian 
 		ifTrue: [16r4D4D]
 		ifFalse: [16r4949].
-	douglasAdams := 42.
+	douglasAdams _ 42.
 	aTIFFStream reset.
-	(aTIFFStream nextUint16 = expectedWord) 
+	(aTIFFStream nextUnsignedInt16 = expectedWord) 
 		ifFalse: [self error: 'TIFF Header not valid. First word not correct for expected endian-ness'].
-	(aTIFFStream nextUint16 = douglasAdams) 
+	(aTIFFStream nextUnsignedInt16 = douglasAdams) 
 		ifFalse: [self error: 'TIFF Header not valid. Answer not 42.']! !
 
 !TIFFStructure class methodsFor: 'instance creation' stamp: 'mrm 7/25/2001 21:52'!

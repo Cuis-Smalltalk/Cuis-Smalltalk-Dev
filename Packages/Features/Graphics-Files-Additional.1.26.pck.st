@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5795] on 7 May 2023 at 7:06:39 pm'!
+'From Cuis 6.0 [latest update: #5791] on 7 May 2023 at 6:16:45 pm'!
 'Description '!
-!provides: 'Graphics-Files-Additional' 1 27!
+!provides: 'Graphics-Files-Additional' 1 26!
 !requires: 'Compression' 1 nil nil!
 SystemOrganization addCategory: 'Graphics-Files-Additional'!
 
@@ -999,7 +999,7 @@ nextPutImage: aForm interlace: aMethod filter: aFilterType
 updateCrc: oldCrc from: start to: stop in: aCollection
 	^ZipWriteStream updateCrc: oldCrc from: start to: stop in: aCollection! !
 
-!PNGReadWriter methodsFor: 'writing' stamp: 'jmv 5/7/2023 18:57:39'!
+!PNGReadWriter methodsFor: 'writing' stamp: 'jmv 2/26/2016 17:06'!
 writeChunk: crcStream
 	| bytes length crc debug |
 	debug := self debugging.
@@ -1013,9 +1013,9 @@ writeChunk: crcStream
 			nextPutAll: (bytes copyFrom: 1 to: 4) asString;
 			nextPutAll: ' len='; print: length;
 			nextPutAll: ' crc=0x'; nextPutAll: crc printStringHex  ].
-	stream nextUint32Put: length-4 bigEndian: true. "exclude chunk name"
+	stream nextUnsignedInt32Put: length-4 bigEndian: true. "exclude chunk name"
 	stream next: length putAll: bytes startingAt: 1.
-	stream nextUint32Put: crc bigEndian: true.
+	stream nextUnsignedInt32Put: crc bigEndian: true.
 	debug ifTrue: [ Transcript nextPutAll: ' afterPos='; print: stream position ].
 	crcStream resetToStart.! !
 
@@ -1051,12 +1051,12 @@ writeIENDChunkOn: aStream
 	"Write the IEND chunk"
 	aStream nextPutAll: 'IEND' asByteArray.! !
 
-!PNGReadWriter methodsFor: 'writing' stamp: 'jmv 5/7/2023 19:01:35'!
+!PNGReadWriter methodsFor: 'writing' stamp: 'jmv 2/26/2016 17:06'!
 writeIHDRChunkOn: aStream
 	"Write the IHDR chunk"
 	aStream nextPutAll: 'IHDR' asByteArray.
-	aStream nextInt32Put: width bigEndian: true.
-	aStream nextInt32Put: height bigEndian: true.
+	aStream nextSignedInt32Put: width bigEndian: true.
+	aStream nextSignedInt32Put: height bigEndian: true.
 	aStream nextPut: bitsPerChannel.
 	aStream nextPut: colorType.
 	aStream nextPut: 0. "compression"
@@ -2332,17 +2332,17 @@ nextByteInBody
 		^self nextLZWUncompressedByte ].
 	^ stream next! !
 
-!TIFFStream methodsFor: 'TIFF type access' stamp: 'jmv 5/7/2023 18:50:59'!
+!TIFFStream methodsFor: 'TIFF type access' stamp: 'jmv 5/7/2023 10:31:51'!
 nextUint16
 	"Read a 16-bit unsigned quantity from the stream."
 
-	^ stream nextUint16BigEndian: bigEndian! !
+	^ stream nextUnsignedInt16BigEndian: bigEndian! !
 
-!TIFFStream methodsFor: 'TIFF type access' stamp: 'jmv 5/7/2023 18:56:26'!
+!TIFFStream methodsFor: 'TIFF type access' stamp: 'jmv 5/7/2023 10:28:24'!
 nextUint32
 	"Read a 32-bit unsigned quantity from the stream."
 
-	^ stream nextUint32BigEndian: bigEndian! !
+	^ stream nextUnsignedInt32BigEndian: bigEndian! !
 
 !TIFFStream methodsFor: 'stream access' stamp: 'mrm 7/22/2001 20:23'!
 next: anInteger

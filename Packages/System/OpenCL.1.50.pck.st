@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5791] on 7 May 2023 at 6:24:16 pm'!
+'From Cuis 5.0 [latest update: #4415] on 22 October 2020 at 9:18:46 pm'!
 'Description '!
-!provides: 'OpenCL' 1 51!
+!provides: 'OpenCL' 1 50!
 !requires: 'FFI' 1 nil nil!
 SystemOrganization addCategory: 'OpenCL-Constants'!
 SystemOrganization addCategory: 'OpenCL'!
@@ -741,6 +741,87 @@ Responsibilities:
 	- primitive support to allow OpenCLEvent class>>waitForEvents: to block a single Squeak Process, rather than the main VM thread.  To do this, we need a separate native thread (maybe from a thread-pool?) that will signal a Squeak semaphore... the Process waiting for the primitive will block waiting for that semaphore to be signalled.  
 	
 	for blocking-waits on a command-queue that occur in a different native thread.  Probably make a subclass of command-queue whose instances register themselves with the plugin, and!
+
+!CLImageDescStruct methodsFor: 'printing' stamp: 'jmv 10/30/2015 12:53'!
+printOn: aStream
+	super printOn: aStream.
+	aStream
+		nextPut: $(;
+		nextPutAll: (self class image_type_String: self image_type);
+		nextPutAll: ' width:'; print: self image_width;
+		nextPutAll: ' height:'; print: self image_height;
+		nextPutAll: ' depth'; print: self image_depth;
+		nextPutAll: ' arraySize:'; print: self image_array_size;
+		nextPutAll: ' rowPitch:'; print: self image_row_pitch;
+		nextPutAll: ' slicePitch:'; print: self image_slice_pitch;
+		nextPutAll: ' mipLevels:'; print: self num_mip_levels;
+		nextPutAll: ' numSamples:'; print: self num_samples;
+		nextPutAll: ' buffer:'; print: self buffer;
+		nextPut: $)! !
+
+!CLImageFormatStruct methodsFor: 'printing' stamp: 'jmv 10/29/2015 15:11'!
+printOn: aStream
+	super printOn: aStream.
+	aStream nextPut: $(.
+	aStream nextPutAll: (self class image_channel_order_String: self image_channel_order).
+	aStream space.
+	aStream nextPutAll: (self class image_channel_data_type_String: self image_channel_data_type).
+	aStream nextPut: $).! !
+
+!OpenCLDevice methodsFor: 'accessing' stamp: 'jmv 9/9/2015 11:46'!
+name
+	"Device name string."
+	^self stringProperty: CL_DEVICE_NAME! !
+
+!OpenCLDevice methodsFor: 'printing' stamp: 'pb 6/18/2019 02:00:37'!
+printOn: aStream
+	super printOn: aStream.
+	aStream nextPut: $(; print: self name; nextPut:$)! !
+
+!OpenCLPlatform methodsFor: 'accessing' stamp: 'jcg 1/10/2010 02:22'!
+name
+	^name! !
+
+!OpenCLImage2D methodsFor: 'accessing' stamp: 'jcg 1/29/2010 02:18'!
+format
+	^format! !
+
+!OpenCLImage3D methodsFor: 'accessing' stamp: 'jcg 1/29/2010 02:18'!
+format
+	^format! !
+
+!OpenCLPrimitiveInterface class methodsFor: 'class initialization' stamp: 'jmv 7/1/2019 17:54:48'!
+shutDown: quitting
+	"We assume that the image is being saved.  When it is restarted, we want the finalization-registry to be empty.  Otherwise, there is a race-condition where the finalization-process might run before the startup-list is processed, and we might crash because we try to free OpenCL objects whose handles are no longer valid.  Also see #startUp:."
+	self finalizationRegistry removeAll.
+	OpenCLPlatform preferredDevice: nil! !
+
+!OpenCLPrimitiveInterface class methodsFor: 'class initialization' stamp: 'jmv 8/20/2015 20:16'!
+startUp: resuming
+	"Behave differently depending on whether we are restarting a saved image, or are continuing without quitting."
+	resuming 
+		ifTrue:[
+			"Each time we restart the image, we flush the installed library so that 
+			 we are sure to use the proper library for the current platform."
+			ActiveSubclass := nil.
+			
+			"Any existing OpenCLObjects are invalid; mark them as such."
+			OpenCLRefCounter allInstancesDo:[:counter| counter invalidateOnStartUp].
+			OpenCLObject allSubInstancesDo: [:obj | obj invalidateOnStartUp].
+		]
+		ifFalse: [
+			"See #shutDown:... there we cleaned out our finalization registry to avoid a 
+			 crash-causing race-condition when restarting a saved image.  Now we put 
+			 all of the objects back, to ensure that they're finalized."
+			OpenCLRefCountedObject allSubInstancesDo: [:obj | obj registerForFinalization]
+		].! !
+
+!OpenCLRefCounter methodsFor: 'printing' stamp: 'jcg 1/15/2010 00:57'!
+printOn: aStream
+	aStream nextPutAll: '[ref-count: '.
+	refCount printOn: aStream.
+	aStream nextPut: $]
+! !
 
 !OpenCLConstants class methodsFor: 'code generation' stamp: 'jmv 12/23/2016 12:19:32'!
 clearConstantInitializers
@@ -1834,23 +1915,6 @@ initialize
 	"Different in 32 and 64 bits systems"
 	CLBufferRegionStruct defineFields! !
 
-!CLImageDescStruct methodsFor: 'printing' stamp: 'jmv 10/30/2015 12:53'!
-printOn: aStream
-	super printOn: aStream.
-	aStream
-		nextPut: $(;
-		nextPutAll: (self class image_type_String: self image_type);
-		nextPutAll: ' width:'; print: self image_width;
-		nextPutAll: ' height:'; print: self image_height;
-		nextPutAll: ' depth'; print: self image_depth;
-		nextPutAll: ' arraySize:'; print: self image_array_size;
-		nextPutAll: ' rowPitch:'; print: self image_row_pitch;
-		nextPutAll: ' slicePitch:'; print: self image_slice_pitch;
-		nextPutAll: ' mipLevels:'; print: self num_mip_levels;
-		nextPutAll: ' numSamples:'; print: self num_samples;
-		nextPutAll: ' buffer:'; print: self buffer;
-		nextPut: $)! !
-
 !CLImageDescStruct methodsFor: 'accessing'!
 buffer
 	"This method was automatically generated. See CLImageDescStruct class>>fields."
@@ -2024,15 +2088,6 @@ image_type_String: image_type "a image_type constant"
 initialize
 	"Different in 32 and 64 bits systems"
 	CLImageDescStruct defineFields! !
-
-!CLImageFormatStruct methodsFor: 'printing' stamp: 'jmv 10/29/2015 15:11'!
-printOn: aStream
-	super printOn: aStream.
-	aStream nextPut: $(.
-	aStream nextPutAll: (self class image_channel_order_String: self image_channel_order).
-	aStream space.
-	aStream nextPutAll: (self class image_channel_data_type_String: self image_channel_data_type).
-	aStream nextPut: $).! !
 
 !CLImageFormatStruct methodsFor: 'accessing' stamp: 'jmv 10/29/2015 16:44'!
 image_channel_data_type
@@ -2517,7 +2572,7 @@ maxWorkItemDimensions
 	"Maximum dimensions that specify the global and local work-item IDs used by the data parallel execution model. (Refer to clEnqueueNDRangeKernel). The minimum value is 3."
 	^self uintProperty: CL_DEVICE_MAX_WORK_ITEM_DIMENSIONS! !
 
-!OpenCLDevice methodsFor: 'accessing' stamp: 'jmv 5/7/2023 10:42:53'!
+!OpenCLDevice methodsFor: 'accessing' stamp: 'jmv 12/23/2016 17:12:53'!
 maxWorkItemSizes
 	"Maximum number of work-items that can be specified in each dimension of the work-group to clEnqueueNDRangeKernel.
 
@@ -2527,12 +2582,12 @@ Smalltalk wordSize = 8 ifTrue: [
 	buf := ByteArray new: 24.
 	self getDeviceInfoParameter: CL_DEVICE_MAX_WORK_ITEM_SIZES into: buf.
 	^#(1 9 17) 
-		collect: [:i | buf uint64At: i bigEndian: Smalltalk isBigEndian].
+		collect: [:i | buf unsignedLong64At: i bigEndian: Smalltalk isBigEndian].
 ].
 	buf := ByteArray new: 12.
 	self getDeviceInfoParameter: CL_DEVICE_MAX_WORK_ITEM_SIZES into: buf.
 	^#(1 5 9) 
-		collect: [:i | buf uint32At: i bigEndian: Smalltalk isBigEndian].
+		collect: [:i | buf unsignedLongAt: i bigEndian: Smalltalk isBigEndian].
 	! !
 
 !OpenCLDevice methodsFor: 'accessing' stamp: 'jmv 9/9/2015 11:45'!
@@ -2549,11 +2604,6 @@ memBaseAddrAlign
 minDataTypeAlignSize
 	"The smallest alignment in bytes which can be used for any data type."
 	^self uintProperty: CL_DEVICE_MIN_DATA_TYPE_ALIGN_SIZE! !
-
-!OpenCLDevice methodsFor: 'accessing' stamp: 'jmv 9/9/2015 11:46'!
-name
-	"Device name string."
-	^self stringProperty: CL_DEVICE_NAME! !
 
 !OpenCLDevice methodsFor: 'accessing' stamp: 'jcg 1/13/2010 00:35'!
 platform
@@ -2649,11 +2699,6 @@ OpenCL<space><major_version.minor_version><space><vendor-specific information>
 The major_version.minor_version value returned will be 1.0."
 	^self stringProperty: CL_DEVICE_VERSION! !
 
-!OpenCLDevice methodsFor: 'printing' stamp: 'pb 6/18/2019 02:00:37'!
-printOn: aStream
-	super printOn: aStream.
-	aStream nextPut: $(; print: self name; nextPut:$)! !
-
 !OpenCLDevice methodsFor: 'initialize' stamp: 'jcg 1/13/2010 00:33'!
 platform: anOpenCLPlatform
 	platform := anOpenCLPlatform! !
@@ -2744,7 +2789,7 @@ booleanProperty: property
 	bool == CL_FALSE ifTrue: [^false].
 	self error: 'failed to obtain boolean device property'! !
 
-!OpenCLDevice methodsFor: 'private' stamp: 'jmv 5/7/2023 10:42:48'!
+!OpenCLDevice methodsFor: 'private' stamp: 'jmv 8/5/2015 17:30'!
 floatingPointPrecisionConfig: precision "CLDevice[Single|Double|Half]FpConfig"
 	"Get the specified property, one of CL_DEVICE_SINGLE_FP_CONFIG, CL_DEVICE_DOUBLE_FP_CONFIG, or CL_DEVICE_HALF_FP_CONFIG. property.  Answer a bit-field that describes the OPTIONAL double precision floating-point capability of the OpenCL device. This is a bit-field that describes one or more of the following values:
 	CL_FP_DENORM - denorms are supported.
@@ -2757,8 +2802,8 @@ floatingPointPrecisionConfig: precision "CLDevice[Single|Double|Half]FpConfig"
 	buf := ByteArray new: 8.
 	self getDeviceInfoParameter: precision into: buf.
 	isBigEndian := Smalltalk isBigEndian.
-	^ ((buf uint32At: 5 bigEndian: isBigEndian) bitShift: 32) +
-		(buf uint32At: 1 bigEndian: isBigEndian)! !
+	^ ((buf unsignedLongAt: 5 bigEndian: isBigEndian) bitShift: 32) +
+		(buf unsignedLongAt: 1 bigEndian: isBigEndian)! !
 
 !OpenCLDevice methodsFor: 'private' stamp: 'jmv 12/20/2016 22:58:35'!
 getDeviceInfoParameter: param "cl_device_info" into: buf "String, IntegerArray, etc."
@@ -2795,23 +2840,23 @@ stringProperty: property
 	(string at: size) numericValue = 0 ifTrue: [size := size - 1 "strip off terminal NULL character"].
 	^string first: size! !
 
-!OpenCLDevice methodsFor: 'private' stamp: 'jmv 5/7/2023 10:42:57'!
+!OpenCLDevice methodsFor: 'private' stamp: 'jmv 8/5/2015 17:29'!
 uintProperty: property
 	"Get the specified unsigned 32-bit property."
 	| buf |
 	buf := ByteArray new: 4.
 	self getDeviceInfoParameter: property into: buf.
-	^buf uint32At: 1 bigEndian: Smalltalk isBigEndian! !
+	^buf unsignedLongAt: 1 bigEndian: Smalltalk isBigEndian! !
 
-!OpenCLDevice methodsFor: 'private' stamp: 'jmv 5/7/2023 10:43:03'!
+!OpenCLDevice methodsFor: 'private' stamp: 'jmv 8/5/2015 17:30'!
 ulongProperty: property
 	"Get the specified unsigned 64-bit property."
 	| buf isBigEndian |
 	buf := ByteArray new: 8.
 	self getDeviceInfoParameter: property into: buf.
 	isBigEndian := Smalltalk isBigEndian.
-	^ ((buf uint32At: 5 bigEndian: isBigEndian) bitShift: 32) +
-		(buf uint32At: 1 bigEndian: isBigEndian)! !
+	^ ((buf unsignedLongAt: 5 bigEndian: isBigEndian) bitShift: 32) +
+		(buf unsignedLongAt: 1 bigEndian: isBigEndian)! !
 
 !OpenCLPlatform methodsFor: 'accessing' stamp: 'jmv 9/9/2015 11:47'!
 allCPUs
@@ -2858,10 +2903,6 @@ allGPUs
 !OpenCLPlatform methodsFor: 'accessing' stamp: 'jcg 1/10/2010 02:22'!
 extensions
 	^extensions! !
-
-!OpenCLPlatform methodsFor: 'accessing' stamp: 'jcg 1/10/2010 02:22'!
-name
-	^name! !
 
 !OpenCLPlatform methodsFor: 'accessing' stamp: 'jcg 1/10/2010 02:22'!
 profile
@@ -4006,10 +4047,6 @@ extent
 	^width@height! !
 
 !OpenCLImage2D methodsFor: 'accessing' stamp: 'jcg 1/29/2010 02:18'!
-format
-	^format! !
-
-!OpenCLImage2D methodsFor: 'accessing' stamp: 'jcg 1/29/2010 02:18'!
 height
 	^height! !
 
@@ -4033,10 +4070,6 @@ context: anOpenCLContext format: fmt "a CLImageFormatStruct" width: w height: h 
 !OpenCLImage3D methodsFor: 'accessing' stamp: 'jcg 1/29/2010 02:18'!
 depth
 	^depth! !
-
-!OpenCLImage3D methodsFor: 'accessing' stamp: 'jcg 1/29/2010 02:18'!
-format
-	^format! !
 
 !OpenCLImage3D methodsFor: 'accessing' stamp: 'jcg 1/29/2010 02:18'!
 height
@@ -4194,13 +4227,13 @@ commandQueue
 	"Answer the command-queue that the command corresponding to this event was enqueued upon."
 		^commandQueue! !
 
-!OpenCLEvent methodsFor: 'accessing' stamp: 'jmv 5/7/2023 10:43:07'!
+!OpenCLEvent methodsFor: 'accessing' stamp: 'jmv 9/9/2015 11:46'!
 commandType
 	"Answer an integer representing the cl_command_type of the event."
 	| bytes |
 	bytes := ByteArray new: 4.
 	self getEventInfo: CL_EVENT_COMMAND_TYPE into: bytes.
-	^bytes uint32At: 1 bigEndian: Smalltalk isBigEndian! !
+	^bytes unsignedLongAt: 1 bigEndian: Smalltalk isBigEndian! !
 
 !OpenCLEvent methodsFor: 'accessing' stamp: 'jmv 2/24/2016 15:19'!
 executionStatus
@@ -4465,32 +4498,6 @@ libraryForCurrentPlatform
 	"Answer the name of the OpenCL library on the current platform."
 	self error: 'Unknown platform'.
 	^nil! !
-
-!OpenCLPrimitiveInterface class methodsFor: 'class initialization' stamp: 'jmv 7/1/2019 17:54:48'!
-shutDown: quitting
-	"We assume that the image is being saved.  When it is restarted, we want the finalization-registry to be empty.  Otherwise, there is a race-condition where the finalization-process might run before the startup-list is processed, and we might crash because we try to free OpenCL objects whose handles are no longer valid.  Also see #startUp:."
-	self finalizationRegistry removeAll.
-	OpenCLPlatform preferredDevice: nil! !
-
-!OpenCLPrimitiveInterface class methodsFor: 'class initialization' stamp: 'jmv 8/20/2015 20:16'!
-startUp: resuming
-	"Behave differently depending on whether we are restarting a saved image, or are continuing without quitting."
-	resuming 
-		ifTrue:[
-			"Each time we restart the image, we flush the installed library so that 
-			 we are sure to use the proper library for the current platform."
-			ActiveSubclass := nil.
-			
-			"Any existing OpenCLObjects are invalid; mark them as such."
-			OpenCLRefCounter allInstancesDo:[:counter| counter invalidateOnStartUp].
-			OpenCLObject allSubInstancesDo: [:obj | obj invalidateOnStartUp].
-		]
-		ifFalse: [
-			"See #shutDown:... there we cleaned out our finalization registry to avoid a 
-			 crash-causing race-condition when restarting a saved image.  Now we put 
-			 all of the objects back, to ensure that they're finalized."
-			OpenCLRefCountedObject allSubInstancesDo: [:obj | obj registerForFinalization]
-		].! !
 
 !OpenCLPrimitiveInterface class methodsFor: 'class initialization' stamp: 'jmv 5/17/2017 12:32:26'!
 subclassForCurrentPlatform
@@ -24520,13 +24527,6 @@ libraryForCurrentPlatform
 supportedPlatform
 	^'Win32'! !
 
-!OpenCLRefCounter methodsFor: 'printing' stamp: 'jcg 1/15/2010 00:57'!
-printOn: aStream
-	aStream nextPutAll: '[ref-count: '.
-	refCount printOn: aStream.
-	aStream nextPut: $]
-! !
-
 !OpenCLRefCounter methodsFor: 'accessing' stamp: 'jcg 1/15/2010 01:39'!
 count
 	^refCount! !
@@ -24660,7 +24660,7 @@ __kernel void copy(global const float * in, global float * out, int w, int h) {
 downloadDataFromGPU: outputForm
 	"Block, because outputForm may be moved by GC before the data transfer occurs.  We could test to see if we're using an ExternalForm, and if so use a non-blocking command."
 	
-	"Ã–jo que origin y region tienen tamanio 3, no 2. Entender"
+	"Öjo que origin y region tienen tamanio 3, no 2. Entender"
 	
 	lastEvent := queue
 					readImage: result

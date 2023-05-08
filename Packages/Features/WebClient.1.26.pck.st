@@ -1,9 +1,9 @@
-'From Cuis 6.0 [latest update: #5795] on 7 May 2023 at 7:09:33 pm'!
+'From Cuis 6.0 [latest update: #5766] on 14 April 2023 at 12:58:48 pm'!
 'Description Description - This package is a port and refactoring of WebClient from http://ss3.gemstone.com/ss/WebClient.html with moderate changes by David Graham, Nicola Mingotti, Juan Vuletich and Hernan Wilkinson.
 	- WebClient-Core-ul.100
 	- WebClient-Help-ar.10
 	- WebClient-Tests-topa.48'!
-!provides: 'WebClient' 1 28!
+!provides: 'WebClient' 1 26!
 !requires: 'Network-Kernel' 1 2 nil!
 !requires: 'Identities-UUID' 1 7 nil!
 !requires: 'Cryptography-DigitalSignatures' 1 7 nil!
@@ -5634,7 +5634,7 @@ send: data code: opcode final: isFinal
 
 	^self send: data code: opcode final: isFinal mask: self masking! !
 
-!WebSocket07 methodsFor: 'read/write' stamp: 'jmv 5/7/2023 18:59:40'!
+!WebSocket07 methodsFor: 'read/write' stamp: 'jmv 1/10/2023 17:08:28'!
 send: data code: opcode final: isFinal mask: doMask
 	"Sends unfragmented data using the given opcode"
 
@@ -5646,12 +5646,12 @@ send: data code: opcode final: isFinal mask: doMask
 			byte2 := 127.
 			xLength := ByteArray new: 8.
 			(WriteStream on: xLength)
-				nextUint32Put: data size >> 32 bigEndian: true;
-				nextUint32Put: (data size bitAnd: 16rFFFFFFFF) bigEndian: true.
+				nextUnsignedInt32Put: data size >> 32 bigEndian: true;
+				nextUnsignedInt32Put: (data size bitAnd: 16rFFFFFFFF) bigEndian: true.
 		] ifFalse:[
 			byte2 := 126.
 			xLength := ByteArray new: 2.
-			(WriteStream on: xLength) nextUint16Put: data size bigEndian: true.
+			(WriteStream on: xLength) nextUnsignedInt16Put: data size bigEndian: true.
 		].
 	] ifFalse:[
 		byte2 := data size.
@@ -5901,14 +5901,14 @@ extractWebSocketKey: field
 	^digits // spaces.
 ! !
 
-!WebUtils class methodsFor: 'websockets' stamp: 'jmv 5/7/2023 11:08:48'!
+!WebUtils class methodsFor: 'websockets' stamp: 'ar 7/8/2010 18:59'!
 webSocketHandshake: key1 with: key2 with: data
 	"Do the actual WebSocket handshake computation"
 
 	| bytes |
 	bytes := ByteArray new: 16.
-	bytes int32At: 1 put: key1 bigEndian: true.
-	bytes int32At: 5 put: key2 bigEndian: true.
+	bytes longAt: 1 put: key1 bigEndian: true.
+	bytes longAt: 5 put: key2 bigEndian: true.
 	bytes replaceFrom: 9 to: 16 with: data.
 	^(self md5HashStream: bytes readStream) reversed! !
 
@@ -6420,7 +6420,7 @@ md5Digest: aStringOrByteArray
 
 	^(self md5HashStream: (ReadStream on: aStringOrByteArray asByteArray)) reversed hex! !
 
-!WebUtils class methodsFor: 'md5' stamp: 'jmv 5/7/2023 11:06:05'!
+!WebUtils class methodsFor: 'md5' stamp: 'ar 2/25/2010 23:29'!
 md5HashStream: aStream
 	"self md5HashStream: (ReadStream on: 'foo')"
 
@@ -6444,7 +6444,7 @@ md5HashStream: aStream
 			] ifFalse:[
 				"not enough room for the length, so just pad this one, then..."
 				sz < 64 ifTrue:[buffer at: sz + 1 put: 128].
-				1 to: 16 do:[:i| words at: i put: (buffer uint32At: i*4-3 bigEndian: false)].
+				1 to: 16 do:[:i| words at: i put: (buffer unsignedLongAt: i*4-3 bigEndian: false)].
 				self md5Transform: words hash: hash.
 				"process one additional block of padding ending with the length"
 				buffer atAllPut: 0.
@@ -6454,14 +6454,14 @@ md5HashStream: aStream
 			n := (aStream position - start) * 8.
 			7 to: 0 by: -1 do:[:i| buffer at: (buffer size - i) put: ((n bitShift: 7 - i * -8) bitAnd: 255)].
 		].
-		1 to: 16 do:[:i| words at: i put: (buffer uint32At: i*4-3 bigEndian: false)].
+		1 to: 16 do:[:i| words at: i put: (buffer unsignedLongAt: i*4-3 bigEndian: false)].
 		self md5Transform: words hash: hash.
 	].
 	bytes := ByteArray new: 16.
-	bytes uint32At: 1 put: (hash at: 4) bigEndian: true.
-	bytes uint32At: 5 put: (hash at: 3) bigEndian: true.
-	bytes uint32At: 9 put: (hash at: 2) bigEndian: true.
-	bytes uint32At: 13 put: (hash at: 1) bigEndian: true.
+	bytes unsignedLongAt: 1 put: (hash at: 4) bigEndian: true.
+	bytes unsignedLongAt: 5 put: (hash at: 3) bigEndian: true.
+	bytes unsignedLongAt: 9 put: (hash at: 2) bigEndian: true.
+	bytes unsignedLongAt: 13 put: (hash at: 1) bigEndian: true.
 	^bytes
 ! !
 

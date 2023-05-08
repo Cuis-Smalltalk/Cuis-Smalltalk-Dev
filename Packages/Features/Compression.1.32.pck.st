@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5795] on 7 May 2023 at 7:05:19 pm'!
+'From Cuis 6.0 [latest update: #5544] on 31 October 2022 at 11:51:18 am'!
 'Description '!
-!provides: 'Compression' 1 33!
+!provides: 'Compression' 1 32!
 SystemOrganization addCategory: 'Compression-System'!
 SystemOrganization addCategory: 'Compression-Archives'!
 
@@ -2793,10 +2793,10 @@ nextPutAllWordArray: aWordArray
 	].
 ! !
 
-!GZipSurrogateStream methodsFor: 'as yet unclassified' stamp: 'jmv 5/7/2023 19:01:41'!
+!GZipSurrogateStream methodsFor: 'as yet unclassified' stamp: 'jmv 2/26/2016 16:19'!
 nextSignedInt32Put: int32 bigEndian: bigEndian
 
-	^self bufferStream nextInt32Put: int32 bigEndian: bigEndian! !
+	^self bufferStream nextSignedInt32Put: int32 bigEndian: bigEndian! !
 
 !GZipSurrogateStream methodsFor: 'as yet unclassified' stamp: 'RAA 6/22/2000 18:42'!
 nextStringPut: s 
@@ -3351,21 +3351,21 @@ extractAllTo: aDirectory informing: barBlock overwrite: allOverwrite
 memberClass
 	^ZipArchiveMember! !
 
-!ZipArchive methodsFor: 'private' stamp: 'jmv 5/7/2023 18:55:56'!
+!ZipArchive methodsFor: 'private' stamp: 'jmv 2/26/2016 16:28'!
 readEndOfCentralDirectoryFrom: aStream
 	"Read EOCD, starting from position before signature."
 	| signature zipFileCommentLength |
-	signature := self readSignatureFrom: aStream.
+	signature _ self readSignatureFrom: aStream.
 	signature = EndOfCentralDirectorySignature ifFalse: [ ^self error: 'bad signature at ', aStream position printString ].
 
-	aStream nextUint16BigEndian: false. "# of this disk"
-	aStream nextUint16BigEndian: false. "# of disk with central dir start"
-	aStream nextUint16BigEndian: false. "# of entries in central dir on this disk"
-	aStream nextUint16BigEndian: false. "total # of entries in central dir"
-	centralDirectorySize := aStream nextUint32BigEndian: false. "size of central directory"
-	centralDirectoryOffsetWRTStartingDiskNumber := aStream nextUint32BigEndian: false. "offset of start of central directory"
-	zipFileCommentLength := aStream nextUint16BigEndian: false. "zip file comment"
-	zipFileComment := aStream next: zipFileCommentLength.
+	aStream nextUnsignedInt16BigEndian: false. "# of this disk"
+	aStream nextUnsignedInt16BigEndian: false. "# of disk with central dir start"
+	aStream nextUnsignedInt16BigEndian: false. "# of entries in central dir on this disk"
+	aStream nextUnsignedInt16BigEndian: false. "total # of entries in central dir"
+	centralDirectorySize _ aStream nextUnsignedInt32BigEndian: false. "size of central directory"
+	centralDirectoryOffsetWRTStartingDiskNumber _ aStream nextUnsignedInt32BigEndian: false. "offset of start of central directory"
+	zipFileCommentLength _ aStream nextUnsignedInt16BigEndian: false. "zip file comment"
+	zipFileComment _ aStream next: zipFileCommentLength.
 ! !
 
 !ZipArchive methodsFor: 'private' stamp: 'nk 2/23/2001 09:19'!
@@ -3408,17 +3408,17 @@ writeCentralDirectoryTo: aStream
 
 ! !
 
-!ZipArchive methodsFor: 'private' stamp: 'jmv 5/7/2023 18:57:46'!
+!ZipArchive methodsFor: 'private' stamp: 'jmv 2/26/2016 16:37'!
 writeEndOfCentralDirectoryTo: aStream
 
 	aStream nextPutAll: EndOfCentralDirectorySignature.
-	aStream nextUint16Put: 0 bigEndian: false. "diskNumber"
-	aStream nextUint16Put: 0 bigEndian: false. "diskNumberWithStartOfCentralDirectory"
-	aStream nextUint16Put: members size bigEndian: false. "numberOfCentralDirectoriesOnThisDisk"
-	aStream nextUint16Put: members size bigEndian: false. "numberOfCentralDirectories"
-	aStream nextUint32Put: writeEOCDOffset - writeCentralDirectoryOffset bigEndian: false. "size of central dir"
-	aStream nextUint32Put: writeCentralDirectoryOffset bigEndian: false. "offset of central dir"
-	aStream nextUint16Put: zipFileComment size bigEndian: false. "zip file comment"
+	aStream nextUnsignedInt16Put: 0 bigEndian: false. "diskNumber"
+	aStream nextUnsignedInt16Put: 0 bigEndian: false. "diskNumberWithStartOfCentralDirectory"
+	aStream nextUnsignedInt16Put: members size bigEndian: false. "numberOfCentralDirectoriesOnThisDisk"
+	aStream nextUnsignedInt16Put: members size bigEndian: false. "numberOfCentralDirectories"
+	aStream nextUnsignedInt32Put: writeEOCDOffset - writeCentralDirectoryOffset bigEndian: false. "size of central dir"
+	aStream nextUnsignedInt32Put: writeCentralDirectoryOffset bigEndian: false. "offset of central dir"
+	aStream nextUnsignedInt16Put: zipFileComment size bigEndian: false. "zip file comment"
 	zipFileComment isEmpty ifFalse: [ aStream nextPutAll: zipFileComment ].
 
 ! !
@@ -3947,32 +3947,31 @@ copyRawDataTo: aStream from: start to: finish
 	].
 ! !
 
-!ZipArchiveMember methodsFor: 'private-writing' stamp: 'jmv 5/7/2023 18:58:15'!
+!ZipArchiveMember methodsFor: 'private-writing' stamp: 'jmv 2/26/2016 16:51'!
 refreshLocalFileHeaderTo: aStream
 	"Re-writes my local header to the given stream.
 	To be called after writing the data stream.
 	Assumes that fileName and localExtraField sizes didn't change since last written."
 
 	| here |
-	here := aStream position.
+	here _ aStream position.
 	aStream position: writeLocalHeaderRelativeOffset.
 
 	aStream nextPutAll: LocalFileHeaderSignature.
-	aStream nextUint16Put: versionNeededToExtract bigEndian: false.
-	aStream nextUint16Put: bitFlag bigEndian: false.
-	aStream nextUint16Put: desiredCompressionMethod bigEndian: false.
-	aStream nextUint32Put: lastModFileDateTime bigEndian: false.
-	aStream nextUint32Put: crc32 bigEndian: false.
-	aStream nextUint32Put: (desiredCompressionMethod = CompressionStored
-							ifTrue: [ uncompressedSize ]
-							ifFalse: [ compressedSize ]) bigEndian: false.
-	aStream nextUint32Put: uncompressedSize bigEndian: false.
-	aStream nextUint16Put: fileName size bigEndian: false.
-	aStream nextUint16Put: localExtraField size bigEndian: false.
+	aStream nextUnsignedInt16Put: versionNeededToExtract bigEndian: false.
+	aStream nextUnsignedInt16Put: bitFlag bigEndian: false.
+	aStream nextUnsignedInt16Put: desiredCompressionMethod bigEndian: false.
+	aStream nextUnsignedInt32Put: lastModFileDateTime bigEndian: false.
+	aStream nextUnsignedInt32Put: crc32 bigEndian: false.
+	aStream nextUnsignedInt32Put: (desiredCompressionMethod = CompressionStored
+												ifTrue: [ uncompressedSize ] ifFalse: [ compressedSize ]) bigEndian: false.
+	aStream nextUnsignedInt32Put: uncompressedSize bigEndian: false.
+	aStream nextUnsignedInt16Put: fileName size bigEndian: false.
+	aStream nextUnsignedInt16Put: localExtraField size bigEndian: false.
 
 	aStream position: here! !
 
-!ZipArchiveMember methodsFor: 'private-writing' stamp: 'jmv 5/7/2023 18:59:48'!
+!ZipArchiveMember methodsFor: 'private-writing' stamp: 'jmv 2/26/2016 16:53'!
 writeCentralDirectoryFileHeaderTo: aStream
 	"C2 v3 V4 v5 V2"
 
@@ -3980,33 +3979,32 @@ writeCentralDirectoryFileHeaderTo: aStream
 	aStream nextPut: versionMadeBy.
 	aStream nextPut: fileAttributeFormat.
 
-	aStream nextUint16Put: versionNeededToExtract bigEndian: false.
-	aStream nextUint16Put: bitFlag bigEndian: false.
-	aStream nextUint16Put: desiredCompressionMethod bigEndian: false.
+	aStream nextUnsignedInt16Put: versionNeededToExtract bigEndian: false.
+	aStream nextUnsignedInt16Put: bitFlag bigEndian: false.
+	aStream nextUnsignedInt16Put: desiredCompressionMethod bigEndian: false.
 
-	aStream nextUint32Put: lastModFileDateTime bigEndian: false.
+	aStream nextUnsignedInt32Put: lastModFileDateTime bigEndian: false.
 
 	"These next 3 should have been updated during the write of the data"
-	aStream nextUint32Put: crc32 bigEndian: false.
-	aStream nextUint32Put: (desiredCompressionMethod = CompressionStored
-							ifTrue: [ uncompressedSize ]
-							ifFalse: [ compressedSize ]) bigEndian: false.
-	aStream nextUint32Put: uncompressedSize bigEndian: false.
+	aStream nextUnsignedInt32Put: crc32 bigEndian: false.
+	aStream nextUnsignedInt32Put: (desiredCompressionMethod = CompressionStored
+												ifTrue: [ uncompressedSize ] ifFalse: [ compressedSize ]) bigEndian: false.
+	aStream nextUnsignedInt32Put: uncompressedSize bigEndian: false.
 
-	aStream nextUint16Put: fileName size bigEndian: false.
-	aStream nextUint16Put: cdExtraField size bigEndian: false.
-	aStream nextUint16Put: fileComment size bigEndian: false.
-	aStream nextUint16Put: 0 bigEndian: false.		"diskNumberStart"
-	aStream nextUint16Put: internalFileAttributes bigEndian: false.
+	aStream nextUnsignedInt16Put: fileName size bigEndian: false.
+	aStream nextUnsignedInt16Put: cdExtraField size bigEndian: false.
+	aStream nextUnsignedInt16Put: fileComment size bigEndian: false.
+	aStream nextUnsignedInt16Put: 0 bigEndian: false.		"diskNumberStart"
+	aStream nextUnsignedInt16Put: internalFileAttributes bigEndian: false.
 
-	aStream nextUint32Put: externalFileAttributes bigEndian: false.
-	aStream nextUint32Put: writeLocalHeaderRelativeOffset bigEndian: false.
+	aStream nextUnsignedInt32Put: externalFileAttributes bigEndian: false.
+	aStream nextUnsignedInt32Put: writeLocalHeaderRelativeOffset bigEndian: false.
 
 	aStream nextPutAll: fileName asByteArray.
 	aStream nextPutAll: cdExtraField asByteArray.
 	aStream nextPutAll: fileComment asByteArray.! !
 
-!ZipArchiveMember methodsFor: 'private-writing' stamp: 'jmv 5/7/2023 18:58:52'!
+!ZipArchiveMember methodsFor: 'private-writing' stamp: 'jmv 2/26/2016 16:54'!
 writeDataDescriptorTo: aStream
 	"This writes a data descriptor to the given stream.
 	Assumes that crc32, writeOffset, and uncompressedSize are
@@ -4014,9 +4012,9 @@ writeDataDescriptorTo: aStream
 	Further, the local file header should have the
 	GPBF_HAS_DATA_DESCRIPTOR_MASK (8) bit set."
 
-	aStream nextUint32Put: crc32 bigEndian: false.
-	aStream nextUint32Put: compressedSize bigEndian: false.
-	aStream nextUint32Put: uncompressedSize bigEndian: false! !
+	aStream nextUnsignedInt32Put: crc32 bigEndian: false.
+	aStream nextUnsignedInt32Put: compressedSize bigEndian: false.
+	aStream nextUnsignedInt32Put: uncompressedSize bigEndian: false! !
 
 !ZipArchiveMember methodsFor: 'private-writing' stamp: 'ar 8/10/2010 13:15'!
 writeDataTo: aStream
@@ -4055,26 +4053,25 @@ writeDataTo: aStream from: start to: finish
 
 	self copyRawDataTo: aStream from: start to: finish.! !
 
-!ZipArchiveMember methodsFor: 'private-writing' stamp: 'jmv 5/7/2023 18:59:07'!
+!ZipArchiveMember methodsFor: 'private-writing' stamp: 'jmv 2/26/2016 16:55'!
 writeLocalFileHeaderTo: aStream
 	"Write my local header to a file handle.
 	Stores the offset to the start of the header in my
 	writeLocalHeaderRelativeOffset member."
 
 	aStream nextPutAll: LocalFileHeaderSignature.
-	aStream nextUint16Put: versionNeededToExtract bigEndian: false.
-	aStream nextUint16Put: bitFlag bigEndian: false.
-	aStream nextUint16Put: desiredCompressionMethod bigEndian: false.
+	aStream nextUnsignedInt16Put: versionNeededToExtract bigEndian: false.
+	aStream nextUnsignedInt16Put: bitFlag bigEndian: false.
+	aStream nextUnsignedInt16Put: desiredCompressionMethod bigEndian: false.
 
-	aStream nextUint32Put: lastModFileDateTime bigEndian: false.
-	aStream nextUint32Put: crc32 bigEndian: false.
-	aStream nextUint32Put: (desiredCompressionMethod = CompressionStored
-							ifTrue: [ uncompressedSize ]
-							ifFalse: [ compressedSize ]) bigEndian: false.
-	aStream nextUint32Put: uncompressedSize bigEndian: false.
+	aStream nextUnsignedInt32Put: lastModFileDateTime bigEndian: false.
+	aStream nextUnsignedInt32Put: crc32 bigEndian: false.
+	aStream nextUnsignedInt32Put: (desiredCompressionMethod = CompressionStored
+												ifTrue: [ uncompressedSize ] ifFalse: [ compressedSize ]) bigEndian: false.
+	aStream nextUnsignedInt32Put: uncompressedSize bigEndian: false.
 
-	aStream nextUint16Put: fileName size bigEndian: false.
-	aStream nextUint16Put: localExtraField size bigEndian: false.
+	aStream nextUnsignedInt16Put: fileName size bigEndian: false.
+	aStream nextUnsignedInt16Put: localExtraField size bigEndian: false.
 
 	aStream nextPutAll: fileName asByteArray.
 	aStream nextPutAll: localExtraField asByteArray! !
@@ -4271,36 +4268,36 @@ canonicalizeFileName
 	[fileName beginsWith: '/'] whileTrue: [fileName := fileName allButFirst].
 	fileName := fileName copyReplaceAll: '../' with: ''! !
 
-!ZipFileMember methodsFor: 'private-reading' stamp: 'jmv 5/7/2023 18:57:19'!
+!ZipFileMember methodsFor: 'private-reading' stamp: 'jmv 2/26/2016 16:30'!
 readCentralDirectoryFileHeaderFrom: aStream
 	"Assumes aStream positioned after signature"
 
 	| fileNameLength extraFieldLength fileCommentLength |
 
-	versionMadeBy := aStream next.
-	fileAttributeFormat := aStream next.
+	versionMadeBy _ aStream next.
+	fileAttributeFormat _ aStream next.
 
-	versionNeededToExtract := aStream nextUint16BigEndian: false.
-	bitFlag := aStream nextUint16BigEndian: false.
-	compressionMethod := aStream nextUint16BigEndian: false.
+	versionNeededToExtract _ aStream nextUnsignedInt16BigEndian: false.
+	bitFlag _ aStream nextUnsignedInt16BigEndian: false.
+	compressionMethod _ aStream nextUnsignedInt16BigEndian: false.
 
-	lastModFileDateTime := aStream nextUint32BigEndian: false.
-	crc32 := aStream nextUint32BigEndian: false.
-	compressedSize := aStream nextUint32BigEndian: false.
-	uncompressedSize := aStream nextUint32BigEndian: false.
+	lastModFileDateTime _ aStream nextUnsignedInt32BigEndian: false.
+	crc32 _ aStream nextUnsignedInt32BigEndian: false.
+	compressedSize _ aStream nextUnsignedInt32BigEndian: false.
+	uncompressedSize _ aStream nextUnsignedInt32BigEndian: false.
 
-	fileNameLength := aStream nextUint16BigEndian: false.
-	extraFieldLength := aStream nextUint16BigEndian: false.
-	fileCommentLength := aStream nextUint16BigEndian: false.
-	aStream nextUint16BigEndian: false. 	"disk number start"
-	internalFileAttributes := aStream nextUint16BigEndian: false.
+	fileNameLength _ aStream nextUnsignedInt16BigEndian: false.
+	extraFieldLength _ aStream nextUnsignedInt16BigEndian: false.
+	fileCommentLength _ aStream nextUnsignedInt16BigEndian: false.
+	aStream nextUnsignedInt16BigEndian: false. 	"disk number start"
+	internalFileAttributes _ aStream nextUnsignedInt16BigEndian: false.
 
-	externalFileAttributes := aStream nextUint32BigEndian: false.
-	localHeaderRelativeOffset := aStream nextUint32BigEndian: false.
+	externalFileAttributes _ aStream nextUnsignedInt32BigEndian: false.
+	localHeaderRelativeOffset _ aStream nextUnsignedInt32BigEndian: false.
 
-	fileName := (aStream next: fileNameLength) asString.
-	cdExtraField := (aStream next: extraFieldLength) asByteArray.
-	fileComment := (aStream next: fileCommentLength) asString.
+	fileName _ (aStream next: fileNameLength) asString.
+	cdExtraField _ (aStream next: extraFieldLength) asByteArray.
+	fileComment _ (aStream next: fileCommentLength) asString.
 
 	self desiredCompressionMethod: compressionMethod! !
 
@@ -4314,43 +4311,43 @@ readFrom: aStream
 	self canonicalizeFileName.
 ! !
 
-!ZipFileMember methodsFor: 'private-reading' stamp: 'jmv 5/7/2023 18:56:20'!
+!ZipFileMember methodsFor: 'private-reading' stamp: 'jmv 2/26/2016 16:31'!
 readLocalDirectoryFileHeaderFrom: aStream 
 	"Positions stream as necessary. Will return stream to its original position"
 
 	| fileNameLength extraFieldLength xcrc32 xcompressedSize xuncompressedSize sig oldPos |
 
-	oldPos := aStream position.
+	oldPos _ aStream position.
 
 	aStream position: localHeaderRelativeOffset.
 
-	sig := aStream next: 4.
+	sig _ aStream next: 4.
 	sig = LocalFileHeaderSignature asByteArray
 		ifFalse: [ aStream position: oldPos.
 				^self error: 'bad LH signature at ', localHeaderRelativeOffset hex ].
 
-	versionNeededToExtract := aStream nextUint16BigEndian: false.
-	bitFlag := aStream nextUint16BigEndian: false.
-	compressionMethod := aStream nextUint16BigEndian: false.
+	versionNeededToExtract _ aStream nextUnsignedInt16BigEndian: false.
+	bitFlag _ aStream nextUnsignedInt16BigEndian: false.
+	compressionMethod _ aStream nextUnsignedInt16BigEndian: false.
 
-	lastModFileDateTime := aStream nextUint32BigEndian: false.
-	xcrc32 := aStream nextUint32BigEndian: false.
-	xcompressedSize := aStream nextUint32BigEndian: false.
-	xuncompressedSize := aStream nextUint32BigEndian: false.
+	lastModFileDateTime _ aStream nextUnsignedInt32BigEndian: false.
+	xcrc32 _ aStream nextUnsignedInt32BigEndian: false.
+	xcompressedSize _ aStream nextUnsignedInt32BigEndian: false.
+	xuncompressedSize _ aStream nextUnsignedInt32BigEndian: false.
 
-	fileNameLength := aStream nextUint16BigEndian: false.
-	extraFieldLength := aStream nextUint16BigEndian: false.
+	fileNameLength _ aStream nextUnsignedInt16BigEndian: false.
+	extraFieldLength _ aStream nextUnsignedInt16BigEndian: false.
 
-	fileName := (aStream next: fileNameLength) asString.
-	localExtraField := (aStream next: extraFieldLength) asByteArray.
+	fileName _ (aStream next: fileNameLength) asString.
+	localExtraField _ (aStream next: extraFieldLength) asByteArray.
 
-	dataOffset := aStream position.
+	dataOffset _ aStream position.
 
 	"Don't trash these fields if we already got them from the central directory"
 	self hasDataDescriptor ifFalse: [
-		crc32 := xcrc32.
-		compressedSize := xcompressedSize.
-		uncompressedSize := xuncompressedSize.
+		crc32 _ xcrc32.
+		compressedSize _ xcompressedSize.
+		uncompressedSize _ xuncompressedSize.
 	].
 
 	aStream position: oldPos.! !
@@ -4367,17 +4364,17 @@ rewindData
 	stream position: (localHeaderRelativeOffset + 4).
 	self skipLocalDirectoryFileHeaderFrom: stream.! !
 
-!ZipFileMember methodsFor: 'private-reading' stamp: 'jmv 5/7/2023 18:50:56'!
+!ZipFileMember methodsFor: 'private-reading' stamp: 'jmv 2/26/2016 16:31'!
 skipLocalDirectoryFileHeaderFrom: aStream 
 	"Assumes that stream is positioned after signature."
 
 	|  extraFieldLength fileNameLength |
 	aStream next: 22.
-	fileNameLength := aStream nextUint16BigEndian: false.
-	extraFieldLength := aStream nextUint16BigEndian: false.
+	fileNameLength _ aStream nextUnsignedInt16BigEndian: false.
+	extraFieldLength _ aStream nextUnsignedInt16BigEndian: false.
 	aStream next: fileNameLength.
 	aStream next: extraFieldLength.
-	dataOffset := aStream position! !
+	dataOffset _ aStream position! !
 
 !ZipFileMember methodsFor: 'initialization' stamp: 'ar 3/2/2001 18:46'!
 close

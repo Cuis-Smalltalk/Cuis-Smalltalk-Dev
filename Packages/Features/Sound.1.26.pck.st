@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5795] on 7 May 2023 at 7:07:55 pm'!
+'From Cuis 6.0 [latest update: #5635] on 18 January 2023 at 3:41:50 pm'!
 'Description '!
-!provides: 'Sound' 1 27!
+!provides: 'Sound' 1 26!
 !requires: 'Compression' 1 nil nil!
 !requires: 'Collections-CompactArrays' 1 2 nil!
 SystemOrganization addCategory: 'Sound-Synthesis'!
@@ -798,36 +798,36 @@ normalized: percentOfFullVolume
 	1 to: self size do: [:i | self at: i put: (mult * (self at: i)) asInteger].
 ! !
 
-!SoundBuffer methodsFor: 'utilities' stamp: 'jmv 5/7/2023 19:01:30'!
+!SoundBuffer methodsFor: 'utilities' stamp: 'jmv 1/4/2023 16:58:59'!
 saveAsAIFFFileSamplingRate: rate on: aBinaryStream
 	"Store this mono sound buffer in AIFF file format with the given sampling rate on the given stream."
 
 	| sampleCount s swapBytes |
-	sampleCount := self monoSampleCount.
+	sampleCount _ self monoSampleCount.
 	aBinaryStream nextPutAll: 'FORM' asByteArray.
-	aBinaryStream nextInt32Put: (2 * sampleCount) + ((7 * 4) + 18) bigEndian: true.
+	aBinaryStream nextSignedInt32Put: (2 * sampleCount) + ((7 * 4) + 18) bigEndian: true.
 	aBinaryStream nextPutAll: 'AIFF' asByteArray.
 	aBinaryStream nextPutAll: 'COMM' asByteArray.
-	aBinaryStream nextInt32Put: 18 bigEndian: true.
-	aBinaryStream nextUint16Put: 1 bigEndian: true.  "channels"
-	aBinaryStream nextInt32Put: sampleCount bigEndian: true.
-	aBinaryStream nextUint16Put: 16 bigEndian: true.  "bits/sample"
+	aBinaryStream nextSignedInt32Put: 18 bigEndian: true.
+	aBinaryStream nextUnsignedInt16Put: 1 bigEndian: true.  "channels"
+	aBinaryStream nextSignedInt32Put: sampleCount bigEndian: true.
+	aBinaryStream nextUnsignedInt16Put: 16 bigEndian: true.  "bits/sample"
 	self storeExtendedFloat: rate on: aBinaryStream.
 	aBinaryStream nextPutAll: 'SSND' asByteArray.
-	aBinaryStream nextInt32Put: (2 * sampleCount) + 8 bigEndian: true.
-	aBinaryStream nextInt32Put: 0 bigEndian: true.
-	aBinaryStream nextInt32Put: 0 bigEndian: true.
+	aBinaryStream nextSignedInt32Put: (2 * sampleCount) + 8 bigEndian: true.
+	aBinaryStream nextSignedInt32Put: 0 bigEndian: true.
+	aBinaryStream nextSignedInt32Put: 0 bigEndian: true.
 
 	(aBinaryStream isFileStream) ifTrue: [
 		"optimization: write sound buffer directly to file"
-		swapBytes := Smalltalk isLittleEndian.
+		swapBytes _ Smalltalk isLittleEndian.
 		swapBytes ifTrue: [self reverseEndianness].  "make big endian"
 		aBinaryStream next: (self size // 2) putAll: self startingAt: 1.  "size in words"
 		swapBytes ifTrue: [self reverseEndianness].  "revert to little endian"
 		^ self].
 
 	1 to: sampleCount do: [:i |
-		s := self at: i.
+		s _ self at: i.
 		aBinaryStream nextPut: ((s bitShift: -8) bitAnd: 16rFF).
 		aBinaryStream nextPut: (s bitAnd: 16rFF)].
 ! !
@@ -1224,103 +1224,103 @@ readChunk: chunkType size: chunkSize
 	in skip: chunkSize.  "skip unknown chunks"
 ! !
 
-!AIFFFileReader methodsFor: 'private' stamp: 'jmv 5/7/2023 18:56:30'!
+!AIFFFileReader methodsFor: 'private' stamp: 'jmv 2/26/2016 16:59'!
 readCommonChunk: chunkSize
 	"Read a COMM chunk. All AIFF files have exactly one chunk of this type."
 
 	| compressionType |
-	channelCount := in nextUint16BigEndian: true.
-	frameCount := in nextUint32BigEndian: true.
-	bitsPerSample := in nextUint16BigEndian: true.
-	samplingRate := self readExtendedFloat.
+	channelCount _ in nextUnsignedInt16BigEndian: true.
+	frameCount _ in nextUnsignedInt32BigEndian: true.
+	bitsPerSample _ in nextUnsignedInt16BigEndian: true.
+	samplingRate _ self readExtendedFloat.
 	chunkSize > 18 ifTrue: [
 		fileType = 'AIFF'
 			ifTrue: [self error: 'unexpectedly long COMM chunk size for AIFF file'].
-		compressionType := (in next: 4) asString.
+		compressionType _ (in next: 4) asString.
 		compressionType = 'NONE' ifFalse: [self error: 'cannot read compressed AIFF files'].
 		in skip: (chunkSize - 22)].  "skip the reminder of AIFF-C style chunk"
 ! !
 
-!AIFFFileReader methodsFor: 'private' stamp: 'jmv 5/7/2023 18:56:39'!
+!AIFFFileReader methodsFor: 'private' stamp: 'jmv 4/11/2019 14:01:46'!
 readExtendedFloat
 	"Read and answer an Apple extended-precision 80-bit floating point number from the input stream."
 	"Details: I could not find the specification for this format, so constants were determined empirically based on assumption of 1-bit sign, 15-bit exponent, 64-bit mantissa. This format does not seem to have an implicit one before the mantissa as some float formats do."
 
 	| signAndExp mantissa sign exp |
-	signAndExp := in nextUint16BigEndian: true.
+	signAndExp _ in nextUnsignedInt16BigEndian: true.
 	"scaled by (2 raisedTo: -64) below"
-	mantissa := (in nextUint32BigEndian: true) << 32 + (in nextUint32BigEndian: true).
+	mantissa _ (in nextUnsignedInt32BigEndian: true) << 32 + (in nextUnsignedInt32BigEndian: true).
 	(signAndExp bitAnd: 16r8000) = 0
-		ifTrue: [sign := 1.0]
-		ifFalse: [sign := -1.0].
-	exp := (signAndExp bitAnd: 16r7FFF) - 16r4000 + 2.  "not sure why +2 is needed..."
+		ifTrue: [sign _ 1.0]
+		ifFalse: [sign _ -1.0].
+	exp _ (signAndExp bitAnd: 16r7FFF) - 16r4000 + 2.  "not sure why +2 is needed..."
 	^ (sign * mantissa asFloat * (2.0 raisedTo: exp - 64)) roundTo: 0.00000001
 ! !
 
-!AIFFFileReader methodsFor: 'private' stamp: 'jmv 5/7/2023 18:56:44'!
+!AIFFFileReader methodsFor: 'private' stamp: 'jmv 2/26/2016 17:00'!
 readFrom: aBinaryStream
 	"Read AIFF data from the given binary stream."
 	"Details: An AIFF file consists of a header (FORM chunk) followed by a sequence of tagged data chunks. Each chunk starts with a header consisting of a four-byte tag (a string) and a four byte size. These eight bytes of chunk header are not included in the chunk size. For each chunk, the readChunk:size: method consumes chunkSize bytes of the input stream, parsing recognized chunks or skipping unrecognized ones. If chunkSize is odd, it will be followed by a padding byte. Chunks may occur in any order."
 
 	| sz end chunkType chunkSize p |
-	in := aBinaryStream.
+	in _ aBinaryStream.
 
 	"read FORM chunk"
 	(in next: 4) asString = 'FORM' ifFalse: [^ self error: 'not an AIFF file'].
-	sz := in nextUint32BigEndian: true.
-	end := in position + sz.
-	fileType := (in next: 4) asString.
+	sz _ in nextUnsignedInt32BigEndian: true.
+	end _ in position + sz.
+	fileType _ (in next: 4) asString.
 
 	[in atEnd not and: [in position < end]] whileTrue: [
-		chunkType := (in next: 4) asString.
-		chunkSize := in nextUint32BigEndian: true.
-		p := in position.
+		chunkType _ (in next: 4) asString.
+		chunkSize _ in nextUnsignedInt32BigEndian: true.
+		p _ in position.
 		self readChunk: chunkType size: chunkSize.
 		(in position = (p + chunkSize))
 			ifFalse: [self error: 'chunk size mismatch; bad AIFF file?'].
 		chunkSize odd ifTrue: [in skip: 1]].  "skip padding byte"
 ! !
 
-!AIFFFileReader methodsFor: 'private' stamp: 'jmv 5/7/2023 18:51:18'!
+!AIFFFileReader methodsFor: 'private' stamp: 'jmv 2/26/2016 16:57'!
 readInstrumentChunk: chunkSize
 
 	| midiKey detune lowNote highNote lowVelocity highVelocity
 	  sustainMode sustainStartID sustainEndID
 	  releaseMode releaseStartID releaseEndID |
 
-	midiKey := in next.
-	detune := in next.
-	lowNote := in next.
-	highNote := in next.
-	lowVelocity := in next.
-	highVelocity := in next.
-	gain := in nextUint16BigEndian: true.
-	sustainMode := in nextUint16BigEndian: true.
-	sustainStartID := in nextUint16BigEndian: true.
-	sustainEndID := in nextUint16BigEndian: true.
-	releaseMode := in nextUint16BigEndian: true.
-	releaseStartID := in nextUint16BigEndian: true.
-	releaseEndID := in nextUint16BigEndian: true.
-	isLooped := sustainMode = 1.
+	midiKey _ in next.
+	detune _ in next.
+	lowNote _ in next.
+	highNote _ in next.
+	lowVelocity _ in next.
+	highVelocity _ in next.
+	gain _ in nextUnsignedInt16BigEndian: true.
+	sustainMode _ in nextUnsignedInt16BigEndian: true.
+	sustainStartID _ in nextUnsignedInt16BigEndian: true.
+	sustainEndID _ in nextUnsignedInt16BigEndian: true.
+	releaseMode _ in nextUnsignedInt16BigEndian: true.
+	releaseStartID _ in nextUnsignedInt16BigEndian: true.
+	releaseEndID _ in nextUnsignedInt16BigEndian: true.
+	isLooped _ sustainMode = 1.
 	(isLooped and: [markers notNil]) ifTrue: [
 		((markers first last > frameCount) or:
 		 [markers last last > frameCount]) ifTrue: [
 			"bad loop data; some sample CD files claim to be looped but aren't"
-			isLooped := false]].
-	pitch := self pitchForKey: midiKey.
+			isLooped _ false]].
+	pitch _ self pitchForKey: midiKey.
 ! !
 
-!AIFFFileReader methodsFor: 'private' stamp: 'jmv 5/7/2023 18:56:48'!
+!AIFFFileReader methodsFor: 'private' stamp: 'jmv 2/26/2016 17:00'!
 readMarkerChunk: chunkSize
 
 	| markerCount id position labelBytes label |
-	markerCount := in nextUint16BigEndian: true.
-	markers := Array new: markerCount.
+	markerCount _ in nextUnsignedInt16BigEndian: true.
+	markers _ Array new: markerCount.
 	1 to: markerCount do: [:i |
-		id := in nextUint16BigEndian: true.
-		position := in nextUint32BigEndian: true.
-		labelBytes := in next.
-		label := (in next: labelBytes) asString.
+		id _ in nextUnsignedInt16BigEndian: true.
+		position _ in nextUnsignedInt32BigEndian: true.
+		labelBytes _ in next.
+		label _ (in next: labelBytes) asString.
 		labelBytes even ifTrue: [in skip: 1].
 		markers at: i put: (Array with: id with: label with: position)].
 
@@ -1388,38 +1388,38 @@ readMultiChannelDataFrom: s
 					(channelData at: ch) at: i put: w]]].
 ! !
 
-!AIFFFileReader methodsFor: 'private' stamp: 'jmv 5/7/2023 18:56:53'!
+!AIFFFileReader methodsFor: 'private' stamp: 'jmv 2/26/2016 17:00'!
 readSamplesChunk: chunkSize
 	"Read a SSND chunk. All AIFF files with a non-zero frameCount contain exactly one chunk of this type."
 
 	| offset blockSize bytesOfSamples s |
-	offset := in nextUint32BigEndian: true.
-	blockSize := in nextUint32BigEndian: true.
+	offset _ in nextUnsignedInt32BigEndian: true.
+	blockSize _ in nextUnsignedInt32BigEndian: true.
 	((offset ~= 0) or: [blockSize ~= 0])
 		ifTrue: [^ self error: 'this AIFF reader cannot handle blocked sample chunks'].
-	bytesOfSamples := chunkSize - 8.
+	bytesOfSamples _ chunkSize - 8.
 	bytesOfSamples = (channelCount * frameCount * (bitsPerSample // 8))
 		ifFalse: [self error: 'actual sample count does not match COMM chunk'].
 
-	channelDataOffset := in position.  "record stream position for start of data"
+	channelDataOffset _ in position.  "record stream position for start of data"
 	skipDataChunk ifTrue: [in skip: (chunkSize - 8). ^ self].  "if skipDataChunk, skip sample data"
 
 	(mergeIfStereo and: [channelCount = 2])
 		ifTrue: [
-			channelData := Array with: (SoundBuffer newMonoSampleCount: frameCount)]
+			channelData _ Array with: (SoundBuffer newMonoSampleCount: frameCount)]
 		ifFalse: [
-			channelData :=
+			channelData _
 				(1 to: channelCount) collect: [:i | SoundBuffer newMonoSampleCount: frameCount]].
 
 	(bytesOfSamples < (Smalltalk garbageCollectMost - 300000))
-		ifTrue: [s := ReadStream on: (in next: bytesOfSamples)]  "bulk-read, then process"
-		ifFalse: [s := in].  "not enough space to buffer; read directly from file"
+		ifTrue: [s _ ReadStream on: (in next: bytesOfSamples)]  "bulk-read, then process"
+		ifFalse: [s _ in].  "not enough space to buffer; read directly from file"
 
 	"mono and stereo are special-cased for better performance"
 	channelCount = 1 ifTrue: [^ self readMonoChannelDataFrom: s].
 	channelCount = 2 ifTrue: [
 		mergeIfStereo
-			ifTrue: [channelCount := 1. ^ self readMergedStereoChannelDataFrom: s]
+			ifTrue: [channelCount _ 1. ^ self readMergedStereoChannelDataFrom: s]
 			ifFalse: [^ self readStereoChannelDataFrom: s]].
 	self readMultiChannelDataFrom: s.
 ! !
@@ -1937,79 +1937,79 @@ storeAIFFOnFileNamed: fileName
 		strm binary.
 		self storeAIFFSamplesOn: strm ]! !
 
-!AbstractSound methodsFor: 'file i/o' stamp: 'jmv 5/7/2023 19:01:52'!
+!AbstractSound methodsFor: 'file i/o' stamp: 'jmv 2/26/2016 17:03'!
 storeAIFFSamplesOn: aBinaryStream
 	"Store this sound as a 16-bit AIFF file at the current SoundPlayer sampling rate. Store both channels if self isStereo is true; otherwise, store the left channel only as a mono sound."
 
 	| samplesToStore channelCount dataByteCount |
-	samplesToStore := (self duration * self samplingRate) ceiling.
-	channelCount := self isStereo ifTrue: [2] ifFalse: [1].
-	dataByteCount := samplesToStore * channelCount * 2.
+	samplesToStore _ (self duration * self samplingRate) ceiling.
+	channelCount _ self isStereo ifTrue: [2] ifFalse: [1].
+	dataByteCount _ samplesToStore * channelCount * 2.
 
 	"write AIFF file header:"
 	aBinaryStream nextPutAll: 'FORM' asByteArray.
-	aBinaryStream nextInt32Put: ((7 * 4) + 18) + dataByteCount bigEndian: true.
+	aBinaryStream nextSignedInt32Put: ((7 * 4) + 18) + dataByteCount bigEndian: true.
 	aBinaryStream nextPutAll: 'AIFF' asByteArray.
 	aBinaryStream nextPutAll: 'COMM' asByteArray.
-	aBinaryStream nextInt32Put: 18 bigEndian: true.
-	aBinaryStream nextUint16Put: channelCount bigEndian: true.
-	aBinaryStream nextInt32Put: samplesToStore bigEndian: true.
-	aBinaryStream nextUint16Put: 16 bigEndian: true.  "bits/sample"
+	aBinaryStream nextSignedInt32Put: 18 bigEndian: true.
+	aBinaryStream nextUnsignedInt16Put: channelCount bigEndian: true.
+	aBinaryStream nextSignedInt32Put: samplesToStore bigEndian: true.
+	aBinaryStream nextUnsignedInt16Put: 16 bigEndian: true.  "bits/sample"
 	self storeExtendedFloat: self samplingRate on: aBinaryStream.
 	aBinaryStream nextPutAll: 'SSND' asByteArray.
-	aBinaryStream nextInt32Put: dataByteCount + 8 bigEndian: true.
-	aBinaryStream nextInt32Put: 0 bigEndian: true.
-	aBinaryStream nextInt32Put: 0 bigEndian: true.
+	aBinaryStream nextSignedInt32Put: dataByteCount + 8 bigEndian: true.
+	aBinaryStream nextSignedInt32Put: 0 bigEndian: true.
+	aBinaryStream nextSignedInt32Put: 0 bigEndian: true.
 
 	"write data:"
 	self storeSampleCount: samplesToStore bigEndian: true on: aBinaryStream.
 ! !
 
-!AbstractSound methodsFor: 'file i/o' stamp: 'jmv 5/7/2023 18:59:13'!
+!AbstractSound methodsFor: 'file i/o' stamp: 'jmv 4/11/2019 15:33:07'!
 storeExtendedFloat: aNumber on: aBinaryStream
 	"Store an Apple extended-precision 80-bit floating point number on the given stream."
 	"Details: I could not find the specification for this format, so constants were determined empirically based on assumption of 1-bit sign, 15-bit exponent, 64-bit mantissa. This format does not seem to have an implicit one before the mantissa as some float formats do."
 
 	| n isNeg exp mantissa |
-	n := aNumber asFloat.
-	isNeg := false.
+	n _ aNumber asFloat.
+	isNeg _ false.
 	n < 0.0 ifTrue: [
-		n := 0.0 - n.
-		isNeg := true].
-	exp := (n log: 2.0) ceiling.
-	mantissa := (n * (2 raisedTo: 64 - exp)) truncated.
-	exp := exp + 16r4000 - 2.  "not sure why the -2 is needed..."
-	isNeg ifTrue: [exp := exp bitOr: 16r8000].  "set sign bit"
+		n _ 0.0 - n.
+		isNeg _ true].
+	exp _ (n log: 2.0) ceiling.
+	mantissa _ (n * (2 raisedTo: 64 - exp)) truncated.
+	exp _ exp + 16r4000 - 2.  "not sure why the -2 is needed..."
+	isNeg ifTrue: [exp _ exp bitOr: 16r8000].  "set sign bit"
 	aBinaryStream nextPut: ((exp bitShift: -8) bitAnd: 16rFF).
 	aBinaryStream nextPut: (exp bitAnd: 16rFF).
-	aBinaryStream nextUint32Put: mantissa >> 32 bigEndian: true.
-	aBinaryStream nextUint32Put: (mantissa bitAnd: 16rFFFFFFFF) bigEndian: true.! !
+	aBinaryStream nextUnsignedInt32Put: mantissa >> 32 bigEndian: true.
+	aBinaryStream nextUnsignedInt32Put: (mantissa bitAnd: 16rFFFFFFFF) bigEndian: true.! !
 
-!AbstractSound methodsFor: 'file i/o' stamp: 'jmv 5/7/2023 19:00:38'!
+!AbstractSound methodsFor: 'file i/o' stamp: 'jmv 1/4/2023 16:59:09'!
 storeSampleCount: samplesToStore bigEndian: bigEndianFlag on: aBinaryStream
 	"Store my samples on the given stream at the current SoundPlayer sampling rate. If bigFlag is true, then each 16-bit sample is stored most-significant byte first (AIFF files), otherwise it is stored least-significant byte first (WAV files). If self isStereo is true, both channels are stored, creating a stereo file. Otherwise, only the left channel is stored, creating a mono file."
 
 	| bufSize stereoBuffer  |
 	self reset.
-	bufSize := (2 * self samplingRate rounded) min: samplesToStore.  "two second buffer"
-	stereoBuffer := SoundBuffer newStereoSampleCount: bufSize.
+	bufSize _ (2 * self samplingRate rounded) min: samplesToStore.  "two second buffer"
+	stereoBuffer _ SoundBuffer newStereoSampleCount: bufSize.
 
 	'Storing audio...' displayProgressAt: Sensor mousePoint
 		from: 0 to: samplesToStore during: [:barBlock | | remaining out |
-			remaining := samplesToStore.
+			remaining _ samplesToStore.
 			[remaining > 0] whileTrue: [
 				barBlock value: samplesToStore - remaining.
 				stereoBuffer primFill: 0.  "clear the buffer"
 				self playSampleCount: (bufSize min: remaining) into: stereoBuffer startingAt: 1.
 				self isStereo
-					ifTrue: [out := stereoBuffer]
-					ifFalse: [out := stereoBuffer extractLeftChannel].
+					ifTrue: [out _ stereoBuffer]
+					ifFalse: [out _ stereoBuffer extractLeftChannel].
 				(aBinaryStream isFileStream)
 					ifTrue: [  "optimization for files: write sound buffer directly to file"
 						aBinaryStream next: (out size // 2) putAll: out startingAt: 1]  "size in words"
 					ifFalse: [  "for non-file streams:"
-						1 to: out monoSampleCount do: [:i | aBinaryStream nextInt16Put: (out at: i) bigEndian: bigEndianFlag ]].
-				remaining := remaining - bufSize]]! !
+						1 to: out monoSampleCount do: [:i | aBinaryStream nextSignedInt16Put: (out at: i) bigEndian: bigEndianFlag ]].
+				remaining _ remaining - bufSize]]! !
 
 !AbstractSound methodsFor: 'file i/o' stamp: 'pb 5/25/2016 01:35'!
 storeWAVOnFileNamed: fileName
@@ -2019,38 +2019,38 @@ storeWAVOnFileNamed: fileName
 		strm binary.
 		self storeWAVSamplesOn: strm ]! !
 
-!AbstractSound methodsFor: 'file i/o' stamp: 'jmv 5/7/2023 18:59:27'!
+!AbstractSound methodsFor: 'file i/o' stamp: 'jmv 2/26/2016 16:33'!
 storeWAVSamplesOn: aBinaryStream
 	"Store this sound as a 16-bit Windows WAV file at the current SoundPlayer sampling rate. Store both channels if self isStereo is true; otherwise, store the left channel only as a mono sound."
 
 	| samplesToStore channelCount dataByteCount samplesPerSec bytesPerSec |
-	samplesToStore := (self duration * self samplingRate) ceiling.
-	channelCount := self isStereo ifTrue: [2] ifFalse: [1].
-	dataByteCount := samplesToStore * channelCount * 2.
-	samplesPerSec := self samplingRate rounded.
-	bytesPerSec := samplesPerSec * channelCount * 2.
+	samplesToStore _ (self duration * self samplingRate) ceiling.
+	channelCount _ self isStereo ifTrue: [2] ifFalse: [1].
+	dataByteCount _ samplesToStore * channelCount * 2.
+	samplesPerSec _ self samplingRate rounded.
+	bytesPerSec _ samplesPerSec * channelCount * 2.
 
 	"file header"
 	aBinaryStream
 		nextPutAll: 'RIFF' asByteArray;
-		nextUint32Put: dataByteCount + 36 bigEndian: false;	"total length of all chunks"
+		nextUnsignedInt32Put: dataByteCount + 36 bigEndian: false;	"total length of all chunks"
 		nextPutAll: 'WAVE' asByteArray.
 
 	"format chunk"
 	aBinaryStream
 		nextPutAll: 'fmt ' asByteArray;
-		nextUint32Put: 16 bigEndian: false;	"length of this chunk"
-		nextUint16Put: 1 bigEndian: false;	"format tag"
-		nextUint16Put: channelCount bigEndian: false;
-		nextUint32Put: samplesPerSec bigEndian: false;
-		nextUint32Put: bytesPerSec bigEndian: false;
-		nextUint16Put: 4 bigEndian: false;	"alignment"
-		nextUint16Put: 16 bigEndian: false.	"bits per sample"
+		nextUnsignedInt32Put: 16 bigEndian: false;	"length of this chunk"
+		nextUnsignedInt16Put: 1 bigEndian: false;	"format tag"
+		nextUnsignedInt16Put: channelCount bigEndian: false;
+		nextUnsignedInt32Put: samplesPerSec bigEndian: false;
+		nextUnsignedInt32Put: bytesPerSec bigEndian: false;
+		nextUnsignedInt16Put: 4 bigEndian: false;	"alignment"
+		nextUnsignedInt16Put: 16 bigEndian: false.	"bits per sample"
 
 	"data chunk"
 	aBinaryStream
 		nextPutAll: 'data' asByteArray;
-		nextUint32Put: dataByteCount bigEndian: false.  "length of this chunk"
+		nextUnsignedInt32Put: dataByteCount bigEndian: false.  "length of this chunk"
 
 	self storeSampleCount: samplesToStore bigEndian: false on: aBinaryStream.
 ! !
@@ -4520,7 +4520,7 @@ stopAfterMSecs: mSecs
 	count _ (mSecs * self samplingRate) // 1000.
 ! !
 
-!LoopedSampledSound methodsFor: 'file i/o' stamp: 'jmv 5/7/2023 19:00:41'!
+!LoopedSampledSound methodsFor: 'file i/o' stamp: 'jmv 1/4/2023 16:59:16'!
 storeSampleCount: samplesToStore bigEndian: bigEndianFlag on: aBinaryStream
 	"Store my samples on the given stream at the current SoundPlayer sampling rate. If bigFlag is true, then each 16-bit sample is stored most-significant byte first (AIFF files), otherwise it is stored least-significant byte first (WAV files)."
 
@@ -4532,7 +4532,7 @@ storeSampleCount: samplesToStore bigEndian: bigEndianFlag on: aBinaryStream
 		ifTrue: [  "optimization for files: write sound buffer directly to file"
 			aBinaryStream next: (leftSamples size // 2) putAll: leftSamples startingAt: 1]  "size in words"
 		ifFalse: [  "for non-file streams:"
-			1 to: leftSamples monoSampleCount do: [:i | aBinaryStream nextInt16Put: (leftSamples at: i) bigEndian: bigEndianFlag ]]! !
+			1 to: leftSamples monoSampleCount do: [:i | aBinaryStream nextSignedInt16Put: (leftSamples at: i) bigEndian: bigEndianFlag ]]! !
 
 !LoopedSampledSound class methodsFor: 'instance creation'!
 fromAIFFFileNamed: fileName mergeIfStereo: mergeFlag
@@ -5434,7 +5434,7 @@ setSamples: anArray samplingRate: rate
 	self reset.
 ! !
 
-!SampledSound methodsFor: 'file i/o' stamp: 'jmv 5/7/2023 19:00:45'!
+!SampledSound methodsFor: 'file i/o' stamp: 'jmv 1/4/2023 16:59:23'!
 storeSampleCount: samplesToStore bigEndian: bigEndianFlag on: aBinaryStream
 	"Store my samples on the given stream at the current SoundPlayer sampling rate. If bigFlag is true, then each 16-bit sample is stored most-significant byte first (AIFF files), otherwise it is stored least-significant byte first (WAV files)."
 
@@ -5446,7 +5446,7 @@ storeSampleCount: samplesToStore bigEndian: bigEndianFlag on: aBinaryStream
 		ifTrue: [  "optimization for files: write sound buffer directly to file"
 			aBinaryStream next: (samples size // 2) putAll: samples startingAt: 1]  "size in words"
 		ifFalse: [  "for non-file streams:"
-			1 to: samples monoSampleCount do: [:i | aBinaryStream nextInt16Put: (samples at: i) bigEndian: bigEndianFlag ]]! !
+			1 to: samples monoSampleCount do: [:i | aBinaryStream nextSignedInt16Put: (samples at: i) bigEndian: bigEndianFlag ]]! !
 
 !SampledSound methodsFor: 'sound tracks' stamp: 'jmv 12/4/2012 23:42'!
 volumeForm: height from: start to: stop nSamplesPerPixel: nPerPixel
@@ -6136,7 +6136,7 @@ loadBuffer: aSoundBuffer compressedSampleCount: sampleCount
 	leftoverSamples _ buf copyFrom: (j + 1) to: buf monoSampleCount.
 ! !
 
-!StreamingMonoSound methodsFor: 'private' stamp: 'jmv 5/7/2023 19:00:14'!
+!StreamingMonoSound methodsFor: 'private' stamp: 'jmv 2/26/2016 16:03'!
 loadBuffer: aSoundBuffer uncompressedSampleCount: sampleCount
 	"Load the given sound buffer from the uncompressed sample stream."
 
@@ -6145,7 +6145,7 @@ loadBuffer: aSoundBuffer uncompressedSampleCount: sampleCount
 	aSoundBuffer restoreEndianness.
 
 	"read the final sample if sampleCount is odd:"
-	sampleCount odd ifTrue: [aSoundBuffer at: sampleCount put: (stream nextInt16BigEndian: true)].
+	sampleCount odd ifTrue: [aSoundBuffer at: sampleCount put: (stream nextSignedInt16BigEndian: true)].
 ! !
 
 !StreamingMonoSound methodsFor: 'private' stamp: 'jm 11/21/2001 08:02'!
@@ -6329,22 +6329,22 @@ volume: aNumber
 	self createMixer.
 ! !
 
-!StreamingMonoSound methodsFor: 'other' stamp: 'jmv 5/7/2023 19:00:09'!
+!StreamingMonoSound methodsFor: 'other' stamp: 'jmv 2/26/2016 16:02'!
 extractFrom: startSecs to: endSecs
 	"Extract a portion of this sound between the given start and end times. The current implementation only works if the sound is uncompressed."
 
 	| emptySound first last sampleCount byteStream sndBuf |
 	codec ifNotNil: [^ self error: 'only works on uncompressed sounds'].
-	emptySound := SampledSound samples: SoundBuffer new samplingRate: streamSamplingRate.
-	first := (startSecs * streamSamplingRate) truncated max: 0.
-	last := ((endSecs * streamSamplingRate) truncated min: totalSamples) - 1.
+	emptySound _ SampledSound samples: SoundBuffer new samplingRate: streamSamplingRate.
+	first _ (startSecs * streamSamplingRate) truncated max: 0.
+	last _ ((endSecs * streamSamplingRate) truncated min: totalSamples) - 1.
 	first >= last ifTrue: [^ emptySound].
 	codec ifNotNil: [self error: 'extracting from compressed sounds is not supported'].
-	sampleCount := last + 1 - first.
+	sampleCount _ last + 1 - first.
 	stream position: audioDataStart + (2 * first).
-	byteStream := ReadStream on: (stream next: 2 * sampleCount).
-	sndBuf := SoundBuffer newMonoSampleCount: sampleCount.
-	1 to: sampleCount do: [:i | sndBuf at: i put: (byteStream nextInt16BigEndian: true)].
+	byteStream _ ReadStream on: (stream next: 2 * sampleCount).
+	sndBuf _ SoundBuffer newMonoSampleCount: sampleCount.
+	1 to: sampleCount do: [:i | sndBuf at: i put: (byteStream nextSignedInt16BigEndian: true)].
 	^ SampledSound samples: sndBuf samplingRate: streamSamplingRate
 ! !
 
