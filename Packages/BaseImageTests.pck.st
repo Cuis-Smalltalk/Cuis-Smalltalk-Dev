@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5813] on 26 May 2023 at 3:35:04 pm'!
-'Description Test for push up when inst var in siblings'!
-!provides: 'BaseImageTests' 1 344!
+'From Cuis 6.0 [latest update: #5813] on 26 May 2023 at 4:04:39 pm'!
+'Description Tests when pushing down method to verify method in root class sends subclassResponsibility'!
+!provides: 'BaseImageTests' 1 345!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Objects'!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Classes'!
@@ -28565,7 +28565,7 @@ assertPushDownCreationFailsWith: aMessageTextCreator
 		assertCreation: [ PushDownInstanceVariable named: instanceVariableToPushDown from: classToRefactor. ]
 		failsWith: aMessageTextCreator ! !
 
-!PushDownMethodTest methodsFor: 'tests' stamp: 'fz 12/4/2019 14:09:00'!
+!PushDownMethodTest methodsFor: 'tests' stamp: 'MEGL 5/26/2023 16:02:53'!
 test01AnEmptyMethodOnClassToRefactorShouldBePushedDownToSubclasses
 
 	| classToRefactorSubclass1 classToRefactorSubclass2 classToRefactor selector push |
@@ -28580,11 +28580,10 @@ test01AnEmptyMethodOnClassToRefactorShouldBePushedDownToSubclasses
            
 	push := PushDownMethod for: classToRefactor >> selector.
 	push apply.
-   
+
+	self assert: classToRefactor implementsSendingSubclassResponsibility: selector.
 	self assert: (classToRefactorSubclass1 includesSelector: selector).
 	self assert: (classToRefactorSubclass2 includesSelector: selector).
-	self deny: (classToRefactor includesSelector: selector).
-	
 	! !
 
 !PushDownMethodTest methodsFor: 'tests' stamp: 'HAW 12/14/2019 11:23:35'!
@@ -28631,7 +28630,7 @@ test03AMethodArgumentDeclaredAsInstVarOnASubclassCanNotBePushedDownToSubclasses
 	self deny: (classToRefactorSubclass2 includesSelector: selector).
 	self assert: (classToRefactor includesSelector: selector).! !
 
-!PushDownMethodTest methodsFor: 'tests' stamp: 'fz 12/4/2019 14:58:23'!
+!PushDownMethodTest methodsFor: 'tests' stamp: 'MEGL 5/26/2023 16:02:57'!
 test04AMethodAccessesClassToRefactorInstVarShouldBePushedDownToSubclasses
 	| classToRefactorSubclass1 classToRefactorSubclass2 classToRefactor newVariable selector push |
 
@@ -28646,12 +28645,12 @@ test04AMethodAccessesClassToRefactorInstVarShouldBePushedDownToSubclasses
            
 	push := PushDownMethod for: classToRefactor >> selector.
 	push apply.
-   
-	self assert: (classToRefactorSubclass1 includesSelector: selector).
-	self assert: (classToRefactorSubclass2 includesSelector: selector).
-	self deny: (classToRefactor includesSelector: selector).! !
 
-!PushDownMethodTest methodsFor: 'tests' stamp: 'fz 12/4/2019 14:58:27'!
+	self assert: classToRefactor implementsSendingSubclassResponsibility: selector.
+	self assert: (classToRefactorSubclass1 includesSelector: selector).
+	self assert: (classToRefactorSubclass2 includesSelector: selector).! !
+
+!PushDownMethodTest methodsFor: 'tests' stamp: 'MEGL 5/26/2023 16:03:03'!
 test05AMethodWritesClassToRefactorInstVarShouldBePushedDownToSubclasses
 	| classToRefactorSubclass1 classToRefactorSubclass2 classToRefactor newVariable selector push |
 
@@ -28667,9 +28666,9 @@ test05AMethodWritesClassToRefactorInstVarShouldBePushedDownToSubclasses
 	push := PushDownMethod for: classToRefactor >> selector.
 	push apply.
    
+	self assert: classToRefactor implementsSendingSubclassResponsibility: selector.
 	self assert: (classToRefactorSubclass1 includesSelector: selector).
-	self assert: (classToRefactorSubclass2 includesSelector: selector).
-	self deny: (classToRefactor includesSelector: selector).! !
+	self assert: (classToRefactorSubclass2 includesSelector: selector).! !
 
 !PushDownMethodTest methodsFor: 'tests' stamp: 'HAW 12/14/2019 11:24:59'!
 test06AMethodInClassToRefactorExistsInSubClassesShouldOverrideTheExistingSubClassesMethod
@@ -28694,10 +28693,39 @@ test06AMethodInClassToRefactorExistsInSubClassesShouldOverrideTheExistingSubClas
 	self assert: (classToRefactorSubclass includesSelector: selector).
 	self assert: (classToRefactor includesSelector: selector).! !
 
+!PushDownMethodTest methodsFor: 'tests' stamp: 'MEGL 5/26/2023 16:03:07'!
+test07AMethodInClassToRefactorShouldBeReplacedBySubclassResponsibility
+
+	| classToRefactor selector push  expectedBody|
+
+	selector := #newMethod.
+
+	classToRefactor := self createClassNamed: self classToRefactorName.
+	self createClassNamed: #Subclass1 subclassOf: classToRefactor.
+	self createClassNamed: #Subclass2 subclassOf: classToRefactor.
+
+	classToRefactor compile: selector asString.
+
+	push := PushDownMethod for: classToRefactor >> selector.
+	push apply.
+
+	expectedBody := selector, Character lf asString, Character tab asString, 'self ', #subclassResponsibility.
+
+	self assert: classToRefactor implementsSendingSubclassResponsibility: selector.
+	self assert: expectedBody equals: (classToRefactor >> selector) getSource.! !
+
 !PushDownMethodTest methodsFor: 'class factory' stamp: 'fz 12/4/2019 14:05:35'!
 classToRefactorName	
 
 	^#ClassToPushMethodDown! !
+
+!PushDownMethodTest methodsFor: 'assertions' stamp: 'MEGL 5/26/2023 15:59:57'!
+assert: classToRefactor implementsSendingSubclassResponsibility: selector
+
+	| newMethod |
+
+	newMethod := classToRefactor compiledMethodAt: selector ifAbsent: [ self fail ].
+	self assert: (newMethod sendsSelector: 	#subclassResponsibility)! !
 
 !PushUpInstanceVariableTest methodsFor: 'class factory' stamp: 'MSC 12/15/2019 12:44:48'!
 classToRefactorName
