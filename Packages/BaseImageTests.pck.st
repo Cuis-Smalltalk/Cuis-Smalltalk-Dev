@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5813] on 26 May 2023 at 4:32:07 pm'!
-'Description Tests when pushing down method equivalent in other subclasses'!
-!provides: 'BaseImageTests' 1 346!
+'From Cuis 6.0 [latest update: #5813] on 26 May 2023 at 5:56:32 pm'!
+'Description Tests when pushing up with equivalent methods'!
+!provides: 'BaseImageTests' 1 347!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Objects'!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Classes'!
@@ -28693,7 +28693,7 @@ test06AMethodInClassToRefactorExistsInSubClassesShouldOverrideTheExistingSubClas
 	self assert: (classToRefactorSubclass includesSelector: selector).
 	self assert: (classToRefactor includesSelector: selector).! !
 
-!PushDownMethodTest methodsFor: 'tests' stamp: 'MEGL 5/26/2023 16:03:07'!
+!PushDownMethodTest methodsFor: 'tests' stamp: 'HAW 5/26/2023 17:52:47'!
 test07AMethodInClassToRefactorShouldBeReplacedBySubclassResponsibility
 
 	| classToRefactor selector push  expectedBody|
@@ -28709,7 +28709,8 @@ test07AMethodInClassToRefactorShouldBeReplacedBySubclassResponsibility
 	push := PushDownMethod for: classToRefactor >> selector.
 	push apply.
 
-	expectedBody := selector, Character lf asString, Character tab asString, 'self ', #subclassResponsibility.
+	expectedBody := String streamContents: [ :stream |
+		stream nextPutAll: selector; newLine; newLine; tab; nextPutAll: 'self '; nextPutAll: #subclassResponsibility asString ].
 
 	self assert: classToRefactor implementsSendingSubclassResponsibility: selector.
 	self assert: expectedBody equals: (classToRefactor >> selector) getSource.! !
@@ -28986,6 +28987,92 @@ test07AMethodInClassToRefactorExistsInSuperClassShouldOverrideTheExistingSuperCl
 		
 	self assert: (classToRefactorSuperclass includesSelector: selector).
 	self assert: (classToRefactor includesSelector: selector).! !
+
+!PushUpMethodTest methodsFor: 'tests' stamp: 'HAW 5/26/2023 17:22:14'!
+test08RemovesEquivalantMethodsFromSiblings
+
+	| classToRefactorSuperclass classToRefactor selector push sourceCode classToRefactorSibling |
+
+	selector := #newMethod.
+   	sourceCode := selector, ' ^10 factorial'.
+	
+	classToRefactorSuperclass := self createClassNamed: #Superclass.
+	classToRefactor := self createClassNamed: self classToRefactorName subclassOf: classToRefactorSuperclass.
+	classToRefactor compile: sourceCode.
+ 	classToRefactorSibling := self createClassNamed: (self classToRefactorName,'Sibling') asSymbol subclassOf: classToRefactorSuperclass.
+	classToRefactorSibling compile: sourceCode.
+           
+	push := PushUpMethod for: classToRefactor >> selector additionallyRemovingFrom: { classToRefactorSibling }.
+	push apply.
+   
+	self assert: (classToRefactorSuperclass includesSelector: selector).
+	self deny: (classToRefactor includesSelector: selector).
+	self deny: (classToRefactorSibling includesSelector: selector).
+	
+	! !
+
+!PushUpMethodTest methodsFor: 'tests' stamp: 'HAW 5/26/2023 17:14:54'!
+test09CannotRemoveNotImplementedMethodFromAdditionalSubclasses
+
+	| classToRefactorSuperclass classToRefactor selector sourceCode classToRefactorSibling |
+
+	selector := #newMethod.
+   	sourceCode := selector, ' ^10 factorial'.
+	
+	classToRefactorSuperclass := self createClassNamed: #Superclass.
+	classToRefactor := self createClassNamed: self classToRefactorName subclassOf: classToRefactorSuperclass.
+	classToRefactor compile: sourceCode.
+ 	classToRefactorSibling := self createClassNamed: (self classToRefactorName,'Sibling') asSymbol subclassOf: classToRefactorSuperclass.
+	   
+	self 
+		assertCreation: [  PushUpMethod for: classToRefactor >> selector additionallyRemovingFrom: { classToRefactorSibling } ]
+		failsWith: [ PushUpMethod errorMessageForMethodCannotBeRemovedMethodFrom: { classToRefactorSibling } ].
+
+	
+	
+	! !
+
+!PushUpMethodTest methodsFor: 'tests' stamp: 'HAW 5/26/2023 17:24:10'!
+test10CannotRemoveMethodFromNoSiblings
+
+	| classToRefactorSuperclass classToRefactor selector sourceCode classToRefactorSibling |
+
+	selector := #newMethod.
+   	sourceCode := selector, ' ^10 factorial'.
+	
+	classToRefactorSuperclass := self createClassNamed: #Superclass.
+	classToRefactor := self createClassNamed: self classToRefactorName subclassOf: classToRefactorSuperclass.
+	classToRefactor compile: sourceCode.
+ 	classToRefactorSibling := self createClassNamed: (self classToRefactorName,'NoSibling') asSymbol subclassOf: Object.
+	classToRefactorSibling compile: sourceCode.
+    
+	self 
+		assertCreation: [  PushUpMethod for: classToRefactor >> selector additionallyRemovingFrom: { classToRefactorSibling } ]
+		failsWith: [ PushUpMethod errorMessageForNoSiblings: { classToRefactorSibling } ].
+
+	
+	
+	! !
+
+!PushUpMethodTest methodsFor: 'tests' stamp: 'HAW 5/26/2023 17:30:15'!
+test11CannotRemoveNotEquivalantMethodsFromSiblings
+
+	| classToRefactorSuperclass classToRefactor selector classToRefactorSibling |
+
+	selector := #newMethod.
+   	classToRefactorSuperclass := self createClassNamed: #Superclass.
+	classToRefactor := self createClassNamed: self classToRefactorName subclassOf: classToRefactorSuperclass.
+	classToRefactor compile: selector, ' ^10 factorial'.
+ 	classToRefactorSibling := self createClassNamed: (self classToRefactorName,'NoSibling') asSymbol subclassOf: classToRefactorSuperclass.
+	classToRefactorSibling compile: selector, ' ^11 factorial'.
+    
+	self 
+		assertCreation: [  PushUpMethod for: classToRefactor >> selector additionallyRemovingFrom: { classToRefactorSibling } ]
+		failsWith: [ PushUpMethod errorMessageForNotEquivalentMethods: { classToRefactorSibling } ].
+
+	
+	
+	! !
 
 !PushUpMethodTest methodsFor: 'class factory' stamp: 'MSC 11/12/2019 11:48:09'!
 classToRefactorName	
