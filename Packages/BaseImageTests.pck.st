@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5813] on 26 May 2023 at 4:04:39 pm'!
-'Description Tests when pushing down method to verify method in root class sends subclassResponsibility'!
-!provides: 'BaseImageTests' 1 345!
+'From Cuis 6.0 [latest update: #5813] on 26 May 2023 at 4:32:07 pm'!
+'Description Tests when pushing down method equivalent in other subclasses'!
+!provides: 'BaseImageTests' 1 346!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Objects'!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Classes'!
@@ -28713,6 +28713,30 @@ test07AMethodInClassToRefactorShouldBeReplacedBySubclassResponsibility
 
 	self assert: classToRefactor implementsSendingSubclassResponsibility: selector.
 	self assert: expectedBody equals: (classToRefactor >> selector) getSource.! !
+
+!PushDownMethodTest methodsFor: 'tests' stamp: 'MEGL 5/26/2023 16:16:19'!
+test08AMethodInClassToRefactorExistsInSubClassesShouldNotOverrideTheExistingSubClassesMethodIfEquivalent
+
+	| classToRefactor classToRefactorSubclass newVariable selector subclassMethodContent push |
+
+	newVariable := 'a'.	
+	selector := #newMethod.
+	subclassMethodContent := selector, '
+	^ 2 + ', newVariable, '.'.
+
+	classToRefactor := self createClassNamed: self classToRefactorName instanceVariableNames: newVariable.
+	classToRefactor compile: subclassMethodContent.
+
+	classToRefactorSubclass := self createClassNamed: #Subclass subclassOf: classToRefactor.
+	classToRefactorSubclass compile: subclassMethodContent.
+
+	push := PushDownMethod for: classToRefactor >> selector.
+	push apply.
+
+	self assert: (classToRefactorSubclass includesSelector: selector).
+	self assert: subclassMethodContent equals: (classToRefactorSubclass >> selector) getSource.
+	self assert: (classToRefactor includesSelector: selector).
+	self deny: (subclassMethodContent = (classToRefactor >> selector) getSource).! !
 
 !PushDownMethodTest methodsFor: 'class factory' stamp: 'fz 12/4/2019 14:05:35'!
 classToRefactorName	
