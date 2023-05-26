@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5780] on 26 April 2023 at 3:13:36 pm'!
-'Description Inline temp new test'!
-!provides: 'BaseImageTests' 1 343!
+'From Cuis 6.0 [latest update: #5813] on 26 May 2023 at 3:35:04 pm'!
+'Description Test for push up when inst var in siblings'!
+!provides: 'BaseImageTests' 1 344!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Objects'!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Classes'!
@@ -28763,6 +28763,24 @@ test04AnInstanceVariableThatIsUsedOnSuperClassAsTemporaryVariableCannotBePushedU
 	
 	self deny: (classToRefactorSuperClass definesInstanceVariableNamed: instanceVariableToPushUp).
 	self assert: (classToRefactor definesInstanceVariableNamed: instanceVariableToPushUp).! !
+
+!PushUpInstanceVariableTest methodsFor: 'tests' stamp: 'MEGL 5/26/2023 15:30:45'!
+test05AnInstanceVariableOnMultipleSubclassesInDifferentLevelsShouldBeRemovedFromAllSubclassesAndPushedUpToSuperClass 
+
+	|  pushUp subclassWithoutInstVar  |
+
+	classToRefactorSuperClass := self createClassNamed: #SuperclassWithoutInstVar.
+	classToRefactor := self createClassNamed: self classToRefactorName subclassOf: classToRefactorSuperClass  instanceVariableNames: instanceVariableToPushUp.
+	subclassWithoutInstVar := self createClassNamed: #SubClassWithoutInstVar subclassOf: classToRefactorSuperClass.
+	self createClassNamed: #SubSubClassWithInstVar subclassOf: subclassWithoutInstVar instanceVariableNames: instanceVariableToPushUp.
+
+	pushUp := PushUpInstanceVariable named: instanceVariableToPushUp from: classToRefactor.
+	pushUp apply.
+
+	self assert: (classToRefactorSuperClass definesInstanceVariableNamed: instanceVariableToPushUp).
+	classToRefactorSuperClass allSubclassesDo: [ :subClass |
+		self deny: (subClass definesInstanceVariableNamed: instanceVariableToPushUp)
+	].! !
 
 !PushUpInstanceVariableTest methodsFor: 'setup' stamp: 'MSC 12/21/2019 22:12:16'!
 setUp
