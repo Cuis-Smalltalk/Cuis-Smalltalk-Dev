@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5813] on 26 May 2023 at 5:56:32 pm'!
-'Description Tests when pushing up with equivalent methods'!
-!provides: 'BaseImageTests' 1 347!
+'From Cuis 6.0 [latest update: #5818] on 26 May 2023 at 8:49:54 pm'!
+'Description Tests for some push down/up enhacements'!
+!provides: 'BaseImageTests' 1 348!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Objects'!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Classes'!
@@ -28739,6 +28739,22 @@ test08AMethodInClassToRefactorExistsInSubClassesShouldNotOverrideTheExistingSubC
 	self assert: (classToRefactor includesSelector: selector).
 	self deny: (subclassMethodContent = (classToRefactor >> selector) getSource).! !
 
+!PushDownMethodTest methodsFor: 'tests' stamp: 'HAW 5/26/2023 20:01:15'!
+test09CannotPushDownMethodWithoutSubclasses
+
+	| classToRefactor selector |
+	
+	selector := #newMethod.
+	  
+	classToRefactor := self createClassNamed: self classToRefactorName.
+	
+	classToRefactor compile: selector.
+           
+	self
+		assertCreation: [ PushDownMethod for: classToRefactor >> selector ]
+		 failsWith: [ PushDownMethod errorMessageNoSubclassToPushDownMethodTo ].
+	! !
+
 !PushDownMethodTest methodsFor: 'class factory' stamp: 'fz 12/4/2019 14:05:35'!
 classToRefactorName	
 
@@ -28965,8 +28981,8 @@ test06AMethodAccessesSuperClassClassToRefactorInstVarShouldBePushedUpToSuperclas
 	self assert: (classToRefactorSuperclass includesSelector: selector).
 	self deny: (classToRefactor includesSelector: selector).! !
 
-!PushUpMethodTest methodsFor: 'tests' stamp: 'HAW 12/14/2019 11:25:39'!
-test07AMethodInClassToRefactorExistsInSuperClassShouldOverrideTheExistingSuperClassMethod
+!PushUpMethodTest methodsFor: 'tests' stamp: 'HAW 5/26/2023 19:47:40'!
+test07ShouldWarnWhenNotEquivalentMethodExistsInSuperclass
 	
 	| classToRefactor classToRefactorSuperclass newVariable selector superclassMethodContent |
 	
@@ -28985,11 +29001,10 @@ test07AMethodInClassToRefactorExistsInSuperClassShouldOverrideTheExistingSuperCl
 		assertCreation: [ PushUpMethod for: classToRefactor >> selector ]
 		warnsWith: [ PushUpMethod methodToPushUpExistOnSuperclassWarningMessage ].
 		
-	self assert: (classToRefactorSuperclass includesSelector: selector).
-	self assert: (classToRefactor includesSelector: selector).! !
+	! !
 
-!PushUpMethodTest methodsFor: 'tests' stamp: 'HAW 5/26/2023 17:22:14'!
-test08RemovesEquivalantMethodsFromSiblings
+!PushUpMethodTest methodsFor: 'tests' stamp: 'HAW 5/26/2023 19:46:24'!
+test08RemovesEquivalentMethodsFromSiblings
 
 	| classToRefactorSuperclass classToRefactor selector push sourceCode classToRefactorSibling |
 
@@ -29072,6 +29087,25 @@ test11CannotRemoveNotEquivalantMethodsFromSiblings
 
 	
 	
+	! !
+
+!PushUpMethodTest methodsFor: 'tests' stamp: 'HAW 5/26/2023 19:50:19'!
+test12ShouldNotWarnWhenEquivalentMethodExistsInSuperclass
+	
+	| classToRefactor classToRefactorSuperclass selector sourceCode |
+	
+	selector := #newMethod.
+	sourceCode := selector, ' ^10 factorial'.
+	 
+	classToRefactorSuperclass := self createClassNamed: #Superclass.
+	classToRefactorSuperclass compile: sourceCode.
+
+	classToRefactor := self createClassNamed: self classToRefactorName subclassOf: classToRefactorSuperclass.
+	classToRefactor compile: sourceCode.
+
+	self 
+		shouldnt: [ PushUpMethod for: classToRefactor >> selector ]
+		raise: self refactoringWarning 
 	! !
 
 !PushUpMethodTest methodsFor: 'class factory' stamp: 'MSC 11/12/2019 11:48:09'!
