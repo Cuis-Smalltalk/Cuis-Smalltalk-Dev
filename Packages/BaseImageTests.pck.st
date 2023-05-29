@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5818] on 26 May 2023 at 8:49:54 pm'!
-'Description Tests for some push down/up enhacements'!
-!provides: 'BaseImageTests' 1 348!
+'From Cuis 6.0 [latest update: #5818] on 29 May 2023 at 4:23:25 pm'!
+'Description PushDownMethod test refactoring and PushDownToOneSubclass tests'!
+!provides: 'BaseImageTests' 1 349!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Objects'!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Classes'!
@@ -34,6 +34,7 @@ SystemOrganization addCategory: 'BaseImageTests-Tools-Testing'!
 SystemOrganization addCategory: 'BaseImageTests-Tools-Code Differ'!
 SystemOrganization addCategory: 'BaseImageTests-Tools-Refactoring'!
 SystemOrganization addCategory: 'BaseImageTests-Fixed Bugs'!
+SystemOrganization addCategory: 'BaseImageTests-Kernel'!
 
 
 !classDefinition: #MyResumableTestError category: 'BaseImageTests-Exceptions'!
@@ -1376,6 +1377,26 @@ RefactoringTest subclass: #PushDownMethodTest
 PushDownMethodTest class
 	instanceVariableNames: ''!
 
+!classDefinition: #PushDownMethodToOneSubclassTest category: 'BaseImageTests-Tools-Refactoring'!
+PushDownMethodTest subclass: #PushDownMethodToOneSubclassTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-Tools-Refactoring'!
+!classDefinition: 'PushDownMethodToOneSubclassTest class' category: 'BaseImageTests-Tools-Refactoring'!
+PushDownMethodToOneSubclassTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #PushDownMethodToSubclassesTest category: 'BaseImageTests-Tools-Refactoring'!
+PushDownMethodTest subclass: #PushDownMethodToSubclassesTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-Tools-Refactoring'!
+!classDefinition: 'PushDownMethodToSubclassesTest class' category: 'BaseImageTests-Tools-Refactoring'!
+PushDownMethodToSubclassesTest class
+	instanceVariableNames: ''!
+
 !classDefinition: #PushUpInstanceVariableTest category: 'BaseImageTests-Tools-Refactoring'!
 RefactoringTest subclass: #PushUpInstanceVariableTest
 	instanceVariableNames: 'classToRefactor instanceVariableToPushUp classToRefactorSuperClass'
@@ -1506,16 +1527,6 @@ TestCase subclass: #TestValueWithinFix
 TestValueWithinFix class
 	instanceVariableNames: ''!
 
-!classDefinition: #BecomeTestExperiment category: 'BaseImageTests-Kernel-Objects'!
-Object subclass: #BecomeTestExperiment
-	instanceVariableNames: 'a b'
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'BaseImageTests-Kernel-Objects'!
-!classDefinition: 'BecomeTestExperiment class' category: 'BaseImageTests-Kernel-Objects'!
-BecomeTestExperiment class
-	instanceVariableNames: ''!
-
 !classDefinition: #ExceptionTester category: 'BaseImageTests-Exceptions'!
 Object subclass: #ExceptionTester
 	instanceVariableNames: 'log suiteLog iterationsBeforeTimeout'
@@ -1534,6 +1545,16 @@ Object subclass: #RefactoringClassTestData
 	category: 'BaseImageTests-Tools-Refactoring'!
 !classDefinition: 'RefactoringClassTestData class' category: 'BaseImageTests-Tools-Refactoring'!
 RefactoringClassTestData class
+	instanceVariableNames: ''!
+
+!classDefinition: #BecomeTestExperiment category: 'BaseImageTests-Kernel'!
+Object subclass: #BecomeTestExperiment
+	instanceVariableNames: 'a b'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-Kernel'!
+!classDefinition: 'BecomeTestExperiment class' category: 'BaseImageTests-Kernel'!
+BecomeTestExperiment class
 	instanceVariableNames: ''!
 
 
@@ -23670,13 +23691,20 @@ assertCreation: aCreationBlock failsWith: aMessageTextCreator
 		raise: self refactoringError
 		withMessageText: aMessageTextCreator ! !
 
-!RefactoringTest methodsFor: 'assertions' stamp: 'HAW 6/1/2017 14:30:58'!
+!RefactoringTest methodsFor: 'assertions' stamp: 'HAW 5/29/2023 12:17:08'!
 assertCreation: aCreationBlock warnsWith: aMessageTextCreator 
 
-	self 
-		should: aCreationBlock 
-		raise: self refactoringWarning
-		withMessageText: aMessageTextCreator ! !
+	| warningSignaled |
+	
+	warningSignaled := false.
+	aCreationBlock 
+		on: self refactoringWarning
+		do: [ :aWarning |
+			self assert: aMessageTextCreator value equals: aWarning messageText.
+			warningSignaled := true.
+			aWarning resume ].
+		
+	self assert: warningSignaled description: 'Warning was not signaled'! !
 
 !RefactoringTest methodsFor: 'exceptions' stamp: 'HAW 8/17/2018 16:38:44'!
 canNotRefactorDueToReferencesRefactoringError
@@ -28565,208 +28593,364 @@ assertPushDownCreationFailsWith: aMessageTextCreator
 		assertCreation: [ PushDownInstanceVariable named: instanceVariableToPushDown from: classToRefactor. ]
 		failsWith: aMessageTextCreator ! !
 
-!PushDownMethodTest methodsFor: 'tests' stamp: 'MEGL 5/26/2023 16:02:53'!
-test01AnEmptyMethodOnClassToRefactorShouldBePushedDownToSubclasses
-
-	| classToRefactorSubclass1 classToRefactorSubclass2 classToRefactor selector push |
-
-	selector := #newMethod.
-   
-	classToRefactor := self createClassNamed: self classToRefactorName.
-	classToRefactorSubclass1 := self createClassNamed: #Subclass1 subclassOf: classToRefactor.
-	classToRefactorSubclass2 := self createClassNamed: #Subclass2 subclassOf: classToRefactor.
-	
-	classToRefactor compile: selector asString.
-           
-	push := PushDownMethod for: classToRefactor >> selector.
-	push apply.
-
-	self assert: classToRefactor implementsSendingSubclassResponsibility: selector.
-	self assert: (classToRefactorSubclass1 includesSelector: selector).
-	self assert: (classToRefactorSubclass2 includesSelector: selector).
-	! !
-
-!PushDownMethodTest methodsFor: 'tests' stamp: 'HAW 12/14/2019 11:23:35'!
-test02AMethodTemporaryVarDeclaredAsInstVarOnASubclassCanNotBePushedDownToSubclasses
-	| classToRefactorSubclass1 classToRefactorSubclass2 classToRefactor selector newVariable |
-	
-	selector := #newMethod.
-	newVariable := 'a'.
-   
-	classToRefactor := self createClassNamed: self classToRefactorName.
-	classToRefactorSubclass1 := self createClassNamed: #Subclass1 subclassOf: classToRefactor.
-	classToRefactorSubclass2 := self createClassNamed: #Subclass2 subclassOf: classToRefactor instanceVariableNames: newVariable.
-	
-	classToRefactor compile: selector, '|', newVariable, '|'.
-           
-	self
-		assertCreation: [ PushDownMethod for: classToRefactor >> selector ]
-		 failsWith: [ PushDownMethod errorMessageCanNotPushDownWithShadowedInstVarsOf:
-			{classToRefactorSubclass2 -> {newVariable }} asDictionary ].
-	   
-	self deny: (classToRefactorSubclass1 includesSelector: selector).
-	self deny: (classToRefactorSubclass2 includesSelector: selector).
-	self assert: (classToRefactor includesSelector: selector).! !
-
-!PushDownMethodTest methodsFor: 'tests' stamp: 'HAW 12/14/2019 11:24:14'!
-test03AMethodArgumentDeclaredAsInstVarOnASubclassCanNotBePushedDownToSubclasses
-	| classToRefactorSubclass1 classToRefactorSubclass2 classToRefactor selector newVariable |
-	
-	selector := #newMethod:.
-	newVariable := 'a'.
-   
-	classToRefactor := self createClassNamed: self classToRefactorName.
-	classToRefactorSubclass1 := self createClassNamed: #Subclass1 subclassOf: classToRefactor.
-	classToRefactorSubclass2 := self createClassNamed: #Subclass2 subclassOf: classToRefactor instanceVariableNames: newVariable.
-	
-	classToRefactor compile: selector, newVariable.
-           
-	self
-		assertCreation: [ PushDownMethod for: classToRefactor >> selector ]
-		 failsWith: [ PushDownMethod errorMessageCanNotPushDownWithShadowedInstVarsOf:
-			{classToRefactorSubclass2 -> {newVariable }} asDictionary].
-	   
-	self deny: (classToRefactorSubclass1 includesSelector: selector).
-	self deny: (classToRefactorSubclass2 includesSelector: selector).
-	self assert: (classToRefactor includesSelector: selector).! !
-
-!PushDownMethodTest methodsFor: 'tests' stamp: 'MEGL 5/26/2023 16:02:57'!
-test04AMethodAccessesClassToRefactorInstVarShouldBePushedDownToSubclasses
-	| classToRefactorSubclass1 classToRefactorSubclass2 classToRefactor newVariable selector push |
-
-	selector := #newMethod.
-	newVariable := 'a'.
-   
-	classToRefactor := self createClassNamed: self classToRefactorName instanceVariableNames: newVariable.
-	classToRefactorSubclass1 := self createClassNamed: #Subclass1 subclassOf: classToRefactor.
-	classToRefactorSubclass2 := self createClassNamed: #Subclass2 subclassOf: classToRefactor.
-	
-	classToRefactor compile: selector, '^ 1 + ', newVariable.
-           
-	push := PushDownMethod for: classToRefactor >> selector.
-	push apply.
-
-	self assert: classToRefactor implementsSendingSubclassResponsibility: selector.
-	self assert: (classToRefactorSubclass1 includesSelector: selector).
-	self assert: (classToRefactorSubclass2 includesSelector: selector).! !
-
-!PushDownMethodTest methodsFor: 'tests' stamp: 'MEGL 5/26/2023 16:03:03'!
-test05AMethodWritesClassToRefactorInstVarShouldBePushedDownToSubclasses
-	| classToRefactorSubclass1 classToRefactorSubclass2 classToRefactor newVariable selector push |
-
-	selector := #newMethod.
-	newVariable := 'a'.
-   
-	classToRefactor := self createClassNamed: self classToRefactorName instanceVariableNames: newVariable.
-	classToRefactorSubclass1 := self createClassNamed: #Subclass1 subclassOf: classToRefactor.
-	classToRefactorSubclass2 := self createClassNamed: #Subclass2 subclassOf: classToRefactor.
-	
-	classToRefactor compile: selector, ' a = 1'.
-           
-	push := PushDownMethod for: classToRefactor >> selector.
-	push apply.
-   
-	self assert: classToRefactor implementsSendingSubclassResponsibility: selector.
-	self assert: (classToRefactorSubclass1 includesSelector: selector).
-	self assert: (classToRefactorSubclass2 includesSelector: selector).! !
-
-!PushDownMethodTest methodsFor: 'tests' stamp: 'HAW 12/14/2019 11:24:59'!
-test06AMethodInClassToRefactorExistsInSubClassesShouldOverrideTheExistingSubClassesMethod
-	
-	| classToRefactor classToRefactorSubclass newVariable selector subclassMethodContent |
-	
-	newVariable := 'a'.	
-	selector := #newMethod.
-	subclassMethodContent := selector, '
-	^ 2 + ', newVariable, '.'.
-
-	classToRefactor := self createClassNamed: self classToRefactorName instanceVariableNames: newVariable.
-	classToRefactor compile: subclassMethodContent.
-	 
-	classToRefactorSubclass := self createClassNamed: #Subclass subclassOf: classToRefactor.
-	classToRefactorSubclass compile: selector, '^ 1 + ', newVariable.
-
-	self 
-		assertCreation: [ PushDownMethod for: classToRefactor >> selector ]
-		warnsWith: [ PushDownMethod warningMesssageForMessageAlreadyImplementedIn: { classToRefactorSubclass } ].
-		
-	self assert: (classToRefactorSubclass includesSelector: selector).
-	self assert: (classToRefactor includesSelector: selector).! !
-
-!PushDownMethodTest methodsFor: 'tests' stamp: 'HAW 5/26/2023 17:52:47'!
-test07AMethodInClassToRefactorShouldBeReplacedBySubclassResponsibility
-
-	| classToRefactor selector push  expectedBody|
-
-	selector := #newMethod.
-
-	classToRefactor := self createClassNamed: self classToRefactorName.
-	self createClassNamed: #Subclass1 subclassOf: classToRefactor.
-	self createClassNamed: #Subclass2 subclassOf: classToRefactor.
-
-	classToRefactor compile: selector asString.
-
-	push := PushDownMethod for: classToRefactor >> selector.
-	push apply.
-
-	expectedBody := String streamContents: [ :stream |
-		stream nextPutAll: selector; newLine; newLine; tab; nextPutAll: 'self '; nextPutAll: #subclassResponsibility asString ].
-
-	self assert: classToRefactor implementsSendingSubclassResponsibility: selector.
-	self assert: expectedBody equals: (classToRefactor >> selector) getSource.! !
-
-!PushDownMethodTest methodsFor: 'tests' stamp: 'MEGL 5/26/2023 16:16:19'!
-test08AMethodInClassToRefactorExistsInSubClassesShouldNotOverrideTheExistingSubClassesMethodIfEquivalent
-
-	| classToRefactor classToRefactorSubclass newVariable selector subclassMethodContent push |
-
-	newVariable := 'a'.	
-	selector := #newMethod.
-	subclassMethodContent := selector, '
-	^ 2 + ', newVariable, '.'.
-
-	classToRefactor := self createClassNamed: self classToRefactorName instanceVariableNames: newVariable.
-	classToRefactor compile: subclassMethodContent.
-
-	classToRefactorSubclass := self createClassNamed: #Subclass subclassOf: classToRefactor.
-	classToRefactorSubclass compile: subclassMethodContent.
-
-	push := PushDownMethod for: classToRefactor >> selector.
-	push apply.
-
-	self assert: (classToRefactorSubclass includesSelector: selector).
-	self assert: subclassMethodContent equals: (classToRefactorSubclass >> selector) getSource.
-	self assert: (classToRefactor includesSelector: selector).
-	self deny: (subclassMethodContent = (classToRefactor >> selector) getSource).! !
-
-!PushDownMethodTest methodsFor: 'tests' stamp: 'HAW 5/26/2023 20:01:15'!
-test09CannotPushDownMethodWithoutSubclasses
-
-	| classToRefactor selector |
-	
-	selector := #newMethod.
-	  
-	classToRefactor := self createClassNamed: self classToRefactorName.
-	
-	classToRefactor compile: selector.
-           
-	self
-		assertCreation: [ PushDownMethod for: classToRefactor >> selector ]
-		 failsWith: [ PushDownMethod errorMessageNoSubclassToPushDownMethodTo ].
-	! !
-
-!PushDownMethodTest methodsFor: 'class factory' stamp: 'fz 12/4/2019 14:05:35'!
-classToRefactorName	
-
-	^#ClassToPushMethodDown! !
-
-!PushDownMethodTest methodsFor: 'assertions' stamp: 'MEGL 5/26/2023 15:59:57'!
+!PushDownMethodTest methodsFor: 'assertions' stamp: 'HAW 5/29/2023 14:38:47'!
 assert: classToRefactor implementsSendingSubclassResponsibility: selector
 
 	| newMethod |
 
 	newMethod := classToRefactor compiledMethodAt: selector ifAbsent: [ self fail ].
 	self assert: (newMethod sendsSelector: 	#subclassResponsibility)! !
+
+!PushDownMethodTest methodsFor: 'object factory' stamp: 'HAW 5/29/2023 15:05:28'!
+classToPushDownTo
+
+	^ #ClassToPushDownTo! !
+
+!PushDownMethodTest methodsFor: 'object factory' stamp: 'HAW 5/29/2023 15:05:42'!
+classToPushDownTo2
+
+	^ #ClassToPushDownTo2! !
+
+!PushDownMethodTest methodsFor: 'object factory' stamp: 'HAW 5/29/2023 14:52:33'!
+classToRefactorName	
+
+	^#ClassToPushMethodDown! !
+
+!PushDownMethodTest methodsFor: 'object factory' stamp: 'HAW 5/29/2023 14:58:30'!
+selectorToPushDown
+
+	^ #newMethod! !
+
+!PushDownMethodToOneSubclassTest methodsFor: 'tests' stamp: 'HAW 5/29/2023 15:07:12'!
+test01MethodShouldPushedDownOnlyToSelectedSubclass
+
+	| classToPushDownTo sibling classToRefactor push |
+
+	classToRefactor := self createClassNamed: self classToRefactorName.
+	classToPushDownTo := self createClassNamed: self classToPushDownTo subclassOf: classToRefactor.
+	sibling := self createClassNamed: self classToPushDownTo2 subclassOf: classToRefactor.
+	
+	classToRefactor compile: self selectorToPushDown asString.
+           
+	self 
+		assertCreation: [ push := PushDownMethodToOneSubclass for: classToRefactor >> self selectorToPushDown to: classToPushDownTo ]
+		warnsWith: [ PushDownMethodToOneSubclass warningMessageNotARefactoringBecauseNotImplementedIn: { sibling } ].
+	push apply.
+   
+	self assert: (classToPushDownTo includesSelector: self selectorToPushDown).
+	self deny: (sibling includesSelector: self selectorToPushDown).
+	self deny: (classToRefactor includesSelector: self selectorToPushDown).
+	
+	! !
+
+!PushDownMethodToOneSubclassTest methodsFor: 'tests' stamp: 'HAW 5/29/2023 15:08:23'!
+test02MethodShouldPushedDownIfVarNotShadowedInClassToPushDownTo
+
+	| classToPushDownTo sibling classToRefactor instVar push |
+	
+	instVar := 'a'.
+   
+	classToRefactor := self createClassNamed: self classToRefactorName.
+	classToPushDownTo := self createClassNamed: self classToPushDownTo subclassOf: classToRefactor.
+	sibling := self createClassNamed: self classToPushDownTo2 subclassOf: classToRefactor instanceVariableNames: instVar.
+	
+	classToRefactor compile: self selectorToPushDown, '|', instVar, '|'.
+	sibling compile: self selectorToPushDown asString.
+           
+	self
+		shouldnt: [ push := PushDownMethodToOneSubclass for: classToRefactor >> self selectorToPushDown to: classToPushDownTo ]
+		raise: self refactoringError.
+	push apply.
+	
+	self assert: (classToPushDownTo includesSelector: self selectorToPushDown).
+	self assert: classToRefactor implementsSendingSubclassResponsibility: self selectorToPushDown.! !
+
+!PushDownMethodToOneSubclassTest methodsFor: 'tests' stamp: 'HAW 5/29/2023 15:08:29'!
+test03MethodShouldNotPushedDownIfVarShadowedInClassToPushDownTo
+
+	| classToPushDownTo classToRefactor instVar |
+	
+	instVar := 'a'.
+   
+	classToRefactor := self createClassNamed: self classToRefactorName.
+	classToPushDownTo := self createClassNamed: self classToPushDownTo subclassOf: classToRefactor instanceVariableNames: instVar.
+	
+	classToRefactor compile: self selectorToPushDown, '|', instVar, '|'.
+	   
+	self
+		assertCreation: [ PushDownMethodToOneSubclass for: classToRefactor >> self selectorToPushDown to: classToPushDownTo ]
+		failsWith: [ PushDownMethodToOneSubclass errorMessageCanNotPushDownWithShadowedInstVarsOf:
+			{classToPushDownTo -> {instVar }} asDictionary].
+	! !
+
+!PushDownMethodToOneSubclassTest methodsFor: 'tests' stamp: 'HAW 5/29/2023 15:08:41'!
+test04ExistingMethodInSubclassShouldBeOverriden
+	
+	| classToRefactor classToPushDownMethodTo methodToPushDownSourceCode push |
+	
+	methodToPushDownSourceCode := self selectorToPushDown, ' ^ 2'.
+
+	classToRefactor := self createClassNamed: self classToRefactorName.
+	classToRefactor compile: methodToPushDownSourceCode.
+	 
+	classToPushDownMethodTo := self createClassNamed: self classToPushDownTo subclassOf: classToRefactor.
+	classToPushDownMethodTo compile: self selectorToPushDown, ' ^ 1'.
+
+	self 
+		assertCreation: [ push := PushDownMethodToOneSubclass for: classToRefactor >> self selectorToPushDown to: classToPushDownMethodTo ]
+		warnsWith: [ PushDownMethodToOneSubclass warningMesssageForMessageAlreadyImplementedIn: { classToPushDownMethodTo } ].
+	push apply.
+		
+	self assert: (classToPushDownMethodTo includesSelector: self selectorToPushDown).
+	self deny: (classToRefactor includesSelector: self selectorToPushDown).
+	self assert: methodToPushDownSourceCode equals: (classToPushDownMethodTo >> self selectorToPushDown) sourceCode! !
+
+!PushDownMethodToOneSubclassTest methodsFor: 'tests' stamp: 'HAW 5/29/2023 15:08:55'!
+test05AMethodCannotBePushedToClassThatIsNotInHierarchy
+
+	| classNotInRefactorHierarchy classToRefactor |
+
+	classToRefactor := self createClassNamed: self classToRefactorName.
+	classNotInRefactorHierarchy := self createClassNamed: self classToPushDownTo.
+	
+	classToRefactor compile: self selectorToPushDown asString.
+         
+	self 
+		assertCreation: [ PushDownMethodToOneSubclass for: classToRefactor >> self selectorToPushDown to: classNotInRefactorHierarchy] 
+		failsWith: [ PushDownMethodToOneSubclass errorMessage: classNotInRefactorHierarchy isNotSubclassOf: classToRefactor ].
+	! !
+
+!PushDownMethodToOneSubclassTest methodsFor: 'tests' stamp: 'HAW 5/29/2023 15:09:19'!
+test06WarnWhenMethodNotImplementedInSiblings
+
+	| classToPushDownTo classToRefactor sibling |
+
+	classToRefactor := self createClassNamed: self classToRefactorName.
+	classToPushDownTo := self createClassNamed: self classToPushDownTo subclassOf: classToRefactor.
+	sibling := self createClassNamed: self classToPushDownTo2 subclassOf: classToRefactor.
+	
+	classToRefactor compile: self selectorToPushDown asString.
+         
+	self 
+		assertCreation: [ PushDownMethodToOneSubclass for: classToRefactor >> self selectorToPushDown to: classToPushDownTo] 
+		warnsWith: [ PushDownMethodToOneSubclass warningMessageNotARefactoringBecauseNotImplementedIn: { sibling } ].
+	! !
+
+!PushDownMethodToOneSubclassTest methodsFor: 'tests' stamp: 'HAW 5/29/2023 15:09:27'!
+test07ShouldNotWarnWhenMethodImplementedInSiblings
+
+	| classToPushDownTo classToRefactor sibling |
+
+	classToRefactor := self createClassNamed: self classToRefactorName.
+	classToPushDownTo := self createClassNamed: self classToPushDownTo subclassOf: classToRefactor.
+	sibling := self createClassNamed: self classToPushDownTo2 subclassOf: classToRefactor.
+	
+	classToRefactor compile: self selectorToPushDown asString.
+ 	sibling compile: self selectorToPushDown asString.
+         
+	self 
+		shouldnt: [ PushDownMethodToOneSubclass for: classToRefactor >> self selectorToPushDown to: classToPushDownTo] 
+		raise: self refactoringWarning ! !
+
+!PushDownMethodToOneSubclassTest methodsFor: 'tests' stamp: 'HAW 5/29/2023 15:09:45'!
+test08ShouldImplementAsSubclassResponsibilityWhenImplementedInAllSubclasses
+
+	| classToPushDownTo classToRefactor sibling push expectedClassToRefactorSourceCode |
+
+	classToRefactor := self createClassNamed: self classToRefactorName.
+	classToPushDownTo := self createClassNamed: self classToPushDownTo subclassOf: classToRefactor.
+	sibling := self createClassNamed: self classToPushDownTo2 subclassOf: classToRefactor.
+	
+	classToRefactor compile: self selectorToPushDown asString.
+ 	sibling compile: self selectorToPushDown asString.
+         
+	push := PushDownMethodToOneSubclass for: classToRefactor >> self selectorToPushDown to: classToPushDownTo.
+	push apply.
+	
+	expectedClassToRefactorSourceCode := String streamContents: [ :stream |
+		stream nextPutAll: self selectorToPushDown; newLine; newLine; tab; nextPutAll: 'self '; nextPutAll: #subclassResponsibility asString ].
+
+	self assert: classToRefactor implementsSendingSubclassResponsibility: self selectorToPushDown.
+	self assert: expectedClassToRefactorSourceCode equals: (classToRefactor >> self selectorToPushDown) sourceCode.! !
+
+!PushDownMethodToSubclassesTest methodsFor: 'tests' stamp: 'HAW 5/29/2023 15:05:18'!
+test01AnEmptyMethodOnClassToRefactorShouldBePushedDownToSubclasses
+
+	| classToRefactorSubclass1 classToRefactorSubclass2 classToRefactor push |
+
+	classToRefactor := self createClassNamed: self classToRefactorName.
+	classToRefactorSubclass1 := self createClassNamed: self classToPushDownTo subclassOf: classToRefactor.
+	classToRefactorSubclass2 := self createClassNamed: self classToPushDownTo2 subclassOf: classToRefactor.
+	
+	classToRefactor compile: self selectorToPushDown asString.
+           
+	push := PushDownMethodToSubclasses for: classToRefactor >> self selectorToPushDown.
+	push apply.
+
+	self assert: classToRefactor implementsSendingSubclassResponsibility: self selectorToPushDown.
+	self assert: (classToRefactorSubclass1 includesSelector: self selectorToPushDown).
+	self assert: (classToRefactorSubclass2 includesSelector: self selectorToPushDown).
+	! !
+
+!PushDownMethodToSubclassesTest methodsFor: 'tests' stamp: 'HAW 5/29/2023 15:05:18'!
+test02CanNotPushDownWhenATemporaryVarIsAnInstVarOnASubclass
+	| classToRefactorSubclass1 classToRefactorSubclass2 classToRefactor newVariable |
+	
+	newVariable := 'a'.
+   
+	classToRefactor := self createClassNamed: self classToRefactorName.
+	classToRefactorSubclass1 := self createClassNamed: self classToPushDownTo subclassOf: classToRefactor.
+	classToRefactorSubclass2 := self createClassNamed: self classToPushDownTo2 subclassOf: classToRefactor instanceVariableNames: newVariable.
+	
+	classToRefactor compile: self selectorToPushDown, '|', newVariable, '|'.
+           
+	self
+		assertCreation: [ PushDownMethodToSubclasses for: classToRefactor >> self selectorToPushDown ]
+		 failsWith: [ PushDownMethodToSubclasses errorMessageCanNotPushDownWithShadowedInstVarsOf:
+			{classToRefactorSubclass2 -> {newVariable }} asDictionary ].
+	   
+	self deny: (classToRefactorSubclass1 includesSelector: self selectorToPushDown).
+	self deny: (classToRefactorSubclass2 includesSelector: self selectorToPushDown).
+	self assert: (classToRefactor includesSelector: self selectorToPushDown).! !
+
+!PushDownMethodToSubclassesTest methodsFor: 'tests' stamp: 'HAW 5/29/2023 15:57:20'!
+test03CanNotPushDownWhenAnArgumentIsAnInstVarOnASubclass
+	| classToRefactorSubclass1 classToRefactorSubclass2 classToRefactor newVariable selectorToPushDown |
+	
+	newVariable := 'a'.
+   
+	classToRefactor := self createClassNamed: self classToRefactorName.
+	classToRefactorSubclass1 := self createClassNamed: self classToPushDownTo subclassOf: classToRefactor.
+	classToRefactorSubclass2 := self createClassNamed: self classToPushDownTo2 subclassOf: classToRefactor instanceVariableNames: newVariable.
+	
+	selectorToPushDown := #newMethod:.
+	classToRefactor compile: selectorToPushDown, newVariable.
+           
+	self
+		assertCreation: [ PushDownMethodToSubclasses for: classToRefactor >> selectorToPushDown ]
+		 failsWith: [ PushDownMethodToSubclasses errorMessageCanNotPushDownWithShadowedInstVarsOf:
+			{classToRefactorSubclass2 -> {newVariable }} asDictionary].
+	   
+	self deny: (classToRefactorSubclass1 includesSelector: selectorToPushDown).
+	self deny: (classToRefactorSubclass2 includesSelector: selectorToPushDown).
+	self assert: (classToRefactor includesSelector: selectorToPushDown).! !
+
+!PushDownMethodToSubclassesTest methodsFor: 'tests' stamp: 'HAW 5/29/2023 15:05:18'!
+test04AMethodAccessesClassToRefactorInstVarShouldBePushedDownToSubclasses
+	| classToRefactorSubclass1 classToRefactorSubclass2 classToRefactor newVariable push |
+
+	newVariable := 'a'.
+   
+	classToRefactor := self createClassNamed: self classToRefactorName instanceVariableNames: newVariable.
+	classToRefactorSubclass1 := self createClassNamed: self classToPushDownTo subclassOf: classToRefactor.
+	classToRefactorSubclass2 := self createClassNamed: self classToPushDownTo2 subclassOf: classToRefactor.
+	
+	classToRefactor compile: self selectorToPushDown, '^ 1 + ', newVariable.
+           
+	push := PushDownMethodToSubclasses for: classToRefactor >> self selectorToPushDown.
+	push apply.
+
+	self assert: classToRefactor implementsSendingSubclassResponsibility: self selectorToPushDown.
+	self assert: (classToRefactorSubclass1 includesSelector: self selectorToPushDown).
+	self assert: (classToRefactorSubclass2 includesSelector: self selectorToPushDown).! !
+
+!PushDownMethodToSubclassesTest methodsFor: 'tests' stamp: 'HAW 5/29/2023 15:05:18'!
+test05AMethodWritesClassToRefactorInstVarShouldBePushedDownToSubclasses
+	| classToRefactorSubclass1 classToRefactorSubclass2 classToRefactor newVariable push |
+
+	newVariable := 'a'.
+   
+	classToRefactor := self createClassNamed: self classToRefactorName instanceVariableNames: newVariable.
+	classToRefactorSubclass1 := self createClassNamed: self classToPushDownTo subclassOf: classToRefactor.
+	classToRefactorSubclass2 := self createClassNamed: self classToPushDownTo2 subclassOf: classToRefactor.
+	
+	classToRefactor compile: self selectorToPushDown, ' a = 1'.
+           
+	push := PushDownMethodToSubclasses for: classToRefactor >> self selectorToPushDown.
+	push apply.
+   
+	self assert: classToRefactor implementsSendingSubclassResponsibility: self selectorToPushDown.
+	self assert: (classToRefactorSubclass1 includesSelector: self selectorToPushDown).
+	self assert: (classToRefactorSubclass2 includesSelector: self selectorToPushDown).! !
+
+!PushDownMethodToSubclassesTest methodsFor: 'tests' stamp: 'HAW 5/29/2023 14:58:09'!
+test06AMethodInClassToRefactorExistsInSubClassesShouldOverrideTheExistingSubClassesMethod
+	
+	| classToRefactor classToRefactorSubclass newVariable subclassMethodContent |
+	
+	newVariable := 'a'.	
+	subclassMethodContent := self selectorToPushDown, '
+	^ 2 + ', newVariable, '.'.
+
+	classToRefactor := self createClassNamed: self classToRefactorName instanceVariableNames: newVariable.
+	classToRefactor compile: subclassMethodContent.
+	 
+	classToRefactorSubclass := self createClassNamed: #Subclass subclassOf: classToRefactor.
+	classToRefactorSubclass compile: self selectorToPushDown, '^ 1 + ', newVariable.
+
+	self 
+		assertCreation: [ PushDownMethodToSubclasses for: classToRefactor >> self selectorToPushDown ]
+		warnsWith: [ PushDownMethodToSubclasses warningMesssageForMessageAlreadyImplementedIn: { classToRefactorSubclass } ].
+		
+	self assert: (classToRefactorSubclass includesSelector: self selectorToPushDown).
+	self assert: (classToRefactor includesSelector: self selectorToPushDown).! !
+
+!PushDownMethodToSubclassesTest methodsFor: 'tests' stamp: 'HAW 5/29/2023 15:05:18'!
+test07AMethodInClassToRefactorShouldBeReplacedBySubclassResponsibility
+
+	| classToRefactor push  expectedBody|
+
+	classToRefactor := self createClassNamed: self classToRefactorName.
+	self createClassNamed: self classToPushDownTo subclassOf: classToRefactor.
+	self createClassNamed: self classToPushDownTo2 subclassOf: classToRefactor.
+
+	classToRefactor compile: self selectorToPushDown asString.
+
+	push := PushDownMethodToSubclasses for: classToRefactor >> self selectorToPushDown.
+	push apply.
+
+	expectedBody := String streamContents: [ :stream |
+		stream nextPutAll: self selectorToPushDown; newLine; newLine; tab; nextPutAll: 'self '; nextPutAll: #subclassResponsibility asString ].
+
+	self assert: classToRefactor implementsSendingSubclassResponsibility: self selectorToPushDown.
+	self assert: expectedBody equals: (classToRefactor >> self selectorToPushDown) sourceCode.! !
+
+!PushDownMethodToSubclassesTest methodsFor: 'tests' stamp: 'HAW 5/29/2023 15:57:59'!
+test08AMethodInClassToRefactorExistsInSubClassesShouldNotOverrideTheExistingSubClassesMethodIfEquivalent
+
+	| classToRefactor classToRefactorSubclass newVariable subclassMethodContent push |
+
+	newVariable := 'a'.	
+	subclassMethodContent := self selectorToPushDown, '
+	^ 2 + ', newVariable, '.'.
+
+	classToRefactor := self createClassNamed: self classToRefactorName instanceVariableNames: newVariable.
+	classToRefactor compile: subclassMethodContent.
+
+	classToRefactorSubclass := self createClassNamed: self classToPushDownTo subclassOf: classToRefactor.
+	classToRefactorSubclass compile: subclassMethodContent.
+
+	push := PushDownMethodToSubclasses for: classToRefactor >> self selectorToPushDown.
+	push apply.
+
+	self assert: (classToRefactorSubclass includesSelector: self selectorToPushDown).
+	self assert: subclassMethodContent equals: (classToRefactorSubclass >> self selectorToPushDown) getSource.
+	self assert: (classToRefactor includesSelector: self selectorToPushDown).
+	self deny: (subclassMethodContent = (classToRefactor >> self selectorToPushDown) getSource).! !
+
+!PushDownMethodToSubclassesTest methodsFor: 'tests' stamp: 'HAW 5/29/2023 14:58:20'!
+test09CannotPushDownMethodWithoutSubclasses
+
+	| classToRefactor |
+	
+	classToRefactor := self createClassNamed: self classToRefactorName.
+	
+	classToRefactor compile: self selectorToPushDown.
+           
+	self
+		assertCreation: [ PushDownMethodToSubclasses for: classToRefactor >> self selectorToPushDown ]
+		 failsWith: [ PushDownMethodToSubclasses errorMessageNoSubclassToPushDownMethodTo ].
+	! !
 
 !PushUpInstanceVariableTest methodsFor: 'class factory' stamp: 'MSC 12/15/2019 12:44:48'!
 classToRefactorName
@@ -31520,7 +31704,7 @@ assertSubclassesReturnsACopy
 	It is not a seprate test because I do not want senders of this precondition to run if it fails - Hernan"
 	self deny: self class superclass subclasses == self class superclass subclasses! !
 
-!SafelyRemoveClassTest methodsFor: 'test support' stamp: 'HAW 8/1/2018 16:47:22'!
+!SafelyRemoveClassTest methodsFor: 'test support' stamp: 'HAW 5/29/2023 16:22:33'!
 safelyRemoveHierarchyOf: classToRemove
 		
 	| remove |
@@ -31528,11 +31712,9 @@ safelyRemoveHierarchyOf: classToRemove
 	"see comment of #assertSubclassesReturnsACopy - Hernan"
 	self assertSubclassesReturnsACopy.
 	
-	[ remove := SafelyRemoveClass of: classToRemove ]
-		on: self refactoringWarning 
-		do: [ :aWarning | 
-			self assert: (SafelyRemoveClass warningMessageFor: classToRemove hasSubclasses: classToRemove allSubclasses) equals: aWarning messageText.
-			aWarning resume ].
+	self 
+		assertCreation: [ remove := SafelyRemoveClass of: classToRemove ]
+		warnsWith: [ SafelyRemoveClass warningMessageFor: classToRemove hasSubclasses: classToRemove allSubclasses ].
 		
 	remove apply.! !
 
@@ -31956,63 +32138,6 @@ valueWithinNonLocalReturn
 	"Do a non-local return from a valueWithin: block"
 	[^self] valueWithin: 20 milliSeconds onTimeout:[].
 ! !
-
-!BecomeTestExperiment methodsFor: 'as yet unclassified' stamp: 'jmv 1/11/2019 12:21:36'!
-initialize
-	a _ 1.
-	b _ 2.! !
-
-!BecomeTestExperiment methodsFor: 'as yet unclassified' stamp: 'jmv 1/29/2019 10:59:12'!
-messStuffUp
-"In a Workspace
-
-BecomeTestExperiment twoVars.
-e _ BecomeTestExperiment new.
-e messStuffUp.
-
-e _ nil. Smalltalk garbageCollect.
-BecomeTestExperiment allInstances
-
-Processor invalidMethodInStackDueToClass: BecomeTestExperiment
-"
-
-	BecomeTestExperiment threeVars. "New ivar c is added before a and be"
-	^a + b! !
-
-!BecomeTestExperiment methodsFor: 'as yet unclassified' stamp: 'jmv 1/29/2019 10:59:16'!
-messStuffUpWBecome
-"In a Workspace
-
-BecomeTestExperiment twoVars.
-e _ BecomeTestExperiment new.
-e messStuffUpWBecome.
-
-e _ nil. Smalltalk garbageCollect.
-BecomeTestExperiment allInstances
-
-Processor invalidMethodInStackDueToClass: BecomeTestExperiment
-"
-
-	self becomeForward: {22}.
-	^a + b! !
-
-!BecomeTestExperiment class methodsFor: 'as yet unclassified' stamp: 'jmv 3/8/2019 11:37:17'!
-threeVars
-
-	Object subclass: #BecomeTestExperiment
-		instanceVariableNames: 'c a b'
-		classVariableNames: ''
-		poolDictionaries: ''
-		category: 'BaseImageTests-Kernel'! !
-
-!BecomeTestExperiment class methodsFor: 'as yet unclassified' stamp: 'jmv 3/8/2019 11:37:22'!
-twoVars
-
-	Object subclass: #BecomeTestExperiment
-		instanceVariableNames: 'a b'
-		classVariableNames: ''
-		poolDictionaries: ''
-		category: 'BaseImageTests-Kernel'! !
 
 !ExceptionTester methodsFor: 'accessing' stamp: 'dtl 6/1/2004 21:53'!
 basicANSISignaledExceptionTestSelectors
@@ -32640,6 +32765,63 @@ runTest: aSelector
 wantsChangeSetLogging 
 
 	^false! !
+
+!BecomeTestExperiment methodsFor: 'as yet unclassified' stamp: 'jmv 1/11/2019 12:21:36'!
+initialize
+	a _ 1.
+	b _ 2.! !
+
+!BecomeTestExperiment methodsFor: 'as yet unclassified' stamp: 'jmv 1/29/2019 10:59:12'!
+messStuffUp
+"In a Workspace
+
+BecomeTestExperiment twoVars.
+e _ BecomeTestExperiment new.
+e messStuffUp.
+
+e _ nil. Smalltalk garbageCollect.
+BecomeTestExperiment allInstances
+
+Processor invalidMethodInStackDueToClass: BecomeTestExperiment
+"
+
+	BecomeTestExperiment threeVars. "New ivar c is added before a and be"
+	^a + b! !
+
+!BecomeTestExperiment methodsFor: 'as yet unclassified' stamp: 'jmv 1/29/2019 10:59:16'!
+messStuffUpWBecome
+"In a Workspace
+
+BecomeTestExperiment twoVars.
+e _ BecomeTestExperiment new.
+e messStuffUpWBecome.
+
+e _ nil. Smalltalk garbageCollect.
+BecomeTestExperiment allInstances
+
+Processor invalidMethodInStackDueToClass: BecomeTestExperiment
+"
+
+	self becomeForward: {22}.
+	^a + b! !
+
+!BecomeTestExperiment class methodsFor: 'as yet unclassified' stamp: 'jmv 3/8/2019 11:37:17'!
+threeVars
+
+	Object subclass: #BecomeTestExperiment
+		instanceVariableNames: 'c a b'
+		classVariableNames: ''
+		poolDictionaries: ''
+		category: 'BaseImageTests-Kernel'! !
+
+!BecomeTestExperiment class methodsFor: 'as yet unclassified' stamp: 'jmv 3/8/2019 11:37:22'!
+twoVars
+
+	Object subclass: #BecomeTestExperiment
+		instanceVariableNames: 'a b'
+		classVariableNames: ''
+		poolDictionaries: ''
+		category: 'BaseImageTests-Kernel'! !
 
 !BoxedFloat64 methodsFor: '*BaseImageTests-Kernel-Numbers' stamp: 'jmv 2/25/2019 17:20:54'!
 primTestAdd: aNumber
