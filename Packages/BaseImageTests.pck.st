@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5818] on 29 May 2023 at 4:23:25 pm'!
-'Description PushDownMethod test refactoring and PushDownToOneSubclass tests'!
-!provides: 'BaseImageTests' 1 349!
+'From Cuis 6.0 [latest update: #5831] on 30 May 2023 at 12:01:11 am'!
+'Description Implement subclassResponsiblity for messages with keywords working'!
+!provides: 'BaseImageTests' 1 350!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Objects'!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Classes'!
@@ -28895,25 +28895,30 @@ test06AMethodInClassToRefactorExistsInSubClassesShouldOverrideTheExistingSubClas
 	self assert: (classToRefactorSubclass includesSelector: self selectorToPushDown).
 	self assert: (classToRefactor includesSelector: self selectorToPushDown).! !
 
-!PushDownMethodToSubclassesTest methodsFor: 'tests' stamp: 'HAW 5/29/2023 15:05:18'!
+!PushDownMethodToSubclassesTest methodsFor: 'tests' stamp: 'HAW 5/29/2023 23:59:24'!
 test07AMethodInClassToRefactorShouldBeReplacedBySubclassResponsibility
 
-	| classToRefactor push  expectedBody|
+	| classToRefactor push  expectedBody selectorToPushDown selectorAndArguments |
 
 	classToRefactor := self createClassNamed: self classToRefactorName.
 	self createClassNamed: self classToPushDownTo subclassOf: classToRefactor.
 	self createClassNamed: self classToPushDownTo2 subclassOf: classToRefactor.
 
-	classToRefactor compile: self selectorToPushDown asString.
+	selectorToPushDown := #newMethod:.
+	selectorAndArguments := selectorToPushDown, ' anABC'.
+	classToRefactor compile: selectorAndArguments.
 
-	push := PushDownMethodToSubclasses for: classToRefactor >> self selectorToPushDown.
+	push := PushDownMethodToSubclasses for: classToRefactor >> selectorToPushDown.
 	push apply.
 
 	expectedBody := String streamContents: [ :stream |
-		stream nextPutAll: self selectorToPushDown; newLine; newLine; tab; nextPutAll: 'self '; nextPutAll: #subclassResponsibility asString ].
+		stream nextPutAll: selectorAndArguments ; newLine; newLine; tab; nextPutAll: 'self '; nextPutAll: #subclassResponsibility asString ].
 
-	self assert: classToRefactor implementsSendingSubclassResponsibility: self selectorToPushDown.
-	self assert: expectedBody equals: (classToRefactor >> self selectorToPushDown) sourceCode.! !
+	self assert: classToRefactor implementsSendingSubclassResponsibility: selectorToPushDown.
+	self assert: expectedBody equals: (classToRefactor >> selectorToPushDown) sourceCode. 
+'newMethod: anABC
+ 
+ 	self subclassResponsibility' ! !
 
 !PushDownMethodToSubclassesTest methodsFor: 'tests' stamp: 'HAW 5/29/2023 15:57:59'!
 test08AMethodInClassToRefactorExistsInSubClassesShouldNotOverrideTheExistingSubClassesMethodIfEquivalent
