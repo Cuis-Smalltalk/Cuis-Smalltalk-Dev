@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5038] on 5 January 2022 at 1:09:13 pm'!
+'From Cuis 6.0 [latest update: #5832] on 5 June 2023 at 6:49:54 pm'!
 'Description '!
-!provides: 'ExamplesBrowser' 1 16!
+!provides: 'ExamplesBrowser' 1 18!
 SystemOrganization addCategory: 'ExamplesBrowser'!
 
 
@@ -25,24 +25,24 @@ ExamplesBrowser class
 	instanceVariableNames: ''!
 
 
-!ExamplesBrowserWindow methodsFor: 'GUI building' stamp: 'MM 12/11/2021 12:05:09'!
+!ExamplesBrowserWindow methodsFor: 'as yet unclassified' stamp: 'MM 6/5/2023 18:29:45'!
 buildMorphicWindow
 
-	| navigationLayout categoriesList subCategoriesList examplesList content buttons docsMorph |
+	| navigationLayout categoriesList subCategoriesList examplesList content buttons exampleSourceMorph |
 	
-	navigationLayout _ LayoutMorph newColumn.
+	navigationLayout := LayoutMorph newColumn.
 	
-	categoriesList _ PluggableListMorph model: model 
+	categoriesList := PluggableListMorph model: model 
 					listGetter: #examplesCategories 
 					indexGetter: #examplesCategoriesIndex 
 					indexSetter: #examplesCategoriesIndex:.
 					
-	subCategoriesList _ PluggableListMorph model: model 
+	subCategoriesList := PluggableListMorph model: model 
 						listGetter: #examplesSubCategories
 						indexGetter: #examplesSubCategoriesIndex 
 						indexSetter: #examplesSubCategoriesIndex:.
 						
-	examplesList _ PluggableListMorph model: model 
+	examplesList := PluggableListMorph model: model 
 						listGetter: #examplesList
 						indexGetter: #examplesListIndex
 						indexSetter: #examplesListIndex:.
@@ -54,12 +54,13 @@ buildMorphicWindow
 		
 	layoutMorph addMorph: navigationLayout proportionalWidth: 0.33.
 	
-	content _ LayoutMorph newColumn.
+	content := LayoutMorph newColumn.
 	
-	docsMorph _ TextModelMorph textProvider: model textGetter: #exampleDocumentation.
-	content addMorphUseAll: docsMorph.
+	exampleSourceMorph := TextModelMorph textProvider: model textGetter: #exampleSource.
+	exampleSourceMorph disableEditing.
+	content addMorphUseAll: exampleSourceMorph.
 	
-	buttons _ LayoutMorph newRow.
+	buttons := LayoutMorph newRow.
 	
 	buttons addMorph: (PluggableButtonMorph model: model action: #runExample label: 'Run').
 	buttons addMorph: (PluggableButtonMorph model: model action: #inspectExample label: 'Inspect').
@@ -69,7 +70,7 @@ buildMorphicWindow
 	
 	layoutMorph addAdjusterAndMorph: content layoutSpec: LayoutSpec useAll.! !
 
-!ExamplesBrowserWindow methodsFor: 'initialization' stamp: 'MM 12/11/2021 11:12:16'!
+!ExamplesBrowserWindow methodsFor: 'as yet unclassified' stamp: 'MM 12/11/2021 11:12:16'!
 initialize
 
 	super initialize.
@@ -81,9 +82,10 @@ open
 	"self open"
 	^ self open: ExamplesBrowser new label: 'Examples browser'! !
 
-!ExamplesBrowserWindow class methodsFor: 'as yet unclassified' stamp: 'MM 12/11/2021 13:31:57'!
-worldMenuForOpenGroup
+!ExamplesBrowserWindow class methodsFor: 'as yet unclassified' stamp: 'MM 6/5/2023 18:49:30'!
+worldMenuOptions
 	^ `{{
+			#submenuOf -> TheWorldMenu openLabel.
 			#itemGroup 				-> 	10.
 			#itemOrder 				-> 	50.
 			#label 				->	'Examples Browser'.
@@ -93,7 +95,13 @@ worldMenuForOpenGroup
 			#balloonText 				-> 	'A browser tool for running examples'.
 		} asDictionary}`! !
 
-!ExamplesBrowser methodsFor: 'initialization' stamp: 'MM 12/14/2021 12:09:03'!
+!ExamplesBrowser methodsFor: 'as yet unclassified' stamp: 'MM 12/11/2021 12:11:46'!
+browseExample
+
+	self currentExample ifNotNil: [:example | example browse]
+		! !
+
+!ExamplesBrowser methodsFor: 'as yet unclassified' stamp: 'MM 12/14/2021 12:09:03'!
 collectExamples
 
 	"Collect examples in Smalltalk system"
@@ -112,32 +120,27 @@ collectExamples
 				catExamples _ examples at: cat.
 				catExamples at: class name put: exampleMethods]]].! !
 
-!ExamplesBrowser methodsFor: 'initialization' stamp: 'MM 12/14/2021 12:13:29'!
-initialize
-
-	self collectExamples.
-	
-	categoriesList _ examples keys asSortedCollection: [:x :y | x < y].
-	subCategoriesList _ OrderedCollection new.
-	examplesList _ OrderedCollection new.! !
-
-!ExamplesBrowser methodsFor: 'accessing' stamp: 'MM 12/11/2021 11:49:59'!
+!ExamplesBrowser methodsFor: 'as yet unclassified' stamp: 'MM 12/11/2021 11:49:59'!
 currentCategory
 
 	^ categoriesIndex ifNotNil: [:index | categoriesList at: index]! !
 
-!ExamplesBrowser methodsFor: 'accessing' stamp: 'MM 12/11/2021 11:49:41'!
+!ExamplesBrowser methodsFor: 'as yet unclassified' stamp: 'MM 12/11/2021 11:49:41'!
 currentExample
 
 	^ examplesListIndex ifNotNil: [:index | examplesList at: index]! !
 
-!ExamplesBrowser methodsFor: 'accessing' stamp: 'MM 12/11/2021 11:49:21'!
+!ExamplesBrowser methodsFor: 'as yet unclassified' stamp: 'MM 12/11/2021 11:49:21'!
 currentSubCategory
 
 	^ subCategoriesIndex ifNotNil: [:index | subCategoriesList at: index]! !
 
-!ExamplesBrowser methodsFor: 'accessing' stamp: 'MM 12/11/2021 12:07:19'!
-exampleDocumentation
+!ExamplesBrowser methodsFor: 'as yet unclassified' stamp: 'MM 6/5/2023 18:38:16'!
+editorClassFor: textGetter
+	^SmalltalkEditor! !
+
+!ExamplesBrowser methodsFor: 'as yet unclassified' stamp: 'MM 6/5/2023 18:27:48'!
+exampleSource
 
 	^ self currentExample 
 		ifNotNil: [:example | 
@@ -145,15 +148,15 @@ exampleDocumentation
 				s nextPutAll: example getSource]]
 		ifNil: ['']! !
 
-!ExamplesBrowser methodsFor: 'accessing' stamp: 'MM 12/14/2021 12:13:01'!
+!ExamplesBrowser methodsFor: 'as yet unclassified' stamp: 'MM 12/14/2021 12:13:01'!
 examplesCategories
 	^ categoriesList! !
 
-!ExamplesBrowser methodsFor: 'accessing' stamp: 'MM 12/11/2021 10:40:42'!
+!ExamplesBrowser methodsFor: 'as yet unclassified' stamp: 'MM 12/11/2021 10:40:42'!
 examplesCategoriesIndex
 	^ categoriesIndex ifNil: [0]! !
 
-!ExamplesBrowser methodsFor: 'accessing' stamp: 'MM 12/12/2021 11:00:21'!
+!ExamplesBrowser methodsFor: 'as yet unclassified' stamp: 'MM 12/12/2021 11:00:21'!
 examplesCategoriesIndex: anIndex
 
 	anIndex isZero ifTrue: [^ categoriesIndex _ nil].
@@ -165,35 +168,35 @@ examplesCategoriesIndex: anIndex
 	
 	self examplesSubCategoriesIndex: 1! !
 
-!ExamplesBrowser methodsFor: 'accessing' stamp: 'MM 12/11/2021 10:24:11'!
+!ExamplesBrowser methodsFor: 'as yet unclassified' stamp: 'MM 12/11/2021 10:24:11'!
 examplesInCategory: aCategory
 	^ examples at: aCategory! !
 
-!ExamplesBrowser methodsFor: 'accessing' stamp: 'MM 12/11/2021 13:06:35'!
+!ExamplesBrowser methodsFor: 'as yet unclassified' stamp: 'MM 12/11/2021 13:06:35'!
 examplesList
 	^ examplesList collect: [:example | self formatExampleName: example selector asString]! !
 
-!ExamplesBrowser methodsFor: 'accessing' stamp: 'MM 12/11/2021 10:43:04'!
+!ExamplesBrowser methodsFor: 'as yet unclassified' stamp: 'MM 12/11/2021 10:43:04'!
 examplesListIndex
 	^ examplesListIndex ifNil: [0]! !
 
-!ExamplesBrowser methodsFor: 'accessing' stamp: 'MM 12/11/2021 12:09:19'!
+!ExamplesBrowser methodsFor: 'as yet unclassified' stamp: 'MM 6/5/2023 18:27:48'!
 examplesListIndex: anIndex
 
 	anIndex isZero ifTrue: [^ examplesListIndex _ nil].
 	examplesListIndex _ anIndex.
-	self changed: #exampleDocumentation! !
+	self changed: #exampleSource! !
 
-!ExamplesBrowser methodsFor: 'accessing' stamp: 'MM 12/11/2021 11:53:07'!
+!ExamplesBrowser methodsFor: 'as yet unclassified' stamp: 'MM 12/11/2021 11:53:07'!
 examplesSubCategories
 
 	^ subCategoriesList ! !
 
-!ExamplesBrowser methodsFor: 'accessing' stamp: 'MM 12/11/2021 10:42:10'!
+!ExamplesBrowser methodsFor: 'as yet unclassified' stamp: 'MM 12/11/2021 10:42:10'!
 examplesSubCategoriesIndex
 	^ subCategoriesIndex ifNil: [0]! !
 
-!ExamplesBrowser methodsFor: 'accessing' stamp: 'MM 12/12/2021 11:03:00'!
+!ExamplesBrowser methodsFor: 'as yet unclassified' stamp: 'MM 12/12/2021 11:03:00'!
 examplesSubCategoriesIndex: anIndex
 	anIndex isZero ifTrue: [^ subCategoriesIndex _ nil].
 	subCategoriesIndex _ anIndex.
@@ -203,27 +206,11 @@ examplesSubCategoriesIndex: anIndex
 	self changed: #examplesList.
 	self examplesListIndex: 1.! !
 
-!ExamplesBrowser methodsFor: 'actions' stamp: 'MM 12/11/2021 12:11:46'!
-browseExample
-
-	self currentExample ifNotNil: [:example | example browse]
-		! !
-
-!ExamplesBrowser methodsFor: 'actions' stamp: 'MM 12/11/2021 12:35:32'!
+!ExamplesBrowser methodsFor: 'as yet unclassified' stamp: 'MM 12/11/2021 12:35:32'!
 exploreExample
 	self currentExample ifNotNil: [:example | (example methodClass soleInstance perform: example selector) explore]! !
 
-!ExamplesBrowser methodsFor: 'actions' stamp: 'MM 12/11/2021 12:35:24'!
-inspectExample
-	self currentExample ifNotNil: [:example | (example methodClass soleInstance perform: example selector) inspect]! !
-
-!ExamplesBrowser methodsFor: 'actions' stamp: 'MM 12/11/2021 12:37:28'!
-runExample
-	self currentExample ifNotNil: [:example | |result|
-		result _ example methodClass soleInstance perform: example selector.
-		(result isKindOf: Morph) ifTrue: [result openInWorld]]! !
-
-!ExamplesBrowser methodsFor: 'printing' stamp: 'MM 12/11/2021 13:09:46'!
+!ExamplesBrowser methodsFor: 'as yet unclassified' stamp: 'MM 12/11/2021 13:09:46'!
 formatExampleName: aString
 
 	^ String streamContents: [:s |
@@ -235,6 +222,42 @@ formatExampleName: aString
 				char isUppercase ifTrue: [
 					s nextPut: Character space;					nextPut: char asLowercase]
 				ifFalse: [s nextPut: char]]]]! !
+
+!ExamplesBrowser methodsFor: 'as yet unclassified' stamp: 'MM 12/14/2021 12:13:29'!
+initialize
+
+	self collectExamples.
+	
+	categoriesList _ examples keys asSortedCollection: [:x :y | x < y].
+	subCategoriesList _ OrderedCollection new.
+	examplesList _ OrderedCollection new.! !
+
+!ExamplesBrowser methodsFor: 'as yet unclassified' stamp: 'MM 12/11/2021 12:35:24'!
+inspectExample
+	self currentExample ifNotNil: [:example | (example methodClass soleInstance perform: example selector) inspect]! !
+
+!ExamplesBrowser methodsFor: 'as yet unclassified' stamp: 'MM 12/11/2021 12:37:28'!
+runExample
+	self currentExample ifNotNil: [:example | |result|
+		result _ example methodClass soleInstance perform: example selector.
+		(result isKindOf: Morph) ifTrue: [result openInWorld]]! !
+
+!ExamplesBrowser methodsFor: 'as yet unclassified' stamp: 'MM 6/5/2023 18:39:25'!
+shouldAutoHighlight
+	^ false! !
+
+!ExamplesBrowser methodsFor: 'as yet unclassified' stamp: 'MM 6/5/2023 18:44:25'!
+shouldStyle: text with: anSHTextStyler
+	self currentExample ifNotNil: [:example | anSHTextStyler classOrMetaClass: example methodClass].
+	^ true! !
+
+!ExamplesBrowser methodsFor: 'as yet unclassified' stamp: 'MM 6/5/2023 18:39:53'!
+shoutMustKeepContentsSize
+	^ false! !
+
+!ExamplesBrowser methodsFor: 'as yet unclassified' stamp: 'MM 6/5/2023 18:38:51'!
+textStylerClassFor: textGetter
+	^SHTextStylerST80! !
 
 !ExamplesBrowser class methodsFor: 'as yet unclassified' stamp: 'MM 12/12/2021 10:57:10'!
 windowColor
