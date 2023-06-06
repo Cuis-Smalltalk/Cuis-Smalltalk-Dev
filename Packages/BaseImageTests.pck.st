@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5831] on 30 May 2023 at 12:01:11 am'!
+'From Cuis 6.0 [latest update: #5833] on 6 June 2023 at 11:43:31 am'!
 'Description Implement subclassResponsiblity for messages with keywords working'!
-!provides: 'BaseImageTests' 1 350!
+!provides: 'BaseImageTests' 1 351!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Objects'!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Classes'!
@@ -7590,6 +7590,14 @@ testReplaceFromToWithStartingAt
 		replacementDigit := lpi7 digitAt: e - 4.
 		self assert: replacementDigit equals: digit]
 ! !
+
+!LargePositiveIntegerTest methodsFor: 'tests' stamp: 'jmv 6/6/2023 11:34:02'!
+test_raisedTo_modulo
+	"The bug was caused because of calling unnormalized #\\\.
+	The fix is to use #\\ instead."
+
+	self assert: (5445648384 raisedTo: 3 modulo: 1 << 34) = 0.
+	self assert: (5445648384 raisedTo: 4 modulo: 1 << 34) = 0.! !
 
 !NumberTest methodsFor: 'tests' stamp: 'GabrielOmarCotelli 5/26/2009 21:57'!
 testFractionPart
