@@ -1,13 +1,13 @@
-'From Cuis 5.0 [latest update: #5004] on 18 December 2021 at 2:03:43 am'!
-'Description '!
-!provides: 'PackageDownloaderUtils' 1 8!
+'From Cuis 6.0 [latest update: #5832] on 9 June 2023 at 12:19:41 am'!
+'Description Tool for processing the list of packages that PackageDownloader uses.'!
+!provides: 'PackageDownloaderUtils' 1 11!
 !requires: 'PackageDownloader' 1 25 nil!
 SystemOrganization addCategory: 'PackageDownloaderUtils'!
 
 
 !classDefinition: #PackageDownloaderUtils category: 'PackageDownloaderUtils'!
 Object subclass: #PackageDownloaderUtils
-	instanceVariableNames: 'packageList csvFileUrl csvFile jsonFile'
+	instanceVariableNames: 'packageList csvFileUrl csvFile jsonFile skipErrors'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'PackageDownloaderUtils'!
@@ -16,7 +16,7 @@ PackageDownloaderUtils class
 	instanceVariableNames: ''!
 
 
-!PackageDownloaderUtils commentStamp: 'MM 12/17/2021 21:41:00' prior: 0!
+!PackageDownloaderUtils commentStamp: 'MM 6/9/2023 00:19:15' prior: 0!
 I download a file with a list of packages in CSV format, and produce a JSON file with information of the packages, that can be used with PackageDownloader.
 
 The procedure works as follows:
@@ -27,6 +27,8 @@ The procedure works as follows:
 - A JSON file is produced.
 
 That JSON file should be uploaded to an url address where PackageDownloader downloads the package list.
+
+If an error ocurrs when downloading or scanning a package, it is skipped and discarded from the final package list by default.
 
 Example usage:
 
@@ -86,27 +88,32 @@ collectPackagesFromUrls: urls
 		filePath _ dir // (url at: 'fileName').
 		filePath fileContents: (WebClient httpGet: (url at: 'url')) content ].! !
 
-!PackageDownloaderUtils methodsFor: 'as yet unclassified' stamp: 'MM 12/17/2021 21:30:52'!
+!PackageDownloaderUtils methodsFor: 'as yet unclassified' stamp: 'MM 6/9/2023 00:18:14'!
 collectRemotePackagesFromFile: aCSVFile
 
 	aCSVFile readStreamDo: [ :f | | line splitLine packageName downloadUrl packageFile |
 		
 		[f atEnd] whileFalse: [ | package codePackage |
-			line _ f nextLine.
-			splitLine _ line findTokens: (Array with: $,).
-			packageName _ splitLine first.
-			downloadUrl _ splitLine second.
-			packageFile _ PackageDownloaderUtils downloadDirectory // (packageName, '.pck.st').
+			[line := f nextLine.
+			splitLine := line findTokens: (Array with: $,).
+			packageName := splitLine first.
+			downloadUrl := splitLine second.
+			packageFile := PackageDownloaderUtils downloadDirectory // (packageName, '.pck.st').
 			
 			self downloadPackage: downloadUrl into: packageFile.
 			
-			codePackage _ CodePackageFile onFileEntry: packageFile.
+			codePackage := CodePackageFile onFileEntry: packageFile.
 			
-			package _ RemotePackageDescription new.
+			package := RemotePackageDescription new.
 			package downloadUrl: downloadUrl.
 			self populatePackage: package from: codePackage.
 			
-			self addPackage: package]]! !
+			self addPackage: package]
+				on: Error do: [:e |
+					skipErrors 
+						ifTrue: [	Transcript show: ('Error processing package: ', packageName, '. Skipping.'); newLine.
+								Transcript show: e description; newLine.]
+						ifFalse: [self error: 'Error processing package: ', packageName, ' ' , e messageText]	]]]! !
 
 !PackageDownloaderUtils methodsFor: 'as yet unclassified' stamp: 'MM 12/17/2021 21:46:49'!
 defaultCSVFile
@@ -154,9 +161,10 @@ downloadPackagesFromUrls: arg1 into: aDirectory
 		temp1_4 _ aDirectory // ((argm1_3 at: 'name'), '.pck.st').
 		temp1_4 fileContents: (WebClient httpGet: (argm1_3 at: 'url')) content ].! !
 
-!PackageDownloaderUtils methodsFor: 'as yet unclassified' stamp: 'MM 11/19/2021 12:03:43'!
+!PackageDownloaderUtils methodsFor: 'as yet unclassified' stamp: 'MM 6/9/2023 00:17:47'!
 initialize
-	packageList _ OrderedCollection new! !
+	packageList := OrderedCollection new.
+	skipErrors := true.! !
 
 !PackageDownloaderUtils methodsFor: 'as yet unclassified' stamp: 'MM 11/19/2021 12:06:44'!
 package: packageName properties: aBlock
@@ -173,41 +181,6 @@ package: packageName properties: aBlock
 packageList
 	^ packageList! !
 
-!PackageDownloaderUtils methodsFor: 'as yet unclassified' stamp: 'MM 11/19/2021 12:33:55'!
-placesToLookForPackagesDo: aBlock
-
-	| base packagesDirectory |
-
-	"Look in Cuis image folder and reasonable subfolders"
-	base _ DirectoryEntry smalltalkImageDirectory.
-	aBlock value: base.
-	packagesDirectory _ base / 'Packages'.
-	aBlock value: packagesDirectory.
-	packagesDirectory allRegularDirectoriesDo: aBlock.
-	base regularDirectoriesDo: [ :child |
-		child = packagesDirectory ifFalse: [
-			aBlock value: child.
-			child allRegularDirectoriesDo: aBlock]].
-	
-	"Look in parent directory and reasonable subfolders. 
-	Useful when image is stored in a subdirectory of the main app directory.
-	This could be the case when the package comes from a 'main' git repo, and image is copied from gitHub.
-	First try directories including the word Cuis in the name. Then try others."
-	base parent regularDirectoriesDo: [ :dir |
-		dir ~= base ifTrue: [
-			('*Cuis*' match: dir name)
-				ifTrue: [aBlock value: dir. dir allRegularDirectoriesDo: aBlock]]].
-	base parent regularDirectoriesDo: [ :dir |
-		dir ~= base ifTrue: [
-			('*Cuis*' match: dir name)
-				ifFalse: [aBlock value: dir. dir allRegularDirectoriesDo: aBlock]]].
-
-	"Also look in host OS current directory"
-	(base ~= DirectoryEntry currentDirectory and: [base parent ~= DirectoryEntry currentDirectory])
-		ifTrue: [
-			base _ DirectoryEntry currentDirectory.
-			base allRegularDirectoriesDo: aBlock ]! !
-
 !PackageDownloaderUtils methodsFor: 'as yet unclassified' stamp: 'MM 11/26/2021 09:39:09'!
 populatePackage: aPackageSpec from: aCodePackage
 
@@ -220,7 +193,7 @@ populatePackage: aPackageSpec from: aCodePackage
 	
 	^ aPackageSpec! !
 
-!PackageDownloaderUtils methodsFor: 'as yet unclassified' stamp: 'MM 12/17/2021 21:54:54'!
+!PackageDownloaderUtils methodsFor: 'as yet unclassified' stamp: 'MM 6/8/2023 18:47:13'!
 run
 
 	"Download list of packages"
@@ -229,11 +202,16 @@ run
 	self csvFile asFileEntry fileContents: (WebClient httpGet: csvFileUrl) content.
 	
 	"Process the list of packages to generate json definitions"
-	Transcript show: 'Download and scan packages...'; newLine.
+	Transcript show: 'Downloading and scanning packages...'; newLine.
 	self	collectRemotePackagesFromFile: self csvFile asFileEntry.
 	
 	Transcript show: 'Writing list of packages to JSON file: '; show: self jsonFile; newLine.
 	self writePackagesListToJsonFile: self jsonFile asFileEntry.! !
+
+!PackageDownloaderUtils methodsFor: 'as yet unclassified' stamp: 'MM 6/8/2023 20:58:22'!
+skipErrors: aBoolean
+
+	skipErrors := aBoolean! !
 
 !PackageDownloaderUtils methodsFor: 'as yet unclassified' stamp: 'MM 11/19/2021 14:33:49'!
 specFromCodePackage: aCodePackage
