@@ -3,7 +3,7 @@
 #### [About Cuis Smalltalk](#about-cuis)
 #### [The Philosophy behind Cuis Smalltalk](#the-philosophy-behind-cuis)
 #### [About the name Cuis Smalltalk](#about-the-name-cuis)
-#### [The Cuis Smalltalk project and community](#the-cuis-smalltalk-project-and-community)
+#### [The Cuis Smalltalk project and community](#the-cuis-project-and-community)
 #### [Running Cuis Smalltalk](#setting-up-cuis-in-your-machine)
 #### [Learning Cuis Smalltalk](#learning-about-cuis-smalltalk)
 #### [Contributing to the project](#contributing-to-cuis)
@@ -51,7 +51,7 @@ Cuis is continuously evolving towards simplicity. Each release is better (i.e. s
 
 Cuis is the common name of a [small animal](https://en.wikipedia.org/wiki/Southern_mountain_cavy) that lives in Argentina's countryside. Cuis Smalltalk was originally forked from Squeak Smalltalk and many of us are also active in the Squeak community. So, picking the onomatopoeia of the voice of a mouse for the name makes sense. As the project was started in Buenos Aires, 'Cuis' (essentially 'Squeak' in Rioplatense Spanish) was the obvious choice.
 
-## The Cuis Smalltalk project and community
+## The Cuis project and community
 [(back to ToC)](#table-of-contents)
 
 Cuis is maintained on our [Main GitHub repo](https://github.com/Cuis-Smalltalk/Cuis-Smalltalk-Dev). All source code, issue tracker and documentation is held there.
