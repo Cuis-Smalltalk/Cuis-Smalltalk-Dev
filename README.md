@@ -3,7 +3,7 @@
 #### [About Cuis Smalltalk](#about-cuis)
 #### [The Philosophy behind Cuis Smalltalk](#the-philosophy-behind-cuis)
 #### [About the name Cuis Smalltalk](#about-the-name-cuis)
-#### [The Cuis Smalltalk project and community](#project-and-community)
+#### [The Cuis Smalltalk project and community](#the-cuis-smalltalk-project-and-community)
 #### [Running Cuis Smalltalk](#setting-up-cuis-in-your-machine)
 #### [Learning Cuis Smalltalk](#learning-about-cuis-smalltalk)
 #### [Contributing to the project](#contributing-to-cuis)
