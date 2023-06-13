@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5833] on 6 June 2023 at 11:43:31 am'!
+'From Cuis 6.0 [latest update: #5849] on 13 June 2023 at 11:47:25 am'!
 'Description Implement subclassResponsiblity for messages with keywords working'!
-!provides: 'BaseImageTests' 1 351!
+!provides: 'BaseImageTests' 1 352!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Objects'!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Classes'!
@@ -1255,6 +1255,16 @@ DynamicallyCodeCreationTest subclass: #RefactoringTest
 	category: 'BaseImageTests-Tools-Refactoring'!
 !classDefinition: 'RefactoringTest class' category: 'BaseImageTests-Tools-Refactoring'!
 RefactoringTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #AddAsSubclassResponsabilityTest category: 'BaseImageTests-Tools-Refactoring'!
+RefactoringTest subclass: #AddAsSubclassResponsabilityTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-Tools-Refactoring'!
+!classDefinition: 'AddAsSubclassResponsabilityTest class' category: 'BaseImageTests-Tools-Refactoring'!
+AddAsSubclassResponsabilityTest class
 	instanceVariableNames: ''!
 
 !classDefinition: #AddInstanceVariableTest category: 'BaseImageTests-Tools-Refactoring'!
@@ -23733,6 +23743,52 @@ refactoringWarning
 referencesRefactoringWarning
 
 	^ Refactoring referencesWarningClass - MessageNotUnderstood.! !
+
+!AddAsSubclassResponsabilityTest methodsFor: 'tests' stamp: 'PB 6/10/2023 22:54:45'!
+test01AMethodOnClassToRefactorShouldBeAddedAsSubclassResponsabilityInSuperclass
+
+	| classToRefactorSuperclass classToRefactor selector push |
+
+	selector := #newMethod.
+   
+	classToRefactorSuperclass := self createClassNamed: #Superclass.
+	classToRefactor := self createClassNamed: self classToRefactorName subclassOf: classToRefactorSuperclass.
+	classToRefactor compile: selector asString.
+           
+	push := AddAsSubclassResponsability for: classToRefactor >> selector.
+	push apply.
+   
+	self assert: (classToRefactorSuperclass includesSelector: selector).
+	self assert: (classToRefactor includesSelector: selector).
+	
+	! !
+
+!AddAsSubclassResponsabilityTest methodsFor: 'tests' stamp: 'PB 6/10/2023 22:53:52'!
+test02ShouldWarnWhenMethodWithSameNameExistsInSuperclass
+	
+	| classToRefactor classToRefactorSuperclass newVariable selector superclassMethodContent |
+	
+	newVariable := 'a'.	
+	selector := #newMethod.
+	superclassMethodContent := selector, '
+	^ 2 + ', newVariable, '.'.
+	 
+	classToRefactorSuperclass := self createClassNamed: #Superclass instanceVariableNames: newVariable.
+	classToRefactorSuperclass compile: selector, '^ 1 + ', newVariable.
+
+	classToRefactor := self createClassNamed: self classToRefactorName subclassOf: classToRefactorSuperclass.
+	classToRefactor compile: superclassMethodContent.
+
+	self 
+		assertCreation: [ AddAsSubclassResponsability for: classToRefactor >> selector ]
+		warnsWith: [ AddAsSubclassResponsability methodToAddAsSubclassResponsabilityExistOnSuperclassWarningMessage ].
+		
+	! !
+
+!AddAsSubclassResponsabilityTest methodsFor: 'class factory' stamp: 'PB 6/10/2023 22:46:51'!
+classToRefactorName	
+
+	^#ClassToAddMethodInSuperClassAsSubclassResponsability! !
 
 !AddInstanceVariableTest methodsFor: 'class factory' stamp: 'HAW 6/11/2017 18:12:55'!
 classToRefactorName
