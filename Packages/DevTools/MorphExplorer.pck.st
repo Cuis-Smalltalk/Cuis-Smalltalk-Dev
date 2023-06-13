@@ -1,12 +1,16 @@
-'From Cuis 6.0 [latest update: #5832] on 6 June 2023 at 10:47:27 am'!
-'Description '!
-!provides: 'MorphExplorer' 1 10!
+'From Cuis 6.0 [latest update: #5848] on 13 June 2023 at 12:26:19 pm'!
+'Description Tool that combines an explorer and an inspector specialized for Morphs.
+
+Open from the Morphs Halo menu: Debug -> Explore.
+
+Pickup morph to explore from the Window menu.'!
+!provides: 'MorphExplorer' 1 14!
 SystemOrganization addCategory: 'MorphExplorer'!
 
 
 !classDefinition: #MorphExplorer category: 'MorphExplorer'!
 AbstractHierarchicalList subclass: #MorphExplorer
-	instanceVariableNames: 'rootMorph previousSelection'
+	instanceVariableNames: 'rootMorph previousSelection list'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'MorphExplorer'!
@@ -43,10 +47,10 @@ MorphExplorerWindow
 MorphExplorerWindow 
 		open: (MorphExplorer new rootMorph: self runningWorld)!
 
-!MorphExplorer methodsFor: 'accessing' stamp: 'MM 6/5/2023 15:48:31'!
+!MorphExplorer methodsFor: 'accessing' stamp: 'MM 6/13/2023 11:49:25'!
 getList
 
-	^Array with: (MorphExplorerWrapper with: rootMorph)! !
+	^list ifNil: [list := Array with: (MorphExplorerWrapper with: rootMorph)]! !
 
 !MorphExplorer methodsFor: 'accessing' stamp: 'MM 6/5/2023 15:46:03'!
 rootMorph
@@ -59,6 +63,11 @@ rootMorph: anObject
 	"Set the value of rootMorph"
 
 	rootMorph := anObject! !
+
+!MorphExplorer methodsFor: 'as yet unclassified' stamp: 'MM 6/13/2023 11:49:01'!
+findMorphItem: aMorph
+
+	^ self findMorphItem: aMorph in: list! !
 
 !MorphExplorer methodsFor: 'as yet unclassified' stamp: 'MM 6/5/2023 16:33:04'!
 getPreviousSelection
@@ -99,10 +108,36 @@ buildMorphicWindow
 	
 	self setLabel: model rootMorph shortPrintString.! !
 
-!MorphExplorerWindow methodsFor: 'as yet unclassified' stamp: 'MM 6/5/2023 16:42:41'!
+!MorphExplorerWindow methodsFor: 'as yet unclassified' stamp: 'MM 6/13/2023 11:46:56'!
+buildWindowMenu
+
+	|menu|
+	
+	menu := super buildWindowMenu.
+	
+	menu addLine.
+	menu add: 'pick morph ...' action: #pickMorph icon: #worldIcon.
+	
+	^ menu! !
+
+!MorphExplorerWindow methodsFor: 'as yet unclassified' stamp: 'MM 6/13/2023 11:48:41'!
+deeperMorphFrom: aMorph that: aBlock
+
+	| found |
+	
+	aMorph submorphs do: [ :submorph |
+		found := self
+			deeperMorphFrom: submorph
+			that: aBlock.
+		found ifNotNil: [ ^ found ]].
+	(aBlock value: aMorph) ifTrue: [ ^ aMorph ].
+
+	^ nil.! !
+
+!MorphExplorerWindow methodsFor: 'as yet unclassified' stamp: 'MM 6/13/2023 12:00:59'!
 delete
 
-	model getCurrentSelection ifNotNil: [:aWrapper | aWrapper item highlighted: false].
+	model getCurrentSelection ifNotNil: [:aWrapper | aWrapper withoutListWrapper highlighted: false].
 	
 	super delete.! !
 
@@ -133,22 +168,50 @@ morphMenu
 		
 	^ menu! !
 
-!MorphExplorerWindow methodsFor: 'as yet unclassified' stamp: 'MM 6/5/2023 16:27:31'!
+!MorphExplorerWindow methodsFor: 'as yet unclassified' stamp: 'MM 6/13/2023 12:08:16'!
+pickMorph
+
+	| morph prevMorph delay world |
+	
+	morph := nil.
+	prevMorph := nil.
+	delay := Delay forMilliseconds: 50.
+	world := self runningWorld.
+	
+	[Sensor isAnyButtonPressed] whileFalse: [
+		prevMorph := morph.
+		morph := self deeperMorphFrom: model rootMorph
+					that: [:m | m displayBounds ifNotNil: [:bounds | bounds containsPoint: Sensor mousePoint] ifNil: [false]].
+		prevMorph == morph ifFalse: [
+			Transcript show: morph printString; newLine.
+			prevMorph ifNotNil: [prevMorph highlighted: false].
+			morph ifNotNil: [morph highlighted: true.
+						model noteNewSelection: (MorphExplorerWrapper with: morph)]].
+		world doOneCycleNow.
+		delay wait].
+	
+	prevMorph ifNotNil: [prevMorph highlighted: false].
+	morph ifNotNil: [
+		morph highlighted: false.
+		model noteNewSelection: (MorphExplorerWrapper with: morph)]
+		! !
+
+!MorphExplorerWindow methodsFor: 'as yet unclassified' stamp: 'MM 6/13/2023 12:01:46'!
 replaceInspector
 
 	self layoutMorph removeMorph: inspectorMorph.
 	
-	inspectorMorph := self inspectorMorphOn: model getCurrentSelection item.
+	inspectorMorph := self inspectorMorphOn: model getCurrentSelection withoutListWrapper .
 	
 	self layoutMorph addMorph: inspectorMorph layoutSpec: LayoutSpec useAll.
 	self layoutMorph adoptWidgetsColor: self windowColor.! !
 
-!MorphExplorerWindow methodsFor: 'as yet unclassified' stamp: 'MM 6/6/2023 10:45:02'!
+!MorphExplorerWindow methodsFor: 'as yet unclassified' stamp: 'MM 6/13/2023 12:02:13'!
 update: aSymbol
 
 	aSymbol == #getCurrentSelection ifTrue: [ | selectedMorph |
-		model getPreviousSelection ifNotNil: [:wrapper | wrapper item highlighted: false].
-		selectedMorph := model getCurrentSelection ifNotNil: [:selection | selection item].
+		model getPreviousSelection ifNotNil: [:wrapper | wrapper withoutListWrapper highlighted: false].
+		selectedMorph := model getCurrentSelection ifNotNil: [:selection | selection withoutListWrapper ].
 		selectedMorph ifNotNil: [
 			selectedMorph highlighted: true.
 			activateWindows ifTrue: [selectedMorph isKindOf: SystemWindow :: ifTrue: [selectedMorph activate]].
@@ -158,6 +221,14 @@ update: aSymbol
 contents
 
 	^ item submorphs collect: [:submorph | self class with: submorph]! !
+
+!MorphExplorerWrapper methodsFor: 'as yet unclassified' stamp: 'MM 6/13/2023 12:23:24'!
+isAncestorOf: anObject
+
+	self item allSubmorphsDo: [:submorph |
+		submorph == anObject ifTrue: [^true]].
+	
+	^ false! !
 
 !Morph methodsFor: '*MorphExplorer' stamp: 'MM 6/6/2023 10:46:39'!
 explore
