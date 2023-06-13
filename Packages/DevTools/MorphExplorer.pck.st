@@ -1,16 +1,16 @@
-'From Cuis 6.0 [latest update: #5848] on 13 June 2023 at 12:26:19 pm'!
+'From Cuis 6.0 [latest update: #5848] on 13 June 2023 at 12:51:06 pm'!
 'Description Tool that combines an explorer and an inspector specialized for Morphs.
 
 Open from the Morphs Halo menu: Debug -> Explore.
 
 Pickup morph to explore from the Window menu.'!
-!provides: 'MorphExplorer' 1 14!
+!provides: 'MorphExplorer' 1 15!
 SystemOrganization addCategory: 'MorphExplorer'!
 
 
 !classDefinition: #MorphExplorer category: 'MorphExplorer'!
 AbstractHierarchicalList subclass: #MorphExplorer
-	instanceVariableNames: 'rootMorph previousSelection list'
+	instanceVariableNames: 'rootMorph previousSelection'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'MorphExplorer'!
@@ -47,10 +47,10 @@ MorphExplorerWindow
 MorphExplorerWindow 
 		open: (MorphExplorer new rootMorph: self runningWorld)!
 
-!MorphExplorer methodsFor: 'accessing' stamp: 'MM 6/13/2023 11:49:25'!
+!MorphExplorer methodsFor: 'accessing' stamp: 'MM 6/13/2023 12:47:01'!
 getList
 
-	^list ifNil: [list := Array with: (MorphExplorerWrapper with: rootMorph)]! !
+	^Array with: (MorphExplorerWrapper with: rootMorph)! !
 
 !MorphExplorer methodsFor: 'accessing' stamp: 'MM 6/5/2023 15:46:03'!
 rootMorph
@@ -63,11 +63,6 @@ rootMorph: anObject
 	"Set the value of rootMorph"
 
 	rootMorph := anObject! !
-
-!MorphExplorer methodsFor: 'as yet unclassified' stamp: 'MM 6/13/2023 11:49:01'!
-findMorphItem: aMorph
-
-	^ self findMorphItem: aMorph in: list! !
 
 !MorphExplorer methodsFor: 'as yet unclassified' stamp: 'MM 6/5/2023 16:33:04'!
 getPreviousSelection
@@ -86,7 +81,7 @@ noteNewSelection: anItemWrapper
 	
 	^ super noteNewSelection: anItemWrapper! !
 
-!MorphExplorerWindow methodsFor: 'as yet unclassified' stamp: 'MM 6/5/2023 16:30:22'!
+!MorphExplorerWindow methodsFor: 'as yet unclassified' stamp: 'MM 6/13/2023 12:48:00'!
 buildMorphicWindow
 
 	listMorph := HierarchicalListMorph
@@ -103,8 +98,8 @@ buildMorphicWindow
 	inspectorMorph := self inspectorMorphOn: model rootMorph.
 	
 	self layoutMorph
-		addMorph: listMorph proportionalWidth: 0.5;
-		addAdjusterAndMorph: inspectorMorph proportionalWidth: 0.5.
+		addMorph: listMorph proportionalWidth: 0.4;
+		addAdjusterAndMorph: inspectorMorph layoutSpec: LayoutSpec useAll.
 	
 	self setLabel: model rootMorph shortPrintString.! !
 
@@ -140,6 +135,11 @@ delete
 	model getCurrentSelection ifNotNil: [:aWrapper | aWrapper withoutListWrapper highlighted: false].
 	
 	super delete.! !
+
+!MorphExplorerWindow methodsFor: 'as yet unclassified' stamp: 'MM 6/13/2023 12:45:18'!
+initialExtent
+
+	^`500@400` * (Preferences at: #standardCodeFont) lineSpacing // 14! !
 
 !MorphExplorerWindow methodsFor: 'as yet unclassified' stamp: 'MM 6/6/2023 10:45:16'!
 initialize
@@ -206,12 +206,12 @@ replaceInspector
 	self layoutMorph addMorph: inspectorMorph layoutSpec: LayoutSpec useAll.
 	self layoutMorph adoptWidgetsColor: self windowColor.! !
 
-!MorphExplorerWindow methodsFor: 'as yet unclassified' stamp: 'MM 6/13/2023 12:02:13'!
+!MorphExplorerWindow methodsFor: 'as yet unclassified' stamp: 'MM 6/13/2023 12:50:36'!
 update: aSymbol
 
 	aSymbol == #getCurrentSelection ifTrue: [ | selectedMorph |
-		model getPreviousSelection ifNotNil: [:wrapper | wrapper withoutListWrapper highlighted: false].
-		selectedMorph := model getCurrentSelection ifNotNil: [:selection | selection withoutListWrapper ].
+		model getPreviousSelection ifNotNil: [:wrapper | wrapper item highlighted: false].
+		selectedMorph := model getCurrentSelection ifNotNil: [:selection | selection item ].
 		selectedMorph ifNotNil: [
 			selectedMorph highlighted: true.
 			activateWindows ifTrue: [selectedMorph isKindOf: SystemWindow :: ifTrue: [selectedMorph activate]].
