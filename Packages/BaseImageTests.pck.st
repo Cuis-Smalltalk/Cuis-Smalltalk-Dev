@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5831] on 30 May 2023 at 12:01:11 am'!
+'From Cuis 6.0 [latest update: #5849] on 13 June 2023 at 11:47:25 am'!
 'Description Implement subclassResponsiblity for messages with keywords working'!
-!provides: 'BaseImageTests' 1 350!
+!provides: 'BaseImageTests' 1 352!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Objects'!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Classes'!
@@ -1255,6 +1255,16 @@ DynamicallyCodeCreationTest subclass: #RefactoringTest
 	category: 'BaseImageTests-Tools-Refactoring'!
 !classDefinition: 'RefactoringTest class' category: 'BaseImageTests-Tools-Refactoring'!
 RefactoringTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #AddAsSubclassResponsabilityTest category: 'BaseImageTests-Tools-Refactoring'!
+RefactoringTest subclass: #AddAsSubclassResponsabilityTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-Tools-Refactoring'!
+!classDefinition: 'AddAsSubclassResponsabilityTest class' category: 'BaseImageTests-Tools-Refactoring'!
+AddAsSubclassResponsabilityTest class
 	instanceVariableNames: ''!
 
 !classDefinition: #AddInstanceVariableTest category: 'BaseImageTests-Tools-Refactoring'!
@@ -7590,6 +7600,14 @@ testReplaceFromToWithStartingAt
 		replacementDigit := lpi7 digitAt: e - 4.
 		self assert: replacementDigit equals: digit]
 ! !
+
+!LargePositiveIntegerTest methodsFor: 'tests' stamp: 'jmv 6/6/2023 11:34:02'!
+test_raisedTo_modulo
+	"The bug was caused because of calling unnormalized #\\\.
+	The fix is to use #\\ instead."
+
+	self assert: (5445648384 raisedTo: 3 modulo: 1 << 34) = 0.
+	self assert: (5445648384 raisedTo: 4 modulo: 1 << 34) = 0.! !
 
 !NumberTest methodsFor: 'tests' stamp: 'GabrielOmarCotelli 5/26/2009 21:57'!
 testFractionPart
@@ -23725,6 +23743,52 @@ refactoringWarning
 referencesRefactoringWarning
 
 	^ Refactoring referencesWarningClass - MessageNotUnderstood.! !
+
+!AddAsSubclassResponsabilityTest methodsFor: 'tests' stamp: 'PB 6/10/2023 22:54:45'!
+test01AMethodOnClassToRefactorShouldBeAddedAsSubclassResponsabilityInSuperclass
+
+	| classToRefactorSuperclass classToRefactor selector push |
+
+	selector := #newMethod.
+   
+	classToRefactorSuperclass := self createClassNamed: #Superclass.
+	classToRefactor := self createClassNamed: self classToRefactorName subclassOf: classToRefactorSuperclass.
+	classToRefactor compile: selector asString.
+           
+	push := AddAsSubclassResponsability for: classToRefactor >> selector.
+	push apply.
+   
+	self assert: (classToRefactorSuperclass includesSelector: selector).
+	self assert: (classToRefactor includesSelector: selector).
+	
+	! !
+
+!AddAsSubclassResponsabilityTest methodsFor: 'tests' stamp: 'PB 6/10/2023 22:53:52'!
+test02ShouldWarnWhenMethodWithSameNameExistsInSuperclass
+	
+	| classToRefactor classToRefactorSuperclass newVariable selector superclassMethodContent |
+	
+	newVariable := 'a'.	
+	selector := #newMethod.
+	superclassMethodContent := selector, '
+	^ 2 + ', newVariable, '.'.
+	 
+	classToRefactorSuperclass := self createClassNamed: #Superclass instanceVariableNames: newVariable.
+	classToRefactorSuperclass compile: selector, '^ 1 + ', newVariable.
+
+	classToRefactor := self createClassNamed: self classToRefactorName subclassOf: classToRefactorSuperclass.
+	classToRefactor compile: superclassMethodContent.
+
+	self 
+		assertCreation: [ AddAsSubclassResponsability for: classToRefactor >> selector ]
+		warnsWith: [ AddAsSubclassResponsability methodToAddAsSubclassResponsabilityExistOnSuperclassWarningMessage ].
+		
+	! !
+
+!AddAsSubclassResponsabilityTest methodsFor: 'class factory' stamp: 'PB 6/10/2023 22:46:51'!
+classToRefactorName	
+
+	^#ClassToAddMethodInSuperClassAsSubclassResponsability! !
 
 !AddInstanceVariableTest methodsFor: 'class factory' stamp: 'HAW 6/11/2017 18:12:55'!
 classToRefactorName

@@ -3,6 +3,7 @@
 #### [About Cuis Smalltalk](#about-cuis)
 #### [The Philosophy behind Cuis Smalltalk](#the-philosophy-behind-cuis)
 #### [About the name Cuis Smalltalk](#about-the-name-cuis)
+#### [The Cuis Smalltalk project and community](#the-cuis-project-and-community)
 #### [Running Cuis Smalltalk](#setting-up-cuis-in-your-machine)
 #### [Learning Cuis Smalltalk](#learning-about-cuis-smalltalk)
 #### [Contributing to the project](#contributing-to-cuis)
@@ -50,10 +51,19 @@ Cuis is continuously evolving towards simplicity. Each release is better (i.e. s
 
 Cuis is the common name of a [small animal](https://en.wikipedia.org/wiki/Southern_mountain_cavy) that lives in Argentina's countryside. Cuis Smalltalk was originally forked from Squeak Smalltalk and many of us are also active in the Squeak community. So, picking the onomatopoeia of the voice of a mouse for the name makes sense. As the project was started in Buenos Aires, 'Cuis' (essentially 'Squeak' in Rioplatense Spanish) was the obvious choice.
 
+## The Cuis project and community
+[(back to ToC)](#table-of-contents)
+
+Cuis is maintained on our [Main GitHub repo](https://github.com/Cuis-Smalltalk/Cuis-Smalltalk-Dev). All source code, issue tracker and documentation is held there.
+
+This is our main [Project Website](https://www.cuis.st). It includes a general overview of the project. You can find the schedule for our future onlime monthly meetings, and watch video recordings for past ones.
+
+Cuis has an active community of developers and users. Our main meeting point is the [mailing list](https://lists.cuis.st/mailman/listinfo/cuis-dev). You can browse the archives for a glimpse of our discussions. Pre-April-2019 archives are found [here](http://cuis-smalltalk.org/pipermail/cuis-dev_cuis-smalltalk.org/) and [here](http://jvuletich.org/mailman/listinfo/cuis_jvuletich.org). You are welcome here. If you use Cuis or are curious about our work, subscribe to the mail list to ask questions and tell us about your own projects and ideas.
+
 ## Setting up Cuis in your machine
 [(back to ToC)](#table-of-contents)
 
-Follow [Setting up and starting Cuis Smalltalk](Documentation/GettingStarted.md) .
+Follow [Setting up and starting Cuis Smalltalk](Documentation/GettingStarted.md)
 
 ## Learning about Cuis Smalltalk
 [(back to ToC)](#table-of-contents)
@@ -69,7 +79,7 @@ Visit the ["Cuis Smalltalk YouTube Channel"](https://www.youtube.com/playlist?li
 ## Contributing to Cuis
 [(back to ToC)](#table-of-contents)
 
-Cuis is maintained on https://github.com/Cuis-Smalltalk/Cuis-Smalltalk-Dev. The main meeting point for Cuis users and developers is the mail list https://lists.cuis.st/mailman/listinfo/cuis-dev. You can browse the archives for a glimpse of our discussions. An older mail list with pre-April-2019 messages can be found at http://cuis-smalltalk.org/pipermail/cuis-dev_cuis-smalltalk.org/. An even older mail list with messages staring in 2012 is at http://jvuletich.org/mailman/listinfo/cuis_jvuletich.org.
+Cuis is maintained on our [Main GitHub repo](https://github.com/Cuis-Smalltalk/Cuis-Smalltalk-Dev). All source code, issue tracker and documentation is held there.
 
 For the recommended way of handling your own projects based on Cuis, please read [Code Management in Cuis](Documentation/CodeManagementInCuis.md), about developing packages for Cuis, and [Using Git and GitHub to host and manage Cuis code](Documentation/CuisAndGitHub.md). While Cuis should work equally well with any file-based DVCS, we encourage the use of Git and GitHub.
 

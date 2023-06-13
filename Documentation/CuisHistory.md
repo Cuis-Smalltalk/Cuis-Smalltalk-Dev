@@ -64,10 +64,16 @@ So we can run in at least one VM flavor in MacOS, Linux (Intel, ARM), Windows an
 All this also means that we don't need to maintain forked code bases to support this wide array of VMs and platforms. Developers of applications and tools need to focus on a single code base and always get platform independence for free.   
 
 ## 2019-05-10 - TrueType font support ##
-100% Smalltalk code. No need for FreeType or any other external library. https://lists.cuis.st/mailman/archives/cuis-dev/2019-May/000184.html
+100% Smalltalk code. No need for FreeType or any other external library. See https://lists.cuis.st/mailman/archives/cuis-dev/2019-May/000184.html
+
+## 2020 - The Cuis Book ##
+Hilaire Fernandes lead the creation of a book written specifically for people learning about Cuis and Smalltalk.
+Read the [online version](https://cuis-smalltalk.github.io/TheCuisBook) or download the [pdf version](https://github.com/Cuis-Smalltalk/TheCuisBook/releases/download/latestpdfbuild/TheCuisBook.pdf).
 
 ## 2020, 2021 - Vector Graphics ##
 Work on Morphic 3, a redesign of Morphic to make it independent of pixel resolution, and a Vector Graphics backend to replace BitBlt started at the same time as the Cuis project. See https://github.com/Cuis-Smalltalk/Cuis-Smalltalk-Dev/blob/master/Documentation/VectorGraphicsAndMorphic3.md . The redesign of Morphic to use floating point local coordinates, and affine transformations as the location for Morphs was done in the Cuis image. The experiments with VectorGraphics were done separatedly. During 2020 and 2021, the implementation of the VectorGraphics Morphic Canvas and Engine matured, and they were added as optional packages to the main Cuis Smalltalk repo. Later, the VectorEngine was added to the official OpenSmalltalk VMs. VectorGraphics became reliable and performant, and can now be used as the main UI for Cuis and applications developed with it.
+See https://lists.cuis.st/mailman/archives/cuis-dev/2020-August/002157.html
+See https://lists.cuis.st/mailman/archives/cuis-dev/2021-March/002849.html
 
 ## 2021-12-31 - Cuis 6.0 ##
 The hierarchy of fundamentel Morph classes was reorganized, to make it more meaningful. As this may significantly affect compatibility, a new major version release was done.
@@ -75,5 +81,5 @@ The hierarchy of fundamentel Morph classes was reorganized, to make it more mean
 ## 2022-05-10 - Unicode ##
 Unicode support in Text Editors, Files and Smalltalk selectors and variables. https://lists.cuis.st/mailman/archives/cuis-dev/2022-May/005654.html . Now, after selecting 'Preferences / Use Unicode text', the full range of Unicode characters can be used anywhere, and files are saved in Utf-8 format, including Smalltalk code.
 
-## 2022-11-09 - Unicode by default ##
+## 2022-10-28 - Unicode enabled by default ##
 All code files are UTF-8. All Strings and code in the image can hold Unicode. All text is rasterized by our Vector Graphics engine from TrueType font definitions.
