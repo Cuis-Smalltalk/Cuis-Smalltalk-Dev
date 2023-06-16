@@ -1,6 +1,6 @@
 #!/bin/bash
 
-repositories="SVG EnhancedText Erudite StyledTextEditor Measures Calendars CodeExamples Cuis-Smalltalk-UI Games Morphic Cairo OSProcess Numerics GeographicInformationSystems Parsers Machine-Learning AMQP firmata VMMaker Learning-Cuis TheCuisBook AnimatedGIF"
+repositories="AMQP AnimatedGIF Cairo Calendars CodeExamples Cuis-Smalltalk-Tools Cuis-Smalltalk-UI EnhancedText Erudite firmata Games GeographicInformationSystems Learning-Cuis Machine-Learning Measures Morphic Numerics OSProcess Parsers StyledTextEditor SVG VMMaker TheCuisBook Cuis-Smalltalk.github.io Cuis-Website"
 
 echo
 echo -e "Status of \e[7m =====Cuis-Smalltalk-Dev===== \e[0m"
