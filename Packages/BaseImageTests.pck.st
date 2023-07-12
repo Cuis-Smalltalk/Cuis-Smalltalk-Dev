@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5901] on 12 July 2023 at 4:55:39 pm'!
-'Description PushUpMethod changes due to warn when accessing inst var'!
-!provides: 'BaseImageTests' 1 353!
+'From Cuis 6.0 [latest update: #5908] on 12 July 2023 at 7:29:04 pm'!
+'Description PushUpMethod does not warn when method in superclass is absstract test'!
+!provides: 'BaseImageTests' 1 355!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Objects'!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Classes'!
@@ -29385,6 +29385,26 @@ test13FailsWhenAccessingInstVarDefinedAsTemporaryInSuperclass
 	self
 		assertCreation: [ PushUpMethod for: classToRefactor >> selector ]
 		failsWith: [ PushUpInstanceVariable errorMessageForInstanceVariable: newVariable isDefinedInMethodsOf: classToRefactorSuperclass ].! !
+
+!PushUpMethodTest methodsFor: 'tests' stamp: 'HAW 7/12/2023 19:27:47'!
+test14ShouldNotWarnWhenMethodExistsInSuperclassIsSubclassResponsibility
+	
+	| classToRefactor classToRefactorSuperclass selector superclassMethodContent |
+	
+	selector := #newMethod.
+	superclassMethodContent := selector, ' self ', #subclassResponsibility.
+	 
+	classToRefactorSuperclass := self createClassNamed: #Superclass.
+	classToRefactorSuperclass compile: superclassMethodContent.
+
+	classToRefactor := self createClassNamed: self classToRefactorName subclassOf: classToRefactorSuperclass.
+	classToRefactor compile: selector, ' ^1'.
+
+	self 
+		shouldnt: [ PushUpMethod for: classToRefactor >> selector ]
+		raise: self refactoringWarning 
+	
+	! !
 
 !PushUpMethodTest methodsFor: 'class factory' stamp: 'MSC 11/12/2019 11:48:09'!
 classToRefactorName	
