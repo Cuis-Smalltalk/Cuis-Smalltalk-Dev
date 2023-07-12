@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5849] on 13 June 2023 at 11:47:25 am'!
-'Description Implement subclassResponsiblity for messages with keywords working'!
-!provides: 'BaseImageTests' 1 352!
+'From Cuis 6.0 [latest update: #5901] on 12 July 2023 at 4:55:39 pm'!
+'Description PushUpMethod changes due to warn when accessing inst var'!
+!provides: 'BaseImageTests' 1 353!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Objects'!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Classes'!
@@ -29137,10 +29137,10 @@ test01AnEmptyMethodOnClassToRefactorShouldBePushedUpToSuperclass
 	
 	! !
 
-!PushUpMethodTest methodsFor: 'tests' stamp: 'MSC 11/12/2019 11:47:51'!
-test02AMethodAccessesClassToRefactorInstVarCanNotBePushedUpToSuperclass
+!PushUpMethodTest methodsFor: 'tests' stamp: 'MEGL 7/12/2023 16:36:42'!
+test02AMethodReadingInstVarWarnsWhenPushedUpToSuperclass
 
-	| classToRefactorSuperclass classToRefactor selector newVariable |
+	| classToRefactorSuperclass classToRefactor selector newVariable refactoring |
 
 	newVariable := 'a'.	
 	selector := #newMethod.
@@ -29149,18 +29149,21 @@ test02AMethodAccessesClassToRefactorInstVarCanNotBePushedUpToSuperclass
 
 	classToRefactor := self createClassNamed: self classToRefactorName subclassOf: classToRefactorSuperclass instanceVariableNames: newVariable.
 	classToRefactor compile: selector, '^ 1 + ', newVariable.
-
+	
 	self
-		assertCreation: [ PushUpMethod for: classToRefactor >> selector ]
-		 failsWith: [ PushUpMethod errorMessageForMethodCannotAccessInstanceVariable ].
-	   
-	self deny: (classToRefactorSuperclass includesSelector: selector).
-	self assert: (classToRefactor includesSelector: selector).! !
+		assertCreation: [ refactoring := PushUpMethod for: classToRefactor >> selector ]
+		 warnsWith: [ PushUpMethod accessingInstanceVariableWarningMessage: { newVariable }].
+		
+	refactoring apply.
+	
+	self assert: (classToRefactorSuperclass definesInstanceVariableNamed: newVariable).
+	self assert: (classToRefactorSuperclass includesSelector: selector).
+	self deny: (classToRefactor includesSelector: selector).! !
 
-!PushUpMethodTest methodsFor: 'tests' stamp: 'MSC 11/12/2019 11:47:54'!
-test03AMethodWritesClassToRefactorInstVarCanNotBePushedUpToSuperclass
+!PushUpMethodTest methodsFor: 'tests' stamp: 'MEGL 7/12/2023 16:37:15'!
+test03AMethodWritingInstVarWarnsWhenPushedUpToSuperclass
 
-	| classToRefactorSuperclass classToRefactor selector newVariable |
+	| classToRefactorSuperclass classToRefactor selector newVariable refactoring |
 
 	newVariable := 'a'.	
 	selector := #newMethod.
@@ -29171,11 +29174,14 @@ test03AMethodWritesClassToRefactorInstVarCanNotBePushedUpToSuperclass
 	classToRefactor compile: selector, ' a = 1'.
 
 	self
-		assertCreation: [ PushUpMethod for: classToRefactor >> selector ]
-		 failsWith: [ PushUpMethod errorMessageForMethodCannotAccessInstanceVariable ].
-	   
-	self deny: (classToRefactorSuperclass includesSelector: selector).
-	self assert: (classToRefactor includesSelector: selector).! !
+		assertCreation: [ refactoring := PushUpMethod for: classToRefactor >> selector ]
+		 warnsWith: [ PushUpMethod accessingInstanceVariableWarningMessage: { newVariable } ].
+		
+	refactoring apply.
+	
+	self assert: (classToRefactorSuperclass definesInstanceVariableNamed: newVariable).
+	self assert: (classToRefactorSuperclass includesSelector: selector).
+	self deny: (classToRefactor includesSelector: selector).! !
 
 !PushUpMethodTest methodsFor: 'tests' stamp: 'MSC 11/12/2019 11:47:57'!
 test04AMethodWritesSuperClassInstVarShouldBePushedUpToSuperclass
@@ -29360,6 +29366,25 @@ test12ShouldNotWarnWhenEquivalentMethodExistsInSuperclass
 		shouldnt: [ PushUpMethod for: classToRefactor >> selector ]
 		raise: self refactoringWarning 
 	! !
+
+!PushUpMethodTest methodsFor: 'tests' stamp: 'MEGL 7/12/2023 16:38:15'!
+test13FailsWhenAccessingInstVarDefinedAsTemporaryInSuperclass
+
+	| classToRefactorSuperclass classToRefactor selector superclassSelector newVariable |
+
+	newVariable := 'a'.	
+	superclassSelector := #superClassNewMethod.
+	selector := #newMethod.
+	 
+	classToRefactorSuperclass := self createClassNamed: #Superclass.
+	classToRefactorSuperclass compile: superclassSelector, '|', newVariable, '|', '^ 1 + ', newVariable.
+	
+	classToRefactor := self createClassNamed: self classToRefactorName subclassOf: classToRefactorSuperclass instanceVariableNames: newVariable.
+	classToRefactor compile: selector, '^ 1 + ', newVariable.
+	
+	self
+		assertCreation: [ PushUpMethod for: classToRefactor >> selector ]
+		failsWith: [ PushUpInstanceVariable errorMessageForInstanceVariable: newVariable isDefinedInMethodsOf: classToRefactorSuperclass ].! !
 
 !PushUpMethodTest methodsFor: 'class factory' stamp: 'MSC 11/12/2019 11:48:09'!
 classToRefactorName	
