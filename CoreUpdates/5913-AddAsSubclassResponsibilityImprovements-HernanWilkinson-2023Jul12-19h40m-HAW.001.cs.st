@@ -1,7 +1,7 @@
 'From Cuis 6.0 [latest update: #5908] on 12 July 2023 at 9:19:16 pm'!
 !classDefinition: #AddAsSubclassResponsability category: #'Tools-Refactoring'!
 TransferMethod subclass: #AddAsSubclassResponsability
-	instanceVariableNames: 'method '
+	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Tools-Refactoring'!
@@ -13,7 +13,7 @@ RefactoringApplier subclass: #TransferMethodApplier
 	category: 'Tools-Refactoring'!
 !classDefinition: #AddAsSubclassResponsabilityApplier category: #'Tools-Refactoring'!
 TransferMethodApplier subclass: #AddAsSubclassResponsabilityApplier
-	instanceVariableNames: 'method browser '
+	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Tools-Refactoring'!
@@ -52,7 +52,7 @@ shouldWarnIf: aMethodToTransfer isImplementedInSuperclassAs: superclassMethod
 !TransferMethod class methodsFor: 'warnings' stamp: 'HAW 7/12/2023 20:45:25'!
 warnIfMethodIsImplementedInSuperClass: aMethodToTransfer
 
-	aMethodToTransfer methodClass superclass 
+	aMethodToTransfer methodClass superclass
 		compiledMethodAt: aMethodToTransfer selector
 		ifPresent: [ :superclassMethod | (self shouldWarnIf: aMethodToTransfer isImplementedInSuperclassAs: superclassMethod)
 			ifFalse: [ self refactoringWarning: self methodImplementedInSuperclassWarningMessage ]]
@@ -68,7 +68,7 @@ removeMethod
 !PushDownMethod methodsFor: 'applying - private' stamp: 'HAW 7/12/2023 20:42:47'!
 implementSubclassResponsibility
 
-	^ self implementSubclassResponsibilityIn: method methodClass 
+	^ self implementSubclassResponsibilityIn: method methodClass
 	! !
 
 
@@ -95,8 +95,8 @@ for: aMethod
 
 !PushDownMethodToOneSubclass methodsFor: 'applying - private' stamp: 'HAW 7/12/2023 21:07:34'!
 removeMethod
-	
-	implementSubclassResponsibility 
+
+	implementSubclassResponsibility
 		ifTrue: [ self implementSubclassResponsibility ]
 		ifFalse: [ super removeMethod ]! !
 
@@ -123,7 +123,7 @@ for: aMethodToPushUp additionallyRemovingFrom: subclassesToRemoveMethodFrom
 	self assert: aMethodToPushUp isImplementedIn: subclassesToRemoveMethodFrom.
 	self assert: aMethodToPushUp isEquivalentlyImplementedIn: subclassesToRemoveMethodFrom.
 	self warnIfMethodIsImplementedInSuperClass: aMethodToPushUp.
-	
+
 	^self new initializeFor: aMethodToPushUp additionallyRemovingFrom: subclassesToRemoveMethodFrom.! !
 
 
@@ -153,7 +153,7 @@ methodHasSenders
 
 !PushDownMethodToOneSubclassApplier methodsFor: 'refactoring - creation' stamp: 'HAW 7/12/2023 20:47:51'!
 createRefactoring
-	
+
 	^self refactoringClass for: methodToTransfer to: subclassToPushDownTo
 	! !
 
@@ -174,7 +174,7 @@ createRefactoring
 implementsEquivalentMethod: aSubclass
 
 	^ aSubclass ~= methodToTransfer methodClass and: [
-		aSubclass 
+		aSubclass
 			compiledMethodAt: methodToTransfer selector
 			ifPresent: [ :subclassMethod | subclassMethod equivalentTo: methodToTransfer ]
 			ifAbsent: [ false ]]! !
@@ -186,7 +186,7 @@ requestRefactoringParameters
 
 	withEquivalentMethod := methodToTransfer methodClass superclass subclasses select: [ :aSubclass |
 		self implementsEquivalentMethod: aSubclass].
-	
+
 	withEquivalentMethod ifNotEmpty: [ self askMethodsToRemoveFrom: withEquivalentMethod ]! !
 
 !PushUpMethodApplier methodsFor: 'refactoring - parameters request' stamp: 'HAW 7/12/2023 20:47:51'!
@@ -197,7 +197,7 @@ withEquivalentMethodMessage: withEquivalentMethod
 			nextPutAll: methodToTransfer selector;
 			nextPutAll: ' has equivalent methods declared in '.
 		withEquivalentMethod asCommaSeparated:  [:aClass| stream print: aClass] on: stream.
-		stream 
+		stream
 			newLine;
 			nextPutAll: 'How do you want to proceed?' ]! !
 
@@ -325,4 +325,3 @@ TransferMethodApplier subclass: #AddAsSubclassResponsabilityApplier
 ('refactoring - parameters request' askMethodsToRemoveFrom: implementsEquivalentMethod: requestRefactoringParameters withEquivalentMethodMessage:)
 ('initialization' initialize)
 !
-
