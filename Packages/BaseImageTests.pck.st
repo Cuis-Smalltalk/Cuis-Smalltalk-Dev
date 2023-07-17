@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5908] on 12 July 2023 at 9:20:09 pm'!
-'Description AddAsSubclassResponsibilty re design and new tests on TransferMethod tests'!
-!provides: 'BaseImageTests' 1 356!
+'From Cuis 6.0 [latest update: #5921] on 17 July 2023 at 12:25:16 pm'!
+'Description New tests for PushDownMethod when class is meta'!
+!provides: 'BaseImageTests' 1 357!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Objects'!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Classes'!
@@ -28858,6 +28858,23 @@ test08ShouldImplementAsSubclassResponsibilityWhenImplementedInAllSubclasses
 	self assert: classToRefactor implementsSendingSubclassResponsibility: self selectorToPushDown.
 	self assert: expectedClassToRefactorSourceCode equals: (classToRefactor >> self selectorToPushDown) sourceCode.! !
 
+!PushDownMethodToOneSubclassTest methodsFor: 'tests' stamp: 'HAW 7/17/2023 12:24:30'!
+test09AClassMethodShouldBePushedDownToSubclasses
+
+	| classToRefactorSubclass classToRefactor push |
+   
+	classToRefactor := self createClassNamed: self classToRefactorName.
+	classToRefactorSubclass := self createClassNamed: self classToPushDownTo subclassOf: classToRefactor.
+	
+	classToRefactor class compile: self selectorToPushDown classified: self methodToPushDownCategory.
+           
+	push := PushDownMethodToOneSubclass for: classToRefactor class >> self selectorToPushDown to: classToRefactorSubclass class.
+	push apply.
+   
+	self deny: (classToRefactor class includesSelector: self selectorToPushDown).
+	self assert: (classToRefactorSubclass class includesSelector: self selectorToPushDown).
+	! !
+
 !PushDownMethodToSubclassesTest methodsFor: 'tests' stamp: 'HAW 7/12/2023 21:16:23'!
 test01AnEmptyMethodOnClassToRefactorShouldBePushedDownToSubclasses
 
@@ -29041,6 +29058,37 @@ test09CannotPushDownMethodWithoutSubclasses
 		assertCreation: [ PushDownMethodToSubclasses for: classToRefactor >> self selectorToPushDown ]
 		 failsWith: [ PushDownMethodToSubclasses errorMessageNoSubclassToPushDownMethodTo ].
 	! !
+
+!PushDownMethodToSubclassesTest methodsFor: 'tests' stamp: 'HAW 7/17/2023 12:24:49'!
+test10AClassMethodShouldBePushedDownToSubclasses
+
+	| classToRefactorSubclass1 classToRefactorSubclass2 classToRefactor push |
+   
+	classToRefactor := self createClassNamed: self classToRefactorName.
+	classToRefactorSubclass1 := self createClassNamed: self classToPushDownTo subclassOf: classToRefactor.
+	classToRefactorSubclass2 := self createClassNamed: self classToPushDownTo2 subclassOf: classToRefactor.
+	
+	classToRefactor class compile: self selectorToPushDown classified: self methodToPushDownCategory.
+           
+	push := PushDownMethodToSubclasses for: classToRefactor class >> self selectorToPushDown.
+	push apply.
+   
+	self assert: classToRefactor class implementsSendingSubclassResponsibility: self selectorToPushDown.
+	self assert: (classToRefactorSubclass1 class includesSelector: self selectorToPushDown).
+	self assert: (classToRefactorSubclass2 class includesSelector: self selectorToPushDown).! !
+
+!PushDownMethodToSubclassesTest methodsFor: 'tests' stamp: 'TS 7/9/2023 20:47:34'!
+test11CannotPushDownClassMethodWithoutSubclasses
+
+	| classToRefactor |
+	
+	classToRefactor := self createClassNamed: self classToRefactorName.
+
+	classToRefactor class compile: self selectorToPushDown.
+           
+	self
+		assertCreation: [ PushDownMethodToSubclasses for: classToRefactor class >> self selectorToPushDown ]
+		 failsWith: [ PushDownMethodToSubclasses errorMessageNoSubclassToPushDownMethodTo ].! !
 
 !PushUpInstanceVariableTest methodsFor: 'class factory' stamp: 'MSC 12/15/2019 12:44:48'!
 classToRefactorName
