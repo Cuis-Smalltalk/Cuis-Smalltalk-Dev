@@ -1,77 +1,87 @@
-'From Cuis 5.0 [latest update: #4012] on 9 January 2020 at 8:04:03 pm'!
+'From Cuis 6.0 [latest update: #5923] on 17 July 2023 at 8:28:29 pm'!
 'Description '!
-!provides: 'Theme-Themes' 1 7!
-SystemOrganization addCategory: #'Theme-Themes'!
+!provides: 'Theme-Themes' 1 8!
+SystemOrganization addCategory: 'Theme-Themes'!
 
 
-!classDefinition: #ClassicTheme category: #'Theme-Themes'!
+!classDefinition: #ClassicTheme category: 'Theme-Themes'!
 Theme subclass: #ClassicTheme
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Theme-Themes'!
-!classDefinition: 'ClassicTheme class' category: #'Theme-Themes'!
+!classDefinition: 'ClassicTheme class' category: 'Theme-Themes'!
 ClassicTheme class
 	instanceVariableNames: ''!
 
-!classDefinition: #DarkBlueTheme category: #'Theme-Themes'!
+!classDefinition: #DarkBlueTheme category: 'Theme-Themes'!
 Theme subclass: #DarkBlueTheme
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Theme-Themes'!
-!classDefinition: 'DarkBlueTheme class' category: #'Theme-Themes'!
+!classDefinition: 'DarkBlueTheme class' category: 'Theme-Themes'!
 DarkBlueTheme class
 	instanceVariableNames: ''!
 
-!classDefinition: #DarkColorTheme category: #'Theme-Themes'!
+!classDefinition: #DarkColorTheme category: 'Theme-Themes'!
 Theme subclass: #DarkColorTheme
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Theme-Themes'!
-!classDefinition: 'DarkColorTheme class' category: #'Theme-Themes'!
+!classDefinition: 'DarkColorTheme class' category: 'Theme-Themes'!
 DarkColorTheme class
 	instanceVariableNames: ''!
 
-!classDefinition: #HighContrastBlackTheme category: #'Theme-Themes'!
+!classDefinition: #HighContrastBlackTheme category: 'Theme-Themes'!
 Theme subclass: #HighContrastBlackTheme
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Theme-Themes'!
-!classDefinition: 'HighContrastBlackTheme class' category: #'Theme-Themes'!
+!classDefinition: 'HighContrastBlackTheme class' category: 'Theme-Themes'!
 HighContrastBlackTheme class
 	instanceVariableNames: ''!
 
-!classDefinition: #HighContrastWhiteTheme category: #'Theme-Themes'!
+!classDefinition: #HighContrastWhiteTheme category: 'Theme-Themes'!
 Theme subclass: #HighContrastWhiteTheme
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Theme-Themes'!
-!classDefinition: 'HighContrastWhiteTheme class' category: #'Theme-Themes'!
+!classDefinition: 'HighContrastWhiteTheme class' category: 'Theme-Themes'!
 HighContrastWhiteTheme class
 	instanceVariableNames: ''!
 
-!classDefinition: #LightBluetheme category: #'Theme-Themes'!
+!classDefinition: #LightBluetheme category: 'Theme-Themes'!
 Theme subclass: #LightBluetheme
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Theme-Themes'!
-!classDefinition: 'LightBluetheme class' category: #'Theme-Themes'!
+!classDefinition: 'LightBluetheme class' category: 'Theme-Themes'!
 LightBluetheme class
 	instanceVariableNames: ''!
 
-!classDefinition: #LightTheme category: #'Theme-Themes'!
+!classDefinition: #LightTheme category: 'Theme-Themes'!
 Theme subclass: #LightTheme
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Theme-Themes'!
-!classDefinition: 'LightTheme class' category: #'Theme-Themes'!
+!classDefinition: 'LightTheme class' category: 'Theme-Themes'!
 LightTheme class
+	instanceVariableNames: ''!
+
+!classDefinition: #PinkTheme category: 'Theme-Themes'!
+Theme subclass: #PinkTheme
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Theme-Themes'!
+!classDefinition: 'PinkTheme class' category: 'Theme-Themes'!
+PinkTheme class
 	instanceVariableNames: ''!
 
 
@@ -714,3 +724,129 @@ useWindowTitleGradient
 !LightTheme methodsFor: 'colors' stamp: 'jmv 11/27/2018 10:09:27'!
 windowLabel
 	^ `Color gray: 0.3`! !
+
+!PinkTheme methodsFor: 'tools colors' stamp: 'pau 7/17/2023 19:14:22'!
+browser
+	^ self paleLavander.! !
+
+!PinkTheme methodsFor: 'tools colors' stamp: 'pau 7/17/2023 19:26:11'!
+debugger
+	
+	^self electricPink lighter! !
+
+!PinkTheme methodsFor: 'tools colors' stamp: 'pau 7/17/2023 19:24:02'!
+defaultWindowColor
+	^ self electricPink ! !
+
+!PinkTheme methodsFor: 'tools colors' stamp: 'pau 7/17/2023 19:19:15'!
+menu
+	^ self pink.! !
+
+!PinkTheme methodsFor: 'tools colors' stamp: 'pau 7/17/2023 19:30:55'!
+menuTitleBar
+	^self paleLavander ! !
+
+!PinkTheme methodsFor: 'window and background colors' stamp: 'pau 7/17/2023 19:12:55'!
+background
+	^self palePink! !
+
+!PinkTheme methodsFor: 'window and background colors' stamp: 'pau 7/17/2023 19:05:12'!
+paneBackgroundFrom: aColor
+	
+	^ Color hue: 0 chroma: 0 luminance: 1! !
+
+!PinkTheme methodsFor: 'window and background colors' stamp: 'pau 7/17/2023 19:05:50'!
+windowLabel
+	^ `Color black`! !
+
+!PinkTheme methodsFor: 'text colors' stamp: 'pau 7/17/2023 19:04:10'!
+buttonLabel
+	^Color gray: 0.2! !
+
+!PinkTheme methodsFor: 'text colors' stamp: 'pau 7/17/2023 19:04:48'!
+errorColor
+	^Color r: 0.33 g: 0 b: 0.67! !
+
+!PinkTheme methodsFor: 'text colors' stamp: 'pau 7/17/2023 19:05:02'!
+missingCommentTextColor
+	^Color green! !
+
+!PinkTheme methodsFor: 'text colors' stamp: 'pau 7/17/2023 19:51:22'!
+shout
+	"Color symbols as an association list."
+
+	^ {
+		#selector  					-> nil.
+		#arguments 					-> #(cyan muchDarker).
+		#comment 					-> #(magenta lighter).
+		#tempBar 					-> #gray.
+		#tempVars 					-> #(gray muchDarker).
+		#instVar 					-> #(magenta muchDarker).
+		#pseudoVariables 			-> #(purple muchDarker).
+		#literals 					-> #(green muchDarker).
+		#messages 					-> #(blue darker).
+		#incompleteMessages  	-> #(gray veryMuchDarker).
+		#blockLevelZero 			-> #black.
+		#blockLevelOne 			-> #brown.
+		#blockLevelTwo 			-> #magenta.
+		#blockLevelThree 			-> #red.
+		#blockLevelFour 			-> #(green darker).
+		#blockLevelFive 			-> #(orange darker).
+		#blockLevelSix 			-> #(magenta darker).
+		#blockLevelSeven 			-> #blue.
+		#defaults 					-> #black.
+		#undefined 					-> #red.
+		#methodTags 				-> #(green muchDarker).
+	}! !
+
+!PinkTheme methodsFor: 'text colors' stamp: 'pau 7/17/2023 19:05:28'!
+text
+	^ `Color magenta darker`! !
+
+!PinkTheme methodsFor: 'text colors' stamp: 'pau 7/17/2023 19:19:15'!
+textHighlight
+	^ (self pink)  alphaMixed: 0.6 with: Color white.! !
+
+!PinkTheme methodsFor: 'text colors' stamp: 'pau 7/17/2023 19:05:58'!
+textPane
+	^ `Color white`! !
+
+!PinkTheme methodsFor: 'pink colors' stamp: 'pau 7/17/2023 19:19:53'!
+electricPink
+
+	^ (Color r: 0.8 g: 0 b:0.4) alphaMixed: 0.6 with: Color white! !
+
+!PinkTheme methodsFor: 'pink colors' stamp: 'pau 7/17/2023 19:14:22'!
+paleLavander
+
+	^ Color r: 0.8 g: 0.584 b: 0.8! !
+
+!PinkTheme methodsFor: 'pink colors' stamp: 'pau 7/17/2023 19:12:55'!
+palePink
+
+	^ `Color r: 0.9 g: 0.584 b: 0.8`! !
+
+!PinkTheme methodsFor: 'pink colors' stamp: 'pau 7/17/2023 19:19:15'!
+pink
+
+	^ Color r: 1 g: 0.584 b: 0.8! !
+
+!PinkTheme methodsFor: 'other options' stamp: 'pau 7/17/2023 19:20:57'!
+embossedTitles
+	^true! !
+
+!PinkTheme methodsFor: 'other options' stamp: 'pau 7/17/2023 19:21:07'!
+roundWindowCorners
+	^true! !
+
+!PinkTheme methodsFor: 'other options' stamp: 'pau 7/17/2023 19:21:15'!
+useButtonGradient
+	^true! !
+
+!PinkTheme methodsFor: 'other options' stamp: 'pau 7/17/2023 19:21:22'!
+useUniformColors
+	^true! !
+
+!PinkTheme methodsFor: 'other options' stamp: 'pau 7/17/2023 19:21:32'!
+useWindowTitleGradient
+	^true! !
