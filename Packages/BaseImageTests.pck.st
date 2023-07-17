@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5921] on 17 July 2023 at 12:25:16 pm'!
-'Description New tests for PushDownMethod when class is meta'!
-!provides: 'BaseImageTests' 1 357!
+'From Cuis 6.0 [latest update: #5922] on 17 July 2023 at 12:33:17 pm'!
+'Description MetaclassTest for hasSubclasses'!
+!provides: 'BaseImageTests' 1 358!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Objects'!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Classes'!
@@ -175,6 +175,16 @@ TestCase subclass: #ClassTest
 	category: 'BaseImageTests-Kernel-Classes'!
 !classDefinition: 'ClassTest class' category: 'BaseImageTests-Kernel-Classes'!
 ClassTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #MetaclassTest category: 'BaseImageTests-Kernel-Classes'!
+TestCase subclass: #MetaclassTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-Kernel-Classes'!
+!classDefinition: 'MetaclassTest class' category: 'BaseImageTests-Kernel-Classes'!
+MetaclassTest class
 	instanceVariableNames: ''!
 
 !classDefinition: #AbstractNumberTest category: 'BaseImageTests-Kernel-Numbers'!
@@ -2352,6 +2362,12 @@ testDefinitionReplacingCategoryWithWorksWhenCategoryIsNil
 		
 
 ! !
+
+!MetaclassTest methodsFor: 'tests' stamp: 'HAW 7/17/2023 12:32:33'!
+testHasSubclassesReturnsThisClassHasSubclasses
+
+	self assert: Object hasSubclasses equals: Object class hasSubclasses.
+	self assert: self class hasSubclasses equals: self class class hasSubclasses ! !
 
 !AbstractNumberTest methodsFor: 'helpers' stamp: 'sqr 12/18/2018 16:27:22'!
 effectiveZeroExponentForTrigonometry
