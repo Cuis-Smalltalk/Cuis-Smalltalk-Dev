@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5922] on 17 July 2023 at 12:33:17 pm'!
-'Description MetaclassTest for hasSubclasses'!
-!provides: 'BaseImageTests' 1 358!
+'From Cuis 6.0 [latest update: #5924] on 19 July 2023 at 12:39:52 pm'!
+'Description ExtractMethod rename argument tests'!
+!provides: 'BaseImageTests' 1 359!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Objects'!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Classes'!
@@ -495,6 +495,16 @@ TestCase subclass: #CompiledMethodTest
 	category: 'BaseImageTests-Kernel-Methods'!
 !classDefinition: 'CompiledMethodTest class' category: 'BaseImageTests-Kernel-Methods'!
 CompiledMethodTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #MessageTest category: 'BaseImageTests-Kernel-Methods'!
+TestCase subclass: #MessageTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-Kernel-Methods'!
+!classDefinition: 'MessageTest class' category: 'BaseImageTests-Kernel-Methods'!
+MessageTest class
 	instanceVariableNames: ''!
 
 !classDefinition: #DelayTest category: 'BaseImageTests-Kernel-Processes'!
@@ -1315,6 +1325,16 @@ RefactoringTest subclass: #ExtractAsParameterTest
 	category: 'BaseImageTests-Tools-Refactoring'!
 !classDefinition: 'ExtractAsParameterTest class' category: 'BaseImageTests-Tools-Refactoring'!
 ExtractAsParameterTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #ExtractMethodApplierTest category: 'BaseImageTests-Tools-Refactoring'!
+RefactoringTest subclass: #ExtractMethodApplierTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-Tools-Refactoring'!
+!classDefinition: 'ExtractMethodApplierTest class' category: 'BaseImageTests-Tools-Refactoring'!
+ExtractMethodApplierTest class
 	instanceVariableNames: ''!
 
 !classDefinition: #ExtractMethodTest category: 'BaseImageTests-Tools-Refactoring'!
@@ -10345,6 +10365,73 @@ test10AccessorDescriptionIsWriteForMethodThatWritesInstanceVariable
 test11AccessorDescriptionIsWriteReadForMethodThatWritesAndReadInstanceVariable
 
 	self assert: 'write/read' equals: (self class>>#iv1ReadWrite accessorDescriptionOf: 'iv1' at: self indexOfIv1)! !
+
+!MessageTest methodsFor: 'tests' stamp: 'HAW 7/19/2023 10:33:59'!
+test01FullName
+
+	self assertFullNameOf: #printString arguments: { } is: 'printString'. 
+	self assertFullNameOf: #+ arguments: { 'a' } is: '+ a'. 
+	self assertFullNameOf: #selector: arguments: { 'a' } is: 'selector: a'. 
+	self assertFullNameOf: #selector:argument: arguments: { 'a'. 'b'} is: 'selector: a argument: b'. ! !
+
+!MessageTest methodsFor: 'tests' stamp: 'HAW 7/19/2023 12:25:39'!
+test02Keywords
+
+	self assertKeywordsOf: #printString arguments: {} is: #(printString).
+	self assertKeywordsOf: #+ arguments: {'a'} is: #(+).
+	self assertKeywordsOf: #selector: arguments: {#printString} is: #(selector:).
+	self assertKeywordsOf: #selector:arguments: arguments: {#printString:. 'b'} is: #(selector: arguments:).
+	! !
+
+!MessageTest methodsFor: 'tests' stamp: 'HAW 7/19/2023 12:13:32'!
+test03HasNoRightNumberOfArgumentsForUnaryMessageAndNotEmptyArguments
+
+	self deny: (Message selector: #printString argument: 'a') hasRightNumberOfArguments! !
+
+!MessageTest methodsFor: 'tests' stamp: 'HAW 7/19/2023 12:14:06'!
+test04HasRightNumberOfArgumentsForUnaryMessageAndEmptyArguments
+
+	self assert: (Message selector: #printString) hasRightNumberOfArguments! !
+
+!MessageTest methodsFor: 'tests' stamp: 'HAW 7/19/2023 12:17:15'!
+test05HasNoRightNumberOfArgumentsForBinaryMessageAndEmptyArguments
+
+	self deny: (Message selector: #+) hasRightNumberOfArguments! !
+
+!MessageTest methodsFor: 'tests' stamp: 'HAW 7/19/2023 12:17:42'!
+test06HasNoRightNumberOfArgumentsForBinaryMessageAndMoreThanOneArgument
+
+	self deny: (Message selector: #+ arguments: { 'a'. 'b' }) hasRightNumberOfArguments! !
+
+!MessageTest methodsFor: 'tests' stamp: 'HAW 7/19/2023 12:18:34'!
+test07HasRightNumberOfArgumentsForBinaryMessageAndOneArgument
+
+	self assert: (Message selector: #+ argument: 'a') hasRightNumberOfArguments! !
+
+!MessageTest methodsFor: 'tests' stamp: 'HAW 7/19/2023 12:19:17'!
+test08HasNoRightNumberOfArgumentsForKeywordMessageAndLessArguments
+
+	self deny: (Message selector: #selector:) hasRightNumberOfArguments! !
+
+!MessageTest methodsFor: 'tests' stamp: 'HAW 7/19/2023 12:24:12'!
+test09HasNoRightNumberOfArgumentsForKeywordMessageAndMoreArguments
+
+	self deny: (Message selector: #selector: arguments: { #printString. 'b' }) hasRightNumberOfArguments! !
+
+!MessageTest methodsFor: 'tests' stamp: 'HAW 7/19/2023 12:24:25'!
+test10HasRightNumberOfArgumentsForKeywordMessageWhenSameNumberOfKeywordsAndArguments
+
+	self assert: (Message selector: #selector:argument: arguments: { #printString:. 'b' }) hasRightNumberOfArguments! !
+
+!MessageTest methodsFor: 'assertions' stamp: 'HAW 7/19/2023 10:32:37'!
+assertFullNameOf: aSelector arguments: arguments is: expectedFullName  
+
+	^ self assert: expectedFullName equals: (Message selector: aSelector arguments: arguments ) fullName! !
+
+!MessageTest methodsFor: 'assertions' stamp: 'HAW 7/19/2023 12:04:17'!
+assertKeywordsOf: aSelector arguments: arguments is: expectedKeyword
+
+	^ self assert: expectedKeyword equals: (Message selector: aSelector arguments: arguments ) keywords! !
 
 !DelayTest methodsFor: 'testing-limits' stamp: 'laza 9/5/2009 08:49'!
 testBounds
@@ -25599,6 +25686,42 @@ classToRefactorName
 	
 	^#ClassToIntroduceParameter! !
 
+!ExtractMethodApplierTest methodsFor: 'tests' stamp: 'HAW 7/19/2023 10:02:33'!
+test01InvalidMessageNameWhenKeywordWithoutParamenter
+
+	self assertSignals: ExtractMethodNewMethod invalidMethodNameError with: 'm1:' argumentNames: {'p1'} ! !
+
+!ExtractMethodApplierTest methodsFor: 'tests' stamp: 'HAW 7/19/2023 10:04:21'!
+test02InvalidMessageNameWhenMultipleParamentersBetweenKeywords
+
+	self assertSignals: ExtractMethodNewMethod invalidMethodNameError with: 'm1: a b m2: c' argumentNames: {'p1'. 'p2'}.
+	! !
+
+!ExtractMethodApplierTest methodsFor: 'tests' stamp: 'HAW 7/19/2023 10:05:24'!
+test03WrongNumberOfArgumentsWhenParsedArgumensAreNotTheSameAsUserEnteredArguments
+
+	self assertSignals: ExtractMethodNewMethod wrongNumberOfArgumentsGivenErrorMessage with: 'm1: a' argumentNames: {}.
+	! !
+
+!ExtractMethodApplierTest methodsFor: 'assertions' stamp: 'HAW 7/19/2023 10:03:49'!
+assertSignals: anErrorMessage with: userAnswer argumentNames: argumentNames  
+
+	| argumentNodes |
+	
+	argumentNodes := argumentNames collect: [ :argumetName | self argumentNamed: argumetName ].
+	
+	self
+		should: [ ExtractMethodApplier new saveBinaryOrKeywordSelector: userAnswer withArguments: argumentNodes ]
+		raise: RefactoringError 
+		withMessageText: anErrorMessage ! !
+
+!ExtractMethodApplierTest methodsFor: 'object factory' stamp: 'HAW 7/19/2023 10:06:29'!
+argumentNamed: anArgumentName
+
+	"The instance is not complete, but it is enoght for testing - Hernan"
+	^TempVariableNode new name: anArgumentName
+		! !
+
 !ExtractMethodTest methodsFor: 'assertions' stamp: 'RNG 9/28/2019 00:49:10'!
 assertClassHasDefined: aSelector withBody: newSourceCode
 
@@ -25612,33 +25735,53 @@ assertClassHasDefined: aSelector withBody: newSourceCode inCategory: aCategory
 	self assertClassHasDefined: aSelector withBody: newSourceCode.
 	self assert: aCategory equals: (classToRefactor >> aSelector) category! !
 
-!ExtractMethodTest methodsFor: 'assertions' stamp: 'RNG 1/12/2020 21:08:55'!
+!ExtractMethodTest methodsFor: 'assertions' stamp: 'HAW 7/18/2023 17:13:27'!
 assertExtracting: codeToExtract from: originalCode named: newMessage defines: newCode andUpdates: updatedCode
 
 	| originalSelector category |
-	category _ #category.
-	originalSelector _ classToRefactor compile: originalCode classified: category.
+	category := #category.
+	originalSelector := classToRefactor compile: originalCode classified: category.
 
 	(ExtractMethod
 		fromInterval: (self intervalOf: codeToExtract locatedIn: originalCode)
 		of: classToRefactor >> originalSelector
 		to: newMessage
-		categorizedAs: category) apply.
+		categorizedAs: category
+		withArgumentNames: Dictionary new) apply.
 
 	self
 		assertClassHasDefined: originalSelector withBody: updatedCode inCategory: category;
 		assertClassHasDefined: newMessage selector withBody: newCode inCategory: category! !
 
-!ExtractMethodTest methodsFor: 'assertions' stamp: 'RNG 5/25/2020 01:10:35'!
+!ExtractMethodTest methodsFor: 'assertions' stamp: 'pau 7/17/2023 18:25:23'!
+assertExtracting: codeToExtract from: originalCode named: newMessage defines: newMethodCodeWithRenamedArg andUpdates: updatedCode withRenamedArguments: renamedArgs
+
+	| category originalSelector |
+	category := #category.
+	originalSelector := classToRefactor compile: originalCode classified: category.
+	
+	(ExtractMethod
+		fromInterval: (self intervalOf: codeToExtract locatedIn: originalCode)
+		of: classToRefactor >> originalSelector
+		to: newMessage
+		categorizedAs: category
+		withArgumentNames: renamedArgs) apply.
+
+	self
+		assertClassHasDefined: originalSelector withBody: updatedCode inCategory: category;
+		assertClassHasDefined: newMessage selector withBody: newMethodCodeWithRenamedArg inCategory: category! !
+
+!ExtractMethodTest methodsFor: 'assertions' stamp: 'HAW 7/18/2023 17:13:41'!
 creationWithMessage: aMessage onInterval: anIntervalToExtract ofMethod: methodToExtractCodeFrom failsWith: aRefactoringExceptionMessageEvaluationBlock errorCondition: anExceptionHandlingCondition
 
 	self
 		should: [
-			ExtractMethod
+			ExtractMethod  
 				fromInterval: anIntervalToExtract
 				of: methodToExtractCodeFrom
 				to: aMessage
-				categorizedAs: Categorizer default ]
+				categorizedAs: Categorizer default 
+				withArgumentNames: aMessage arguments]
 		raise: anExceptionHandlingCondition
 		withMessageText: aRefactoringExceptionMessageEvaluationBlock! !
 
@@ -26095,6 +26238,56 @@ test45CanExtractCodeWithMoreThanOneBlockAndABlockAtTheEndInsideAnotherBlock
 		assertExtracting: codeToExtract from: originalCode named: (Message selector: #m4)
 		defines: newMethodCode andUpdates: updatedCode! !
 
+!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'HAW 7/19/2023 12:29:27'!
+test46CanModifyArgumentsNamesInExtractedMethod
+
+	| codeToExtract newMethodCodeWithRenamedArg originalCode updatedCode newMessage |
+	
+	codeToExtract := 'true ifTrue: [ arg ].'.
+	originalCode := 'm1: arg
+	[true] whileTrue: [ ' , codeToExtract, ']'.
+	newMethodCodeWithRenamedArg := 'm3: argModified
+
+	^ true ifTrue: [ argModified ]'.
+	updatedCode := 'm1: arg
+	[true] whileTrue: [ self m3: arg.]'.
+	
+	newMessage := Message selector: #m3: argument: 'arg'. 
+	
+	self 
+		assertExtracting: codeToExtract 
+		from: originalCode 
+		named: newMessage 
+		defines: newMethodCodeWithRenamedArg 
+		andUpdates: updatedCode 
+		withRenamedArguments: (Dictionary with:'arg'->'argModified' ). 
+	! !
+
+!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'HAW 7/19/2023 12:32:51'!
+test47OnlyModifiedArgumentsNamesAreModifiedInExtractedMethod
+
+	| codeToExtract newMethodCodeWithRenamedArg originalCode updatedCode newMessage |
+	
+	codeToExtract := 'arg1 ifTrue: [ arg2 ].'.
+	originalCode := 'm1: arg1 m2: arg2
+	[true] whileTrue: [ ' , codeToExtract, ']'.
+	newMethodCodeWithRenamedArg := 'm3: arg1Modified m4: arg2
+
+	^ arg1Modified ifTrue: [ arg2 ]'.
+	updatedCode := 'm1: arg1 m2: arg2
+	[true] whileTrue: [ self m3: arg1 m4: arg2.]'.
+	
+	newMessage := Message selector: #m3:m4: arguments: #('arg1' 'arg2'). 
+	self 
+		assertExtracting: codeToExtract 
+		from: originalCode 
+		named: newMessage 
+		defines: newMethodCodeWithRenamedArg 
+		andUpdates: updatedCode 
+		withRenamedArguments: (Dictionary with:'arg1'->'arg1Modified'). 
+	
+! !
+
 !ExtractMethodTest methodsFor: 'tests - validations' stamp: 'RNG 7/12/2020 19:13:15'!
 test01NewSelectorShouldNotBeEmpty
 
@@ -26288,7 +26481,16 @@ test41CannotExtractPartOfMethodSignature
 		using: (Message selector: #m2: arguments: #('arg'))
 		failsWith: [ SourceCodeOfMethodToBeExtractedPrecondition errorMessageForExtractingPartOfMethodSignature ]! !
 
-!ExtractMethodTest methodsFor: 'tests - many repetitions' stamp: 'HAW 9/5/2021 07:13:44'!
+!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'HAW 7/19/2023 12:07:09'!
+test48NewSelectorMustBeUnaryWhenNoArguments
+
+	self
+		tryingToExtract: '10'
+		from: 'm1 10'
+		using: (Message selector: #m2: arguments: #())
+		failsWith: [ ExtractMethodNewMethod wrongNumberOfArgumentsGivenErrorMessage ]! !
+
+!ExtractMethodTest methodsFor: 'tests - many repetitions' stamp: 'HAW 7/18/2023 17:13:57'!
 test42ExtractsManyRepetitionsOnSameMethod
 
 	| sourceMethodName finder sourceMethod extractMethod intervalToExtract newMessage |
@@ -26306,7 +26508,8 @@ test42ExtractsManyRepetitionsOnSameMethod
 			fromInterval: intervalToExtract 
 			of: sourceMethod 
 			to: newMessage 
-			categorizedAs: #something)
+			categorizedAs: #something
+			withArgumentNames: Dictionary new)
 		replacements: finder replacements.
 		
 	extractMethod apply.
@@ -26318,7 +26521,7 @@ test42ExtractsManyRepetitionsOnSameMethod
 	self assert: 'm1 self m2. self m2' equals: (classToRefactor >> #m1) sourceCode.
 	! !
 
-!ExtractMethodTest methodsFor: 'tests - many repetitions' stamp: 'HAW 9/5/2021 07:13:44'!
+!ExtractMethodTest methodsFor: 'tests - many repetitions' stamp: 'HAW 7/18/2023 17:14:14'!
 test43ExtractsRepetitionsOnMoreThanOneMethod
 
 	| sourceMethodName finder sourceMethod extractMethod intervalToExtract newMessage |
@@ -26337,7 +26540,8 @@ test43ExtractsRepetitionsOnMoreThanOneMethod
 			fromInterval: intervalToExtract 
 			of: sourceMethod 
 			to: newMessage 
-			categorizedAs: #something)
+			categorizedAs: #something
+			withArgumentNames: Dictionary new)
 		replacements: finder replacements.
 		
 	extractMethod apply.
