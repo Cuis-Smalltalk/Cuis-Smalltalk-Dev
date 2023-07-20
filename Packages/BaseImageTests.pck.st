@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5924] on 19 July 2023 at 12:39:52 pm'!
+'From Cuis 6.0 [latest update: #5936] on 20 July 2023 at 2:03:04 pm'!
 'Description ExtractMethod rename argument tests'!
-!provides: 'BaseImageTests' 1 359!
+!provides: 'BaseImageTests' 1 360!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Objects'!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Classes'!
@@ -20749,31 +20749,31 @@ testLayout1
 
 	pane delete! !
 
-!LayoutMorphTest methodsFor: 'tests' stamp: 'jmv 7/12/2022 15:12:18'!
+!LayoutMorphTest methodsFor: 'tests' stamp: 'jmv 7/20/2023 14:02:06'!
 testLayout2
 	"
 	self new testLayout2
 	"
 	| pane row c1 c2 c3 |
-	pane _ LayoutMorph newColumn separation: 5.
+	pane := LayoutMorph newColumn separation: 5.
 	pane color: Color red.
-	row _ LayoutMorph newRow separation: 5.
+	row := LayoutMorph newRow separation: 5.
 	row
 		color: (Color h: 270 s: 0.2 v: 0.6);
-		addMorph: (c1 _ BoxedMorph new color: (Color h: 120 s: 0.6 v: 0.6))
+		addMorph: (c1 := BoxedMorph new color: (Color h: 120 s: 0.6 v: 0.6))
 			layoutSpec: (LayoutSpec fixedWidth: 20 proportionalHeight: 0.8 offAxisEdgeWeight: #rowBottom);
-		addMorph: (c2 _ BoxedMorph new color: (Color h: 90 s: 0.6 v: 0.6))
+		addMorph: (c2 := BoxedMorph new color: (Color h: 90 s: 0.6 v: 0.6))
 			layoutSpec: (LayoutSpec proportionalWidth: 0.8 fixedHeight: 40 offAxisEdgeWeight: #rowTop);
-		addMorph: (c3 _ BoxedMorph new color: (Color h: 150 s: 0.6 v: 0.6))
+		addMorph: (c3 := BoxedMorph new color: (Color h: 150 s: 0.6 v: 0.6))
 			layoutSpec: (LayoutSpec fixedWidth: 30 proportionalHeight: 0.7 offAxisEdgeWeight: #center).
-	pane addMorph: row layoutSpec: (LayoutSpec proportionalHeight: 0.9).
-	pane openInWorld: UISupervisor ui; morphExtent: 400@300.
+	pane addMorph: row layoutSpec: (LayoutSpec proportionalHeight: 1.0).
+	pane openInWorld: UISupervisor ui; morphExtent: 400@271.
 	(UISupervisor animatedUIOf: Processor activeProcess)
 		ifNotNil: [ :ui | ui doOneCycleNow]
 		ifNil: [ | updated d |
-			updated _ false.
-			d _ Delay forMilliseconds: 10.
-			UISupervisor whenUIinSafeState: [ updated _ true ].
+			updated := false.
+			d := Delay forMilliseconds: 10.
+			UISupervisor whenUIinSafeState: [ updated := true ].
 			[updated] whileFalse: [
 				d wait ]].
 
