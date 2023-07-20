@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5936] on 20 July 2023 at 2:03:04 pm'!
+'From Cuis 6.0 [latest update: #5939] on 20 July 2023 at 2:35:51 pm'!
 'Description ExtractMethod rename argument tests'!
-!provides: 'BaseImageTests' 1 360!
+!provides: 'BaseImageTests' 1 361!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Objects'!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Classes'!
@@ -18513,14 +18513,23 @@ testTabWhenConditionIsTruePutsATabInStream
 
 	self assertTranscriptContentsAdded: Character tab asString after: [ Transcript tabWhen: true ]! !
 
-!TranscriptTest methodsFor: 'assertions' stamp: 'HAW 3/20/2019 07:14:26'!
+!TranscriptTest methodsFor: 'assertions' stamp: 'jmv 7/20/2023 14:15:23'!
+assertTranscriptContentsAdded2: expectedAddedString after: aBlock
+	
+	| transcriptContentsBeforeBlockEvaluation |
+	Transcript clear.
+	transcriptContentsBeforeBlockEvaluation := Transcript contents.
+	aBlock value.
+	{transcriptContentsBeforeBlockEvaluation. expectedAddedString.Transcript contents} inspect.
+	self assert: transcriptContentsBeforeBlockEvaluation, expectedAddedString equals: Transcript contents! !
+
+!TranscriptTest methodsFor: 'assertions' stamp: 'jmv 7/20/2023 14:15:10'!
 assertTranscriptContentsAdded: expectedAddedString after: aBlock
 	
 	| transcriptContentsBeforeBlockEvaluation |
-	
+	Transcript clear.
 	transcriptContentsBeforeBlockEvaluation := Transcript contents.
 	aBlock value.
-	
 	self assert: transcriptContentsBeforeBlockEvaluation, expectedAddedString equals: Transcript contents! !
 
 !TranscriptTest methodsFor: 'assertions' stamp: 'HAW 3/20/2019 07:15:48'!
@@ -20669,52 +20678,52 @@ testInverseTransformation
 	self assert: ((inverse internalizeDelta: 3@4) - (forward externalizeDelta: 3@4)) r < 0.0001.
 	self assert: ((inverse internalizeScalar: 7) - (forward externalizeScalar: 7)) abs < 0.0001.! !
 
-!LayoutMorphTest methodsFor: 'tests' stamp: 'jmv 7/12/2022 15:12:08'!
+!LayoutMorphTest methodsFor: 'tests' stamp: 'jmv 7/20/2023 14:28:07'!
 testLayout1
 	"
 	self new testLayout1
 	"
 	| pane row1 row2 row3 r1c1 r1c2 r1c3 r1c4 r1c5 r2c1 r2c2 r2c3 r3c1 r3c2 r3c3 |
-	pane _ LayoutMorph newColumn separation: 5.
+	pane := LayoutMorph newColumn separation: 5.
 	pane color: Color red.
-	row1 _ LayoutMorph newRow separation: 5.
+	row1 := LayoutMorph newRow separation: 5.
 	row1 color: Color red;
-		addMorph: (r1c1 _ BoxedMorph new color: (Color h: 60 s: 0.6 v: 0.6))
+		addMorph: (r1c1 := BoxedMorph new color: (Color h: 60 s: 0.6 v: 0.6))
 			layoutSpec: (LayoutSpec fixedWidth: 10);
-		addMorph: (r1c2 _ BoxedMorph new color: Color blue)
+		addMorph: (r1c2 := BoxedMorph new color: Color blue)
 			layoutSpec: (LayoutSpec proportionalWidth: 0.8);
-		addMorph: (r1c3 _ BoxedMorph new color: (Color h: 30 s: 0.6 v: 0.6))
+		addMorph: (r1c3 := BoxedMorph new color: (Color h: 30 s: 0.6 v: 0.6))
 			layoutSpec: (LayoutSpec proportionalWidth: 0.4);
-		addMorph: (r1c4 _ BoxedMorph new color: (Color h: 30 s: 0.6 v: 0.6))
+		addMorph: (r1c4 := BoxedMorph new color: (Color h: 30 s: 0.6 v: 0.6))
 			layoutSpec: (LayoutSpec proportionalWidth: 0.15);
-		addMorph: (r1c5 _ BoxedMorph new color: (Color h: 60 s: 0.6 v: 0.6))
+		addMorph: (r1c5 := BoxedMorph new color: (Color h: 60 s: 0.6 v: 0.6))
 			layoutSpec: (LayoutSpec fixedWidth: 20 fixedHeight: 20).
 	pane addMorph: row1 layoutSpec: LayoutSpec useAll.
-	row2 _ LayoutMorph newRow separation: 5.
+	row2 := LayoutMorph newRow separation: 5.
 	row2 color: Color red;
-		addMorph: (r2c1 _ BoxedMorph new color: Color blue)
+		addMorph: (r2c1 := BoxedMorph new color: Color blue)
 			layoutSpec: (LayoutSpec proportionalWidth: 0.8);
-		addMorph: (r2c2 _ BoxedMorph new color: (Color h: 30 s: 0.6 v: 0.6))
+		addMorph: (r2c2 := BoxedMorph new color: (Color h: 30 s: 0.6 v: 0.6))
 			layoutSpec: (LayoutSpec proportionalWidth: 0.4);
-		addMorph: (r2c3 _ BoxedMorph new color: (Color h: 30 s: 0.6 v: 0.6))
+		addMorph: (r2c3 := BoxedMorph new color: (Color h: 30 s: 0.6 v: 0.6))
 			layoutSpec: (LayoutSpec proportionalWidth: 0.2).
 	pane addMorph: row2 layoutSpec: LayoutSpec useAll.
-	row3 _ LayoutMorph newRow separation: 5.
+	row3 := LayoutMorph newRow separation: 5.
 	row3 color: Color red;
-		addMorph: (r3c1 _ BoxedMorph new color: (Color h: 120 s: 0.6 v: 0.6))
+		addMorph: (r3c1 := BoxedMorph new color: (Color h: 120 s: 0.6 v: 0.6))
 			layoutSpec: (LayoutSpec fixedWidth: 20 proportionalHeight: 0.8);
-		addMorph: (r3c2 _ BoxedMorph new color: (Color h: 90 s: 0.6 v: 0.6))
+		addMorph: (r3c2 := BoxedMorph new color: (Color h: 90 s: 0.6 v: 0.6))
 			layoutSpec: (LayoutSpec proportionalWidth: 0.5 fixedHeight: 40);
-		addMorph: (r3c3 _ BoxedMorph new color: (Color h: 150 s: 0.6 v: 0.6))
+		addMorph: (r3c3 := BoxedMorph new color: (Color h: 150 s: 0.6 v: 0.6))
 			layoutSpec: (LayoutSpec fixedWidth: 30 proportionalHeight: 1.0).
 	pane addMorph: row3 layoutSpec: (LayoutSpec fixedHeight: 60).
 	pane openInWorld: UISupervisor ui; morphExtent: 408@300.
 	(UISupervisor animatedUIOf: Processor activeProcess)
 		ifNotNil: [ :ui | ui doOneCycleNow]
 		ifNil: [ | updated d |
-			updated _ false.
-			d _ Delay forMilliseconds: 10.
-			UISupervisor whenUIinSafeState: [ updated _ true ].
+			updated := false.
+			d := Delay forMilliseconds: 10.
+			UISupervisor whenUIinSafeState: [ UISupervisor whenUIinSafeState: [updated := true ]].
 			[updated] whileFalse: [
 				d wait ]].
 
@@ -20749,7 +20758,7 @@ testLayout1
 
 	pane delete! !
 
-!LayoutMorphTest methodsFor: 'tests' stamp: 'jmv 7/20/2023 14:02:06'!
+!LayoutMorphTest methodsFor: 'tests' stamp: 'jmv 7/20/2023 14:27:40'!
 testLayout2
 	"
 	self new testLayout2
@@ -20773,7 +20782,7 @@ testLayout2
 		ifNil: [ | updated d |
 			updated := false.
 			d := Delay forMilliseconds: 10.
-			UISupervisor whenUIinSafeState: [ updated := true ].
+			UISupervisor whenUIinSafeState: [ UISupervisor whenUIinSafeState: [updated := true ]].
 			[updated] whileFalse: [
 				d wait ]].
 
@@ -20791,39 +20800,39 @@ testLayout2
 
 	pane delete! !
 
-!LayoutMorphTest methodsFor: 'tests' stamp: 'jmv 7/12/2022 15:12:23'!
+!LayoutMorphTest methodsFor: 'tests' stamp: 'jmv 7/20/2023 14:27:20'!
 testLayout3
 	"
 	self new testLayout3
 	"
 	| pane row innerRow i1 i2 i3 c2 c3 |
-	pane _ LayoutMorph newColumn separation: 5.
+	pane := LayoutMorph newColumn separation: 5.
 	pane color: Color red.
-	row _ LayoutMorph newRow separation: 5.
-	innerRow _ LayoutMorph newRow color: Color red;  separation: 5.
+	row := LayoutMorph newRow separation: 5.
+	innerRow := LayoutMorph newRow color: Color red;  separation: 5.
 	innerRow
-		addMorph: (i1 _ BoxedMorph new)
+		addMorph: (i1 := BoxedMorph new)
 			layoutSpec: (LayoutSpec fixedWidth: 10 fixedHeight: 10);
-		addMorph: (i2 _ BoxedMorph new)
+		addMorph: (i2 := BoxedMorph new)
 			layoutSpec: (LayoutSpec fixedWidth: 10 fixedHeight: 10);
-		addMorph: (i3 _ BoxedMorph new)
+		addMorph: (i3 := BoxedMorph new)
 			layoutSpec: (LayoutSpec proportionalWidth: 1.0 fixedHeight: 10).
 	row
 		color: (Color h: 270 s: 0.2 v: 0.6);
 		addMorph: innerRow
 			layoutSpec: (LayoutSpec proportionalWidth: 0.5 fixedHeight: 30 offAxisEdgeWeight: #center);
-		addMorph: (c2 _ BoxedMorph new color: (Color h: 90 s: 0.6 v: 0.6))
+		addMorph: (c2 := BoxedMorph new color: (Color h: 90 s: 0.6 v: 0.6))
 			layoutSpec: (LayoutSpec proportionalWidth: 0.5 fixedHeight: 40 offAxisEdgeWeight: #rowTop);
-		addMorph: (c3 _ BoxedMorph new color: (Color h: 150 s: 0.6 v: 0.6))
+		addMorph: (c3 := BoxedMorph new color: (Color h: 150 s: 0.6 v: 0.6))
 			layoutSpec: (LayoutSpec fixedWidth: 30 proportionalHeight: 1.0).
 	pane addMorph: row layoutSpec: (LayoutSpec fixedHeight: 200).
 	pane openInWorld: UISupervisor ui; morphExtent: 400@300.
 	(UISupervisor animatedUIOf: Processor activeProcess)
 		ifNotNil: [ :ui | ui doOneCycleNow]
 		ifNil: [ | updated d |
-			updated _ false.
-			d _ Delay forMilliseconds: 10.
-			UISupervisor whenUIinSafeState: [ updated _ true ].
+			updated := false.
+			d := Delay forMilliseconds: 10.
+			UISupervisor whenUIinSafeState: [ UISupervisor whenUIinSafeState: [updated := true ]].
 			[updated] whileFalse: [
 				d wait ]].
 
