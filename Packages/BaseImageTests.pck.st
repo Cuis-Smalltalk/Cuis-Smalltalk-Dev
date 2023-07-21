@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5939] on 20 July 2023 at 2:35:51 pm'!
-'Description ExtractMethod rename argument tests'!
-!provides: 'BaseImageTests' 1 361!
+'From Cuis 6.0 [latest update: #5941] on 21 July 2023 at 5:04:59 pm'!
+'Description ExtractTemporary and Method tests for fix of ((...) ... (...))'!
+!provides: 'BaseImageTests' 1 362!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Objects'!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Classes'!
@@ -18248,6 +18248,29 @@ test05GroupsOfParenthesesIncludingSeparatorsAreTrimmed
 
 	self assert: (5 to: 7) asSourceCodeInterval equals: trimmedInterval! !
 
+!SourceCodeIntervalTest methodsFor: 'tests - trimming' stamp: 'HAW 7/21/2023 16:51:49'!
+test23TrimmsExternalParentesisWhenMoreParentesisAtDifferentCollaborations
+	
+	| originalInterval trimmedInterval sourceCode |
+	
+	sourceCode := '((self m2) + (self m3))'.
+	originalInterval := (1 to: sourceCode size) asSourceCodeInterval.
+	trimmedInterval := originalInterval trimToMatchExpressionOn: sourceCode.
+
+	self assert: (2 to: 22) asSourceCodeInterval equals: trimmedInterval! !
+
+!SourceCodeIntervalTest methodsFor: 'tests - trimming' stamp: 'HAW 7/21/2023 16:52:27'!
+test24TrimmsExternalParentesisWhenMoreParentesisAtDifferentCollaborationsWithOtherSeparators
+	
+	| originalInterval trimmedInterval sourceCode |
+	
+	sourceCode := '((self m2) + (self m3)
+	)'.
+	originalInterval := (1 to: sourceCode size) asSourceCodeInterval.
+	trimmedInterval := originalInterval trimToMatchExpressionOn: sourceCode.
+
+	self assert: (2 to: 22) asSourceCodeInterval equals: trimmedInterval! !
+
 !SourceCodeIntervalTest methodsFor: 'tests - equality' stamp: 'RNG 5/27/2020 23:59:37'!
 test11AsSourceCodeIntervalMessageDoesNotCreateANewSourceCodeIntervalInstance
 
@@ -26725,6 +26748,18 @@ test24WhenExtractingAnEntireStatementItOnlyGeneratesTheVariableAssignment
 	action := self run'.
 
 	self assertExtracting: 'self run' from: sourceCode toVariableNamed: 'action' updatesTo: sourceCodeAfterRefactoring! !
+
+!ExtractToTemporaryTest methodsFor: 'tests - successful' stamp: 'HAW 7/21/2023 16:56:47'!
+test26ExtractsCorrectlyWithParentesisInsideParentesis
+
+	| sourceCode sourceCodeAfterRefactoring |
+	
+	sourceCode := 'm1 ^((self m2) + (self m3)) m1.'.
+	sourceCodeAfterRefactoring := 'm1 | action |
+	action := (self m2) + (self m3).
+	^(action) m1.'.
+
+	self assertExtracting: '((self m2) + (self m3))' from: sourceCode toVariableNamed: 'action' updatesTo: sourceCodeAfterRefactoring! !
 
 !ExtractToTemporaryTest methodsFor: 'tests - validations' stamp: 'RNG 2/25/2020 15:13:05'!
 test01NewVariableCanNotBeEmpty
