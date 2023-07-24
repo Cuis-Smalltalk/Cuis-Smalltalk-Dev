@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5941] on 21 July 2023 at 5:04:59 pm'!
-'Description ExtractTemporary and Method tests for fix of ((...) ... (...))'!
-!provides: 'BaseImageTests' 1 362!
+'From Cuis 6.0 [latest update: #5943] on 24 July 2023 at 3:58:17 pm'!
+'Description ExtractToTemporary when reapeated nodes'!
+!provides: 'BaseImageTests' 1 363!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Objects'!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Classes'!
@@ -26760,6 +26760,41 @@ test26ExtractsCorrectlyWithParentesisInsideParentesis
 	^(action) m1.'.
 
 	self assertExtracting: '((self m2) + (self m3))' from: sourceCode toVariableNamed: 'action' updatesTo: sourceCodeAfterRefactoring! !
+
+!ExtractToTemporaryTest methodsFor: 'tests - successful' stamp: 'HAW 7/24/2023 15:51:16'!
+test27ExtractRightNodeWhenDuplicates
+
+	| sourceCode sourceCodeAfterRefactoring |
+	
+	sourceCode := 'm1
+self m2.
+^self m2.'.
+	sourceCodeAfterRefactoring := 'm1
+| a |
+	a := self m2.
+^self m2.'.
+
+	self assertExtracting: 'self m2' from: sourceCode toVariableNamed: 'a' updatesTo: sourceCodeAfterRefactoring! !
+
+!ExtractToTemporaryTest methodsFor: 'tests - successful' stamp: 'HAW 7/24/2023 15:54:10'!
+test28ExtractRightNodeWhenDuplicatesAndSelectedLastOne
+
+	| sourceCode sourceCodeAfterRefactoring intervalToExtract methodToRefactor actualSourceCodeAfterRefactoring |
+	
+	sourceCode := 'm1
+self m2.
+^self m2.'.
+	sourceCodeAfterRefactoring := 'm1
+| a |
+	self m2.
+a := self m2.
+	^a.'.
+
+	classToRefactor compile: sourceCode.
+	intervalToExtract := (14 to: 20) asSourceCodeInterval.
+	methodToRefactor := classToRefactor >> #m1.
+	actualSourceCodeAfterRefactoring := (ExtractToTemporary named: 'a' at: intervalToExtract from: methodToRefactor) apply.
+	self assert: sourceCodeAfterRefactoring equals: actualSourceCodeAfterRefactoring! !
 
 !ExtractToTemporaryTest methodsFor: 'tests - validations' stamp: 'RNG 2/25/2020 15:13:05'!
 test01NewVariableCanNotBeEmpty
