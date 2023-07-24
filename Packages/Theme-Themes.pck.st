@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5944] on 24 July 2023 at 11:27:20 am'!
+'From Cuis 6.0 [latest update: #5944] on 24 July 2023 at 11:28:52 am'!
 'Description Theme customizer'!
-!provides: 'Theme-Themes' 1 11!
+!provides: 'Theme-Themes' 1 12!
 SystemOrganization addCategory: 'Theme-Themes'!
 
 
@@ -16,7 +16,7 @@ ThemeCustomizerModel class
 
 !classDefinition: #ThemeCustomizerWindow category: 'Theme-Themes'!
 SystemWindow subclass: #ThemeCustomizerWindow
-	instanceVariableNames: 'menuWindow backgroundPalette primaryPalette labelsPalette textPalette secondaryPalette'
+	instanceVariableNames: 'backgroundPalette primaryPalette labelsPalette textPalette secondaryPalette'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Theme-Themes'!
