@@ -22,7 +22,9 @@ resumeProcess
 	contextStackTop := nil.
 	receiverInspector := nil.
 	contextVariablesInspector := nil.
-	mustRedisplay ifNotNil: [ :w | UISupervisor whenUIinSafeState: [ w invalidateBounds ]].
+	mustRedisplay ifNotNil: [ :w |
+		[UISupervisor whenUIinSafeState: [ w invalidateBounds ]]
+			forkAt: Processor userSchedulingPriority-1 ].
 	"restart low space handler"
 	Smalltalk installLowSpaceWatcher.
 	"If this process was the UI process, and we just resumed the old one,
