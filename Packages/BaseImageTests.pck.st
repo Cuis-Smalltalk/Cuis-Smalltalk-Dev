@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5943] on 24 July 2023 at 3:58:17 pm'!
-'Description ExtractToTemporary when reapeated nodes'!
-!provides: 'BaseImageTests' 1 363!
+'From Cuis 6.0 [latest update: #5948] on 25 July 2023 at 5:40:16 pm'!
+'Description ExtractMethod for optimized messages test'!
+!provides: 'BaseImageTests' 1 364!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Objects'!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Classes'!
@@ -26317,6 +26317,28 @@ test47OnlyModifiedArgumentsNamesAreModifiedInExtractedMethod
 		defines: newMethodCodeWithRenamedArg 
 		andUpdates: updatedCode 
 		withRenamedArguments: (Dictionary with:'arg1'->'arg1Modified'). 
+	
+! !
+
+!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'HAW 7/25/2023 17:39:33'!
+test49CanExtractFromOptimizedMessageSends
+
+	| codeToExtract newMethodCodeWithRenamedArg originalCode updatedCode newMessage |
+	
+	codeToExtract := 'x + 1'.
+	originalCode := 'm1 1 to: 2 do: [ :x | x + 1]'.
+	newMethodCodeWithRenamedArg := 'm2: x
+
+	^ x + 1'.
+	updatedCode := 'm1 1 to: 2 do: [ :x | self m2: x]'.
+	
+	newMessage := Message selector: #m2: argument: 'x'. 
+	self 
+		assertExtracting: codeToExtract 
+		from: originalCode 
+		named: newMessage 
+		defines: newMethodCodeWithRenamedArg 
+		andUpdates: updatedCode 
 	
 ! !
 
