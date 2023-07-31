@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5948] on 25 July 2023 at 5:40:16 pm'!
+'From Cuis 6.0 [latest update: #5966] on 31 July 2023 at 1:01:42 pm'!
 'Description ExtractMethod for optimized messages test'!
-!provides: 'BaseImageTests' 1 364!
+!provides: 'BaseImageTests' 1 365!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Objects'!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Classes'!
@@ -2087,7 +2087,7 @@ testNumberAtSymbol
 testIsMessageSend
 	self assert: (WeakMessageSend new is: #MessageSend).! !
 
-!BehaviorTest methodsFor: 'class hierarchy tests' stamp: 'HernanWilkinson 1/19/2017 20:32:36'!
+!BehaviorTest methodsFor: 'class hierarchy tests' stamp: 'jmv 7/31/2023 11:56:10'!
 testAllSuperclassesUpToFailsWhenWantsToStopOnInvalidSuperclass
 
 	| invalidSuperclass |
@@ -2097,52 +2097,46 @@ testAllSuperclassesUpToFailsWhenWantsToStopOnInvalidSuperclass
 		should: [ SmallInteger allSuperclassesUpTo: invalidSuperclass ]
 		raise: Error
 		withExceptionDo: [:anError | 
-			self assert: anError messageText equals: (nil superclassNotValidErrorDescriptionFor: invalidSuperclass) ]
-		
-	! !
+			self assert: (nil superclassNotValidErrorDescriptionFor: invalidSuperclass) equals: anError messageText ].! !
 
-!BehaviorTest methodsFor: 'class hierarchy tests' stamp: 'HAW 2/10/2017 10:51:40'!
+!BehaviorTest methodsFor: 'class hierarchy tests' stamp: 'jmv 7/31/2023 11:53:44'!
 testAllSuperclassesUpToPutsFirstSuperclassesFirst
 
 	| superclasses |
 	
 	superclasses := SmallInteger allSuperclassesUpTo: Number.
 	
-	self assert: 2 equals: superclasses size.
-	self assert: Integer equals: superclasses first.
-	self assert: Number equals: superclasses second! !
+	self assert: superclasses size equals: 2.
+	self assert: superclasses first equals: Integer.
+	self assert: superclasses second equals: Number.! !
 
-!BehaviorTest methodsFor: 'class hierarchy tests' stamp: 'HAW 2/10/2017 10:52:55'!
+!BehaviorTest methodsFor: 'class hierarchy tests' stamp: 'jmv 7/31/2023 11:56:01'!
 testAllSuperclassesUpToStopsOnRightClass
 
 	| superclasses |
 	
 	superclasses := SmallInteger allSuperclassesUpTo: Integer.
 	
-	self assert: 1 equals: superclasses size.
-	self assert: (superclasses includes: Integer)
-	
-	! !
+	self assert: superclasses size equals: 1.
+	self assert: (superclasses includes: Integer).! !
 
-!BehaviorTest methodsFor: 'class hierarchy tests' stamp: 'HAW 8/3/2019 09:29:49'!
+!BehaviorTest methodsFor: 'class hierarchy tests' stamp: 'jmv 7/31/2023 11:55:49'!
 testHighestClassImplementingReturnsReceiverWhenNoOtherSuperclassImplementsSelector
 
 	| higestClass |
 	
 	higestClass := OrderedCollection highestClassImplementing: #addFirst: ifNone: [ self fail ].
 	
-	self assert: OrderedCollection equals: higestClass 
-	! !
+	self assert: higestClass equals: OrderedCollection.! !
 
-!BehaviorTest methodsFor: 'class hierarchy tests' stamp: 'HAW 8/3/2019 09:30:01'!
+!BehaviorTest methodsFor: 'class hierarchy tests' stamp: 'jmv 7/31/2023 11:55:45'!
 testHighestClassImplementingReturnsTheTopSuperclassImplementingSelector
 
 	| higestClass |
 	
 	higestClass := OrderedCollection highestClassImplementing: #select: ifNone: [ self fail ].
 	
-	self assert: Collection equals: higestClass 
-	! !
+	self assert: higestClass equals: Collection.! !
 
 !BehaviorTest methodsFor: 'class hierarchy tests' stamp: 'HAW 8/3/2019 09:29:55'!
 testHighestClassImplementingValuesIfNoneBlockWhenSelectorIsNotImplemented
@@ -2151,17 +2145,17 @@ testHighestClassImplementingValuesIfNoneBlockWhenSelectorIsNotImplemented
 	
 	self fail! !
 
-!BehaviorTest methodsFor: 'class hierarchy tests' stamp: 'HAW 2/10/2017 10:52:30'!
+!BehaviorTest methodsFor: 'class hierarchy tests' stamp: 'jmv 7/31/2023 11:55:32'!
 testWithAllSuperclassesUpToIncludesReceiverClass
 
 	| superclasses |
 	
 	superclasses := SmallInteger withAllSuperclassesUpTo: Number.
 	
-	self assert: 3 equals: superclasses size.
-	self assert: SmallInteger equals: superclasses first.
-	self assert: Integer equals: superclasses second.
-	self assert: Number equals: superclasses third ! !
+	self assert: superclasses size equals: 3.
+	self assert: superclasses first equals: SmallInteger.
+	self assert: superclasses second equals: Integer.
+	self assert: superclasses third equals: Number.! !
 
 !BehaviorTest methodsFor: 'instance variables tests' stamp: 'HAW 6/28/2020 11:57:28'!
 testAllAccessToInstVarReturnsAccessReceiversBranch
@@ -2199,15 +2193,15 @@ testAllBroadAccessToReturnsAccessInAllHierarchy
 
 	self assert: (references anySatisfy: [ :aReference | aReference methodClass = Dictionary ])! !
 
-!BehaviorTest methodsFor: 'instance variables tests' stamp: 'HAW 8/2/2018 16:54:42'!
+!BehaviorTest methodsFor: 'instance variables tests' stamp: 'jmv 7/31/2023 11:55:53'!
 testAllUnreferencedInstanceVariablesReturnsOnlyUnreferencedVariables
 
 	| unreferencedVariables |
 	
 	unreferencedVariables := BehaviorTestSubclass allUnreferencedInstanceVariables.
 	
-	self assert: 1 equals: unreferencedVariables size.
-	self assert: (unreferencedVariables includes: 'unreferenced') ! !
+	self assert: unreferencedVariables size equals: 1.
+	self assert: (unreferencedVariables includes: 'unreferenced').! !
 
 !BehaviorTest methodsFor: 'instance variables tests' stamp: 'HAW 8/2/2018 16:54:45'!
 testHasReferencesToInstanceVariableNamedLooksInClassOnly
@@ -2230,15 +2224,15 @@ testProtoObjectAllRegularInstVarNamesDoesNotFail
 		shouldnt: [ ProtoObject allRegularInstVarNames ]
 		raise: Error! !
 
-!BehaviorTest methodsFor: 'instance variables tests' stamp: 'HAW 8/2/2018 16:54:52'!
+!BehaviorTest methodsFor: 'instance variables tests' stamp: 'jmv 7/31/2023 11:55:40'!
 testUnreferencedInstanceVariablesReturnsOnlyUnreferencedVariables
 
 	| unreferencedVariables |
 	
 	unreferencedVariables := self class unreferencedInstanceVariables.
 	
-	self assert: 1 equals: unreferencedVariables size.
-	self assert: (unreferencedVariables includes: 'unreferenced') ! !
+	self assert: unreferencedVariables size equals: 1.
+	self assert: (unreferencedVariables includes: 'unreferenced').! !
 
 !BehaviorTestSubclass methodsFor: 'test data' stamp: 'HAW 8/2/2018 16:54:29'!
 methodReferencingReferencedVariable
@@ -2277,7 +2271,7 @@ assertClassifiesWithoutBlanks: aCategoryWithBlanks
 	self assert: (categorizer categoryOfElement: 1) equals: aCategoryWithBlanks withBlanksTrimmed 
 	! !
 
-!CategorizerTest methodsFor: 'assertions' stamp: 'HAW 2/1/2022 17:55:04'!
+!CategorizerTest methodsFor: 'assertions' stamp: 'jmv 7/31/2023 11:57:12'!
 assertRenamesToWithoutBlanks: aCategoryWithBlanks
 
 	| categorizer categoryToRename |
@@ -2291,8 +2285,7 @@ assertRenamesToWithoutBlanks: aCategoryWithBlanks
 	self assert: (categorizer categories includes: aCategoryWithBlanks withBlanksTrimmed).
 	self deny: (categorizer categories includes: aCategoryWithBlanks).
 	self deny: (categorizer categories includes: categoryToRename).
-	self assert: aCategoryWithBlanks withBlanksTrimmed equals: (categorizer categoryOfElement: 1)  
-	! !
+	self assert: (categorizer categoryOfElement: 1) equals: aCategoryWithBlanks withBlanksTrimmed.! !
 
 !CategorizerTest methodsFor: 'tests' stamp: 'HAW 9/24/2020 19:57:50'!
 testClassifiesWithoutLeadingBlanks
@@ -2751,7 +2744,7 @@ testExpNonPrimitive
 		self assert: (computed - expected) abs <= (expected ulp*2)
 		]! !
 
-!FloatTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 12/12/2018 14:38:16'!
+!FloatTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 7/31/2023 11:14:00'!
 testFloorLog2
 	"Float internal representation of Float being in base 2, we expect (aFloat floorLog: 2) to be exact."
 	
@@ -2761,9 +2754,9 @@ testFloorLog2
 	Float emin + 1 to: Float emax - 1 do: [:exp |
 		| exactPowerOfTwo |
 		exactPowerOfTwo := 1.0 timesTwoPower: exp.
-		self assert: exp equals: (exactPowerOfTwo floorLog: 2).
-		self assert: exp equals: (exactPowerOfTwo * aBitMore floorLog: 2).
-		self assert: exp-1 equals: (exactPowerOfTwo * aBitLess floorLog: 2) ].! !
+		self assert: (exactPowerOfTwo floorLog: 2) equals: exp.
+		self assert: (exactPowerOfTwo * aBitMore floorLog: 2) equals: exp.
+		self assert: (exactPowerOfTwo * aBitLess floorLog: 2) equals: exp-1 ].! !
 
 !FloatTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 11/27/2018 13:33:48'!
 testLn
@@ -7431,32 +7424,31 @@ testDenormalizedPrintString
 	self assert: i0 normalize = 0.
 	self assert: (i0 normalize isMemberOf: SmallInteger)! !
 
-!LargeNegativeIntegerTest methodsFor: 'tests' stamp: 'dtl 7/22/2014 21:40'!
+!LargeNegativeIntegerTest methodsFor: 'tests' stamp: 'jmv 7/31/2023 11:18:36'!
 testDigitAt
 
 	| lni |
 	lni := -114605103402541699037609980192546360895434064385.
 	1 to: 20 do: [:i | | digit |
 		digit := lni digitAt: i.
-		self assert: i equals: digit]
+		self assert: digit equals: i]
 ! !
 
-!LargeNegativeIntegerTest methodsFor: 'tests' stamp: 'dtl 7/22/2014 22:25'!
+!LargeNegativeIntegerTest methodsFor: 'tests' stamp: 'jmv 7/31/2023 11:19:22'!
 testDigitAtPut
 
 	| lni |
 	lni := LargeNegativeInteger new: 20.
 	1 to: 20 do: [:i | lni digitAt: i put: i].
-	self assert: -114605103402541699037609980192546360895434064385equals: lni
+	self assert: lni equals: -114605103402541699037609980192546360895434064385
 ! !
 
-!LargeNegativeIntegerTest methodsFor: 'tests' stamp: 'dtl 7/22/2014 21:39'!
+!LargeNegativeIntegerTest methodsFor: 'tests' stamp: 'jmv 7/31/2023 11:19:42'!
 testDigitLength
 
 	| lni |
 	lni := -114605103402541699037609980192546360895434064385.
-	self assert: 20 equals: lni digitLength
-! !
+	self assert: lni digitLength equals: 20! !
 
 !LargeNegativeIntegerTest methodsFor: 'tests' stamp: 'ul 11/15/2010 11:52'!
 testEmptyTemplate
@@ -7492,7 +7484,7 @@ testMinimumNegativeIntegerArithmetic
 		self assert: (largeNegativeInt * -1) equals: largePositiveInt.
 		self assert: (largeNegativeInt / -1) equals: largePositiveInt]! !
 
-!LargeNegativeIntegerTest methodsFor: 'tests' stamp: 'dtl 7/22/2014 22:26'!
+!LargeNegativeIntegerTest methodsFor: 'tests' stamp: 'jmv 7/31/2023 11:21:05'!
 testReplaceFromToWithStartingAt
 
 	| lni20 lni7 |
@@ -7504,12 +7496,12 @@ testReplaceFromToWithStartingAt
 	"unmodified digits"
 	(1 to: 5) , (11 to: 20) do: [:e | | digit |
 		digit := lni20 digitAt: e.
-		self assert: e equals: digit].
+		self assert: digit equals: e].
 	"replaced digits"
 	6 to: 10 do: [:e | | digit replacementDigit |
 		digit := lni20 digitAt: e.
 		replacementDigit := lni7 digitAt: e - 4.
-		self assert: replacementDigit equals: digit]
+		self assert: digit equals: replacementDigit]
 ! !
 
 !LargePositiveIntegerTest methodsFor: 'tests' stamp: 'jmv 9/1/2010 13:47'!
@@ -7542,31 +7534,31 @@ testDenormalizedPrintString
 	self assert: i0 normalize = 0.
 	self assert: (i0 normalize isMemberOf: SmallInteger)! !
 
-!LargePositiveIntegerTest methodsFor: 'tests' stamp: 'dtl 7/22/2014 21:40'!
+!LargePositiveIntegerTest methodsFor: 'tests' stamp: 'jmv 7/31/2023 11:21:17'!
 testDigitAt
 
 	| lpi |
 	lpi := 114605103402541699037609980192546360895434064385.
 	1 to: 20 do: [:i | | digit |
 		digit := lpi digitAt: i.
-		self assert: i equals: digit]
+		self assert: digit equals: i]
 ! !
 
-!LargePositiveIntegerTest methodsFor: 'tests' stamp: 'dtl 7/22/2014 21:35'!
+!LargePositiveIntegerTest methodsFor: 'tests' stamp: 'jmv 7/31/2023 11:21:34'!
 testDigitAtPut
 
 	| lpi |
 	lpi := LargePositiveInteger new: 20.
 	1 to: 20 do: [:i | lpi digitAt: i put: i].
-	self assert: 114605103402541699037609980192546360895434064385equals: lpi
+	self assert: lpi equals: 114605103402541699037609980192546360895434064385
 ! !
 
-!LargePositiveIntegerTest methodsFor: 'tests' stamp: 'dtl 7/22/2014 21:39'!
+!LargePositiveIntegerTest methodsFor: 'tests' stamp: 'jmv 7/31/2023 11:21:48'!
 testDigitLength
 
 	| lpi |
 	lpi := 114605103402541699037609980192546360895434064385.
-	self assert: 20 equals: lpi digitLength
+	self assert: lpi digitLength equals: 20
 ! !
 
 !LargePositiveIntegerTest methodsFor: 'tests' stamp: 'ul 11/15/2010 11:52'!
@@ -7617,7 +7609,7 @@ testNormalize
 	self should: ((SmallInteger minVal - 1 + 1) = SmallInteger minVal).
 	self assert: (SmallInteger minVal - 3 + 6) = (SmallInteger minVal+3).! !
 
-!LargePositiveIntegerTest methodsFor: 'tests' stamp: 'dtl 7/22/2014 21:59'!
+!LargePositiveIntegerTest methodsFor: 'tests' stamp: 'jmv 7/31/2023 11:22:06'!
 testReplaceFromToWithStartingAt
 
 	| lpi20 lpi7 |
@@ -7629,12 +7621,12 @@ testReplaceFromToWithStartingAt
 	"unmodified digits"
 	(1 to: 5) , (11 to: 20) do: [:e | | digit |
 		digit := lpi20 digitAt: e.
-		self assert: e equals: digit].
+		self assert: digit equals: e].
 	"replaced digits"
 	6 to: 10 do: [:e | | digit replacementDigit |
 		digit := lpi20 digitAt: e.
 		replacementDigit := lpi7 digitAt: e - 4.
-		self assert: replacementDigit equals: digit]
+		self assert: digit equals: replacementDigit]
 ! !
 
 !LargePositiveIntegerTest methodsFor: 'tests' stamp: 'jmv 6/6/2023 11:34:02'!
@@ -7955,13 +7947,13 @@ assert: expected is: actual
 		assert: (expected == actual)
 		description: (self comparingStringBetween: expected and: actual)! !
 
-!NumberTest methodsFor: 'support' stamp: 'GC 9/8/2018 15:06:11'!
+!NumberTest methodsFor: 'support' stamp: 'jmv 7/31/2023 11:22:43'!
 assertThat: aNumber isEqualTo: anExpectedNumber
 
 	| result |
 	result := self subject: aNumber.
 	
-	self assert: result equals: anExpectedNumber! !
+	self assert: anExpectedNumber equals: result! !
 
 !NumberTest methodsFor: 'support' stamp: 'GC 9/8/2018 14:48:11'!
 subject: aString
@@ -8570,34 +8562,34 @@ b' encompassParagraph: (3 to: 3)) = (3 to: 3).
 self assert: ('a
 b' encompassParagraph: (4 to: 3)) = (3 to: 3).! !
 
-!StringTest methodsFor: 'testing' stamp: 'HAW 12/29/2020 13:29:16'!
+!StringTest methodsFor: 'testing' stamp: 'jmv 7/31/2023 11:24:44'!
 testFindSelector 
 
-	self assert: #printOn: equals: '"self printOn:' findSelector.
-	self assert: #printOn: equals: 'self printOn:"' findSelector.
-	self assert: #printOn: equals: '"self printOn:"' findSelector.
-	self assert: #printOn: equals: 'self printOn:' findSelector.
+	self assert: '"self printOn:' findSelector equals: #printOn:.
+	self assert: 'self printOn:"' findSelector equals: #printOn:.
+	self assert: '"self printOn:"' findSelector equals: #printOn:.
+	self assert: 'self printOn:' findSelector equals: #printOn:.
 ! !
 
-!StringTest methodsFor: 'testing' stamp: 'jmv 6/6/2022 16:47:18'!
+!StringTest methodsFor: 'testing' stamp: 'jmv 7/31/2023 11:25:19'!
 testFirstNonSeparator
 
-	self assert: 1 equals: 'abc' firstNonSeparator.
-	self assert: 2 equals: ' abc' firstNonSeparator.
-	self assert: 0 equals: '' firstNonSeparator ! !
+	self assert: 'abc' firstNonSeparator equals: 1.
+	self assert: ' abc' firstNonSeparator equals: 2.
+	self assert: '' firstNonSeparator equals: 0.! !
 
 !StringTest methodsFor: 'testing' stamp: 'jmv 7/5/2022 16:02:31'!
 testIsString
 	self assert: ('Hello World' isString).
 	self assert: ('' isString).! !
 
-!StringTest methodsFor: 'testing' stamp: 'jmv 6/6/2022 16:46:49'!
+!StringTest methodsFor: 'testing' stamp: 'jmv 7/31/2023 11:26:24'!
 testLastNonSeparator
 
-	self assert: 3 equals: 'abc' lastNonSeparator.
-	self assert: 3 equals: 'abc ' lastNonSeparator.
-	self assert: 4 equals: ' abc ' lastNonSeparator.
-	self assert: 0 equals: '' lastNonSeparator ! !
+	self assert: 'abc' lastNonSeparator equals: 3.
+	self assert: 'abc ' lastNonSeparator equals: 3.
+	self assert: ' abc ' lastNonSeparator equals: 4.
+	self assert: '' lastNonSeparator equals: 0! !
 
 !StringTest methodsFor: 'testing' stamp: 'jmv 12/17/2012 10:51'!
 testLineSeparators
@@ -8648,21 +8640,21 @@ self new testSorting
 	self assert: ('Á' asByteString caseInsensitiveLessOrEqual: 'b' asByteString).
 	self assert: ('Á' asByteString caseInsensitiveLessOrEqual: 'B' asByteString).! !
 
-!StringTest methodsFor: 'testing' stamp: 'HAW 8/3/2018 11:00:28'!
+!StringTest methodsFor: 'testing' stamp: 'jmv 7/31/2023 11:28:24'!
 testWithBlanksTrimmed
 
-	self assert: 'abc' equals: ' abc' withBlanksTrimmed.
-	self assert: 'abc' equals: 'abc ' withBlanksTrimmed.
-	self assert: 'abc' equals: ' abc ' withBlanksTrimmed.
-	self assert: 'a b c' equals: ' a b c ' withBlanksTrimmed.
+	self assert: ' abc' withBlanksTrimmed equals: 'abc'.
+	self assert: 'abc ' withBlanksTrimmed equals: 'abc'.
+	self assert: ' abc ' withBlanksTrimmed equals: 'abc'.
+	self assert: ' a b c ' withBlanksTrimmed equals: 'a b c'.
 	self assert: '' equals: '' withBlanksTrimmed.
 	! !
 
-!StringTest methodsFor: 'testing' stamp: 'HAW 8/2/2018 20:35:28'!
+!StringTest methodsFor: 'testing' stamp: 'jmv 7/31/2023 11:28:59'!
 testWithoutLeadingBlanks
 
-	self assert: 'abc' equals: ' abc' withoutLeadingBlanks.
-	self assert: 'abc' equals: 'abc' withoutLeadingBlanks.
+	self assert: ' abc' withoutLeadingBlanks equals: 'abc'.
+	self assert: 'abc' withoutLeadingBlanks equals: 'abc'.
 	self assert: '' withoutLeadingBlanks isEmpty
 ! !
 
@@ -8678,17 +8670,17 @@ testWithoutPrefix
 	self assert: ('Elvis' asUnicodeString withoutPrefix: 'El' asUnicodeString) = 'vis'.
 	self assert: ('Elvis' asUnicodeString withoutPrefix: 'Paul' asUnicodeString) isNil.! !
 
-!StringTest methodsFor: 'testing' stamp: 'HAW 6/8/2019 18:18:47'!
+!StringTest methodsFor: 'testing' stamp: 'jmv 7/31/2023 11:29:37'!
 testWithoutSeparators
 
-	self assert: 'abc' equals: 'abc' withoutSeparators.
-	self assert: 'abc' equals: ' a b c ' withoutSeparators! !
+	self assert: 'abc' withoutSeparators equals: 'abc'.
+	self assert: ' a b c ' withoutSeparators equals: 'abc'! !
 
-!StringTest methodsFor: 'testing' stamp: 'HAW 8/2/2018 20:35:32'!
+!StringTest methodsFor: 'testing' stamp: 'jmv 7/31/2023 11:30:04'!
 testWithoutTrailingBlanks
 
-	self assert: 'abc' equals: 'abc ' withoutTrailingBlanks.
-	self assert: 'abc' equals: 'abc' withoutTrailingBlanks.
+	self assert: 'abc ' withoutTrailingBlanks equals: 'abc'.
+	self assert: 'abc' withoutTrailingBlanks equals: 'abc'.
 	self assert: '' withoutTrailingBlanks isEmpty
 ! !
 
@@ -9498,33 +9490,33 @@ test5ReadWriteUtf8
 	byteArray2 _ self class fileName2 asFileEntry binaryContents.
 	self assert: byteArray = byteArray2.! !
 
-!UnicodeTest methodsFor: 'testing' stamp: 'jmv 12/7/2022 11:24:36'!
+!UnicodeTest methodsFor: 'testing' stamp: 'jmv 7/31/2023 10:59:54'!
 testTextConcatenation
 	"
 	UnicodeTest new testTextConcatenation
 	"
 
 	| s1 s2 u1 u2 |
-	s1 _ 'Hello' asByteString.
-	s2 _ ' world' asByteString.
-	u1 _ s1 asUnicodeString.
-	u2 _ s2 asUnicodeString.
+	s1 := 'Hello' asByteString.
+	s2 := ' world' asByteString.
+	u1 := s1 asUnicodeString.
+	u2 := s2 asUnicodeString.
 
-	self assert: s1, u2 equalsExpected: s1, s2.
-	self assert: u1, s2 equalsExpected: s1, s2.
-	self assert: u1, u2 equalsExpected: s1, s2.
+	self assert: s1, u2 equals: s1, s2.
+	self assert: u1, s2 equals: s1, s2.
+	self assert: u1, u2 equals: s1, s2.
 
-	self assert: s1, u2 bold equalsExpected: s1, s2 bold.
-	self assert: u1, s2 bold equalsExpected: s1, s2 bold.
-	self assert: u1, u2 bold equalsExpected: s1, s2 bold.
+	self assert: s1, u2 bold equals: s1, s2 bold.
+	self assert: u1, s2 bold equals: s1, s2 bold.
+	self assert: u1, u2 bold equals: s1, s2 bold.
 
-	self assert: s1 bold, u2 equalsExpected: s1 bold, s2.
-	self assert: u1 bold, s2 equalsExpected: s1 bold, s2.
-	self assert: u1 bold, u2 equalsExpected: s1 bold, s2.
+	self assert: s1 bold, u2 equals: s1 bold, s2.
+	self assert: u1 bold, s2 equals: s1 bold, s2.
+	self assert: u1 bold, u2 equals: s1 bold, s2.
 
-	self assert: s1, u2 bold equalsExpected: s1, s2 bold.
-	self assert: u1, s2 bold equalsExpected: s1, s2 bold.
-	self assert: u1, u2 bold equalsExpected: s1, s2 bold.! !
+	self assert: s1, u2 bold equals: s1, s2 bold.
+	self assert: u1, s2 bold equals: s1, s2 bold.
+	self assert: u1, u2 bold equals: s1, s2 bold.! !
 
 !UnicodeTest class methodsFor: 'as yet unclassified' stamp: 'hjh 2/12/2013 19:25'!
 fileName
@@ -13083,7 +13075,7 @@ testTerminateHighestPriorityProcess
 	p terminate.
 	self assert: p isTerminated! !
 
-!ProcessTest methodsFor: 'tests' stamp: 'jmv 7/1/2022 19:56:21'!
+!ProcessTest methodsFor: 'tests' stamp: 'jmv 7/31/2023 10:59:59'!
 testTerminateInEnsure
 	"As shown in
 	Martin McClure's 'Threads, Critical Sections, and Termination' (Smalltalks 2019 conference)
@@ -13093,16 +13085,16 @@ testTerminateInEnsure
 	"
 	| process count delay |
 	10 timesRepeat: [
-		process _ [
-			count _ 0.
+		process := [
+			count := 0.
 			[] ensure: [
 				10 timesRepeat: [
-					count _ count + 1.
+					count := count + 1.
 					1000000 timesRepeat: [12 factorial]].
-				count _ count + 1]
+				count := count + 1]
 			] newProcess.
 		process resumeAt: Processor activeProcess priority - 1.
-		delay _ Delay forMilliseconds: 10.
+		delay := Delay forMilliseconds: 10.
 		[ count isNil ] whileTrue: [
 			delay wait ].
 		self assert: process isTerminated not.
@@ -13110,7 +13102,7 @@ testTerminateInEnsure
 		process priority: Processor activeProcess priority + 1.
 		self
 			assert: process isTerminated;
-			assert: count equalsExpected: 11 ]! !
+			assert: count equals: 11 ]! !
 
 !ProcessTest methodsFor: 'tests' stamp: 'jar 1/19/2023 17:34:01'!
 testTerminateInTerminate
@@ -13277,7 +13269,7 @@ testTerminateWithNiledUnwindBlock
 	[p terminate] forkAt: Processor activePriority + 1.
 	self assert: p isTerminated! !
 
-!ProcessTest methodsFor: 'tests' stamp: 'jmv 7/1/2022 19:56:26'!
+!ProcessTest methodsFor: 'tests' stamp: 'jmv 7/31/2023 11:00:04'!
 testValueEnsured
 	"Based on #testTerminateInEnsure
 	Tweaked to raise likelihood of failure, besides testing #valueEnsured
@@ -13285,16 +13277,16 @@ testValueEnsured
 	"
 	| process count delay |
 	100 timesRepeat: [
-		process _ [
-			count _ 0.
+		process := [
+			count := 0.
 			[
 				10 timesRepeat: [
-					count _ count + 1.
+					count := count + 1.
 					100000 timesRepeat: [12 factorial]].
-				count _ count + 1 ] valueEnsured
+				count := count + 1 ] valueEnsured
 			] newProcess.
 		process resumeAt: Processor activeProcess priority - 1.
-		delay _ Delay forMilliseconds: 10.
+		delay := Delay forMilliseconds: 10.
 		[ count isNil ] whileTrue: [
 			delay wait ].
 		self assert: process isTerminated not.
@@ -13302,7 +13294,7 @@ testValueEnsured
 		process priority: Processor activeProcess priority + 1.
 		self
 			assert: process isTerminated;
-			assert: count equalsExpected: 11 ]! !
+			assert: count equals: 11 ]! !
 
 !ProcessorTest methodsFor: 'as yet unclassified' stamp: 'jmv 8/22/2022 14:38:31'!
 testGrabProcessor
@@ -13540,13 +13532,13 @@ testCriticalIfError
 	[lock critical: [self criticalError ifError:[]]] forkAt: Processor userInterruptPriority.
 	self assert: lock isSignaled! !
 
-!SemaphoreTest methodsFor: 'testing' stamp: 'jar 1/30/2023 11:10:11'!
+!SemaphoreTest methodsFor: 'testing' stamp: 'jmv 7/31/2023 11:58:07'!
 testSemaAfterCriticalWait
 	"This tests whether a semaphore that has just left the wait in Semaphore>>critical:
 	leaves it with signaling the associated semaphore."
 	| s p |
-	s _ Semaphore new.
-	p _ [s critical: []] newProcess.
+	s := Semaphore new.
+	p := [s critical: []] newProcess.
 	p priority: Processor activePriority-1.
 	p resume.
 	"wait until p entered the critical section"
@@ -13556,15 +13548,15 @@ testSemaAfterCriticalWait
 	anything."
 	s signal.
 	p terminate.
-	self assert: 1 equals: (s instVarNamed: #excessSignals)! !
+	self assert: (s instVarNamed: #excessSignals) equals: 1.! !
 
-!SemaphoreTest methodsFor: 'testing' stamp: 'jar 1/30/2023 11:08:29'!
+!SemaphoreTest methodsFor: 'testing' stamp: 'jmv 7/31/2023 11:58:19'!
 testSemaAfterCriticalWait2
 	"This tests whether a semaphore that has just left the wait in Semaphore>>critical:
 	leaves it with signaling the associated semaphore."
 	| s p beenHere |
-	s _ Semaphore new. beenHere _ false.
-	p _ [s critical: [beenHere _ true]] newProcess.
+	s := Semaphore new. beenHere := false.
+	p := [s critical: [beenHere := true]] newProcess.
 	p priority: Processor activePriority-1.
 	p resume.
 	"wait until p entered the critical section"
@@ -13574,16 +13566,16 @@ testSemaAfterCriticalWait2
 	anything."
 	s signal.
 	p terminate.
-	self assert: 1 equals: (s instVarNamed: #excessSignals).
-	self deny: beenHere! !
+	self assert: (s instVarNamed: #excessSignals) equals: 1.
+	self deny: beenHere.! !
 
-!SemaphoreTest methodsFor: 'testing' stamp: 'jar 1/30/2023 11:11:06'!
+!SemaphoreTest methodsFor: 'testing' stamp: 'jmv 7/31/2023 11:58:28'!
 testSemaAfterCriticalWaitInEnsure
 	"This tests whether a semaphore that has just left the wait in Semaphore>>critical:
 	leaves it with signaling the associated semaphore."
 	| s p |
-	s _ Semaphore new.
-	p _ [[] ensure: [s critical: []]] newProcess.
+	s := Semaphore new.
+	p := [[] ensure: [s critical: []]] newProcess.
 	p priority: Processor activePriority-1.
 	p resume.
 	"wait until p entered the critical section"
@@ -13593,15 +13585,15 @@ testSemaAfterCriticalWaitInEnsure
 	anything."
 	s signal.
 	p terminate.
-	self assert: 1 equals: (s instVarNamed: #excessSignals)! !
+	self assert: (s instVarNamed: #excessSignals) equals: 1.! !
 
-!SemaphoreTest methodsFor: 'testing' stamp: 'jar 1/30/2023 11:09:30'!
+!SemaphoreTest methodsFor: 'testing' stamp: 'jmv 7/31/2023 11:58:41'!
 testSemaAfterCriticalWaitInEnsure2
 	"This tests whether a semaphore that has just left the wait in Semaphore>>critical:
 	leaves it with signaling the associated semaphore."
 	| s p beenHere |
-	s _ Semaphore new. beenHere _ false.
-	p _ [[] ensure: [s critical: [beenHere _ true]]] newProcess.
+	s := Semaphore new. beenHere := false.
+	p := [[] ensure: [s critical: [beenHere := true]]] newProcess.
 	p priority: Processor activePriority-1.
 	p resume.
 	"wait until p entered the critical section"
@@ -13611,16 +13603,16 @@ testSemaAfterCriticalWaitInEnsure2
 	anything."
 	s signal.
 	p terminate.
-	self assert: 1 equals: (s instVarNamed: #excessSignals).
-	self assert: beenHere! !
+	self assert: (s instVarNamed: #excessSignals) equals: 1.
+	self assert: beenHere.! !
 
-!SemaphoreTest methodsFor: 'testing' stamp: 'jar 1/19/2023 19:31:21'!
+!SemaphoreTest methodsFor: 'testing' stamp: 'jmv 7/31/2023 11:58:51'!
 testSemaAfterCriticalWaitSuspended
 	"Test whether a semaphore that has just left the wait in Semaphore>>critical: but 	has
 	 been suspended before termination, leaves it with signaling the associated semaphore."
 	| s p |
-	s _ Semaphore new.
-	p _ [s critical:[]] newProcess.
+	s := Semaphore new.
+	p := [s critical:[]] newProcess.
 	p priority: Processor activePriority-1.
 	p resume.
 	"wait until p entered the critical section"
@@ -13633,24 +13625,24 @@ testSemaAfterCriticalWaitSuspended
 	p suspend.
 	self assert: p suspendingList == nil.
 	p terminate.
-	self assert: 1 equals: (s instVarNamed: #excessSignals)! !
+	self assert: (s instVarNamed: #excessSignals) equals: 1.! !
 
-!SemaphoreTest methodsFor: 'testing' stamp: 'jar 1/19/2023 19:22:07'!
+!SemaphoreTest methodsFor: 'testing' stamp: 'jmv 7/31/2023 11:59:00'!
 testSemaInCriticalEnsureArgument	
 	"Test whether a process that is in an ensure argument block but has yet to evaluate the signal
 	leaves it with signaling the associated semaphore."
 	
 	| terminatee sema |
-	sema _ Semaphore forMutualExclusion.
-	terminatee _ [sema critical: []] newProcess.
+	sema := Semaphore forMutualExclusion.
+	terminatee := [sema critical: []] newProcess.
 	self assert: terminatee isSuspended.
 	[terminatee suspendedContext selectorToSendOrSelf = #signal] whileFalse: [terminatee step].
 	self assert: terminatee isSuspended.
 	terminatee terminate.
 	self assert: terminatee isTerminated. 
-	self assert: 1 equals: (sema instVarNamed: #excessSignals)! !
+	self assert: (sema instVarNamed: #excessSignals) equals: 1.! !
 
-!SemaphoreTest methodsFor: 'testing' stamp: 'jmv 4/12/2023 19:38:41'!
+!SemaphoreTest methodsFor: 'testing' stamp: 'jmv 7/31/2023 11:59:16'!
 testSemaInCriticalWait
 	"This tests whether a semaphore that has entered the wait in Semaphore>>critical:
 	leaves it without signaling the associated semaphore."
@@ -13666,11 +13658,11 @@ testSemaInCriticalWait
 	Call #yield the number of times required to get where we need."
 	[sentinel first] whileFalse: [
 		Processor yield ].
-	self assert: s equals: p suspendingList.
+	self assert: p suspendingList equals: s.
 	p terminate.
-	self assert: 0 equals: (s instVarNamed: #excessSignals)! !
+	self assert: (s instVarNamed: #excessSignals) equals: 0! !
 
-!SemaphoreTest methodsFor: 'testing' stamp: 'jmv 4/12/2023 19:39:32'!
+!SemaphoreTest methodsFor: 'testing' stamp: 'jmv 7/31/2023 11:59:38'!
 testSemaInCriticalWait2
 	"This tests whether a semaphore that has entered the wait in Semaphore>>critical:
 	leaves it without signaling the associated semaphore."
@@ -13686,12 +13678,12 @@ testSemaInCriticalWait2
 	Call #yield the number of times required to get where we need."
 	[sentinel first] whileFalse: [
 		Processor yield ].
-	self assert: s equals: p suspendingList.
+	self assert: p suspendingList equals: s.
 	p terminate.
-	self assert: 0 equals: (s instVarNamed: #excessSignals).
-	self deny: beenHere! !
+	self assert: (s instVarNamed: #excessSignals) equals: 0.
+	self deny: beenHere.! !
 
-!SemaphoreTest methodsFor: 'testing' stamp: 'jmv 4/12/2023 19:38:37'!
+!SemaphoreTest methodsFor: 'testing' stamp: 'jmv 7/31/2023 11:59:52'!
 testSemaInCriticalWaitInEnsure
 	"This tests whether a semaphore that has entered the wait in Semaphore>>critical:
 	leaves it without signaling the associated semaphore."
@@ -13707,11 +13699,11 @@ testSemaInCriticalWaitInEnsure
 	Call #yield the number of times required to get where we need."
 	[sentinel first] whileFalse: [
 		Processor yield ].
-	self assert: s equals: p suspendingList.
+	self assert: p suspendingList equals: s.
 	p terminate.
-	self assert: 0 equals: (s instVarNamed: #excessSignals)! !
+	self assert: (s instVarNamed: #excessSignals) equals: 0.! !
 
-!SemaphoreTest methodsFor: 'testing' stamp: 'jmv 4/12/2023 19:40:03'!
+!SemaphoreTest methodsFor: 'testing' stamp: 'jmv 7/31/2023 12:00:12'!
 testSemaInCriticalWaitInEnsure2
 	"This tests whether a semaphore that has entered the wait in Semaphore>>critical:
 	leaves it without signaling the associated semaphore."
@@ -13727,10 +13719,10 @@ testSemaInCriticalWaitInEnsure2
 	Call #yield the number of times required to get where we need."
 	[sentinel first] whileFalse: [
 		Processor yield ].
-	self assert: s equals: p suspendingList.
+	self assert: p suspendingList equals: s.
 	p terminate.
-	self assert: 0 equals: (s instVarNamed: #excessSignals).
-	self deny: beenHere! !
+	self assert: (s instVarNamed: #excessSignals) equals: 0.
+	self deny: beenHere.! !
 
 !SemaphoreTest methodsFor: 'testing' stamp: 'jar 1/21/2023 20:55:46'!
 testSuspendAndResume
@@ -13805,12 +13797,12 @@ testProduct
 	self assert: (bag product: [ :v | v ]) = 240.
 	self assert: (bag product: [ :v | v-1 ]) = 72.! !
 
-!BagTest methodsFor: 'tests' stamp: 'HAW 11/1/2022 23:15:57'!
+!BagTest methodsFor: 'tests' stamp: 'jmv 7/31/2023 12:00:47'!
 testSumIfEmptyEvalsIfEmptyBlockWhenEmpty
 
-	self assert: 'empty' equals: (Bag new sum: [:each | 1 ] ifEmpty: [ 'empty' ])! !
+	self assert: (Bag new sum: [:each | 1 ] ifEmpty: [ 'empty' ]) equals: 'empty'.! !
 
-!BagTest methodsFor: 'tests' stamp: 'HAW 11/1/2022 23:18:12'!
+!BagTest methodsFor: 'tests' stamp: 'jmv 7/31/2023 12:00:58'!
 testSumIfEmptyEvalsSumBlockForEachElementSumingTheResult
 
 	| bag |
@@ -13819,7 +13811,7 @@ testSumIfEmptyEvalsSumBlockForEachElementSumingTheResult
 	bag add: 'hello'; add: 'hello'.
 	bag add: 'bye'.
 	
-	self assert: 3 equals: (bag sum: [ :aString | aString = 'hello' ifTrue: [ 2 ] ifFalse: [ -1 ]] ifEmpty: [ self fail ])! !
+	self assert: (bag sum: [ :aString | aString = 'hello' ifTrue: [ 2 ] ifFalse: [ -1 ]] ifEmpty: [ self fail ]) equals: 3.! !
 
 !BinarySearchTest methodsFor: 'testing' stamp: 'sqr 5/25/2016 14:36'!
 testquickFindFirst
@@ -13913,7 +13905,7 @@ testSortedCollection
 	self assert: result class = OrderedCollection.
 	self assert: result = #(10 8 6 4 2) asOrderedCollection! !
 
-!CollectionTest methodsFor: 'groupBy tests' stamp: 'HAW 7/5/2018 15:14:11'!
+!CollectionTest methodsFor: 'groupBy tests' stamp: 'jmv 7/31/2023 12:01:40'!
 testGroupByHavingSelectsTheResultOfGroupBy
 
 	| collectionToGroupBy groupedByEven |
@@ -13921,10 +13913,10 @@ testGroupByHavingSelectsTheResultOfGroupBy
 	collectionToGroupBy := OrderedCollection with: 1 with: 2 with: 3 with: 4 with: 5.
 	groupedByEven := collectionToGroupBy groupBy: [ :anInteger | anInteger even ] having: [ :group | group size > 2 ].
 	
-	self assert: 1 equals: (groupedByEven size).	
-	self assert: (collectionToGroupBy select: [ :anInteger | anInteger odd ]) equals: (groupedByEven at: false) ! !
+	self assert: (groupedByEven size) equals: 1.	
+	self assert: (collectionToGroupBy select: [ :anInteger | anInteger odd ]) equals: (groupedByEven at: false).! !
 
-!CollectionTest methodsFor: 'groupBy tests' stamp: 'HAW 7/5/2018 15:15:41'!
+!CollectionTest methodsFor: 'groupBy tests' stamp: 'jmv 7/31/2023 12:01:59'!
 testGroupByReturnsADictionaryThatGroupsACollectionByThePluggableKey
 
 	| collectionToGroupBy groupedByEven |
@@ -13932,7 +13924,7 @@ testGroupByReturnsADictionaryThatGroupsACollectionByThePluggableKey
 	collectionToGroupBy := OrderedCollection with: 1 with: 2 with: 3 with: 4 with: 5.
 	groupedByEven := collectionToGroupBy groupBy: [ :anInteger | anInteger even ].
 	
-	self assert: 2 equals: groupedByEven size.
+	self assert: groupedByEven size equals: 2.
 	self assert: (collectionToGroupBy select: [ :anInteger | anInteger even ]) equals: (groupedByEven at: true).
 	self assert:(collectionToGroupBy select: [ :anInteger | anInteger odd ]) equals: (groupedByEven at: false).! !
 
@@ -14006,41 +13998,40 @@ testAsCommaStringAndSeparatesWithCommaButLastOneWithAndWhenMoreThanTwoElements
 
 	self assert: #(1 2 3) asCommaStringAnd equals: '1, 2 and 3' ! !
 
-!CollectionTest methodsFor: 'flatten tests' stamp: 'GC 5/16/2019 00:08:43'!
+!CollectionTest methodsFor: 'flatten tests' stamp: 'jmv 7/31/2023 12:02:25'!
 testItMaintainsTheSameCollectionSpecies
 
-	self assert: (OrderedCollection with: 1 with: 2) equals: (OrderedCollection with: 1 with: #(2)) flatten! !
+	self assert: (OrderedCollection with: 1 with: #(2)) flatten equals: (OrderedCollection with: 1 with: 2).! !
 
-!CollectionTest methodsFor: 'flatten tests' stamp: 'GC 5/15/2019 23:31:15'!
+!CollectionTest methodsFor: 'flatten tests' stamp: 'jmv 7/31/2023 12:02:53'!
 testWhenCollectionContainsASingleLevelOfElementsItReturnsTheSameCollection
 
-	self assert: #(1 2 3) equals: #(1 2 3) flatten! !
+	self assert: #(1 2 3) flatten equals: #(1 2 3).! !
 
-!CollectionTest methodsFor: 'flatten tests' stamp: 'GC 5/16/2019 00:01:02'!
+!CollectionTest methodsFor: 'flatten tests' stamp: 'jmv 7/31/2023 12:03:14'!
 testWhenCollectionContainsMoreThanTwoLevelsltReturnsTheElementsOfAllNestedCollections
 
-	self assert: #(1 2 3 4 5) equals: #(1 #(2 3) #(4 #(5))) flatten! !
+	self assert: #(1 #(2 3) #(4 #(5))) flatten equals: #(1 2 3 4 5).! !
 
-!CollectionTest methodsFor: 'flatten tests' stamp: 'GC 5/16/2019 00:03:22'!
+!CollectionTest methodsFor: 'flatten tests' stamp: 'jmv 7/31/2023 12:03:38'!
 testWhenCollectionContainsStringCollectionsItDoesNotFlattenTheStrings
 
-	self assert: #('string1' 'string2' 'string3') equals: #('string1' #('string2' 'string3')) flatten! !
+	self assert: #('string1' #('string2' 'string3')) flatten equals: #('string1' 'string2' 'string3').! !
 
-!CollectionTest methodsFor: 'flatten tests' stamp: 'GC 5/16/2019 00:02:07'!
+!CollectionTest methodsFor: 'flatten tests' stamp: 'jmv 7/31/2023 12:03:59'!
 testWhenCollectionContainsStringsItReturnsTheSameCollection
 
-	self assert: #('string1' 'string2' 'string3') equals: #('string1' 'string2' 'string3') flatten! !
+	self assert: #('string1' 'string2' 'string3') flatten equals: #('string1' 'string2' 'string3').! !
 
-!CollectionTest methodsFor: 'flatten tests' stamp: 'GC 5/16/2019 00:03:37'!
+!CollectionTest methodsFor: 'flatten tests' stamp: 'jmv 7/31/2023 12:04:18'!
 testWhenCollectionContainsTwoLevelsOfElementsItReturnsTheElementsOfAllNestedCollections
 	
-	self assert: #(1 2 3) equals: #(#(1) #(2 3)) flatten
-	! !
+	self assert: #(#(1) #(2 3)) flatten equals: #(1 2 3).! !
 
-!CollectionTest methodsFor: 'flatten tests' stamp: 'GC 5/15/2019 23:24:15'!
+!CollectionTest methodsFor: 'flatten tests' stamp: 'jmv 7/31/2023 12:04:27'!
 testWhenCollectionIsEmptyItReturnsTheSameCollection
 
-	self assert: #() equals: #() flatten! !
+	self assert: #() flatten equals: #().! !
 
 !CollectionTest methodsFor: 'misc tests' stamp: 'jpb 8/2/2019 23:18:50'!
 testIsCollection
@@ -14323,16 +14314,16 @@ testIncludesAllOfOtherTypeOfCollection
 testIsCollection
 	self assert: (OrderedCollection new is: #Collection).! !
 
-!OrderedCollectionTest methodsFor: 'tests' stamp: 'HAW 5/18/2019 17:01:20'!
+!OrderedCollectionTest methodsFor: 'tests' stamp: 'jmv 7/31/2023 12:04:53'!
 testStreamContentsWorksAsExpected
 
 	| contents |
 	
 	contents := OrderedCollection streamContents: [ :stream | stream nextPut: 1 ].
 	
-	self assert: (OrderedCollection with: 1) equals: contents! !
+	self assert: contents equals: (OrderedCollection with: 1).! !
 
-!OrderedCollectionTest methodsFor: 'tests' stamp: 'HAW 5/18/2019 17:04:16'!
+!OrderedCollectionTest methodsFor: 'tests' stamp: 'jmv 7/31/2023 12:05:11'!
 testWriteStreamOnOrderedCollectionGrowsAsExpected
 
 	| contents |
@@ -14340,8 +14331,7 @@ testWriteStreamOnOrderedCollectionGrowsAsExpected
 	contents := OrderedCollection streamContents: [ :stream | 
 		1 to: 101 do: [ :aNumber | stream nextPut: aNumber ]].
 	
-	1 to: 101 do: [ :aNumber | self assert: aNumber equals: (contents at: aNumber) ]
-	! !
+	1 to: 101 do: [ :aNumber | self assert: (contents at: aNumber) equals: aNumber ].! !
 
 !OrderedDictionaryTest methodsFor: 'tests' stamp: 'jmv 5/25/2018 10:36:59'!
 testOrder
@@ -14425,7 +14415,7 @@ testCombinationsAtATimeDoShouldEvaluateBlockWithEmptyCollection
 	
 	self assert: combinationWasEmpty! !
 
-!SequenceableCollectionTest methodsFor: 'tests' stamp: 'HAW 5/25/2019 09:59:32'!
+!SequenceableCollectionTest methodsFor: 'tests' stamp: 'jmv 7/31/2023 12:05:29'!
 testCombinationsAtATimeDoWorksAsExpected
 	
 	| combinations |
@@ -14433,12 +14423,12 @@ testCombinationsAtATimeDoWorksAsExpected
 	combinations := OrderedCollection new.
 	'abc' combinations: 2 atATimeDo: [ :combination | combinations add: combination copy].
 	
-	self assert: 3 equals: combinations size.
+	self assert: combinations size equals: 3.
 	self assert: (combinations includes: #($a $b)).
 	self assert: (combinations includes: #($a $c)).
 	self assert: (combinations includes: #($b $c)).! !
 
-!SequenceableCollectionTest methodsFor: 'tests' stamp: 'HAW 3/17/2019 06:33:35'!
+!SequenceableCollectionTest methodsFor: 'tests' stamp: 'jmv 7/31/2023 12:05:44'!
 testDoSeparatedByDoesNotValueSeparatedBlockForCollectionsOfOneElement
 
 	| collectionToTraverse traversedElements |
@@ -14447,9 +14437,9 @@ testDoSeparatedByDoesNotValueSeparatedBlockForCollectionsOfOneElement
 	traversedElements := OrderedCollection new.
 	self shouldntFail: [ collectionToTraverse do: [ :anElement | traversedElements add: anElement ] separatedBy: [ self fail ] ].
 
-	self assert: collectionToTraverse equals: traversedElements! !
+	self assert: traversedElements equals: collectionToTraverse.! !
 
-!SequenceableCollectionTest methodsFor: 'tests' stamp: 'HAW 3/17/2019 06:38:06'!
+!SequenceableCollectionTest methodsFor: 'tests' stamp: 'jmv 7/31/2023 12:06:00'!
 testDoSeparatedByDoesNotValueSeparatedBlockOnLastElement
 
 	| collectionToTraverse traversedElements |
@@ -14459,44 +14449,44 @@ testDoSeparatedByDoesNotValueSeparatedBlockOnLastElement
 
 	self shouldntFail: [ collectionToTraverse do: [ :anElement | traversedElements add: anElement ] separatedBy: [ traversedElements add: $-] ].
 
-	self assert: (OrderedCollection with: 1 with: $- with: 2) equals: traversedElements! !
+	self assert: traversedElements equals: (OrderedCollection with: 1 with: $- with: 2).! !
 
 !SequenceableCollectionTest methodsFor: 'tests' stamp: 'HAW 3/17/2019 06:29:27'!
 testDoSeparatedByDoesNothingForEmptyCollection
 
 	self shouldntFail: [ #() do: [ :anElement | self fail ] separatedBy: [ self fail ] ]! !
 
-!SequenceableCollectionTest methodsFor: 'tests' stamp: 'HAW 5/21/2020 17:00:14'!
+!SequenceableCollectionTest methodsFor: 'tests' stamp: 'jmv 7/31/2023 12:06:15'!
 testFirstAvailableReturnsAllObjectsWhenRequestedMoreThanTheSize
 
-	self assert: #(10 20 30) equals: (#(10 20 30) firstAvailable: 4)! !
+	self assert: (#(10 20 30) firstAvailable: 4) equals:  #(10 20 30).! !
 
-!SequenceableCollectionTest methodsFor: 'tests' stamp: 'HAW 5/21/2020 17:00:43'!
+!SequenceableCollectionTest methodsFor: 'tests' stamp: 'jmv 7/31/2023 12:06:30'!
 testFirstAvailableReturnsAllObjectsWhenRequestedTheReceiversSize
 
-	self assert: #(10 20 30) equals: (#(10 20 30) firstAvailable: 3)! !
+	self assert: (#(10 20 30) firstAvailable: 3) equals: #(10 20 30).! !
 
-!SequenceableCollectionTest methodsFor: 'tests' stamp: 'HAW 5/21/2020 16:58:40'!
+!SequenceableCollectionTest methodsFor: 'tests' stamp: 'jmv 7/31/2023 12:06:45'!
 testFirstAvailableReturnsTheFirstRequestedObjectsWhenTheyAreAvailable
 
-	self assert: #(10 20) equals: (#(10 20 30) firstAvailable: 2)! !
+	self assert: (#(10 20 30) firstAvailable: 2) equals: #(10 20).! !
 
-!SequenceableCollectionTest methodsFor: 'tests' stamp: 'HAW 5/21/2020 17:03:20'!
+!SequenceableCollectionTest methodsFor: 'tests' stamp: 'jmv 7/31/2023 12:06:59'!
 testLastAvailableReturnsAllObjectsWhenRequestedMoreThanTheSize
 
-	self assert: #(10 20 30) equals: (#(10 20 30) lastAvailable: 4)! !
+	self assert: (#(10 20 30) lastAvailable: 4) equals: #(10 20 30).! !
 
-!SequenceableCollectionTest methodsFor: 'tests' stamp: 'HAW 5/21/2020 17:02:57'!
+!SequenceableCollectionTest methodsFor: 'tests' stamp: 'jmv 7/31/2023 12:07:16'!
 testLastAvailableReturnsAllObjectsWhenRequestedTheReceiversSize
 
-	self assert: #(10 20 30) equals: (#(10 20 30) lastAvailable: 3)! !
+	self assert: (#(10 20 30) lastAvailable: 3) equals: #(10 20 30).! !
 
-!SequenceableCollectionTest methodsFor: 'tests' stamp: 'HAW 5/21/2020 17:02:27'!
+!SequenceableCollectionTest methodsFor: 'tests' stamp: 'jmv 7/31/2023 12:07:34'!
 testLastAvailableReturnsTheLastRequestedObjectsWhenTheyAreAvailable
 
-	self assert: #(20 30) equals: (#(10 20 30) lastAvailable: 2)! !
+	self assert: (#(10 20 30) lastAvailable: 2) equals: #(20 30).! !
 
-!SequenceableCollectionTest methodsFor: 'tests' stamp: 'HAW 3/17/2019 06:36:00'!
+!SequenceableCollectionTest methodsFor: 'tests' stamp: 'jmv 7/31/2023 12:07:58'!
 testWithIndexDoSeparatedByDoesNotValueSeparatedBlockForCollectionsOfOneElement
 
 	| collectionToTraverse traversedElements |
@@ -14506,10 +14496,10 @@ testWithIndexDoSeparatedByDoesNotValueSeparatedBlockForCollectionsOfOneElement
 
 	self shouldntFail: [ collectionToTraverse withIndexDo: [ :anElement :index | traversedElements add: anElement  -> index ] separatedBy: [ self fail ] ].
 
-	self assert: 1 equals: traversedElements size.
-	self assert: $a->1 equals: traversedElements first! !
+	self assert: traversedElements size equals: 1.
+	self assert: traversedElements first equals: $a->1.! !
 
-!SequenceableCollectionTest methodsFor: 'tests' stamp: 'HAW 3/17/2019 06:40:01'!
+!SequenceableCollectionTest methodsFor: 'tests' stamp: 'jmv 7/31/2023 12:08:54'!
 testWithIndexDoSeparatedByDoesNotValueSeparatedBlockOnLastElement
 
 	| collectionToTraverse traversedElements |
@@ -14521,10 +14511,10 @@ testWithIndexDoSeparatedByDoesNotValueSeparatedBlockOnLastElement
 		withIndexDo: [ :anElement :index | traversedElements add: anElement  -> index ]
 		separatedBy: [ traversedElements add: $-].
 
-	self assert: 3 equals: traversedElements size.
-	self assert: $a->1 equals: traversedElements first.
-	self assert: $- equals: traversedElements second.
-	self assert: $b->2 equals: traversedElements third! !
+	self assert: traversedElements size equals: 3.
+	self assert: traversedElements first equals: $a->1.
+	self assert: traversedElements second equals: $-.
+	self assert: traversedElements third equals: $b->2.! !
 
 !SequenceableCollectionTest methodsFor: 'tests' stamp: 'HAW 3/17/2019 06:30:18'!
 testWithIndexDoSeparatedByDoesNothingForEmptyCollection
@@ -14648,20 +14638,20 @@ testIsCollection
 	self assert: (#(1 2 3) is: #Collection).
 	self assert: (#() is: #Collection).! !
 
-!ArrayTest methodsFor: 'test - accessing' stamp: 'HAW 5/3/2020 00:46:01'!
+!ArrayTest methodsFor: 'test - accessing' stamp: 'jmv 7/31/2023 12:09:15'!
 testAntepenultimateIfAbsentReturnsAntepenultimateIfExists
 
-	self assert: 1 equals: (#(1 2 3) antepenultimateIfAbsent: [ self fail ])! !
+	self assert: (#(1 2 3) antepenultimateIfAbsent: [ self fail ]) equals: 1.! !
 
-!ArrayTest methodsFor: 'test - accessing' stamp: 'HAW 5/3/2020 00:47:18'!
+!ArrayTest methodsFor: 'test - accessing' stamp: 'jmv 7/31/2023 12:09:26'!
 testAntepenultimateIfAbsentValuesIfAbsentBlockWhenNoAntepenultimate
 
-	self assert: 0 equals: (#(1 2) antepenultimateIfAbsent: [ 0 ])! !
+	self assert: (#(1 2) antepenultimateIfAbsent: [ 0 ]) equals: 0.! !
 
-!ArrayTest methodsFor: 'test - accessing' stamp: 'HAW 5/3/2020 00:48:13'!
+!ArrayTest methodsFor: 'test - accessing' stamp: 'jmv 7/31/2023 12:09:35'!
 testAntepenultimateReturnsAntepenultimateIfExists
 
-	self assert: 1 equals: #(1 2 3) antepenultimate! !
+	self assert: #(1 2 3) antepenultimate equals: 1.! !
 
 !ArrayTest methodsFor: 'test - accessing' stamp: 'HAW 5/3/2020 00:49:10'!
 testAntepenultimateSignalsErrorWhenCollectionIsNotBigEnough
@@ -14671,15 +14661,15 @@ testAntepenultimateSignalsErrorWhenCollectionIsNotBigEnough
 		raise: Error
 		withMessageText: Collection collectionTooSmallDescription! !
 
-!ArrayTest methodsFor: 'test - accessing' stamp: 'HAW 5/4/2020 00:37:18'!
+!ArrayTest methodsFor: 'test - accessing' stamp: 'jmv 7/31/2023 12:10:37'!
 testLastIfEmptyReturnsLastWhenExist
 
-	self assert: 1 equals: (#(1) lastIfEmpty: [ self fail ])! !
+	self assert: (#(1) lastIfEmpty: [ self fail ]) equals: 1.! !
 
-!ArrayTest methodsFor: 'test - accessing' stamp: 'HAW 5/4/2020 00:38:24'!
+!ArrayTest methodsFor: 'test - accessing' stamp: 'jmv 7/31/2023 12:10:53'!
 testLastIfEmptyValuesEmptyBlockWhenEmpty
 
-	self assert: 1 equals: (#() lastIfEmpty: [ 1 ])! !
+	self assert: (#() lastIfEmpty: [ 1 ]) equals: 1.! !
 
 !ArrayTest methodsFor: 'test - accessing' stamp: 'HAW 5/4/2020 00:43:47'!
 testLastSignalsErrorWhenEmpty
@@ -14689,20 +14679,20 @@ testLastSignalsErrorWhenEmpty
 		raise: Error
 		withMessageText: Collection emptyCollectionDescription! !
 
-!ArrayTest methodsFor: 'test - accessing' stamp: 'HAW 5/3/2020 00:37:15'!
+!ArrayTest methodsFor: 'test - accessing' stamp: 'jmv 7/31/2023 12:11:01'!
 testPenultimateIfAbsentReturnsPenultimateIfExists
 
-	self assert: 2 equals: (#(2 3) penultimateIfAbsent: [ self fail ])! !
+	self assert: (#(2 3) penultimateIfAbsent: [ self fail ]) equals: 2.! !
 
-!ArrayTest methodsFor: 'test - accessing' stamp: 'HAW 5/3/2020 00:41:03'!
+!ArrayTest methodsFor: 'test - accessing' stamp: 'jmv 7/31/2023 12:11:17'!
 testPenultimateIfAbsentValuesIfAbsentBlockWhenNoPenultimate
 
-	self assert: 2 equals: (#(1) penultimateIfAbsent: [ 2 ])! !
+	self assert: (#(1) penultimateIfAbsent: [ 2 ]) equals: 2.! !
 
-!ArrayTest methodsFor: 'test - accessing' stamp: 'HAW 5/3/2020 00:41:31'!
+!ArrayTest methodsFor: 'test - accessing' stamp: 'jmv 7/31/2023 12:11:24'!
 testPenultimateReturnsPenultimateIfExists
 
-	self assert: 2 equals: #(2 3) penultimate! !
+	self assert: #(2 3) penultimate equals: 2.! !
 
 !ArrayTest methodsFor: 'test - accessing' stamp: 'HAW 5/3/2020 00:43:44'!
 testPenultimateSignalsErrorWhenCollectionIsNotBigEnough
@@ -15377,7 +15367,7 @@ testNewLineTabWhenConditionIsFalseDoesNotPutANewLineTabInStream
 	self assert: stream contents isEmpty
 	! !
 
-!WriteStreamTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:28:04'!
+!WriteStreamTest methodsFor: 'tests' stamp: 'jmv 7/31/2023 12:12:31'!
 testNewLineTabWhenConditionIsTruePutsANewLineTabInStream
 
 	| stream |
@@ -15385,8 +15375,7 @@ testNewLineTabWhenConditionIsTruePutsANewLineTabInStream
 	stream := String writeStream.
 	stream newLineTab: 2 when: true.
 	
-	self assert: (String streamContents: [ :s | s newLineTab: 2 ]) equals: stream contents 
-	! !
+	self assert: stream contents equals: (String streamContents: [ :s | s newLineTab: 2 ]).! !
 
 !WriteStreamTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:20:47'!
 testNewLineWhenConditionIsFalseDoesNotPutANewLineInStream
@@ -15399,7 +15388,7 @@ testNewLineWhenConditionIsFalseDoesNotPutANewLineInStream
 	self assert: stream contents isEmpty
 	! !
 
-!WriteStreamTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:22:05'!
+!WriteStreamTest methodsFor: 'tests' stamp: 'jmv 7/31/2023 12:13:18'!
 testNewLineWhenConditionIsTruePutsANewLineInStream
 
 	| stream |
@@ -15407,8 +15396,7 @@ testNewLineWhenConditionIsTruePutsANewLineInStream
 	stream := String writeStream.
 	stream newLineWhen: true.
 	
-	self assert: Character newLineCharacter asString equals: stream contents 
-	! !
+	self assert: stream contents equals: Character newLineCharacter asString.! !
 
 !WriteStreamTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:06:13'!
 testNextPutAllWhenConditionIsFalseDoesNotPutCollectionInStream
@@ -15421,7 +15409,7 @@ testNextPutAllWhenConditionIsFalseDoesNotPutCollectionInStream
 	self assert: stream contents isEmpty
 	! !
 
-!WriteStreamTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:06:19'!
+!WriteStreamTest methodsFor: 'tests' stamp: 'jmv 7/31/2023 12:13:41'!
 testNextPutAllWhenConditionIsTruePutsCollectionInStream
 
 	| stream |
@@ -15429,9 +15417,7 @@ testNextPutAllWhenConditionIsTruePutsCollectionInStream
 	stream := String writeStream.
 	stream nextPutAll: 'other' when: true.
 	
-	self assert: 'other' equals: stream contents
-	
-	! !
+	self assert: stream contents equals: 'other'.! !
 
 !WriteStreamTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:06:24'!
 testNextPutWhenConditionIsFalseDoesNotPutObjectInStream
@@ -15445,7 +15431,7 @@ testNextPutWhenConditionIsFalseDoesNotPutObjectInStream
 	
 	! !
 
-!WriteStreamTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:06:28'!
+!WriteStreamTest methodsFor: 'tests' stamp: 'jmv 7/31/2023 12:14:03'!
 testNextPutWhenConditionIsTruePutsObjectInStream
 
 	| stream |
@@ -15453,9 +15439,7 @@ testNextPutWhenConditionIsTruePutsObjectInStream
 	stream := String writeStream.
 	stream nextPut: $t when: true.
 	
-	self assert: 't' equals: stream contents 
-	
-	! !
+	self assert: stream contents equals: 't'.! !
 
 !WriteStreamTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:13:06'!
 testPrintWhenConditionIsFalseDoesNotPrintObjectInStream
@@ -15469,7 +15453,7 @@ testPrintWhenConditionIsFalseDoesNotPrintObjectInStream
 	
 	! !
 
-!WriteStreamTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:06:44'!
+!WriteStreamTest methodsFor: 'tests' stamp: 'jmv 7/31/2023 12:14:20'!
 testPrintWhenConditionIsTruePrintsObjectInStream
 
 	| stream |
@@ -15477,7 +15461,7 @@ testPrintWhenConditionIsTruePrintsObjectInStream
 	stream := String writeStream.
 	stream print: Object when: true.
 	
-	self assert: Object printString equals: stream contents! !
+	self assert: stream contents equals: Object printString.! !
 
 !WriteStreamTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:42:20'!
 testSpaceManyTimesWhenConditionIsFalseDoesNotPutASpaceInStream
@@ -15490,7 +15474,7 @@ testSpaceManyTimesWhenConditionIsFalseDoesNotPutASpaceInStream
 	self assert: stream contents isEmpty
 	! !
 
-!WriteStreamTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:43:01'!
+!WriteStreamTest methodsFor: 'tests' stamp: 'jmv 7/31/2023 12:14:32'!
 testSpaceManyTimesWhenConditionIsTruePutSpacesInStream
 
 	| stream |
@@ -15498,8 +15482,7 @@ testSpaceManyTimesWhenConditionIsTruePutSpacesInStream
 	stream := String writeStream.
 	stream space: 2 when: true.
 	
-	self assert: '  ' equals: stream contents 
-	! !
+	self assert: stream contents equals: '  '.! !
 
 !WriteStreamTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:19:06'!
 testSpaceWhenConditionIsFalseDoesNotPutASpaceInStream
@@ -15512,7 +15495,7 @@ testSpaceWhenConditionIsFalseDoesNotPutASpaceInStream
 	self assert: stream contents isEmpty
 	! !
 
-!WriteStreamTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:19:50'!
+!WriteStreamTest methodsFor: 'tests' stamp: 'jmv 7/31/2023 12:14:45'!
 testSpaceWhenConditionIsTruePutsASpaceInStream
 
 	| stream |
@@ -15520,8 +15503,7 @@ testSpaceWhenConditionIsTruePutsASpaceInStream
 	stream := String writeStream.
 	stream spaceWhen: true.
 	
-	self assert: ' ' equals: stream contents 
-	! !
+	self assert: stream contents equals: ' '.! !
 
 !WriteStreamTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:24:34'!
 testTabManyTimesWhenConditionIsFalseDoesNotPutATabInStream
@@ -15534,7 +15516,7 @@ testTabManyTimesWhenConditionIsFalseDoesNotPutATabInStream
 	self assert: stream contents isEmpty
 	! !
 
-!WriteStreamTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:25:46'!
+!WriteStreamTest methodsFor: 'tests' stamp: 'jmv 7/31/2023 12:15:00'!
 testTabManyTimesWhenConditionIsTruePutsTabsInStream
 
 	| stream |
@@ -15542,8 +15524,7 @@ testTabManyTimesWhenConditionIsTruePutsTabsInStream
 	stream := String writeStream.
 	stream tab: 2 when: true.
 	
-	self assert: (String streamContents: [ :s | s tab: 2 ]) equals: stream contents 
-	! !
+	self assert: stream contents equals: (String streamContents: [ :s | s tab: 2 ]).! !
 
 !WriteStreamTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:22:50'!
 testTabWhenConditionIsFalseDoesNotPutATabInStream
@@ -15556,7 +15537,7 @@ testTabWhenConditionIsFalseDoesNotPutATabInStream
 	self assert: stream contents isEmpty
 	! !
 
-!WriteStreamTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:23:28'!
+!WriteStreamTest methodsFor: 'tests' stamp: 'jmv 7/31/2023 12:15:13'!
 testTabWhenConditionIsTruePutsATabInStream
 
 	| stream |
@@ -15564,8 +15545,7 @@ testTabWhenConditionIsTruePutsATabInStream
 	stream := String writeStream.
 	stream tabWhen: true.
 	
-	self assert: Character tab asString equals: stream contents 
-	! !
+	self assert: stream contents equals: Character tab asString.! !
 
 !ExceptionHandlingConditionTest methodsFor: 'exception handling tests' stamp: 'HAW 3/29/2017 13:50:30'!
 testBlockClosuresCanBeUsedAsHandlingCondition
@@ -16192,7 +16172,7 @@ test06isNotAtInstanceVariablesWhenIndexIsOutsideInstanceVariablesString
 	
 	! !
 
-!ClassDefinitionNodeAnalyzerTest methodsFor: 'testing' stamp: 'HAW 4/17/2019 21:07:45'!
+!ClassDefinitionNodeAnalyzerTest methodsFor: 'testing' stamp: 'jmv 7/31/2023 12:16:14'!
 test07CanAccessSuperclass
 
 	| classDefinitionNode analyzer |
@@ -16201,7 +16181,7 @@ test07CanAccessSuperclass
 	
 	analyzer := ClassDefinitionNodeAnalyzer for: classDefinitionNode.
 	
-	self assert: self class superclass equals: analyzer superclass! !
+	self assert: analyzer superclass equals: self class superclass.! !
 
 !ClassDefinitionNodeAnalyzerTest methodsFor: 'testing' stamp: 'HAW 4/17/2019 21:07:50'!
 test08isAtCategoryWhenIndexIsInCategoryString
@@ -16611,7 +16591,7 @@ supportTestSourceRangeAccessForInjectInto: method source: source selectionSequen
 				 self assert: (Scanner new scanTokens: (source copyFrom: range first to: range last)) = debugTokens]].
 	self assert: evaluationCount = 2! !
 
-!ClosureCompilerTest methodsFor: 'tests' stamp: 'jmv 6/1/2021 14:17:23'!
+!ClosureCompilerTest methodsFor: 'tests' stamp: 'jmv 7/31/2023 12:17:23'!
 testBlockDoitDecompilation
 	"Tests that decompile of a doit block with remote vars executes correcly"
 	"Tests that decompilation of a Block, when 'method' of block is equivalent to that compiled by a DoIt, preserves the temp names "
@@ -16621,16 +16601,15 @@ testBlockDoitDecompilation
 	methodNode := Compiler new 
 						from: blockSourceStream class: nil class context: nil notifying: nil;
 						translate: blockSourceStream noPattern: true ifFail: [nil].
-	method _ methodNode generate.
+	method := methodNode generate.
 	block := nil withArgs: #() executeMethod: method.
 	
 	self shouldnt: [decompiledBlock := block decompile] raise: Error.
-	self assert: 
+	self assert: decompiledBlock printString equals:
  '{[ :argm0_4 :argm0_5 |
 	temp1 _ argm0_4.
 	temp3 _ argm0_5.
-	temp1 + temp3. ]}' equals: decompiledBlock printString
-! !
+	temp1 + temp3. ]}'.! !
 
 !ClosureCompilerTest methodsFor: 'tests' stamp: 'jmv 1/17/2011 00:13'!
 testBlockNumbering
@@ -17939,7 +17918,7 @@ testMulticharBinarySelectors
 		do: [ result _ [Compiler evaluate: expression] on: MessageNotUnderstood do: [#dnu]].
 	self assert: result = #dnu.! !
 
-!ParserTest methodsFor: 'test' stamp: 'HAW 2/29/2020 18:09:57'!
+!ParserTest methodsFor: 'test' stamp: 'jmv 7/31/2023 12:17:49'!
 testRangesAreOkWhenReturningAVariableWithoutSpaceAfterThat
 
 	| methodNode ranges |
@@ -17950,7 +17929,7 @@ testRangesAreOkWhenReturningAVariableWithoutSpaceAfterThat
 	
 	ranges := methodNode rangeForNode: methodNode tempNodes first ifAbsent: [ self fail ].
 	
-	self assert: 2 equals: ranges size.
+	self assert: ranges size equals: 2.
 	self assert: ranges includes: (5 to: 5).
 	self assert: ranges includes: (9 to: 9).
 	
@@ -17996,31 +17975,31 @@ testItGeneratesAnEmptyTempsDeclarationNodeForAMethodWithoutTemps
 	
 	self assert: tempsDeclarationNode allDeclaredVariableNodes isEmpty.! !
 
-!PrettyPrintingTest methodsFor: 'testing' stamp: 'jmv 4/19/2014 17:39'!
+!PrettyPrintingTest methodsFor: 'testing' stamp: 'jmv 7/31/2023 11:31:38'!
 test1
 	"
 	self new test1
 	"
 	| prettyPrinted source |
 
-	source _ 
+	source := 
 'sample1: x
 	x with: [
 		self print.
 		self print ].'.
 
-	prettyPrinted _ Compiler format: source in: PrettyPrintingTest notifying: nil.
+	prettyPrinted := Compiler format: source in: PrettyPrintingTest notifying: nil.
 
-	self assert: source equals: prettyPrinted! !
+	self assert: prettyPrinted equals: source! !
 
-!PrettyPrintingTest methodsFor: 'testing' stamp: 'jmv 4/19/2014 17:39'!
+!PrettyPrintingTest methodsFor: 'testing' stamp: 'jmv 7/31/2023 11:31:45'!
 test2
 	"
 	self new test2
 	"
 	| prettyPrinted source |
 
-	source _ 
+	source := 
 'sample2: x
 	x
 		print;
@@ -18032,18 +18011,18 @@ test2
 				self print.
 				x size + each size ]].'.
 
-	prettyPrinted _ Compiler format: source in: PrettyPrintingTest notifying: nil.
+	prettyPrinted := Compiler format: source in: PrettyPrintingTest notifying: nil.
 
-	self assert: source equals: prettyPrinted! !
+	self assert: prettyPrinted equals: source! !
 
-!PrettyPrintingTest methodsFor: 'testing' stamp: 'jmv 4/19/2014 17:40'!
+!PrettyPrintingTest methodsFor: 'testing' stamp: 'jmv 7/31/2023 11:31:52'!
 test3
 	"
 	self new test3
 	"
 	| prettyPrinted source |
 
-	source _ 
+	source := 
 'sample3: x
 	x
 		print;
@@ -18055,18 +18034,18 @@ test3
 				self print.
 				x size + each size ]].'.
 
-	prettyPrinted _ Compiler format: source in: PrettyPrintingTest notifying: nil.
+	prettyPrinted := Compiler format: source in: PrettyPrintingTest notifying: nil.
 
-	self assert: source equals: prettyPrinted! !
+	self assert: prettyPrinted equals: source! !
 
-!PrettyPrintingTest methodsFor: 'testing' stamp: 'jmv 4/19/2014 17:40'!
+!PrettyPrintingTest methodsFor: 'testing' stamp: 'jmv 7/31/2023 11:32:07'!
 test4
 	"
 	self new test4
 	"
 	| prettyPrinted source |
 
-	source _ 
+	source := 
 'sample4: x
 	x
 		print;
@@ -18078,18 +18057,18 @@ test4
 				self print.
 				x size + each size ]].'.
 
-	prettyPrinted _ Compiler format: source in: PrettyPrintingTest notifying: nil.
+	prettyPrinted := Compiler format: source in: PrettyPrintingTest notifying: nil.
 
-	self assert: source equals: prettyPrinted! !
+	self assert: prettyPrinted equals: source! !
 
-!PrettyPrintingTest methodsFor: 'testing' stamp: 'jmv 4/19/2014 17:41'!
+!PrettyPrintingTest methodsFor: 'testing' stamp: 'jmv 7/31/2023 11:32:13'!
 test5
 	"
 	self new test5
 	"
 	| prettyPrinted source |
 
-	source _ 
+	source := 
 'sample5: x
 	x
 		print;
@@ -18103,18 +18082,18 @@ test5
 				self print.
 				self print ].'.
 
-	prettyPrinted _ Compiler format: source in: PrettyPrintingTest notifying: nil.
+	prettyPrinted := Compiler format: source in: PrettyPrintingTest notifying: nil.
 
-	self assert: source equals: prettyPrinted! !
+	self assert: prettyPrinted equals: source! !
 
-!PrettyPrintingTest methodsFor: 'testing' stamp: 'jmv 4/19/2014 17:40'!
+!PrettyPrintingTest methodsFor: 'testing' stamp: 'jmv 7/31/2023 11:32:18'!
 test6
 	"
 	self new test6
 	"
 	| prettyPrinted source |
 
-	source _ 
+	source := 
 'sample6: x
 	x
 		with: [
@@ -18124,9 +18103,9 @@ test6
 			self print.
 			self print ].'.
 
-	prettyPrinted _ Compiler format: source in: PrettyPrintingTest notifying: nil.
+	prettyPrinted := Compiler format: source in: PrettyPrintingTest notifying: nil.
 
-	self assert: source equals: prettyPrinted! !
+	self assert: prettyPrinted equals: source! !
 
 !ReturnNodeTest methodsFor: 'tests' stamp: 'HAW 10/19/2020 16:07:48'!
 test01isImplicitSelfReturnInReturnsTrueWithMethodWithOutAnySourceCode
@@ -18197,7 +18176,7 @@ testLiteralSymbols
 			self assert: (Compiler evaluate: str asSymbol printString) = str asSymbol
 				description: 'in all case, a Symbol must be printed in an interpretable fashion']! !
 
-!SourceCodeIntervalTest methodsFor: 'tests - trimming' stamp: 'RNG 5/8/2020 21:02:35'!
+!SourceCodeIntervalTest methodsFor: 'tests - trimming' stamp: 'jmv 7/31/2023 12:18:50'!
 test01TryingToTrimAnAlreadyTrimmedIntervalThatRepresentsASmalltalkExpressionDoesNotChangeTheOriginalInterval
 	
 	| originalInterval trimmedInterval sourceCode |
@@ -18205,9 +18184,9 @@ test01TryingToTrimAnAlreadyTrimmedIntervalThatRepresentsASmalltalkExpressionDoes
 	originalInterval := (1 to: sourceCode size) asSourceCodeInterval.
 	trimmedInterval := originalInterval trimToMatchExpressionOn: sourceCode.
 
-	self assert: originalInterval equals: trimmedInterval! !
+	self assert: trimmedInterval equals: originalInterval.! !
 
-!SourceCodeIntervalTest methodsFor: 'tests - trimming' stamp: 'RNG 5/8/2020 21:02:27'!
+!SourceCodeIntervalTest methodsFor: 'tests - trimming' stamp: 'jmv 7/31/2023 12:19:19'!
 test02StartingAndEndingSeparatorsAreTrimmed
 	
 	| originalInterval trimmedInterval sourceCode |
@@ -18215,9 +18194,9 @@ test02StartingAndEndingSeparatorsAreTrimmed
 	originalInterval := (1 to: sourceCode size) asSourceCodeInterval.
 	trimmedInterval := originalInterval trimToMatchExpressionOn: sourceCode.
 
-	self assert: (2 to: 4) asSourceCodeInterval equals: trimmedInterval! !
+	self assert: trimmedInterval equals: (2 to: 4) asSourceCodeInterval.! !
 
-!SourceCodeIntervalTest methodsFor: 'tests - trimming' stamp: 'RNG 5/8/2020 21:02:09'!
+!SourceCodeIntervalTest methodsFor: 'tests - trimming' stamp: 'jmv 7/31/2023 12:19:27'!
 test03StartingAndEndingDotsAreTrimmed
 	
 	| originalInterval trimmedInterval sourceCode |
@@ -18225,9 +18204,9 @@ test03StartingAndEndingDotsAreTrimmed
 	originalInterval := (1 to: sourceCode size) asSourceCodeInterval.
 	trimmedInterval := originalInterval trimToMatchExpressionOn: sourceCode.
 
-	self assert: (4 to: 6) asSourceCodeInterval equals: trimmedInterval! !
+	self assert: trimmedInterval equals: (4 to: 6) asSourceCodeInterval.! !
 
-!SourceCodeIntervalTest methodsFor: 'tests - trimming' stamp: 'RNG 5/8/2020 21:01:42'!
+!SourceCodeIntervalTest methodsFor: 'tests - trimming' stamp: 'jmv 7/31/2023 12:19:38'!
 test04GroupsOfParenthesesAreTrimmed
 	
 	| originalInterval trimmedInterval sourceCode |
@@ -18235,9 +18214,9 @@ test04GroupsOfParenthesesAreTrimmed
 	originalInterval := (1 to: sourceCode size) asSourceCodeInterval.
 	trimmedInterval := originalInterval trimToMatchExpressionOn: sourceCode.
 
-	self assert: (3 to: 5) asSourceCodeInterval equals: trimmedInterval! !
+	self assert: trimmedInterval equals: (3 to: 5) asSourceCodeInterval.! !
 
-!SourceCodeIntervalTest methodsFor: 'tests - trimming' stamp: 'RNG 5/8/2020 21:01:13'!
+!SourceCodeIntervalTest methodsFor: 'tests - trimming' stamp: 'jmv 7/31/2023 12:19:58'!
 test05GroupsOfParenthesesIncludingSeparatorsAreTrimmed
 	
 	| originalInterval trimmedInterval sourceCode |
@@ -18246,9 +18225,9 @@ test05GroupsOfParenthesesIncludingSeparatorsAreTrimmed
 	originalInterval := (1 to: sourceCode size) asSourceCodeInterval.
 	trimmedInterval := originalInterval trimToMatchExpressionOn: sourceCode.
 
-	self assert: (5 to: 7) asSourceCodeInterval equals: trimmedInterval! !
+	self assert: trimmedInterval equals: (5 to: 7) asSourceCodeInterval.! !
 
-!SourceCodeIntervalTest methodsFor: 'tests - trimming' stamp: 'HAW 7/21/2023 16:51:49'!
+!SourceCodeIntervalTest methodsFor: 'tests - trimming' stamp: 'jmv 7/31/2023 12:23:09'!
 test23TrimmsExternalParentesisWhenMoreParentesisAtDifferentCollaborations
 	
 	| originalInterval trimmedInterval sourceCode |
@@ -18257,9 +18236,9 @@ test23TrimmsExternalParentesisWhenMoreParentesisAtDifferentCollaborations
 	originalInterval := (1 to: sourceCode size) asSourceCodeInterval.
 	trimmedInterval := originalInterval trimToMatchExpressionOn: sourceCode.
 
-	self assert: (2 to: 22) asSourceCodeInterval equals: trimmedInterval! !
+	self assert: trimmedInterval equals: (2 to: 22) asSourceCodeInterval.! !
 
-!SourceCodeIntervalTest methodsFor: 'tests - trimming' stamp: 'HAW 7/21/2023 16:52:27'!
+!SourceCodeIntervalTest methodsFor: 'tests - trimming' stamp: 'jmv 7/31/2023 12:23:24'!
 test24TrimmsExternalParentesisWhenMoreParentesisAtDifferentCollaborationsWithOtherSeparators
 	
 	| originalInterval trimmedInterval sourceCode |
@@ -18269,7 +18248,7 @@ test24TrimmsExternalParentesisWhenMoreParentesisAtDifferentCollaborationsWithOth
 	originalInterval := (1 to: sourceCode size) asSourceCodeInterval.
 	trimmedInterval := originalInterval trimToMatchExpressionOn: sourceCode.
 
-	self assert: (2 to: 22) asSourceCodeInterval equals: trimmedInterval! !
+	self assert: trimmedInterval equals: (2 to: 22) asSourceCodeInterval.! !
 
 !SourceCodeIntervalTest methodsFor: 'tests - equality' stamp: 'RNG 5/27/2020 23:59:37'!
 test11AsSourceCodeIntervalMessageDoesNotCreateANewSourceCodeIntervalInstance
@@ -18279,7 +18258,7 @@ test11AsSourceCodeIntervalMessageDoesNotCreateANewSourceCodeIntervalInstance
 	
 	self assert: interval == interval asSourceCodeInterval! !
 
-!SourceCodeIntervalTest methodsFor: 'tests - expanding' stamp: 'RNG 5/9/2020 15:41:07'!
+!SourceCodeIntervalTest methodsFor: 'tests - expanding' stamp: 'jmv 7/31/2023 12:20:31'!
 test06AnIntervalThatDoesNotHaveCharactersToExpandRemainsTheSame
 
 	| sourceCode expandedInterval originalInterval |
@@ -18287,9 +18266,9 @@ test06AnIntervalThatDoesNotHaveCharactersToExpandRemainsTheSame
 	originalInterval := (1 to: sourceCode size) asSourceCodeInterval.
 	expandedInterval := originalInterval expandToMatchExpressionOn: sourceCode.
 
-	self assert: originalInterval equals: expandedInterval! !
+	self assert: expandedInterval equals: originalInterval.! !
 
-!SourceCodeIntervalTest methodsFor: 'tests - expanding' stamp: 'RNG 5/9/2020 15:41:07'!
+!SourceCodeIntervalTest methodsFor: 'tests - expanding' stamp: 'jmv 7/31/2023 12:20:48'!
 test07AnIntervalEnclosedByParenthesesCanBeExpanded
 
 	| sourceCode expandedInterval originalInterval |
@@ -18297,9 +18276,9 @@ test07AnIntervalEnclosedByParenthesesCanBeExpanded
 	originalInterval := (2 to: sourceCode size - 1) asSourceCodeInterval.
 	expandedInterval := originalInterval expandToMatchExpressionOn: sourceCode.
 
-	self assert: (1 to: sourceCode size) equals: expandedInterval! !
+	self assert: expandedInterval equals: (1 to: sourceCode size).! !
 
-!SourceCodeIntervalTest methodsFor: 'tests - expanding' stamp: 'RNG 5/9/2020 15:41:07'!
+!SourceCodeIntervalTest methodsFor: 'tests - expanding' stamp: 'jmv 7/31/2023 12:20:58'!
 test08AnIntervalWithParenthesesOnJustOneSideCannotBeExpanded
 
 	| sourceCode expandedInterval originalInterval |
@@ -18307,9 +18286,9 @@ test08AnIntervalWithParenthesesOnJustOneSideCannotBeExpanded
 	originalInterval := (1 to: sourceCode size - 1) asSourceCodeInterval.
 	expandedInterval := originalInterval expandToMatchExpressionOn: sourceCode.
 
-	self assert: originalInterval equals: expandedInterval! !
+	self assert: expandedInterval equals: originalInterval.! !
 
-!SourceCodeIntervalTest methodsFor: 'tests - expanding' stamp: 'RNG 5/9/2020 15:41:07'!
+!SourceCodeIntervalTest methodsFor: 'tests - expanding' stamp: 'jmv 7/31/2023 12:21:07'!
 test09AnIntervalEnclosedByBackticksCanBeExpanded
 
 	| sourceCode expandedInterval originalInterval |
@@ -18317,9 +18296,9 @@ test09AnIntervalEnclosedByBackticksCanBeExpanded
 	originalInterval := (2 to: sourceCode size - 1) asSourceCodeInterval.
 	expandedInterval := originalInterval expandToMatchExpressionOn: sourceCode.
 
-	self assert: (1 to: sourceCode size) equals: expandedInterval! !
+	self assert: expandedInterval equals: (1 to: sourceCode size).! !
 
-!SourceCodeIntervalTest methodsFor: 'tests - expanding' stamp: 'RNG 5/9/2020 15:41:07'!
+!SourceCodeIntervalTest methodsFor: 'tests - expanding' stamp: 'jmv 7/31/2023 12:21:16'!
 test10AnIntervalEnclosedMultipleBackticksAndParenthesesCanBeExpanded
 
 	| sourceCode expandedInterval originalInterval |
@@ -18327,9 +18306,9 @@ test10AnIntervalEnclosedMultipleBackticksAndParenthesesCanBeExpanded
 	originalInterval := (4 to: sourceCode size - 3) asSourceCodeInterval.
 	expandedInterval := originalInterval expandToMatchExpressionOn: sourceCode.
 
-	self assert: (1 to: sourceCode size) equals: expandedInterval! !
+	self assert: expandedInterval equals: (1 to: sourceCode size).! !
 
-!SourceCodeIntervalTest methodsFor: 'tests - testing' stamp: 'HAW 6/11/2022 20:09:17'!
+!SourceCodeIntervalTest methodsFor: 'tests - testing' stamp: 'jmv 7/31/2023 12:21:27'!
 test12AnIntervalEndingOnDotExpandsUntilStartOfNextStatementOnSameLine
 
 	| interval sourceCode expectedExpandedInterval expandedInterval |
@@ -18338,9 +18317,9 @@ test12AnIntervalEndingOnDotExpandsUntilStartOfNextStatementOnSameLine
 	interval := (1 to: 6) asSourceCodeInterval.
 	expandedInterval := interval expandUntilStartOfNextStatementOn: sourceCode.
 	expectedExpandedInterval := (1 to: 7) asSourceCodeInterval.
-	self assert: expectedExpandedInterval equals: expandedInterval.! !
+	self assert: expandedInterval equals: expectedExpandedInterval.! !
 
-!SourceCodeIntervalTest methodsFor: 'tests - testing' stamp: 'HAW 6/11/2022 20:09:21'!
+!SourceCodeIntervalTest methodsFor: 'tests - testing' stamp: 'jmv 7/31/2023 12:21:42'!
 test13AnIntervalEndingBeforeDotExpandsUntilStartOfNextStatementOnSameLine
 
 	| interval sourceCode expectedExpandedInterval expandedInterval |
@@ -18349,9 +18328,9 @@ test13AnIntervalEndingBeforeDotExpandsUntilStartOfNextStatementOnSameLine
 	interval := (1 to: 5) asSourceCodeInterval.
 	expandedInterval := interval expandUntilStartOfNextStatementOn: sourceCode.
 	expectedExpandedInterval := (1 to: 7) asSourceCodeInterval.
-	self assert: expectedExpandedInterval equals: expandedInterval.! !
+	self assert: expandedInterval equals: expectedExpandedInterval.! !
 
-!SourceCodeIntervalTest methodsFor: 'tests - testing' stamp: 'HAW 6/11/2022 20:09:24'!
+!SourceCodeIntervalTest methodsFor: 'tests - testing' stamp: 'jmv 7/31/2023 12:21:50'!
 test14AnIntervalEndingOnEndOfTemporariesDeclarationExpandsUntilStartOfNextStatement
 
 	| interval sourceCode expectedExpandedInterval expandedInterval |
@@ -18361,9 +18340,9 @@ test14AnIntervalEndingOnEndOfTemporariesDeclarationExpandsUntilStartOfNextStatem
 	interval := (1 to: 8) asSourceCodeInterval.
 	expandedInterval := interval expandUntilStartOfNextStatementOn: sourceCode.
 	expectedExpandedInterval := (1 to:12) asSourceCodeInterval.
-	self assert: expectedExpandedInterval equals: expandedInterval. ! !
+	self assert: expandedInterval equals: expectedExpandedInterval.! !
 
-!SourceCodeIntervalTest methodsFor: 'tests - testing' stamp: 'HAW 6/11/2022 20:09:30'!
+!SourceCodeIntervalTest methodsFor: 'tests - testing' stamp: 'jmv 7/31/2023 12:22:00'!
 test15AnIntervalEndingOnLastStatemenWithoutDottIsNotExpanded
 
 	| interval sourceCode expandedInterval |
@@ -18373,9 +18352,9 @@ test15AnIntervalEndingOnLastStatemenWithoutDottIsNotExpanded
 	interval := (1 to: 16) asSourceCodeInterval.
 	expandedInterval := interval expandUntilStartOfNextStatementOn: sourceCode.
 	
-	self assert: interval equals: expandedInterval.! !
+	self assert: expandedInterval equals: interval.! !
 
-!SourceCodeIntervalTest methodsFor: 'tests - testing' stamp: 'HAW 6/11/2022 20:09:32'!
+!SourceCodeIntervalTest methodsFor: 'tests - testing' stamp: 'jmv 7/31/2023 12:22:11'!
 test16AnIntervalEndingOnLastStatemenWithDotIsNotExpanded
 
 	| interval sourceCode expandedInterval |
@@ -18385,7 +18364,7 @@ test16AnIntervalEndingOnLastStatemenWithDotIsNotExpanded
 	interval := (1 to: 17) asSourceCodeInterval.
 	expandedInterval := interval expandUntilStartOfNextStatementOn: sourceCode.
 	
-	self assert: interval equals: expandedInterval.! !
+	self assert: expandedInterval equals: interval.! !
 
 !SourceCodeIntervalTest methodsFor: 'tests - testing' stamp: 'HAW 6/11/2022 20:09:35'!
 test17AnIntervalEndingBeforeStatementEndCannotBeExpanded
@@ -18410,7 +18389,7 @@ test18AnIntervalEndingAfterLastStatementCannotBeExpanded
 		raise: Error 
 		withMessageText: [SourceCodeInterval canNotExpandIncompleteStatementError].! !
 
-!SourceCodeIntervalTest methodsFor: 'tests - testing' stamp: 'HAW 6/11/2022 20:09:41'!
+!SourceCodeIntervalTest methodsFor: 'tests - testing' stamp: 'jmv 7/31/2023 12:22:22'!
 test19AnIntervalEndingAfterSourceCodeEndIsNotExpanded
 
 	| interval sourceCode expandedInterval |
@@ -18419,9 +18398,9 @@ test19AnIntervalEndingAfterSourceCodeEndIsNotExpanded
 	interval := (1 to: 1000) asSourceCodeInterval.
 	expandedInterval := interval expandUntilStartOfNextStatementOn: sourceCode.
 	
-	self assert: interval equals: expandedInterval.! !
+	self assert: expandedInterval equals: interval.! !
 
-!SourceCodeIntervalTest methodsFor: 'tests - testing' stamp: 'HAW 6/11/2022 20:09:44'!
+!SourceCodeIntervalTest methodsFor: 'tests - testing' stamp: 'jmv 7/31/2023 12:22:30'!
 test20AnIntervalEndingExpandsUntilStartOfNextStatementOnNextLine
 
 	| interval sourceCode expandedInterval expectedInterval |
@@ -18432,9 +18411,9 @@ test20AnIntervalEndingExpandsUntilStartOfNextStatementOnNextLine
 	expandedInterval := interval expandUntilStartOfNextStatementOn: sourceCode.
 	expectedInterval := (1 to: 9) asSourceCodeInterval.
 	
-	self assert: expectedInterval equals: expandedInterval.! !
+	self assert: expandedInterval equals: expectedInterval.! !
 
-!SourceCodeIntervalTest methodsFor: 'tests - testing' stamp: 'FB 7/4/2022 21:13:38'!
+!SourceCodeIntervalTest methodsFor: 'tests - testing' stamp: 'jmv 7/31/2023 12:22:40'!
 test21ExpandIntervalToEndOfStatement
 
 	| interval sourceCode expandedInterval expectedInterval |
@@ -18444,9 +18423,9 @@ test21ExpandIntervalToEndOfStatement
 	expandedInterval := interval expandUntilStatementEndOn: sourceCode.
 	expectedInterval := (1 to: 6) asSourceCodeInterval.
 	
-	self assert: expectedInterval equals: expandedInterval.! !
+	self assert: expandedInterval equals: expectedInterval.! !
 
-!SourceCodeIntervalTest methodsFor: 'tests - testing' stamp: 'FB 7/4/2022 21:15:10'!
+!SourceCodeIntervalTest methodsFor: 'tests - testing' stamp: 'jmv 7/31/2023 12:22:54'!
 test22ExpandIntervalToEndOfStatementWhenNoDotIsPresent
 
 	| interval sourceCode expandedInterval expectedInterval |
@@ -18456,7 +18435,7 @@ test22ExpandIntervalToEndOfStatementWhenNoDotIsPresent
 	expandedInterval := interval expandUntilStatementEndOn: sourceCode.
 	expectedInterval := (1 to: 5) asSourceCodeInterval.
 	
-	self assert: expectedInterval equals: expandedInterval.! !
+	self assert: expandedInterval equals: expectedInterval.! !
 
 !SystemConsistencyTest methodsFor: 'testing' stamp: 'jmv 5/7/2012 09:35'!
 testMethodsWithUnboundGlobals
@@ -18536,7 +18515,7 @@ testTabWhenConditionIsTruePutsATabInStream
 
 	self assertTranscriptContentsAdded: Character tab asString after: [ Transcript tabWhen: true ]! !
 
-!TranscriptTest methodsFor: 'assertions' stamp: 'jmv 7/20/2023 14:15:23'!
+!TranscriptTest methodsFor: 'assertions' stamp: 'jmv 7/31/2023 12:23:57'!
 assertTranscriptContentsAdded2: expectedAddedString after: aBlock
 	
 	| transcriptContentsBeforeBlockEvaluation |
@@ -18544,16 +18523,16 @@ assertTranscriptContentsAdded2: expectedAddedString after: aBlock
 	transcriptContentsBeforeBlockEvaluation := Transcript contents.
 	aBlock value.
 	{transcriptContentsBeforeBlockEvaluation. expectedAddedString.Transcript contents} inspect.
-	self assert: transcriptContentsBeforeBlockEvaluation, expectedAddedString equals: Transcript contents! !
+	self assert: Transcript contents equals: transcriptContentsBeforeBlockEvaluation, expectedAddedString.! !
 
-!TranscriptTest methodsFor: 'assertions' stamp: 'jmv 7/20/2023 14:15:10'!
+!TranscriptTest methodsFor: 'assertions' stamp: 'jmv 7/31/2023 12:24:46'!
 assertTranscriptContentsAdded: expectedAddedString after: aBlock
 	
 	| transcriptContentsBeforeBlockEvaluation |
 	Transcript clear.
 	transcriptContentsBeforeBlockEvaluation := Transcript contents.
 	aBlock value.
-	self assert: transcriptContentsBeforeBlockEvaluation, expectedAddedString equals: Transcript contents! !
+	self assert: Transcript contents equals: transcriptContentsBeforeBlockEvaluation, expectedAddedString.! !
 
 !TranscriptTest methodsFor: 'assertions' stamp: 'HAW 3/20/2019 07:15:48'!
 assertTranscriptContentsDoesNotChangeAfter: aBlock
@@ -21028,68 +21007,68 @@ testDoOneCycleWorksWithDeferredQueue
 	        self assert: finished
 	] forkAt: Processor userInterruptPriority.! !
 
-!MethodReferenceTest methodsFor: 'test actual class' stamp: 'HAW 10/23/2019 21:08:24'!
+!MethodReferenceTest methodsFor: 'test actual class' stamp: 'jmv 7/31/2023 12:25:57'!
 testActualClassIfAbsentEvaluatesBlockIfClassDoesNotExist
 
 	self 
-		assert: 1 
-		equals: ((MethodReference 
+		assert: ((MethodReference 
 			classSymbol: #X_Y_Z 
 			classIsMeta: false 
-			methodSymbol: #xx) actualClassIfAbsent: [ 1])! !
+			methodSymbol: #xx) actualClassIfAbsent: [ 1])
+		equals: 1.! !
 
-!MethodReferenceTest methodsFor: 'test actual class' stamp: 'HAW 10/23/2019 21:09:29'!
+!MethodReferenceTest methodsFor: 'test actual class' stamp: 'jmv 7/31/2023 12:26:27'!
 testActualClassIfAbsentReturnsClassIfClassExists
 
 	self 
-		assert: self class
-		equals: ((MethodReference 
+		assert: ((MethodReference 
 			class: self class  
-			selector: thisContext selector) actualClassIfAbsent: [ self fail])! !
+			selector: thisContext selector) actualClassIfAbsent: [ self fail])
+		equals: self class.! !
 
 !MethodReferenceTest methodsFor: 'test actual class' stamp: 'HAW 10/23/2019 21:05:22'!
 testActualClassReturnNilWhenClassDoesNotExist
 
 	self assert: (MethodReference classSymbol: #X_Y_Z classIsMeta: false methodSymbol: #xx) actualClass isNil! !
 
-!MethodReferenceTest methodsFor: 'test actual class' stamp: 'HAW 10/23/2019 21:09:58'!
+!MethodReferenceTest methodsFor: 'test actual class' stamp: 'jmv 7/31/2023 12:26:49'!
 testActualClassReturnsClassIfExists
 
 	self 
-		assert: self class
-		equals: (MethodReference 
+		assert: (MethodReference 
 			class: self class 
-			selector: thisContext selector) actualClass ! !
+			selector: thisContext selector) actualClass 
+		equals: self class.! !
 
-!MethodReferenceTest methodsFor: 'test source code' stamp: 'HAW 10/23/2019 21:42:10'!
+!MethodReferenceTest methodsFor: 'test source code' stamp: 'jmv 7/31/2023 12:28:00'!
 testSourceCodeIfAbsentEvaluatesBlockIfClassDoesNotExist
 
 	self 
-		assert: 1
-		equals: ((MethodReference classSymbol: #X_Y_Z classIsMeta: false methodSymbol:#xx) sourceCodeIfAbsent: [ 1 ])! !
+		assert: ((MethodReference classSymbol: #X_Y_Z classIsMeta: false methodSymbol:#xx) sourceCodeIfAbsent: [ 1 ])
+		equals: 1.! !
 
-!MethodReferenceTest methodsFor: 'test source code' stamp: 'HAW 10/23/2019 21:42:34'!
+!MethodReferenceTest methodsFor: 'test source code' stamp: 'jmv 7/31/2023 12:28:12'!
 testSourceCodeIfAbsentEvaluatesBlockIfMethodDoesNotExist
 
 	self 
-		assert: 1
-		equals: ((MethodReference class: self class selector:#xx) sourceCodeIfAbsent: [ 1 ])! !
+		assert: ((MethodReference class: self class selector:#xx) sourceCodeIfAbsent: [ 1 ])
+		equals: 1.! !
 
-!MethodReferenceTest methodsFor: 'test source code' stamp: 'HAW 10/23/2019 21:43:23'!
+!MethodReferenceTest methodsFor: 'test source code' stamp: 'jmv 7/31/2023 12:28:34'!
 testSourceCodeIfAbsentReturnsSourceCodeIfExists
 
 	self 
-		assert: (self class>>thisContext selector) sourceCode
-		equals: ((MethodReference class: self class selector: thisContext selector) sourceCodeIfAbsent: [ self fail ])! !
+		assert: ((MethodReference class: self class selector: thisContext selector) sourceCodeIfAbsent: [ self fail ])
+		equals: (self class>>thisContext selector) sourceCode.! !
 
-!MethodReferenceTest methodsFor: 'test source code' stamp: 'HAW 10/23/2019 21:11:15'!
+!MethodReferenceTest methodsFor: 'test source code' stamp: 'jmv 7/31/2023 12:28:54'!
 testSourceCodeReturnsSourceCodeIfMethodExist
 
 	self 
-		assert: (self class compiledMethodAt: thisContext selector) sourceCode
-		equals: (MethodReference 
+		assert: (MethodReference 
 			class: self class 
-			selector: thisContext selector) sourceCode ! !
+			selector: thisContext selector) sourceCode
+		equals: (self class compiledMethodAt: thisContext selector) sourceCode.! !
 
 !MethodReferenceTest methodsFor: 'test source code' stamp: 'HAW 10/23/2019 21:39:16'!
 testSourceCodeSignalExceptionIfClassDoesNotExist
@@ -21107,46 +21086,46 @@ testSourceCodeSignalExceptionIfMethodDoesNotExist
 		raise: Error
 		withMessageText: Dictionary keyNotFoundErrorDescription ! !
 
-!MethodReferenceTest methodsFor: 'test compiled method' stamp: 'HAW 1/1/2020 19:46:58'!
+!MethodReferenceTest methodsFor: 'test compiled method' stamp: 'jmv 7/31/2023 12:27:03'!
 testCompiledMethodIfAbsentEvaluatesAbsentBlockWhenActualClassIsNil
 
 	self 
-		assert: 1 
-		equals: ((MethodReference 
+		assert: ((MethodReference 
 			classSymbol: #X_Y_Z 
 			classIsMeta: false 
-			methodSymbol: #xx) compiledMethodIfAbsent: [ 1])! !
+			methodSymbol: #xx) compiledMethodIfAbsent: [ 1])
+		equals: 1.! !
 
-!MethodReferenceTest methodsFor: 'test compiled method' stamp: 'HAW 1/1/2020 19:47:05'!
+!MethodReferenceTest methodsFor: 'test compiled method' stamp: 'jmv 7/31/2023 12:27:19'!
 testCompiledMethodIfAbsentEvaluatesAbsentBlockWhenSelectorIsNotImplemented
 
 	self 
-		assert: 1 
-		equals: ((MethodReference 
+		assert: ((MethodReference 
 			classSymbol: self class name
 			classIsMeta: false 
-			methodSymbol: #xx) compiledMethodIfAbsent: [ 1])! !
+			methodSymbol: #xx) compiledMethodIfAbsent: [ 1])
+		equals: 1.! !
 
-!MethodReferenceTest methodsFor: 'test compiled method' stamp: 'HAW 1/1/2020 19:47:13'!
+!MethodReferenceTest methodsFor: 'test compiled method' stamp: 'jmv 7/31/2023 12:27:34'!
 testCompiledMethodIfAbsentReturnsImplementedMethodWhenItExists
 
 	self 
-		assert: thisContext method 
-		equals: ((MethodReference 
+		assert: ((MethodReference 
 			classSymbol: self class name
 			classIsMeta: false 
-			methodSymbol: thisContext selector) compiledMethodIfAbsent: [ self fail ])! !
+			methodSymbol: thisContext selector) compiledMethodIfAbsent: [ self fail ])
+		equals: thisContext method .! !
 
-!MethodReferenceTest methodsFor: 'test string version' stamp: 'HAW 4/9/2020 15:51:56'!
+!MethodReferenceTest methodsFor: 'test string version' stamp: 'jmv 7/31/2023 12:25:16'!
 test01DefaultStringVersionIsClassAndSelector
 
 	| stringVersion |
 	
 	stringVersion := (MethodReference method: thisContext method) stringVersion.
 	
-	self assert: self class name, ' ', thisContext selector equals: stringVersion! !
+	self assert: stringVersion equals: self class name, ' ', thisContext selector.! !
 
-!MethodReferenceTest methodsFor: 'test string version' stamp: 'HAW 8/19/2021 15:05:13'!
+!MethodReferenceTest methodsFor: 'test string version' stamp: 'jmv 7/31/2023 12:25:41'!
 test02CanPrefixStringVersion
 
 	| methodReference prefix |
@@ -21155,7 +21134,7 @@ test02CanPrefixStringVersion
 	methodReference := MethodReference method: thisContext method.
 	methodReference prefixStringVersionWith: prefix.
 	
-	self assert: '[',prefix,'] - ',self class name, ' ', thisContext selector equals: methodReference stringVersion! !
+	self assert: methodReference stringVersion equals: '[',prefix,'] - ',self class name, ' ', thisContext selector.! !
 
 !MethodReferenceTest methodsFor: 'test testing' stamp: 'HAW 1/2/2020 06:49:00'!
 testReferencesParameterAtReturnsFalseWhenInvalid
@@ -21305,7 +21284,7 @@ assertTypeOfBinaryMessageSend: aSourceCode is: aExpectedType
 		messageRange: [ :ranges | ranges penultimate ]
 ! !
 
-!SHST80RangeTypeTest methodsFor: 'assertions' stamp: 'jmv 4/26/2021 19:40:38'!
+!SHST80RangeTypeTest methodsFor: 'assertions' stamp: 'jmv 7/31/2023 11:32:34'!
 assertTypeOfMessageSend: aSourceCode 
 	is: aExpectedType
 	in: aClassOrMetaClass 
@@ -21326,7 +21305,7 @@ assertTypeOfMessageSend: aSourceCode
 	st80RangeType lastRange: (aReceiverRangeBlock value: ranges).
 	type := st80RangeType ofCurrentRangeOrMessageSendIn: (aMessageRangeBlock value: ranges).
 	
-	self assert: aExpectedType equals: type
+	self assert: type equals: aExpectedType
 	! !
 
 !SHST80RangeTypeTest methodsFor: 'assertions' stamp: 'HAW 10/5/2020 12:23:51'!
@@ -21373,7 +21352,7 @@ _zz
 
 	"Do not remove this method because it exists for its name to have implementors - Hernan"! !
 
-!DebuggerTest methodsFor: 'tests - method categories' stamp: 'HAW 8/19/2021 15:31:36'!
+!DebuggerTest methodsFor: 'tests - method categories' stamp: 'jmv 7/31/2023 11:35:00'!
 testCategoriesAreAddedSortedByAndSeparatedByClass
 
 	| objectCategories protoObjectCategories categoriesPrompter |
@@ -21382,27 +21361,27 @@ testCategoriesAreAddedSortedByAndSeparatedByClass
 	protoObjectCategories := ProtoObject methodCategoriesAsSortedCollection removeAllFoundIn: objectCategories; yourself.
 	
 	"Test pre-conditions. May seem unnecesary but they are not if we take time into account - Hernan"
-	self assert: ProtoObject equals: Object superclass.
-	self assert: nil equals: ProtoObject superclass.
+	self assert: Object superclass equals: ProtoObject.
+	self assert: ProtoObject superclass equals: nil.
 	self assert: objectCategories notEmpty.
 	self assert: protoObjectCategories notEmpty.
 	
 	categoriesPrompter := MethodCategoriesPrompter staringFrom: Object rejectingFirst: false.
 	
-	self assert: 2 equals: categoriesPrompter lines size.
-	self assert: 1 equals: categoriesPrompter lines first.
+	self assert: categoriesPrompter lines size equals: 2.
+	self assert: categoriesPrompter lines first equals: 1.
 	self assert: (categoriesPrompter categories copyFrom: 2 to: categoriesPrompter lines second) asArray equals: objectCategories asArray.
 	self assert: (categoriesPrompter categories copyFrom: categoriesPrompter lines second + 1 to: categoriesPrompter categories size) asArray equals: protoObjectCategories asArray.
 	! !
 
-!DebuggerTest methodsFor: 'tests - method categories' stamp: 'HAW 8/19/2021 15:33:48'!
+!DebuggerTest methodsFor: 'tests - method categories' stamp: 'jmv 7/31/2023 11:33:33'!
 testMetaclassCategoriesIncludesInstanceCreation
 
 	| categoriesPrompter |
 
 	categoriesPrompter := MethodCategoriesPrompter staringFrom: ProtoObject class rejectingFirst: false.
 	
-	self assert: Categorizer instanceCreation equals: categoriesPrompter categories second ! !
+	self assert: categoriesPrompter categories second equals: Categorizer instanceCreation! !
 
 !SmalltalkCompleterTest methodsFor: 'testing' stamp: 'jmv 7/5/2022 23:08:14'!
 testMessages
@@ -22314,7 +22293,7 @@ testShouldRaiseWithExceptionDoFailsWhenNoExceptionIsSignaled
 		
 	self assert: failureSignaled ! !
 
-!TestCaseTest methodsFor: 'exception testing tests' stamp: 'HernanWilkinson 1/19/2017 20:52:31'!
+!TestCaseTest methodsFor: 'exception testing tests' stamp: 'jmv 7/31/2023 12:29:46'!
 testShouldRaiseWithExceptionDoFailsWhenOtherExceptionTypeIsSignaled
 
 	| exceptionToRaise |
@@ -22326,11 +22305,9 @@ testShouldRaiseWithExceptionDoFailsWhenOtherExceptionTypeIsSignaled
 		raise: ZeroDivide 
 		withExceptionDo: [:signaledException | self error: 'should not evalaute this block' ]]
 		on: Error
-		do: [:anError | self assert: exceptionToRaise equals: anError ]
-		
-! !
+		do: [:anError | self assert: anError equals: anError ].! !
 
-!TestCaseTest methodsFor: 'exception testing tests' stamp: 'HernanWilkinson 1/19/2017 20:51:53'!
+!TestCaseTest methodsFor: 'exception testing tests' stamp: 'jmv 7/31/2023 12:30:07'!
 testShouldRaiseWithExceptionDoPassSignaledExceptionToAssertionsBlock
 
 	| exceptionToRaise |
@@ -22341,9 +22318,7 @@ testShouldRaiseWithExceptionDoPassSignaledExceptionToAssertionsBlock
 		should: [ exceptionToRaise signal ]
 		raise: exceptionToRaise class
 		withExceptionDo: [:signaledException |
-			self assert: exceptionToRaise equals: signaledException ].
-		
-! !
+			self assert: signaledException equals: exceptionToRaise ].! !
 
 !TestCaseTest methodsFor: 'exception testing tests' stamp: 'HernanWilkinson 1/19/2017 20:51:45'!
 testShouldRaiseWithExceptionDoValuesAssertionsBlockWhenExceptionIsRaised
@@ -22520,17 +22495,16 @@ testShouldNotTakeMoreThanPassesWhenClosureTakesLessThanTheLimit
 	self shouldntFail: [ self should: [] notTakeMoreThan: 1 milliSeconds ]
 		! !
 
-!TestSuiteTest methodsFor: 'assertions' stamp: 'HAW 2/10/2017 15:11:43'!
+!TestSuiteTest methodsFor: 'assertions' stamp: 'jmv 7/31/2023 12:30:31'!
 assert: expectedTestSuite hasSameTestsAs: resultTestSuite
 
 	| expectedTests resultTests |
 	
-	expectedTests _ expectedTestSuite tests.
-	resultTests _ resultTestSuite tests.
+	expectedTests := expectedTestSuite tests.
+	resultTests := resultTestSuite tests.
 	
-	self assert: expectedTests size equals: resultTests size.
-	self assert: (expectedTests allSatisfy: [:expectedTest | resultTests anySatisfy: [:resultTest | self is: expectedTest equalTo: resultTest ]])
-	! !
+	self assert: resultTests size equals: expectedTests size.
+	self assert: (expectedTests allSatisfy: [:expectedTest | resultTests anySatisfy: [:resultTest | self is: expectedTest equalTo: resultTest ]]).! !
 
 !TestSuiteTest methodsFor: 'assertions' stamp: 'jmv 3/12/2018 20:41:35'!
 assertIncludesThisTest: aTestSuite 
@@ -23049,7 +23023,7 @@ testCanNotReferenceThisContextInsideBackTick
 			self assert: (anError messageText includesSubString: 
 				(BacktickNode canNotReferencePseudoVarInsideBacktickErrorDescriptionFor: 'thisContext')) ]! !
 
-!CompilerTest methodsFor: 'tests - exceptions' stamp: 'EB 12/20/2019 20:54:26'!
+!CompilerTest methodsFor: 'tests - exceptions' stamp: 'jmv 7/31/2023 12:31:13'!
 testAddsMoreThanOneUndeclaredVariableCorrectlyInBlock
 	
 	| testClass |
@@ -23062,10 +23036,9 @@ testAddsMoreThanOneUndeclaredVariableCorrectlyInBlock
 		do: [ :anUndeclaredVariable |
 			anUndeclaredVariable resume: anUndeclaredVariable declareBlockTempAction ].
 		
-	self assert: 'griffle [ | goo var1 | var1 := 1. goo := 1. ^goo + var1 ]' equals: sourceCode
-! !
+	self assert: sourceCode equals: 'griffle [ | goo var1 | var1 := 1. goo := 1. ^goo + var1 ]'.! !
 
-!CompilerTest methodsFor: 'tests - exceptions' stamp: 'HAW 12/17/2019 17:15:47'!
+!CompilerTest methodsFor: 'tests - exceptions' stamp: 'jmv 7/31/2023 12:31:30'!
 testAddsUndeclaredVariableCorrectlyInBlockWhenNoSpaceBetweenLastOneAndPipe
 
 	| testClass |
@@ -23078,9 +23051,9 @@ testAddsUndeclaredVariableCorrectlyInBlockWhenNoSpaceBetweenLastOneAndPipe
 		do: [ :anUndeclaredVariable |
 			anUndeclaredVariable resume: anUndeclaredVariable declareBlockTempAction ].
 		
-	self assert: 'griffle [|var1 goo | var1 := 1.goo := 1.^ goo + var1]' equals: sourceCode! !
+	self assert: sourceCode equals: 'griffle [|var1 goo | var1 := 1.goo := 1.^ goo + var1]'.! !
 
-!CompilerTest methodsFor: 'tests - exceptions' stamp: 'EB 1/27/2020 00:10:26'!
+!CompilerTest methodsFor: 'tests - exceptions' stamp: 'jmv 7/31/2023 12:31:41'!
 testAddsUndeclaredVariableCorrectlyInBlockWhenTheresAnArgumentAlready
 
 	| testClass |
@@ -23093,9 +23066,9 @@ testAddsUndeclaredVariableCorrectlyInBlockWhenTheresAnArgumentAlready
 		do: [ :anUndeclaredVariable |
 			anUndeclaredVariable resume: anUndeclaredVariable declareBlockTempAction ].
 		
-	self assert: 'griffle [ :var1 | | goo | goo := 1.^ goo + var1]' equals: sourceCode! !
+	self assert: sourceCode equals: 'griffle [ :var1 | | goo | goo := 1.^ goo + var1]'.! !
 
-!CompilerTest methodsFor: 'tests - exceptions' stamp: 'EB 1/27/2020 02:46:02'!
+!CompilerTest methodsFor: 'tests - exceptions' stamp: 'jmv 7/31/2023 12:31:50'!
 testAddsUndeclaredVariableCorrectlyInBlockWhenTheresArgumentsAndTempDeclarationPipesWithNoTemps
 
 	| testClass |
@@ -23108,9 +23081,9 @@ testAddsUndeclaredVariableCorrectlyInBlockWhenTheresArgumentsAndTempDeclarationP
 		do: [ :anUndeclaredVariable |
 			anUndeclaredVariable resume: anUndeclaredVariable declareBlockTempAction ].
 		
-	self assert: 'griffle [ :var1 | | goo | goo := 1.^ goo + var1]' equals: sourceCode! !
+	self assert: sourceCode equals: 'griffle [ :var1 | | goo | goo := 1.^ goo + var1]'.! !
 
-!CompilerTest methodsFor: 'tests - exceptions' stamp: 'EB 12/20/2019 20:55:29'!
+!CompilerTest methodsFor: 'tests - exceptions' stamp: 'jmv 7/31/2023 12:31:59'!
 testAddsUndeclaredVariableCorrectlyInMethodAndInBlock
 
 	| testClass |
@@ -23123,9 +23096,9 @@ testAddsUndeclaredVariableCorrectlyInMethodAndInBlock
 		do: [ :anUndeclaredVariable |
 			anUndeclaredVariable resume: anUndeclaredVariable declareBlockTempAction ].
 		
-	self assert: 'griffle | var1 |', String newLineString, 'var1 := 1. [ | goo | goo := 1. ^goo + var1 ]' equals: sourceCode! !
+	self assert: sourceCode equals: 'griffle | var1 |', String newLineString, 'var1 := 1. [ | goo | goo := 1. ^goo + var1 ]'.! !
 
-!CompilerTest methodsFor: 'tests - exceptions' stamp: 'HAW 12/17/2019 17:15:27'!
+!CompilerTest methodsFor: 'tests - exceptions' stamp: 'jmv 7/31/2023 12:32:08'!
 testAddsUndeclaredVariableCorrectlyInMethodWhenNoSpaceBetweenLastOneAndPipe
 
 	| testClass |
@@ -23138,9 +23111,9 @@ testAddsUndeclaredVariableCorrectlyInMethodWhenNoSpaceBetweenLastOneAndPipe
 		do: [ :anUndeclaredVariable |
 			anUndeclaredVariable resume: anUndeclaredVariable declareBlockTempAction ].
 		
-	self assert: 'griffle |var1 goo | var1 := 1.goo := 1.^ goo + var1' equals: sourceCode! !
+	self assert: sourceCode equals: 'griffle |var1 goo | var1 := 1.goo := 1.^ goo + var1'.! !
 
-!CompilerTest methodsFor: 'tests - exceptions' stamp: 'HAW 12/17/2019 17:18:11'!
+!CompilerTest methodsFor: 'tests - exceptions' stamp: 'jmv 7/31/2023 12:32:20'!
 testAddsUndeclaredVariableInRightBlock
 	| testClass |
 	
@@ -23152,9 +23125,9 @@ testAddsUndeclaredVariableInRightBlock
 		do: [ :anUndeclaredVariable |
 			anUndeclaredVariable resume: anUndeclaredVariable declareBlockTempAction ].
 		
-	self assert: 'griffle [|goo| goo := 1. ^goo ]. [ | goo1 |goo1:=1.^ goo1]' equals: sourceCode! !
+	self assert: sourceCode equals: 'griffle [|goo| goo := 1. ^goo ]. [ | goo1 |goo1:=1.^ goo1]'.! !
 
-!CompilerTest methodsFor: 'tests - exceptions' stamp: 'EB 1/27/2020 00:31:46'!
+!CompilerTest methodsFor: 'tests - exceptions' stamp: 'jmv 7/31/2023 12:32:29'!
 testAddsUndeclaredVariableWithAnArgumentAndTempAlreadyInBlock
 
 	| testClass |
@@ -23167,9 +23140,9 @@ testAddsUndeclaredVariableWithAnArgumentAndTempAlreadyInBlock
 		do: [ :anUndeclaredVariable |
 			anUndeclaredVariable resume: anUndeclaredVariable declareBlockTempAction ].
 		
-	self assert: 'griffle [ :var1 | | foo goo | foo := 2. goo := 1.^ goo + var1 + foo ]' equals: sourceCode! !
+	self assert: sourceCode equals: 'griffle [ :var1 | | foo goo | foo := 2. goo := 1.^ goo + var1 + foo ]'.! !
 
-!CompilerTest methodsFor: 'tests - exceptions' stamp: 'HAW 12/17/2019 11:06:40'!
+!CompilerTest methodsFor: 'tests - exceptions' stamp: 'jmv 7/31/2023 12:32:42'!
 testDoesNotConfusesVariablesWithSameNameOfDifferentBlocksWhenRemoving
 
 	| testClass counter |
@@ -23184,9 +23157,9 @@ testDoesNotConfusesVariablesWithSameNameOfDifferentBlocksWhenRemoving
 			counter := counter + 1.
 			unusedVariable resume: counter = 1 ].
 		
-	self assert: 'griffle [  ]. [ | goo | ]' equals: sourceCode.! !
+	self assert: sourceCode equals: 'griffle [  ]. [ | goo | ]'.! !
 
-!CompilerTest methodsFor: 'tests - exceptions' stamp: 'HAW 12/17/2019 11:07:39'!
+!CompilerTest methodsFor: 'tests - exceptions' stamp: 'jmv 7/31/2023 12:32:51'!
 testDoesNotRemoveUnusedVariableIfSaidSo
 
 	| testClass |
@@ -23200,9 +23173,9 @@ testDoesNotRemoveUnusedVariableIfSaidSo
 			self assert: 'goo' equals: unusedVariable name.
 			unusedVariable resume: false ].
 		
-	self assert: 'griffle | goo |' equals: sourceCode.! !
+	self assert: sourceCode equals: 'griffle | goo |'.! !
 
-!CompilerTest methodsFor: 'tests - exceptions' stamp: 'HAW 12/17/2019 11:12:44'!
+!CompilerTest methodsFor: 'tests - exceptions' stamp: 'jmv 7/31/2023 12:33:03'!
 testKeepsVariableDefinitionWhenThereAreUsedTemporaries
 
 	| testClass |
@@ -23216,9 +23189,9 @@ testKeepsVariableDefinitionWhenThereAreUsedTemporaries
 			self assert: 'goo' equals: unusedVariable name.
 			unusedVariable resume: true ].
 		
-	self assert: 'griffle | a | a := 1. ^a' equals: sourceCode.! !
+	self assert: sourceCode equals: 'griffle | a | a := 1. ^a'.! !
 
-!CompilerTest methodsFor: 'tests - exceptions' stamp: 'HAW 12/17/2019 11:03:46'!
+!CompilerTest methodsFor: 'tests - exceptions' stamp: 'jmv 7/31/2023 12:33:11'!
 testRemovesUnusedVariablesFromBlocks
 
 	| testClass |
@@ -23232,9 +23205,9 @@ testRemovesUnusedVariablesFromBlocks
 			self assert: 'goo' equals: unusedVariable name.
 			unusedVariable resume: true ].
 		
-	self assert: 'griffle [  ]' equals: sourceCode.! !
+	self assert: sourceCode equals: 'griffle [  ]'.! !
 
-!CompilerTest methodsFor: 'tests - exceptions' stamp: 'HAW 12/17/2019 11:01:28'!
+!CompilerTest methodsFor: 'tests - exceptions' stamp: 'jmv 7/31/2023 12:33:20'!
 testRemovesVariableDefinitionWhenNoMoreUnusedTemporaries
 
 	| testClass |
@@ -23248,9 +23221,9 @@ testRemovesVariableDefinitionWhenNoMoreUnusedTemporaries
 			self assert: 'goo' equals: unusedVariable name.
 			unusedVariable resume: true ].
 		
-	self assert: 'griffle ' equals: sourceCode.! !
+	self assert: sourceCode equals: 'griffle '.! !
 
-!CompilerTest methodsFor: 'tests - exceptions' stamp: 'HAW 12/17/2019 17:13:33'!
+!CompilerTest methodsFor: 'tests - exceptions' stamp: 'jmv 7/31/2023 12:33:31'!
 testReusesBlockTempDeclarationWhenEmptyForUndeclaredVariable
 
 	| testClass |
@@ -23263,9 +23236,9 @@ testReusesBlockTempDeclarationWhenEmptyForUndeclaredVariable
 		do: [ :anUndeclaredVariable |
 			anUndeclaredVariable resume: anUndeclaredVariable declareBlockTempAction ].
 		
-	self assert: 'griffle [ | goo | goo := 1.^ goo ]' equals: sourceCode! !
+	self assert: sourceCode equals: 'griffle [ | goo | goo := 1.^ goo ]'.! !
 
-!CompilerTest methodsFor: 'tests - exceptions' stamp: 'HAW 12/17/2019 17:12:52'!
+!CompilerTest methodsFor: 'tests - exceptions' stamp: 'jmv 7/31/2023 12:33:42'!
 testReusesMethodTempDeclarationWhenEmptyForUndeclaredVariable
 
 	| testClass |
@@ -23278,9 +23251,9 @@ testReusesMethodTempDeclarationWhenEmptyForUndeclaredVariable
 		do: [ :anUndeclaredVariable |
 			anUndeclaredVariable resume: anUndeclaredVariable declareMethodTempAction ].
 		
-	self assert: 'griffle | goo | goo := 1.^ goo' equals: sourceCode! !
+	self assert: sourceCode equals: 'griffle | goo | goo := 1.^ goo'.! !
 
-!CompilerTest methodsFor: 'tests - exceptions' stamp: 'HAW 12/17/2019 17:12:34'!
+!CompilerTest methodsFor: 'tests - exceptions' stamp: 'jmv 7/31/2023 12:34:10'!
 testUndeclaredVariableIsSignaledForUndeclaredVariables
 
 	| testClass |
@@ -23291,9 +23264,9 @@ testUndeclaredVariableIsSignaledForUndeclaredVariables
 		should:  [ testClass compile: 'griffle ^ goo' notifying: self ]
 		raise: UndeclaredVariable
 		withExceptionDo: [ :anUndeclaredVariable |
-			self assert: 'goo' equals: anUndeclaredVariable name ]! !
+			self assert: anUndeclaredVariable name equals: 'goo' ].! !
 
-!CompilerTest methodsFor: 'tests - exceptions' stamp: 'HAW 12/17/2019 11:09:35'!
+!CompilerTest methodsFor: 'tests - exceptions' stamp: 'jmv 7/31/2023 12:34:37'!
 testUndefinedVariableIsSignaledForVariablesDefinedButNotInitialized
 
 	| testClass |
@@ -23304,9 +23277,9 @@ testUndefinedVariableIsSignaledForVariablesDefinedButNotInitialized
 		should: [testClass compile: 'griffle | goo | ^ goo' notifying: self]
 		raise: UndefinedVariable
 		withExceptionDo: [ :anUndefinedVariable |
-			self assert: 'goo' equals: anUndefinedVariable name ]! !
+			self assert: anUndefinedVariable name equals: 'goo' ].! !
 
-!CompilerTest methodsFor: 'tests - exceptions' stamp: 'HAW 12/17/2019 11:10:53'!
+!CompilerTest methodsFor: 'tests - exceptions' stamp: 'jmv 7/31/2023 12:34:56'!
 testUnknownSelectorIsSignalForMessagesSendNotImplemented
 
 	| testClass unknowSelector |
@@ -23320,9 +23293,9 @@ testUnknownSelectorIsSignalForMessagesSendNotImplemented
 				notifying: self]
 		raise: UnknownSelector
 		withExceptionDo: [ :anUnknowSelector |
-			self assert: unknowSelector equals: anUnknowSelector name ]! !
+			self assert: anUnknowSelector name equals: unknowSelector ].! !
 
-!CompilerTest methodsFor: 'tests - exceptions' stamp: 'HAW 12/17/2019 11:11:49'!
+!CompilerTest methodsFor: 'tests - exceptions' stamp: 'jmv 7/31/2023 12:35:16'!
 testUnusedVariableIsSignaledForUnusedVariables
 
 	| testClass |
@@ -23334,8 +23307,7 @@ testUnusedVariableIsSignaledForUnusedVariables
 		should: [testClass compile: sourceCode notifying: self]
 		raise: UnusedVariable
 		withExceptionDo: [ :unusedVariable |
-			self assert: 'goo' equals: unusedVariable name ]
-! !
+			self assert: unusedVariable name equals: 'goo' ].! !
 
 !CompilerTest methodsFor: 'private' stamp: 'HAW 12/17/2019 10:38:10'!
 createTestClass
@@ -23348,7 +23320,7 @@ unusedVariableSource
 		| goo |
 		^ nil'! !
 
-!ChangesTest methodsFor: 'assertions' stamp: 'HAW 11/1/2019 17:04:26'!
+!ChangesTest methodsFor: 'assertions' stamp: 'jmv 7/31/2023 12:35:38'!
 assertIsLogged: aString times: stringCount and: aBlock
 
 	| logContent startPosition indexOfSubstring |
@@ -23364,7 +23336,7 @@ assertIsLogged: aString times: stringCount and: aBlock
 				self assert: indexOfSubstring > 0.
 				startPosition := indexOfSubstring + 1 ].
 			indexOfSubstring := logContent findString: aString startingAt: startPosition.
-			self assert: 0 equals: indexOfSubstring].
+			self assert: indexOfSubstring equals: 0 ].
 		
 	aBlock value: logContent value: startPosition.
 	
@@ -23594,7 +23566,7 @@ test03ChangingAMethodShouldBeLogged
 		self assertIsLoggedOnce: 'prior: '.
 		self assertIsLoggedOnce: 'm1 ^ 2' ] ! !
 
-!ChangesTest methodsFor: 'log tests' stamp: 'HAW 11/1/2019 17:08:53'!
+!ChangesTest methodsFor: 'log tests' stamp: 'jmv 7/31/2023 12:36:30'!
 test04RemovingAMethodShouldBeLogged
 	" Log format expected:
 
@@ -23616,9 +23588,9 @@ test04RemovingAMethodShouldBeLogged
 				readStream nextLine.
 				methodSource := readStream nextLine.
 		
-				self assert: 'm1 ^ 1!!' equals: methodSource ]]! !
+				self assert: methodSource equals: 'm1 ^ 1!!' ]].! !
 
-!ChangesTest methodsFor: 'log tests' stamp: 'HAW 11/1/2019 17:08:56'!
+!ChangesTest methodsFor: 'log tests' stamp: 'jmv 7/31/2023 12:36:57'!
 test05RemovingAClassShouldBeLogged
 	" Log format expected:
 
@@ -23640,7 +23612,7 @@ test05RemovingAClassShouldBeLogged
 				readStream nextLine.
 				loggedDefinition := readStream upToEnd.
 				
-				self assert: definition,'!!' equals: loggedDefinition ]]! !
+				self assert: loggedDefinition equals: definition,'!!' ]].! !
 
 !ChangesTest methodsFor: 'log tests' stamp: 'MGD 3/30/2020 17:00:58'!
 test06RenamingAClassShouldBeLogged
@@ -23835,6 +23807,20 @@ classToRefactorName
 subclassToRefactorName
 	
 	^#SubclassToExtractMethod! !
+
+!ExtractMethodFinderTest methodsFor: 'assertions' stamp: 'jmv 7/31/2023 11:40:00'!
+assert: expected equals: actual
+	"This tests assumes the order of arguments used by Cuis before July 31, 2023,
+	and also used by Squeak."
+
+	super assert: actual equals: expected! !
+
+!RefactoringTest methodsFor: 'assertions' stamp: 'jmv 7/31/2023 11:39:13'!
+assert: expected equals: actual
+	"This tests assumes the order of arguments used by Cuis before July 31, 2023,
+	and also used by Squeak."
+
+	super assert: actual equals: expected! !
 
 !RefactoringTest methodsFor: 'assertions' stamp: 'HAW 6/1/2017 19:01:00'!
 assertCreation: aCreationBlock failsWith: aMessageTextCreator
