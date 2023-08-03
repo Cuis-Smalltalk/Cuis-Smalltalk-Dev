@@ -1244,4 +1244,4 @@ readFrom: fontData fromOffset: offset
 	false ifTrue: [
 		fontDescription setKernPairs: kernPairs ].! !
 
-VectorCanvas initialize!
+"VectorCanvas initialize"!
