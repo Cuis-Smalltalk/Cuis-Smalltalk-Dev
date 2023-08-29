@@ -11,7 +11,7 @@
 !requires: 'MessageChainBrowsers' 1 0 nil!
 !requires: 'MessageTracer' 1 0 nil!
 !requires: 'MethodAdvisers' 1 0 nil!
-!requires: 'SUnit XML reports' 1 0 nil!
+!requires: 'SUnitXMLreports' 1 0 nil!
 !requires: 'Graphics-Files-Additional' 1 0 nil!
 !requires: 'Printf' 1 0 nil!
 !requires: 'Sound' 1 0 nil!
