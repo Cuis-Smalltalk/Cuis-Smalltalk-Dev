@@ -2,10 +2,11 @@
 
 !Character class methodsFor: 'class initialization' stamp: 'jmv 8/22/2023 15:34:00'!
 initialize
-	"Create the table of unique Characters.
+	"
 	Character initialize
 	"
-	CharacterTable := nil.
+	Character isImmediateClass ifTrue: [
+		CharacterTable := nil ].
 	self initializeLookupTables.
 	self initializeUnicodeCodePoints.! !
 
@@ -15,7 +16,7 @@ nonImmediateNumericValue: anInteger
 
 
 	CharacterTable ifNil: [
-		CharacterTable := (0 to: 255) collect: [ :i | Character numericValue: i ]].
+		CharacterTable := (0 to: 255) collect: [ :i | Character basicNew instVarAt: 1 put: i; yourself ]].
 	^CharacterTable at: anInteger + 1! !
 
 !Character class methodsFor: 'instance creation' stamp: 'jmv 8/15/2023 18:06:55'!
