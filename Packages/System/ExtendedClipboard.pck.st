@@ -1,59 +1,59 @@
-'From Cuis 6.0 [latest update: #5623] on 6 January 2023 at 2:25:08 pm'!
+'From Cuis 6.0 [latest update: #6032] on 17 September 2023 at 7:55:58 pm'!
 'Description '!
-!provides: 'ExtendedClipboard' 1 15!
+!provides: 'ExtendedClipboard' 1 16!
 !requires: 'FFI' 1 nil nil!
 !requires: 'Graphics-Files-Additional' 1 nil nil!
-SystemOrganization addCategory: 'ExtendedClipboard'!
-SystemOrganization addCategory: 'ExtendedClipboard-Win32'!
+SystemOrganization addCategory: #ExtendedClipboard!
+SystemOrganization addCategory: #'ExtendedClipboard-Win32'!
 
 
-!classDefinition: #Win32Bitmap category: 'ExtendedClipboard-Win32'!
+!classDefinition: #Win32Bitmap category: #'ExtendedClipboard-Win32'!
 ExternalStructure subclass: #Win32Bitmap
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'ExtendedClipboard-Win32'!
-!classDefinition: 'Win32Bitmap class' category: 'ExtendedClipboard-Win32'!
+!classDefinition: 'Win32Bitmap class' category: #'ExtendedClipboard-Win32'!
 Win32Bitmap class
 	instanceVariableNames: ''!
 
-!classDefinition: #ExtendedClipboardInterface category: 'ExtendedClipboard'!
+!classDefinition: #ExtendedClipboardInterface category: #ExtendedClipboard!
 Object subclass: #ExtendedClipboardInterface
 	instanceVariableNames: 'clipboard'
 	classVariableNames: 'Current WinClipboardTypes'
 	poolDictionaries: ''
 	category: 'ExtendedClipboard'!
-!classDefinition: 'ExtendedClipboardInterface class' category: 'ExtendedClipboard'!
+!classDefinition: 'ExtendedClipboardInterface class' category: #ExtendedClipboard!
 ExtendedClipboardInterface class
 	instanceVariableNames: ''!
 
-!classDefinition: #ExtendedClipboardMacInterface category: 'ExtendedClipboard'!
+!classDefinition: #ExtendedClipboardMacInterface category: #ExtendedClipboard!
 ExtendedClipboardInterface subclass: #ExtendedClipboardMacInterface
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'ExtendedClipboard'!
-!classDefinition: 'ExtendedClipboardMacInterface class' category: 'ExtendedClipboard'!
+!classDefinition: 'ExtendedClipboardMacInterface class' category: #ExtendedClipboard!
 ExtendedClipboardMacInterface class
 	instanceVariableNames: ''!
 
-!classDefinition: #ExtendedClipboardUnixInterface category: 'ExtendedClipboard'!
+!classDefinition: #ExtendedClipboardUnixInterface category: #ExtendedClipboard!
 ExtendedClipboardInterface subclass: #ExtendedClipboardUnixInterface
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'ExtendedClipboard'!
-!classDefinition: 'ExtendedClipboardUnixInterface class' category: 'ExtendedClipboard'!
+!classDefinition: 'ExtendedClipboardUnixInterface class' category: #ExtendedClipboard!
 ExtendedClipboardUnixInterface class
 	instanceVariableNames: ''!
 
-!classDefinition: #ExtendedClipboardWinInterface category: 'ExtendedClipboard'!
+!classDefinition: #ExtendedClipboardWinInterface category: #ExtendedClipboard!
 ExtendedClipboardInterface subclass: #ExtendedClipboardWinInterface
 	instanceVariableNames: 'lastSeenSequenceNr'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'ExtendedClipboard'!
-!classDefinition: 'ExtendedClipboardWinInterface class' category: 'ExtendedClipboard'!
+!classDefinition: 'ExtendedClipboardWinInterface class' category: #ExtendedClipboard!
 ExtendedClipboardWinInterface class
 	instanceVariableNames: ''!
 
@@ -396,7 +396,7 @@ storeString: aString id: otherString
 		"
 	self addClipboardData: otherString dataFormat: 'cuis-id'! !
 
-!ExtendedClipboardMacInterface methodsFor: 'api - store' stamp: 'jmv 5/26/2022 12:08:32'!
+!ExtendedClipboardMacInterface methodsFor: 'api - store' stamp: 'bp 9/17/2023 19:44:06'!
 storeText: aText id: otherString
 	"I presume the order is: most preferred format first, least desirable format last.
 	Cuis object id is usually at the end, but don't include it if we include a streamed representation."
@@ -407,7 +407,7 @@ storeText: aText id: otherString
 
 	"RTF format
 	#rtfString might not be loaded (Package RTFExporting)"
-	[ self addClipboardData: aText rtfString dataFormat: 'public.rtf' ] on: MessageNotUnderstood do: [].
+	[ self addClipboardData: aText rtfString asUtf8Bytes dataFormat: 'public.rtf' ] on: MessageNotUnderstood do: [].
 
 	"Just the string"
 	self
