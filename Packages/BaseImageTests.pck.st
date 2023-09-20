@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #6018] on 10 September 2023 at 6:56:02 pm'!
+'From Cuis 6.0 [latest update: #6031] on 20 September 2023 at 3:52:17 pm'!
 'Description ExtractMethod for optimized messages test'!
-!provides: 'BaseImageTests' 1 366!
+!provides: 'BaseImageTests' 1 367!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Objects'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
@@ -11522,7 +11522,7 @@ test3DTerminate
 	self assert: a first & a second & a third description: 'assert #4 failed'.
 	self deny: a fourth description: 'assert #5 failed'.! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/7/2023 10:39:03'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 9/20/2023 15:49:13'!
 test4AResume
 	"Resume runnable process.
 	Test all nested unwind blocks are correctly unwound; 
@@ -11541,7 +11541,10 @@ test4AResume
 		Processor yield ].
 	"make sure p is runnable and none of the unwind blocks has finished yet"
 	self assert: p isReady description: 'assert #1 failed'.
-	self assert: (a noneSatisfy: [ :b | b ]) description: 'assert #2 failed'.
+	self deny: a first description: 'assert #2.1 failed'.
+	self deny: a second description: 'assert #2.2 failed'.
+	self deny: a third description: 'assert #2.3 failed'.
+	self deny: a fourth description: 'assert #2.4 failed'.
 	"now let the process run and make sure all unwind blocks have finished"
 	[ p isReady ] whileTrue: [ Processor yield ].
 	self assert: p isTerminated description: 'assert #3 failed'.
@@ -14054,13 +14057,13 @@ testSetEquality
 testIsCollection
 	self assert: (Dictionary new is: #Collection)! !
 
-!DictionaryTest methodsFor: 'tests' stamp: 'HAW 4/4/2019 08:18:05'!
+!DictionaryTest methodsFor: 'tests' stamp: 'jmv 9/20/2023 15:43:32'!
 testKeyNotFoundSignalTheRightMessage
 
 	self 
-		should: [ Dictionary new errorKeyNotFound ]
+		should: [ Dictionary new errorKeyNotFound: 'theKey' ]
 		raise: Error
-		withMessageText: Dictionary keyNotFoundErrorDescription ! !
+		withMessageText: 'key: ''theKey'' not found'! !
 
 !IntervalTest methodsFor: 'testing' stamp: 'jmv 12/18/2018 10:56:31'!
 testAt
@@ -18668,13 +18671,13 @@ testIncludesReturnsTrueForIncludedStrings
 	self assert: ((Trie with: 'hello') includes: 'hello')
 	! !
 
-!TrieTest methodsFor: 'testing' stamp: 'HAW 4/4/2019 08:18:55'!
+!TrieTest methodsFor: 'testing' stamp: 'jmv 9/20/2023 15:43:54'!
 testKeyNotFoundSignalTheRightMessage
 
 	self 
-		should: [ Trie new errorKeyNotFound ]
+		should: [ Trie new errorKeyNotFound: 'theKey' ]
 		raise: Error
-		withMessageText: Dictionary keyNotFoundErrorDescription ! !
+		withMessageText: 'key: ''theKey'' not found'! !
 
 !TrieTest methodsFor: 'testing' stamp: 'jmv 6/22/2011 12:30'!
 testPrefixIteration
@@ -21078,13 +21081,13 @@ testSourceCodeSignalExceptionIfClassDoesNotExist
 		raise: Error
 		withMessageText: MethodReference classDoesNotExistErrorMessage ! !
 
-!MethodReferenceTest methodsFor: 'test source code' stamp: 'HAW 10/23/2019 21:13:28'!
+!MethodReferenceTest methodsFor: 'test source code' stamp: 'jmv 9/20/2023 15:44:26'!
 testSourceCodeSignalExceptionIfMethodDoesNotExist
 
 	self 
 		should: [ (MethodReference class: self class selector: #xx) sourceCode ]
 		raise: Error
-		withMessageText: Dictionary keyNotFoundErrorDescription ! !
+		withMessageText: 'key: #xx not found'! !
 
 !MethodReferenceTest methodsFor: 'test compiled method' stamp: 'jmv 7/31/2023 12:27:03'!
 testCompiledMethodIfAbsentEvaluatesAbsentBlockWhenActualClassIsNil
