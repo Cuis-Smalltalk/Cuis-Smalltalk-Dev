@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #6035] on 8 October 2023 at 5:05:27 pm'!
+'From Cuis 6.0 [latest update: #6036] on 8 October 2023 at 5:10:44 pm'!
 'Description ExtractMethod for optimized messages test'!
-!provides: 'BaseImageTests' 1 368!
+!provides: 'BaseImageTests' 1 369!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Objects'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
@@ -11680,7 +11680,7 @@ test4CTerminate
 	self assert: a first & a second & a third description: 'assert #4 failed'.
 	self deny: a fourth description: 'assert #5 failed'.! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/7/2023 10:39:31'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 10/8/2023 17:09:57'!
 test4DResume
 	"Resume runnable process.
 	Test all nested unwind blocks are correctly unwound; 
@@ -11688,7 +11688,7 @@ test4DResume
 
 	| p a s |
 	a := Array new: 4 withAll: false.
-	s := Array with: false.
+	s := Array with: false with: false.
 	p := [
 			self aux4D: a sentinel: s
 		] newProcess.
@@ -11700,6 +11700,7 @@ test4DResume
 	"make sure p is runnable and none of the unwind blocks has finished yet"
 	self assert: p isReady description: 'assert #1 failed'.
 	self assert: (a noneSatisfy: [ :b | b ]) description: 'assert #2 failed'.
+	s at: 2 put: true.
 	"now let the process run and make sure all unwind blocks have finished"
 	[ p isReady ] whileTrue: [ Processor yield ].
 	self assert: p isTerminated description: 'assert #3 failed'.
