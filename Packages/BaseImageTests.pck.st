@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #6031] on 20 September 2023 at 3:52:17 pm'!
+'From Cuis 6.0 [latest update: #6035] on 8 October 2023 at 5:05:27 pm'!
 'Description ExtractMethod for optimized messages test'!
-!provides: 'BaseImageTests' 1 367!
+!provides: 'BaseImageTests' 1 368!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Objects'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
@@ -11705,7 +11705,7 @@ test4DResume
 	self assert: p isTerminated description: 'assert #3 failed'.
 	self assert: a first & a second & a third & a fourth description: 'assert #4 failed'.! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/7/2023 10:45:08'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 10/8/2023 17:03:54'!
 test4DTerminate
 	"Terminate runnable process.
 	Test all nested unwind blocks are correctly unwound; 
@@ -11713,7 +11713,7 @@ test4DTerminate
 
 	| p a s |
 	a := Array new: 4 withAll: false.
-	s := Array with: false.
+	s := Array with: false with: false.
 	p := [
 			self aux4D: a sentinel: s
 		] newProcess.
@@ -11725,6 +11725,7 @@ test4DTerminate
 	"make sure p is runnable and none of the unwind blocks has finished yet"
 	self assert: p isReady description: 'assert #1 failed'.
 	self assert: (a noneSatisfy: [ :b | b ]) description: 'assert #2 failed'.
+	s at: 2 put: true.
 	"now terminate the process and make sure all unwind blocks have finished"
 	p terminate.
 	self assert: p isTerminated description: 'assert #3 failed'.
@@ -12555,14 +12556,15 @@ aux4C: anArray sentinel: sentinel
 		^anArray at: 3 put: true].
 	anArray at: 4 put: true! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 4/4/2023 16:14:10'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 10/8/2023 17:04:58'!
 aux4D: anArray sentinel: sentinel
 
 	sentinel at: 1 put: true.
 	[
 		[ ] ensure: [
 			[] ensure: [
-				Processor yield.
+				[ sentinel second ] whileFalse: [
+					Processor yield ].
 				anArray at: 1 put: true].
 			anArray at: 2 put: true]
 	] ensure: [
