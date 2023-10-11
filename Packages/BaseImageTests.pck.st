@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #6036] on 8 October 2023 at 5:10:44 pm'!
+'From Cuis 6.0 [latest update: #6043] on 11 October 2023 at 2:23:22 pm'!
 'Description ExtractMethod for optimized messages test'!
-!provides: 'BaseImageTests' 1 369!
+!provides: 'BaseImageTests' 1 370!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Objects'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
@@ -20686,7 +20686,7 @@ testInverseTransformation
 	self assert: ((inverse internalizeDelta: 3@4) - (forward externalizeDelta: 3@4)) r < 0.0001.
 	self assert: ((inverse internalizeScalar: 7) - (forward externalizeScalar: 7)) abs < 0.0001.! !
 
-!LayoutMorphTest methodsFor: 'tests' stamp: 'jmv 7/20/2023 14:28:07'!
+!LayoutMorphTest methodsFor: 'tests' stamp: 'jmv 10/11/2023 13:07:20'!
 testLayout1
 	"
 	self new testLayout1
@@ -20727,7 +20727,7 @@ testLayout1
 	pane addMorph: row3 layoutSpec: (LayoutSpec fixedHeight: 60).
 	pane openInWorld: UISupervisor ui; morphExtent: 408@300.
 	(UISupervisor animatedUIOf: Processor activeProcess)
-		ifNotNil: [ :ui | ui doOneCycleNow]
+		ifNotNil: [ :ui | ui doOneCycleNowOn: ui mainCanvas ]
 		ifNil: [ | updated d |
 			updated := false.
 			d := Delay forMilliseconds: 10.
@@ -20766,7 +20766,7 @@ testLayout1
 
 	pane delete! !
 
-!LayoutMorphTest methodsFor: 'tests' stamp: 'jmv 7/20/2023 14:27:40'!
+!LayoutMorphTest methodsFor: 'tests' stamp: 'jmv 10/11/2023 13:07:34'!
 testLayout2
 	"
 	self new testLayout2
@@ -20786,7 +20786,7 @@ testLayout2
 	pane addMorph: row layoutSpec: (LayoutSpec proportionalHeight: 1.0).
 	pane openInWorld: UISupervisor ui; morphExtent: 400@271.
 	(UISupervisor animatedUIOf: Processor activeProcess)
-		ifNotNil: [ :ui | ui doOneCycleNow]
+		ifNotNil: [ :ui | ui doOneCycleNowOn: ui mainCanvas ]
 		ifNil: [ | updated d |
 			updated := false.
 			d := Delay forMilliseconds: 10.
@@ -20808,7 +20808,7 @@ testLayout2
 
 	pane delete! !
 
-!LayoutMorphTest methodsFor: 'tests' stamp: 'jmv 7/20/2023 14:27:20'!
+!LayoutMorphTest methodsFor: 'tests' stamp: 'jmv 10/11/2023 13:07:41'!
 testLayout3
 	"
 	self new testLayout3
@@ -20836,7 +20836,7 @@ testLayout3
 	pane addMorph: row layoutSpec: (LayoutSpec fixedHeight: 200).
 	pane openInWorld: UISupervisor ui; morphExtent: 400@300.
 	(UISupervisor animatedUIOf: Processor activeProcess)
-		ifNotNil: [ :ui | ui doOneCycleNow]
+		ifNotNil: [ :ui | ui doOneCycleNowOn: ui mainCanvas ]
 		ifNil: [ | updated d |
 			updated := false.
 			d := Delay forMilliseconds: 10.
@@ -20999,17 +20999,17 @@ testTransform
 	self assert: ((MorphicTranslation withTranslation: -2) transform: (4@ 2)) = (2@0).
 	self assert: ((MorphicTranslation withTranslation: -4) transform: (2@ 2)) = (-2@ -2)! !
 
-!WorldTest methodsFor: 'tests' stamp: 'jmv 6/24/2022 21:24:22'!
+!WorldTest methodsFor: 'tests' stamp: 'jmv 10/11/2023 13:08:57'!
 testDoOneCycleWorksWithDeferredQueue
         "Ensure that nested doOneCycles don't break deferred UI messages"
         | finished |
         [
 		[
-	                UISupervisor whenUIinSafeState: [ UISupervisor ui doOneCycleNow ].
+	                UISupervisor whenUIinSafeState: [ UISupervisor ui doOneCycleNowOn: UISupervisor ui mainCanvas ].
 	                UISupervisor whenUIinSafeState: nil "whatever".
-	                UISupervisor ui doOneCycleNow.
-	                finished _ true.
-	        ] valueWithin: 1 seconds onTimeout: [finished _ false ].
+			UISupervisor ui doOneCycleNowOn: UISupervisor ui mainCanvas.
+	                finished := true.
+	        ] valueWithin: 1 seconds onTimeout: [finished := false ].
 	        self assert: finished
 	] forkAt: Processor userInterruptPriority.! !
 
