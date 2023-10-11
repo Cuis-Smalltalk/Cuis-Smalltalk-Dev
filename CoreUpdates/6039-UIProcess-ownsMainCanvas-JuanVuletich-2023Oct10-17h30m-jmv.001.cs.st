@@ -527,5 +527,19 @@ Leave the line above, and replace the rest of this comment by a useful one.
 Executable statements should follow this comment, and should
 be separated by periods, with no exclamation points (!!).
 Be sure to put any further comments in double-quotes, like this one."
-UISupervisor newUIProcess!
+| activeProc guiRoot |
+(nil confirm: 'After this update,
+we need to restart the User Interface process.
+Please do World / Changes... / [Install New Updates] again.') ifFalse: [ self halt ].
+[
+	ChangeSet installing: '6039-UIProcess-ownsMainCanvas-JuanVuletich-2023Oct10-17h30m-jmv.001.cs.st' do: [].
+	cs _ ChangeSet changeSetForBaseSystem.
+	(cs name beginsWith: '6039') ifTrue: [
+		ChangeSet removeChangeSet: cs ].
+	'Installed ChangeSet: 6039-UIProcess-ownsMainCanvas-JuanVuletich-2023Oct10-17h30m-jmv.001.cs.st' print.
+	'Please do World / Changes... / [Install New Updates] again.' print.
+] forkAt: 39.
+UISupervisor newUIProcess.
+Processor activeProcess terminate.
+!
 
