@@ -29,7 +29,7 @@ basicDisplayUtf8: aByteArray fromByte: byteStartIndex toByte: byteStopIndex at: 
 				deltaXForDiacriticalMark := glyph deltaXToCenter.
 				deltaXForDiacriticalMark = 0 ifFalse: [ "Only for those who specify a delta to center."
 					deltaXForDiacriticalMark := deltaXForDiacriticalMark - deltaXForBaseGlyph ].
-				deltaYForDiacriticalMark := 			baseGlyphTopOffset = 0
+				deltaYForDiacriticalMark := baseGlyphTopOffset = 0
 					ifTrue: [0]
 					ifFalse: [ baseGlyphTopOffset - (glyph topOffset * 0.8) ]].
 		destX := (fdestX + glyph leftOffset + deltaXForDiacriticalMark) roundedHAFZ.
