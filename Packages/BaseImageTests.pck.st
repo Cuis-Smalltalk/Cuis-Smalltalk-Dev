@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #6043] on 11 October 2023 at 2:23:22 pm'!
+'From Cuis 6.0 [latest update: #6053] on 20 October 2023 at 7:24:09 pm'!
 'Description ExtractMethod for optimized messages test'!
-!provides: 'BaseImageTests' 1 370!
+!provides: 'BaseImageTests' 1 371!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Objects'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
@@ -21785,11 +21785,11 @@ test037_AutocompletesEntriesFor_ReservedNames_WithIdentifiersBegginingWithThem
 	self assertEntriesWhenBrowsing: 'm1 ni' areIdentifiersBeginningWith: 'nil'.
 	self assertEntriesWhenBrowsing: 'm1 thisContex' areIdentifiersBeginningWith: 'thisContext'.! !
 
-!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'NPM 3/18/2020 19:15:44'!
+!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'MH-NMS 10/14/2023 03:53:39'!
 test038_DoesNotAutocompleteEntriesFor_UndefinedIdentifiers
 
 	| completer |
-	completer := self createCompleterForBrowsing: 'a'.
+	completer := self createCompleterForBrowsing: 'asddas: kdkk ads'.
 	
 	completer computeEntries.
 	
@@ -21842,6 +21842,101 @@ test044_AutocompletesEntriesFor_IncompleteKeywordMessages_WithIdentifiersBeggini
 		assertEntriesWhenBrowsing: 'm1 self firstKeyword:'
 		areSelectorsOf: SmalltalkCompleterTest
 		beginningWith: 'firstKeyword:'.! !
+
+!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'MH-NMS 10/16/2023 11:57:00'!
+test045_AutocompletesEntriesFor_patternUnary_containsExactlyTwoMethods
+
+	| completer |
+	completer := self createCompleterForBrowsing: 'fl'.
+	
+	completer computeEntries.
+
+	self assert: completer entries size equals: 2.
+	self assert: completer entries includes: 'flag: aSymbol'.
+	self assert: completer entries includes: 'flash'.! !
+
+!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'MH-NMS 10/16/2023 13:35:15'!
+test046_AutocompletesEntriesFor_patternUnary_notContainsAnyMethod
+
+	| completer |
+	completer := self createCompleterForBrowsing: 'flagggg'.
+	
+	completer computeEntries.
+
+	self assert: completer entries size equals: 0! !
+
+!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'MH-NMS 10/16/2023 13:35:25'!
+test047_AutocompletesEntriesFor_patternUnary_doesNotAutocompleteMethodOfSameClass
+
+	| completer |
+	completer := self createCompleterForBrowsing: 'm1'.
+	
+	completer computeEntries.
+
+	self assert: completer entries size equals: 0! !
+
+!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'MH-NMS 10/16/2023 13:35:37'!
+test048_AutocompletesEntriesFor_patternKeyword_containsExactlyOneMethod
+
+	| completer |
+	completer := self createCompleterForBrowsing: 'flag:'.
+	
+	completer computeEntries.
+
+	self assert: completer entries size equals: 1.
+	self assert: completer entries includes: 'flag: aSymbol'
+! !
+
+!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'MH-NMS 10/14/2023 06:13:52'!
+test049_AutocompletesEntriesFor_patternKeyword_notContainsAnyMethod
+
+	| completer |
+	completer := self createCompleterForBrowsing: 'flagg:'.
+	
+	completer computeEntries.
+
+	self assert: completer entries size equals: 0! !
+
+!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'MH-NMS 10/16/2023 12:00:36'!
+test050_AutocompletesEntriesFor_patternKeyword_doesNotAutocompleteMethodOfSameClass
+
+	| completer |
+	completer := self createCompleterForBrowsing: 'm1:'.
+	
+	completer computeEntries.
+
+	self assert: completer entries size equals: 0! !
+
+!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'MH-NMS 10/16/2023 13:35:57'!
+test051_AutocompletesEntriesFor_patternBinary_containsExactlyOneMethod
+
+	| completer |
+	completer := self createCompleterForBrowsing: '->'.
+	
+	completer computeEntries.
+
+	self assert: completer entries size equals: 1.
+	self assert: completer entries includes: '-> anObject'! !
+
+!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'MH-NMS 10/16/2023 13:36:07'!
+test052_AutocompletesEntriesFor_patternBinary_notContainsAnyMethod
+
+	| completer |
+	completer := self createCompleterForBrowsing: '*'.
+	
+	completer computeEntries.
+
+	self assert: completer entries size equals: 0! !
+
+!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'MH-NMS 10/16/2023 13:36:03'!
+test053_AutocompletesEntriesFor_patternBinary_doestNotAutocompleteMethodOfSameClass
+
+	| completer |
+	completer := self createCompleterForBrowsing: '+'.
+	
+	completer computeEntries.
+
+	self assert: completer entries size equals: 0! !
 
 !SmalltalkCompleterTest methodsFor: 'test objects' stamp: 'HAW 1/27/2022 19:32:18'!
 createCompleterForBrowsing: sourceCode 
