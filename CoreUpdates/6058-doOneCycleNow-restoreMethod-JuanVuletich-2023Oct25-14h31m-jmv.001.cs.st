@@ -2,5 +2,6 @@
 
 !WorldMorph methodsFor: 'update cycle' stamp: 'jmv 10/25/2023 14:38:47'!
 doOneCycleNow
+	"Plase don't remove this method. It is used, for instance, for custom image setup shell scripts."
 	self doOneCycleNowOn: canvas! !
 
