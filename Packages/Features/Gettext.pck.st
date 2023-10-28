@@ -1,77 +1,77 @@
-'From Cuis 6.0 [latest update: #5799] on 11 May 2023 at 11:29:24 am'!
+'From Cuis 6.0 [latest update: #6058] on 27 October 2023 at 10:42:50 pm'!
 'Description '!
-!provides: 'Gettext' 1 26!
+!provides: 'Gettext' 1 28!
 !requires: 'System-Locales' 1 4 nil!
-SystemOrganization addCategory: 'Gettext'!
+SystemOrganization addCategory: #Gettext!
 
 
-!classDefinition: #GetTextExporter category: 'Gettext'!
+!classDefinition: #GetTextExporter category: #Gettext!
 Object subclass: #GetTextExporter
 	instanceVariableNames: 'stream'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Gettext'!
-!classDefinition: 'GetTextExporter class' category: 'Gettext'!
+!classDefinition: 'GetTextExporter class' category: #Gettext!
 GetTextExporter class
 	instanceVariableNames: ''!
 
-!classDefinition: #MOFile category: 'Gettext'!
+!classDefinition: #MOFile category: #Gettext!
 Object subclass: #MOFile
 	instanceVariableNames: 'localeID isLittleEndian magic revision nStrings originalTableOffset translatedTableOffset hashTableSize hashTableOffset hashTable originalStrings translatedStrings translations'
 	classVariableNames: 'Cr Lf'
 	poolDictionaries: ''
 	category: 'Gettext'!
-!classDefinition: 'MOFile class' category: 'Gettext'!
+!classDefinition: 'MOFile class' category: #Gettext!
 MOFile class
 	instanceVariableNames: ''!
 
-!classDefinition: #NaturalLanguageTranslator category: 'Gettext'!
+!classDefinition: #NaturalLanguageTranslator category: #Gettext!
 Object subclass: #NaturalLanguageTranslator
 	instanceVariableNames: 'id'
 	classVariableNames: 'Translators'
 	poolDictionaries: ''
 	category: 'Gettext'!
-!classDefinition: 'NaturalLanguageTranslator class' category: 'Gettext'!
+!classDefinition: 'NaturalLanguageTranslator class' category: #Gettext!
 NaturalLanguageTranslator class
 	instanceVariableNames: ''!
 
-!classDefinition: #GetTextTranslator category: 'Gettext'!
+!classDefinition: #GetTextTranslator category: #Gettext!
 NaturalLanguageTranslator subclass: #GetTextTranslator
 	instanceVariableNames: 'moFiles'
 	classVariableNames: 'LocaleDirsForDomain SystemDefaultLocaleDirs UserDefaultLocaleDirs'
 	poolDictionaries: ''
 	category: 'Gettext'!
-!classDefinition: 'GetTextTranslator class' category: 'Gettext'!
+!classDefinition: 'GetTextTranslator class' category: #Gettext!
 GetTextTranslator class
 	instanceVariableNames: ''!
 
-!classDefinition: #TextDomainInfo category: 'Gettext'!
+!classDefinition: #TextDomainInfo category: #Gettext!
 Object subclass: #TextDomainInfo
 	instanceVariableNames: 'categoryPrefixes categories'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Gettext'!
-!classDefinition: 'TextDomainInfo class' category: 'Gettext'!
+!classDefinition: 'TextDomainInfo class' category: #Gettext!
 TextDomainInfo class
 	instanceVariableNames: ''!
 
-!classDefinition: #TextDomainManager category: 'Gettext'!
+!classDefinition: #TextDomainManager category: #Gettext!
 Object subclass: #TextDomainManager
 	instanceVariableNames: ''
 	classVariableNames: 'ClassCategories Classes DefaultDomain DomainInfos LoneClasses'
 	poolDictionaries: ''
 	category: 'Gettext'!
-!classDefinition: 'TextDomainManager class' category: 'Gettext'!
+!classDefinition: 'TextDomainManager class' category: #Gettext!
 TextDomainManager class
 	instanceVariableNames: ''!
 
-!classDefinition: #TranslatedReceiverFinder category: 'Gettext'!
+!classDefinition: #TranslatedReceiverFinder category: #Gettext!
 Object subclass: #TranslatedReceiverFinder
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Gettext'!
-!classDefinition: 'TranslatedReceiverFinder class' category: 'Gettext'!
+!classDefinition: 'TranslatedReceiverFinder class' category: #Gettext!
 TranslatedReceiverFinder class
 	instanceVariableNames: ''!
 
@@ -500,20 +500,20 @@ loadStringPointers: strm offset: tableOffset
 	tupple at: 2 put:  lenTable.
 	^tupple! !
 
-!MOFile methodsFor: 'private' stamp: 'hlsf 12/9/2022 22:14:08'!
+!MOFile methodsFor: 'private' stamp: 'hlsf 10/27/2023 22:35:57'!
 loadStrings: strm pointers: table
 "We convert string encoding at load time.
 Currently, we do not take care to set the leadingChar for a languageEnvironment"
 	| offsetTable lenTable strings |
-	strm ascii.
-	offsetTable _  table first.
-	lenTable _ table second.
-	strings _ Array new: nStrings.
+	strm useCharacters.
+	offsetTable :=  table first.
+	lenTable := table second.
+	strings := Array new: nStrings.
 	1 to: nStrings do: [:index | |  rawStr start byteLength endPos|
-		start _ offsetTable at: index.
-		byteLength _ lenTable at: index.
-		endPos _ start + byteLength.
-		rawStr _  (String new: byteLength) writeStream.
+		start := offsetTable at: index.
+		byteLength := lenTable at: index.
+		endPos := start + byteLength.
+		rawStr :=  (String new: byteLength) writeStream.
 		strm position:  start.
 		[strm position < endPos] whileTrue: [rawStr nextPut: strm next].
 		strings at: index put: (UnicodeString fromUtf8Bytes: rawStr contents asByteArray	)].
@@ -672,7 +672,7 @@ domainUnregistered: aDomainName
 	moFiles removeKey: aDomainName ifAbsent: [^self]
 	! !
 
-!GetTextTranslator methodsFor: 'accessing' stamp: 'hlsf 3/11/2022 10:17:14'!
+!GetTextTranslator methodsFor: 'accessing' stamp: 'hlsf 10/27/2023 22:22:34'!
 loadMOFiles
 	TextDomainManager allKnownDomains 
 		do: [:domainName | 
@@ -1126,14 +1126,6 @@ senders
 	o _ OrderedCollection new.
 	m do: [ :e | self searchMethodNode: e addTo: o ].
 	^ o sort! !
-
-!TranslatedReceiverFinder class methodsFor: 'utilities' stamp: 'hlsf 3/5/2022 11:08:25'!
-browseNonLiteralReceivers
-	"TranslatedReceiverFinder browseNonLiteralReceivers"
-	Smalltalk
-		browseMessageList: (self new nonLiteralReceiversOf: #translated)  asSortedCollection
-		name: 'Non literal receivers of #translated'
-		autoSelect: 'translated'! !
 
 !CharacterSequence methodsFor: '*Gettext' stamp: 'hlsf 10/31/2022 21:54:01'!
 translated
