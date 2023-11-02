@@ -1,68 +1,68 @@
-'From Cuis 6.0 [latest update: #6055] on 25 October 2023 at 10:49:57 am'!
+'From Cuis 6.0 [latest update: #6068] on 2 November 2023 at 10:43:20 am'!
 'Description '!
-!provides: 'CuisDynamicLibraries' 1 20!
-SystemOrganization addCategory: #'CuisDynamicLibraries-Code Model'!
-SystemOrganization addCategory: #'CuisDynamicLibraries-Dynamic Libraries'!
-SystemOrganization addCategory: #CuisDynamicLibraries!
+!provides: 'DynamicCuisLibraries' 1 22!
+SystemOrganization addCategory: #'DynamicCuisLibraries-Code Model'!
+SystemOrganization addCategory: #'DynamicCuisLibraries-Dynamic Libraries'!
+SystemOrganization addCategory: #DynamicCuisLibraries!
 
 
-!classDefinition: #CodeElementSpec category: #'CuisDynamicLibraries-Code Model'!
+!classDefinition: #CodeElementSpec category: #'DynamicCuisLibraries-Code Model'!
 Object subclass: #CodeElementSpec
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
-	category: 'CuisDynamicLibraries-Code Model'!
-!classDefinition: 'CodeElementSpec class' category: #'CuisDynamicLibraries-Code Model'!
+	category: 'DynamicCuisLibraries-Code Model'!
+!classDefinition: 'CodeElementSpec class' category: #'DynamicCuisLibraries-Code Model'!
 CodeElementSpec class
 	instanceVariableNames: ''!
 
-!classDefinition: #ClassSpec category: #'CuisDynamicLibraries-Code Model'!
+!classDefinition: #ClassSpec category: #'DynamicCuisLibraries-Code Model'!
 CodeElementSpec subclass: #ClassSpec
 	instanceVariableNames: 'name superclass type instVarNames classVarNames poolDictionaryNames classInstVarNames instVarCountBeforeInstall instVarCountAfterInstall methodSpecsInstVarIndexMap'
 	classVariableNames: ''
 	poolDictionaries: ''
-	category: 'CuisDynamicLibraries-Code Model'!
-!classDefinition: 'ClassSpec class' category: #'CuisDynamicLibraries-Code Model'!
+	category: 'DynamicCuisLibraries-Code Model'!
+!classDefinition: 'ClassSpec class' category: #'DynamicCuisLibraries-Code Model'!
 ClassSpec class
 	instanceVariableNames: ''!
 
-!classDefinition: #LiteralVariableSpec category: #'CuisDynamicLibraries-Code Model'!
+!classDefinition: #LiteralVariableSpec category: #'DynamicCuisLibraries-Code Model'!
 CodeElementSpec subclass: #LiteralVariableSpec
 	instanceVariableNames: 'variableName'
 	classVariableNames: ''
 	poolDictionaries: ''
-	category: 'CuisDynamicLibraries-Code Model'!
-!classDefinition: 'LiteralVariableSpec class' category: #'CuisDynamicLibraries-Code Model'!
+	category: 'DynamicCuisLibraries-Code Model'!
+!classDefinition: 'LiteralVariableSpec class' category: #'DynamicCuisLibraries-Code Model'!
 LiteralVariableSpec class
 	instanceVariableNames: ''!
 
-!classDefinition: #MethodSpec category: #'CuisDynamicLibraries-Code Model'!
+!classDefinition: #MethodSpec category: #'DynamicCuisLibraries-Code Model'!
 CodeElementSpec subclass: #MethodSpec
 	instanceVariableNames: 'classSpec isClassSide selector header literals pragmas bytecodes'
 	classVariableNames: ''
 	poolDictionaries: ''
-	category: 'CuisDynamicLibraries-Code Model'!
-!classDefinition: 'MethodSpec class' category: #'CuisDynamicLibraries-Code Model'!
+	category: 'DynamicCuisLibraries-Code Model'!
+!classDefinition: 'MethodSpec class' category: #'DynamicCuisLibraries-Code Model'!
 MethodSpec class
 	instanceVariableNames: ''!
 
-!classDefinition: #DynamicCuisLibrary category: #'CuisDynamicLibraries-Dynamic Libraries'!
+!classDefinition: #DynamicCuisLibrary category: #'DynamicCuisLibraries-Dynamic Libraries'!
 Object subclass: #DynamicCuisLibrary
 	instanceVariableNames: 'classSpecs methodSpecs'
 	classVariableNames: ''
 	poolDictionaries: ''
-	category: 'CuisDynamicLibraries-Dynamic Libraries'!
-!classDefinition: 'DynamicCuisLibrary class' category: #'CuisDynamicLibraries-Dynamic Libraries'!
+	category: 'DynamicCuisLibraries-Dynamic Libraries'!
+!classDefinition: 'DynamicCuisLibrary class' category: #'DynamicCuisLibraries-Dynamic Libraries'!
 DynamicCuisLibrary class
 	instanceVariableNames: ''!
 
-!classDefinition: #BasicFileServices category: #CuisDynamicLibraries!
+!classDefinition: #BasicFileServices category: #DynamicCuisLibraries!
 Object subclass: #BasicFileServices
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
-	category: 'CuisDynamicLibraries'!
-!classDefinition: 'BasicFileServices class' category: #CuisDynamicLibraries!
+	category: 'DynamicCuisLibraries'!
+!classDefinition: 'BasicFileServices class' category: #DynamicCuisLibraries!
 BasicFileServices class
 	instanceVariableNames: ''!
 
@@ -967,9 +967,11 @@ remapMethodSpecInstVarAccesses: doIt
 				ifFalse: [ ^false ]]].
 	^true! !
 
-!DynamicCuisLibrary methodsFor: 'file io' stamp: 'jmv 9/4/2023 12:15:21'!
+!DynamicCuisLibrary methodsFor: 'file io' stamp: 'jmv 11/2/2023 10:39:15'!
 writeOnFile: fileEntry
 	"
+	Feature require: 'TestDynamicCuisLibraries'.
+	""
 	| sourceForLibrary lib |
 	sourceForLibrary := NoclashABC_DclExample03.
 	lib := DynamicCuisLibrary

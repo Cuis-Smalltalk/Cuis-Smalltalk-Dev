@@ -1,316 +1,316 @@
 'From Cuis 6.0 [latest update: #6055] on 25 October 2023 at 10:50:00 am'!
 'Description '!
-!provides: 'TestCuisDynamicLibraries' 1 13!
-!requires: 'CuisDynamicLibraries' 1 16 nil!
-SystemOrganization addCategory: #TestCuisDynamicLibraries!
-SystemOrganization addCategory: #'TestCuisDynamicLibraries-Tests'!
-SystemOrganization addCategory: #'TestCuisDynamicLibraries-SubjectClassesBasic'!
-SystemOrganization addCategory: #'TestCuisDynamicLibraries-SubjectClasses01'!
-SystemOrganization addCategory: #'TestCuisDynamicLibraries-SubjectClasses02'!
-SystemOrganization addCategory: #'TestCuisDynamicLibraries-SubjectClasses03'!
-SystemOrganization addCategory: #'TestCuisDynamicLibraries-SubjectClasses04'!
-SystemOrganization addCategory: #'TestCuisDynamicLibraries-SubjectClasses05'!
-SystemOrganization addCategory: #'TestCuisDynamicLibraries-SubjectClasses06'!
-SystemOrganization addCategory: #'TestCuisDynamicLibraries-Transient'!
+!provides: 'TestDynamicCuisLibraries' 1 15!
+!requires: 'DynamicCuisLibraries' 1 22 nil!
+SystemOrganization addCategory: #TestDynamicCuisLibraries!
+SystemOrganization addCategory: #'TestDynamicCuisLibraries-Tests'!
+SystemOrganization addCategory: #'TestDynamicCuisLibraries-SubjectClassesBasic'!
+SystemOrganization addCategory: #'TestDynamicCuisLibraries-SubjectClasses01'!
+SystemOrganization addCategory: #'TestDynamicCuisLibraries-SubjectClasses02'!
+SystemOrganization addCategory: #'TestDynamicCuisLibraries-SubjectClasses03'!
+SystemOrganization addCategory: #'TestDynamicCuisLibraries-SubjectClasses04'!
+SystemOrganization addCategory: #'TestDynamicCuisLibraries-SubjectClasses05'!
+SystemOrganization addCategory: #'TestDynamicCuisLibraries-SubjectClasses06'!
+SystemOrganization addCategory: #'TestDynamicCuisLibraries-Transient'!
 
 
-!classDefinition: #Noclash_Float32ArrayCodeModelExperiment category: #'TestCuisDynamicLibraries-SubjectClassesBasic'!
+!classDefinition: #Noclash_Float32ArrayCodeModelExperiment category: #'TestDynamicCuisLibraries-SubjectClassesBasic'!
 FloatArray variableWordSubclass: #Noclash_Float32ArrayCodeModelExperiment
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
-	category: 'TestCuisDynamicLibraries-SubjectClassesBasic'!
-!classDefinition: 'Noclash_Float32ArrayCodeModelExperiment class' category: #'TestCuisDynamicLibraries-SubjectClassesBasic'!
+	category: 'TestDynamicCuisLibraries-SubjectClassesBasic'!
+!classDefinition: 'Noclash_Float32ArrayCodeModelExperiment class' category: #'TestDynamicCuisLibraries-SubjectClassesBasic'!
 Noclash_Float32ArrayCodeModelExperiment class
 	instanceVariableNames: ''!
 
-!classDefinition: #CodeModelTest1 category: #'TestCuisDynamicLibraries-Tests'!
+!classDefinition: #CodeModelTest1 category: #'TestDynamicCuisLibraries-Tests'!
 TestCase subclass: #CodeModelTest1
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
-	category: 'TestCuisDynamicLibraries-Tests'!
-!classDefinition: 'CodeModelTest1 class' category: #'TestCuisDynamicLibraries-Tests'!
+	category: 'TestDynamicCuisLibraries-Tests'!
+!classDefinition: 'CodeModelTest1 class' category: #'TestDynamicCuisLibraries-Tests'!
 CodeModelTest1 class
 	instanceVariableNames: ''!
 
-!classDefinition: #DclBasicTest category: #'TestCuisDynamicLibraries-Tests'!
+!classDefinition: #DclBasicTest category: #'TestDynamicCuisLibraries-Tests'!
 TestCase subclass: #DclBasicTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
-	category: 'TestCuisDynamicLibraries-Tests'!
-!classDefinition: 'DclBasicTest class' category: #'TestCuisDynamicLibraries-Tests'!
+	category: 'TestDynamicCuisLibraries-Tests'!
+!classDefinition: 'DclBasicTest class' category: #'TestDynamicCuisLibraries-Tests'!
 DclBasicTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #DclTest category: #'TestCuisDynamicLibraries-Tests'!
+!classDefinition: #DclTest category: #'TestDynamicCuisLibraries-Tests'!
 TestCase subclass: #DclTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
-	category: 'TestCuisDynamicLibraries-Tests'!
-!classDefinition: 'DclTest class' category: #'TestCuisDynamicLibraries-Tests'!
+	category: 'TestDynamicCuisLibraries-Tests'!
+!classDefinition: 'DclTest class' category: #'TestDynamicCuisLibraries-Tests'!
 DclTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #Noclash_CodeModelExperiment category: #'TestCuisDynamicLibraries-SubjectClassesBasic'!
+!classDefinition: #Noclash_CodeModelExperiment category: #'TestDynamicCuisLibraries-SubjectClassesBasic'!
 Object subclass: #Noclash_CodeModelExperiment
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
-	category: 'TestCuisDynamicLibraries-SubjectClassesBasic'!
-!classDefinition: 'Noclash_CodeModelExperiment class' category: #'TestCuisDynamicLibraries-SubjectClassesBasic'!
+	category: 'TestDynamicCuisLibraries-SubjectClassesBasic'!
+!classDefinition: 'Noclash_CodeModelExperiment class' category: #'TestDynamicCuisLibraries-SubjectClassesBasic'!
 Noclash_CodeModelExperiment class
 	instanceVariableNames: ''!
 
-!classDefinition: #Noclash_PointCodeModelExperiment category: #'TestCuisDynamicLibraries-SubjectClassesBasic'!
+!classDefinition: #Noclash_PointCodeModelExperiment category: #'TestDynamicCuisLibraries-SubjectClassesBasic'!
 Object subclass: #Noclash_PointCodeModelExperiment
 	instanceVariableNames: 'x y'
 	classVariableNames: ''
 	poolDictionaries: ''
-	category: 'TestCuisDynamicLibraries-SubjectClassesBasic'!
-!classDefinition: 'Noclash_PointCodeModelExperiment class' category: #'TestCuisDynamicLibraries-SubjectClassesBasic'!
+	category: 'TestDynamicCuisLibraries-SubjectClassesBasic'!
+!classDefinition: 'Noclash_PointCodeModelExperiment class' category: #'TestDynamicCuisLibraries-SubjectClassesBasic'!
 Noclash_PointCodeModelExperiment class
 	instanceVariableNames: ''!
 
-!classDefinition: #Noclash_DclExample01 category: #'TestCuisDynamicLibraries-SubjectClasses01'!
+!classDefinition: #Noclash_DclExample01 category: #'TestDynamicCuisLibraries-SubjectClasses01'!
 Object subclass: #Noclash_DclExample01
 	instanceVariableNames: 'a b c'
 	classVariableNames: 'A B'
 	poolDictionaries: ''
-	category: 'TestCuisDynamicLibraries-SubjectClasses01'!
-!classDefinition: 'Noclash_DclExample01 class' category: #'TestCuisDynamicLibraries-SubjectClasses01'!
+	category: 'TestDynamicCuisLibraries-SubjectClasses01'!
+!classDefinition: 'Noclash_DclExample01 class' category: #'TestDynamicCuisLibraries-SubjectClasses01'!
 Noclash_DclExample01 class
 	instanceVariableNames: 'aa bb'!
 
-!classDefinition: #NoclashExisting_DclExample02 category: #'TestCuisDynamicLibraries-SubjectClasses02'!
+!classDefinition: #NoclashExisting_DclExample02 category: #'TestDynamicCuisLibraries-SubjectClasses02'!
 Object subclass: #NoclashExisting_DclExample02
 	instanceVariableNames: 'a b c'
 	classVariableNames: ''
 	poolDictionaries: ''
-	category: 'TestCuisDynamicLibraries-SubjectClasses02'!
-!classDefinition: 'NoclashExisting_DclExample02 class' category: #'TestCuisDynamicLibraries-SubjectClasses02'!
+	category: 'TestDynamicCuisLibraries-SubjectClasses02'!
+!classDefinition: 'NoclashExisting_DclExample02 class' category: #'TestDynamicCuisLibraries-SubjectClasses02'!
 NoclashExisting_DclExample02 class
 	instanceVariableNames: 'aa bb'!
 
-!classDefinition: #Noclash_DclExample02 category: #'TestCuisDynamicLibraries-SubjectClasses02'!
+!classDefinition: #Noclash_DclExample02 category: #'TestDynamicCuisLibraries-SubjectClasses02'!
 Object subclass: #Noclash_DclExample02
 	instanceVariableNames: 'a b c'
 	classVariableNames: ''
 	poolDictionaries: ''
-	category: 'TestCuisDynamicLibraries-SubjectClasses02'!
-!classDefinition: 'Noclash_DclExample02 class' category: #'TestCuisDynamicLibraries-SubjectClasses02'!
+	category: 'TestDynamicCuisLibraries-SubjectClasses02'!
+!classDefinition: 'Noclash_DclExample02 class' category: #'TestDynamicCuisLibraries-SubjectClasses02'!
 Noclash_DclExample02 class
 	instanceVariableNames: 'aa bb'!
 
-!classDefinition: #NoclashABCnoClassIvars_DclExample03 category: #'TestCuisDynamicLibraries-SubjectClasses03'!
+!classDefinition: #NoclashABCnoClassIvars_DclExample03 category: #'TestDynamicCuisLibraries-SubjectClasses03'!
 Object subclass: #NoclashABCnoClassIvars_DclExample03
 	instanceVariableNames: 'a b c'
 	classVariableNames: ''
 	poolDictionaries: ''
-	category: 'TestCuisDynamicLibraries-SubjectClasses03'!
-!classDefinition: 'NoclashABCnoClassIvars_DclExample03 class' category: #'TestCuisDynamicLibraries-SubjectClasses03'!
+	category: 'TestDynamicCuisLibraries-SubjectClasses03'!
+!classDefinition: 'NoclashABCnoClassIvars_DclExample03 class' category: #'TestDynamicCuisLibraries-SubjectClasses03'!
 NoclashABCnoClassIvars_DclExample03 class
 	instanceVariableNames: 'zz xx'!
 
-!classDefinition: #NoclashABC_DclExample03 category: #'TestCuisDynamicLibraries-SubjectClasses03'!
+!classDefinition: #NoclashABC_DclExample03 category: #'TestDynamicCuisLibraries-SubjectClasses03'!
 Object subclass: #NoclashABC_DclExample03
 	instanceVariableNames: 'a b c'
 	classVariableNames: ''
 	poolDictionaries: ''
-	category: 'TestCuisDynamicLibraries-SubjectClasses03'!
-!classDefinition: 'NoclashABC_DclExample03 class' category: #'TestCuisDynamicLibraries-SubjectClasses03'!
+	category: 'TestDynamicCuisLibraries-SubjectClasses03'!
+!classDefinition: 'NoclashABC_DclExample03 class' category: #'TestDynamicCuisLibraries-SubjectClasses03'!
 NoclashABC_DclExample03 class
 	instanceVariableNames: ''!
 
-!classDefinition: #NoclashABCD_DclExample03Subclass category: #'TestCuisDynamicLibraries-SubjectClasses03'!
+!classDefinition: #NoclashABCD_DclExample03Subclass category: #'TestDynamicCuisLibraries-SubjectClasses03'!
 NoclashABC_DclExample03 subclass: #NoclashABCD_DclExample03Subclass
 	instanceVariableNames: 'd'
 	classVariableNames: ''
 	poolDictionaries: ''
-	category: 'TestCuisDynamicLibraries-SubjectClasses03'!
-!classDefinition: 'NoclashABCD_DclExample03Subclass class' category: #'TestCuisDynamicLibraries-SubjectClasses03'!
+	category: 'TestDynamicCuisLibraries-SubjectClasses03'!
+!classDefinition: 'NoclashABCD_DclExample03Subclass class' category: #'TestDynamicCuisLibraries-SubjectClasses03'!
 NoclashABCD_DclExample03Subclass class
 	instanceVariableNames: ''!
 
-!classDefinition: #NoclashAB_DclExample03 category: #'TestCuisDynamicLibraries-SubjectClasses03'!
+!classDefinition: #NoclashAB_DclExample03 category: #'TestDynamicCuisLibraries-SubjectClasses03'!
 Object subclass: #NoclashAB_DclExample03
 	instanceVariableNames: 'a b'
 	classVariableNames: ''
 	poolDictionaries: ''
-	category: 'TestCuisDynamicLibraries-SubjectClasses03'!
-!classDefinition: 'NoclashAB_DclExample03 class' category: #'TestCuisDynamicLibraries-SubjectClasses03'!
+	category: 'TestDynamicCuisLibraries-SubjectClasses03'!
+!classDefinition: 'NoclashAB_DclExample03 class' category: #'TestDynamicCuisLibraries-SubjectClasses03'!
 NoclashAB_DclExample03 class
 	instanceVariableNames: ''!
 
-!classDefinition: #NoclashABD_DclExample03Subclass category: #'TestCuisDynamicLibraries-SubjectClasses03'!
+!classDefinition: #NoclashABD_DclExample03Subclass category: #'TestDynamicCuisLibraries-SubjectClasses03'!
 NoclashAB_DclExample03 subclass: #NoclashABD_DclExample03Subclass
 	instanceVariableNames: 'd'
 	classVariableNames: ''
 	poolDictionaries: ''
-	category: 'TestCuisDynamicLibraries-SubjectClasses03'!
-!classDefinition: 'NoclashABD_DclExample03Subclass class' category: #'TestCuisDynamicLibraries-SubjectClasses03'!
+	category: 'TestDynamicCuisLibraries-SubjectClasses03'!
+!classDefinition: 'NoclashABD_DclExample03Subclass class' category: #'TestDynamicCuisLibraries-SubjectClasses03'!
 NoclashABD_DclExample03Subclass class
 	instanceVariableNames: ''!
 
-!classDefinition: #NoclashACB_DclExample03 category: #'TestCuisDynamicLibraries-SubjectClasses03'!
+!classDefinition: #NoclashACB_DclExample03 category: #'TestDynamicCuisLibraries-SubjectClasses03'!
 Object subclass: #NoclashACB_DclExample03
 	instanceVariableNames: 'a c b'
 	classVariableNames: ''
 	poolDictionaries: ''
-	category: 'TestCuisDynamicLibraries-SubjectClasses03'!
-!classDefinition: 'NoclashACB_DclExample03 class' category: #'TestCuisDynamicLibraries-SubjectClasses03'!
+	category: 'TestDynamicCuisLibraries-SubjectClasses03'!
+!classDefinition: 'NoclashACB_DclExample03 class' category: #'TestDynamicCuisLibraries-SubjectClasses03'!
 NoclashACB_DclExample03 class
 	instanceVariableNames: ''!
 
-!classDefinition: #NoclashABC_DclExample04 category: #'TestCuisDynamicLibraries-SubjectClasses04'!
+!classDefinition: #NoclashABC_DclExample04 category: #'TestDynamicCuisLibraries-SubjectClasses04'!
 Object subclass: #NoclashABC_DclExample04
 	instanceVariableNames: 'a b c'
 	classVariableNames: ''
 	poolDictionaries: ''
-	category: 'TestCuisDynamicLibraries-SubjectClasses04'!
-!classDefinition: 'NoclashABC_DclExample04 class' category: #'TestCuisDynamicLibraries-SubjectClasses04'!
+	category: 'TestDynamicCuisLibraries-SubjectClasses04'!
+!classDefinition: 'NoclashABC_DclExample04 class' category: #'TestDynamicCuisLibraries-SubjectClasses04'!
 NoclashABC_DclExample04 class
 	instanceVariableNames: ''!
 
-!classDefinition: #NoclashAC_DclExample04 category: #'TestCuisDynamicLibraries-SubjectClasses04'!
+!classDefinition: #NoclashAC_DclExample04 category: #'TestDynamicCuisLibraries-SubjectClasses04'!
 Object subclass: #NoclashAC_DclExample04
 	instanceVariableNames: 'a c'
 	classVariableNames: ''
 	poolDictionaries: ''
-	category: 'TestCuisDynamicLibraries-SubjectClasses04'!
-!classDefinition: 'NoclashAC_DclExample04 class' category: #'TestCuisDynamicLibraries-SubjectClasses04'!
+	category: 'TestDynamicCuisLibraries-SubjectClasses04'!
+!classDefinition: 'NoclashAC_DclExample04 class' category: #'TestDynamicCuisLibraries-SubjectClasses04'!
 NoclashAC_DclExample04 class
 	instanceVariableNames: ''!
 
-!classDefinition: #NoclashB_DclExample04Sub category: #'TestCuisDynamicLibraries-SubjectClasses04'!
+!classDefinition: #NoclashB_DclExample04Sub category: #'TestDynamicCuisLibraries-SubjectClasses04'!
 NoclashAC_DclExample04 subclass: #NoclashB_DclExample04Sub
 	instanceVariableNames: 'b'
 	classVariableNames: ''
 	poolDictionaries: ''
-	category: 'TestCuisDynamicLibraries-SubjectClasses04'!
-!classDefinition: 'NoclashB_DclExample04Sub class' category: #'TestCuisDynamicLibraries-SubjectClasses04'!
+	category: 'TestDynamicCuisLibraries-SubjectClasses04'!
+!classDefinition: 'NoclashB_DclExample04Sub class' category: #'TestDynamicCuisLibraries-SubjectClasses04'!
 NoclashB_DclExample04Sub class
 	instanceVariableNames: ''!
 
-!classDefinition: #NoclashByte_DclExample05 category: #'TestCuisDynamicLibraries-SubjectClasses05'!
+!classDefinition: #NoclashByte_DclExample05 category: #'TestDynamicCuisLibraries-SubjectClasses05'!
 Object variableByteSubclass: #NoclashByte_DclExample05
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
-	category: 'TestCuisDynamicLibraries-SubjectClasses05'!
-!classDefinition: 'NoclashByte_DclExample05 class' category: #'TestCuisDynamicLibraries-SubjectClasses05'!
+	category: 'TestDynamicCuisLibraries-SubjectClasses05'!
+!classDefinition: 'NoclashByte_DclExample05 class' category: #'TestDynamicCuisLibraries-SubjectClasses05'!
 NoclashByte_DclExample05 class
 	instanceVariableNames: ''!
 
-!classDefinition: #NoclashDoubleByte_DclExample05 category: #'TestCuisDynamicLibraries-SubjectClasses05'!
+!classDefinition: #NoclashDoubleByte_DclExample05 category: #'TestDynamicCuisLibraries-SubjectClasses05'!
 Object variableDoubleByteSubclass: #NoclashDoubleByte_DclExample05
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
-	category: 'TestCuisDynamicLibraries-SubjectClasses05'!
-!classDefinition: 'NoclashDoubleByte_DclExample05 class' category: #'TestCuisDynamicLibraries-SubjectClasses05'!
+	category: 'TestDynamicCuisLibraries-SubjectClasses05'!
+!classDefinition: 'NoclashDoubleByte_DclExample05 class' category: #'TestDynamicCuisLibraries-SubjectClasses05'!
 NoclashDoubleByte_DclExample05 class
 	instanceVariableNames: ''!
 
-!classDefinition: #NoclashDoubleWord_DclExample05 category: #'TestCuisDynamicLibraries-SubjectClasses05'!
+!classDefinition: #NoclashDoubleWord_DclExample05 category: #'TestDynamicCuisLibraries-SubjectClasses05'!
 Object variableDoubleWordSubclass: #NoclashDoubleWord_DclExample05
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
-	category: 'TestCuisDynamicLibraries-SubjectClasses05'!
-!classDefinition: 'NoclashDoubleWord_DclExample05 class' category: #'TestCuisDynamicLibraries-SubjectClasses05'!
+	category: 'TestDynamicCuisLibraries-SubjectClasses05'!
+!classDefinition: 'NoclashDoubleWord_DclExample05 class' category: #'TestDynamicCuisLibraries-SubjectClasses05'!
 NoclashDoubleWord_DclExample05 class
 	instanceVariableNames: ''!
 
-!classDefinition: #NoclashIndexed_DclExample05 category: #'TestCuisDynamicLibraries-SubjectClasses05'!
+!classDefinition: #NoclashIndexed_DclExample05 category: #'TestDynamicCuisLibraries-SubjectClasses05'!
 Object variableSubclass: #NoclashIndexed_DclExample05
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
-	category: 'TestCuisDynamicLibraries-SubjectClasses05'!
-!classDefinition: 'NoclashIndexed_DclExample05 class' category: #'TestCuisDynamicLibraries-SubjectClasses05'!
+	category: 'TestDynamicCuisLibraries-SubjectClasses05'!
+!classDefinition: 'NoclashIndexed_DclExample05 class' category: #'TestDynamicCuisLibraries-SubjectClasses05'!
 NoclashIndexed_DclExample05 class
 	instanceVariableNames: ''!
 
-!classDefinition: #NoclashObject_DclExample05 category: #'TestCuisDynamicLibraries-SubjectClasses05'!
+!classDefinition: #NoclashObject_DclExample05 category: #'TestDynamicCuisLibraries-SubjectClasses05'!
 Object subclass: #NoclashObject_DclExample05
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
-	category: 'TestCuisDynamicLibraries-SubjectClasses05'!
-!classDefinition: 'NoclashObject_DclExample05 class' category: #'TestCuisDynamicLibraries-SubjectClasses05'!
+	category: 'TestDynamicCuisLibraries-SubjectClasses05'!
+!classDefinition: 'NoclashObject_DclExample05 class' category: #'TestDynamicCuisLibraries-SubjectClasses05'!
 NoclashObject_DclExample05 class
 	instanceVariableNames: ''!
 
-!classDefinition: #NoclashWeak_DclExample05 category: #'TestCuisDynamicLibraries-SubjectClasses05'!
+!classDefinition: #NoclashWeak_DclExample05 category: #'TestDynamicCuisLibraries-SubjectClasses05'!
 Object weakSubclass: #NoclashWeak_DclExample05
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
-	category: 'TestCuisDynamicLibraries-SubjectClasses05'!
-!classDefinition: 'NoclashWeak_DclExample05 class' category: #'TestCuisDynamicLibraries-SubjectClasses05'!
+	category: 'TestDynamicCuisLibraries-SubjectClasses05'!
+!classDefinition: 'NoclashWeak_DclExample05 class' category: #'TestDynamicCuisLibraries-SubjectClasses05'!
 NoclashWeak_DclExample05 class
 	instanceVariableNames: ''!
 
-!classDefinition: #NoclashWord_DclExample05 category: #'TestCuisDynamicLibraries-SubjectClasses05'!
+!classDefinition: #NoclashWord_DclExample05 category: #'TestDynamicCuisLibraries-SubjectClasses05'!
 Object variableWordSubclass: #NoclashWord_DclExample05
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
-	category: 'TestCuisDynamicLibraries-SubjectClasses05'!
-!classDefinition: 'NoclashWord_DclExample05 class' category: #'TestCuisDynamicLibraries-SubjectClasses05'!
+	category: 'TestDynamicCuisLibraries-SubjectClasses05'!
+!classDefinition: 'NoclashWord_DclExample05 class' category: #'TestDynamicCuisLibraries-SubjectClasses05'!
 NoclashWord_DclExample05 class
 	instanceVariableNames: ''!
 
-!classDefinition: #Noclash_DclExample05Super category: #'TestCuisDynamicLibraries-SubjectClasses05'!
+!classDefinition: #Noclash_DclExample05Super category: #'TestDynamicCuisLibraries-SubjectClasses05'!
 Object subclass: #Noclash_DclExample05Super
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
-	category: 'TestCuisDynamicLibraries-SubjectClasses05'!
-!classDefinition: 'Noclash_DclExample05Super class' category: #'TestCuisDynamicLibraries-SubjectClasses05'!
+	category: 'TestDynamicCuisLibraries-SubjectClasses05'!
+!classDefinition: 'Noclash_DclExample05Super class' category: #'TestDynamicCuisLibraries-SubjectClasses05'!
 Noclash_DclExample05Super class
 	instanceVariableNames: ''!
 
-!classDefinition: #NoclashSub_DclExample05 category: #'TestCuisDynamicLibraries-SubjectClasses05'!
+!classDefinition: #NoclashSub_DclExample05 category: #'TestDynamicCuisLibraries-SubjectClasses05'!
 Noclash_DclExample05Super subclass: #NoclashSub_DclExample05
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
-	category: 'TestCuisDynamicLibraries-SubjectClasses05'!
-!classDefinition: 'NoclashSub_DclExample05 class' category: #'TestCuisDynamicLibraries-SubjectClasses05'!
+	category: 'TestDynamicCuisLibraries-SubjectClasses05'!
+!classDefinition: 'NoclashSub_DclExample05 class' category: #'TestDynamicCuisLibraries-SubjectClasses05'!
 NoclashSub_DclExample05 class
 	instanceVariableNames: ''!
 
-!classDefinition: #NoclashABCclasVarZZ_DclExample06 category: #'TestCuisDynamicLibraries-SubjectClasses06'!
+!classDefinition: #NoclashABCclasVarZZ_DclExample06 category: #'TestDynamicCuisLibraries-SubjectClasses06'!
 Object subclass: #NoclashABCclasVarZZ_DclExample06
 	instanceVariableNames: 'a b c'
 	classVariableNames: 'ZZ'
 	poolDictionaries: ''
-	category: 'TestCuisDynamicLibraries-SubjectClasses06'!
-!classDefinition: 'NoclashABCclasVarZZ_DclExample06 class' category: #'TestCuisDynamicLibraries-SubjectClasses06'!
+	category: 'TestDynamicCuisLibraries-SubjectClasses06'!
+!classDefinition: 'NoclashABCclasVarZZ_DclExample06 class' category: #'TestDynamicCuisLibraries-SubjectClasses06'!
 NoclashABCclasVarZZ_DclExample06 class
 	instanceVariableNames: ''!
 
-!classDefinition: #NoclashABC_DclExample06 category: #'TestCuisDynamicLibraries-SubjectClasses06'!
+!classDefinition: #NoclashABC_DclExample06 category: #'TestDynamicCuisLibraries-SubjectClasses06'!
 Object subclass: #NoclashABC_DclExample06
 	instanceVariableNames: 'a b c'
 	classVariableNames: ''
 	poolDictionaries: ''
-	category: 'TestCuisDynamicLibraries-SubjectClasses06'!
-!classDefinition: 'NoclashABC_DclExample06 class' category: #'TestCuisDynamicLibraries-SubjectClasses06'!
+	category: 'TestDynamicCuisLibraries-SubjectClasses06'!
+!classDefinition: 'NoclashABC_DclExample06 class' category: #'TestDynamicCuisLibraries-SubjectClasses06'!
 NoclashABC_DclExample06 class
 	instanceVariableNames: ''!
 
-!classDefinition: #NoclashProtoObject_DclExample05 category: #'TestCuisDynamicLibraries-SubjectClasses05'!
+!classDefinition: #NoclashProtoObject_DclExample05 category: #'TestDynamicCuisLibraries-SubjectClasses05'!
 ProtoObject subclass: #NoclashProtoObject_DclExample05
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
-	category: 'TestCuisDynamicLibraries-SubjectClasses05'!
-!classDefinition: 'NoclashProtoObject_DclExample05 class' category: #'TestCuisDynamicLibraries-SubjectClasses05'!
+	category: 'TestDynamicCuisLibraries-SubjectClasses05'!
+!classDefinition: 'NoclashProtoObject_DclExample05 class' category: #'TestDynamicCuisLibraries-SubjectClasses05'!
 NoclashProtoObject_DclExample05 class
 	instanceVariableNames: ''!
 
@@ -1506,7 +1506,7 @@ test06MissingGlobal
 		instanceVariableNames: ''
 		classVariableNames: ''
 		poolDictionaries: ''
-		category: 'TestCuisDynamicLibraries-Transient'.
+		category: 'TestDynamicCuisLibraries-Transient'.
 	(Smalltalk at: #DclExample06) compile: 'a1 ^DclExample06Global'.
 	Smalltalk at: #LogCompilerUse put: rsg.
 	self assert: (Smalltalk at: #DclExample06) new a1 = 123.4.	
@@ -1932,7 +1932,7 @@ maxVal
 someLiteral
 	^#(1 31 #aSymbol #otherSymbol)! !
 
-!InstructionStream class methodsFor: '*TestCuisDynamicLibraries-monitorCompilerUsage' stamp: 'jmv 8/8/2023 10:59:25'!
+!InstructionStream class methodsFor: '*TestDynamicCuisLibraries-monitorCompilerUsage' stamp: 'jmv 8/8/2023 10:59:25'!
 new
 	LogCompilerUse == true ifTrue: [
 		LogCompilerUse := false.
@@ -1941,7 +1941,7 @@ new
 		thisContext printStack: 10 ].
 	^super new.! !
 
-!ContextPart class methodsFor: '*TestCuisDynamicLibraries-monitorCompilerUsage' stamp: 'jmv 8/8/2023 10:59:32'!
+!ContextPart class methodsFor: '*TestDynamicCuisLibraries-monitorCompilerUsage' stamp: 'jmv 8/8/2023 10:59:32'!
 newForMethod: aMethod
 	"This is the only method for creating new contexts, other than primitive cloning.
 	Any other attempts, such as inherited methods like shallowCopy, should be
@@ -1957,7 +1957,7 @@ newForMethod: aMethod
 		thisContext printStack: 10 ].
 	^ super basicNew: aMethod frameSize! !
 
-!UnhandledError methodsFor: '*TestCuisDynamicLibraries-monitorCompilerUsage' stamp: 'jmv 8/8/2023 10:55:48'!
+!UnhandledError methodsFor: '*TestDynamicCuisLibraries-monitorCompilerUsage' stamp: 'jmv 8/8/2023 10:55:48'!
 devDefaultAction
 
 	LogCompilerUse := false.
@@ -1965,7 +1965,7 @@ devDefaultAction
 		debugContext: exception signalerContext
 		title: exception description.! !
 
-!Compiler class methodsFor: '*TestCuisDynamicLibraries-monitorCompilerUsage' stamp: 'jmv 8/8/2023 10:59:40'!
+!Compiler class methodsFor: '*TestDynamicCuisLibraries-monitorCompilerUsage' stamp: 'jmv 8/8/2023 10:59:40'!
 new
 	LogCompilerUse == true ifTrue: [
 		LogCompilerUse := false.
@@ -1974,7 +1974,7 @@ new
 		thisContext printStack: 15 ].
 	^ super new parser: self parserClass new.! !
 
-!Scanner class methodsFor: '*TestCuisDynamicLibraries-monitorCompilerUsage' stamp: 'jmv 8/8/2023 10:59:43'!
+!Scanner class methodsFor: '*TestDynamicCuisLibraries-monitorCompilerUsage' stamp: 'jmv 8/8/2023 10:59:43'!
 new
 	LogCompilerUse == true ifTrue: [
 		LogCompilerUse := false.
@@ -1983,7 +1983,7 @@ new
 		thisContext printStack: 10 ].
 	^self basicNew initScanner! !
 
-!ParseNode class methodsFor: '*TestCuisDynamicLibraries-monitorCompilerUsage' stamp: 'jmv 8/8/2023 10:59:45'!
+!ParseNode class methodsFor: '*TestDynamicCuisLibraries-monitorCompilerUsage' stamp: 'jmv 8/8/2023 10:59:45'!
 new
 	LogCompilerUse == true ifTrue: [
 		LogCompilerUse := false.
@@ -1995,7 +1995,7 @@ new
 		VariableNode initClassCachedState ].
 	^super new! !
 
-!MessageNode class methodsFor: '*TestCuisDynamicLibraries-monitorCompilerUsage' stamp: 'jmv 8/8/2023 10:59:48'!
+!MessageNode class methodsFor: '*TestDynamicCuisLibraries-monitorCompilerUsage' stamp: 'jmv 8/8/2023 10:59:48'!
 new
 	LogCompilerUse == true ifTrue: [
 		LogCompilerUse := false.

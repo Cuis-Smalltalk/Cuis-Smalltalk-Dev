@@ -1,7 +1,7 @@
-'From Cuis 6.0 [latest update: #6050] on 19 October 2023 at 3:10:12 pm'!
+'From Cuis 6.0 [latest update: #6068] on 2 November 2023 at 10:43:17 am'!
 'Description '!
-!provides: 'Bootstrap' 1 31!
-!requires: 'CuisDynamicLibraries' 1 20 nil!
+!provides: 'Bootstrap' 1 33!
+!requires: 'DynamicCuisLibraries' 1 22 nil!
 SystemOrganization addCategory: #'Bootstrap-Smalltalk Image Builders'!
 SystemOrganization addCategory: #'Bootstrap-Foreign Objects'!
 
@@ -451,7 +451,7 @@ initialize
 	globalVariables  := OrderedCollection new.
 	symbols := OrderedCollection new.! !
 
-!ImageBuilder methodsFor: 'image building' stamp: 'jmv 9/20/2023 16:35:26'!
+!ImageBuilder methodsFor: 'image building' stamp: 'jmv 11/2/2023 10:35:03'!
 addBasicMethodsAndReferencedClasses
 
 	"Classes referenced from methods below, but of which no methods are included."
@@ -517,6 +517,7 @@ addBasicMethodsAndReferencedClasses
 		Behavior>>#basicNew:.
 		Behavior>>#isMeta.
 		Behavior >> #identityHash.
+		Behavior >> #primitiveIdentityHash.
 		ClassDescription>>#printNameOn:.
 		ClassDescription>>#theNonMetaClass.
 		Class>>#printNameOn:.
@@ -608,6 +609,7 @@ addBasicMethodsAndReferencedClasses
 		SequenceableCollection class>>#streamContents:estimatedSize:.
 		SequenceableCollection >> #do:.
 		SequenceableCollection>>#copyReplaceFrom:to:with:.
+		SequenceableCollection >> #,.
 		SequenceableCollection>>#asByteArray.
 		SequenceableCollection>>#replaceFrom:to:with:.
 		SequenceableCollection>>#writeStream.
@@ -1073,7 +1075,7 @@ addExample05SymbolExperimentsMethods
 	} do: [ :compiledMethod |
 		self addExistingMethod: compiledMethod ].! !
 
-!ImageBuilder methodsFor: 'image building examples' stamp: 'jmv 9/21/2023 12:45:35'!
+!ImageBuilder methodsFor: 'image building examples' stamp: 'jmv 11/2/2023 10:31:20'!
 addExample06LoadDynamicLibraryMethods
 
 	"Classes referenced from below, but of which no methods are included."
@@ -1134,6 +1136,7 @@ addExample06LoadDynamicLibraryMethods
 		Behavior>>#compiledMethodAt:.
 		Behavior>>#bindingOf:.
 		Behavior>>#classBindingOf:.
+		Behavior>>#someInstance.
 
 		ClassDescription>>#instVarNames.
 		ClassDescription>>#organization:.
@@ -1156,6 +1159,7 @@ addExample06LoadDynamicLibraryMethods
 		Metaclass>>#new.
 		Metaclass>>#bindingOf:.
 		Metaclass>>#localBindingOf:.
+		Metaclass>>#allClassInstVarNames.
 
 		CompiledMethod class>>#createMethod:trailer:header:.
 		CompiledMethod class>>#newMethod:header:.
@@ -1359,7 +1363,7 @@ addExample06LoadDynamicLibraryMethods
 	} do: [ :compiledMethod |
 		self addExistingMethod: compiledMethod ].! !
 
-!ImageBuilder methodsFor: 'image building examples' stamp: 'jmv 9/21/2023 12:45:44'!
+!ImageBuilder methodsFor: 'image building examples' stamp: 'jmv 11/2/2023 10:32:28'!
 addExample07LoadDynamicLibraryMethods
 
 	"Classes referenced from below, but of which no methods are included."
@@ -1422,6 +1426,7 @@ addExample07LoadDynamicLibraryMethods
 		Behavior>>#compiledMethodAt:.
 		Behavior>>#bindingOf:.
 		Behavior>>#classBindingOf:.
+		Behavior>>#someInstance.
 
 		ClassDescription>>#instVarNames.
 		ClassDescription>>#organization:.
@@ -1444,6 +1449,7 @@ addExample07LoadDynamicLibraryMethods
 		Metaclass>>#new.
 		Metaclass>>#bindingOf:.
 		Metaclass>>#localBindingOf:.
+		Metaclass>>#allClassInstVarNames.
 
 		CompiledMethod class>>#createMethod:trailer:header:.
 		CompiledMethod class>>#newMethod:header:.
@@ -1830,7 +1836,7 @@ buildExample05SymbolExperiments
 	"Creating the start process requires CompiledMethods to be there"
 	self addStartProcess.! !
 
-!ImageBuilder methodsFor: 'image building examples' stamp: 'jmv 9/19/2023 12:28:50'!
+!ImageBuilder methodsFor: 'image building examples' stamp: 'jmv 11/2/2023 10:39:48'!
 buildExample06LoadDynamicLibrary
 	"
 	Spur64ImageBuilder new
@@ -1842,7 +1848,17 @@ buildExample06LoadDynamicLibrary
 		buildExample06LoadDynamicLibrary;
 		saveImageTo: 'Example06LoadDynamicLibrary32.image' asFileEntry.
 	"
-
+	"
+	Feature require: 'TestDynamicCuisLibraries'.
+	""
+	| sourceForLibrary lib |
+	sourceForLibrary := NoclashABC_DclExample03.
+	lib := DynamicCuisLibrary
+		withClasses: { sourceForLibrary }
+		classSelectors: { sourceForLibrary class selectors }
+		instanceSelectors: { sourceForLibrary selectors }.
+	lib writeOnFile: 'DclExample03.dcl' asFileEntry
+	"
 	| startUpMethodForeignObject |
 
 	"Any image will include these. They are mandatory."
