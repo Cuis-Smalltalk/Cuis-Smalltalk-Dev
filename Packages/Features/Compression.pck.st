@@ -1,257 +1,257 @@
-'From Cuis 6.0 [latest update: #5795] on 7 May 2023 at 7:05:19 pm'!
+'From Cuis 6.0 [latest update: #6079] on 21 November 2023 at 4:56:15 pm'!
 'Description '!
-!provides: 'Compression' 1 33!
-SystemOrganization addCategory: 'Compression-System'!
-SystemOrganization addCategory: 'Compression-Archives'!
+!provides: 'Compression' 1 34!
+SystemOrganization addCategory: #'Compression-System'!
+SystemOrganization addCategory: #'Compression-Archives'!
 
 
-!classDefinition: #GZipConstants category: 'Compression-System'!
+!classDefinition: #GZipConstants category: #'Compression-System'!
 SharedPool subclass: #GZipConstants
 	instanceVariableNames: ''
 	classVariableNames: 'GZipAsciiFlag GZipCommentFlag GZipContinueFlag GZipDeflated GZipEncryptFlag GZipExtraField GZipMagic GZipNameFlag GZipReservedFlags'
 	poolDictionaries: ''
 	category: 'Compression-System'!
-!classDefinition: 'GZipConstants class' category: 'Compression-System'!
+!classDefinition: 'GZipConstants class' category: #'Compression-System'!
 GZipConstants class
 	instanceVariableNames: ''!
 
-!classDefinition: #ZipConstants category: 'Compression-System'!
+!classDefinition: #ZipConstants category: #'Compression-System'!
 SharedPool subclass: #ZipConstants
 	instanceVariableNames: ''
 	classVariableNames: 'BaseDistance BaseLength BitLengthOrder DistanceCodes DynamicBlock EndBlock ExtraBitLengthBits ExtraDistanceBits ExtraLengthBits FixedBlock FixedDistanceTree FixedLiteralTree HashBits HashMask HashShift MatchLengthCodes MaxBitLengthBits MaxBitLengthCodes MaxBits MaxDistCodes MaxDistance MaxLengthCodes MaxLiteralCodes MaxMatch MinMatch NumLiterals Repeat11To138 Repeat3To10 Repeat3To6 StoredBlock WindowMask WindowSize'
 	poolDictionaries: ''
 	category: 'Compression-System'!
-!classDefinition: 'ZipConstants class' category: 'Compression-System'!
+!classDefinition: 'ZipConstants class' category: #'Compression-System'!
 ZipConstants class
 	instanceVariableNames: ''!
 
-!classDefinition: #ZipFileConstants category: 'Compression-Archives'!
+!classDefinition: #ZipFileConstants category: #'Compression-Archives'!
 SharedPool subclass: #ZipFileConstants
 	instanceVariableNames: ''
 	classVariableNames: 'CentralDirectoryFileHeaderSignature CompressionDeflated CompressionLevelDefault CompressionLevelNone CompressionStored DataDescriptorLength DefaultDirectoryPermissions DefaultFilePermissions DeflatingCompressionFast DeflatingCompressionMaximum DeflatingCompressionNormal DeflatingCompressionSuperFast DirectoryAttrib EndOfCentralDirectorySignature FaMsdos FaUnix FileAttrib IfaBinaryFile IfaTextFile LocalFileHeaderSignature'
 	poolDictionaries: ''
 	category: 'Compression-Archives'!
-!classDefinition: 'ZipFileConstants class' category: 'Compression-Archives'!
+!classDefinition: 'ZipFileConstants class' category: #'Compression-Archives'!
 ZipFileConstants class
 	instanceVariableNames: ''!
 
-!classDefinition: #InflateStream category: 'Compression-System'!
+!classDefinition: #InflateStream category: #'Compression-System'!
 ReadStream subclass: #InflateStream
 	instanceVariableNames: 'state bitBuf bitPos source sourcePos sourceLimit litTable distTable sourceStream crc'
 	classVariableNames: 'BlockProceedBit BlockTypes FixedDistCodes FixedLitCodes MaxBits StateNewBlock StateNoMoreData'
 	poolDictionaries: ''
 	category: 'Compression-System'!
-!classDefinition: 'InflateStream class' category: 'Compression-System'!
+!classDefinition: 'InflateStream class' category: #'Compression-System'!
 InflateStream class
 	instanceVariableNames: ''!
 
-!classDefinition: #FastInflateStream category: 'Compression-System'!
+!classDefinition: #FastInflateStream category: #'Compression-System'!
 InflateStream subclass: #FastInflateStream
 	instanceVariableNames: ''
 	classVariableNames: 'DistanceMap FixedDistTable FixedLitTable LiteralLengthMap'
 	poolDictionaries: ''
 	category: 'Compression-System'!
-!classDefinition: 'FastInflateStream class' category: 'Compression-System'!
+!classDefinition: 'FastInflateStream class' category: #'Compression-System'!
 FastInflateStream class
 	instanceVariableNames: ''!
 
-!classDefinition: #GZipReadStream category: 'Compression-System'!
+!classDefinition: #GZipReadStream category: #'Compression-System'!
 FastInflateStream subclass: #GZipReadStream
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: 'GZipConstants'
 	category: 'Compression-System'!
-!classDefinition: 'GZipReadStream class' category: 'Compression-System'!
+!classDefinition: 'GZipReadStream class' category: #'Compression-System'!
 GZipReadStream class
 	instanceVariableNames: ''!
 
-!classDefinition: #ZLibReadStream category: 'Compression-System'!
+!classDefinition: #ZLibReadStream category: #'Compression-System'!
 FastInflateStream subclass: #ZLibReadStream
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Compression-System'!
-!classDefinition: 'ZLibReadStream class' category: 'Compression-System'!
+!classDefinition: 'ZLibReadStream class' category: #'Compression-System'!
 ZLibReadStream class
 	instanceVariableNames: ''!
 
-!classDefinition: #ZipReadStream category: 'Compression-System'!
+!classDefinition: #ZipReadStream category: #'Compression-System'!
 FastInflateStream subclass: #ZipReadStream
 	instanceVariableNames: 'expectedCrc'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Compression-System'!
-!classDefinition: 'ZipReadStream class' category: 'Compression-System'!
+!classDefinition: 'ZipReadStream class' category: #'Compression-System'!
 ZipReadStream class
 	instanceVariableNames: ''!
 
-!classDefinition: #DeflateStream category: 'Compression-System'!
+!classDefinition: #DeflateStream category: #'Compression-System'!
 WriteStream subclass: #DeflateStream
 	instanceVariableNames: 'hashHead hashTail hashValue blockPosition blockStart'
 	classVariableNames: ''
 	poolDictionaries: 'ZipConstants'
 	category: 'Compression-System'!
-!classDefinition: 'DeflateStream class' category: 'Compression-System'!
+!classDefinition: 'DeflateStream class' category: #'Compression-System'!
 DeflateStream class
 	instanceVariableNames: ''!
 
-!classDefinition: #ZipWriteStream category: 'Compression-System'!
+!classDefinition: #ZipWriteStream category: #'Compression-System'!
 DeflateStream subclass: #ZipWriteStream
 	instanceVariableNames: 'literals distances literalFreq distanceFreq litCount matchCount encoder crc crcPosition bytesWritten'
 	classVariableNames: 'CrcTable VerboseLevel'
 	poolDictionaries: 'ZipConstants'
 	category: 'Compression-System'!
-!classDefinition: 'ZipWriteStream class' category: 'Compression-System'!
+!classDefinition: 'ZipWriteStream class' category: #'Compression-System'!
 ZipWriteStream class
 	instanceVariableNames: ''!
 
-!classDefinition: #GZipWriteStream category: 'Compression-System'!
+!classDefinition: #GZipWriteStream category: #'Compression-System'!
 ZipWriteStream subclass: #GZipWriteStream
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: 'GZipConstants'
 	category: 'Compression-System'!
-!classDefinition: 'GZipWriteStream class' category: 'Compression-System'!
+!classDefinition: 'GZipWriteStream class' category: #'Compression-System'!
 GZipWriteStream class
 	instanceVariableNames: ''!
 
-!classDefinition: #ZLibWriteStream category: 'Compression-System'!
+!classDefinition: #ZLibWriteStream category: #'Compression-System'!
 ZipWriteStream subclass: #ZLibWriteStream
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Compression-System'!
-!classDefinition: 'ZLibWriteStream class' category: 'Compression-System'!
+!classDefinition: 'ZLibWriteStream class' category: #'Compression-System'!
 ZLibWriteStream class
 	instanceVariableNames: ''!
 
-!classDefinition: #ZipEncoder category: 'Compression-System'!
+!classDefinition: #ZipEncoder category: #'Compression-System'!
 WriteStream subclass: #ZipEncoder
 	instanceVariableNames: 'bitBuffer bitPosition encodedStream'
 	classVariableNames: ''
 	poolDictionaries: 'ZipConstants'
 	category: 'Compression-System'!
-!classDefinition: 'ZipEncoder class' category: 'Compression-System'!
+!classDefinition: 'ZipEncoder class' category: #'Compression-System'!
 ZipEncoder class
 	instanceVariableNames: ''!
 
-!classDefinition: #CRCError category: 'Compression-System'!
+!classDefinition: #CRCError category: #'Compression-System'!
 Error subclass: #CRCError
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Compression-System'!
-!classDefinition: 'CRCError class' category: 'Compression-System'!
+!classDefinition: 'CRCError class' category: #'Compression-System'!
 CRCError class
 	instanceVariableNames: ''!
 
-!classDefinition: #GZipSurrogateStream category: 'Compression-System'!
+!classDefinition: #GZipSurrogateStream category: #'Compression-System'!
 Object subclass: #GZipSurrogateStream
 	instanceVariableNames: 'gZipStream zippedFileStream bufferStream positionThusFar'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Compression-System'!
-!classDefinition: 'GZipSurrogateStream class' category: 'Compression-System'!
+!classDefinition: 'GZipSurrogateStream class' category: #'Compression-System'!
 GZipSurrogateStream class
 	instanceVariableNames: ''!
 
-!classDefinition: #ZipEncoderNode category: 'Compression-System'!
+!classDefinition: #ZipEncoderNode category: #'Compression-System'!
 Object subclass: #ZipEncoderNode
 	instanceVariableNames: 'value frequency height bitLength code parent left right'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Compression-System'!
-!classDefinition: 'ZipEncoderNode class' category: 'Compression-System'!
+!classDefinition: 'ZipEncoderNode class' category: #'Compression-System'!
 ZipEncoderNode class
 	instanceVariableNames: ''!
 
-!classDefinition: #ZipEncoderTree category: 'Compression-System'!
+!classDefinition: #ZipEncoderTree category: #'Compression-System'!
 Object subclass: #ZipEncoderTree
 	instanceVariableNames: 'bitLengths codes maxCode'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Compression-System'!
-!classDefinition: 'ZipEncoderTree class' category: 'Compression-System'!
+!classDefinition: 'ZipEncoderTree class' category: #'Compression-System'!
 ZipEncoderTree class
 	instanceVariableNames: ''!
 
-!classDefinition: #Archive category: 'Compression-Archives'!
+!classDefinition: #Archive category: #'Compression-Archives'!
 Object subclass: #Archive
 	instanceVariableNames: 'members'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Compression-Archives'!
-!classDefinition: 'Archive class' category: 'Compression-Archives'!
+!classDefinition: 'Archive class' category: #'Compression-Archives'!
 Archive class
 	instanceVariableNames: ''!
 
-!classDefinition: #ZipArchive category: 'Compression-Archives'!
+!classDefinition: #ZipArchive category: #'Compression-Archives'!
 Archive subclass: #ZipArchive
 	instanceVariableNames: 'centralDirectorySize centralDirectoryOffsetWRTStartingDiskNumber zipFileComment writeCentralDirectoryOffset writeEOCDOffset'
 	classVariableNames: ''
 	poolDictionaries: 'ZipFileConstants'
 	category: 'Compression-Archives'!
-!classDefinition: 'ZipArchive class' category: 'Compression-Archives'!
+!classDefinition: 'ZipArchive class' category: #'Compression-Archives'!
 ZipArchive class
 	instanceVariableNames: ''!
 
-!classDefinition: #ArchiveMember category: 'Compression-Archives'!
+!classDefinition: #ArchiveMember category: #'Compression-Archives'!
 Object subclass: #ArchiveMember
 	instanceVariableNames: 'fileName isCorrupt'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Compression-Archives'!
-!classDefinition: 'ArchiveMember class' category: 'Compression-Archives'!
+!classDefinition: 'ArchiveMember class' category: #'Compression-Archives'!
 ArchiveMember class
 	instanceVariableNames: ''!
 
-!classDefinition: #ZipArchiveMember category: 'Compression-Archives'!
+!classDefinition: #ZipArchiveMember category: #'Compression-Archives'!
 ArchiveMember subclass: #ZipArchiveMember
 	instanceVariableNames: 'lastModFileDateTime fileAttributeFormat versionMadeBy versionNeededToExtract bitFlag compressionMethod desiredCompressionMethod desiredCompressionLevel internalFileAttributes externalFileAttributes cdExtraField localExtraField fileComment crc32 compressedSize uncompressedSize writeLocalHeaderRelativeOffset readDataRemaining'
 	classVariableNames: ''
 	poolDictionaries: 'ZipFileConstants'
 	category: 'Compression-Archives'!
-!classDefinition: 'ZipArchiveMember class' category: 'Compression-Archives'!
+!classDefinition: 'ZipArchiveMember class' category: #'Compression-Archives'!
 ZipArchiveMember class
 	instanceVariableNames: ''!
 
-!classDefinition: #ZipFileMember category: 'Compression-Archives'!
+!classDefinition: #ZipFileMember category: #'Compression-Archives'!
 ZipArchiveMember subclass: #ZipFileMember
 	instanceVariableNames: 'externalFileName stream localHeaderRelativeOffset dataOffset'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Compression-Archives'!
-!classDefinition: 'ZipFileMember class' category: 'Compression-Archives'!
+!classDefinition: 'ZipFileMember class' category: #'Compression-Archives'!
 ZipFileMember class
 	instanceVariableNames: ''!
 
-!classDefinition: #ZipDirectoryMember category: 'Compression-Archives'!
+!classDefinition: #ZipDirectoryMember category: #'Compression-Archives'!
 ZipFileMember subclass: #ZipDirectoryMember
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Compression-Archives'!
-!classDefinition: 'ZipDirectoryMember class' category: 'Compression-Archives'!
+!classDefinition: 'ZipDirectoryMember class' category: #'Compression-Archives'!
 ZipDirectoryMember class
 	instanceVariableNames: ''!
 
-!classDefinition: #ZipNewFileMember category: 'Compression-Archives'!
+!classDefinition: #ZipNewFileMember category: #'Compression-Archives'!
 ZipArchiveMember subclass: #ZipNewFileMember
 	instanceVariableNames: 'externalFileName stream'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Compression-Archives'!
-!classDefinition: 'ZipNewFileMember class' category: 'Compression-Archives'!
+!classDefinition: 'ZipNewFileMember class' category: #'Compression-Archives'!
 ZipNewFileMember class
 	instanceVariableNames: ''!
 
-!classDefinition: #ZipStringMember category: 'Compression-Archives'!
+!classDefinition: #ZipStringMember category: #'Compression-Archives'!
 ZipArchiveMember subclass: #ZipStringMember
 	instanceVariableNames: 'contents stream'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Compression-Archives'!
-!classDefinition: 'ZipStringMember class' category: 'Compression-Archives'!
+!classDefinition: 'ZipStringMember class' category: #'Compression-Archives'!
 ZipStringMember class
 	instanceVariableNames: ''!
 
@@ -3878,23 +3878,24 @@ unixFileAttributes: perms
 	externalFileAttributes _ self mapPermissionsFromUnix: newPerms.
 	^oldPerms.! !
 
-!ZipArchiveMember methodsFor: 'private-writing' stamp: 'ar 2/28/2001 14:01'!
+!ZipArchiveMember methodsFor: 'private-writing' stamp: 'jmv 11/21/2023 16:54:51'!
 compressDataTo: aStream
 	"Copy my deflated data to the given stream."
 	| encoder startPos endPos |
 
-	encoder _ ZipWriteStream on: aStream.
-	startPos _ aStream position.
+	encoder := ZipWriteStream on: aStream.
+	startPos := aStream position.
 
 	[ readDataRemaining > 0 ] whileTrue: [ | data |
-		data _ self readRawChunk: (4096 min: readDataRemaining).
-		encoder nextPutAll: data asByteArray.
-		readDataRemaining _ readDataRemaining - data size.
+		data := self readRawChunk: (4096 min: readDataRemaining).
+		data := data asByteArray.
+		encoder nextPutAll: data.
+		readDataRemaining := readDataRemaining - data size.
 	].
 	encoder finish. "not close!!"
-	endPos _ aStream position.
-	compressedSize _ endPos - startPos.
-	crc32 _ encoder crc.
+	endPos := aStream position.
+	compressedSize := endPos - startPos.
+	crc32 := encoder crc.
 ! !
 
 !ZipArchiveMember methodsFor: 'private-writing' stamp: 'nk 2/23/2001 11:04'!
