@@ -1,4 +1,4 @@
-'From Cuis 6.0 [latest update: #6072] on 21 November 2023 at 8:20:10 am'!
+'From Cuis 6.0 [latest update: #6072] on 22 November 2023 at 5:46:55 pm'!
 
 !Debugger methodsFor: 'private' stamp: 'jmv 11/21/2023 08:17:07'!
 fixReceiverInspector
@@ -20,10 +20,10 @@ fixReceiverInspector
 	receiverInspector object: currentReceiver! !
 
 
-!WorldMorph methodsFor: 'interaction loop' stamp: 'jmv 11/21/2023 08:06:14'!
+!WorldMorph methodsFor: 'interaction loop' stamp: 'jmv 11/22/2023 17:45:45'!
 mainLoop
 
-	| morphicCanvas d |
+	| morphicCanvas morphicDamageRecorder delay |
         "If this platform supports deferred updates
 		- Set Display to deferred update mode
 		- Use a Canvas on Display
@@ -33,10 +33,12 @@ mainLoop
 	morphicCanvas := (Display deferUpdates: true)
 		ifNotNil: [ Display getMainCanvas ]
 		ifNil: [ (Form extent: extent depth: Display depth) getCanvas ].
+	morphicCanvas ownerProcess: Processor activeProcess.
 	morphicCanvas world: self.
+	morphicDamageRecorder := DamageRecorder new.
 	"Set this as the main canvas"
 	canvas := morphicCanvas.
-	damageRecorder := DamageRecorder new.
+	damageRecorder := morphicDamageRecorder.
 	damageRecorder recordInvalidRect: self morphLocalBounds for: nil.
 	self restoreDisplay.
 
@@ -45,14 +47,15 @@ mainLoop
 	lastCycleTime := Time localMillisecondClock.
 	lastAlarmTime := 0.
 
-	d := Delay forMilliseconds: 50.
+	delay := Delay forMilliseconds: 50.
 	[
 		self displayWorldOn: morphicCanvas.
 		[
 			"Set the main canvas on every iteration.
 			This is needed if UI processes are interrupted, resumed, etc."
 			canvas := morphicCanvas.
-			self doOneCycleOn: morphicCanvas delay: d.
+			damageRecorder := morphicDamageRecorder.
+			self doOneCycleOn: morphicCanvas delay: delay.
 			UISupervisor isUIProcessRunning ]
 				whileTrue: []
 	] on: Error, Halt do: [ :ex |
@@ -70,7 +73,7 @@ mainLoop
 			ifNil: [ ex pass ]
 	].! !
 
-!methodRemoval: WorldMorph #handleFatalDrawingError: stamp: 'jmv 11/21/2023 08:19:42'!
+!methodRemoval: WorldMorph #handleFatalDrawingError: stamp: 'jmv 11/22/2023 17:46:00'!
 WorldMorph removeSelector: #handleFatalDrawingError:!
 "Postscript:
 Leave the line above, and replace the rest of this comment by a useful one.
