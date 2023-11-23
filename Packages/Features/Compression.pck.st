@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #6092] on 23 November 2023 at 7:23:16 pm'!
+'From Cuis 6.0 [latest update: #6092] on 23 November 2023 at 7:35:16 pm'!
 'Description '!
-!provides: 'Compression' 1 37!
+!provides: 'Compression' 1 38!
 SystemOrganization addCategory: #'Compression-System'!
 SystemOrganization addCategory: #'Compression-Archives'!
 
@@ -4767,7 +4767,7 @@ compressFile
 			self close ].
 	 ^zipped! !
 
-!UniFileStream methodsFor: '*Compression' stamp: 'jmv 11/23/2023 17:02:25'!
+!UniFileStream methodsFor: '*Compression' stamp: 'jmv 11/23/2023 19:35:02'!
 viewGZipContents
 	"View the contents of a gzipped file"
 
@@ -4775,7 +4775,7 @@ viewGZipContents
 	self binary.
 	stringContents := self contentsOfEntireFile.
 	stringContents := (GZipReadStream on: stringContents) upToEnd.
-	stringContents := UnicodeString fromUtf8Bytes: stringContents withCuisLineEndings.
+	stringContents := (UnicodeString fromUtf8Bytes: stringContents) withCuisLineEndings.
 
 	Workspace new
 		contents: stringContents;
