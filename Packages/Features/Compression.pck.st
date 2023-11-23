@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #6079] on 21 November 2023 at 4:56:15 pm'!
+'From Cuis 6.0 [latest update: #6091] on 23 November 2023 at 10:51:21 am'!
 'Description '!
-!provides: 'Compression' 1 34!
+!provides: 'Compression' 1 35!
 SystemOrganization addCategory: #'Compression-System'!
 SystemOrganization addCategory: #'Compression-Archives'!
 
@@ -3597,19 +3597,19 @@ fileReaderServicesForFileEntry: aFileEntry suffix: suffix
 		} ].
 	^#()! !
 
-!ZipArchive class methodsFor: 'file format' stamp: 'pb 5/25/2016 01:51'!
+!ZipArchive class methodsFor: 'file format' stamp: 'jmv 11/23/2023 10:45:19'!
 isZipArchive: aStreamOrFileName
 	"Answer whether the given filename represents a valid zip file."
 
 	| stream eocdPosition |
-	stream _ (aStreamOrFileName is: #Stream)
+	stream := (aStreamOrFileName is: #Stream)
 		ifTrue: [aStreamOrFileName]
 		ifFalse: [aStreamOrFileName asFileEntry readStream ].
 	stream ifNil: [^ false].
 	"nil happens sometimes somehow"
-	stream size < 22 ifTrue: [^ false].
 	stream binary.
-	eocdPosition _ self findEndOfCentralDirectoryFrom: stream.
+	stream size < 22 ifTrue: [^ false].
+	eocdPosition := self findEndOfCentralDirectoryFrom: stream.
 	stream ~= aStreamOrFileName ifTrue: [stream close].
 	^ eocdPosition > 0! !
 
@@ -4501,16 +4501,17 @@ newNamed: aFileName
 close
 	stream ifNotNil:[stream close].! !
 
-!ZipNewFileMember methodsFor: 'initialization' stamp: 'pb 5/25/2016 01:51'!
+!ZipNewFileMember methodsFor: 'initialization' stamp: 'jmv 11/23/2023 10:45:56'!
 from: aFileName
 	| entry |
-	compressionMethod _ CompressionStored.
+	compressionMethod := CompressionStored.
 	"Now get the size, attributes, and timestamps, and see if the file exists"
-	stream _ aFileName asFileEntry readStream.
-	self localFileName: (externalFileName _ stream name).
-	entry _ aFileName asFileEntry.
-	compressedSize _ uncompressedSize _ entry fileSize.
-	desiredCompressionMethod _ compressedSize > 0 ifTrue: [ CompressionDeflated ] ifFalse: [ CompressionStored ].
+	stream := aFileName asFileEntry readStream.
+	stream binary.
+	self localFileName: (externalFileName := stream name).
+	entry := aFileName asFileEntry.
+	compressedSize := uncompressedSize := entry fileSize.
+	desiredCompressionMethod := compressedSize > 0 ifTrue: [ CompressionDeflated ] ifFalse: [ CompressionStored ].
 	self setLastModFileDateTimeFrom: entry modificationTime
 ! !
 
