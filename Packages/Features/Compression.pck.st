@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #6091] on 23 November 2023 at 11:09:53 am'!
+'From Cuis 6.0 [latest update: #6092] on 23 November 2023 at 7:23:16 pm'!
 'Description '!
-!provides: 'Compression' 1 36!
+!provides: 'Compression' 1 37!
 SystemOrganization addCategory: #'Compression-System'!
 SystemOrganization addCategory: #'Compression-Archives'!
 
@@ -516,7 +516,7 @@ initializeWriteStreamConstants
 	self initializeFixedTrees.
 ! !
 
-!ZipFileConstants class methodsFor: 'pool initialization' stamp: 'ar 5/18/2003 19:20'!
+!ZipFileConstants class methodsFor: 'pool initialization' stamp: 'jmv 11/23/2023 17:03:47'!
 initialize
 	"ZipFileConstants initialize"
 	FaMsdos		:= 0.
@@ -542,12 +542,9 @@ initialize
 	DirectoryAttrib 					:= 8r040000.
 	FileAttrib 						:= 8r0100000.
 
-	CentralDirectoryFileHeaderSignature _ 
-		(ByteArray with: 16r50 with: 16r4B with: 16r01 with: 16r02) asString.
-	LocalFileHeaderSignature _
-		(ByteArray with: 16r50 with: 16r4B with: 16r03 with: 16r04) asString.
-	EndOfCentralDirectorySignature _
-		(ByteArray with: 16r50 with: 16r4B with: 16r05 with: 16r06) asString.! !
+	CentralDirectoryFileHeaderSignature := ByteArray with: 16r50 with: 16r4B with: 16r01 with: 16r02.
+	LocalFileHeaderSignature := ByteArray with: 16r50 with: 16r4B with: 16r03 with: 16r04.
+	EndOfCentralDirectorySignature := ByteArray with: 16r50 with: 16r4B with: 16r05 with: 16r06.! !
 
 !InflateStream methodsFor: 'testing' stamp: 'jmv 3/1/2010 11:28'!
 atEnd
@@ -3359,7 +3356,7 @@ extractAllTo: aDirectory informing: barBlock overwrite: allOverwrite
 memberClass
 	^ZipArchiveMember! !
 
-!ZipArchive methodsFor: 'private' stamp: 'jmv 5/7/2023 18:55:56'!
+!ZipArchive methodsFor: 'private' stamp: 'jmv 11/23/2023 17:28:01'!
 readEndOfCentralDirectoryFrom: aStream
 	"Read EOCD, starting from position before signature."
 	| signature zipFileCommentLength |
@@ -3373,7 +3370,7 @@ readEndOfCentralDirectoryFrom: aStream
 	centralDirectorySize := aStream nextUint32BigEndian: false. "size of central directory"
 	centralDirectoryOffsetWRTStartingDiskNumber := aStream nextUint32BigEndian: false. "offset of start of central directory"
 	zipFileCommentLength := aStream nextUint16BigEndian: false. "zip file comment"
-	zipFileComment := aStream next: zipFileCommentLength.
+	zipFileComment := UnicodeString fromUtf8Bytes: (aStream next: zipFileCommentLength).
 ! !
 
 !ZipArchive methodsFor: 'private' stamp: 'nk 2/23/2001 09:19'!
@@ -3390,16 +3387,16 @@ readMembersFrom: stream named: fileName
 		self addMember: newMember.
 	] repeat.! !
 
-!ZipArchive methodsFor: 'private' stamp: 'nk 2/21/2001 20:09'!
+!ZipArchive methodsFor: 'private' stamp: 'jmv 11/23/2023 17:27:25'!
 readSignatureFrom: stream
 	"Returns next signature from given stream, leaves stream positioned afterwards."
 
 	| signatureData | 
-	signatureData _ String new: 4.
+	signatureData := ByteArray new: 4.
 	stream next: 4 into: signatureData.
 	({ CentralDirectoryFileHeaderSignature . LocalFileHeaderSignature . EndOfCentralDirectorySignature }
 		includes: signatureData)
-			ifFalse: [ ^self error: 'bad signature ', signatureData asHex, ' at position ', (stream position - 4) asString ].
+			ifFalse: [ ^self error: 'bad signature ', signatureData asHex, ' at position ', (stream position - 4) printString ].
 	^signatureData
 ! !
 
@@ -3416,9 +3413,11 @@ writeCentralDirectoryTo: aStream
 
 ! !
 
-!ZipArchive methodsFor: 'private' stamp: 'jmv 5/7/2023 18:57:46'!
+!ZipArchive methodsFor: 'private' stamp: 'jmv 11/23/2023 18:28:13'!
 writeEndOfCentralDirectoryTo: aStream
 
+	| zipFileCommentBytes |
+	zipFileCommentBytes := zipFileComment asByteArray.
 	aStream nextPutAll: EndOfCentralDirectorySignature.
 	aStream nextUint16Put: 0 bigEndian: false. "diskNumber"
 	aStream nextUint16Put: 0 bigEndian: false. "diskNumberWithStartOfCentralDirectory"
@@ -3426,8 +3425,8 @@ writeEndOfCentralDirectoryTo: aStream
 	aStream nextUint16Put: members size bigEndian: false. "numberOfCentralDirectories"
 	aStream nextUint32Put: writeEOCDOffset - writeCentralDirectoryOffset bigEndian: false. "size of central dir"
 	aStream nextUint32Put: writeCentralDirectoryOffset bigEndian: false. "offset of central dir"
-	aStream nextUint16Put: zipFileComment size bigEndian: false. "zip file comment"
-	zipFileComment isEmpty ifFalse: [ aStream nextPutAll: zipFileComment ].
+	aStream nextUint16Put: zipFileCommentBytes size bigEndian: false. "zip file comment"
+	zipFileCommentBytes isEmpty ifFalse: [ aStream nextPutAll: zipFileCommentBytes ].
 
 ! !
 
@@ -3439,9 +3438,9 @@ prependedDataSize
 		ifFalse: [ members first localHeaderRelativeOffset ]
 		ifTrue: [ centralDirectoryOffsetWRTStartingDiskNumber ]! !
 
-!ZipArchive methodsFor: 'accessing' stamp: 'nk 2/24/2001 13:44'!
+!ZipArchive methodsFor: 'accessing' stamp: 'jmv 11/23/2023 17:28:16'!
 zipFileComment
-	^zipFileComment asString! !
+	^zipFileComment! !
 
 !ZipArchive methodsFor: 'accessing' stamp: 'nk 2/24/2001 13:43'!
 zipFileComment: aString
@@ -3536,7 +3535,7 @@ compressionLevelNone
 compressionStored
 	^CompressionStored! !
 
-!ZipArchive class methodsFor: 'constants' stamp: 'jmv 11/2/2010 12:40'!
+!ZipArchive class methodsFor: 'constants' stamp: 'jmv 11/23/2023 18:11:56'!
 findEndOfCentralDirectoryFrom: stream
 	"Seek in the given stream to the end, then read backwards until we find the
 	signature of the central directory record. Leave the file positioned right
@@ -3546,27 +3545,27 @@ findEndOfCentralDirectoryFrom: stream
 
 	| data fileLength seekOffset pos maxOffset |
 	stream setToEnd.
-	fileLength _ stream position.
+	fileLength := stream position.
 	"If the file length is less than 18 for the EOCD length plus 4 for the signature, we have a problem"
 	fileLength < 22 ifTrue: [^ self error: 'file is too short'].
 	
-	seekOffset _ 0.
-	pos _ 0.
-	data _ String new: 4100.
-	maxOffset _ 40960 min: fileLength.	"limit search range to 40K"
+	seekOffset := 0.
+	pos := 0.
+	data := ByteArray new: 4100.
+	maxOffset := 40960 min: fileLength.	"limit search range to 40K"
 
 	[
-		seekOffset _ (seekOffset + 4096) min: fileLength.
+		seekOffset := (seekOffset + 4096) min: fileLength.
 		stream position: fileLength - seekOffset.
-		data _ stream next: (4100 min: seekOffset) into: data startingAt: 1.
-		pos _ self
+		data := stream next: (4100 min: seekOffset) into: data startingAt: 1.
+		pos := self
 			lastIndexOfPKSignature: EndOfCentralDirectorySignature
 			in: data.
 		pos = 0 and: [seekOffset < maxOffset]
 	] whileTrue.
 
 	^ pos > 0
-		ifTrue: [ | newPos | stream position: (newPos _ (stream position + pos - seekOffset - 1)). newPos]
+		ifTrue: [ | newPos | stream position: (newPos := (stream position + pos - seekOffset - 1)). newPos]
 		ifFalse: [0]! !
 
 !ZipArchive class methodsFor: 'constants' stamp: 'ar 9/6/2010 15:28'!
@@ -3748,14 +3747,14 @@ squeakToDosTime: secs
 	^ dosTime
 ! !
 
-!ZipArchiveMember methodsFor: 'accessing' stamp: 'nk 2/22/2001 09:44'!
+!ZipArchiveMember methodsFor: 'accessing' stamp: 'jmv 11/23/2023 17:11:06'!
 centralDirectoryHeaderSize
-	^ 46 + fileName size + cdExtraField size + fileComment size! !
+	^ 46 + fileName asByteArray size + cdExtraField size + fileComment asByteArray size! !
 
-!ZipArchiveMember methodsFor: 'accessing' stamp: 'nk 2/23/2001 08:00'!
+!ZipArchiveMember methodsFor: 'accessing' stamp: 'jmv 11/23/2023 17:11:36'!
 clearExtraFields
-	cdExtraField _ ''.
-	localExtraField _ ''.! !
+	cdExtraField := ByteArray new.
+	localExtraField := ByteArray new.! !
 
 !ZipArchiveMember methodsFor: 'accessing' stamp: 'nk 2/22/2001 00:38'!
 compressedSize
@@ -3956,7 +3955,7 @@ copyRawDataTo: aStream from: start to: finish
 	].
 ! !
 
-!ZipArchiveMember methodsFor: 'private-writing' stamp: 'jmv 5/7/2023 18:58:15'!
+!ZipArchiveMember methodsFor: 'private-writing' stamp: 'jmv 11/23/2023 17:13:18'!
 refreshLocalFileHeaderTo: aStream
 	"Re-writes my local header to the given stream.
 	To be called after writing the data stream.
@@ -3976,21 +3975,22 @@ refreshLocalFileHeaderTo: aStream
 							ifTrue: [ uncompressedSize ]
 							ifFalse: [ compressedSize ]) bigEndian: false.
 	aStream nextUint32Put: uncompressedSize bigEndian: false.
-	aStream nextUint16Put: fileName size bigEndian: false.
+	aStream nextUint16Put: fileName asByteArray size bigEndian: false.
 	aStream nextUint16Put: localExtraField size bigEndian: false.
 
 	aStream position: here! !
 
-!ZipArchiveMember methodsFor: 'private-writing' stamp: 'jmv 5/7/2023 18:59:48'!
+!ZipArchiveMember methodsFor: 'private-writing' stamp: 'jmv 11/23/2023 19:20:21'!
 writeCentralDirectoryFileHeaderTo: aStream
 	"C2 v3 V4 v5 V2"
 
+	| fileNameBytes fileCommentBytes |
 	aStream nextPutAll: CentralDirectoryFileHeaderSignature.
 	aStream nextPut: versionMadeBy.
 	aStream nextPut: fileAttributeFormat.
 
 	aStream nextUint16Put: versionNeededToExtract bigEndian: false.
-	aStream nextUint16Put: bitFlag bigEndian: false.
+	aStream nextUint16Put: bitFlag bigEndian: false. "Bit 11: Language encoding flag (EFS) is set. See #initialize."
 	aStream nextUint16Put: desiredCompressionMethod bigEndian: false.
 
 	aStream nextUint32Put: lastModFileDateTime bigEndian: false.
@@ -4002,18 +4002,20 @@ writeCentralDirectoryFileHeaderTo: aStream
 							ifFalse: [ compressedSize ]) bigEndian: false.
 	aStream nextUint32Put: uncompressedSize bigEndian: false.
 
-	aStream nextUint16Put: fileName size bigEndian: false.
+	fileNameBytes := fileName asByteArray.
+	fileCommentBytes := fileComment asByteArray.
+	aStream nextUint16Put: fileNameBytes size bigEndian: false.
 	aStream nextUint16Put: cdExtraField size bigEndian: false.
-	aStream nextUint16Put: fileComment size bigEndian: false.
+	aStream nextUint16Put: fileCommentBytes size bigEndian: false.
 	aStream nextUint16Put: 0 bigEndian: false.		"diskNumberStart"
 	aStream nextUint16Put: internalFileAttributes bigEndian: false.
 
 	aStream nextUint32Put: externalFileAttributes bigEndian: false.
 	aStream nextUint32Put: writeLocalHeaderRelativeOffset bigEndian: false.
 
-	aStream nextPutAll: fileName asByteArray.
-	aStream nextPutAll: cdExtraField asByteArray.
-	aStream nextPutAll: fileComment asByteArray.! !
+	aStream nextPutAll: fileNameBytes.
+	aStream nextPutAll: cdExtraField.
+	aStream nextPutAll: fileCommentBytes.! !
 
 !ZipArchiveMember methodsFor: 'private-writing' stamp: 'jmv 5/7/2023 18:58:52'!
 writeDataDescriptorTo: aStream
@@ -4064,15 +4066,16 @@ writeDataTo: aStream from: start to: finish
 
 	self copyRawDataTo: aStream from: start to: finish.! !
 
-!ZipArchiveMember methodsFor: 'private-writing' stamp: 'jmv 5/7/2023 18:59:07'!
+!ZipArchiveMember methodsFor: 'private-writing' stamp: 'jmv 11/23/2023 19:20:27'!
 writeLocalFileHeaderTo: aStream
 	"Write my local header to a file handle.
 	Stores the offset to the start of the header in my
 	writeLocalHeaderRelativeOffset member."
 
+	| fileNameBytes |
 	aStream nextPutAll: LocalFileHeaderSignature.
 	aStream nextUint16Put: versionNeededToExtract bigEndian: false.
-	aStream nextUint16Put: bitFlag bigEndian: false.
+	aStream nextUint16Put: bitFlag bigEndian: false. "Bit 11: Language encoding flag (EFS) is set. See #initialize."
 	aStream nextUint16Put: desiredCompressionMethod bigEndian: false.
 
 	aStream nextUint32Put: lastModFileDateTime bigEndian: false.
@@ -4082,11 +4085,12 @@ writeLocalFileHeaderTo: aStream
 							ifFalse: [ compressedSize ]) bigEndian: false.
 	aStream nextUint32Put: uncompressedSize bigEndian: false.
 
-	aStream nextUint16Put: fileName size bigEndian: false.
+	fileNameBytes := fileName asByteArray.
+	aStream nextUint16Put: fileNameBytes size bigEndian: false.
 	aStream nextUint16Put: localExtraField size bigEndian: false.
 
-	aStream nextPutAll: fileName asByteArray.
-	aStream nextPutAll: localExtraField asByteArray! !
+	aStream nextPutAll: fileNameBytes.
+	aStream nextPutAll: localExtraField.! !
 
 !ZipArchiveMember methodsFor: 'reading' stamp: 'jmv 10/31/2022 10:46:31'!
 contentStream
@@ -4105,11 +4109,11 @@ contents
 	s useCharacters.
 	^s contents! !
 
-!ZipArchiveMember methodsFor: 'reading' stamp: 'jmv 10/8/2017 17:07:29'!
+!ZipArchiveMember methodsFor: 'reading' stamp: 'jmv 11/23/2023 18:36:28'!
 contentsFrom: start to: finish
 	"Answer my contents as a string."
 	| s |
-	s _ RWBinaryOrTextStream on: (String new: finish - start + 1).
+	s := RWBinaryOrTextStream on: (ByteArray new: finish - start + 1).
 	self extractTo: s from: start to: finish.
 	s useCharacters.
 	^s contents! !
@@ -4227,26 +4231,32 @@ isTextFile: aBoolean
 looksLikeDirectory
 	^false! !
 
-!ZipArchiveMember methodsFor: 'initialization' stamp: 'nk 2/24/2001 16:16'!
+!ZipArchiveMember methodsFor: 'initialization' stamp: 'jmv 11/23/2023 19:18:59'!
 initialize
+	"https://pkware.cachefly.net/webdocs/casestudies/APPNOTE.TXT"
+
 	super initialize.
-	lastModFileDateTime _ 0.
-	fileAttributeFormat _ FaUnix.
-	versionMadeBy _ 20.
-	versionNeededToExtract _ 20.
-	bitFlag _ 0.
-	compressionMethod _ CompressionStored.
-	desiredCompressionMethod _ CompressionDeflated.
-	desiredCompressionLevel _ CompressionLevelDefault.
-	internalFileAttributes _ 0.
-	externalFileAttributes _ 0.
-	fileName _ ''.
-	cdExtraField _ ''.
-	localExtraField _ ''.
-	fileComment _ ''.
-	crc32 _ 0.
-	compressedSize _ 0.
-	uncompressedSize _ 0.
+	"Bit 11: Language encoding flag (EFS).  If this bit is set,
+                the filename and comment fields for this file
+                MUST be encoded using UTF-8. (see APPENDIX D)"
+	bitFlag := `2 raisedTo: 11`.
+
+	lastModFileDateTime := 0.
+	fileAttributeFormat := FaUnix.
+	versionMadeBy := 20.
+	versionNeededToExtract := 20.
+	compressionMethod := CompressionStored.
+	desiredCompressionMethod := CompressionDeflated.
+	desiredCompressionLevel := CompressionLevelDefault.
+	internalFileAttributes := 0.
+	externalFileAttributes := 0.
+	fileName := ''.
+	cdExtraField := ByteArray new.
+	localExtraField := ByteArray new.
+	fileComment := ''.
+	crc32 := 0.
+	compressedSize := 0.
+	uncompressedSize := 0.
 	self unixFileAttributes: DefaultFilePermissions.! !
 
 !ZipArchiveMember methodsFor: 'writing' stamp: 'nk 2/23/2001 11:28'!
@@ -4280,7 +4290,7 @@ canonicalizeFileName
 	[fileName beginsWith: '/'] whileTrue: [fileName := fileName allButFirst].
 	fileName := fileName copyReplaceAll: '../' with: ''! !
 
-!ZipFileMember methodsFor: 'private-reading' stamp: 'jmv 5/7/2023 18:57:19'!
+!ZipFileMember methodsFor: 'private-reading' stamp: 'jmv 11/23/2023 17:09:13'!
 readCentralDirectoryFileHeaderFrom: aStream
 	"Assumes aStream positioned after signature"
 
@@ -4307,9 +4317,9 @@ readCentralDirectoryFileHeaderFrom: aStream
 	externalFileAttributes := aStream nextUint32BigEndian: false.
 	localHeaderRelativeOffset := aStream nextUint32BigEndian: false.
 
-	fileName := (aStream next: fileNameLength) asString.
-	cdExtraField := (aStream next: extraFieldLength) asByteArray.
-	fileComment := (aStream next: fileCommentLength) asString.
+	fileName := UnicodeString fromUtf8Bytes: (aStream next: fileNameLength).
+	cdExtraField := aStream next: extraFieldLength.
+	fileComment := UnicodeString fromUtf8Bytes: (aStream next: fileCommentLength).
 
 	self desiredCompressionMethod: compressionMethod! !
 
@@ -4323,7 +4333,7 @@ readFrom: aStream
 	self canonicalizeFileName.
 ! !
 
-!ZipFileMember methodsFor: 'private-reading' stamp: 'jmv 5/7/2023 18:56:20'!
+!ZipFileMember methodsFor: 'private-reading' stamp: 'jmv 11/23/2023 18:22:59'!
 readLocalDirectoryFileHeaderFrom: aStream 
 	"Positions stream as necessary. Will return stream to its original position"
 
@@ -4334,7 +4344,7 @@ readLocalDirectoryFileHeaderFrom: aStream
 	aStream position: localHeaderRelativeOffset.
 
 	sig := aStream next: 4.
-	sig = LocalFileHeaderSignature asByteArray
+	sig = LocalFileHeaderSignature
 		ifFalse: [ aStream position: oldPos.
 				^self error: 'bad LH signature at ', localHeaderRelativeOffset hex ].
 
@@ -4350,8 +4360,8 @@ readLocalDirectoryFileHeaderFrom: aStream
 	fileNameLength := aStream nextUint16BigEndian: false.
 	extraFieldLength := aStream nextUint16BigEndian: false.
 
-	fileName := (aStream next: fileNameLength) asString.
-	localExtraField := (aStream next: extraFieldLength) asByteArray.
+	fileName := UnicodeString fromUtf8Bytes: (aStream next: fileNameLength).
+	localExtraField := aStream next: extraFieldLength.
 
 	dataOffset := aStream position.
 
@@ -4728,12 +4738,12 @@ asUnZippedStream: memberFileName
 	archive close.
 	^ strm! !
 
-!ReadWriteStream methodsFor: '*Compression' stamp: 'jmv 6/10/2013 20:40'!
+!ReadWriteStream methodsFor: '*Compression' stamp: 'jmv 11/23/2023 17:05:01'!
 isZipArchive
 	"Determine if this appears to be a valid Zip archive"
 	|  sig |
 	self binary.
-	sig _ (self next: 4) asString.
+	sig := self next: 4.
 	self position: self position - 4. "rewind"
 	^ (ZipArchive validSignatures includes: sig)! !
 
@@ -4757,15 +4767,15 @@ compressFile
 			self close ].
 	 ^zipped! !
 
-!UniFileStream methodsFor: '*Compression' stamp: 'jmv 6/10/2013 20:39'!
+!UniFileStream methodsFor: '*Compression' stamp: 'jmv 11/23/2023 17:02:25'!
 viewGZipContents
 	"View the contents of a gzipped file"
 
 	|  stringContents |
 	self binary.
-	stringContents _ self contentsOfEntireFile.
-	stringContents _ (GZipReadStream on: stringContents) upToEnd.
-	stringContents _ stringContents asString withCuisLineEndings.
+	stringContents := self contentsOfEntireFile.
+	stringContents := (GZipReadStream on: stringContents) upToEnd.
+	stringContents := UnicodeString fromUtf8Bytes: stringContents withCuisLineEndings.
 
 	Workspace new
 		contents: stringContents;
