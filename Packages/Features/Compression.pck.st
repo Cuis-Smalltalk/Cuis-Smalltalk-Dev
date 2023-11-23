@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #6091] on 23 November 2023 at 10:51:21 am'!
+'From Cuis 6.0 [latest update: #6091] on 23 November 2023 at 11:09:53 am'!
 'Description '!
-!provides: 'Compression' 1 35!
+!provides: 'Compression' 1 36!
 SystemOrganization addCategory: #'Compression-System'!
 SystemOrganization addCategory: #'Compression-Archives'!
 
@@ -378,7 +378,7 @@ Their data comes from external file streams.!
 
 !ZipStringMember commentStamp: '<historical>' prior: 0!
 ZipStringMember instances are used to represent files that are going to be written to a ZipArchive.
-Their data comes from in-image strings, though.!
+Their data comes from in-image strings or ByteArrays, though.!
 
 !GZipConstants class methodsFor: 'pool initialization' stamp: 'ar 5/18/2003 19:00'!
 gzipMagic
@@ -3152,6 +3152,14 @@ nodeSortBlock
 buildTreeFrom: frequencies maxDepth: depth
 	^self new buildTreeFrom: frequencies maxDepth: depth! !
 
+!Archive methodsFor: 'archive operations' stamp: 'jmv 11/23/2023 11:05:47'!
+addBytes: aStringByteArray as: aFileName
+	| newMember |
+	newMember := self memberClass newFromStringOrByteArray: aStringByteArray named: aFileName.
+	self addMember: newMember.
+	newMember localFileName: aFileName.
+	^newMember! !
+
 !Archive methodsFor: 'archive operations' stamp: 'nk 2/22/2001 19:09'!
 addDirectory: aFileName
 	^self addDirectory: aFileName as: aFileName
@@ -3181,10 +3189,10 @@ addFile: aFileName as: anotherFileName
 addMember: aMember
 	^members addLast: aMember! !
 
-!Archive methodsFor: 'archive operations' stamp: 'nk 12/20/2002 15:03'!
-addString: aString as: aFileName
+!Archive methodsFor: 'archive operations' stamp: 'jmv 11/23/2023 11:05:36'!
+addString: aStringByteArray as: aFileName
 	| newMember |
-	newMember _ self memberClass newFromString: aString named: aFileName.
+	newMember := self memberClass newFromStringOrByteArray: aStringByteArray named: aFileName.
 	self addMember: newMember.
 	newMember localFileName: aFileName.
 	^newMember! !
@@ -3262,11 +3270,11 @@ replaceMember: aMemberOrName with: newMember
 	member ifNotNil: [ members replaceAll: member with: newMember ].
 	^member! !
 
-!Archive methodsFor: 'archive operations' stamp: 'nk 2/22/2001 17:24'!
-setContentsOf: aMemberOrName to: aString
+!Archive methodsFor: 'archive operations' stamp: 'jmv 11/23/2023 11:05:20'!
+setContentsOf: aMemberOrName to: aStringByteArray
 	| newMember oldMember |
-	oldMember _ self member: aMemberOrName.
-	newMember _ (self memberClass newFromString: aString named: oldMember fileName)
+	oldMember := self member: aMemberOrName.
+	newMember := (self memberClass newFromStringOrByteArray: aStringByteArray named: oldMember fileName)
 		copyFrom: oldMember.
 	self replaceMember: oldMember with: newMember.! !
 
@@ -4257,9 +4265,9 @@ newFromDirectory: aFileName
 newFromFile: aFileName
 	^ZipNewFileMember newNamed: aFileName! !
 
-!ZipArchiveMember class methodsFor: 'instance creation' stamp: 'nk 2/22/2001 17:25'!
-newFromString: aString named: aFileName
-	^ZipStringMember newFrom: aString named: aFileName! !
+!ZipArchiveMember class methodsFor: 'instance creation' stamp: 'jmv 11/23/2023 11:05:25'!
+newFromStringOrByteArray: aStringByteArray named: aFileName
+	^ZipStringMember newFrom: aStringByteArray named: aFileName! !
 
 !ZipArchiveMember class methodsFor: 'instance creation' stamp: 'nk 2/21/2001 20:40'!
 newFromZipFile: stream named: fileName
@@ -4544,10 +4552,10 @@ newNamed: aFileName
 contents
 	^contents! !
 
-!ZipStringMember methodsFor: 'initialization' stamp: 'jmv 4/17/2013 11:57'!
-contents: aString
-	contents _ aString.
-	compressedSize _ uncompressedSize _ aString size.
+!ZipStringMember methodsFor: 'initialization' stamp: 'jmv 11/23/2023 11:06:37'!
+contents: aStringOrByteArray
+	contents := aStringOrByteArray asByteArray.
+	compressedSize := uncompressedSize := contents size.
 	"set the file date to now"
 	self setLastModFileDateTimeFrom: Time localSecondClock! !
 
