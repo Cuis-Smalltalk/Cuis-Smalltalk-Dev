@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #6070] on 15 November 2023 at 2:13:27 pm'!
+'From Cuis 6.0 [latest update: #6091] on 23 November 2023 at 10:29:41 am'!
 'Description ExtractMethod for optimized messages test'!
-!provides: 'BaseImageTests' 1 372!
+!provides: 'BaseImageTests' 1 373!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Objects'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
@@ -1165,6 +1165,16 @@ TestCase subclass: #DebuggerTest
 	category: 'BaseImageTests-Tools-Debugger'!
 !classDefinition: 'DebuggerTest class' category: #'BaseImageTests-Tools-Debugger'!
 DebuggerTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #QuickReturnDebuggingTest category: #'BaseImageTests-Tools-Debugger'!
+TestCase subclass: #QuickReturnDebuggingTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-Tools-Debugger'!
+!classDefinition: 'QuickReturnDebuggingTest class' category: #'BaseImageTests-Tools-Debugger'!
+QuickReturnDebuggingTest class
 	instanceVariableNames: ''!
 
 !classDefinition: #SmalltalkCompleterTest category: #'BaseImageTests-Tools-Autocompletion'!
@@ -21554,6 +21564,104 @@ testMetaclassCategoriesIncludesInstanceCreation
 	categoriesPrompter := MethodCategoriesPrompter staringFrom: ProtoObject class rejectingFirst: false.
 	
 	self assert: categoriesPrompter categories second equals: Categorizer instanceCreation! !
+
+!QuickReturnDebuggingTest methodsFor: 'private' stamp: 'FJG 11/13/2023 14:01:10'!
+debuggerOn: aBlock
+	| debugger |
+	
+	debugger := Debugger newDebugging: aBlock.
+	
+	debugger expandStack.
+	
+	[debugger interruptedContext method == aBlock outerContext method ]
+		whileFalse: [debugger send].
+		
+	^ debugger! !
+
+!QuickReturnDebuggingTest methodsFor: 'private' stamp: 'FJG 11/8/2023 19:12:58'!
+quickReturn
+	" Example:
+		QuickReturnDebuggingTest new halt quickReturn
+	"
+	
+	^ 2! !
+
+!QuickReturnDebuggingTest methodsFor: 'tests' stamp: 'FJG 11/8/2023 19:12:03'!
+test01_debuggerCanStepIntoQuickReturnMethods
+	| aDebugger |
+	aDebugger := self debuggerOn: [		self quickReturn 	].
+	
+	aDebugger send.
+	
+	self assert: aDebugger interruptedContext method equals: self class >> #quickReturn.! !
+
+!QuickReturnDebuggingTest methodsFor: 'tests' stamp: 'FJG 11/8/2023 19:12:20'!
+test02_debuggerCanProceedFromAQuickReturnMethod
+	| aDebugger result |
+	aDebugger := self debuggerOn: [		
+		result := self quickReturn 
+	].
+	aDebugger send.
+	
+	aDebugger proceed.
+	
+	self assert: result equals: self quickReturn.! !
+
+!QuickReturnDebuggingTest methodsFor: 'tests' stamp: 'FJG 11/9/2023 23:20:47'!
+test03_debuggerCanStepThroughFromAQuickReturnMethod
+	| aDebugger result |
+	aDebugger := self debuggerOn: [		
+		result := self quickReturn 
+	].
+	aDebugger send.
+	
+	aDebugger stepIntoBlock.
+	
+	self assert: aDebugger interruptedContext method equals: thisContext method.
+	aDebugger proceed.
+	self assert: result equals: self quickReturn.! !
+
+!QuickReturnDebuggingTest methodsFor: 'tests' stamp: 'FJG 11/9/2023 23:21:12'!
+test04_debuggerCanStepFromAQuickReturnMethod
+	| aDebugger result |
+	aDebugger := self debuggerOn: [		
+		result := self quickReturn 
+	].
+	aDebugger send.
+	
+	aDebugger doStep.
+	
+	self assert: aDebugger interruptedContext method equals: thisContext method.
+	aDebugger proceed.
+	self assert: result equals: self quickReturn.! !
+
+!QuickReturnDebuggingTest methodsFor: 'tests' stamp: 'FJG 11/9/2023 23:21:20'!
+test05_debuggerCanSendFromAQuickReturnMethod
+	| aDebugger result |
+	aDebugger := self debuggerOn: [		
+		result := self quickReturn 
+	].
+	aDebugger send.
+	
+	aDebugger send.
+	
+	self assert: aDebugger interruptedContext method equals: thisContext method.
+	aDebugger proceed.
+	self assert: result equals: self quickReturn.! !
+
+!QuickReturnDebuggingTest methodsFor: 'tests' stamp: 'FJG 11/9/2023 23:23:04'!
+test06_debuggerCanRestartFromAQuickReturnMethod
+	| aDebugger result |
+	aDebugger := self debuggerOn: [		
+		result := self quickReturn 
+	].
+	aDebugger send.
+	
+	aDebugger restart.
+	
+	self assert: aDebugger interruptedContext method equals: self class >> #quickReturn.
+	aDebugger proceed.
+	self assert: result equals: self quickReturn.! !
 
 !SmalltalkCompleterTest methodsFor: 'testing' stamp: 'jmv 7/5/2022 23:08:14'!
 testMessages
