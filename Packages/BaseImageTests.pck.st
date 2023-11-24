@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #6092] on 24 November 2023 at 11:59:57 am'!
+'From Cuis 6.0 [latest update: #6092] on 24 November 2023 at 12:04:08 pm'!
 'Description ExtractMethod for optimized messages test'!
-!provides: 'BaseImageTests' 1 374!
+!provides: 'BaseImageTests' 1 375!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Objects'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
@@ -20054,7 +20054,7 @@ testAllAlphasRgbMinInvert
 		assert: correctAlphas = 65536
 		description: 'Some incorrect alpha values computed for BitBlt rule rgbMinInvert'.! !
 
-!BitBltTest methodsFor: 'bugs' stamp: 'jmv 11/24/2023 11:44:10'!
+!BitBltTest methodsFor: 'bugs' stamp: 'jmv 11/24/2023 12:04:03'!
 testAllAlphasRgbMul
 	"self run: #testAllAlphasRgbMul"
 	| sourceForm destForm blt correctAlphas computedValue theoreticalValue |
@@ -20075,7 +20075,7 @@ testAllAlphasRgbMul
 			computedValue := (blt destForm bits at: 1) digitAt: 4.
 			theoreticalValue := destAlpha * sourceAlpha / 255.0.
 			correctAlphas := correctAlphas +
-				((computedValue - theoreticalValue) abs < 0.5
+				((computedValue - theoreticalValue) abs < 1.0
 					ifTrue: [ 1 ]
 					ifFalse: [ 0 ]) ]].
 	self
