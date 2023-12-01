@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #6092] on 24 November 2023 at 12:04:08 pm'!
+'From Cuis6.0 [latest update: #6114] on 1 December 2023 at 5:20:06 pm'!
 'Description ExtractMethod for optimized messages test'!
-!provides: 'BaseImageTests' 1 375!
+!provides: 'BaseImageTests' 1 376!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Objects'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
@@ -13125,6 +13125,41 @@ testResumeTerminatingProcess
 	self assert: terminatee isTerminated.
 	self assert: unwound.
 	self assert: terminator isTerminated! !
+
+!ProcessTest methodsFor: 'tests' stamp: 'jar 12/1/2023 19:01:14'!
+testResumeWithEnsureAfterBCR
+	"This test verifies #cannotReturn: context sender's pc has been nilled
+	 before returning to make sure its code won't continue executing,
+	 an unwind block will be run, and an Error will be raised.
+	
+	Without nilling the pc this example would crash the VM after resumption:
+		[[^ 1] on: BlockCannotReturn do: [:ex | ex resume] ] fork
+	
+	and this example would happily execute an illegal return after resumption:
+		[[true ifTrue: [^ 1]] on: BlockCannotReturn do: [:ex | ex resume] ] fork
+	
+	Note: push a fake stack top to prevent a VM crash when running this test in
+	an image without the amended #cannotReturn:to: nilling the receiver's pc;
+	the functionality of the test is not affected by this precautionary measure.	"
+
+	| expr executedReturnTwo error unwound sync |
+	expr _ true.
+	executedReturnTwo _ false.
+	error _ false.
+	unwound _ false.
+	sync _ Semaphore new.
+	[	[sync signal.
+	      [[expr ifTrue: [thisContext push: nil. ^1].  "see the note above"
+	       executedReturnTwo _ true. ^2]
+			ensure: [unwound _ true]]
+			        on: BlockCannotReturn
+			        do: [:ex | ex resume]]
+					on: Error
+					do: [error _ true]] fork.
+	sync wait.
+	self deny: executedReturnTwo.
+	self assert: unwound.
+	self assert: error! !
 
 !ProcessTest methodsFor: 'tests' stamp: 'jar 1/19/2023 19:04:07'!
 testRevisedSuspendExpectations
