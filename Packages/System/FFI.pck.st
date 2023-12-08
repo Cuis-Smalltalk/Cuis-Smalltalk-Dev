@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #6070] on 14 November 2023 at 4:39:45 pm'!
+'From Cuis6.0 [latest update: #6114] on 8 December 2023 at 11:08:48 am'!
 'Description '!
-!provides: 'FFI' 1 40!
+!provides: 'FFI' 1 41!
 SystemOrganization addCategory: #'FFI-Pools'!
 SystemOrganization addCategory: #'FFI-Kernel'!
 
@@ -416,80 +416,92 @@ printOn: aStream
 
 	aStream nextPutAll: '@ '; nextPutAll: self asInteger hex8! !
 
-!ExternalAddress methodsFor: 'arithmetic' stamp: 'jmv 11/14/2023 14:06:10'!
+!ExternalAddress methodsFor: 'arithmetic' stamp: 'jmv 12/8/2023 10:16:50'!
 + offset
 	"Create an address that is offset by the given number of bytes.
-	More tricky than one would think due to the FFI's handling of ExternalAddress
-	as pointer to an object so that 'self unsignedLongAt: ' would dereference."
+	Do the arithmethic on a ByteArray, not on an instance of ExternalAddress.
+	See #asByteArrayWithPointer and #asExternalAddress."
 
 	| bytes |
-	"Convert xaddr -> bytes"
-	bytes := self asByteArrayPointer.
+	"Convert ExternalAddress -> pointer bytes in a ByteArray"
+	bytes := self asByteArrayWithPointer.
 	"Update bytes using platform dependent accessors"
-	self size = 4
-		ifTrue: [bytes ffiUint32At: 1 put: (bytes ffiUint32At: 1) + offset]
-		ifFalse: [bytes ffiUint64At: 1 put: (bytes ffiUint64At: 1) + offset].
-	"Convert bytes -> xaddr"
-	^bytes asExternalPointer! !
+	self size = 8
+		ifFalse: [bytes ffiUint32At: 1 put: (bytes ffiUint32At: 1) + offset]
+		ifTrue: [bytes ffiUint64At: 1 put: (bytes ffiUint64At: 1) + offset].
+	"Convert bytes -> ExternalAddress"
+	^bytes asExternalAddress! !
 
-!ExternalAddress methodsFor: 'private' stamp: 'nice 4/13/2018 07:48'!
+!ExternalAddress methodsFor: 'private' stamp: 'jmv 12/8/2023 10:11:33'!
 asByteArrayPointer
-	"Answer a ByteArray containing a copy of pointer to the contents of the receiver."
+	"Only kept for compatibility.
+	Prefer #asByteArrayWithPointer"
+
+	^self asByteArrayWithPointer! !
+
+!ExternalAddress methodsFor: 'private' stamp: 'jmv 12/8/2023 10:11:06'!
+asByteArrayWithPointer
+	"Answer a ByteArray containing a copy of the pointer in the receiver.
+	Useful when we specifically need an instance of ByteArray and not an instance of ExternalAddress.
+	For example, to use data access primitive in SqueakFFIPrims, such as:
+		primitiveFFIIntegerAt
+		primitiveFFIIntegerAtPut,
+	but have them operate on pointer data, and not on actual data pointed by it.
+	See #asExternalAddress"
+
 	| sz |
 	^(ByteArray basicNew: (sz := self size))
-		replaceFrom: 1 to: sz with: self startingAt: 1 "answers self"! !
+		replaceFrom: 1 to: sz with: self startingAt: 1.! !
 
-!ExternalAddress methodsFor: 'private' stamp: 'jcg 2/16/2010 01:00'!
-asExternalPointer
-	"No need to convert."
+!ExternalAddress methodsFor: 'private' stamp: 'jmv 12/8/2023 10:12:23'!
+asExternalAddress
+	"Answer an instance of ExternalAddress, with my contents, assuming they form a pointer.
+	See inheritance.
+	See #asByteArrayWithPointer"
+
 	^self! !
 
-!ExternalAddress methodsFor: 'converting' stamp: 'jmv 11/14/2023 14:08:50'!
+!ExternalAddress methodsFor: 'private' stamp: 'jmv 12/8/2023 10:58:17'!
+primitiveFree
+	"Primitive. Free the object pointed to on the external heap.
+	Dangerous - may break your system if the receiver hasn't been
+	allocated by ExternalAddress class>>allocate:. No checks are done.
+	Only to be called from ExternalAddress>>#free. Don't call directly."
+	<primitive:'primitiveFFIFree' module:'SqueakFFIPrims'>
+	^self primitiveFailed! !
+
+!ExternalAddress methodsFor: 'converting' stamp: 'jmv 12/8/2023 10:11:48'!
 asInteger
-	"convert address to integer"
-	^ self asByteArrayPointer primFFIIntegerAt: 1 size: self size signed: false! !
+	"Convert address to integer.
+	We need to convert to a ByteArray in order to access the pointer bytes instead of
+	the bytes pointed to!!
+	Primitive primitiveFFIIntegerAt will use the appropriate endianess for this platform.
+	See also ExternalAddress class >> #fromInteger:"
 
-!ExternalAddress methodsFor: 'converting' stamp: 'jmv 11/14/2023 14:08:04'!
-fromInteger: address
-	"set my handle to point at address."
-	"Do we really need this? bf 2/21/2001 23:48"
-
-	| sz pointer |
-	sz := self size.
-	pointer := ByteArray new: sz.
-	pointer primFFIIntegerAt: 1 put: address size: sz signed: false. .
-	self basicAt: 1 put: (pointer byteAt: 1);
-		basicAt: 2 put: (pointer byteAt: 2);
-		basicAt: 3 put: (pointer byteAt: 3);
-		basicAt: 4 put: (pointer byteAt: 4).
-	sz = 8 ifTrue:
-		[self basicAt: 5 put: (pointer byteAt: 5);
-			basicAt: 6 put: (pointer byteAt: 6);
-			basicAt: 7 put: (pointer byteAt: 7);
-			basicAt: 8 put: (pointer byteAt: 8)]! !
+	^ self asByteArrayWithPointer primFFIIntegerAt: 1 size: self size signed: false! !
 
 !ExternalAddress methodsFor: 'release' stamp: 'ar 11/22/1999 04:25'!
 beNull
 	"Make the receiver a NULL pointer"
 	self atAllPut: 0.! !
 
-!ExternalAddress methodsFor: 'release' stamp: 'ar 11/28/1999 23:40'!
+!ExternalAddress methodsFor: 'release' stamp: 'jmv 12/8/2023 11:04:49'!
 free
-	"Primitive. Free the object pointed to on the external heap.
+	"Free the object pointed to on the external heap.
+	Don't free the same instance twice.
 	Dangerous - may break your system if the receiver hasn't been
 	allocated by ExternalAddress class>>allocate:. No checks are done."
-	<primitive:'primitiveFFIFree' module:'SqueakFFIPrims'>
-	^self primitiveFailed! !
 
-!ExternalAddress methodsFor: 'accessing' stamp: 'jmv 11/14/2023 13:52:45'!
-byteAt: byteOffset
-	"Go through a different primitive since the receiver describes data in the outside world"
-	^self ffiUint8At: byteOffset! !
+	| instanceForPrimitiveCall |
+	self isNull ifTrue: [
+		^self ].
+	instanceForPrimitiveCall := self copy.
 
-!ExternalAddress methodsFor: 'accessing' stamp: 'jmv 11/14/2023 13:55:52'!
-byteAt: byteOffset put: value
-	"Go through a different primitive since the receiver describes data in the outside world"
-	^self ffiUint8At: byteOffset put: value! !
+	"Call the primitive immediately after nulling us."
+	self beNull.
+	instanceForPrimitiveCall primitiveFree.
+
+	ExternalAddress finalizationRegistry remove: self ifAbsent: [].! !
 
 !ExternalAddress methodsFor: 'accessing' stamp: 'jcg 6/4/2010 02:40'!
 isExternalAddress
@@ -545,6 +557,33 @@ allocate: byteSize
 	"Primitive. Allocate an object on the external heap."
 	<primitive:'primitiveFFIAllocate' module:'SqueakFFIPrims'>
 	^self primitiveFailed! !
+
+!ExternalAddress class methodsFor: 'instance creation' stamp: 'jmv 12/8/2023 09:54:13'!
+fromInteger: address
+	"Create an instance. address must be an integer.
+	Use a ByteArray to be able to call #primFFIIntegerAt:put:size:signed: and have it operate on the pointer bytes
+	and not on (yet undefined!!) pointed memory.
+	Primitive primitiveFFIIntegerAtPut will use the appropriate endianess for this platform.
+	See also ExternalAddress >> #asInteger"
+	"
+	(ExternalAddress fromInteger: 12345678) asInteger
+	"
+
+	| pointerBytes sz answer |
+	sz := self numElements.
+	pointerBytes := ByteArray new: sz.
+	pointerBytes primFFIIntegerAt: 1 put: address size: sz signed: false.
+	answer := self new.
+	answer basicAt: 1 put: (pointerBytes ffiUint8At: 1);
+		basicAt: 2 put: (pointerBytes ffiUint8At: 2);
+		basicAt: 3 put: (pointerBytes ffiUint8At: 3);
+		basicAt: 4 put: (pointerBytes ffiUint8At: 4).
+	sz = 8 ifTrue: [
+		answer basicAt: 5 put: (pointerBytes ffiUint8At: 5);
+			basicAt: 6 put: (pointerBytes ffiUint8At: 6);
+			basicAt: 7 put: (pointerBytes ffiUint8At: 7);
+			basicAt: 8 put: (pointerBytes ffiUint8At: 8) ].
+	^answer! !
 
 !ExternalAddress class methodsFor: 'instance creation' stamp: 'nice 5/19/2006 03:24'!
 gcallocate: byteSize
@@ -1216,7 +1255,7 @@ compiledSpec
 	"Return the compiled spec of the receiver"
 	^compiledSpec ifNil:[self compileFields].! !
 
-!ExternalStructure class methodsFor: 'field definition' stamp: 'jmv 8/31/2018 12:11:18'!
+!ExternalStructure class methodsFor: 'field definition' stamp: 'jmv 12/8/2023 10:37:39'!
 defineAliasAccessorsFor: fieldName type: type
 	"Define read/write accessors for the given field"
 	| code refClass argName |
@@ -1251,7 +1290,7 @@ defineAliasAccessorsFor: fieldName type: type
 		(refClass == nil and:[type isAtomic and:[type isPointerType not]])
 			ifTrue:[s nextPutAll:'handle := ', argName]
 			ifFalse:[s nextPutAll:'handle := ', argName,' getHandle'.
-					type isPointerType ifTrue:[s nextPutAll:' asByteArrayPointer']]].
+					type isPointerType ifTrue:[s nextPutAll:' asByteArrayWithPointer']]].
 	self compile: code classified: 'accessing' withStamp: nil notifying: nil.! !
 
 !ExternalStructure class methodsFor: 'field definition' stamp: 'jmv 8/31/2018 12:13:06'!
@@ -1930,6 +1969,13 @@ int16
 int32
 	^AtomicTypes at: 'int32'! !
 
+!ExternalType class methodsFor: 'type constants' stamp: 'jmv 12/8/2023 10:00:05'!
+int3264
+	"32 or 64 bits, depending on the platform"
+	^Smalltalk wordSize = 8
+		ifTrue: [ self int32 ]
+		ifFalse: [ self int64 ].! !
+
 !ExternalType class methodsFor: 'type constants' stamp: 'jmv 11/14/2023 09:42:40'!
 int64
 	^AtomicTypes at: 'int64'! !
@@ -2218,10 +2264,20 @@ asMachineWordArray
 		answer uint64At: i-1*Smalltalk wordSize+1 put: (self at: i) bigEndian: Smalltalk isBigEndian ].
 	^answer! !
 
-!ByteArray methodsFor: '*FFI-Kernel' stamp: 'jmv 11/14/2023 16:15:42'!
+!ByteArray methodsFor: '*FFI-Kernel' stamp: 'jmv 12/8/2023 10:12:16'!
+asExternalAddress
+	"Answer an instance of ExternalAddress, with my contents, assuming they form a pointer.
+	See inheritance.
+	See #asByteArrayWithPointer"
+
+	^ self pointerAt: 1.! !
+
+!ByteArray methodsFor: '*FFI-Kernel' stamp: 'jmv 12/8/2023 10:39:12'!
 asExternalPointer
-	"Convert the receiver assuming that it describes a pointer to an object."
-	^ self pointerAt: 1! !
+	"Compatibility.
+	Used for generated FFI code."
+
+	^self asExternalAddress! !
 
 !ByteArray methodsFor: '*FFI-Kernel' stamp: 'jmv 11/14/2023 16:03:52'!
 booleanAt: byteOffset
@@ -2236,6 +2292,17 @@ booleanAt: byteOffset put: value
 	"If a regular ByteArray, byteOffset is the start position in self.
 	If an ExternalAddress, take us as a pointer. byteOffset is applied to the pointer. Access memory at pointer+offset."
 	^self primFFIIntegerAt: byteOffset put: (value ifTrue:[1] ifFalse:[0]) size: 1 signed: false! !
+
+!ByteArray methodsFor: '*FFI-Kernel' stamp: 'jmv 12/8/2023 10:19:12'!
+bytesAt: byteOffset length: length
+	"Return a ByteArray of the given length starting at the indicated byte offset."
+	"If a regular ByteArray, byteOffset is the start position in self.
+	If an ExternalAddress, take us as a pointer. byteOffset is applied to the pointer. Access memory at pointer+offset."
+	| value |
+	value := ByteArray new: length.
+	1 to: length do: [ :i |
+		value ffiUint8At: i put: (self ffiUint8At: byteOffset+i-1)].
+	^value! !
 
 !ByteArray methodsFor: '*FFI-Kernel' stamp: 'jmv 12/22/2016 17:10:09'!
 doubleAt: byteOffset
@@ -2618,16 +2685,12 @@ signedShortAt: byteOffset put: value
 
 	^self ffiInt16At: byteOffset put: value! !
 
-!ByteArray methodsFor: '*FFI-Kernel' stamp: 'jmv 11/14/2023 16:11:35'!
+!ByteArray methodsFor: '*FFI-Kernel' stamp: 'jmv 12/8/2023 10:19:34'!
 structAt: byteOffset length: length
 	"Return a structure of the given length starting at the indicated byte offset."
 	"If a regular ByteArray, byteOffset is the start position in self.
 	If an ExternalAddress, take us as a pointer. byteOffset is applied to the pointer. Access memory at pointer+offset."
-	| value |
-	value := ByteArray new: length.
-	1 to: length do: [ :i |
-		value ffiUint8At: i put: (self ffiUint8At: byteOffset+i-1)].
-	^value! !
+	^self bytesAt: byteOffset length: length! !
 
 !ByteArray methodsFor: '*FFI-Kernel' stamp: 'jmv 11/14/2023 16:11:44'!
 structAt: byteOffset put: value length: length
@@ -2713,6 +2776,29 @@ unsignedShortAt: byteOffset put: value
 	If an ExternalAddress, take us as a pointer. byteOffset is applied to the pointer. Access memory at pointer+offset."
 
 	^self ffiUint16At: byteOffset put: value! !
+
+!ByteArray methodsFor: '*FFI-Kernel' stamp: 'jmv 12/8/2023 10:27:39'!
+utf16StringAt: byteOffset length: lengthInBytes
+	"Return a UnicodeString using the given byte length starting at the indicated byte offset.
+	Assume bytes are UTF-16 encoded, and in this platform endianess."
+	"If a regular ByteArray, byteOffset is the start position in self.
+	If an ExternalAddress, take us as a pointer. byteOffset is applied to the pointer. Access memory at pointer+offset."
+
+	| utf16Bytes utf8Bytes |
+	utf16Bytes := self bytesAt: byteOffset length: lengthInBytes.
+	utf8Bytes := UnicodeString utf8FromUtf16Bytes: utf16Bytes bigEndianHint: Smalltalk isBigEndian.
+	^UnicodeString fromUtf8Bytes: utf8Bytes.! !
+
+!ByteArray methodsFor: '*FFI-Kernel' stamp: 'jmv 12/8/2023 10:25:16'!
+utf8StringAt: byteOffset length: lengthInBytes
+	"Return a UnicodeString using the given byte length starting at the indicated byte offset.
+	Assume bytes are UTF-8 encoded."
+	"If a regular ByteArray, byteOffset is the start position in self.
+	If an ExternalAddress, take us as a pointer. byteOffset is applied to the pointer. Access memory at pointer+offset."
+
+	| bytes |
+	bytes := self bytesAt: byteOffset length: lengthInBytes.
+	^UnicodeString fromUtf8Bytes: bytes.! !
 
 !ByteArray methodsFor: '*FFI-Kernel' stamp: 'ar 11/29/1999 00:16'!
 voidAt: byteOffset

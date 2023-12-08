@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #6072] on 16 November 2023 at 11:30:54 am'!
+'From Cuis6.0 [latest update: #6114] on 8 December 2023 at 11:09:01 am'!
 'Description '!
-!provides: 'ObjectProperties' 1 0!
+!provides: 'ObjectProperties' 1 1!
 SystemOrganization addCategory: #ObjectProperties!
 
 
@@ -81,6 +81,10 @@ propertyAt: aSymbol ifAbsent: absentBlock
 		ifNil: absentBlock
 		ifNotNil: [ :map |
 			map at: aSymbol ifAbsent: absentBlock ]! !
+
+!Object methodsFor: '*ObjectProperties-adding / removing' stamp: 'jmv 12/8/2023 09:01:05'!
+propertyAt: aSymbol ifAbsentPut: aBlock
+	^self propertyMap at: aSymbol ifAbsentPut: aBlock! !
 
 !Object methodsFor: '*ObjectProperties-querying / testing' stamp: 'jmv 11/16/2023 11:15:47'!
 propertyAt: aSymbol ifPresentDo: presentBlock
