@@ -1,173 +1,173 @@
-'From Cuis 6.0 [latest update: #5795] on 7 May 2023 at 7:09:33 pm'!
+'From Cuis6.0 [latest update: #6120] on 14 December 2023 at 10:58:20 am'!
 'Description Description - This package is a port and refactoring of WebClient from http://ss3.gemstone.com/ss/WebClient.html with moderate changes by David Graham, Nicola Mingotti, Juan Vuletich and Hernan Wilkinson.
 	- WebClient-Core-ul.100
 	- WebClient-Help-ar.10
 	- WebClient-Tests-topa.48'!
-!provides: 'WebClient' 1 28!
+!provides: 'WebClient' 1 29!
 !requires: 'Network-Kernel' 1 2 nil!
 !requires: 'Identities-UUID' 1 7 nil!
 !requires: 'Cryptography-DigitalSignatures' 1 7 nil!
-SystemOrganization addCategory: 'WebClient-Core'!
-SystemOrganization addCategory: 'WebClient-SqueakSSL-Core'!
+SystemOrganization addCategory: #'WebClient-Core'!
+SystemOrganization addCategory: #'WebClient-SqueakSSL-Core'!
 
 
-!classDefinition: #WebChunkedStream category: 'WebClient-Core'!
+!classDefinition: #WebChunkedStream category: #'WebClient-Core'!
 ReadStream subclass: #WebChunkedStream
 	instanceVariableNames: 'sourceStream chunkSize'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'WebClient-Core'!
-!classDefinition: 'WebChunkedStream class' category: 'WebClient-Core'!
+!classDefinition: 'WebChunkedStream class' category: #'WebClient-Core'!
 WebChunkedStream class
 	instanceVariableNames: ''!
 
-!classDefinition: #SqueakSSLCertificateError category: 'WebClient-SqueakSSL-Core'!
+!classDefinition: #SqueakSSLCertificateError category: #'WebClient-SqueakSSL-Core'!
 Error subclass: #SqueakSSLCertificateError
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'WebClient-SqueakSSL-Core'!
-!classDefinition: 'SqueakSSLCertificateError class' category: 'WebClient-SqueakSSL-Core'!
+!classDefinition: 'SqueakSSLCertificateError class' category: #'WebClient-SqueakSSL-Core'!
 SqueakSSLCertificateError class
 	instanceVariableNames: ''!
 
-!classDefinition: #WebAuthRequired category: 'WebClient-Core'!
+!classDefinition: #WebAuthRequired category: #'WebClient-Core'!
 Exception subclass: #WebAuthRequired
 	instanceVariableNames: 'client request response authParams message'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'WebClient-Core'!
-!classDefinition: 'WebAuthRequired class' category: 'WebClient-Core'!
+!classDefinition: 'WebAuthRequired class' category: #'WebClient-Core'!
 WebAuthRequired class
 	instanceVariableNames: ''!
 
-!classDefinition: #SecureSocket category: 'WebClient-SqueakSSL-Core'!
+!classDefinition: #SecureSocket category: #'WebClient-SqueakSSL-Core'!
 Socket subclass: #SecureSocket
 	instanceVariableNames: 'ssl decoded readBuf sendBuf'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'WebClient-SqueakSSL-Core'!
-!classDefinition: 'SecureSocket class' category: 'WebClient-SqueakSSL-Core'!
+!classDefinition: 'SecureSocket class' category: #'WebClient-SqueakSSL-Core'!
 SecureSocket class
 	instanceVariableNames: ''!
 
-!classDefinition: #SecureSocketStream category: 'WebClient-SqueakSSL-Core'!
+!classDefinition: #SecureSocketStream category: #'WebClient-SqueakSSL-Core'!
 SocketStream subclass: #SecureSocketStream
 	instanceVariableNames: 'ssl sendBuf readBuf decoded certIssues'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'WebClient-SqueakSSL-Core'!
-!classDefinition: 'SecureSocketStream class' category: 'WebClient-SqueakSSL-Core'!
+!classDefinition: 'SecureSocketStream class' category: #'WebClient-SqueakSSL-Core'!
 SecureSocketStream class
 	instanceVariableNames: ''!
 
-!classDefinition: #WebClient category: 'WebClient-Core'!
+!classDefinition: #WebClient category: #'WebClient-Core'!
 Object subclass: #WebClient
 	instanceVariableNames: 'flags server scheme timeout stream cookies proxyServer lastScheme lastServer lastPort maxRedirect redirections userAgent authParams proxyParams accessLog debugLog'
 	classVariableNames: 'DebugLog FlagAcceptCookies FlagAllowAuth FlagAllowRedirect ProxyHandler'
 	poolDictionaries: ''
 	category: 'WebClient-Core'!
-!classDefinition: 'WebClient class' category: 'WebClient-Core'!
+!classDefinition: 'WebClient class' category: #'WebClient-Core'!
 WebClient class
 	instanceVariableNames: ''!
 
-!classDefinition: #WebCookie category: 'WebClient-Core'!
+!classDefinition: #WebCookie category: #'WebClient-Core'!
 Object subclass: #WebCookie
 	instanceVariableNames: 'name value path domain expiry version secure httpOnly comment'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'WebClient-Core'!
-!classDefinition: 'WebCookie class' category: 'WebClient-Core'!
+!classDefinition: 'WebCookie class' category: #'WebClient-Core'!
 WebCookie class
 	instanceVariableNames: ''!
 
-!classDefinition: #WebMessage category: 'WebClient-Core'!
+!classDefinition: #WebMessage category: #'WebClient-Core'!
 Object subclass: #WebMessage
 	instanceVariableNames: 'stream protocol headers content'
 	classVariableNames: 'StatusCodes'
 	poolDictionaries: ''
 	category: 'WebClient-Core'!
-!classDefinition: 'WebMessage class' category: 'WebClient-Core'!
+!classDefinition: 'WebMessage class' category: #'WebClient-Core'!
 WebMessage class
 	instanceVariableNames: ''!
 
-!classDefinition: #WebRequest category: 'WebClient-Core'!
+!classDefinition: #WebRequest category: #'WebClient-Core'!
 WebMessage subclass: #WebRequest
 	instanceVariableNames: 'method request rawUrl server'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'WebClient-Core'!
-!classDefinition: 'WebRequest class' category: 'WebClient-Core'!
+!classDefinition: 'WebRequest class' category: #'WebClient-Core'!
 WebRequest class
 	instanceVariableNames: ''!
 
-!classDefinition: #WebResponse category: 'WebClient-Core'!
+!classDefinition: #WebResponse category: #'WebClient-Core'!
 WebMessage subclass: #WebResponse
 	instanceVariableNames: 'request status code url'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'WebClient-Core'!
-!classDefinition: 'WebResponse class' category: 'WebClient-Core'!
+!classDefinition: 'WebResponse class' category: #'WebClient-Core'!
 WebResponse class
 	instanceVariableNames: ''!
 
-!classDefinition: #WebServer category: 'WebClient-Core'!
+!classDefinition: #WebServer category: #'WebClient-Core'!
 Object subclass: #WebServer
 	instanceVariableNames: 'listenerSocket listenerProcess interface port mutex connections entryPoints vault logAction nonceCache sessions serverString errorHandler accessLog certName siteUrl'
 	classVariableNames: 'Default Registry'
 	poolDictionaries: ''
 	category: 'WebClient-Core'!
-!classDefinition: 'WebServer class' category: 'WebClient-Core'!
+!classDefinition: 'WebServer class' category: #'WebClient-Core'!
 WebServer class
 	instanceVariableNames: ''!
 
-!classDefinition: #WebSocket category: 'WebClient-Core'!
+!classDefinition: #WebSocket category: #'WebClient-Core'!
 Object subclass: #WebSocket
 	instanceVariableNames: 'name process stream handlers'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'WebClient-Core'!
-!classDefinition: 'WebSocket class' category: 'WebClient-Core'!
+!classDefinition: 'WebSocket class' category: #'WebClient-Core'!
 WebSocket class
 	instanceVariableNames: ''!
 
-!classDefinition: #WebSocket00 category: 'WebClient-Core'!
+!classDefinition: #WebSocket00 category: #'WebClient-Core'!
 WebSocket subclass: #WebSocket00
 	instanceVariableNames: 'frameType frameData'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'WebClient-Core'!
-!classDefinition: 'WebSocket00 class' category: 'WebClient-Core'!
+!classDefinition: 'WebSocket00 class' category: #'WebClient-Core'!
 WebSocket00 class
 	instanceVariableNames: ''!
 
-!classDefinition: #WebSocket07 category: 'WebClient-Core'!
+!classDefinition: #WebSocket07 category: #'WebClient-Core'!
 WebSocket subclass: #WebSocket07
 	instanceVariableNames: 'frameType frameData closing masking'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'WebClient-Core'!
-!classDefinition: 'WebSocket07 class' category: 'WebClient-Core'!
+!classDefinition: 'WebSocket07 class' category: #'WebClient-Core'!
 WebSocket07 class
 	instanceVariableNames: ''!
 
-!classDefinition: #WebUtils category: 'WebClient-Core'!
+!classDefinition: #WebUtils category: #'WebClient-Core'!
 Object subclass: #WebUtils
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'WebClient-Core'!
-!classDefinition: 'WebUtils class' category: 'WebClient-Core'!
+!classDefinition: 'WebUtils class' category: #'WebClient-Core'!
 WebUtils class
 	instanceVariableNames: 'currentProxyServer'!
 
-!classDefinition: #SqueakSSL category: 'WebClient-SqueakSSL-Core'!
+!classDefinition: #SqueakSSL category: #'WebClient-SqueakSSL-Core'!
 Object subclass: #SqueakSSL
 	instanceVariableNames: 'handle readBlock writeBlock'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'WebClient-SqueakSSL-Core'!
-!classDefinition: 'SqueakSSL class' category: 'WebClient-SqueakSSL-Core'!
+!classDefinition: 'SqueakSSL class' category: #'WebClient-SqueakSSL-Core'!
 SqueakSSL class
 	instanceVariableNames: ''!
 
@@ -1749,16 +1749,13 @@ defaultPort
 		ifTrue:[443]
 		ifFalse:[80]! !
 
-!WebClient methodsFor: 'initialize' stamp: 'ar 2/12/2012 21:03'!
+!WebClient methodsFor: 'initialize' stamp: 'BAP 12/13/2023 15:57:57'!
 defaultUserAgent
 	"Answer the default User-Agent string to use for WebClient"
 
-	^'WebClient/1.5 (', 
-		WebUtils mcVersion, '; ', 
-		SystemVersion current version,'-', 
-		SystemVersion current highestUpdate printString, '; ', 
-		WebUtils platformName,')'.
-! !
+	^ 'WebClient/1.5 (',
+		SystemVersion current versionString,'; ', 
+		WebUtils platformName,')'.! !
 
 !WebClient methodsFor: 'initialize' stamp: 'ul 7/28/2016 18:09'!
 destroy
@@ -4669,7 +4666,7 @@ handleError: ex request: aRequest
 	[self log: String newLineString, errReport] on: Error do:[:ex2| ex return].
 	aRequest send500Response: errReport. ! !
 
-!WebServer methodsFor: 'errors' stamp: 'jmv 6/25/2017 19:16:01'!
+!WebServer methodsFor: 'errors' stamp: 'jmv 12/12/2023 18:29:21'!
 systemInfoOn: strm
 	"Provides system information for a server error report"
 	| info |
@@ -4680,7 +4677,7 @@ systemInfoOn: strm
 		newLine.
 
 	strm nextPutAll: 'Image: ';
-		nextPutAll:  SystemVersion current version asString;
+		nextPutAll:  SystemVersion current versionString;
 		nextPutAll: ' [';
 		nextPutAll: Smalltalk lastUpdateString asString;
 		nextPutAll: ']';
@@ -5108,15 +5105,13 @@ serverDate
 		s nextPutAll: ' GMT'.
 	].! !
 
-!WebServer class methodsFor: 'accessing' stamp: 'jmv 6/25/2017 20:15:47'!
+!WebServer class methodsFor: 'accessing' stamp: 'jmv 12/12/2023 18:31:59'!
 serverString
 	"Returns the server string to be used in responses"
 
-	^'WebServer/1.5 (',
-		SystemVersion current version,'-',
-		SystemVersion current highestUpdate printString, '; ',
-		WebUtils platformName,')'
-! !
+	^ 'WebServer/1.5 (',
+		SystemVersion current versionString,'; ',
+		WebUtils platformName,')'.! !
 
 !WebServer class methodsFor: 'registry' stamp: 'ar 11/1/2010 20:59'!
 forUrl: urlString
