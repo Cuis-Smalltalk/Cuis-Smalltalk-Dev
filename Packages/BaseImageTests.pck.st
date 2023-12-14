@@ -1,6 +1,6 @@
-'From Cuis6.0 [latest update: #6114] on 1 December 2023 at 5:20:06 pm'!
+'From Cuis6.0 [latest update: #6122] on 14 December 2023 at 11:51:13 am'!
 'Description ExtractMethod for optimized messages test'!
-!provides: 'BaseImageTests' 1 376!
+!provides: 'BaseImageTests' 1 377!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Objects'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
@@ -855,6 +855,16 @@ DecompilerTests subclass: #DecompilerTestFailuresCollector
 	category: 'BaseImageTests-Compiler'!
 !classDefinition: 'DecompilerTestFailuresCollector class' category: #'BaseImageTests-Compiler'!
 DecompilerTestFailuresCollector class
+	instanceVariableNames: ''!
+
+!classDefinition: #MessageNodeTest category: #'BaseImageTests-Compiler'!
+TestCase subclass: #MessageNodeTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-Compiler'!
+!classDefinition: 'MessageNodeTest class' category: #'BaseImageTests-Compiler'!
+MessageNodeTest class
 	instanceVariableNames: ''!
 
 !classDefinition: #MirrorPrimitiveTests category: #'BaseImageTests-Compiler'!
@@ -17967,6 +17977,32 @@ assert: aBoolean description: aString resumable: resumableBoolean
 !DecompilerTestFailuresCollector methodsFor: 'accessing' stamp: 'eem 11/10/2008 15:47'!
 failures
 	^failures! !
+
+!MessageNodeTest methodsFor: 'tests' stamp: 'HAW 12/10/2023 11:06:00'!
+cascadeMessageSend
+
+	1 printString; yourself! !
+
+!MessageNodeTest methodsFor: 'tests' stamp: 'HAW 12/10/2023 11:05:52'!
+messageSend
+
+	1 printString! !
+
+!MessageNodeTest methodsFor: 'tests' stamp: 'HAW 12/10/2023 11:06:08'!
+test01hasEquivalentReceiverWithWorksForAnyCombinationOfMessageSend
+
+	| cascadeMessageSend messageSend |
+	
+	messageSend := (self class >> #messageSend) methodNode block statements first.
+	"I look for the MessageNode in the sourceRanges because there is where the receiver is nil and 
+	#hasEquivalentReceiverWith: was not taking care of that case - Hernan"
+	cascadeMessageSend := (self class >> #cascadeMessageSend) methodNode completeSourceRanges keys detect: [ :a | a isMessageNode and: [ a selector key = #printString ]].
+	
+	self assert: (messageSend hasEquivalentReceiverWith: cascadeMessageSend).
+	self assert: (cascadeMessageSend hasEquivalentReceiverWith: messageSend).
+	self assert: (cascadeMessageSend hasEquivalentReceiverWith: cascadeMessageSend).
+	self assert: (messageSend hasEquivalentReceiverWith: messageSend).
+	! !
 
 !MirrorPrimitiveTests methodsFor: 'tests' stamp: 'jmv 12/28/2013 19:06'!
 testMirrorAt
