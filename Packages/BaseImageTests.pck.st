@@ -1,6 +1,6 @@
-'From Cuis6.0 [latest update: #6122] on 14 December 2023 at 11:51:13 am'!
+'From Cuis6.0 [latest update: #6134] on 15 December 2023 at 5:55:40 pm'!
 'Description ExtractMethod for optimized messages test'!
-!provides: 'BaseImageTests' 1 377!
+!provides: 'BaseImageTests' 1 378!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Objects'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
@@ -23830,21 +23830,22 @@ changeUserChangesFileWhile: aBlock
 		of: #userChangesFileNameExtension
 		do: aBlock.! !
 
-!ChangesTest methodsFor: 'user changes' stamp: 'HAW 11/1/2019 17:07:57'!
+!ChangesTest methodsFor: 'user changes' stamp: 'jmv 12/15/2023 17:46:22'!
 scanChangesFromFile
 
 	| fileStream changeList |
 
-	fileStream := Smalltalk defaultUserChangesName asFileEntry readStream.
+	fileStream := (DirectoryEntry userChangesDirectory // Smalltalk userChangesFileName) readStream.
 	changeList := ChangeList new scanFile: fileStream from: 0 to: fileStream size.
 
 	^ changeList changeList.
 ! !
 
-!ChangesTest methodsFor: 'user changes' stamp: 'HAW 11/1/2019 17:08:00'!
+!ChangesTest methodsFor: 'user changes' stamp: 'jmv 12/15/2023 17:52:55'!
 userChangesForTestsFile
 
-	^self userChangesForTestsFileName asFileEntry! !
+	^DirectoryEntry userChangesDirectory // 
+	((FileIOAccessor default baseNameFor: Smalltalk imageName pathAndLocalName second), self userChangesForTestsFileExtension).! !
 
 !ChangesTest methodsFor: 'user changes' stamp: 'HAW 11/1/2019 17:08:04'!
 userChangesForTestsFileExtension
