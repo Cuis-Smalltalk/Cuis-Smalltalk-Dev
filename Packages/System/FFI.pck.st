@@ -1,6 +1,6 @@
-'From Cuis6.0 [latest update: #6114] on 8 December 2023 at 11:08:48 am'!
+'From Cuis6.0 [latest update: #6154] on 26 December 2023 at 6:35:29 pm'!
 'Description '!
-!provides: 'FFI' 1 41!
+!provides: 'FFI' 1 42!
 SystemOrganization addCategory: #'FFI-Pools'!
 SystemOrganization addCategory: #'FFI-Kernel'!
 
@@ -1969,12 +1969,12 @@ int16
 int32
 	^AtomicTypes at: 'int32'! !
 
-!ExternalType class methodsFor: 'type constants' stamp: 'jmv 12/8/2023 10:00:05'!
+!ExternalType class methodsFor: 'type constants' stamp: 'fgz 12/23/2023 02:47:25'!
 int3264
 	"32 or 64 bits, depending on the platform"
 	^Smalltalk wordSize = 8
-		ifTrue: [ self int32 ]
-		ifFalse: [ self int64 ].! !
+		ifTrue: [ self int64 ]
+		ifFalse: [ self int32 ].! !
 
 !ExternalType class methodsFor: 'type constants' stamp: 'jmv 11/14/2023 09:42:40'!
 int64
