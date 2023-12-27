@@ -274,25 +274,25 @@ Compile-time evaluation is support for arbitrary literal objects in methods. In 
 ````
 it creates an instance of String with the proper content and stores the instance as one of the CompiledMethod's indexed variables. A Smalltalk VM can refer to objects in a CompiledMethod's indexed variables. The bytecode of the method would include instructions to fetch a reference from a certain indexed variable and send it the size message. These indexed variables are used by the compiler for various purposes, including storing literals and selectors of messages sent by the method, and are collectively known as the method's literal frame.
 
-Any object could be stored in a literal frame, but Smalltalk syntax includes notation only for literal Numbers, Characters, Strings, Symbols ans Arrays. Compile-time evaluation is a mechanism to allow literals of other types. The expression to create a literal object is used in a method in place of the literal, wrapped in #(). The expression is evaluated when the method is compiled--hence the name of the feature--and the result is used as a literal object in place of the #() construct. For example, these two lines would be equivalent:
+Any object could be stored in a literal frame, but Smalltalk syntax includes notation only for literal Numbers, Characters, Strings, Symbols ans Arrays. Compile-time evaluation is a mechanism to allow literals of other types. The expression to create a literal object is used in a method in place of the literal, wrapped in ##(). The expression is evaluated when the method is compiled--hence the name of the feature--and the result is used as a literal object in place of the ##() construct. For example, these two lines would be equivalent:
 ````Smalltalk
     'abc' size
-    #(String with: $a with: $b with: $c) size
+    ##(String with: $a with: $b with: $c) size
 ````
 Compile-time evaluation can be used to include literal dictionaries in a method:
 ````Smalltalk
     errorStringFor: anInteger
-        ^#(Dictionary new
+        ^##(Dictionary new
             at: 1 put: 'File not found';
             at: 2 put: 'Not enough memory';
             yourself)
                 at: anInteger ifAbsent: [^'Unknown error']
 ````
-What would it take to implement something like that in VisualWorks or Squeak? We can probably reuse the existing mechanism that handles "classic" literal objects such as Strings. As we could see in the parse tree of self new: 10 withAll: Character space in the last section, the literal 10 was represented by an instance of LiteralNode. Experiments with other literal objects show that any literal is parsed as an instance of LiteralNode, with the actual object stored in the value variable of the node. This suggests a simple plan of attack. All we have to do is tweak the parser to recognize the #(...) thing, evaluate whatever is found between the parentheses, and produce a LiteralNode with the result of evaluation as its value. The code generator will take care of the rest.
+What would it take to implement something like that in VisualWorks or Squeak? We can probably reuse the existing mechanism that handles "classic" literal objects such as Strings. As we could see in the parse tree of self new: 10 withAll: Character space in the last section, the literal 10 was represented by an instance of LiteralNode. Experiments with other literal objects show that any literal is parsed as an instance of LiteralNode, with the actual object stored in the value variable of the node. This suggests a simple plan of attack. All we have to do is tweak the parser to recognize the ##(...) thing, evaluate whatever is found between the parentheses, and produce a LiteralNode with the result of evaluation as its value. The code generator will take care of the rest.
 
-This sounds simple enough but before we begin, let's check how #() scans. The scanAll: method we added to the Scanner will show that a sample expression, say
+This sounds simple enough but before we begin, let's check how ##() scans. The scanAll: method we added to the Scanner will show that a sample expression, say
 ````Smalltalk
-    #(Time now)
+    ##(Time now)
 ````
 scans in VisualWorks as
 ````
@@ -358,9 +358,9 @@ Parsing begins in the parseMethod method. Since, according to the grammar, metho
 
 In short, the parser predicts what to expect further in the input based on the current token and the tokens seen so far. There are limitations to this parsing scheme, but it is easy to understand and implement by hand.
 
-In VisualWorks, methods involved in recursive descent are under expression types-* protocols, and the entry point is the ````method:context:```` method. The method responsible for parsing things such as arrays, symbols and strings is constant. To make our modification, we will need to change this method to recognize the #() construct. The method is essentially a long case statement. Closer to the end we can see a number of tests for various things that can begin with a hash mark. (It is interesting to note that in VW 3.x, there is a test for #leftBrace--a qualified name literal, part of namespace support introduced in VW 5i which apparently has been in the works since before 3.x).
+In VisualWorks, methods involved in recursive descent are under expression types-* protocols, and the entry point is the ````method:context:```` method. The method responsible for parsing things such as arrays, symbols and strings is constant. To make our modification, we will need to change this method to recognize the ##() construct. The method is essentially a long case statement. Closer to the end we can see a number of tests for various things that can begin with a hash mark. (It is interesting to note that in VW 3.x, there is a test for #leftBrace--a qualified name literal, part of namespace support introduced in VW 5i which apparently has been in the works since before 3.x).
 
-For our purposes, we add a case to recognize a second hash mark, shown in bold below. We can make this change immediately, without breaking the compiler. Even though compileTimeEval method is not yet in the system, the ````compileTimeEval```` message is only sent if we actually parse a #() construct.
+For our purposes, we add a case to recognize a second hash mark, shown in bold below. We can make this change immediately, without breaking the compiler. Even though compileTimeEval method is not yet in the system, the ````compileTimeEval```` message is only sent if we actually parse a ##() construct.
 ````Smalltalk
   Parser>>constant
     ...
@@ -369,7 +369,7 @@ For our purposes, we add a case to recognize a second hash mark, shown in bold b
             [self scanToken.
             self qualifiedNameLiteral.
             ^true].
-    tokenType == #literalQuote "must be #(expr)"
+    tokenType == #literalQuote "must be ##(expr)"
         ifTrue:
             [self scanToken.
             tokenType == #leftParenthesis
@@ -399,11 +399,11 @@ We begin with the last task, building the literal node, because it is the easies
 ````
 Reading tokens up to a closing parenthesis sounds simple enough--just read them one by one--but there is a catch. First, it should be a matching parenthesis. There may be other, nested, pairs of parentheses before it. Second, a collection of tokens, even after we scan in correctly as far as nested parentheses go, is useless to us. We need to parse and evaluate it, but the Parser has no interface to parse a pre-scanned sequence of tokens!  It would not be easy to add, too! (If you just  thought of constructing an object holding onto a sequence of tokens and simulating a Scanner by returning them one by one, pat yourself on the shoulder for having a perfect OO intuition). The problem is, in both Squeak and VisualWorks Parser is a subclass of Scanner--so a Parser and a Scanner is actually one object! Because of this design glitch, we cannot plug in a different Scanner and are stuck with a Parser that can only read character streams.
 
-We can get through this, and easily. Think what the input looks like after we skip over the two hash marks of a #() expression. If the original source was #(Time now), the Parser/Scanner now looks at (Time now). Of course--this is just a parenthesized expression, or a primaryExpression in terms of the grammar the Parser understands! If we ask the Parser to parse a primaryExpression, it will gladly gobble everything up to the matching closing parenthesis and hand us the parse tree back.  Here is a second approximation of our method:
+We can get through this, and easily. Think what the input looks like after we skip over the two hash marks of a ##() expression. If the original source was ##(Time now), the Parser/Scanner now looks at (Time now). Of course--this is just a parenthesized expression, or a primaryExpression in terms of the grammar the Parser understands! If we ask the Parser to parse a primaryExpression, it will gladly gobble everything up to the matching closing parenthesis and hand us the parse tree back.  Here is a second approximation of our method:
 ````Smalltalk
     compileTimeEval
         self primaryExpression.
-        "parseNode now holds the parse tree of the #() body"
+        "parseNode now holds the parse tree of the ##() body"
         parseNode := ...evaluate the current parseNode...
 ````
 This is exactly why this is much easier to implement in VisualWorks than in Squeak. In Squeak, we would have to extend the scanner to read the input stream up the matching closing parenthesis, properly handling parentheses nesting, and then try to somehow parse that token sequence. While not impossible (nothing is impossible in Smalltalk, right?), that certainly would not be as easy as what we just did.
@@ -425,7 +425,7 @@ So we have a full method parse tree. Now we need a CompiledMethod built from it.
 
 The final important issue to consider is the scope used when we build a CompiledMethod. Any code is compiled within the scope of a certain class and executes as a message sent to an instance of that class. The scope determines what variables are accessible from the code. The code evaluated in the workspace is compiled in the scope of UndefinedObject. It executes as a message sent to nil.  (If you have never thought of it this way, evaluate self in a workspace and see what the result is. What is even more fun, investigate what happens if you evaluate an expression self DoIt in a Squeak workspace and why). Likewise, the code evaluated in a browser is compiled in scope of the class selected in the browser, so it can refer to class variables. The code evaluated in an inspector is compiled within the class of the object being inspected and is executed as a message sent to the object being inspected--so the code can use self and all of the object's instance variables.
 
-A reasonable scope for compile-time evaluated code is the class where the method containing the code is defined. For example, #(self name) in an instance-side method of class Foo would capture a literal reference to a symbol #Foo.
+A reasonable scope for compile-time evaluated code is the class where the method containing the code is defined. For example, ##(self name) in an instance-side method of class Foo would capture a literal reference to a symbol #Foo.
 
 To be able to evaluate the compile-time expression in that scope, the Parser needs to know the class where the method it now parses is supposed to be installed. In VW versions prior to 3.0, this information was not available. My older implementation in the UIUC archive adds targetClass instance variable to Parser. In version 3.0, VisualWorks implementors themselves added targetClass to Parser so that modification is no longer necessary. The (almost) final version of our method is:
 ````Smalltalk
