@@ -1,6 +1,6 @@
-'From Cuis6.0 [latest update: #6134] on 15 December 2023 at 5:55:40 pm'!
+'From Cuis6.3 [latest update: #6156] on 29 December 2023 at 5:15:58 pm'!
 'Description ExtractMethod for optimized messages test'!
-!provides: 'BaseImageTests' 1 378!
+!provides: 'BaseImageTests' 1 379!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Objects'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
@@ -16764,20 +16764,20 @@ supportTestSourceRangeAccessForDecompiledNoBytecodeInjectInto: method source: so
 								']'
 								'^t3 at: 1')! !
 
-!ClosureCompilerTest methodsFor: 'tests' stamp: 'jmv 12/30/2009 14:17'!
+!ClosureCompilerTest methodsFor: 'tests' stamp: 'jmv 12/29/2023 17:15:16'!
 supportTestSourceRangeAccessForInjectInto: method source: source
 	"Test debugger source range selection for inject:into:"
 	^self
 		supportTestSourceRangeAccessForInjectInto: method
 		source: source
-		selectionSequence: #(	'_ thisValue'
-								'do: [:each | nextValue _ binaryBlock value: nextValue value: each]'
+		selectionSequence: #(	':= thisValue'
+								'do: [:each | nextValue := binaryBlock value: nextValue value: each]'
 								'value: nextValue value: each'
-								'_ binaryBlock value: nextValue value: each'
-								'nextValue _ binaryBlock value: nextValue value: each'
+								':= binaryBlock value: nextValue value: each'
+								'nextValue := binaryBlock value: nextValue value: each'
 								'value: nextValue value: each'
-								'_ binaryBlock value: nextValue value: each'
-								'nextValue _ binaryBlock value: nextValue value: each'
+								':= binaryBlock value: nextValue value: each'
+								'nextValue := binaryBlock value: nextValue value: each'
 								'^nextValue')! !
 
 !ClosureCompilerTest methodsFor: 'tests' stamp: 'eem 7/29/2008 17:16'!
