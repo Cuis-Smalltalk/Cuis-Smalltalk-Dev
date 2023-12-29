@@ -1,0 +1,17 @@
+'From Cuis6.2 [latest update: #6156] on 29 December 2023 at 3:21:29 pm'!
+
+
+----SNAPSHOT----(29 December 2023 15:21:29) Cuis6.2-v3.image priorSource: 0!
+
+----QUIT----(29 December 2023 15:21:46) Cuis6.3-6156-v3.image priorSource: 73!
+
+----STARTUP---- (29 December 2023 15:38:18) as C:\Users\Juan Vuletich\Cuis-Smalltalk\Cuis-Smalltalk-Dev\Cuis6.3-6156-v3.image!
+
+
+SourceFileVersionString!
+
+SourceFileVersionString := 'Cuis6.3' .!
+
+SourceFileVersionString!
+
+----QUIT----(29 December 2023 15:38:48) Cuis6.3-6156-v3.image priorSource: 151!
