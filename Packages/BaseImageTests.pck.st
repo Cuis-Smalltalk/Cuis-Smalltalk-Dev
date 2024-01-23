@@ -1,6 +1,6 @@
-'From Cuis6.3 [latest update: #6156] on 29 December 2023 at 5:15:58 pm'!
-'Description ExtractMethod for optimized messages test'!
-!provides: 'BaseImageTests' 1 379!
+'From Cuis6.3 [latest update: #6167] on 23 January 2024 at 3:44:22 pm'!
+'Description PushUpMethod enhancements'!
+!provides: 'BaseImageTests' 1 380!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Objects'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
@@ -857,16 +857,6 @@ DecompilerTests subclass: #DecompilerTestFailuresCollector
 DecompilerTestFailuresCollector class
 	instanceVariableNames: ''!
 
-!classDefinition: #MessageNodeTest category: #'BaseImageTests-Compiler'!
-TestCase subclass: #MessageNodeTest
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'BaseImageTests-Compiler'!
-!classDefinition: 'MessageNodeTest class' category: #'BaseImageTests-Compiler'!
-MessageNodeTest class
-	instanceVariableNames: ''!
-
 !classDefinition: #MirrorPrimitiveTests category: #'BaseImageTests-Compiler'!
 TestCase subclass: #MirrorPrimitiveTests
 	instanceVariableNames: ''
@@ -885,6 +875,46 @@ TestCase subclass: #ParseNodeEnumeratorTest
 	category: 'BaseImageTests-Compiler'!
 !classDefinition: 'ParseNodeEnumeratorTest class' category: #'BaseImageTests-Compiler'!
 ParseNodeEnumeratorTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #ParseNodeTest category: #'BaseImageTests-Compiler'!
+TestCase subclass: #ParseNodeTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-Compiler'!
+!classDefinition: 'ParseNodeTest class' category: #'BaseImageTests-Compiler'!
+ParseNodeTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #BlockNodeTest category: #'BaseImageTests-Compiler'!
+ParseNodeTest subclass: #BlockNodeTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-Compiler'!
+!classDefinition: 'BlockNodeTest class' category: #'BaseImageTests-Compiler'!
+BlockNodeTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #MessageNodeTest category: #'BaseImageTests-Compiler'!
+ParseNodeTest subclass: #MessageNodeTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-Compiler'!
+!classDefinition: 'MessageNodeTest class' category: #'BaseImageTests-Compiler'!
+MessageNodeTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #VariableNodeTest category: #'BaseImageTests-Compiler'!
+ParseNodeTest subclass: #VariableNodeTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-Compiler'!
+!classDefinition: 'VariableNodeTest class' category: #'BaseImageTests-Compiler'!
+VariableNodeTest class
 	instanceVariableNames: ''!
 
 !classDefinition: #ParserTest category: #'BaseImageTests-Compiler'!
@@ -17978,32 +18008,6 @@ assert: aBoolean description: aString resumable: resumableBoolean
 failures
 	^failures! !
 
-!MessageNodeTest methodsFor: 'tests' stamp: 'HAW 12/10/2023 11:06:00'!
-cascadeMessageSend
-
-	1 printString; yourself! !
-
-!MessageNodeTest methodsFor: 'tests' stamp: 'HAW 12/10/2023 11:05:52'!
-messageSend
-
-	1 printString! !
-
-!MessageNodeTest methodsFor: 'tests' stamp: 'HAW 12/10/2023 11:06:08'!
-test01hasEquivalentReceiverWithWorksForAnyCombinationOfMessageSend
-
-	| cascadeMessageSend messageSend |
-	
-	messageSend := (self class >> #messageSend) methodNode block statements first.
-	"I look for the MessageNode in the sourceRanges because there is where the receiver is nil and 
-	#hasEquivalentReceiverWith: was not taking care of that case - Hernan"
-	cascadeMessageSend := (self class >> #cascadeMessageSend) methodNode completeSourceRanges keys detect: [ :a | a isMessageNode and: [ a selector key = #printString ]].
-	
-	self assert: (messageSend hasEquivalentReceiverWith: cascadeMessageSend).
-	self assert: (cascadeMessageSend hasEquivalentReceiverWith: messageSend).
-	self assert: (cascadeMessageSend hasEquivalentReceiverWith: cascadeMessageSend).
-	self assert: (messageSend hasEquivalentReceiverWith: messageSend).
-	! !
-
 !MirrorPrimitiveTests methodsFor: 'tests' stamp: 'jmv 12/28/2013 19:06'!
 testMirrorAt
 	| stackpBefore stackpAfter array byteArray |
@@ -18127,6 +18131,100 @@ testItEnumeratesAllTheParseNodesPresentInAMethodNode
 	}.
 
 	self assert: (enumeratedNodes includesAllOf: nodesToBeEnumerated)! !
+
+!ParseNodeTest methodsFor: 'parse nodes helpers' stamp: 'RNG 1/19/2018 21:09:10'!
+message: aSelector to: aVariableName
+
+	| variableNode selectorNode |
+	variableNode _ VariableNode named: aVariableName.
+	selectorNode _ SelectorNode new key: aSelector code: 34.
+	^ MessageNode new
+		receiver: variableNode
+		selector: selectorNode
+		arguments: #()
+		precedence: 1! !
+
+!BlockNodeTest methodsFor: 'detecting self recursion' stamp: 'RNG 1/19/2018 21:05:22'!
+testItDoesNotSendsAGivenMessageToSelfWhenTheBlockIsEmpty
+
+	| anEmptyBlock |
+	anEmptyBlock _ BlockNode empty.
+
+	self deny: (anEmptyBlock sendsMessageToSelf: #myMethod)! !
+
+!BlockNodeTest methodsFor: 'detecting self recursion' stamp: 'RNG 1/19/2018 21:08:08'!
+testItSendsAGivenMessageToSelfWhenItContainsAnStatementWithAMessageSendToSelf
+
+	| anEmptyBlock |
+	anEmptyBlock _ BlockNode withJust: (self message: #myMethod to: 'self').
+
+	self assert: (anEmptyBlock sendsMessageToSelf: #myMethod)! !
+
+!MessageNodeTest methodsFor: 'tests' stamp: 'HAW 12/10/2023 11:06:00'!
+cascadeMessageSend
+
+	1 printString; yourself! !
+
+!MessageNodeTest methodsFor: 'tests' stamp: 'HAW 12/10/2023 11:05:52'!
+messageSend
+
+	1 printString! !
+
+!MessageNodeTest methodsFor: 'tests' stamp: 'HAW 12/10/2023 11:06:08'!
+test01hasEquivalentReceiverWithWorksForAnyCombinationOfMessageSend
+
+	| cascadeMessageSend messageSend |
+	
+	messageSend := (self class >> #messageSend) methodNode block statements first.
+	"I look for the MessageNode in the sourceRanges because there is where the receiver is nil and 
+	#hasEquivalentReceiverWith: was not taking care of that case - Hernan"
+	cascadeMessageSend := (self class >> #cascadeMessageSend) methodNode completeSourceRanges keys detect: [ :a | a isMessageNode and: [ a selector key = #printString ]].
+	
+	self assert: (messageSend hasEquivalentReceiverWith: cascadeMessageSend).
+	self assert: (cascadeMessageSend hasEquivalentReceiverWith: messageSend).
+	self assert: (cascadeMessageSend hasEquivalentReceiverWith: cascadeMessageSend).
+	self assert: (messageSend hasEquivalentReceiverWith: messageSend).
+	! !
+
+!MessageNodeTest methodsFor: 'detecting self recursion' stamp: 'RNG 1/19/2018 21:02:30'!
+testItDoesNotSendTheMessageToSelfWhenTheReceiverIsNotSelf
+
+	| messageNode |
+	messageNode _ self message: #myMethod to: 'super'.
+
+	self deny: (messageNode sendsMessageToSelf: #myMethod)! !
+
+!MessageNodeTest methodsFor: 'detecting self recursion' stamp: 'RNG 1/19/2018 21:02:19'!
+testItDoesNotSendTheMessageToSelfWhenTheReceiverIsSelfButTheSelectorIsDifferent
+
+	| messageNode |
+	messageNode _ self message: #myMethod to: 'self'.
+
+	self deny: (messageNode sendsMessageToSelf: #otherMethod)! !
+
+!MessageNodeTest methodsFor: 'detecting self recursion' stamp: 'RNG 1/19/2018 21:01:10'!
+testItSendsTheMessageToSelfWhenTheReceiverIsSelf
+
+	| messageNode |
+	messageNode _ self message: #myMethod to: 'self'.
+
+	self assert: (messageNode sendsMessageToSelf: #myMethod)! !
+
+!VariableNodeTest methodsFor: 'references to self' stamp: 'RNG 1/19/2018 20:51:09'!
+testItDoesNotReferencesSelfWhenTheVariableNameIsNotSelf
+
+	| variableNode |
+	variableNode _ VariableNode named: 'abc'.
+
+	self deny: variableNode referencesSelf! !
+
+!VariableNodeTest methodsFor: 'references to self' stamp: 'RNG 1/19/2018 20:50:13'!
+testItReferencesSelfWhenTheVariableNameIsSelf
+
+	| variableNode |
+	variableNode _ VariableNode named: 'self'.
+
+	self assert: variableNode referencesSelf! !
 
 !ParserTest methodsFor: 'test' stamp: 'jmv 7/4/2022 10:21:47'!
 testMulticharBinarySelectors
@@ -29978,7 +30076,7 @@ test01AnEmptyMethodOnClassToRefactorShouldBePushedUpToSuperclass
 	
 	! !
 
-!PushUpMethodTest methodsFor: 'tests' stamp: 'MEGL 7/12/2023 16:36:42'!
+!PushUpMethodTest methodsFor: 'tests' stamp: 'MEGL 8/21/2023 16:25:50'!
 test02AMethodReadingInstVarWarnsWhenPushedUpToSuperclass
 
 	| classToRefactorSuperclass classToRefactor selector newVariable refactoring |
@@ -29999,9 +30097,10 @@ test02AMethodReadingInstVarWarnsWhenPushedUpToSuperclass
 	
 	self assert: (classToRefactorSuperclass definesInstanceVariableNamed: newVariable).
 	self assert: (classToRefactorSuperclass includesSelector: selector).
+	self deny: (classToRefactor definesInstanceVariableNamed: newVariable).
 	self deny: (classToRefactor includesSelector: selector).! !
 
-!PushUpMethodTest methodsFor: 'tests' stamp: 'MEGL 7/12/2023 16:37:15'!
+!PushUpMethodTest methodsFor: 'tests' stamp: 'MEGL 8/21/2023 16:26:59'!
 test03AMethodWritingInstVarWarnsWhenPushedUpToSuperclass
 
 	| classToRefactorSuperclass classToRefactor selector newVariable refactoring |
@@ -30016,12 +30115,13 @@ test03AMethodWritingInstVarWarnsWhenPushedUpToSuperclass
 
 	self
 		assertCreation: [ refactoring := PushUpMethod for: classToRefactor >> selector ]
-		 warnsWith: [ PushUpMethod accessingInstanceVariableWarningMessage: { newVariable } ].
+		warnsWith: [ PushUpMethod accessingInstanceVariableWarningMessage: { newVariable }].
 		
 	refactoring apply.
 	
 	self assert: (classToRefactorSuperclass definesInstanceVariableNamed: newVariable).
 	self assert: (classToRefactorSuperclass includesSelector: selector).
+	self deny: (classToRefactor definesInstanceVariableNamed: newVariable).
 	self deny: (classToRefactor includesSelector: selector).! !
 
 !PushUpMethodTest methodsFor: 'tests' stamp: 'MSC 11/12/2019 11:47:57'!
@@ -30081,7 +30181,7 @@ test06AMethodAccessesSuperClassClassToRefactorInstVarShouldBePushedUpToSuperclas
 	self assert: (classToRefactorSuperclass includesSelector: selector).
 	self deny: (classToRefactor includesSelector: selector).! !
 
-!PushUpMethodTest methodsFor: 'tests' stamp: 'HAW 7/12/2023 20:37:43'!
+!PushUpMethodTest methodsFor: 'tests' stamp: 'HAW 1/23/2024 15:00:48'!
 test07ShouldWarnWhenNotEquivalentMethodExistsInSuperclass
 	
 	| classToRefactor classToRefactorSuperclass newVariable selector superclassMethodContent |
@@ -30099,11 +30199,11 @@ test07ShouldWarnWhenNotEquivalentMethodExistsInSuperclass
 
 	self 
 		assertCreation: [ PushUpMethod for: classToRefactor >> selector ]
-		warnsWith: [ PushUpMethod methodImplementedInSuperclassWarningMessage ].
+		warnsWith: [ PushUpMethod methodWithDifferentImplementationInSuperclass: { selector } ].
 		
 	! !
 
-!PushUpMethodTest methodsFor: 'tests' stamp: 'HAW 5/26/2023 19:46:24'!
+!PushUpMethodTest methodsFor: 'tests' stamp: 'HAW 1/23/2024 15:33:57'!
 test08RemovesEquivalentMethodsFromSiblings
 
 	| classToRefactorSuperclass classToRefactor selector push sourceCode classToRefactorSibling |
@@ -30117,7 +30217,7 @@ test08RemovesEquivalentMethodsFromSiblings
  	classToRefactorSibling := self createClassNamed: (self classToRefactorName,'Sibling') asSymbol subclassOf: classToRefactorSuperclass.
 	classToRefactorSibling compile: sourceCode.
            
-	push := PushUpMethod for: classToRefactor >> selector additionallyRemovingFrom: { classToRefactorSibling }.
+	push := PushUpMethod for: classToRefactor >> selector additionallyRemovingFrom: { classToRefactor >> selector  -> {classToRefactorSibling} } asDictionary pushingUp: Set new.
 	push apply.
    
 	self assert: (classToRefactorSuperclass includesSelector: selector).
@@ -30126,7 +30226,7 @@ test08RemovesEquivalentMethodsFromSiblings
 	
 	! !
 
-!PushUpMethodTest methodsFor: 'tests' stamp: 'HAW 5/26/2023 17:14:54'!
+!PushUpMethodTest methodsFor: 'tests' stamp: 'HAW 1/23/2024 15:34:55'!
 test09CannotRemoveNotImplementedMethodFromAdditionalSubclasses
 
 	| classToRefactorSuperclass classToRefactor selector sourceCode classToRefactorSibling |
@@ -30140,14 +30240,14 @@ test09CannotRemoveNotImplementedMethodFromAdditionalSubclasses
  	classToRefactorSibling := self createClassNamed: (self classToRefactorName,'Sibling') asSymbol subclassOf: classToRefactorSuperclass.
 	   
 	self 
-		assertCreation: [  PushUpMethod for: classToRefactor >> selector additionallyRemovingFrom: { classToRefactorSibling } ]
+		assertCreation: [  PushUpMethod for: classToRefactor >> selector additionallyRemovingFrom: { classToRefactor >> selector -> {classToRefactorSibling} } asDictionary pushingUp: Set new ]
 		failsWith: [ PushUpMethod errorMessageForMethodCannotBeRemovedMethodFrom: { classToRefactorSibling } ].
 
 	
 	
 	! !
 
-!PushUpMethodTest methodsFor: 'tests' stamp: 'HAW 5/26/2023 17:24:10'!
+!PushUpMethodTest methodsFor: 'tests' stamp: 'HAW 1/23/2024 15:35:02'!
 test10CannotRemoveMethodFromNoSiblings
 
 	| classToRefactorSuperclass classToRefactor selector sourceCode classToRefactorSibling |
@@ -30162,14 +30262,14 @@ test10CannotRemoveMethodFromNoSiblings
 	classToRefactorSibling compile: sourceCode.
     
 	self 
-		assertCreation: [  PushUpMethod for: classToRefactor >> selector additionallyRemovingFrom: { classToRefactorSibling } ]
+		assertCreation: [  PushUpMethod for: classToRefactor >> selector additionallyRemovingFrom: { classToRefactor >> selector -> { classToRefactorSibling } } asDictionary pushingUp: Set new ]
 		failsWith: [ PushUpMethod errorMessageForNoSiblings: { classToRefactorSibling } ].
 
 	
 	
 	! !
 
-!PushUpMethodTest methodsFor: 'tests' stamp: 'HAW 5/26/2023 17:30:15'!
+!PushUpMethodTest methodsFor: 'tests' stamp: 'HAW 1/23/2024 15:35:07'!
 test11CannotRemoveNotEquivalantMethodsFromSiblings
 
 	| classToRefactorSuperclass classToRefactor selector classToRefactorSibling |
@@ -30182,7 +30282,7 @@ test11CannotRemoveNotEquivalantMethodsFromSiblings
 	classToRefactorSibling compile: selector, ' ^11 factorial'.
     
 	self 
-		assertCreation: [  PushUpMethod for: classToRefactor >> selector additionallyRemovingFrom: { classToRefactorSibling } ]
+		assertCreation: [  PushUpMethod for: classToRefactor >> selector additionallyRemovingFrom: { classToRefactor >> selector  -> {classToRefactorSibling} } asDictionary pushingUp: Set new ]
 		failsWith: [ PushUpMethod errorMessageForNotEquivalentMethods: { classToRefactorSibling } ].
 
 	
@@ -30246,6 +30346,226 @@ test14ShouldNotWarnWhenMethodExistsInSuperclassIsSubclassResponsibility
 		raise: self refactoringWarning 
 	
 	! !
+
+!PushUpMethodTest methodsFor: 'tests' stamp: 'HAW 1/23/2024 15:35:23'!
+test15AMethodThatDependsOnOtherMethodPushesUpMethodsToSuperclass
+
+	| classToRefactorSuperclass classToRefactor selector dependantSelector refactoring |
+
+	selector := #newMethod.
+	dependantSelector := #dependantMethod.
+
+	classToRefactorSuperclass := self createClassNamed: #Superclass.
+
+	classToRefactor := self createClassNamed: self classToRefactorName subclassOf: classToRefactorSuperclass.
+	classToRefactor compile: selector, ' ^ self ', dependantSelector.
+	classToRefactor compile: dependantSelector, ' ^ 1'.
+
+	refactoring := PushUpMethod for: classToRefactor >> selector additionallyRemovingFrom: Dictionary new pushingUp: { classToRefactor >> dependantSelector } asSet.
+	refactoring apply.
+
+	self assert: (classToRefactorSuperclass includesSelector: selector).
+	self assert: (classToRefactorSuperclass includesSelector: dependantSelector).
+	self deny: (classToRefactor includesSelector: selector).
+	self deny: (classToRefactor includesSelector: dependantSelector).! !
+
+!PushUpMethodTest methodsFor: 'tests' stamp: 'HAW 1/23/2024 15:35:32'!
+test16AMethodThatDependsOnACycleOfMethodsPushesUpMethodsToSuperclass
+
+	| classToRefactorSuperclass classToRefactor selector dependantSelector refactoring otherDependantSelector |
+
+	selector := #newMethod.
+	dependantSelector := #dependantMethod.
+	otherDependantSelector := #otherDependantSelector.
+
+	classToRefactorSuperclass := self createClassNamed: #Superclass.
+
+	classToRefactor := self createClassNamed: self classToRefactorName subclassOf: classToRefactorSuperclass.
+	classToRefactor compile: selector, ' ^ self ', dependantSelector.
+	classToRefactor compile: dependantSelector, ' ^ self ', otherDependantSelector.
+	classToRefactor compile: otherDependantSelector, ' ^ self ', selector.
+
+	refactoring := PushUpMethod for: classToRefactor >> selector additionallyRemovingFrom: Dictionary new pushingUp: { classToRefactor >> dependantSelector . classToRefactor >> otherDependantSelector } asSet.
+	refactoring apply.
+
+	self assert: (classToRefactorSuperclass includesSelector: selector).
+	self assert: (classToRefactorSuperclass includesSelector: dependantSelector).
+	self assert: (classToRefactorSuperclass includesSelector: otherDependantSelector).
+	self deny: (classToRefactor includesSelector: selector).
+	self deny: (classToRefactor includesSelector: dependantSelector).
+	self deny: (classToRefactor includesSelector: otherDependantSelector).! !
+
+!PushUpMethodTest methodsFor: 'tests' stamp: 'HAW 1/23/2024 15:35:40'!
+test17FailsWhenPushingADependantMethodAccessingInstVarDefinedAsTemporaryInSuperclass
+
+	| classToRefactorSuperclass classToRefactor selector superclassSelector dependantSelector newVariable |
+
+	newVariable := 'a'.	
+	superclassSelector := #superClassNewMethod.
+	selector := #newMethod.
+	dependantSelector := #dependantMethod.
+
+	classToRefactorSuperclass := self createClassNamed: #Superclass.
+	classToRefactorSuperclass compile: superclassSelector, '|', newVariable, '|', '^ 1 + ', newVariable.
+
+	classToRefactor := self createClassNamed: self classToRefactorName subclassOf: classToRefactorSuperclass instanceVariableNames: newVariable.
+	classToRefactor compile: selector, ' ^ self ', dependantSelector.
+	classToRefactor compile: dependantSelector, ' ^ 1 + ', newVariable.
+
+	self
+		assertCreation: [ PushUpMethod for: classToRefactor >> selector additionallyRemovingFrom: Dictionary new pushingUp: { classToRefactor >> dependantSelector } asSet ]
+		failsWith: [ PushUpInstanceVariable errorMessageForInstanceVariable: newVariable isDefinedInMethodsOf: classToRefactorSuperclass ].! !
+
+!PushUpMethodTest methodsFor: 'tests' stamp: 'HAW 1/23/2024 15:35:48'!
+test18ShouldWarnWhenNotEquivalentMethodOfDependantMethodExistsInSuperclass
+
+	| classToRefactor classToRefactorSuperclass newVariable selector dependantSelector superclassMethodContent |
+
+	newVariable := 'a'.	
+	selector := #newMethod.
+	dependantSelector := #dependantMethod.
+	superclassMethodContent := dependantSelector, '
+	^ 2 + ', newVariable, '.'.
+
+	classToRefactorSuperclass := self createClassNamed: #Superclass instanceVariableNames: newVariable.
+	classToRefactorSuperclass compile: dependantSelector, '^ 1 + ', newVariable.
+
+	classToRefactor := self createClassNamed: self classToRefactorName subclassOf: classToRefactorSuperclass.
+	classToRefactor compile: selector, ' ^ self ', dependantSelector.
+	classToRefactor compile: superclassMethodContent.
+
+	self 
+		assertCreation: [ PushUpMethod for: classToRefactor >> selector additionallyRemovingFrom: Dictionary new pushingUp: { classToRefactor >> dependantSelector } asSet ]
+		warnsWith: [ PushUpMethod methodWithDifferentImplementationInSuperclass: { dependantSelector } ].! !
+
+!PushUpMethodTest methodsFor: 'tests' stamp: 'HAW 1/23/2024 15:19:55'!
+test19ShouldSelectSiblingClassesWithEquivalentMethod
+
+	| superclass classToTest classWithEquivalentMethod selector methodContent equivalentMethod|
+
+	selector := #newMethod.
+	methodContent :=  selector, '^ 2'.
+
+	superclass := self createClassNamed: #Superclass.
+
+	classToTest := self createClassNamed: #ClassToTest subclassOf: superclass.
+	classToTest compile: methodContent.
+	
+	classWithEquivalentMethod := self createClassNamed: #ClassWithEquivalentMethod subclassOf: superclass.
+	classWithEquivalentMethod compile: methodContent.
+	
+	equivalentMethod := PushUpMethod equivalentMethodsOfSiblingsOfAll: { classToTest >> selector }.
+	   
+	self assert: (equivalentMethod size = 1).
+	self assert: (equivalentMethod includesKey: (classToTest >> selector)).
+	self assert: ((equivalentMethod at: classToTest >> selector) = { classWithEquivalentMethod }).! !
+
+!PushUpMethodTest methodsFor: 'tests' stamp: 'HAW 1/23/2024 15:19:55'!
+test20ShouldNotSelectSiblingClassesWithNoEquivalentMethod
+
+	| superclass classToTest classWithEquivalentMethod selector  equivalentMethod|
+
+	selector := #newMethod.
+
+	superclass := self createClassNamed: #Superclass.
+
+	classToTest := self createClassNamed: #ClassToTest subclassOf: superclass.
+	classToTest compile: selector, '^ 2'.
+	
+	classWithEquivalentMethod := self createClassNamed: #ClassWithEquivalentMethod subclassOf: superclass.
+	classWithEquivalentMethod compile: selector, '^ 3'.
+	
+	equivalentMethod := PushUpMethod equivalentMethodsOfSiblingsOfAll: { classToTest >> selector }.
+	   
+	self assert: (equivalentMethod isEmpty).! !
+
+!PushUpMethodTest methodsFor: 'tests' stamp: 'HAW 1/23/2024 15:19:55'!
+test21WhenMultipleMethodsShouldSelectSiblingClassesWithEquivalentMethodForEachOne
+
+	| superclass classToTest classWithEquivalentMethod selector anotherSelector methodContent anotherMethodContent equivalentMethod|
+
+	selector := #newMethod.
+	anotherSelector := #newMethod2.
+	methodContent :=  selector, '^ 2'.
+	anotherMethodContent := anotherSelector, '^ 1'.
+
+	superclass := self createClassNamed: #Superclass.
+
+	classToTest := self createClassNamed: #ClassToTest subclassOf: superclass.
+	classToTest compile: methodContent.
+	classToTest compile: anotherMethodContent.
+	
+	classWithEquivalentMethod := self createClassNamed: #ClassWithEquivalentMethod subclassOf: superclass.
+	classWithEquivalentMethod compile: methodContent.
+	classWithEquivalentMethod compile: anotherMethodContent.
+	
+	equivalentMethod := PushUpMethod equivalentMethodsOfSiblingsOfAll: { classToTest >> selector . classToTest >> anotherSelector }.
+	   
+	self assert: (equivalentMethod size = 2).
+	self assert: (equivalentMethod includesKey: (classToTest >> selector)).
+	self assert: (equivalentMethod includesKey: (classToTest >> anotherSelector)).
+	self assert: ((equivalentMethod at: classToTest >> selector) = { classWithEquivalentMethod }).
+	self assert: ((equivalentMethod at: classToTest >> anotherSelector) = { classWithEquivalentMethod }).! !
+
+!PushUpMethodTest methodsFor: 'tests' stamp: 'MEGL 8/20/2023 20:55:09'!
+test22ShouldSelectDependantSelectors
+
+	| superclass classToTest selector dependantSelector methodContent dependantMethodContent dependantSelectors|
+
+	selector := #newMethod.
+	dependantSelector := #dependantMethod.
+	methodContent :=  selector, '^ self ', dependantSelector.
+	dependantMethodContent :=  dependantSelector, '^ 2'.
+
+	superclass := self createClassNamed: #Superclass.
+	classToTest := self createClassNamed: #ClassToTest subclassOf: superclass.
+	classToTest compile: methodContent.
+	classToTest compile: dependantMethodContent.
+	
+	dependantSelectors := PushUpMethod selectAllMessageSendsToSelfNotImplementedInSuperClassFrom: ( classToTest >> selector ).
+	   
+	self assert: (dependantSelectors size = 1).
+	self assert: (dependantSelectors includes: dependantSelector).! !
+
+!PushUpMethodTest methodsFor: 'tests' stamp: 'MEGL 8/20/2023 20:58:47'!
+test23ShouldNotSelectDependantSelectorsWhenThereIsNone
+
+	| superclass classToTest selector methodContent dependantSelectors|
+
+	selector := #newMethod.
+	methodContent :=  selector, '^ 2'.
+
+	superclass := self createClassNamed: #Superclass.
+	classToTest := self createClassNamed: #ClassToTest subclassOf: superclass.
+	classToTest compile: methodContent.
+	
+	dependantSelectors := PushUpMethod selectAllMessageSendsToSelfNotImplementedInSuperClassFrom: ( classToTest >> selector ).
+	   
+	self assert: (dependantSelectors isEmpty).! !
+
+!PushUpMethodTest methodsFor: 'tests' stamp: 'MEGL 8/20/2023 20:57:41'!
+test24ShouldSelectCyclicDependantSelectors
+
+	| superclass classToTest selector dependantSelector otherDependantSelector methodContent dependantMethodContent otherDependantMethodContent dependantSelectors|
+
+	selector := #newMethod.
+	dependantSelector := #dependantMethod.
+	otherDependantSelector := #otherDependantSelector.
+	methodContent :=  selector, '^ self ', dependantSelector.
+	dependantMethodContent :=  dependantSelector, '^ self ', otherDependantSelector.
+	otherDependantMethodContent := otherDependantSelector, '^ self ', selector.
+
+	superclass := self createClassNamed: #Superclass.
+	classToTest := self createClassNamed: #ClassToTest subclassOf: superclass.
+	classToTest compile: methodContent.
+	classToTest compile: dependantMethodContent.
+	classToTest compile: otherDependantMethodContent.
+	
+	dependantSelectors := PushUpMethod selectAllMessageSendsToSelfNotImplementedInSuperClassFrom: ( classToTest >> selector ).
+	   
+	self assert: (dependantSelectors size = 2).
+	self assert: (dependantSelectors includes: dependantSelector).
+	self assert: (dependantSelectors includes: otherDependantSelector).! !
 
 !PushUpMethodTest methodsFor: 'class factory' stamp: 'MSC 11/12/2019 11:48:09'!
 classToRefactorName	
