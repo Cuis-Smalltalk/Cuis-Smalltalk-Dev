@@ -1,106 +1,106 @@
-'From Cuis 6.0 [latest update: #5299] on 18 June 2022 at 11:53:03 am'!
+'From Cuis6.3 [latest update: #6200] on 29 January 2024 at 3:42:27 pm'!
 'Description '!
-!provides: 'Printf' 1 40!
-SystemOrganization addCategory: 'Printf'!
+!provides: 'Printf' 1 41!
+SystemOrganization addCategory: #Printf!
 
 
-!classDefinition: #PrintfFormatStringTest category: 'Printf'!
+!classDefinition: #PrintfFormatStringTest category: #Printf!
 TestCase subclass: #PrintfFormatStringTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Printf'!
-!classDefinition: 'PrintfFormatStringTest class' category: 'Printf'!
+!classDefinition: 'PrintfFormatStringTest class' category: #Printf!
 PrintfFormatStringTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #Printf category: 'Printf'!
+!classDefinition: #Printf category: #Printf!
 Object subclass: #Printf
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Printf'!
-!classDefinition: 'Printf class' category: 'Printf'!
+!classDefinition: 'Printf class' category: #Printf!
 Printf class
 	instanceVariableNames: ''!
 
-!classDefinition: #PrintfFormatDescriptor category: 'Printf'!
+!classDefinition: #PrintfFormatDescriptor category: #Printf!
 Object subclass: #PrintfFormatDescriptor
 	instanceVariableNames: 'flush width precision'
 	classVariableNames: 'Flags Operators'
 	poolDictionaries: ''
 	category: 'Printf'!
-!classDefinition: 'PrintfFormatDescriptor class' category: 'Printf'!
+!classDefinition: 'PrintfFormatDescriptor class' category: #Printf!
 PrintfFormatDescriptor class
 	instanceVariableNames: ''!
 
-!classDefinition: #PrintfCharacterFormatDescriptor category: 'Printf'!
+!classDefinition: #PrintfCharacterFormatDescriptor category: #Printf!
 PrintfFormatDescriptor subclass: #PrintfCharacterFormatDescriptor
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Printf'!
-!classDefinition: 'PrintfCharacterFormatDescriptor class' category: 'Printf'!
+!classDefinition: 'PrintfCharacterFormatDescriptor class' category: #Printf!
 PrintfCharacterFormatDescriptor class
 	instanceVariableNames: ''!
 
-!classDefinition: #PrintfNumberFormatDescriptor category: 'Printf'!
+!classDefinition: #PrintfNumberFormatDescriptor category: #Printf!
 PrintfFormatDescriptor subclass: #PrintfNumberFormatDescriptor
 	instanceVariableNames: 'operator padding radix space thousandSeparate'
 	classVariableNames: 'Base Cased DecimalSeparator Radix ThousandSeparator UserDecimalSeparator UserThousandSeparator'
 	poolDictionaries: ''
 	category: 'Printf'!
-!classDefinition: 'PrintfNumberFormatDescriptor class' category: 'Printf'!
+!classDefinition: 'PrintfNumberFormatDescriptor class' category: #Printf!
 PrintfNumberFormatDescriptor class
 	instanceVariableNames: ''!
 
-!classDefinition: #PrintfFloatFormatDescriptor category: 'Printf'!
+!classDefinition: #PrintfFloatFormatDescriptor category: #Printf!
 PrintfNumberFormatDescriptor subclass: #PrintfFloatFormatDescriptor
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Printf'!
-!classDefinition: 'PrintfFloatFormatDescriptor class' category: 'Printf'!
+!classDefinition: 'PrintfFloatFormatDescriptor class' category: #Printf!
 PrintfFloatFormatDescriptor class
 	instanceVariableNames: ''!
 
-!classDefinition: #PrintfNumberHolderDescriptor category: 'Printf'!
+!classDefinition: #PrintfNumberHolderDescriptor category: #Printf!
 PrintfFormatDescriptor subclass: #PrintfNumberHolderDescriptor
 	instanceVariableNames: 'value'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Printf'!
-!classDefinition: 'PrintfNumberHolderDescriptor class' category: 'Printf'!
+!classDefinition: 'PrintfNumberHolderDescriptor class' category: #Printf!
 PrintfNumberHolderDescriptor class
 	instanceVariableNames: ''!
 
-!classDefinition: #PrintfStringFormatDescriptor category: 'Printf'!
+!classDefinition: #PrintfStringFormatDescriptor category: #Printf!
 PrintfFormatDescriptor subclass: #PrintfStringFormatDescriptor
 	instanceVariableNames: 'widthDescriptor'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Printf'!
-!classDefinition: 'PrintfStringFormatDescriptor class' category: 'Printf'!
+!classDefinition: 'PrintfStringFormatDescriptor class' category: #Printf!
 PrintfStringFormatDescriptor class
 	instanceVariableNames: ''!
 
-!classDefinition: #PrintStringFormatDescriptor category: 'Printf'!
+!classDefinition: #PrintStringFormatDescriptor category: #Printf!
 PrintfStringFormatDescriptor subclass: #PrintStringFormatDescriptor
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Printf'!
-!classDefinition: 'PrintStringFormatDescriptor class' category: 'Printf'!
+!classDefinition: 'PrintStringFormatDescriptor class' category: #Printf!
 PrintStringFormatDescriptor class
 	instanceVariableNames: ''!
 
-!classDefinition: #PrintfFormatString category: 'Printf'!
+!classDefinition: #PrintfFormatString category: #Printf!
 Object subclass: #PrintfFormatString
 	instanceVariableNames: 'format string outputStream'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Printf'!
-!classDefinition: 'PrintfFormatString class' category: 'Printf'!
+!classDefinition: 'PrintfFormatString class' category: #Printf!
 PrintfFormatString class
 	instanceVariableNames: ''!
 
@@ -562,10 +562,10 @@ printOn: aStream
 	aStream nextPut: $c
 	! !
 
-!PrintfCharacterFormatDescriptor methodsFor: 'rendering' stamp: 'NM 8/16/2021 14:23:00'!
+!PrintfCharacterFormatDescriptor methodsFor: 'rendering' stamp: 'jmv 1/29/2024 15:42:22'!
 applyOperator: object
-	^ String with: object asCharacter
-	! !
+	^ String with: 
+		(object isNumber ifTrue: [ Character codePoint: object ] ifFalse: [ object ])! !
 
 !PrintfNumberFormatDescriptor methodsFor: 'printing' stamp: 'NM 1/15/2022 15:26:57'!
 printOn: aStream

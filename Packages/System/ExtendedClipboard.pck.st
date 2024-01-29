@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #6032] on 17 September 2023 at 7:55:58 pm'!
+'From Cuis6.3 [latest update: #6200] on 29 January 2024 at 3:40:22 pm'!
 'Description '!
-!provides: 'ExtendedClipboard' 1 16!
+!provides: 'ExtendedClipboard' 1 17!
 !requires: 'FFI' 1 nil nil!
 !requires: 'Graphics-Files-Additional' 1 nil nil!
 SystemOrganization addCategory: #ExtendedClipboard!
@@ -202,10 +202,10 @@ isOperational
 fromBMPBytes: bytes
 	^ (BMPReadWriter onBinaryStream: bytes readStream) nextImage! !
 
-!ExtendedClipboardInterface methodsFor: 'object from raw data' stamp: 'jmv 3/7/2018 18:50:49'!
+!ExtendedClipboardInterface methodsFor: 'object from raw data' stamp: 'jmv 1/29/2024 15:38:42'!
 fromISO8859Bytes: bytes
 
-	^(String streamContents: [ :strm | bytes do: [ :byte | strm nextPut: (Character numericValue: byte) ]])
+	^(String streamContents: [ :strm | bytes do: [ :byte | strm nextPut: (Character codePoint: byte) ]])
 		withCuisLineEndings! !
 
 !ExtendedClipboardInterface methodsFor: 'object from raw data' stamp: 'jmv 12/21/2013 09:30'!
@@ -773,9 +773,9 @@ BOOL OpenClipboard(
 	"^self externalCallFailed"
 	^0! !
 
-!ExtendedClipboardWinInterface methodsFor: 'system calls' stamp: 'mir 6/18/2006 18:47'!
+!ExtendedClipboardWinInterface methodsFor: 'system calls' stamp: 'jmv 1/29/2024 15:39:28'!
 setClipboardFormat: format data: data 
-	"ExtendedClipboardInterface current setClipboardFormat: 1 data: ('clipboard test' copyWith: 0 asCharacter) "
+	"ExtendedClipboardInterface current setClipboardFormat: 1 data: ('clipboard test' copyWith: (Character codePoint: 0)) "
 
 	"http://msdn.microsoft.com/library/default.asp?url=/library/en-us/winui/winui/windowsuserinterface/dataexchange/clipboard/clipboardreference/clipboardfunctions/setclipboarddata.asp
 

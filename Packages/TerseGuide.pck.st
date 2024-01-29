@@ -1,36 +1,36 @@
-'From Cuis 6.0 [latest update: #5566] on 30 November 2022 at 10:33:30 am'!
+'From Cuis6.3 [latest update: #6200] on 29 January 2024 at 3:44:22 pm'!
 'Description Add ability to dynamically add topic pages from other sources.'!
-!provides: 'TerseGuide' 1 144!
-SystemOrganization addCategory: 'TerseGuide'!
+!provides: 'TerseGuide' 1 145!
+SystemOrganization addCategory: #TerseGuide!
 
 
-!classDefinition: #TerseGuideHelp category: 'TerseGuide'!
+!classDefinition: #TerseGuideHelp category: #TerseGuide!
 Workspace subclass: #TerseGuideHelp
 	instanceVariableNames: 'topics topicListIndex selectedTopic topicList window textPane'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'TerseGuide'!
-!classDefinition: 'TerseGuideHelp class' category: 'TerseGuide'!
+!classDefinition: 'TerseGuideHelp class' category: #TerseGuide!
 TerseGuideHelp class
 	instanceVariableNames: 'topics'!
 
-!classDefinition: #TerseGuideWindow category: 'TerseGuide'!
+!classDefinition: #TerseGuideWindow category: #TerseGuide!
 WorkspaceWindow subclass: #TerseGuideWindow
 	instanceVariableNames: 'textModelM list1'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'TerseGuide'!
-!classDefinition: 'TerseGuideWindow class' category: 'TerseGuide'!
+!classDefinition: 'TerseGuideWindow class' category: #TerseGuide!
 TerseGuideWindow class
 	instanceVariableNames: ''!
 
-!classDefinition: #TerseGuideTopic category: 'TerseGuide'!
+!classDefinition: #TerseGuideTopic category: #TerseGuide!
 Object subclass: #TerseGuideTopic
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'TerseGuide'!
-!classDefinition: 'TerseGuideTopic class' category: 'TerseGuide'!
+!classDefinition: 'TerseGuideTopic class' category: #TerseGuide!
 TerseGuideTopic class
 	instanceVariableNames: ''!
 
@@ -747,7 +747,7 @@ result _ (switch at: $B) value.
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 10/6/2018 16:33:43'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'jmv 1/29/2024 15:44:16'!
 conversion
 	"Conversion"
 	^
@@ -755,7 +755,6 @@ conversion
 x _ 3.99 asInteger.			"convert number to integer (truncates in Cuis)"
 x _ 3.99 asFraction.			"convert number to fraction"
 x _ 3 asFloat.					"convert number to float"
-x _ 65 asCharacter.			"convert integer to character"
 x _ $A asciiValue.			"convert character to integer"
 x _ 3.99 printString.		"convert object to string via printOn:"
 x _ 3.99 storeString.		"convert object to string via storeOn:"

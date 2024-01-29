@@ -1,378 +1,378 @@
-'From Cuis 6.0 [latest update: #5553] on 15 November 2022 at 11:20:39 am'!
+'From Cuis6.3 [latest update: #6200] on 29 January 2024 at 4:37:47 pm'!
 'Description Various code used in Squeak which is not in Cuis.'!
-!provides: 'SqueakCompatibility' 1 37!
+!provides: 'SqueakCompatibility' 1 39!
 !requires: 'Cuis-Base' 42 2658 nil!
-SystemOrganization addCategory: 'SqueakCompatibility'!
-SystemOrganization addCategory: 'SqueakCompatibility-System-Files'!
+SystemOrganization addCategory: #SqueakCompatibility!
+SystemOrganization addCategory: #'SqueakCompatibility-System-Files'!
 
 
-!classDefinition: #KlattResonatorIndices category: 'SqueakCompatibility'!
+!classDefinition: #KlattResonatorIndices category: #SqueakCompatibility!
 SharedPool subclass: #KlattResonatorIndices
 	instanceVariableNames: ''
 	classVariableNames: 'R1c R1vp R2c R2fp R2vp R3c R3fp R3vp R4c R4fp R4vp R5c R5fp R6c R6fp R7c R8c Rnpc Rnpp Rnz Rout Rtpc Rtpp Rtz'
 	poolDictionaries: ''
 	category: 'SqueakCompatibility'!
-!classDefinition: 'KlattResonatorIndices class' category: 'SqueakCompatibility'!
+!classDefinition: 'KlattResonatorIndices class' category: #SqueakCompatibility!
 KlattResonatorIndices class
 	instanceVariableNames: ''!
 
-!classDefinition: #StringHolder category: 'SqueakCompatibility'!
+!classDefinition: #StringHolder category: #SqueakCompatibility!
 TextModel subclass: #StringHolder
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'SqueakCompatibility'!
-!classDefinition: 'StringHolder class' category: 'SqueakCompatibility'!
+!classDefinition: 'StringHolder class' category: #SqueakCompatibility!
 StringHolder class
 	instanceVariableNames: ''!
 
-!classDefinition: #Model category: 'SqueakCompatibility'!
+!classDefinition: #Model category: #SqueakCompatibility!
 ActiveModel subclass: #Model
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'SqueakCompatibility'!
-!classDefinition: 'Model class' category: 'SqueakCompatibility'!
+!classDefinition: 'Model class' category: #SqueakCompatibility!
 Model class
 	instanceVariableNames: ''!
 
-!classDefinition: #TimeStamp category: 'SqueakCompatibility'!
+!classDefinition: #TimeStamp category: #SqueakCompatibility!
 DateAndTime subclass: #TimeStamp
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'SqueakCompatibility'!
-!classDefinition: 'TimeStamp class' category: 'SqueakCompatibility'!
+!classDefinition: 'TimeStamp class' category: #SqueakCompatibility!
 TimeStamp class
 	instanceVariableNames: ''!
 
-!classDefinition: #ByteString category: 'SqueakCompatibility'!
+!classDefinition: #ByteString category: #SqueakCompatibility!
 String variableByteSubclass: #ByteString
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'SqueakCompatibility'!
-!classDefinition: 'ByteString class' category: 'SqueakCompatibility'!
+!classDefinition: 'ByteString class' category: #SqueakCompatibility!
 ByteString class
 	instanceVariableNames: ''!
 
-!classDefinition: #MultiByteFileStream category: 'SqueakCompatibility'!
+!classDefinition: #MultiByteFileStream category: #SqueakCompatibility!
 UniFileStream subclass: #MultiByteFileStream
 	instanceVariableNames: 'lineEndConvention'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'SqueakCompatibility'!
-!classDefinition: 'MultiByteFileStream class' category: 'SqueakCompatibility'!
+!classDefinition: 'MultiByteFileStream class' category: #SqueakCompatibility!
 MultiByteFileStream class
 	instanceVariableNames: ''!
 
-!classDefinition: #CrLfFileStream category: 'SqueakCompatibility'!
+!classDefinition: #CrLfFileStream category: #SqueakCompatibility!
 MultiByteFileStream subclass: #CrLfFileStream
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'SqueakCompatibility'!
-!classDefinition: 'CrLfFileStream class' category: 'SqueakCompatibility'!
+!classDefinition: 'CrLfFileStream class' category: #SqueakCompatibility!
 CrLfFileStream class
 	instanceVariableNames: ''!
 
-!classDefinition: #FileStream category: 'SqueakCompatibility-System-Files'!
+!classDefinition: #FileStream category: #'SqueakCompatibility-System-Files'!
 ReadWriteStream subclass: #FileStream
 	instanceVariableNames: 'rwmode'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'SqueakCompatibility-System-Files'!
-!classDefinition: 'FileStream class' category: 'SqueakCompatibility-System-Files'!
+!classDefinition: 'FileStream class' category: #'SqueakCompatibility-System-Files'!
 FileStream class
 	instanceVariableNames: ''!
 
-!classDefinition: #StandardFileStream category: 'SqueakCompatibility-System-Files'!
+!classDefinition: #StandardFileStream category: #'SqueakCompatibility-System-Files'!
 FileStream subclass: #StandardFileStream
 	instanceVariableNames: 'name fileID buffer1'
 	classVariableNames: 'Registry'
 	poolDictionaries: ''
 	category: 'SqueakCompatibility-System-Files'!
-!classDefinition: 'StandardFileStream class' category: 'SqueakCompatibility-System-Files'!
+!classDefinition: 'StandardFileStream class' category: #'SqueakCompatibility-System-Files'!
 StandardFileStream class
 	instanceVariableNames: ''!
 
-!classDefinition: #InvalidDirectoryError category: 'SqueakCompatibility'!
+!classDefinition: #InvalidDirectoryError category: #SqueakCompatibility!
 Error subclass: #InvalidDirectoryError
 	instanceVariableNames: 'pathName'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'SqueakCompatibility'!
-!classDefinition: 'InvalidDirectoryError class' category: 'SqueakCompatibility'!
+!classDefinition: 'InvalidDirectoryError class' category: #SqueakCompatibility!
 InvalidDirectoryError class
 	instanceVariableNames: ''!
 
-!classDefinition: #ProvideAnswerNotification category: 'SqueakCompatibility'!
+!classDefinition: #ProvideAnswerNotification category: #SqueakCompatibility!
 Notification subclass: #ProvideAnswerNotification
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'SqueakCompatibility'!
-!classDefinition: 'ProvideAnswerNotification class' category: 'SqueakCompatibility'!
+!classDefinition: 'ProvideAnswerNotification class' category: #SqueakCompatibility!
 ProvideAnswerNotification class
 	instanceVariableNames: ''!
 
-!classDefinition: #ClassTestCase category: 'SqueakCompatibility'!
+!classDefinition: #ClassTestCase category: #SqueakCompatibility!
 TestCase subclass: #ClassTestCase
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'SqueakCompatibility'!
-!classDefinition: 'ClassTestCase class' category: 'SqueakCompatibility'!
+!classDefinition: 'ClassTestCase class' category: #SqueakCompatibility!
 ClassTestCase class
 	instanceVariableNames: ''!
 
-!classDefinition: #TestObjectsAsMethods category: 'SqueakCompatibility'!
+!classDefinition: #TestObjectsAsMethods category: #SqueakCompatibility!
 TestCase subclass: #TestObjectsAsMethods
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'SqueakCompatibility'!
-!classDefinition: 'TestObjectsAsMethods class' category: 'SqueakCompatibility'!
+!classDefinition: 'TestObjectsAsMethods class' category: #SqueakCompatibility!
 TestObjectsAsMethods class
 	instanceVariableNames: ''!
 
-!classDefinition: #FileDirectory category: 'SqueakCompatibility'!
+!classDefinition: #FileDirectory category: #SqueakCompatibility!
 Object subclass: #FileDirectory
 	instanceVariableNames: 'pathName'
 	classVariableNames: 'CurrentDirectory DirectoryClass ImageDirectory VMDirectory'
 	poolDictionaries: ''
 	category: 'SqueakCompatibility'!
-!classDefinition: 'FileDirectory class' category: 'SqueakCompatibility'!
+!classDefinition: 'FileDirectory class' category: #SqueakCompatibility!
 FileDirectory class
 	instanceVariableNames: ''!
 
-!classDefinition: #AcornFileDirectory category: 'SqueakCompatibility'!
+!classDefinition: #AcornFileDirectory category: #SqueakCompatibility!
 FileDirectory subclass: #AcornFileDirectory
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'SqueakCompatibility'!
-!classDefinition: 'AcornFileDirectory class' category: 'SqueakCompatibility'!
+!classDefinition: 'AcornFileDirectory class' category: #SqueakCompatibility!
 AcornFileDirectory class
 	instanceVariableNames: ''!
 
-!classDefinition: #DosFileDirectory category: 'SqueakCompatibility'!
+!classDefinition: #DosFileDirectory category: #SqueakCompatibility!
 FileDirectory subclass: #DosFileDirectory
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'SqueakCompatibility'!
-!classDefinition: 'DosFileDirectory class' category: 'SqueakCompatibility'!
+!classDefinition: 'DosFileDirectory class' category: #SqueakCompatibility!
 DosFileDirectory class
 	instanceVariableNames: ''!
 
-!classDefinition: #UnixFileDirectory category: 'SqueakCompatibility'!
+!classDefinition: #UnixFileDirectory category: #SqueakCompatibility!
 FileDirectory subclass: #UnixFileDirectory
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'SqueakCompatibility'!
-!classDefinition: 'UnixFileDirectory class' category: 'SqueakCompatibility'!
+!classDefinition: 'UnixFileDirectory class' category: #SqueakCompatibility!
 UnixFileDirectory class
 	instanceVariableNames: ''!
 
-!classDefinition: #SmalltalkImage category: 'SqueakCompatibility'!
+!classDefinition: #SmalltalkImage category: #SqueakCompatibility!
 Object subclass: #SmalltalkImage
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'SqueakCompatibility'!
-!classDefinition: 'SmalltalkImage class' category: 'SqueakCompatibility'!
+!classDefinition: 'SmalltalkImage class' category: #SqueakCompatibility!
 SmalltalkImage class
 	instanceVariableNames: ''!
 
-!classDefinition: #SqDirectoryEntry category: 'SqueakCompatibility'!
+!classDefinition: #SqDirectoryEntry category: #SqueakCompatibility!
 Object subclass: #SqDirectoryEntry
 	instanceVariableNames: 'directory name creationTime modificationTime fileSize'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'SqueakCompatibility'!
-!classDefinition: 'SqDirectoryEntry class' category: 'SqueakCompatibility'!
+!classDefinition: 'SqDirectoryEntry class' category: #SqueakCompatibility!
 SqDirectoryEntry class
 	instanceVariableNames: ''!
 
-!classDefinition: #DirectoryEntryDirectory category: 'SqueakCompatibility'!
+!classDefinition: #DirectoryEntryDirectory category: #SqueakCompatibility!
 SqDirectoryEntry subclass: #DirectoryEntryDirectory
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'SqueakCompatibility'!
-!classDefinition: 'DirectoryEntryDirectory class' category: 'SqueakCompatibility'!
+!classDefinition: 'DirectoryEntryDirectory class' category: #SqueakCompatibility!
 DirectoryEntryDirectory class
 	instanceVariableNames: ''!
 
-!classDefinition: #DirectoryEntryFile category: 'SqueakCompatibility'!
+!classDefinition: #DirectoryEntryFile category: #SqueakCompatibility!
 SqDirectoryEntry subclass: #DirectoryEntryFile
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'SqueakCompatibility'!
-!classDefinition: 'DirectoryEntryFile class' category: 'SqueakCompatibility'!
+!classDefinition: 'DirectoryEntryFile class' category: #SqueakCompatibility!
 DirectoryEntryFile class
 	instanceVariableNames: ''!
 
-!classDefinition: #UnsupportedInCuis category: 'SqueakCompatibility'!
+!classDefinition: #UnsupportedInCuis category: #SqueakCompatibility!
 Object subclass: #UnsupportedInCuis
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'SqueakCompatibility'!
-!classDefinition: 'UnsupportedInCuis class' category: 'SqueakCompatibility'!
+!classDefinition: 'UnsupportedInCuis class' category: #SqueakCompatibility!
 UnsupportedInCuis class
 	instanceVariableNames: ''!
 
-!classDefinition: #AlignmentMorph category: 'SqueakCompatibility'!
+!classDefinition: #AlignmentMorph category: #SqueakCompatibility!
 UnsupportedInCuis subclass: #AlignmentMorph
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'SqueakCompatibility'!
-!classDefinition: 'AlignmentMorph class' category: 'SqueakCompatibility'!
+!classDefinition: 'AlignmentMorph class' category: #SqueakCompatibility!
 AlignmentMorph class
 	instanceVariableNames: ''!
 
-!classDefinition: #BorderStyle category: 'SqueakCompatibility'!
+!classDefinition: #BorderStyle category: #SqueakCompatibility!
 UnsupportedInCuis subclass: #BorderStyle
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'SqueakCompatibility'!
-!classDefinition: 'BorderStyle class' category: 'SqueakCompatibility'!
+!classDefinition: 'BorderStyle class' category: #SqueakCompatibility!
 BorderStyle class
 	instanceVariableNames: ''!
 
-!classDefinition: #ComponentInstance category: 'SqueakCompatibility'!
+!classDefinition: #ComponentInstance category: #SqueakCompatibility!
 UnsupportedInCuis subclass: #ComponentInstance
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'SqueakCompatibility'!
-!classDefinition: 'ComponentInstance class' category: 'SqueakCompatibility'!
+!classDefinition: 'ComponentInstance class' category: #SqueakCompatibility!
 ComponentInstance class
 	instanceVariableNames: ''!
 
-!classDefinition: #LayoutFrame category: 'SqueakCompatibility'!
+!classDefinition: #LayoutFrame category: #SqueakCompatibility!
 UnsupportedInCuis subclass: #LayoutFrame
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'SqueakCompatibility'!
-!classDefinition: 'LayoutFrame class' category: 'SqueakCompatibility'!
+!classDefinition: 'LayoutFrame class' category: #SqueakCompatibility!
 LayoutFrame class
 	instanceVariableNames: ''!
 
-!classDefinition: #MCWorkingCopy category: 'SqueakCompatibility'!
+!classDefinition: #MCWorkingCopy category: #SqueakCompatibility!
 UnsupportedInCuis subclass: #MCWorkingCopy
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'SqueakCompatibility'!
-!classDefinition: 'MCWorkingCopy class' category: 'SqueakCompatibility'!
+!classDefinition: 'MCWorkingCopy class' category: #SqueakCompatibility!
 MCWorkingCopy class
 	instanceVariableNames: ''!
 
-!classDefinition: #PackageOrganizer category: 'SqueakCompatibility'!
+!classDefinition: #PackageOrganizer category: #SqueakCompatibility!
 UnsupportedInCuis subclass: #PackageOrganizer
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'SqueakCompatibility'!
-!classDefinition: 'PackageOrganizer class' category: 'SqueakCompatibility'!
+!classDefinition: 'PackageOrganizer class' category: #SqueakCompatibility!
 PackageOrganizer class
 	instanceVariableNames: ''!
 
-!classDefinition: #PluggableTextMorph category: 'SqueakCompatibility'!
+!classDefinition: #PluggableTextMorph category: #SqueakCompatibility!
 UnsupportedInCuis subclass: #PluggableTextMorph
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'SqueakCompatibility'!
-!classDefinition: 'PluggableTextMorph class' category: 'SqueakCompatibility'!
+!classDefinition: 'PluggableTextMorph class' category: #SqueakCompatibility!
 PluggableTextMorph class
 	instanceVariableNames: ''!
 
-!classDefinition: #ProportionalLayout category: 'SqueakCompatibility'!
+!classDefinition: #ProportionalLayout category: #SqueakCompatibility!
 UnsupportedInCuis subclass: #ProportionalLayout
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'SqueakCompatibility'!
-!classDefinition: 'ProportionalLayout class' category: 'SqueakCompatibility'!
+!classDefinition: 'ProportionalLayout class' category: #SqueakCompatibility!
 ProportionalLayout class
 	instanceVariableNames: ''!
 
-!classDefinition: #SimpleButtonMorph category: 'SqueakCompatibility'!
+!classDefinition: #SimpleButtonMorph category: #SqueakCompatibility!
 UnsupportedInCuis subclass: #SimpleButtonMorph
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'SqueakCompatibility'!
-!classDefinition: 'SimpleButtonMorph class' category: 'SqueakCompatibility'!
+!classDefinition: 'SimpleButtonMorph class' category: #SqueakCompatibility!
 SimpleButtonMorph class
 	instanceVariableNames: ''!
 
-!classDefinition: #TableLayout category: 'SqueakCompatibility'!
+!classDefinition: #TableLayout category: #SqueakCompatibility!
 UnsupportedInCuis subclass: #TableLayout
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'SqueakCompatibility'!
-!classDefinition: 'TableLayout class' category: 'SqueakCompatibility'!
+!classDefinition: 'TableLayout class' category: #SqueakCompatibility!
 TableLayout class
 	instanceVariableNames: ''!
 
-!classDefinition: #TextMorph category: 'SqueakCompatibility'!
+!classDefinition: #TextMorph category: #SqueakCompatibility!
 UnsupportedInCuis subclass: #TextMorph
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'SqueakCompatibility'!
-!classDefinition: 'TextMorph class' category: 'SqueakCompatibility'!
+!classDefinition: 'TextMorph class' category: #SqueakCompatibility!
 TextMorph class
 	instanceVariableNames: ''!
 
-!classDefinition: #TextStyle category: 'SqueakCompatibility'!
+!classDefinition: #TextStyle category: #SqueakCompatibility!
 UnsupportedInCuis subclass: #TextStyle
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'SqueakCompatibility'!
-!classDefinition: 'TextStyle class' category: 'SqueakCompatibility'!
+!classDefinition: 'TextStyle class' category: #SqueakCompatibility!
 TextStyle class
 	instanceVariableNames: ''!
 
-!classDefinition: #TranscriptStream category: 'SqueakCompatibility'!
+!classDefinition: #TranscriptStream category: #SqueakCompatibility!
 UnsupportedInCuis subclass: #TranscriptStream
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'SqueakCompatibility'!
-!classDefinition: 'TranscriptStream class' category: 'SqueakCompatibility'!
+!classDefinition: 'TranscriptStream class' category: #SqueakCompatibility!
 TranscriptStream class
 	instanceVariableNames: ''!
 
-!classDefinition: #TransferMorph category: 'SqueakCompatibility'!
+!classDefinition: #TransferMorph category: #SqueakCompatibility!
 UnsupportedInCuis subclass: #TransferMorph
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'SqueakCompatibility'!
-!classDefinition: 'TransferMorph class' category: 'SqueakCompatibility'!
+!classDefinition: 'TransferMorph class' category: #SqueakCompatibility!
 TransferMorph class
 	instanceVariableNames: ''!
 
-!classDefinition: #UIManager category: 'SqueakCompatibility'!
+!classDefinition: #UIManager category: #SqueakCompatibility!
 UnsupportedInCuis subclass: #UIManager
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'SqueakCompatibility'!
-!classDefinition: 'UIManager class' category: 'SqueakCompatibility'!
+!classDefinition: 'UIManager class' category: #SqueakCompatibility!
 UIManager class
 	instanceVariableNames: ''!
 
@@ -3146,43 +3146,19 @@ between: min and: max
 isCharacter
 	^true! !
 
+!Character methodsFor: '*squeakCompatibility' stamp: 'jmv 1/29/2024 16:14:03'!
+numericValue
+	^self codePoint! !
+
 !Character methodsFor: '*squeakCompatibility' stamp: 'jmv 9/6/2016 10:27:11'!
 value
 	^self numericValue! !
 
-!Character class methodsFor: '*squeakCompatibility' stamp: 'jmv 9/6/2016 10:26:47'!
+!Character class methodsFor: '*squeakCompatibility' stamp: 'jmv 1/29/2024 16:37:15'!
 value: anInteger
 	"Answer the Character whose value is anInteger."
 
-	^ self numericValue: anInteger! !
-
-!UnicodeCodePoint methodsFor: '*squeakCompatibility' stamp: 'jmv 10/31/2022 17:42:45'!
-asInteger
-	^self codePoint! !
-
-!UnicodeCodePoint methodsFor: '*squeakCompatibility' stamp: 'jmv 10/31/2022 17:41:55'!
-asUnicode
-	"Answer the unicode encoding of the receiver"
-	"self leadingChar = 0 ifTrue: [^ self asInteger].
-	^self encodedCharSet charsetClass convertToUnicode: self charCode"
-	^self asInteger! !
-
-!UnicodeCodePoint methodsFor: '*squeakCompatibility' stamp: 'jmv 10/31/2022 17:43:02'!
-between: min and: max 
-	"Answer whether the receiver is less than or equal to the argument, max, 
-	and greater than or equal to the argument, min."
-
-	^self codePoint >= min codePoint and: [self codePoint <= max codePoint]! !
-
-!UnicodeCodePoint methodsFor: '*squeakCompatibility' stamp: 'jmv 10/31/2022 17:43:17'!
-value
-	^self numericValue! !
-
-!UnicodeCodePoint class methodsFor: '*squeakCompatibility' stamp: 'jmv 10/31/2022 17:44:39'!
-value: anInteger
-	"Answer the Character whose value is anInteger."
-
-	^ self numericValue: anInteger! !
+	^ self codePoint: anInteger! !
 
 !BlockClosure methodsFor: '*squeakCompatibility' stamp: 'bp 11/29/2014 17:29'!
 cull: firstArg

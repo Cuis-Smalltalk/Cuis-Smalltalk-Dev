@@ -1,67 +1,67 @@
-'From Cuis 6.0 [latest update: #5799] on 11 May 2023 at 11:29:20 am'!
+'From Cuis6.3 [latest update: #6200] on 29 January 2024 at 3:46:43 pm'!
 'Description '!
-!provides: 'System-Locales' 1 9!
-SystemOrganization addCategory: 'System-Locales'!
-SystemOrganization addCategory: 'System-Locales-Tests'!
+!provides: 'System-Locales' 1 10!
+SystemOrganization addCategory: #'System-Locales'!
+SystemOrganization addCategory: #'System-Locales-Tests'!
 
 
-!classDefinition: #ISOLanguageDefinitionTest category: 'System-Locales-Tests'!
+!classDefinition: #ISOLanguageDefinitionTest category: #'System-Locales-Tests'!
 TestCase subclass: #ISOLanguageDefinitionTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'System-Locales-Tests'!
-!classDefinition: 'ISOLanguageDefinitionTest class' category: 'System-Locales-Tests'!
+!classDefinition: 'ISOLanguageDefinitionTest class' category: #'System-Locales-Tests'!
 ISOLanguageDefinitionTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #LocaleIDTest category: 'System-Locales-Tests'!
+!classDefinition: #LocaleIDTest category: #'System-Locales-Tests'!
 TestCase subclass: #LocaleIDTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'System-Locales-Tests'!
-!classDefinition: 'LocaleIDTest class' category: 'System-Locales-Tests'!
+!classDefinition: 'LocaleIDTest class' category: #'System-Locales-Tests'!
 LocaleIDTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #LocaleTest category: 'System-Locales-Tests'!
+!classDefinition: #LocaleTest category: #'System-Locales-Tests'!
 TestCase subclass: #LocaleTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'System-Locales-Tests'!
-!classDefinition: 'LocaleTest class' category: 'System-Locales-Tests'!
+!classDefinition: 'LocaleTest class' category: #'System-Locales-Tests'!
 LocaleTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #ISOLanguageDefinition category: 'System-Locales'!
+!classDefinition: #ISOLanguageDefinition category: #'System-Locales'!
 Object subclass: #ISOLanguageDefinition
 	instanceVariableNames: 'iso3 iso2 iso3Alternate language'
 	classVariableNames: 'ISO2Countries ISO2Table ISO3Countries ISO3Table'
 	poolDictionaries: ''
 	category: 'System-Locales'!
-!classDefinition: 'ISOLanguageDefinition class' category: 'System-Locales'!
+!classDefinition: 'ISOLanguageDefinition class' category: #'System-Locales'!
 ISOLanguageDefinition class
 	instanceVariableNames: ''!
 
-!classDefinition: #Locale category: 'System-Locales'!
+!classDefinition: #Locale category: #'System-Locales'!
 Object subclass: #Locale
 	instanceVariableNames: 'id'
 	classVariableNames: 'Activated Current CurrentPlatform KnownLocales LanguageSymbols LocaleChangeListeners PlatformEncodings Previous'
 	poolDictionaries: ''
 	category: 'System-Locales'!
-!classDefinition: 'Locale class' category: 'System-Locales'!
+!classDefinition: 'Locale class' category: #'System-Locales'!
 Locale class
 	instanceVariableNames: ''!
 
-!classDefinition: #LocaleID category: 'System-Locales'!
+!classDefinition: #LocaleID category: #'System-Locales'!
 Object subclass: #LocaleID
 	instanceVariableNames: 'isoLanguage isoCountry'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'System-Locales'!
-!classDefinition: 'LocaleID class' category: 'System-Locales'!
+!classDefinition: 'LocaleID class' category: #'System-Locales'!
 LocaleID class
 	instanceVariableNames: ''!
 
@@ -698,27 +698,27 @@ iso2LanguageTable
 		ISO2Table at: entry iso2 put: entry].
 	^ISO2Table! !
 
-!ISOLanguageDefinition class methodsFor: 'private - ISO 3166'!
+!ISOLanguageDefinition class methodsFor: 'private - ISO 3166' stamp: 'jmv 1/29/2024 15:45:26'!
 buildIso3166CodesTables
 	"ISOLanguageDefinition buildIso3166CodesTables"
 	| rawdata stream country isoa2 isoa3 unNumeric macName macCode windowsName windowsCode empty table |
-	rawdata _ self iso3166Codes.
-	table _ OrderedCollection new: 200. 
-	stream _ rawdata readStream.
-	empty _ 160 asCharacter asString.
+	rawdata := self iso3166Codes.
+	table := OrderedCollection new: 200. 
+	stream := rawdata readStream.
+	empty := (Character codePoint: 160) asString.
 	[stream atEnd] whileFalse: 
-		[country _ stream nextLine.
-		isoa2 _ stream nextLine.
-		isoa3 _ stream nextLine.
-		unNumeric _ stream nextLine.
-		windowsName _ stream nextLine.
-		windowsName = empty ifTrue: [windowsName _ nil].
-		windowsCode _ stream nextLine. 
-		windowsCode = empty ifTrue: [windowsCode _ nil].
-		macName _ stream nextLine.
-		macName = empty ifTrue: [macName _ nil].
-		macCode _ stream nextLine.
-		macCode = empty ifTrue: [macCode _ nil].
+		[country := stream nextLine.
+		isoa2 := stream nextLine.
+		isoa3 := stream nextLine.
+		unNumeric := stream nextLine.
+		windowsName := stream nextLine.
+		windowsName = empty ifTrue: [windowsName := nil].
+		windowsCode := stream nextLine. 
+		windowsCode = empty ifTrue: [windowsCode := nil].
+		macName := stream nextLine.
+		macName = empty ifTrue: [macName := nil].
+		macCode := stream nextLine.
+		macCode = empty ifTrue: [macCode := nil].
 		table add: { country.  isoa2. isoa3.  unNumeric. windowsName.  windowsCode.  macName. macCode. }].
 	^table! !
 
@@ -2714,32 +2714,32 @@ printOn: aStream
 	super printOn: aStream.
 	aStream nextPutAll:  '(' ; print: id ; nextPutAll:  ')'! !
 
-!Locale methodsFor: 'private'!
+!Locale methodsFor: 'private' stamp: 'jmv 1/29/2024 15:46:14'!
 fetchISO2Language
 	"Locale current fetchISO2Language"
 
 	| lang isoLang |
-	lang _ self primLanguage.
+	lang := self primLanguage.
 	lang ifNil: [ ^ nil ].
-	lang _ lang copyUpTo: 0 asCharacter.
+	lang := lang copyUpTo: Character null.
 	lang size = 2 ifTrue: [ ^ lang ].
-	isoLang _ ISOLanguageDefinition iso3LanguageDefinition: lang.
+	isoLang := ISOLanguageDefinition iso3LanguageDefinition: lang.
 	^ isoLang ifNotNil: [ isoLang iso2 ]! !
 
 !Locale methodsFor: 'accessing'!
 determineLocale
 	self localeID: self determineLocaleID! !
 
-!Locale methodsFor: 'accessing'!
+!Locale methodsFor: 'accessing' stamp: 'jmv 1/29/2024 15:46:26'!
 determineLocaleID
 	"Locale current determineLocaleID"
 	| langCode isoLang countryCode isoCountry |
-	langCode _ self fetchISO2Language.
-	isoLang _ langCode
+	langCode := self fetchISO2Language.
+	isoLang := langCode
 		ifNil: [^self localeID]
 		ifNotNil: [langCode].
-	countryCode _ self primCountry copyUpTo: 0 asCharacter.
-	isoCountry _ countryCode
+	countryCode := self primCountry copyUpTo: Character null.
+	isoCountry := countryCode
 		ifNil: [^LocaleID isoLanguage: isoLang]
 		ifNotNil: [countryCode].
 	^LocaleID isoLanguage: isoLang isoCountry: isoCountry! !
