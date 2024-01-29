@@ -1,9 +1,9 @@
-'From Cuis6.0 [latest update: #6120] on 14 December 2023 at 10:58:20 am'!
+'From Cuis6.3 [latest update: #6189] on 9 January 2024 at 6:04:00 pm'!
 'Description Description - This package is a port and refactoring of WebClient from http://ss3.gemstone.com/ss/WebClient.html with moderate changes by David Graham, Nicola Mingotti, Juan Vuletich and Hernan Wilkinson.
 	- WebClient-Core-ul.100
 	- WebClient-Help-ar.10
 	- WebClient-Tests-topa.48'!
-!provides: 'WebClient' 1 29!
+!provides: 'WebClient' 1 33!
 !requires: 'Network-Kernel' 1 2 nil!
 !requires: 'Identities-UUID' 1 7 nil!
 !requires: 'Cryptography-DigitalSignatures' 1 7 nil!
@@ -4464,7 +4464,10 @@ initialize
 	vault := Dictionary new.
 	nonceCache := Dictionary new.
 	sessions := Dictionary new.
-	self logAction:[:aString| Transcript log: aString].
+	self logAction: [ :aString |
+		aString isString
+			ifTrue: [ Transcript log: aString ]
+			ifFalse: [ Transcript log: aString printString ]].
 ! !
 
 !WebServer methodsFor: 'initialize' stamp: 'ar 2/22/2010 05:35'!
@@ -5371,13 +5374,13 @@ on: aStream
 
 	^self new on: aStream! !
 
-!WebSocket00 methodsFor: 'running' stamp: 'jmv 9/5/2016 20:49:42'!
+!WebSocket00 methodsFor: 'running' stamp: 'jmv 1/9/2024 17:42:32'!
 close
 	"Request graceful close"
 
 	stream isConnected ifTrue:[
-		stream nextPut: (Character numericValue: 255).
-		stream nextPutAll: (Character numericValue: 0).
+		stream nextPut: (Character codePoint: 255).
+		stream nextPutAll: (Character codePoint: 0).
 		stream flush.
 	].
 ! !
@@ -5397,24 +5400,27 @@ run
 	].
 ! !
 
-!WebSocket00 methodsFor: 'read/write' stamp: 'jmv 5/26/2022 12:06:34'!
+!WebSocket00 methodsFor: 'read/write' stamp: 'jmv 1/9/2024 17:38:41'!
 readMessage
 	"Reads one frame worth of data"
 
 	| byte length |
-	byte := stream next ifNil:[
+	byte := stream next ifNil: [
 		frameType := 255.
 		^nil].
-	frameType := byte numericValue.
+	byte isCharacter ifTrue: [ byte := byte codePoint ].
+	frameType := byte.
 	frameType < 128 ifTrue:[
 		"Frame type < 128: UTF-8 encoded text with 0xFF frame delimiter"
-		frameData := String fromUtf8Bytes: (stream upTo: 255 asCharacter) asByteArray.
+		frameData := String fromUtf8Bytes: (stream upTo: (Character codePoint: 255)) asByteArray.
 	] ifFalse:[
 		"Frame type >= 128: Binary data with length prefix"
 		length := 0.
-		[byte := stream next numericValue.
-		length := (length * 128) + (byte bitClear: 128).
-		byte >= 128] whileTrue.
+		[
+			byte := stream next.
+			byte isCharacter ifTrue: [ byte := byte codePoint ].
+			length := (length * 128) + (byte bitClear: 128).
+			byte >= 128 ] whileTrue.
 		frameData := ByteArray new: length.
 		stream nextInto: frameData.
 	].
@@ -5426,16 +5432,16 @@ send: aString
 
 	^self send: aString type: 0! !
 
-!WebSocket00 methodsFor: 'read/write' stamp: 'jmv 5/26/2022 12:08:06'!
+!WebSocket00 methodsFor: 'read/write' stamp: 'jmv 1/9/2024 17:42:37'!
 send: data type: type
 	"Writes one frame worth of data using the given frame type"
 
 	"Frame type"
-	stream nextPut: (Character numericValue: type).
+	stream nextPut: (Character codePoint: type).
 	type < 128 ifTrue:[
 		"Frame type < 128: UTF-8 encoded text with 0xFF frame delimiter"
 		stream nextPutAll: data asString asUtf8Bytes.
-		stream nextPut: (Character numericValue: 255).
+		stream nextPut: (Character codePoint: 255).
 	] ifFalse:[ | prefix length |
 		"Frame type >= 128: Binary data with length prefix"
 		prefix := ByteArray new.
@@ -5553,17 +5559,19 @@ readFrame
 
 	^self readFrameFrom: stream! !
 
-!WebSocket07 methodsFor: 'read/write' stamp: 'jmv 1/10/2023 17:07:10'!
+!WebSocket07 methodsFor: 'read/write' stamp: 'jmv 1/9/2024 17:40:31'!
 readFrameFrom: aStream
 	"Reads one frame worth of data"
 
 	| byte length final mask opcode payload |
-	byte := (aStream next ifNil:[^nil]) numericValue.
+	byte := aStream next ifNil: [^nil].
+	byte isCharacter ifTrue: [ byte := byte codePoint ].
 
 	final := byte anyMask: 128.
 	opcode := byte bitAnd: 15.
 
-	byte := (aStream next ifNil:[^nil]) numericValue.
+	byte := aStream next ifNil: [^nil].
+	byte isCharacter ifTrue: [ byte := byte codePoint ].
 	mask := byte anyMask: 128.
 	length := byte bitAnd: 127.
 
@@ -5702,13 +5710,15 @@ masking: aBool
 
 	masking := aBool! !
 
-!WebSocket07 methodsFor: 'private' stamp: 'jmv 9/5/2016 21:35:24'!
+!WebSocket07 methodsFor: 'private' stamp: 'jmv 1/9/2024 17:39:32'!
 nextNumber: n from: aStream
 	"Answer the next n bytes as a positive Integer or LargePositiveInteger."
 	| s |
 	s := 0.
-	1 to: n do: 
-		[:i | s := (s bitShift: 8) bitOr: aStream next numericValue].
+	1 to: n do: 	[ :i | | b |
+		b := aStream next.
+		b isCharacter ifTrue: [ b := b codePoint ].
+		s := (s bitShift: 8) bitOr: b ].
 	^ s normalize! !
 
 !WebSocket07 methodsFor: 'running' stamp: 'ar 9/26/2011 12:40'!
@@ -6174,7 +6184,7 @@ jsonCharFrom: stream on: writeStream
 	| ch decoded |
 	ch _ stream next.
 	decoded _ ch caseOf: {
-		[$u] 	-> 	[UnicodeCodePoint codePoint: (Integer readFrom: (stream next: 4) readStream base: 16)].
+		[$u] 	-> 	[Character codePoint: (Integer readFrom: (stream next: 4) readStream base: 16)].
 		[$r] 	-> 	[Character cr].
 		[$n] 	-> 	[Character lf].
 		[$t] 	-> 	[Character tab].
@@ -7276,37 +7286,7 @@ secureSocketStream
 
 	^SecureSocketStream! !
 
-!SmallInteger methodsFor: '*WebClient' stamp: 'jmv 9/19/2016 22:04:27'!
-numericValue
-	"Shouldn't be needed!!"! !
-
-!String methodsFor: '*WebClient' stamp: 'jmv 4/13/2023 15:11:45'!
-percentEscapeUrl
-	"Answer an instance of String where all characters are ASCII.
-	If we contain any ASCII character that is invalid in an URL, parentEscape it
-	If we contain any non-ASCII character, percentEscape its UTF-8 bytes.
-	See https://en.wikipedia.org/wiki/URL_encoding"
-
-	| badChars |
-	badChars := String invalidAsciiInUrls.
-	(self isAscii and: [(self indexOfAnyOf: badChars) = 0]) ifTrue: [
-		^self ].
-	^String percentEscapingNonAsciiAndThoseIn: badChars bytes: self asUtf8Bytes! !
-
-!String methodsFor: '*WebClient' stamp: 'jmv 4/13/2023 15:09:29'!
-percentEscapeUrlField
-	"Answer an instance of String where all characters are ASCII.
-	If we contain any ASCII character that is invalid in an URL field, parentEscape it
-	If we contain any non-ASCII character, percentEscape its UTF-8 bytes.
-	See https://en.wikipedia.org/wiki/URL_encoding"
-
-	| badChars |
-	badChars := String invalidAsciiInUrlFields.
-	(self isAscii and: [(self indexOfAnyOf: badChars) = 0]) ifTrue: [
-		^self ].
-	^String percentEscapingNonAsciiAndThoseIn: badChars bytes: self asUtf8Bytes! !
-
-!String class methodsFor: '*WebClient' stamp: 'jmv 4/13/2023 15:10:15'!
+!String class methodsFor: '*WebClient' stamp: 'jmv 1/9/2024 17:28:20'!
 invalidAsciiInUrlFields
 	"Answer a CharacterSet with all ASCII characters that are invalid in an URL field.
 	See https://en.wikipedia.org/wiki/URL_encoding
@@ -7314,10 +7294,14 @@ invalidAsciiInUrlFields
 	This is appropriate to prepare any ASCII String to be used as a field name or value in an URL.
 	See senders.	"
 
-	^`CharacterSet newFrom: 
-		(((0 to: 127) collect: [ :i | Character asciiValue: i ]) reject: [ :c | c isAlphaNumeric  | ('.-_' includes: c)])`! !
+	| answer |
+	answer := ByteArray new: 256.
+	(((0 to: 127) collect: [ :i | Character codePoint: i ]) reject: [ :c | c isAlphaNumeric  | ('.-_' includes: c)]) do: [ :char |
+			answer at: char codePoint + 1 put: 1 ].
+	^answer
+	! !
 
-!String class methodsFor: '*WebClient' stamp: 'jmv 4/13/2023 15:10:21'!
+!String class methodsFor: '*WebClient' stamp: 'jmv 1/9/2024 17:27:11'!
 invalidAsciiInUrls
 	"Answer a CharacterSet with all ASCII characters that are invalid in an URL.
 	See https://en.wikipedia.org/wiki/URL_encoding
@@ -7325,11 +7309,14 @@ invalidAsciiInUrls
 	This is appropriate for preparing a complete URL to be sent to network primitives.
 	See senders.	"
 
-	^`CharacterSet newFrom: 
-		((0 to: 31) collect: [ :i | Character asciiValue: i ]),
-		{Character space. $". $<. $>. $\. $^. $`. ${. $|. $}. Character asciiValue: 127}`.! !
+	| answer |
+	answer := ByteArray new: 256.
+	((((0 to: 31) collect: [ :i | Character codePoint: i ]),
+		{Character space. $". $<. $>. $\. $^. $`. ${. $|. $}. Character codePoint: 127})) do: [ :char |
+			answer at: char codePoint + 1 put: 1 ].
+	^answer! !
 
-!UnicodeString methodsFor: '*WebClient' stamp: 'jmv 4/13/2023 15:11:39'!
+!String methodsFor: '*WebClient' stamp: 'jmv 1/9/2024 17:29:48'!
 percentEscapeUrl
 	"Answer an instance of String where all characters are ASCII.
 	If we contain any ASCII character that is invalid in an URL, parentEscape it
@@ -7337,12 +7324,12 @@ percentEscapeUrl
 	See https://en.wikipedia.org/wiki/URL_encoding"
 
 	| badChars |
-	badChars := String invalidAsciiInUrls.
-	(self isAscii and: [(bytes indexOfAnyOf: badChars startingAt: 1 ifAbsent: 0) = 0]) ifTrue: [
-		^self asByteString ].
+	badChars := `String invalidAsciiInUrls`.
+	(self isAscii and: [(self indexOfAnyIn: badChars startingAt: 1 ifAbsent: 0) = 0]) ifTrue: [
+		^self ].
 	^String percentEscapingNonAsciiAndThoseIn: badChars bytes: self asUtf8Bytes! !
 
-!UnicodeString methodsFor: '*WebClient' stamp: 'jmv 4/13/2023 15:09:27'!
+!String methodsFor: '*WebClient' stamp: 'jmv 1/9/2024 17:29:50'!
 percentEscapeUrlField
 	"Answer an instance of String where all characters are ASCII.
 	If we contain any ASCII character that is invalid in an URL field, parentEscape it
@@ -7350,8 +7337,67 @@ percentEscapeUrlField
 	See https://en.wikipedia.org/wiki/URL_encoding"
 
 	| badChars |
-	badChars := String invalidAsciiInUrlFields.
-	(self isAscii and: [(bytes indexOfAnyOf: badChars startingAt: 1 ifAbsent: 0) = 0]) ifTrue: [
+	badChars := `String invalidAsciiInUrlFields`.
+	(self isAscii and: [(self indexOfAnyIn: badChars startingAt: 1 ifAbsent: 0) = 0]) ifTrue: [
+		^self ].
+	^String percentEscapingNonAsciiAndThoseIn: badChars bytes: self asUtf8Bytes! !
+
+!String methodsFor: '*WebClient' stamp: 'jmv 1/9/2024 18:03:29'!
+unescapePercents
+	"change each %XY substring to the character with ASCII value XY in hex.
+	This is the opposite of #percentEscapingNonAscii: and #percentEscapingNonAsciiAndThoseIn:bytes:
+	(String percentEscapingNonAscii: '⊙' bytes) unescapePercents
+	'%E2%8A%99' unescapePercents
+	"
+
+	| myBytes answerClass answerBytes c decodedByte pos oldPos specialCharsByteSet |
+	myBytes := self asByteArray.
+	specialCharsByteSet := `ByteArray new: 256 :: at: $+ asciiValue + 1 put: 1; at: $% asciiValue + 1 put: 1; yourself`.
+	answerClass := String.
+	answerBytes := ByteArray streamContents: [ :byteStream |
+		oldPos := 1.
+
+		[pos := myBytes indexOfAnyIn: specialCharsByteSet startingAt: oldPos ifAbsent: [ 0 ]. pos > 0 ]
+		whileTrue: [
+			byteStream nextPutAll: (myBytes copyFrom: oldPos to: pos - 1).
+			c := self at: pos.
+			c = $+ ifTrue: [byteStream nextPut: `$  asciiValue` ] ifFalse: [
+				(c = $% and: [pos + 2 <= self size]) ifTrue: [
+					decodedByte := (self at: pos+1) asUppercase digitValue * 16 +
+						(self at: pos+2) asUppercase digitValue.
+					pos := pos + 2.
+					decodedByte > 255 ifTrue: [^self].	"not really an escaped string"
+					decodedByte > 127 ifTrue: [ answerClass := UnicodeString ].
+					byteStream nextPut: decodedByte ]
+				ifFalse: [byteStream nextPut: c codePoint ]].
+			oldPos := pos+1].
+		byteStream nextPutAll: (myBytes copyFrom: oldPos to: self size).
+	].
+	^ answerClass fromUtf8Bytes: answerBytes! !
+
+!UnicodeString methodsFor: '*WebClient' stamp: 'jmv 1/9/2024 17:30:43'!
+percentEscapeUrl
+	"Answer an instance of String where all characters are ASCII.
+	If we contain any ASCII character that is invalid in an URL, parentEscape it
+	If we contain any non-ASCII character, percentEscape its UTF-8 bytes.
+	See https://en.wikipedia.org/wiki/URL_encoding"
+
+	| badChars |
+	badChars := `String invalidAsciiInUrls`.
+	(self isAscii and: [(self indexOfAnyIn: badChars startingAt: 1 ifAbsent: 0) = 0]) ifTrue: [
+		^self asByteString ].
+	^String percentEscapingNonAsciiAndThoseIn: badChars bytes: self asUtf8Bytes! !
+
+!UnicodeString methodsFor: '*WebClient' stamp: 'jmv 1/9/2024 17:30:30'!
+percentEscapeUrlField
+	"Answer an instance of String where all characters are ASCII.
+	If we contain any ASCII character that is invalid in an URL field, parentEscape it
+	If we contain any non-ASCII character, percentEscape its UTF-8 bytes.
+	See https://en.wikipedia.org/wiki/URL_encoding"
+
+	| badChars |
+	badChars := `String invalidAsciiInUrlFields`.
+	(self isAscii and: [(self indexOfAnyIn: badChars startingAt: 1 ifAbsent: 0) = 0]) ifTrue: [
 		^self asByteString ].
 	^String percentEscapingNonAsciiAndThoseIn: badChars bytes: self asUtf8Bytes! !
 WebClient initialize!

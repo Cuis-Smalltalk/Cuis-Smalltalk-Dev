@@ -1,52 +1,52 @@
-'From Cuis 5.0 [latest update: #4415] on 22 October 2020 at 9:35:12 pm'!
+'From Cuis6.3 [latest update: #6189] on 9 January 2024 at 5:50:42 pm'!
 'Description This package contains implementations of common digital signature algorithms.
 For example SHA1, DSA.
 
 It was originally written for Squeak 4.5 and ported to Cuis with few changes by David Graham.
 
 License: MIT'!
-!provides: 'Cryptography-DigitalSignatures' 1 14!
+!provides: 'Cryptography-DigitalSignatures' 1 15!
 !requires: 'Sound' 1 3 nil!
-SystemOrganization addCategory: 'Cryptography-DigitalSignatures'!
+SystemOrganization addCategory: #'Cryptography-DigitalSignatures'!
 
 
-!classDefinition: #DigitalSignatureAlgorithm category: 'Cryptography-DigitalSignatures'!
+!classDefinition: #DigitalSignatureAlgorithm category: #'Cryptography-DigitalSignatures'!
 Object subclass: #DigitalSignatureAlgorithm
 	instanceVariableNames: 'randKey randSeed'
 	classVariableNames: 'HighBitOfByte SmallPrimes'
 	poolDictionaries: ''
 	category: 'Cryptography-DigitalSignatures'!
-!classDefinition: 'DigitalSignatureAlgorithm class' category: 'Cryptography-DigitalSignatures'!
+!classDefinition: 'DigitalSignatureAlgorithm class' category: #'Cryptography-DigitalSignatures'!
 DigitalSignatureAlgorithm class
 	instanceVariableNames: ''!
 
-!classDefinition: #SecureHashAlgorithm category: 'Cryptography-DigitalSignatures'!
+!classDefinition: #SecureHashAlgorithm category: #'Cryptography-DigitalSignatures'!
 Object subclass: #SecureHashAlgorithm
 	instanceVariableNames: 'totalA totalB totalC totalD totalE totals'
 	classVariableNames: 'K1 K2 K3 K4'
 	poolDictionaries: ''
 	category: 'Cryptography-DigitalSignatures'!
-!classDefinition: 'SecureHashAlgorithm class' category: 'Cryptography-DigitalSignatures'!
+!classDefinition: 'SecureHashAlgorithm class' category: #'Cryptography-DigitalSignatures'!
 SecureHashAlgorithm class
 	instanceVariableNames: ''!
 
-!classDefinition: #SecureHashAlgorithm256 category: 'Cryptography-DigitalSignatures'!
+!classDefinition: #SecureHashAlgorithm256 category: #'Cryptography-DigitalSignatures'!
 Object subclass: #SecureHashAlgorithm256
 	instanceVariableNames: 'totals totalA totalB totalC totalD totalE totalF totalG totalH'
 	classVariableNames: 'HashValues RoundConstants'
 	poolDictionaries: ''
 	category: 'Cryptography-DigitalSignatures'!
-!classDefinition: 'SecureHashAlgorithm256 class' category: 'Cryptography-DigitalSignatures'!
+!classDefinition: 'SecureHashAlgorithm256 class' category: #'Cryptography-DigitalSignatures'!
 SecureHashAlgorithm256 class
 	instanceVariableNames: ''!
 
-!classDefinition: #ThirtyTwoBitRegister category: 'Cryptography-DigitalSignatures'!
+!classDefinition: #ThirtyTwoBitRegister category: #'Cryptography-DigitalSignatures'!
 Object subclass: #ThirtyTwoBitRegister
 	instanceVariableNames: 'hi low'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Cryptography-DigitalSignatures'!
-!classDefinition: 'ThirtyTwoBitRegister class' category: 'Cryptography-DigitalSignatures'!
+!classDefinition: 'ThirtyTwoBitRegister class' category: #'Cryptography-DigitalSignatures'!
 ThirtyTwoBitRegister class
 	instanceVariableNames: ''!
 
@@ -146,36 +146,6 @@ largeIntegerXorShift128 := [
 
 xorShift128 bench. '4,990,000 per second. 201 nanoseconds per run.'.
 largeIntegerXorShift128 bench. '529,000 per second. 1.89 microseconds per run.'.!
-
-!ThirtyTwoBitRegister methodsFor: 'accumulator ops' stamp: 'ul 4/10/2015 20:54'!
->> anInteger
-	"Unsigned right shift."
-
-	| bitCount shift |
-	bitCount := anInteger.
-	bitCount >= 32 ifTrue: [
-		hi := low := 0.
-		^self ].
-	bitCount >= 16 ifTrue: [
-		low := hi.
-		hi := 0.
-		bitCount := bitCount - 16 ].
-	bitCount >= 2 ifTrue: [
-		shift := 0 - bitCount.
-		low := (low bitShift: shift) bitOr: ((hi bitShift: shift + 16) bitAnd: 16rFFFF).
-		hi := hi bitShift: shift.
-		^self ].
-	bitCount >= 1 ifTrue: [
-		low := (low bitShift: -1) bitOr: ((hi bitAnd: 16r1) bitShift: 15).
-		hi := hi bitShift: -1 ]! !
-
-!ThirtyTwoBitRegister methodsFor: 'printing' stamp: 'laza 3/29/2004 12:22'!
-printOn: aStream
-	"Print my contents in hex with a leading 'R' to show that it is a register object being printed."
-
-	aStream nextPutAll: 'R:'.
-	self asInteger storeOn: aStream base: 16.
-! !
 
 !DigitalSignatureAlgorithm methodsFor: 'public' stamp: 'nice 9/2/2010 21:48'!
 computeSignatureForMessageHash: hash privateKey: privateKey
@@ -367,7 +337,7 @@ initRandom: randomInteger
 	Transcript show: 'Random seed: ', randomInteger printString; newLine.
 ! !
 
-!DigitalSignatureAlgorithm methodsFor: 'initialization' stamp: 'jmv 9/5/2016 21:13:01'!
+!DigitalSignatureAlgorithm methodsFor: 'initialization' stamp: 'jmv 1/9/2024 16:21:14'!
 initRandomFromString: aString
 	"Ask the user to type a long random string and use the result to seed the secure random number generator."
 
@@ -376,13 +346,13 @@ initRandomFromString: aString
 	k := LargePositiveInteger new: (s size min: 64).
 	srcIndex := 0.
 	k digitLength to: 1 by: -1 do: [:i |
-		k digitAt: i put: (s at: (srcIndex := srcIndex + 1)) numericValue].
+		k digitAt: i put: (s at: (srcIndex := srcIndex + 1)) codePoint].
 	k := k normalize + (Random new next * 16r7FFFFFFF) asInteger.  "a few additional bits randomness"
 	k highBit > 512 ifTrue: [k := k bitShift: k highBit - 512].
 	self initRandom: k.
 ! !
 
-!DigitalSignatureAlgorithm methodsFor: 'initialization' stamp: 'jmv 9/5/2016 21:13:06'!
+!DigitalSignatureAlgorithm methodsFor: 'initialization' stamp: 'jmv 1/9/2024 16:21:21'!
 initRandomFromUser
 	"Ask the user to type a long random string and use the result to seed the secure random number generator."
 
@@ -391,7 +361,7 @@ initRandomFromUser
 	k := LargePositiveInteger new: (s size min: 64).
 	srcIndex := 0.
 	k digitLength to: 1 by: -1 do: [:i |
-		k digitAt: i put: (s at: (srcIndex := srcIndex + 1)) numericValue].
+		k digitAt: i put: (s at: (srcIndex := srcIndex + 1)) codePoint].
 	k := k normalize + (Random new next * 16r7FFFFFFF) asInteger.  "a few additional bits randomness"
 	k highBit > 512 ifTrue: [k := k bitShift: k highBit - 512].
 	self initRandom: k.
@@ -536,7 +506,7 @@ testKeySet
 		(8343811888543852523216773185009428259187948644369498021763210776677854991854533186365944349987509452133156416880596803846631577352387751880552969116768071 1197175832754339660404549606408619548226315875117 1433467472198821951822151391684734233265646022897503720591270330985699984763922266163182803556189497900262038518780931942996381297743579119123094520048965 4645213122572190617807944614677917601101008235397095646475699959851618402406173485853587185431290863173614335452934961425661774118334228449202337038283799))
 ! !
 
-!DigitalSignatureAlgorithm class methodsFor: 'examples' stamp: 'jmv 9/5/2016 20:48:35'!
+!DigitalSignatureAlgorithm class methodsFor: 'examples' stamp: 'jmv 1/9/2024 16:21:30'!
 timeDecode: count
 	"Example of signing a message and verifying its signature."
 	"Note: Secure random numbers are needed for key generation and message signing, but not for signature verification. There is no need to call initRandomFromUser if you are merely checking a signature."
@@ -549,7 +519,7 @@ timeDecode: count
 	#(1 10 100 1000 10000 100000) do: [ :extraLen |
 		| msg keys sig s |
 		s := String new: extraLen.
-		1 to: s size do: [ :i | s at: i put: (Character numericValue: 200 atRandom)].
+		1 to: s size do: [ :i | s at: i put: (Character codePoint: 200 atRandom)].
 		msg := 'This is a test...',s.
 		keys := self testKeySet.
 		sig := self sign: msg privateKey: keys first dsa: dsa.
@@ -1330,6 +1300,28 @@ makeRoundConstantsArray
 		hi := ((hi bitShift: bitCount) bitAnd: 16rFFFF) bitOr: (low bitShift: bitCount - 16).
 		low := (low bitShift: bitCount) bitAnd: 16rFFFF ]! !
 
+!ThirtyTwoBitRegister methodsFor: 'accumulator ops' stamp: 'ul 4/10/2015 20:54'!
+>> anInteger
+	"Unsigned right shift."
+
+	| bitCount shift |
+	bitCount := anInteger.
+	bitCount >= 32 ifTrue: [
+		hi := low := 0.
+		^self ].
+	bitCount >= 16 ifTrue: [
+		low := hi.
+		hi := 0.
+		bitCount := bitCount - 16 ].
+	bitCount >= 2 ifTrue: [
+		shift := 0 - bitCount.
+		low := (low bitShift: shift) bitOr: ((hi bitShift: shift + 16) bitAnd: 16rFFFF).
+		hi := hi bitShift: shift.
+		^self ].
+	bitCount >= 1 ifTrue: [
+		low := (low bitShift: -1) bitOr: ((hi bitAnd: 16r1) bitShift: 15).
+		hi := hi bitShift: -1 ]! !
+
 !ThirtyTwoBitRegister methodsFor: 'accumulator ops' stamp: 'jm 12/7/1999 15:41'!
 bitAnd: aThirtTwoBitRegister
 	"Replace my contents with the bitwise AND of the given register and my current contents."
@@ -1413,6 +1405,14 @@ rightRotateBy: bits
 		newLow _ ((hi bitShift: shift) bitAnd: 16rFFFF) bitOr: low >> bitCount.
 		hi _ ((low bitShift: shift) bitAnd: 16rFFFF) bitOr: hi >> bitCount.
 		low _ newLow ]! !
+
+!ThirtyTwoBitRegister methodsFor: 'printing' stamp: 'laza 3/29/2004 12:22'!
+printOn: aStream
+	"Print my contents in hex with a leading 'R' to show that it is a register object being printed."
+
+	aStream nextPutAll: 'R:'.
+	self asInteger storeOn: aStream base: 16.
+! !
 
 !ThirtyTwoBitRegister methodsFor: 'accessing' stamp: 'jm 12/7/1999 15:26'!
 hi

@@ -1,6 +1,6 @@
-'From Cuis6.0 [latest update: #6154] on 26 December 2023 at 6:35:29 pm'!
+'From Cuis6.3 [latest update: #6200] on 29 January 2024 at 12:37:32 pm'!
 'Description '!
-!provides: 'FFI' 1 42!
+!provides: 'FFI' 1 43!
 SystemOrganization addCategory: #'FFI-Pools'!
 SystemOrganization addCategory: #'FFI-Kernel'!
 
@@ -752,14 +752,12 @@ initialize
 "	Smalltalk addToStartUpList: self after: ShortRunArray."
 	Smalltalk addToStartUpList: self.! !
 
-!ExternalObject class methodsFor: 'conversion' stamp: 'jmv 1/6/2023 10:20:14'!
-adaptStringsAndCharacters: anArray
+!ExternalObject class methodsFor: 'conversion' stamp: 'jmv 1/10/2024 08:47:45'!
+adaptStrings: anArray
 	^anArray collect: [ :each |
 		each isString
 			ifTrue: [each asUtf8BytesOrByteString]
-			ifFalse: [each isCharacter
-				ifTrue: [each asCharacter]
-				ifFalse: [each]]]! !
+			ifFalse: [each]]! !
 
 !ExternalFunction methodsFor: 'accessing' stamp: 'ar 11/19/1999 19:13'!
 argTypes
@@ -846,10 +844,10 @@ invokeWith: arg1 with: arg2 with: arg3 with: arg4 with: arg5
 invokeWith: arg1 with: arg2 with: arg3 with: arg4 with: arg5 with: arg6
 	^self invokeWithArguments: (Array with: arg1 with: arg2 with: arg3 with: arg4 with: arg5 with: arg6)! !
 
-!ExternalFunction methodsFor: 'invoking' stamp: 'jmv 1/6/2023 10:20:34'!
+!ExternalFunction methodsFor: 'invoking' stamp: 'jmv 1/10/2024 08:47:51'!
 invokeWithArguments: argArray
 	"Manually invoke the receiver, representing an external function."
-	^self primInvokeWithArguments: (ExternalObject adaptStringsAndCharacters: argArray)! !
+	^self primInvokeWithArguments: (ExternalObject adaptStrings: argArray)! !
 
 !ExternalFunction methodsFor: 'invoking' stamp: 'jmv 1/6/2023 10:15:29'!
 primInvokeWithArguments: argArray
@@ -864,10 +862,10 @@ primTryInvokeWithArguments: argArray
 	
 	^thisContext class primitiveFailTokenFor: ec! !
 
-!ExternalFunction methodsFor: 'invoking' stamp: 'jmv 1/6/2023 10:20:39'!
+!ExternalFunction methodsFor: 'invoking' stamp: 'jmv 1/10/2024 08:47:55'!
 tryInvokeWithArguments: argArray
 	"Sent from the debugger to simulate an FFI call."
-	^self primTryInvokeWithArguments: (ExternalObject adaptStringsAndCharacters: argArray)! !
+	^self primTryInvokeWithArguments: (ExternalObject adaptStrings: argArray)! !
 
 !ExternalFunction class methodsFor: 'compiler support' stamp: 'ar 12/2/1999 16:20'!
 atomicTypeNamed: aString
@@ -1433,7 +1431,7 @@ recompileStructures
 	self sortStructs: unsorted into: sorted.
 	sorted do: [:e | e checkFieldLayoutChange]! !
 
-!ExternalData methodsFor: 'conversion' stamp: 'jmv 11/14/2023 16:07:45'!
+!ExternalData methodsFor: 'conversion' stamp: 'jmv 1/10/2024 08:50:08'!
 fromCString
 	"Assume that the receiver represents a C string and convert it to a Smalltalk string. hg 2/25/2000 14:18"
 
@@ -1441,7 +1439,7 @@ fromCString
 	type isPointerType ifFalse: [self error: 'External object is not a pointer type.'].
 	stream := WriteStream on: String new.
 	index := 1.
-	[(char := handle unsignedCharAt: index) = 0 asCharacter] whileFalse: [
+	[(char := handle unsignedCharAt: index) codePoint = 0] whileFalse: [
 		stream nextPut: char.
 		index := index + 1].
 	^stream contents! !
@@ -1459,7 +1457,7 @@ fromCStringAsByteArray
 		index := index + 1].
 	^stream contents! !
 
-!ExternalData methodsFor: 'conversion' stamp: 'jmv 11/14/2023 16:07:50'!
+!ExternalData methodsFor: 'conversion' stamp: 'jmv 1/10/2024 08:49:54'!
 fromCStrings
 	"Assume that the receiver represents a set of C strings and is teerminated by a empty string and convert it to a Smalltalk ordered collection of strings"
 
@@ -1469,7 +1467,7 @@ fromCStrings
 	index := 1.
 	[
 		stream := WriteStream on: String new.
-		[(char := handle unsignedCharAt: index) = 0 asCharacter]
+		[(char := handle unsignedCharAt: index) codePoint = 0]
 			whileFalse: [
 				stream nextPut: char.
 				index := index + 1
@@ -2627,17 +2625,29 @@ signedByteAt: byteOffset put: value
 
 	^self ffiInt8At: byteOffset put: value! !
 
-!ByteArray methodsFor: '*FFI-Kernel' stamp: 'jmv 11/14/2023 16:08:42'!
+!ByteArray methodsFor: '*FFI-Kernel-oldTypeNames' stamp: 'jmv 1/10/2024 08:44:01'!
 signedCharAt: byteOffset
 	"If a regular ByteArray, byteOffset is the start position in self.
-	If an ExternalAddress, take us as a pointer. byteOffset is applied to the pointer. Access memory at pointer+offset."
-	^(self ffiUint8At: byteOffset) asCharacter! !
+	If an ExternalAddress, take us as a pointer. byteOffset is applied to the pointer.
+	Access memory at pointer+offset.
+	Note: This methos should likely be removed.
+		- It will answer an instance of Character, but based on a single byte it will only be in the Latin-1 range.
+		- There's no concept of sign for Characters. This doesn't make any sense.
+	Perhaps users should use #signedByteAt: instead?"
 
-!ByteArray methodsFor: '*FFI-Kernel' stamp: 'jmv 11/14/2023 16:08:51'!
+	^ Character codePoint: (self ffiUint8At: byteOffset)! !
+
+!ByteArray methodsFor: '*FFI-Kernel-oldTypeNames' stamp: 'jmv 1/10/2024 08:42:17'!
 signedCharAt: byteOffset put: aCharacter
 	"If a regular ByteArray, byteOffset is the start position in self.
-	If an ExternalAddress, take us as a pointer. byteOffset is applied to the pointer. Access memory at pointer+offset."
-	^self ffiUint8At: byteOffset put: aCharacter numericValue! !
+	If an ExternalAddress, take us as a pointer. byteOffset is applied to the pointer.
+	Access memory at pointer+offset.
+	Note: This methos should likely be removed.
+		- It takes an instance of Character, but it must be in the Latin-1 range.
+		- There's no concept of sign for Characters. This doesn't seem useful.
+	Perhaps users should use #signedByteAt:put: instead?"
+
+	^self ffiUint8At: byteOffset put: aCharacter codePoint! !
 
 !ByteArray methodsFor: '*FFI-Kernel-oldTypeNames' stamp: 'jmv 11/14/2023 16:19:45'!
 signedLongAt: byteOffset
@@ -2717,17 +2727,27 @@ unsignedByteAt: byteOffset put: value
 
 	^self ffiUint8At: byteOffset put: value! !
 
-!ByteArray methodsFor: '*FFI-Kernel' stamp: 'jmv 11/14/2023 16:07:15'!
+!ByteArray methodsFor: '*FFI-Kernel-oldTypeNames' stamp: 'jmv 1/10/2024 08:44:09'!
 unsignedCharAt: byteOffset
 	"If a regular ByteArray, byteOffset is the start position in self.
-	If an ExternalAddress, take us as a pointer. byteOffset is applied to the pointer. Access memory at pointer+offset."
-	^(self ffiUint8At: byteOffset) asCharacter! !
+	If an ExternalAddress, take us as a pointer. byteOffset is applied to the pointer.
+	Access memory at pointer+offset.
+	Note: This methos should likely be removed.
+		- It will answer an instance of Character, but based on a single byte it will only be in the Latin-1 range.
+	Perhaps users should use #unsignedByteAt: instead?"
 
-!ByteArray methodsFor: '*FFI-Kernel' stamp: 'jmv 11/14/2023 16:07:21'!
+	^ Character codePoint: (self ffiUint8At: byteOffset)! !
+
+!ByteArray methodsFor: '*FFI-Kernel-oldTypeNames' stamp: 'jmv 1/10/2024 08:43:11'!
 unsignedCharAt: byteOffset put: aCharacter
 	"If a regular ByteArray, byteOffset is the start position in self.
-	If an ExternalAddress, take us as a pointer. byteOffset is applied to the pointer. Access memory at pointer+offset."
-	^self ffiUint8At: byteOffset put: aCharacter numericValue! !
+	If an ExternalAddress, take us as a pointer. byteOffset is applied to the pointer.
+	Access memory at pointer+offset.
+	Note: This methos should likely be removed.
+		- It takes an instance of Character, but it must be in the Latin-1 range.
+	Perhaps users should use #unsignedByteAt:put: instead?"
+
+	^self ffiUint8At: byteOffset put: aCharacter codePoint! !
 
 !ByteArray methodsFor: '*FFI-Kernel-oldTypeNames' stamp: 'jmv 11/14/2023 16:23:28'!
 unsignedLongAt: byteOffset

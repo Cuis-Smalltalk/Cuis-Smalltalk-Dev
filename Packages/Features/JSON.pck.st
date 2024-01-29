@@ -1,37 +1,37 @@
-'From Cuis 6.0 [latest update: #5559] on 25 November 2022 at 12:48:20 pm'!
+'From Cuis6.3 [latest update: #6189] on 9 January 2024 at 5:52:13 pm'!
 'Description '!
-!provides: 'JSON' 1 25!
+!provides: 'JSON' 1 26!
 !requires: 'Cuis-Base' 60 5557 nil!
-SystemOrganization addCategory: 'JSON'!
+SystemOrganization addCategory: #JSON!
 
 
-!classDefinition: #JsonObject category: 'JSON'!
+!classDefinition: #JsonObject category: #JSON!
 OrderedDictionary subclass: #JsonObject
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'JSON'!
-!classDefinition: 'JsonObject class' category: 'JSON'!
+!classDefinition: 'JsonObject class' category: #JSON!
 JsonObject class
 	instanceVariableNames: ''!
 
-!classDefinition: #JsonSyntaxError category: 'JSON'!
+!classDefinition: #JsonSyntaxError category: #JSON!
 Error subclass: #JsonSyntaxError
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'JSON'!
-!classDefinition: 'JsonSyntaxError class' category: 'JSON'!
+!classDefinition: 'JsonSyntaxError class' category: #JSON!
 JsonSyntaxError class
 	instanceVariableNames: ''!
 
-!classDefinition: #Json category: 'JSON'!
+!classDefinition: #Json category: #JSON!
 Object subclass: #Json
 	instanceVariableNames: 'stream ctorMap'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'JSON'!
-!classDefinition: 'Json class' category: 'JSON'!
+!classDefinition: 'Json class' category: #JSON!
 Json class
 	instanceVariableNames: 'escapeArray'!
 
@@ -227,13 +227,13 @@ skipWhitespace
 	[stream peek isSeparator] whileTrue: [stream next].
 	self skipComment.! !
 
-!Json methodsFor: 'private' stamp: 'KenD 11/24/2022 08:15:33'!
+!Json methodsFor: 'private' stamp: 'jmv 1/9/2024 16:27:42'!
 unescapeUnicodeTo: aStream
 	"Next 4 chars from `stream` are hex unicode point value"
 	| string codePoint |
-	string _ String newFrom: {stream next. stream next. stream next. stream next.}.
-	codePoint _ Integer readFrom: string asUppercase readStream base: 16.
-	aStream nextPut: (UnicodeCodePoint codePoint: codePoint) ! !
+	string := String newFrom: {stream next. stream next. stream next. stream next.}.
+	codePoint := Integer readFrom: string asUppercase readStream base: 16.
+	aStream nextPut: (Character codePoint: codePoint) ! !
 
 !Json methodsFor: 'accessing' stamp: 'tonyg 11/29/2005 11:40'!
 ctorMap

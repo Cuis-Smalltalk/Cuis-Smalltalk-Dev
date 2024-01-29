@@ -1,470 +1,470 @@
-'From Cuis 6.0 [latest update: #5795] on 7 May 2023 at 7:07:55 pm'!
+'From Cuis6.3 [latest update: #6189] on 9 January 2024 at 5:53:34 pm'!
 'Description '!
-!provides: 'Sound' 1 27!
+!provides: 'Sound' 1 28!
 !requires: 'Compression' 1 nil nil!
 !requires: 'Collections-CompactArrays' 1 2 nil!
-SystemOrganization addCategory: 'Sound-Synthesis'!
-SystemOrganization addCategory: 'Sound-Scores'!
-SystemOrganization addCategory: 'Sound-System-Support'!
+SystemOrganization addCategory: #'Sound-Synthesis'!
+SystemOrganization addCategory: #'Sound-Scores'!
+SystemOrganization addCategory: #'Sound-System-Support'!
 
 
-!classDefinition: #SoundBuffer category: 'Sound-Synthesis'!
+!classDefinition: #SoundBuffer category: #'Sound-Synthesis'!
 ArrayedCollection variableWordSubclass: #SoundBuffer
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Sound-Synthesis'!
-!classDefinition: 'SoundBuffer class' category: 'Sound-Synthesis'!
+!classDefinition: 'SoundBuffer class' category: #'Sound-Synthesis'!
 SoundBuffer class
 	instanceVariableNames: ''!
 
-!classDefinition: #Sonogram category: 'Sound-Synthesis'!
+!classDefinition: #Sonogram category: #'Sound-Synthesis'!
 ImageMorph subclass: #Sonogram
 	instanceVariableNames: 'lastX scrollDelta columnForm minVal maxVal pixValMap'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Sound-Synthesis'!
-!classDefinition: 'Sonogram class' category: 'Sound-Synthesis'!
+!classDefinition: 'Sonogram class' category: #'Sound-Synthesis'!
 Sonogram class
 	instanceVariableNames: ''!
 
-!classDefinition: #AIFFFileReader category: 'Sound-Synthesis'!
+!classDefinition: #AIFFFileReader category: #'Sound-Synthesis'!
 Object subclass: #AIFFFileReader
 	instanceVariableNames: 'in fileType channelCount frameCount bitsPerSample samplingRate channelData channelDataOffset markers pitch gain isLooped skipDataChunk mergeIfStereo'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Sound-Synthesis'!
-!classDefinition: 'AIFFFileReader class' category: 'Sound-Synthesis'!
+!classDefinition: 'AIFFFileReader class' category: #'Sound-Synthesis'!
 AIFFFileReader class
 	instanceVariableNames: ''!
 
-!classDefinition: #AbstractSound category: 'Sound-Synthesis'!
+!classDefinition: #AbstractSound category: #'Sound-Synthesis'!
 Object subclass: #AbstractSound
 	instanceVariableNames: 'envelopes mSecsSinceStart samplesUntilNextControl scaledVol scaledVolIncr scaledVolLimit'
 	classVariableNames: 'FloatScaleFactor MaxScaledValue PitchesForBottomOctave ScaleFactor Sounds TopOfBottomOctave UnloadedSnd'
 	poolDictionaries: ''
 	category: 'Sound-Synthesis'!
-!classDefinition: 'AbstractSound class' category: 'Sound-Synthesis'!
+!classDefinition: 'AbstractSound class' category: #'Sound-Synthesis'!
 AbstractSound class
 	instanceVariableNames: ''!
 
-!classDefinition: #FMSound category: 'Sound-Synthesis'!
+!classDefinition: #FMSound category: #'Sound-Synthesis'!
 AbstractSound subclass: #FMSound
 	instanceVariableNames: 'initialCount count waveTable scaledWaveTableSize scaledIndex scaledIndexIncr modulation multiplier normalizedModulation scaledOffsetIndex scaledOffsetIndexIncr'
 	classVariableNames: 'SineTable'
 	poolDictionaries: ''
 	category: 'Sound-Synthesis'!
-!classDefinition: 'FMSound class' category: 'Sound-Synthesis'!
+!classDefinition: 'FMSound class' category: #'Sound-Synthesis'!
 FMSound class
 	instanceVariableNames: ''!
 
-!classDefinition: #FMBassoonSound category: 'Sound-Synthesis'!
+!classDefinition: #FMBassoonSound category: #'Sound-Synthesis'!
 FMSound subclass: #FMBassoonSound
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Sound-Synthesis'!
-!classDefinition: 'FMBassoonSound class' category: 'Sound-Synthesis'!
+!classDefinition: 'FMBassoonSound class' category: #'Sound-Synthesis'!
 FMBassoonSound class
 	instanceVariableNames: ''!
 
-!classDefinition: #FMClarinetSound category: 'Sound-Synthesis'!
+!classDefinition: #FMClarinetSound category: #'Sound-Synthesis'!
 FMSound subclass: #FMClarinetSound
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Sound-Synthesis'!
-!classDefinition: 'FMClarinetSound class' category: 'Sound-Synthesis'!
+!classDefinition: 'FMClarinetSound class' category: #'Sound-Synthesis'!
 FMClarinetSound class
 	instanceVariableNames: ''!
 
-!classDefinition: #UnloadedSound category: 'Sound-Synthesis'!
+!classDefinition: #UnloadedSound category: #'Sound-Synthesis'!
 FMSound subclass: #UnloadedSound
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Sound-Synthesis'!
-!classDefinition: 'UnloadedSound class' category: 'Sound-Synthesis'!
+!classDefinition: 'UnloadedSound class' category: #'Sound-Synthesis'!
 UnloadedSound class
 	instanceVariableNames: ''!
 
-!classDefinition: #LoopedSampledSound category: 'Sound-Synthesis'!
+!classDefinition: #LoopedSampledSound category: #'Sound-Synthesis'!
 AbstractSound subclass: #LoopedSampledSound
 	instanceVariableNames: 'initialCount count releaseCount sampleCountForRelease leftSamples rightSamples originalSamplingRate perceivedPitch gain firstSample lastSample loopEnd scaledLoopLength scaledIndex scaledIndexIncr'
 	classVariableNames: 'FloatLoopIndexScaleFactor LoopIndexFractionMask LoopIndexScaleFactor'
 	poolDictionaries: ''
 	category: 'Sound-Synthesis'!
-!classDefinition: 'LoopedSampledSound class' category: 'Sound-Synthesis'!
+!classDefinition: 'LoopedSampledSound class' category: #'Sound-Synthesis'!
 LoopedSampledSound class
 	instanceVariableNames: ''!
 
-!classDefinition: #MixedSound category: 'Sound-Synthesis'!
+!classDefinition: #MixedSound category: #'Sound-Synthesis'!
 AbstractSound subclass: #MixedSound
 	instanceVariableNames: 'sounds leftVols rightVols soundDone'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Sound-Synthesis'!
-!classDefinition: 'MixedSound class' category: 'Sound-Synthesis'!
+!classDefinition: 'MixedSound class' category: #'Sound-Synthesis'!
 MixedSound class
 	instanceVariableNames: ''!
 
-!classDefinition: #PluckedSound category: 'Sound-Synthesis'!
+!classDefinition: #PluckedSound category: #'Sound-Synthesis'!
 AbstractSound subclass: #PluckedSound
 	instanceVariableNames: 'initialCount count ring scaledIndex scaledIndexIncr scaledIndexLimit'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Sound-Synthesis'!
-!classDefinition: 'PluckedSound class' category: 'Sound-Synthesis'!
+!classDefinition: 'PluckedSound class' category: #'Sound-Synthesis'!
 PluckedSound class
 	instanceVariableNames: ''!
 
-!classDefinition: #QueueSound category: 'Sound-Synthesis'!
+!classDefinition: #QueueSound category: #'Sound-Synthesis'!
 AbstractSound subclass: #QueueSound
 	instanceVariableNames: 'startTime sounds currentSound done'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Sound-Synthesis'!
-!classDefinition: 'QueueSound class' category: 'Sound-Synthesis'!
+!classDefinition: 'QueueSound class' category: #'Sound-Synthesis'!
 QueueSound class
 	instanceVariableNames: ''!
 
-!classDefinition: #RepeatingSound category: 'Sound-Synthesis'!
+!classDefinition: #RepeatingSound category: #'Sound-Synthesis'!
 AbstractSound subclass: #RepeatingSound
 	instanceVariableNames: 'sound iterationCount iteration samplesPerIteration'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Sound-Synthesis'!
-!classDefinition: 'RepeatingSound class' category: 'Sound-Synthesis'!
+!classDefinition: 'RepeatingSound class' category: #'Sound-Synthesis'!
 RepeatingSound class
 	instanceVariableNames: ''!
 
-!classDefinition: #RestSound category: 'Sound-Synthesis'!
+!classDefinition: #RestSound category: #'Sound-Synthesis'!
 AbstractSound subclass: #RestSound
 	instanceVariableNames: 'initialCount count'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Sound-Synthesis'!
-!classDefinition: 'RestSound class' category: 'Sound-Synthesis'!
+!classDefinition: 'RestSound class' category: #'Sound-Synthesis'!
 RestSound class
 	instanceVariableNames: ''!
 
-!classDefinition: #ReverbSound category: 'Sound-Synthesis'!
+!classDefinition: #ReverbSound category: #'Sound-Synthesis'!
 AbstractSound subclass: #ReverbSound
 	instanceVariableNames: 'sound tapDelays tapGains tapCount bufferSize bufferIndex leftBuffer rightBuffer'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Sound-Synthesis'!
-!classDefinition: 'ReverbSound class' category: 'Sound-Synthesis'!
+!classDefinition: 'ReverbSound class' category: #'Sound-Synthesis'!
 ReverbSound class
 	instanceVariableNames: ''!
 
-!classDefinition: #SampledSound category: 'Sound-Synthesis'!
+!classDefinition: #SampledSound category: #'Sound-Synthesis'!
 AbstractSound subclass: #SampledSound
 	instanceVariableNames: 'initialCount count samples originalSamplingRate samplesSize scaledIndex indexHighBits scaledIncrement'
 	classVariableNames: 'CoffeeCupClink DefaultSampleTable IncrementFractionBits IncrementScaleFactor NominalSamplePitch ScaledIndexOverflow SoundLibrary'
 	poolDictionaries: ''
 	category: 'Sound-Synthesis'!
-!classDefinition: 'SampledSound class' category: 'Sound-Synthesis'!
+!classDefinition: 'SampledSound class' category: #'Sound-Synthesis'!
 SampledSound class
 	instanceVariableNames: ''!
 
-!classDefinition: #SequentialSound category: 'Sound-Synthesis'!
+!classDefinition: #SequentialSound category: #'Sound-Synthesis'!
 AbstractSound subclass: #SequentialSound
 	instanceVariableNames: 'sounds currentIndex'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Sound-Synthesis'!
-!classDefinition: 'SequentialSound class' category: 'Sound-Synthesis'!
+!classDefinition: 'SequentialSound class' category: #'Sound-Synthesis'!
 SequentialSound class
 	instanceVariableNames: ''!
 
-!classDefinition: #StreamingMonoSound category: 'Sound-Synthesis'!
+!classDefinition: #StreamingMonoSound category: #'Sound-Synthesis'!
 AbstractSound subclass: #StreamingMonoSound
 	instanceVariableNames: 'stream volume repeat headerStart audioDataStart streamSamplingRate totalSamples codec mixer leftoverSamples lastBufferMSecs mutex'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Sound-Synthesis'!
-!classDefinition: 'StreamingMonoSound class' category: 'Sound-Synthesis'!
+!classDefinition: 'StreamingMonoSound class' category: #'Sound-Synthesis'!
 StreamingMonoSound class
 	instanceVariableNames: ''!
 
-!classDefinition: #ScorePlayer category: 'Sound-Scores'!
+!classDefinition: #ScorePlayer category: #'Sound-Scores'!
 AbstractSound subclass: #ScorePlayer
 	instanceVariableNames: 'score instruments overallVolume leftVols rightVols muted rate tempo secsPerTick done repeat ticksSinceStart ticksClockIncr trackEventIndex tempoMapIndex activeSounds activeMIDINotes midiPort midiPlayerProcess durationInTicks'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Sound-Scores'!
-!classDefinition: 'ScorePlayer class' category: 'Sound-Scores'!
+!classDefinition: 'ScorePlayer class' category: #'Sound-Scores'!
 ScorePlayer class
 	instanceVariableNames: ''!
 
-!classDefinition: #CompressedSoundData category: 'Sound-Synthesis'!
+!classDefinition: #CompressedSoundData category: #'Sound-Synthesis'!
 Object subclass: #CompressedSoundData
 	instanceVariableNames: 'channels soundClassName codecName loopEnd loopLength perceivedPitch samplingRate gain firstSample cachedSound'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Sound-Synthesis'!
-!classDefinition: 'CompressedSoundData class' category: 'Sound-Synthesis'!
+!classDefinition: 'CompressedSoundData class' category: #'Sound-Synthesis'!
 CompressedSoundData class
 	instanceVariableNames: ''!
 
-!classDefinition: #Envelope category: 'Sound-Synthesis'!
+!classDefinition: #Envelope category: #'Sound-Synthesis'!
 Object subclass: #Envelope
 	instanceVariableNames: 'points loopStartIndex loopEndIndex loopStartMSecs loopMSecs target updateSelector loopEndMSecs endMSecs scale decayScale lastValue currValue valueIncr nextRecomputeTime noChangesDuringLoop'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Sound-Synthesis'!
-!classDefinition: 'Envelope class' category: 'Sound-Synthesis'!
+!classDefinition: 'Envelope class' category: #'Sound-Synthesis'!
 Envelope class
 	instanceVariableNames: ''!
 
-!classDefinition: #PitchEnvelope category: 'Sound-Synthesis'!
+!classDefinition: #PitchEnvelope category: #'Sound-Synthesis'!
 Envelope subclass: #PitchEnvelope
 	instanceVariableNames: 'centerPitch'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Sound-Synthesis'!
-!classDefinition: 'PitchEnvelope class' category: 'Sound-Synthesis'!
+!classDefinition: 'PitchEnvelope class' category: #'Sound-Synthesis'!
 PitchEnvelope class
 	instanceVariableNames: ''!
 
-!classDefinition: #RandomEnvelope category: 'Sound-Synthesis'!
+!classDefinition: #RandomEnvelope category: #'Sound-Synthesis'!
 Envelope subclass: #RandomEnvelope
 	instanceVariableNames: 'rand lowLimit highLimit delta'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Sound-Synthesis'!
-!classDefinition: 'RandomEnvelope class' category: 'Sound-Synthesis'!
+!classDefinition: 'RandomEnvelope class' category: #'Sound-Synthesis'!
 RandomEnvelope class
 	instanceVariableNames: ''!
 
-!classDefinition: #VolumeEnvelope category: 'Sound-Synthesis'!
+!classDefinition: #VolumeEnvelope category: #'Sound-Synthesis'!
 Envelope subclass: #VolumeEnvelope
 	instanceVariableNames: 'targetVol mSecsForChange'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Sound-Synthesis'!
-!classDefinition: 'VolumeEnvelope class' category: 'Sound-Synthesis'!
+!classDefinition: 'VolumeEnvelope class' category: #'Sound-Synthesis'!
 VolumeEnvelope class
 	instanceVariableNames: ''!
 
-!classDefinition: #SampledInstrument category: 'Sound-Synthesis'!
+!classDefinition: #SampledInstrument category: #'Sound-Synthesis'!
 Object subclass: #SampledInstrument
 	instanceVariableNames: 'sustainedSoft sustainedLoud staccatoSoft staccatoLoud sustainedThreshold loudThreshold'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Sound-Synthesis'!
-!classDefinition: 'SampledInstrument class' category: 'Sound-Synthesis'!
+!classDefinition: 'SampledInstrument class' category: #'Sound-Synthesis'!
 SampledInstrument class
 	instanceVariableNames: ''!
 
-!classDefinition: #SoundCodec category: 'Sound-Synthesis'!
+!classDefinition: #SoundCodec category: #'Sound-Synthesis'!
 Object subclass: #SoundCodec
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Sound-Synthesis'!
-!classDefinition: 'SoundCodec class' category: 'Sound-Synthesis'!
+!classDefinition: 'SoundCodec class' category: #'Sound-Synthesis'!
 SoundCodec class
 	instanceVariableNames: ''!
 
-!classDefinition: #ADPCMCodec category: 'Sound-Synthesis'!
+!classDefinition: #ADPCMCodec category: #'Sound-Synthesis'!
 SoundCodec subclass: #ADPCMCodec
 	instanceVariableNames: 'predicted index deltaSignMask deltaValueMask deltaValueHighBit frameSizeMask currentByte bitPosition byteIndex encodedBytes samples rightSamples sampleIndex bitsPerSample stepSizeTable indexTable'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Sound-Synthesis'!
-!classDefinition: 'ADPCMCodec class' category: 'Sound-Synthesis'!
+!classDefinition: 'ADPCMCodec class' category: #'Sound-Synthesis'!
 ADPCMCodec class
 	instanceVariableNames: ''!
 
-!classDefinition: #GSMCodec category: 'Sound-Synthesis'!
+!classDefinition: #GSMCodec category: #'Sound-Synthesis'!
 SoundCodec subclass: #GSMCodec
 	instanceVariableNames: 'encodeState decodeState'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Sound-Synthesis'!
-!classDefinition: 'GSMCodec class' category: 'Sound-Synthesis'!
+!classDefinition: 'GSMCodec class' category: #'Sound-Synthesis'!
 GSMCodec class
 	instanceVariableNames: ''!
 
-!classDefinition: #MuLawCodec category: 'Sound-Synthesis'!
+!classDefinition: #MuLawCodec category: #'Sound-Synthesis'!
 SoundCodec subclass: #MuLawCodec
 	instanceVariableNames: ''
 	classVariableNames: 'DecodingTable'
 	poolDictionaries: ''
 	category: 'Sound-Synthesis'!
-!classDefinition: 'MuLawCodec class' category: 'Sound-Synthesis'!
+!classDefinition: 'MuLawCodec class' category: #'Sound-Synthesis'!
 MuLawCodec class
 	instanceVariableNames: ''!
 
-!classDefinition: #SoundPlayer category: 'Sound-Synthesis'!
+!classDefinition: #SoundPlayer category: #'Sound-Synthesis'!
 Object subclass: #SoundPlayer
 	instanceVariableNames: ''
 	classVariableNames: 'ActiveSounds Buffer BufferIndex BufferMSecs LastBuffer PlayerProcess PlayerSemaphore ReadyForBuffer ReverbState SamplingRate SoundJustStarted SoundSupported Stereo UseReadySemaphore UseReverb'
 	poolDictionaries: ''
 	category: 'Sound-Synthesis'!
-!classDefinition: 'SoundPlayer class' category: 'Sound-Synthesis'!
+!classDefinition: 'SoundPlayer class' category: #'Sound-Synthesis'!
 SoundPlayer class
 	instanceVariableNames: ''!
 
-!classDefinition: #SoundRecorder category: 'Sound-Synthesis'!
+!classDefinition: #SoundRecorder category: #'Sound-Synthesis'!
 Object subclass: #SoundRecorder
 	instanceVariableNames: 'stereo samplingRate recordLevel recordedBuffers recordedSound recordProcess bufferAvailableSema paused meteringBuffer meterLevel soundPlaying currentBuffer nextIndex codec desiredSampleRate'
 	classVariableNames: 'CanRecordWhilePlaying RecorderActive'
 	poolDictionaries: ''
 	category: 'Sound-Synthesis'!
-!classDefinition: 'SoundRecorder class' category: 'Sound-Synthesis'!
+!classDefinition: 'SoundRecorder class' category: #'Sound-Synthesis'!
 SoundRecorder class
 	instanceVariableNames: ''!
 
-!classDefinition: #SoundInputStream category: 'Sound-Synthesis'!
+!classDefinition: #SoundInputStream category: #'Sound-Synthesis'!
 SoundRecorder subclass: #SoundInputStream
 	instanceVariableNames: 'bufferSize mutex'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Sound-Synthesis'!
-!classDefinition: 'SoundInputStream class' category: 'Sound-Synthesis'!
+!classDefinition: 'SoundInputStream class' category: #'Sound-Synthesis'!
 SoundInputStream class
 	instanceVariableNames: ''!
 
-!classDefinition: #AbstractScoreEvent category: 'Sound-Scores'!
+!classDefinition: #AbstractScoreEvent category: #'Sound-Scores'!
 Object subclass: #AbstractScoreEvent
 	instanceVariableNames: 'time'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Sound-Scores'!
-!classDefinition: 'AbstractScoreEvent class' category: 'Sound-Scores'!
+!classDefinition: 'AbstractScoreEvent class' category: #'Sound-Scores'!
 AbstractScoreEvent class
 	instanceVariableNames: ''!
 
-!classDefinition: #ControlChangeEvent category: 'Sound-Scores'!
+!classDefinition: #ControlChangeEvent category: #'Sound-Scores'!
 AbstractScoreEvent subclass: #ControlChangeEvent
 	instanceVariableNames: 'control value channel'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Sound-Scores'!
-!classDefinition: 'ControlChangeEvent class' category: 'Sound-Scores'!
+!classDefinition: 'ControlChangeEvent class' category: #'Sound-Scores'!
 ControlChangeEvent class
 	instanceVariableNames: ''!
 
-!classDefinition: #NoteEvent category: 'Sound-Scores'!
+!classDefinition: #NoteEvent category: #'Sound-Scores'!
 AbstractScoreEvent subclass: #NoteEvent
 	instanceVariableNames: 'duration midiKey velocity channel'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Sound-Scores'!
-!classDefinition: 'NoteEvent class' category: 'Sound-Scores'!
+!classDefinition: 'NoteEvent class' category: #'Sound-Scores'!
 NoteEvent class
 	instanceVariableNames: ''!
 
-!classDefinition: #PitchBendEvent category: 'Sound-Scores'!
+!classDefinition: #PitchBendEvent category: #'Sound-Scores'!
 AbstractScoreEvent subclass: #PitchBendEvent
 	instanceVariableNames: 'bend channel'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Sound-Scores'!
-!classDefinition: 'PitchBendEvent class' category: 'Sound-Scores'!
+!classDefinition: 'PitchBendEvent class' category: #'Sound-Scores'!
 PitchBendEvent class
 	instanceVariableNames: ''!
 
-!classDefinition: #ProgramChangeEvent category: 'Sound-Scores'!
+!classDefinition: #ProgramChangeEvent category: #'Sound-Scores'!
 AbstractScoreEvent subclass: #ProgramChangeEvent
 	instanceVariableNames: 'program channel'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Sound-Scores'!
-!classDefinition: 'ProgramChangeEvent class' category: 'Sound-Scores'!
+!classDefinition: 'ProgramChangeEvent class' category: #'Sound-Scores'!
 ProgramChangeEvent class
 	instanceVariableNames: ''!
 
-!classDefinition: #TempoEvent category: 'Sound-Scores'!
+!classDefinition: #TempoEvent category: #'Sound-Scores'!
 AbstractScoreEvent subclass: #TempoEvent
 	instanceVariableNames: 'tempo'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Sound-Scores'!
-!classDefinition: 'TempoEvent class' category: 'Sound-Scores'!
+!classDefinition: 'TempoEvent class' category: #'Sound-Scores'!
 TempoEvent class
 	instanceVariableNames: ''!
 
-!classDefinition: #MIDIFileReader category: 'Sound-Scores'!
+!classDefinition: #MIDIFileReader category: #'Sound-Scores'!
 Object subclass: #MIDIFileReader
 	instanceVariableNames: 'stream fileType trackCount ticksPerQuarter tracks trackInfo tempoMap strings track trackStream activeEvents maxNoteTicks'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Sound-Scores'!
-!classDefinition: 'MIDIFileReader class' category: 'Sound-Scores'!
+!classDefinition: 'MIDIFileReader class' category: #'Sound-Scores'!
 MIDIFileReader class
 	instanceVariableNames: ''!
 
-!classDefinition: #MIDIInputParser category: 'Sound-Scores'!
+!classDefinition: #MIDIInputParser category: #'Sound-Scores'!
 Object subclass: #MIDIInputParser
 	instanceVariableNames: 'cmdActionTable midiPort received rawDataBuffer sysExBuffer ignoreSysEx startTime timeNow state lastSelector lastCmdByte argByte1 argByte2'
 	classVariableNames: 'DefaultMidiTable'
 	poolDictionaries: ''
 	category: 'Sound-Scores'!
-!classDefinition: 'MIDIInputParser class' category: 'Sound-Scores'!
+!classDefinition: 'MIDIInputParser class' category: #'Sound-Scores'!
 MIDIInputParser class
 	instanceVariableNames: ''!
 
-!classDefinition: #MIDIScore category: 'Sound-Scores'!
+!classDefinition: #MIDIScore category: #'Sound-Scores'!
 Object subclass: #MIDIScore
 	instanceVariableNames: 'tracks trackInfo tempoMap ticksPerQuarterNote'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Sound-Scores'!
-!classDefinition: 'MIDIScore class' category: 'Sound-Scores'!
+!classDefinition: 'MIDIScore class' category: #'Sound-Scores'!
 MIDIScore class
 	instanceVariableNames: ''!
 
-!classDefinition: #MIDISynth category: 'Sound-Scores'!
+!classDefinition: #MIDISynth category: #'Sound-Scores'!
 Object subclass: #MIDISynth
 	instanceVariableNames: 'midiParser channels process'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Sound-Scores'!
-!classDefinition: 'MIDISynth class' category: 'Sound-Scores'!
+!classDefinition: 'MIDISynth class' category: #'Sound-Scores'!
 MIDISynth class
 	instanceVariableNames: ''!
 
-!classDefinition: #MIDISynthChannel category: 'Sound-Scores'!
+!classDefinition: #MIDISynthChannel category: #'Sound-Scores'!
 Object subclass: #MIDISynthChannel
 	instanceVariableNames: 'instrument muted masterVolume channelVolume pan pitchBend activeSounds'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Sound-Scores'!
-!classDefinition: 'MIDISynthChannel class' category: 'Sound-Scores'!
+!classDefinition: 'MIDISynthChannel class' category: #'Sound-Scores'!
 MIDISynthChannel class
 	instanceVariableNames: ''!
 
-!classDefinition: #SimpleMIDIPort category: 'Sound-Scores'!
+!classDefinition: #SimpleMIDIPort category: #'Sound-Scores'!
 Object subclass: #SimpleMIDIPort
 	instanceVariableNames: 'portNumber accessSema lastCommandByteOut'
 	classVariableNames: 'DefaultPortNumber InterfaceClockRate'
 	poolDictionaries: ''
 	category: 'Sound-Scores'!
-!classDefinition: 'SimpleMIDIPort class' category: 'Sound-Scores'!
+!classDefinition: 'SimpleMIDIPort class' category: #'Sound-Scores'!
 SimpleMIDIPort class
 	instanceVariableNames: ''!
 
-!classDefinition: #Beeper category: 'Sound-System-Support'!
+!classDefinition: #Beeper category: #'Sound-System-Support'!
 Object subclass: #Beeper
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Sound-System-Support'!
-!classDefinition: 'Beeper class' category: 'Sound-System-Support'!
+!classDefinition: 'Beeper class' category: #'Sound-System-Support'!
 Beeper class
 	instanceVariableNames: 'default'!
 
-!classDefinition: #SoundSystem category: 'Sound-System-Support'!
+!classDefinition: #SoundSystem category: #'Sound-System-Support'!
 Object subclass: #SoundSystem
 	instanceVariableNames: ''
 	classVariableNames: 'Default'
 	poolDictionaries: ''
 	category: 'Sound-System-Support'!
-!classDefinition: 'SoundSystem class' category: 'Sound-System-Support'!
+!classDefinition: 'SoundSystem class' category: #'Sound-System-Support'!
 SoundSystem class
 	instanceVariableNames: ''!
 
@@ -11245,14 +11245,14 @@ readChunkSize
 	^ n
 ! !
 
-!MIDIFileReader methodsFor: 'private' stamp: 'jm 9/12/1998 17:32'!
+!MIDIFileReader methodsFor: 'private' stamp: 'jmv 1/9/2024 17:34:10'!
 readChunkType
 	"Read a chunk ID string from the next 4 bytes."
 	"Assume: Stream has at least four bytes left."
 
 	| s |
-	s _ String new: 4.
-	1 to: 4 do: [:i | s at: i put: (stream next) asCharacter].
+	s := String new: 4.
+	1 to: 4 do: [:i | s at: i put: (Character codePoint: stream next) ].
 	^ s
 ! !
 

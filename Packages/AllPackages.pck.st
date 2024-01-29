@@ -7,9 +7,6 @@
 !requires: 'Chalten' 1 0 nil!
 !requires: 'Code-Patterns' 1 0 nil!
 !requires: 'TrafficLight' 1 0 nil!
-!requires: 'Ropes' 1 0 nil!
-!requires: 'UniCodes' 1 0 nil!
-!requires: 'UniCodesTests' 1 0 nil!
 !requires: 'Erudite' 1 0 nil!
 !requires: 'EruditeToolsExtensions' 1 0 nil!
 !requires: 'MorphicBook' 1 0 nil!

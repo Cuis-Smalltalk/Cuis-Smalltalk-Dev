@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #6070] on 14 November 2023 at 2:27:43 pm'!
+'From Cuis6.3 [latest update: #6200] on 29 January 2024 at 12:37:35 pm'!
 'Description '!
-!provides: 'Tests-FFI' 1 3!
+!provides: 'Tests-FFI' 1 4!
 !requires: 'FFI' 1 39 nil!
 SystemOrganization addCategory: #'Tests-FFI'!
 
@@ -98,7 +98,7 @@ testBlitToAndFromExternalForm
 	external2 displayOn: destination.
 	self should: [source bits = destination bits].! !
 
-!FFIPluginTests methodsFor: 'simple tests' stamp: 'jmv 9/5/2016 21:13:26'!
+!FFIPluginTests methodsFor: 'simple tests' stamp: 'jmv 1/10/2024 08:31:16'!
 testConstructedCharCall
 	"Test using generic FFI spec"
 	| result meth |
@@ -108,7 +108,7 @@ testConstructedCharCall
 		argumentTypes: ((1 to: 4) collect:[:i| ExternalType char]).
 	result := meth invokeWith: $A with: 65 with: 65.0 with: true.
 	self assert: result class = Character.
-	self assert: result numericValue = 130! !
+	self assert: result codePoint = 130! !
 
 !FFIPluginTests methodsFor: 'simple tests' stamp: 'ar 8/14/2006 19:22'!
 testConstructedDoubleCall
@@ -165,19 +165,19 @@ testConstructedPrintString
 	result := meth invokeWith:'Hello World!!'.
 	self assert: result = 'Hello World!!'.! !
 
-!FFIPluginTests methodsFor: 'simple tests' stamp: 'jmv 1/6/2023 10:36:34'!
+!FFIPluginTests methodsFor: 'simple tests' stamp: 'jmv 1/10/2024 08:29:05'!
 testGenericCharCall
 	"Test using generic FFI spec"
 	| result |
-	result := FFITestLibrary ffiTestChar: $A asCharacter with: 65 with: 65.0 with: true.
+	result := FFITestLibrary ffiTestChar: $A with: 65 with: 65.0 with: true.
 	self assert: result class = Character.
-	self assert: result numericValue = 130! !
+	self assert: result codePoint = 130! !
 
-!FFIPluginTests methodsFor: 'simple tests' stamp: 'jmv 1/6/2023 10:55:08'!
+!FFIPluginTests methodsFor: 'simple tests' stamp: 'jmv 1/10/2024 08:29:16'!
 testGenericDoubleCall
 	"Test using generic FFI spec"
 	| result |
-	result := FFITestLibrary ffiTestDoubles: $A asCharacter with: 65.0.
+	result := FFITestLibrary ffiTestDoubles: $A with: 65.0.
 	self assert: result = 130.0! !
 
 !FFIPluginTests methodsFor: 'simple tests' stamp: 'djm 5/6/2014 02:52'!
@@ -187,25 +187,25 @@ testGenericDoubleCall2
 	result := FFITestLibrary ffiTestDoubles9: 1.0 d: 2.0 d: 3.0 d: 4.0 d: 5.0 d: 6.0 d: 7.0 d: 8.0 d: 9.0.
 	self assert: result = 45.0! !
 
-!FFIPluginTests methodsFor: 'simple tests' stamp: 'jmv 1/6/2023 10:55:25'!
+!FFIPluginTests methodsFor: 'simple tests' stamp: 'jmv 1/10/2024 08:29:20'!
 testGenericFloatCall
 	"Test using generic FFI spec"
 	| result |
-	result := FFITestLibrary ffiTestFloats: $A asCharacter with: 65.0.
+	result := FFITestLibrary ffiTestFloats: $A with: 65.0.
 	self assert: result = 130.0! !
 
-!FFIPluginTests methodsFor: 'simple tests' stamp: 'jmv 11/14/2023 10:36:38'!
+!FFIPluginTests methodsFor: 'simple tests' stamp: 'jmv 1/10/2024 08:29:26'!
 testGenericInt16Call
 	"Test using generic FFI spec"
 	| result |
-	result := FFITestLibrary ffiTestInt16: $A asCharacter with: 65 with: 65.0 with: true.
+	result := FFITestLibrary ffiTestInt16: $A with: 65 with: 65.0 with: true.
 	self assert: result = 130.! !
 
-!FFIPluginTests methodsFor: 'simple tests' stamp: 'jmv 11/14/2023 10:37:38'!
+!FFIPluginTests methodsFor: 'simple tests' stamp: 'jmv 1/10/2024 08:29:30'!
 testGenericInt32Call
 	"Test using generic FFI spec"
 	| result |
-	result := FFITestLibrary ffiTestInt32: $A asCharacter with: 65 with: 65.0 with: true.
+	result := FFITestLibrary ffiTestInt32: $A with: 65 with: 65.0 with: true.
 	self assert: result = 130.! !
 
 !FFIPluginTests methodsFor: 'simple tests' stamp: 'jmv 11/14/2023 10:38:10'!
@@ -252,33 +252,33 @@ testInt64A3
 	long2 := FFITestLibrary ffiTestInt64A3: byte1 with: long1 with: byte2.
 	self assert: long2 = (byte1 + long1 + byte2)! !
 
-!FFIPluginTests methodsFor: 'simple tests' stamp: 'jmv 1/6/2023 10:36:42'!
+!FFIPluginTests methodsFor: 'simple tests' stamp: 'jmv 1/10/2024 08:29:45'!
 testLibraryCharCall
 	"Test using call from ExternalLibrary"
 	| result |
-	result := FFITestLibrary new ffiTestChar: $A asCharacter with: 65 with: 65.0 with: true.
+	result := FFITestLibrary new ffiTestChar: $A with: 65 with: 65.0 with: true.
 	self assert: result class = Character.
-	self assert: result numericValue = 130! !
+	self assert: result codePoint = 130! !
 
-!FFIPluginTests methodsFor: 'simple tests' stamp: 'jmv 1/6/2023 10:55:43'!
+!FFIPluginTests methodsFor: 'simple tests' stamp: 'jmv 1/10/2024 08:29:49'!
 testLibraryDoubleCall
 	"Test using call from ExternalLibrary"
 	| result |
-	result := FFITestLibrary new ffiTestDoubles: $A asCharacter with: 65.0.
+	result := FFITestLibrary new ffiTestDoubles: $A with: 65.0.
 	self assert: result = 130.0! !
 
-!FFIPluginTests methodsFor: 'simple tests' stamp: 'jmv 1/6/2023 10:55:53'!
+!FFIPluginTests methodsFor: 'simple tests' stamp: 'jmv 1/10/2024 08:30:01'!
 testLibraryFloatCall
 	"Test using call from ExternalLibrary"
 	| result |
-	result := FFITestLibrary new ffiTestFloats: $A asCharacter with: 65.0.
+	result := FFITestLibrary new ffiTestFloats: $A with: 65.0.
 	self assert: result = 130.0! !
 
-!FFIPluginTests methodsFor: 'simple tests' stamp: 'jmv 11/14/2023 10:35:10'!
+!FFIPluginTests methodsFor: 'simple tests' stamp: 'jmv 1/10/2024 08:30:10'!
 testLibraryInt32Call
 	"Test using call from ExternalLibrary"
 	| result |
-	result := FFITestLibrary new ffiTestInt32: $A asCharacter with: 65 with: 65.0 with: true.
+	result := FFITestLibrary new ffiTestInt32: $A with: 65 with: 65.0 with: true.
 	self assert: result = 130.! !
 
 !FFIPluginTests methodsFor: 'simple tests' stamp: 'jmv 1/6/2023 10:24:06'!
@@ -420,11 +420,11 @@ testSmallStructureReturn
 	self assert: pt1 x = 3.
 	self assert: pt1 y = 4.! !
 
-!FFIPluginTests methodsFor: 'old typeNames tests' stamp: 'jmv 1/6/2023 10:55:32'!
+!FFIPluginTests methodsFor: 'old typeNames tests' stamp: 'jmv 1/10/2024 08:29:34'!
 testGenericIntCall
 	"Test using generic FFI spec"
 	| result |
-	result := FFITestLibrary ffiTestInt: $A asCharacter with: 65 with: 65.0 with: true.
+	result := FFITestLibrary ffiTestInt: $A with: 65 with: 65.0 with: true.
 	self assert: result = 130.! !
 
 !FFIPluginTests methodsFor: 'old typeNames tests' stamp: 'jmv 2/20/2019 00:15:10'!
@@ -437,18 +437,18 @@ testGenericMixedDoublesIntAndStruct
 	result := FFITestLibrary ffiTestMixedDoublesIntAndStruct: 1.0 d: 2.0 d: 3.0 d: 4.0 d: 5.0 d: 6.0 d: 7.0 d: 8.0 d: 9.0 i: int s: struct.
 	self assert: result = (45.0 + 42 + 10)! !
 
-!FFIPluginTests methodsFor: 'old typeNames tests' stamp: 'jmv 1/6/2023 10:53:52'!
+!FFIPluginTests methodsFor: 'old typeNames tests' stamp: 'jmv 1/10/2024 08:29:38'!
 testGenericShortCall
 	"Test using generic FFI spec"
 	| result |
-	result := FFITestLibrary ffiTestShort: $A asCharacter with: 65 with: 65.0 with: true.
+	result := FFITestLibrary ffiTestShort: $A with: 65 with: 65.0 with: true.
 	self assert: result = 130.! !
 
-!FFIPluginTests methodsFor: 'old typeNames tests' stamp: 'jmv 1/6/2023 10:56:03'!
+!FFIPluginTests methodsFor: 'old typeNames tests' stamp: 'jmv 1/10/2024 08:30:13'!
 testLibraryIntCall
 	"Test using call from ExternalLibrary"
 	| result |
-	result := FFITestLibrary new ffiTestInt: $A asCharacter with: 65 with: 65.0 with: true.
+	result := FFITestLibrary new ffiTestInt: $A with: 65 with: 65.0 with: true.
 	self assert: result = 130.! !
 
 !FFIPluginTests methodsFor: 'old typeNames tests' stamp: 'djm 5/6/2014 01:54'!

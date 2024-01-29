@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #6092] on 23 November 2023 at 7:35:16 pm'!
+'From Cuis6.3 [latest update: #6189] on 9 January 2024 at 5:50:03 pm'!
 'Description '!
-!provides: 'Compression' 1 38!
+!provides: 'Compression' 1 39!
 SystemOrganization addCategory: #'Compression-System'!
 SystemOrganization addCategory: #'Compression-Archives'!
 
@@ -2675,10 +2675,10 @@ binary
 
 	self bufferStream binary! !
 
-!GZipSurrogateStream methodsFor: 'as yet unclassified' stamp: 'RAA 6/23/2000 08:43'!
+!GZipSurrogateStream methodsFor: 'as yet unclassified' stamp: 'jmv 1/9/2024 16:18:56'!
 bufferStream
 
-	^bufferStream ifNil: [bufferStream _ RWBinaryOrTextStream on: (ByteArray new: 5000)].
+	^bufferStream ifNil: [bufferStream := ReadWriteStream on: (ByteArray new: 5000)].
 ! !
 
 !GZipSurrogateStream methodsFor: 'as yet unclassified' stamp: 'RAA 6/23/2000 09:26'!
@@ -4092,28 +4092,28 @@ writeLocalFileHeaderTo: aStream
 	aStream nextPutAll: fileNameBytes.
 	aStream nextPutAll: localExtraField.! !
 
-!ZipArchiveMember methodsFor: 'reading' stamp: 'jmv 10/31/2022 10:46:31'!
+!ZipArchiveMember methodsFor: 'reading' stamp: 'jmv 1/9/2024 16:18:59'!
 contentStream
 	"Answer my contents as a string."
 	| s |
-	s _ RWBinaryOrTextStream on: (ByteArray new: self uncompressedSize).
+	s := ReadWriteStream on: (ByteArray new: self uncompressedSize).
 	self extractTo: s.
 	^s reset! !
 
-!ZipArchiveMember methodsFor: 'reading' stamp: 'jmv 10/31/2022 10:46:38'!
+!ZipArchiveMember methodsFor: 'reading' stamp: 'jmv 1/9/2024 16:19:02'!
 contents
 	"Answer my contents as a string."
 	| s |
-	s _ RWBinaryOrTextStream on: (ByteArray new: self uncompressedSize).
+	s := ReadWriteStream on: (ByteArray new: self uncompressedSize).
 	self extractTo: s.
 	s useCharacters.
 	^s contents! !
 
-!ZipArchiveMember methodsFor: 'reading' stamp: 'jmv 11/23/2023 18:36:28'!
+!ZipArchiveMember methodsFor: 'reading' stamp: 'jmv 1/9/2024 16:19:05'!
 contentsFrom: start to: finish
 	"Answer my contents as a string."
 	| s |
-	s := RWBinaryOrTextStream on: (ByteArray new: finish - start + 1).
+	s := ReadWriteStream on: (ByteArray new: finish - start + 1).
 	self extractTo: s from: start to: finish.
 	s useCharacters.
 	^s contents! !
@@ -4689,11 +4689,11 @@ writeOnGZIPByteStream: aStream
 	
 	aStream nextPutAllWordArray: self! !
 
-!ByteArray methodsFor: '*Compression' stamp: 'jmv 10/31/2022 11:43:39'!
+!ByteArray methodsFor: '*Compression' stamp: 'jmv 1/9/2024 16:17:37'!
 unzipped
 	|  magic1 magic2 |
-	magic1 _ (self at: 1) numericValue.
-	magic2 _ (self at: 2) numericValue.
+	magic1 := self at: 1.
+	magic2 := self at: 2.
 	(magic1 = 16r1F and:[magic2 = 16r8B]) ifFalse: [ ^self ].
 	^ (GZipReadStream on: self) upToEnd! !
 
@@ -4701,21 +4701,21 @@ unzipped
 asZLibReadStream
 	^ ZLibReadStream on: collection from: position+1 to: readLimit! !
 
-!ReadWriteStream methodsFor: '*Compression' stamp: 'jmv 6/10/2013 20:39'!
+!ReadWriteStream methodsFor: '*Compression' stamp: 'jmv 1/9/2024 16:18:53'!
 asUnZippedStream
 	|  isGZip outputStream first strm |
 	"Decompress this file if needed, and return a stream.  No file is written.  File extension may be .gz or anything else."
 
-	strm _ self binary.
+	strm := self binary.
 
-	first _ strm next.
-	isGZip _ (strm next * 256 + first) = (GZipConstants gzipMagic).
+	first := strm next.
+	isGZip := (strm next * 256 + first) = (GZipConstants gzipMagic).
 	strm skip: -2.
 	isGZip 
-		ifTrue: [ outputStream _ (RWBinaryOrTextStream with:
+		ifTrue: [ outputStream := (ReadWriteStream with:
 									(GZipReadStream on: strm) upToEnd) reset.
 				strm close]
-		ifFalse: [ outputStream _ strm].
+		ifFalse: [ outputStream := strm].
 	^ outputStream! !
 
 !ReadWriteStream methodsFor: '*Compression' stamp: 'jmv 6/10/2013 20:40'!

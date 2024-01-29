@@ -1,77 +1,77 @@
-'From Cuis 6.0 [latest update: #5795] on 7 May 2023 at 7:06:39 pm'!
+'From Cuis6.3 [latest update: #6189] on 9 January 2024 at 5:51:12 pm'!
 'Description '!
-!provides: 'Graphics-Files-Additional' 1 27!
+!provides: 'Graphics-Files-Additional' 1 28!
 !requires: 'Compression' 1 nil nil!
-SystemOrganization addCategory: 'Graphics-Files-Additional'!
+SystemOrganization addCategory: #'Graphics-Files-Additional'!
 
 
-!classDefinition: #PNGReadWriter category: 'Graphics-Files-Additional'!
+!classDefinition: #PNGReadWriter category: #'Graphics-Files-Additional'!
 ImageReadWriter subclass: #PNGReadWriter
 	instanceVariableNames: 'chunk form width height depth backColor bitsPerChannel colorType interlaceMethod bitsPerPixel bytesPerScanline thisScanline prevScanline rowSize globalDataChunk unknownChunks palette transparentPixelValue filtersSeen cachedDecoderMap bigEndian auxBitBlt auxSource auxDest auxCMap'
 	classVariableNames: 'BPP BlockHeight BlockWidth Debugging StandardSwizzleMaps'
 	poolDictionaries: ''
 	category: 'Graphics-Files-Additional'!
-!classDefinition: 'PNGReadWriter class' category: 'Graphics-Files-Additional'!
+!classDefinition: 'PNGReadWriter class' category: #'Graphics-Files-Additional'!
 PNGReadWriter class
 	instanceVariableNames: ''!
 
-!classDefinition: #TIFFReadWriter category: 'Graphics-Files-Additional'!
+!classDefinition: #TIFFReadWriter category: #'Graphics-Files-Additional'!
 ImageReadWriter subclass: #TIFFReadWriter
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Graphics-Files-Additional'!
-!classDefinition: 'TIFFReadWriter class' category: 'Graphics-Files-Additional'!
+!classDefinition: 'TIFFReadWriter class' category: #'Graphics-Files-Additional'!
 TIFFReadWriter class
 	instanceVariableNames: ''!
 
-!classDefinition: #TIFFField category: 'Graphics-Files-Additional'!
+!classDefinition: #TIFFField category: #'Graphics-Files-Additional'!
 Object subclass: #TIFFField
 	instanceVariableNames: 'tag type values'
 	classVariableNames: 'DefaultFields SingleValuedTagSymbols TagSymbols ValueReaderSelectors'
 	poolDictionaries: ''
 	category: 'Graphics-Files-Additional'!
-!classDefinition: 'TIFFField class' category: 'Graphics-Files-Additional'!
+!classDefinition: 'TIFFField class' category: #'Graphics-Files-Additional'!
 TIFFField class
 	instanceVariableNames: ''!
 
-!classDefinition: #TIFFImageFileDirectory category: 'Graphics-Files-Additional'!
+!classDefinition: #TIFFImageFileDirectory category: #'Graphics-Files-Additional'!
 Object subclass: #TIFFImageFileDirectory
 	instanceVariableNames: 'fields'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Graphics-Files-Additional'!
-!classDefinition: 'TIFFImageFileDirectory class' category: 'Graphics-Files-Additional'!
+!classDefinition: 'TIFFImageFileDirectory class' category: #'Graphics-Files-Additional'!
 TIFFImageFileDirectory class
 	instanceVariableNames: ''!
 
-!classDefinition: #TIFFReader category: 'Graphics-Files-Additional'!
+!classDefinition: #TIFFReader category: #'Graphics-Files-Additional'!
 Object subclass: #TIFFReader
 	instanceVariableNames: 'stream structure'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Graphics-Files-Additional'!
-!classDefinition: 'TIFFReader class' category: 'Graphics-Files-Additional'!
+!classDefinition: 'TIFFReader class' category: #'Graphics-Files-Additional'!
 TIFFReader class
 	instanceVariableNames: ''!
 
-!classDefinition: #TIFFStream category: 'Graphics-Files-Additional'!
+!classDefinition: #TIFFStream category: #'Graphics-Files-Additional'!
 Object subclass: #TIFFStream
 	instanceVariableNames: 'stream bigEndian compressionType remainBitCount outCodes maxOutCodes outCount prefixTable suffixTable bitMask clearCode eoiCode freeCode codeSize maxCode finChar oldCode'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Graphics-Files-Additional'!
-!classDefinition: 'TIFFStream class' category: 'Graphics-Files-Additional'!
+!classDefinition: 'TIFFStream class' category: #'Graphics-Files-Additional'!
 TIFFStream class
 	instanceVariableNames: ''!
 
-!classDefinition: #TIFFStructure category: 'Graphics-Files-Additional'!
+!classDefinition: #TIFFStructure category: #'Graphics-Files-Additional'!
 Object subclass: #TIFFStructure
 	instanceVariableNames: 'imageFileDirectories'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Graphics-Files-Additional'!
-!classDefinition: 'TIFFStructure class' category: 'Graphics-Files-Additional'!
+!classDefinition: 'TIFFStructure class' category: #'Graphics-Files-Additional'!
 TIFFStructure class
 	instanceVariableNames: ''!
 
@@ -1591,18 +1591,18 @@ tag: tagInteger type: typeInteger values: valueArray
 	type _ typeInteger.
 	values _ valueArray.! !
 
-!TIFFField methodsFor: 'private-value reading' stamp: 'jmv 9/5/2016 16:57:57'!
+!TIFFField methodsFor: 'private-value reading' stamp: 'jmv 1/9/2024 16:23:28'!
 read: count charsFrom: aTIFFStream
 	"Read count bytes from the current position of aTIFFStream and return them as an Array of Strings, using NUL as the separating character between strings. Don't worry about the ending position of aTIFFStream."
 	| strings oneString size |
-	strings _ OrderedCollection new.
-	oneString _ OrderedCollection new.
+	strings := OrderedCollection new.
+	oneString := OrderedCollection new.
 	1 to: count do: [ :i |
 		aTIFFStream peek = 0
 			ifFalse: [
-				oneString add: (Character numericValue: aTIFFStream nextByte) ]
+				oneString add: (Character codePoint: aTIFFStream nextByte) ]
 			ifTrue: [ "Null, so that's the end of this string. "
-				size _ oneString size.
+				size := oneString size.
 				strings add: ((String new: size) replaceFrom: 1 to: size with: oneString) ]].
 	^ strings asArray! !
 

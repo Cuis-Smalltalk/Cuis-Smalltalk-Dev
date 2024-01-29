@@ -1,126 +1,126 @@
-'From Cuis 6.0 [latest update: #5637] on 19 January 2023 at 2:22:26 pm'!
+'From Cuis6.3 [latest update: #6189] on 9 January 2024 at 5:54:35 pm'!
 'Description '!
-!provides: 'Network-Kernel' 1 6!
-SystemOrganization addCategory: 'Network-Kernel'!
+!provides: 'Network-Kernel' 1 7!
+SystemOrganization addCategory: #'Network-Kernel'!
 
 
-!classDefinition: #InvalidSocketStatusException category: 'Network-Kernel'!
+!classDefinition: #InvalidSocketStatusException category: #'Network-Kernel'!
 Error subclass: #InvalidSocketStatusException
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Network-Kernel'!
-!classDefinition: 'InvalidSocketStatusException class' category: 'Network-Kernel'!
+!classDefinition: 'InvalidSocketStatusException class' category: #'Network-Kernel'!
 InvalidSocketStatusException class
 	instanceVariableNames: ''!
 
-!classDefinition: #NetworkError category: 'Network-Kernel'!
+!classDefinition: #NetworkError category: #'Network-Kernel'!
 Error subclass: #NetworkError
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Network-Kernel'!
-!classDefinition: 'NetworkError class' category: 'Network-Kernel'!
+!classDefinition: 'NetworkError class' category: #'Network-Kernel'!
 NetworkError class
 	instanceVariableNames: ''!
 
-!classDefinition: #ConnectionClosed category: 'Network-Kernel'!
+!classDefinition: #ConnectionClosed category: #'Network-Kernel'!
 NetworkError subclass: #ConnectionClosed
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Network-Kernel'!
-!classDefinition: 'ConnectionClosed class' category: 'Network-Kernel'!
+!classDefinition: 'ConnectionClosed class' category: #'Network-Kernel'!
 ConnectionClosed class
 	instanceVariableNames: ''!
 
-!classDefinition: #ConnectionRefused category: 'Network-Kernel'!
+!classDefinition: #ConnectionRefused category: #'Network-Kernel'!
 NetworkError subclass: #ConnectionRefused
 	instanceVariableNames: 'host port'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Network-Kernel'!
-!classDefinition: 'ConnectionRefused class' category: 'Network-Kernel'!
+!classDefinition: 'ConnectionRefused class' category: #'Network-Kernel'!
 ConnectionRefused class
 	instanceVariableNames: ''!
 
-!classDefinition: #ConnectionTimedOut category: 'Network-Kernel'!
+!classDefinition: #ConnectionTimedOut category: #'Network-Kernel'!
 NetworkError subclass: #ConnectionTimedOut
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Network-Kernel'!
-!classDefinition: 'ConnectionTimedOut class' category: 'Network-Kernel'!
+!classDefinition: 'ConnectionTimedOut class' category: #'Network-Kernel'!
 ConnectionTimedOut class
 	instanceVariableNames: ''!
 
-!classDefinition: #NameLookupFailure category: 'Network-Kernel'!
+!classDefinition: #NameLookupFailure category: #'Network-Kernel'!
 NetworkError subclass: #NameLookupFailure
 	instanceVariableNames: 'hostName'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Network-Kernel'!
-!classDefinition: 'NameLookupFailure class' category: 'Network-Kernel'!
+!classDefinition: 'NameLookupFailure class' category: #'Network-Kernel'!
 NameLookupFailure class
 	instanceVariableNames: ''!
 
-!classDefinition: #NoNetworkError category: 'Network-Kernel'!
+!classDefinition: #NoNetworkError category: #'Network-Kernel'!
 NetworkError subclass: #NoNetworkError
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Network-Kernel'!
-!classDefinition: 'NoNetworkError class' category: 'Network-Kernel'!
+!classDefinition: 'NoNetworkError class' category: #'Network-Kernel'!
 NoNetworkError class
 	instanceVariableNames: ''!
 
-!classDefinition: #SocketPrimitiveFailed category: 'Network-Kernel'!
+!classDefinition: #SocketPrimitiveFailed category: #'Network-Kernel'!
 NetworkError subclass: #SocketPrimitiveFailed
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Network-Kernel'!
-!classDefinition: 'SocketPrimitiveFailed class' category: 'Network-Kernel'!
+!classDefinition: 'SocketPrimitiveFailed class' category: #'Network-Kernel'!
 SocketPrimitiveFailed class
 	instanceVariableNames: ''!
 
-!classDefinition: #ConnectionQueue category: 'Network-Kernel'!
+!classDefinition: #ConnectionQueue category: #'Network-Kernel'!
 Object subclass: #ConnectionQueue
 	instanceVariableNames: 'portNumber maxQueueLength connections accessSema socket process'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Network-Kernel'!
-!classDefinition: 'ConnectionQueue class' category: 'Network-Kernel'!
+!classDefinition: 'ConnectionQueue class' category: #'Network-Kernel'!
 ConnectionQueue class
 	instanceVariableNames: ''!
 
-!classDefinition: #NetNameResolver category: 'Network-Kernel'!
+!classDefinition: #NetNameResolver category: #'Network-Kernel'!
 Object subclass: #NetNameResolver
 	instanceVariableNames: ''
 	classVariableNames: 'DefaultHostName HaveNetwork ResolverBusy ResolverError ResolverMutex ResolverReady ResolverSemaphore ResolverUninitialized'
 	poolDictionaries: ''
 	category: 'Network-Kernel'!
-!classDefinition: 'NetNameResolver class' category: 'Network-Kernel'!
+!classDefinition: 'NetNameResolver class' category: #'Network-Kernel'!
 NetNameResolver class
 	instanceVariableNames: ''!
 
-!classDefinition: #Socket category: 'Network-Kernel'!
+!classDefinition: #Socket category: #'Network-Kernel'!
 Object subclass: #Socket
 	instanceVariableNames: 'semaphore socketHandle readSemaphore writeSemaphore'
 	classVariableNames: 'Connected DeadServer InvalidSocket OtherEndClosed Registry RegistryThreshold TCPSocketType ThisEndClosed UDPSocketType Unconnected WaitingForConnection'
 	poolDictionaries: ''
 	category: 'Network-Kernel'!
-!classDefinition: 'Socket class' category: 'Network-Kernel'!
+!classDefinition: 'Socket class' category: #'Network-Kernel'!
 Socket class
 	instanceVariableNames: ''!
 
-!classDefinition: #SocketStream category: 'Network-Kernel'!
+!classDefinition: #SocketStream category: #'Network-Kernel'!
 Object subclass: #SocketStream
 	instanceVariableNames: 'recentlyRead socket inBuffer outBuffer inNextToWrite outNextToWrite lastRead timeout autoFlush bufferSize binary shouldSignal'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Network-Kernel'!
-!classDefinition: 'SocketStream class' category: 'Network-Kernel'!
+!classDefinition: 'SocketStream class' category: #'Network-Kernel'!
 SocketStream class
 	instanceVariableNames: ''!
 
@@ -2624,12 +2624,17 @@ next: n putAll: aCollection startingAt: startIndex
 	self checkFlush.
 	^aCollection! !
 
-!SocketStream methodsFor: 'stream out' stamp: 'md 2/24/2006 19:51'!
+!SocketStream methodsFor: 'stream out' stamp: 'jmv 1/9/2024 17:36:48'!
 nextPut: char
 	"Put a single Character or byte onto the stream."
 
 	| toPut |
-	toPut := binary ifTrue: [char asInteger] ifFalse: [char asCharacter].
+	toPut := char.
+	self isBinary 
+		ifTrue: [
+			char isCharacter ifTrue: [			toPut := char codePoint ]]
+		ifFalse: [
+			char isNumber ifTrue: [			toPut := Character codePoint: char ]].
 	self adjustOutBuffer: 1.
 	outBuffer at: outNextToWrite put: toPut.
 	outNextToWrite := outNextToWrite + 1.
@@ -2950,15 +2955,18 @@ upTo: aCharacterOrByte
 
 	^self upTo: aCharacterOrByte limit: 100000! !
 
-!SocketStream methodsFor: 'stream in' stamp: 'ar 8/22/2010 13:27'!
+!SocketStream methodsFor: 'stream in' stamp: 'jmv 1/9/2024 17:36:06'!
 upTo: aCharacterOrByte limit: nBytes
 	"Return data up to, but not including given character or byte. If the character is not in the stream, or not found within nBytes answer the available contents of the stream"
 
 	| target index result searchedSoFar |
 	"Deal with ascii vs. binary"
+	target := aCharacterOrByte.
 	self isBinary 
-		ifTrue:[target := aCharacterOrByte asInteger] 
-		ifFalse:[target := aCharacterOrByte asCharacter].
+		ifTrue: [
+			aCharacterOrByte isCharacter ifTrue: [			target := aCharacterOrByte codePoint ]]
+		ifFalse: [
+			aCharacterOrByte isNumber ifTrue: [			target := Character codePoint: aCharacterOrByte ]].
 
 	"Look in the current inBuffer first"
 	index := inBuffer indexOf: target startingAt: lastRead + 1 ifAbsent:[0].

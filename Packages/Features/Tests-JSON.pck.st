@@ -1,27 +1,27 @@
-'From Cuis 6.0 [latest update: #5649] on 23 January 2023 at 5:31:00 pm'!
+'From Cuis6.3 [latest update: #6189] on 9 January 2024 at 5:52:15 pm'!
 'Description '!
-!provides: 'Tests-JSON' 1 4!
+!provides: 'Tests-JSON' 1 5!
 !requires: 'JSON' 1 24 nil!
-SystemOrganization addCategory: 'Tests-JSON'!
+SystemOrganization addCategory: #'Tests-JSON'!
 
 
-!classDefinition: #JsonTests category: 'Tests-JSON'!
+!classDefinition: #JsonTests category: #'Tests-JSON'!
 TestCase subclass: #JsonTests
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Tests-JSON'!
-!classDefinition: 'JsonTests class' category: 'Tests-JSON'!
+!classDefinition: 'JsonTests class' category: #'Tests-JSON'!
 JsonTests class
 	instanceVariableNames: ''!
 
-!classDefinition: #JsonDummyTestObject category: 'Tests-JSON'!
+!classDefinition: #JsonDummyTestObject category: #'Tests-JSON'!
 Object subclass: #JsonDummyTestObject
 	instanceVariableNames: 'a b c'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Tests-JSON'!
-!classDefinition: 'JsonDummyTestObject class' category: 'Tests-JSON'!
+!classDefinition: 'JsonDummyTestObject class' category: #'Tests-JSON'!
 JsonDummyTestObject class
 	instanceVariableNames: ''!
 
@@ -91,13 +91,13 @@ testAtomSpecialFloats
 	read _ self readFrom: '-Infinity'.
 	self assert: read  = Float negativeInfinity.! !
 
-!JsonTests methodsFor: 'as yet unclassified' stamp: 'jmv 9/5/2016 16:53:32'!
+!JsonTests methodsFor: 'as yet unclassified' stamp: 'jmv 1/9/2024 16:28:38'!
 testAtomString
 	self json: '"hi"' equals: 'hi'.
 	self json: '"\""' equals: '"'.
 	self json: '"\\"' equals: '\'.
 	self json: '""' equals: ''.
-	self json: '"a\u0004b"' equals: ({$a. Character numericValue: 4. $b} as: String).
+	self json: '"a\u0004b"' equals: ({$a. Character codePoint: 4. $b} as: String).
 	self json: '"a\nb"' equals: ({$a. Character lf. $b} as: String).! !
 
 !JsonTests methodsFor: 'as yet unclassified' stamp: 'tonyg 8/16/2005 23:36'!
@@ -133,10 +133,10 @@ testMissingCtorNoMap
 		should: [Json new readFrom: '@Missing[]' readStream]
 		raise: JsonSyntaxError! !
 
-!JsonTests methodsFor: 'as yet unclassified' stamp: 'KenD 11/24/2022 08:29:42'!
+!JsonTests methodsFor: 'as yet unclassified' stamp: 'jmv 1/9/2024 16:28:49'!
 testStringWithUnicode
 	| unicodeString |
-	unicodeString _ UnicodeString with: (UnicodeCodePoint codePoint: 16r263A).
+	unicodeString := UnicodeString with: (Character codePoint: 16r263A).
 	self json: '"\u263A"' equals: unicodeString.
 	self json: '"', unicodeString, '"' equals: unicodeString.
 	self render: unicodeString equals: '"', unicodeString, '"'! !
@@ -153,13 +153,13 @@ testWriteAssociation
 	
 	! !
 
-!JsonTests methodsFor: 'as yet unclassified' stamp: 'jmv 1/10/2023 13:55:28'!
+!JsonTests methodsFor: 'as yet unclassified' stamp: 'jmv 1/9/2024 16:28:55'!
 testWriteString
 	self render: '"' equals: '"\""'.
 	self render: '\' equals: '"\\"'.
 	self render: 'hi' equals: '"hi"'.
 	self render: ({$a. Character lf. $b} as: String) equals: '"a\nb"'.
-	self render: ({$a. Character numericValue: 4. $b} as: String) equals: '"a\u0004b"'.
+	self render: ({$a. Character codePoint: 4. $b} as: String) equals: '"a\u0004b"'.
 	self render: 'agüita' equals: '"agüita"'.
 	self render: 'ñandú' equals: '"ñandú"'.! !
 

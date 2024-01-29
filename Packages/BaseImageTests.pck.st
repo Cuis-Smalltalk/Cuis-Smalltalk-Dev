@@ -1,6 +1,6 @@
-'From Cuis6.3 [latest update: #6167] on 23 January 2024 at 3:44:22 pm'!
-'Description PushUpMethod enhancements'!
-!provides: 'BaseImageTests' 1 380!
+'From Cuis6.3 [latest update: #6197] on 29 January 2024 at 12:02:50 pm'!
+'Description ExtractMethod for optimized messages test'!
+!provides: 'BaseImageTests' 1 381!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Objects'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
@@ -317,16 +317,6 @@ RandomTest subclass: #ParkMiller93RandomTest
 ParkMiller93RandomTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #CharacterSetTest category: #'BaseImageTests-Kernel-Text'!
-TestCase subclass: #CharacterSetTest
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'BaseImageTests-Kernel-Text'!
-!classDefinition: 'CharacterSetTest class' category: #'BaseImageTests-Kernel-Text'!
-CharacterSetTest class
-	instanceVariableNames: ''!
-
 !classDefinition: #CharacterTest category: #'BaseImageTests-Kernel-Text'!
 TestCase subclass: #CharacterTest
 	instanceVariableNames: ''
@@ -355,16 +345,6 @@ TestCase subclass: #SymbolTest
 	category: 'BaseImageTests-Kernel-Text'!
 !classDefinition: 'SymbolTest class' category: #'BaseImageTests-Kernel-Text'!
 SymbolTest class
-	instanceVariableNames: ''!
-
-!classDefinition: #UnicodeCodePointTest category: #'BaseImageTests-Kernel-Text'!
-TestCase subclass: #UnicodeCodePointTest
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'BaseImageTests-Kernel-Text'!
-!classDefinition: 'UnicodeCodePointTest class' category: #'BaseImageTests-Kernel-Text'!
-UnicodeCodePointTest class
 	instanceVariableNames: ''!
 
 !classDefinition: #UnicodeNormalizationTest category: #'BaseImageTests-Kernel-Text'!
@@ -4847,7 +4827,7 @@ testPrimTimesTwoPower
 	self assert: (Float negativeInfinity timesTwoPower: -1024) = Float negativeInfinity.
 	self assert: (Float nan timesTwoPower: 2) isNaN.! !
 
-!FloatTest methodsFor: 'tests - primitives' stamp: 'jmv 3/12/2019 14:39:27'!
+!FloatTest methodsFor: 'tests - primitives' stamp: 'jmv 1/4/2024 16:00:48'!
 testPrimTruncated
 
 	self assert: 1.0 primTestTruncated == 1.
@@ -4883,7 +4863,8 @@ testPrimTruncated
 	self assert: SmallInteger maxVal asFloat predecessor primTestTruncated = SmallInteger maxVal asFloat predecessor asTrueFraction truncated.	
 	self assert: (SmallInteger maxVal+1) asFloat successor asTrueFraction truncated class = LargePositiveInteger.
 	self assert: (SmallInteger maxVal+1) asFloat successor primTestTruncated = # fail.
-	"Depends on rounding to nearest Float. This could change depending on SmallInteger maxVal. Currently false in 64 bits Spur image, but true in 32 bits Spur and V3 images."
+	"Depends on rounding to nearest Float. This could change depending on SmallInteger maxVal.
+	Currently false in 64 bits images, but true in 32 bits images."
 	SmallInteger maxVal asFloat asTrueFraction truncated class = SmallInteger
 		ifTrue: [ self assert: SmallInteger maxVal asFloat primTestTruncated = SmallInteger maxVal asFloat asTrueFraction truncated ]
 		ifFalse: [ self assert: SmallInteger maxVal asFloat primTestTruncated = #fail ].
@@ -4892,7 +4873,8 @@ testPrimTruncated
 	self assert: SmallInteger minVal asFloat successor primTestTruncated = SmallInteger minVal asFloat successor asTrueFraction truncated.	
 	self assert: (SmallInteger minVal-1) asFloat predecessor asTrueFraction truncated class = LargeNegativeInteger.
 	self assert: (SmallInteger minVal-1) asFloat predecessor primTestTruncated = # fail.
-	"Depends on rounding to nearestFloat. This could change depending on SmallInteger maxVal. Currently true in 64 bits Spur image, and in 32 bits Spur and V3 images."
+	"Depends on rounding to nearestFloat. This could change depending on SmallInteger maxVal.
+	Currently true in 64 bits images, and in 32 bits images."
 	SmallInteger minVal asFloat asTrueFraction truncated class = SmallInteger
 		ifTrue: [ self assert: SmallInteger minVal asFloat primTestTruncated = SmallInteger minVal asFloat asTrueFraction truncated ]
 		ifFalse: [ self assert: SmallInteger minVal asFloat primTestTruncated = #fail ].
@@ -7451,11 +7433,6 @@ testLCMProperties
 	self assert: (0 lcm: a) = 0.
 	self assert: (0 lcm: 0) = 0! !
 
-!LargeNegativeIntegerTest methodsFor: 'tests' stamp: 'jmv 8/21/2016 20:04:13'!
-testCompactClassIndex
-	Smalltalk isSpur ifFalse: [
-		self assert: LargeNegativeInteger indexIfCompact = 4 ]! !
-
 !LargeNegativeIntegerTest methodsFor: 'tests' stamp: 'ul 11/15/2010 11:51'!
 testDenormalizedPrintString
 	"Check that an un-normalized instance behaves reasonably."
@@ -7560,11 +7537,6 @@ testBitShift
 	"Check bitShift from and back to SmallInts"
 	
 	1 to: 257 do: [:i | self should: [((i bitShift: i) bitShift: 0-i) = i]].! !
-
-!LargePositiveIntegerTest methodsFor: 'tests' stamp: 'jmv 8/21/2016 20:04:20'!
-testCompactClassIndex
-	Smalltalk isSpur ifFalse: [
-		self assert: LargePositiveInteger indexIfCompact = 5 ]! !
 
 !LargePositiveIntegerTest methodsFor: 'tests' stamp: 'ul 11/15/2010 11:52'!
 testDenormalizedPrintString
@@ -8362,21 +8334,6 @@ rngClass
 
 	^ParkMiller93Random! !
 
-!CharacterSetTest methodsFor: 'testing includes' stamp: 'HAW 6/12/2019 17:32:08'!
-testIncludesReturnsFalseForCharacterNotIncluded
-
-	self deny: ((CharacterSet with: $a) includes: $b)! !
-
-!CharacterSetTest methodsFor: 'testing includes' stamp: 'HAW 6/12/2019 17:31:45'!
-testIncludesReturnsFalseForObjectsThatAreNotCharacters
-
-	self deny: ((CharacterSet with: $a) includes: 1)! !
-
-!CharacterSetTest methodsFor: 'testing includes' stamp: 'HAW 6/12/2019 17:32:24'!
-testIncludesReturnsTrueForCharacterIncluded
-
-	self assert: ((CharacterSet with: $a) includes: $a)! !
-
 !CharacterTest methodsFor: 'testing' stamp: 'jmv 10/6/2010 22:08'!
 testCaseConversion
 	"
@@ -8385,25 +8342,36 @@ testCaseConversion
 	self assert: ('año Comé tomá Camión' collect: [ :c | c asLowercase ]) = 'año comé tomá camión'.
 	self assert:('año Comé tomá Camión' collect: [ :c | c asUppercase ]) = 'AÑO COMÉ TOMÁ CAMIÓN'! !
 
+!CharacterTest methodsFor: 'testing' stamp: 'jmv 1/9/2024 12:43:41'!
+testCompareIsTransitive
+	| c1 c2 c3 |
+	1 to: 512 by: 8 do: [ :n1 |
+		c1 := Character codePoint: n1.
+		1 to: 512 by: 8 do: [ :n2 |
+			c2 := Character codePoint: n2.
+			1 to: 512 by: 8 do: [ :n3 |
+				c3 := Character codePoint: n3.
+				(c1 < c2) & (c2 < c3) ifTrue: [ self assert: (c1 < c3) ]]]]! !
+
 !CharacterTest methodsFor: 'testing' stamp: 'jmv 7/5/2022 15:56:54'!
 testIsCharacter
 	self assert: $a isCharacter.
 	self assert: $X isCharacter.
 	self assert: Character cr isCharacter.! !
 
-!CharacterTest methodsFor: 'testing' stamp: 'jmv 7/5/2022 16:43:11'!
+!CharacterTest methodsFor: 'testing' stamp: 'jmv 1/9/2024 12:55:01'!
 testSorting
 	"
 	self new testSorting
 	"
-	self assert: $a asCharacter < $á asCharacter.
-	self deny: $a asCharacter < $Á asCharacter.
-	self assert: $A asCharacter < $á asCharacter.
-	self assert: $A asCharacter < $Á asCharacter.
-	self assert: $á asCharacter < $b asCharacter.
-	self deny: $á asCharacter < $B asCharacter.
-	self assert: $Á asCharacter < $b asCharacter.
-	self assert: $Á asCharacter < $B asCharacter.! !
+	self assert: $a < $á.
+	self deny: $a < $Á.
+	self assert: $A < $á.
+	self assert: $A < $Á.
+	self assert: $á < $b.
+	self deny: $á < $B.
+	self assert: $Á < $b.
+	self assert: $Á < $B.! !
 
 !CharacterTest methodsFor: 'testing' stamp: 'jmv 10/6/2010 22:10'!
 testTestingMethods
@@ -8452,29 +8420,29 @@ testSomeLatinCharsFromUtf8
 		]].
 	self assert: string = 'áAåAæAñAÆA¥Aü'! !
 
-!CharacterTest methodsFor: 'UTF-8 conversion' stamp: 'jmv 7/5/2022 16:43:56'!
+!CharacterTest methodsFor: 'UTF-8 conversion' stamp: 'jmv 1/9/2024 12:54:18'!
 testSomeLatinCharsToUtf8
 	"
 	CharacterTest new testSomeLatinCharsToUtf8
 	"
 	| characters bytes |
-	characters _ 'áAåAæAñAÆA¥Aü' readStream.
-	bytes _ ByteArray streamContents: [ :strm |
+	characters := 'áAåAæAñAÆA¥Aü' readStream.
+	bytes := ByteArray streamContents: [ :strm |
 		[ characters atEnd ] whileFalse: [
 			Character
 				evaluate: [ :byte | strm nextPut: byte ]
-				withUtf8BytesOfUnicodeCodePoint: characters next codePoint ]].
+				withUtf8BytesOf: characters next codePoint ]].
 	self assert: bytes hex = 'C3A141C3A541C3A641C3B141C38641C2A541C3BC'! !
 
-!CharacterTest methodsFor: 'UTF-8 conversion' stamp: 'jmv 2/20/2013 20:09'!
+!CharacterTest methodsFor: 'UTF-8 conversion' stamp: 'jmv 1/9/2024 12:55:20'!
 testToUtf8
 	"
 	CharacterTest new testToUtf8
 	"
-	self assert: (Character utf8BytesOfUnicodeCodePoint: 16r0024) hex =  '24'.
-	self assert: (Character utf8BytesOfUnicodeCodePoint: 16r00A2) hex =  'C2A2'.
-	self assert: (Character utf8BytesOfUnicodeCodePoint: 16r20AC) hex = 'E282AC'.
-	self assert: (Character utf8BytesOfUnicodeCodePoint: 16r024B62) hex = 'F0A4ADA2'! !
+	self assert: (Character utf8BytesOf: 16r0024) hex =  '24'.
+	self assert: (Character utf8BytesOf: 16r00A2) hex =  'C2A2'.
+	self assert: (Character utf8BytesOf: 16r20AC) hex = 'E282AC'.
+	self assert: (Character utf8BytesOf: 16r024B62) hex = 'F0A4ADA2'! !
 
 !StringTest methodsFor: 'UTF-8 conversion' stamp: 'jmv 5/26/2022 12:00:49'!
 testAsUtf8
@@ -8800,38 +8768,6 @@ testIsValidKeywordSelectorIfItContainsKeywordsWithColons
 testIsValidUnarySelectorIfItStartsWithALetterAndDoesNotContainSeparators
 
 	self assert: #t234 isValidSelector! !
-
-!UnicodeCodePointTest methodsFor: 'testing' stamp: 'jmv 7/6/2022 09:31:50'!
-testCompareIsTransitive
-	| c1 c2 c3 |
-	1 to: 512 by: 8 do: [ :n1 |
-		c1 _ UnicodeCodePoint codePoint: n1.
-		1 to: 512 by: 8 do: [ :n2 |
-			c2 _ UnicodeCodePoint codePoint: n2.
-			1 to: 512 by: 8 do: [ :n3 |
-				c3 _ UnicodeCodePoint codePoint: n3.
-				(c1 < c2) & (c2 < c3) ifTrue: [ self assert: (c1 < c3) ]]]]! !
-
-!UnicodeCodePointTest methodsFor: 'testing' stamp: 'jmv 7/6/2022 09:23:47'!
-testCompareWithCharacters
-	| c1 c2 |
-	1 to: 255 do: [ :n1 |
-		c1 _ Character numericValue: n1.
-		1 to: 255 do: [ :n2 |
-			c2 _ Character numericValue: n2.
-			self assert: (c1 < c2) = (c1 < c2 asUnicodeCodePoint).
-			self assert: (c1 < c2) = (c1 asUnicodeCodePoint < c2).
-			self assert: (c1 < c2) = (c1 asUnicodeCodePoint < c2 asUnicodeCodePoint).
-			self assert: (c1 <= c2) = (c1 <= c2 asUnicodeCodePoint).
-			self assert: (c1 <= c2) = (c1 asUnicodeCodePoint <= c2).
-			self assert: (c1 <= c2) = (c1 asUnicodeCodePoint <= c2 asUnicodeCodePoint).
-			self assert: (c1 > c2) = (c1 > c2 asUnicodeCodePoint).
-			self assert: (c1 > c2) = (c1 asUnicodeCodePoint > c2).
-			self assert: (c1 > c2) = (c1 asUnicodeCodePoint > c2 asUnicodeCodePoint).
-			self assert: (c1 >= c2) = (c1 >= c2 asUnicodeCodePoint).
-			self assert: (c1 >= c2) = (c1 asUnicodeCodePoint >= c2).
-			self assert: (c1 >= c2) = (c1 asUnicodeCodePoint >= c2 asUnicodeCodePoint).
-			]]! !
 
 !UnicodeNormalizationTest methodsFor: 'tests' stamp: 'jmv 12/11/2022 19:35:18'!
 testCanonicalComposites
@@ -9500,44 +9436,44 @@ test2ReadWithOutBinary
 	content := self class fileName asFileEntry textContents.
 	self deny: content = bytesOfExample1! !
 
-!UnicodeTest methodsFor: 'testing' stamp: 'jmv 5/26/2022 12:01:13'!
+!UnicodeTest methodsFor: 'testing' stamp: 'jmv 1/9/2024 12:51:36'!
 test3ReadUtf8
 	
 	"see UnicodeNotes.md"
      "
 	self new setUp test3ReadUtf8
 	"
-     | content byteArray |
-	byteArray _ self class fileName asFileEntry binaryContents.
-	content := String fromUtf8Bytes: byteArray.
-	self assert: content = 'abc àè€ αβγ'! !
+	| content byteArray |
+	byteArray := self class fileName asFileEntry binaryContents.
+	content := UnicodeString fromUtf8Bytes: byteArray.
+	self assert: content = 'abc àè€ αβγ'.! !
 
-!UnicodeTest methodsFor: 'testing' stamp: 'jmv 10/28/2022 18:44:48'!
+!UnicodeTest methodsFor: 'testing' stamp: 'jmv 1/9/2024 12:51:52'!
 test4BackConversion
 	"see UnicodeNotes.md"
 	"
 	self new setUp test4BackConversion
 	"
 	| contentInternalString contentByteArray |
-	contentInternalString _ String fromUtf8Bytes: self class fileName asFileEntry binaryContents.
-	contentByteArray _ self class fileName asFileEntry binaryContents.
+	contentInternalString := UnicodeString fromUtf8Bytes: self class fileName asFileEntry binaryContents.
+	contentByteArray := self class fileName asFileEntry binaryContents.
 	self assert: contentByteArray = contentInternalString asUtf8Bytes.! !
 
-!UnicodeTest methodsFor: 'testing' stamp: 'jmv 10/28/2022 18:45:42'!
+!UnicodeTest methodsFor: 'testing' stamp: 'jmv 1/9/2024 12:52:04'!
 test5ReadWriteUtf8
 	"see UnicodeNotes.md"
 	"
 	self new setUp test5ReadWriteUtf8
 	"
 	| content byteArray byteArray2 |
-	byteArray _ self class fileName asFileEntry binaryContents.
-	content _ String fromUtf8Bytes: byteArray.
+	byteArray := self class fileName asFileEntry binaryContents.
+	content := UnicodeString fromUtf8Bytes: byteArray.
 	self class fileName2 asFileEntry forceWriteStreamDo: [ :stream |
 		stream binary.
 		stream nextPutAll: content asUtf8Bytes ].
 	"compare the two versions: what is in file 'fileName' with what is in file 'fileName2'"
-	byteArray _ self class fileName asFileEntry binaryContents.
-	byteArray2 _ self class fileName2 asFileEntry binaryContents.
+	byteArray := self class fileName asFileEntry binaryContents.
+	byteArray2 := self class fileName2 asFileEntry binaryContents.
 	self assert: byteArray = byteArray2.! !
 
 !UnicodeTest methodsFor: 'testing' stamp: 'jmv 7/31/2023 10:59:54'!
@@ -16499,7 +16435,7 @@ thisClassDefinitionNode
 	
 	 ^self class methodNodeFor: self class definition noPattern: true ! !
 
-!ClosureCompilerTest methodsFor: 'source' stamp: 'jmv 3/13/2012 11:29'!
+!ClosureCompilerTest methodsFor: 'source' stamp: 'jmv 1/9/2024 16:00:21'!
 closureCases
 	^#(
 '| n |
@@ -16657,7 +16593,7 @@ mn generate: #(0 0 0 0).
 	inPrimitiveResponse := false.   "whether we are inside of primitiveResponse"
 	''Gnuifying''
 		displayProgressAt: Sensor mousePoint
-		from: 1 to: (inData occurrencesOf: Character crCharacter)
+		from: 1 to: (inData occurrencesOf: Character cr)
 		during:
 			[:bar | | lineNumber |
 			lineNumber := 0.
@@ -18512,7 +18448,7 @@ returnNodeOf: methodNode
 	
 	self error: 'No return node found'! !
 
-!ScannerTest methodsFor: 'testing' stamp: 'jmv 9/5/2016 20:48:53'!
+!ScannerTest methodsFor: 'testing' stamp: 'jmv 1/8/2024 17:16:14'!
 testLiteralSymbols
 
 	self assert: ('*+-/\~=<>&@%,|' allSatisfy: [:char | Scanner isLiteralSymbol: (String with: char) asSymbol])
@@ -18521,7 +18457,7 @@ testLiteralSymbols
 	self assert: (#('x' 'x:' 'x:y:' 'from:to:by:' 'yourself') allSatisfy: [:str | Scanner isLiteralSymbol: str asSymbol])
 		description: 'valid ascii selector symbols can be printed without string quotes'.
 		
-	((32 to: 94), (96 to: 126) collect: [:ascii | Character numericValue: ascii]) ,
+	((32 to: 94), (96 to: 126) collect: [:ascii | Character codePoint: ascii]) ,
 	#(':x:yourself' '::' 'x:yourself' '123' 'x0:x1:x2:' 'x.y.z' '1abc' 'a1b0c2' ' x' 'x ' '+x-y' '||' '-' '++' '+' '+/-' '-/+' '<|>' '#x' '()' '[]' '{}' '')
 		do: [:str |
 			self assert: (Compiler evaluate: str asSymbol printString) = str asSymbol

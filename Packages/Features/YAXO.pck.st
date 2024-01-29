@@ -1,246 +1,246 @@
-'From Cuis 6.0 [latest update: #5625] on 8 January 2023 at 9:00:13 pm'!
+'From Cuis6.3 [latest update: #6189] on 9 January 2024 at 5:12:56 pm'!
 'Description '!
-!provides: 'YAXO' 1 24!
-SystemOrganization addCategory: 'YAXO'!
+!provides: 'YAXO' 1 26!
+SystemOrganization addCategory: #YAXO!
 
 
-!classDefinition: #SAXException category: 'YAXO'!
+!classDefinition: #SAXException category: #YAXO!
 Error subclass: #SAXException
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'YAXO'!
-!classDefinition: 'SAXException class' category: 'YAXO'!
+!classDefinition: 'SAXException class' category: #YAXO!
 SAXException class
 	instanceVariableNames: ''!
 
-!classDefinition: #SAXMalformedException category: 'YAXO'!
+!classDefinition: #SAXMalformedException category: #YAXO!
 SAXException subclass: #SAXMalformedException
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'YAXO'!
-!classDefinition: 'SAXMalformedException class' category: 'YAXO'!
+!classDefinition: 'SAXMalformedException class' category: #YAXO!
 SAXMalformedException class
 	instanceVariableNames: ''!
 
-!classDefinition: #SAXParseException category: 'YAXO'!
+!classDefinition: #SAXParseException category: #YAXO!
 SAXException subclass: #SAXParseException
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'YAXO'!
-!classDefinition: 'SAXParseException class' category: 'YAXO'!
+!classDefinition: 'SAXParseException class' category: #YAXO!
 SAXParseException class
 	instanceVariableNames: ''!
 
-!classDefinition: #XMLException category: 'YAXO'!
+!classDefinition: #XMLException category: #YAXO!
 Error subclass: #XMLException
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'YAXO'!
-!classDefinition: 'XMLException class' category: 'YAXO'!
+!classDefinition: 'XMLException class' category: #YAXO!
 XMLException class
 	instanceVariableNames: ''!
 
-!classDefinition: #XMLInvalidException category: 'YAXO'!
+!classDefinition: #XMLInvalidException category: #YAXO!
 XMLException subclass: #XMLInvalidException
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'YAXO'!
-!classDefinition: 'XMLInvalidException class' category: 'YAXO'!
+!classDefinition: 'XMLInvalidException class' category: #YAXO!
 XMLInvalidException class
 	instanceVariableNames: ''!
 
-!classDefinition: #XMLMalformedException category: 'YAXO'!
+!classDefinition: #XMLMalformedException category: #YAXO!
 XMLException subclass: #XMLMalformedException
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'YAXO'!
-!classDefinition: 'XMLMalformedException class' category: 'YAXO'!
+!classDefinition: 'XMLMalformedException class' category: #YAXO!
 XMLMalformedException class
 	instanceVariableNames: ''!
 
-!classDefinition: #XMLWarningException category: 'YAXO'!
+!classDefinition: #XMLWarningException category: #YAXO!
 XMLException subclass: #XMLWarningException
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'YAXO'!
-!classDefinition: 'XMLWarningException class' category: 'YAXO'!
+!classDefinition: 'XMLWarningException class' category: #YAXO!
 XMLWarningException class
 	instanceVariableNames: ''!
 
-!classDefinition: #SAXWarning category: 'YAXO'!
+!classDefinition: #SAXWarning category: #YAXO!
 Warning subclass: #SAXWarning
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'YAXO'!
-!classDefinition: 'SAXWarning class' category: 'YAXO'!
+!classDefinition: 'SAXWarning class' category: #YAXO!
 SAXWarning class
 	instanceVariableNames: ''!
 
-!classDefinition: #DTDEntityDeclaration category: 'YAXO'!
+!classDefinition: #DTDEntityDeclaration category: #YAXO!
 Object subclass: #DTDEntityDeclaration
 	instanceVariableNames: 'name value ndata'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'YAXO'!
-!classDefinition: 'DTDEntityDeclaration class' category: 'YAXO'!
+!classDefinition: 'DTDEntityDeclaration class' category: #YAXO!
 DTDEntityDeclaration class
 	instanceVariableNames: 'contextBehavior'!
 
-!classDefinition: #DTDExternalEntityDeclaration category: 'YAXO'!
+!classDefinition: #DTDExternalEntityDeclaration category: #YAXO!
 DTDEntityDeclaration subclass: #DTDExternalEntityDeclaration
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'YAXO'!
-!classDefinition: 'DTDExternalEntityDeclaration class' category: 'YAXO'!
+!classDefinition: 'DTDExternalEntityDeclaration class' category: #YAXO!
 DTDExternalEntityDeclaration class
 	instanceVariableNames: ''!
 
-!classDefinition: #DTDParameterEntityDeclaration category: 'YAXO'!
+!classDefinition: #DTDParameterEntityDeclaration category: #YAXO!
 DTDEntityDeclaration subclass: #DTDParameterEntityDeclaration
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'YAXO'!
-!classDefinition: 'DTDParameterEntityDeclaration class' category: 'YAXO'!
+!classDefinition: 'DTDParameterEntityDeclaration class' category: #YAXO!
 DTDParameterEntityDeclaration class
 	instanceVariableNames: ''!
 
-!classDefinition: #SAXHandler category: 'YAXO'!
+!classDefinition: #SAXHandler category: #YAXO!
 Object subclass: #SAXHandler
 	instanceVariableNames: 'document driver eod'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'YAXO'!
-!classDefinition: 'SAXHandler class' category: 'YAXO'!
+!classDefinition: 'SAXHandler class' category: #YAXO!
 SAXHandler class
 	instanceVariableNames: ''!
 
-!classDefinition: #XMLDOMParser category: 'YAXO'!
+!classDefinition: #XMLDOMParser category: #YAXO!
 SAXHandler subclass: #XMLDOMParser
 	instanceVariableNames: 'entity stack incremental'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'YAXO'!
-!classDefinition: 'XMLDOMParser class' category: 'YAXO'!
+!classDefinition: 'XMLDOMParser class' category: #YAXO!
 XMLDOMParser class
 	instanceVariableNames: ''!
 
-!classDefinition: #XMLNamespaceScope category: 'YAXO'!
+!classDefinition: #XMLNamespaceScope category: #YAXO!
 Object subclass: #XMLNamespaceScope
 	instanceVariableNames: 'scope currentBindings useNamespaces validateAttributes'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'YAXO'!
-!classDefinition: 'XMLNamespaceScope class' category: 'YAXO'!
+!classDefinition: 'XMLNamespaceScope class' category: #YAXO!
 XMLNamespaceScope class
 	instanceVariableNames: ''!
 
-!classDefinition: #XMLNode category: 'YAXO'!
+!classDefinition: #XMLNode category: #YAXO!
 Object subclass: #XMLNode
 	instanceVariableNames: ''
 	classVariableNames: 'CanonicalTable'
 	poolDictionaries: ''
 	category: 'YAXO'!
-!classDefinition: 'XMLNode class' category: 'YAXO'!
+!classDefinition: 'XMLNode class' category: #YAXO!
 XMLNode class
 	instanceVariableNames: ''!
 
-!classDefinition: #XMLNodeWithElements category: 'YAXO'!
+!classDefinition: #XMLNodeWithElements category: #YAXO!
 XMLNode subclass: #XMLNodeWithElements
 	instanceVariableNames: 'elements uri namespace'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'YAXO'!
-!classDefinition: 'XMLNodeWithElements class' category: 'YAXO'!
+!classDefinition: 'XMLNodeWithElements class' category: #YAXO!
 XMLNodeWithElements class
 	instanceVariableNames: ''!
 
-!classDefinition: #XMLDocument category: 'YAXO'!
+!classDefinition: #XMLDocument category: #YAXO!
 XMLNodeWithElements subclass: #XMLDocument
 	instanceVariableNames: 'dtd version encoding requiredMarkup'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'YAXO'!
-!classDefinition: 'XMLDocument class' category: 'YAXO'!
+!classDefinition: 'XMLDocument class' category: #YAXO!
 XMLDocument class
 	instanceVariableNames: ''!
 
-!classDefinition: #XMLElement category: 'YAXO'!
+!classDefinition: #XMLElement category: #YAXO!
 XMLNodeWithElements subclass: #XMLElement
 	instanceVariableNames: 'name contents attributes'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'YAXO'!
-!classDefinition: 'XMLElement class' category: 'YAXO'!
+!classDefinition: 'XMLElement class' category: #YAXO!
 XMLElement class
 	instanceVariableNames: ''!
 
-!classDefinition: #XMLPI category: 'YAXO'!
+!classDefinition: #XMLPI category: #YAXO!
 XMLNode subclass: #XMLPI
 	instanceVariableNames: 'target data'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'YAXO'!
-!classDefinition: 'XMLPI class' category: 'YAXO'!
+!classDefinition: 'XMLPI class' category: #YAXO!
 XMLPI class
 	instanceVariableNames: ''!
 
-!classDefinition: #XMLStringNode category: 'YAXO'!
+!classDefinition: #XMLStringNode category: #YAXO!
 XMLNode subclass: #XMLStringNode
 	instanceVariableNames: 'string'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'YAXO'!
-!classDefinition: 'XMLStringNode class' category: 'YAXO'!
+!classDefinition: 'XMLStringNode class' category: #YAXO!
 XMLStringNode class
 	instanceVariableNames: ''!
 
-!classDefinition: #XMLTokenizer category: 'YAXO'!
+!classDefinition: #XMLTokenizer category: #YAXO!
 Object subclass: #XMLTokenizer
 	instanceVariableNames: 'stream nestedStreams entities externalEntities parameterEntities parsingMarkup markedPosition peekChar validating nameBuffer attributeBuffer'
 	classVariableNames: 'CharEscapes DigitTable LiteralChars NameDelimiters'
 	poolDictionaries: ''
 	category: 'YAXO'!
-!classDefinition: 'XMLTokenizer class' category: 'YAXO'!
+!classDefinition: 'XMLTokenizer class' category: #YAXO!
 XMLTokenizer class
 	instanceVariableNames: ''!
 
-!classDefinition: #SAXDriver category: 'YAXO'!
+!classDefinition: #SAXDriver category: #YAXO!
 XMLTokenizer subclass: #SAXDriver
 	instanceVariableNames: 'saxHandler scope useNamespaces validateAttributes'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'YAXO'!
-!classDefinition: 'SAXDriver class' category: 'YAXO'!
+!classDefinition: 'SAXDriver class' category: #YAXO!
 SAXDriver class
 	instanceVariableNames: ''!
 
-!classDefinition: #XMLParser category: 'YAXO'!
+!classDefinition: #XMLParser category: #YAXO!
 XMLTokenizer subclass: #XMLParser
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'YAXO'!
-!classDefinition: 'XMLParser class' category: 'YAXO'!
+!classDefinition: 'XMLParser class' category: #YAXO!
 XMLParser class
 	instanceVariableNames: ''!
 
-!classDefinition: #XMLWriter category: 'YAXO'!
+!classDefinition: #XMLWriter category: #YAXO!
 Object subclass: #XMLWriter
 	instanceVariableNames: 'stream stack scope scanner canonical'
 	classVariableNames: 'XMLTranslation XMLTranslationMap'
 	poolDictionaries: ''
 	category: 'YAXO'!
-!classDefinition: 'XMLWriter class' category: 'YAXO'!
+!classDefinition: 'XMLWriter class' category: #YAXO!
 XMLWriter class
 	instanceVariableNames: ''!
 
@@ -1577,7 +1577,7 @@ nextCharReference
 	self next = $;
 		ifFalse: [self errorExpected: '";"'].
 
-	^UnicodeCodePoint codePoint: asciiCodeOrCodePoint! !
+	^Character codePoint: asciiCodeOrCodePoint! !
 
 !XMLTokenizer methodsFor: 'tokenizing' stamp: 'jmv 9/3/2022 22:38:15'!
 nextComment
@@ -2269,7 +2269,7 @@ initialize
 	LiteralChars _ Array new: 256.
 	LiteralChars atAllPut: false.
 	':-_.' do: [:each | LiteralChars at: each asciiValue put: true].
-	1 to: 256 do: [:i | ((i-1) asCharacter isDigit or: [(i-1) asCharacter isLetter])
+	1 to: 256 do: [:i | ((Character codePoint: (i-1)) isDigit or: [(Character codePoint: (i-1)) isLetter])
 		ifTrue: [LiteralChars at: i put: true]].
 
 	nameDelimiters _ #(9 10 12 13 32 61 "$= asInteger 61" 62 "$> asInteger" 47 "$/ asInteger").
@@ -2564,18 +2564,18 @@ endTag: tagName xmlns: xmlns
 flush
 	self stream flush! !
 
-!XMLWriter methodsFor: 'writing xml' stamp: 'jmv 1/4/2023 11:00:54'!
+!XMLWriter methodsFor: 'writing xml' stamp: 'jmv 1/9/2024 17:12:15'!
 pcData: aString
 	| lastIndex nextIndex |
 	lastIndex := 1.
 	"Unroll the first search to avoid copying"
-	nextIndex := aString indexOfAnyOf: XMLTranslationMap startingAt: lastIndex ifAbsent: 0.
+	nextIndex := aString indexOfAnyIn: XMLTranslationMap startingAt: lastIndex ifAbsent: 0.
 	nextIndex = 0 ifTrue: [^self stream nextPutAll: aString].
 	[
 		self stream nextPutAll: (aString copyFrom: lastIndex to: nextIndex-1).
 		self stream nextPutAll: (XMLTranslation at: (aString at: nextIndex)).
 		lastIndex := nextIndex + 1.
-		nextIndex := aString indexOfAnyOf: XMLTranslationMap startingAt: lastIndex ifAbsent: 0.
+		nextIndex := aString indexOfAnyIn: XMLTranslationMap startingAt: lastIndex ifAbsent: 0.
 		nextIndex = 0
 	] whileFalse.
 	self stream nextPutAll: (aString copyFrom: lastIndex to: aString size).! !
@@ -2769,7 +2769,7 @@ initialize
 	canonical _ false.
 	scope := XMLNamespaceScope new! !
 
-!XMLWriter class methodsFor: 'class initialization' stamp: 'jmv 1/4/2023 12:49:06'!
+!XMLWriter class methodsFor: 'class initialization' stamp: 'jmv 1/9/2024 17:11:49'!
 initialize
 	"XMLWriter initialize"
 
@@ -2783,9 +2783,9 @@ initialize
 		at: $> put: '&gt;';
 "		at: $' put: '&apos;'; "
 		at: $" put: '&quot;'.
-	XMLTranslationMap := CharacterSet new.
-	XMLTranslation keysDo: [ :ch | XMLTranslationMap add: ch ].
-! !
+	XMLTranslationMap := ByteArray new: 256.
+	XMLTranslation keysDo: [ :character |
+		XMLTranslationMap at: character asciiValue + 1 put: 1 ].! !
 
 !XMLWriter class methodsFor: 'instance creation' stamp: 'jmv 2/2/2014 00:42'!
 on: aStream
