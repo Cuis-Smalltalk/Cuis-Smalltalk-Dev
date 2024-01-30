@@ -4,7 +4,7 @@ These instructions assume you have the Git code versioning system installed in y
 
 If you want to ask any question, or contribute back to the community, please subscribe to the Cuis development mail list at http://cuis-smalltalk.org/mailman/listinfo/cuis-dev_cuis-smalltalk.org , and email us there.
 
-Cuis Smalltalk is available in 64 bits and 32 bits variants. It also available in the older 32 bits V3 (pre Spur) image format. All three of them share the full source code and have essentially the same behavior, providing full portability for your code between them. These instructions are for the recommended format for each system, although most systems support all of them. 
+Cuis Smalltalk is available in 64 bits and 32 bits variants. They share the full source code and have essentially the same behavior, providing full portability for your code between them.
 
 ## For all systems: Create project folder and add Cuis Smalltalk ##
 
@@ -48,7 +48,7 @@ mv ./sqcogspur64linuxht ./cogspur
 
 ### Starting Cuis Smalltalk ###
 ```
-cogspur/squeak Cuis-Smalltalk-Dev/Cuis6.3-6156.image
+cogspur/squeak Cuis-Smalltalk-Dev/Cuis6.3-6202.image
 ```
 If you get this error message (you won't get it if you run Cuis as root or sudo):
 ```
@@ -73,11 +73,11 @@ Drag Squeak.app to your MyProject folder
 ```
 
 ### Starting Cuis Smalltalk ###
-* drop the Cuis6.3-6156.image over the Squeak.app file
+* drop the Cuis6.3-6202.image over the Squeak.app file
 * If you get "Squeak is an app downloaded from the Internet. Are you sure you want to open it?", click on [Open]
 * Alternatively, you might:
 ```
-./Squeak.app/Contents/MacOS/Squeak Cuis-Smalltalk-Dev/Cuis6.3-6156.image
+./Squeak.app/Contents/MacOS/Squeak Cuis-Smalltalk-Dev/Cuis6.3-6202.image
 ```
 
 ## For 64 bits Windows ##
@@ -96,7 +96,7 @@ unzip cogspur.zip -d cogspur
 
 ### Starting Cuis Smalltalk ###
 ```
-cogspur/Squeak.exe Cuis-Smalltalk-Dev/Cuis6.3-6156.image
+cogspur/Squeak.exe Cuis-Smalltalk-Dev/Cuis6.3-6202.image
 ```
 
 ## For Raspberry Pi Raspian ##
@@ -112,7 +112,7 @@ mv ./sqcogspurlinuxhtRPi ./cogspur
 
 ### Starting Cuis Smalltalk ###
 ```
-cogspur/squeak Cuis-Smalltalk-Dev/Cuis6.3-6156-32.image
+cogspur/squeak Cuis-Smalltalk-Dev/Cuis6.3-6202-32.image
 ```
 
 ## For Chromebooks ##
@@ -143,14 +143,14 @@ mv ./sqstkspurlinuxhtRPi ./stkspur
 
 ### Starting Cuis Smalltalk ###
 ```
-cogspur/squeak Cuis-Smalltalk-Dev/Cuis6.3-6156-32.image
-stkspur/squeak Cuis-Smalltalk-Dev/Cuis6.3-6156-32.image
+cogspur/squeak Cuis-Smalltalk-Dev/Cuis6.3-6202-32.image
+stkspur/squeak Cuis-Smalltalk-Dev/Cuis6.3-6202-32.image
 ```
 
 ## Troubleshooting ##
 * If when starting the image you get error messages like "This interpreter (vers. 6505) cannot read image file (vers. 68021).", (68021 or some other reasonable number) it means you image and VM are mismatched. For example, one of them is Spur and the other is pre-Spur, or one of them is 32 bits and the other is 64 bits.
 * If when starting the image you get error messages like "This interpreter (vers. 6505) cannot read image file (vers. 1007290890).", (1007290890 or some other absurd number) it means your git installation is breaking the files. It is usually best to configure git not to do any conversion on files.
-* If you can't find Cuis6.3-6156-32.image, then this document is outdated. Use the Cuis spur image with the latest update number available.
+* If you can't find Cuis6.3-6202-32.image, then this document is outdated. Use the Cuis spur image with the latest update number available.
 * If you can't find the Squeak Cog Spur VM specified, then this document is outdated. Use the latest available Squeak Cog Spur VM for your platform from https://github.com/OpenSmalltalk/opensmalltalk-vm/releases
 * If you can't get Cuis to run on your system after trying the above instructions, send mail to the Cuis-Dev mail list. Please give enough detail of your system, what you tried, and any error messages you got.
 * To get the contents of this repository without using Git, you can do
