@@ -524,7 +524,7 @@
 	<key>SqueakExplicitWindowOpenNeeded</key>
 	<false/>
 	<key>SqueakImageName</key>
-	<string>CuisImage/Cuis6.2.image</string>
+	<string>CuisImage/Cuis6.3-6202.image</string>
 <!-- Uncomment and set this if you want to restrict the maximum heap size
 	<key>SqueakMaxHeapSize</key>
 	<integer>536870912</integer>
