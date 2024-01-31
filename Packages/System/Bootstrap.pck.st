@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #6068] on 2 November 2023 at 10:43:17 am'!
+'From Cuis6.3 [latest update: #6202] on 31 January 2024 at 10:18:54 am'!
 'Description '!
-!provides: 'Bootstrap' 1 33!
+!provides: 'Bootstrap' 1 36!
 !requires: 'DynamicCuisLibraries' 1 22 nil!
 SystemOrganization addCategory: #'Bootstrap-Smalltalk Image Builders'!
 SystemOrganization addCategory: #'Bootstrap-Foreign Objects'!
@@ -451,7 +451,7 @@ initialize
 	globalVariables  := OrderedCollection new.
 	symbols := OrderedCollection new.! !
 
-!ImageBuilder methodsFor: 'image building' stamp: 'jmv 11/2/2023 10:35:03'!
+!ImageBuilder methodsFor: 'image building' stamp: 'jmv 1/31/2024 10:13:31'!
 addBasicMethodsAndReferencedClasses
 
 	"Classes referenced from methods below, but of which no methods are included."
@@ -492,7 +492,7 @@ addBasicMethodsAndReferencedClasses
 		Object>>#isByteString.
 		Object>>#isUnicodeString.
 		Object>>#isSymbol.
-		Object>>#isUnicodeCodePoint.
+		Object>>#isCharacter.
 		Object>>#isBehavior.
 		Object>>#isInterval.
 		Object>>#value.
@@ -517,7 +517,6 @@ addBasicMethodsAndReferencedClasses
 		Behavior>>#basicNew:.
 		Behavior>>#isMeta.
 		Behavior >> #identityHash.
-		Behavior >> #primitiveIdentityHash.
 		ClassDescription>>#printNameOn:.
 		ClassDescription>>#theNonMetaClass.
 		Class>>#printNameOn:.
@@ -637,17 +636,16 @@ addBasicMethodsAndReferencedClasses
 		String >> #,.
 		String>>#appendToString:.
 		String>>#copyReplaceFrom:to:with:.
-		String>>#canHoldCodePoints.
 		Symbol>>#noclash01_storeOn:.
 
 		Character class>>#lf.
 		Character class>>#newLineCharacter.
 		Character class>>#space.
 		Character class>>#digitValue:.
-		Character class>>#noclash01_numericValue:.
-		Character class>>#immediateNumericValue:.
+		Character class>>#codePoint:.
 		Character>>#identityHash.
-		Character>>#is:.
+		Character>>#isCharacter.
+		Character>>#codePoint.
 
 		Stream>>#nextPutAll:.
 		PositionableStream class>>#on:.
@@ -668,8 +666,6 @@ addBasicMethodsAndReferencedClasses
 		Association>>#value.
 
 		SystemDictionary>>#quitPrimitive:.
-		SystemDictionary>>#isSpur.
-		SystemDictionary>>#compactClassesArray.
 		SystemDictionary>>#specialObjectsArray.
 
 		StdIOWriteStream class>>#stdout.
@@ -1075,7 +1071,7 @@ addExample05SymbolExperimentsMethods
 	} do: [ :compiledMethod |
 		self addExistingMethod: compiledMethod ].! !
 
-!ImageBuilder methodsFor: 'image building examples' stamp: 'jmv 11/2/2023 10:31:20'!
+!ImageBuilder methodsFor: 'image building examples' stamp: 'jmv 1/31/2024 09:53:42'!
 addExample06LoadDynamicLibraryMethods
 
 	"Classes referenced from below, but of which no methods are included."
@@ -1116,9 +1112,7 @@ addExample06LoadDynamicLibraryMethods
 		Behavior>>#isBehavior.
 		Behavior>>#superclass.
 		Behavior>>#typeOfClass.
-		Behavior>>#typeOfClassSpur.
 		Behavior>>#isVariable.
-		Behavior>>#isVariableSpur.
 		Behavior>>#isBytes.
 		Behavior>>#isBits.
 		Behavior>>#isImmediateClass.
@@ -1334,7 +1328,6 @@ addExample06LoadDynamicLibraryMethods
 		DataStream>>#readSymbol.
 		DataStream>>#readString.
 		DataStream>>#readCharacter.
-		ReferenceStream class>>#on:.
 		ReferenceStream>>#setStream:.
 		ReferenceStream>>#next.
 		ReferenceStream>>#beginReference:.
@@ -1353,7 +1346,7 @@ addExample06LoadDynamicLibraryMethods
 		SystemDictionary>>#flushClassNameCache.
 	
 		ClassBuilder>>#newSubclassOf:type:instanceVariables:from:.
-		ClassBuilder>>#computeFormat:instSize:forSuper:ccIndex:.
+		ClassBuilder>>#computeFormat:instSize:forSuper:.
 		ClassBuilder>>#computeFormat:fullInstancesSize:.
 		ClassBuilder>>#format:variable:bitsUnitSize:pointers:weak:.
 		ClassBuilder>>#privateNewSubclassOf:from:.
@@ -1363,7 +1356,7 @@ addExample06LoadDynamicLibraryMethods
 	} do: [ :compiledMethod |
 		self addExistingMethod: compiledMethod ].! !
 
-!ImageBuilder methodsFor: 'image building examples' stamp: 'jmv 11/2/2023 10:32:28'!
+!ImageBuilder methodsFor: 'image building examples' stamp: 'jmv 1/31/2024 09:53:52'!
 addExample07LoadDynamicLibraryMethods
 
 	"Classes referenced from below, but of which no methods are included."
@@ -1406,9 +1399,7 @@ addExample07LoadDynamicLibraryMethods
 		Behavior>>#isBehavior.
 		Behavior>>#superclass.
 		Behavior>>#typeOfClass.
-		Behavior>>#typeOfClassSpur.
 		Behavior>>#isVariable.
-		Behavior>>#isVariableSpur.
 		Behavior>>#isBytes.
 		Behavior>>#isBits.
 		Behavior>>#isImmediateClass.
@@ -1624,7 +1615,6 @@ addExample07LoadDynamicLibraryMethods
 		DataStream>>#readSymbol.
 		DataStream>>#readString.
 		DataStream>>#readCharacter.
-		ReferenceStream class>>#on:.
 		ReferenceStream>>#setStream:.
 		ReferenceStream>>#next.
 		ReferenceStream>>#beginReference:.
@@ -1643,7 +1633,7 @@ addExample07LoadDynamicLibraryMethods
 		SystemDictionary>>#flushClassNameCache.
 	
 		ClassBuilder>>#newSubclassOf:type:instanceVariables:from:.
-		ClassBuilder>>#computeFormat:instSize:forSuper:ccIndex:.
+		ClassBuilder>>#computeFormat:instSize:forSuper:.
 		ClassBuilder>>#computeFormat:fullInstancesSize:.
 		ClassBuilder>>#format:variable:bitsUnitSize:pointers:weak:.
 		ClassBuilder>>#privateNewSubclassOf:from:.
@@ -2967,13 +2957,12 @@ foreignObjectClassFor: anObject
 		
 	^super foreignObjectClassFor: anObject! !
 
-!Spur32ImageBuilder methodsFor: 'services' stamp: 'jmv 8/17/2023 14:37:38'!
+!Spur32ImageBuilder methodsFor: 'services' stamp: 'jmv 1/31/2024 09:30:37'!
 foreignOopOfImmediateCharacter: aCharacter
 
 	| numericValue |
 	self assert: aCharacter class == Character. 
-	numericValue := aCharacter numericValue.
-	self assert: numericValue <= 255.
+	numericValue := aCharacter codePoint.
 	^(numericValue << 2) + 2.! !
 
 !Spur32ImageBuilder methodsFor: 'services' stamp: 'jmv 6/29/2023 16:27:03'!
@@ -3055,13 +3044,12 @@ foreignObjectClassFor: anObject
 		
 	^super foreignObjectClassFor: anObject! !
 
-!Spur64ImageBuilder methodsFor: 'services' stamp: 'jmv 8/17/2023 14:37:40'!
+!Spur64ImageBuilder methodsFor: 'services' stamp: 'jmv 1/31/2024 09:30:42'!
 foreignOopOfImmediateCharacter: aCharacter
 
 	| numericValue |
 	self assert: aCharacter class == Character. 
-	numericValue := aCharacter numericValue.
-	self assert: numericValue <= 255.
+	numericValue := aCharacter codePoint.
 	^(numericValue << 3) + 2.! !
 
 !Spur64ImageBuilder methodsFor: 'services' stamp: 'jmv 7/19/2023 15:57:10'!
@@ -3706,11 +3694,10 @@ referencedObjectsDo: aBlock
 	"Evaluate aBlock for each object our representedObject points to.
 	We don't reference any other objects."! !
 
-!Indexed16BitForeignObject class methodsFor: 'subclass selection' stamp: 'jmv 6/7/2023 17:35:46'!
+!Indexed16BitForeignObject class methodsFor: 'subclass selection' stamp: 'jmv 1/9/2024 14:25:32'!
 canRepresent: anObject
 	"We can work with indexable objects with 16 bit numeric slots."
 
-	Smalltalk isSpur ifFalse: [ self halt ].
 	^anObject class instSpec = 11! !
 
 !Indexed32BitForeignObject methodsFor: 'accessing' stamp: 'jmv 5/22/2023 16:35:36'!
@@ -3749,13 +3736,12 @@ referencedObjectsDo: aBlock
 	"Evaluate aBlock for each object our representedObject points to.
 	We don't reference any other objects."! !
 
-!Indexed32BitForeignObject class methodsFor: 'subclass selection' stamp: 'jmv 6/23/2023 17:09:27'!
+!Indexed32BitForeignObject class methodsFor: 'subclass selection' stamp: 'jmv 1/9/2024 14:25:37'!
 canRepresent: anObject
 	"We can work with indexable objects with 32 bit numeric slots, like WordArray, Bitmap, Float32Array, etc.
 	Also for BoxedFloats, but they are handled in a special way. See #foreignObjectClassFor:"
 
 	anObject isFloat ifTrue: [ ^false ].
-	Smalltalk isSpur ifFalse: [ self halt ].
 	^anObject class instSpec = 10! !
 
 !Indexed64BitForeignObject methodsFor: 'accessing' stamp: 'jmv 5/22/2023 16:35:40'!
@@ -3789,11 +3775,10 @@ referencedObjectsDo: aBlock
 	"Evaluate aBlock for each object our representedObject points to.
 	We don't reference any other objects."! !
 
-!Indexed64BitForeignObject class methodsFor: 'subclass selection' stamp: 'jmv 6/7/2023 17:35:56'!
+!Indexed64BitForeignObject class methodsFor: 'subclass selection' stamp: 'jmv 1/9/2024 14:25:41'!
 canRepresent: anObject
 	"We can work with indexable objects with 64 bit numeric slots."
 
-	Smalltalk isSpur ifFalse: [ self halt ].
 	^anObject class instSpec = 9! !
 
 !Indexed8BitForeignObject methodsFor: 'accessing' stamp: 'jmv 5/22/2023 12:05:33'!
@@ -3847,11 +3832,10 @@ printRepresentedObjectOn: aStream
 		^super printRepresentedObjectOn: aStream ].
 	aStream nextPutAll: representedObject printString.! !
 
-!Indexed8BitForeignObject class methodsFor: 'subclass selection' stamp: 'jmv 6/7/2023 17:36:01'!
+!Indexed8BitForeignObject class methodsFor: 'subclass selection' stamp: 'jmv 1/9/2024 14:25:45'!
 canRepresent: anObject
 	"We can work with ByteArray and the like."
 
-	Smalltalk isSpur ifFalse: [ self halt ].
 	^anObject class instSpec = 16! !
 
 !IndexedOopsForeignObject methodsFor: 'accessing' stamp: 'jmv 5/20/2023 09:26:22'!
@@ -3893,11 +3877,10 @@ referencedObjectsDo: aBlock
 !IndexedOopsForeignObject methodsFor: 'printing' stamp: 'jmv 7/14/2023 17:02:17'!
 printRepresentedObjectOn: aStream! !
 
-!IndexedOopsForeignObject class methodsFor: 'subclass selection' stamp: 'jmv 6/7/2023 17:36:06'!
+!IndexedOopsForeignObject class methodsFor: 'subclass selection' stamp: 'jmv 1/9/2024 14:25:48'!
 canRepresent: anObject
 	"We can work with Array and the like."
 
-	Smalltalk isSpur ifFalse: [ self halt ].
 	^anObject class instSpec = 2! !
 
 !IvarsAndIndexedOopsForeignObject methodsFor: 'accessing' stamp: 'jmv 5/22/2023 16:43:38'!
@@ -3929,7 +3912,7 @@ writeSlotsOn: byteStream forSpur: anImageBuilder
 			ifFalse: [ anImageBuilder findForeignObjectFor: each ].
 		anImageBuilder on: byteStream nexWordPut: (fo foreignOopFor: anImageBuilder) ].! !
 
-!IvarsAndIndexedOopsForeignObject class methodsFor: 'subclass selection' stamp: 'jmv 7/13/2023 15:11:34'!
+!IvarsAndIndexedOopsForeignObject class methodsFor: 'subclass selection' stamp: 'jmv 1/9/2024 14:25:53'!
 canRepresent: anObject
 	"We can work classes that are indexable and also include instance variables,
 		like BlockClosure and AdditionalMethodState.
@@ -3937,7 +3920,6 @@ canRepresent: anObject
 
 	anObject class == MethodDictionary ifTrue: [ ^false ].
 	anObject class == MethodContext ifTrue: [ ^false ].
-	Smalltalk isSpur ifFalse: [ self halt ].
 	^anObject class instSpec = 3! !
 
 !IvarsForeignObject methodsFor: 'accessing' stamp: 'jmv 5/22/2023 15:38:42'!
@@ -3980,14 +3962,13 @@ referencedObjectsDo: aBlock
 !IvarsForeignObject methodsFor: 'printing' stamp: 'jmv 7/14/2023 17:01:51'!
 printRepresentedObjectOn: aStream! !
 
-!IvarsForeignObject class methodsFor: 'subclass selection' stamp: 'jmv 6/7/2023 17:36:18'!
+!IvarsForeignObject class methodsFor: 'subclass selection' stamp: 'jmv 1/9/2024 14:25:57'!
 canRepresent: anObject
 	"We can work with regular classes with instance variables, like Point and OrderedCollection.
 	We don't work with classes or metaclasses."
 
 	anObject isBehavior ifTrue: [ ^false ].
 	(anObject is: #CodeElementSpec) ifTrue: [ ^false ].
-	Smalltalk isSpur ifFalse: [ self halt ].
 	^anObject class instSpec = 1! !
 
 !LargeIntegerForeignObject methodsFor: 'accessing' stamp: 'jmv 8/14/2023 17:41:17'!
@@ -4178,10 +4159,9 @@ isDone
 	See #isTerminated	"
 	^true! !
 
-!MethodContextForeignObject class methodsFor: 'subclass selection' stamp: 'jmv 7/11/2023 19:02:12'!
+!MethodContextForeignObject class methodsFor: 'subclass selection' stamp: 'jmv 1/9/2024 14:26:01'!
 canRepresent: anObject
 
-	Smalltalk isSpur ifFalse: [ self halt ].
 	anObject class == MethodContext ifTrue: [ ^true ].
 	^false! !
 
@@ -4345,11 +4325,10 @@ spurObjectFormat
 
 	^4! !
 
-!WeakIndexedOopsForeignObject class methodsFor: 'subclass selection' stamp: 'jmv 6/7/2023 17:36:26'!
+!WeakIndexedOopsForeignObject class methodsFor: 'subclass selection' stamp: 'jmv 1/9/2024 14:26:05'!
 canRepresent: anObject
 	"We can work classes that are indexable and that reference weakely, like WeakArray."
 
-	Smalltalk isSpur ifFalse: [ self halt ].
 	^anObject class instSpec = 4! !
 
 !WeakIvarsForeignObject methodsFor: 'accessing' stamp: 'jmv 5/22/2023 16:36:58'!
@@ -4371,11 +4350,10 @@ spurObjectFormat
 
 	^5! !
 
-!WeakIvarsForeignObject class methodsFor: 'subclass selection' stamp: 'jmv 6/7/2023 17:36:30'!
+!WeakIvarsForeignObject class methodsFor: 'subclass selection' stamp: 'jmv 1/9/2024 14:26:09'!
 canRepresent: anObject
 	"We can work classes that have ivars and that reference weakely, like Ephemeron."
 
-	Smalltalk isSpur ifFalse: [ self halt ].
 	^anObject class instSpec = 5! !
 
 !ZeroSizeForeignObject methodsFor: 'accessing' stamp: 'jmv 5/19/2023 17:38:29'!
@@ -4400,11 +4378,10 @@ spurObjectFormat
 !ZeroSizeForeignObject methodsFor: 'serialization' stamp: 'jmv 8/17/2023 17:18:10'!
 writeSlotsOn: byteStream forSpur: anImageBuilder! !
 
-!ZeroSizeForeignObject class methodsFor: 'subclass selection' stamp: 'jmv 6/7/2023 17:36:36'!
+!ZeroSizeForeignObject class methodsFor: 'subclass selection' stamp: 'jmv 1/9/2024 14:26:13'!
 canRepresent: anObject
 	"We can work with nil, false, true and regular objects with no instance variables."
 
-	Smalltalk isSpur ifFalse: [ self halt ].
 	^anObject class instSpec = 0! !
 
 !ImmediateForeignObject methodsFor: 'accessing' stamp: 'jmv 6/26/2023 11:08:19'!
@@ -4624,14 +4601,6 @@ noclash01_warning: aString
 noclash01_allInstances
 	"Answer all instances of the receiver."
 	<primitive: 177>! !
-
-!Character class methodsFor: '*Bootstrap-newImageOverrides' stamp: 'jmv 8/2/2023 10:32:54'!
-noclash01_numericValue: anInteger
-	"Answer the Character whose value is anInteger."
-
-	"Don't use Character Table. Only for Spur."
-
-	^self immediateNumericValue: anInteger! !
 
 !Symbol methodsFor: '*Bootstrap-newImageOverrides' stamp: 'jmv 8/2/2023 10:32:58'!
 noclash01_storeOn: aStream 

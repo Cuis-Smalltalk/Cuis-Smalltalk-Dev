@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #6068] on 2 November 2023 at 10:43:20 am'!
+'From Cuis6.3 [latest update: #6202] on 31 January 2024 at 9:19:32 am'!
 'Description '!
-!provides: 'DynamicCuisLibraries' 1 22!
+!provides: 'DynamicCuisLibraries' 1 23!
 SystemOrganization addCategory: #'DynamicCuisLibraries-Code Model'!
 SystemOrganization addCategory: #'DynamicCuisLibraries-Dynamic Libraries'!
 SystemOrganization addCategory: #DynamicCuisLibraries!
@@ -666,12 +666,11 @@ isReturnField
 	"Answer whether the receiver is a quick return of an instance variable."
 	^ self primitive between: 264 and: 519! !
 
-!MethodSpec methodsFor: 'compatibility with CompiledMethod' stamp: 'jmv 9/6/2023 17:50:17'!
+!MethodSpec methodsFor: 'compatibility with CompiledMethod' stamp: 'jmv 1/31/2024 09:16:14'!
 primitive
 	"Answer the primitive index associated with the receiver.
 	Zero indicates that this is not a primitive method."
 
-	Smalltalk isSpur ifFalse: [ self halt ].
 	^(self header anyMask: 65536) "Is the hasPrimitive? flag set?"
 		ifTrue: [(self at: 2) + ((self at: 3) bitShift: 8)]
 		ifFalse: [0].! !
@@ -718,7 +717,7 @@ for: aCompiledMethod addClassesTo: anOrderedDictionaryOfClasses
 		pragmas: (self pragmaSpecsFor: aCompiledMethod)
 		bytecodes: aCompiledMethod bytecodes.! !
 
-!MethodSpec class methodsFor: 'instance creation' stamp: 'jmv 9/4/2023 10:45:32'!
+!MethodSpec class methodsFor: 'instance creation' stamp: 'jmv 1/31/2024 09:17:10'!
 literalSpecsFor: aCompiledMethod
 	"Answer an Array with the regular literals. I.e. not including the last two, #penultimateLiteral and the #methodClassAssociation.
 	Convert variable bindings (shared Associations in globals, class pool or shared pools) into LiteralVariableSpec"
@@ -757,7 +756,6 @@ SHRange
 CursorWithMask
 Color
 TranslucentColor
-CharacterSet
 TextBackgroundColor
 Text + RunArray, NotRunArray, atributos... mhhhhhh
 "! !
@@ -771,7 +769,7 @@ pragmaSpecsFor: aCompiledMethod
 	ps size = 0 ifTrue: [ ^nil ].
 	^aCompiledMethod pragmas collect: [ :p | Array with: p keyword withAll: p arguments ]! !
 
-!MethodSpec class methodsFor: 'services' stamp: 'jmv 4/20/2023 16:19:58'!
+!MethodSpec class methodsFor: 'services' stamp: 'jmv 1/31/2024 09:17:32'!
 classesAssumedToExist
 	"
 	MethodSpec classesAssumedToExist collect: [ :clsName | Smalltalk at: clsName ]
@@ -798,7 +796,6 @@ classesAssumedToExist
 							LargeNegativeInteger
 						SmallInteger
 			Character
-			UnicodeCodePoint
 			Collection
 				Set
 					Dictionary
