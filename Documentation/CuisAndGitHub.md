@@ -1,14 +1,10 @@
 # Using Git and GitHub to host and manage Cuis code
 
-Cuis includes tools and procedures for managing Smalltalk code. Central to this is the management of Packages and Package Files (.pck). But Cuis doesn't do version control. Instead, we suggest using external VCS tools.  In particular, we're using [GitHub](http://www.github.com/), and the first project we're hosting there is [StyledTextEditor](https://github.com/bpieber/Cuis-StyledTextEditor).
+Cuis includes tools and procedures for managing Smalltalk code. Central to this is the management of Packages and Package Files (.pck), and ChangeSet and ChangeSet files (.cs.st). But Cuis doesn't do version control by itself. Instead, we suggest using external VCS tools.  The Cuis project is hosted on [GitHub](http://www.github.com/), as most projects related to Cuis.
 
-The guiding principle is to *not duplicate concepts and behavior*. As we're using an external tool (Git) for version control, then we use it as it meant to be used. Most people use Git for version control and a file based IDE such as Eclipse for development. Such IDEs don't do version control themselves. It is done by Git. Do the same: do not include package version control in Cuis. This is a departure from the Monticello /Git integration (smallsource and MonticelloFileTree) by Otto Behrens, Dale Henrichs, etc.
+The guiding principle is to *not duplicate concepts and behavior*. We use GitHub to host, version, diff and merge external packages (.pck files), i.e. code that is maintained independently and outside Cuis.
 
-We use GitHub to host, version, diff and merge external packages (.pck files), i.e. code that is maintained independently and outside Cuis.
-
-Package files need to be simple text files. Cuis encoding for latin alphabet (ISO 8859-15) is handled without problems by GitHub. Cuis uses the LF (ascii code 10) newline convention, as preferred in GitHub. This allows Git/GitHub to diff versions, and merge branches.
-
-Each GitHub repository has one set of users and permissions. Each GitHub repository has one state (Git commits repositories, not individual files). Branch and merges are done on the whole repository and not on individual files. Therefore, we need a separate GitHub repository for each project, i.e., for each package or set of closely related packages that are always loaded and maintained together as a whole.
+Package files need to be simple text files. Cuis code files are encoded in UTF-8, and use the LF (ascii code 10) newline convention. This allows Git/GitHub to diff versions, and merge branches.
 
 ## Using Git/GitHub to host External Packages
 
@@ -26,6 +22,6 @@ There is a additional information on External Packages and how to use them at [M
 
 * Git add / commit / push as appropriate.
 
-* Fileout changes that are not part of any package. These are automatically captured in numbered changesets, separated from changes to packages.
+* Save changes that are not part of any package. These are automatically captured in numbered ChangeSets, separated from changes to packages.
 
 * Exit the image. Usually without saving.

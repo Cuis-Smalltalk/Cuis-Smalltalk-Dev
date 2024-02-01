@@ -1,6 +1,10 @@
 # A short history of Cuis #
 
-The Cuis Smalltalk project was started by Juan Vuletich in 2004. The focus has always been to develop a general purpose Smalltalk system that doesn't include application specific code by default, so it doesn't mandate extra burden on the developer. A friendly and enthusiastic community has formed around it, developing additional code packages and applications.
+In 2003, Juan Vuletich, by then an active collaborator in the Squeak project, decided that a zoomeable and scalable GUI was needed for Smalltalk. This would require completely abandoning back compatibility with the existing Morphic in Squeak. So, the Cuis Smalltalk project was started, although it was named much later.
+
+The focus has always been to develop a general purpose Smalltalk system that doesn't include application specific code by default, and only includes basic functionality. This makes it easy to evolve, and it doesn't mandate extra burden on the developer.
+
+A friendly and enthusiastic community has formed around it, developing additional code packages and applications.
 
 Some landmarks in the project are:
 
@@ -43,6 +47,8 @@ First public presentation of Cuis at the Smalltalks conference in Buenos Aires. 
 
 https://www.youtube.com/watch?v=G8HniJhVxlA
 
+You can see more about the early development of the projects at: [The Morphic 3 Project](http://www.jvuletich.org/Morphic3/Morphic3-200911.html), [Morphic 3 in action](http://www.jvuletich.org/Morphic3/Morphic3-201006.html)
+
 ## 2010-01-4 - Cuis 2.0 ##
 Support for true BlockClosures. Requires a newer, closures-enabled VM.
 
@@ -63,6 +69,11 @@ http://lists.squeakfoundation.org/pipermail/squeak-dev/2012-May/164142.html
 Adopting GitHub as our code repository greately eases project managing, gives us wider visibility, and protects the future of the project.
 
 https://github.com/Cuis-Smalltalk/Cuis-Smalltalk-Dev  
+
+## 2013-11-24 - Publication of Vector Graphics engine techniques ##
+A defensive disclosure on the techniques used in the project was published. This meant the code could now be open-sourced without worries of someone else trying to get a patent on it.
+
+[Prefiltering Antialiasing for General Vector Graphics](https://www.researchgate.net/publication/267152327_Prefiltering_Antialiasing_for_General_Vector_Graphics), [(also here)](https://priorart.ip.com/IPCOM/000232657).
 
 ## 2016-11-7 - Cuis 5.0 - Spur Image Format ##
 The [OpenSmalltalk](http://www.opensmalltalk.org) project keeps developing modern VMs for Open Source Smalltalk systems. We add Cuis images in the new Spur 32 and 64 bits formats to be used with them, in addition to the existing V3 32 bit image for existing VMs.
@@ -108,3 +119,6 @@ https://lists.cuis.st/mailman/archives/cuis-dev/2022-May/005654.html
 
 ## 2022-10-28 - Unicode enabled by default ##
 All code files are UTF-8. All Strings and code in the image can hold Unicode. All text is rasterized by our Vector Graphics engine from TrueType font definitions.
+
+## 2023-11-20 - Cuis 6.2 Stable Release ##
+First release following a new Release Process.
