@@ -4,7 +4,7 @@
 
 Cuis is an Open Source, multiplatform [Smalltalk-80](https://en.wikipedia.org/wiki/Smalltalk) system.
 
-What sets Cuis apart from the other Smalltalk systems is the focus on the original values of the Smalltalk project at Xerox PARC, and an active attitude towards system complexity: Keep it to a minimum.
+What sets Cuis apart from the other Smalltalk systems is the focus on the original values of the Smalltalk project at Xerox PARC, and an active attitude towards system complexity: Just keep it to a minimum!
 
 There is more to be said about Cuis, its goals and ideas. See
 [About Cuis](https://github.com/Cuis-Smalltalk/Cuis-Smalltalk-Dev/blob/master/Documentation/AboutCuis.md).
