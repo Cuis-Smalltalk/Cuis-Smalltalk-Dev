@@ -1,4 +1,4 @@
-#TrueTypeFonts folder
+# TrueTypeFonts folder
 
 This directory structure holds Cuis TrueType fonts included in the official release.
 
