@@ -1,6 +1,6 @@
-'From Cuis6.3 [latest update: #6189] on 9 January 2024 at 5:50:03 pm'!
+'From Cuis6.3 [latest update: #6213] on 6 February 2024 at 10:24:20 am'!
 'Description '!
-!provides: 'Compression' 1 39!
+!provides: 'Compression' 1 41!
 SystemOrganization addCategory: #'Compression-System'!
 SystemOrganization addCategory: #'Compression-Archives'!
 
@@ -735,7 +735,7 @@ createHuffmanTables: values counts: counts from: minBits to: maxBits
 		table at: tableStart + tableIndex put: (values at: i).
 		tableIndex _ self increment: tableIndex bits: minBits].
 	"Fill up remaining entries with invalid entries"
-	tableStack _ OrderedCollection new: 10. "Should be more than enough"
+	tableStack _ OrderedCollection new.
 	tableStack addLast: 
 		(Array 
 			with: minBits	"Number of bits (e.g., depth) for this table"
@@ -3093,17 +3093,17 @@ buildHierarchyFrom: aHeap
 	^aHeap removeFirst
 ! !
 
-!ZipEncoderTree methodsFor: 'encoding' stamp: 'ar 12/30/1999 14:19'!
+!ZipEncoderTree methodsFor: 'encoding' stamp: 'jmv 2/6/2024 10:11:03'!
 buildTree: nodeList maxDepth: depth
 	"Build either the literal or the distance tree"
 	| heap rootNode blCounts |
-	heap _ Heap new: nodeList size // 3.
+	heap := Heap new.
 	heap sortBlock: self nodeSortBlock.
 	"Find all nodes with non-zero frequency and add to heap"
-	maxCode _ 0.
+	maxCode := 0.
 	nodeList do:[:dNode|
 		dNode frequency = 0 ifFalse:[
-			maxCode _ dNode value.
+			maxCode := dNode value.
 			heap add: dNode]].
 	"The pkzip format requires that at least one distance code exists,
 	and that at least one bit should be sent even if there is only one
@@ -3113,17 +3113,17 @@ buildTree: nodeList maxDepth: depth
 		self assert:[maxCode = 0].
 		heap add: nodeList first.
 		heap add: nodeList second.
-		maxCode _ 1].
+		maxCode := 1].
 	heap size = 1 ifTrue:[
 		nodeList first frequency = 0
 			ifTrue:[heap add: nodeList first]
 			ifFalse:[heap add: nodeList second].
-		maxCode _ maxCode max: 1].
-	rootNode _ self buildHierarchyFrom: heap.
+		maxCode := maxCode max: 1].
+	rootNode := self buildHierarchyFrom: heap.
 	rootNode height > depth ifTrue:[
-		rootNode _ rootNode rotateToHeight: depth.
+		rootNode := rootNode rotateToHeight: depth.
 		rootNode height > depth ifTrue:[self error:'Cannot encode tree']].
-	blCounts _ WordArray new: depth+1.
+	blCounts := WordArray new: depth+1.
 	rootNode encodeBitLength: blCounts from: self.
 	self buildCodes: nodeList counts: blCounts maxDepth: depth.
 	self setValuesFrom: nodeList.! !

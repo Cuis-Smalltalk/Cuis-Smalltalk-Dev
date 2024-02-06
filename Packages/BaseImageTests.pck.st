@@ -1,6 +1,6 @@
-'From Cuis6.3 [latest update: #6197] on 29 January 2024 at 12:02:50 pm'!
+'From Cuis6.3 [latest update: #6213] on 6 February 2024 at 10:23:08 am'!
 'Description ExtractMethod for optimized messages test'!
-!provides: 'BaseImageTests' 1 381!
+!provides: 'BaseImageTests' 1 383!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Objects'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
@@ -2910,7 +2910,7 @@ testComparisonWithFraction
 	self assert: 0.1 = (1/10).
 	self assert: (1/10) = 0.1! !
 
-!FloatTest methodsFor: 'tests - comparing' stamp: 'jmv 8/29/2019 16:20:39'!
+!FloatTest methodsFor: 'tests - comparing' stamp: 'jmv 2/6/2024 09:56:06'!
 testEqualityComparison
 	"In Cuis, it was decided to coerce operands to Float for comparison (if any of them was float),
 	in the classic ST-80 way"
@@ -2947,8 +2947,8 @@ testEqualityComparison
 	
 	"Test hash code"
 	self assert:
-		((Set new: 3) add: 3; add: 3.0; size) =
-		((Set new: 4) add: 3; add: 3.0; size).
+		((Set newWithRoomForMoreThan: 3) add: 3; add: 3.0; size) =
+		((Set newWithRoomForMoreThan: 4) add: 3; add: 3.0; size).
 
 
 	self assert: 9007199254740996 = 9007199254740996.0.
@@ -3711,14 +3711,14 @@ testNoIntegerHash
 	self deny: Float pi hash = (Float pi *1.00000000000001) hash.
 	self deny: Float pi hash = (Float pi /1.00000000000001) hash.! !
 
-!FloatTest methodsFor: 'tests - hash' stamp: 'nice 2/13/2010 04:15'!
+!FloatTest methodsFor: 'tests - hash' stamp: 'jmv 2/6/2024 09:56:29'!
 testSetOfFloat
 	"Classical disagreement between hash and = did lead to a bug.
 	This is a non regression test from http://bugs.squeak.org/view.php?id=3360"
 
 	| size3 size4 |
-	size3 := (Set new: 3) add: 3; add: 3.0; size.
-	size4 := (Set new: 4) add: 3; add: 3.0; size.
+	size3 := (Set newWithRoomForMoreThan: 3) add: 3; add: 3.0; size.
+	size4 := (Set newWithRoomForMoreThan: 4) add: 3; add: 3.0; size.
 	self assert: size3 = size4 description: 'The size of a Set should not depend on its capacity.'! !
 
 !FloatTest methodsFor: 'tests - constants' stamp: 'jmv 12/27/2018 18:37:19'!
@@ -33910,11 +33910,11 @@ simpleNoTimeoutTestResults
 		add: self doSomethingString;
 		yourself! !
 
-!ExceptionTester methodsFor: 'results' stamp: 'brp 10/21/2004 17:44'!
+!ExceptionTester methodsFor: 'results' stamp: 'jmv 2/6/2024 10:18:21'!
 simpleTimeoutTestResults
 
 	| things |
-	things := OrderedCollection new: self iterationsBeforeTimeout.
+	things := OrderedCollection new.
 
 	self iterationsBeforeTimeout timesRepeat: [ things add: self  doSomethingString ].
 	things add: self doSomethingElseString.

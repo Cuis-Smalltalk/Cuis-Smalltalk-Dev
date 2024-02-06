@@ -1,6 +1,6 @@
-'From Cuis6.3 [latest update: #6202] on 31 January 2024 at 10:18:54 am'!
+'From Cuis6.3 [latest update: #6213] on 6 February 2024 at 10:23:55 am'!
 'Description '!
-!provides: 'Bootstrap' 1 36!
+!provides: 'Bootstrap' 1 37!
 !requires: 'DynamicCuisLibraries' 1 22 nil!
 SystemOrganization addCategory: #'Bootstrap-Smalltalk Image Builders'!
 SystemOrganization addCategory: #'Bootstrap-Foreign Objects'!
@@ -2692,7 +2692,7 @@ addMetaclassFor: aClassSpec
 	metaclassForeignObject instanceVariablesForeignObject: (self findOrAddLiteral: aClassSpec classInstVarNames).
 	^metaclassForeignObject! !
 
-!SpurImageBuilder methodsFor: 'foreign objects' stamp: 'jmv 8/17/2023 17:25:16'!
+!SpurImageBuilder methodsFor: 'foreign objects' stamp: 'jmv 2/6/2024 10:14:02'!
 addMethodDictionaryFor: aClassOrMetaclassForeignObject
 	"Create a ForeignObject for a new MethodDictionary to be created.
 	Also create required ForeignObjects for its parts, i.e. the 'array' instance variable.
@@ -2706,7 +2706,7 @@ addMethodDictionaryFor: aClassOrMetaclassForeignObject
 	So we can simply use a MethodDictionary.
 	These assumptions may change in the future, and a more sophisticated strategy to build MethodDictionaries may be needed.
 	This should actually take into account the source code from which the MethodDictionary class will be created..."
-	methodDictionaryToAdd := MethodDictionary new: methodForeignObjects size.
+	methodDictionaryToAdd := MethodDictionary newWithRoomForMoreThan: methodForeignObjects size.
 	methodForeignObjects do: [ :each |
 		methodDictionaryToAdd
 			at: (self findForeignObjectFor: each representedObject selector)
@@ -4852,7 +4852,7 @@ bootstrappedExample07LoadDynamicLibrary
 
 	self quitPrimitive: 42.! !
 
-!DataStream class methodsFor: '*Bootstrap-newImageOverrides' stamp: 'jmv 9/5/2023 14:44:05'!
+!DataStream class methodsFor: '*Bootstrap-newImageOverrides' stamp: 'jmv 2/6/2024 10:13:28'!
 noclash01_initCachedState
 	"TypeMap maps Smalltalk classes to type ID numbers which identify the data stream primitive formats.  nextPut: writes these IDs to the data stream.  NOTE: Changing these type ID numbers will invalidate all extant data stream files.  Adding new ones is OK.  
 	Classes named here have special formats in the file.  If such a class has a subclass, it will use type 9 and write correctly.  It will just be slow.  (Later write the class name in the special format, then subclasses can use the type also.)
@@ -4862,7 +4862,7 @@ noclash01_initCachedState
 	"
 
 	| t |
-	t := TypeMap := Dictionary new: 80. "sparse for fast hashing"
+	t := TypeMap := Dictionary newWithRoomForMoreThan: 80. "sparse for fast hashing"
 
 	t at: UndefinedObject put: 1.
 	t at: True put: 2.

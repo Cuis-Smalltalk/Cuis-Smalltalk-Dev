@@ -1,6 +1,6 @@
 'From Cuis6.3 [latest update: #6200] on 29 January 2024 at 4:37:47 pm'!
 'Description Various code used in Squeak which is not in Cuis.'!
-!provides: 'SqueakCompatibility' 1 39!
+!provides: 'SqueakCompatibility' 1 40!
 !requires: 'Cuis-Base' 42 2658 nil!
 SystemOrganization addCategory: #SqueakCompatibility!
 SystemOrganization addCategory: #'SqueakCompatibility-System-Files'!
@@ -1824,7 +1824,7 @@ entries
 	"
 
 	| entries index done entryArray |
-	entries _ OrderedCollection new: 200.
+	entries _ OrderedCollection new.
 	index _ 1.
 	done _ false.
 	[ done ] whileFalse: [
@@ -1867,7 +1867,7 @@ fullNamesOfAllFilesInSubtree
 	"Answer a collection containing the full names of all the files in the subtree of the file system whose root is this directory."
 
 	| result todo dir |
-	result _ OrderedCollection new: 100.
+	result _ OrderedCollection new.
 	todo _ OrderedCollection with: self.
 	[todo size > 0] whileTrue: [
 		dir _ todo removeFirst.

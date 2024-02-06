@@ -1,6 +1,6 @@
 'From Cuis6.3 [latest update: #6200] on 29 January 2024 at 3:40:22 pm'!
 'Description '!
-!provides: 'ExtendedClipboard' 1 17!
+!provides: 'ExtendedClipboard' 1 18!
 !requires: 'FFI' 1 nil nil!
 !requires: 'Graphics-Files-Additional' 1 nil nil!
 SystemOrganization addCategory: #ExtendedClipboard!
@@ -328,7 +328,7 @@ initialize
 !ExtendedClipboardMacInterface methodsFor: 'private' stamp: 'jmv 1/18/2011 15:56'!
 readPrimAvailableFormats
 	| i availableFormats formatData |
-	availableFormats _ OrderedCollection new: 10.
+	availableFormats _ OrderedCollection new.
 	i _ 1.
 	[
 		formatData _ self getClipboardFormat: i.
@@ -421,7 +421,7 @@ storeText: aText id: otherString
 !ExtendedClipboardUnixInterface methodsFor: 'private' stamp: 'jmv 1/18/2011 15:56'!
 readPrimAvailableFormats
 	| i availableFormats formatData |
-	availableFormats _ OrderedCollection new: 10.
+	availableFormats _ OrderedCollection new.
 	i _ 1.
 	[
 		formatData _ self getClipboardFormat: i.
@@ -534,7 +534,7 @@ readClipboardData: format
 !ExtendedClipboardWinInterface methodsFor: 'private' stamp: 'jmv 1/18/2011 15:56'!
 readPrimAvailableFormats
 	| i availableFormats |
-	availableFormats _ OrderedCollection new: 10.
+	availableFormats _ OrderedCollection new.
 	i _ 0.
 	self openClipboard.
 	[

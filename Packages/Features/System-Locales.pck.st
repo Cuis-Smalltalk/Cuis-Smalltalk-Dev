@@ -1,6 +1,6 @@
-'From Cuis6.3 [latest update: #6200] on 29 January 2024 at 3:46:43 pm'!
+'From Cuis6.3 [latest update: #6213] on 6 February 2024 at 10:26:11 am'!
 'Description '!
-!provides: 'System-Locales' 1 10!
+!provides: 'System-Locales' 1 11!
 SystemOrganization addCategory: #'System-Locales'!
 SystemOrganization addCategory: #'System-Locales-Tests'!
 
@@ -688,22 +688,22 @@ iso2Countries
 	ISO2Countries ifNil: [self initISOCountries].
 	^ISO2Countries! !
 
-!ISOLanguageDefinition class methodsFor: 'private - ISO 2'!
+!ISOLanguageDefinition class methodsFor: 'private - ISO 2' stamp: 'jmv 2/6/2024 10:14:35'!
 iso2LanguageTable
 	"self iso2LanguageTable"
 
 	ISO2Table ifNotNil: [^ISO2Table].
-	ISO2Table _ Dictionary new: self iso3LanguageTable basicSize.
+	ISO2Table := Dictionary new.
 	self iso3LanguageTable do: [:entry |
 		ISO2Table at: entry iso2 put: entry].
 	^ISO2Table! !
 
-!ISOLanguageDefinition class methodsFor: 'private - ISO 3166' stamp: 'jmv 1/29/2024 15:45:26'!
+!ISOLanguageDefinition class methodsFor: 'private - ISO 3166' stamp: 'jmv 2/6/2024 10:20:20'!
 buildIso3166CodesTables
 	"ISOLanguageDefinition buildIso3166CodesTables"
 	| rawdata stream country isoa2 isoa3 unNumeric macName macCode windowsName windowsCode empty table |
 	rawdata := self iso3166Codes.
-	table := OrderedCollection new: 200. 
+	table := OrderedCollection new.
 	stream := rawdata readStream.
 	empty := (Character codePoint: 160) asString.
 	[stream atEnd] whileFalse: 

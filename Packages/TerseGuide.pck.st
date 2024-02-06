@@ -1,6 +1,6 @@
-'From Cuis6.3 [latest update: #6200] on 29 January 2024 at 3:44:22 pm'!
+'From Cuis6.3 [latest update: #6213] on 6 February 2024 at 10:29:56 am'!
 'Description Add ability to dynamically add topic pages from other sources.'!
-!provides: 'TerseGuide' 1 145!
+!provides: 'TerseGuide' 1 146!
 SystemOrganization addCategory: #TerseGuide!
 
 
@@ -1221,13 +1221,12 @@ y _ x magnifyBy: 1.5.
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 10/6/2018 17:02:59'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'jmv 2/6/2024 10:29:40'!
 heap
 	"Heap"
 	^
 '| x n sort |
 x _ Heap new.						"Answer a heap of default size"
-x _ Heap new: (n _ 7).			"Answer a heap of size n"
 x _ Heap with: #purple with: #green.	"Answer a Heap with the two arguments as elements."
 sort _ [:a :c | a > c].		"Define a sorting order"
 x _ Heap withAll: #(11 32 19 21).	"Create a new heap with all the elements from a collection"

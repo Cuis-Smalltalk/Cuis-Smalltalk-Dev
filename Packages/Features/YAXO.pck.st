@@ -1,6 +1,6 @@
-'From Cuis6.3 [latest update: #6189] on 9 January 2024 at 5:12:56 pm'!
+'From Cuis6.3 [latest update: #6213] on 6 February 2024 at 10:27:23 am'!
 'Description '!
-!provides: 'YAXO' 1 26!
+!provides: 'YAXO' 1 27!
 SystemOrganization addCategory: #YAXO!
 
 
@@ -734,9 +734,9 @@ establishLocalBindings
 			currentBindings := currentBindings copy.
 			self currentScope at: 2 put: currentBindings]! !
 
-!XMLNamespaceScope methodsFor: 'private' stamp: 'mir 6/24/2003 14:25'!
+!XMLNamespaceScope methodsFor: 'private' stamp: 'jmv 2/6/2024 10:20:27'!
 initScope
-	scope := OrderedCollection new: 20.
+	scope := OrderedCollection new.
 	currentBindings := Dictionary new.
 	scope addLast: {'http://www.w3.org/TR/REC-xml-names'. currentBindings. nil. }.
 ! !
@@ -1793,16 +1793,16 @@ nextPubidLiteral
 nextSystemLiteral
 	^self nextAttributeValue! !
 
-!XMLTokenizer methodsFor: 'tokenizing' stamp: 'jmv 9/3/2022 22:40:54'!
+!XMLTokenizer methodsFor: 'tokenizing' stamp: 'jmv 2/6/2024 10:15:26'!
 nextTag
 	| tagName attributes nextChar namespaces |
 	(self peek = $/)
 		ifTrue: [^self nextEndTag].
-	tagName _ self nextName.
+	tagName := self nextName.
 	self skipSeparators.
-	attributes _ Dictionary new: 33.
-	namespaces _ Dictionary new: 5.
-	[(nextChar _ self peek) = $> or: [nextChar = $/]] whileFalse: [
+	attributes := Dictionary new.
+	namespaces := Dictionary new.
+	[(nextChar := self peek) = $> or: [nextChar = $/]] whileFalse: [
 		self checkAndExpandReference: #content.
 		self nextAttributeInto: attributes namespaces: namespaces.
 		self skipSeparators.].

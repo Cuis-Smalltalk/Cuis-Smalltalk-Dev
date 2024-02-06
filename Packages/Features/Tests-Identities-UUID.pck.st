@@ -1,27 +1,27 @@
-'From Cuis 5.0 [latest update: #4415] on 22 October 2020 at 9:30:24 pm'!
+'From Cuis6.3 [latest update: #6213] on 6 February 2024 at 10:26:48 am'!
 'Description '!
-!provides: 'Tests-Identities-UUID' 1 0!
+!provides: 'Tests-Identities-UUID' 1 1!
 !requires: 'Identities-UUID' 1 8 nil!
-SystemOrganization addCategory: 'Tests-Identities-UUID'!
+SystemOrganization addCategory: #'Tests-Identities-UUID'!
 
 
-!classDefinition: #UUIDPrimitivesTest category: 'Tests-Identities-UUID'!
+!classDefinition: #UUIDPrimitivesTest category: #'Tests-Identities-UUID'!
 TestCase subclass: #UUIDPrimitivesTest
 	instanceVariableNames: ''
 	classVariableNames: 'Default'
 	poolDictionaries: ''
 	category: 'Tests-Identities-UUID'!
-!classDefinition: 'UUIDPrimitivesTest class' category: 'Tests-Identities-UUID'!
+!classDefinition: 'UUIDPrimitivesTest class' category: #'Tests-Identities-UUID'!
 UUIDPrimitivesTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #UUIDTest category: 'Tests-Identities-UUID'!
+!classDefinition: #UUIDTest category: #'Tests-Identities-UUID'!
 TestCase subclass: #UUIDTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Tests-Identities-UUID'!
-!classDefinition: 'UUIDTest class' category: 'Tests-Identities-UUID'!
+!classDefinition: 'UUIDTest class' category: #'Tests-Identities-UUID'!
 UUIDTest class
 	instanceVariableNames: ''!
 
@@ -92,12 +92,12 @@ testCreationNodeBased
 		self should: [((uuid at: 9) bitAnd: 16rC0) = 16r80]]
 ! !
 
-!UUIDPrimitivesTest methodsFor: 'tests' stamp: 'nice 12/27/2009 04:15'!
+!UUIDPrimitivesTest methodsFor: 'tests' stamp: 'jmv 2/6/2024 10:12:47'!
 testDuplicationsKinda
 	| check size |
 
 	size := 5000.
-	check := Set new: size.
+	check := Set newWithRoomForMoreThan: size.
 	size timesRepeat: 
 		[ | uuid |
 		uuid := UUID new.

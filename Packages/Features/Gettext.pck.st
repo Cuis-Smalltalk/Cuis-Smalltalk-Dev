@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #6058] on 27 October 2023 at 10:42:50 pm'!
+'From Cuis6.3 [latest update: #6213] on 6 February 2024 at 10:25:04 am'!
 'Description '!
-!provides: 'Gettext' 1 28!
+!provides: 'Gettext' 1 29!
 !requires: 'System-Locales' 1 4 nil!
 SystemOrganization addCategory: #Gettext!
 
@@ -433,23 +433,23 @@ hashPjw: aString
 	^hash.
 ! !
 
-!MOFile methodsFor: 'public' stamp: 'hlsf 3/9/2022 18:28:42'!
+!MOFile methodsFor: 'public' stamp: 'jmv 2/6/2024 10:14:53'!
 load: aFileEntry localeID: id
 "all of strings are loaded. 
 translation strings are converted to internal string format on load time.
 original-string/index pairs are registerd to Dictionary on load time."
-	localeID _ id.
+	localeID := id.
 	aFileEntry readStreamDo: [:strm | |originalTable translatedTable|
 		self loadHeader: strm.
-		originalTable _ self loadStringPointers: strm offset: originalTableOffset.					
-		translatedTable _ self loadStringPointers: strm offset: translatedTableOffset.
-		originalStrings _ self loadStrings: strm pointers: originalTable.
-		translatedStrings _ self loadStrings: strm pointers: translatedTable.
-		translations _ Dictionary new: nStrings.  
+		originalTable := self loadStringPointers: strm offset: originalTableOffset.					
+		translatedTable := self loadStringPointers: strm offset: translatedTableOffset.
+		originalStrings := self loadStrings: strm pointers: originalTable.
+		translatedStrings := self loadStrings: strm pointers: translatedTable.
+		translations := Dictionary newWithRoomForMoreThan: nStrings.  
 		1 to: nStrings do: [:index | | key |
-			key _ originalStrings at: index.
+			key := originalStrings at: index.
 			translations at: key put: index].
-		originalStrings _ nil] ! !
+		originalStrings := nil] ! !
 
 !MOFile methodsFor: 'public'!
 searchFor: aString

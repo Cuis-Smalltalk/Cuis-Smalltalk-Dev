@@ -1,6 +1,6 @@
-'From Cuis6.3 [latest update: #6189] on 9 January 2024 at 5:53:34 pm'!
+'From Cuis6.3 [latest update: #6213] on 6 February 2024 at 10:25:39 am'!
 'Description '!
-!provides: 'Sound' 1 28!
+!provides: 'Sound' 1 29!
 !requires: 'Compression' 1 nil nil!
 !requires: 'Collections-CompactArrays' 1 2 nil!
 SystemOrganization addCategory: #'Sound-Synthesis'!
@@ -7975,18 +7975,18 @@ playChromaticRunFrom: startPitch to: endPitch
 	(AbstractSound chromaticRunFrom: startPitch to: endPitch on: self) play.
 ! !
 
-!SampledInstrument methodsFor: 'other' stamp: 'jm 8/11/1998 15:52'!
+!SampledInstrument methodsFor: 'other' stamp: 'jmv 2/6/2024 10:19:56'!
 pruneNoteList: aNoteList notesPerOctave: notesPerOctave
 	"Return a pruned version of the given note list with only the given number of notes per octave. Assume the given notelist is in sorted order."
 
 	| r interval lastPitch |
-	r _ OrderedCollection new: aNoteList size.
-	interval _ (2.0 raisedTo: (1.0 / notesPerOctave)) * 0.995.
-	lastPitch _ 0.0.
+	r := OrderedCollection new.
+	interval := (2.0 raisedTo: (1.0 / notesPerOctave)) * 0.995.
+	lastPitch := 0.0.
 	aNoteList do: [:n |
 		n pitch > (lastPitch * interval) ifTrue: [
 			r addLast: n.
-			lastPitch _ n pitch]].
+			lastPitch := n pitch]].
 	^ r
 ! !
 
@@ -10512,15 +10512,15 @@ initialize
 	mutex _ nil.
 ! !
 
-!SoundInputStream methodsFor: 'recording controls' stamp: 'jm 9/8/1999 15:23'!
+!SoundInputStream methodsFor: 'recording controls' stamp: 'jmv 2/6/2024 10:20:08'!
 startRecording
 	"Start the sound input process."
 
 	recordProcess ifNotNil: [self stopRecording].
-	recordedBuffers _ OrderedCollection new: 100.
-	mutex _ Semaphore forMutualExclusion.
+	recordedBuffers := OrderedCollection new.
+	mutex := Semaphore forMutualExclusion.
 	super startRecording.
-	paused _ false.
+	paused := false.
 ! !
 
 !SoundInputStream methodsFor: 'recording controls' stamp: 'jm 9/8/1999 15:23'!
@@ -11515,16 +11515,16 @@ standardMIDIInstrumentNames
 		'Gunshot')
 ! !
 
-!MIDIInputParser methodsFor: 'recording' stamp: 'jmv 4/17/2013 12:05'!
+!MIDIInputParser methodsFor: 'recording' stamp: 'jmv 2/6/2024 10:21:32'!
 clearBuffers
 	"Clear the MIDI record buffers. This should be called at the start of recording or real-time MIDI processing."	
 
-	received _ received species new: 5000.
-	rawDataBuffer _ ByteArray new: 1000.
-	sysExBuffer _ WriteStream on: (ByteArray new: 100).
+	received := received species new.
+	rawDataBuffer := ByteArray new: 1000.
+	sysExBuffer := WriteStream on: (ByteArray new: 100).
 	midiPort ifNotNil: [midiPort ensureOpen; flushInput].
-	startTime _ Time localMillisecondClock.
-	state _ #idle.
+	startTime := Time localMillisecondClock.
+	state := #idle.
 ! !
 
 !MIDIInputParser methodsFor: 'recording' stamp: 'jm 10/8/1998 21:06'!

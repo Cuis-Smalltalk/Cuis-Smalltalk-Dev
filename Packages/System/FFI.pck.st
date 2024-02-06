@@ -1,6 +1,6 @@
-'From Cuis6.3 [latest update: #6200] on 29 January 2024 at 12:37:32 pm'!
+'From Cuis6.3 [latest update: #6213] on 6 February 2024 at 10:24:41 am'!
 'Description '!
-!provides: 'FFI' 1 43!
+!provides: 'FFI' 1 44!
 SystemOrganization addCategory: #'FFI-Pools'!
 SystemOrganization addCategory: #'FFI-Kernel'!
 
@@ -1419,7 +1419,7 @@ install
 			[self recompileStructures.
 			PreviousPlatform := newPlatform]! !
 
-!ExternalStructure class methodsFor: 'system startup' stamp: 'nice 4/13/2018 12:35'!
+!ExternalStructure class methodsFor: 'system startup' stamp: 'jmv 2/6/2024 10:19:42'!
 recompileStructures
 	"Check and update the layout of all subclasses for host machine dependency.
 	Arrange to check the inner nested structures first."
@@ -1427,7 +1427,7 @@ recompileStructures
 	"ExternalStructure recompileStructures"
 	| sorted unsorted |
 	unsorted := self withAllSubclasses.
-	sorted := OrderedCollection new: unsorted size.
+	sorted := OrderedCollection new.
 	self sortStructs: unsorted into: sorted.
 	sorted do: [:e | e checkFieldLayoutChange]! !
 

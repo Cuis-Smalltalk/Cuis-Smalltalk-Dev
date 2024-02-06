@@ -1,6 +1,6 @@
-'From Cuis6.3 [latest update: #6189] on 9 January 2024 at 5:51:12 pm'!
+'From Cuis6.3 [latest update: #6213] on 6 February 2024 at 10:25:23 am'!
 'Description '!
-!provides: 'Graphics-Files-Additional' 1 28!
+!provides: 'Graphics-Files-Additional' 1 29!
 !requires: 'Compression' 1 nil nil!
 SystemOrganization addCategory: #'Graphics-Files-Additional'!
 
@@ -1945,15 +1945,15 @@ at: tagSymbol
 			[TIFFField defaultFor: tagSymbol]. "Raises error if no default."
 	^ field value.! !
 
-!TIFFImageFileDirectory methodsFor: 'private' stamp: 'jmv 5/7/2023 10:32:15'!
+!TIFFImageFileDirectory methodsFor: 'private' stamp: 'jmv 2/6/2024 10:15:14'!
 parseFrom: aTIFFStream
 	"Blow away any former state I had and parse a new collection of fields from the given stream.
 	Leave the stream positioned at the end of the IFD, just before the pointer to the next IFD."
 	| fieldCount field |
 	fieldCount := aTIFFStream nextUint16.
-	fields := (Dictionary new: fieldCount).
-	fieldCount timesRepeat: 
-		[field := TIFFField parseFrom: aTIFFStream.
+	fields := Dictionary newWithRoomForMoreThan: fieldCount.
+	fieldCount timesRepeat: [
+		field := TIFFField parseFrom: aTIFFStream.
 		field isNil ifFalse: [fields at: field tagSymbol put: field] ].
 ! !
 
