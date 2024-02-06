@@ -1,7 +1,7 @@
-'From Cuis6.3 [latest update: #6200] on 29 January 2024 at 4:37:47 pm'!
+'From Cuis6.3 [latest update: #6216] on 6 February 2024 at 4:46:53 pm'!
 'Description Various code used in Squeak which is not in Cuis.'!
-!provides: 'SqueakCompatibility' 1 40!
-!requires: 'Cuis-Base' 42 2658 nil!
+!provides: 'SqueakCompatibility' 1 42!
+!requires: 'Cuis-Base' 6 3 nil!
 SystemOrganization addCategory: #SqueakCompatibility!
 SystemOrganization addCategory: #'SqueakCompatibility-System-Files'!
 
@@ -3085,10 +3085,6 @@ ifNotNilDo: ifNotNilBlock
 	"Compatibility. Prefer #ifNotNil:"
 	^self ifNotNil: ifNotNilBlock! !
 
-!Object methodsFor: '*squeakCompatibility' stamp: 'jmv 5/14/2015 11:11'!
-isCharacter
-	^false! !
-
 !Float methodsFor: '*squeakCompatibility' stamp: 'KenD 8/26/2016 15:08:16'!
 printOn: aStream base: base digitCount: numDigits
 
@@ -3141,10 +3137,6 @@ between: min and: max
 	and greater than or equal to the argument, min."
 
 	^self numericValue >= min numericValue and: [self numericValue <= max numericValue]! !
-
-!Character methodsFor: '*squeakCompatibility' stamp: 'jmv 5/14/2015 11:12'!
-isCharacter
-	^true! !
 
 !Character methodsFor: '*squeakCompatibility' stamp: 'jmv 1/29/2024 16:14:03'!
 numericValue
@@ -3356,52 +3348,41 @@ crlf
 lf
 	^self lfString! !
 
-!CompiledMethod methodsFor: '*squeakCompatibility' stamp: 'NS 12/12/2003 15:18'!
-isAbstract
-	| marker |
-	marker := self markerOrNil.
-	^ marker notNil and: [self class abstractMarkers includes: marker].! !
+!OrderedCollection class methodsFor: '*squeakCompatibility' stamp: 'jmv 2/6/2024 16:06:56'!
+new: nElements
+	"Answer an instance that can hold nElements objects without growing.
+	Smalltalk-80 protocol. Of dubious utility these days."
 
-!CompiledMethod methodsFor: '*squeakCompatibility' stamp: 'al 2/13/2006 17:44'!
-markerOrNil
-	"If I am a marker method, answer the symbol used to mark me.  Otherwise
-	answer nil.
+	(self name, ' creation with the #new: message is only supported for compatibility. Sender is: ', thisContext sender printString) print.
+	^ self basicNew setCollection: (Array new: nElements)! !
 
-	What is a marker method?  It is method with body like 
-		'self subclassResponsibility' or '^ self subclassResponsibility' 
-	used to indicate ('mark') a special property.
+!Bag class methodsFor: '*squeakCompatibility' stamp: 'jmv 2/6/2024 16:03:29'!
+new: nElements
+	"Answer an instance that can hold nElements distinct objects without growing.
+	Smalltalk-80 protocol. Of dubious utility these days."
 
-	Marker methods compile to bytecode like:
+	(self name, ' creation with the #new: message is only supported for compatibility. Sender is: ', thisContext sender printString) print..
+	^ self basicNew setContents: (self contentsClass newWithRoomForMoreThan: nElements)! !
 
-		9 <70> self
-		10 <D0> send: <literal 1>
-		11 <87> pop
-		12 <78> returnSelf
+!Set class methodsFor: '*squeakCompatibility' stamp: 'jmv 2/6/2024 16:04:37'!
+new: nElements
+	"Answer an instance that can hold nElements objects without growing.
+	Smalltalk-80 protocol. It is better to be explicit and call #newWithRoomForMoreThan: if needed."
 
-	for the first form, or 
-
-		9 <70> self
-		10 <D0> send: <literal 1>
-		11 <7C> returnTop
-
-	for the second form."
-
-	| e |
-	((e := self endPC) = 19 or: [e = 20]) ifFalse: [^ nil].
-	(self numLiterals = 3) ifFalse:[^ nil].
-	(self at: 17) =  16r70 ifFalse:[^ nil].		"push self"
-	(self at: 18) = 16rD0 ifFalse:[^ nil].		"send <literal 1>"
-	"If we reach this point, we have a marker method that sends self <literal 1>"
-	^ self literalAt: 1
-! !
-
-!CompiledMethod class methodsFor: '*squeakCompatibility' stamp: 'NS 12/12/2003 15:17'!
-abstractMarkers
-	^ #(subclassResponsibility shouldNotImplement)! !
+	(self name, ' creation with the #new: message is only supported for compatibility. Sender is: ', thisContext sender printString) print.
+	^self newWithRoomForMoreThan: nElements! !
 
 !SystemDictionary methodsFor: '*squeakCompatibility' stamp: 'jmv 7/2/2019 08:08:30'!
 datedVersion
 	^ self version! !
+
+!WeakRegistry class methodsFor: '*squeakCompatibility' stamp: 'jmv 2/6/2024 16:04:57'!
+new: nElements
+	"Answer an instance that can hold nElements objects without growing.
+	Smalltalk-80 protocol. It is better to be explicit and call #newWithRoomForMoreThan: if needed."
+
+	(self name, ' creation with the #new: message is only supported for compatibility. Sender is: ', thisContext sender printString) print.
+	^self newWithRoomForMoreThan: nElements! !
 
 !Stream methodsFor: '*squeakCompatibility' stamp: 'KenD 8/26/2016 15:02:52'!
 print: aNumber digits: numDigits
