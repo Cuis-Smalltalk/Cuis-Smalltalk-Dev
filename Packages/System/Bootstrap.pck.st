@@ -1,6 +1,6 @@
-'From Cuis6.3 [latest update: #6213] on 6 February 2024 at 10:23:55 am'!
+'From Cuis6.3 [latest update: #6221] on 8 February 2024 at 6:30:57 am'!
 'Description '!
-!provides: 'Bootstrap' 1 37!
+!provides: 'Bootstrap' 1 38!
 !requires: 'DynamicCuisLibraries' 1 22 nil!
 SystemOrganization addCategory: #'Bootstrap-Smalltalk Image Builders'!
 SystemOrganization addCategory: #'Bootstrap-Foreign Objects'!
@@ -451,7 +451,7 @@ initialize
 	globalVariables  := OrderedCollection new.
 	symbols := OrderedCollection new.! !
 
-!ImageBuilder methodsFor: 'image building' stamp: 'jmv 1/31/2024 10:13:31'!
+!ImageBuilder methodsFor: 'image building' stamp: 'jmv 2/7/2024 17:51:23'!
 addBasicMethodsAndReferencedClasses
 
 	"Classes referenced from methods below, but of which no methods are included."
@@ -602,10 +602,10 @@ addBasicMethodsAndReferencedClasses
 
 		Message>>#selector.
 
-		Collection class>>#ofSize:.
 		Collection>>#species.
 		SequenceableCollection class>>#streamContents:.
 		SequenceableCollection class>>#streamContents:estimatedSize:.
+		SequenceableCollection class>>#streamContents:on:.
 		SequenceableCollection >> #do:.
 		SequenceableCollection>>#copyReplaceFrom:to:with:.
 		SequenceableCollection >> #,.
@@ -615,6 +615,8 @@ addBasicMethodsAndReferencedClasses
 		SequenceableCollection>>#asStreamResult.
 		SequenceableCollection>>#thatCanBeModified.
 		SequenceableCollection>>#copyFrom:to:.
+		SequenceableCollection>>#copyBlank:.
+		ArrayedCollection class>>#new:.
 		ArrayedCollection class>>#withAll:.
 		ArrayedCollection>>#size.
 		Array>>#elementsExchangeIdentityWith:.
@@ -626,6 +628,7 @@ addBasicMethodsAndReferencedClasses
 		CharacterSequence>>#storeOn:.
 		CharacterSequence>>#isString.
 		CharacterSequence>>#string.
+		String class>>#new:.
 		String class>>#with:.
 		String class>>#isAscii:.
 		String>>#asUtf8Bytes.
@@ -1071,7 +1074,7 @@ addExample05SymbolExperimentsMethods
 	} do: [ :compiledMethod |
 		self addExistingMethod: compiledMethod ].! !
 
-!ImageBuilder methodsFor: 'image building examples' stamp: 'jmv 1/31/2024 09:53:42'!
+!ImageBuilder methodsFor: 'image building examples' stamp: 'jmv 2/7/2024 17:55:10'!
 addExample06LoadDynamicLibraryMethods
 
 	"Classes referenced from below, but of which no methods are included."
@@ -1229,7 +1232,7 @@ addExample06LoadDynamicLibraryMethods
 		Symbol>>#flushCache.
 
 		Set class>>#new.
-		Set class>>#new:.
+		Set class>>#newWithRoomForMoreThan:.
 		Set class>>#sizeFor:.
 		Set>>#init:.
 		Set>>#atNewIndex:put:.
@@ -1265,7 +1268,7 @@ addExample06LoadDynamicLibraryMethods
 		IdentityDictionary>>#scanFor:.
 
 		MethodDictionary class>>#new.
-		MethodDictionary class>>#new:.
+		MethodDictionary class>>#newWithRoomForMoreThan:.
 		MethodDictionary>>#at:ifAbsent:.
 		MethodDictionary>>#scanFor:.
 		MethodDictionary>>#postCopy.
@@ -1356,7 +1359,7 @@ addExample06LoadDynamicLibraryMethods
 	} do: [ :compiledMethod |
 		self addExistingMethod: compiledMethod ].! !
 
-!ImageBuilder methodsFor: 'image building examples' stamp: 'jmv 1/31/2024 09:53:52'!
+!ImageBuilder methodsFor: 'image building examples' stamp: 'jmv 2/7/2024 17:55:52'!
 addExample07LoadDynamicLibraryMethods
 
 	"Classes referenced from below, but of which no methods are included."
@@ -1516,7 +1519,7 @@ addExample07LoadDynamicLibraryMethods
 		Symbol>>#flushCache.
 
 		Set class>>#new.
-		Set class>>#new:.
+		Set class>>#newWithRoomForMoreThan:.
 		Set class>>#sizeFor:.
 		Set>>#init:.
 		Set>>#atNewIndex:put:.
@@ -1552,7 +1555,7 @@ addExample07LoadDynamicLibraryMethods
 		IdentityDictionary>>#scanFor:.
 
 		MethodDictionary class>>#new.
-		MethodDictionary class>>#new:.
+		MethodDictionary class>>#newWithRoomForMoreThan:.
 		MethodDictionary>>#at:ifAbsent:.
 		MethodDictionary>>#scanFor:.
 		MethodDictionary>>#postCopy.

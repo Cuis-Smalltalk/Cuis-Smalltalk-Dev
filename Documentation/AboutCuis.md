@@ -44,7 +44,7 @@ We follow a set of ideas that started with Jean Piaget's [Constructivism](https:
 
 Cuis Smalltalk is our attempt at this challenge. Furthermore, we believe we are doing something else that no other Smalltalk, commercial or open source, does. We attempt to give a true Smalltalk-80 experience, and keep Smalltalk-80 not just as legacy software historic significance, but as a live, evolving system. We feel we are the keepers of this Smalltalk heritage, and enablers of the Dynabook experience.
 
-Cuis is continuously evolving towards simplicity. Each release is better (i.e. simpler) than the previous one. At the same time, features are enhanced, and any reported bugs fixed. We also adopt recent enhancements from Squeak and share our work with the wider Squeak and Smalltalk community.
+As Cuis evolves, we keep on these values. Every update, be it a bug fix or a feature enhancement, is reviewed carefully to avoid adding unneeded complexity to the system. Every opportunity to remove unneeded complexity is followed. As we go, features are enhanced, and any reported bugs fixed. We also adopt selected enhancements from Squeak and Pharo, and share our work with the wider Smalltalk community.
 
 ## About the name Cuis
 [(back to ToC)](#table-of-contents)

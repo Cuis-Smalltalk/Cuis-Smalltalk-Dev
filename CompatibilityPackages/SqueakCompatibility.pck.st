@@ -1,6 +1,6 @@
-'From Cuis6.3 [latest update: #6216] on 6 February 2024 at 4:46:53 pm'!
+'From Cuis6.3 [latest update: #6221] on 7 February 2024 at 5:21:36 pm'!
 'Description Various code used in Squeak which is not in Cuis.'!
-!provides: 'SqueakCompatibility' 1 42!
+!provides: 'SqueakCompatibility' 1 43!
 !requires: 'Cuis-Base' 6 3 nil!
 SystemOrganization addCategory: #SqueakCompatibility!
 SystemOrganization addCategory: #'SqueakCompatibility-System-Files'!
@@ -3193,6 +3193,16 @@ cull: firstArg cull: secondArg cull: thirdArg cull: fourthArg
 cursorPoint
 	^self mousePoint! !
 
+!Collection class methodsFor: '*squeakCompatibility' stamp: 'HAW 5/18/2019 09:36:08'!
+ofSize: aSize
+
+	"Create a new collection of size aSize with nil as its elements.
+	This method exists because OrderedCollection new: aSize creates an
+	empty collection,  not one of size aSize that it is necesary for #streamContents: 
+	when sent to OrderedCollection"
+	
+	^ self new: aSize! !
+
 !SequenceableCollection methodsFor: '*squeakCompatibility' stamp: 'jmv 4/2/2016 23:18'!
 doWithIndex: elementAndIndexBlock
 	"Old style. Prefer #withIndexDo:"
@@ -3355,6 +3365,13 @@ new: nElements
 
 	(self name, ' creation with the #new: message is only supported for compatibility. Sender is: ', thisContext sender printString) print.
 	^ self basicNew setCollection: (Array new: nElements)! !
+
+!OrderedCollection class methodsFor: '*squeakCompatibility' stamp: 'HAW 5/18/2019 16:49:03'!
+ofSize: aSize
+
+	"See superclass implementation"
+	
+	^ super new initializeOfSize: aSize! !
 
 !Bag class methodsFor: '*squeakCompatibility' stamp: 'jmv 2/6/2024 16:03:29'!
 new: nElements
