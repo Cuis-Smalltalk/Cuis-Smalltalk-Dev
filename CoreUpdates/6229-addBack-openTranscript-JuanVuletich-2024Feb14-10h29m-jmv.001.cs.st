@@ -3,7 +3,7 @@
 !TranscriptWindow class methodsFor: 'please-remove' stamp: 'jmv 2/14/2024 10:30:50'!
 openTranscript
 	"Only required for GitHub CI unti we push updated images"
-	Transcript open! !
+	^ Transcript open! !
 
 
 !TranscriptWindow class reorganize!
