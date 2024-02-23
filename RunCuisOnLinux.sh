@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # File:        			RunCuisOnLinux.sh, based on: squeak.sh
-# Author:      			Juan Vuletich, Fabio Niephaus, K K Subramaniam, Marcel Taeumel
+# Author:      			Fabio Niephaus, K K Subramaniam, Marcel Taeumel, Juan Vuletich
 # Description: 			Script to launch Cuis from a bundle, intended for Linux systems
 # usage:
 #    RunCuisOnLinux [<vmargs>] [ *.image [ <stargs> ... ]]
@@ -41,7 +41,7 @@ else # all-in-one bundle
 
     BINDIR="${ROOT}/CuisVM.app/Contents/Linux-${CPU}/"
     IMAGEDIR="${ROOT}/CuisImage/"
-    IMAGE="${IMAGEDIR}Cuis6.3-6202.image"
+    IMAGE="${IMAGEDIR}Cuis?.?-????.image"
 fi
 
 VM="${BINDIR}/${APP}"
