@@ -44,7 +44,7 @@ else # all-in-one bundle
     IMAGE="${IMAGEDIR}Cuis6.3-6222.image"
 fi
 
-VM="${BINDIR}/${APP}"
+VM="${BINDIR}${APP}"
 VMOPTIONS="-encoding UTF-8"
 STARGS=()
 
