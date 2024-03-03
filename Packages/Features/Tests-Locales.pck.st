@@ -1,66 +1,56 @@
-'From Cuis 6.0 [latest update: #5090] on 4 March 2022 at 9:31:22 am'!
+'From Cuis6.3 [latest update: #6247] on 2 March 2024 at 9:00:22 pm'!
 'Description '!
-!provides: 'System-Locales-Tests' 1 0!
-SystemOrganization addCategory: 'System-Locales-Tests'!
+!provides: 'Tests-Locales' 1 1!
+SystemOrganization addCategory: 'Tests-Locales'!
 
 
-!classDefinition: #ISOLanguageDefinitionTest category: 'System-Locales-Tests'!
+!classDefinition: #ISOLanguageDefinitionTest category: 'Tests-Locales'!
 TestCase subclass: #ISOLanguageDefinitionTest
 	instanceVariableNames: ''
 	classVariableNames: ''
-	poolDictionaries: 'nil'
-	category: 'System-Locales-Tests'!
-!classDefinition: 'ISOLanguageDefinitionTest class' category: 'System-Locales-Tests'!
+	poolDictionaries: ''
+	category: 'Tests-Locales'!
+!classDefinition: 'ISOLanguageDefinitionTest class' category: 'Tests-Locales'!
 ISOLanguageDefinitionTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #LocaleIDTest category: 'System-Locales-Tests'!
+!classDefinition: #LocaleIDTest category: 'Tests-Locales'!
 TestCase subclass: #LocaleIDTest
 	instanceVariableNames: ''
 	classVariableNames: ''
-	poolDictionaries: 'nil'
-	category: 'System-Locales-Tests'!
-!classDefinition: 'LocaleIDTest class' category: 'System-Locales-Tests'!
+	poolDictionaries: ''
+	category: 'Tests-Locales'!
+!classDefinition: 'LocaleIDTest class' category: 'Tests-Locales'!
 LocaleIDTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #LocaleTest category: 'System-Locales-Tests'!
+!classDefinition: #LocaleTest category: 'Tests-Locales'!
 TestCase subclass: #LocaleTest
 	instanceVariableNames: ''
 	classVariableNames: ''
-	poolDictionaries: 'nil'
-	category: 'System-Locales-Tests'!
-!classDefinition: 'LocaleTest class' category: 'System-Locales-Tests'!
+	poolDictionaries: ''
+	category: 'Tests-Locales'!
+!classDefinition: 'LocaleTest class' category: 'Tests-Locales'!
 LocaleTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #NaturalLanguageTranslatorTest category: 'System-Locales-Tests'!
+!classDefinition: #NaturalLanguageTranslatorTest category: 'Tests-Locales'!
 TestCase subclass: #NaturalLanguageTranslatorTest
 	instanceVariableNames: 'previousRegistered'
 	classVariableNames: ''
-	poolDictionaries: 'nil'
-	category: 'System-Locales-Tests'!
-!classDefinition: 'NaturalLanguageTranslatorTest class' category: 'System-Locales-Tests'!
+	poolDictionaries: ''
+	category: 'Tests-Locales'!
+!classDefinition: 'NaturalLanguageTranslatorTest class' category: 'Tests-Locales'!
 NaturalLanguageTranslatorTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #NameOfSubclass category: 'System-Locales-Tests'!
-Object subclass: #NameOfSubclass
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'System-Locales-Tests'!
-!classDefinition: 'NameOfSubclass class' category: 'System-Locales-Tests'!
-NameOfSubclass class
-	instanceVariableNames: ''!
-
-!classDefinition: #RegisterableTranslatorMock category: 'System-Locales-Tests'!
+!classDefinition: #RegisterableTranslatorMock category: 'Tests-Locales'!
 Object subclass: #RegisterableTranslatorMock
 	instanceVariableNames: 'translations'
 	classVariableNames: ''
-	poolDictionaries: 'nil'
-	category: 'System-Locales-Tests'!
-!classDefinition: 'RegisterableTranslatorMock class' category: 'System-Locales-Tests'!
+	poolDictionaries: ''
+	category: 'Tests-Locales'!
+!classDefinition: 'RegisterableTranslatorMock class' category: 'Tests-Locales'!
 RegisterableTranslatorMock class
 	instanceVariableNames: ''!
 

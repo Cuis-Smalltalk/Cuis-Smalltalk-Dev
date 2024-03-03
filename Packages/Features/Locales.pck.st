@@ -1,79 +1,39 @@
-'From Cuis6.3 [latest update: #6213] on 6 February 2024 at 10:26:11 am'!
+'From Cuis6.3 [latest update: #6247] on 2 March 2024 at 9:00:22 pm'!
 'Description '!
-!provides: 'System-Locales' 1 11!
-SystemOrganization addCategory: #'System-Locales'!
-SystemOrganization addCategory: #'System-Locales-Tests'!
+!provides: 'Locales' 1 12!
+SystemOrganization addCategory: #'Locales'!
 
 
-!classDefinition: #ISOLanguageDefinitionTest category: #'System-Locales-Tests'!
-TestCase subclass: #ISOLanguageDefinitionTest
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'System-Locales-Tests'!
-!classDefinition: 'ISOLanguageDefinitionTest class' category: #'System-Locales-Tests'!
-ISOLanguageDefinitionTest class
-	instanceVariableNames: ''!
-
-!classDefinition: #LocaleIDTest category: #'System-Locales-Tests'!
-TestCase subclass: #LocaleIDTest
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'System-Locales-Tests'!
-!classDefinition: 'LocaleIDTest class' category: #'System-Locales-Tests'!
-LocaleIDTest class
-	instanceVariableNames: ''!
-
-!classDefinition: #LocaleTest category: #'System-Locales-Tests'!
-TestCase subclass: #LocaleTest
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'System-Locales-Tests'!
-!classDefinition: 'LocaleTest class' category: #'System-Locales-Tests'!
-LocaleTest class
-	instanceVariableNames: ''!
-
-!classDefinition: #ISOLanguageDefinition category: #'System-Locales'!
+!classDefinition: #ISOLanguageDefinition category: #'Locales'!
 Object subclass: #ISOLanguageDefinition
 	instanceVariableNames: 'iso3 iso2 iso3Alternate language'
 	classVariableNames: 'ISO2Countries ISO2Table ISO3Countries ISO3Table'
 	poolDictionaries: ''
-	category: 'System-Locales'!
-!classDefinition: 'ISOLanguageDefinition class' category: #'System-Locales'!
+	category: 'Locales'!
+!classDefinition: 'ISOLanguageDefinition class' category: #'Locales'!
 ISOLanguageDefinition class
 	instanceVariableNames: ''!
 
-!classDefinition: #Locale category: #'System-Locales'!
+!classDefinition: #Locale category: #'Locales'!
 Object subclass: #Locale
 	instanceVariableNames: 'id'
 	classVariableNames: 'Activated Current CurrentPlatform KnownLocales LanguageSymbols LocaleChangeListeners PlatformEncodings Previous'
 	poolDictionaries: ''
-	category: 'System-Locales'!
-!classDefinition: 'Locale class' category: #'System-Locales'!
+	category: 'Locales'!
+!classDefinition: 'Locale class' category: #'Locales'!
 Locale class
 	instanceVariableNames: ''!
 
-!classDefinition: #LocaleID category: #'System-Locales'!
+!classDefinition: #LocaleID category: #'Locales'!
 Object subclass: #LocaleID
 	instanceVariableNames: 'isoLanguage isoCountry'
 	classVariableNames: ''
 	poolDictionaries: ''
-	category: 'System-Locales'!
-!classDefinition: 'LocaleID class' category: #'System-Locales'!
+	category: 'Locales'!
+!classDefinition: 'LocaleID class' category: #'Locales'!
 LocaleID class
 	instanceVariableNames: ''!
 
-
-!ISOLanguageDefinitionTest commentStamp: '' prior: 0!
-Unit tests on ISO language definitions!
-
-!LocaleIDTest commentStamp: '' prior: 0!
-A unit test class for class LocaleID!
-
-!LocaleTest commentStamp: '' prior: 0!
-A unit test class for class Locale!
 
 !ISOLanguageDefinition commentStamp: '' prior: 0!
 The language definitions from International Organization for Standardization.
@@ -98,99 +58,6 @@ http://mitglied.lycos.de/buran/knowhow/codes/locales/!
 !LocaleID commentStamp: '' prior: 0!
 The ID for localization!
 
-!ISOLanguageDefinitionTest methodsFor: 'tests'!
-testISO2LanguageDefinition
-
-	self 
-		assert: (ISOLanguageDefinition iso2LanguageDefinition: 'de') language equals: 'German';
-		assert: (ISOLanguageDefinition iso2LanguageDefinition: 'fr') language equals: 'French'! !
-
-!ISOLanguageDefinitionTest methodsFor: 'tests'!
-testISO3LanguageDefinition
-
-	self 
-		assert: (ISOLanguageDefinition iso3LanguageDefinition: 'deu') language equals: 'German';
-		assert: (ISOLanguageDefinition iso3LanguageDefinition: 'fra') language equals: 'French'! !
-
-!LocaleIDTest methodsFor: 'tests' stamp: 'hlsf 3/4/2022 09:17:47'!
-testComparision
-
-	self deny: self germanLocaleID = self frenchLocaleID.
-	self assert: self germanLocaleID equals: self germanLocaleID.	! !
-
-!LocaleIDTest methodsFor: 'tests'!
-testFromISOString
-
-	| locale |
-	locale _ LocaleID isoString: 'en-us'.
-	self 
-		assert: locale isoLanguage equals: 'en';
-		assert: locale isoCountry equals: 'us'! !
-
-!LocaleIDTest methodsFor: 'tests'!
-testFromSingleISOString
-
-	| locale |
-	locale _ LocaleID isoString: 'en'.
-	self 
-		assert: locale isoLanguage equals: 'en';
-		assert: locale isoCountry isNil! !
-
-!LocaleIDTest methodsFor: 'tests'!
-testHashing
-
-	self assert: self germanLocaleID hash equals: self germanLocaleID hash.
-	self assert: self frenchLocaleID hash equals: self frenchLocaleID hash.	
-! !
-
-!LocaleIDTest methodsFor: 'tests'!
-testInstanceCreationWithISOLanguage
-
-	|germanLocale|
-	germanLocale _ LocaleID isoLanguage: 'de'.
-	self assert: germanLocale isoLanguage equals: 'de'! !
-
-!LocaleIDTest methodsFor: 'tests'!
-testInstanceCreationWithISOLanguageAndCountry
-
-	|locale|
-	locale _ LocaleID isoLanguage: 'zh' isoCountry: 'CN'.
-	self 
-		assert: locale isoLanguage equals: 'zh';
-		assert: locale isoCountry equals: 'CN'! !
-
-!LocaleIDTest methodsFor: 'tests'!
-testPosixNameConversion
-
-	| locale |
-	locale _ LocaleID posixName: 'en_us'.
-	self 
-		assert: locale isoLanguage equals: 'en';
-		assert: locale isoCountry equals: 'us'! !
-
-!LocaleIDTest methodsFor: 'tests'!
-testPrintString
-
-	| locale |
-	locale _ LocaleID isoString: 'en-us'.	
-	self assert: locale printString equals: 'en-us'
-! !
-
-!LocaleIDTest methodsFor: 'tests - test data'!
-frenchLocaleID
-
-	^LocaleID isoLanguage: 'fr'! !
-
-!LocaleIDTest methodsFor: 'tests - test data'!
-germanLocaleID
-
-	^LocaleID isoLanguage: 'de'! !
-
-!LocaleTest methodsFor: 'tests'!
-testCurrent
-
-	self assert: Locale current notNil
-	! !
 
 !ISOLanguageDefinition methodsFor: 'accessing'!
 iso2
@@ -2903,7 +2770,7 @@ knownLocales
 	"KnownLocales _ nil"
 	^KnownLocales ifNil: [KnownLocales _ self initKnownLocales]! !
 
-!Locale class methodsFor: 'initialization' stamp: 'Install-System-Locales 7/3/2022 12:37:18'!
+!Locale class methodsFor: 'initialization' stamp: 'Install-Locales 7/3/2022 12:37:18'!
 initialize
 	Smalltalk addToStartUpList: Locale.
 	Preferences 

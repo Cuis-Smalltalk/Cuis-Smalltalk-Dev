@@ -1,7 +1,7 @@
-'From Cuis6.3 [latest update: #6213] on 6 February 2024 at 10:25:04 am'!
+'From Cuis6.3 [latest update: #6247] on 2 March 2024 at 9:00:22 pm'!
 'Description '!
-!provides: 'Gettext' 1 29!
-!requires: 'System-Locales' 1 4 nil!
+!provides: 'Gettext' 1 30!
+!requires: 'Locales' 1 12 nil!
 SystemOrganization addCategory: #Gettext!
 
 
@@ -137,7 +137,7 @@ Usage:
 
 The domain name map to a .mo file in {image|vm}Path/locale/{lang}/LC_MESSAGES/domain.mo
 For example locale/fr/LC_MESSAGES/drgeo.mo
-{lang} is the host language locale resolved by the System-Locales package.
+{lang} is the host language locale resolved by the Locales package.
 
 Class variables:
  ClassCategories				IdentityDictionary -- classCategory -> domainName 
