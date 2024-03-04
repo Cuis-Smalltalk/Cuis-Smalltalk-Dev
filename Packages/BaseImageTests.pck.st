@@ -1,6 +1,6 @@
-'From Cuis6.3 [latest update: #6213] on 6 February 2024 at 10:23:08 am'!
+'From Cuis6.3 [latest update: #6251] on 4 March 2024 at 3:36:54 pm'!
 'Description ExtractMethod for optimized messages test'!
-!provides: 'BaseImageTests' 1 383!
+!provides: 'BaseImageTests' 1 384!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Objects'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
@@ -19293,25 +19293,21 @@ directoryEntryForTest
 randomFileName
 	^100000 atRandom asString, '.fmtst'! !
 
-!FileManTest methodsFor: 'testing' stamp: 'jmv 6/15/2022 17:16:47'!
+!FileManTest methodsFor: 'testing' stamp: 'jmv 3/4/2024 15:35:39'!
 testAbsolutePath
 	"FileManTest debug: #testAbsolutePath"
 	| dirEntry dirEntry1 dirEntry2 dirEntry3 |
 	dirEntry := '/' asDirectoryEntry.
-	self should: [dirEntry = ':' asDirectoryEntry].
 	self should: [dirEntry = '\' asDirectoryEntry].
 	
 	dirEntry1 := '/temp/' asDirectoryEntry.
-	self should: [dirEntry1 = ':temp' asDirectoryEntry].
 	self should: [dirEntry1 = '\temp' asDirectoryEntry].
 
 	dirEntry2 := '/temp/a' asDirectoryEntry.
-	self should: [dirEntry2 = ':temp:a' asDirectoryEntry].
 	self should: [dirEntry2 = '\temp\a' asDirectoryEntry].
 
 	dirEntry3 := 'C:/temp/b' asDirectoryEntry.
-	self should: [dirEntry3 = 'C:\temp\b' asDirectoryEntry].
-	self should: [dirEntry3 = 'C::temp:b' asDirectoryEntry].! !
+	self should: [dirEntry3 = 'C:\temp\b' asDirectoryEntry].! !
 
 !FileManTest methodsFor: 'testing' stamp: 'jmv 5/31/2016 10:49'!
 testAtPut
@@ -19334,13 +19330,13 @@ testAtPut
 	dir recursiveDelete.
 	self should: [dir exists not]! !
 
-!FileManTest methodsFor: 'testing' stamp: 'jmv 5/31/2016 10:49'!
+!FileManTest methodsFor: 'testing' stamp: 'jmv 3/4/2024 15:35:54'!
 testConcatenation
 	"
 	FileManTest debug: #testConcatenation
 	"
 	| dir |
-	dir := ('./subDir' asDirectoryEntry / 'aaa/bbb' / 'ccc' / 'ddd\eee' / 'fff:ggg').
+	dir := ('./subDir' asDirectoryEntry / 'aaa/bbb' / 'ccc' / 'ddd\eee' / 'fff/ggg').
 	dir at: 'test1' put: 'RecursiveDeleted!!'.
 
 	self assert: dir name = 'ggg'.
@@ -19442,22 +19438,22 @@ testIsRelativePathName
 	self deny: 'C:/temp/b' isRelativePathName.
 	self deny: 'Macintosh HD/tmp' isRelativePathName.! !
 
-!FileManTest methodsFor: 'testing' stamp: 'jmv 5/31/2016 10:50'!
+!FileManTest methodsFor: 'testing' stamp: 'jmv 3/4/2024 15:36:12'!
 testPathComponents
 	"
 	FileManTest debug: #testPathComponents
 	"
 	| pathComponents |
 
-	pathComponents := './aaa/bbb\ccc:ddd' asDirectoryEntry pathComponents.
+	pathComponents := './aaa/bbb\ccc/ddd' asDirectoryEntry pathComponents.
 	pathComponents := pathComponents last: 4.
 	self assert: pathComponents asArray = #('aaa' 'bbb' 'ccc' 'ddd').
 
-	pathComponents := '/aaa/bbb\ccc:ddd' asDirectoryEntry pathComponents.
+	pathComponents := '/aaa/bbb\ccc/ddd' asDirectoryEntry pathComponents.
 	pathComponents := pathComponents last: 4.
 	self assert: pathComponents asArray = #('aaa' 'bbb' 'ccc' 'ddd').
 
-	pathComponents := 'aaa/bbb\ccc:ddd' asDirectoryEntry pathComponents.
+	pathComponents := 'aaa/bbb\ccc/ddd' asDirectoryEntry pathComponents.
 	pathComponents := pathComponents last: 4.
 	self assert: pathComponents asArray = #('aaa' 'bbb' 'ccc' 'ddd')! !
 
@@ -19549,7 +19545,7 @@ testRename
 	self should: [file1 exists not].
 	! !
 
-!FileManTest methodsFor: 'testing' stamp: 'jmv 5/31/2016 12:02'!
+!FileManTest methodsFor: 'testing' stamp: 'jmv 3/4/2024 15:36:21'!
 testRoot
 	"FileManTest debug: #testRoot"
 	| root |
@@ -19557,7 +19553,6 @@ testRoot
 	self should: [root pathComponents isEmpty].
 	FileIOAccessor default onUnix ifTrue: [
 		self should: [root = '\' asDirectoryEntry]. 
-		self should: [root = ':' asDirectoryEntry]. 
 		self should: [root = '/' asDirectoryEntry]]! !
 
 !FileManTest methodsFor: 'testing' stamp: 'jmv 5/31/2016 11:19'!
