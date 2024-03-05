@@ -1,4 +1,4 @@
-# Bootstrap: Creating Minimal Imaged from Srcatch
+# Bootstrap: Creating Minimal Imaged from Scratch
 
 [Presentation](Bootstrap.key.pdf) given by Juan at the [Smalltalks 2023](https://smalltalks2023.fast.org.ar) conference at Buenos Aires.
 
