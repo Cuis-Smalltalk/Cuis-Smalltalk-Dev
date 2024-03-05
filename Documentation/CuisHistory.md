@@ -126,6 +126,6 @@ A new framework for bootstrapping Smalltalk images in the Spur format. A new bin
 https://lists.cuis.st/mailman/archives/cuis-dev/2023-October/008099.html
 
 ## 2023-12-29 - Cuis 6.2 Stable Release, Cuis 6.3 Rolling Release ##
-First release following a new Release Process. Traditional Rolling Release is now 6.3.
+First release of Cuis following a new Release Process: Cuis 6.2 Stable Release. Traditional Rolling Release is now 6.3.
 
 https://lists.cuis.st/mailman/archives/cuis-dev/2023-December/008269.html
