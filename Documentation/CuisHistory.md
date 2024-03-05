@@ -120,5 +120,10 @@ https://lists.cuis.st/mailman/archives/cuis-dev/2022-May/005654.html
 ## 2022-10-28 - Unicode enabled by default ##
 All code files are UTF-8. All Strings and code in the image can hold Unicode. All text is rasterized by our Vector Graphics engine from TrueType font definitions.
 
+## 2023 - Bootstrap and Dynamic Libraries ##
+A new framework for bootstrapping Smalltalk images in the Spur format. A new binary, precompiled format for Smalltalk libraries that can be dynamically bound to a running image.
+
+https://lists.cuis.st/mailman/archives/cuis-dev/2023-October/008099.html
+
 ## 2023-11-20 - Cuis 6.2 Stable Release ##
 First release following a new Release Process.
