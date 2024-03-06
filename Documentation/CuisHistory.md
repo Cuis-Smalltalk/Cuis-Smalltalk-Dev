@@ -38,7 +38,7 @@ http://www.jvuletich.org/Morphic3/Smalltalks2007/Smalltalks2007.html
 
 ## 2009-03-27 - Cuis 1.0 ##
 [Ann] Cuis: A new Squeak distribution
-When it started to be clear that neither Squeak nor Pharo would rebase their codebase on our reduced kernel image, Juan decided to turn it into an Open Source, Community Maintained, Smalltalk system, independent of all others.
+When it started to be clear that neither Squeak nor Pharo would rebase their codebase on our reduced kernel image, Juan decided to turn it into an Open Source, Community Maintained, Smalltalk system, as a separate project.
 
 http://lists.squeakfoundation.org/pipermail/squeak-dev/2009-March/134986.html
 
