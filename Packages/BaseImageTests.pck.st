@@ -1,6 +1,6 @@
-'From Cuis6.3 [latest update: #6251] on 4 March 2024 at 3:36:54 pm'!
+'From Cuis6.3 [latest update: #6275] on 14 March 2024 at 12:24:59 pm'!
 'Description ExtractMethod for optimized messages test'!
-!provides: 'BaseImageTests' 1 384!
+!provides: 'BaseImageTests' 1 385!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Objects'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
@@ -16698,20 +16698,20 @@ doTestDebuggerTempAccessWith: one with: two
 	self assert: local1 = 25.
 	self assert: remote1 = (6/7)! !
 
-!ClosureCompilerTest methodsFor: 'tests' stamp: 'jmv 6/1/2021 14:22:49'!
+!ClosureCompilerTest methodsFor: 'tests' stamp: 'jmv 3/14/2024 12:23:53'!
 supportTestSourceRangeAccessForDecompiledInjectInto: method source: source
 	"Test debugger source range selection for inject:into:"
 	^self
 		supportTestSourceRangeAccessForInjectInto: method
 		source: source
-		selectionSequence: #(	'_ arg1'
-								'do: [:argm1_5 | temp3 _ arg2 value: temp3 value: argm1_5]'
+		selectionSequence: #(	':= arg1'
+								'do: [:argm1_5 | temp3 := arg2 value: temp3 value: argm1_5]'
 								'value: temp3 value: argm1_5'
-								'_ arg2 value: temp3 value: argm1_5'
-								'temp3 _ arg2 value: temp3 value: argm1_5'
+								':= arg2 value: temp3 value: argm1_5'
+								'temp3 := arg2 value: temp3 value: argm1_5'
 								'value: temp3 value: argm1_5'
-								'_ arg2 value: temp3 value: argm1_5'
-								'temp3 _ arg2 value: temp3 value: argm1_5'
+								':= arg2 value: temp3 value: argm1_5'
+								'temp3 := arg2 value: temp3 value: argm1_5'
 								'^temp3')! !
 
 !ClosureCompilerTest methodsFor: 'tests' stamp: 'eem 6/4/2008 19:44'!
@@ -16784,13 +16784,13 @@ supportTestSourceRangeAccessForInjectInto: method source: source selectionSequen
 				 self assert: (Scanner new scanTokens: (source copyFrom: range first to: range last)) = debugTokens]].
 	self assert: evaluationCount = 2! !
 
-!ClosureCompilerTest methodsFor: 'tests' stamp: 'jmv 7/31/2023 12:17:23'!
+!ClosureCompilerTest methodsFor: 'tests' stamp: 'jmv 3/14/2024 12:18:54'!
 testBlockDoitDecompilation
 	"Tests that decompile of a doit block with remote vars executes correcly"
 	"Tests that decompilation of a Block, when 'method' of block is equivalent to that compiled by a DoIt, preserves the temp names "
 	
 	| blockSourceStream methodNode block decompiledBlock method |
-	blockSourceStream := '|x y| [:a :b | x _ a. y _ b. x + y]' readStream.
+	blockSourceStream := '|x y| [:a :b | x := a. y := b. x + y]' readStream.
 	methodNode := Compiler new 
 						from: blockSourceStream class: nil class context: nil notifying: nil;
 						translate: blockSourceStream noPattern: true ifFail: [nil].
@@ -16800,8 +16800,8 @@ testBlockDoitDecompilation
 	self shouldnt: [decompiledBlock := block decompile] raise: Error.
 	self assert: decompiledBlock printString equals:
  '{[ :argm0_4 :argm0_5 |
-	temp1 _ argm0_4.
-	temp3 _ argm0_5.
+	temp1 := argm0_4.
+	temp3 := argm0_5.
 	temp1 + temp3. ]}'.! !
 
 !ClosureCompilerTest methodsFor: 'tests' stamp: 'jmv 1/17/2011 00:13'!
@@ -16872,7 +16872,7 @@ testDebuggerTempAccess
 	"This test also fails in Squeak. Check if it is ever fixed."
 	self shouldFail: [ self doTestDebuggerTempAccessWith: 1 with: 2 ]! !
 
-!ClosureCompilerTest methodsFor: 'tests' stamp: 'jmv 6/1/2021 14:19:36'!
+!ClosureCompilerTest methodsFor: 'tests' stamp: 'jmv 3/14/2024 12:21:25'!
 testInjectIntoDecompilationsEncoderForV3PlusClosures
 	"Test various compilations decompile to the same code for a method sufficiently
 	 simple that this is possible and sufficiently complex that the code generated
@@ -16880,9 +16880,8 @@ testInjectIntoDecompilationsEncoderForV3PlusClosures
 	"self new testInjectIntoDecompilationsEncoderForV3PlusClosures"
 	| source |
 
-	source := (Collection sourceCodeAt: #inject:into:) asString.
-	{ EncoderForV3PlusClosures } do:
-		[:encoderClass| | method |
+	source := Collection sourceCodeAt: #inject:into:.
+	{ EncoderForV3PlusClosures } do: [ :encoderClass | | method |
 		method := (Parser new
 							encoderClass: encoderClass;
 							parse: source
@@ -16891,19 +16890,18 @@ testInjectIntoDecompilationsEncoderForV3PlusClosures
 		self assert: (Scanner new scanTokens: method decompileString)
 					= #(inject: arg1 into: arg2
 							| temp3 |
-							temp3 _ arg1 .
-							self do: [ ':argm1_5' | temp3 _ arg2 value: temp3 value: argm1_5 ] .
+							temp3 := arg1 .
+							self do: [ ':argm1_5' | temp3 := arg2 value: temp3 value: argm1_5 ] .
 							^ temp3 . )]! !
 
-!ClosureCompilerTest methodsFor: 'tests' stamp: 'jmv 5/27/2015 13:04'!
+!ClosureCompilerTest methodsFor: 'tests' stamp: 'jmv 3/14/2024 12:21:01'!
 testInjectIntoDecompiledDebugs
 	"Test various debugs of the decompiled form debug correctly."
 	"self new testInjectIntoDecompiledDebugs"
 	| source |
 
-	source := (Collection sourceCodeAt: #inject:into:) asString.
-	{ EncoderForV3PlusClosures } do:
-		[:encoderClass| | method |
+	source := Collection sourceCodeAt: #inject:into:.
+	{ EncoderForV3PlusClosures } do: [ :encoderClass | | method |
 		method := (Parser new
 							encoderClass: encoderClass;
 							parse: source
@@ -16969,12 +16967,12 @@ testInlineBlockCollectionSD1
 	b2 := b2 asArray collect: [:b | b value].
 	self assert: b1 = b2! !
 
-!ClosureCompilerTest methodsFor: 'tests' stamp: 'eem 6/4/2008 15:20'!
+!ClosureCompilerTest methodsFor: 'tests' stamp: 'jmv 3/14/2024 12:21:37'!
 testSourceRangeAccessForClosureBytecodeInjectInto
 	"Test debugger source range selection for inject:into: for a version compiled with closures"
 	"self new testSourceRangeAccessForClosureBytecodeInjectInto"
 	| source method |
-	source := (Collection sourceCodeAt: #inject:into:) asString.
+	source := Collection sourceCodeAt: #inject:into:.
 	method := (Parser new
 						encoderClass: EncoderForV3PlusClosures;
 						parse: source
@@ -16982,12 +16980,12 @@ testSourceRangeAccessForClosureBytecodeInjectInto
 					generate: (Collection compiledMethodAt: #inject:into:) trailer.
 	self supportTestSourceRangeAccessForInjectInto: method source: source! !
 
-!ClosureCompilerTest methodsFor: 'tests' stamp: 'eem 6/4/2008 11:40'!
+!ClosureCompilerTest methodsFor: 'tests' stamp: 'jmv 3/14/2024 12:21:44'!
 testSourceRangeAccessForInjectInto
 	"Test debugger source range selection for inject:into: for the current version of the method"
 	"self new testSourceRangeAccessForInjectInto"
 	self supportTestSourceRangeAccessForInjectInto: (Collection compiledMethodAt: #inject:into:)
-		source: (Collection sourceCodeAt: #inject:into:) asString! !
+		source: (Collection sourceCodeAt: #inject:into:)! !
 
 !ClosureCompilerTest methodsFor: 'tests' stamp: 'eem 6/15/2008 11:26'!
 testTempNameAccessForInjectInto
