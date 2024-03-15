@@ -1,6 +1,6 @@
-'From Cuis6.3 [latest update: #6275] on 14 March 2024 at 12:24:59 pm'!
+'From Cuis6.3 [latest update: #6277] on 15 March 2024 at 4:53:52 pm'!
 'Description ExtractMethod for optimized messages test'!
-!provides: 'BaseImageTests' 1 385!
+!provides: 'BaseImageTests' 1 386!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Objects'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
@@ -19264,16 +19264,12 @@ test03
 	self assert: (all includes: {'car'. String. Float pi. SmallFloat64}).
 	self assert: (all includes: {'cat'. UnicodeString. Date today. Date}).! !
 
-!FileIOAccessorTest methodsFor: 'private' stamp: 'jmv 5/31/2016 10:30'!
-defaultDirectoryPath
-	^DirectoryEntry currentDirectory pathName! !
-
-!FileIOAccessorTest methodsFor: 'testing' stamp: 'jmv 5/31/2016 10:48'!
+!FileIOAccessorTest methodsFor: 'testing' stamp: 'jmv 3/15/2024 16:53:35'!
 testDirectoryExists
 	"FileIOAccessorTest debug: #testDirectoryExists"
 	| subDirString dirString |
 	subDirString := 99999 atRandom asString.
-	dirString := self defaultDirectoryPath, FileIOAccessor default slash, subDirString.
+	dirString := DirectoryEntry userBaseDirectory pathName, FileIOAccessor default slash, subDirString.
 
 	FileIOAccessor default createDirectory: dirString.
 
@@ -19373,7 +19369,7 @@ testCopy
 	
 	! !
 
-!FileManTest methodsFor: 'testing' stamp: 'jmv 6/1/2016 17:17'!
+!FileManTest methodsFor: 'testing' stamp: 'jmv 3/15/2024 16:53:40'!
 testDefaultDirectory
 	"
 	FileManTest debug: #testDefaultDirectory
@@ -19381,13 +19377,9 @@ testDefaultDirectory
 	
 	| pathComponents |
 
-	"
-	See #asAbsolutePathName. See #isAbsolutePathName
-	self assert: '' asDirectoryEntry =  DirectoryEntry currentDirectory.
-	"
-
+	self assert: '' asDirectoryEntry =  DirectoryEntry userBaseDirectory.
 	pathComponents := '' asDirectoryEntry pathComponents.
-	self assert: pathComponents = DirectoryEntry currentDirectory pathComponents! !
+	self assert: pathComponents = DirectoryEntry userBaseDirectory pathComponents! !
 
 !FileManTest methodsFor: 'testing' stamp: 'jmv 5/31/2016 10:49'!
 testFileContents
