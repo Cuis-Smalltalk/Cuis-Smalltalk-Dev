@@ -3,9 +3,9 @@
 Utilities classPool at: #AuthorName put: 'TravisCI'.
 Utilities classPool at: #AuthorInitials put: 'TCI'.
 
-CodePackageFile installPackage: './Packages/BaseImageTests.pck.st' asFileEntry.
+CodePackageFile installPackage: DirectoryEntry currentDirectory // 'Packages/BaseImageTests.pck.st'.
 
-ChangeSet fileIn: './.ContinuousIntegrationScripts/TestResultConsolePrinter.st' asFileEntry.
+ChangeSet fileIn: DirectoryEntry currentDirectory // '.ContinuousIntegrationScripts/TestResultConsolePrinter.st'.
 
 testSuite := TestSuite new.
 testCases := TestCase allSubclasses reject: [:testCase | testCase isAbstract].
