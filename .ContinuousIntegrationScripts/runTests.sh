@@ -3,14 +3,15 @@
 set -euo pipefail
 
 IMAGE_FILE="$(ls CuisImage/ | grep 'Cuis6.3-[0-9]\+.image')"
-RUN_TESTS_SCRIPT_FILEPATH="/home/runner/work/Cuis-Smalltalk-Dev/Cuis-Smalltalk-Dev/.ContinuousIntegrationScripts/runTests.st"
+RUN_TESTS_SCRIPT_FILEPATH_LINUX="/home/runner/work/Cuis-Smalltalk-Dev/Cuis-Smalltalk-Dev/.ContinuousIntegrationScripts/runTests.st"
+RUN_TESTS_SCRIPT_FILEPATH_MACOS=".ContinuousIntegrationScripts/runTests.st"
 
 runTestsOnLinux() {
-  /home/runner/work/Cuis-Smalltalk-Dev/Cuis-Smalltalk-Dev/sqcogspur64linux/squeak -vm-display-null CuisImage/"$IMAGE_FILE" -s "$RUN_TESTS_SCRIPT_FILEPATH"
+  /home/runner/work/Cuis-Smalltalk-Dev/Cuis-Smalltalk-Dev/sqcogspur64linux/squeak -vm-display-null CuisImage/"$IMAGE_FILE" -s "$RUN_TESTS_SCRIPT_FILEPATH_LINUX"
 }
 
 runTestsOnMacOS() {
-  /Applications/Squeak.app/Contents/MacOS/Squeak -headless CuisImage/"$IMAGE_FILE" -s "$RUN_TESTS_SCRIPT_FILEPATH"
+  /Applications/Squeak.app/Contents/MacOS/Squeak -headless CuisImage/"$IMAGE_FILE" -s "$RUN_TESTS_SCRIPT_FILEPATH_MACOS"
 }
 
 case $RUNNER_OS in
