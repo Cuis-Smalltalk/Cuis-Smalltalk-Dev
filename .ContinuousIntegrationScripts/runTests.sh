@@ -10,8 +10,6 @@ runTestsOnLinux() {
 }
 
 runTestsOnMacOS() {
-JJJ=`pwd`
-echo JJJ
   /Applications/Squeak.app/Contents/MacOS/Squeak -headless CuisImage/"$IMAGE_FILE" -s "$RUN_TESTS_SCRIPT_FILEPATH"
 }
 
