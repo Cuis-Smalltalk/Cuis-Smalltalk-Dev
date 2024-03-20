@@ -1,6 +1,6 @@
-'From Cuis6.3 [latest update: #6285] on 20 March 2024 at 4:21:27 pm'!
+'From Cuis6.3 [latest update: #6286] on 20 March 2024 at 6:51:50 pm'!
 'Description ExtractMethod for optimized messages test'!
-!provides: 'BaseImageTests' 1 389!
+!provides: 'BaseImageTests' 1 390!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Objects'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
@@ -22837,7 +22837,7 @@ testShouldRaiseWithMessageTextDoesNotFailWithRightMessageText
 		raise: TestResult failure 
 		! !
 
-!TestCaseTest methodsFor: 'exception testing tests' stamp: 'jmv 3/20/2024 16:21:10'!
+!TestCaseTest methodsFor: 'exception testing tests' stamp: 'HAW 2/6/2019 13:38:00'!
 testShouldRaiseWithMessageTextFailsWithDifferentMessageText
 
 	self 
@@ -22845,9 +22845,8 @@ testShouldRaiseWithMessageTextFailsWithDifferentMessageText
 			self 
 				should: [ self error: 'some message' ]
 				raise: Error
-				withMessageText: 'a different message' ]
-		raise: TestResult failure 
-		! !
+				withMessageText: '' ]
+		raise: TestResult failure! !
 
 !TestCaseTest methodsFor: 'exception testing tests' stamp: 'HAW 3/17/2019 06:42:30'!
 testShoulndFailErrorsWhenAnErrorIsSignaled
@@ -22945,17 +22944,19 @@ testAssertIsNotCloseWithPrecisionPassesWhenDifferenceIsBiggerThanPrecision
 	
 	self assert: originalNumber isNotCloseTo: newValue withPrecision: precision! !
 
-!TestCaseTest methodsFor: 'includes' stamp: 'HAW 5/15/2019 18:49:51'!
+!TestCaseTest methodsFor: 'includes' stamp: 'jmv 3/20/2024 18:35:09'!
 testAssertIncludesFailsWhenElementIsNotIncludedInCollection
-	
+
 	| collection anElement |
-	
-	anElement _ 1.
-	collection _ #().
-	
+
+	anElement := 1.
+	collection := #().
+
 	self should: [ self assert: collection includes: anElement ] 
 		 raise: TestResult failure
-		 withMessageText: collection asString, ' does not include ', anElement asString! !
+		withExceptionDo: [ :anException | | expectedError |
+			expectedError := collection asString, ' does not include ', anElement asString.
+			self assert: (anException messageText endsWith: expectedError) ]! !
 
 !TestCaseTest methodsFor: 'includes' stamp: 'HAW 5/15/2019 18:50:04'!
 testAssertIncludesShouldNotFailWhenElementIsInCollection
@@ -24317,8 +24318,8 @@ assertCreation: aCreationBlock failsWith: aStringOrBlock
 		raise: self refactoringError
 		withMessageText: aStringOrBlock ! !
 
-!RefactoringTest methodsFor: 'assertions' stamp: 'jmv 3/20/2024 16:02:54'!
-assertCreation: aCreationBlock warnsWith: aStringOrBlock 
+!RefactoringTest methodsFor: 'assertions' stamp: 'jmv 3/20/2024 18:23:28'!
+assertCreation: aCreationBlock warnsWith: aStringOrBlock
 
 	| warningSignaled |
 	
@@ -24326,10 +24327,10 @@ assertCreation: aCreationBlock warnsWith: aStringOrBlock
 	aCreationBlock 
 		on: self refactoringWarning
 		do: [ :aWarning |
-			self assert: (aStringOrBlock value endsWith: aWarning messageText).
+			self assert: aStringOrBlock value equals: aWarning messageText.
 			warningSignaled := true.
 			aWarning resume ].
-		
+
 	self assert: warningSignaled description: 'Warning was not signaled'! !
 
 !RefactoringTest methodsFor: 'exceptions' stamp: 'HAW 8/17/2018 16:38:44'!
