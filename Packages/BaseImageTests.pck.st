@@ -1,6 +1,6 @@
-'From Cuis6.3 [latest update: #6284] on 20 March 2024 at 4:06:30 pm'!
+'From Cuis6.3 [latest update: #6285] on 20 March 2024 at 4:21:27 pm'!
 'Description ExtractMethod for optimized messages test'!
-!provides: 'BaseImageTests' 1 388!
+!provides: 'BaseImageTests' 1 389!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Objects'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
@@ -22837,7 +22837,7 @@ testShouldRaiseWithMessageTextDoesNotFailWithRightMessageText
 		raise: TestResult failure 
 		! !
 
-!TestCaseTest methodsFor: 'exception testing tests' stamp: 'HAW 2/6/2019 13:38:00'!
+!TestCaseTest methodsFor: 'exception testing tests' stamp: 'jmv 3/20/2024 16:21:10'!
 testShouldRaiseWithMessageTextFailsWithDifferentMessageText
 
 	self 
@@ -22845,7 +22845,7 @@ testShouldRaiseWithMessageTextFailsWithDifferentMessageText
 			self 
 				should: [ self error: 'some message' ]
 				raise: Error
-				withMessageText: '' ]
+				withMessageText: 'a different message' ]
 		raise: TestResult failure 
 		! !
 
