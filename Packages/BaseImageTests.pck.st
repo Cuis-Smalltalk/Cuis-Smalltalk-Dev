@@ -1,6 +1,6 @@
-'From Cuis6.3 [latest update: #6284] on 20 March 2024 at 3:47:29 pm'!
+'From Cuis6.3 [latest update: #6284] on 20 March 2024 at 4:06:30 pm'!
 'Description ExtractMethod for optimized messages test'!
-!provides: 'BaseImageTests' 1 387!
+!provides: 'BaseImageTests' 1 388!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Objects'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
@@ -24309,16 +24309,16 @@ assert: expected equals: actual
 
 	super assert: actual equals: expected! !
 
-!RefactoringTest methodsFor: 'assertions' stamp: 'HAW 6/1/2017 19:01:00'!
-assertCreation: aCreationBlock failsWith: aMessageTextCreator
+!RefactoringTest methodsFor: 'assertions' stamp: 'jmv 3/20/2024 15:59:45'!
+assertCreation: aCreationBlock failsWith: aStringOrBlock
 
 	self 
 		should: aCreationBlock 
 		raise: self refactoringError
-		withMessageText: aMessageTextCreator ! !
+		withMessageText: aStringOrBlock ! !
 
-!RefactoringTest methodsFor: 'assertions' stamp: 'HAW 5/29/2023 12:17:08'!
-assertCreation: aCreationBlock warnsWith: aMessageTextCreator 
+!RefactoringTest methodsFor: 'assertions' stamp: 'jmv 3/20/2024 16:02:54'!
+assertCreation: aCreationBlock warnsWith: aStringOrBlock 
 
 	| warningSignaled |
 	
@@ -24326,7 +24326,7 @@ assertCreation: aCreationBlock warnsWith: aMessageTextCreator
 	aCreationBlock 
 		on: self refactoringWarning
 		do: [ :aWarning |
-			self assert: aMessageTextCreator value equals: aWarning messageText.
+			self assert: (aStringOrBlock value endsWith: aWarning messageText).
 			warningSignaled := true.
 			aWarning resume ].
 		
@@ -29457,12 +29457,12 @@ setUp
 	
 	instanceVariableToPushDown := 'a'.! !
 
-!PushDownInstanceVariableTest methodsFor: 'assertions' stamp: 'HAW 12/26/2019 19:41:11'!
-assertPushDownCreationFailsWith: aMessageTextCreator
+!PushDownInstanceVariableTest methodsFor: 'assertions' stamp: 'jmv 3/20/2024 16:00:17'!
+assertPushDownCreationFailsWith: aStringOrBlock
 
 	self
 		assertCreation: [ PushDownInstanceVariable named: instanceVariableToPushDown from: classToRefactor. ]
-		failsWith: aMessageTextCreator ! !
+		failsWith: aStringOrBlock ! !
 
 !PushDownMethodTest methodsFor: 'assertions' stamp: 'HAW 7/12/2023 21:15:23'!
 assert: classToRefactor implementsSendingSubclassResponsibility: selector
@@ -29974,12 +29974,12 @@ setUp
 	
 	instanceVariableToPushUp := 'a'.! !
 
-!PushUpInstanceVariableTest methodsFor: 'assertions' stamp: 'HAW 12/26/2019 20:18:51'!
-assertPushUpCreationFailsWith: aMessageTextCreator
+!PushUpInstanceVariableTest methodsFor: 'assertions' stamp: 'jmv 3/20/2024 16:00:22'!
+assertPushUpCreationFailsWith: aStringOrBlock
 
 	self
 		assertCreation: [ PushUpInstanceVariable named: instanceVariableToPushUp from: classToRefactor. ]
-		failsWith: aMessageTextCreator.! !
+		failsWith: aStringOrBlock.! !
 
 !PushUpMethodTest methodsFor: 'tests' stamp: 'MSC 11/12/2019 11:47:47'!
 test01AnEmptyMethodOnClassToRefactorShouldBePushedUpToSuperclass
@@ -31529,18 +31529,18 @@ createClassToRefactor
 	
 	classToRefactor := self createClassNamed: self classToRefactorName instanceVariableNames: oldVariable ! !
 
-!RenameInstanceVariableTest methodsFor: 'class factory' stamp: 'HAW 5/28/2017 21:36:47'!
-createClassToRefactorAndAssertRenameCreationFailsWith: aMessageTextCreator
+!RenameInstanceVariableTest methodsFor: 'class factory' stamp: 'jmv 3/20/2024 16:00:33'!
+createClassToRefactorAndAssertRenameCreationFailsWith: aStringOrBlock
 
 	self createClassToRefactor.
-	self assertRenameCreationFailsWith: aMessageTextCreator ! !
+	self assertRenameCreationFailsWith: aStringOrBlock ! !
 
-!RenameInstanceVariableTest methodsFor: 'assertions' stamp: 'HAW 6/1/2017 19:00:37'!
-assertRenameCreationFailsWith: aMessageTextCreator
+!RenameInstanceVariableTest methodsFor: 'assertions' stamp: 'jmv 3/20/2024 16:00:27'!
+assertRenameCreationFailsWith: aStringOrBlock
 
 	self
 		assertCreation: [ RenameInstanceVariable from: oldVariable to: newVariable in: classToRefactor ]
-		failsWith: aMessageTextCreator ! !
+		failsWith: aStringOrBlock ! !
 
 !RenameInstanceVariableTest methodsFor: 'setup' stamp: 'HAW 5/28/2017 21:33:44'!
 setUp
