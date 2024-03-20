@@ -1,6 +1,6 @@
-'From Cuis6.3 [latest update: #6277] on 15 March 2024 at 4:53:52 pm'!
+'From Cuis6.3 [latest update: #6284] on 20 March 2024 at 3:47:29 pm'!
 'Description ExtractMethod for optimized messages test'!
-!provides: 'BaseImageTests' 1 386!
+!provides: 'BaseImageTests' 1 387!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Objects'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
@@ -9398,18 +9398,18 @@ test04LatinUtf8SymbolFirst
 testSerialization
 	self assert: (Object unStream: (ReferenceStream streamedRepresentationOf: 'hello' asUnicodeString asSymbol)) = 'hello' asUnicodeString asSymbol! !
 
-!UnicodeTest methodsFor: 'set up' stamp: 'jmv 5/31/2016 11:24'!
+!UnicodeTest methodsFor: 'set up' stamp: 'jmv 3/20/2024 15:44:56'!
 setUp
 	"
 	self new setUp
 	"
+	super setUp.
+	bytesOfExample1 := #[16r61 16r62 16r63 16r20 16rC3 16rA0 16rC3 16rA8 16rE2 
+						16r82 16rAC 16r20 16rCE 16rB1 16rCE 16rB2 16rCE 16rB3].
 
-     bytesOfExample1 := #[16r61 16r62 16r63 16r20 16rC3 16rA0 16rC3 16rA8 16rE2 
-	                              16r82 16rAC 16r20 16rCE 16rB1 16rCE 16rB2 16rCE 16rB3].
-	
 	"see UnicodeNotes.md"
-	
-     "write the bytes of an UFT8 encoded string in binary mode to a file"
+
+	"write the bytes of an UFT8 encoded string in binary mode to a file"
 	self class fileName asFileEntry forceWriteStreamDo: [ :stream |
 		stream binary.
 		stream nextPutAll: bytesOfExample1 ]! !
@@ -17382,9 +17382,10 @@ bc11
 	{ b. d. e. f } print.
 	^{[ g + a * 10 + a + a + g + c ]. [ b _ 7. c _ c * 2 ]}.! !
 
-!ClosureSerializationTest methodsFor: 'setUp/tearDown' stamp: 'jmv 9/26/2019 23:19:41'!
+!ClosureSerializationTest methodsFor: 'setUp/tearDown' stamp: 'jmv 3/20/2024 15:45:08'!
 setUp
-	ivar _ 7.
+	super setUp.
+	ivar := 7.
 	^ivar! !
 
 !ClosureTests methodsFor: 'utilities' stamp: 'lr 3/9/2009 16:48'!
@@ -22698,11 +22699,12 @@ isAbstract
 
 	^DynamicTypingSmalltalkCompleter isForCurrentTypeSystem not! !
 
-!TaskbarTest methodsFor: 'Running' stamp: 'jmv 7/14/2022 21:51:15'!
+!TaskbarTest methodsFor: 'Running' stamp: 'jmv 3/20/2024 15:45:15'!
 setUp
 
-	needsDelete _ UISupervisor ui taskbar isNil.
-	taskbar _ UISupervisor ui hideTaskbar; showTaskbar; taskbar.
+	super setUp.
+	needsDelete := UISupervisor ui taskbar isNil.
+	taskbar := UISupervisor ui hideTaskbar; showTaskbar; taskbar.
 	taskbar screenSizeChanged.
 	"taskbar world runStepMethods"! !
 
@@ -23379,9 +23381,10 @@ denyExistsClassCategory: aClassCategory
 		
 	self deny: (SystemOrganization hasCategory: aClassCategory) description: 'Can not run test because class category ', aClassCategory, ' already exists'! !
 
-!DynamicallyCodeCreationTest methodsFor: 'setup/teardown' stamp: 'HAW 12/17/2019 10:33:36'!
+!DynamicallyCodeCreationTest methodsFor: 'setup/teardown' stamp: 'jmv 3/20/2024 15:45:28'!
 setUp
 
+	super setUp.
 	"If the authorInitials are not set, they will be asked - Hernan"
 	UISupervisor whenUIinSafeState: [ Utilities authorInitials ].
 	"Because I'm using the same system to create classes and removed them with its category at tearDown, I want to be sure 
