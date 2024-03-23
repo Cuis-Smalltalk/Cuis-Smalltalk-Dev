@@ -171,4 +171,4 @@ detect_sound
 export SQUEAK_DISPLAY_PER_MONITOR_SCALE=1 
 
 echo "Using ${VM} ..."
-exec ${SOUNDSERVER} "${VM}" ${VMOPTIONS} ${VMARGS} "${IMAGE}" "${STARGS[@]}"
+exec ${SOUNDSERVER} "${VM}" ${VMOPTIONS} ${VMARGS} "${IMAGE}" -u "${STARGS[@]}"

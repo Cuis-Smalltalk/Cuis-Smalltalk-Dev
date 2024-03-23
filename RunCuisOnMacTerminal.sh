@@ -1,1 +1,1 @@
-./CuisVM.app/Contents/MacOS/Squeak CuisImage/Cuis?.?-????.image
+./CuisVM.app/Contents/MacOS/Squeak CuisImage/Cuis?.?-????.image -u
