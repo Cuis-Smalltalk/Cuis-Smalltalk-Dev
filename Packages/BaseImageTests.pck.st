@@ -1,6 +1,6 @@
-'From Cuis6.3 [latest update: #6286] on 20 March 2024 at 6:51:50 pm'!
+'From Cuis6.3 [latest update: #6302] on 26 March 2024 at 12:55:56 pm'!
 'Description ExtractMethod for optimized messages test'!
-!provides: 'BaseImageTests' 1 390!
+!provides: 'BaseImageTests' 1 391!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Objects'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
@@ -26277,7 +26277,7 @@ assertExtracting: codeToExtract from: originalCode named: newMessage defines: ne
 		assertClassHasDefined: originalSelector withBody: updatedCode inCategory: category;
 		assertClassHasDefined: newMessage selector withBody: newMethodCodeWithRenamedArg inCategory: category! !
 
-!ExtractMethodTest methodsFor: 'assertions' stamp: 'HAW 7/18/2023 17:13:41'!
+!ExtractMethodTest methodsFor: 'assertions' stamp: 'jmv 3/26/2024 12:55:29'!
 creationWithMessage: aMessage onInterval: anIntervalToExtract ofMethod: methodToExtractCodeFrom failsWith: aRefactoringExceptionMessageEvaluationBlock errorCondition: anExceptionHandlingCondition
 
 	self
@@ -26286,7 +26286,7 @@ creationWithMessage: aMessage onInterval: anIntervalToExtract ofMethod: methodTo
 				fromInterval: anIntervalToExtract
 				of: methodToExtractCodeFrom
 				to: aMessage
-				categorizedAs: Categorizer default 
+				categorizedAs: ClassOrganizer defaultMethodCategory 
 				withArgumentNames: aMessage arguments]
 		raise: anExceptionHandlingCondition
 		withMessageText: aRefactoringExceptionMessageEvaluationBlock! !
