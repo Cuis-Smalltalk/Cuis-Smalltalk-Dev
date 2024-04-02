@@ -1,106 +1,106 @@
-'From Cuis 6.0 [latest update: #5944] on 24 July 2023 at 11:28:52 am'!
+'From Cuis6.3 [latest update: #6306] on 2 April 2024 at 9:50:35 am'!
 'Description Theme customizer'!
-!provides: 'Theme-Themes' 1 12!
-SystemOrganization addCategory: 'Theme-Themes'!
+!provides: 'Theme-Themes' 1 13!
+SystemOrganization addCategory: #'Theme-Themes'!
 
 
-!classDefinition: #ThemeCustomizerModel category: 'Theme-Themes'!
+!classDefinition: #ThemeCustomizerModel category: #'Theme-Themes'!
 ActiveModel subclass: #ThemeCustomizerModel
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Theme-Themes'!
-!classDefinition: 'ThemeCustomizerModel class' category: 'Theme-Themes'!
+!classDefinition: 'ThemeCustomizerModel class' category: #'Theme-Themes'!
 ThemeCustomizerModel class
 	instanceVariableNames: ''!
 
-!classDefinition: #ThemeCustomizerWindow category: 'Theme-Themes'!
+!classDefinition: #ThemeCustomizerWindow category: #'Theme-Themes'!
 SystemWindow subclass: #ThemeCustomizerWindow
 	instanceVariableNames: 'backgroundPalette primaryPalette labelsPalette textPalette secondaryPalette'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Theme-Themes'!
-!classDefinition: 'ThemeCustomizerWindow class' category: 'Theme-Themes'!
+!classDefinition: 'ThemeCustomizerWindow class' category: #'Theme-Themes'!
 ThemeCustomizerWindow class
 	instanceVariableNames: ''!
 
-!classDefinition: #ClassicTheme category: 'Theme-Themes'!
+!classDefinition: #ClassicTheme category: #'Theme-Themes'!
 Theme subclass: #ClassicTheme
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Theme-Themes'!
-!classDefinition: 'ClassicTheme class' category: 'Theme-Themes'!
+!classDefinition: 'ClassicTheme class' category: #'Theme-Themes'!
 ClassicTheme class
 	instanceVariableNames: ''!
 
-!classDefinition: #DarkBlueTheme category: 'Theme-Themes'!
+!classDefinition: #DarkBlueTheme category: #'Theme-Themes'!
 Theme subclass: #DarkBlueTheme
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Theme-Themes'!
-!classDefinition: 'DarkBlueTheme class' category: 'Theme-Themes'!
+!classDefinition: 'DarkBlueTheme class' category: #'Theme-Themes'!
 DarkBlueTheme class
 	instanceVariableNames: ''!
 
-!classDefinition: #DarkColorTheme category: 'Theme-Themes'!
+!classDefinition: #DarkColorTheme category: #'Theme-Themes'!
 Theme subclass: #DarkColorTheme
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Theme-Themes'!
-!classDefinition: 'DarkColorTheme class' category: 'Theme-Themes'!
+!classDefinition: 'DarkColorTheme class' category: #'Theme-Themes'!
 DarkColorTheme class
 	instanceVariableNames: ''!
 
-!classDefinition: #HighContrastBlackTheme category: 'Theme-Themes'!
+!classDefinition: #HighContrastBlackTheme category: #'Theme-Themes'!
 Theme subclass: #HighContrastBlackTheme
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Theme-Themes'!
-!classDefinition: 'HighContrastBlackTheme class' category: 'Theme-Themes'!
+!classDefinition: 'HighContrastBlackTheme class' category: #'Theme-Themes'!
 HighContrastBlackTheme class
 	instanceVariableNames: ''!
 
-!classDefinition: #HighContrastWhiteTheme category: 'Theme-Themes'!
+!classDefinition: #HighContrastWhiteTheme category: #'Theme-Themes'!
 Theme subclass: #HighContrastWhiteTheme
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Theme-Themes'!
-!classDefinition: 'HighContrastWhiteTheme class' category: 'Theme-Themes'!
+!classDefinition: 'HighContrastWhiteTheme class' category: #'Theme-Themes'!
 HighContrastWhiteTheme class
 	instanceVariableNames: ''!
 
-!classDefinition: #LightBluetheme category: 'Theme-Themes'!
+!classDefinition: #LightBluetheme category: #'Theme-Themes'!
 Theme subclass: #LightBluetheme
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Theme-Themes'!
-!classDefinition: 'LightBluetheme class' category: 'Theme-Themes'!
+!classDefinition: 'LightBluetheme class' category: #'Theme-Themes'!
 LightBluetheme class
 	instanceVariableNames: ''!
 
-!classDefinition: #LightTheme category: 'Theme-Themes'!
+!classDefinition: #LightTheme category: #'Theme-Themes'!
 Theme subclass: #LightTheme
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Theme-Themes'!
-!classDefinition: 'LightTheme class' category: 'Theme-Themes'!
+!classDefinition: 'LightTheme class' category: #'Theme-Themes'!
 LightTheme class
 	instanceVariableNames: ''!
 
-!classDefinition: #PersonalizedTheme category: 'Theme-Themes'!
+!classDefinition: #PersonalizedTheme category: #'Theme-Themes'!
 Theme subclass: #PersonalizedTheme
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Theme-Themes'!
-!classDefinition: 'PersonalizedTheme class' category: 'Theme-Themes'!
+!classDefinition: 'PersonalizedTheme class' category: #'Theme-Themes'!
 PersonalizedTheme class
 	instanceVariableNames: 'background labels primary secondary writing'!
 
@@ -706,7 +706,7 @@ buttonLabel
 paneBackgroundFrom: aColor
 	^ `(Color hue: 212 chroma: 0.8 luminance: 0.4) muchDarker`! !
 
-!DarkBlueTheme methodsFor: 'colors' stamp: 'jmv 11/27/2018 09:58:03'!
+!DarkBlueTheme methodsFor: 'colors' stamp: 'jmv 4/2/2024 09:21:34'!
 shout
 	"Color symbols as an association list."
 
@@ -714,24 +714,24 @@ shout
 		#selector  						-> nil.
 		#arguments 						-> #white.
 		#comment 						-> #(green lighter).
-		#tempBar 						-> #gray.
+		#tempBar 						-> #(gray quiteWhiter).
 		#tempVars 						-> #(gray quiteWhiter).
-		#instVar 						-> #(magenta muchDarker).
-		#pseudoVariables 				-> #(red veryMuchLighter).
+		#instVar 						-> #(magenta quiteWhiter).
+		#pseudoVariables 						-> #(red veryMuchLighter).
 		#literals 						-> #(green veryMuchLighter).
 		#messages 						-> #(cyan).
-		#incompleteMessages 			-> #(gray veryMuchDarker).
-		#blockLevelZero 				-> #black.
-		#blockLevelOne 				-> #brown.
-		#blockLevelTwo 				-> #magenta.
-		#blockLevelThree 				-> #red.
-		#blockLevelFour 				-> #(green darker).
-		#blockLevelFive 				-> #(red darker).
-		#blockLevelSix 				-> #(magenta darker).
-		#blockLevelSeven 				-> #blue.
+		#incompleteMessages 						-> #(gray veryMuchDarker).
+		#blockLevelZero 						-> #black.
+		#blockLevelOne 						-> #brown.
+		#blockLevelTwo 						-> #magenta.
+		#blockLevelThree 						-> #red.
+		#blockLevelFour 						-> #(green darker).
+		#blockLevelFive 						-> #(red darker).
+		#blockLevelSix 						-> #(magenta darker).
+		#blockLevelSeven 						-> #blue.
 		#defaults 						-> #white.
 		#undefined 						-> #(orange lighter).
-		#methodTags 					-> #(green lighter).
+		#methodTags 						-> #(green lighter).
 	}! !
 
 !DarkBlueTheme methodsFor: 'colors' stamp: 'jmv 11/27/2018 10:05:48'!
@@ -786,9 +786,9 @@ menuText
 menuTitleBar
 	^ `(Color hue: 212 chroma: 0.6 luminance: 0.3) twiceDarker`! !
 
-!DarkColorTheme methodsFor: 'colors' stamp: 'jmv 11/27/2018 10:08:09'!
+!DarkColorTheme methodsFor: 'colors' stamp: 'jmv 4/2/2024 09:03:22'!
 background
-	^ `Color darkGray darker`! !
+	^ `Color darkGray`! !
 
 !DarkColorTheme methodsFor: 'colors' stamp: 'jmv 11/27/2018 10:08:13'!
 buttonLabel
@@ -866,9 +866,9 @@ useButtonGradient
 useWindowTitleGradient
 	^true! !
 
-!DarkColorTheme methodsFor: 'menu colors' stamp: 'jmv 11/27/2018 10:09:13'!
+!DarkColorTheme methodsFor: 'menu colors' stamp: 'jmv 4/2/2024 09:02:26'!
 menu
-	^ `Color darkGray`! !
+	^ `Color gray`! !
 
 !DarkColorTheme methodsFor: 'menu colors' stamp: 'jmv 11/27/2018 10:09:17'!
 menuText
@@ -895,32 +895,32 @@ listMultiHighlightFocused: aBoolean
 paneBackgroundFrom: aColor
 	^ aColor alphaMixed: 0.7 with: Color black! !
 
-!HighContrastBlackTheme methodsFor: 'colors' stamp: 'jmv 11/27/2018 09:58:12'!
+!HighContrastBlackTheme methodsFor: 'colors' stamp: 'jmv 4/2/2024 09:36:53'!
 shout
 	"Color symbols as an association list."
 
 	^ {
-		#selector  					-> nil.
-		#arguments 					-> #(white darker).
-		#comment 					-> #(magenta darker).
-		#tempBar 					-> #(gray veryMuchLighter lighter).
-		#tempVars 					-> #(gray muchLighter).
-		#instVar 					-> #(green darker).
-		#pseudoVariables 			-> #(cyan darker).
-		#literals 					-> #(green darker).
-		#messages 					-> #(yellow darker).
+		#selector  						-> nil.
+		#arguments 						-> #(white darker).
+		#comment 						-> #(magenta darker).
+		#tempBar 						-> #veryLightGray.
+		#tempVars 						-> #veryLightGray.
+		#instVar 						-> #(green darker).
+		#pseudoVariables 						-> #(cyan darker).
+		#literals 						-> #(green darker).
+		#messages 						-> #(yellow darker).
 		#incompleteMessages  	-> #gray.
-		#blockLevelZero 			-> #black.
-		#blockLevelOne 			-> #brown.
-		#blockLevelTwo 			-> #magenta.
-		#blockLevelThree 			-> #red.
-		#blockLevelFour 			-> #(magenta).
-		#blockLevelFive 			-> #(orange negated).
-		#blockLevelSix 			-> #(green).
-		#blockLevelSeven 			-> #blue.
-		#defaults 					-> #white.
-		#undefined 					-> #cyan.
-		#methodTags 				-> #(magenta darker).
+		#blockLevelZero 						-> #black.
+		#blockLevelOne 						-> #brown.
+		#blockLevelTwo 						-> #magenta.
+		#blockLevelThree 						-> #red.
+		#blockLevelFour 						-> #(magenta).
+		#blockLevelFive 						-> #(orange negated).
+		#blockLevelSix 						-> #(green).
+		#blockLevelSeven 						-> #blue.
+		#defaults 						-> #white.
+		#undefined 						-> #cyan.
+		#methodTags 						-> #(magenta darker).
 	}! !
 
 !HighContrastBlackTheme methodsFor: 'colors' stamp: 'jmv 11/27/2018 10:09:48'!
@@ -943,13 +943,13 @@ unfocusedTextHighlightFrom: aColor
 windowLabel
 	^ `Color white`! !
 
-!HighContrastBlackTheme methodsFor: 'tool colors' stamp: 'jmv 11/27/2018 10:10:05'!
+!HighContrastBlackTheme methodsFor: 'tool colors' stamp: 'jmv 4/2/2024 09:34:03'!
 defaultWindowColor
-	^ `Color gray duller darker darker`! !
+	^ `Color veryDarkGray`! !
 
-!HighContrastBlackTheme methodsFor: 'menu colors' stamp: 'jmv 11/27/2018 10:10:10'!
+!HighContrastBlackTheme methodsFor: 'menu colors' stamp: 'jmv 4/2/2024 09:04:46'!
 menu
-	^ `Color darkGray darker darker`! !
+	^ `Color darkGray`! !
 
 !HighContrastBlackTheme methodsFor: 'menu colors' stamp: 'jmv 11/27/2018 10:10:13'!
 menuText
@@ -963,9 +963,9 @@ menuTitleBar
 useUniformColors
 	^true! !
 
-!HighContrastWhiteTheme methodsFor: 'colors' stamp: 'jmv 11/27/2018 10:10:23'!
+!HighContrastWhiteTheme methodsFor: 'colors' stamp: 'jmv 4/2/2024 09:25:26'!
 background
-	^ `Color lightGray muchLighter`! !
+	^ `Color veryVeryLightGray`! !
 
 !HighContrastWhiteTheme methodsFor: 'colors' stamp: 'jmv 11/27/2018 10:10:26'!
 buttonLabel
@@ -975,9 +975,9 @@ buttonLabel
 textCursor
 	^ super textHighlight muchDarker! !
 
-!HighContrastWhiteTheme methodsFor: 'colors' stamp: 'jmv 11/27/2018 10:10:32'!
+!HighContrastWhiteTheme methodsFor: 'colors' stamp: 'jmv 4/2/2024 09:24:08'!
 textHighlight
-	^ `Color lightGray twiceLighter`! !
+	^ `Color veryVeryLightGray`! !
 
 !HighContrastWhiteTheme methodsFor: 'colors' stamp: 'jmv 11/27/2018 10:10:36'!
 windowLabel
@@ -987,9 +987,9 @@ windowLabel
 defaultWindowColor
 	^ `Color white duller`! !
 
-!HighContrastWhiteTheme methodsFor: 'menu colors' stamp: 'jmv 11/27/2018 10:10:44'!
+!HighContrastWhiteTheme methodsFor: 'menu colors' stamp: 'jmv 4/2/2024 09:24:48'!
 menu
-	^ `Color lightGray muchLighter`! !
+	^ `Color veryVeryLightGray`! !
 
 !HighContrastWhiteTheme methodsFor: 'other options' stamp: 'jmv 11/22/2010 16:35'!
 useUniformColors
@@ -1041,13 +1041,13 @@ textHighlight
 	"^ Color hue: 0 chroma: 0.56 luminance: 0.45"
 	^ Color r: 0 g: 0.584 b: 0.8.! !
 
-!LightBluetheme methodsFor: 'colors' stamp: 'gsa 6/18/2014 14:05'!
+!LightBluetheme methodsFor: 'colors' stamp: 'jmv 4/2/2024 09:26:11'!
 textHighlightFocused: focused
 	"A nice light blue."
 	| textHighlight |
-	Display depth = 1 ifTrue: [^ Color veryLightGray].
+	Display depth = 1 ifTrue: [^ Color veryVeryLightGray].
 	Display depth = 2 ifTrue: [^ Color gray: 0.87].
-	textHighlight _ self textHighlight.
+	textHighlight := self textHighlight.
 	^focused
 		ifTrue: [ textHighlight ]
 		ifFalse: [ self unfocusedTextHighlightFrom: textHighlight ]! !
