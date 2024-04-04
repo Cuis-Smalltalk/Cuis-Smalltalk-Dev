@@ -27,7 +27,8 @@ setQuery: queryString initialAnswer: initialAnswer
 			lineWidth := FontFamily defaultFamilyAndPointSize widthOfString: eachLine.
 			contentsWidth := contentsWidth max: (lineWidth min: maxLineWidth).
 			requiredLines := requiredLines + (lineWidth / maxLineWidth) ceiling ].
-		extraWidth := (6 * FontFamily defaultPointSize). "Some extra room for edition plus accept/cancel buttons." ].
+		extraWidth := (6 * FontFamily defaultPointSize). "Some extra room for edition plus accept/cancel buttons."
+		requiredLines := requiredLines min: 20. "Use scrollbars if needed." 		].
 
 	self morphExtent: ((titleWidth max: contentsWidth) + extraWidth)@(titleHeight + (FontFamily defaultLineSpacing * requiredLines)).! !
 
