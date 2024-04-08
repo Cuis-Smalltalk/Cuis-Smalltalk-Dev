@@ -1,6 +1,6 @@
-'From Cuis6.3 [latest update: #6306] on 2 April 2024 at 9:50:35 am'!
+'From Cuis6.3 [latest update: #6313] on 8 April 2024 at 9:55:53 am'!
 'Description Theme customizer'!
-!provides: 'Theme-Themes' 1 13!
+!provides: 'Theme-Themes' 1 14!
 SystemOrganization addCategory: #'Theme-Themes'!
 
 
@@ -84,6 +84,16 @@ Theme subclass: #LightBluetheme
 LightBluetheme class
 	instanceVariableNames: ''!
 
+!classDefinition: #LightGrayTheme category: #'Theme-Themes'!
+Theme subclass: #LightGrayTheme
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Theme-Themes'!
+!classDefinition: 'LightGrayTheme class' category: #'Theme-Themes'!
+LightGrayTheme class
+	instanceVariableNames: ''!
+
 !classDefinition: #LightTheme category: #'Theme-Themes'!
 Theme subclass: #LightTheme
 	instanceVariableNames: ''
@@ -129,6 +139,9 @@ Bright white theme: good for subclassing.!
 
 !LightBluetheme commentStamp: '<historical>' prior: 0!
 A nice deep blue theme.!
+
+!LightGrayTheme commentStamp: '<historical>' prior: 0!
+A light gray theme. Easy on those who are used to using gray operating systems and such.!
 
 !LightTheme commentStamp: '<historical>' prior: 0!
 A very gray theme. Easy on those who are used to using gray operating systems and such.!
@@ -686,14 +699,6 @@ roundButtons
 roundWindowCorners
 	^false! !
 
-!ClassicTheme methodsFor: 'other options' stamp: 'cbr 12/6/2010 19:44'!
-useButtonGradient
-	^false! !
-
-!ClassicTheme methodsFor: 'other options' stamp: 'cbr 12/6/2010 19:44'!
-useWindowTitleGradient
-	^false! !
-
 !ClassicTheme methodsFor: 'other options' stamp: 'jmv 11/27/2018 10:07:12'!
 windowLabel
 	^ `Color black`! !
@@ -754,24 +759,8 @@ windowLabel
 defaultWindowColor
 	^ `Color hue: 212 chroma: 0.6 luminance: 0.24`! !
 
-!DarkBlueTheme methodsFor: 'other options' stamp: 'jmv 11/22/2010 16:05'!
-embossedTitles
-	^true! !
-
-!DarkBlueTheme methodsFor: 'other options' stamp: 'jmv 11/22/2010 16:05'!
-roundWindowCorners
-	^true! !
-
-!DarkBlueTheme methodsFor: 'other options' stamp: 'jmv 11/30/2010 10:59'!
-useButtonGradient
-	^true! !
-
 !DarkBlueTheme methodsFor: 'other options' stamp: 'jmv 11/22/2010 16:32'!
 useUniformColors
-	^true! !
-
-!DarkBlueTheme methodsFor: 'other options' stamp: 'jmv 11/22/2010 16:05'!
-useWindowTitleGradient
 	^true! !
 
 !DarkBlueTheme methodsFor: 'menu colors' stamp: 'jmv 11/27/2018 10:06:16'!
@@ -849,22 +838,6 @@ versionsBrowser
 !DarkColorTheme methodsFor: 'tool colors' stamp: 'jmv 11/27/2018 10:09:03'!
 workspace
 	^ `Color r: 0.3 g: 0.3 b: 0.27`! !
-
-!DarkColorTheme methodsFor: 'other options' stamp: 'jmv 11/18/2010 12:03'!
-embossedTitles
-	^true! !
-
-!DarkColorTheme methodsFor: 'other options' stamp: 'jmv 11/18/2010 12:03'!
-roundWindowCorners
-	^true! !
-
-!DarkColorTheme methodsFor: 'other options' stamp: 'jmv 11/30/2010 10:59'!
-useButtonGradient
-	^true! !
-
-!DarkColorTheme methodsFor: 'other options' stamp: 'jmv 11/18/2010 12:03'!
-useWindowTitleGradient
-	^true! !
 
 !DarkColorTheme methodsFor: 'menu colors' stamp: 'jmv 4/2/2024 09:02:26'!
 menu
@@ -1071,24 +1044,8 @@ defaultWindowColor
 	"^ Color hue: 0 chroma: 0 luminance: 1."
 	^ Color r: 0.686 g: 0.796 b: 0.910! !
 
-!LightBluetheme methodsFor: 'other options' stamp: 'gsa 6/18/2014 09:27'!
-embossedTitles
-	^true! !
-
-!LightBluetheme methodsFor: 'other options' stamp: 'gsa 6/18/2014 09:27'!
-roundWindowCorners
-	^true! !
-
-!LightBluetheme methodsFor: 'other options' stamp: 'gsa 6/18/2014 09:27'!
-useButtonGradient
-	^true! !
-
 !LightBluetheme methodsFor: 'other options' stamp: 'gsa 6/18/2014 14:21'!
 useUniformColors
-	^true! !
-
-!LightBluetheme methodsFor: 'other options' stamp: 'gsa 6/18/2014 09:27'!
-useWindowTitleGradient
 	^true! !
 
 !LightBluetheme methodsFor: 'menu colors' stamp: 'gsa 6/18/2014 13:47'!
@@ -1105,24 +1062,28 @@ menuText
 menuTitleBar
 	^ self menu twiceDarker! !
 
-!LightTheme methodsFor: 'other options' stamp: 'jmv 11/23/2010 09:32'!
-embossedTitles
-	^true! !
+!LightGrayTheme methodsFor: 'tool colors' stamp: 'jmv 4/5/2024 16:35:19'!
+defaultWindowColor
+	^ `Color gray: 0.85`! !
 
-!LightTheme methodsFor: 'other options' stamp: 'jmv 11/23/2010 09:32'!
-roundWindowCorners
-	^true! !
+!LightGrayTheme methodsFor: 'other options' stamp: 'jmv 4/5/2024 16:35:19'!
+roundedButtonRadius
+	"Only effective if #roundButtons answers true.
+	Provide a reasonable default for subclasses."
+	^ 5! !
 
-!LightTheme methodsFor: 'other options' stamp: 'jmv 11/30/2010 10:59'!
-useButtonGradient
+!LightGrayTheme methodsFor: 'other options' stamp: 'jmv 4/5/2024 16:35:19'!
+roundedWindowRadius
+	"Only effective if #roundWindowCorners answers true.
+	Provide a reasonable default for subclasses."
+	^ 5! !
+
+!LightGrayTheme methodsFor: 'other options' stamp: 'jmv 4/5/2024 16:35:19'!
+useUniformColors
 	^true! !
 
 !LightTheme methodsFor: 'other options' stamp: 'jmv 11/23/2010 09:22'!
 useUniformColors
-	^true! !
-
-!LightTheme methodsFor: 'other options' stamp: 'jmv 11/23/2010 09:32'!
-useWindowTitleGradient
 	^true! !
 
 !LightTheme methodsFor: 'colors' stamp: 'jmv 11/27/2018 10:09:27'!
@@ -1137,16 +1098,8 @@ embossedTitles
 roundWindowCorners
 	^true! !
 
-!PersonalizedTheme methodsFor: 'other options' stamp: 'lucy 7/20/2023 15:12:47'!
-useButtonGradient
-	^true! !
-
 !PersonalizedTheme methodsFor: 'other options' stamp: 'lucy 7/20/2023 15:12:55'!
 useUniformColors
-	^true! !
-
-!PersonalizedTheme methodsFor: 'other options' stamp: 'lucy 7/20/2023 15:13:03'!
-useWindowTitleGradient
 	^true! !
 
 !PersonalizedTheme methodsFor: 'colors' stamp: 'lucy 7/20/2023 15:10:17'!
