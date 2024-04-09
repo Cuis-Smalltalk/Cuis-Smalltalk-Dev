@@ -1,6 +1,6 @@
-'From Cuis6.3 [latest update: #6213] on 6 February 2024 at 10:24:20 am'!
+'From Cuis6.3 [latest update: #6319] on 9 April 2024 at 3:33:56 pm'!
 'Description '!
-!provides: 'Compression' 1 41!
+!provides: 'Compression' 1 42!
 SystemOrganization addCategory: #'Compression-System'!
 SystemOrganization addCategory: #'Compression-Archives'!
 
@@ -3593,14 +3593,14 @@ validSignatures
 		with: CentralDirectoryFileHeaderSignature
 		with: EndOfCentralDirectorySignature! !
 
-!ZipArchive class methodsFor: 'file list services' stamp: 'pb 2/26/2020 13:51:11'!
+!ZipArchive class methodsFor: 'file list services' stamp: 'jmv 4/9/2024 15:25:15'!
 fileReaderServicesForFileEntry: aFileEntry suffix: suffix
 	"FileList buttons that are swe know about."
 
 	suffix = 'mcz'
 		ifTrue: [ ^ {
-			CodePackageFile serviceInstallMonticelloPackage .
-			CodeFileBrowser serviceBrowseMCZCode
+			CodeFileBrowser serviceBrowseMCZCode.
+			ChangeList serviceMCZContents
 		} ].
 	^#()! !
 
@@ -4092,31 +4092,13 @@ writeLocalFileHeaderTo: aStream
 	aStream nextPutAll: fileNameBytes.
 	aStream nextPutAll: localExtraField.! !
 
-!ZipArchiveMember methodsFor: 'reading' stamp: 'jmv 1/9/2024 16:18:59'!
-contentStream
-	"Answer my contents as a string."
-	| s |
-	s := ReadWriteStream on: (ByteArray new: self uncompressedSize).
-	self extractTo: s.
-	^s reset! !
-
-!ZipArchiveMember methodsFor: 'reading' stamp: 'jmv 1/9/2024 16:19:02'!
+!ZipArchiveMember methodsFor: 'reading' stamp: 'jmv 4/9/2024 15:16:03'!
 contents
-	"Answer my contents as a string."
-	| s |
-	s := ReadWriteStream on: (ByteArray new: self uncompressedSize).
-	self extractTo: s.
-	s useCharacters.
-	^s contents! !
+	"Answer my contents as a ByteArray."
 
-!ZipArchiveMember methodsFor: 'reading' stamp: 'jmv 1/9/2024 16:19:05'!
-contentsFrom: start to: finish
-	"Answer my contents as a string."
-	| s |
-	s := ReadWriteStream on: (ByteArray new: finish - start + 1).
-	self extractTo: s from: start to: finish.
-	s useCharacters.
-	^s contents! !
+	^ByteArray
+		streamContents: [ :strm | self extractTo: strm ]
+		estimatedSize: self uncompressedSize.! !
 
 !ZipArchiveMember methodsFor: 'extraction' stamp: 'jmv 5/31/2016 10:38'!
 extractInDirectory: aDirectoryEntry
@@ -4590,11 +4572,15 @@ rewindData
 newFrom: aString named: aFileName
 	^(self new) contents: aString; localFileName: aFileName; yourself! !
 
-!CodeFileBrowser class methodsFor: '*Compression' stamp: 'jmv 10/2/2015 16:55'!
+!CodeFileBrowser class methodsFor: '*Compression' stamp: 'jmv 4/9/2024 15:26:09'!
 browseMCZCode: aFileEntry
 	"Browse the selected file."
 
-	CodeFileBrowserWindow browseMCZFile: aFileEntry! !
+	| codeFile unzipped |
+	aFileEntry readStreamDo: [ :stream |
+		unzipped := (stream unzippedStringLFContentsOf: 'snapshot/source.st') readStream.
+		codeFile := (CodeFile new fullName: aFileEntry pathName; buildFrom: unzipped) ].
+	CodeFileBrowser browseCodeSource: codeFile.! !
 
 !CodeFileBrowser class methodsFor: '*Compression' stamp: 'HAW 1/2/2019 18:26:10'!
 serviceBrowseMCZCode
@@ -4610,10 +4596,10 @@ serviceBrowseMCZCode
 			argumentGetter: [ :fileList |
 				fileList selectedFileEntry ]! !
 
-!ChangeList class methodsFor: '*Compression' stamp: 'jmv 4/4/2020 12:59:40'!
+!ChangeList class methodsFor: '*Compression' stamp: 'jmv 4/9/2024 14:38:46'!
 browseMCZContents: aFileEntry
 	"Browse the selected file."
-	|  unzipped changeList fullName packageFile pkName |
+	|  unzippedString unzipped changeList fullName packageFile pkName |
 	
 	"For Monticello packages we do as we do with our own .pck.st files: Instead of just browsing
 	contents, also include what is no longer part of the package (and should therefore be removed on install)
@@ -4621,19 +4607,19 @@ browseMCZContents: aFileEntry
 	However, this was never tested to run!!"
 	self flag: #jmvVer.
 
-	fullName _ aFileEntry pathName.
-	pkName _ CodePackageFile monticelloPackageNameFrom: fullName.
+	fullName := aFileEntry pathName.
+	pkName := CodePackageFile monticelloPackageNameFrom: fullName.
 	aFileEntry readStreamDo: [ :stream |
-		unzipped _ stream asUnZippedStream: 'snapshot/source.st'.
-		unzipped ascii.
-		changeList _ self new scanFile: unzipped from: 0 to: unzipped size.
+		unzippedString := stream unzippedStringLFContentsOf: 'snapshot/source.st'.
+		unzipped := unzippedString readStream.
+		changeList := self new scanFile: unzipped from: 0 to: unzippedString size.
 		stream reset.
-		packageFile _ CodePackageFile new.
+		packageFile := CodePackageFile new.
 		packageFile
 			buildFileStream: unzipped
 			packageName: pkName
-			fullName: fullName.
-	].
+			fullName: fullName ].
+
 	"Add deletions of methods and classes that are in the CodePackage (i.e., active in the system)
 	but are no longer in the CodePackageFile being viewed."
 	packageFile methodsToRemove do: [ :methodReference |
@@ -4645,7 +4631,7 @@ browseMCZContents: aFileEntry
 			addItem: (ClassDeletionChangeRecord new className: clsName)
 			text: 'class no longer in package: ', clsName ].
 	changeList clearSelections.
-	ChangeListWindow open: changeList label: aFileEntry pathName! !
+	ChangeListWindow open: changeList label: aFileEntry pathName.! !
 
 !ChangeList class methodsFor: '*Compression' stamp: 'HAW 1/2/2019 18:27:25'!
 serviceMCZContents
@@ -4689,54 +4675,18 @@ writeOnGZIPByteStream: aStream
 	
 	aStream nextPutAllWordArray: self! !
 
-!ByteArray methodsFor: '*Compression' stamp: 'jmv 1/9/2024 16:17:37'!
+!ByteArray methodsFor: '*Compression' stamp: 'jmv 4/9/2024 13:07:45'!
 unzipped
 	|  magic1 magic2 |
 	magic1 := self at: 1.
 	magic2 := self at: 2.
-	(magic1 = 16r1F and:[magic2 = 16r8B]) ifFalse: [ ^self ].
+	magic2 * 256 + magic1 = GZipConstants gzipMagic
+		ifFalse: [ ^self ].
 	^ (GZipReadStream on: self) upToEnd! !
 
 !PositionableStream methodsFor: '*Compression' stamp: 'jmv 6/10/2013 20:40'!
 asZLibReadStream
 	^ ZLibReadStream on: collection from: position+1 to: readLimit! !
-
-!ReadWriteStream methodsFor: '*Compression' stamp: 'jmv 1/9/2024 16:18:53'!
-asUnZippedStream
-	|  isGZip outputStream first strm |
-	"Decompress this file if needed, and return a stream.  No file is written.  File extension may be .gz or anything else."
-
-	strm := self binary.
-
-	first := strm next.
-	isGZip := (strm next * 256 + first) = (GZipConstants gzipMagic).
-	strm skip: -2.
-	isGZip 
-		ifTrue: [ outputStream := (ReadWriteStream with:
-									(GZipReadStream on: strm) upToEnd) reset.
-				strm close]
-		ifFalse: [ outputStream := strm].
-	^ outputStream! !
-
-!ReadWriteStream methodsFor: '*Compression' stamp: 'jmv 6/10/2013 20:40'!
-asUnZippedStream: memberFileName
-	|  strm archive which |
-	"Decompress this file if needed, and return a stream.  No file is written.  File extension may be .gz or anything else.  Also works on archives (.zip, .gZip)."
-
-	strm _ self binary.
-	strm isZipArchive ifFalse: [
-		^self error: 'Not a Zip file' ].
-	
-	archive _ ZipArchive new readFrom: strm.
-	which _ archive members 
-		detect: [:any | any fileName  = memberFileName] 
-		ifNone: nil.
-	which ifNil: [
-		archive close.
-		^ self error: 'Can''t find requested file in archive'].
-	strm _ which contentStream.
-	archive close.
-	^ strm! !
 
 !ReadWriteStream methodsFor: '*Compression' stamp: 'jmv 11/23/2023 17:05:01'!
 isZipArchive
@@ -4746,6 +4696,48 @@ isZipArchive
 	sig := self next: 4.
 	self position: self position - 4. "rewind"
 	^ (ZipArchive validSignatures includes: sig)! !
+
+!ReadWriteStream methodsFor: '*Compression' stamp: 'jmv 4/9/2024 14:21:45'!
+unzippedContentsOf: memberFileName
+	"Decompress this file if needed, and return its bytes.
+	No file is written.  File extension may be .gz or anything else.  Also works on archives (.zip, .gZip)."
+
+	| bytes archive which |
+	self binary.
+	self isZipArchive ifFalse: [
+		^self error: 'Not a Zip file' ].
+	
+	archive := ZipArchive new readFrom: self.
+	which := archive members 
+		detect: [:any | any fileName  = memberFileName] 
+		ifNone: nil.
+	which ifNil: [
+		archive close.
+		^ self error: 'Can''t find requested file in archive'].
+	bytes := which contents.
+	archive close.
+	^ bytes! !
+
+!ReadWriteStream methodsFor: '*Compression' stamp: 'jmv 4/9/2024 14:23:35'!
+unzippedStringContentsOf: memberFileName
+	"Decompress this file if needed, and return a String with its contents.
+	No file is written.  File extension may be .gz or anything else.  Also works on archives (.zip, .gZip)."
+
+	| bytes |
+	bytes := self unzippedContentsOf: memberFileName.
+	^UnicodeString fromUtf8Bytes: bytes.! !
+
+!ReadWriteStream methodsFor: '*Compression' stamp: 'jmv 4/9/2024 14:39:16'!
+unzippedStringLFContentsOf: memberFileName
+	"Decompress this file if needed, and return a String with its contents.
+	No file is written.  File extension may be .gz or anything else.  Also works on archives (.zip, .gZip).
+	Convert line terminators to LF. Useful for Smalltalk code from Squeak."
+
+	| bytes |
+	bytes := self unzippedContentsOf: memberFileName.
+	(bytes includes: 13) ifTrue: [
+		bytes := String string: bytes withLineEndings: #(10) ].
+	^UnicodeString fromUtf8Bytes: bytes.! !
 
 !UniFileStream methodsFor: '*Compression' stamp: 'HAW 1/2/2019 18:57:48'!
 compressFile
@@ -4781,38 +4773,6 @@ viewGZipContents
 		contents: stringContents;
 		openLabel: 'Decompressed contents of: ', self localName! !
 
-!CodeFileBrowserWindow class methodsFor: '*Compression' stamp: 'jmv 3/24/2020 11:20:46'!
-browseMCZFile: aFileEntry
-
-	| codeFile unzipped |
-	aFileEntry readStreamDo: [ :stream |
-		unzipped _ stream asUnZippedStream: 'snapshot/source.st'.
-		unzipped ascii.
-		codeFile _ (CodeFile new fullName: aFileEntry pathName; buildFrom: unzipped) ].
-	CodeFileBrowser browseCodeFileEntry: codeFile! !
-
-!CodePackageFile class methodsFor: '*Compression' stamp: 'jmv 10/2/2015 16:55'!
-browseMCZCode: aFileEntry
-	"Browse the selected file."
-
-	CodeFileBrowserWindow browseMCZFile: aFileEntry! !
-
-!CodePackageFile class methodsFor: '*Compression' stamp: 'jmv 4/4/2020 12:57:16'!
-installMonticelloPackage: aFileEntry
-	
-	| fullName pkName unzip codePackageFile |
-	fullName _ aFileEntry pathName.
-	pkName _ CodePackageFile monticelloPackageNameFrom: fullName.
-	aFileEntry readStreamDo: [ :stream |
-		unzip _ stream asUnZippedStream: 'snapshot/source.st'.
-		unzip ascii.
-		codePackageFile _ CodePackageFile new.
-		codePackageFile
-			buildFileStream: unzip
-			packageName: pkName
-			fullName: fullName.
-		codePackageFile install ]! !
-
 !CodePackageFile class methodsFor: '*Compression' stamp: 'jmv 11/3/2016 11:38:49'!
 monticelloPackageNameFrom: fullName
 	| localName |
@@ -4820,32 +4780,6 @@ monticelloPackageNameFrom: fullName
 	^(localName prefixAndSuffix: $-)
 		ifNotNil: [ :ary | ary first ]
 		ifNil: [ localName withoutSuffix: '.mcz' ]! !
-
-!CodePackageFile class methodsFor: '*Compression' stamp: 'HAW 1/2/2019 18:28:36'!
-serviceBrowseMCZCode
-	"Answer a service for opening a changelist browser on a file"
-
-	^ (SimpleServiceEntry 
-		provider: self 
-		label: 'browse code'
-		selector: #browseMCZCode:
-		description: 'open a "file-contents browser" on this file, allowing you to view and selectively load its code'
-		buttonLabel: 'code'
-		icon: #editFindReplaceIcon)
-			argumentGetter: [ :fileList | fileList selectedFileEntry ] ! !
-
-!CodePackageFile class methodsFor: '*Compression' stamp: 'HAW 1/2/2019 18:29:13'!
-serviceInstallMonticelloPackage
-	"Answer the service of installing a Monticello package file (Squeak's compressed chunk format file for a package)"
-
-	^ (SimpleServiceEntry
-		provider: self 
-		label: 'install Monticello package'
-		selector: #installMonticelloPackage:
-		description: 'install the Monticello package, replacing all existing code in the package (if any); create a new change set just for the installation'
-		buttonLabel: 'install package'
-		icon: #saveIcon)
-			argumentGetter: [ :fileList | fileList selectedFileEntry ] ! !
 GZipConstants initialize!
 ZipConstants initialize!
 ZipFileConstants initialize!
