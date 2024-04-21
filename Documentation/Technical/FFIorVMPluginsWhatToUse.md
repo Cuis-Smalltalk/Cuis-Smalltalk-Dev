@@ -47,22 +47,27 @@ Additionally, some calls need to be done with strict real time restrictions (lik
 
 ### a) Ease of development and prototyping.
 For the scenarios where FFI is well suited, (1) or (2), working with FFI is usually much faster and easier. It is possible to reuse API docs and general know how from outside the Smalltalk world. On the other hand, code that needs to deal with Smalltalk object internals and VM services (5) is easier to do as a plugins. For code written in C (and not regular Smalltalk) for performance reasons (4), if you already have the required setup, writing a plugin is easier and faster, as you don't need to deal with the platform stack.
+
 -- Bottom line: It depends.
 
 ### b) Ease of modifications, ease of updating users installations.
 Modifying a plugin usually requires the developer to compile a new dll. Modifying FFI calls can be done with just Smalltalk code.
+
 -- Bottom line: Clear win for FFI.
 
 ### c) Call Speed.
 Plugin calls are almost as fast as regular numbered primitives. In Cuis and Squeak, FFI calls range from terribly slow to just plain slow, when compared to that.
+
 -- Bottom line: Plugin wins, if you really need low call overhead.
 
 ### d) Support for callbacks
 Recent implementations of FFI do support real callbacks. With VM plugins, the best we can do is to register a semaphore for the plugin to signal. This is usually safer, as the callback is done as a Smalltalk Process switch, making it easier to protect shared state. But there might be a large delay from the moment the semaphore is signaled to the moment where the "callback" is actually ran. As a side note, callbacks usually open a kind of Pandora's box. A design that doesn't use callbacks at all is usually preferable.
+
 -- Bottom line: FFI (callbacks enabled) clear win, if you need callbacks.
 
 ### e) Access to VM services and data structures to deal with Smalltalk objects
 VM plugins have a lot of services provided by available VM functions, and types provided by VM maker. Slang/C code needing to deal with the internals of Smalltalk objects is usually much easily done in plugins.
+
 -- Bottom line: Plugin wins, if you need this.
 
 
@@ -70,14 +75,16 @@ VM plugins have a lot of services provided by available VM functions, and types 
 
 FFI is good for:
 - Tight integration with host platform, like a host windowing system or native widget libraries, but only if dynamic linking is supported
-- 3rd party code that is meant to be linked dynamically, and everyone else calls via FFI
+- Third party code (libraries) that is meant to be linked dynamically, and everyone else calls via FFI
+- Using the version of third party libraries provided by the system, making it easy to use the latest available
 - Application specific stuff (where dealing with platform specific details is not a problem)
 - Functionality that requires real callbacks
 - Stuff that is in development, APIs that are not yet stable, experimental code
 
 Plugins are good for:
 - Own code written for performance
-- 3rd party code that is meant to be linked statically
+- Third party code (static libraries) that is meant to be linked statically
+- Picking a specific version of third party libraries and sticking to it for stability
 - Kernel Smalltalk functionality
 - Functions that take very short time to run, and call overhead becomes dominant time
 - Stable functionality that will be used by many people over a long time
