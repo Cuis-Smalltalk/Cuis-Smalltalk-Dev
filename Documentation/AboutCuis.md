@@ -81,5 +81,7 @@ To contribute code to the base image, use the tools includede in Cuis, such as t
 
 Please use an image with all relevant packages already loaded, using updated versions, especially, of any affected packages. This will ensure we don't break them while we evolve Cuis.
 
+For some ideas on how you can help Cuis, see [Helping Cuis](wiki/Helping-Cuis). You can contribute your own too.
+
 Cuis is distributed subject to the MIT License. See the LICENSE file. Any contribution must also be under the MIT license.
  
