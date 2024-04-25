@@ -1,6 +1,6 @@
-'From Cuis6.3 [latest update: #6221] on 8 February 2024 at 6:30:57 am'!
+'From Cuis6.3 [latest update: #6327] on 25 April 2024 at 11:46:38 am'!
 'Description '!
-!provides: 'Bootstrap' 1 38!
+!provides: 'Bootstrap' 1 39!
 !requires: 'DynamicCuisLibraries' 1 22 nil!
 SystemOrganization addCategory: #'Bootstrap-Smalltalk Image Builders'!
 SystemOrganization addCategory: #'Bootstrap-Foreign Objects'!
@@ -375,10 +375,10 @@ We do know all our MethodSpecs via their CompiledMethodForeignObjects.
 No references to any object in the running image. This means we don't depend on the representation used in the image we're running in. We just need to know how to create a MethodDictionary in the format required for the new image.
 Only when it is time to serialize ourselves in a new image, we gather all our methods and build suitable state for our new instance. This means that only at that moment we do #addForeignObjectFor: for the array.!
 
-!Spur32FreeListsForeignObject commentStamp: '<historical>' prior: 0!
+!Spur32FreeListsForeignObject commentStamp: 'jmv 4/17/2024 20:42:30' prior: 0!
 The Spur FreeLists object is pretty special. It is very much like a regular Smalltalk Array. But it is used by the VM to hold machine pointers, not oops. So, it is a numeric array, closer to ByteArray. Additionally, it is not visible from the Smalltalk side. So, it is not an instance of any class.
 
-There are two possible variants, for Spur64 and Spur32. It has a number of slots (64 or 32). Its format is 9 (64 bits indexable) or 10 (32 bits indexable). Hash is set to 0. ClassIndex is set to 19 or 18. These don't refer to any class!! See VMMaker SpurMemoryManager>>#sixtyFourBitLongsClassIndexPun and VMMaker SpurMemoryManager>>#thirtyTwoBitLongsClassIndexPun.
+There are two possible variants, for Spur64 and Spur32. It has a number of slots (64 or 32). Its format is 9 (64 bits indexable) or 10 (32 bits indexable). Hash is set to 0. ClassIndex is set to 19 or 18. These are not actual class indexes, they don't refer to any class!! See VMMaker SpurMemoryManager>>#sixtyFourBitLongsClassIndexPun and VMMaker SpurMemoryManager>>#thirtyTwoBitLongsClassIndexPun.
 
 The purpose of this class is to create correctly these objects in a new Spur image.
 
@@ -402,10 +402,10 @@ classIndex: 16r12=18 (VMMaker SpurMemoryManager>>#thirtyTwoBitLongsClassIndexPun
 siguen 32*4=128 bytes en cero. Despues viene el HiddenRoots, que es un objeto de mas de 255 slots!!
 (cuisSpur32ImageFirstBytes uint64At: 64+1+(8*6)+8+128 bigEndian: false) hex.!
 
-!Spur64FreeListsForeignObject commentStamp: '<historical>' prior: 0!
+!Spur64FreeListsForeignObject commentStamp: 'jmv 4/17/2024 20:42:38' prior: 0!
 The Spur FreeLists object is pretty special. It is very much like a regular Smalltalk Array. But it is used by the VM to hold machine pointers, not oops. So, it is a numeric array, closer to ByteArray. Additionally, it is not visible from the Smalltalk side. So, it is not an instance of any class.
 
-There are two possible variants, for Spur64 and Spur32. It has a number of slots (64 or 32). Its format is 9 (64 bits indexable) or 10 (32 bits indexable). Hash is set to 0. ClassIndex is set to 19 or 18. These don't refer to any class!! See VMMaker SpurMemoryManager>>#sixtyFourBitLongsClassIndexPun and VMMaker SpurMemoryManager>>#thirtyTwoBitLongsClassIndexPun.
+There are two possible variants, for Spur64 and Spur32. It has a number of slots (64 or 32). Its format is 9 (64 bits indexable) or 10 (32 bits indexable). Hash is set to 0. ClassIndex is set to 19 or 18. These are not actual class indexes, they don't refer to any class!! See VMMaker SpurMemoryManager>>#sixtyFourBitLongsClassIndexPun and VMMaker SpurMemoryManager>>#thirtyTwoBitLongsClassIndexPun.
 
 The purpose of this class is to create correctly these objects in a new Spur image.
 
@@ -429,8 +429,8 @@ classIndex: 16r12=18 (VMMaker SpurMemoryManager>>#thirtyTwoBitLongsClassIndexPun
 siguen 32*4=128 bytes en cero. Despues viene el HiddenRoots, que es un objeto de mas de 255 slots!!
 (cuisSpur32ImageFirstBytes uint64At: 64+1+(8*6)+8+128 bigEndian: false) hex.!
 
-!SpurPseudoArrayForeignObject commentStamp: 'jmv 5/20/2023 09:30:55' prior: 0!
-The Spur Class Table and Class Table Page objects ar pretty special. They are very much like a regular Smalltalk Array. But they are is not visible from the Smalltalk side. So, they are not an instance of any class. ClassIndex is set to 16, witch doesn't refer to any class.
+!SpurPseudoArrayForeignObject commentStamp: 'jmv 4/17/2024 20:42:53' prior: 0!
+The Spur Class Table and Class Table Page objects ar pretty special. They are very much like a regular Smalltalk Array. But they are is not visible from the Smalltalk side. So, they are not an instance of any class. ClassIndex is set to 16, which is not a real class index and doesn't refer to any class.
 See VMMaker SpurMemoryManager>>#arrayClassIndexPun.
 
 However, our representedObject is a regular Array, that holds the required information (oops) that are needed to create the pseudo-Array in the image being built.
@@ -687,7 +687,7 @@ addBasicMethodsAndReferencedClasses
 	} do: [ :compiledMethod |
 		self addExistingMethod: compiledMethod ].! !
 
-!ImageBuilder methodsFor: 'image building' stamp: 'jmv 7/17/2023 14:46:29'!
+!ImageBuilder methodsFor: 'image building' stamp: 'jmv 4/18/2024 14:09:49'!
 addFundamentalClasses
 	"Some classes that are needed for any Cuis image:
 	- nil, false and true are always present and need their class
@@ -700,7 +700,8 @@ addFundamentalClasses
 	It would be better to build them from scratch, using alternative class protocol in ClassSpec,
 	most likely by compiling a source code file."
 
-	#(#UndefinedObject #False #True
+	| fundamentalClassNames |
+	fundamentalClassNames := #(#UndefinedObject #False #True
 		#ProtoObject #Object #Boolean #Magnitude #Number #Integer #Float
 		#Collection #SequenceableCollection #CharacterSequence #Symbol #ArrayedCollection #LinkedList
 		#Set #Dictionary #IdentityDictionary #SystemDictionary
@@ -710,14 +711,15 @@ addFundamentalClasses
 		#Behavior #ClassDescription #Class #Metaclass
 		#MethodDictionary
 		#CompiledMethod #AdditionalMethodState #Pragma
-		#Form #DisplayScreen
-		#InputSensor #EventSensor #SharedQueue)
-	do: [ :className | | classSpec classForeignObject |
+		#SharedQueue).
+	self includeDisplayAndSensor ifTrue: [
+		fundamentalClassNames := fundamentalClassNames, #(#Form #DisplayScreen #InputSensor #EventSensor ) ].
+	fundamentalClassNames do: [ :className | | classSpec classForeignObject |
 		classSpec := ClassSpec for: (Smalltalk at: className) addClassesTo: classes.	
 		classForeignObject := self addClassAndMetaclassSpec: classSpec classIndexOrNil: nil.
 		self map: classSpec toForeignObject: classForeignObject ].! !
 
-!ImageBuilder methodsFor: 'image building' stamp: 'jmv 9/18/2023 15:44:42'!
+!ImageBuilder methodsFor: 'image building' stamp: 'jmv 4/18/2024 14:10:20'!
 addFundamentalObjectsAndClasses
 	"
 	Objects and classes added here are absolutely required for building
@@ -743,8 +745,9 @@ addFundamentalObjectsAndClasses
 	"Create basic globals"
 	"Smalltalk globals inspect"
 	self addProcessor.
-	self addDisplay.
-	self addSensor.
+	self includeDisplayAndSensor ifTrue: [
+		self addDisplay.
+		self addSensor ].
 	self addSmalltalk.
 	self addUndeclared.
 
@@ -792,7 +795,7 @@ addSpecialObjectsArray
 addSpurHiddenObjectsIfRequired
 	"NOP here. Only for Spur."! !
 
-!ImageBuilder methodsFor: 'image building' stamp: 'jmv 7/17/2023 16:19:13'!
+!ImageBuilder methodsFor: 'image building' stamp: 'jmv 4/18/2024 14:26:23'!
 addVmKnownClasses
 "
 Copied and adapted from the Spur implementation, that requires specific identityHash for these classe.
@@ -806,11 +809,11 @@ This implementation hasn't yet been tested!!
 	"This first implementation uses the fact that these classes already exist in the image we are running.
 	It would be better to build them from scratch, using alternative class protocol in ClassSpec,
 	most likely by compiling a source code file."
-self halt: 'No SmallFloats without Spur64!!'.
-	#(
+
+	| vmKnownClassNames |
+	vmKnownClassNames := #(
 		#SmallInteger
 		#Character
-		#SmallFloat64
 		#LargeNegativeInteger
 		#LargePositiveInteger
 		#BoxedFloat64
@@ -821,9 +824,10 @@ self halt: 'No SmallFloats without Spur64!!'.
 		#ByteArray
 		#Array
 		#String
-		#Bitmap
-		#Point)
-	do: [ :className | | classSpec classForeignObject |
+		#Point).
+	self includeDisplayAndSensor ifTrue: [
+		vmKnownClassNames := vmKnownClassNames, #(#Bitmap) ].
+	vmKnownClassNames do: [ :className | | classSpec classForeignObject |
 		classSpec := ClassSpec for: (Smalltalk at: className) addClassesTo: classes.	
 		classForeignObject := self addClassAndMetaclassSpec: classSpec classIndexOrNil: nil.
 		self map: classSpec toForeignObject: classForeignObject ].! !
@@ -929,6 +933,11 @@ includedDefinition: missingSelector start: classSpec isClassMethod: classSideFla
 				(includedSelectors includes: missingSelector) ifTrue: [
 					^superclassSpec ]]].
 	^nil! !
+
+!ImageBuilder methodsFor: 'image building testing' stamp: 'jmv 4/18/2024 14:08:07'!
+includeDisplayAndSensor
+	"Some imges may need them, but minimal headless images won't"
+	^false! !
 
 !ImageBuilder methodsFor: 'image building examples' stamp: 'jmv 9/19/2023 11:27:31'!
 addExample03FloatMethods
@@ -1074,11 +1083,11 @@ addExample05SymbolExperimentsMethods
 	} do: [ :compiledMethod |
 		self addExistingMethod: compiledMethod ].! !
 
-!ImageBuilder methodsFor: 'image building examples' stamp: 'jmv 2/7/2024 17:55:10'!
+!ImageBuilder methodsFor: 'image building examples' stamp: 'jmv 4/18/2024 15:03:43'!
 addExample06LoadDynamicLibraryMethods
 
 	"Classes referenced from below, but of which no methods are included."
-	#(ReadWriteStream IdentitySet)
+	#(ReadWriteStream IdentitySet Bitmap)
 	do: [ :className | | classSpec classForeignObject |
 		classSpec := ClassSpec for: (Smalltalk at: className) addClassesTo: classes.	
 		classForeignObject := self addClassAndMetaclassSpec: classSpec classIndexOrNil: nil.
@@ -1359,12 +1368,11 @@ addExample06LoadDynamicLibraryMethods
 	} do: [ :compiledMethod |
 		self addExistingMethod: compiledMethod ].! !
 
-!ImageBuilder methodsFor: 'image building examples' stamp: 'jmv 2/7/2024 17:55:52'!
+!ImageBuilder methodsFor: 'image building examples' stamp: 'jmv 4/18/2024 15:04:35'!
 addExample07LoadDynamicLibraryMethods
 
 	"Classes referenced from below, but of which no methods are included."
-	#(ReadWriteStream IdentitySet
-	)
+	#(ReadWriteStream IdentitySet Bitmap)
 	do: [ :className | | classSpec classForeignObject |
 		classSpec := ClassSpec for: (Smalltalk at: className) addClassesTo: classes.	
 		classForeignObject := self addClassAndMetaclassSpec: classSpec classIndexOrNil: nil.
@@ -2353,56 +2361,12 @@ wordSize
 	In Bytes"
 	self subclassResponsibility ! !
 
-!ImageBuilder methodsFor: 'image file saving' stamp: 'jmv 8/22/2023 12:50:58'!
+!ImageBuilder methodsFor: 'image file saving' stamp: 'jmv 4/18/2024 14:45:42'!
 writeImageFileHeaderOn: aStream byteSize: imageByteSizeIncludingHeader
 	"Write an appropriate image file header.
 	Intended to be called after saving the heap to the file, and setting #position: to zero."
-"
-readImageFromFile:HeapSize:StartingAt:
-"
-	| specialObjectsOop savedWindowSize imageHeaderFlags extraVMMemory 
-	desiredNumStackPages cogCodeSizeKB desiredEdenBytes maxExtSemTabSize the2ndUnknownShort_maxLiteralCountForCompile firstSegmentByteSize bytesLeftInOldSpace |
 
-	false ifTrue: [ lastHash := lastHash ].
-	specialObjectsOop := specialObjectsArrayForeignObject foreignOopFor: self.
-	savedWindowSize := 640<<16 + 480.
-#setImageHeaderFlagsFrom:.
-	imageHeaderFlags := 130. 								"See #setImageHeaderFlagsFrom: and #getImageHeaderFlags and #imageHeaderFlags"
-	extraVMMemory := 0. 								"See #extraVMMemory and #extraVMMemory:"
-
-	desiredNumStackPages := 0. 								"Apparently 8 for v3, 0 for Spur means default"
-	cogCodeSizeKB := 0.								"Apparently 0 for Spur"
-	desiredEdenBytes := 0.								"Apparently 0 for Spur, meaning default? The VM saves Cuis with 16777216 ..."
-	maxExtSemTabSize := 256 * 0.								"Apparently 0 for Spur? The VM saves Cuis with 0 ..."
-	the2ndUnknownShort_maxLiteralCountForCompile := 0.
-	firstSegmentByteSize := imageByteSizeIncludingHeader - self imageHeaderSize.
-	bytesLeftInOldSpace := 0. 								"???? freeOldSpaceInImage"
-
-	self on: aStream nextUint32Put: self imageFormat.
-	self on: aStream nextUint32Put: self imageHeaderSize.
-	self on: aStream nexWordPut: imageByteSizeIncludingHeader - self imageHeaderSize. 																"length of heap in file"
-	self on: aStream nexWordPut: baseAddressOfImage.																"object memory base address of image"
-	self on: aStream nexWordPut: specialObjectsOop.
-	self on: aStream nexWordPut: lastHash.
-	self on: aStream nexWordPut: savedWindowSize.
-	self on: aStream nexWordPut: imageHeaderFlags.
-	self on: aStream nextUint32Put: extraVMMemory.
-
-	"Only for Cog"
-	aStream nextUint16Put: desiredNumStackPages bigEndian: isBigEndian.
-	aStream nextUint16Put: cogCodeSizeKB bigEndian: isBigEndian.
-
-	"40 o 64 bytes so far"
-
-	self on: aStream nextUint32Put: desiredEdenBytes.
-	aStream nextUint16Put: maxExtSemTabSize bigEndian: isBigEndian.
-	aStream nextUint16Put: the2ndUnknownShort_maxLiteralCountForCompile bigEndian: isBigEndian.
-
-	"48 o 72 bytes so far"
-
-	"Only for Spur????"
-	self on: aStream nexWordPut: firstSegmentByteSize.
-	self on: aStream nexWordPut: bytesLeftInOldSpace.! !
+	self subclassResponsibility! !
 
 !SpurImageBuilder methodsFor: 'initialization' stamp: 'jmv 5/15/2023 16:25:30'!
 initialize
@@ -2419,7 +2383,7 @@ addSpurHiddenObjectsIfRequired
 	"Class Table and Hidden Roots. First page of the Class Table."
 	self addClassTable.! !
 
-!SpurImageBuilder methodsFor: 'image building' stamp: 'jmv 8/14/2023 16:48:52'!
+!SpurImageBuilder methodsFor: 'image building' stamp: 'jmv 4/18/2024 14:26:12'!
 addVmKnownClasses
 	"Some classes are known by the VM.
 	- They have specific classIndex and identityHash
@@ -2432,7 +2396,8 @@ addVmKnownClasses
 
 	"Note: SmallFloat64 will never be instantiated in Spur32!!"
 
-	#(
+	| vmKnownClassNames |
+	vmKnownClassNames := #(
 		#(#SmallInteger 1)
 		#(#Character 2)
 		#(#SmallFloat64 4)
@@ -2446,16 +2411,18 @@ addVmKnownClasses
 		#(#ByteArray 50)
 		#(#Array 51)
 		#(#String 52)
-		#(#Bitmap 53)
 		#(#Point 54)
-	) do: [ :pair | | className specialHash classSpec classForeignObject |
+	).
+	self includeDisplayAndSensor ifTrue: [
+		vmKnownClassNames := vmKnownClassNames, #(#(#Bitmap 53)) ].
+	vmKnownClassNames do: [ :pair | | className specialHash classSpec classForeignObject |
 		className := pair first.
 		specialHash := pair second.
 		classSpec := ClassSpec for: (Smalltalk at: className) addClassesTo: classes.
 		classForeignObject := self addClassAndMetaclassSpec: classSpec classIndexOrNil: specialHash.
 		self map: classSpec toForeignObject: classForeignObject ].! !
 
-!SpurImageBuilder methodsFor: 'image building' stamp: 'jmv 7/17/2023 12:48:25'!
+!SpurImageBuilder methodsFor: 'image building' stamp: 'jmv 4/18/2024 14:57:25'!
 fillSpecialObjectsArray
 	"Create a SpecialObjectsArray for our new image. See #recreateSpecialObjectsArray.
 	Add a ForeignObject for it to our foreign object list and dicitonary.
@@ -2485,7 +2452,8 @@ fillSpecialObjectsArray
 	self assert: processorBindingForeignObject == (globalVariables detect: [ :assocFO |
 		assocFO representedObject key representedObject == #Processor ]).
 	"Numerous classes below used for type checking and instantiation"
-	specialObjectsArray at: 5 put: (classes at: #Bitmap).
+	self includeDisplayAndSensor ifTrue: [
+		specialObjectsArray at: 5 put: (classes at: #Bitmap) ].
 	specialObjectsArray at: 6 put: (classes at: #SmallInteger).
 	specialObjectsArray at: 7 put: (classes at: #String).
 	specialObjectsArray at: 8 put: (classes at: #Array).
@@ -2499,9 +2467,10 @@ fillSpecialObjectsArray
 	specialObjectsArray at: 13 put: (classes at: #Point).
 	specialObjectsArray at: 14 put: (classes at: #LargePositiveInteger).
 	"ForeignObjct for the new Display global Displaycreen."
-	specialObjectsArray at: 15 put: displayForeignObject.
-	self assert: displayForeignObject == ((globalVariables detect: [ :assocFO |
-		assocFO representedObject key representedObject == #Display ]) representedObject value).
+	displayForeignObject ifNotNil: [
+		specialObjectsArray at: 15 put: displayForeignObject.
+		self assert: displayForeignObject == ((globalVariables detect: [ :assocFO |
+			assocFO representedObject key representedObject == #Display ]) representedObject value) ].
 	specialObjectsArray at: 16 put: (classes at: #Message).
 	specialObjectsArray at: 17 put: (classes at: #CompiledMethod).
 	specialObjectsArray at: 18 put: (self createForeignObjectFor: Semaphore new). "low space Semaphore"
@@ -2931,6 +2900,82 @@ write: aForeignObject on: byteStream
 	Therefore, stream position must also be a multiple of 8.
 	Note: This matches #sizeInBytesOfBody:"
 	[(byteStream position \\ 8) = 0] whileFalse: [byteStream nextPut: 0].! !
+
+!SpurImageBuilder methodsFor: 'image file saving' stamp: 'jmv 4/25/2024 11:43:00'!
+writeImageFileHeaderOn: aStream byteSize: imageByteSizeIncludingHeader
+	"Write an appropriate image file header.
+	Intended to be called after saving the heap to the file, and setting #position: to zero.
+	Reviewed with Eliot Miranda on Apr 18, 2024. Thanks Eliot!!"
+"
+readImageFromFile:HeapSize:StartingAt:
+"
+	| specialObjectsOop savedWindowSize imageHeaderFlags shiftedBit extraVMMemory 
+	desiredNumStackPages cogCodeSizeKB desiredEdenBytes maxExtSemTabSize maxLiteralCountForCompile firstSegmentByteSize bytesLeftInOldSpace |
+
+	false ifTrue: [ lastHash := lastHash ].
+	specialObjectsOop := specialObjectsArrayForeignObject foreignOopFor: self.
+	savedWindowSize := 640<<16 + 480.
+
+	"imageHeaderFlags includes all the bits in vmParameter 48, but shifted to make room for two additional lsb bits: fullScreenFlag and floatsInPlatformOrder.
+	((Smalltalk vmParameterAt: 48) bitShift: 2) bitOr: 2
+	((((Smalltalk vmParameterAt: 48) bitShift: 2) bitOr: 2) printStringBase: 2 nDigits: 11) reversed
+	See comment at #vmParameterAt: , in particular for index 48
+	See also #setImageHeaderFlagsFrom: in VMMaker
+	"
+	imageHeaderFlags := 0.
+	shiftedBit := 1.
+	#(
+		0 		"0: Full screen off."
+		1 		"1: Floats are in plarform order."
+		0  		"0: Process doesn't have threadAffinity ivar. No threaded FFI support."
+		0  		"0: Don't flag interpreted methods by default."
+		1  		"1: Preemption does not yield."
+		0  		"0: noThreadingOfGUIThread. Currently unused in Cuis. Update this when Cuis supports threaded FFI."
+		0  		"0: Don't use the new finalization, intended to support Ephemerons."
+		1  		"1: Don't create fake keyboard events for wheel events."
+		1  		"1: Don't do mixed arithmetic in the VM. Let the image decide how to do it."
+		0  		"0: Don't use UTC seconds from epoch for files (FilePlugin / FileAttributesPlugin)."
+		0  		"0: Don't upscaleDisplayIfHighDPI."
+	) do: [ :bit |
+		imageHeaderFlags := imageHeaderFlags bitOr: (shiftedBit * bit).
+		shiftedBit := shiftedBit * 2 ].
+
+
+	extraVMMemory := 0. 								"Not used in Spur"
+
+	desiredNumStackPages := 0. 								"0 means default value as preferred by the VM. This is vmParameterAt: 43."
+	cogCodeSizeKB := 0.								"If zero, set by the VM, depending on the density of the instuction set of the target architecture. vmParameterAt: 47. unused if no cog jitter"
+	desiredEdenBytes := 0.								"0 for minimal images. Cuis image is saved with 16777216.
+									Typical app images could use something like 128, 256 or 512 MB. Profile your app with various values to find out.  vmParameterAt: 45."
+	maxExtSemTabSize := 256 * 0.								"0 means vm default, i.e. 256. This is vmParameterAt: 49"
+	maxLiteralCountForCompile := 0. 								"How much literals above which we'd not jit a method. 0 means vm default (60). Unused if no cog jitter"
+	firstSegmentByteSize := imageByteSizeIncludingHeader - self imageHeaderSize.
+	bytesLeftInOldSpace := 0. 								"0 for bootstrapped images, because there is no heap fragmentation."
+
+	self on: aStream nextUint32Put: self imageFormat.
+	self on: aStream nextUint32Put: self imageHeaderSize.
+	self on: aStream nexWordPut: imageByteSizeIncludingHeader - self imageHeaderSize. 																"length of heap in file"
+	self on: aStream nexWordPut: baseAddressOfImage.																"object memory base address of image"
+	self on: aStream nexWordPut: specialObjectsOop.
+	self on: aStream nexWordPut: lastHash.
+	self on: aStream nexWordPut: savedWindowSize.
+	self on: aStream nexWordPut: imageHeaderFlags.
+	self on: aStream nextUint32Put: extraVMMemory.
+
+	"Only for Cog"
+	aStream nextUint16Put: desiredNumStackPages bigEndian: isBigEndian.
+	aStream nextUint16Put: cogCodeSizeKB bigEndian: isBigEndian.
+
+	"40 o 64 bytes so far"
+
+	self on: aStream nextUint32Put: desiredEdenBytes.
+	aStream nextUint16Put: maxExtSemTabSize bigEndian: isBigEndian.
+	aStream nextUint16Put: maxLiteralCountForCompile bigEndian: isBigEndian.
+
+	"48 o 72 bytes so far"
+
+	self on: aStream nexWordPut: firstSegmentByteSize.
+	self on: aStream nexWordPut: bytesLeftInOldSpace.! !
 
 !Spur32ImageBuilder methodsFor: 'foreign objects' stamp: 'jmv 6/23/2023 15:17:33'!
 addFreeLists
