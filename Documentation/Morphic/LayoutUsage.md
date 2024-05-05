@@ -87,7 +87,7 @@ From the Morph's point of view, a Morph has a morphExtent and a minimumExtent.  
 The optional LayoutSpec adds options, but must respect the Morph's minimumExtent.  The actual minimum, however, depends on information from both the Morph and its LayoutSpec (if any).
 
 The LayoutSpec can specify (x and y independent):
-- [A] Use the Morph's (current) Width wnd Height  [proportionalW/H nil, fixedW/H nil]
+- [A] Use the Morph's (current) Width and Height  [proportionalW/H nil, fixedW/H nil]
 - [B] Have a fixed Width and Height [proportionalW/H nil, fixedW/H numbers]
 - [C] Have a Width/Height proportional to the amount of otherwise unused/unoccupied layout space
 [proportionalW/H 0..1, fixedW/H nil (=> 0) or a number].
