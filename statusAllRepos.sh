@@ -1,6 +1,6 @@
 #!/bin/bash
 
-repositories="AMQP AnimatedGIF Cairo Calendars CodeExamples Cuis-Smalltalk-Tools Cuis-Smalltalk-UI EnhancedText Erudite firmata Games GeographicInformationSystems Learning-Cuis Machine-Learning Measures Morphic Numerics OSProcess Parsers StyledTextEditor SVG VMMaker TheCuisBook Cuis-Smalltalk.github.io Cuis-Website Cuis-Smalltalk-Historical"
+repositories="AMQP AnimatedGIF Cairo Calendars CodeExamples Cuis-Smalltalk-Tools Cuis-Smalltalk-UI EnhancedText Erudite firmata Games GeographicInformationSystems Learning-Cuis Machine-Learning Measures Morphic Numerics OSProcess Parsers StyledTextEditor SVG VMMaker TheCuisBook Cuis-Smalltalk.github.io Cuis-Website Cuis-Smalltalk-Historical Cuis-Smalltalk-Regex"
 
 echo
 echo -e "Status of \e[7m =====Cuis-Smalltalk-Dev===== \e[0m"
