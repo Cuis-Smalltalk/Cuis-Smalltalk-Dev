@@ -1,6 +1,6 @@
-'From Cuis6.3 [latest update: #6302] on 26 March 2024 at 12:55:56 pm'!
+'From Cuis6.3 [latest update: #6355] on 10 May 2024 at 5:58:00 pm'!
 'Description ExtractMethod for optimized messages test'!
-!provides: 'BaseImageTests' 1 391!
+!provides: 'BaseImageTests' 1 392!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Objects'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
@@ -23396,13 +23396,13 @@ setUp
 	
 	classCategories := Set new.! !
 
-!DynamicallyCodeCreationTest methodsFor: 'setup/teardown' stamp: 'HAW 12/17/2019 10:33:41'!
+!DynamicallyCodeCreationTest methodsFor: 'setup/teardown' stamp: 'bp 5/10/2024 17:52:37'!
 tearDown
 
 	setUpAssertionsPassed ifTrue: [
 		self assertAllClassCategoriesAreExpectedToBeRemoved.
 		SystemOrganization removeSystemCategories: classCategories.
-		"I commented this becuase it took too much time and the only ones runing these tests 
+		"I commented this because it took too much time and the only ones running these tests 
 		are the ones developing refactorings that know about creating/removing test data category - Hernan
 		Browser allInstancesDo: [:aBrowser | aBrowser changed: #systemCategoryList ]"]! !
 
