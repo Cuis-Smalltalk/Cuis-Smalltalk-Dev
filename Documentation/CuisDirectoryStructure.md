@@ -27,7 +27,7 @@ There are several directories used by Cuis itself:
 
 This is the base directory for all the files in the Cuis distribution. It is the same as the Git repository. For a Stable Cuis Release it is something like:
 
-**`Your/Path/To/Project/Cuis-6-2`**
+**`Your/Path/To/Project/Cuis-7-0`**
 
 For the Rolling Release of Cuis it is something like:
 

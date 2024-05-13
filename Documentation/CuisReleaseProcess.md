@@ -1,6 +1,6 @@
 # The Cuis Smalltalk Release Process
 
-This document describes the Process to handle Stable Releases for Cuis. It is inspired by RedHat Linux. The latest Stable Releases is at the [Cuis 6.2 repo](https://github.com/Cuis-Smalltalk/Cuis6-2). Alpha development is done at the [Rolling Release of Cuis](https://github.com/Cuis-Smalltalk/Cuis-Smalltalk-Dev).
+This document describes the Process to handle Stable Releases for Cuis. It is inspired by RedHat Linux. The latest Stable Releases is at the [Cuis 7.0 repo](https://github.com/Cuis-Smalltalk/Cuis7-0). Alpha development is done at the [Rolling Release of Cuis](https://github.com/Cuis-Smalltalk/Cuis-Smalltalk-Dev).
 
 The process described here produces two releases per year: One in May and another November. 
 
