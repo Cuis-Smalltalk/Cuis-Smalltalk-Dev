@@ -1,36 +1,36 @@
-'From Cuis6.3 [latest update: #6247] on 2 March 2024 at 9:00:22 pm'!
+'From Cuis7.0 [latest update: #6367] on 17 May 2024 at 11:26:08 am'!
 'Description '!
-!provides: 'Locales' 1 12!
-SystemOrganization addCategory: #'Locales'!
+!provides: 'Locales' 1 13!
+SystemOrganization addCategory: #Locales!
 
 
-!classDefinition: #ISOLanguageDefinition category: #'Locales'!
+!classDefinition: #ISOLanguageDefinition category: #Locales!
 Object subclass: #ISOLanguageDefinition
 	instanceVariableNames: 'iso3 iso2 iso3Alternate language'
 	classVariableNames: 'ISO2Countries ISO2Table ISO3Countries ISO3Table'
 	poolDictionaries: ''
 	category: 'Locales'!
-!classDefinition: 'ISOLanguageDefinition class' category: #'Locales'!
+!classDefinition: 'ISOLanguageDefinition class' category: #Locales!
 ISOLanguageDefinition class
 	instanceVariableNames: ''!
 
-!classDefinition: #Locale category: #'Locales'!
+!classDefinition: #Locale category: #Locales!
 Object subclass: #Locale
 	instanceVariableNames: 'id'
 	classVariableNames: 'Activated Current CurrentPlatform KnownLocales LanguageSymbols LocaleChangeListeners PlatformEncodings Previous'
 	poolDictionaries: ''
 	category: 'Locales'!
-!classDefinition: 'Locale class' category: #'Locales'!
+!classDefinition: 'Locale class' category: #Locales!
 Locale class
 	instanceVariableNames: ''!
 
-!classDefinition: #LocaleID category: #'Locales'!
+!classDefinition: #LocaleID category: #Locales!
 Object subclass: #LocaleID
 	instanceVariableNames: 'isoLanguage isoCountry'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Locales'!
-!classDefinition: 'LocaleID class' category: #'Locales'!
+!classDefinition: 'LocaleID class' category: #Locales!
 LocaleID class
 	instanceVariableNames: ''!
 
@@ -57,7 +57,6 @@ http://mitglied.lycos.de/buran/knowhow/codes/locales/!
 
 !LocaleID commentStamp: '' prior: 0!
 The ID for localization!
-
 
 !ISOLanguageDefinition methodsFor: 'accessing'!
 iso2
@@ -2874,16 +2873,20 @@ switchTo: locale
 	self switchTo: locale gently: false.
 ! !
 
-!Locale class methodsFor: 'accessing' stamp: 'hlsf 2/20/2022 10:12:21'!
+!Locale class methodsFor: 'accessing' stamp: 'jmv 5/17/2024 11:24:29'!
 switchTo: locale gently: gentlyFlag
 	"Locale switchTo: (Locale isoLanguage: 'de')"
-	| availableID |
-	availableID := (NaturalLanguageTranslator availableForLocaleID: locale localeID) localeID.
-	Current localeID = availableID
-		ifFalse: [Previous := Current.
-				CurrentPlatform := Current := Locale localeID: availableID.
-				NaturalLanguageTranslator localeChanged.
-				gentlyFlag ifTrue: [self localeChangedGently] ifFalse: [self localeChanged]]! !
+	| nlTranslatorClass availableID |
+	nlTranslatorClass := nil.
+	availableID := locale localeID.
+	availableID := Smalltalk at: #NaturalLanguageTranslator ifPresent: [ :c |
+		nlTranslatorClass := c.
+		(nlTranslatorClass availableForLocaleID: locale localeID) localeID ].
+	Current localeID = availableID ifFalse: [
+			Previous := Current.
+			CurrentPlatform := Current := Locale localeID: availableID.
+			nlTranslatorClass ifNotNil: [ nlTranslatorClass localeChanged ].
+			gentlyFlag ifTrue: [self localeChangedGently] ifFalse: [self localeChanged]]! !
 
 !Locale class methodsFor: 'accessing'!
 switchToID: localeID
@@ -2985,9 +2988,11 @@ isoString
 parent
 	^self class isoLanguage: self isoLanguage! !
 
-!LocaleID methodsFor: 'accessing'!
+!LocaleID methodsFor: 'accessing' stamp: 'jmv 5/17/2024 11:25:49'!
 translator
-	^ NaturalLanguageTranslator localeID: self ! !
+
+	^Smalltalk at: #NaturalLanguageTranslator ifPresent: [ :nlTranslatorClass |
+		nlTranslatorClass localeID: self ]! !
 
 !LocaleID class methodsFor: 'accessing'!
 current
