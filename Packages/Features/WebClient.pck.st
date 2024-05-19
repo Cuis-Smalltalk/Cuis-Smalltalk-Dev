@@ -1,9 +1,9 @@
-'From Cuis6.3 [latest update: #6189] on 9 January 2024 at 6:04:00 pm'!
+'From Cuis7.1 [latest update: #6379] on 19 May 2024 at 3:22:27 pm'!
 'Description Description - This package is a port and refactoring of WebClient from http://ss3.gemstone.com/ss/WebClient.html with moderate changes by David Graham, Nicola Mingotti, Juan Vuletich and Hernan Wilkinson.
 	- WebClient-Core-ul.100
 	- WebClient-Help-ar.10
 	- WebClient-Tests-topa.48'!
-!provides: 'WebClient' 1 34!
+!provides: 'WebClient' 1 35!
 !requires: 'Network-Kernel' 1 2 nil!
 !requires: 'Identities-UUID' 1 7 nil!
 !requires: 'Cryptography-DigitalSignatures' 1 7 nil!
@@ -7286,7 +7286,7 @@ secureSocketStream
 
 	^SecureSocketStream! !
 
-!String class methodsFor: '*WebClient' stamp: 'jmv 1/9/2024 17:28:20'!
+!CharacterSequence class methodsFor: '*WebClient' stamp: 'jmv 5/19/2024 15:21:59'!
 invalidAsciiInUrlFields
 	"Answer a CharacterSet ByteArray with all ASCII characters that are invalid in an URL field.
 	See https://en.wikipedia.org/wiki/URL_encoding
@@ -7298,10 +7298,9 @@ invalidAsciiInUrlFields
 	answer := ByteArray new: 256.
 	(((0 to: 127) collect: [ :i | Character codePoint: i ]) reject: [ :c | c isAlphaNumeric  | ('.-_' includes: c)]) do: [ :char |
 			answer at: char codePoint + 1 put: 1 ].
-	^answer
-	! !
+	^answer! !
 
-!String class methodsFor: '*WebClient' stamp: 'jmv 1/9/2024 17:27:11'!
+!CharacterSequence class methodsFor: '*WebClient' stamp: 'jmv 5/19/2024 15:21:53'!
 invalidAsciiInUrls
 	"Answer a CharacterSet ByteArray with all ASCII characters that are invalid in an URL.
 	See https://en.wikipedia.org/wiki/URL_encoding
@@ -7316,7 +7315,7 @@ invalidAsciiInUrls
 			answer at: char codePoint + 1 put: 1 ].
 	^answer! !
 
-!String methodsFor: '*WebClient' stamp: 'jmv 1/9/2024 17:29:48'!
+!String methodsFor: '*WebClient' stamp: 'jmv 5/19/2024 15:22:17'!
 percentEscapeUrl
 	"Answer an instance of String where all characters are ASCII.
 	If we contain any ASCII character that is invalid in an URL, parentEscape it
@@ -7324,7 +7323,7 @@ percentEscapeUrl
 	See https://en.wikipedia.org/wiki/URL_encoding"
 
 	| badChars |
-	badChars := `String invalidAsciiInUrls`.
+	badChars := `CharacterSequence invalidAsciiInUrls`.
 	(self isAscii and: [(self indexOfAnyIn: badChars startingAt: 1 ifAbsent: 0) = 0]) ifTrue: [
 		^self ].
 	^String percentEscapingNonAsciiAndThoseIn: badChars bytes: self asUtf8Bytes! !
@@ -7375,7 +7374,7 @@ unescapePercents
 	].
 	^ answerClass fromUtf8Bytes: answerBytes! !
 
-!UnicodeString methodsFor: '*WebClient' stamp: 'jmv 1/9/2024 17:30:43'!
+!UnicodeString methodsFor: '*WebClient' stamp: 'jmv 5/19/2024 15:22:20'!
 percentEscapeUrl
 	"Answer an instance of String where all characters are ASCII.
 	If we contain any ASCII character that is invalid in an URL, parentEscape it
@@ -7383,7 +7382,7 @@ percentEscapeUrl
 	See https://en.wikipedia.org/wiki/URL_encoding"
 
 	| badChars |
-	badChars := `String invalidAsciiInUrls`.
+	badChars := `CharacterSequence invalidAsciiInUrls`.
 	(self isAscii and: [(self indexOfAnyIn: badChars startingAt: 1 ifAbsent: 0) = 0]) ifTrue: [
 		^self asByteString ].
 	^String percentEscapingNonAsciiAndThoseIn: badChars bytes: self asUtf8Bytes! !
