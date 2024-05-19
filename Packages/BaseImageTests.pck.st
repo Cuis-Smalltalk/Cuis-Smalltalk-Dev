@@ -1,5 +1,5 @@
-'From Cuis6.3 [latest update: #6355] on 10 May 2024 at 5:58:00 pm'!
-'Description ExtractMethod for optimized messages test'!
+'From Cuis7.1 [latest update: #6368] on 16 May 2024 at 10:02:47 am'!
+'Description Rename extentions tests'!
 !provides: 'BaseImageTests' 1 392!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Objects'!
@@ -1275,6 +1275,16 @@ DynamicallyCodeCreationTest subclass: #CompilerTest
 	category: 'BaseImageTests-Compiler'!
 !classDefinition: 'CompilerTest class' category: #'BaseImageTests-Compiler'!
 CompilerTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #SystemOrganizerTest category: #'BaseImageTests-System-Support'!
+DynamicallyCodeCreationTest subclass: #SystemOrganizerTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-System-Support'!
+!classDefinition: 'SystemOrganizerTest class' category: #'BaseImageTests-System-Support'!
+SystemOrganizerTest class
 	instanceVariableNames: ''!
 
 !classDefinition: #ChangesTest category: #'BaseImageTests-Tools-Changes'!
@@ -23396,13 +23406,13 @@ setUp
 	
 	classCategories := Set new.! !
 
-!DynamicallyCodeCreationTest methodsFor: 'setup/teardown' stamp: 'bp 5/10/2024 17:52:37'!
+!DynamicallyCodeCreationTest methodsFor: 'setup/teardown' stamp: 'HAW 12/17/2019 10:33:41'!
 tearDown
 
 	setUpAssertionsPassed ifTrue: [
 		self assertAllClassCategoriesAreExpectedToBeRemoved.
 		SystemOrganization removeSystemCategories: classCategories.
-		"I commented this because it took too much time and the only ones running these tests 
+		"I commented this becuase it took too much time and the only ones runing these tests 
 		are the ones developing refactorings that know about creating/removing test data category - Hernan
 		Browser allInstancesDo: [:aBrowser | aBrowser changed: #systemCategoryList ]"]! !
 
@@ -23806,6 +23816,31 @@ unusedVariableSource
 	^ 'griffle 
 		| goo |
 		^ nil'! !
+
+!SystemOrganizerTest methodsFor: 'testing' stamp: 'HAW 5/16/2024 10:00:12'!
+testRenameSystemCategoryAlsoRenameClassExtensions
+	
+	| oldCategoryName oldExtensionName newCategoryName newExtensionName classWithCategoryToRename classOrganizer metaclassOrganizer |
+
+	oldCategoryName := 'ACategoryToRename'. 
+	oldExtensionName := '*', oldCategoryName, ' SubCategory'.
+	newCategoryName := self classCategoryOfTestData.
+	newExtensionName := '*', newCategoryName, ' SubCategory'.
+	classWithCategoryToRename := self createClassNamed: #AClassWithCategoryToRename.
+	[ classOrganizer := classWithCategoryToRename organization.
+	classOrganizer addCategory: oldExtensionName.
+	metaclassOrganizer := classWithCategoryToRename class organization.
+	metaclassOrganizer addCategory: oldExtensionName.
+
+	SystemOrganization renameSystemCategory: oldCategoryName to: newCategoryName.
+
+	self assert: classWithCategoryToRename category equals: newCategoryName.
+	self deny: (classOrganizer categories includes: oldExtensionName).
+	self assert: (classOrganizer categories includes: newExtensionName).
+	self deny: (metaclassOrganizer categories includes: oldExtensionName).
+	self assert: (metaclassOrganizer categories includes: newExtensionName) ] ensure: [
+		SystemOrganization removeSystemCategory: oldCategoryName ].
+! !
 
 !ChangesTest methodsFor: 'assertions' stamp: 'jmv 7/31/2023 12:35:38'!
 assertIsLogged: aString times: stringCount and: aBlock

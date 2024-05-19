@@ -1,4 +1,4 @@
-# Cuis Smalltalk v.6.3 Rolling Release
+# Cuis Smalltalk v.7.1 Rolling Release
 
 ## About Cuis
 

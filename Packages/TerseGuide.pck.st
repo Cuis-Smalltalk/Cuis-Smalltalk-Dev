@@ -1,6 +1,6 @@
-'From Cuis6.3 [latest update: #6213] on 6 February 2024 at 10:29:56 am'!
+'From Cuis7.1 [latest update: #6378] on 18 May 2024 at 4:47:05 pm'!
 'Description Add ability to dynamically add topic pages from other sources.'!
-!provides: 'TerseGuide' 1 146!
+!provides: 'TerseGuide' 1 147!
 SystemOrganization addCategory: #TerseGuide!
 
 
@@ -2170,26 +2170,23 @@ pages
 		'Custom Browsers'
 	) , self additionalTopicTitles! !
 
-!TerseGuideWindow methodsFor: 'initialization' stamp: 'dhn 6/15/2016 19:03'!
+!TerseGuideWindow methodsFor: 'initialization' stamp: 'jmv 5/17/2024 18:03:24'!
 buildMorphicWindow
 	"Define the window layout for Terse Guide"
 	| row |
 	
-	list1 _ (PluggableListMorph
-				model: model
-				listGetter: #topicList
-				indexGetter: #topicListIndex
-				indexSetter: #topicListIndex:
-				mainView: self
-				menuGetter: nil
-				keystrokeAction: nil)
-					name: 'Topic List'.
-	textModelM _ TextModelMorph withModel: model.
+	list1 := (PluggableListMorph
+			withModel: model
+			listGetter: #topicList
+			indexGetter: #topicListIndex
+			indexSetter: #topicListIndex:)
+				name: 'Topic List'.
+	textModelM := TextModelMorph withModel: model.
 	textModelM
 		askBeforeDiscardingEdits: false;
 		name: 'Work Space'.
 	model when: #topicListIndex send: #update: to: list1 withArguments: #(#topicListIndex).
-	row _ LayoutMorph newRow.
+	row := LayoutMorph newRow.
 	row
 		name: #Row;
 		addMorph: list1 proportionalWidth: 0.2;

@@ -3,7 +3,7 @@
 	- WebClient-Core-ul.100
 	- WebClient-Help-ar.10
 	- WebClient-Tests-topa.48'!
-!provides: 'WebClient' 1 33!
+!provides: 'WebClient' 1 34!
 !requires: 'Network-Kernel' 1 2 nil!
 !requires: 'Identities-UUID' 1 7 nil!
 !requires: 'Cryptography-DigitalSignatures' 1 7 nil!
@@ -6620,7 +6620,7 @@ parseAuthParams: authHeader
 		stream skipSeparators.
 		stream peek = $" 
 			ifTrue:[value := stream next; upTo: $". stream upTo: $,]
-			ifFalse:[value := stream upToAny: ' ,' asCharacterSet].
+			ifFalse:[value := stream upToAny: ' ,' asSet].
 		authParams at: key asLowercase put: value.
 	].
 	^authParams! !
@@ -7288,7 +7288,7 @@ secureSocketStream
 
 !String class methodsFor: '*WebClient' stamp: 'jmv 1/9/2024 17:28:20'!
 invalidAsciiInUrlFields
-	"Answer a CharacterSet with all ASCII characters that are invalid in an URL field.
+	"Answer a CharacterSet ByteArray with all ASCII characters that are invalid in an URL field.
 	See https://en.wikipedia.org/wiki/URL_encoding
 	Do include Reserved Characters (i.e. Characters that are used to form URLs)
 	This is appropriate to prepare any ASCII String to be used as a field name or value in an URL.
@@ -7303,7 +7303,7 @@ invalidAsciiInUrlFields
 
 !String class methodsFor: '*WebClient' stamp: 'jmv 1/9/2024 17:27:11'!
 invalidAsciiInUrls
-	"Answer a CharacterSet with all ASCII characters that are invalid in an URL.
+	"Answer a CharacterSet ByteArray with all ASCII characters that are invalid in an URL.
 	See https://en.wikipedia.org/wiki/URL_encoding
 	Do not include Reserved Characters (i.e. Characters that are used to form URLs)
 	This is appropriate for preparing a complete URL to be sent to network primitives.

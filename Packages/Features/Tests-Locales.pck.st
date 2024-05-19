@@ -1,6 +1,8 @@
 'From Cuis6.3 [latest update: #6247] on 2 March 2024 at 9:00:22 pm'!
 'Description '!
-!provides: 'Tests-Locales' 1 1!
+!provides: 'Tests-Locales' 1 2!
+!requires: 'Locales' 1 12 nil!
+!requires: 'Gettext' 1 30 nil!
 SystemOrganization addCategory: 'Tests-Locales'!
 
 
