@@ -1,6 +1,6 @@
-'From Cuis6.3 [latest update: #6247] on 2 March 2024 at 9:00:22 pm'!
+'From Cuis7.1 [latest update: #6387] on 21 May 2024 at 11:07:07 am'!
 'Description '!
-!provides: 'Gettext' 1 30!
+!provides: 'Gettext' 1 31!
 !requires: 'Locales' 1 12 nil!
 SystemOrganization addCategory: #Gettext!
 
@@ -530,7 +530,7 @@ fileName: path localeID: id
 	^self new 
 			load:path localeID: id! !
 
-!NaturalLanguageTranslator methodsFor: 'printing'!
+!NaturalLanguageTranslator methodsFor: 'printing' stamp: 'nk 8/29/2004 10:51'!
 printOn: aStream
 	aStream nextPutAll: self class name; nextPut: $(; print: self localeID; nextPut: $)! !
 
@@ -546,18 +546,18 @@ domainRegistered: aDomainName
 domainUnregistered: aDomainName
 	"notify that new TextDomain is unregistered.  Concrete subclass can responds to this event if needed"! !
 
-!NaturalLanguageTranslator methodsFor: 'accessing'!
+!NaturalLanguageTranslator methodsFor: 'accessing' stamp: 'mir 7/15/2004 14:42'!
 localeID
 	^id! !
-
-!NaturalLanguageTranslator methodsFor: 'accessing'!
-localeID: anID
-	id _ anID! !
 
 !NaturalLanguageTranslator methodsFor: 'language switching'!
 setCurrent
 	"notify locale of the translator become current"
 ! !
+
+!NaturalLanguageTranslator methodsFor: 'initialize-release' stamp: 'mir 7/15/2004 14:41'!
+localeID: anID
+	id := anID! !
 
 !NaturalLanguageTranslator class methodsFor: 'class initialization' stamp: 'hlsf 8/16/2022 11:09:35'!
 initialize

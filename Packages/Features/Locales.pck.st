@@ -1,6 +1,6 @@
-'From Cuis7.0 [latest update: #6367] on 17 May 2024 at 11:26:08 am'!
+'From Cuis7.1 [latest update: #6387] on 21 May 2024 at 11:07:09 am'!
 'Description '!
-!provides: 'Locales' 1 13!
+!provides: 'Locales' 1 14!
 SystemOrganization addCategory: #Locales!
 
 
@@ -58,37 +58,37 @@ http://mitglied.lycos.de/buran/knowhow/codes/locales/!
 !LocaleID commentStamp: '' prior: 0!
 The ID for localization!
 
-!ISOLanguageDefinition methodsFor: 'accessing'!
+!ISOLanguageDefinition methodsFor: 'accessing' stamp: 'mir 7/1/2004 18:20'!
 iso2
 	^iso2 ifNil: [self iso3]! !
 
-!ISOLanguageDefinition methodsFor: 'accessing'!
-iso2: aString
-	iso2 _ aString ifEmpty: [nil] ifNotEmpty: [aString]! !
-
-!ISOLanguageDefinition methodsFor: 'accessing'!
+!ISOLanguageDefinition methodsFor: 'accessing' stamp: 'mir 7/1/2004 18:21'!
 iso3
 	^iso3 ifNil: ['']! !
 
-!ISOLanguageDefinition methodsFor: 'accessing'!
-iso3: aString
-	iso3 _ aString ifEmpty: [nil] ifNotEmpty: [aString]! !
-
-!ISOLanguageDefinition methodsFor: 'accessing'!
+!ISOLanguageDefinition methodsFor: 'accessing' stamp: 'mir 6/30/2004 15:47'!
 iso3Alternate
 	^iso3Alternate ifNil: ['']! !
 
-!ISOLanguageDefinition methodsFor: 'accessing'!
-iso3Alternate: aString
-	iso3Alternate _ aString ifEmpty: [nil] ifNotEmpty: [aString]! !
-
-!ISOLanguageDefinition methodsFor: 'accessing'!
+!ISOLanguageDefinition methodsFor: 'accessing' stamp: 'mir 8/15/2003 13:13'!
 language
-	^ language! !
+	^language! !
 
-!ISOLanguageDefinition methodsFor: 'accessing'!
+!ISOLanguageDefinition methodsFor: 'initialize' stamp: 'mir 6/30/2004 15:54'!
+iso2: aString
+	iso2 := aString ifEmpty: [nil] ifNotEmpty: [aString]! !
+
+!ISOLanguageDefinition methodsFor: 'initialize' stamp: 'mir 6/30/2004 15:54'!
+iso3: aString
+	iso3 := aString ifEmpty: [nil] ifNotEmpty: [aString]! !
+
+!ISOLanguageDefinition methodsFor: 'initialize' stamp: 'mir 6/30/2004 15:54'!
+iso3Alternate: aString
+	iso3Alternate := aString ifEmpty: [nil] ifNotEmpty: [aString]! !
+
+!ISOLanguageDefinition methodsFor: 'initialize' stamp: 'mir 8/15/2003 13:40'!
 language: aString
-	language _ aString! !
+	language := aString! !
 
 !ISOLanguageDefinition class methodsFor: 'initialization'!
 initialize
@@ -109,495 +109,17 @@ initISOCountries
 		ISO3Countries at: (entry at: 3) put: (entry at: 1)].
 	! !
 
-!ISOLanguageDefinition class methodsFor: 'private'!
-isoLanguages
-	"ISO 639: 3-letter codes"
-	^'abk	ab	Abkhazian
-ace		Achinese
-ach		Acoli
-ada		Adangme
-aar	aa	Afar
-afh		Afrihili
-afr	af	Afrikaans
-afa		Afro-Asiatic (Other)
-aka		Akan
-akk		Akkadian
-alb/sqi	sq	Albanian
-ale		Aleut
-alg		Algonquian languages
-tut		Altaic (Other)
-amh	am	Amharic
-apa		Apache languages
-ara	ar	Arabic
-arc		Aramaic
-arp		Arapaho
-arn		Araucanian
-arw		Arawak
-arm/hye	hy	Armenian
-art		Artificial (Other)
-asm	as	Assamese
-ath		Athapascan languages
-map		Austronesian (Other)
-ava		Avaric
-ave		Avestan
-awa		Awadhi
-aym	ay	Aymara
-aze	az	Azerbaijani
-nah		Aztec
-ban		Balinese
-bat		Baltic (Other)
-bal		Baluchi
-bam		Bambara
-bai		Bamileke languages
-bad		Banda
-bnt		Bantu (Other)
-bas		Basa
-bak	ba	Bashkir
-baq/eus	eu	Basque
-bej		Beja
-bem		Bemba
-ben	bn	Bengali
-ber		Berber (Other)
-bho		Bhojpuri
-bih	bh	Bihari
-bik		Bikol
-bin		Bini
-bis	bi	Bislama
-bra		Braj
-bre	be	Breton
-bug		Buginese
-bul	bg	Bulgarian
-bua		Buriat
-bur/mya	my	Burmese
-bel	be	Byelorussian
-cad		Caddo
-car		Carib
-cat	ca	Catalan
-cau		Caucasian (Other)
-ceb		Cebuano
-cel		Celtic (Other)
-cai		Central American Indian (Other)
-chg		Chagatai
-cha		Chamorro
-che		Chechen
-chr		Cherokee
-chy		Cheyenne
-chb		Chibcha
-chi/zho	zh	Chinese
-chn		Chinook jargon
-cho		Choctaw
-chu		Church Slavic
-chv		Chuvash
-cop		Coptic
-cor		Cornish
-cos	co	Corsican
-cre		Cree
-mus		Creek
-crp		Creoles and Pidgins (Other)
-cpe		Creoles and Pidgins, English-based (Other)
-cpf		Creoles and Pidgins, French-based (Other)
-cpp		Creoles and Pidgins, Portuguese-based (Other)
-cus		Cushitic (Other)
-	hr	Croatian
-ces/cze	cs	Czech
-dak		Dakota
-dan	da	Danish
-del		Delaware
-din		Dinka
-div		Divehi
-doi		Dogri
-dra		Dravidian (Other)
-dua		Duala
-dut/nla	nl	Dutch
-dum		Dutch, Middle (ca. 1050-1350)
-dyu		Dyula
-dzo	dz	Dzongkha
-efi		Efik
-egy		Egyptian (Ancient)
-eka		Ekajuk
-elx		Elamite
-eng	en	English
-enm		English, Middle (ca. 1100-1500)
-ang		English, Old (ca. 450-1100)
-esk		Eskimo (Other)
-epo	eo	Esperanto
-est	et	Estonian
-ewe		Ewe
-ewo		Ewondo
-fan		Fang
-fat		Fanti
-fao	fo	Faroese
-fij	fj	Fijian
-fin	fi	Finnish
-fiu		Finno-Ugrian (Other)
-fon		Fon
-fra/fre	fr	French
-frm		French, Middle (ca. 1400-1600)
-fro		French, Old (842- ca. 1400)
-fry	fy	Frisian
-ful		Fulah
-gaa		Ga
-gae/gdh		Gaelic (Scots)
-glg	gl	Gallegan
-lug		Ganda
-gay		Gayo
-gez		Geez
-geo/kat	ka	Georgian
-deu/ger	de	German
-gmh		German, Middle High (ca. 1050-1500)
-goh		German, Old High (ca. 750-1050)
-gem		Germanic (Other)
-gil		Gilbertese
-gon		Gondi
-got		Gothic
-grb		Grebo
-grc		Greek, Ancient (to 1453)
-ell/gre	el	Greek, Modern (1453-)
-kal	kl	Greenlandic
-grn	gn	Guarani
-guj	gu	Gujarati
-hai		Haida
-hau	ha	Hausa
-haw		Hawaiian
-heb	he	Hebrew
-her		Herero
-hil		Hiligaynon
-him		Himachali
-hin	hi	Hindi
-hmo		Hiri Motu
-hun	hu	Hungarian
-hup		Hupa
-iba		Iban
-ice/isl	is	Icelandic
-ibo		Igbo
-ijo		Ijo
-ilo		Iloko
-inc		Indic (Other)
-ine		Indo-European (Other)
-ind	id	Indonesian
-ina	ia	Interlingua (International Auxiliary language Association)
-ine		 Interlingue
-iku	iu	Inuktitut
-ipk	ik	Inupiak
-ira		Iranian (Other)
-gai/iri	ga	Irish
-sga		Irish, Old (to 900)
-mga		Irish, Middle (900 - 1200)
-iro		Iroquoian languages
-ita	it	Italian
-jpn	ja	Japanese
-jav/jaw	jv/jw Javanese
-jrb		Judeo-Arabic
-jpr		Judeo-Persian
-kab		Kabyle
-kac		Kachin
-kam		Kamba
-kan	kn	Kannada
-kau		Kanuri
-kaa		Kara-Kalpak
-kar		Karen
-kas	ks	Kashmiri
-kaw		Kawi
-kaz	kk	Kazakh
-kha		Khasi
-khm	km	Khmer
-khi		Khoisan (Other)
-kho		Khotanese
-kik		Kikuyu
-kin	rw	Kinyarwanda
-kir	ky	Kirghiz
-kom		Komi
-kon		Kongo
-kok		Konkani
-kor	ko	Korean
-kpe		Kpelle
-kro		Kru
-kua		Kuanyama
-kum		Kumyk
-kur	ku	Kurdish
-kru		Kurukh
-kus		Kusaie
-kut		Kutenai
-lad		Ladino
-lah		Lahnda
-lam		Lamba
-oci	oc	Langue d''Oc (post 1500)
-lao	lo	Lao
-lat	la	Latin
-lav	lv	Latvian
-ltz		Letzeburgesch
-lez		Lezghian
-lin	ln	Lingala
-lit	lt	Lithuanian
-loz		Lozi
-lub		Luba-Katanga
-lui		Luiseno
-lun		Lunda
-luo		Luo (Kenya and Tanzania)
-mac/mak	mk	Macedonian
-mad		Madurese
-mag		Magahi
-mai		Maithili
-mak		Makasar
-mlg	mg	Malagasy
-may/msa	ms	Malay
-mal		Malayalam
-mlt	ml	Maltese
-man		Mandingo
-mni		Manipuri
-mno		Manobo languages
-max		Manx
-mao/mri	mi	Maori
-mar	mr	Marathi
-chm		Mari
-mah		Marshall
-mwr		Marwari
-mas		Masai
-myn		Mayan languages
-men		Mende
-mic		Micmac
-min		Minangkabau
-mis		Miscellaneous (Other)
-moh		Mohawk
-mol	mo	Moldavian
-mkh		Mon-Kmer (Other)
-lol		Mongo
-mon	mn	Mongolian
-mos		Mossi
-mul		Multiple languages
-mun		Munda languages
-nau	na	Nauru
-nav		Navajo
-nde		Ndebele, North
-nbl		Ndebele, South
-ndo		Ndongo
-nep	ne	Nepali
-new		Newari
-nic		Niger-Kordofanian (Other)
-ssa		Nilo-Saharan (Other)
-niu		Niuean
-non		Norse, Old
-nai		North American Indian (Other)
-nor	no	Norwegian
-nno		Norwegian (Nynorsk)
-nub		Nubian languages
-nym		Nyamwezi
-nya		Nyanja
-nyn		Nyankole
-nyo		Nyoro
-nzi		Nzima
-oji		Ojibwa
-ori	or	Oriya
-orm	om	Oromo
-osa		Osage
-oss		Ossetic
-oto		Otomian languages
-pal		Pahlavi
-pau		Palauan
-pli		Pali
-pam		Pampanga
-pag		Pangasinan
-pan	pa	Panjabi
-pap		Papiamento
-paa		Papuan-Australian (Other)
-fas/per	fa	Persian
-peo		Persian, Old (ca 600 - 400 B.C.)
-phn		Phoenician
-pol	pl	Polish
-pon		Ponape
-por	pt	Portuguese
-pra		Prakrit languages
-pro		Provencal, Old (to 1500)
-pus	ps	Pushto
-que	qu	Quechua
-roh	rm	Rhaeto-Romance
-raj		Rajasthani
-rar		Rarotongan
-roa		Romance (Other)
-ron/rum	ro	Romanian
-rom		Romany
-run	rn	Rundi
-rus	ru	Russian
-sal		Salishan languages
-sam		Samaritan Aramaic
-smi		Sami languages
-smo	sm	Samoan
-sad		Sandawe
-sag	sg	Sango
-san	sa	Sanskrit
-srd		Sardinian
-sco		Scots
-sel		Selkup
-sem		Semitic (Other)
-	sr	Serbian
-scr	sh	Serbo-Croatian
-srr		Serer
-shn		Shan
-sna	sn	Shona
-sid		Sidamo
-bla		Siksika
-snd	sd	Sindhi
-sin	si	Singhalese
-sit		Sino-Tibetan (Other)
-sio		Siouan languages
-sla		Slavic (Other)
-ssw	ss	Siswant
-slk/slo	sk	Slovak
-slv	sl	Slovenian
-sog		Sogdian
-som	so	Somali
-son		Songhai
-wen		Sorbian languages
-nso		Sotho, Northern
-sot	st	Sotho, Southern
-sai		South American Indian (Other)
-esl/spa	es	Spanish
-suk		Sukuma
-sux		Sumerian
-sun	su	Sudanese
-sus		Susu
-swa	sw	Swahili
-ssw		Swazi
-sve/swe	sv	Swedish
-syr		Syriac
-tgl	tl	Tagalog
-tah		Tahitian
-tgk	tg	Tajik
-tmh		Tamashek
-tam	ta	Tamil
-tat	tt	Tatar
-tel	te	Telugu
-ter		Tereno
-tha	th	Thai
-bod/tib	bo	Tibetan
-tig		Tigre
-tir	ti	Tigrinya
-tem		Timne
-tiv		Tivi
-tli		Tlingit
-tog	to	Tonga (Nyasa)
-ton		Tonga (Tonga Islands)
-tru		Truk
-tsi		Tsimshian
-tso	ts	Tsonga
-tsn	tn	Tswana
-tum		Tumbuka
-tur	tr	Turkish
-ota		Turkish, Ottoman (1500 - 1928)
-tuk	tk	Turkmen
-tyv		Tuvinian
-twi	tw	Twi
-uga		Ugaritic
-uig	ug	Uighur
-ukr	uk	Ukrainian
-umb		Umbundu
-und		Undetermined
-urd	ur	Urdu
-uzb	uz	Uzbek
-vai		Vai
-ven		Venda
-vie	vi	Vietnamese
-vol	vo	Volapük
-vot		Votic
-wak		Wakashan languages
-wal		Walamo
-war		Waray
-was		Washo
-cym/wel	cy	Welsh
-wol	wo	Wolof
-xho	xh	Xhosa
-sah		Yakut
-yao		Yao
-yap		Yap
-yid	yi	Yiddish
-yor	yo	Yoruba
-zap		Zapotec
-zen		Zenaga
-zha	za	Zhuang
-zul	zu	Zulu
-zun		Zuni'! !
-
-!ISOLanguageDefinition class methodsFor: 'private'!
-readISOLanguagesFrom: stream
-	"self readISOLanguagesFrom: self isoLanguages readStream "
-	| languages language code3 index line |
-	languages _ Dictionary new.
-	[stream atEnd
-		or: [(line _ stream nextLine readStream) atEnd]]
-		whileFalse: [
-			language _ self new.
-			code3 _ line upTo: Character tab.
-			(index _ code3 indexOf: $/) > 0
-				ifTrue: [
-					language iso3: (code3 copyFrom: 1 to: index-1).
-					language iso3Alternate: (code3 copyFrom: index+1 to: code3 size)]
-				ifFalse: [language iso3: code3].
-			language
-				iso2: (line upTo: Character tab);
-				language: line upToEnd.
-			languages at: language iso3 put: language].
-	^languages! !
-
-!ISOLanguageDefinition class methodsFor: 'accessing'!
-iso2LanguageDefinition: aString
-	^self iso2LanguageTable at: aString! !
-
-!ISOLanguageDefinition class methodsFor: 'accessing'!
-iso3LanguageDefinition: aString
-	^self iso3LanguageTable at: aString! !
-
-!ISOLanguageDefinition class methodsFor: 'private - ISO 2'!
+!ISOLanguageDefinition class methodsFor: 'private' stamp: 'mir 9/1/2005 14:18'!
 iso2Countries
-	"self iso2Countries"
-	"ISO2Countries _ nil. ISO3Countries := nil"
+	"ISOLanguageDefinition iso2Countries"
+	"ISO2Countries := nil. ISO3Countries := nil"
 
 	ISO2Countries ifNil: [self initISOCountries].
 	^ISO2Countries! !
 
-!ISOLanguageDefinition class methodsFor: 'private - ISO 2' stamp: 'jmv 2/6/2024 10:14:35'!
-iso2LanguageTable
-	"self iso2LanguageTable"
-
-	ISO2Table ifNotNil: [^ISO2Table].
-	ISO2Table := Dictionary new.
-	self iso3LanguageTable do: [:entry |
-		ISO2Table at: entry iso2 put: entry].
-	^ISO2Table! !
-
-!ISOLanguageDefinition class methodsFor: 'private - ISO 3166' stamp: 'jmv 2/6/2024 10:20:20'!
-buildIso3166CodesTables
-	"ISOLanguageDefinition buildIso3166CodesTables"
-	| rawdata stream country isoa2 isoa3 unNumeric macName macCode windowsName windowsCode empty table |
-	rawdata := self iso3166Codes.
-	table := OrderedCollection new.
-	stream := rawdata readStream.
-	empty := (Character codePoint: 160) asString.
-	[stream atEnd] whileFalse: 
-		[country := stream nextLine.
-		isoa2 := stream nextLine.
-		isoa3 := stream nextLine.
-		unNumeric := stream nextLine.
-		windowsName := stream nextLine.
-		windowsName = empty ifTrue: [windowsName := nil].
-		windowsCode := stream nextLine. 
-		windowsCode = empty ifTrue: [windowsCode := nil].
-		macName := stream nextLine.
-		macName = empty ifTrue: [macName := nil].
-		macCode := stream nextLine.
-		macCode = empty ifTrue: [macCode := nil].
-		table add: { country.  isoa2. isoa3.  unNumeric. windowsName.  windowsCode.  macName. macCode. }].
-	^table! !
-
-!ISOLanguageDefinition class methodsFor: 'private - ISO 3166'!
-initISO3LanguageTable
-	"self  initISO3LanguageTable"
-	
-	^ self readISOLanguagesFrom: self isoLanguages readStream.
-	! !
-
-!ISOLanguageDefinition class methodsFor: 'private - ISO 3166'!
+!ISOLanguageDefinition class methodsFor: 'private' stamp: 'mir 9/1/2005 13:57'!
 iso3166Codes
-	"http://www.unicode.org/onlinedat/countries.html"
+"http://www.unicode.org/onlinedat/countries.html"
 
 ^'ÅLAND ISLANDS
 AX
@@ -2561,19 +2083,497 @@ CTRY_ZIMBABWE
  
 '! !
 
-!ISOLanguageDefinition class methodsFor: 'private - ISO 3'!
+!ISOLanguageDefinition class methodsFor: 'private' stamp: 'mir 9/1/2005 14:18'!
 iso3Countries
-	"self iso3Countries"
-	"ISO2Countries _ nil. ISO3Countries := nil"
+	"ISOLanguageDefinition iso3Countries"
+	"ISO2Countries := nil. ISO3Countries := nil"
 
 	ISO3Countries ifNil: [self initISOCountries].
 	^ISO3Countries! !
 
-!ISOLanguageDefinition class methodsFor: 'private - ISO 3'!
+!ISOLanguageDefinition class methodsFor: 'private' stamp: 'mir 7/21/2004 13:10'!
 iso3LanguageTable
-	"self iso3LanguageTable"
+	"ISOLanguageDefinition iso3LanguageTable"
 
-	^ISO3Table ifNil: [ISO3Table _ self initISO3LanguageTable]! !
+	^ISO3Table ifNil: [ISO3Table := self initISO3LanguageTable]! !
+
+!ISOLanguageDefinition class methodsFor: 'private' stamp: 'yo 12/3/2004 17:46'!
+isoLanguages
+	"ISO 639: 3-letter codes"
+	^'abk	ab	Abkhazian
+ace		Achinese
+ach		Acoli
+ada		Adangme
+aar	aa	Afar
+afh		Afrihili
+afr	af	Afrikaans
+afa		Afro-Asiatic (Other)
+aka		Akan
+akk		Akkadian
+alb/sqi	sq	Albanian
+ale		Aleut
+alg		Algonquian languages
+tut		Altaic (Other)
+amh	am	Amharic
+apa		Apache languages
+ara	ar	Arabic
+arc		Aramaic
+arp		Arapaho
+arn		Araucanian
+arw		Arawak
+arm/hye	hy	Armenian
+art		Artificial (Other)
+asm	as	Assamese
+ath		Athapascan languages
+map		Austronesian (Other)
+ava		Avaric
+ave		Avestan
+awa		Awadhi
+aym	ay	Aymara
+aze	az	Azerbaijani
+nah		Aztec
+ban		Balinese
+bat		Baltic (Other)
+bal		Baluchi
+bam		Bambara
+bai		Bamileke languages
+bad		Banda
+bnt		Bantu (Other)
+bas		Basa
+bak	ba	Bashkir
+baq/eus	eu	Basque
+bej		Beja
+bem		Bemba
+ben	bn	Bengali
+ber		Berber (Other)
+bho		Bhojpuri
+bih	bh	Bihari
+bik		Bikol
+bin		Bini
+bis	bi	Bislama
+bra		Braj
+bre	be	Breton
+bug		Buginese
+bul	bg	Bulgarian
+bua		Buriat
+bur/mya	my	Burmese
+bel	be	Byelorussian
+cad		Caddo
+car		Carib
+cat	ca	Catalan
+cau		Caucasian (Other)
+ceb		Cebuano
+cel		Celtic (Other)
+cai		Central American Indian (Other)
+chg		Chagatai
+cha		Chamorro
+che		Chechen
+chr		Cherokee
+chy		Cheyenne
+chb		Chibcha
+chi/zho	zh	Chinese
+chn		Chinook jargon
+cho		Choctaw
+chu		Church Slavic
+chv		Chuvash
+cop		Coptic
+cor		Cornish
+cos	co	Corsican
+cre		Cree
+mus		Creek
+crp		Creoles and Pidgins (Other)
+cpe		Creoles and Pidgins, English-based (Other)
+cpf		Creoles and Pidgins, French-based (Other)
+cpp		Creoles and Pidgins, Portuguese-based (Other)
+cus		Cushitic (Other)
+	hr	Croatian
+ces/cze	cs	Czech
+dak		Dakota
+dan	da	Danish
+del		Delaware
+din		Dinka
+div		Divehi
+doi		Dogri
+dra		Dravidian (Other)
+dua		Duala
+dut/nla	nl	Dutch
+dum		Dutch, Middle (ca. 1050-1350)
+dyu		Dyula
+dzo	dz	Dzongkha
+efi		Efik
+egy		Egyptian (Ancient)
+eka		Ekajuk
+elx		Elamite
+eng	en	English
+enm		English, Middle (ca. 1100-1500)
+ang		English, Old (ca. 450-1100)
+esk		Eskimo (Other)
+epo	eo	Esperanto
+est	et	Estonian
+ewe		Ewe
+ewo		Ewondo
+fan		Fang
+fat		Fanti
+fao	fo	Faroese
+fij	fj	Fijian
+fin	fi	Finnish
+fiu		Finno-Ugrian (Other)
+fon		Fon
+fra/fre	fr	French
+frm		French, Middle (ca. 1400-1600)
+fro		French, Old (842- ca. 1400)
+fry	fy	Frisian
+ful		Fulah
+gaa		Ga
+gae/gdh		Gaelic (Scots)
+glg	gl	Gallegan
+lug		Ganda
+gay		Gayo
+gez		Geez
+geo/kat	ka	Georgian
+deu/ger	de	German
+gmh		German, Middle High (ca. 1050-1500)
+goh		German, Old High (ca. 750-1050)
+gem		Germanic (Other)
+gil		Gilbertese
+gon		Gondi
+got		Gothic
+grb		Grebo
+grc		Greek, Ancient (to 1453)
+ell/gre	el	Greek, Modern (1453-)
+kal	kl	Greenlandic
+grn	gn	Guarani
+guj	gu	Gujarati
+hai		Haida
+hau	ha	Hausa
+haw		Hawaiian
+heb	he	Hebrew
+her		Herero
+hil		Hiligaynon
+him		Himachali
+hin	hi	Hindi
+hmo		Hiri Motu
+hun	hu	Hungarian
+hup		Hupa
+iba		Iban
+ice/isl	is	Icelandic
+ibo		Igbo
+ijo		Ijo
+ilo		Iloko
+inc		Indic (Other)
+ine		Indo-European (Other)
+ind	id	Indonesian
+ina	ia	Interlingua (International Auxiliary language Association)
+ine		 Interlingue
+iku	iu	Inuktitut
+ipk	ik	Inupiak
+ira		Iranian (Other)
+gai/iri	ga	Irish
+sga		Irish, Old (to 900)
+mga		Irish, Middle (900 - 1200)
+iro		Iroquoian languages
+ita	it	Italian
+jpn	ja	Japanese
+jav/jaw	jv/jw Javanese
+jrb		Judeo-Arabic
+jpr		Judeo-Persian
+kab		Kabyle
+kac		Kachin
+kam		Kamba
+kan	kn	Kannada
+kau		Kanuri
+kaa		Kara-Kalpak
+kar		Karen
+kas	ks	Kashmiri
+kaw		Kawi
+kaz	kk	Kazakh
+kha		Khasi
+khm	km	Khmer
+khi		Khoisan (Other)
+kho		Khotanese
+kik		Kikuyu
+kin	rw	Kinyarwanda
+kir	ky	Kirghiz
+kom		Komi
+kon		Kongo
+kok		Konkani
+kor	ko	Korean
+kpe		Kpelle
+kro		Kru
+kua		Kuanyama
+kum		Kumyk
+kur	ku	Kurdish
+kru		Kurukh
+kus		Kusaie
+kut		Kutenai
+lad		Ladino
+lah		Lahnda
+lam		Lamba
+oci	oc	Langue d''Oc (post 1500)
+lao	lo	Lao
+lat	la	Latin
+lav	lv	Latvian
+ltz		Letzeburgesch
+lez		Lezghian
+lin	ln	Lingala
+lit	lt	Lithuanian
+loz		Lozi
+lub		Luba-Katanga
+lui		Luiseno
+lun		Lunda
+luo		Luo (Kenya and Tanzania)
+mac/mak	mk	Macedonian
+mad		Madurese
+mag		Magahi
+mai		Maithili
+mak		Makasar
+mlg	mg	Malagasy
+may/msa	ms	Malay
+mal		Malayalam
+mlt	ml	Maltese
+man		Mandingo
+mni		Manipuri
+mno		Manobo languages
+max		Manx
+mao/mri	mi	Maori
+mar	mr	Marathi
+chm		Mari
+mah		Marshall
+mwr		Marwari
+mas		Masai
+myn		Mayan languages
+men		Mende
+mic		Micmac
+min		Minangkabau
+mis		Miscellaneous (Other)
+moh		Mohawk
+mol	mo	Moldavian
+mkh		Mon-Kmer (Other)
+lol		Mongo
+mon	mn	Mongolian
+mos		Mossi
+mul		Multiple languages
+mun		Munda languages
+nau	na	Nauru
+nav		Navajo
+nde		Ndebele, North
+nbl		Ndebele, South
+ndo		Ndongo
+nep	ne	Nepali
+new		Newari
+nic		Niger-Kordofanian (Other)
+ssa		Nilo-Saharan (Other)
+niu		Niuean
+non		Norse, Old
+nai		North American Indian (Other)
+nor	no	Norwegian
+nno		Norwegian (Nynorsk)
+nub		Nubian languages
+nym		Nyamwezi
+nya		Nyanja
+nyn		Nyankole
+nyo		Nyoro
+nzi		Nzima
+oji		Ojibwa
+ori	or	Oriya
+orm	om	Oromo
+osa		Osage
+oss		Ossetic
+oto		Otomian languages
+pal		Pahlavi
+pau		Palauan
+pli		Pali
+pam		Pampanga
+pag		Pangasinan
+pan	pa	Panjabi
+pap		Papiamento
+paa		Papuan-Australian (Other)
+fas/per	fa	Persian
+peo		Persian, Old (ca 600 - 400 B.C.)
+phn		Phoenician
+pol	pl	Polish
+pon		Ponape
+por	pt	Portuguese
+pra		Prakrit languages
+pro		Provencal, Old (to 1500)
+pus	ps	Pushto
+que	qu	Quechua
+roh	rm	Rhaeto-Romance
+raj		Rajasthani
+rar		Rarotongan
+roa		Romance (Other)
+ron/rum	ro	Romanian
+rom		Romany
+run	rn	Rundi
+rus	ru	Russian
+sal		Salishan languages
+sam		Samaritan Aramaic
+smi		Sami languages
+smo	sm	Samoan
+sad		Sandawe
+sag	sg	Sango
+san	sa	Sanskrit
+srd		Sardinian
+sco		Scots
+sel		Selkup
+sem		Semitic (Other)
+	sr	Serbian
+scr	sh	Serbo-Croatian
+srr		Serer
+shn		Shan
+sna	sn	Shona
+sid		Sidamo
+bla		Siksika
+snd	sd	Sindhi
+sin	si	Singhalese
+sit		Sino-Tibetan (Other)
+sio		Siouan languages
+sla		Slavic (Other)
+ssw	ss	Siswant
+slk/slo	sk	Slovak
+slv	sl	Slovenian
+sog		Sogdian
+som	so	Somali
+son		Songhai
+wen		Sorbian languages
+nso		Sotho, Northern
+sot	st	Sotho, Southern
+sai		South American Indian (Other)
+esl/spa	es	Spanish
+suk		Sukuma
+sux		Sumerian
+sun	su	Sudanese
+sus		Susu
+swa	sw	Swahili
+ssw		Swazi
+sve/swe	sv	Swedish
+syr		Syriac
+tgl	tl	Tagalog
+tah		Tahitian
+tgk	tg	Tajik
+tmh		Tamashek
+tam	ta	Tamil
+tat	tt	Tatar
+tel	te	Telugu
+ter		Tereno
+tha	th	Thai
+bod/tib	bo	Tibetan
+tig		Tigre
+tir	ti	Tigrinya
+tem		Timne
+tiv		Tivi
+tli		Tlingit
+tog	to	Tonga (Nyasa)
+ton		Tonga (Tonga Islands)
+tru		Truk
+tsi		Tsimshian
+tso	ts	Tsonga
+tsn	tn	Tswana
+tum		Tumbuka
+tur	tr	Turkish
+ota		Turkish, Ottoman (1500 - 1928)
+tuk	tk	Turkmen
+tyv		Tuvinian
+twi	tw	Twi
+uga		Ugaritic
+uig	ug	Uighur
+ukr	uk	Ukrainian
+umb		Umbundu
+und		Undetermined
+urd	ur	Urdu
+uzb	uz	Uzbek
+vai		Vai
+ven		Venda
+vie	vi	Vietnamese
+vol	vo	Volapük
+vot		Votic
+wak		Wakashan languages
+wal		Walamo
+war		Waray
+was		Washo
+cym/wel	cy	Welsh
+wol	wo	Wolof
+xho	xh	Xhosa
+sah		Yakut
+yao		Yao
+yap		Yap
+yid	yi	Yiddish
+yor	yo	Yoruba
+zap		Zapotec
+zen		Zenaga
+zha	za	Zhuang
+zul	zu	Zulu
+zun		Zuni'! !
+
+!ISOLanguageDefinition class methodsFor: 'private'!
+readISOLanguagesFrom: stream
+	"self readISOLanguagesFrom: self isoLanguages readStream "
+	| languages language code3 index line |
+	languages _ Dictionary new.
+	[stream atEnd
+		or: [(line _ stream nextLine readStream) atEnd]]
+		whileFalse: [
+			language _ self new.
+			code3 _ line upTo: Character tab.
+			(index _ code3 indexOf: $/) > 0
+				ifTrue: [
+					language iso3: (code3 copyFrom: 1 to: index-1).
+					language iso3Alternate: (code3 copyFrom: index+1 to: code3 size)]
+				ifFalse: [language iso3: code3].
+			language
+				iso2: (line upTo: Character tab);
+				language: line upToEnd.
+			languages at: language iso3 put: language].
+	^languages! !
+
+!ISOLanguageDefinition class methodsFor: 'accessing' stamp: 'mir 7/1/2004 18:06'!
+iso2LanguageDefinition: aString
+	^self iso2LanguageTable at: aString! !
+
+!ISOLanguageDefinition class methodsFor: 'accessing' stamp: 'mir 7/1/2004 18:06'!
+iso3LanguageDefinition: aString
+	^self iso3LanguageTable at: aString! !
+
+!ISOLanguageDefinition class methodsFor: 'private - ISO 2' stamp: 'jmv 2/6/2024 10:14:35'!
+iso2LanguageTable
+	"self iso2LanguageTable"
+
+	ISO2Table ifNotNil: [^ISO2Table].
+	ISO2Table := Dictionary new.
+	self iso3LanguageTable do: [:entry |
+		ISO2Table at: entry iso2 put: entry].
+	^ISO2Table! !
+
+!ISOLanguageDefinition class methodsFor: 'private - ISO 3166' stamp: 'jmv 2/6/2024 10:20:20'!
+buildIso3166CodesTables
+	"ISOLanguageDefinition buildIso3166CodesTables"
+	| rawdata stream country isoa2 isoa3 unNumeric macName macCode windowsName windowsCode empty table |
+	rawdata := self iso3166Codes.
+	table := OrderedCollection new.
+	stream := rawdata readStream.
+	empty := (Character codePoint: 160) asString.
+	[stream atEnd] whileFalse: 
+		[country := stream nextLine.
+		isoa2 := stream nextLine.
+		isoa3 := stream nextLine.
+		unNumeric := stream nextLine.
+		windowsName := stream nextLine.
+		windowsName = empty ifTrue: [windowsName := nil].
+		windowsCode := stream nextLine. 
+		windowsCode = empty ifTrue: [windowsCode := nil].
+		macName := stream nextLine.
+		macName = empty ifTrue: [macName := nil].
+		macCode := stream nextLine.
+		macCode = empty ifTrue: [macCode := nil].
+		table add: { country.  isoa2. isoa3.  unNumeric. windowsName.  windowsCode.  macName. macCode. }].
+	^table! !
+
+!ISOLanguageDefinition class methodsFor: 'private - ISO 3166'!
+initISO3LanguageTable
+	"self  initISO3LanguageTable"
+	
+	^ self readISOLanguagesFrom: self isoLanguages readStream.
+	! !
 
 !Locale methodsFor: 'printing'!
 printOn: aStream 
@@ -2592,7 +2592,7 @@ fetchISO2Language
 	isoLang := ISOLanguageDefinition iso3LanguageDefinition: lang.
 	^ isoLang ifNotNil: [ isoLang iso2 ]! !
 
-!Locale methodsFor: 'accessing'!
+!Locale methodsFor: 'accessing' stamp: 'mir 8/31/2005 17:03'!
 determineLocale
 	self localeID: self determineLocaleID! !
 
@@ -2610,28 +2610,28 @@ determineLocaleID
 		ifNotNil: [countryCode].
 	^LocaleID isoLanguage: isoLang isoCountry: isoCountry! !
 
-!Locale methodsFor: 'accessing'!
+!Locale methodsFor: 'accessing' stamp: 'nk 8/31/2004 09:39'!
 isoCountry
 	^self localeID isoCountry! !
 
-!Locale methodsFor: 'accessing'!
+!Locale methodsFor: 'accessing' stamp: 'nk 8/31/2004 09:39'!
 isoLanguage
 	^self localeID isoLanguage! !
 
-!Locale methodsFor: 'accessing'!
+!Locale methodsFor: 'accessing' stamp: 'mir 7/15/2004 12:41'!
 isoLocale
 	"<language>-<country>"
 	^self isoCountry
 		ifNil: [self isoLanguage]
 		ifNotNil: [self isoLanguage , '-' , self isoCountry]! !
 
-!Locale methodsFor: 'accessing'!
+!Locale methodsFor: 'accessing' stamp: 'mir 7/15/2004 14:55'!
 localeID
 	^id! !
 
-!Locale methodsFor: 'accessing'!
+!Locale methodsFor: 'accessing' stamp: 'mir 7/15/2004 14:55'!
 localeID: anID
-	id _ anID! !
+	id := anID! !
 
 !Locale methodsFor: 'system primitives'!
 primCountry
@@ -2639,31 +2639,31 @@ primCountry
 	<primitive: 'primitiveCountry' module: 'LocalePlugin'>
 	^'FR'! !
 
-!Locale methodsFor: 'system primitives'!
+!Locale methodsFor: 'system primitives' stamp: 'tpr 6/1/2005 18:45'!
 primCurrencyNotation
 	"Returns boolean if symbol is pre- (true) or post-fix (false)"
 	<primitive: 'primitiveCurrencyNotation' module: 'LocalePlugin'>
 	^true! !
 
-!Locale methodsFor: 'system primitives'!
+!Locale methodsFor: 'system primitives' stamp: 'tpr 6/1/2005 18:47'!
 primCurrencySymbol
 	"Returns string with currency symbol"
 	<primitive: 'primitiveCurrencySymbol' module:'LocalePlugin'>
 	^'$'! !
 
-!Locale methodsFor: 'system primitives'!
+!Locale methodsFor: 'system primitives' stamp: 'tpr 6/1/2005 18:48'!
 primDST
 	"Returns boolean if DST  (daylight saving time) is active or not"
 	<primitive:'primitiveDaylightSavings' module: 'LocalePlugin'>
 	^false! !
 
-!Locale methodsFor: 'system primitives'!
+!Locale methodsFor: 'system primitives' stamp: 'tpr 6/2/2005 13:42'!
 primDecimalSymbol
 	"Returns string with e.g. '.' or ','"
 	<primitive:'primitiveDecimalSymbol' module: 'LocalePlugin'>
 	^'.'! !
 
-!Locale methodsFor: 'system primitives'!
+!Locale methodsFor: 'system primitives' stamp: 'tpr 6/2/2005 13:42'!
 primDigitGrouping
 	"Returns string with e.g. '.' or ',' (thousands etc)"
 	<primitive:'primitiveDigitGroupingSymbol' module: 'LocalePlugin'>
@@ -2686,7 +2686,7 @@ primLongDateFormat
 	^'dddd, mmmm d, yyyy'
 ! !
 
-!Locale methodsFor: 'system primitives'!
+!Locale methodsFor: 'system primitives' stamp: 'tpr 6/2/2005 13:43'!
 primMeasurement
 	"Returns boolean denoting metric(true) or imperial(false)."
 	<primitive:'primitiveMeasurementMetric' module: 'LocalePlugin'>
@@ -2714,14 +2714,14 @@ primTimeFormat
 	^'h:mmx'
 ! !
 
-!Locale methodsFor: 'system primitives'!
+!Locale methodsFor: 'system primitives' stamp: 'tpr 6/2/2005 13:43'!
 primTimezone
 	"The offset from UTC in minutes, with positive offsets being towards the east.
-	(San Francisco is in UTC -07*60 and Paris is in UTC +02*60 (daylight savings is not in effect)."
+	(San Francisco is in UTC -08*60 and Paris is in GMT +01*60 (daylight savings is not in effect)."
 	<primitive:'primitiveTimezoneOffset' module: 'LocalePlugin'>
 	^0! !
 
-!Locale methodsFor: 'system primitives'!
+!Locale methodsFor: 'system primitives' stamp: 'tpr 6/2/2005 13:44'!
 primVMOffsetToUTC
 	"Returns the offset in minutes between the VM and UTC.
 	If the VM does not support UTC times, this is 0.
@@ -2746,7 +2746,7 @@ defaultLocales
 	
 	^ #(de en es fr it)! !
 
-!Locale class methodsFor: 'private'!
+!Locale class methodsFor: 'private' stamp: 'mir 7/28/2005 00:24'!
 determineCurrentLocale
 	"For now just return the default locale.
 	A smarter way would be to determine the current platforms default locale."
@@ -2764,10 +2764,10 @@ initKnownLocales
 		locales at: id put: (self new localeID: id)].
 	^locales! !
 
-!Locale class methodsFor: 'private'!
+!Locale class methodsFor: 'private' stamp: 'mir 7/15/2004 16:44'!
 knownLocales
-	"KnownLocales _ nil"
-	^KnownLocales ifNil: [KnownLocales _ self initKnownLocales]! !
+	"KnownLocales := nil"
+	^KnownLocales ifNil: [KnownLocales := self initKnownLocales]! !
 
 !Locale class methodsFor: 'initialization' stamp: 'Install-Locales 7/3/2022 12:37:18'!
 initialize
@@ -2844,29 +2844,23 @@ currentPlatform: locale during: aBlock
 	aBlock value]
 		ensure: [self switchTo: savedLocale]! !
 
-!Locale class methodsFor: 'accessing'!
+!Locale class methodsFor: 'accessing' stamp: 'mir 7/15/2004 14:20'!
 isoLanguage: isoLanguage
 	^self isoLanguage: isoLanguage isoCountry: nil! !
 
-!Locale class methodsFor: 'accessing'!
+!Locale class methodsFor: 'accessing' stamp: 'mir 7/15/2004 14:31'!
 isoLanguage: isoLanguage isoCountry: isoCountry
 	^self localeID: (LocaleID  isoLanguage: isoLanguage isoCountry: isoCountry)! !
 
-!Locale class methodsFor: 'accessing'!
+!Locale class methodsFor: 'accessing' stamp: 'mir 7/13/2004 00:24'!
 languageSymbol: languageSymbol
 	"Locale languageSymbol: #Deutsch"
 
 	^self isoLanguage: (LanguageSymbols at: languageSymbol)! !
 
-!Locale class methodsFor: 'accessing'!
+!Locale class methodsFor: 'accessing' stamp: 'mir 7/15/2004 14:30'!
 localeID: id
 	^self knownLocales at: id ifAbsentPut: [Locale new localeID: id]! !
-
-!Locale class methodsFor: 'accessing'!
-platformEncodings
-	PlatformEncodings isEmptyOrNil ifTrue: [ self initializePlatformEncodings ].
-	^PlatformEncodings
-! !
 
 !Locale class methodsFor: 'accessing' stamp: 'hlsf 2/20/2022 10:13:01'!
 switchTo: locale
@@ -2888,13 +2882,13 @@ switchTo: locale gently: gentlyFlag
 			nlTranslatorClass ifNotNil: [ nlTranslatorClass localeChanged ].
 			gentlyFlag ifTrue: [self localeChangedGently] ifFalse: [self localeChanged]]! !
 
-!Locale class methodsFor: 'accessing'!
+!Locale class methodsFor: 'accessing' stamp: 'mir 7/15/2004 19:07'!
 switchToID: localeID
 	"Locale switchToID: (LocaleID isoLanguage: 'de') "
 
 	self switchTo: (Locale localeID: localeID)! !
 
-!Locale class methodsFor: 'notification' stamp: 'hlsf 2/20/2022 09:54:39'!
+!Locale class methodsFor: 'notification' stamp: 'mir 6/30/2004 16:15'!
 addLocalChangedListener: anObjectOrClass
 	self localeChangedListeners add: anObjectOrClass! !
 
@@ -2909,9 +2903,15 @@ localeChangedGently
 "	SystemNavigation default allBehaviorsDo: [:b | b == self ifFalse: [b localeChangedGently]].
 "! !
 
-!Locale class methodsFor: 'notification' stamp: 'hlsf 2/20/2022 09:55:30'!
+!Locale class methodsFor: 'notification' stamp: 'mir 6/30/2004 16:15'!
 localeChangedListeners
 	^LocaleChangeListeners ifNil: [LocaleChangeListeners := OrderedCollection new]! !
+
+!Locale class methodsFor: 'class initialization' stamp: 'nk 8/29/2004 13:20'!
+platformEncodings
+	PlatformEncodings isEmptyOrNil ifTrue: [ self initializePlatformEncodings ].
+	^PlatformEncodings
+! !
 
 !LocaleID methodsFor: 'printing'!
 posixName
@@ -2922,14 +2922,14 @@ posixName
 		ifNil: [self isoLanguage]
 		ifNotNil: [self isoLanguage , '_' , self isoCountry]! !
 
-!LocaleID methodsFor: 'printing'!
+!LocaleID methodsFor: 'printing' stamp: 'mir 7/15/2004 12:45'!
 printOn: stream
 	"<language>-<country>"
 	stream nextPutAll: self isoLanguage.
 	self isoCountry
 		ifNotNil: [stream nextPut: $-; nextPutAll: self isoCountry]! !
 
-!LocaleID methodsFor: 'printing'!
+!LocaleID methodsFor: 'printing' stamp: 'tak 11/15/2004 12:45'!
 storeOn: aStream 
 	aStream nextPut: $(.
 	aStream nextPutAll: self class name.
@@ -2938,27 +2938,27 @@ storeOn: aStream
 	aStream nextPut: $).
 ! !
 
-!LocaleID methodsFor: 'comparing'!
+!LocaleID methodsFor: 'comparing' stamp: 'mir 7/15/2004 14:23'!
 = anotherObject
 	self class == anotherObject class
 		ifFalse: [^false].
 	^self isoLanguage = anotherObject isoLanguage
 		and: [self isoCountry = anotherObject isoCountry]! !
 
-!LocaleID methodsFor: 'comparing'!
+!LocaleID methodsFor: 'comparing' stamp: 'mir 7/15/2004 14:23'!
 hash
 	^self isoLanguage hash bitXor: self isoCountry hash! !
 
-!LocaleID methodsFor: 'testing'!
+!LocaleID methodsFor: 'testing' stamp: 'mir 7/15/2004 14:34'!
 hasParent
 	^self isoCountry notNil! !
 
-!LocaleID methodsFor: 'initialize'!
+!LocaleID methodsFor: 'initialize' stamp: 'mir 7/15/2004 12:44'!
 isoLanguage: langString isoCountry: countryStringOrNil
-	isoLanguage _ langString.
-	isoCountry _ countryStringOrNil! !
+	isoLanguage := langString.
+	isoCountry := countryStringOrNil! !
 
-!LocaleID methodsFor: 'accessing'!
+!LocaleID methodsFor: 'accessing' stamp: 'mir 9/1/2005 14:17'!
 displayCountry
 	^(ISOLanguageDefinition iso2Countries at: self isoCountry asUppercase ifAbsent: [ self isoCountry ]) ! !
 
@@ -2972,19 +2972,19 @@ displayLanguage
 		ifNil: [language]
 		ifNotNil: [language , ' (' , self displayCountry , ')']! !
 
-!LocaleID methodsFor: 'accessing'!
+!LocaleID methodsFor: 'accessing' stamp: 'mir 7/15/2004 12:43'!
 isoCountry
 	^isoCountry! !
 
-!LocaleID methodsFor: 'accessing'!
+!LocaleID methodsFor: 'accessing' stamp: 'mir 7/15/2004 12:43'!
 isoLanguage
 	^isoLanguage! !
 
-!LocaleID methodsFor: 'accessing'!
+!LocaleID methodsFor: 'accessing' stamp: 'mir 7/21/2004 19:17'!
 isoString
 	^self asString! !
 
-!LocaleID methodsFor: 'accessing'!
+!LocaleID methodsFor: 'accessing' stamp: 'mir 7/15/2004 14:34'!
 parent
 	^self class isoLanguage: self isoLanguage! !
 
@@ -2994,29 +2994,29 @@ translator
 	^Smalltalk at: #NaturalLanguageTranslator ifPresent: [ :nlTranslatorClass |
 		nlTranslatorClass localeID: self ]! !
 
-!LocaleID class methodsFor: 'accessing'!
+!LocaleID class methodsFor: 'accessing' stamp: 'mir 7/15/2004 15:09'!
 current
 	^Locale current localeID! !
 
-!LocaleID class methodsFor: 'instance creation'!
+!LocaleID class methodsFor: 'instance creation' stamp: 'mir 7/15/2004 14:35'!
 isoLanguage: langString
 	^self isoLanguage: langString isoCountry: nil! !
 
-!LocaleID class methodsFor: 'instance creation'!
+!LocaleID class methodsFor: 'instance creation' stamp: 'mir 7/15/2004 12:46'!
 isoLanguage: langString isoCountry: countryStringOrNil
 	^self new isoLanguage: langString isoCountry: countryStringOrNil! !
 
-!LocaleID class methodsFor: 'instance creation'!
+!LocaleID class methodsFor: 'instance creation' stamp: 'mir 7/21/2004 13:59'!
 isoString: isoString
 	"Parse the isoString (<language>-<country>) into its components and return the matching LocaleID"
 	"LocaleID isoString: 'en' "
 	"LocaleID isoString: 'en-us' "
 
 	| parts language country |
-	parts _ isoString findTokens: #($- ).
-	language _ parts first.
+	parts := isoString findTokens: #($- ).
+	language := parts first.
 	parts size > 1
-		ifTrue: [country _ parts second].
+		ifTrue: [country := parts second].
 	^self isoLanguage: language isoCountry: country! !
 
 !LocaleID class methodsFor: 'instance creation'!
