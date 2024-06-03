@@ -1,6 +1,6 @@
-'From Cuis6.3 [latest update: #6200] on 29 January 2024 at 12:37:35 pm'!
+'From Cuis7.1 [latest update: #6426] on 3 June 2024 at 11:09:39 am'!
 'Description '!
-!provides: 'Tests-FFI' 1 4!
+!provides: 'Tests-FFI' 1 5!
 !requires: 'FFI' 1 39 nil!
 SystemOrganization addCategory: #'Tests-FFI'!
 
@@ -486,6 +486,42 @@ testUlongRange
 	| result |
 	self shouldnt:[result := FFITestLibrary ffiTestUlong: 3103854339 with: 3103854339 with: 3103854339 with: 3103854339] raise: Error.
 	self should: result =  1912741382.! !
+
+!FFIPluginTests methodsFor: 'callback tests' stamp: 'eem 6/2/2024 18:24:42'!
+testLibcQsort
+	"Use libc's qsort to sort some floats"
+
+	| sizeofDouble size_t_Type rand nElements values dataSize qsort callback callbackCount orig sort usecs |
+	sizeofDouble := ExternalType double byteSize.
+	size_t_Type := Smalltalk wordSize = 8 ifTrue: [ExternalType uint64] ifFalse: [ExternalType uint32].
+	qsort := ExternalLibraryFunction
+				name:'qsort' module: Alien libcName
+				callType: 0 returnType: ExternalType void
+				argumentTypes: {ExternalType void asPointerType. size_t_Type. size_t_Type. ExternalType void asPointerType}.
+	callbackCount := 0.
+	callback := Callback
+					signature:  #(int (*)(const void *, const void *))
+					block: [ :arg1 :arg2 |
+							callbackCount := callbackCount + 1.
+							((arg1 doubleAt: 1) - (arg2 doubleAt: 1)) sign].
+
+	rand := Random new.
+	values := ExternalAddress gcallocate: (dataSize := (nElements := 100) * sizeofDouble).
+	1 to: dataSize by: sizeofDouble do:
+		[:i| values doubleAt: i put: rand next].
+	orig := (1 to: dataSize by: sizeofDouble) collect: [:i| values doubleAt: i].
+	self assert: ((1 to: nElements - 1) anySatisfy: [:i| (orig at: i) > (orig at: i + 1)]).
+	usecs := Time microsecondsToRun: [qsort	
+											invokeWith: values
+											with: nElements
+											with: sizeofDouble
+											with: callback thunk].
+	sort := (1 to: dataSize by: sizeofDouble) collect: [:i| values doubleAt: i].
+	self deny: orig = sort.
+	1 to: nElements - 1 do:
+		[:i| self assert: (sort at: i) <= (sort at: i + 1)].
+	values free.
+	^{ orig. sort. usecs. callbackCount }! !
 
 !FFITestLibrary methodsFor: 'primitives' stamp: 'jmv 1/6/2023 10:52:11'!
 ffiPrintString: aString

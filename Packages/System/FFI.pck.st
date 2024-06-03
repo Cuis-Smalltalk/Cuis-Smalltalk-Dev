@@ -1,6 +1,7 @@
-'From Cuis6.3 [latest update: #6213] on 6 February 2024 at 10:24:41 am'!
+'From Cuis7.1 [latest update: #6426] on 3 June 2024 at 11:09:34 am'!
 'Description '!
-!provides: 'FFI' 1 44!
+!provides: 'FFI' 1 45!
+!requires: 'Alien-Core' 1 0 nil!
 SystemOrganization addCategory: #'FFI-Pools'!
 SystemOrganization addCategory: #'FFI-Kernel'!
 
@@ -461,13 +462,13 @@ asExternalAddress
 
 	^self! !
 
-!ExternalAddress methodsFor: 'private' stamp: 'jmv 12/8/2023 10:58:17'!
+!ExternalAddress methodsFor: 'private' stamp: 'eem 6/2/2024 17:39:27'!
 primitiveFree
 	"Primitive. Free the object pointed to on the external heap.
 	Dangerous - may break your system if the receiver hasn't been
 	allocated by ExternalAddress class>>allocate:. No checks are done.
 	Only to be called from ExternalAddress>>#free. Don't call directly."
-	<primitive:'primitiveFFIFree' module:'SqueakFFIPrims'>
+	<primitive: #primitiveFFIFree module: #SqueakFFIPrims error: ec>
 	^self primitiveFailed! !
 
 !ExternalAddress methodsFor: 'converting' stamp: 'jmv 12/8/2023 10:11:48'!
@@ -503,10 +504,173 @@ free
 
 	ExternalAddress finalizationRegistry remove: self ifAbsent: [].! !
 
+!ExternalAddress methodsFor: 'accessing' stamp: 'eem 6/2/2024 17:15:23'!
+doubleAt: byteOffset	
+	"Primitive. Return a float value from the receiver.
+	- FAILS IF the receiver has not enough bytes for an IEEE 754 (64 bits) floating point number.
+	- NOTE that this primitive will access memory in the outer space if invoked from ExternalAddress.
+	- SEE Float class >> #fromIEEE64Bit: and Float >> #asIEEE64BitWord"
+	<primitive: #primitiveFFIDoubleAt module: #SqueakFFIPrims error: ec>
+	^ self primitiveFailed! !
+
+!ExternalAddress methodsFor: 'accessing' stamp: 'eem 6/2/2024 17:15:30'!
+doubleAt: byteOffset	 put: value
+	"Primitive. Store the given value as IEEE 754 (64 bits) floating point number.
+	- FAILS IF the receiver has not enough bytes for that representation.
+	- NOTE that this primitive will access memory in the outer space if invoked from ExternalAddress.
+	- SEE Float class >> #fromIEEE64Bit: and Float >> #asIEEE64BitWord"
+	<primitive: #primitiveFFIDoubleAtPut module: #SqueakFFIPrims error: ec>
+	^ self primitiveFailed! !
+
+!ExternalAddress methodsFor: 'accessing' stamp: 'eem 6/2/2024 17:23:55'!
+floatAt: byteOffset
+	"Primitive. Return a float value from the receiver.
+	- FAILS IF the receiver has not enough bytes for an IEEE 754 (32 bits) floating point number.
+	- NOTE that this primitive will access memory in the outer space if invoked from ExternalAddress.
+	- SEE Float class >> #fromIEEE32Bit: and Float >> #asIEEE32BitWord"
+	<primitive: #primitiveFFIFloatAt module: #SqueakFFIPrims error: ec>
+	^ self primitiveFailed! !
+
+!ExternalAddress methodsFor: 'accessing' stamp: 'eem 6/2/2024 17:24:25'!
+floatAt: byteOffset put: value
+	"Primitive. Store the given value as IEEE 754 (32 bits) floating point number.
+	- FAILS IF the receiver has not enough bytes for that representation.
+	- NOTE that this primitive will access memory in the outer space if invoked from ExternalAddress.
+	- SEE Float class >> #fromIEEE32Bit: and Float >> #asIEEE32BitWord"
+	<primitive: #primitiveFFIFloatAtPut module: #SqueakFFIPrims error: ec>
+	^ self primitiveFailed! !
+
+!ExternalAddress methodsFor: 'accessing' stamp: 'eem 06/02/2024 17:30'!
+int16At: byteOffset
+	"Answer the signed 16-bit integer at byte offset, in platform native order."
+	<primitive: #primitiveSignedInt16At module: #SqueakFFIPrims error: ec>
+	^self integerAt: byteOffset size: 2 signed: true! !
+
+!ExternalAddress methodsFor: 'accessing' stamp: 'eem 06/02/2024 17:35'!
+int16At: byteOffset put: value
+	"Store the signed 16-bit integer at byte offset, in platform native order."
+	<primitive: #primitiveSignedInt16AtPut module: #SqueakFFIPrims error: ec>
+	^self integerAt: byteOffset put: value size: 2 signed: true! !
+
+!ExternalAddress methodsFor: 'accessing' stamp: 'eem 06/02/2024 17:30'!
+int32At: byteOffset
+	"Answer the signed 32-bit integer at byte offset, in platform native order."
+	<primitive: #primitiveSignedInt32At module: #SqueakFFIPrims error: ec>
+	^self integerAt: byteOffset size: 4 signed: true! !
+
+!ExternalAddress methodsFor: 'accessing' stamp: 'eem 06/02/2024 17:35'!
+int32At: byteOffset put: value
+	"Store the signed 32-bit integer at byte offset, in platform native order."
+	<primitive: #primitiveSignedInt32AtPut module: #SqueakFFIPrims error: ec>
+	^self integerAt: byteOffset put: value size: 4 signed: true! !
+
+!ExternalAddress methodsFor: 'accessing' stamp: 'eem 06/02/2024 17:30'!
+int64At: byteOffset
+	"Answer the signed 64-bit integer at byte offset, in platform native order."
+	<primitive: #primitiveSignedInt64At module: #SqueakFFIPrims error: ec>
+	^self integerAt: byteOffset size: 8 signed: true! !
+
+!ExternalAddress methodsFor: 'accessing' stamp: 'eem 06/02/2024 17:35'!
+int64At: byteOffset put: value
+	"Store the signed 64-bit integer at byte offset, in platform native order."
+	<primitive: #primitiveSignedInt64AtPut module: #SqueakFFIPrims error: ec>
+	^self integerAt: byteOffset put: value size: 8 signed: true! !
+
+!ExternalAddress methodsFor: 'accessing' stamp: 'eem 06/02/2024 17:30'!
+int8At: byteOffset
+	"Answer the signed 8-bit integer at byte offset."
+	<primitive: #primitiveSignedInt8At module: #SqueakFFIPrims error: ec>
+	^self integerAt: byteOffset size: 1 signed: true! !
+
+!ExternalAddress methodsFor: 'accessing' stamp: 'eem 06/02/2024 17:35'!
+int8At: byteOffset put: value
+	"Store the signed 8-bit integer at byte offset."
+	<primitive: #primitiveSignedInt8AtPut module: #SqueakFFIPrims error: ec>
+	^self integerAt: byteOffset put: value size: 1 signed: true! !
+
+!ExternalAddress methodsFor: 'accessing' stamp: 'eem 6/2/2024 17:37:10'!
+integerAt: byteOffset put: value size: nBytes signed: aBoolean
+	"Primitive. Store the given value as integer of nBytes size in the receiver.
+	- BYTE ORDER is platform native order.
+	- FAILS IF the value is out of range.
+	- NOTE that this primitive will access memory in the outer space if invoked from ExternalAddress."
+	<primitive: #primitiveFFIIntegerAtPut module: #SqueakFFIPrims error: ec>
+	^ self primitiveFailed! !
+
+!ExternalAddress methodsFor: 'accessing' stamp: 'eem 6/2/2024 17:37:40'!
+integerAt: byteOffset size: nBytes signed: aBoolean
+	"Primitive. Return an integer of nBytes size from the receiver.
+	- BYTE ORDER is platform native order.
+	- FAILS IF the receiver has not enough bytes.
+	- NOTE that this primitive will access memory in the outer space if invoked from ExternalAddress."
+	<primitive: #primitiveFFIIntegerAt module: #SqueakFFIPrims error: ec>
+	^ self primitiveFailed! !
+
 !ExternalAddress methodsFor: 'accessing' stamp: 'jcg 6/4/2010 02:40'!
 isExternalAddress
 	"Return true if the receiver describes the address of an object in the outside world"
 	^true! !
+
+!ExternalAddress methodsFor: 'accessing' stamp: 'eem 06/02/2024 17:30'!
+pointerAt: byteOffset length: length
+	"Answer a pointer of the given length starting at the indicated byte offset."
+
+	^ ExternalAddress fromInteger: (self integerAt: byteOffset size: length signed: false)! !
+
+!ExternalAddress methodsFor: 'accessing' stamp: 'eem 06/02/2024 17:35'!
+pointerAt: byteOffset put: externalAddress length: length
+	"Store a pointer of the given length starting at the indicated byte offset."
+
+	self integerAt: byteOffset put: externalAddress asInteger size: length signed: false.
+	^ externalAddress! !
+
+!ExternalAddress methodsFor: 'accessing' stamp: 'eem 06/02/2024 17:30'!
+uint16At: byteOffset
+	"Answer the signed 16-bit integer at byte offset, in platform native order."
+	<primitive: #primitiveUnsignedInt16At module: #SqueakFFIPrims error: ec>
+	^self integerAt: byteOffset size: 2 signed: false! !
+
+!ExternalAddress methodsFor: 'accessing' stamp: 'eem 06/02/2024 17:35'!
+uint16At: byteOffset put: value
+	"Store the unsigned 16-bit integer at byte offset, in platform native order."
+	<primitive: #primitiveUnsignedInt16AtPut module: #SqueakFFIPrims error: ec>
+	^self integerAt: byteOffset put: value size: 2 signed: false! !
+
+!ExternalAddress methodsFor: 'accessing' stamp: 'eem 06/02/2024 17:30'!
+uint32At: byteOffset
+	"Answer the signed 32-bit integer at byte offset, in platform native order."
+	<primitive: #primitiveUnsignedInt32At module: #SqueakFFIPrims error: ec>
+	^self integerAt: byteOffset size: 4 signed: false! !
+
+!ExternalAddress methodsFor: 'accessing' stamp: 'eem 06/02/2024 17:35'!
+uint32At: byteOffset put: value
+	"Store the unsigned 32-bit integer at byte offset, in platform native order."
+	<primitive: #primitiveUnsignedInt32AtPut module: #SqueakFFIPrims error: ec>
+	^self integerAt: byteOffset put: value size: 4 signed: false! !
+
+!ExternalAddress methodsFor: 'accessing' stamp: 'eem 06/02/2024 17:30'!
+uint64At: byteOffset
+	"Answer the signed 64-bit integer at byte offset, in platform native order."
+	<primitive: #primitiveUnsignedInt64At module: #SqueakFFIPrims error: ec>
+	^self integerAt: byteOffset size: 8 signed: false! !
+
+!ExternalAddress methodsFor: 'accessing' stamp: 'eem 06/02/2024 17:35'!
+uint64At: byteOffset put: value
+	"Store the unsigned 64-bit integer at byte offset, in platform native order."
+	<primitive: #primitiveUnsignedInt64AtPut module: #SqueakFFIPrims error: ec>
+	^self integerAt: byteOffset put: value size: 8 signed: false! !
+
+!ExternalAddress methodsFor: 'accessing' stamp: 'eem 06/02/2024 17:30'!
+uint8At: byteOffset
+	"Answer the unsigned 8-bit integer at byte offset. Same as #byteAt: and #at:."
+	<primitive: #primitiveUnsignedInt8At module: #SqueakFFIPrims error: ec>
+	^self integerAt: byteOffset size: 1 signed: false! !
+
+!ExternalAddress methodsFor: 'accessing' stamp: 'eem 06/02/2024 17:35'!
+uint8At: byteOffset put: value
+	"Store the unsigned 8-bit integer at byte offset. Same as #byteAt:put: and #at:put:."
+	<primitive: #primitiveUnsignedInt8AtPut module: #SqueakFFIPrims error: ec>
+	^self integerAt: byteOffset put: value size: 1 signed: false! !
 
 !ExternalAddress methodsFor: 'copying' stamp: 'tbn 4/26/2012 14:10'!
 clone
@@ -552,10 +716,10 @@ startUp: resuming
 			ifFalse:
 				[instances do: [:addr| addr beNull]]]! !
 
-!ExternalAddress class methodsFor: 'instance creation' stamp: 'ar 11/28/1999 23:20'!
+!ExternalAddress class methodsFor: 'instance creation' stamp: 'eem 6/2/2024 17:39:05'!
 allocate: byteSize
 	"Primitive. Allocate an object on the external heap."
-	<primitive:'primitiveFFIAllocate' module:'SqueakFFIPrims'>
+	<primitive: #primitiveFFIAllocate module: #SqueakFFIPrims error: ec>
 	^self primitiveFailed! !
 
 !ExternalAddress class methodsFor: 'instance creation' stamp: 'jmv 12/8/2023 09:54:13'!
@@ -596,9 +760,9 @@ gcallocate: byteSize
 	self finalizationRegistry add: externalAddress.
 	^externalAddress! !
 
-!ExternalAddress class methodsFor: 'instance creation' stamp: 'dtl 9/12/2015 18:04'!
+!ExternalAddress class methodsFor: 'instance creation' stamp: 'eem 6/2/2024 17:38:48'!
 loadSymbol: moduleSymbol module: module 
-	<primitive: 'primitiveLoadSymbolFromModule' module: 'SqueakFFIPrims'>
+	<primitive: #primitiveLoadSymbolFromModule module: #SqueakFFIPrims error: ec>
 	^ self primitiveFailed! !
 
 !ExternalAddress class methodsFor: 'instance creation' stamp: 'eem 2/22/2016 15:42'!
