@@ -1,6 +1,6 @@
-'From Cuis7.1 [latest update: #6426] on 4 June 2024 at 5:51:55 pm'!
+'From Cuis7.1 [latest update: #6449] on 5 June 2024 at 10:47:38 am'!
 'Description FFI (Foreign Function Interface) provides access to foreign functions in external libraries, provided they use the platform''s Application Binary Interface (ABI), which is essentially the C calling convention for the platform. FFI supports callbacks, allowing one to pass callbacks that invoke Smalltalk blocks when called from foreign code. FFI provides support for defining classes that correspond to C struct types, with named fields, etc. See Tests-FFI for examples.'!
-!provides: 'FFI' 1 46!
+!provides: 'FFI' 1 47!
 !requires: 'Alien-Core' 1 0 nil!
 SystemOrganization addCategory: #'FFI-Pools'!
 SystemOrganization addCategory: #'FFI-Kernel'!
@@ -534,11 +534,11 @@ allocate: byteSize
 	<primitive: #primitiveFFIAllocate module: #SqueakFFIPrims error: ec>
 	^self primitiveFailed! !
 
-!ExternalAddress class methodsFor: 'instance creation' stamp: 'eem 6/4/2024 14:08:06'!
+!ExternalAddress class methodsFor: 'instance creation' stamp: 'eem 6/5/2024 10:46:46'!
 fromInteger: address
 	"Create an instance. address must be a non-negative integer.
-	Use a ByteArray to be able to call #primFFIIntegerAt:put:size:signed: and have it operate on the pointer bytes
-	and not on the (as yet undefined!!) pointed to memory.
+	 Use a ByteArray to be able to send #integerAt:put:size:signed: and have it operate
+	 on the pointer bytes and not on the (as yet undefined!!) pointed to memory.
 	Primitive integerAt:put:size:signed: will use the appropriate endianess for this platform.
 	See also ExternalAddress >> #asInteger"
 	"
@@ -2145,7 +2145,7 @@ initializeDefaultTypes
 	self initializeStructureTypes.
 	"AtomicTypes := nil"! !
 
-!ExternalType class methodsFor: 'class initialization' stamp: 'eem 6/4/2024 15:57:47'!
+!ExternalType class methodsFor: 'class initialization' stamp: 'eem 6/5/2024 10:26:31'!
 initializeFFIConstants
 	"ExternalType initialize"
 	FFIConstants initialize. "ensure proper initialization"
@@ -2173,7 +2173,7 @@ initializeFFIConstants
 		at: FFITypeBool put: #booleanAt:;
 		at: FFITypeUint8 put: #uint8At:;
 		at: FFITypeInt8 put: #int8At:;
-		at: FFITypeUint16 put: #ffiUint16At:;
+		at: FFITypeUint16 put: #uint16At:;
 		at: FFITypeInt16 put: #int16At:;
 		at: FFITypeUint32 put: #uint32At:;
 		at: FFITypeInt32 put: #int32At:;
