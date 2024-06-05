@@ -1,6 +1,6 @@
-'From Cuis7.1 [latest update: #6426] on 3 June 2024 at 11:09:39 am'!
-'Description '!
-!provides: 'Tests-FFI' 1 5!
+'From Cuis7.1 [latest update: #6426] on 4 June 2024 at 4:36:32 pm'!
+'Description Tests for, and examples of the use of, the FFI package.'!
+!provides: 'Tests-FFI' 1 6!
 !requires: 'FFI' 1 39 nil!
 SystemOrganization addCategory: #'Tests-FFI'!
 
@@ -751,25 +751,25 @@ ffiTestUlong: c1 with: c2 with: c3 with: c4
 x
 	"This method was automatically generated. See FFISmallStruct1 class>>fields."
 	<generated>
-	^handle ffiUint8At: 1! !
+	^handle uint8At: 1! !
 
 !FFISmallStruct1 methodsFor: 'accessing'!
 x: anObject
 	"This method was automatically generated. See FFISmallStruct1 class>>fields."
 	<generated>
-	handle ffiUint8At: 1 put: anObject! !
+	handle uint8At: 1 put: anObject! !
 
 !FFISmallStruct1 methodsFor: 'accessing'!
 y
 	"This method was automatically generated. See FFISmallStruct1 class>>fields."
 	<generated>
-	^handle ffiUint8At: 2! !
+	^handle uint8At: 2! !
 
 !FFISmallStruct1 methodsFor: 'accessing'!
 y: anObject
 	"This method was automatically generated. See FFISmallStruct1 class>>fields."
 	<generated>
-	handle ffiUint8At: 2 put: anObject! !
+	handle uint8At: 2 put: anObject! !
 
 !FFISmallStruct1 class methodsFor: 'as yet unclassified' stamp: 'jmv 11/14/2023 10:48:25'!
 fields
@@ -787,97 +787,97 @@ initialize
 r
 	"This method was automatically generated. See FFITestBiggerStruct class>>fields."
 	<generated>
-	^handle ffiInt64At: 33! !
+	^handle int64At: 33! !
 
 !FFITestBiggerStruct methodsFor: 'accessing'!
 r: anObject
 	"This method was automatically generated. See FFITestBiggerStruct class>>fields."
 	<generated>
-	handle ffiInt64At: 33 put: anObject! !
+	handle int64At: 33 put: anObject! !
 
 !FFITestBiggerStruct methodsFor: 'accessing'!
 s
 	"This method was automatically generated. See FFITestBiggerStruct class>>fields."
 	<generated>
-	^handle ffiInt64At: 41! !
+	^handle int64At: 41! !
 
 !FFITestBiggerStruct methodsFor: 'accessing'!
 s: anObject
 	"This method was automatically generated. See FFITestBiggerStruct class>>fields."
 	<generated>
-	handle ffiInt64At: 41 put: anObject! !
+	handle int64At: 41 put: anObject! !
 
 !FFITestBiggerStruct methodsFor: 'accessing'!
 t
 	"This method was automatically generated. See FFITestBiggerStruct class>>fields."
 	<generated>
-	^handle ffiInt64At: 49! !
+	^handle int64At: 49! !
 
 !FFITestBiggerStruct methodsFor: 'accessing'!
 t: anObject
 	"This method was automatically generated. See FFITestBiggerStruct class>>fields."
 	<generated>
-	handle ffiInt64At: 49 put: anObject! !
+	handle int64At: 49 put: anObject! !
 
 !FFITestBiggerStruct methodsFor: 'accessing'!
 u
 	"This method was automatically generated. See FFITestBiggerStruct class>>fields."
 	<generated>
-	^handle ffiInt64At: 57! !
+	^handle int64At: 57! !
 
 !FFITestBiggerStruct methodsFor: 'accessing'!
 u: anObject
 	"This method was automatically generated. See FFITestBiggerStruct class>>fields."
 	<generated>
-	handle ffiInt64At: 57 put: anObject! !
+	handle int64At: 57 put: anObject! !
 
 !FFITestBiggerStruct methodsFor: 'accessing'!
 w
 	"This method was automatically generated. See FFITestBiggerStruct class>>fields."
 	<generated>
-	^handle ffiInt64At: 25! !
+	^handle int64At: 25! !
 
 !FFITestBiggerStruct methodsFor: 'accessing'!
 w: anObject
 	"This method was automatically generated. See FFITestBiggerStruct class>>fields."
 	<generated>
-	handle ffiInt64At: 25 put: anObject! !
+	handle int64At: 25 put: anObject! !
 
 !FFITestBiggerStruct methodsFor: 'accessing'!
 x
 	"This method was automatically generated. See FFITestBiggerStruct class>>fields."
 	<generated>
-	^handle ffiInt64At: 1! !
+	^handle int64At: 1! !
 
 !FFITestBiggerStruct methodsFor: 'accessing'!
 x: anObject
 	"This method was automatically generated. See FFITestBiggerStruct class>>fields."
 	<generated>
-	handle ffiInt64At: 1 put: anObject! !
+	handle int64At: 1 put: anObject! !
 
 !FFITestBiggerStruct methodsFor: 'accessing'!
 y
 	"This method was automatically generated. See FFITestBiggerStruct class>>fields."
 	<generated>
-	^handle ffiInt64At: 9! !
+	^handle int64At: 9! !
 
 !FFITestBiggerStruct methodsFor: 'accessing'!
 y: anObject
 	"This method was automatically generated. See FFITestBiggerStruct class>>fields."
 	<generated>
-	handle ffiInt64At: 9 put: anObject! !
+	handle int64At: 9 put: anObject! !
 
 !FFITestBiggerStruct methodsFor: 'accessing'!
 z
 	"This method was automatically generated. See FFITestBiggerStruct class>>fields."
 	<generated>
-	^handle ffiInt64At: 17! !
+	^handle int64At: 17! !
 
 !FFITestBiggerStruct methodsFor: 'accessing'!
 z: anObject
 	"This method was automatically generated. See FFITestBiggerStruct class>>fields."
 	<generated>
-	handle ffiInt64At: 17 put: anObject! !
+	handle int64At: 17 put: anObject! !
 
 !FFITestBiggerStruct class methodsFor: 'field definition' stamp: 'jmv 11/14/2023 12:13:58'!
 fields
@@ -904,25 +904,25 @@ initialize
 x
 	"This method was automatically generated. See FFITestPoint2 class>>fields."
 	<generated>
-	^handle ffiInt32At: 1! !
+	^handle int32At: 1! !
 
 !FFITestPoint2 methodsFor: 'accessing'!
 x: anObject
 	"This method was automatically generated. See FFITestPoint2 class>>fields."
 	<generated>
-	handle ffiInt32At: 1 put: anObject! !
+	handle int32At: 1 put: anObject! !
 
 !FFITestPoint2 methodsFor: 'accessing'!
 y
 	"This method was automatically generated. See FFITestPoint2 class>>fields."
 	<generated>
-	^handle ffiInt32At: 5! !
+	^handle int32At: 5! !
 
 !FFITestPoint2 methodsFor: 'accessing'!
 y: anObject
 	"This method was automatically generated. See FFITestPoint2 class>>fields."
 	<generated>
-	handle ffiInt32At: 5 put: anObject! !
+	handle int32At: 5 put: anObject! !
 
 !FFITestPoint2 class methodsFor: 'field definition' stamp: 'jmv 11/14/2023 10:09:36'!
 fields
@@ -940,49 +940,49 @@ initialize
 w
 	"This method was automatically generated. See FFITestPoint4 class>>fields."
 	<generated>
-	^handle ffiInt32At: 13! !
+	^handle int32At: 13! !
 
 !FFITestPoint4 methodsFor: 'accessing'!
 w: anObject
 	"This method was automatically generated. See FFITestPoint4 class>>fields."
 	<generated>
-	handle ffiInt32At: 13 put: anObject! !
+	handle int32At: 13 put: anObject! !
 
 !FFITestPoint4 methodsFor: 'accessing'!
 x
 	"This method was automatically generated. See FFITestPoint4 class>>fields."
 	<generated>
-	^handle ffiInt32At: 1! !
+	^handle int32At: 1! !
 
 !FFITestPoint4 methodsFor: 'accessing'!
 x: anObject
 	"This method was automatically generated. See FFITestPoint4 class>>fields."
 	<generated>
-	handle ffiInt32At: 1 put: anObject! !
+	handle int32At: 1 put: anObject! !
 
 !FFITestPoint4 methodsFor: 'accessing'!
 y
 	"This method was automatically generated. See FFITestPoint4 class>>fields."
 	<generated>
-	^handle ffiInt32At: 5! !
+	^handle int32At: 5! !
 
 !FFITestPoint4 methodsFor: 'accessing'!
 y: anObject
 	"This method was automatically generated. See FFITestPoint4 class>>fields."
 	<generated>
-	handle ffiInt32At: 5 put: anObject! !
+	handle int32At: 5 put: anObject! !
 
 !FFITestPoint4 methodsFor: 'accessing'!
 z
 	"This method was automatically generated. See FFITestPoint4 class>>fields."
 	<generated>
-	^handle ffiInt32At: 9! !
+	^handle int32At: 9! !
 
 !FFITestPoint4 methodsFor: 'accessing'!
 z: anObject
 	"This method was automatically generated. See FFITestPoint4 class>>fields."
 	<generated>
-	handle ffiInt32At: 9 put: anObject! !
+	handle int32At: 9 put: anObject! !
 
 !FFITestPoint4 class methodsFor: 'field definition' stamp: 'jmv 11/14/2023 10:10:10'!
 fields
