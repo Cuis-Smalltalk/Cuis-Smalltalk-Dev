@@ -23,6 +23,6 @@ git clone https://github.com/Cuis-Smalltalk/StyledTextEditor.git
 git clone https://github.com/Cuis-Smalltalk/SVG.git
 git clone https://github.com/Cuis-Smalltalk/VMMaker.git
 git clone https://github.com/Cuis-Smalltalk/Cuis-Smalltalk-Regex.git
-git clone https://github.com/Cuis-Smalltalk/Cuis-Website
-git clone https://github.com/Cuis-Smalltalk/Cuis-Smalltalk.github.io
-git clone https://github.com/Cuis-Smalltalk/Cuis-Smalltalk-Historical
+git clone https://github.com/Cuis-Smalltalk/Cuis-Website.git
+git clone https://github.com/Cuis-Smalltalk/Cuis-Smalltalk.github.io.git
+git clone https://github.com/Cuis-Smalltalk/Cuis-Smalltalk-Historical.git

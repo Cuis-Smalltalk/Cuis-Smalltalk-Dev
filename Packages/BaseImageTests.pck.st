@@ -1,6 +1,6 @@
 'From Cuis7.1 [latest update: #6398] on 24 May 2024 at 3:48:29 pm'!
 'Description Rename extentions tests'!
-!provides: 'BaseImageTests' 1 394!
+!provides: 'BaseImageTests' 1 395!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Objects'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
@@ -22219,7 +22219,7 @@ test012_AutocompletesMessagesFor_InstanceVariables
 !SmalltalkCompleterTest methodsFor: 'tests' stamp: 'HAW 5/2/2020 16:42:09'!
 test013_AutocompletesMessagesFor_MethodArguments_WithSelectorsForUnknownClasses
 	
-	"I reference to SmalltalkCompleterTest directly and not thru 'self class' becuase this test has subclasses
+	"I reference to SmalltalkCompleterTest directly and not thru 'self class' because this test has subclasses
 	the #m1: and #m2: are defined in SmalltalkCompleterTest - Hernan"
 	self assertEntriesAreSelectorsOfUnknownClassesWhenBrowsingMethodWith: SmalltalkCompleterTest >> #m1:.
 	self assertEntriesAreSelectorsOfUnknownClassesWhenBrowsingMethodWith: SmalltalkCompleterTest >> #m2: ! !
@@ -23046,7 +23046,7 @@ testShouldFailPassesWhenAnErrorIsSignaled
 !TestCaseTest methodsFor: 'exception testing tests' stamp: 'HAW 4/5/2018 14:32:15'!
 testShouldRaiseWithExceptionDoCanExpectException
 
-	"This test is important becuase TestFailure is a subclass of Exception, therefore if we are expecting Exception to be raised it should not 
+	"This test is important because TestFailure is a subclass of Exception, therefore if we are expecting Exception to be raised it should not 
 	catch the TestFailure - Hernan"
 	
 	| failureRaised |
@@ -23562,7 +23562,7 @@ allClassCategoriesOfTestData
 !DynamicallyCodeCreationTest methodsFor: 'class factory' stamp: 'HAW 12/17/2019 10:31:31'!
 classCategoryOfTestData
 	
-	"I can not call it testDataClassCategory becuase it will be taken as test!! - Hernan"
+	"I can not call it testDataClassCategory because it will be taken as test!! - Hernan"
 	
 	^self class classCategoryOfTestData! !
 
@@ -23657,7 +23657,7 @@ createClassNamed: aName subclassOf: superclass instanceVariableNames: instanceVa
 !DynamicallyCodeCreationTest methodsFor: 'assertions' stamp: 'HAW 12/17/2019 10:32:57'!
 assertAllClassCategoriesAreExpectedToBeRemoved
 
-	"I'm using a halt instead of assert or error becuase I want the programmer to see what class category 
+	"I'm using a halt instead of assert or error because I want the programmer to see what class category 
 	was not defined in allClassCategoriesOfTestData - Hernan"
 	(classCategories difference: self allClassCategoriesOfTestData) notEmpty ifTrue: [ self halt: #allClassCategoriesOfTestData asString, ' is not implemented correctly' ]
 	! !
@@ -23699,7 +23699,7 @@ tearDown
 	setUpAssertionsPassed ifTrue: [
 		self assertAllClassCategoriesAreExpectedToBeRemoved.
 		SystemOrganization removeSystemCategories: classCategories.
-		"I commented this becuase it took too much time and the only ones runing these tests 
+		"I commented this because it took too much time and the only ones running these tests 
 		are the ones developing refactorings that know about creating/removing test data category - Hernan
 		Browser allInstancesDo: [:aBrowser | aBrowser changed: #systemCategoryList ]"]! !
 
@@ -31567,8 +31567,8 @@ test19RenamesClassWhenMethodReferencesClassAndDoesNothing
 
 	| oldClassName newClassName classToRefactor selector rename referencingMethod |
 	
-	"Currently the rename class is not handling this case becuase message #allCallsOn: does not return a method
-	that references a class but does nothing becuase it is optimize to return self... it is a really wierd case so I decided
+	"Currently the rename class is not handling this case because message #allCallsOn: does not return a method
+	that references a class but does nothing because it is optimize to return self... it is a really wierd case so I decided
 	no to solve it by now - Hernan"
 	self shouldFail: [
 		oldClassName := 'OldClassTest18' asSymbol.
