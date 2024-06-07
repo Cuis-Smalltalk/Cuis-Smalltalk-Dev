@@ -1,6 +1,6 @@
-'From Cuis7.1 [latest update: #6449] on 5 June 2024 at 10:47:38 am'!
+'From Cuis7.1 [latest update: #6451] on 7 June 2024 at 2:41:29 pm'!
 'Description FFI (Foreign Function Interface) provides access to foreign functions in external libraries, provided they use the platform''s Application Binary Interface (ABI), which is essentially the C calling convention for the platform. FFI supports callbacks, allowing one to pass callbacks that invoke Smalltalk blocks when called from foreign code. FFI provides support for defining classes that correspond to C struct types, with named fields, etc. See Tests-FFI for examples.'!
-!provides: 'FFI' 1 47!
+!provides: 'FFI' 1 48!
 !requires: 'Alien-Core' 1 0 nil!
 SystemOrganization addCategory: #'FFI-Pools'!
 SystemOrganization addCategory: #'FFI-Kernel'!
@@ -452,22 +452,13 @@ asExternalAddress
 
 	^self! !
 
-!ExternalAddress methodsFor: 'private' stamp: 'eem 6/2/2024 17:39:27'!
-primitiveFree
-	"Primitive. Free the object pointed to on the external heap.
-	Dangerous - may break your system if the receiver hasn't been
-	allocated by ExternalAddress class>>allocate:. No checks are done.
-	Only to be called from ExternalAddress>>#free. Don't call directly."
-	<primitive: #primitiveFFIFree module: #SqueakFFIPrims error: ec>
-	^self primitiveFailed! !
-
-!ExternalAddress methodsFor: 'converting' stamp: 'eem 6/4/2024 14:12:48'!
+!ExternalAddress methodsFor: 'converting' stamp: 'eem 6/7/2024 14:19:34'!
 asInteger
 	"Convert address to integer.
 	 Convert to a ByteArray in order to access the pointer bytes instead of the bytes pointed to!!
 	Primitive integerAt:size:signed: will use the appropriate endianess for this platform.
 	See also ExternalAddress class >> #fromInteger:"
-
+	<primitive: #primitiveExternalAddressAsInteger module: #SqueakFFIPrims>
 	| clone |
 	clone := self shallowCopy.
 	ByteArray adoptInstance: clone.
@@ -485,23 +476,13 @@ finalize
 	self isNull ifTrue: [^self].
 	self free! !
 
-!ExternalAddress methodsFor: 'initialize-release' stamp: 'jmv 12/8/2023 11:04:49'!
+!ExternalAddress methodsFor: 'initialize-release' stamp: 'eem 07/26/2021 08:22'!
 free
-	"Free the object pointed to on the external heap.
-	Don't free the same instance twice.
+	"Primitive. Free the object pointed to on the external heap.
 	Dangerous - may break your system if the receiver hasn't been
 	allocated by ExternalAddress class>>allocate:. No checks are done."
-
-	| instanceForPrimitiveCall |
-	self isNull ifTrue: [
-		^self ].
-	instanceForPrimitiveCall := self copy.
-
-	"Call the primitive immediately after nulling us."
-	self beNull.
-	instanceForPrimitiveCall primitiveFree.
-
-	ExternalAddress finalizationRegistry remove: self ifAbsent: [].! !
+	<primitive: #primitiveFFIFree module: #SqueakFFIPrims>
+	^self primitiveFailed! !
 
 !ExternalAddress methodsFor: 'testing' stamp: 'ar 11/16/2006 15:35'!
 isNull
@@ -534,7 +515,7 @@ allocate: byteSize
 	<primitive: #primitiveFFIAllocate module: #SqueakFFIPrims error: ec>
 	^self primitiveFailed! !
 
-!ExternalAddress class methodsFor: 'instance creation' stamp: 'eem 6/5/2024 10:46:46'!
+!ExternalAddress class methodsFor: 'instance creation' stamp: 'eem 6/7/2024 13:48:31'!
 fromInteger: address
 	"Create an instance. address must be a non-negative integer.
 	 Use a ByteArray to be able to send #integerAt:put:size:signed: and have it operate
@@ -544,7 +525,7 @@ fromInteger: address
 	"
 	(ExternalAddress fromInteger: 12345678) asInteger
 	"
-
+	<primitive: #primitiveExternalAddressFromInteger module: #SqueakFFIPrims>
 	| pointerBytes |
 	pointerBytes := ByteArray new: wordSize.
 	pointerBytes integerAt: 1 put: address size: wordSize signed: false.
@@ -2208,6 +2189,34 @@ initializeStructureTypes
 new
 	"Use either the type constants or #externalType for creating external types"
 	^self shouldNotImplement! !
+
+!ExternalType class methodsFor: 'query' stamp: 'eem 6/7/2024 14:34:35'!
+primitiveAlignmentOf: atomicTypeCode
+	"Answer the platform C compiler's alignment in a structure of an element of the
+	 C type corresponding to atomicTypeCode, where atomicTypeCode is in the range
+	 FFITypeUint8 (2) to FFITypeDoubleFloat (13), or is FFIFlagStructure (65536)."
+	<primitive: #primitiveStructureElementAlignment module: #SqueakFFIPrims>
+	self primitiveFailed
+
+	"(FFITypeUint8 to: FFITypeDoubleFloat), {FFIFlagStructure} collect: [:n| self primitiveAlignmentOf: n]"! !
+
+!ExternalType class methodsFor: 'query' stamp: 'eem 6/7/2024 14:35:18'!
+primitiveCDataModel
+	"Answer the name for the platform C compiler's data model, ILP32, LP64, et al."
+	<primitive: #primitiveCDataModel module: #SqueakFFIPrims error: ec>
+	self primitiveFailed
+
+	"self primitiveCDataModel"! !
+
+!ExternalType class methodsFor: 'query' stamp: 'eem 6/7/2024 14:35:38'!
+primitiveSizesInto: aByteArrayOfSizeNine
+	"Answer the platform C compiler's sizes for char, short, int, long, long long, wchar_t, float, double, void *."
+	<primitive: #primitiveCDataModel module: #SqueakFFIPrims error: ec>
+	self primitiveFailed
+
+	"(#(char short int long #'long long' wchar_t float double #'void *')
+		with: (self primitiveSizesInto: (ByteArray new: 9))
+		collect: [:n :s| {n. s}]) flatten"! !
 
 !Object methodsFor: '*FFI-Kernel' stamp: 'ar 8/14/2006 23:02'!
 externalCallFailed
