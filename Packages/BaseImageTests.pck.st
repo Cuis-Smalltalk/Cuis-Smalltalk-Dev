@@ -1,6 +1,6 @@
-'From Cuis7.1 [latest update: #6398] on 24 May 2024 at 3:48:29 pm'!
+'From Cuis7.1 [latest update: #6467] on 13 June 2024 at 1:08:04 pm'!
 'Description Rename extentions tests'!
-!provides: 'BaseImageTests' 1 395!
+!provides: 'BaseImageTests' 1 396!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Objects'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
@@ -27674,18 +27674,22 @@ test04FailsIfNewTemporaryIsEqualToInstanceVariableInClass
 		assertCreation: [ ExtractToTemporary named: newVariable at: intervalToExtract from: methodToRefactor ]
 		failsWith: [ NewTemporaryPrecondition errorMessageFor: newVariable canNotBeNamedDueToInstanceVariableDefinedIn: classToRefactor ]! !
 
-!ExtractToTemporaryTest methodsFor: 'tests - validations' stamp: 'RNG 5/24/2020 20:01:16'!
+!ExtractToTemporaryTest methodsFor: 'tests - validations' stamp: 'jmv 6/13/2024 13:07:57'!
 test05FailsIfNewTemporaryIsEqualToInstanceVariableInAnySuperclass
 
 	| newVariable sourceCode sourceCodeToExtract methodToRefactor superclassToRefactor intervalToExtract |
-	newVariable _ 'new'.
-	superclassToRefactor _ self createClassNamed: #ClassToRefactorSuperclass instanceVariableNames: newVariable.
-	classToRefactor superclass: superclassToRefactor.
-	sourceCodeToExtract _ '78'.
-	sourceCode _ 'm1 ^ ', sourceCodeToExtract.
-	intervalToExtract _ self intervalOf: sourceCodeToExtract locatedIn: sourceCode.
+	newVariable := 'new'.
+	superclassToRefactor := self createClassNamed: #ClassToRefactorSuperclass instanceVariableNames: newVariable.
+
+	"classToRefactor superclass: superclassToRefactor."
+	classToRefactor instVarNamed: 'superclass' put: superclassToRefactor.
+	Object flushCache.
+
+	sourceCodeToExtract := '78'.
+	sourceCode := 'm1 ^ ', sourceCodeToExtract.
+	intervalToExtract := self intervalOf: sourceCodeToExtract locatedIn: sourceCode.
 	classToRefactor compile: sourceCode.
-	methodToRefactor _ classToRefactor >> #m1.
+	methodToRefactor := classToRefactor >> #m1.
 	
 	self 
 		assertCreation: [ ExtractToTemporary named: newVariable at: intervalToExtract from: methodToRefactor ]
