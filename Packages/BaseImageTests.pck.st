@@ -1,6 +1,6 @@
-'From Cuis7.1 [latest update: #6467] on 13 June 2024 at 1:08:04 pm'!
+'From Cuis7.1 [latest update: #6468] on 13 June 2024 at 2:57:34 pm'!
 'Description Rename extentions tests'!
-!provides: 'BaseImageTests' 1 396!
+!provides: 'BaseImageTests' 1 397!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Objects'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
@@ -21992,13 +21992,14 @@ quickReturn
 	
 	^ 2! !
 
-!QuickReturnDebuggingTest methodsFor: 'tests' stamp: 'FJG 11/8/2023 19:12:03'!
+!QuickReturnDebuggingTest methodsFor: 'tests' stamp: 'jmv 6/13/2024 14:56:52'!
 test01_debuggerCanStepIntoQuickReturnMethods
 	| aDebugger |
-	aDebugger := self debuggerOn: [		self quickReturn 	].
-	
+	aDebugger := self debuggerOn: [		self quickReturn 	].	
+
 	aDebugger send.
-	
+	aDebugger send.
+
 	self assert: aDebugger interruptedContext method equals: self class >> #quickReturn.! !
 
 !QuickReturnDebuggingTest methodsFor: 'tests' stamp: 'FJG 11/8/2023 19:12:20'!
