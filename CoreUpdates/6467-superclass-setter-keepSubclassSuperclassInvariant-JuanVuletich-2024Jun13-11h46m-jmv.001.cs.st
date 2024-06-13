@@ -10,6 +10,6 @@ superclass: aClass
 	| oldSuperclass |
 	oldSuperclass := superclass.
 	super superclass: aClass.
-	oldSuperclass ifNotNil: [
+	(oldSuperclass notNil and: [ oldSuperclass ~~ superclass ]) ifTrue: [
 		oldSuperclass removeSubclass: self ].! !
 
