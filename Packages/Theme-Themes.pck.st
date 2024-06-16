@@ -1,6 +1,6 @@
-'From Cuis7.1 [latest update: #6456] on 9 June 2024 at 8:05:22 pm'!
+'From Cuis7.1 [latest update: #6469] on 16 June 2024 at 4:41:52 pm'!
 'Description Theme customizer'!
-!provides: 'Theme-Themes' 1 15!
+!provides: 'Theme-Themes' 1 16!
 SystemOrganization addCategory: #'Theme-Themes'!
 
 
@@ -1154,6 +1154,12 @@ windowLabel
 workspace
 	^ self class secondaryColor.! !
 
+!PersonalizedTheme methodsFor: 'initialization' stamp: 'kdpm 5/18/2024 08:06:44'!
+initialize
+
+	PersonalizedTheme backgroundColor ifNil: [
+		ThemeCustomizerWindow open.].! !
+
 !PersonalizedTheme class methodsFor: 'changes' stamp: 'HAW 7/24/2023 11:15:08'!
 changeBackgroundColorTo: color
 	background := color.! !
@@ -1174,9 +1180,9 @@ changeSecondaryColorTo: color
 changeTextColorTo: color
 	writing := color.! !
 
-!PersonalizedTheme class methodsFor: 'initialize' stamp: 'jmv 6/9/2024 20:04:51'!
+!PersonalizedTheme class methodsFor: 'initialize' stamp: 'jmv 6/16/2024 16:41:45'!
 initialize
-	^self initializeThemeWithDefaultColors ! !
+	"^self initializeThemeWithDefaultColors "! !
 
 !PersonalizedTheme class methodsFor: 'initialize' stamp: 'HAW 7/24/2023 11:15:27'!
 initializeThemeWithDefaultColors
