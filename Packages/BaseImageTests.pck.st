@@ -1,6 +1,6 @@
-'From Cuis7.1 [latest update: #6474] on 17 June 2024 at 10:20:15 pm'!
+'From Cuis7.1 [latest update: #6483] on 18 June 2024 at 5:12:48 pm'!
 'Description Rename extentions tests'!
-!provides: 'BaseImageTests' 1 399!
+!provides: 'BaseImageTests' 1 400!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Objects'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
@@ -19352,17 +19352,6 @@ testBase64
 		assert: (String new: 100 withAll: $x) asByteArray base64Encoded  =
 'eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4
 eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eA=='! !
-
-!StringTest methodsFor: 'testing' stamp: 'HAW 8/3/2018 10:42:26'!
-testAfterBlanksEndsWith
-
-	self assert: (' abc' afterBlanksEndsWith: 'abc').
-	self assert: ('abc' afterBlanksEndsWith: 'abc').
-	
-	self deny: (' ab' afterBlanksEndsWith: 'abc').
-	self deny: (' ab' afterBlanksEndsWith: 'a').
-	self deny: ('' afterBlanksEndsWith: 'abc').
-	self deny: (' a a bc' afterBlanksEndsWith: 'a bc').! !
 
 !StringTest methodsFor: 'testing' stamp: 'jmv 12/7/2022 11:38:26'!
 testBeginsWith
