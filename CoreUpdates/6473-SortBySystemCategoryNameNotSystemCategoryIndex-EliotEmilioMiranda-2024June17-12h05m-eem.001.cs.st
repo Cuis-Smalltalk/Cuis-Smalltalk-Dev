@@ -15,7 +15,7 @@ allSubclassesWithLevelDo: classAndLevelBlock startingLevel: level sortByCategory
 	self subclasses
 		sort: [ :a :b |
 			sortByCategoryBoolean
-				ifTrue: [ a category < b category or: [ a category = b category and: [ a name <= b name ]]]
+				ifTrue: [ (a category ifNil: ['']) < (b category ifNil: ['']) or: [ a category = b category and: [ a name <= b name ]]]
 				ifFalse: [ a name <= b name ]
 			];
 		do: [ :subclass |
