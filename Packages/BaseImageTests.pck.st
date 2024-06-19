@@ -1,6 +1,6 @@
-'From Cuis7.1 [latest update: #6483] on 18 June 2024 at 5:12:48 pm'!
+'From Cuis7.1 [latest update: #6486] on 19 June 2024 at 9:39:46 am'!
 'Description Rename extentions tests'!
-!provides: 'BaseImageTests' 1 400!
+!provides: 'BaseImageTests' 1 402!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Objects'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
@@ -11236,39 +11236,39 @@ testNaNCompare
 		self assert: (theNaN ~= comp2) description: warningMessage.
 		self assert: (comp2 ~= theNaN) description: warningMessage].! !
 
-!FloatTest methodsFor: 'tests - NaN behavior' stamp: 'jmv 8/1/2019 18:12:56'!
+!FloatTest methodsFor: 'tests - NaN behavior' stamp: 'sqr 6/18/2024 23:11:33'!
 testNaNPropagationBinary
 	"Any operation should propagate NaN"
 	| s a c |
-	s _ Set new.
+	s := Set new.
 	s addAll: Number selectors.
 	s addAll: Float selectors.
 	s addAll: BoxedFloat64 selectors.
 	s addAll: SmallFloat64 selectors.
-	s _ s select: [ :sel | sel numArgs = 1 ].
+	s := s select: [ :sel | sel numArgs = 1 ].
 	s removeAll: #(#at: #basicAt: #ifNotZero: smoothIsAbsBelow:).
-	a _ s asArray sort.
+	a := s asArray sort.
 	a do: [ :sel |
 		{ 0. 0.0. 1/3. 1. 1.0. 2. 2.0. Float nan } do: [ :op1 |
 			{ 0. 0.0. 1/3. 1. 1.0. 2. 2.0. Float nan } do: [ :op2 |
 				op1 isNaN | op2 isNaN ifTrue: [
-					c _ [ op1 perform: sel with: op2 ] on: Error do: [ #error ].
+					c := [ op1 perform: sel with: op2 ] on: UnhandledError do: [ #error ].
 					self assert: (c isNumber not or: [c isNaN]) ]]]].! !
 
-!FloatTest methodsFor: 'tests - NaN behavior' stamp: 'jmv 2/28/2023 12:06:10'!
+!FloatTest methodsFor: 'tests - NaN behavior' stamp: 'sqr 6/18/2024 23:11:41'!
 testNaNPropagationUnary
 	"Any operation should propagate NaN"
 	| s a c |
-	s _ Set new.
+	s := Set new.
 	s addAll: Number selectors.
 	s addAll: Float selectors.
 	s addAll: BoxedFloat64 selectors.
 	s addAll: SmallFloat64 selectors.
-	s _ s select: [ :sel | sel numArgs = 0 ].
+	s := s select: [ :sel | sel numArgs = 0 ].
 	s removeAll: #(#asIEEE32BitWord #byteSize #hash #identityHash #mantissaBits #signBit #exponentBits #exponent primTestExponent #fractionPart).
-	a _ s asArray sort.
+	a := s asArray sort.
 	a do: [ :sel |
-		c _ [ Float nan perform: sel ] on: Error do: [ #error ].
+		c := [ Float nan perform: sel ] on: UnhandledError do: [ #error ].
 		self assert: (c isNumber not or: [c isNaN]) ].! !
 
 !FloatTest methodsFor: 'tests - NaN behavior' stamp: 'jmv 5/21/2020 22:51:38'!
@@ -18345,7 +18345,7 @@ testResumeTerminatingProcess
 	self assert: unwound.
 	self assert: terminator isTerminated! !
 
-!ProcessTest methodsFor: 'tests' stamp: 'jar 12/1/2023 19:01:14'!
+!ProcessTest methodsFor: 'tests' stamp: 'sqr 6/18/2024 23:12:01'!
 testResumeWithEnsureAfterBCR
 	"This test verifies #cannotReturn: context sender's pc has been nilled
 	 before returning to make sure its code won't continue executing,
@@ -18362,19 +18362,19 @@ testResumeWithEnsureAfterBCR
 	the functionality of the test is not affected by this precautionary measure.	"
 
 	| expr executedReturnTwo error unwound sync |
-	expr _ true.
-	executedReturnTwo _ false.
-	error _ false.
-	unwound _ false.
-	sync _ Semaphore new.
+	expr := true.
+	executedReturnTwo := false.
+	error := false.
+	unwound := false.
+	sync := Semaphore new.
 	[	[sync signal.
 	      [[expr ifTrue: [thisContext push: nil. ^1].  "see the note above"
-	       executedReturnTwo _ true. ^2]
-			ensure: [unwound _ true]]
+	       executedReturnTwo := true. ^2]
+			ensure: [unwound := true]]
 			        on: BlockCannotReturn
 			        do: [:ex | ex resume]]
-					on: Error
-					do: [error _ true]] fork.
+					on: UnhandledError
+					do: [error := true]] fork.
 	sync wait.
 	self deny: executedReturnTwo.
 	self assert: unwound.
@@ -19593,21 +19593,6 @@ testArticle
 		assert: 'Ukranian' withArticle equals: 'a Ukranian';
 		assert: 'Argentine' withArticle equals: 'an Argentine';
 		assert: 'user' withArticle equals: 'a user'! !
-
-!SymbolTest methodsFor: 'tests - isTestSelector' stamp: 'HAW 10/16/2022 09:21:30'!
-testIsNotTestSelectorWhenHasParameters
-
-	self deny: #test01: isTestSelector! !
-
-!SymbolTest methodsFor: 'tests - isTestSelector' stamp: 'HAW 10/16/2022 09:20:06'!
-testIsNotTestSelectorWhenItDoesNotStartsWithTest
-
-	self deny: #tes01 isTestSelector! !
-
-!SymbolTest methodsFor: 'tests - isTestSelector' stamp: 'HAW 10/16/2022 09:21:13'!
-testIsTestSelectorWhenStartsWithTestAndHasNoParameters
-
-	self assert: #test01 isTestSelector! !
 
 !SymbolTest methodsFor: 'tests - selector validation' stamp: 'RNG 3/29/2020 19:59:47'!
 testIsNotValidBinarySelectorIfItContainsACharacterNotAllowed
@@ -34165,6 +34150,21 @@ testShouldNotTakeMoreThanPassesWhenClosureTakesLessThanTheLimit
 
 	self shouldntFail: [ self should: [] notTakeMoreThan: 1 milliSeconds ]
 		! !
+
+!TestCaseTest methodsFor: 'symbols' stamp: 'jmv 6/19/2024 09:39:01'!
+testIsNotTestSelectorWhenHasParameters
+
+	self deny: (TestCase isTestSelector: #test01:)! !
+
+!TestCaseTest methodsFor: 'symbols' stamp: 'jmv 6/19/2024 09:38:48'!
+testIsNotTestSelectorWhenItDoesNotStartsWithTest
+
+	self deny: (TestCase isTestSelector: #tes01)! !
+
+!TestCaseTest methodsFor: 'symbols' stamp: 'jmv 6/19/2024 09:38:23'!
+testIsTestSelectorWhenStartsWithTestAndHasNoParameters
+
+	self assert: (TestCase isTestSelector: #test01)! !
 
 !TestSuiteTest methodsFor: 'assertions' stamp: 'jmv 7/31/2023 12:30:31'!
 assert: expectedTestSuite hasSameTestsAs: resultTestSuite
