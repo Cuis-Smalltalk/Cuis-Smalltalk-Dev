@@ -20,7 +20,7 @@ After release, any critical fixes are pushed to the Cuis 7.0 repo.
 
 The following process will be repeated for each release. Currently the target is to do two releases per year, meaning 6 month per release. These are split in: 
 
-Four months of unencumbered ("Aplha") development. 
+Four months of unencumbered ("Alpha") development. 
 
 One month of "Beta" testing and addressing remaining and newfound issues. 
 
