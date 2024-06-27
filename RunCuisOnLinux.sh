@@ -45,7 +45,6 @@ else # all-in-one bundle
 fi
 
 VM="${BINDIR}${APP}"
-VMOPTIONS="-encoding UTF-8"
 STARGS=()
 
 # separate vm and script arguments
@@ -53,11 +52,13 @@ while [[ -n "$1" ]] ; do
     case "$1" in
          *.image) break;;
          *.st|*.cs) STARGS+=("$1");;
+	 -gdb) DBGOPTIONS=-gdb;;
 	 --) break;;
-         *) VMARGS="${VMARGS} $1";;
+         *) VMARGS+=" $1";;
     esac
     shift
 done
+VMOPTIONS+=" -encoding UTF-8"
 while [[ -n "$1" ]]; do
     case "$1" in
          *.image) IMAGE="$1";;
@@ -151,9 +152,9 @@ ensure_image() {
 detect_sound() {
     if pulseaudio --check 2>/dev/null ; then
         if "${VM}" --help 2>/dev/null | grep -q vm-sound-pulse ; then
-	    VMOPTIONS="${VMOPTIONS} -vm-sound-pulse"
+	    VMOPTIONS+=" -vm-sound-pulse"
         else
-            VMOPTIONS="${VMOPTIONS} -vm-sound-oss"
+            VMOPTIONS+=" -vm-sound-oss"
             if padsp true 2>/dev/null; then
                 SOUNDSERVER=padsp
             fi
@@ -168,7 +169,7 @@ detect_sound
 
 # Enable per-monitor scaling to work around memory leak:
 # https://github.com/OpenSmalltalk/opensmalltalk-vm/issues/642
-export SQUEAK_DISPLAY_PER_MONITOR_SCALE=1 
+export SQUEAK_DISPLAY_PER_MONITOR_SCALE=1
 
 echo "Using ${VM} ..."
-exec ${SOUNDSERVER} "${VM}" ${VMOPTIONS} ${VMARGS} "${IMAGE}" -u "${STARGS[@]}"
+exec ${SOUNDSERVER} "${VM}" ${DBGOPTIONS} ${VMOPTIONS} ${VMARGS} "${IMAGE}" -u "${STARGS[@]}"
