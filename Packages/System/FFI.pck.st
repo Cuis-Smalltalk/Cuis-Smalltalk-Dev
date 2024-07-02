@@ -1,6 +1,6 @@
-'From Cuis7.1 [latest update: #6451] on 7 June 2024 at 2:41:29 pm'!
+'From Cuis7.1 [latest update: #6493] on 2 July 2024 at 9:29:03 am'!
 'Description FFI (Foreign Function Interface) provides access to foreign functions in external libraries, provided they use the platform''s Application Binary Interface (ABI), which is essentially the C calling convention for the platform. FFI supports callbacks, allowing one to pass callbacks that invoke Smalltalk blocks when called from foreign code. FFI provides support for defining classes that correspond to C struct types, with named fields, etc. See Tests-FFI for examples.'!
-!provides: 'FFI' 1 48!
+!provides: 'FFI' 1 49!
 !requires: 'Alien-Core' 1 0 nil!
 SystemOrganization addCategory: #'FFI-Pools'!
 SystemOrganization addCategory: #'FFI-Kernel'!
@@ -25,16 +25,6 @@ ByteArray variableByteSubclass: #ExternalAddress
 !classDefinition: 'ExternalAddress class' category: #'FFI-Kernel'!
 ExternalAddress class
 	instanceVariableNames: 'wordSize'!
-
-!classDefinition: #ExternalForm category: #'FFI-Kernel'!
-Form subclass: #ExternalForm
-	instanceVariableNames: 'pointer'
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'FFI-Kernel'!
-!classDefinition: 'ExternalForm class' category: #'FFI-Kernel'!
-ExternalForm class
-	instanceVariableNames: ''!
 
 !classDefinition: #ExternalObject category: #'FFI-Kernel'!
 Object subclass: #ExternalObject
@@ -116,26 +106,19 @@ Object subclass: #ExternalType
 ExternalType class
 	instanceVariableNames: ''!
 
+!classDefinition: #ExternalForm category: #'FFI-Kernel'!
+Form subclass: #ExternalForm
+	instanceVariableNames: 'pointer'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'FFI-Kernel'!
+!classDefinition: 'ExternalForm class' category: #'FFI-Kernel'!
+ExternalForm class
+	instanceVariableNames: ''!
+
 
 !ExternalAddress commentStamp: '<historical>' prior: 0!
 An ExternalAddress is an opaque handle to objects outside Smalltalk memory (e.g., a pointer).!
-
-!ExternalForm commentStamp: '<historical>' prior: 0!
-An ExternalForm is a specialized Form whose pixel-data is stored in memory that the user provides a pointer to.  This can simply be memory on the C heap, or (the motivating use-case...) it can be a pointer that is temporarily "mapped" from GPU memory by an API such as OpenCL.
-
-The user is responsible for both releasing the image-memory, as well as destroying the surface handle (perhaps the latter should be handled by automatic finalization).
-
-Example usage:
-
-| extent form ptr |
-extent := 400@300.
-form := ExternalForm extent: extent depth: 32.
-ptr := ExternalAddress gcallocate: (extent x * extent y * 4).
-form setManualSurfacePointer: ptr.
-Display displayOn: form.
-form displayAt: 100@500.
-form destroySurface.
-!
 
 !ExternalObject commentStamp: '<historical>' prior: 0!
 External objects represent entities that are not part of the Smalltalk universe. They are accessed using a unique handle which is interpreted depending on the actual entity that is represented. 
@@ -306,6 +289,23 @@ Note that all combinations of the flags FFIFlagPointer, FFIFlagAtomic, and FFIFl
 		It requires a byte size of four (e.g. a 32bit pointer) to work correctly.
 
 [Note: Other combinations may be allowed in the future]
+!
+
+!ExternalForm commentStamp: '<historical>' prior: 0!
+An ExternalForm is a specialized Form whose pixel-data is stored in memory that the user provides a pointer to.  This can simply be memory on the C heap, or (the motivating use-case...) it can be a pointer that is temporarily "mapped" from GPU memory by an API such as OpenCL.
+
+The user is responsible for both releasing the image-memory, as well as destroying the surface handle (perhaps the latter should be handled by automatic finalization).
+
+Example usage:
+
+| extent form ptr |
+extent := 400@300.
+form := ExternalForm extent: extent depth: 32.
+ptr := ExternalAddress gcallocate: (extent x * extent y * 4).
+form setManualSurfacePointer: ptr.
+Display displayOn: form.
+form displayAt: 100@500.
+form destroySurface.
 !
 
 !FFIConstants class methodsFor: 'pool initialization' stamp: 'ar 5/18/2003 18:54'!
@@ -563,95 +563,6 @@ numElements
 !ExternalAddress class methodsFor: 'accessing' stamp: 'eem 2/16/2016 12:34'!
 wordSize
 	^wordSize! !
-
-!ExternalForm methodsFor: 'initialization' stamp: 'jmv 5/4/2016 12:43'!
-allocateSpace
-	"Convenient way to allocate space for the pixels.  This isn't done by default, because it is common to use a pointer obtained from elsewhere."
-	| addr |
-	pointer ifNotNil: [self error: 'space is already allocated'].
-	addr := ExternalAddress gcallocate: width*height * depth abs // 8. "area times bytes/pixel"
-	self setManualSurfacePointer: addr.! !
-
-!ExternalForm methodsFor: 'initialization' stamp: 'jcg 1/29/2010 01:29'!
-destroySurface
-	"Users must call this explicitly when this object is no longer needed; otherwise, resource-leakage will occur in the SurfacePlugin"
-	bits ifNotNil: [:surfaceID |
-		bits := nil.
-		self primDestroyManualSurface: surfaceID
-	].! !
-
-!ExternalForm methodsFor: 'initialization' stamp: 'jcg 6/4/2010 02:04'!
-initialize
-	super initialize.
-	pointer := nil.
-	! !
-
-!ExternalForm methodsFor: 'initialization' stamp: 'jmv 5/4/2016 12:47'!
-setExtent: extent depth: bitsPerPixel
-	bits ifNotNil: [self error: 'bits are already set'].
-	(#(8 16 32) includes: bitsPerPixel abs)
-		ifFalse: [self error: 'only +/- 8, 16 or 32 bits for now'.  "see 'rowPitch' below"].
-	width := extent x asInteger.
-	width < 0 ifTrue: [width := 0].
-	height := extent y asInteger.
-	height < 0 ifTrue: [height := 0].
-	depth := bitsPerPixel.
-	bits := self 
-		primCreateManualSurfaceWidth: width 
-		height: height 
-		rowPitch: width * (bitsPerPixel abs/8)
-		depth: bitsPerPixel abs
-		isMSB: bitsPerPixel > 0.! !
-
-!ExternalForm methodsFor: 'initialization' stamp: 'jcg 1/29/2010 01:31'!
-setExtent: extent depth: bitsPerPixel bits: aPointer
-	self setExtent: extent depth: bitsPerPixel.
-	self setManualSurfacePointer: aPointer.! !
-
-!ExternalForm methodsFor: 'initialization' stamp: 'jmv 5/7/2023 10:42:41'!
-setManualSurfacePointer: newPointer "ExternalStructure, ExternalAddress, or nil"
-	"Set the memory-location of the image data.  It is OK to set a NULL pointer; in this case, any attempt to BitBlt to or from the form will result in a primitive-failure."
-	| integer |
-	pointer := newPointer.
-	pointer ifNil: [^self primManualSurface: bits setPointer: 0].
-	pointer isExternalAddress
-		ifFalse: ["must already be ExternalStructure, so nothing to do"]
-		ifTrue: [pointer := ExternalData 
-							fromHandle: newPointer 
-							type: ExternalType void asPointerType].
-	"The primitive expects an unsigned integer arg, not an ExternalAddress."
-	"NOTE: it used to be acceptable for 'newPointer' to be an Integer... 
-	 if you get a MNU for #getHandle here, you should update your code 
-	 to pass in either an ExternalStructure or an ExternalAddress."
-	integer := Smalltalk wordSize caseOf: {
-			[ 4 ] -> [ pointer getHandle uint32At: 1 bigEndian: Smalltalk isBigEndian ].
-			[ 8 ] -> [ pointer getHandle uint64At: 1 bigEndian: Smalltalk isBigEndian ]
-		}
-		otherwise: [ self error ].
-	self primManualSurface: bits setPointer: integer! !
-
-!ExternalForm methodsFor: 'accessing' stamp: 'jcg 2/16/2010 00:01'!
-pointer
-	^pointer! !
-
-!ExternalForm methodsFor: 'primitives' stamp: 'jcg 1/30/2010 02:52'!
-primCreateManualSurfaceWidth: aWidth height: aHeight rowPitch: rowPitch depth: aDepth isMSB: isMSB
-	<primitive: 'primitiveCreateManualSurface' module: 'SqueakFFIPrims'>
-	self primitiveFailed
-! !
-
-!ExternalForm methodsFor: 'primitives' stamp: 'jcg 1/30/2010 02:52'!
-primDestroyManualSurface: surfaceID
-	<primitive: 'primitiveDestroyManualSurface' module: 'SqueakFFIPrims'>
-	self primitiveFailed
-! !
-
-!ExternalForm methodsFor: 'primitives' stamp: 'jcg 1/30/2010 02:52'!
-primManualSurface: surfaceID setPointer: aPointer
-	"The 'surfaceID' is a handle returned by #primitiveCreateManualSurface from SurfacePlugin. The pointer is a 32-bit unsigned integer that SurfacePlugin casts to a void*."
-	<primitive: 'primitiveSetManualSurfacePointer' module: 'SqueakFFIPrims'>
-	self primitiveFailed
-! !
 
 !ExternalObject methodsFor: 'private' stamp: 'ar 11/16/1999 20:25'!
 getHandle
@@ -2218,6 +2129,95 @@ primitiveSizesInto: aByteArrayOfSizeNine
 		with: (self primitiveSizesInto: (ByteArray new: 9))
 		collect: [:n :s| {n. s}]) flatten"! !
 
+!ExternalForm methodsFor: 'initialization' stamp: 'jmv 5/4/2016 12:43'!
+allocateSpace
+	"Convenient way to allocate space for the pixels.  This isn't done by default, because it is common to use a pointer obtained from elsewhere."
+	| addr |
+	pointer ifNotNil: [self error: 'space is already allocated'].
+	addr := ExternalAddress gcallocate: width*height * depth abs // 8. "area times bytes/pixel"
+	self setManualSurfacePointer: addr.! !
+
+!ExternalForm methodsFor: 'initialization' stamp: 'jcg 1/29/2010 01:29'!
+destroySurface
+	"Users must call this explicitly when this object is no longer needed; otherwise, resource-leakage will occur in the SurfacePlugin"
+	bits ifNotNil: [:surfaceID |
+		bits := nil.
+		self primDestroyManualSurface: surfaceID
+	].! !
+
+!ExternalForm methodsFor: 'initialization' stamp: 'jcg 6/4/2010 02:04'!
+initialize
+	super initialize.
+	pointer := nil.
+	! !
+
+!ExternalForm methodsFor: 'initialization' stamp: 'jmv 5/4/2016 12:47'!
+setExtent: extent depth: bitsPerPixel
+	bits ifNotNil: [self error: 'bits are already set'].
+	(#(8 16 32) includes: bitsPerPixel abs)
+		ifFalse: [self error: 'only +/- 8, 16 or 32 bits for now'.  "see 'rowPitch' below"].
+	width := extent x asInteger.
+	width < 0 ifTrue: [width := 0].
+	height := extent y asInteger.
+	height < 0 ifTrue: [height := 0].
+	depth := bitsPerPixel.
+	bits := self 
+		primCreateManualSurfaceWidth: width 
+		height: height 
+		rowPitch: width * (bitsPerPixel abs/8)
+		depth: bitsPerPixel abs
+		isMSB: bitsPerPixel > 0.! !
+
+!ExternalForm methodsFor: 'initialization' stamp: 'jcg 1/29/2010 01:31'!
+setExtent: extent depth: bitsPerPixel bits: aPointer
+	self setExtent: extent depth: bitsPerPixel.
+	self setManualSurfacePointer: aPointer.! !
+
+!ExternalForm methodsFor: 'initialization' stamp: 'jmv 5/7/2023 10:42:41'!
+setManualSurfacePointer: newPointer "ExternalStructure, ExternalAddress, or nil"
+	"Set the memory-location of the image data.  It is OK to set a NULL pointer; in this case, any attempt to BitBlt to or from the form will result in a primitive-failure."
+	| integer |
+	pointer := newPointer.
+	pointer ifNil: [^self primManualSurface: bits setPointer: 0].
+	pointer isExternalAddress
+		ifFalse: ["must already be ExternalStructure, so nothing to do"]
+		ifTrue: [pointer := ExternalData 
+							fromHandle: newPointer 
+							type: ExternalType void asPointerType].
+	"The primitive expects an unsigned integer arg, not an ExternalAddress."
+	"NOTE: it used to be acceptable for 'newPointer' to be an Integer... 
+	 if you get a MNU for #getHandle here, you should update your code 
+	 to pass in either an ExternalStructure or an ExternalAddress."
+	integer := Smalltalk wordSize caseOf: {
+			[ 4 ] -> [ pointer getHandle uint32At: 1 bigEndian: Smalltalk isBigEndian ].
+			[ 8 ] -> [ pointer getHandle uint64At: 1 bigEndian: Smalltalk isBigEndian ]
+		}
+		otherwise: [ self error ].
+	self primManualSurface: bits setPointer: integer! !
+
+!ExternalForm methodsFor: 'accessing' stamp: 'jcg 2/16/2010 00:01'!
+pointer
+	^pointer! !
+
+!ExternalForm methodsFor: 'primitives' stamp: 'jcg 1/30/2010 02:52'!
+primCreateManualSurfaceWidth: aWidth height: aHeight rowPitch: rowPitch depth: aDepth isMSB: isMSB
+	<primitive: 'primitiveCreateManualSurface' module: 'SqueakFFIPrims'>
+	self primitiveFailed
+! !
+
+!ExternalForm methodsFor: 'primitives' stamp: 'jcg 1/30/2010 02:52'!
+primDestroyManualSurface: surfaceID
+	<primitive: 'primitiveDestroyManualSurface' module: 'SqueakFFIPrims'>
+	self primitiveFailed
+! !
+
+!ExternalForm methodsFor: 'primitives' stamp: 'jcg 1/30/2010 02:52'!
+primManualSurface: surfaceID setPointer: aPointer
+	"The 'surfaceID' is a handle returned by #primitiveCreateManualSurface from SurfacePlugin. The pointer is a 32-bit unsigned integer that SurfacePlugin casts to a void*."
+	<primitive: 'primitiveSetManualSurfacePointer' module: 'SqueakFFIPrims'>
+	self primitiveFailed
+! !
+
 !Object methodsFor: '*FFI-Kernel' stamp: 'ar 8/14/2006 23:02'!
 externalCallFailed
 	"Raise an error after a failed call to an external function"
@@ -2362,6 +2362,20 @@ int8At: byteOffset put: value
 	"Store the signed 8-bit integer at byte offset."
 	<primitive: #primitiveSignedInt8AtPut module: #SqueakFFIPrims error: ec>
 	^self integerAt: byteOffset put: value size: 1 signed: true! !
+
+!ByteArray methodsFor: '*FFI-Kernel-platform' stamp: 'fgz 6/28/2024 15:38:01'!
+integerAt: byteOffset
+	"32 or 64 bits, depending on the platform"
+	^Smalltalk wordSize = 8
+		ifTrue: [ self int64At: byteOffset ]
+		ifFalse: [ self int32At: byteOffset ]! !
+
+!ByteArray methodsFor: '*FFI-Kernel-platform' stamp: 'fgz 6/28/2024 15:54:31'!
+integerAt: byteOffset put: value
+	"32 or 64 bits, depending on the platform"
+	^Smalltalk wordSize = 8
+		ifTrue: [ self int64At: byteOffset put: value ]
+		ifFalse: [ self int32At: byteOffset put: value ]! !
 
 !ByteArray methodsFor: '*FFI-Kernel' stamp: 'eem 6/2/2024 17:37:10'!
 integerAt: byteOffset put: value size: nBytes signed: aBoolean
@@ -2658,6 +2672,20 @@ uint8At: byteOffset put: value
 	"Store the unsigned 8-bit integer at byte offset. Same as #byteAt:put: and #at:put:."
 	<primitive: #primitiveUnsignedInt8AtPut module: #SqueakFFIPrims error: ec>
 	^self integerAt: byteOffset put: value size: 1 signed: false! !
+
+!ByteArray methodsFor: '*FFI-Kernel-platform' stamp: 'fgz 6/28/2024 15:56:48'!
+uintegerAt: byteOffset
+	"32 or 64 bits, depending on the platform"
+	^Smalltalk wordSize = 8
+		ifTrue: [ self uint64At: byteOffset ]
+		ifFalse: [ self uint32At: byteOffset ]! !
+
+!ByteArray methodsFor: '*FFI-Kernel-platform' stamp: 'fgz 6/28/2024 15:57:43'!
+uintegerAt: byteOffset put: value
+	"32 or 64 bits, depending on the platform"
+	^Smalltalk wordSize = 8
+		ifTrue: [ self uint64At: byteOffset put: value ]
+		ifFalse: [ self uint32At: byteOffset put: value ]! !
 
 !ByteArray methodsFor: '*FFI-Kernel-oldTypeNames' stamp: 'eem 06/04/2024 14:28'!
 unsignedByteAt: byteOffset
