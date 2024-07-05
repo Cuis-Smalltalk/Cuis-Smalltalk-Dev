@@ -1,6 +1,6 @@
-'From Cuis7.1 [latest update: #6486] on 19 June 2024 at 9:39:46 am'!
+'From Cuis7.1 [latest update: #6503] on 5 July 2024 at 4:13:11 pm'!
 'Description Rename extentions tests'!
-!provides: 'BaseImageTests' 1 402!
+!provides: 'BaseImageTests' 1 405!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Objects'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
@@ -215,6 +215,16 @@ TestCase subclass: #ArrayTest
 	category: 'BaseImageTests-Collections-Arrayed'!
 !classDefinition: 'ArrayTest class' category: #'BaseImageTests-Collections-Arrayed'!
 ArrayTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #DoubleByteArrayTest category: #'BaseImageTests-Collections-Arrayed'!
+TestCase subclass: #DoubleByteArrayTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-Collections-Arrayed'!
+!classDefinition: 'DoubleByteArrayTest class' category: #'BaseImageTests-Collections-Arrayed'!
+DoubleByteArrayTest class
 	instanceVariableNames: ''!
 
 !classDefinition: #Float32ArrayTest category: #'BaseImageTests-Collections-Arrayed'!
@@ -1780,7 +1790,6 @@ Set. #do:.
 Set. #scanFor:.
 SHParserST80. #isBinary.
 ShootoutMall. #processVisitors.
-ShortIntegerArray. #writeOn:.
 SparseLargeArray. #analyzeSpaceSaving.
 StackInterpreter. #validStackPageBaseFrames.
 StackInterpreter. #divorceAllFrames.
@@ -3475,6 +3484,49 @@ testPenultimateSignalsErrorWhenCollectionIsNotBigEnough
 		should: [ #(1) penultimate ]
 		raise: Error
 		withMessageText: Collection collectionTooSmallDescription! !
+
+!DoubleByteArrayTest methodsFor: 'testing' stamp: 'jmv 7/5/2024 14:53:22'!
+testSigned
+	"
+	
+	DoubleByteArray holds 16 bit unsigned or signed numbers.
+	DoubleByteArrayTest new testSigned
+	"
+        | u16 |
+        u16 := DoubleByteArray new: 7.
+
+	self assert: u16 size = 7.
+        u16 signedAt: 1 put:  16r7123.
+        self assert: ((u16 signedAt: 1) = 16r7123).
+        u16 signedAt: 1 put: 0.
+        self assert: ((u16 signedAt: 1) = 0).
+        u16 signedAt: 1 put:  -1.
+        self assert: ((u16 signedAt: 1) = -1).
+        u16 signedAt: 1 put:  -32768.
+        self assert: ((u16 signedAt: 1) = -32768).
+        self should: [u16 signedAt: 1 put:  -32769] raise: Error. "to big"
+        self should: [u16 signedAt: 1 put:  (16r7FFF + 1)] raise: Error. "too big"! !
+
+!DoubleByteArrayTest methodsFor: 'testing' stamp: 'jmv 7/5/2024 14:53:31'!
+testUnsigned
+	"
+	DoubleByteArray holds 16 bit unsigned or signed numbers.
+	DoubleByteArrayTest new testUnsigned
+	"
+        | u16 |
+        u16 := DoubleByteArray new: 5.
+
+	self assert: u16 size = 5.
+        u16 at: 1 put:  16r8123.
+        self assert: ((u16 at: 1) = 16r8123).
+        u16 at: 1 put: 0.
+        self assert: ((u16 at: 1) = 0).
+        u16 at: 1 put:  32768.
+        self assert: ((u16 at: 1) = 32768).
+        u16 at: 1 put:  16rFFFF.
+        self assert: ((u16 at: 1) = 16rFFFF).
+        self should: [u16 at: 1 put:  -1] raise: Error. "wrong sign"
+        self should: [u16 at: 1 put:  (16rFFFF + 1)] raise: Error. "too big"! !
 
 !Float32ArrayTest methodsFor: 'Tests' stamp: 'jmv 9/3/2020 18:39:55'!
 testIsType
@@ -20410,7 +20462,7 @@ testUtf16BytesFromUtf8
 	utf16Bytes := UnicodeString utf16BytesFromUtf8: utf8 bigEndian: true includeBOM: true.
 	self assert: utf16Bytes = #[16rFE 16rFF 16r0 16r24 16r20 16rAC 16rD8 16r1 16rDC 16r37 16rD8 16r52 16rDF 16r62].! !
 
-!UnicodeTest methodsFor: 'testing utf16' stamp: 'jmv 11/15/2023 14:13:04'!
+!UnicodeTest methodsFor: 'testing utf16' stamp: 'jmv 7/5/2024 16:12:49'!
 testUtf16WordsFromUtf8
 	"Four code point sample from https://en.wikipedia.org/wiki/UTF-16
 	CodePoint: 0x24
@@ -20441,7 +20493,7 @@ testUtf16WordsFromUtf8
 	self assert: utf8 equals: #[16r24 16rE2 16r82 16rAC 16rF0 16r90 16r90 16rB7 16rF0 16rA4 16rAD 16rA2].
 
 	utf16Words := UnicodeString utf16WordsFromUtf8: utf8 includeBOM: true.
-	self assert: utf16Words asArray = {16rFEFF. 16r24. 16r20AC. 16rD801. 16rDC37. 16rD852. 16rDF62. 0}.
+	self assert: utf16Words asArray = {16rFEFF. 16r24. 16r20AC. 16rD801. 16rDC37. 16rD852. 16rDF62}.
 
 	utf16Words := UnicodeString utf16WordsFromUtf8: utf8 includeBOM: false.
 	self assert: utf16Words asArray = {16r24. 16r20AC. 16rD801. 16rDC37. 16rD852. 16rDF62}.! !

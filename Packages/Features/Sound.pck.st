@@ -1,8 +1,7 @@
 'From Cuis6.3 [latest update: #6213] on 6 February 2024 at 10:25:39 am'!
 'Description '!
-!provides: 'Sound' 1 29!
+!provides: 'Sound' 1 31!
 !requires: 'Compression' 1 nil nil!
-!requires: 'Collections-CompactArrays' 1 2 nil!
 SystemOrganization addCategory: #'Sound-Synthesis'!
 SystemOrganization addCategory: #'Sound-Scores'!
 SystemOrganization addCategory: #'Sound-System-Support'!
@@ -969,13 +968,16 @@ initialize
 !SoundBuffer class methodsFor: 'class initialization' stamp: 'jmv 2/25/2016 10:33'!
 startUp
 	"Check if the word order has changed from the last save."
-
+"It should be better to make SoundBuffer a doubleBytes class...
+Please review this."
+"
 	| la |
 	la _ ShortIntegerArray classPool at: #LastSaveOrder.
 	((la at: 2) = 42 and: [(la at: 1) = 13]) 
 		ifTrue: [
 			self allInstancesDo: [ :each | 
 				BitBlt swapHalvesIn32BitWords: each ]]
+"
 			"Reverse the two 16-bit halves."
 			"Another reversal happened automatically which reversed the bytes."! !
 
