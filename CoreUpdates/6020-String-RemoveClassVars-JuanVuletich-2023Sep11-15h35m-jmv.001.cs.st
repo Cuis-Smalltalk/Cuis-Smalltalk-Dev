@@ -176,7 +176,7 @@ findStringIgnoreCase: subString in: body startingAt: start
 
 !String class methodsFor: 'services' stamp: 'jmv 9/11/2023 14:23:42'!
 is: aStringOrByteArray equalTo: another
-	"Take adventage of String primitive for comparing, for example, ByteArrays"
+	"Take advantage of String primitive for comparing, for example, ByteArrays"
 
 	^ (self compare: aStringOrByteArray with: another collated: self caseSensitiveOrder) = 2! !
 
