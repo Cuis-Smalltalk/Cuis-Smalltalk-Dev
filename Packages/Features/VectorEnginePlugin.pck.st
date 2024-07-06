@@ -1,6 +1,6 @@
 'From Cuis 5.0 [latest update: #4911] on 26 October 2022 at 10:46:22 am'!
 'Description '!
-!provides: 'VectorEnginePlugin' 1 32!
+!provides: 'VectorEnginePlugin' 1 33!
 !requires: 'VMMaker' 1 7 nil!
 SystemOrganization addCategory: 'VectorEnginePlugin'!
 
@@ -20,6 +20,38 @@ VectorEnginePlugin class
 Slang implementation of VectorGraphicsEngine. Based on https://www.researchgate.net/publication/267152327_Prefiltering_Antialiasing_for_General_Vector_Graphics
 
 VectorEnginePlugin translateInDirectory: DirectoryEntry currentDirectory doInlining: true!
+
+!VectorEnginePlugin methodsFor: 'instance initialization' stamp: 'eem 7/1/2024 11:40'!
+initialize
+	"c.f. declareCVarsIn:"
+	antiAliasingWidth :=
+	subPixelDelta :=
+	hop :=
+	strokeWidth :=
+	strokeR :=
+	strokeG :=
+	strokeB :=
+	strokeA :=
+	fillR :=
+	fillG :=
+	fillB :=
+	fillA :=
+	txA11 :=
+	txA12 :=
+	txA13 :=
+	txA21 :=
+	txA22 :=
+	txA23 :=
+	auxAntiAliasingWidthScaledInverse :=
+	auxStrokeWidthDilatedHalf :=
+	auxStrokeWidthDilatedHalfSquared :=
+	auxStrokeWidthErodedHalfSquared :=
+	spanLeft :=
+	spanTop :=
+	spanRight :=
+	spanBottom :=
+	leftAtThisY :=
+	rightAtThisY := 0.0! !
 
 !VectorEnginePlugin methodsFor: 'accessing' stamp: 'jmv 6/11/2021 12:05:12'!
 antiAliasingWidth: aFloat subPixelDelta: otherFloat hopLength: anotherFloat

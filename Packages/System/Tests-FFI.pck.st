@@ -1,7 +1,7 @@
 'From Cuis7.1 [latest update: #6426] on 4 June 2024 at 4:36:32 pm'!
 'Description Tests for, and examples of the use of, the FFI package.'!
 !provides: 'Tests-FFI' 1 6!
-!requires: 'FFI' 1 39 nil!
+!requires: 'FFI' 1 48 nil!
 SystemOrganization addCategory: #'Tests-FFI'!
 
 
