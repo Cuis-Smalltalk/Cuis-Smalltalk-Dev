@@ -1,6 +1,6 @@
-'From Cuis7.1 [latest update: #6503] on 5 July 2024 at 4:13:11 pm'!
+'From Cuis7.1 [latest update: #6509] on 8 July 2024 at 4:28:37 pm'!
 'Description Rename extentions tests'!
-!provides: 'BaseImageTests' 1 405!
+!provides: 'BaseImageTests' 1 406!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Objects'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
@@ -23825,6 +23825,17 @@ createClassNamed: aName subclassOf: superclass instanceVariableNames: instanceVa
 		category: self classCategoryOfTestData.
 ! !
 
+!DynamicallyCodeCreationTest methodsFor: 'class factory' stamp: 'HAW 7/8/2024 09:34:28'!
+createClassNamed: aName subclassOf: superclass instanceVariableNames: instanceVariables classVariableNames: classVariables
+
+	^self createClassNamed: aName 
+		subclassOf: superclass 
+		instanceVariableNames: instanceVariables 
+		classVariableNames: classVariables 
+		poolDictionaries: '' 
+		category: self classCategoryOfTestData 
+! !
+
 !DynamicallyCodeCreationTest methodsFor: 'class factory' stamp: 'HAW 12/17/2019 10:32:28'!
 createClassNamed: aName subclassOf: superclass instanceVariableNames: instanceVariables classVariableNames: classVariables poolDictionaries: poolDictionaries category: category
 
@@ -25718,7 +25729,7 @@ test28WhenSenderLastParameterIsABlockAddedParameterIsNotAddedInsideTheBlock
 	self assert: senderFirstParameterValue equals: senderSourceCode
 	! !
 
-!AddParameterTest methodsFor: 'tests' stamp: 'HAW 1/7/2019 13:42:08'!
+!AddParameterTest methodsFor: 'tests' stamp: 'HAW 5/7/2024 18:22:27'!
 test29AddingParameterAsFirstOneWorksAsExpected
 
 	| refactoring classToRefactor oldSelector newSelector newImplementorMethodNode newParameter newParameterValue senderSelector senderMethod newSelectorAddedKeyword |
@@ -25739,13 +25750,13 @@ test29AddingParameterAsFirstOneWorksAsExpected
 		implementors: {classToRefactor>>oldSelector} senders: {classToRefactor>>senderSelector}.
 	refactoring apply.
 	
+	newImplementorMethodNode :=  (classToRefactor>>newSelector) methodNode.
+	senderMethod := classToRefactor compiledMethodAt: senderSelector.
 	self deny: (classToRefactor includesSelector: oldSelector).
 	self assert: (classToRefactor includesSelector: newSelector).
 	
-	newImplementorMethodNode :=  (classToRefactor>>newSelector) methodNode.
 	self assert: (newImplementorMethodNode arguments at: 1) name equals: newParameter.
 	
-	senderMethod := classToRefactor compiledMethodAt: senderSelector.
 	self deny: (senderMethod sendsOrRefersTo: oldSelector).
 	self assert: (senderMethod sendsOrRefersTo: newSelector).
 	
@@ -26018,7 +26029,7 @@ assertCanExtractAsParameter: toExtract
 
 	self assertCanExtractFrom: toExtract size: toExtract size introducing: toExtract! !
 
-!ExtractAsParameterTest methodsFor: 'assertions' stamp: 'HAW 9/22/2021 15:11:43'!
+!ExtractAsParameterTest methodsFor: 'assertions' stamp: 'HAW 7/8/2024 11:22:22'!
 assertCanExtractFrom: sourceCode interval: interval introducing: toIntroduced 
 
 	| refactoring classToRefactor oldSelector newSelector newImplementorSourceCode newParameter senderSelector senderMethod |
@@ -26028,7 +26039,7 @@ assertCanExtractFrom: sourceCode interval: interval introducing: toIntroduced
 	newParameter := 'newParam'.
 	senderSelector := 'sender_m1' asSymbol.
 	
-	classToRefactor := self createClassNamed: self classToRefactorName.
+	classToRefactor := self createDefaultClassToRefactor. 
 	classToRefactor compile: oldSelector asString, ' ', sourceCode.
 	classToRefactor compile: senderSelector asString, ' self ', oldSelector asString.
 	
@@ -26695,10 +26706,84 @@ test51CannotExtractNotExistingGlobalReference
 
 	self assertCannotExtractInvalidNodeAsParameter: '__Smalltalk__'! !
 
+!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 7/8/2024 09:35:25'!
+test52CanExtractReferenceToInstVar
+
+	self assertCanExtractAsParameter: self instVarName ! !
+
+!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 7/8/2024 09:39:29'!
+test53CanExtractReferenceToClassVar
+
+	self assertCanExtractAsParameter: self classVarName ! !
+
+!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 7/8/2024 11:26:06'!
+test54CannotExtractInstVarWhenInLeftPartOfAssigment
+	
+	| classToRefactor oldSelector |
+	
+	oldSelector := 'm1' asSymbol.
+	
+	classToRefactor := self createDefaultClassToRefactor.
+	classToRefactor compile: oldSelector asString, ' ', self instVarName, ':= 1'.
+	
+	self
+		assertCreation: [ ExtractAsParameter 
+			named: 'newParam' 
+			extractedFromAll: { oldSelector size + 2 to: oldSelector size + 2 + self instVarName size - 1 } 
+			at: classToRefactor>>oldSelector  
+			implementors: {classToRefactor>>oldSelector} 
+			senders: {} ]
+		failsWith: ExtractAsParameter errorMessageForInvalidExpressionToExtractAsParameter 
+		
+	
+		! !
+
+!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 7/8/2024 12:13:57'!
+test55CanExtractInstVarEvenIsLeftPartOfAssigmentOfOtherNode
+	
+	| classToRefactor oldSelector sourceCode |
+	
+	oldSelector := 'm1' asSymbol.
+	
+	classToRefactor := self createDefaultClassToRefactor.
+	sourceCode := oldSelector asString, ' ', self instVarName, ':= 1. ', self instVarName.
+	classToRefactor compile: sourceCode.
+	
+	self 
+		shouldnt: [ ExtractAsParameter 
+			named: 'newParam' 
+			extractedFromAll: { sourceCode size - self instVarName size + 1 to: sourceCode size } 
+			at: classToRefactor>>oldSelector  
+			implementors: {classToRefactor>>oldSelector} 
+			senders: {} ]
+		raise: RefactoringError 
+		
+	
+		! !
+
 !ExtractAsParameterTest methodsFor: 'class factory' stamp: 'HAW 9/8/2021 22:00:32'!
 classToRefactorName
 	
 	^#ClassToIntroduceParameter! !
+
+!ExtractAsParameterTest methodsFor: 'class factory' stamp: 'HAW 7/8/2024 09:33:19'!
+classVarName
+	
+	^'ClassVar1'! !
+
+!ExtractAsParameterTest methodsFor: 'class factory' stamp: 'HAW 7/8/2024 11:22:22'!
+createDefaultClassToRefactor
+
+	^ self 
+		createClassNamed: self classToRefactorName 
+		subclassOf: Object 
+		instanceVariableNames: self instVarName 
+		classVariableNames: self classVarName! !
+
+!ExtractAsParameterTest methodsFor: 'class factory' stamp: 'HAW 7/8/2024 09:33:01'!
+instVarName
+	
+	^'iv1'! !
 
 !ExtractMethodApplierTest methodsFor: 'tests' stamp: 'HAW 7/19/2023 10:02:33'!
 test01InvalidMessageNameWhenKeywordWithoutParamenter
