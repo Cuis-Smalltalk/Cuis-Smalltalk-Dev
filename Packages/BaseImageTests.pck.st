@@ -1,6 +1,6 @@
-'From Cuis7.1 [latest update: #6509] on 8 July 2024 at 4:28:37 pm'!
+'From Cuis7.1 [latest update: #6512] on 10 July 2024 at 3:27:25 pm'!
 'Description Rename extentions tests'!
-!provides: 'BaseImageTests' 1 406!
+!provides: 'BaseImageTests' 1 407!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Objects'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
@@ -1155,6 +1155,16 @@ TestCase subclass: #SmartRefStreamTest
 	category: 'BaseImageTests-System-Object Storage'!
 !classDefinition: 'SmartRefStreamTest class' category: #'BaseImageTests-System-Object Storage'!
 SmartRefStreamTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #IniFileTest category: #'BaseImageTests-System-Support'!
+TestCase subclass: #IniFileTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-System-Support'!
+!classDefinition: 'IniFileTest class' category: #'BaseImageTests-System-Support'!
+IniFileTest class
 	instanceVariableNames: ''!
 
 !classDefinition: #SystemConsistencyTest category: #'BaseImageTests-System-Support'!
@@ -21844,6 +21854,273 @@ testWeakDumps
 	refStream nextPut: oldInstance.
 	self deny: (refStream references keys anySatisfy: [ :dumpedObject | dumpedObject isKindOf: Morph ]).
 	UISupervisor whenUIinSafeState: [window delete].! !
+
+!IniFileTest methodsFor: 'tests' stamp: 'jmv 7/10/2024 10:43:19'!
+testBasic
+	| ini section |
+	ini := IniFile new.
+
+	section := ini ensureSectionNamed: 'foo1'.
+	self assert: section notNil.
+	section at: 'bar' put: 'baz1'.
+	self assert: (section at: 'bar') equals: 'baz1'.
+	self assert: (ini atSection: 'foo1' entry: 'bar') equals: 'baz1'.
+
+	ini atSection: 'foo2' entry: 'bar' put: 'baz2'.
+	self assert: (ini atSection: 'foo1' entry: 'bar') equals: 'baz1'.
+	self assert: ((ini sectionNamed: 'foo1') at: 'bar') equals: 'baz1'.
+	self assert: (ini atSection: 'foo2' entry: 'bar') equals: 'baz2'.
+	self assert: ((ini sectionNamed: 'foo2') at: 'bar') equals: 'baz2'.! !
+
+!IniFileTest methodsFor: 'tests' stamp: 'jmv 7/10/2024 10:46:00'!
+testBasicGlobal
+	| ini |
+	ini := IniFile new.
+
+	ini globalEntry: 'bar' put: 'baz1'.
+	self assert: (ini globalSection at: 'bar') equals: 'baz1'.
+	self assert: (ini atGlobalEntry: 'bar') equals: 'baz1'.
+! !
+
+!IniFileTest methodsFor: 'tests' stamp: 'jmv 7/10/2024 10:35:30'!
+testMissingEntry
+	| ini section |
+	ini := IniFile new.
+
+	section := ini ensureSectionNamed: 'foo1'.
+	self assert: section notNil.
+	self assert: (section at: 'bar') isNil.
+	self assert: (section at: 'bar' orDefault: 'whoknows1?') equals: 'whoknows1?'.
+	self assert: (ini atSection: 'foo1' entry: 'bar' orDefault: 'whoknows2?') equals: 'whoknows2?'.
+	self assert: (ini atSection: 'foo3' entry: 'bar') isNil.
+	self assert: (ini atSection: 'foo3' entry: 'bar' orDefault: 'whoknows3?') equals: 'whoknows3?'.! !
+
+!IniFileTest methodsFor: 'tests' stamp: 'jmv 7/10/2024 10:25:23'!
+testMissingEntryStoringDefault
+	| ini section |
+	ini := IniFile new.
+
+	section := ini ensureSectionNamed: 'foo1'.
+	self assert: section notNil.
+	self assert: (section at: 'bar1' orPutDefault: 'newDefault') equals: 'newDefault'.
+	self assert: (ini atSection: 'foo1' entry: 'bar2' orPutDefault: 'newDefault2') equals: 'newDefault2'.
+	self assert: (section at: 'bar1' orDefault: 'whoknows?') equals: 'newDefault'.
+	self assert: (ini atSection: 'foo1' entry: 'bar2' orDefault: 'whoknows?') equals: 'newDefault2'.! !
+
+!IniFileTest methodsFor: 'tests' stamp: 'jmv 7/10/2024 10:38:30'!
+testMissingGlobalEntry
+	| ini |
+	ini := IniFile new.
+
+	self assert: ini globalSection isNil.
+	ini ensureGlobalSection.
+	self assert: ini globalSection notNil.
+	self assert: (ini globalSection at: 'bar') isNil.
+	self assert: (ini globalSection at: 'bar' orDefault: 'whoknows1?') equals: 'whoknows1?'.
+	self assert: (ini atGlobalEntry: 'bar' orDefault: 'whoknows2?') equals: 'whoknows2?'.
+	self assert: (ini atGlobalEntry: 'bar') isNil.
+	self assert: (ini atGlobalEntry: 'bar' orDefault: 'whoknows3?') equals: 'whoknows3?'.! !
+
+!IniFileTest methodsFor: 'tests' stamp: 'jmv 7/10/2024 10:40:53'!
+testMissingGlobalEntryStoringDefault1
+	| ini section |
+	ini := IniFile new.
+
+	section := ini ensureGlobalSection.
+	self assert: section notNil.
+	self assert: (section at: 'bar1' orPutDefault: 'newDefault') equals: 'newDefault'.
+	self assert: (ini atSection: 'foo1' entry: 'bar2' orPutDefault: 'newDefault2') equals: 'newDefault2'.
+	self assert: (section at: 'bar1' orDefault: 'whoknows?') equals: 'newDefault'.
+	self assert: (ini atSection: 'foo1' entry: 'bar2' orDefault: 'whoknows?') equals: 'newDefault2'.! !
+
+!IniFileTest methodsFor: 'tests' stamp: 'jmv 7/10/2024 10:41:53'!
+testMissingGlobalEntryStoringDefault2
+	| ini |
+	ini := IniFile new.
+
+	self assert: (ini atGlobalEntry: 'bar1' orPutDefault: 'newDefault') equals: 'newDefault'.
+	self assert: (ini atGlobalEntry: 'bar2' orPutDefault: 'newDefault2') equals: 'newDefault2'.
+	self assert: (ini atGlobalEntry: 'bar1' orDefault: 'whoknows?') equals: 'newDefault'.
+	self assert: (ini atGlobalEntry: 'bar2' orDefault: 'whoknows?') equals: 'newDefault2'.! !
+
+!IniFileTest methodsFor: 'tests' stamp: 'jmv 7/10/2024 10:42:56'!
+testMissingGlobalSection
+	| ini |
+	ini := IniFile new.
+
+	self assert: ini globalSection isNil.
+	ini ensureGlobalSection.
+	self deny: ini globalSection isNil.! !
+
+!IniFileTest methodsFor: 'tests' stamp: 'jmv 7/10/2024 10:26:31'!
+testMissingSection
+	| ini |
+	ini := IniFile new.
+
+	self assert: (ini sectionNamed: 'foo1') isNil.
+	ini ensureSectionNamed: 'foo1'.
+	self deny: (ini sectionNamed: 'foo1') isNil.! !
+
+!IniFileTest methodsFor: 'tests' stamp: 'jmv 7/10/2024 11:02:50'!
+testReadEmptyValue
+	| content ini |
+	content := '[foo]
+key1 =      '.
+
+	ini := IniFile readFrom: content readStream.
+	self assert: ((ini sectionNamed: 'foo') at: 'key1') isNil! !
+
+!IniFileTest methodsFor: 'tests' stamp: 'jmv 7/10/2024 11:04:51'!
+testReadGlobalAndTwoNamedSections
+	| content ini |
+	content := '
+key1 = val1global
+
+key2 = val2global
+
+[bar]
+;comment
+
+key1 = val1bar
+
+key2 = val2
+;key2 = oldvalue
+
+;foo heading comment
+[foo]
+key1=    val1
+key2= val with a space in it
+
+'.
+
+	ini := IniFile readFrom: content readStream.
+	self assert: (ini atGlobalEntry: 'key1') = 'val1global'.
+	self assert: (ini atGlobalEntry: 'key2') = 'val2global'.
+	self assert: (ini atSection: 'foo' entry: 'key1') = 'val1'.
+	self assert: (ini atSection: 'foo' entry: 'key2') = 'val with a space in it'.
+	self assert: (ini atSection: 'bar' entry: 'key1') = 'val1bar'.
+	self assert: (ini atSection: 'bar' entry: 'key2') = 'val2'.
+! !
+
+!IniFileTest methodsFor: 'tests' stamp: 'jmv 7/10/2024 11:03:48'!
+testReadTwoSections
+	| content ini |
+	content := '
+
+[bar]
+;comment
+
+key1 = val1bar
+
+key2 = val2
+;key2 = oldvalue
+
+;foo heading comment
+[foo]
+key1=    val1
+key2= val with a space in it
+
+'.
+
+	ini := IniFile readFrom: content readStream.
+	self assert: ini globalSection isNil.
+	self assert: (ini atSection: 'foo' entry: 'key1') = 'val1'.
+	self assert: (ini atSection: 'foo' entry: 'key2') = 'val with a space in it'.
+	self assert: (ini atSection: 'bar' entry: 'key1') = 'val1bar'.
+	self assert: (ini atSection: 'bar' entry: 'key2') = 'val2'.
+! !
+
+!IniFileTest methodsFor: 'tests' stamp: 'jmv 7/10/2024 11:35:38'!
+testWriteGlobalSection
+	| out written globalSection |
+	out := IniFile new.
+	out globalEntry: 'key1' put: 'val1'.
+	out globalEntry: 'key2' put: 'val2'.
+	written := String streamContents: [ :stream | out writeOn: stream ].
+	
+	globalSection := (IniFile readFrom: written readStream) globalSection.
+	self assert: (globalSection at: 'key1') = 'val1'.
+	self assert: (globalSection at: 'key2') = 'val2'.! !
+
+!IniFileTest methodsFor: 'tests' stamp: 'jmv 7/10/2024 11:36:00'!
+testWriteMultipleSections
+	| out written in |
+	out := IniFile new.
+	(out ensureSectionNamed: 'foo') at: 'key1' put: 'val1'.
+	(out ensureSectionNamed: 'foo') at: 'key2' put: 'val2'.
+	(out ensureSectionNamed: 'bar') at: 'key1' put: 'val1x'.
+	(out ensureSectionNamed: 'bar') at: 'key2' put: 'val2y'.
+	written := String streamContents: [ :stream | out writeOn: stream ].
+	
+	in := IniFile readFrom: written readStream.
+	self assert: ((in sectionNamed: 'foo') at: 'key1') = 'val1'.
+	self assert: ((in sectionNamed: 'foo') at: 'key2') = 'val2'.
+	self assert: ((in sectionNamed: 'bar') at: 'key1') = 'val1x'.
+	self assert: ((in sectionNamed: 'bar') at: 'key2') = 'val2y'.! !
+
+!IniFileTest methodsFor: 'tests' stamp: 'jmv 7/10/2024 11:37:12'!
+testWriteMultipleSections2
+	| out written in |
+	out := IniFile new.
+	out globalEntry: 'key1' put: 'g1'.
+	out globalEntry: 'key2' put: 'g2'.
+	(out ensureSectionNamed: 'foo') at: 'key1' put: 'val1'.
+	(out ensureSectionNamed: 'foo') at: 'key2' put: 'val2'.
+	(out ensureSectionNamed: 'bar') at: 'key1' put: 'val1x'.
+	(out ensureSectionNamed: 'bar') at: 'key2' put: 'val2y'.
+	written := String streamContents: [ :stream | out writeOn: stream ].
+	
+	in := IniFile readFrom: written readStream.
+	self assert: (in atGlobalEntry: 'key1') = 'g1'.
+	self assert: (in atGlobalEntry: 'key2') = 'g2'.
+	self assert: ((in sectionNamed: 'foo') at: 'key1') = 'val1'.
+	self assert: ((in sectionNamed: 'foo') at: 'key2') = 'val2'.
+	self assert: ((in sectionNamed: 'bar') at: 'key1') = 'val1x'.
+	self assert: ((in sectionNamed: 'bar') at: 'key2') = 'val2y'.! !
+
+!IniFileTest methodsFor: 'tests' stamp: 'jmv 7/10/2024 11:34:09'!
+testWriteNilGlobalValue
+	| ini written expected |
+	ini := IniFile new.
+	ini globalEntry: 'key1' put: nil.
+	written := String streamContents: [ :stream | ini writeOn: stream ].
+	
+	expected := 'key1=
+
+'.
+	
+	self assert: written equals: expected.
+
+
+	! !
+
+!IniFileTest methodsFor: 'tests' stamp: 'jmv 7/10/2024 11:28:28'!
+testWriteNilValue
+	| ini written expected |
+	ini := IniFile new.
+	ini atSection: 'foo' entry: 'key1' put: nil.
+	written := String streamContents: [ :stream | ini writeOn: stream ].
+	
+	expected := '[foo]
+key1=
+'.
+	
+	self assert: written equals: expected.
+
+
+	! !
+
+!IniFileTest methodsFor: 'tests' stamp: 'jmv 7/10/2024 11:28:51'!
+testWriteSingleSection
+	| out written foo |
+	out := IniFile new.
+	out atSection: 'foo' entry: 'key1' put: 'val1'.
+	out atSection: 'foo' entry: 'key2' put: 'val2'.
+	written := String streamContents: [ :stream | out writeOn: stream ].
+	
+	foo := (IniFile readFrom: written readStream) sectionNamed: 'foo'.
+	self assert: (foo at: 'key1') = 'val1'.
+	self assert: (foo at: 'key2') = 'val2'.! !
 
 !SystemConsistencyTest methodsFor: 'testing' stamp: 'jmv 5/7/2012 09:35'!
 testMethodsWithUnboundGlobals
