@@ -12,6 +12,5 @@ messageList
 	answer isNil ifTrue: [
 		selectedMessageCategory := nil.
 		answer := #() ].
-	"Sort message list with binary selectors first (otherwise some unicode binary selectors end up at the end of the list)."
 	^answer! !
 
