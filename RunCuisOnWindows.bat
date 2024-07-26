@@ -1,1 +1,1 @@
-START /B .\CuisVM.app\Contents\Windows-x86_64\Squeak.exe "CuisImage\Cuis7.1-6526.image" -u
+START /B .\CuisVM.app\Contents\Windows-x86_64\Squeak.exe "CuisImage\Cuis7.1-6538.image" -u
