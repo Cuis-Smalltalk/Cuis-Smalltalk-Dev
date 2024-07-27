@@ -4,7 +4,9 @@
 addedMorph: aMorph
 	"Notify the receiver that the given morph was just added."
 	super addedMorph: aMorph.
+false ifTrue: [
 	self firstHand newMouseFocus: nil. "Hand need to reset mouseFocus"
+].
 	self taskbar ifNotNil: [ :tb |
 		tb wasOpened: aMorph ]! !
 
