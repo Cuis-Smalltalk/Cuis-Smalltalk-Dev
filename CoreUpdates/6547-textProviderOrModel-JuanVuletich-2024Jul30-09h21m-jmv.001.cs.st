@@ -5,15 +5,3 @@ textProviderOrModel
 
 	^ (model is: #hasTextProvider) ifTrue: [ model textProvider ] ifFalse: [ model ].! !
 
-
-!SmalltalkEditor methodsFor: 'private' stamp: 'jmv 7/30/2024 09:32:49'!
-codeProvider
-
-	^morph textProviderOrModel.! !
-
-
-!SmalltalkCompleter methodsFor: 'entries - private' stamp: 'jmv 7/30/2024 09:32:51'!
-textProviderOrModel
-
-	^textMorph textProviderOrModel.! !
-
