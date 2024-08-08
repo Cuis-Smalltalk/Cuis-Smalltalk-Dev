@@ -1,28 +1,8 @@
-'From Cuis7.1 [latest update: #6469] on 16 June 2024 at 4:41:52 pm'!
+'From Cuis7.1 [latest update: #6566] on 8 August 2024 at 10:08:12 am'!
 'Description Theme customizer'!
-!provides: 'Theme-Themes' 1 16!
+!provides: 'Theme-Themes' 1 17!
 SystemOrganization addCategory: #'Theme-Themes'!
 
-
-!classDefinition: #ThemeCustomizerModel category: #'Theme-Themes'!
-ActiveModel subclass: #ThemeCustomizerModel
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Theme-Themes'!
-!classDefinition: 'ThemeCustomizerModel class' category: #'Theme-Themes'!
-ThemeCustomizerModel class
-	instanceVariableNames: ''!
-
-!classDefinition: #ThemeCustomizerWindow category: #'Theme-Themes'!
-SystemWindow subclass: #ThemeCustomizerWindow
-	instanceVariableNames: 'backgroundPalette primaryPalette labelsPalette textPalette secondaryPalette'
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Theme-Themes'!
-!classDefinition: 'ThemeCustomizerWindow class' category: #'Theme-Themes'!
-ThemeCustomizerWindow class
-	instanceVariableNames: ''!
 
 !classDefinition: #ClassicTheme category: #'Theme-Themes'!
 Theme subclass: #ClassicTheme
@@ -114,6 +94,26 @@ Theme subclass: #PersonalizedTheme
 PersonalizedTheme class
 	instanceVariableNames: 'background labels primary secondary writing'!
 
+!classDefinition: #ThemeCustomizerModel category: #'Theme-Themes'!
+ActiveModel subclass: #ThemeCustomizerModel
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Theme-Themes'!
+!classDefinition: 'ThemeCustomizerModel class' category: #'Theme-Themes'!
+ThemeCustomizerModel class
+	instanceVariableNames: ''!
+
+!classDefinition: #ThemeCustomizerWindow category: #'Theme-Themes'!
+SystemWindow subclass: #ThemeCustomizerWindow
+	instanceVariableNames: 'backgroundPalette primaryPalette labelsPalette textPalette secondaryPalette'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Theme-Themes'!
+!classDefinition: 'ThemeCustomizerWindow class' category: #'Theme-Themes'!
+ThemeCustomizerWindow class
+	instanceVariableNames: ''!
+
 
 !ClassicTheme commentStamp: 'cbr 4/22/2011 12:07' prior: 0!
 This is the theme from Cuis 2.9.
@@ -145,390 +145,6 @@ A light gray theme. Easy on those who are used to using gray operating systems a
 
 !LightTheme commentStamp: '<historical>' prior: 0!
 A very gray theme. Easy on those who are used to using gray operating systems and such.!
-
-!ThemeCustomizerModel methodsFor: 'change colors' stamp: 'lucy 7/20/2023 15:24:03'!
-changeBackground: arguments
-	
-	| backgroundColor row |
-	backgroundColor := arguments first.
-	row := arguments second.
-	PersonalizedTheme changeBackgroundColorTo: backgroundColor.
-	PersonalizedTheme beCurrent.
-	row color: backgroundColor.! !
-
-!ThemeCustomizerModel methodsFor: 'change colors' stamp: 'lucy 7/20/2023 15:24:09'!
-changeLabels: arguments
-
-	| labelsColor row |
-	labelsColor := arguments first.
-	row := arguments second.
-	PersonalizedTheme changeLabelsColorTo: labelsColor.
-	PersonalizedTheme beCurrent.
-	row color: labelsColor.! !
-
-!ThemeCustomizerModel methodsFor: 'change colors' stamp: 'lucy 7/20/2023 15:24:16'!
-changePrimary: arguments
-
-	| primaryColor row |
-	primaryColor := arguments first.
-	row := arguments second.
-	PersonalizedTheme changePrimaryColorTo: primaryColor.
-	PersonalizedTheme beCurrent.
-	row color: primaryColor.! !
-
-!ThemeCustomizerModel methodsFor: 'change colors' stamp: 'lucy 7/20/2023 15:24:22'!
-changeSecondary: arguments
-
-	| secondaryColor row |
-	secondaryColor := arguments first.
-	row := arguments second.
-	PersonalizedTheme changeSecondaryColorTo: secondaryColor.
-	PersonalizedTheme beCurrent.
-	row color: secondaryColor.! !
-
-!ThemeCustomizerModel methodsFor: 'change colors' stamp: 'lucy 7/20/2023 15:24:27'!
-changeText: arguments
-
-	| textColor row |
-	textColor := arguments first.
-	row := arguments second.
-	PersonalizedTheme changeTextColorTo: textColor.
-	PersonalizedTheme beCurrent.
-	row color: textColor.! !
-
-!ThemeCustomizerWindow methodsFor: 'colors' stamp: 'lucy 7/20/2023 15:25:30'!
-buttonsColor
-
-	^ Color white twiceDarker darker darker. ! !
-
-!ThemeCustomizerWindow methodsFor: 'colors' stamp: 'lucy 7/22/2023 02:21:47'!
-colorFromHexString: aHexString
-
-	^Color fromHexString: aHexString.! !
-
-!ThemeCustomizerWindow methodsFor: 'colors' stamp: 'lucy 7/22/2023 02:22:08'!
-initMessageBackgroundColor
-
-	^self colorFromHexString: '#0d285f'.! !
-
-!ThemeCustomizerWindow methodsFor: 'colors' stamp: 'lucy 7/22/2023 02:22:17'!
-initMessageTextColor
-
-	^self colorFromHexString: '#e069e0'.! !
-
-!ThemeCustomizerWindow methodsFor: 'colors' stamp: 'lucy 7/22/2023 02:22:36'!
-labelsColor
-	
-	^self colorFromHexString: '#FAF3DD'! !
-
-!ThemeCustomizerWindow methodsFor: 'colors' stamp: 'lucy 7/22/2023 02:22:57'!
-windowBackColor
-
-	^(self colorFromHexString: '#9ec7e8') muchDarker.! !
-
-!ThemeCustomizerWindow methodsFor: 'palettes' stamp: 'lucy 7/22/2023 02:16:50'!
-buildBackgroundPalette
-	
-	| sunset ocean forest ash light |
-	sunset := OrderedCollection with: (Color fromHexString: '#FE938C') with: 'Sunset'.
-	ocean := OrderedCollection with: (Color fromHexString: '#124559') with: 'Ocean'.
-	forest := OrderedCollection with: (Color fromHexString: '#788475') with: 'Forest'.
-	ash := OrderedCollection with: (Color fromHexString: '#363946') with: 'Ash'.
-	light := OrderedCollection with: (Color fromHexString: '#F2DFD7') with: 'Light'.
-	
-	backgroundPalette := OrderedCollection with: sunset with: ocean with: forest with: ash with: light.! !
-
-!ThemeCustomizerWindow methodsFor: 'palettes' stamp: 'lucy 7/22/2023 02:17:17'!
-buildLabelsPalette
-	
-	| sunset ocean forest ash light |
-	sunset := OrderedCollection with: (Color fromHexString: '#fCD89A') with: 'Sunset'.
-	ocean := OrderedCollection with: (Color fromHexString: '#EFF6E0') with: 'Ocean'.
-	forest := OrderedCollection with: (Color fromHexString: '#8DAA91') with: 'Forest'.
-	ash := OrderedCollection with: (Color fromHexString: '#000000') with: 'Ash'.
-	light := OrderedCollection with: (Color fromHexString: '#946846') with: 'Light'.
-	
-	labelsPalette := OrderedCollection with: sunset with: ocean with: forest with: ash with: light.! !
-
-!ThemeCustomizerWindow methodsFor: 'palettes' stamp: 'lucy 7/22/2023 02:17:44'!
-buildPrimaryPalette
-	
-	| sunset ocean forest ash light |
-	sunset := OrderedCollection with: (Color fromHexString: '#DA627D') with: 'Sunset'.
-	ocean := OrderedCollection with: (Color fromHexString: '#598392') with: 'Ocean'.
-	forest := OrderedCollection with: (Color fromHexString: '#5E5D5C') with: 'Forest'.
-	ash := OrderedCollection with: (Color fromHexString: '#696773') with: 'Ash'.
-	light := OrderedCollection with: (Color fromHexString: '#CEB5A7') with: 'Light'.
-	
-	primaryPalette := OrderedCollection with: sunset with: ocean with: forest with: ash with: light.! !
-
-!ThemeCustomizerWindow methodsFor: 'palettes' stamp: 'lucy 7/22/2023 02:18:07'!
-buildSecondaryPalette
-	
-	| sunset ocean forest ash light |
-	sunset := OrderedCollection with: (Color fromHexString: '#FCA17D') with: 'Sunset'.
-	ocean := OrderedCollection with: (Color fromHexString: '#AEC3B0') with: 'Ocean'.
-	forest := OrderedCollection with: (Color fromHexString: '#453643') with: 'Forest'.
-	ash := OrderedCollection with: (Color fromHexString: '#8D99AE') with: 'Ash '.
-	light := OrderedCollection with: (Color fromHexString: '#BCAA99') with: 'Light'.
-	
-	secondaryPalette := OrderedCollection with: sunset with: ocean with: forest with: ash with: light.! !
-
-!ThemeCustomizerWindow methodsFor: 'palettes' stamp: 'lucy 7/22/2023 02:18:36'!
-buildTextPalette
-	
-	| sunset ocean forest ash light |
-	sunset := OrderedCollection with: (Color fromHexString: '#9E3F3F') with: 'Sunset'.
-	ocean := OrderedCollection with: (Color fromHexString: '#01161E') with: 'Ocean'.
-	forest := OrderedCollection with: (Color fromHexString: '#28112B') with: 'Forest'.
-	ash := OrderedCollection with: (Color fromHexString: '#2B2D42') with: 'Ash'.
-	light := OrderedCollection with: (Color fromHexString: '#3C3C3B') with: 'Light'.
-	
-	textPalette := OrderedCollection with: sunset with: ocean with: forest with: ash with: light.! !
-
-!ThemeCustomizerWindow methodsFor: 'initialization' stamp: 'HAW 7/24/2023 11:04:04'!
-buildMorphicWindow
-
-	| themesMorph mainWindowMorph scrollMorph |
-	
-	themesMorph := self buildThemesMorph.
-	scrollMorph := self buildScrollMorphFor: themesMorph.
-	mainWindowMorph := LayoutMorph new addMorph: scrollMorph proportionalHeight: 1.
-	
-	self layoutMorph addMorph: mainWindowMorph.
-	self setLabel: 'Theme Customizer'
-	
-	! !
-
-!ThemeCustomizerWindow methodsFor: 'initialization' stamp: 'lucy 7/22/2023 04:07:35'!
-buildPalettes
-
-	self buildBackgroundPalette.
-	self buildPrimaryPalette.
-	self buildSecondaryPalette.
-	self buildTextPalette.
-	self buildLabelsPalette! !
-
-!ThemeCustomizerWindow methodsFor: 'initialization' stamp: 'HAW 7/24/2023 11:06:23'!
-buildScrollMorphFor: themesMorph
-
-	| scrollMorph |
-	
-	scrollMorph := PluggableScrollPane initializedInstance.
-	scrollMorph scroller: themesMorph;
-	color: self windowBackColor.
-	
-	^scrollMorph! !
-
-!ThemeCustomizerWindow methodsFor: 'initialization' stamp: 'HAW 7/24/2023 11:06:41'!
-buildThemesMorph
-
-	^ LayoutMorph new 
-		beColumn;
-		morphExtent: self defaultExtent;
-		addMorph: self buildTitleRow;
-		addMorph: self buildBackgroundRow;
-		addMorph: self buildPrimaryRow;
-		addMorph: self buildSecondaryRow;
-		addMorph: self buildTextRow;
-		addMorph: self buildLabelsRow! !
-
-!ThemeCustomizerWindow methodsFor: 'initialization' stamp: 'lucy 7/22/2023 04:24:15'!
-defaultExtent
-	^ 1400 @ 720.! !
-
-!ThemeCustomizerWindow methodsFor: 'initialization' stamp: 'HAW 7/24/2023 11:03:52'!
-initialize
-
-	super initialize.
-	PersonalizedTheme initializeThemeWithDefaultColors.
-	self buildPalettes.
-	! !
-
-!ThemeCustomizerWindow methodsFor: 'build - private' stamp: 'lucy 7/20/2023 15:26:37'!
-buildButtonForCustomColorThatExecutes: action forRow: row
-
-	| column buttonMorph argument|
-	argument := Array with: action with: row.
-	buttonMorph := PluggableButtonMorph model: self stateGetter: nil stateArgument: nil action: #buildCustomColorInputAndDoRowAction: actionArgument: argument label: 'Custom'.
-	
-	buttonMorph mouseOverColor: Color white; 
-	color: self buttonsColor.
-	
-	column := LayoutMorph newColumn.
-	column separation: 5; axisEdgeWeight: 0.5; color: Color gray; borderWidth: 0; addMorph: buttonMorph.
-		
-	^ column.! !
-
-!ThemeCustomizerWindow methodsFor: 'build - private' stamp: 'lucy 7/20/2023 15:26:43'!
-buildButtonThatExecutes: action hasLabel: label color: buttonColor forRow: row
-
-	| column buttonMorph argument|
-	argument := Array with: buttonColor with: row.
-	buttonMorph := PluggableButtonMorph model: self model stateGetter: nil stateArgument: nil action: action actionArgument: argument label: label.
-	
-	buttonMorph mouseOverColor: buttonColor muchLighter; 
-	color: self buttonsColor.
-	
-	column := LayoutMorph newColumn.
-	column separation: 5; axisEdgeWeight: 0.5; color: buttonColor; borderWidth: 0; addMorph: buttonMorph.
-		
-	^ column.! !
-
-!ThemeCustomizerWindow methodsFor: 'build - private' stamp: 'HAW 7/24/2023 11:13:20'!
-buildCustomColorInputAndDoRowAction: arguments
-
-	| customColorString action row initialText |
-	
-	action := arguments first.
-	row := arguments second.
-	initialText := 'hex code (example: #FFAABB)'.
-	customColorString := FillInTheBlankMorph request: 'Enter custom color:' initialAnswer: initialText onCancel: [^''].
-	customColorString = initialText ifFalse: [self ensureColorIsHexCode: customColorString andDo: action for: row].
-	^customColorString.! !
-
-!ThemeCustomizerWindow methodsFor: 'build - private' stamp: 'lucy 7/20/2023 15:26:54'!
-buildLabelForRowWithText: label
-
-	| column |
-	column := LayoutMorph newColumn.
-	column
-		separation: 5;
-		axisEdgeWeight: 0.5;
-		color: self windowBackColor;
-		addMorph: (self buildLabelWithNoBordersBold: label
-				withColor: self labelsColor).
-	^ column.! !
-
-!ThemeCustomizerWindow methodsFor: 'build - private' stamp: 'lucy 7/20/2023 15:26:59'!
-buildLabelWithNoBordersBold: label withColor: labelColor
-
-	| labelMorph |
-	labelMorph := LabelMorph contents: label.
-	labelMorph
-		emphasis: 1;
-		color: labelColor;
-		borderWidth: 0.
-		
-	^ labelMorph.! !
-
-!ThemeCustomizerWindow methodsFor: 'build - private' stamp: 'lucy 7/22/2023 03:52:14'!
-buildRow
-
-	| row |
-
-	row := LayoutMorph newRow.
-	row color: self windowBackColor;
-	borderWidth: 5;
-	borderColor: self windowBackColor.
-	
-	
-	row separation: 10;
-	axisEdgeWeight: 1.
-	
-	^row.! !
-
-!ThemeCustomizerWindow methodsFor: 'build - private' stamp: 'lucy 7/22/2023 03:32:33'!
-buildRow: rowLabel thatExecutesAction: action forPalette: palette
-
-	| buttonColor buttonLabel rowName row | 
-	
-	row := self buildRow.
-	
-	rowName := self buildLabelForRowWithText: rowLabel.
-	row addMorph: rowName.
-	
-	palette do: [:colorDuo | buttonColor := colorDuo first.
-					      buttonLabel := colorDuo second.
-					      row addMorph: (self buildButtonThatExecutes: action
-									       hasLabel: buttonLabel color: buttonColor forRow: rowName).
-					
-		].
-	
-	row addMorph: (self buildButtonForCustomColorThatExecutes: action forRow: rowName).
-	
-	^row.! !
-
-!ThemeCustomizerWindow methodsFor: 'build - private' stamp: 'HAW 7/24/2023 11:10:48'!
-ensureColorIsHexCode: customColorHex andDo: action for: row
-	
-	| customColor |
-	
-	customColor := Color fromHexString: customColorHex.
-	customColor isNil 
-		ifTrue: [self inform: self errorNotAHexCode]
-		ifFalse: [ self model perform: action with: (Array with: customColor with: row) ]
-
-
-	! !
-
-!ThemeCustomizerWindow methodsFor: 'error' stamp: 'HAW 7/24/2023 11:14:06'!
-errorNotAHexCode
-
-	^'The entered string is not a valid hex code'.! !
-
-!ThemeCustomizerWindow methodsFor: 'build rows' stamp: 'lucy 7/20/2023 15:21:03'!
-buildBackgroundRow
-	
-	^self buildRow: 'Background' thatExecutesAction: #changeBackground: forPalette: backgroundPalette.! !
-
-!ThemeCustomizerWindow methodsFor: 'build rows' stamp: 'lucy 7/20/2023 15:21:11'!
-buildLabelsRow
-
-	^self buildRow: 'Labels' thatExecutesAction: #changeLabels: forPalette: labelsPalette.! !
-
-!ThemeCustomizerWindow methodsFor: 'build rows' stamp: 'lucy 7/20/2023 15:21:16'!
-buildPrimaryRow
-
-	^self buildRow: 'Primary' thatExecutesAction: #changePrimary: forPalette: primaryPalette.! !
-
-!ThemeCustomizerWindow methodsFor: 'build rows' stamp: 'lucy 7/20/2023 15:21:22'!
-buildSecondaryRow
-
-	^self buildRow: 'Secondary' thatExecutesAction: #changeSecondary: forPalette: secondaryPalette.! !
-
-!ThemeCustomizerWindow methodsFor: 'build rows' stamp: 'lucy 7/20/2023 15:21:27'!
-buildTextRow
-	
-	^self buildRow: 'Text' thatExecutesAction: #changeText: forPalette: textPalette.! !
-
-!ThemeCustomizerWindow methodsFor: 'build rows' stamp: 'lucy 7/20/2023 15:21:33'!
-buildTitleRow
-
-	| titleRow titleLabel |
-	
-	titleLabel := self buildLabelWithNoBordersBold: 'Make your own theme!!' withColor: self initMessageTextColor.
-	titleRow := LayoutMorph newRow.
-	titleRow
-		separation: 10;
-		axisEdgeWeight: 1;
-		color: self initMessageBackgroundColor;
-		addMorph: titleLabel.
-		
-	titleRow layoutSpec proportionalHeight: 0.
-	
-	^ titleRow.! !
-
-!ThemeCustomizerWindow class methodsFor: 'opening' stamp: 'HAW 7/24/2023 11:01:05'!
-open
-
-	self new
-		model: ThemeCustomizerModel new;
-		buildMorphicWindow;
-		openInWorld ! !
-
-!ThemeCustomizerWindow class methodsFor: 'menu-world' stamp: 'HAW 7/24/2023 11:26:05'!
-worldMenuOptions
-	^ `{{
-			#submenuOf -> TheWorldMenu preferencesLabel.
-			#itemGroup 			->  10.
-			#itemOrder 			-> 	85.	
-			#label 			->	'Theme customizer...'.
-			#object 			-> 	ThemeCustomizerWindow.
-			#selector 		-> 		#open.
-			#icon 			-> 	#appearanceIcon.
-			#balloonText 	-> 		'Allows you to customize the personalized theme'.
-		} asDictionary}`! !
 
 !ClassicTheme methodsFor: 'icons' stamp: 'cbr 5/16/2011 01:12'!
 acceptIcon
@@ -1211,4 +827,387 @@ secondaryColor
 !PersonalizedTheme class methodsFor: 'accessing' stamp: 'HAW 7/24/2023 11:15:27'!
 writingColor
 	^writing.! !
+
+!ThemeCustomizerModel methodsFor: 'change colors' stamp: 'lucy 7/20/2023 15:24:03'!
+changeBackground: arguments
+	
+	| backgroundColor row |
+	backgroundColor := arguments first.
+	row := arguments second.
+	PersonalizedTheme changeBackgroundColorTo: backgroundColor.
+	PersonalizedTheme beCurrent.
+	row color: backgroundColor.! !
+
+!ThemeCustomizerModel methodsFor: 'change colors' stamp: 'lucy 7/20/2023 15:24:09'!
+changeLabels: arguments
+
+	| labelsColor row |
+	labelsColor := arguments first.
+	row := arguments second.
+	PersonalizedTheme changeLabelsColorTo: labelsColor.
+	PersonalizedTheme beCurrent.
+	row color: labelsColor.! !
+
+!ThemeCustomizerModel methodsFor: 'change colors' stamp: 'lucy 7/20/2023 15:24:16'!
+changePrimary: arguments
+
+	| primaryColor row |
+	primaryColor := arguments first.
+	row := arguments second.
+	PersonalizedTheme changePrimaryColorTo: primaryColor.
+	PersonalizedTheme beCurrent.
+	row color: primaryColor.! !
+
+!ThemeCustomizerModel methodsFor: 'change colors' stamp: 'lucy 7/20/2023 15:24:22'!
+changeSecondary: arguments
+
+	| secondaryColor row |
+	secondaryColor := arguments first.
+	row := arguments second.
+	PersonalizedTheme changeSecondaryColorTo: secondaryColor.
+	PersonalizedTheme beCurrent.
+	row color: secondaryColor.! !
+
+!ThemeCustomizerModel methodsFor: 'change colors' stamp: 'lucy 7/20/2023 15:24:27'!
+changeText: arguments
+
+	| textColor row |
+	textColor := arguments first.
+	row := arguments second.
+	PersonalizedTheme changeTextColorTo: textColor.
+	PersonalizedTheme beCurrent.
+	row color: textColor.! !
+
+!ThemeCustomizerWindow methodsFor: 'colors' stamp: 'lucy 7/20/2023 15:25:30'!
+buttonsColor
+
+	^ Color white twiceDarker darker darker. ! !
+
+!ThemeCustomizerWindow methodsFor: 'colors' stamp: 'lucy 7/22/2023 02:21:47'!
+colorFromHexString: aHexString
+
+	^Color fromHexString: aHexString.! !
+
+!ThemeCustomizerWindow methodsFor: 'colors' stamp: 'lucy 7/22/2023 02:22:08'!
+initMessageBackgroundColor
+
+	^self colorFromHexString: '#0d285f'.! !
+
+!ThemeCustomizerWindow methodsFor: 'colors' stamp: 'lucy 7/22/2023 02:22:17'!
+initMessageTextColor
+
+	^self colorFromHexString: '#e069e0'.! !
+
+!ThemeCustomizerWindow methodsFor: 'colors' stamp: 'lucy 7/22/2023 02:22:36'!
+labelsColor
+	
+	^self colorFromHexString: '#FAF3DD'! !
+
+!ThemeCustomizerWindow methodsFor: 'colors' stamp: 'lucy 7/22/2023 02:22:57'!
+windowBackColor
+
+	^(self colorFromHexString: '#9ec7e8') muchDarker.! !
+
+!ThemeCustomizerWindow methodsFor: 'palettes' stamp: 'lucy 7/22/2023 02:16:50'!
+buildBackgroundPalette
+	
+	| sunset ocean forest ash light |
+	sunset := OrderedCollection with: (Color fromHexString: '#FE938C') with: 'Sunset'.
+	ocean := OrderedCollection with: (Color fromHexString: '#124559') with: 'Ocean'.
+	forest := OrderedCollection with: (Color fromHexString: '#788475') with: 'Forest'.
+	ash := OrderedCollection with: (Color fromHexString: '#363946') with: 'Ash'.
+	light := OrderedCollection with: (Color fromHexString: '#F2DFD7') with: 'Light'.
+	
+	backgroundPalette := OrderedCollection with: sunset with: ocean with: forest with: ash with: light.! !
+
+!ThemeCustomizerWindow methodsFor: 'palettes' stamp: 'lucy 7/22/2023 02:17:17'!
+buildLabelsPalette
+	
+	| sunset ocean forest ash light |
+	sunset := OrderedCollection with: (Color fromHexString: '#fCD89A') with: 'Sunset'.
+	ocean := OrderedCollection with: (Color fromHexString: '#EFF6E0') with: 'Ocean'.
+	forest := OrderedCollection with: (Color fromHexString: '#8DAA91') with: 'Forest'.
+	ash := OrderedCollection with: (Color fromHexString: '#000000') with: 'Ash'.
+	light := OrderedCollection with: (Color fromHexString: '#946846') with: 'Light'.
+	
+	labelsPalette := OrderedCollection with: sunset with: ocean with: forest with: ash with: light.! !
+
+!ThemeCustomizerWindow methodsFor: 'palettes' stamp: 'lucy 7/22/2023 02:17:44'!
+buildPrimaryPalette
+	
+	| sunset ocean forest ash light |
+	sunset := OrderedCollection with: (Color fromHexString: '#DA627D') with: 'Sunset'.
+	ocean := OrderedCollection with: (Color fromHexString: '#598392') with: 'Ocean'.
+	forest := OrderedCollection with: (Color fromHexString: '#5E5D5C') with: 'Forest'.
+	ash := OrderedCollection with: (Color fromHexString: '#696773') with: 'Ash'.
+	light := OrderedCollection with: (Color fromHexString: '#CEB5A7') with: 'Light'.
+	
+	primaryPalette := OrderedCollection with: sunset with: ocean with: forest with: ash with: light.! !
+
+!ThemeCustomizerWindow methodsFor: 'palettes' stamp: 'lucy 7/22/2023 02:18:07'!
+buildSecondaryPalette
+	
+	| sunset ocean forest ash light |
+	sunset := OrderedCollection with: (Color fromHexString: '#FCA17D') with: 'Sunset'.
+	ocean := OrderedCollection with: (Color fromHexString: '#AEC3B0') with: 'Ocean'.
+	forest := OrderedCollection with: (Color fromHexString: '#453643') with: 'Forest'.
+	ash := OrderedCollection with: (Color fromHexString: '#8D99AE') with: 'Ash '.
+	light := OrderedCollection with: (Color fromHexString: '#BCAA99') with: 'Light'.
+	
+	secondaryPalette := OrderedCollection with: sunset with: ocean with: forest with: ash with: light.! !
+
+!ThemeCustomizerWindow methodsFor: 'palettes' stamp: 'lucy 7/22/2023 02:18:36'!
+buildTextPalette
+	
+	| sunset ocean forest ash light |
+	sunset := OrderedCollection with: (Color fromHexString: '#9E3F3F') with: 'Sunset'.
+	ocean := OrderedCollection with: (Color fromHexString: '#01161E') with: 'Ocean'.
+	forest := OrderedCollection with: (Color fromHexString: '#28112B') with: 'Forest'.
+	ash := OrderedCollection with: (Color fromHexString: '#2B2D42') with: 'Ash'.
+	light := OrderedCollection with: (Color fromHexString: '#3C3C3B') with: 'Light'.
+	
+	textPalette := OrderedCollection with: sunset with: ocean with: forest with: ash with: light.! !
+
+!ThemeCustomizerWindow methodsFor: 'initialization' stamp: 'KenD 8/8/2024 10:06:26'!
+buildMorphicWindow
+
+	| themesMorph mainWindowMorph scrollMorph |
+	
+	themesMorph := self buildThemesMorph.
+	scrollMorph := self buildScrollMorphFor: themesMorph.
+	mainWindowMorph := LayoutMorph newRow addMorph: scrollMorph proportionalHeight: 1.
+	
+	self layoutMorph addMorph: mainWindowMorph.
+	self setLabel: 'Theme Customizer'
+	
+	! !
+
+!ThemeCustomizerWindow methodsFor: 'initialization' stamp: 'lucy 7/22/2023 04:07:35'!
+buildPalettes
+
+	self buildBackgroundPalette.
+	self buildPrimaryPalette.
+	self buildSecondaryPalette.
+	self buildTextPalette.
+	self buildLabelsPalette! !
+
+!ThemeCustomizerWindow methodsFor: 'initialization' stamp: 'HAW 7/24/2023 11:06:23'!
+buildScrollMorphFor: themesMorph
+
+	| scrollMorph |
+	
+	scrollMorph := PluggableScrollPane initializedInstance.
+	scrollMorph scroller: themesMorph;
+	color: self windowBackColor.
+	
+	^scrollMorph! !
+
+!ThemeCustomizerWindow methodsFor: 'initialization' stamp: 'KenD 8/8/2024 10:07:19'!
+buildThemesMorph
+
+	^ LayoutMorph newColumn ::
+		morphExtent: self defaultExtent;
+		addMorph: self buildTitleRow;
+		addMorph: self buildBackgroundRow;
+		addMorph: self buildPrimaryRow;
+		addMorph: self buildSecondaryRow;
+		addMorph: self buildTextRow;
+		addMorph: self buildLabelsRow! !
+
+!ThemeCustomizerWindow methodsFor: 'initialization' stamp: 'lucy 7/22/2023 04:24:15'!
+defaultExtent
+	^ 1400 @ 720.! !
+
+!ThemeCustomizerWindow methodsFor: 'initialization' stamp: 'HAW 7/24/2023 11:03:52'!
+initialize
+
+	super initialize.
+	PersonalizedTheme initializeThemeWithDefaultColors.
+	self buildPalettes.
+	! !
+
+!ThemeCustomizerWindow methodsFor: 'build - private' stamp: 'lucy 7/20/2023 15:26:37'!
+buildButtonForCustomColorThatExecutes: action forRow: row
+
+	| column buttonMorph argument|
+	argument := Array with: action with: row.
+	buttonMorph := PluggableButtonMorph model: self stateGetter: nil stateArgument: nil action: #buildCustomColorInputAndDoRowAction: actionArgument: argument label: 'Custom'.
+	
+	buttonMorph mouseOverColor: Color white; 
+	color: self buttonsColor.
+	
+	column := LayoutMorph newColumn.
+	column separation: 5; axisEdgeWeight: 0.5; color: Color gray; borderWidth: 0; addMorph: buttonMorph.
+		
+	^ column.! !
+
+!ThemeCustomizerWindow methodsFor: 'build - private' stamp: 'lucy 7/20/2023 15:26:43'!
+buildButtonThatExecutes: action hasLabel: label color: buttonColor forRow: row
+
+	| column buttonMorph argument|
+	argument := Array with: buttonColor with: row.
+	buttonMorph := PluggableButtonMorph model: self model stateGetter: nil stateArgument: nil action: action actionArgument: argument label: label.
+	
+	buttonMorph mouseOverColor: buttonColor muchLighter; 
+	color: self buttonsColor.
+	
+	column := LayoutMorph newColumn.
+	column separation: 5; axisEdgeWeight: 0.5; color: buttonColor; borderWidth: 0; addMorph: buttonMorph.
+		
+	^ column.! !
+
+!ThemeCustomizerWindow methodsFor: 'build - private' stamp: 'HAW 7/24/2023 11:13:20'!
+buildCustomColorInputAndDoRowAction: arguments
+
+	| customColorString action row initialText |
+	
+	action := arguments first.
+	row := arguments second.
+	initialText := 'hex code (example: #FFAABB)'.
+	customColorString := FillInTheBlankMorph request: 'Enter custom color:' initialAnswer: initialText onCancel: [^''].
+	customColorString = initialText ifFalse: [self ensureColorIsHexCode: customColorString andDo: action for: row].
+	^customColorString.! !
+
+!ThemeCustomizerWindow methodsFor: 'build - private' stamp: 'lucy 7/20/2023 15:26:54'!
+buildLabelForRowWithText: label
+
+	| column |
+	column := LayoutMorph newColumn.
+	column
+		separation: 5;
+		axisEdgeWeight: 0.5;
+		color: self windowBackColor;
+		addMorph: (self buildLabelWithNoBordersBold: label
+				withColor: self labelsColor).
+	^ column.! !
+
+!ThemeCustomizerWindow methodsFor: 'build - private' stamp: 'lucy 7/20/2023 15:26:59'!
+buildLabelWithNoBordersBold: label withColor: labelColor
+
+	| labelMorph |
+	labelMorph := LabelMorph contents: label.
+	labelMorph
+		emphasis: 1;
+		color: labelColor;
+		borderWidth: 0.
+		
+	^ labelMorph.! !
+
+!ThemeCustomizerWindow methodsFor: 'build - private' stamp: 'lucy 7/22/2023 03:52:14'!
+buildRow
+
+	| row |
+
+	row := LayoutMorph newRow.
+	row color: self windowBackColor;
+	borderWidth: 5;
+	borderColor: self windowBackColor.
+	
+	
+	row separation: 10;
+	axisEdgeWeight: 1.
+	
+	^row.! !
+
+!ThemeCustomizerWindow methodsFor: 'build - private' stamp: 'lucy 7/22/2023 03:32:33'!
+buildRow: rowLabel thatExecutesAction: action forPalette: palette
+
+	| buttonColor buttonLabel rowName row | 
+	
+	row := self buildRow.
+	
+	rowName := self buildLabelForRowWithText: rowLabel.
+	row addMorph: rowName.
+	
+	palette do: [:colorDuo | buttonColor := colorDuo first.
+					      buttonLabel := colorDuo second.
+					      row addMorph: (self buildButtonThatExecutes: action
+									       hasLabel: buttonLabel color: buttonColor forRow: rowName).
+					
+		].
+	
+	row addMorph: (self buildButtonForCustomColorThatExecutes: action forRow: rowName).
+	
+	^row.! !
+
+!ThemeCustomizerWindow methodsFor: 'build - private' stamp: 'HAW 7/24/2023 11:10:48'!
+ensureColorIsHexCode: customColorHex andDo: action for: row
+	
+	| customColor |
+	
+	customColor := Color fromHexString: customColorHex.
+	customColor isNil 
+		ifTrue: [self inform: self errorNotAHexCode]
+		ifFalse: [ self model perform: action with: (Array with: customColor with: row) ]
+
+
+	! !
+
+!ThemeCustomizerWindow methodsFor: 'error' stamp: 'HAW 7/24/2023 11:14:06'!
+errorNotAHexCode
+
+	^'The entered string is not a valid hex code'.! !
+
+!ThemeCustomizerWindow methodsFor: 'build rows' stamp: 'lucy 7/20/2023 15:21:03'!
+buildBackgroundRow
+	
+	^self buildRow: 'Background' thatExecutesAction: #changeBackground: forPalette: backgroundPalette.! !
+
+!ThemeCustomizerWindow methodsFor: 'build rows' stamp: 'lucy 7/20/2023 15:21:11'!
+buildLabelsRow
+
+	^self buildRow: 'Labels' thatExecutesAction: #changeLabels: forPalette: labelsPalette.! !
+
+!ThemeCustomizerWindow methodsFor: 'build rows' stamp: 'lucy 7/20/2023 15:21:16'!
+buildPrimaryRow
+
+	^self buildRow: 'Primary' thatExecutesAction: #changePrimary: forPalette: primaryPalette.! !
+
+!ThemeCustomizerWindow methodsFor: 'build rows' stamp: 'lucy 7/20/2023 15:21:22'!
+buildSecondaryRow
+
+	^self buildRow: 'Secondary' thatExecutesAction: #changeSecondary: forPalette: secondaryPalette.! !
+
+!ThemeCustomizerWindow methodsFor: 'build rows' stamp: 'lucy 7/20/2023 15:21:27'!
+buildTextRow
+	
+	^self buildRow: 'Text' thatExecutesAction: #changeText: forPalette: textPalette.! !
+
+!ThemeCustomizerWindow methodsFor: 'build rows' stamp: 'lucy 7/20/2023 15:21:33'!
+buildTitleRow
+
+	| titleRow titleLabel |
+	
+	titleLabel := self buildLabelWithNoBordersBold: 'Make your own theme!!' withColor: self initMessageTextColor.
+	titleRow := LayoutMorph newRow.
+	titleRow
+		separation: 10;
+		axisEdgeWeight: 1;
+		color: self initMessageBackgroundColor;
+		addMorph: titleLabel.
+		
+	titleRow layoutSpec proportionalHeight: 0.
+	
+	^ titleRow.! !
+
+!ThemeCustomizerWindow class methodsFor: 'opening' stamp: 'HAW 7/24/2023 11:01:05'!
+open
+
+	self new
+		model: ThemeCustomizerModel new;
+		buildMorphicWindow;
+		openInWorld ! !
+
+!ThemeCustomizerWindow class methodsFor: 'menu-world' stamp: 'HAW 7/24/2023 11:26:05'!
+worldMenuOptions
+	^ `{{
+			#submenuOf -> TheWorldMenu preferencesLabel.
+			#itemGroup 			->  10.
+			#itemOrder 			-> 	85.	
+			#label 			->	'Theme customizer...'.
+			#object 			-> 	ThemeCustomizerWindow.
+			#selector 		-> 		#open.
+			#icon 			-> 	#appearanceIcon.
+			#balloonText 	-> 		'Allows you to customize the personalized theme'.
+		} asDictionary}`! !
 PersonalizedTheme initialize!
