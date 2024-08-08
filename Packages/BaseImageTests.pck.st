@@ -1,6 +1,6 @@
-'From Cuis7.1 [latest update: #6512] on 10 July 2024 at 3:27:25 pm'!
+'From Cuis7.1 [latest update: #6571] on 8 August 2024 at 12:35:48 pm'!
 'Description Rename extentions tests'!
-!provides: 'BaseImageTests' 1 407!
+!provides: 'BaseImageTests' 1 408!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Objects'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
@@ -9325,11 +9325,6 @@ iv1: anObject
 
 	iv1 := anObject ! !
 
-!CompiledMethodTest methodsFor: 'tests - accessors' stamp: 'HAW 4/9/2020 16:00:45'!
-iv1ReadWrite
-
-	iv1 := iv1 yourself! !
-
 !CompiledMethodTest methodsFor: 'tests - accessors' stamp: 'HAW 4/9/2020 15:41:59'!
 iv1_notGetter
 
@@ -9339,6 +9334,11 @@ iv1_notGetter
 iv1_notSetter: anObject
 
 	iv1 := anObject ! !
+
+!CompiledMethodTest methodsFor: 'tests - accessors' stamp: 'HAW 4/9/2020 16:00:45'!
+iv1ReadWrite
+
+	iv1 := iv1 yourself! !
 
 !CompiledMethodTest methodsFor: 'tests - accessors' stamp: 'HAW 4/9/2020 15:45:13'!
 iv2
@@ -13287,9 +13287,9 @@ testIntegerReadFrom
 	self assert: (Integer readFrom: '1two3' readStream base: 10) = 1.
 ! !
 
-!IntegerTest methodsFor: 'tests - instance creation' stamp: 'md 3/25/2003 23:14'!
+!IntegerTest methodsFor: 'tests - instance creation' stamp: 'jmv 8/8/2024 12:28:09'!
 testNew
-	self should: [Integer new] raise: TestResult error. ! !
+	self should: [Integer new] raise: TestResult exError. ! !
 
 !IntegerTest methodsFor: 'tests - instance creation' stamp: 'jmv 9/1/2010 13:26'!
 testReadFrom
@@ -14760,6 +14760,14 @@ testReplaceFromToWithStartingAt
 		self assert: digit equals: replacementDigit]
 ! !
 
+!LargePositiveIntegerTest methodsFor: 'tests' stamp: 'jmv 6/6/2023 11:34:02'!
+test_raisedTo_modulo
+	"The bug was caused because of calling unnormalized #\\\.
+	The fix is to use #\\ instead."
+
+	self assert: (5445648384 raisedTo: 3 modulo: 1 << 34) = 0.
+	self assert: (5445648384 raisedTo: 4 modulo: 1 << 34) = 0.! !
+
 !LargePositiveIntegerTest methodsFor: 'tests' stamp: 'jmv 9/1/2010 13:47'!
 testBitShift
 
@@ -14879,14 +14887,6 @@ testReplaceFromToWithStartingAt
 		replacementDigit := lpi7 digitAt: e - 4.
 		self assert: digit equals: replacementDigit]
 ! !
-
-!LargePositiveIntegerTest methodsFor: 'tests' stamp: 'jmv 6/6/2023 11:34:02'!
-test_raisedTo_modulo
-	"The bug was caused because of calling unnormalized #\\\.
-	The fix is to use #\\ instead."
-
-	self assert: (5445648384 raisedTo: 3 modulo: 1 << 34) = 0.
-	self assert: (5445648384 raisedTo: 4 modulo: 1 << 34) = 0.! !
 
 !LargePositiveIntegerTest methodsFor: 'tests - mathematical functions' stamp: 'nice 5/13/2019 13:56'!
 testSqrt
@@ -15234,10 +15234,10 @@ subject: aString
 
 	^ Number readFrom: aStream! !
 
-!SmallIntegerTest methodsFor: 'testing - Class Methods' stamp: 'sd 6/5/2005 08:59'!
+!SmallIntegerTest methodsFor: 'testing - Class Methods' stamp: 'jmv 8/8/2024 12:28:13'!
 testBasicNew
 
-	self should: [SmallInteger basicNew] raise: TestResult error. ! !
+	self should: [SmallInteger basicNew] raise: TestResult exError. ! !
 
 !SmallIntegerTest methodsFor: 'testing - Class Methods' stamp: 'jmv 1/4/2017 08:16:27'!
 testMaxVal
@@ -15257,10 +15257,10 @@ testMinVal
 		ifFalse: [
 			self assert: (SmallInteger minVal = -16r1000000000000000) ]! !
 
-!SmallIntegerTest methodsFor: 'testing - Class Methods' stamp: 'sd 6/5/2005 08:59'!
+!SmallIntegerTest methodsFor: 'testing - Class Methods' stamp: 'jmv 8/8/2024 12:28:16'!
 testNew
 
-	self should: [SmallInteger new] raise: TestResult error. ! !
+	self should: [SmallInteger new] raise: TestResult exError. ! !
 
 !SmallIntegerTest methodsFor: 'testing - arithmetic' stamp: 'sd 6/5/2005 08:59'!
 testDivide
@@ -22200,6 +22200,15 @@ testTabWhenConditionIsTruePutsATabInStream
 
 	self assertTranscriptContentsAdded: Character tab asString after: [ Transcript tabWhen: true ]! !
 
+!TranscriptTest methodsFor: 'assertions' stamp: 'jmv 7/31/2023 12:24:46'!
+assertTranscriptContentsAdded: expectedAddedString after: aBlock
+	
+	| transcriptContentsBeforeBlockEvaluation |
+	Transcript clear.
+	transcriptContentsBeforeBlockEvaluation := Transcript contents.
+	aBlock value.
+	self assert: Transcript contents equals: transcriptContentsBeforeBlockEvaluation, expectedAddedString.! !
+
 !TranscriptTest methodsFor: 'assertions' stamp: 'jmv 7/31/2023 12:23:57'!
 assertTranscriptContentsAdded2: expectedAddedString after: aBlock
 	
@@ -22208,15 +22217,6 @@ assertTranscriptContentsAdded2: expectedAddedString after: aBlock
 	transcriptContentsBeforeBlockEvaluation := Transcript contents.
 	aBlock value.
 	{transcriptContentsBeforeBlockEvaluation. expectedAddedString.Transcript contents} inspect.
-	self assert: Transcript contents equals: transcriptContentsBeforeBlockEvaluation, expectedAddedString.! !
-
-!TranscriptTest methodsFor: 'assertions' stamp: 'jmv 7/31/2023 12:24:46'!
-assertTranscriptContentsAdded: expectedAddedString after: aBlock
-	
-	| transcriptContentsBeforeBlockEvaluation |
-	Transcript clear.
-	transcriptContentsBeforeBlockEvaluation := Transcript contents.
-	aBlock value.
 	self assert: Transcript contents equals: transcriptContentsBeforeBlockEvaluation, expectedAddedString.! !
 
 !TranscriptTest methodsFor: 'assertions' stamp: 'HAW 3/20/2019 07:15:48'!
@@ -31855,17 +31855,6 @@ test03NewClassNameHasToStartWithUppercaseLetter
 		assertCreation: [ RenameClass from: self class to: #_A ]
 		failsWith: [ NewClassPrecondition newNameMustStartWithRightLetterErrorMessage]! !
 
-!RenameClassTest methodsFor: 'tests' stamp: 'HAW 8/13/2018 18:33:08'!
-test04NewClassShouldNotExist
-
-	| newClassName |
-	
-	newClassName := #Object.
-	
-	self 
-		assertCreation: [ RenameClass from: self class to: newClassName in: Smalltalk ]
-		failsWith: [ NewClassPrecondition errorMessageForAlreadyExistClassNamed: newClassName ]! !
-
 !RenameClassTest methodsFor: 'tests' stamp: 'HAW 12/13/2018 17:59:19'!
 test04_01NewClassNameShouldNotBeAGlobalVariable
 
@@ -31876,6 +31865,17 @@ test04_01NewClassNameShouldNotBeAGlobalVariable
 	self 
 		assertCreation: [ RenameClass from: self class to: newClassName in: Smalltalk ]
 		failsWith: [ NewClassPrecondition errorMessageForAlreadyExistGlobalNamed: newClassName ]! !
+
+!RenameClassTest methodsFor: 'tests' stamp: 'HAW 8/13/2018 18:33:08'!
+test04NewClassShouldNotExist
+
+	| newClassName |
+	
+	newClassName := #Object.
+	
+	self 
+		assertCreation: [ RenameClass from: self class to: newClassName in: Smalltalk ]
+		failsWith: [ NewClassPrecondition errorMessageForAlreadyExistClassNamed: newClassName ]! !
 
 !RenameClassTest methodsFor: 'tests' stamp: 'HAW 8/13/2018 18:33:35'!
 test05NewClassShouldNotBeUndeclare
