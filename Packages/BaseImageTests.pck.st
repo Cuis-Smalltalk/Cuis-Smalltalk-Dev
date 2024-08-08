@@ -1,6 +1,6 @@
-'From Cuis7.1 [latest update: #6571] on 8 August 2024 at 12:35:48 pm'!
+'From Cuis7.1 [latest update: #6574] on 8 August 2024 at 5:26:43 pm'!
 'Description Rename extentions tests'!
-!provides: 'BaseImageTests' 1 408!
+!provides: 'BaseImageTests' 1 409!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Objects'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
@@ -19396,12 +19396,15 @@ testToUtf8
 	self assert: (Character utf8BytesOf: 16r20AC) hex = 'E282AC'.
 	self assert: (Character utf8BytesOf: 16r024B62) hex = 'F0A4ADA2'! !
 
-!StringTest methodsFor: 'UTF-8 conversion' stamp: 'jmv 5/26/2022 12:00:49'!
+!StringTest methodsFor: 'UTF-8 conversion' stamp: 'jmv 8/8/2024 17:23:12'!
 testAsUtf8
 	"
 	 StringTest new testAsUtf8
 	"
-	self assert: 'A¢€' asUtf8Bytes hex = '41C2A2E282AC'! !
+	| subject |
+	subject := '¿Ñandú, agüita?' asByteString.
+	self assert: subject asUtf8Bytes hex = 'C2BFC391616E64C3BA2C206167C3BC6974613F'.
+	self assert: subject utf8BytesSize = subject asUtf8Bytes size.! !
 
 !StringTest methodsFor: 'tests - converting' stamp: 'jmv 7/5/2022 21:05:36'!
 testBase64
@@ -20113,6 +20116,21 @@ test12
 	self deny: ('ñandúes' asUnicodeString is: 'úe' asUnicodeString substringAt: 4).
 	self assert: ('ñandúes'asUnicodeString  is: 'úe' asUnicodeString substringAt: 5).
 	self deny: ('ñandúes' asUnicodeString is: 'úe' asUnicodeString substringAt: 6).! !
+
+!UnicodeStringsTest methodsFor: 'testing' stamp: 'jmv 8/8/2024 17:23:12'!
+testAsUtf8
+	"
+	 UnicodeStringTest new testAsUtf8
+	"
+	| subject |
+	subject := 'A¢€'.
+	self assert: subject asUtf8Bytes hex = '41C2A2E282AC'.
+	self assert: subject utf8BytesSize = subject asUtf8Bytes size.
+	subject := '¿Ñandú, agüita?'.
+	self assert: subject asUtf8Bytes hex = 'C2BFC391616E64C3BA2C206167C3BC6974613F'.
+	self assert: subject utf8BytesSize = subject asUtf8Bytes size.
+	self assert: subject asByteString asUtf8Bytes = subject asUtf8Bytes.
+	self assert: subject asByteString utf8BytesSize = subject asUtf8Bytes size.! !
 
 !UnicodeStringsTest methodsFor: 'testing' stamp: 'jmv 2/23/2023 14:00:34'!
 testAtPut
