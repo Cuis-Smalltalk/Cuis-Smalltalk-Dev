@@ -47,7 +47,7 @@ transformToDo: encoder
 				arguments: {limit}
 				precedence: precedence
 				from: encoder
-				sourceRange: (myRange first to: blockRange first-1).
+				sourceRange: (myRange first to: blockRange last+1).
 	incStmt := AssignmentNode new
 				variable: blockVar
 				value: (MessageNode new
