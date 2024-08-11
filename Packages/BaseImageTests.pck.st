@@ -1,6 +1,6 @@
-'From Cuis7.1 [latest update: #6574] on 8 August 2024 at 5:26:43 pm'!
+'From Cuis7.1 [latest update: #6578] on 11 August 2024 at 12:25:01 pm'!
 'Description Rename extentions tests'!
-!provides: 'BaseImageTests' 1 409!
+!provides: 'BaseImageTests' 1 410!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Objects'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
@@ -34715,12 +34715,6 @@ test09ForMessageCategoryWihoutTestIsEmpty
 	suite _ TestSuite forMessageCategoryNamed: (classOrganizer categoryOfElement: #assert:hasSameTestsAs:) of: self class categorizedWith: classOrganizer.
 
 	self assert: suite tests isEmpty! !
-
-!TestSuiteTest methodsFor: 'tests - instance creation' stamp: 'HAW 3/3/2017 18:53:02'!
-test10CanNotDebugAsFailureQuickMethods
-
-	self class debugAsFailure: #quickMethodTest ifCanNot: [ ^self ].
-	self fail! !
 
 !BoxedFloat64 methodsFor: '*BaseImageTests-Kernel-Numbers' stamp: 'jmv 2/25/2019 17:20:54'!
 primTestAdd: aNumber
