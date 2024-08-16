@@ -273,8 +273,3 @@ assureStartupStampLogged
 		stream newLine; newLine.
 		stream nextChunkPut: StartupStamp; newLine.
 		stream flush ].! !
-
-!methodRemoval: SystemDictionary #processCommandLineArguments stamp: 'jmv 8/16/2024 09:22:18'!
-SystemDictionary removeSelector: #processCommandLineArguments!
-!methodRemoval: SystemDictionary #processCommandLineOption:optionArgument:raiseExceptions: stamp: 'jmv 8/16/2024 09:22:25'!
-SystemDictionary removeSelector: #processCommandLineOption:optionArgument:raiseExceptions:!
