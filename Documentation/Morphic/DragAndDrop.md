@@ -23,7 +23,7 @@ of a code or message names browser and look at **senders**.
 
 
 ````Smalltalk
-  Feature require: 'UI-Tools'.
+  Feature require: 'UI-MetaProperties'.
 ````
 
 ## DRAG
@@ -112,10 +112,10 @@ grabMorph: aMorph moveUnderHand: moveUnderHand
 
 	| grabbed positionInHandCoordinates tx bounds |
 	self releaseMouseFocus.	"Break focus"
-	grabbed _ aMorph.
-	aMorph owner ifNotNil: [ :o | grabbed _ o aboutToGrab: aMorph ].
+	grabbed := aMorph.
+	aMorph owner ifNotNil: [ :o | grabbed := o aboutToGrab: aMorph ].
 	grabbed ifNil: [ ^ self ].
-	grabbed _ grabbed aboutToBeGrabbedBy: self.
+	grabbed := grabbed aboutToBeGrabbedBy: self.
 	grabbed ifNil: [ ^ self ].
 	self hideHardwareCursor.
 	self redrawNeeded.
@@ -152,7 +152,7 @@ HandMorph>>dropMorph: aMorph event: aMouseEvent
 	"Drop the given morph which was carried by the hand"
 	| morphData dropEvent |
 	morphData := self grabMorphDataFor: aMorph.
-	dropEvent _ DropEvent new 
+	dropEvent := DropEvent new 
 			setPosition: self morphPosition 
 			contents: aMorph 
 			hand: self
@@ -191,7 +191,7 @@ DropEvent>>dispatchWith: aMorph
 	    and: [aMorph fullIncludesPixel: position] ])
 		ifTrue: [
 		"Do a symmetric check if both morphs like each other"
-		dropped _ self contents.
+		dropped := self contents.
 		((aMorph wantsDroppedMorph: dropped event: self)  "I want her"
 		    and: [dropped wantsToBeDroppedInto: aMorph]) "she wants me"
 			ifTrue: [ ^ self sendEventTo: aMorph ]].
@@ -245,7 +245,7 @@ MorphEditLens>>wantsDroppedMorph: aMorph event: evt
 	]
 ````
 
-So much for the Morph which is the taget of the drop..
+So much for the Morph which is the target of the drop..
 On the other side of the action, the dropping Morph also
 gets to answer if it wants to be dropped onto the
 target morph.
