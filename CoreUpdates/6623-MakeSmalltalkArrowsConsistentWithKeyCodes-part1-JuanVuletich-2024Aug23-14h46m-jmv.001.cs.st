@@ -86,6 +86,36 @@ mapAndStoreGlyphsUsing: characterMap
 		unknownGlyph: unknownGlyph scaleArrowGlyphs: {leftArrowGlyph. rightArrowGlyph. upArrowGlyph. downArrowGlyph. carriageReturnGlyph}! !
 
 
+!TTFontDescription methodsFor: 'private-initialization' stamp: 'jmv 8/23/2024 15:35:18'!
+appendGlyphDataTo: stream glyphsArray: glyphsArray indexes: indexes base: baseIndex	 bar: aProgressBarOrNil unknown: theUnknownGlyph scaleArrowGlyphs: arrowGlyphs
+
+		glyphsArray withIndexDo: [ :glyphOrArrayOrNumberNil :index |
+			aProgressBarOrNil ifNotNil: [ :bar | bar value: index ].
+			glyphOrArrayOrNumberNil ifNotNil: [
+				glyphOrArrayOrNumberNil == theUnknownGlyph
+					ifTrue: [ indexes at: baseIndex + index put: 1 ]
+					ifFalse: [
+						glyphOrArrayOrNumberNil isArray
+							ifTrue: [
+								| nextBaseIndex |
+								nextBaseIndex := indexes size - 128.
+								indexes addAll: (IntegerArray new: 64).
+								indexes at: baseIndex + index put: nextBaseIndex negated.
+								self appendGlyphDataTo: stream glyphsArray: glyphOrArrayOrNumberNil indexes: indexes
+									base: nextBaseIndex bar: nil unknown: theUnknownGlyph scaleArrowGlyphs: arrowGlyphs ]
+							ifFalse: [
+								glyphOrArrayOrNumberNil isNumber
+									ifTrue: [ | glyph tx |
+										glyph := arrowGlyphs at: glyphOrArrayOrNumberNil.
+										tx := AffineTransformation withScale: letterMTopSideBearing asFloat / arrowGlyphs second topSideBearing * 0.7.
+										indexes at: baseIndex + index put: stream position+1.
+										glyph addGlyphDataTo: stream tx: tx
+										]
+									ifFalse: [
+										indexes at: baseIndex + index put: stream position+1.
+										glyphOrArrayOrNumberNil addGlyphDataTo: stream tx: nil ]]]]].! !
+
+
 !Character class methodsFor: 'accessing untypeable characters' stamp: 'jmv 8/23/2024 14:47:14'!
 smalltalkRightArrow
 	"
