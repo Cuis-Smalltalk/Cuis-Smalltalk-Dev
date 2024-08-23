@@ -8,7 +8,7 @@ subclassesSortedDo: aBlock
 	^(self subclasses sort: [:c1 :c2 | c1 name < c2 name ]) do: aBlock! !
 
 !Behavior methodsFor: 'enumerating' stamp: 'jmv 8/20/2024 11:01:19'!
-allSubclassesSortedDo: aBlock 
+allSubclassesSortedDo: aBlock
 	"Evaluate the argument, aBlock, for each of the receiver's subclasses.
 	At each level, sort subclasses."
 
