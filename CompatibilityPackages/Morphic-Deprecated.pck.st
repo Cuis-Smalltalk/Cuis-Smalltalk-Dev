@@ -1,36 +1,36 @@
-'From Cuis 5.0 [latest update: #4758] on 16 August 2021 at 11:47:15 am'!
+'From Cuis7.1 [latest update: #6669] on 2 September 2024 at 8:20:42 pm'!
 'Description '!
-!provides: 'Morphic-Deprecated' 1 4!
-SystemOrganization addCategory: 'Morphic-Deprecated'!
+!provides: 'Morphic-Deprecated' 1 5!
+SystemOrganization addCategory: #'Morphic-Deprecated'!
 
 
-!classDefinition: #RectangleLikeMorph category: 'Morphic-Deprecated'!
+!classDefinition: #RectangleLikeMorph category: #'Morphic-Deprecated'!
 PlacedMorph subclass: #RectangleLikeMorph
 	instanceVariableNames: 'extent color'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Morphic-Deprecated'!
-!classDefinition: 'RectangleLikeMorph class' category: 'Morphic-Deprecated'!
+!classDefinition: 'RectangleLikeMorph class' category: #'Morphic-Deprecated'!
 RectangleLikeMorph class
 	instanceVariableNames: ''!
 
-!classDefinition: #StringMorph category: 'Morphic-Deprecated'!
+!classDefinition: #StringMorph category: #'Morphic-Deprecated'!
 RectangleLikeMorph subclass: #StringMorph
 	instanceVariableNames: 'font emphasis contents'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Morphic-Deprecated'!
-!classDefinition: 'StringMorph class' category: 'Morphic-Deprecated'!
+!classDefinition: 'StringMorph class' category: #'Morphic-Deprecated'!
 StringMorph class
 	instanceVariableNames: ''!
 
-!classDefinition: #UpdatingStringMorph category: 'Morphic-Deprecated'!
+!classDefinition: #UpdatingStringMorph category: #'Morphic-Deprecated'!
 StringMorph subclass: #UpdatingStringMorph
 	instanceVariableNames: 'target getSelector stepTime'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Morphic-Deprecated'!
-!classDefinition: 'UpdatingStringMorph class' category: 'Morphic-Deprecated'!
+!classDefinition: 'UpdatingStringMorph class' category: #'Morphic-Deprecated'!
 UpdatingStringMorph class
 	instanceVariableNames: ''!
 
@@ -55,29 +55,6 @@ UpdatingStringMorph new
      stepTime: 10;
      openInWorld!
 
-!StringMorph methodsFor: 'printing' stamp: 'jm 11/3/97 16:52'!
-printOn: aStream
-
-	super printOn: aStream.
-	aStream print: contents.
-! !
-
-!UpdatingStringMorph class methodsFor: 'new-morph participation' stamp: 'jmv 9/5/2019 17:51:19'!
-initializedInstance
-	"Answer a digital clock"
-
-	| newInst |
-	newInst := self 
-		contents: '' 
-		font: Preferences windowTitleFont 
-		emphasis: AbstractFont  boldCode.
-	newInst 
-		stepTime: 500; "half a second"
-		target: [String streamContents: [ :strm | DateAndTime now printHMSOn: strm]] ;
-		getSelector: #value.
-		
-	^ newInst! !
-
 !RectangleLikeMorph methodsFor: 'accessing' stamp: 'jmv 8/21/2012 21:54'!
 color
 
@@ -100,12 +77,23 @@ initialize
 	extent _ `50@40`.
 	color _ self defaultColor! !
 
-!RectangleLikeMorph methodsFor: 'drawing' stamp: 'jmv 4/14/2015 08:53'!
+!RectangleLikeMorph methodsFor: 'drawing' stamp: 'jmv 9/2/2024 20:07:37'!
 drawOn: aCanvas
 	"A canvas is already set with a proper transformation from our coordinates to those of the Canvas target."
 	aCanvas
-		fillRectangle: self morphLocalBounds
+		fillRectangle: self localBounds
 		color: self color! !
+
+!RectangleLikeMorph methodsFor: 'geometry' stamp: 'jmv 9/2/2024 20:06:20'!
+extentInWorld: newExtent
+	"world coordinates"
+	self flag: #jmvVer2.
+	self morphExtent: (self internalizeDistanceFromWorld: newExtent)! !
+
+!RectangleLikeMorph methodsFor: 'geometry' stamp: 'jmv 9/2/2024 20:07:26'!
+localBounds
+
+	^`0@0` extent: extent.! !
 
 !RectangleLikeMorph methodsFor: 'geometry' stamp: 'jmv 7/24/2020 10:22:57'!
 morphBounds: aRectangle
@@ -128,12 +116,6 @@ morphExtent: newExtent
 			owner ifNotNil: [ owner someSubmorphPositionOrExtentChanged ].
 			self redrawNeeded ]]! !
 
-!RectangleLikeMorph methodsFor: 'geometry' stamp: 'jmv 7/8/2014 11:41'!
-morphExtentInWorld: newExtent
-	"world coordinates"
-	self flag: #jmvVer2.
-	self morphExtent: (self internalizeDistanceFromWorld: newExtent)! !
-
 !RectangleLikeMorph methodsFor: 'geometry' stamp: 'jmv 9/22/2012 14:56'!
 morphHeight
 
@@ -145,30 +127,6 @@ morphHeight
 morphHeight: aNumber
 
 	self morphExtent: extent x@aNumber! !
-
-!RectangleLikeMorph methodsFor: 'geometry' stamp: 'jmv 8/16/2021 11:45:32'!
-morphLocalBounds
-
-	^`0@0` extent: extent.! !
-
-!RectangleLikeMorph methodsFor: 'geometry' stamp: 'jmv 7/23/2020 15:53:07'!
-morphPosition: newPos extent: newExtent
-	"Change the position of this morph. Argument is in owner's coordinates."
-
-	| someChange |
-	someChange _ false.
-	(location isTranslation: newPos) ifFalse: [
-		location _ location withTranslation: newPos.
-		someChange _ true ].
-
-	extent = newExtent ifFalse: [
-		(self privateExtent: newExtent) ifTrue: [
-			someChange _ true ]].
-
-	someChange ifTrue: [
-		self someSubmorphPositionOrExtentChanged.
-		owner ifNotNil: [ owner someSubmorphPositionOrExtentChanged ].
-		self redrawNeeded ]! !
 
 !RectangleLikeMorph methodsFor: 'geometry' stamp: 'jmv 9/28/2020 11:19:35'!
 morphTopLeft
@@ -186,6 +144,25 @@ morphWidth
 morphWidth: aNumber
 
 	self morphExtent: aNumber@extent y! !
+
+!RectangleLikeMorph methodsFor: 'geometry' stamp: 'jmv 9/2/2024 20:19:35'!
+position: newPos extent: newExtent
+	"Change the position of this morph. Argument is in owner's coordinates."
+
+	| someChange |
+	someChange := false.
+	(location isTranslation: newPos) ifFalse: [
+		location := location withTranslation: newPos.
+		someChange := true ].
+
+	extent = newExtent ifFalse: [
+		(self privateExtent: newExtent) ifTrue: [
+			someChange := true ]].
+
+	someChange ifTrue: [
+		self someSubmorphPositionOrExtentChanged.
+		owner ifNotNil: [ owner someSubmorphPositionOrExtentChanged ].
+		self redrawNeeded ]! !
 
 !RectangleLikeMorph methodsFor: 'geometry' stamp: 'jmv 7/20/2014 09:59'!
 privateExtent: aPoint
@@ -205,7 +182,7 @@ isOrthoRectangularMorph
 
 	^true! !
 
-!RectangleLikeMorph methodsFor: 'geometry testing' stamp: 'jmv 7/28/2020 12:16:53'!
+!RectangleLikeMorph methodsFor: 'geometry testing' stamp: 'jmv 9/2/2024 20:07:42'!
 morphContainsPoint: aLocalPoint
 	"Answer true even if aLocalPoint is in a submorph, as long as it is in our shape"
 
@@ -214,12 +191,12 @@ morphContainsPoint: aLocalPoint
 
 	"Most morphs answer true to to #isOrthoRectangularMorph, or redefine this method..."
 	self isOrthoRectangularMorph ifTrue: [
-		^ self morphLocalBounds containsPoint: aLocalPoint ].
+		^ self localBounds containsPoint: aLocalPoint ].
 	
 	"...But for those who not, provide correct albeit expensive behavior."
 	"Can't do better. Please redefine in subclasses as appropriate!! (or finish Morphic 3!!)"
 	"Mhhh. Podria usar el #imageForm: y ver si es transparente... deberia andar"
-	^ self morphLocalBounds containsPoint: aLocalPoint! !
+	^ self localBounds containsPoint: aLocalPoint! !
 
 !RectangleLikeMorph methodsFor: 'geometry testing' stamp: 'jmv 7/18/2020 21:35:08'!
 requiresVectorCanvas
@@ -255,6 +232,13 @@ font: aFont
 
 	font _ aFont.
 	^ self font: font emphasis: emphasis! !
+
+!StringMorph methodsFor: 'printing' stamp: 'jm 11/3/97 16:52'!
+printOn: aStream
+
+	super printOn: aStream.
+	aStream print: contents.
+! !
 
 !StringMorph methodsFor: 'accessing'!
 contents
@@ -460,3 +444,19 @@ fitContents
 !UpdatingStringMorph class methodsFor: 'new-morph participation' stamp: 'pb 6/9/2017 00:04:50'!
 categoryInNewMorphMenu
 	^ 'Widgets'! !
+
+!UpdatingStringMorph class methodsFor: 'new-morph participation' stamp: 'jmv 9/5/2019 17:51:19'!
+initializedInstance
+	"Answer a digital clock"
+
+	| newInst |
+	newInst := self 
+		contents: '' 
+		font: Preferences windowTitleFont 
+		emphasis: AbstractFont  boldCode.
+	newInst 
+		stepTime: 500; "half a second"
+		target: [String streamContents: [ :strm | DateAndTime now printHMSOn: strm]] ;
+		getSelector: #value.
+		
+	^ newInst! !
