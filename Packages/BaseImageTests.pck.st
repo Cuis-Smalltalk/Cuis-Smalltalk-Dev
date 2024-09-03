@@ -1,6 +1,6 @@
-'From Cuis7.1 [latest update: #6578] on 11 August 2024 at 12:25:01 pm'!
+'From Cuis7.1 [latest update: #6669] on 2 September 2024 at 8:11:09 pm'!
 'Description Rename extentions tests'!
-!provides: 'BaseImageTests' 1 410!
+!provides: 'BaseImageTests' 1 411!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Objects'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
@@ -34370,10 +34370,10 @@ testClassSingleton
 	self should: [ taskbar == UISupervisor ui taskbar ].
 ! !
 
-!TaskbarTest methodsFor: 'test cases' stamp: 'jmv 9/4/2012 17:30'!
+!TaskbarTest methodsFor: 'test cases' stamp: 'jmv 9/2/2024 20:10:32'!
 testHorizontalAlignment
 
-	self should: [ taskbar morphPositionInWorld x = 0 ]! !
+	self should: [ taskbar positionInWorld x = 0 ]! !
 
 !TaskbarTest methodsFor: 'test cases' stamp: 'jmv 12/28/2017 16:12:01'!
 testWidth
