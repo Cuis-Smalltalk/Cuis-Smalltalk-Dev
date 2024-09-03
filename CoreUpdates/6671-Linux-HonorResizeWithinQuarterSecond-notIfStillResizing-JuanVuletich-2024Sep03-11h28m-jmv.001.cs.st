@@ -26,7 +26,7 @@ checkForNewScreenSize
 
 	needsNewUIProcessAndCanvas := false.
 	DisplayScreen isDisplayExtentOk ifFalse: [
-		''print. {DateAndTime now. 'Smalltalk Display:'. Display extent. 'os display:'. DisplayScreen actualScreenSize} print.
+		"''print. {DateAndTime now. 'Smalltalk Display:'. Display extent. 'os display:'. DisplayScreen actualScreenSize} print."
 		"If host OS scale factor has changed, try to recover our previous Display extent"
 		newScaleFactor := DisplayScreen hostOSScaleFactor.
 		newScaleFactor = ScaleFactor ifFalse: [
