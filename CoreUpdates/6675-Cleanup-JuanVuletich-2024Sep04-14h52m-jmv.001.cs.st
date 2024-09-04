@@ -252,5 +252,3 @@ WorldMorph removeSelector: #handsToDrawForDamage:do:!
 WorldMorph removeSelector: #handsDo:!
 !methodRemoval: WorldMorph #hands stamp: 'jmv 9/4/2024 14:55:34'!
 WorldMorph removeSelector: #hands!
-!methodRemoval: WorldMorph #handsReverseDo: stamp: 'jmv 9/4/2024 14:55:34'!
-WorldMorph removeSelector: #handsReverseDo:!
