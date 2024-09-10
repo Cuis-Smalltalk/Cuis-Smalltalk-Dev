@@ -1,6 +1,6 @@
-'From Cuis7.1 [latest update: #6493] on 2 July 2024 at 9:29:03 am'!
+'From Cuis7.1 [latest update: #6692] on 10 September 2024 at 5:55:15 pm'!
 'Description FFI (Foreign Function Interface) provides access to foreign functions in external libraries, provided they use the platform''s Application Binary Interface (ABI), which is essentially the C calling convention for the platform. FFI supports callbacks, allowing one to pass callbacks that invoke Smalltalk blocks when called from foreign code. FFI provides support for defining classes that correspond to C struct types, with named fields, etc. See Tests-FFI for examples.'!
-!provides: 'FFI' 1 49!
+!provides: 'FFI' 1 50!
 !requires: 'Alien-Core' 1 0 nil!
 SystemOrganization addCategory: #'FFI-Pools'!
 SystemOrganization addCategory: #'FFI-Kernel'!
@@ -476,8 +476,17 @@ finalize
 	self isNull ifTrue: [^self].
 	self free! !
 
-!ExternalAddress methodsFor: 'initialize-release' stamp: 'eem 07/26/2021 08:22'!
+!ExternalAddress methodsFor: 'initialize-release' stamp: 'jmv 9/10/2024 17:53:33'!
 free
+	self isNull ifFalse: [
+		self primFree.
+		self isNull ifTrue: [
+			"A possible error is explicitly freeing something that was allocated via #gcallocate:.
+			To avoid the double free hazzard, ensure I'm not finalized."
+			self class finalizationRegistry remove: self ifAbsent: nil ]].! !
+
+!ExternalAddress methodsFor: 'initialize-release' stamp: 'jmv 9/10/2024 17:07:38'!
+primFree
 	"Primitive. Free the object pointed to on the external heap.
 	Dangerous - may break your system if the receiver hasn't been
 	allocated by ExternalAddress class>>allocate:. No checks are done."
