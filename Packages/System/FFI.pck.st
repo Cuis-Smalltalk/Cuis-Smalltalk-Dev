@@ -1,6 +1,6 @@
-'From Cuis7.1 [latest update: #6692] on 10 September 2024 at 5:55:15 pm'!
+'From Cuis7.1 [latest update: #6697] on 11 September 2024 at 11:39:22 am'!
 'Description FFI (Foreign Function Interface) provides access to foreign functions in external libraries, provided they use the platform''s Application Binary Interface (ABI), which is essentially the C calling convention for the platform. FFI supports callbacks, allowing one to pass callbacks that invoke Smalltalk blocks when called from foreign code. FFI provides support for defining classes that correspond to C struct types, with named fields, etc. See Tests-FFI for examples.'!
-!provides: 'FFI' 1 50!
+!provides: 'FFI' 1 51!
 !requires: 'Alien-Core' 1 0 nil!
 SystemOrganization addCategory: #'FFI-Pools'!
 SystemOrganization addCategory: #'FFI-Kernel'!
@@ -2277,16 +2277,53 @@ booleanAt: byteOffset put: value
 	self integerAt: byteOffset put: (value ifTrue:[1] ifFalse:[0]) size: 1 signed: false.
 	^value! !
 
-!ByteArray methodsFor: '*FFI-Kernel' stamp: 'eem 6/4/2024 15:15:01'!
+!ByteArray methodsFor: '*FFI-Kernel' stamp: 'jmv 9/11/2024 11:33:38'!
 bytesAt: byteOffset length: length
 	"Answer a ByteArray of the given length starting at the indicated byte offset."
 	"If a regular ByteArray, byteOffset is the start position in self.
-	If an ExternalAddress, take us as a pointer. byteOffset is applied to the pointer. Access memory at pointer+offset."
-	| value |
-	value := ByteArray new: length.
-	1 to: length do: [ :i |
-		value uint8At: i put: (self uint8At: byteOffset+i-1)].
-	^value! !
+	If an ExternalAddress, take us as a pointer.
+		byteOffset is applied to the pointer, access memory at pointer+offset."
+
+	^self bytesAt: byteOffset maxLength: length stopAtNullByte: false! !
+
+!ByteArray methodsFor: '*FFI-Kernel' stamp: 'jmv 9/11/2024 11:37:59'!
+bytesAt: byteOffset maxLength: lengthInBytes stopAtNullByte: aBoolean
+	"Answer a ByteArray of the given length starting at the indicated byte offset.
+	Stop at the first null byte if aBoolean, and don't include it in the result."
+	"If a regular ByteArray, byteOffset is the start position in self.
+	If an ExternalAddress, take us as a pointer. byteOffset is applied to the pointer,
+	access memory at pointer+offset."
+
+	^ ByteArray streamContents: [ :strm | | byteIndex mayContinue byte |
+		byteIndex := byteOffset.
+		mayContinue := true.
+		[ mayContinue and: [ byteIndex <= lengthInBytes ]] whileTrue: [
+			byte := self uint8At: byteIndex.
+			(aBoolean and: [byte = 0])
+				ifTrue: [ mayContinue := false ]
+				ifFalse: [ strm nextPut: byte ].
+			byteIndex := byteIndex + 1 ]].! !
+
+!ByteArray methodsFor: '*FFI-Kernel' stamp: 'jmv 9/11/2024 11:37:38'!
+bytesAt: byteOffset maxLength: lengthInBytes stopAtNullWord: aBoolean
+	"Answer a ByteArray of the given length starting at the indicated byte offset.
+	lengthInBytes is assumed to be even.
+	Stop at the first null 16 bit word if aBoolean, and don't include it in the result."
+	"If a regular ByteArray, byteOffset is the start position in self.
+	If an ExternalAddress, take us as a pointer. byteOffset is applied to the pointer,
+	access memory at pointer+offset."
+
+	^ ByteArray streamContents: [ :strm | | byteIndex mayContinue byte1 byte2 |
+		byteIndex := byteOffset.
+		mayContinue := true.
+		[ mayContinue and: [ byteIndex < lengthInBytes ]] whileTrue: [
+			byte1 := self uint8At: byteIndex.
+			byteIndex := byteIndex + 1.
+			byte2 := self uint8At: byteIndex.
+			byteIndex := byteIndex + 1.
+			(aBoolean and: [byte1 + byte2 = 0])
+				ifTrue: [ mayContinue := false ]
+				ifFalse: [ strm nextPut: byte1; nextPut: byte2 ]]].! !
 
 !ByteArray methodsFor: '*FFI-Kernel' stamp: 'eem 6/2/2024 17:15:23'!
 doubleAt: byteOffset
@@ -2782,27 +2819,52 @@ unsignedShortAt: byteOffset put: value
 
 	^self uint16At: byteOffset put: value! !
 
-!ByteArray methodsFor: '*FFI-Kernel' stamp: 'jmv 12/8/2023 10:27:39'!
+!ByteArray methodsFor: '*FFI-Kernel' stamp: 'jmv 9/11/2024 11:34:36'!
 utf16StringAt: byteOffset length: lengthInBytes
 	"Return a UnicodeString using the given byte length starting at the indicated byte offset.
 	Assume bytes are UTF-16 encoded, and in this platform endianess."
 	"If a regular ByteArray, byteOffset is the start position in self.
-	If an ExternalAddress, take us as a pointer. byteOffset is applied to the pointer. Access memory at pointer+offset."
+	If an ExternalAddress, take us as a pointer.
+		byteOffset is applied to the pointer, access memory at pointer+offset."
+
+	^ self utf16StringAt: byteOffset maxLength: lengthInBytes stopAtNull: false! !
+
+!ByteArray methodsFor: '*FFI-Kernel' stamp: 'jmv 9/11/2024 11:36:46'!
+utf16StringAt: byteOffset maxLength: lengthInBytes stopAtNull: aBoolean
+	"Return a UnicodeString using the given byte length starting at the indicated byte offset.
+	Stop at the first null 16 bit word if aBoolean, and don't include it in the result.
+	Assume bytes are UTF-16 encoded, and in this platform endianess."
+	"If a regular ByteArray, byteOffset is the start position in self.
+	If an ExternalAddress, take us as a pointer.
+		byteOffset is applied to the pointer, access memory at pointer+offset."
 
 	| utf16Bytes utf8Bytes |
-	utf16Bytes := self bytesAt: byteOffset length: lengthInBytes.
+	utf16Bytes := self bytesAt: byteOffset maxLength: lengthInBytes stopAtNullWord: aBoolean.
+	"We need a regular ByteArray for this call."
 	utf8Bytes := UnicodeString utf8FromUtf16Bytes: utf16Bytes bigEndianHint: Smalltalk isBigEndian.
 	^UnicodeString fromUtf8Bytes: utf8Bytes.! !
 
-!ByteArray methodsFor: '*FFI-Kernel' stamp: 'jmv 12/8/2023 10:25:16'!
+!ByteArray methodsFor: '*FFI-Kernel' stamp: 'jmv 9/11/2024 11:34:53'!
 utf8StringAt: byteOffset length: lengthInBytes
 	"Return a UnicodeString using the given byte length starting at the indicated byte offset.
 	Assume bytes are UTF-8 encoded."
 	"If a regular ByteArray, byteOffset is the start position in self.
-	If an ExternalAddress, take us as a pointer. byteOffset is applied to the pointer. Access memory at pointer+offset."
+	If an ExternalAddress, take us as a pointer.
+		byteOffset is applied to the pointer, access memory at pointer+offset."
+
+	^ self utf8StringAt: byteOffset maxLength: lengthInBytes stopAtNull: false! !
+
+!ByteArray methodsFor: '*FFI-Kernel' stamp: 'jmv 9/11/2024 11:36:29'!
+utf8StringAt: byteOffset maxLength: lengthInBytes stopAtNull: aBoolean
+	"Return a UnicodeString using the given byte length starting at the indicated byte offset.
+	Stop at the first null byte if aBoolean, and don't include it in the result.
+	Assume bytes are UTF-8 encoded."
+	"If a regular ByteArray, byteOffset is the start position in self.
+	If an ExternalAddress, take us as a pointer. byteOffset is applied to the pointer.
+	Access memory at pointer+offset."
 
 	| bytes |
-	bytes := self bytesAt: byteOffset length: lengthInBytes.
+	bytes := self bytesAt: byteOffset maxLength: lengthInBytes stopAtNullByte: aBoolean.
 	^UnicodeString fromUtf8Bytes: bytes.! !
 
 !ByteArray methodsFor: '*FFI-Kernel' stamp: 'ar 11/29/1999 00:16'!
