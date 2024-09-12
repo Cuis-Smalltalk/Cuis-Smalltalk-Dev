@@ -1,6 +1,6 @@
-'From Cuis6.3 [latest update: #6189] on 9 January 2024 at 5:54:35 pm'!
+'From Cuis7.1 [latest update: #6713] on 12 September 2024 at 12:08:40 pm'!
 'Description '!
-!provides: 'Network-Kernel' 1 7!
+!provides: 'Network-Kernel' 1 8!
 SystemOrganization addCategory: #'Network-Kernel'!
 
 
@@ -509,21 +509,21 @@ promptUserForHostAddress
 	^ NetNameResolver promptUserForHostAddressDefault: ''
 ! !
 
-!NetNameResolver class methodsFor: 'lookups' stamp: 'jmv 9/24/2012 19:47'!
+!NetNameResolver class methodsFor: 'lookups' stamp: 'jmv 9/12/2024 12:07:52'!
 promptUserForHostAddressDefault: defaultName
 	"Ask the user for a host name and return its address. If the default name is the empty string, use the last host name as the default."
 	"NetNameResolver promptUserForHostAddressDefault: ''"
 
 	| default hostName serverAddr |
 	defaultName isEmpty
-		ifTrue: [default _ DefaultHostName]
-		ifFalse: [default _ defaultName].
-	hostName _ FillInTheBlankMorph
+		ifTrue: [default := DefaultHostName]
+		ifFalse: [default := defaultName].
+	hostName := StringRequestMorph
 		request: 'Host name or address?'
 		initialAnswer: default.
 	hostName isEmpty ifTrue: [^ 0].
-	serverAddr _ NetNameResolver addressForName: hostName timeout: 15.
-	hostName size > 0 ifTrue: [DefaultHostName _ hostName].
+	serverAddr := NetNameResolver addressForName: hostName timeout: 15.
+	hostName size > 0 ifTrue: [DefaultHostName := hostName].
 	^ serverAddr! !
 
 !NetNameResolver class methodsFor: 'lookups' stamp: 'JMM 5/3/2000 11:25'!
@@ -2215,7 +2215,7 @@ newAcceptCheck
 		self inform: 'It appears that you DO NOT have support for the BSD style accept()'].
 	socket destroy! !
 
-!Socket class methodsFor: 'tests' stamp: 'jmv 9/24/2012 19:47'!
+!Socket class methodsFor: 'tests' stamp: 'jmv 9/12/2024 12:07:56'!
 sendTest
 	"Send data to the 'discard' socket of the given host.
 	Tests the speed of one-way data transfers across the
@@ -2227,7 +2227,7 @@ sendTest
 	| sock bytesToSend sendBuf bytesSent t serverName serverAddr |
 	Transcript newLine; show: 'starting send test'; newLine.
 	self initializeNetwork.
-	serverName := FillInTheBlankMorph request: 'What is the destination server?' initialAnswer: 'create.ucsb.edu'.
+	serverName := StringRequestMorph request: 'What is the destination server?' initialAnswer: 'create.ucsb.edu'.
 	serverAddr := NetNameResolver addressForName: serverName timeout: 10.
 	serverAddr ifNil: [
 		^self inform: 'Could not find an address for ' , serverName].

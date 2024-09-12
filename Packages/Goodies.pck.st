@@ -1,159 +1,113 @@
-'From Cuis 6.0 [latest update: #5967] on 31 July 2023 at 3:01:20 pm'!
+'From Cuis7.1 [latest update: #6713] on 12 September 2024 at 12:08:37 pm'!
 'Description '!
-!provides: 'Goodies' 1 10!
-SystemOrganization addCategory: 'Goodies-AsyncFile'!
-SystemOrganization addCategory: 'Goodies-Collections'!
-SystemOrganization addCategory: 'Goodies-Tools-FileList'!
-SystemOrganization addCategory: 'Goodies-Tools-Profiling'!
-SystemOrganization addCategory: 'Goodies-Kernel-Chronology'!
+!provides: 'Goodies' 1 11!
+SystemOrganization addCategory: #'Goodies-AsyncFile'!
+SystemOrganization addCategory: #'Goodies-Collections'!
+SystemOrganization addCategory: #'Goodies-Tools-FileList'!
+SystemOrganization addCategory: #'Goodies-Tools-Profiling'!
+SystemOrganization addCategory: #'Goodies-Kernel-Chronology'!
 
 
-!classDefinition: #MappedCollection category: 'Goodies-Collections'!
-SequenceableCollection subclass: #MappedCollection
-	instanceVariableNames: 'domain map'
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Goodies-Collections'!
-!classDefinition: 'MappedCollection class' category: 'Goodies-Collections'!
-MappedCollection class
-	instanceVariableNames: ''!
-
-!classDefinition: #SkipList category: 'Goodies-Collections'!
-Collection subclass: #SkipList
-	instanceVariableNames: 'sortBlock pointers numElements level splice'
-	classVariableNames: 'Rand'
-	poolDictionaries: ''
-	category: 'Goodies-Collections'!
-!classDefinition: 'SkipList class' category: 'Goodies-Collections'!
-SkipList class
-	instanceVariableNames: ''!
-
-!classDefinition: #IdentitySkipList category: 'Goodies-Collections'!
-SkipList subclass: #IdentitySkipList
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Goodies-Collections'!
-!classDefinition: 'IdentitySkipList class' category: 'Goodies-Collections'!
-IdentitySkipList class
-	instanceVariableNames: ''!
-
-!classDefinition: #StandardFileMenu category: 'Goodies-Tools-FileList'!
-SelectionMenu subclass: #StandardFileMenu
-	instanceVariableNames: 'canTypeFileName pattern excludePattern'
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Goodies-Tools-FileList'!
-!classDefinition: 'StandardFileMenu class' category: 'Goodies-Tools-FileList'!
-StandardFileMenu class
-	instanceVariableNames: ''!
-
-!classDefinition: #AsyncFile category: 'Goodies-AsyncFile'!
-Object subclass: #AsyncFile
-	instanceVariableNames: 'name writeable semaphore fileHandle'
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Goodies-AsyncFile'!
-!classDefinition: 'AsyncFile class' category: 'Goodies-AsyncFile'!
-AsyncFile class
-	instanceVariableNames: ''!
-
-!classDefinition: #SkipListNode category: 'Goodies-Collections'!
-Object subclass: #SkipListNode
-	instanceVariableNames: 'pointers object'
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Goodies-Collections'!
-!classDefinition: 'SkipListNode class' category: 'Goodies-Collections'!
-SkipListNode class
-	instanceVariableNames: ''!
-
-!classDefinition: #StandardFileMenuResult category: 'Goodies-Tools-FileList'!
-Object subclass: #StandardFileMenuResult
-	instanceVariableNames: 'directory name'
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Goodies-Tools-FileList'!
-!classDefinition: 'StandardFileMenuResult class' category: 'Goodies-Tools-FileList'!
-StandardFileMenuResult class
-	instanceVariableNames: ''!
-
-!classDefinition: #ProtocolCatcher2 category: 'Goodies-Tools-Profiling'!
-Object subclass: #ProtocolCatcher2
-	instanceVariableNames: 'realObject'
-	classVariableNames: 'Protocols Started'
-	poolDictionaries: ''
-	category: 'Goodies-Tools-Profiling'!
-!classDefinition: 'ProtocolCatcher2 class' category: 'Goodies-Tools-Profiling'!
-ProtocolCatcher2 class
-	instanceVariableNames: ''!
-
-!classDefinition: #Stopwatch category: 'Goodies-Kernel-Chronology'!
-Object subclass: #Stopwatch
-	instanceVariableNames: 'timespans state'
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Goodies-Kernel-Chronology'!
-!classDefinition: 'Stopwatch class' category: 'Goodies-Kernel-Chronology'!
-Stopwatch class
-	instanceVariableNames: ''!
-
-!classDefinition: #ProtocolCatcher category: 'Goodies-Tools-Profiling'!
+!classDefinition: #ProtocolCatcher category: #'Goodies-Tools-Profiling'!
 ProtoObject subclass: #ProtocolCatcher
 	instanceVariableNames: 'realObject'
 	classVariableNames: 'Protocols Started'
 	poolDictionaries: ''
 	category: 'Goodies-Tools-Profiling'!
-!classDefinition: 'ProtocolCatcher class' category: 'Goodies-Tools-Profiling'!
+!classDefinition: 'ProtocolCatcher class' category: #'Goodies-Tools-Profiling'!
 ProtocolCatcher class
 	instanceVariableNames: ''!
 
+!classDefinition: #MappedCollection category: #'Goodies-Collections'!
+SequenceableCollection subclass: #MappedCollection
+	instanceVariableNames: 'domain map'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Goodies-Collections'!
+!classDefinition: 'MappedCollection class' category: #'Goodies-Collections'!
+MappedCollection class
+	instanceVariableNames: ''!
 
-!MappedCollection commentStamp: '<historical>' prior: 0!
-I represent an access mechanism for a sequencable collection re-ordering or filtering its elements.!
+!classDefinition: #SkipList category: #'Goodies-Collections'!
+Collection subclass: #SkipList
+	instanceVariableNames: 'sortBlock pointers numElements level splice'
+	classVariableNames: 'Rand'
+	poolDictionaries: ''
+	category: 'Goodies-Collections'!
+!classDefinition: 'SkipList class' category: #'Goodies-Collections'!
+SkipList class
+	instanceVariableNames: ''!
 
-!SkipList commentStamp: 'KLC 2/26/2004 12:04' prior: 0!
-From "Skip Lists: A Probabilistic Alternative to Balanced Trees" by William Pugh ( http://epaperpress.com/sortsearch/download/skiplist.pdf ):
+!classDefinition: #IdentitySkipList category: #'Goodies-Collections'!
+SkipList subclass: #IdentitySkipList
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Goodies-Collections'!
+!classDefinition: 'IdentitySkipList class' category: #'Goodies-Collections'!
+IdentitySkipList class
+	instanceVariableNames: ''!
 
-"Skip lists are a data structure that can be used in place of balanced trees.  Skip lists use probabilistic balancing rather than strictly enforcing balancing and as a result the algorithms for insertion and deletion in skip lists are much simpler and significantly faster than equivalent algorithms for balanced trees."
+!classDefinition: #AsyncFile category: #'Goodies-AsyncFile'!
+Object subclass: #AsyncFile
+	instanceVariableNames: 'name writeable semaphore fileHandle'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Goodies-AsyncFile'!
+!classDefinition: 'AsyncFile class' category: #'Goodies-AsyncFile'!
+AsyncFile class
+	instanceVariableNames: ''!
 
-Notes:
+!classDefinition: #SkipListNode category: #'Goodies-Collections'!
+Object subclass: #SkipListNode
+	instanceVariableNames: 'pointers object'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Goodies-Collections'!
+!classDefinition: 'SkipListNode class' category: #'Goodies-Collections'!
+SkipListNode class
+	instanceVariableNames: ''!
 
-The elements of the skip list must implement #< or you must provide a sort block.
+!classDefinition: #Stopwatch category: #'Goodies-Kernel-Chronology'!
+Object subclass: #Stopwatch
+	instanceVariableNames: 'timespans state'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Goodies-Kernel-Chronology'!
+!classDefinition: 'Stopwatch class' category: #'Goodies-Kernel-Chronology'!
+Stopwatch class
+	instanceVariableNames: ''!
 
-!
+!classDefinition: #StandardFileMenuResult category: #'Goodies-Tools-FileList'!
+Object subclass: #StandardFileMenuResult
+	instanceVariableNames: 'directory name'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Goodies-Tools-FileList'!
+!classDefinition: 'StandardFileMenuResult class' category: #'Goodies-Tools-FileList'!
+StandardFileMenuResult class
+	instanceVariableNames: ''!
 
-!IdentitySkipList commentStamp: '<historical>' prior: 0!
-Like a SkipList, except that elements are compared with #== instead of #= .
+!classDefinition: #ProtocolCatcher2 category: #'Goodies-Tools-Profiling'!
+Object subclass: #ProtocolCatcher2
+	instanceVariableNames: 'realObject'
+	classVariableNames: 'Protocols Started'
+	poolDictionaries: ''
+	category: 'Goodies-Tools-Profiling'!
+!classDefinition: 'ProtocolCatcher2 class' category: #'Goodies-Tools-Profiling'!
+ProtocolCatcher2 class
+	instanceVariableNames: ''!
 
-See the comment of IdentitySet for more information.
-!
+!classDefinition: #StandardFileMenu category: #'Goodies-Tools-FileList'!
+SelectionMenu subclass: #StandardFileMenu
+	instanceVariableNames: 'canTypeFileName pattern excludePattern'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Goodies-Tools-FileList'!
+!classDefinition: 'StandardFileMenu class' category: #'Goodies-Tools-FileList'!
+StandardFileMenu class
+	instanceVariableNames: ''!
 
-!StandardFileMenu commentStamp: '<historical>' prior: 0!
-I represent a SelectionMenu which operates like a modal dialog for selecting files, somewhat similar to the StandardFile dialogs in MacOS and Java Swing.
-
-Try for example, the following:
-
-	(StandardFileMenu oldFileFrom: DirectoryEntry smalltalkImageDirectory) inspect
-	
-	(StandardFileMenu new 
-		oldFileFrom: DirectoryEntry smalltalkImageDirectory withPattern: '*.st' excludePattern: '.*';
-		startUpWithCaption: 'Pick up a Smalltalk file') 	inspect
-	
-	((StandardFileMenu new 
-		newFileFrom: DirectoryEntry smalltalkImageDirectory withPattern: '*.st') startUpWithCaption: 'dale') inspect!
-
-!AsyncFile commentStamp: '<historical>' prior: 0!
-An asynchronous file allows simple file read and write operations to be performed in parallel with other processing. This is useful in multimedia applications that need to stream large amounts of sound or image data from or to a file while doing other work.
-!
-
-!ProtocolCatcher2 commentStamp: 'jmv 11/3/2008 14:49' prior: 0!
-See class comment in ProtocolCatcher.
-
-The only difference between ProtocolCatcher and ProtocolCatcher2 is that this is subclass of Object. This means it will not catch protocol inherited from Object. This is not usually a problem, and inspectors are more comfortable to use if the catcher is not that transparent.!
-
-!Stopwatch commentStamp: '<historical>' prior: 0!
-A Stopwatch maintains a collection of timespans.!
 
 !ProtocolCatcher commentStamp: '<historical>' prior: 0!
 Protocol catchers use #doesNotUnderstand: to detect the protocol actually used for classes under study. The subject of study is classes, not particular objects. And all instances of ProtocolCatcher work as a team. The captured protocols are stored in a class variable. In this way, you can do the following, anytime, without worrying of keeping track of each instance of ProtocolCatcher:
@@ -178,6 +132,113 @@ ProtocolCatcher observedClasses
 ProtocolCatcher protocolFor: ParagraphEditor
 
 Finally, this class also serves as an example on how to do a ProtocolCatcher. Sometimes, when replacing an existing class in the system, it is useful to know the actually used protocol. But it can also be useful to keep the forwarding mechanism available after the new class has been installed. This way it is easier to add behavior that is still missing.!
+
+!MappedCollection commentStamp: '<historical>' prior: 0!
+I represent an access mechanism for a sequencable collection re-ordering or filtering its elements.!
+
+!SkipList commentStamp: 'KLC 2/26/2004 12:04' prior: 0!
+From "Skip Lists: A Probabilistic Alternative to Balanced Trees" by William Pugh ( http://epaperpress.com/sortsearch/download/skiplist.pdf ):
+
+"Skip lists are a data structure that can be used in place of balanced trees.  Skip lists use probabilistic balancing rather than strictly enforcing balancing and as a result the algorithms for insertion and deletion in skip lists are much simpler and significantly faster than equivalent algorithms for balanced trees."
+
+Notes:
+
+The elements of the skip list must implement #< or you must provide a sort block.
+
+!
+
+!IdentitySkipList commentStamp: '<historical>' prior: 0!
+Like a SkipList, except that elements are compared with #== instead of #= .
+
+See the comment of IdentitySet for more information.
+!
+
+!AsyncFile commentStamp: '<historical>' prior: 0!
+An asynchronous file allows simple file read and write operations to be performed in parallel with other processing. This is useful in multimedia applications that need to stream large amounts of sound or image data from or to a file while doing other work.
+!
+
+!Stopwatch commentStamp: '<historical>' prior: 0!
+A Stopwatch maintains a collection of timespans.!
+
+!ProtocolCatcher2 commentStamp: 'jmv 11/3/2008 14:49' prior: 0!
+See class comment in ProtocolCatcher.
+
+The only difference between ProtocolCatcher and ProtocolCatcher2 is that this is subclass of Object. This means it will not catch protocol inherited from Object. This is not usually a problem, and inspectors are more comfortable to use if the catcher is not that transparent.!
+
+!StandardFileMenu commentStamp: '<historical>' prior: 0!
+I represent a SelectionMenu which operates like a modal dialog for selecting files, somewhat similar to the StandardFile dialogs in MacOS and Java Swing.
+
+Try for example, the following:
+
+	(StandardFileMenu oldFileFrom: DirectoryEntry smalltalkImageDirectory) inspect
+	
+	(StandardFileMenu new 
+		oldFileFrom: DirectoryEntry smalltalkImageDirectory withPattern: '*.st' excludePattern: '.*';
+		startUpWithCaption: 'Pick up a Smalltalk file') 	inspect
+	
+	((StandardFileMenu new 
+		newFileFrom: DirectoryEntry smalltalkImageDirectory withPattern: '*.st') startUpWithCaption: 'dale') inspect!
+
+!ProtocolCatcher methodsFor: 'catching' stamp: 'jmv 11/3/2008 13:03'!
+doesNotUnderstand: aMessage
+
+	| protocol object answer |
+	Started ifTrue: [
+		protocol _ Protocols at: realObject class ifAbsentPut: Set new.
+		protocol add: aMessage selector ].
+	realObject == self ifTrue: [
+		self halt.
+		^nil].
+	object _ self realObject.
+	answer _ aMessage sendTo: object.
+	^answer == object 
+		ifTrue: [ self ]
+		ifFalse: [ answer ]! !
+
+!ProtocolCatcher methodsFor: 'services' stamp: 'jmv 11/3/2008 12:40'!
+initialize
+	realObject _ self! !
+
+!ProtocolCatcher methodsFor: 'accessing' stamp: 'jmv 11/3/2008 13:04'!
+realObject
+	realObject == self ifTrue: [^self halt].
+	^realObject class == ProtocolCatcher
+		ifTrue: [ realObject realObject ]
+		ifFalse: [ realObject ]! !
+
+!ProtocolCatcher methodsFor: 'accessing' stamp: 'jmv 3/5/2013 22:20'!
+realObject: anObject
+	realObject _ anObject! !
+
+!ProtocolCatcher class methodsFor: 'services' stamp: 'jmv 11/3/2008 11:28'!
+clear
+	Protocols _ Dictionary new.
+	Started _ false! !
+
+!ProtocolCatcher class methodsFor: 'services' stamp: 'jmv 11/3/2008 11:10'!
+observedClasses
+
+	^Protocols keys! !
+
+!ProtocolCatcher class methodsFor: 'services' stamp: 'jmv 11/3/2008 11:11'!
+protocolFor: aClass
+
+	^Protocols at: aClass! !
+
+!ProtocolCatcher class methodsFor: 'services' stamp: 'jmv 11/3/2008 11:28'!
+start
+	Started _ true! !
+
+!ProtocolCatcher class methodsFor: 'services' stamp: 'jmv 11/3/2008 11:28'!
+stop
+	Started _ false! !
+
+!ProtocolCatcher class methodsFor: 'instance creation' stamp: 'jmv 3/5/2013 22:20'!
+on: anObject
+	| catcher |
+	catcher _ self new.
+	catcher realObject: anObject.
+	^catcher! !
 
 !MappedCollection methodsFor: 'adding'!
 add: newObject
@@ -475,252 +536,6 @@ sortBlock: aBlock
 is: element1 equalTo: element2
 	^ element1 == element2! !
 
-!StandardFileMenu methodsFor: 'private' stamp: 'KenD 10/27/2015 19:13'!
-advance: anInteger containingDirectoriesFrom: aDirectory
-
-	| theDirectory |
-	theDirectory _ aDirectory.
-	1 to: anInteger do: [:i | theDirectory _ theDirectory parent].
-	^theDirectory! !
-
-!StandardFileMenu methodsFor: 'private' stamp: 'hlsf 7/25/2023 17:46:51'!
-newFileFrom: aDirectory withPattern: aPattern
-
-	self newFileFrom: aDirectory withPattern: aPattern excludePattern: nil! !
-
-!StandardFileMenu methodsFor: 'private' stamp: 'hlsf 7/25/2023 17:46:25'!
-newFileFrom: aDirectory withPattern: aPattern excludePattern: anotherPattern
-
-	canTypeFileName := true.
-	self pattern: aPattern.
-	self excludePattern: anotherPattern.
-	^self makeFileMenuFor: aDirectory! !
-
-!StandardFileMenu methodsFor: 'private' stamp: 'acg 4/15/1999 22:03'!
-oldFileFrom: aDirectory
-
-	canTypeFileName _ false.
-	^self makeFileMenuFor: aDirectory! !
-
-!StandardFileMenu methodsFor: 'private' stamp: 'hlsf 7/25/2023 17:48:32'!
-oldFileFrom: aDirectory withPattern: aPattern
-	self oldFileFrom: aDirectory withPattern: aPattern excludePattern: nil! !
-
-!StandardFileMenu methodsFor: 'private' stamp: 'hlsf 7/25/2023 17:48:02'!
-oldFileFrom: aDirectory withPattern: aPattern excludePattern: anotherPattern
-
-	canTypeFileName := false.
-	self pattern: aPattern.
-	self excludePattern: anotherPattern.
-	^self makeFileMenuFor: aDirectory! !
-
-!StandardFileMenu methodsFor: 'basic control sequences' stamp: 'KenD 10/27/2015 19:00'!
-confirmExistingFiles: aResult
-
-	|choice|
-	(aResult directory includesKey: aResult name) ifFalse: [^aResult].
-	
-	choice _ (PopUpMenu
-		labels:
-'overwrite that file
-choose another name
-cancel')
-		startUpWithCaption: aResult name, '
-already exists.'.
-
-	choice = 1 ifTrue: [
-		aResult directory 
-			removeKey: aResult name
-			ifAbsent: 
-				[^self startUpWithCaption: 
-'Can''t delete ', aResult name, '
-Select another file'].
-		^aResult].
-	choice = 2 ifTrue: [^self startUpWithCaption: 'Select Another File'].
-	^nil
- ! !
-
-!StandardFileMenu methodsFor: 'basic control sequences' stamp: 'KenD 10/27/2015 19:03'!
-getTypedFileName: aResult
-
-	| name |
-	name _ FillInTheBlankMorph 
-		request: 'Enter a new file name' 
-		initialAnswer: ''.
-	name = '' ifTrue: [^self startUpWithCaption: 'Select a File:' ].
-	^ StandardFileMenuResult
-			directory: (aResult directory)
-			name: name
-! !
-
-!StandardFileMenu methodsFor: 'basic control sequences' stamp: 'jmv 7/27/2018 20:59:10'!
-startUpWithCaption: aString at: location allowKeyboard: aBoolean
-
-	|result|
-	result _ super startUpWithCaption: aString at: location allowKeyboard: aBoolean.
-	result ifNil: [^nil].
-	result isDirectory ifTrue:
-		[self makeFileMenuFor: result directory.
-		 ^self startUpWithCaption: aString at: location allowKeyboard: aBoolean].
-	result isCommand ifTrue: 
-		[result _ self getTypedFileName: result.
-		result ifNil: [^nil]].
-	canTypeFileName ifTrue: [^self confirmExistingFiles: result].
-	^result
-	! !
-
-!StandardFileMenu methodsFor: 'menu building' stamp: 'hlsf 7/25/2023 23:33:54'!
-directoryNamesString: aDirectory
-"Answer a string concatenating the directory name strings in aDirectory, each string followed by a '[...]' indicator, and followed by a newLine."
-
-	^ String streamContents: 		[:s | 
-		(self matchingDirectories: aDirectory) do: 				[:subDirectory |	 
-			s nextPutAll: subDirectory name withBlanksTrimmed , ' [...]'; newLine]]
-
-! !
-
-!StandardFileMenu methodsFor: 'menu building' stamp: 'hlsf 7/25/2023 23:45:13'!
-fileNamesString: aDirectory
-"Answer a string concatenating the file name strings in aDirectory, each string followed by a newLine."
-
-	^String streamContents: 		[:s | 
-		(self matchingFiles: aDirectory) do: 	[:file |
-			s nextPutAll: file name withBlanksTrimmed; newLine]]! !
-
-!StandardFileMenu methodsFor: 'menu building' stamp: 'hlsf 7/25/2023 23:48:19'!
-makeFileMenuFor: aDirectory
-"Initialize an instance of me to operate on aDirectory"
-
-	| theMenu |
-	pattern ifNil: [ self pattern: '*'].
-	excludePattern ifNil: [self excludePattern: ''].
-	self 
-		labels: 	(self menuLabelsString: aDirectory)
-		lines: 	(self menuLinesArray: aDirectory).
-	theMenu := self selections: (self menuSelectionsArray: aDirectory).
-	^theMenu! !
-
-!StandardFileMenu methodsFor: 'menu building' stamp: 'acg 4/15/1999 21:57'!
-menuLabelsString: aDirectory
-"Answer a menu labels object corresponding to aDirectory"
-
-	^ String streamContents: 
-		[:s | 
-			canTypeFileName ifTrue: 
-				[s nextPutAll: 'Enter File Name...'; newLine].
-			s nextPutAll: (self pathPartsString: aDirectory).
-			s nextPutAll: (self directoryNamesString: aDirectory).
-			s nextPutAll: (self fileNamesString: aDirectory).
-			s skip: -1]! !
-
-!StandardFileMenu methodsFor: 'menu building' stamp: 'hlsf 7/25/2023 23:47:12'!
-menuLinesArray: aDirectory
-"Answer a menu lines object corresponding to aDirectory"
-
-	| typeCount nameCnt dirDepth|
-	typeCount := canTypeFileName 
-		ifTrue: [1] 
-		ifFalse: [0].
-	nameCnt := (self matchingDirectories: aDirectory) size.
-	dirDepth := aDirectory pathComponents size.
-	^Array streamContents: [:s |
-		canTypeFileName ifTrue: [s nextPut: 1].
-		s nextPut: dirDepth + typeCount + 1.
-		s nextPut: dirDepth + nameCnt + typeCount + 1]! !
-
-!StandardFileMenu methodsFor: 'menu building' stamp: 'hlsf 7/25/2023 23:43:56'!
-menuSelectionsArray: aDirectory
-"Answer a menu selections object corresponding to aDirectory.  The object is an array corresponding to each item, each element itself constituting a two-element array, the first element of which contains a selector to operate on and the second element of which contains the parameters for that selector."
-
-	|dirSize|
-	dirSize := aDirectory pathComponents size.
-	^Array streamContents: [:s |
-		canTypeFileName ifTrue:
-			[s nextPut: (StandardFileMenuResult
-				directory: aDirectory
-				name: nil)].
-		s nextPut: (StandardFileMenuResult
-			directory: (DirectoryEntry roots first)
-			name: '').
-		aDirectory pathComponents withIndexDo: 
-			[:d :i | s nextPut: (StandardFileMenuResult
-				directory: (self 
-					advance: dirSize - i
-					containingDirectoriesFrom: aDirectory)
-				name: '')].
-		(self matchingDirectories: aDirectory)		 do: 
-			[:dir | 	s nextPut: (StandardFileMenuResult
-					directory: dir
-					name: '')].
-		(self matchingFiles: aDirectory) do: 
-			[:file | 	s nextPut: (StandardFileMenuResult
-					directory: aDirectory
-					name: file name)]]! !
-
-!StandardFileMenu methodsFor: 'menu building' stamp: 'jmv 4/2/2016 23:07'!
-pathPartsString: aDirectory
-"Answer a string concatenating the path parts strings in aDirectory, each string followed by a newLine."
-
-	^String streamContents:
-		[:s | 
-			s nextPutAll: '[]'; newLine.
-			aDirectory pathComponents asArray withIndexDo: 
-				[:part :i |
-					s next: i put: $ .
-					s nextPutAll: part withBlanksTrimmed; newLine]]! !
-
-!StandardFileMenu methodsFor: 'pattern' stamp: 'KenD 7/27/2023 12:19:08'!
-excludePattern: patString
-" See method pattern: "
-
-	excludePattern := patString ifNotNil: [ patString substrings ]! !
-
-!StandardFileMenu methodsFor: 'pattern' stamp: 'hlsf 7/25/2023 17:59:48'!
-excludePatternMatches: aString
-	^excludePattern anySatisfy: [ :pat | pat match: aString ]! !
-
-!StandardFileMenu methodsFor: 'pattern' stamp: 'hlsf 7/25/2023 23:52:31'!
-matchingDirectories: parentDirectory
-	^ (parentDirectory directories reject: [: aDirectory |
-		self excludePatternMatches: aDirectory name]) sort: [:d1 :d2 | 
-			d1 name asLowercase < d2 name asLowercase ]
-	! !
-
-!StandardFileMenu methodsFor: 'pattern' stamp: 'hlsf 7/25/2023 23:54:52'!
-matchingFiles: parentDirectory
-	^ (parentDirectory files select: [: aFile |
-		(self excludePatternMatches: aFile name) not 
-		and: [self patternMatches: aFile name]]) sort: [:f1 :f2 | 
-			f1 name asLowercase < f2 name asLowercase ]
-	! !
-
-!StandardFileMenu methodsFor: 'pattern' stamp: 'jmv 7/9/2009 08:44'!
-pattern: patString
-	" * for all files, or '*.cs' for changeSets, etc.  Just like fileLists
-	jmv- Added support for multiple patterns, separated by spaces.
-	For example '*.cs *.st' will show both changesets and fileouts."
-
-	pattern _ patString substrings! !
-
-!StandardFileMenu methodsFor: 'pattern' stamp: 'jmv 7/9/2009 08:45'!
-patternMatches: aString
-
-	^pattern anySatisfy: [ :pat | pat match: aString ]! !
-
-!StandardFileMenu class methodsFor: 'standard file operations' stamp: 'jmv 1/21/2013 22:59'!
-oldFileFrom: aDirectory
-
-	^(self oldFileMenu: aDirectory)
-		startUpWithCaption: 'Select a File:'! !
-
-!StandardFileMenu class methodsFor: 'instance creation' stamp: 'pb 5/25/2016 01:13'!
-oldFileMenu: aDirectory
-
-	(aDirectory isKindOf: DirectoryEntry)
-		ifFalse: [ self error: 'I require a DirectoryEntry'].
-
-	^self new oldFileFrom: aDirectory! !
-
 !AsyncFile methodsFor: 'as yet unclassified'!
 close
 
@@ -957,115 +772,6 @@ on: element level: maxLevel
 tailOfLevel: n
 	^ self on: nil level: n! !
 
-!StandardFileMenuResult methodsFor: 'accessing' stamp: 'acg 4/15/1999 08:43'!
-directory
-
-	^directory! !
-
-!StandardFileMenuResult methodsFor: 'accessing' stamp: 'acg 4/15/1999 08:43'!
-directory: aDirectory
-
-	^directory _ aDirectory! !
-
-!StandardFileMenuResult methodsFor: 'accessing' stamp: 'acg 4/15/1999 08:43'!
-name
-
-	^name! !
-
-!StandardFileMenuResult methodsFor: 'accessing' stamp: 'acg 4/15/1999 08:43'!
-name: aString
-
-	^name _ aString! !
-
-!StandardFileMenuResult methodsFor: 'accessing' stamp: 'sw 6/9/1999 11:50'!
-printOn: aStream
-	super printOn: aStream.
-	aStream nextPutAll: ' with directory: '.
-	directory printOn: aStream.
-	aStream nextPutAll: ' name: '.
-	name printOn: aStream
-
-"StandardFileMenu oldFile"! !
-
-!StandardFileMenuResult methodsFor: 'private' stamp: 'acg 4/15/1999 08:42'!
-directory: aDirectory name: aString
-
-	directory _ aDirectory.
-	name _ aString.
-	^self! !
-
-!StandardFileMenuResult methodsFor: 'testing' stamp: 'acg 4/15/1999 09:05'!
-isCommand
-
-	^name isNil! !
-
-!StandardFileMenuResult methodsFor: 'testing' stamp: 'acg 4/15/1999 20:57'!
-isDirectory
-
-	^name = ''! !
-
-!StandardFileMenuResult class methodsFor: 'instance creation' stamp: 'acg 4/15/1999 08:42'!
-directory: aDirectory name: aString
-
-	^super new directory: aDirectory name: aString! !
-
-!ProtocolCatcher2 methodsFor: 'catching' stamp: 'jmv 11/3/2008 13:03'!
-doesNotUnderstand: aMessage
-
-	| protocol object answer |
-	Started ifTrue: [
-		protocol _ Protocols at: realObject class ifAbsentPut: Set new.
-		protocol add: aMessage selector ].
-	realObject == self ifTrue: [
-		self halt.
-		^nil].
-	object _ self realObject.
-	answer _ aMessage sendTo: object.
-	^answer == object 
-		ifTrue: [ self ]
-		ifFalse: [ answer ]! !
-
-!ProtocolCatcher2 methodsFor: 'services' stamp: 'jmv 11/3/2008 13:00'!
-initialize
-	realObject _ self! !
-
-!ProtocolCatcher2 methodsFor: 'accessing' stamp: 'jmv 11/3/2008 14:55'!
-realObject
-	realObject == self ifTrue: [^self halt].
-	^realObject class == ProtocolCatcher2
-		ifTrue: [ realObject realObject ]
-		ifFalse: [ realObject ]! !
-
-!ProtocolCatcher2 class methodsFor: 'services' stamp: 'jmv 11/3/2008 12:51'!
-clear
-	Protocols _ Dictionary new.
-	Started _ false! !
-
-!ProtocolCatcher2 class methodsFor: 'services' stamp: 'jmv 11/3/2008 12:51'!
-observedClasses
-
-	^Protocols keys! !
-
-!ProtocolCatcher2 class methodsFor: 'services' stamp: 'jmv 11/3/2008 12:51'!
-protocolFor: aClass
-
-	^Protocols at: aClass! !
-
-!ProtocolCatcher2 class methodsFor: 'services' stamp: 'jmv 11/3/2008 12:51'!
-start
-	Started _ true! !
-
-!ProtocolCatcher2 class methodsFor: 'services' stamp: 'jmv 11/3/2008 12:51'!
-stop
-	Started _ false! !
-
-!ProtocolCatcher2 class methodsFor: 'instance creation' stamp: 'jmv 4/14/2011 16:04'!
-on: anObject
-	| catcher |
-	catcher _ self new.
-	catcher instVarNamed: 'realObject' put: anObject.
-	^catcher! !
-
 !Stopwatch methodsFor: 'squeak protocol' stamp: 'brp 9/24/2003 23:12'!
 activate
 
@@ -1176,7 +882,59 @@ timespans
 	^ timespans ifNil: [ timespans _ OrderedCollection new ]
 ! !
 
-!ProtocolCatcher methodsFor: 'catching' stamp: 'jmv 11/3/2008 13:03'!
+!StandardFileMenuResult methodsFor: 'accessing' stamp: 'acg 4/15/1999 08:43'!
+directory
+
+	^directory! !
+
+!StandardFileMenuResult methodsFor: 'accessing' stamp: 'acg 4/15/1999 08:43'!
+directory: aDirectory
+
+	^directory _ aDirectory! !
+
+!StandardFileMenuResult methodsFor: 'accessing' stamp: 'acg 4/15/1999 08:43'!
+name
+
+	^name! !
+
+!StandardFileMenuResult methodsFor: 'accessing' stamp: 'acg 4/15/1999 08:43'!
+name: aString
+
+	^name _ aString! !
+
+!StandardFileMenuResult methodsFor: 'accessing' stamp: 'sw 6/9/1999 11:50'!
+printOn: aStream
+	super printOn: aStream.
+	aStream nextPutAll: ' with directory: '.
+	directory printOn: aStream.
+	aStream nextPutAll: ' name: '.
+	name printOn: aStream
+
+"StandardFileMenu oldFile"! !
+
+!StandardFileMenuResult methodsFor: 'private' stamp: 'acg 4/15/1999 08:42'!
+directory: aDirectory name: aString
+
+	directory _ aDirectory.
+	name _ aString.
+	^self! !
+
+!StandardFileMenuResult methodsFor: 'testing' stamp: 'acg 4/15/1999 09:05'!
+isCommand
+
+	^name isNil! !
+
+!StandardFileMenuResult methodsFor: 'testing' stamp: 'acg 4/15/1999 20:57'!
+isDirectory
+
+	^name = ''! !
+
+!StandardFileMenuResult class methodsFor: 'instance creation' stamp: 'acg 4/15/1999 08:42'!
+directory: aDirectory name: aString
+
+	^super new directory: aDirectory name: aString! !
+
+!ProtocolCatcher2 methodsFor: 'catching' stamp: 'jmv 11/3/2008 13:03'!
 doesNotUnderstand: aMessage
 
 	| protocol object answer |
@@ -1192,50 +950,292 @@ doesNotUnderstand: aMessage
 		ifTrue: [ self ]
 		ifFalse: [ answer ]! !
 
-!ProtocolCatcher methodsFor: 'services' stamp: 'jmv 11/3/2008 12:40'!
+!ProtocolCatcher2 methodsFor: 'services' stamp: 'jmv 11/3/2008 13:00'!
 initialize
 	realObject _ self! !
 
-!ProtocolCatcher methodsFor: 'accessing' stamp: 'jmv 11/3/2008 13:04'!
+!ProtocolCatcher2 methodsFor: 'accessing' stamp: 'jmv 11/3/2008 14:55'!
 realObject
 	realObject == self ifTrue: [^self halt].
-	^realObject class == ProtocolCatcher
+	^realObject class == ProtocolCatcher2
 		ifTrue: [ realObject realObject ]
 		ifFalse: [ realObject ]! !
 
-!ProtocolCatcher methodsFor: 'accessing' stamp: 'jmv 3/5/2013 22:20'!
-realObject: anObject
-	realObject _ anObject! !
-
-!ProtocolCatcher class methodsFor: 'services' stamp: 'jmv 11/3/2008 11:28'!
+!ProtocolCatcher2 class methodsFor: 'services' stamp: 'jmv 11/3/2008 12:51'!
 clear
 	Protocols _ Dictionary new.
 	Started _ false! !
 
-!ProtocolCatcher class methodsFor: 'services' stamp: 'jmv 11/3/2008 11:10'!
+!ProtocolCatcher2 class methodsFor: 'services' stamp: 'jmv 11/3/2008 12:51'!
 observedClasses
 
 	^Protocols keys! !
 
-!ProtocolCatcher class methodsFor: 'services' stamp: 'jmv 11/3/2008 11:11'!
+!ProtocolCatcher2 class methodsFor: 'services' stamp: 'jmv 11/3/2008 12:51'!
 protocolFor: aClass
 
 	^Protocols at: aClass! !
 
-!ProtocolCatcher class methodsFor: 'services' stamp: 'jmv 11/3/2008 11:28'!
+!ProtocolCatcher2 class methodsFor: 'services' stamp: 'jmv 11/3/2008 12:51'!
 start
 	Started _ true! !
 
-!ProtocolCatcher class methodsFor: 'services' stamp: 'jmv 11/3/2008 11:28'!
+!ProtocolCatcher2 class methodsFor: 'services' stamp: 'jmv 11/3/2008 12:51'!
 stop
 	Started _ false! !
 
-!ProtocolCatcher class methodsFor: 'instance creation' stamp: 'jmv 3/5/2013 22:20'!
+!ProtocolCatcher2 class methodsFor: 'instance creation' stamp: 'jmv 4/14/2011 16:04'!
 on: anObject
 	| catcher |
 	catcher _ self new.
-	catcher realObject: anObject.
+	catcher instVarNamed: 'realObject' put: anObject.
 	^catcher! !
+
+!StandardFileMenu methodsFor: 'private' stamp: 'KenD 10/27/2015 19:13'!
+advance: anInteger containingDirectoriesFrom: aDirectory
+
+	| theDirectory |
+	theDirectory _ aDirectory.
+	1 to: anInteger do: [:i | theDirectory _ theDirectory parent].
+	^theDirectory! !
+
+!StandardFileMenu methodsFor: 'private' stamp: 'hlsf 7/25/2023 17:46:51'!
+newFileFrom: aDirectory withPattern: aPattern
+
+	self newFileFrom: aDirectory withPattern: aPattern excludePattern: nil! !
+
+!StandardFileMenu methodsFor: 'private' stamp: 'hlsf 7/25/2023 17:46:25'!
+newFileFrom: aDirectory withPattern: aPattern excludePattern: anotherPattern
+
+	canTypeFileName := true.
+	self pattern: aPattern.
+	self excludePattern: anotherPattern.
+	^self makeFileMenuFor: aDirectory! !
+
+!StandardFileMenu methodsFor: 'private' stamp: 'acg 4/15/1999 22:03'!
+oldFileFrom: aDirectory
+
+	canTypeFileName _ false.
+	^self makeFileMenuFor: aDirectory! !
+
+!StandardFileMenu methodsFor: 'private' stamp: 'hlsf 7/25/2023 17:48:32'!
+oldFileFrom: aDirectory withPattern: aPattern
+	self oldFileFrom: aDirectory withPattern: aPattern excludePattern: nil! !
+
+!StandardFileMenu methodsFor: 'private' stamp: 'hlsf 7/25/2023 17:48:02'!
+oldFileFrom: aDirectory withPattern: aPattern excludePattern: anotherPattern
+
+	canTypeFileName := false.
+	self pattern: aPattern.
+	self excludePattern: anotherPattern.
+	^self makeFileMenuFor: aDirectory! !
+
+!StandardFileMenu methodsFor: 'basic control sequences' stamp: 'KenD 10/27/2015 19:00'!
+confirmExistingFiles: aResult
+
+	|choice|
+	(aResult directory includesKey: aResult name) ifFalse: [^aResult].
+	
+	choice _ (PopUpMenu
+		labels:
+'overwrite that file
+choose another name
+cancel')
+		startUpWithCaption: aResult name, '
+already exists.'.
+
+	choice = 1 ifTrue: [
+		aResult directory 
+			removeKey: aResult name
+			ifAbsent: 
+				[^self startUpWithCaption: 
+'Can''t delete ', aResult name, '
+Select another file'].
+		^aResult].
+	choice = 2 ifTrue: [^self startUpWithCaption: 'Select Another File'].
+	^nil
+ ! !
+
+!StandardFileMenu methodsFor: 'basic control sequences' stamp: 'jmv 9/12/2024 12:05:29'!
+getTypedFileName: aResult
+
+	| name |
+	name := StringRequestMorph 
+		request: 'Enter a new file name' 
+		initialAnswer: ''.
+	name = '' ifTrue: [^self startUpWithCaption: 'Select a File:' ].
+	^ StandardFileMenuResult
+			directory: (aResult directory)
+			name: name
+! !
+
+!StandardFileMenu methodsFor: 'basic control sequences' stamp: 'jmv 7/27/2018 20:59:10'!
+startUpWithCaption: aString at: location allowKeyboard: aBoolean
+
+	|result|
+	result _ super startUpWithCaption: aString at: location allowKeyboard: aBoolean.
+	result ifNil: [^nil].
+	result isDirectory ifTrue:
+		[self makeFileMenuFor: result directory.
+		 ^self startUpWithCaption: aString at: location allowKeyboard: aBoolean].
+	result isCommand ifTrue: 
+		[result _ self getTypedFileName: result.
+		result ifNil: [^nil]].
+	canTypeFileName ifTrue: [^self confirmExistingFiles: result].
+	^result
+	! !
+
+!StandardFileMenu methodsFor: 'menu building' stamp: 'hlsf 7/25/2023 23:33:54'!
+directoryNamesString: aDirectory
+"Answer a string concatenating the directory name strings in aDirectory, each string followed by a '[...]' indicator, and followed by a newLine."
+
+	^ String streamContents: 		[:s | 
+		(self matchingDirectories: aDirectory) do: 				[:subDirectory |	 
+			s nextPutAll: subDirectory name withBlanksTrimmed , ' [...]'; newLine]]
+
+! !
+
+!StandardFileMenu methodsFor: 'menu building' stamp: 'hlsf 7/25/2023 23:45:13'!
+fileNamesString: aDirectory
+"Answer a string concatenating the file name strings in aDirectory, each string followed by a newLine."
+
+	^String streamContents: 		[:s | 
+		(self matchingFiles: aDirectory) do: 	[:file |
+			s nextPutAll: file name withBlanksTrimmed; newLine]]! !
+
+!StandardFileMenu methodsFor: 'menu building' stamp: 'hlsf 7/25/2023 23:48:19'!
+makeFileMenuFor: aDirectory
+"Initialize an instance of me to operate on aDirectory"
+
+	| theMenu |
+	pattern ifNil: [ self pattern: '*'].
+	excludePattern ifNil: [self excludePattern: ''].
+	self 
+		labels: 	(self menuLabelsString: aDirectory)
+		lines: 	(self menuLinesArray: aDirectory).
+	theMenu := self selections: (self menuSelectionsArray: aDirectory).
+	^theMenu! !
+
+!StandardFileMenu methodsFor: 'menu building' stamp: 'acg 4/15/1999 21:57'!
+menuLabelsString: aDirectory
+"Answer a menu labels object corresponding to aDirectory"
+
+	^ String streamContents: 
+		[:s | 
+			canTypeFileName ifTrue: 
+				[s nextPutAll: 'Enter File Name...'; newLine].
+			s nextPutAll: (self pathPartsString: aDirectory).
+			s nextPutAll: (self directoryNamesString: aDirectory).
+			s nextPutAll: (self fileNamesString: aDirectory).
+			s skip: -1]! !
+
+!StandardFileMenu methodsFor: 'menu building' stamp: 'hlsf 7/25/2023 23:47:12'!
+menuLinesArray: aDirectory
+"Answer a menu lines object corresponding to aDirectory"
+
+	| typeCount nameCnt dirDepth|
+	typeCount := canTypeFileName 
+		ifTrue: [1] 
+		ifFalse: [0].
+	nameCnt := (self matchingDirectories: aDirectory) size.
+	dirDepth := aDirectory pathComponents size.
+	^Array streamContents: [:s |
+		canTypeFileName ifTrue: [s nextPut: 1].
+		s nextPut: dirDepth + typeCount + 1.
+		s nextPut: dirDepth + nameCnt + typeCount + 1]! !
+
+!StandardFileMenu methodsFor: 'menu building' stamp: 'hlsf 7/25/2023 23:43:56'!
+menuSelectionsArray: aDirectory
+"Answer a menu selections object corresponding to aDirectory.  The object is an array corresponding to each item, each element itself constituting a two-element array, the first element of which contains a selector to operate on and the second element of which contains the parameters for that selector."
+
+	|dirSize|
+	dirSize := aDirectory pathComponents size.
+	^Array streamContents: [:s |
+		canTypeFileName ifTrue:
+			[s nextPut: (StandardFileMenuResult
+				directory: aDirectory
+				name: nil)].
+		s nextPut: (StandardFileMenuResult
+			directory: (DirectoryEntry roots first)
+			name: '').
+		aDirectory pathComponents withIndexDo: 
+			[:d :i | s nextPut: (StandardFileMenuResult
+				directory: (self 
+					advance: dirSize - i
+					containingDirectoriesFrom: aDirectory)
+				name: '')].
+		(self matchingDirectories: aDirectory)		 do: 
+			[:dir | 	s nextPut: (StandardFileMenuResult
+					directory: dir
+					name: '')].
+		(self matchingFiles: aDirectory) do: 
+			[:file | 	s nextPut: (StandardFileMenuResult
+					directory: aDirectory
+					name: file name)]]! !
+
+!StandardFileMenu methodsFor: 'menu building' stamp: 'jmv 4/2/2016 23:07'!
+pathPartsString: aDirectory
+"Answer a string concatenating the path parts strings in aDirectory, each string followed by a newLine."
+
+	^String streamContents:
+		[:s | 
+			s nextPutAll: '[]'; newLine.
+			aDirectory pathComponents asArray withIndexDo: 
+				[:part :i |
+					s next: i put: $ .
+					s nextPutAll: part withBlanksTrimmed; newLine]]! !
+
+!StandardFileMenu methodsFor: 'pattern' stamp: 'KenD 7/27/2023 12:19:08'!
+excludePattern: patString
+" See method pattern: "
+
+	excludePattern := patString ifNotNil: [ patString substrings ]! !
+
+!StandardFileMenu methodsFor: 'pattern' stamp: 'hlsf 7/25/2023 17:59:48'!
+excludePatternMatches: aString
+	^excludePattern anySatisfy: [ :pat | pat match: aString ]! !
+
+!StandardFileMenu methodsFor: 'pattern' stamp: 'hlsf 7/25/2023 23:52:31'!
+matchingDirectories: parentDirectory
+	^ (parentDirectory directories reject: [: aDirectory |
+		self excludePatternMatches: aDirectory name]) sort: [:d1 :d2 | 
+			d1 name asLowercase < d2 name asLowercase ]
+	! !
+
+!StandardFileMenu methodsFor: 'pattern' stamp: 'hlsf 7/25/2023 23:54:52'!
+matchingFiles: parentDirectory
+	^ (parentDirectory files select: [: aFile |
+		(self excludePatternMatches: aFile name) not 
+		and: [self patternMatches: aFile name]]) sort: [:f1 :f2 | 
+			f1 name asLowercase < f2 name asLowercase ]
+	! !
+
+!StandardFileMenu methodsFor: 'pattern' stamp: 'jmv 7/9/2009 08:44'!
+pattern: patString
+	" * for all files, or '*.cs' for changeSets, etc.  Just like fileLists
+	jmv- Added support for multiple patterns, separated by spaces.
+	For example '*.cs *.st' will show both changesets and fileouts."
+
+	pattern _ patString substrings! !
+
+!StandardFileMenu methodsFor: 'pattern' stamp: 'jmv 7/9/2009 08:45'!
+patternMatches: aString
+
+	^pattern anySatisfy: [ :pat | pat match: aString ]! !
+
+!StandardFileMenu class methodsFor: 'standard file operations' stamp: 'jmv 1/21/2013 22:59'!
+oldFileFrom: aDirectory
+
+	^(self oldFileMenu: aDirectory)
+		startUpWithCaption: 'Select a File:'! !
+
+!StandardFileMenu class methodsFor: 'instance creation' stamp: 'pb 5/25/2016 01:13'!
+oldFileMenu: aDirectory
+
+	(aDirectory isKindOf: DirectoryEntry)
+		ifFalse: [ self error: 'I require a DirectoryEntry'].
+
+	^self new oldFileFrom: aDirectory! !
 
 !Collection methodsFor: '*Goodies-Collections' stamp: 'LC 6/18/2001 20:30'!
 asIdentitySkipList

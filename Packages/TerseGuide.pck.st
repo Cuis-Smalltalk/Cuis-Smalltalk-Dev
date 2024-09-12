@@ -1,6 +1,6 @@
-'From Cuis7.1 [latest update: #6378] on 18 May 2024 at 4:47:05 pm'!
+'From Cuis7.1 [latest update: #6713] on 12 September 2024 at 12:08:46 pm'!
 'Description Add ability to dynamically add topic pages from other sources.'!
-!provides: 'TerseGuide' 1 147!
+!provides: 'TerseGuide' 1 148!
 SystemOrganization addCategory: #TerseGuide!
 
 
@@ -1559,16 +1559,16 @@ BoxedMorph new
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 3/5/2015 11:34'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'jmv 9/12/2024 12:03:00'!
 misc
 	"Miscellaneous"
 	^
 '| x |
 Smalltalk condenseChanges.					"compress the change file"
-x _ FillInTheBlankMorph request: ''Prompt Me''.		"prompt user for input"
+x _ StringRequestMorph request: ''Prompt Me''.		"prompt user for input"
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 10/6/2018 17:53:32'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'jmv 9/12/2024 12:02:55'!
 morph
 	"Morphs"
 	^
@@ -1580,7 +1580,7 @@ x openInHand.				"make visible at cursor location"
 x name: #MyName.			"used in the halos"
 x name: ''My Name''.		"alternative, allowing imbedded blanks"
 x morphPosition: 100@65.	"set the morph location"
-y _ FillInTheBlankMorph request: ''Please Enter Something''.	"prompt user for input"
+y _ StringRequestMorph request: ''Please Enter Something''.	"prompt user for input"
 Feature require: #''Morphic-Widgets-Extras''.	"ensure a requirement is available for the following plot"
 x _ FunctionGraphMorph initializedInstance openInHand.	"example, plotting two functions"
 x _ SystemWindow new openInWorld.	"open a window"
@@ -1681,7 +1681,7 @@ x _ 20@5 dotProduct: 10@2.					"sum of product (x1*x2 + y1*y2)"
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 8/10/2018 18:30:51'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'jmv 9/12/2024 12:04:44'!
 popUpMenu
 	"PopUpMenu"
 	^
@@ -1702,7 +1702,7 @@ x _ (PopUpMenu labelArray: arr lines: lin)
 	allowKeyboard: false.
 y _ (PopUpMenu withCaption: ''Special'' chooseFrom: ''Alpha\Beta\Gamma\something else'').
 
-x _ FillInTheBlankMorph request: ''Enter the (whatever)'' initialAnswer: ''the default''.
+x _ StringRequestMorph request: ''Enter the (whatever)'' initialAnswer: ''the default''.
 		"when it is not possible to pre-determine an answer"
 		
 "For potentially long menus, the following includes ''more...'' and ''start over...'' behavior"

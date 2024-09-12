@@ -1,6 +1,6 @@
-'From Cuis7.1 [latest update: #6566] on 8 August 2024 at 10:08:12 am'!
+'From Cuis7.1 [latest update: #6713] on 12 September 2024 at 12:08:48 pm'!
 'Description Theme customizer'!
-!provides: 'Theme-Themes' 1 17!
+!provides: 'Theme-Themes' 1 18!
 SystemOrganization addCategory: #'Theme-Themes'!
 
 
@@ -1056,7 +1056,7 @@ buildButtonThatExecutes: action hasLabel: label color: buttonColor forRow: row
 		
 	^ column.! !
 
-!ThemeCustomizerWindow methodsFor: 'build - private' stamp: 'HAW 7/24/2023 11:13:20'!
+!ThemeCustomizerWindow methodsFor: 'build - private' stamp: 'jmv 9/12/2024 12:07:30'!
 buildCustomColorInputAndDoRowAction: arguments
 
 	| customColorString action row initialText |
@@ -1064,7 +1064,7 @@ buildCustomColorInputAndDoRowAction: arguments
 	action := arguments first.
 	row := arguments second.
 	initialText := 'hex code (example: #FFAABB)'.
-	customColorString := FillInTheBlankMorph request: 'Enter custom color:' initialAnswer: initialText onCancel: [^''].
+	customColorString := StringRequestMorph request: 'Enter custom color:' initialAnswer: initialText orCancel: [^''].
 	customColorString = initialText ifFalse: [self ensureColorIsHexCode: customColorString andDo: action for: row].
 	^customColorString.! !
 

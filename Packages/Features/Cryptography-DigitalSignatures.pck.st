@@ -1,11 +1,11 @@
-'From Cuis6.3 [latest update: #6189] on 9 January 2024 at 5:50:42 pm'!
+'From Cuis7.1 [latest update: #6713] on 12 September 2024 at 12:08:34 pm'!
 'Description This package contains implementations of common digital signature algorithms.
 For example SHA1, DSA.
 
 It was originally written for Squeak 4.5 and ported to Cuis with few changes by David Graham.
 
 License: MIT'!
-!provides: 'Cryptography-DigitalSignatures' 1 15!
+!provides: 'Cryptography-DigitalSignatures' 1 16!
 !requires: 'Sound' 1 3 nil!
 SystemOrganization addCategory: #'Cryptography-DigitalSignatures'!
 
@@ -352,12 +352,12 @@ initRandomFromString: aString
 	self initRandom: k.
 ! !
 
-!DigitalSignatureAlgorithm methodsFor: 'initialization' stamp: 'jmv 1/9/2024 16:21:21'!
+!DigitalSignatureAlgorithm methodsFor: 'initialization' stamp: 'jmv 9/12/2024 12:07:04'!
 initRandomFromUser
 	"Ask the user to type a long random string and use the result to seed the secure random number generator."
 
 	| s k srcIndex |
-	s := FillInTheBlankMorph request: 'Enter a long random string to seed the random generator.'.
+	s := StringRequestMorph request: 'Enter a long random string to seed the random generator.'.
 	k := LargePositiveInteger new: (s size min: 64).
 	srcIndex := 0.
 	k digitLength to: 1 by: -1 do: [:i |

@@ -1,6 +1,6 @@
-'From Cuis6.3 [latest update: #6213] on 6 February 2024 at 10:25:39 am'!
+'From Cuis7.1 [latest update: #6713] on 12 September 2024 at 12:08:43 pm'!
 'Description '!
-!provides: 'Sound' 1 31!
+!provides: 'Sound' 1 32!
 !requires: 'Compression' 1 nil nil!
 SystemOrganization addCategory: #'Sound-Synthesis'!
 SystemOrganization addCategory: #'Sound-Scores'!
@@ -27,6 +27,126 @@ ImageMorph subclass: #Sonogram
 Sonogram class
 	instanceVariableNames: ''!
 
+!classDefinition: #AbstractScoreEvent category: #'Sound-Scores'!
+Object subclass: #AbstractScoreEvent
+	instanceVariableNames: 'time'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Sound-Scores'!
+!classDefinition: 'AbstractScoreEvent class' category: #'Sound-Scores'!
+AbstractScoreEvent class
+	instanceVariableNames: ''!
+
+!classDefinition: #ControlChangeEvent category: #'Sound-Scores'!
+AbstractScoreEvent subclass: #ControlChangeEvent
+	instanceVariableNames: 'control value channel'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Sound-Scores'!
+!classDefinition: 'ControlChangeEvent class' category: #'Sound-Scores'!
+ControlChangeEvent class
+	instanceVariableNames: ''!
+
+!classDefinition: #NoteEvent category: #'Sound-Scores'!
+AbstractScoreEvent subclass: #NoteEvent
+	instanceVariableNames: 'duration midiKey velocity channel'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Sound-Scores'!
+!classDefinition: 'NoteEvent class' category: #'Sound-Scores'!
+NoteEvent class
+	instanceVariableNames: ''!
+
+!classDefinition: #PitchBendEvent category: #'Sound-Scores'!
+AbstractScoreEvent subclass: #PitchBendEvent
+	instanceVariableNames: 'bend channel'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Sound-Scores'!
+!classDefinition: 'PitchBendEvent class' category: #'Sound-Scores'!
+PitchBendEvent class
+	instanceVariableNames: ''!
+
+!classDefinition: #ProgramChangeEvent category: #'Sound-Scores'!
+AbstractScoreEvent subclass: #ProgramChangeEvent
+	instanceVariableNames: 'program channel'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Sound-Scores'!
+!classDefinition: 'ProgramChangeEvent class' category: #'Sound-Scores'!
+ProgramChangeEvent class
+	instanceVariableNames: ''!
+
+!classDefinition: #TempoEvent category: #'Sound-Scores'!
+AbstractScoreEvent subclass: #TempoEvent
+	instanceVariableNames: 'tempo'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Sound-Scores'!
+!classDefinition: 'TempoEvent class' category: #'Sound-Scores'!
+TempoEvent class
+	instanceVariableNames: ''!
+
+!classDefinition: #MIDIFileReader category: #'Sound-Scores'!
+Object subclass: #MIDIFileReader
+	instanceVariableNames: 'stream fileType trackCount ticksPerQuarter tracks trackInfo tempoMap strings track trackStream activeEvents maxNoteTicks'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Sound-Scores'!
+!classDefinition: 'MIDIFileReader class' category: #'Sound-Scores'!
+MIDIFileReader class
+	instanceVariableNames: ''!
+
+!classDefinition: #MIDIInputParser category: #'Sound-Scores'!
+Object subclass: #MIDIInputParser
+	instanceVariableNames: 'cmdActionTable midiPort received rawDataBuffer sysExBuffer ignoreSysEx startTime timeNow state lastSelector lastCmdByte argByte1 argByte2'
+	classVariableNames: 'DefaultMidiTable'
+	poolDictionaries: ''
+	category: 'Sound-Scores'!
+!classDefinition: 'MIDIInputParser class' category: #'Sound-Scores'!
+MIDIInputParser class
+	instanceVariableNames: ''!
+
+!classDefinition: #MIDIScore category: #'Sound-Scores'!
+Object subclass: #MIDIScore
+	instanceVariableNames: 'tracks trackInfo tempoMap ticksPerQuarterNote'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Sound-Scores'!
+!classDefinition: 'MIDIScore class' category: #'Sound-Scores'!
+MIDIScore class
+	instanceVariableNames: ''!
+
+!classDefinition: #MIDISynth category: #'Sound-Scores'!
+Object subclass: #MIDISynth
+	instanceVariableNames: 'midiParser channels process'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Sound-Scores'!
+!classDefinition: 'MIDISynth class' category: #'Sound-Scores'!
+MIDISynth class
+	instanceVariableNames: ''!
+
+!classDefinition: #MIDISynthChannel category: #'Sound-Scores'!
+Object subclass: #MIDISynthChannel
+	instanceVariableNames: 'instrument muted masterVolume channelVolume pan pitchBend activeSounds'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Sound-Scores'!
+!classDefinition: 'MIDISynthChannel class' category: #'Sound-Scores'!
+MIDISynthChannel class
+	instanceVariableNames: ''!
+
+!classDefinition: #SimpleMIDIPort category: #'Sound-Scores'!
+Object subclass: #SimpleMIDIPort
+	instanceVariableNames: 'portNumber accessSema lastCommandByteOut'
+	classVariableNames: 'DefaultPortNumber InterfaceClockRate'
+	poolDictionaries: ''
+	category: 'Sound-Scores'!
+!classDefinition: 'SimpleMIDIPort class' category: #'Sound-Scores'!
+SimpleMIDIPort class
+	instanceVariableNames: ''!
+
 !classDefinition: #AIFFFileReader category: #'Sound-Synthesis'!
 Object subclass: #AIFFFileReader
 	instanceVariableNames: 'in fileType channelCount frameCount bitsPerSample samplingRate channelData channelDataOffset markers pitch gain isLooped skipDataChunk mergeIfStereo'
@@ -45,6 +165,16 @@ Object subclass: #AbstractSound
 	category: 'Sound-Synthesis'!
 !classDefinition: 'AbstractSound class' category: #'Sound-Synthesis'!
 AbstractSound class
+	instanceVariableNames: ''!
+
+!classDefinition: #ScorePlayer category: #'Sound-Scores'!
+AbstractSound subclass: #ScorePlayer
+	instanceVariableNames: 'score instruments overallVolume leftVols rightVols muted rate tempo secsPerTick done repeat ticksSinceStart ticksClockIncr trackEventIndex tempoMapIndex activeSounds activeMIDINotes midiPort midiPlayerProcess durationInTicks'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Sound-Scores'!
+!classDefinition: 'ScorePlayer class' category: #'Sound-Scores'!
+ScorePlayer class
 	instanceVariableNames: ''!
 
 !classDefinition: #FMSound category: #'Sound-Synthesis'!
@@ -187,16 +317,6 @@ AbstractSound subclass: #StreamingMonoSound
 StreamingMonoSound class
 	instanceVariableNames: ''!
 
-!classDefinition: #ScorePlayer category: #'Sound-Scores'!
-AbstractSound subclass: #ScorePlayer
-	instanceVariableNames: 'score instruments overallVolume leftVols rightVols muted rate tempo secsPerTick done repeat ticksSinceStart ticksClockIncr trackEventIndex tempoMapIndex activeSounds activeMIDINotes midiPort midiPlayerProcess durationInTicks'
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Sound-Scores'!
-!classDefinition: 'ScorePlayer class' category: #'Sound-Scores'!
-ScorePlayer class
-	instanceVariableNames: ''!
-
 !classDefinition: #CompressedSoundData category: #'Sound-Synthesis'!
 Object subclass: #CompressedSoundData
 	instanceVariableNames: 'channels soundClassName codecName loopEnd loopLength perceivedPitch samplingRate gain firstSample cachedSound'
@@ -327,126 +447,6 @@ SoundRecorder subclass: #SoundInputStream
 SoundInputStream class
 	instanceVariableNames: ''!
 
-!classDefinition: #AbstractScoreEvent category: #'Sound-Scores'!
-Object subclass: #AbstractScoreEvent
-	instanceVariableNames: 'time'
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Sound-Scores'!
-!classDefinition: 'AbstractScoreEvent class' category: #'Sound-Scores'!
-AbstractScoreEvent class
-	instanceVariableNames: ''!
-
-!classDefinition: #ControlChangeEvent category: #'Sound-Scores'!
-AbstractScoreEvent subclass: #ControlChangeEvent
-	instanceVariableNames: 'control value channel'
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Sound-Scores'!
-!classDefinition: 'ControlChangeEvent class' category: #'Sound-Scores'!
-ControlChangeEvent class
-	instanceVariableNames: ''!
-
-!classDefinition: #NoteEvent category: #'Sound-Scores'!
-AbstractScoreEvent subclass: #NoteEvent
-	instanceVariableNames: 'duration midiKey velocity channel'
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Sound-Scores'!
-!classDefinition: 'NoteEvent class' category: #'Sound-Scores'!
-NoteEvent class
-	instanceVariableNames: ''!
-
-!classDefinition: #PitchBendEvent category: #'Sound-Scores'!
-AbstractScoreEvent subclass: #PitchBendEvent
-	instanceVariableNames: 'bend channel'
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Sound-Scores'!
-!classDefinition: 'PitchBendEvent class' category: #'Sound-Scores'!
-PitchBendEvent class
-	instanceVariableNames: ''!
-
-!classDefinition: #ProgramChangeEvent category: #'Sound-Scores'!
-AbstractScoreEvent subclass: #ProgramChangeEvent
-	instanceVariableNames: 'program channel'
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Sound-Scores'!
-!classDefinition: 'ProgramChangeEvent class' category: #'Sound-Scores'!
-ProgramChangeEvent class
-	instanceVariableNames: ''!
-
-!classDefinition: #TempoEvent category: #'Sound-Scores'!
-AbstractScoreEvent subclass: #TempoEvent
-	instanceVariableNames: 'tempo'
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Sound-Scores'!
-!classDefinition: 'TempoEvent class' category: #'Sound-Scores'!
-TempoEvent class
-	instanceVariableNames: ''!
-
-!classDefinition: #MIDIFileReader category: #'Sound-Scores'!
-Object subclass: #MIDIFileReader
-	instanceVariableNames: 'stream fileType trackCount ticksPerQuarter tracks trackInfo tempoMap strings track trackStream activeEvents maxNoteTicks'
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Sound-Scores'!
-!classDefinition: 'MIDIFileReader class' category: #'Sound-Scores'!
-MIDIFileReader class
-	instanceVariableNames: ''!
-
-!classDefinition: #MIDIInputParser category: #'Sound-Scores'!
-Object subclass: #MIDIInputParser
-	instanceVariableNames: 'cmdActionTable midiPort received rawDataBuffer sysExBuffer ignoreSysEx startTime timeNow state lastSelector lastCmdByte argByte1 argByte2'
-	classVariableNames: 'DefaultMidiTable'
-	poolDictionaries: ''
-	category: 'Sound-Scores'!
-!classDefinition: 'MIDIInputParser class' category: #'Sound-Scores'!
-MIDIInputParser class
-	instanceVariableNames: ''!
-
-!classDefinition: #MIDIScore category: #'Sound-Scores'!
-Object subclass: #MIDIScore
-	instanceVariableNames: 'tracks trackInfo tempoMap ticksPerQuarterNote'
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Sound-Scores'!
-!classDefinition: 'MIDIScore class' category: #'Sound-Scores'!
-MIDIScore class
-	instanceVariableNames: ''!
-
-!classDefinition: #MIDISynth category: #'Sound-Scores'!
-Object subclass: #MIDISynth
-	instanceVariableNames: 'midiParser channels process'
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Sound-Scores'!
-!classDefinition: 'MIDISynth class' category: #'Sound-Scores'!
-MIDISynth class
-	instanceVariableNames: ''!
-
-!classDefinition: #MIDISynthChannel category: #'Sound-Scores'!
-Object subclass: #MIDISynthChannel
-	instanceVariableNames: 'instrument muted masterVolume channelVolume pan pitchBend activeSounds'
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Sound-Scores'!
-!classDefinition: 'MIDISynthChannel class' category: #'Sound-Scores'!
-MIDISynthChannel class
-	instanceVariableNames: ''!
-
-!classDefinition: #SimpleMIDIPort category: #'Sound-Scores'!
-Object subclass: #SimpleMIDIPort
-	instanceVariableNames: 'portNumber accessSema lastCommandByteOut'
-	classVariableNames: 'DefaultPortNumber InterfaceClockRate'
-	poolDictionaries: ''
-	category: 'Sound-Scores'!
-!classDefinition: 'SimpleMIDIPort class' category: #'Sound-Scores'!
-SimpleMIDIPort class
-	instanceVariableNames: ''!
-
 !classDefinition: #Beeper category: #'Sound-System-Support'!
 Object subclass: #Beeper
 	instanceVariableNames: ''
@@ -475,98 +475,6 @@ Array size must be even, as two vales are stored in each word.!
 
 !Sonogram commentStamp: '<historical>' prior: 0!
 Sonograms are imageMorphs that will repeatedly plot arrays of values as black on white columns moving to the right in time and scrolling left as necessary.!
-
-!AIFFFileReader commentStamp: '<historical>' prior: 0!
-I am a parser for AIFF (audio interchange file format) files. I can read uncompressed 8-bit and 16-bit mono, stereo, or multichannel AIFF files. I read the marker information used by the TransferStation utility to mark the loop points in sounds extracted from commercial sampled-sound CD-ROMs.
-!
-
-!UnloadedSound commentStamp: '<historical>' prior: 0!
-Instances of me, which are really just FMSounds, are used placeholders for sounds that have been unloaded from this image but which may be re-loaded later.!
-
-!LoopedSampledSound commentStamp: '<historical>' prior: 0!
-I respresent a sequence of sound samples, often used to record a single note played by a real instrument. I can be pitch-shifted up or down, and can include a looped portion to allow a sound to be sustained indefinitely.
-!
-
-!PluckedSound commentStamp: '<historical>' prior: 0!
-The Karplus-Strong plucked string algorithm: start with a buffer full of random noise and repeatedly play the contents of that buffer while averaging adjacent samples. High harmonics damp out more quickly, transfering their energy to lower ones. The length of the buffer corresponds to the length of the string. Fractional indexing is used to allow precise tuning; without this, the pitch would be rounded to the pitch corresponding to the nearest buffer size.
-!
-
-!QueueSound commentStamp: 'efc 1/2/2003 00:30' prior: 0!
-I am a queue for sound - give me a bunch of sounds to play and I will play them one at a time in the order that they are received.
-
-Example:
-"Here is a simple example which plays two sounds three times."
-| clink warble queue |
-clink _ SampledSound soundNamed: 'clink'.
-warble _ SampledSound soundNamed: 'warble'.
-queue _ QueueSound new.
-3 timesRepeat:[
-	queue add: clink; add: warble
-].
-queue play.
-
-Structure:
- startTime 		Integer -- if present, start playing when startTime <= Time millisecondClockValue
-							(schedule the sound to play later)
- sounds			SharedQueue -- the synchronized list of sounds.
- currentSound	AbstractSound -- the currently active sound
- done			Boolean -- am I done playing ?
-
-Other:
-You may want to keep track of the queue's position so that you can feed it at an appropriate rate. To do this in an event driven way, modify or subclass nextSound to notify you when appropriate. You could also poll by checking currentSound, but this is not recommended for most applications.
-
-!
-
-!StreamingMonoSound commentStamp: '<historical>' prior: 0!
-I implement a streaming player for monophonic Sun (.au) and AIFF (.aif) audio files.
-Example of use:
-	(StreamingMonoSound onFileNamed: 'song.aif') play.
-!
-
-!ScorePlayer commentStamp: '<historical>' prior: 0!
-This is a real-time player for MIDI scores (i.e., scores read from MIDI files). Score can be played using either the internal sound synthesis or an external MIDI synthesizer on platforms that support MIDI output.
-!
-
-!CompressedSoundData commentStamp: '<historical>' prior: 0!
-Instances of this class hold the data resulting from compressing a sound.  Each carries a reference to the codec class that created it, so that it can reconstruct a sound similar to the original in response to the message asSound.
-
-In order to facilitate integration with existing sounds, a CompressedSoundData instance can masquerade as a sound by caching a copy of its original sound and delegating the essential sound-playing protocol to that cached copy.  It should probably be made a subclass of AbstractSound to complete the illusion.!
-
-!Envelope commentStamp: '<historical>' prior: 0!
-An envelope models a three-stage progression for a musical note: attack, sustain, decay. Envelopes can either return the envelope value at a given time or can update some target object using a client-specified message selector.
-
-The points instance variable holds an array of (time, value) points, where the times are in milliseconds. The points array must contain at least two points. The time coordinate of the first point must be zero and the time coordinates of subsequent points must be in ascending order, although the spacing between them is arbitrary. Envelope values between points are computed by linear interpolation.
-
-The scale slot is initially set so that the peak of envelope matches some note attribute, such as its loudness. When entering the decay phase, the scale is adjusted so that the decay begins from the envelope's current value. This avoids a potential sharp transient when entering the decay phase.
-
-The loopStartIndex and loopEndIndex slots contain the indices of points in the points array; if they are equal, then the envelope holds a constant value for the sustain phase of the note. Otherwise, envelope values are computed by repeatedly looping between these two points.
-
-The loopEndMSecs slot can be set in advance (as when playing a score) or dynamically (as when responding to interactive inputs from a MIDI keyboard). In the latter case, the value of scale is adjusted to start the decay phase with the current envelope value. Thus, if a note ends before its attack is complete, the decay phase is started immediately (i.e., the attack phase is never completed).
-
-For best results, amplitude envelopes should start and end with zero values. Otherwise, the sharp transient at the beginning or end of the note may cause audible clicks or static. For envelopes on other parameters, this may not be necessary.
-!
-
-!SampledInstrument commentStamp: '<historical>' prior: 0!
-I represent a collection of individual notes at different pitches, volumes, and articulations. On request, I can select the best note to use for a given pitch, duration, and volume. I currently only support two volumes, loud and soft, and two articulations, normal and staccato, but I can easily be extended to include more. The main barrier to keeping more variations is simply the memory space (assuming my component notes are sampled sounds).
-!
-
-!SoundCodec commentStamp: '<historical>' prior: 0!
-I am an abstract class that describes the protocol for sound codecs. Each codec (the name stems from "COder/DECoder") describes a particular algorithm for compressing and decompressing sound data. Most sound codecs are called 'lossy' because they lose information; the decompressed sound data is not exactly the same as the original data.
-!
-
-!ADPCMCodec commentStamp: '<historical>' prior: 0!
-This is a simple ADPCM (adapative delta pulse code modulation) codec. This is a general audio codec that compresses speech, music, or sound effects equally well, and works at any sampling rate (i.e., it contains no frequency-sensitive filters). It compresses 16-bit sample data down to 5, 4, 3, or 2 bits per sample, with lower fidelity and increased noise at the lowest bit rates. Although it does not deliver state-of-the-art compressions, the algorithm is small, simple, and extremely fast, since the encode/decode primitives have been translated into C primitives.
-
-This codec will also encode and decode all Flash .swf file compressed sound formats, both mono and stereo. (Note: stereo Flash compression is not yet implemented, but stereo decompression works.)
-!
-
-!MuLawCodec commentStamp: '<historical>' prior: 0!
-I represent a mu-law (u-law) codec. I compress sound data by a factor of 2:1 by encoding the most significant 12 bits of each 16-bit sample as a signed, exponentially encoded byte. The idea is to use more resolution for smaller lower sample values. This encoding was developed for the North American phone system and a variant of it, a-law, is a European phone standard. It is a popular sound encoding on Unix platforms (.au files).
-!
-
-!SoundInputStream commentStamp: '<historical>' prior: 0!
-This subclass of SoundRecorder supports real-time processing of incoming sound data. The sound input process queues raw sound buffers, allowing them to be read and processed by the client as they become available. A semaphore is used to synchronize between the record process and the client process. Since sound data is buffered, the client process may lag behind the input process without losing data.
-!
 
 !AbstractScoreEvent commentStamp: '<historical>' prior: 0!
 Abstract class for timed events in a MIDI score.
@@ -637,6 +545,98 @@ This initial implementation is extremely spartan, having just enough functionali
 
 !SimpleMIDIPort commentStamp: '<historical>' prior: 0!
 This is a first cut at a simple MIDI output port.
+!
+
+!AIFFFileReader commentStamp: '<historical>' prior: 0!
+I am a parser for AIFF (audio interchange file format) files. I can read uncompressed 8-bit and 16-bit mono, stereo, or multichannel AIFF files. I read the marker information used by the TransferStation utility to mark the loop points in sounds extracted from commercial sampled-sound CD-ROMs.
+!
+
+!ScorePlayer commentStamp: '<historical>' prior: 0!
+This is a real-time player for MIDI scores (i.e., scores read from MIDI files). Score can be played using either the internal sound synthesis or an external MIDI synthesizer on platforms that support MIDI output.
+!
+
+!UnloadedSound commentStamp: '<historical>' prior: 0!
+Instances of me, which are really just FMSounds, are used placeholders for sounds that have been unloaded from this image but which may be re-loaded later.!
+
+!LoopedSampledSound commentStamp: '<historical>' prior: 0!
+I respresent a sequence of sound samples, often used to record a single note played by a real instrument. I can be pitch-shifted up or down, and can include a looped portion to allow a sound to be sustained indefinitely.
+!
+
+!PluckedSound commentStamp: '<historical>' prior: 0!
+The Karplus-Strong plucked string algorithm: start with a buffer full of random noise and repeatedly play the contents of that buffer while averaging adjacent samples. High harmonics damp out more quickly, transfering their energy to lower ones. The length of the buffer corresponds to the length of the string. Fractional indexing is used to allow precise tuning; without this, the pitch would be rounded to the pitch corresponding to the nearest buffer size.
+!
+
+!QueueSound commentStamp: 'efc 1/2/2003 00:30' prior: 0!
+I am a queue for sound - give me a bunch of sounds to play and I will play them one at a time in the order that they are received.
+
+Example:
+"Here is a simple example which plays two sounds three times."
+| clink warble queue |
+clink _ SampledSound soundNamed: 'clink'.
+warble _ SampledSound soundNamed: 'warble'.
+queue _ QueueSound new.
+3 timesRepeat:[
+	queue add: clink; add: warble
+].
+queue play.
+
+Structure:
+ startTime 		Integer -- if present, start playing when startTime <= Time millisecondClockValue
+							(schedule the sound to play later)
+ sounds			SharedQueue -- the synchronized list of sounds.
+ currentSound	AbstractSound -- the currently active sound
+ done			Boolean -- am I done playing ?
+
+Other:
+You may want to keep track of the queue's position so that you can feed it at an appropriate rate. To do this in an event driven way, modify or subclass nextSound to notify you when appropriate. You could also poll by checking currentSound, but this is not recommended for most applications.
+
+!
+
+!StreamingMonoSound commentStamp: '<historical>' prior: 0!
+I implement a streaming player for monophonic Sun (.au) and AIFF (.aif) audio files.
+Example of use:
+	(StreamingMonoSound onFileNamed: 'song.aif') play.
+!
+
+!CompressedSoundData commentStamp: '<historical>' prior: 0!
+Instances of this class hold the data resulting from compressing a sound.  Each carries a reference to the codec class that created it, so that it can reconstruct a sound similar to the original in response to the message asSound.
+
+In order to facilitate integration with existing sounds, a CompressedSoundData instance can masquerade as a sound by caching a copy of its original sound and delegating the essential sound-playing protocol to that cached copy.  It should probably be made a subclass of AbstractSound to complete the illusion.!
+
+!Envelope commentStamp: '<historical>' prior: 0!
+An envelope models a three-stage progression for a musical note: attack, sustain, decay. Envelopes can either return the envelope value at a given time or can update some target object using a client-specified message selector.
+
+The points instance variable holds an array of (time, value) points, where the times are in milliseconds. The points array must contain at least two points. The time coordinate of the first point must be zero and the time coordinates of subsequent points must be in ascending order, although the spacing between them is arbitrary. Envelope values between points are computed by linear interpolation.
+
+The scale slot is initially set so that the peak of envelope matches some note attribute, such as its loudness. When entering the decay phase, the scale is adjusted so that the decay begins from the envelope's current value. This avoids a potential sharp transient when entering the decay phase.
+
+The loopStartIndex and loopEndIndex slots contain the indices of points in the points array; if they are equal, then the envelope holds a constant value for the sustain phase of the note. Otherwise, envelope values are computed by repeatedly looping between these two points.
+
+The loopEndMSecs slot can be set in advance (as when playing a score) or dynamically (as when responding to interactive inputs from a MIDI keyboard). In the latter case, the value of scale is adjusted to start the decay phase with the current envelope value. Thus, if a note ends before its attack is complete, the decay phase is started immediately (i.e., the attack phase is never completed).
+
+For best results, amplitude envelopes should start and end with zero values. Otherwise, the sharp transient at the beginning or end of the note may cause audible clicks or static. For envelopes on other parameters, this may not be necessary.
+!
+
+!SampledInstrument commentStamp: '<historical>' prior: 0!
+I represent a collection of individual notes at different pitches, volumes, and articulations. On request, I can select the best note to use for a given pitch, duration, and volume. I currently only support two volumes, loud and soft, and two articulations, normal and staccato, but I can easily be extended to include more. The main barrier to keeping more variations is simply the memory space (assuming my component notes are sampled sounds).
+!
+
+!SoundCodec commentStamp: '<historical>' prior: 0!
+I am an abstract class that describes the protocol for sound codecs. Each codec (the name stems from "COder/DECoder") describes a particular algorithm for compressing and decompressing sound data. Most sound codecs are called 'lossy' because they lose information; the decompressed sound data is not exactly the same as the original data.
+!
+
+!ADPCMCodec commentStamp: '<historical>' prior: 0!
+This is a simple ADPCM (adapative delta pulse code modulation) codec. This is a general audio codec that compresses speech, music, or sound effects equally well, and works at any sampling rate (i.e., it contains no frequency-sensitive filters). It compresses 16-bit sample data down to 5, 4, 3, or 2 bits per sample, with lower fidelity and increased noise at the lowest bit rates. Although it does not deliver state-of-the-art compressions, the algorithm is small, simple, and extremely fast, since the encode/decode primitives have been translated into C primitives.
+
+This codec will also encode and decode all Flash .swf file compressed sound formats, both mono and stereo. (Note: stereo Flash compression is not yet implemented, but stereo decompression works.)
+!
+
+!MuLawCodec commentStamp: '<historical>' prior: 0!
+I represent a mu-law (u-law) codec. I compress sound data by a factor of 2:1 by encoding the most significant 12 bits of each 16-bit sample as a signed, exponentially encoded byte. The idea is to use more resolution for smaller lower sample values. This encoding was developed for the North American phone system and a variant of it, a-law, is a European phone standard. It is a popular sound encoding on Unix platforms (.au files).
+!
+
+!SoundInputStream commentStamp: '<historical>' prior: 0!
+This subclass of SoundRecorder supports real-time processing of incoming sound data. The sound input process queues raw sound buffers, allowing them to be read and processed by the client as they become available. A semaphore is used to synchronize between the record process and the client process. Since sound data is buffered, the client process may lag behind the input process without losing data.
 !
 
 !Beeper commentStamp: 'gk 2/26/2004 22:44' prior: 0!
@@ -1092,6 +1092,2140 @@ morphExtent: newExtent
 	pixValMap _ ((1 to: 256) collect:
 			[:i | columnForm pixelValueFor: (Color gray: (256-i)/255.0)])
 		as: Bitmap.
+! !
+
+!AbstractScoreEvent methodsFor: 'accessing' stamp: 'di 6/17/1999 14:28'!
+adjustTimeBy: delta
+
+	time _ time + delta
+! !
+
+!AbstractScoreEvent methodsFor: 'accessing' stamp: 'jm 8/27/1998 16:38'!
+endTime
+	"Subclasses should override to return the ending time if the event has some duration."
+
+	^ time
+! !
+
+!AbstractScoreEvent methodsFor: 'accessing' stamp: 'jm 12/31/97 11:43'!
+time
+
+	^ time
+! !
+
+!AbstractScoreEvent methodsFor: 'accessing' stamp: 'jm 12/31/97 11:43'!
+time: aNumber
+
+	time _ aNumber.
+! !
+
+!AbstractScoreEvent methodsFor: 'classification' stamp: 'jm 9/10/1998 09:43'!
+isControlChange
+
+	^ false
+! !
+
+!AbstractScoreEvent methodsFor: 'classification' stamp: 'jm 12/31/97 11:46'!
+isNoteEvent
+
+	^ false
+! !
+
+!AbstractScoreEvent methodsFor: 'classification' stamp: 'jm 9/10/1998 09:43'!
+isPitchBend
+
+	^ false
+! !
+
+!AbstractScoreEvent methodsFor: 'classification' stamp: 'jm 9/10/1998 09:43'!
+isProgramChange
+
+	^ false
+! !
+
+!AbstractScoreEvent methodsFor: 'classification' stamp: 'jm 12/31/97 11:46'!
+isTempoEvent
+
+	^ false
+! !
+
+!AbstractScoreEvent methodsFor: 'midi' stamp: 'jm 9/10/1998 18:31'!
+outputOnMidiPort: aMidiPort
+	"Output this event to the given MIDI port. This default implementation does nothing."
+! !
+
+!ControlChangeEvent methodsFor: 'printing' stamp: 'sma 6/1/2000 09:34'!
+printOn: aStream
+	aStream
+		nextPut: $(;
+		print: time;
+		nextPutAll: ': ctrl[';
+		print: control;
+		nextPutAll: ']=';
+		print: value;
+		nextPut: $)! !
+
+!ControlChangeEvent methodsFor: 'accessing' stamp: 'jm 9/10/1998 07:47'!
+channel
+
+	^ channel
+! !
+
+!ControlChangeEvent methodsFor: 'accessing' stamp: 'jm 9/10/1998 07:47'!
+channel: midiChannel
+
+	channel _ midiChannel.
+! !
+
+!ControlChangeEvent methodsFor: 'accessing' stamp: 'jm 9/10/1998 07:49'!
+control
+
+	^ control
+! !
+
+!ControlChangeEvent methodsFor: 'accessing' stamp: 'jm 9/10/1998 07:48'!
+control: midiControl
+
+	control _ midiControl.
+! !
+
+!ControlChangeEvent methodsFor: 'accessing' stamp: 'jm 9/10/1998 08:03'!
+control: midiControl value: midiControlValue channel: midiChannel
+
+	control _ midiControl.
+	value _ midiControlValue.
+	channel _ midiChannel.
+! !
+
+!ControlChangeEvent methodsFor: 'accessing' stamp: 'jm 9/10/1998 08:02'!
+value
+
+	^ value
+! !
+
+!ControlChangeEvent methodsFor: 'accessing' stamp: 'jm 9/10/1998 08:03'!
+value: midiControlValue
+
+	value _ midiControlValue.
+! !
+
+!ControlChangeEvent methodsFor: 'classification' stamp: 'jm 9/10/1998 09:45'!
+isControlChange
+
+	^ true
+! !
+
+!ControlChangeEvent methodsFor: 'midi' stamp: 'jm 9/10/1998 18:31'!
+outputOnMidiPort: aMidiPort
+	"Output this event to the given MIDI port."
+
+	aMidiPort
+		midiCmd: 16rB0
+		channel: channel
+		byte: control
+		byte: value.
+! !
+
+!NoteEvent methodsFor: 'printing' stamp: 'jm 1/3/98 08:58'!
+keyName
+	"Return a note name for my pitch."
+
+	| pitchName octave |
+	pitchName _ #(c cs d ef e f fs g af a bf b) at: (midiKey \\ 12) + 1.
+	octave _ (#(-1 0 1 2 3 4 5 6 7 8 9) at: (midiKey // 12) + 1) printString.
+	^ pitchName, octave
+! !
+
+!NoteEvent methodsFor: 'printing' stamp: 'jm 1/3/98 08:59'!
+printOn: aStream
+
+	aStream nextPut: $(.
+	time printOn: aStream.
+	aStream nextPutAll: ': '.
+	aStream nextPutAll: self keyName.
+	aStream space.
+	duration printOn: aStream.
+	aStream nextPut: $).
+! !
+
+!NoteEvent methodsFor: 'accessing' stamp: 'jm 12/30/97 22:02'!
+channel
+
+	^ channel
+! !
+
+!NoteEvent methodsFor: 'accessing' stamp: 'jm 12/30/97 22:02'!
+channel: midiChannel
+
+	channel _ midiChannel.
+! !
+
+!NoteEvent methodsFor: 'accessing' stamp: 'jm 12/18/97 19:10'!
+duration
+
+	^ duration
+! !
+
+!NoteEvent methodsFor: 'accessing' stamp: 'jm 12/31/97 11:49'!
+duration: aNumber
+
+	duration _ aNumber.
+! !
+
+!NoteEvent methodsFor: 'accessing' stamp: 'jm 8/27/1998 16:38'!
+endTime
+
+	^ time + duration
+! !
+
+!NoteEvent methodsFor: 'accessing' stamp: 'jm 12/30/97 22:07'!
+key: midiKeyNum velocity: midiVelocity channel: midiChannel
+
+	midiKey _ midiKeyNum.
+	velocity _ midiVelocity.
+	channel _ midiChannel.
+! !
+
+!NoteEvent methodsFor: 'accessing' stamp: 'jm 12/18/97 20:58'!
+midiKey
+
+	^ midiKey
+! !
+
+!NoteEvent methodsFor: 'accessing' stamp: 'jm 12/30/97 09:35'!
+midiKey: midiKeyNum
+
+	midiKey _ midiKeyNum.
+! !
+
+!NoteEvent methodsFor: 'accessing' stamp: 'jm 8/3/1998 17:06'!
+pitch
+	"Convert my MIDI key number to a pitch and return it."
+
+	^ AbstractSound pitchForMIDIKey: midiKey
+! !
+
+!NoteEvent methodsFor: 'accessing' stamp: 'jm 12/30/97 09:32'!
+velocity
+
+	^ velocity
+! !
+
+!NoteEvent methodsFor: 'accessing' stamp: 'jm 12/31/97 11:51'!
+velocity: midiVelocity
+
+	velocity _ midiVelocity.
+! !
+
+!NoteEvent methodsFor: 'midi' stamp: 'jm 9/10/1998 15:58'!
+endNoteOnMidiPort: aMidiPort
+	"Output a noteOff event to the given MIDI port. (Actually, output a noteOff event with zero velocity. This does the same thing, but allows running status to be used when sending a mixture of note on and off commands.)"
+
+	aMidiPort
+		midiCmd: 16r90
+		channel: channel
+		byte: midiKey
+		byte: 0.
+! !
+
+!NoteEvent methodsFor: 'midi' stamp: 'jm 9/10/1998 15:56'!
+startNoteOnMidiPort: aMidiPort
+	"Output a noteOn event to the given MIDI port."
+
+	aMidiPort
+		midiCmd: 16r90
+		channel: channel
+		byte: midiKey
+		byte: velocity.
+! !
+
+!NoteEvent methodsFor: 'classification' stamp: 'jm 12/31/97 11:48'!
+isNoteEvent
+
+	^ true
+! !
+
+!PitchBendEvent methodsFor: 'printing' stamp: 'jm 9/10/1998 09:42'!
+printOn: aStream
+
+	aStream nextPut: $(.
+	time printOn: aStream.
+	aStream nextPutAll: ': bend '.
+	bend printOn: aStream.
+	aStream nextPut: $).
+! !
+
+!PitchBendEvent methodsFor: 'accessing' stamp: 'jm 9/10/1998 07:49'!
+bend
+
+	^ bend
+! !
+
+!PitchBendEvent methodsFor: 'accessing' stamp: 'jm 9/10/1998 07:48'!
+bend: midiPitchBend
+
+	bend _ midiPitchBend.
+! !
+
+!PitchBendEvent methodsFor: 'accessing' stamp: 'jm 9/10/1998 07:48'!
+bend: midiPitchBend channel: midiChannel
+
+	bend _ midiPitchBend.
+	channel _ midiChannel.
+! !
+
+!PitchBendEvent methodsFor: 'accessing' stamp: 'jm 9/10/1998 07:47'!
+channel
+
+	^ channel
+! !
+
+!PitchBendEvent methodsFor: 'accessing' stamp: 'jm 9/10/1998 07:47'!
+channel: midiChannel
+
+	channel _ midiChannel.
+! !
+
+!PitchBendEvent methodsFor: 'classification' stamp: 'jm 9/10/1998 09:45'!
+isPitchBend
+
+	^ true
+! !
+
+!PitchBendEvent methodsFor: 'midi' stamp: 'jm 9/10/1998 18:31'!
+outputOnMidiPort: aMidiPort
+	"Output this event to the given MIDI port."
+
+	aMidiPort
+		midiCmd: 16rE0
+		channel: channel
+		byte: (bend bitAnd: 16r7F)
+		byte: (bend bitShift: -7).
+! !
+
+!ProgramChangeEvent methodsFor: 'printing' stamp: 'jm 9/10/1998 08:28'!
+printOn: aStream
+
+	aStream nextPut: $(.
+	time printOn: aStream.
+	aStream nextPutAll: ': prog '.
+	program printOn: aStream.
+	aStream nextPut: $).
+! !
+
+!ProgramChangeEvent methodsFor: 'accessing' stamp: 'jm 9/10/1998 07:47'!
+channel
+
+	^ channel
+! !
+
+!ProgramChangeEvent methodsFor: 'accessing' stamp: 'jm 9/10/1998 07:47'!
+channel: midiChannel
+
+	channel _ midiChannel.
+! !
+
+!ProgramChangeEvent methodsFor: 'accessing' stamp: 'jm 9/10/1998 07:49'!
+program
+
+	^ program
+! !
+
+!ProgramChangeEvent methodsFor: 'accessing' stamp: 'jm 9/10/1998 07:48'!
+program: midiProgramChange
+
+	program _ midiProgramChange.
+! !
+
+!ProgramChangeEvent methodsFor: 'accessing' stamp: 'jm 9/10/1998 07:48'!
+program: midiProgramChange channel: midiChannel
+
+	program _ midiProgramChange.
+	channel _ midiChannel.
+! !
+
+!ProgramChangeEvent methodsFor: 'classification' stamp: 'jm 9/10/1998 09:46'!
+isProgramChange
+
+	^ true
+! !
+
+!ProgramChangeEvent methodsFor: 'midi' stamp: 'jm 9/10/1998 18:31'!
+outputOnMidiPort: aMidiPort
+	"Output this event to the given MIDI port."
+
+	aMidiPort
+		midiCmd: 16rC0
+		channel: channel
+		byte: program.
+! !
+
+!TempoEvent methodsFor: 'as yet unclassified' stamp: 'jm 12/30/97 10:10'!
+isTempoEvent
+
+	^ true
+! !
+
+!TempoEvent methodsFor: 'as yet unclassified' stamp: 'jm 9/10/1998 08:37'!
+printOn: aStream
+
+	aStream nextPut: $(.
+	time printOn: aStream.
+	aStream nextPutAll: ': tempo '.
+	((120.0 * (500000.0 / tempo)) roundTo: 0.01) printOn: aStream.
+	aStream nextPut: $).
+! !
+
+!TempoEvent methodsFor: 'as yet unclassified' stamp: 'jm 12/30/97 10:09'!
+tempo
+
+	^ tempo
+! !
+
+!TempoEvent methodsFor: 'as yet unclassified' stamp: 'jm 12/30/97 10:09'!
+tempo: anInteger
+
+	tempo _ anInteger.
+! !
+
+!MIDIFileReader methodsFor: 'chunk reading' stamp: 'jm 1/6/98 23:20'!
+asScore
+
+	^ MIDIScore new
+		tracks: tracks;
+		trackInfo: trackInfo;
+		tempoMap: tempoMap;
+		ticksPerQuarterNote: ticksPerQuarter
+! !
+
+!MIDIFileReader methodsFor: 'chunk reading' stamp: 'jmv 3/13/2012 12:37'!
+readHeaderChunk
+
+	| chunkType chunkSize division |
+	chunkType _ self readChunkType.
+	chunkType = 'RIFF' ifTrue:[chunkType _ self riffSkipToMidiChunk].
+	chunkType = 'MThd' ifFalse: [self scanForMIDIHeader].
+	chunkSize _ self readChunkSize.
+	fileType _ self next16BitWord.
+	trackCount _ self next16BitWord.
+	division _ self next16BitWord.
+	(division anyMask: 16r8000)
+		ifTrue: [self error: 'SMPTE time formats are not yet supported']
+		ifFalse: [ticksPerQuarter _ division].
+	maxNoteTicks _ 12 * 4 * ticksPerQuarter.
+		"longest acceptable note; used to detect stuck notes"
+
+	"sanity checks"
+	((chunkSize < 6) or: [chunkSize > 100])
+		ifTrue: [self error: 'unexpected MIDI header size ', chunkSize printString].
+	(#(0 1 2) includes: fileType)
+		ifFalse: [self error: 'unknown MIDI file type ', fileType printString].
+
+	Transcript
+		show: 'Reading Type ', fileType printString, ' MIDI File (';
+		show: trackCount printString, ' tracks, ';
+		show: ticksPerQuarter printString, ' ticks per quarter note)';
+		newLine.
+! !
+
+!MIDIFileReader methodsFor: 'chunk reading' stamp: 'jm 9/12/1998 19:08'!
+readMIDIFrom: aBinaryStream
+	"Read one or more MIDI tracks from the given binary stream."
+
+	stream _ aBinaryStream.
+	tracks _ OrderedCollection new.
+	trackInfo _ OrderedCollection new.
+	self readHeaderChunk.
+	trackCount timesRepeat: [self readTrackChunk].
+	stream atEnd ifFalse: [self report: 'data beyond final track'].
+	fileType = 0 ifTrue: [self splitIntoTracks].
+	self guessMissingInstrumentNames.
+! !
+
+!MIDIFileReader methodsFor: 'chunk reading' stamp: 'jm 12/31/97 10:41'!
+readTrackChunk
+
+	| chunkType chunkSize |
+	chunkType _ self readChunkType.
+	[chunkType = 'MTrk'] whileFalse: [
+		self report: 'skipping unexpected chunk type "', chunkType, '"'.
+		stream skip: (self readChunkSize).  "skip it"
+		chunkType _ (stream next: 4) asString].
+	chunkSize _ self readChunkSize.
+	chunkSize < 10000000 ifFalse: [
+		self error: 'suspiciously large track chunk; this may not be MIDI file'].
+
+	self readTrackContents: chunkSize.
+! !
+
+!MIDIFileReader methodsFor: 'track reading' stamp: 'jm 3/28/98 05:44'!
+endAllNotesAt: endTicks
+	"End of score; end any notes still sounding."
+	"Details: Some MIDI files have missing note-off events, resulting in very long notes. Truncate any such notes encountered."
+
+	| dur |
+	activeEvents do: [:e |
+		dur _ endTicks - e time.
+		dur > maxNoteTicks ifTrue: [dur _ ticksPerQuarter].  "truncate long note"
+		e duration: dur].
+	activeEvents _ activeEvents species new.
+! !
+
+!MIDIFileReader methodsFor: 'track reading' stamp: 'jmv 3/2/2010 09:56'!
+endNote: midiKey chan: channel at: endTicks
+
+	| evt |
+	evt _ activeEvents
+		detect: [:e | (e midiKey = midiKey) and: [e channel = channel]]
+		ifNone: [^ self].
+	evt duration: (endTicks - evt time).
+	activeEvents remove: evt ifAbsent: nil! !
+
+!MIDIFileReader methodsFor: 'track reading' stamp: 'jm 1/3/98 09:45'!
+isTempoTrack: anEventList
+	"Return true if the given event list is non-empty and contains only tempo change events."
+
+	anEventList isEmpty ifTrue: [^ false].
+	anEventList do: [:evt | evt isTempoEvent ifFalse: [^ false]].
+	^ true
+! !
+
+!MIDIFileReader methodsFor: 'track reading' stamp: 'jm 9/27/1998 22:15'!
+metaEventAt: ticks
+	"Read a meta event. Event types appear roughly in order of expected frequency."
+
+	| type length tempo |
+	type _ trackStream next.
+	length _ self readVarLengthIntFrom: trackStream.
+
+	type = 16r51 ifTrue: [  "tempo"
+		tempo _ 0.
+		length timesRepeat: [tempo _ (tempo bitShift: 8) + trackStream next].
+		track add: (TempoEvent new tempo: tempo; time: ticks).
+		^ self].
+
+	type = 16r2F ifTrue: [  "end of track"
+		length = 0 ifFalse: [self error: 'length of end-of-track chunk should be zero'].
+		self endAllNotesAt: ticks.
+		trackStream skip: length.
+		^ self].
+
+	type = 16r58 ifTrue: [  "time signature"
+		length = 4 ifFalse: [self error: 'length of time signature chunk should be four'].
+		trackStream skip: length.
+		^ self].
+
+	type = 16r59 ifTrue: [  "key signature"
+		length = 2 ifFalse: [self error: 'length of key signature chunk should be two'].
+		trackStream skip: length.
+		^ self].
+
+	((type >= 1) and: [type <= 7]) ifTrue: [  "string"
+		strings add: (trackStream next: length) asString.
+		^ self].
+
+	(  type = 16r21 or:   "mystery; found in MIDI files but not in MIDI File 1.0 Spec"
+	 [(type = 16r7F) or:  "sequencer specific meta event"
+	 [(type = 16r00) or:  "sequence number"
+	 [(type = 16r20)]]])  "MIDI channel prefix"
+		ifTrue: [
+			trackStream skip: length.
+			^ self].
+
+	type = 16r54 ifTrue: [
+		"SMPTE offset"
+		self report: 'Ignoring SMPTE offset'.
+		trackStream skip: length.
+		^ self].
+
+	"skip unrecognized meta event"
+	self report:
+		'skipping unrecognized meta event: ', (type printStringBase: 16),
+		' (', length printString, ' bytes)'.
+	trackStream skip: length.
+! !
+
+!MIDIFileReader methodsFor: 'track reading' stamp: 'jmv 3/13/2012 12:37'!
+readTrackContents: byteCount
+
+	| info |
+	strings _ OrderedCollection new.
+	track _ OrderedCollection new.
+	trackStream _ ReadStream on: (stream next: byteCount).
+	activeEvents _ OrderedCollection new.
+	self readTrackEvents.
+	(tracks isEmpty and: [self isTempoTrack: track])
+		ifTrue: [tempoMap _ track asArray]
+		ifFalse: [
+			"Note: Tracks without note events are currently not saved to
+			 eliminate clutter in the score player. In control applications,
+			 this can be easily changed by modifying the following test."
+			(self trackContainsNotes: track) ifTrue: [
+				tracks add: track asArray.
+				info _ WriteStream on: (String new: 100).
+				strings do: [:s | info nextPutAll: s; newLine].
+				trackInfo add: info contents]].
+	strings _ track _ trackStream _ activeEvents _ nil.
+! !
+
+!MIDIFileReader methodsFor: 'track reading' stamp: 'jm 9/10/1998 09:57'!
+readTrackEvents
+	"Read the events of the current track."
+
+	| cmd chan key vel ticks byte length evt |
+	cmd _ #unknown.
+	chan _ key _ vel _ 0.
+	ticks _ 0.
+	[trackStream atEnd] whileFalse: [
+		ticks _ ticks + (self readVarLengthIntFrom: trackStream).
+		byte _ trackStream next.
+		byte >= 16rF0
+			ifTrue: [  "meta or system exclusive event"
+				byte = 16rFF ifTrue: [self metaEventAt: ticks].
+				((byte = 16rF0) or: [byte = 16rF7]) ifTrue: [  "system exclusive data"
+					length _ self readVarLengthIntFrom: trackStream.
+					trackStream skip: length].
+				cmd _ #unknown]
+			ifFalse: [  "channel message event"
+				byte >= 16r80
+					ifTrue: [  "new command"
+						cmd _ byte bitAnd: 16rF0.
+						chan _ byte bitAnd: 16r0F.
+						key _ trackStream next]
+					ifFalse: [  "use running status"
+						cmd == #unknown
+							ifTrue: [self error: 'undefined running status; bad MIDI file?'].
+						key _ byte].
+
+				((cmd = 16rC0) or: [cmd = 16rD0]) ifFalse: [
+					"all but program change and channel pressure have two data bytes"
+					vel _ trackStream next].
+
+				cmd = 16r80 ifTrue: [  "note off"
+					self endNote: key chan: chan at: ticks].
+
+				cmd = 16r90 ifTrue: [  "note on"
+					vel = 0
+						ifTrue: [self endNote: key chan: chan at: ticks]
+						ifFalse: [self startNote: key vel: vel chan: chan at: ticks]].
+
+				"cmd = 16A0 -- polyphonic key pressure; skip"
+
+				cmd = 16rB0 ifTrue: [
+					evt _ ControlChangeEvent new control: key value: vel channel: chan.
+					evt time: ticks.
+					track add: evt].
+
+				cmd = 16rC0 ifTrue: [
+					evt _ ProgramChangeEvent new program: key channel: chan.
+					evt time: ticks.
+					track add: evt].
+
+				"cmd = 16D0 -- channel aftertouch pressure; skip"
+
+				cmd = 16rE0 ifTrue: [
+					evt _ PitchBendEvent new bend: key + (vel bitShift: 7) channel: chan.
+					evt time: ticks.
+					track add: evt]
+	]].
+! !
+
+!MIDIFileReader methodsFor: 'track reading' stamp: 'jmv 3/2/2010 09:56'!
+startNote: midiKey vel: vel chan: chan at: startTicks
+	"Record the beginning of a note."
+	"Details: Some MIDI scores have missing note-off events, causing a note-on to be received for a (key, channel) that is already sounding. If the previous note is suspiciously long, truncate it."
+
+	| newActiveEvents dur noteOnEvent |
+	newActiveEvents _ nil.
+	activeEvents do: [:e |
+		((e midiKey = midiKey) and: [e channel = chan]) ifTrue: [
+			"turn off key already sounding"
+			dur _ startTicks - e time.
+			dur > maxNoteTicks ifTrue: [dur _ ticksPerQuarter].  "truncate"
+			e duration: dur.
+			newActiveEvents ifNil: [newActiveEvents _ activeEvents copy].
+			newActiveEvents remove: e ifAbsent: nil]].
+	newActiveEvents ifNotNil: [activeEvents _ newActiveEvents].
+
+	noteOnEvent _ NoteEvent new key: midiKey velocity: vel channel: chan.
+	noteOnEvent time: startTicks.
+	track add: noteOnEvent.
+	activeEvents add: noteOnEvent! !
+
+!MIDIFileReader methodsFor: 'track reading' stamp: 'jm 9/12/1998 17:15'!
+trackContainsNotes: eventList
+	"Answer true if the given track contains at least one note event."
+
+	eventList do: [:e | e isNoteEvent ifTrue: [^ true]].
+	^ false
+! !
+
+!MIDIFileReader methodsFor: 'private' stamp: 'jmv 3/2/2010 09:56'!
+guessMissingInstrumentNames
+	"Attempt to guess missing instrument names from the first program change in that track."
+
+	| progChange instrIndex instrName |
+	1 to: tracks size do: [:i |
+		(trackInfo at: i) isEmpty ifTrue: [
+			progChange _ (tracks at: i) detect: [:e | e isProgramChange] ifNone: nil.
+			progChange ifNotNil: [
+				instrIndex _ progChange program + 1.
+				instrName _ self class standardMIDIInstrumentNames at: instrIndex.
+				trackInfo at: i put: instrName]]].
+! !
+
+!MIDIFileReader methodsFor: 'private' stamp: 'jm 12/31/97 10:30'!
+next16BitWord
+	"Read a 16-bit positive integer from the input stream, most significant byte first."
+	"Assume: Stream has at least two bytes left."
+
+	| n |
+	n _ stream next.
+	^ (n bitShift: 8) + stream next
+! !
+
+!MIDIFileReader methodsFor: 'private' stamp: 'ar 1/27/98 17:27'!
+next32BitWord: msbFirst
+	"Read a 32-bit positive integer from the input stream."
+	"Assume: Stream has at least four bytes left."
+
+	| n |
+	n _ stream next: 4.
+	^msbFirst
+		ifTrue:[((n at: 1) bitShift: 24) + ((n at: 2) bitShift: 16) + ((n at: 3) bitShift: 8) + (n at: 4)]
+		ifFalse:[((n at: 4) bitShift: 24) + ((n at: 3) bitShift: 16) + ((n at: 2) bitShift: 8) + (n at: 1)]
+! !
+
+!MIDIFileReader methodsFor: 'private' stamp: 'jm 12/31/97 10:29'!
+readChunkSize
+	"Read a 32-bit positive integer from the next 4 bytes, most significant byte first."
+	"Assume: Stream has at least four bytes left."
+
+	| n |
+	n _ 0.
+	1 to: 4 do: [:ignore | n _ (n bitShift: 8) + stream next].
+	^ n
+! !
+
+!MIDIFileReader methodsFor: 'private' stamp: 'jmv 1/9/2024 17:34:10'!
+readChunkType
+	"Read a chunk ID string from the next 4 bytes."
+	"Assume: Stream has at least four bytes left."
+
+	| s |
+	s := String new: 4.
+	1 to: 4 do: [:i | s at: i put: (Character codePoint: stream next) ].
+	^ s
+! !
+
+!MIDIFileReader methodsFor: 'private' stamp: 'jm 12/31/97 11:33'!
+readVarLengthIntFrom: aBinaryStream
+	"Read a one to four byte positive integer from the given stream, most significant byte first. Use only the lowest seven bits of each byte. The highest bit of a byte is set for all bytes except the last."
+
+	| n byte |
+	n _ 0.
+	1 to: 4 do: [:ignore |
+		byte _ aBinaryStream next.
+		byte < 128 ifTrue: [
+			n = 0
+				ifTrue: [^ byte]  "optimization for one-byte lengths"
+				ifFalse: [^ (n bitShift: 7) + byte]].
+		n _ (n bitShift: 7) + (byte bitAnd: 16r7F)].
+
+	self error: 'variable length quantity must not exceed four bytes'.
+! !
+
+!MIDIFileReader methodsFor: 'private' stamp: 'jmv 3/13/2012 12:37'!
+report: aString
+
+	Transcript show: aString; newLine! !
+
+!MIDIFileReader methodsFor: 'private' stamp: 'jm 2/1/98 19:20'!
+riffSkipToMidiChunk
+	"This file is a RIFF file which may (or may not) contain a MIDI chunk. Thanks to Andreas Raab for this code."
+
+	| dwLength fourcc |
+	"Read length of all data"
+	dwLength := self next32BitWord: false.
+	"Get RIFF contents type "
+	fourcc := self readChunkType.
+	fourcc = 'RMID' ifFalse:[^fourcc]. "We can only read RMID files here"
+	"Search for data"
+	[[fourcc := self readChunkType.
+	dwLength := self next32BitWord: false.
+	fourcc = 'data'] whileFalse:[
+		"Skip chunk - rounded to word boundary"
+		stream skip: (dwLength + 1 bitAnd: 16rFFFFFFFE).
+		stream atEnd ifTrue:[^'']].
+	"Data chunk is raw - look into if it contains MIDI data and skip if not"
+	fourcc := self readChunkType.
+	fourcc = 'MThd'] whileFalse:[
+		"Skip data (chunk - 4bytes) rounded to word boundary"
+		stream skip: (dwLength - 3 bitAnd: 16rFFFFFFFE)].
+	^fourcc! !
+
+!MIDIFileReader methodsFor: 'private' stamp: 'jmv 3/1/2010 14:05'!
+scanForMIDIHeader
+	"Scan the first part of this file in search of the MIDI header string 'MThd'. Report an error if it is not found. Otherwise, leave the input stream positioned to the first byte after this string."
+
+	| asciiM p lastSearchPosition byte restOfHeader |
+	asciiM _ $M asciiValue.
+	stream skip: -3.
+	p _ stream position.
+	lastSearchPosition _ p + 10000.  "search only the first 10000 bytes of the file"
+	[p < lastSearchPosition and: [stream atEnd not]] whileTrue: [
+		[(byte _ stream next) ~= asciiM and: [byte notNil]] whileTrue.  "find the next 'M' or file end"
+		restOfHeader _ (stream next: 3) asString.
+		restOfHeader = 'Thd'
+			ifTrue: [^ self]
+			ifFalse: [restOfHeader size = 3 ifTrue: [stream skip: -3]].
+		p _ stream position].
+
+	self error: 'MIDI header chunk not found'.
+! !
+
+!MIDIFileReader methodsFor: 'private' stamp: 'jm 9/12/1998 20:10'!
+splitIntoTracks
+	"Split a type zero MIDI file into separate tracks by channel number."
+
+	| newTempoMap newTracks |
+	tracks size = 1 ifFalse: [self error: 'expected exactly one track in type 0 file'].
+	tempoMap ifNotNil: [self error: 'did not expect a tempo map in type 0 file'].
+	newTempoMap _ OrderedCollection new.
+	newTracks _ (1 to: 16) collect: [:i | OrderedCollection new].
+	tracks first do: [:e |
+		e isTempoEvent
+			ifTrue: [newTempoMap addLast: e]
+			ifFalse: [(newTracks at: e channel + 1) addLast: e]].
+	newTempoMap size > 0 ifTrue: [tempoMap _ newTempoMap asArray].
+	newTracks _ newTracks select: [:t | self trackContainsNotes: t].
+	tracks _ newTracks collect: [:t | t asArray].
+	trackInfo _ trackInfo, ((2 to: tracks size) collect: [:i | '']).
+! !
+
+!MIDIFileReader class methodsFor: 'as yet unclassified' stamp: 'jmv 4/1/2009 21:42'!
+playFileNamed: fileName 
+"
+	ScorePlayerMorph openOn: (self scoreFromFileNamed: fileName)
+		title: (FileDirectory localNameFor: fileName)"! !
+
+!MIDIFileReader class methodsFor: 'as yet unclassified' stamp: 'jmv 4/1/2009 21:43'!
+playStream: binaryStream 
+"
+	ScorePlayerMorph openOn: (self scoreFromStream: binaryStream)
+		title: 'a MIDI stream'"! !
+
+!MIDIFileReader class methodsFor: 'as yet unclassified' stamp: 'jmv 4/1/2009 21:43'!
+playURLNamed: urlString 
+"
+	| titleString |
+	titleString := urlString copyFrom: (urlString findLast: [:c | c = $/]) + 1
+				to: urlString size.
+	ScorePlayerMorph openOn: (self scoreFromURL: urlString)
+		title: titleString"! !
+
+!MIDIFileReader class methodsFor: 'as yet unclassified' stamp: 'pb 5/25/2016 01:51'!
+scoreFromFileNamed: fileName
+
+	| f score |
+	f _ (fileName asFileEntry readStream) binary.
+	score _ (self new readMIDIFrom: f) asScore.
+	f close.
+	^ score
+! !
+
+!MIDIFileReader class methodsFor: 'as yet unclassified' stamp: 'ls 8/8/1998 03:14'!
+scoreFromStream: binaryStream
+
+	|  score |
+	score _ (self new readMIDIFrom: binaryStream) asScore.
+	^ score
+! !
+
+!MIDIFileReader class methodsFor: 'as yet unclassified' stamp: 'jm 9/12/1998 19:57'!
+standardMIDIInstrumentNames
+	"Answer an array of Standard MIDI instrument names."
+
+	^ #(
+		'Grand Piano'
+		'Bright Piano'
+		'Electric Grand Piano'
+		'Honky-tonk Piano'
+		'Electric Piano 1'
+		'Electric Piano 2'
+		'Harpsichord'
+		'Clavichord'
+		'Celesta'
+		'Glockenspiel'
+		'Music Box'
+		'Vibraphone'
+		'Marimba'
+		'Xylophone'
+		'Tubular Bells'
+		'Duclimer'
+		'Drawbar Organ'
+		'Percussive Organ'
+		'Rock Organ'
+		'Church Organ'
+		'Reed Organ'
+		'Accordion'
+		'Harmonica'
+		'Tango Accordion'
+		'Nylon Guitar'
+		'Steel Guitar'
+		'Electric Guitar 1'
+		'Electric Guitar 2'
+		'Electric Guitar 3'
+		'Overdrive Guitar'
+		'Distorted Guitar'
+		'Guitar Harmonics'
+		'Acoustic Bass'
+		'Electric Bass 1'
+		'Electric Bass 2'
+		'Fretless Bass'
+		'Slap Bass 1'
+		'Slap Bass 2'
+		'Synth Bass 1'
+		'Synth Bass 2'
+		'Violin'
+		'Viola'
+		'Cello'
+		'Contrabass'
+		'Tremolo Strings'
+		'Pizzicato Strings'
+		'Orchestral Harp'
+		'Timpani'
+		'String Ensemble 1'
+		'String Ensemble 2'
+		'Synth Strings 1'
+		'Synth Strings 2'
+		'Choir Ahhs'
+		'Choir Oohs'
+		'Synth Voice'
+		'Orchestra Hit'
+		'Trumpet'
+		'Trombone'
+		'Tuba'
+		'Muted Trumpet'
+		'French Horn'
+		'Brass Section'
+		'Synth Brass 1'
+		'Synth Brass 2'
+		'Soprano Sax'
+		'Alto Sax'
+		'Tenor Sax'
+		'Baritone Sax'
+		'Oboe'
+		'English Horn'
+		'Bassoon'
+		'Clarinet'
+		'Piccolo'
+		'Flute'
+		'Recorder'
+		'Pan Flute'
+		'Blown Bottle'
+		'Shakuhachi'
+		'Whistle'
+		'Ocarina'
+		'Lead 1 (square)'
+		'Lead 2 (sawtooth)'
+		'Lead 3 (calliope)'
+		'Lead 4 (chiff)'
+		'Lead 5 (charang)'
+		'Lead 6 (voice)'
+		'Lead 7 (fifths)'
+		'Lead 8 (bass+lead)'
+		'Pad 1 (new age)'
+		'Pad 2 (warm)'
+		'Pad 3 (polysynth)'
+		'Pad 4 (choir)'
+		'Pad 5 (bowed)'
+		'Pad 6 (metallic)'
+		'Pad 7 (halo)'
+		'Pad 8 (sweep)'
+		'FX 1 (rain)'
+		'FX 2 (soundtrack)'
+		'FX 3 (crystals)'
+		'FX 4 (atmosphere)'
+		'FX 5 (brightness)'
+		'FX 6 (goblins)'
+		'FX 7 (echoes)'
+		'FX 8 (sci-fi)'
+		'Sitar'
+		'Banjo'
+		'Shamisen'
+		'Koto'
+		'Kalimba'
+		'Bagpipe'
+		'Fiddle'
+		'Shanai'
+		'Tinkle Bell'
+		'Agogo'
+		'Steel Drum'
+		'Woodblock'
+		'Taiko Drum'
+		'Melodic Tom'
+		'Synth Drum'
+		'Reverse Cymbal'
+		'Guitar Fret Noise'
+		'Breath Noise'
+		'Seashore'
+		'Bird Tweet'
+		'Telephone Ring'
+		'Helicopter'
+		'Applause'
+		'Gunshot')
+! !
+
+!MIDIInputParser methodsFor: 'recording' stamp: 'jmv 2/6/2024 10:21:32'!
+clearBuffers
+	"Clear the MIDI record buffers. This should be called at the start of recording or real-time MIDI processing."	
+
+	received := received species new.
+	rawDataBuffer := ByteArray new: 1000.
+	sysExBuffer := WriteStream on: (ByteArray new: 100).
+	midiPort ifNotNil: [midiPort ensureOpen; flushInput].
+	startTime := Time localMillisecondClock.
+	state := #idle.
+! !
+
+!MIDIInputParser methodsFor: 'recording' stamp: 'jm 10/8/1998 21:06'!
+processMIDIData
+	"Process all MIDI data that has arrived since the last time this method was executed. This method should be called frequently to process, filter, and timestamp MIDI data as it arrives."
+
+	| bytesRead |
+	[(bytesRead _ midiPort readInto: rawDataBuffer) > 0] whileTrue: [
+		timeNow _ (midiPort bufferTimeStampFrom: rawDataBuffer) - startTime.
+		5 to: bytesRead do: [:i | self processByte: (rawDataBuffer at: i)]].
+! !
+
+!MIDIInputParser methodsFor: 'recording' stamp: 'jm 10/8/1998 20:24'!
+received
+	"Answer my current collection of all MIDI commands received. Items in this list have the form (<time><cmd byte>[<arg1>[<arg2>]]). Note that the real-time processing facility, midiDo:, removes items from this list as it processes them."
+
+	^ received
+! !
+
+!MIDIInputParser methodsFor: 'private-state machine' stamp: 'jm 10/8/1998 18:34'!
+endSysExclusive: cmdByte
+	"Error!! Received 'end system exclusive' command when not receiving system exclusive data."
+
+	self error: 'unexpected ''End of System Exclusive'' command'.
+! !
+
+!MIDIInputParser methodsFor: 'private-state machine' stamp: 'jm 10/8/1998 19:24'!
+ignoreOne: cmdByte
+	"Ignore a one argument command."	
+
+	lastCmdByte _ cmdByte.
+	lastSelector _ #ignoreOne:.
+	state _ #ignore1.
+! !
+
+!MIDIInputParser methodsFor: 'private-state machine' stamp: 'jm 10/8/1998 19:24'!
+ignoreTwo: cmdByte
+	"Ignore a two argument command."	
+
+	lastCmdByte _ cmdByte.
+	lastSelector _ #ignoreTwo:.
+	state _ #ignore2.
+! !
+
+!MIDIInputParser methodsFor: 'private-state machine' stamp: 'jm 10/9/1998 07:45'!
+ignoreZero: cmdByte
+	"Ignore a zero argument command, such as tune request or a real-time message. Stay in the current and don't change active status. Note that real-time messages can arrive between data bytes without disruption."	
+
+	"do nothing"
+! !
+
+!MIDIInputParser methodsFor: 'private-state machine' stamp: 'jm 10/9/1998 09:36'!
+processByte: aByte
+	"Process the given incoming MIDI byte and record completed commands."
+	"Details: Because this must be fast, it has been hand-tuned. Be careful!!"
+
+	aByte > 247 ifTrue: [  "real-time message; can arrive at any time"
+		^ self perform: (cmdActionTable at: aByte) with: aByte].
+
+	#idle = state ifTrue: [
+		aByte >= 128
+			ifTrue: [  "command byte in idle state: start new command"
+				^ self perform: (cmdActionTable at: aByte) with: aByte]
+			ifFalse: [  "data byte in idle state: use running status if possible"
+				lastCmdByte ifNil: [^ self].  "running status unknown; skip byte"
+				"process this data as if it had the last command byte in front of it"
+				 self perform: lastSelector with: lastCmdByte.
+
+				"the previous line put us into a new state; we now 'fall through'
+				 to process the data byte given this new state."]].
+
+	#ignore1 = state ifTrue: [^ state _ #idle].
+	#ignore2 = state ifTrue: [^ state _ #ignore1].
+
+	#want1of2 = state ifTrue: [
+		argByte1 _ aByte.
+		^ state _ #want2of2].
+
+	#want2of2 = state ifTrue: [
+		argByte2 _ aByte.
+		received addLast: (Array with: timeNow with: lastCmdByte with: argByte1 with: argByte2).
+		^ state _ #idle].
+
+	#want1only = state ifTrue: [
+		argByte1 _ aByte.
+		received addLast: (Array with: timeNow with: lastCmdByte with: argByte1).
+		^ state _ #idle].
+
+	#sysExclusive = state ifTrue: [
+		aByte < 128 ifTrue: [
+			"record a system exclusive data byte"
+			ignoreSysEx ifFalse: [sysExBuffer nextPut: aByte].
+			^ self]
+		ifFalse: [
+			aByte < 248 ifTrue: [
+				"a system exclusive message is terminated by any non-real-time command byte"
+				ignoreSysEx ifFalse: [
+					received addLast: (Array with: timeNow with: lastCmdByte with: sysExBuffer contents)].
+				state _ #idle.
+				aByte = 247
+					ifTrue: [^ self]							"endSysExclusive command, nothing left to do"
+					ifFalse: [^ self processByte: aByte]]]].  	"no endSysExclusive; just start the next command"
+! !
+
+!MIDIInputParser methodsFor: 'private-state machine' stamp: 'jm 10/8/1998 19:24'!
+recordOne: cmdByte
+	"Record a one argument command at the current time."	
+
+	lastCmdByte _ cmdByte.
+	lastSelector _ #recordOne:.
+	state _ #want1only.
+! !
+
+!MIDIInputParser methodsFor: 'private-state machine' stamp: 'jm 10/8/1998 19:24'!
+recordTwo: cmdByte
+	"Record a two argument command at the current time."	
+
+	lastCmdByte _ cmdByte.
+	lastSelector _ #recordTwo:.
+	state _ #want1of2.
+! !
+
+!MIDIInputParser methodsFor: 'private-state machine' stamp: 'jm 10/9/1998 07:43'!
+recordZero: cmdByte
+	"Record a zero-byte message, such as tune request or a real-time message. Don't change active status. Note that real-time messages can arrive between data bytes without disruption."	
+
+	received addLast: (Array with: timeNow with: cmdByte).
+! !
+
+!MIDIInputParser methodsFor: 'private-state machine' stamp: 'jm 10/9/1998 09:38'!
+startSysExclusive: cmdByte
+	"The beginning of a variable length 'system exclusive' command."
+
+	sysExBuffer resetContents.
+	lastCmdByte _ nil.  "system exclusive commands clear running status"
+	lastSelector _ nil.
+	state _ #sysExclusive.
+! !
+
+!MIDIInputParser methodsFor: 'private-state machine' stamp: 'jm 10/8/1998 17:12'!
+undefined: cmdByte
+	"We have received an unexpected MIDI byte (e.g., a data byte when we were expecting a command). This should never happen."
+
+	self error: 'unexpected MIDI byte ', cmdByte printString.
+! !
+
+!MIDIInputParser methodsFor: 'midi filtering' stamp: 'jm 10/8/1998 20:39'!
+ignoreChannel: channel
+	"Don't record any events arriving on the given MIDI channel (in the range 1-16)."
+
+	((channel isInteger not) | (channel < 1) | (channel > 16))
+		ifTrue: [^ self error: 'bad MIDI channel number', channel printString].
+
+	"two-arg channel messages"
+	#(128 144 160 176 224) do: [:i | cmdActionTable at: (i bitOr: channel - 1) put: #ignoreTwo:].
+
+	"one-arg channel messages"
+	#(192 208) do: [:i | cmdActionTable at: (i bitOr: channel - 1) put: #ignoreOne:].
+! !
+
+!MIDIInputParser methodsFor: 'midi filtering' stamp: 'jm 10/8/1998 20:40'!
+ignoreCommand: midiCmd
+	"Don't record the given MIDI command on any channel."
+
+	| cmd sel | 
+	((midiCmd isInteger not) | (midiCmd < 128) | (midiCmd > 255))
+		ifTrue: [^ self error: 'bad MIDI command'].
+
+	midiCmd < 240 ifTrue: [  "channel commands; ignore on all channels"
+		cmd _ midiCmd bitAnd: 2r11110000.
+		sel _ (#(128 144 160 176 224) includes: cmd)
+			ifTrue: [#ignoreTwo:]
+			ifFalse: [#ignoreOne:].
+		 1 to: 16 do: [:ch | cmdActionTable at: (cmd bitOr: ch - 1) put: sel].
+		^ self].
+
+	(#(240 241 244 245 247 249 253) includes: midiCmd) ifTrue: [
+		^ self error: 'You can''t ignore the undefined MIDI command: ', midiCmd printString].
+
+	midiCmd = 242 ifTrue: [  "two-arg command"
+		cmdActionTable at: midiCmd put: #ignoreTwo:.
+		 ^ self].
+
+	midiCmd = 243 ifTrue: [  "one-arg command"
+		cmdActionTable at: midiCmd put: #ignoreOne:.
+		^ self].
+
+	(#(246 248 250 251 252 254 255) includes: midiCmd) ifTrue:	[  "zero-arg command"
+		cmdActionTable at: midiCmd put: #ignore.
+		 ^ self].
+
+	"we should not get here"
+	self error: 'implementation error'.
+! !
+
+!MIDIInputParser methodsFor: 'midi filtering' stamp: 'jm 10/8/1998 20:38'!
+ignoreSysEx: aBoolean
+	"If the argument is true, then ignore incoming system exclusive message."
+
+	ignoreSysEx _ aBoolean.
+! !
+
+!MIDIInputParser methodsFor: 'midi filtering' stamp: 'jm 10/9/1998 07:46'!
+ignoreTuneAndRealTimeCommands
+	"Ignore tuning requests and real-time commands."
+
+	cmdActionTable at: 246 put: #ignoreZero:.	"tune request"
+	cmdActionTable at: 248 put: #ignoreZero:.	"timing clock"
+	cmdActionTable at: 250 put: #ignoreZero:.	"start"
+	cmdActionTable at: 251 put: #ignoreZero:.		"continue"
+	cmdActionTable at: 252 put: #ignoreZero:.	"stop/Clock"
+	cmdActionTable at: 254 put: #ignoreZero:.	"active sensing"
+	cmdActionTable at: 255 put: #ignoreZero:.	"system reset"
+! !
+
+!MIDIInputParser methodsFor: 'midi filtering' stamp: 'jmv 5/20/2011 11:14'!
+noFiltering
+	"Revert to accepting all MIDI commands on all channels. This undoes any earlier request to filter the incoming MIDI stream."
+
+	cmdActionTable _ DefaultMidiTable copy.
+	ignoreSysEx _ false! !
+
+!MIDIInputParser methodsFor: 'midi filtering' stamp: 'jm 10/9/1998 07:50'!
+recordOnlyChannels: channelList
+	"Record only MIDI data arriving on the given list of channel numbers (in the range 1-16)."
+
+	channelList do: [:ch |
+		((ch isInteger not) | (ch < 1) | (ch > 16))
+			ifTrue: [^ self error: 'bad Midi channel specification: ', ch printString]].
+
+	1 to: 16 do: [:ch | (channelList includes: ch) ifFalse: [self ignoreChannel: ch]].
+! !
+
+!MIDIInputParser methodsFor: 'real-time processing' stamp: 'jm 10/9/1998 07:53'!
+midiDo: aBlock
+	"Poll the incoming MIDI stream in real time and call the given block for each complete command that has been received. The block takes one argument, which is an array of the form (<time><cmd byte>[<arg1>[<arg2>]]). The number of arguments depends on the command byte. For system exclusive commands, the argument is a ByteArray containing the system exclusive message."
+
+	self processMIDIData.
+	[received isEmpty] whileFalse:
+		[aBlock value: received removeFirst].
+! !
+
+!MIDIInputParser methodsFor: 'real-time processing' stamp: 'jmv 1/14/2013 21:13'!
+midiDoUntilMouseDown: midiActionBlock
+	"Process the incoming MIDI stream in real time by calling midiActionBlock for each MIDI event. This block takes three arguments: the MIDI command byte and two argument bytes. One or both argument bytes may be nil, depending on the MIDI command. If not nil, evaluatue idleBlock regularly whether MIDI data is available or not. Pressing any mouse button terminates the interaction."
+
+	| time cmd arg1 arg2 |
+	self clearBuffers.
+	[ Sensor isAnyButtonPressed ] whileFalse: [
+		self midiDo: [ :item |
+			time _ item at: 1.
+			cmd _ item at: 2.
+			arg1 _ arg2 _ nil.
+			item size > 2 ifTrue: [
+				arg1 _ item at: 3.
+				item size > 3 ifTrue: [arg2 _ item at: 4]].
+				midiActionBlock value: cmd value: arg1 value: arg2]].
+! !
+
+!MIDIInputParser methodsFor: 'accessing' stamp: 'jm 1/6/1999 08:25'!
+midiPort
+
+	^ midiPort
+! !
+
+!MIDIInputParser methodsFor: 'accessing' stamp: 'jm 1/6/1999 08:24'!
+midiPort: aMIDIPort
+	"Use the given MIDI port."
+
+	midiPort _ aMIDIPort.
+	self clearBuffers.
+! !
+
+!MIDIInputParser methodsFor: 'midi monitor' stamp: 'jm 10/8/1998 21:22'!
+monitor
+	"Print MIDI messages to the transcript until any mouse button is pressed."
+
+	self midiDoUntilMouseDown: [:cmd :arg1 :arg2 |
+		self printCmd: cmd with: arg1 with: arg2].
+! !
+
+!MIDIInputParser methodsFor: 'midi monitor' stamp: 'jmv 3/13/2012 12:38'!
+printCmd: cmdByte with: arg1 with: arg2
+	"Print the given MIDI command."
+
+	| cmd ch bend |
+	cmdByte < 240
+		ifTrue: [  "channel message" 
+			cmd _ cmdByte bitAnd: 2r11110000.
+			ch _ (cmdByte bitAnd: 2r00001111) + 1]
+		ifFalse: [cmd _ cmdByte].  "system message"
+
+	cmd = 128 ifTrue: [
+		^ Transcript show: ('key up ', arg1 printString, ' vel: ', arg2 printString, ' chan: ', ch printString); newLine].
+	cmd = 144 ifTrue: [
+		^ Transcript show: ('key down: ', arg1 printString, ' vel: ', arg2 printString, ' chan: ', ch printString); newLine].
+	cmd = 160 ifTrue: [
+		^ Transcript show: ('key pressure: ', arg1 printString, ' val: ', arg2 printString, ' chan: ', ch printString); newLine].
+	cmd = 176 ifTrue: [
+		^ Transcript show: ('CC', arg1 printString, ': val: ', arg2 printString, ' chan: ', ch printString); newLine].
+	cmd = 192 ifTrue: [
+		^ Transcript show: ('prog: ', (arg1 + 1) printString, ' chan: ', ch printString); newLine].
+	cmd = 208 ifTrue: [
+		^ Transcript show: ('channel pressure ', arg1 printString, ' chan: ', ch printString); newLine].
+	cmd = 224 ifTrue: [
+		bend _ ((arg2 bitShift: 7) + arg1) - 8192.
+		^ Transcript show: ('bend: ', bend printString, ' chan: ', ch printString); newLine].
+
+	cmd = 240 ifTrue: [
+		^ Transcript show: ('system exclusive: ', (arg1 at: 1) printString, ' (', arg1 size printString, ' bytes)'); newLine].
+
+	Transcript show: 'cmd: ', cmd printString, ' arg1: ', arg1 printString, ' arg2: ', arg2 printString; newLine.
+! !
+
+!MIDIInputParser methodsFor: 'private-other' stamp: 'jm 10/9/1998 07:56'!
+setMIDIPort: aMIDIPort
+	"Initialize this instance for recording from the given MIDI port. Tune and real-time commands are filtered out by default; the client can send noFiltering to receive these messages."
+
+	midiPort _ aMIDIPort.
+	received _ OrderedCollection new.
+	self noFiltering.  "initializes cmdActionTable"
+	self ignoreTuneAndRealTimeCommands.
+! !
+
+!MIDIInputParser class methodsFor: 'class initialization' stamp: 'jm 10/9/1998 07:35'!
+initialize
+	"Build the default MIDI command-byte action table. This table maps MIDI command bytes to the action to be performed when that is received. Note that MIDI data bytes (bytes whose value is < 128) are never used to index into this table."
+	"MIDIInputParser initialize"
+
+	DefaultMidiTable _ Array new: 255 withAll: #undefined:.
+	128 to: 143 do: [:i | DefaultMidiTable at: i put: #recordTwo:].		"key off"
+	144 to: 159 do: [:i | DefaultMidiTable at: i put: #recordTwo:].		"key on"
+	160 to: 175 do: [:i | DefaultMidiTable at: i put: #recordTwo:].		"polyphonic after-touch"
+	176 to: 191 do: [:i | DefaultMidiTable at: i put: #recordTwo:].		"control change"
+	192 to: 207 do: [:i | DefaultMidiTable at: i put: #recordOne:].		"program change"
+	208 to: 223 do: [:i | DefaultMidiTable at: i put: #recordOne:].		"channel after-touch"
+	224 to: 239 do: [:i | DefaultMidiTable at: i put: #recordTwo:].		"pitch bend"
+
+	DefaultMidiTable at: 240 put: #startSysExclusive:.		"start a system exclusive block"
+	DefaultMidiTable at: 241 put: #recordOne:.			"MIDI time code quarter frame"
+	DefaultMidiTable at: 242 put: #recordTwo:.			"song position select"
+	DefaultMidiTable at: 243 put: #recordOne:.			"song select"
+	DefaultMidiTable at: 244 put: #undefined:.
+	DefaultMidiTable at: 245 put: #undefined:.
+	DefaultMidiTable at: 246 put: #recordZero:.			"tune request"
+	DefaultMidiTable at: 247 put: #endSysExclusive:.		"end a system exclusive block"
+	DefaultMidiTable at: 248 put: #recordZero:.			"timing clock"
+	DefaultMidiTable at: 249 put: #undefined:.
+	DefaultMidiTable at: 250 put: #recordZero:.			"start"
+	DefaultMidiTable at: 251 put: #recordZero:.			"continue"
+	DefaultMidiTable at: 252 put: #recordZero:.			"stop/Clock"
+	DefaultMidiTable at: 253 put: #undefined:.
+	DefaultMidiTable at: 254 put: #recordZero:.			"active sensing"
+	DefaultMidiTable at: 255 put: #recordZero:.			"system reset"
+! !
+
+!MIDIInputParser class methodsFor: 'instance creation' stamp: 'jm 10/8/1998 20:29'!
+on: aSimpleMIDIPort
+	"Answer a new MIDI parser on the given port."
+
+	^ super new setMIDIPort: aSimpleMIDIPort
+! !
+
+!MIDIScore methodsFor: 'editing' stamp: 'di 6/20/1999 00:08'!
+appendEvent: noteEvent fullDuration: fullDuration at: selection
+	"It is assumed that the noteEvent already has the proper time"
+
+	| track noteLoc |
+	track _ tracks at: selection first.
+	noteLoc _ selection third + 1.
+	noteEvent midiKey = -1
+		ifTrue: [noteLoc _ noteLoc - 1]
+		ifFalse: ["If not a rest..."
+				track _ track copyReplaceFrom: noteLoc to: noteLoc - 1
+								with: (Array with: noteEvent)].
+	track size >= (noteLoc + 1) ifTrue:
+		["Adjust times of following events"
+		noteLoc + 1 to: track size do:
+			[:i | (track at: i) adjustTimeBy: fullDuration]].
+	tracks at: selection first put: track! !
+
+!MIDIScore methodsFor: 'editing' stamp: 'di 6/17/1999 15:12'!
+cutSelection: selection
+
+	| track selStartTime delta |
+	track _ tracks at: selection first.
+	selStartTime _ (track at: selection second) time.
+	track _ track copyReplaceFrom: selection second to: selection third with: Array new.
+	track size >=  selection second ifTrue:
+		["Adjust times of following events"
+		delta _ selStartTime - (track at: selection second) time.
+		selection second to: track size do:
+			[:i | (track at: i) adjustTimeBy: delta]].
+	tracks at: selection first put: track! !
+
+!MIDIScore methodsFor: 'editing' stamp: 'jm 9/10/1998 17:22'!
+eventForTrack: trackIndex after: eventIndex ticks: scoreTick
+
+	| track evt |
+	track _ tracks at: trackIndex.
+	eventIndex > track size ifTrue: [^ nil].
+	evt _ track at: eventIndex.
+	evt time > scoreTick ifTrue: [^ nil].
+	^ evt
+! !
+
+!MIDIScore methodsFor: 'editing' stamp: 'di 6/17/1999 16:06'!
+gridToNextQuarterNote: tickTime
+
+	^ self gridToQuarterNote: tickTime + ticksPerQuarterNote! !
+
+!MIDIScore methodsFor: 'editing' stamp: 'di 6/17/1999 14:55'!
+gridToQuarterNote: tickTime
+
+	^ tickTime truncateTo: ticksPerQuarterNote! !
+
+!MIDIScore methodsFor: 'editing' stamp: 'di 6/17/1999 16:14'!
+gridTrack: trackIndex toQuarter: quarterDelta at: indexInTrack
+
+	| track selStartTime delta |
+	track _ tracks at: trackIndex.
+	selStartTime _ (track at: indexInTrack) time.
+	delta _ (self gridToQuarterNote: selStartTime + (quarterDelta*ticksPerQuarterNote))
+				- selStartTime.
+	indexInTrack to: track size do:
+		[:i | (track at: i) adjustTimeBy: delta].
+! !
+
+!MIDIScore methodsFor: 'editing' stamp: 'di 6/21/1999 10:56'!
+insertEvents: events at: selection
+
+	| track selStartTime delta |
+	track _ tracks at: selection first.
+	selection second = 0
+		ifTrue: [selStartTime _ 0.
+				selection at: 2 put: 1]
+		ifFalse: [selStartTime _ (track at: selection second) time].
+	track _ track copyReplaceFrom: selection second to: selection second - 1
+				with: (events collect: [:e | e copy]).
+	track size >=  (selection second + events size) ifTrue:
+		["Adjust times of following events"
+		delta _ selStartTime - (track at: selection second) time.
+		selection second to: selection second + events size - 1 do:
+			[:i | (track at: i) adjustTimeBy: delta].
+		delta _ (self gridToNextQuarterNote: (track at: selection second + events size - 1) endTime)
+					- (track at: selection second + events size) time.
+		selection second + events size to: track size do:
+			[:i | (track at: i) adjustTimeBy: delta].
+		].
+	tracks at: selection first put: track! !
+
+!MIDIScore methodsFor: 'editing' stamp: 'jm 8/6/1998 21:16'!
+jitterStartAndEndTimesBy: mSecs
+
+	| r range halfRange oldEnd newEnd newStart |
+	r _ Random new.
+	range _ 2.0 * mSecs.
+	halfRange _ mSecs.
+	tracks do: [:t |
+		t do: [:e |
+			e isNoteEvent ifTrue: [
+				oldEnd _ e time + e duration.
+				newEnd _ oldEnd + ((r next * range) asInteger - halfRange).
+				newStart _ e time + ((r next * range) asInteger - halfRange).
+				e time: newStart.
+				e duration: (newEnd - newStart)]]].
+
+				! !
+
+!MIDIScore methodsFor: 'nil' stamp: 'jmv 4/6/2009 17:15'!
+durationInTicks
+	
+	| t |
+	t _ 0.
+	tracks do: [ :track |
+		track do:
+			[:n | (n isNoteEvent)
+				ifTrue: [t _ t max: n endTime]
+				ifFalse: [t _ t max: n time]]].
+	^ t
+! !
+
+!MIDIScore methodsFor: 'initialization' stamp: 'jmv 4/6/2009 17:15'!
+initialize
+
+	tracks _ #().
+	tempoMap _ #().
+	ticksPerQuarterNote _ 100.
+! !
+
+!MIDIScore methodsFor: 'accessing' stamp: 'jm 1/3/98 07:36'!
+tempoMap
+
+	^ tempoMap
+! !
+
+!MIDIScore methodsFor: 'accessing' stamp: 'jm 1/29/98 18:09'!
+tempoMap: tempoEventList
+
+	tempoEventList ifNil: [
+		tempoMap _ #().
+		^ self].
+	tempoMap _ tempoEventList asArray.
+! !
+
+!MIDIScore methodsFor: 'accessing' stamp: 'jm 1/3/98 07:37'!
+ticksPerQuarterNote
+
+	^ ticksPerQuarterNote
+! !
+
+!MIDIScore methodsFor: 'accessing' stamp: 'jm 1/3/98 07:37'!
+ticksPerQuarterNote: anInteger
+
+	ticksPerQuarterNote _ anInteger.
+! !
+
+!MIDIScore methodsFor: 'accessing' stamp: 'di 10/21/2000 10:02'!
+trackInfo
+
+	^ trackInfo ifNil: [tracks collect: [:i | String new]]
+! !
+
+!MIDIScore methodsFor: 'accessing' stamp: 'jm 1/6/98 23:20'!
+trackInfo: trackInfoList
+
+	trackInfo _ trackInfoList asArray.
+! !
+
+!MIDIScore methodsFor: 'accessing' stamp: 'jm 1/3/98 08:15'!
+tracks
+
+	^ tracks
+! !
+
+!MIDIScore methodsFor: 'accessing' stamp: 'jmv 4/6/2009 17:14'!
+tracks: trackList
+
+	tracks _ trackList asArray collect: [:trackEvents | trackEvents asArray]! !
+
+!MIDISynth methodsFor: 'as yet unclassified' stamp: 'jm 10/14/1998 22:16'!
+channel: i
+
+	^ channels at: i
+! !
+
+!MIDISynth methodsFor: 'as yet unclassified' stamp: 'jm 1/6/1999 10:50'!
+closeMIDIPort
+
+	midiParser midiPort ifNil: [^ self].
+	midiParser midiPort close.
+	midiParser midiPort: nil.
+! !
+
+!MIDISynth methodsFor: 'as yet unclassified' stamp: 'jmv 12/2/2011 09:43'!
+initialize
+
+	midiParser _ MIDIInputParser on: nil.
+	channels _ (1 to: 16) collect: [:ch | MIDISynthChannel new]! !
+
+!MIDISynth methodsFor: 'as yet unclassified' stamp: 'jm 1/6/1999 08:13'!
+instrumentForChannel: channelIndex
+
+	^ (channels at: channelIndex) instrument
+! !
+
+!MIDISynth methodsFor: 'as yet unclassified' stamp: 'jm 1/6/1999 08:14'!
+instrumentForChannel: channelIndex put: aSoundProto
+
+	(channels at: channelIndex) instrument: aSoundProto.
+! !
+
+!MIDISynth methodsFor: 'as yet unclassified' stamp: 'jm 1/6/1999 10:27'!
+isOn
+
+	^ process notNil
+! !
+
+!MIDISynth methodsFor: 'as yet unclassified' stamp: 'jm 10/14/1998 21:52'!
+midiParser
+
+	^ midiParser
+! !
+
+!MIDISynth methodsFor: 'as yet unclassified' stamp: 'jm 1/6/1999 08:26'!
+midiPort
+
+	^ midiParser midiPort
+! !
+
+!MIDISynth methodsFor: 'as yet unclassified' stamp: 'jm 1/6/1999 16:32'!
+midiPort: aMIDIPortOrNil
+
+	midiParser midiPort: aMIDIPortOrNil.
+! !
+
+!MIDISynth methodsFor: 'as yet unclassified' stamp: 'jm 10/13/1998 12:09'!
+midiTrackingLoop
+
+	midiParser clearBuffers.
+	[true] whileTrue: [
+		self processMIDI ifFalse: [(Delay forMilliseconds: 5) wait]].
+! !
+
+!MIDISynth methodsFor: 'as yet unclassified' stamp: 'jm 1/6/1999 20:12'!
+mutedForChannel: channelIndex put: aBoolean
+
+	^ (channels at: channelIndex) muted: aBoolean
+! !
+
+!MIDISynth methodsFor: 'as yet unclassified' stamp: 'jm 1/6/1999 19:45'!
+panForChannel: channelIndex
+
+	^ (channels at: channelIndex) pan
+! !
+
+!MIDISynth methodsFor: 'as yet unclassified' stamp: 'jm 1/6/1999 19:45'!
+panForChannel: channelIndex put: newPan
+
+	(channels at: channelIndex) pan: newPan.
+! !
+
+!MIDISynth methodsFor: 'as yet unclassified' stamp: 'jm 10/14/1998 14:13'!
+processMIDI
+	"Process some MIDI commands. Answer true if any commands were processed."
+
+	| didSomething cmdByte byte1 byte2 cmd chan |
+	didSomething _ false.
+	midiParser midiDo: [:item |
+		didSomething _ true.
+		cmdByte _ item at: 2.
+		byte1 _ byte2 _ nil.
+		item size > 2 ifTrue: [
+			byte1 _ item at: 3.
+			item size > 3 ifTrue: [byte2 _ item at: 4]].
+		cmdByte < 240
+			ifTrue: [  "channel message" 
+				cmd _ cmdByte bitAnd: 2r11110000.
+				chan _ (cmdByte bitAnd: 2r00001111) + 1.
+				(channels at: chan) doChannelCmd: cmd byte1: byte1 byte2: byte2]
+			ifFalse: [  "system message"
+				"process system messages here"
+			]].
+	^ didSomething
+! !
+
+!MIDISynth methodsFor: 'as yet unclassified' stamp: 'jmv 1/14/2013 21:13'!
+processMIDIUntilMouseDown
+	"Used for debugging. Do MIDI processing until the mouse is pressed."
+
+	midiParser clearBuffers.
+	[ Sensor isAnyButtonPressed ] whileFalse: [ self processMIDI ]! !
+
+!MIDISynth methodsFor: 'as yet unclassified' stamp: 'jm 1/6/1999 16:36'!
+setAllChannelMasterVolumes: aNumber
+
+	| vol |
+	vol _ (aNumber asFloat min: 1.0) max: 0.0.
+	channels do: [:ch | ch masterVolume: vol].
+! !
+
+!MIDISynth methodsFor: 'as yet unclassified' stamp: 'jmv 10/8/2012 22:16'!
+startMIDITracking
+
+	midiParser ifNil: [^ self].
+	midiParser midiPort ifNil: [^ self].
+	midiParser midiPort ensureOpen.
+	self stopMIDITracking.
+	SoundPlayer useShortBuffer.
+	process _ [self midiTrackingLoop] newProcess.
+	process priority: Processor userInterruptPriority.
+	process name: 'MIDISynth'.
+	process resume! !
+
+!MIDISynth methodsFor: 'as yet unclassified' stamp: 'jm 1/6/1999 10:34'!
+stopMIDITracking
+
+	process ifNotNil: [
+		process terminate.
+		process _ nil].
+	SoundPlayer shutDown; initialize.  "revert to normal buffer size"
+! !
+
+!MIDISynth methodsFor: 'as yet unclassified' stamp: 'jm 1/6/1999 16:40'!
+volumeForChannel: channelIndex
+
+	^  (channels at: channelIndex) masterVolume
+! !
+
+!MIDISynth methodsFor: 'as yet unclassified' stamp: 'jm 1/6/1999 16:40'!
+volumeForChannel: channelIndex put: newVolume
+
+	(channels at: channelIndex) masterVolume: newVolume.
+! !
+
+!MIDISynth class methodsFor: 'examples' stamp: 'jm 1/6/1999 16:39'!
+example
+	"Here's one way to run the MIDI synth. It will get a nice Morphic UI later. Click the mouse to stop running it. (Mac users note: be sure you have MIDI interface adaptor plugged in, or Squeak will hang waiting for the external clock signal.)."
+	"MIDISynth example"
+
+	| portNum synth |
+	portNum _ SimpleMIDIPort inputPortNumFromUser.
+	portNum ifNil: [^ self].
+	SoundPlayer useShortBuffer.
+	synth _ MIDISynth new
+		midiPort: (SimpleMIDIPort openOnPortNumber: portNum).
+	synth midiParser ignoreCommand: 224.  "filter out pitch bends"
+	1 to: 16 do: [:i |
+		(synth channel: i) instrument:
+ 			 (AbstractSound soundNamed: 'oboe1')].
+	1 to: 16 do: [:ch | synth volumeForChannel: ch put: 0.2].
+
+	synth processMIDIUntilMouseDown.
+	SoundPlayer shutDown; initialize.  "revert to normal buffer size"
+! !
+
+!MIDISynthChannel methodsFor: 'other' stamp: 'jm 10/14/1998 21:45'!
+adjustPitch: bend
+	"Handle a pitch-bend change."
+
+	| snd pitchAdj centerPitch |
+	pitchBend _ bend.
+	pitchAdj _ 2.0 raisedTo: (bend asFloat / 8192.0) / 6.0.
+	activeSounds copy do: [:entry |
+		snd _ entry at: 2.
+		centerPitch _ entry at: 3.
+		snd pitch: pitchAdj * centerPitch.
+		snd internalizeModulationAndRatio].
+! !
+
+!MIDISynthChannel methodsFor: 'other' stamp: 'jm 10/14/1998 15:43'!
+convertVelocity: valueByte
+	"Map a value in the range 0..127 to a volume in the range 0.0..1.0."
+	"Details: A quadratic function seems to give a good keyboard feel."
+
+	| r |
+	r _ (valueByte * valueByte) / 12000.0.
+	r > 1.0 ifTrue: [^ 1.0].
+	r < 0.08 ifTrue: [^ 0.08].
+	^ r
+! !
+
+!MIDISynthChannel methodsFor: 'other' stamp: 'jm 10/14/1998 15:41'!
+newVolume: valueByte
+	"Set the channel volume to the level given by the given number in the range 0..127."
+
+	| snd newVolume |
+	channelVolume _ valueByte asFloat / 127.0.
+	newVolume _ masterVolume * channelVolume.
+	activeSounds do: [:entry |
+		snd _ entry at: 2.
+		snd adjustVolumeTo: newVolume overMSecs: 10].
+! !
+
+!MIDISynthChannel methodsFor: 'midi dispatching' stamp: 'jm 10/14/1998 15:40'!
+channelPressure: newPressure
+	"Handle a channel pressure (channel aftertouch) change."
+
+	self newVolume: newPressure.
+! !
+
+!MIDISynthChannel methodsFor: 'midi dispatching' stamp: 'jm 10/14/1998 13:48'!
+control: control value: newValue
+	"Handle a continuous controller change."
+
+	control = 2 ifTrue: [self newVolume: newValue].  "breath controller"
+! !
+
+!MIDISynthChannel methodsFor: 'midi dispatching' stamp: 'jm 10/14/1998 13:44'!
+doChannelCmd: cmdByte byte1: byte1 byte2: byte2
+	"Dispatch a channel command with the given arguments."
+	"Details: Cases appear in order of expected frequency, most frequent cases first."
+
+	cmdByte = 144 ifTrue: [
+		byte2 = 0
+			ifTrue: [^ self keyUp: byte1 vel: 0]
+			ifFalse: [^ self keyDown: byte1 vel: byte2]].
+	cmdByte = 128 ifTrue: [^ self keyUp: byte1 vel: byte2].
+	cmdByte = 224 ifTrue: [^ self pitchBend: ((byte2 bitShift: 7) + byte1) - 8192].
+	cmdByte = 176 ifTrue: [^ self control: byte1 value: byte2].
+	cmdByte = 208 ifTrue: [^ self channelPressure: byte1].
+	cmdByte = 160 ifTrue: [^ self key: byte1 pressure: byte2].
+	cmdByte = 192 ifTrue: [^ self programChange: byte1].
+! !
+
+!MIDISynthChannel methodsFor: 'midi dispatching' stamp: 'jm 10/14/1998 13:49'!
+key: key pressure: press
+	"Handle a key pressure (polyphonic aftertouch) change. Rarely implemented."
+
+	"Do nothing for now."
+! !
+
+!MIDISynthChannel methodsFor: 'midi dispatching' stamp: 'jm 1/10/1999 08:42'!
+keyDown: key vel: vel
+	"Handle a key down event with non-zero velocity."
+
+	| pitch snd |
+	muted ifTrue: [^ self].
+	pitch _ AbstractSound pitchForMIDIKey: key.
+	snd _ instrument
+		soundForPitch: pitch
+		dur: 10000.0  "sustain a long time, or until turned off"
+		loudness: masterVolume * channelVolume * (self convertVelocity: vel).
+	snd _ (MixedSound new add: snd pan: pan) reset.
+	SoundPlayer resumePlaying: snd quickStart: false.
+	activeSounds add: (Array with: key with: snd with: pitch).
+! !
+
+!MIDISynthChannel methodsFor: 'midi dispatching' stamp: 'jm 10/14/1998 13:49'!
+keyUp: key vel: vel
+	"Handle a key up event."
+
+	| snd |
+	activeSounds copy do: [:entry |
+		(entry at: 1) = key ifTrue: [
+			snd _ entry at: 2.
+			snd stopGracefully.
+			activeSounds remove: entry]].
+! !
+
+!MIDISynthChannel methodsFor: 'midi dispatching' stamp: 'jm 1/11/1999 11:32'!
+pitchBend: bend
+	"Handle a pitch-bend change."
+
+	self adjustPitch: bend.
+! !
+
+!MIDISynthChannel methodsFor: 'midi dispatching' stamp: 'jm 10/14/1998 13:50'!
+programChange: newProgram
+	"Handle a program (instrument) change."
+
+	"Do nothing for now."
+! !
+
+!MIDISynthChannel methodsFor: 'initialization' stamp: 'jm 1/6/1999 20:10'!
+initialize
+
+	instrument _ FMSound default.
+	muted _ false.
+	masterVolume _ 0.5.
+	channelVolume _ 1.0.
+	pan _ 0.5.
+	pitchBend _ 0.0.
+	activeSounds _ OrderedCollection new.
+! !
+
+!MIDISynthChannel methodsFor: 'accessing' stamp: 'jm 10/13/1998 09:45'!
+instrument
+
+	^ instrument
+! !
+
+!MIDISynthChannel methodsFor: 'accessing' stamp: 'jm 10/13/1998 09:45'!
+instrument: aSound
+
+	instrument _ aSound.
+! !
+
+!MIDISynthChannel methodsFor: 'accessing' stamp: 'jm 10/13/1998 09:47'!
+masterVolume
+
+	^ masterVolume
+! !
+
+!MIDISynthChannel methodsFor: 'accessing' stamp: 'jm 10/13/1998 11:49'!
+masterVolume: aNumber
+	"Set the master volume the the given value (0.0 to 1.0)."
+
+	masterVolume _ aNumber asFloat.
+! !
+
+!MIDISynthChannel methodsFor: 'accessing' stamp: 'jm 1/6/1999 20:10'!
+muted
+
+	^ muted
+! !
+
+!MIDISynthChannel methodsFor: 'accessing' stamp: 'jm 1/6/1999 20:11'!
+muted: aBoolean
+
+	muted _ aBoolean.
+! !
+
+!MIDISynthChannel methodsFor: 'accessing' stamp: 'jm 1/6/1999 19:43'!
+pan
+
+	^ pan
+! !
+
+!MIDISynthChannel methodsFor: 'accessing' stamp: 'jm 1/6/1999 19:43'!
+pan: aNumber
+	"Set the left-right pan to the given value (0.0 to 1.0)."
+
+	pan _ aNumber asFloat.
+! !
+
+!SimpleMIDIPort methodsFor: 'input' stamp: 'jm 10/8/1998 19:47'!
+bufferTimeStampFrom: aByteArray
+	"Return the timestamp from the given MIDI input buffer. Assume the given buffer is at least 4 bytes long."
+
+	^ ((aByteArray at: 1) bitShift: 24) +
+	  ((aByteArray at: 2) bitShift: 16) +
+	  ((aByteArray at: 3) bitShift: 8) +
+	   (aByteArray at: 4)
+! !
+
+!SimpleMIDIPort methodsFor: 'input' stamp: 'jm 10/8/1998 19:53'!
+flushInput
+	"Read any lingering MIDI data from this port's input buffer."
+
+	| buf |
+	buf _ ByteArray new: 1000.
+	[(self readInto: buf) > 0] whileTrue.
+! !
+
+!SimpleMIDIPort methodsFor: 'input' stamp: 'jm 10/12/1998 15:49'!
+readInto: aByteArray
+	"Read any data from this port into the given buffer."
+
+	^ self primMIDIReadPort: portNumber into: aByteArray
+! !
+
+!SimpleMIDIPort methodsFor: 'open/close' stamp: 'jm 1/13/1999 08:10'!
+close
+	"Close this MIDI port."
+
+	portNumber ifNotNil: [self primMIDIClosePort: portNumber].
+	accessSema _ nil.
+	lastCommandByteOut _ nil.
+! !
+
+!SimpleMIDIPort methodsFor: 'open/close' stamp: 'jm 1/13/1999 08:23'!
+ensureOpen
+	"Make sure this MIDI port is open. It is good to call this before starting to use a port in case an intervening image save/restore has caused the underlying hardware port to get closed."
+
+	portNumber ifNil: [^ self error: 'Use "openOn:" to open a MIDI port initially'].
+	self primMIDIClosePort: portNumber.
+	self primMIDIOpenPort: portNumber readSemaIndex: 0 interfaceClockRate: InterfaceClockRate.
+	accessSema _ Semaphore forMutualExclusion.
+	lastCommandByteOut _ Array new: 16 withAll: 0.  "clear running status"
+! !
+
+!SimpleMIDIPort methodsFor: 'open/close' stamp: 'jm 1/13/1999 08:09'!
+openOnPortNumber: portNum
+	"Open this MIDI port on the given port number."
+
+	self close.
+	portNumber _ portNum.
+	accessSema _ Semaphore forMutualExclusion.
+	self ensureOpen.
+! !
+
+!SimpleMIDIPort methodsFor: 'open/close' stamp: 'jm 10/12/1998 15:48'!
+portNumber
+	"Answer my port number."
+
+	^ portNumber
+! !
+
+!SimpleMIDIPort methodsFor: 'output' stamp: 'jm 9/28/1998 22:00'!
+midiCmd: cmd channel: channel byte: dataByte
+	"Immediately output the given MIDI command with the given channel and argument byte to this MIDI port. Assume that the port is open."
+
+	accessSema critical: [
+		self primMIDIWritePort: portNumber
+			from: (ByteArray
+					with: (cmd bitOr: channel)
+					with: dataByte)
+			at: 0].
+! !
+
+!SimpleMIDIPort methodsFor: 'output' stamp: 'jm 9/28/1998 22:00'!
+midiCmd: cmd channel: channel byte: dataByte1 byte: dataByte2
+	"Immediately output the given MIDI command with the given channel and argument bytes to this MIDI port. Assume that the port is open."
+
+	accessSema critical: [
+		self primMIDIWritePort: portNumber
+			from: (ByteArray
+					with: (cmd bitOr: channel)
+					with: dataByte1
+					with: dataByte2)
+			at: 0].
+! !
+
+!SimpleMIDIPort methodsFor: 'output' stamp: 'jm 9/28/1998 22:00'!
+midiOutput: aByteArray
+	"Output the given bytes to this MIDI port immediately. Assume that the port is open."
+
+	accessSema critical: [
+		self primMIDIWritePort: portNumber from: aByteArray at: 0].
+! !
+
+!SimpleMIDIPort methodsFor: 'primitives' stamp: 'ar 2/2/2001 15:09'!
+primMIDIClosePort: portNum
+	"Close the given MIDI port. Don't fail if port is already closed."
+
+	<primitive: 'primitiveMIDIClosePort' module: 'MIDIPlugin'>
+! !
+
+!SimpleMIDIPort methodsFor: 'primitives' stamp: 'ar 2/2/2001 15:09'!
+primMIDIOpenPort: portNum readSemaIndex: readSemaIndex interfaceClockRate: interfaceClockRate
+	"Open the given MIDI port. If non-zero, readSemaIndex specifies the index in the external objects array of a semaphore to be signalled when incoming MIDI data is available. Not all platforms support signalling the read semaphore. InterfaceClockRate specifies the clock rate of the external MIDI interface adaptor on Macintosh computers; it is ignored on other platforms."
+
+	<primitive: 'primitiveMIDIOpenPort' module: 'MIDIPlugin'>
+	self primitiveFailed.
+! !
+
+!SimpleMIDIPort methodsFor: 'primitives' stamp: 'ar 2/2/2001 15:09'!
+primMIDIReadPort: portNum into: byteArray
+	"Read any available MIDI data into the given buffer (up to the size of the buffer) and answer the number of bytes read."
+
+	<primitive: 'primitiveMIDIRead' module: 'MIDIPlugin'>
+	self primitiveFailed.
+! !
+
+!SimpleMIDIPort methodsFor: 'primitives' stamp: 'ar 2/2/2001 15:09'!
+primMIDIWritePort: portNum from: byteArray at: midiClockValue
+	"Queue the given data to be sent through the given MIDI port at the given time. If midiClockValue is zero, send the data immediately."
+
+	<primitive: 'primitiveMIDIWrite' module: 'MIDIPlugin'>
+	self primitiveFailed.
+! !
+
+!SimpleMIDIPort class methodsFor: 'utilities' stamp: 'jm 1/13/1999 08:11'!
+closeAllPorts
+	"Close all MIDI ports."
+	"SimpleMIDIPort closeAllPorts"
+
+	| lastPortNum |
+	lastPortNum _ self primPortCount - 1.
+	0 to: lastPortNum do: [:portNum | self basicNew primMIDIClosePort: portNum].
+! !
+
+!SimpleMIDIPort class methodsFor: 'utilities' stamp: 'jmv 5/13/2018 19:06:00'!
+inputPortNumFromUser
+	"Prompt the user for a MIDI input port. Answer a port number, or nil if the user does not select a port or if MIDI is not supported on this platform."
+	"
+	SimpleMIDIPort inputPortNumFromUser
+	"
+
+	| portCount aMenu dir |
+	portCount _ self primPortCount.
+	portCount = 0 ifTrue: [^ nil].
+	aMenu _ PopUpMenu new label: 'MIDI port for input:'.
+	0 to: portCount - 1 do:[:i |
+		dir _ self primPortDirectionalityOf: i.
+		(dir = 1) | (dir = 3) ifTrue:[
+			aMenu add: (self portDescription: i) action: i]].
+	 ^ aMenu startUpMenu! !
+
+!SimpleMIDIPort class methodsFor: 'utilities' stamp: 'jm 10/12/1998 18:10'!
+midiIsSupported
+	"Answer true if this platform supports MIDI."
+
+	^ self primPortCount > 0
+! !
+
+!SimpleMIDIPort class methodsFor: 'utilities' stamp: 'jmv 5/13/2018 19:06:33'!
+outputPortNumFromUser
+	"Prompt the user for a MIDI output port. Answer a port number, or nil if the user does not select a port or if MIDI is not supported on this platform."
+	"
+	SimpleMIDIPort outputPortNumFromUser
+	"
+
+	| portCount aMenu dir |
+	portCount _ self primPortCount.
+	portCount = 0 ifTrue: [^ nil].
+	aMenu _ PopUpMenu new label: 'MIDI port for output:'.
+	0 to: portCount - 1 do:[:i |
+		dir _ self primPortDirectionalityOf: i.
+		(dir = 2) | (dir = 3) ifTrue:[
+			aMenu add: (self portDescription: i) action: i]].
+	 ^ aMenu startUpMenu! !
+
+!SimpleMIDIPort class methodsFor: 'utilities' stamp: 'jm 10/12/1998 17:46'!
+portDescription: portNum
+	"Answer a string indicating the directionality of the given MIDI port."
+	"(0 to: SimpleMIDIPort primPortCount - 1) collect:
+		[:i | SimpleMIDIPort portDescription: i]"
+
+	| portName dir |
+	portName _ self primPortNameOf: portNum.
+	dir _ self primPortDirectionalityOf: portNum.
+	dir = 1 ifTrue: [^ portName, ' (in)'].
+	dir = 2 ifTrue: [^ portName, ' (out)'].
+	dir = 3 ifTrue: [^ portName, ' (in/out)'].
+	^ self error: 'unknown MIDI port directionality'
+! !
+
+!SimpleMIDIPort class methodsFor: 'class initialization' stamp: 'jm 9/10/1998 15:33'!
+initialize
+	"SimpleMIDIPort initialize"
+
+	InterfaceClockRate _ 1000000.
+	DefaultPortNumber _ 0.
+! !
+
+!SimpleMIDIPort class methodsFor: 'instance creation' stamp: 'jm 9/10/1998 18:36'!
+openDefault
+	"Answer a new instance of me opened on the default MIDI port."
+
+	^ self openOnPortNumber: DefaultPortNumber
+! !
+
+!SimpleMIDIPort class methodsFor: 'instance creation' stamp: 'tk 6/24/1999 11:42'!
+openOnPortNumber: portNum
+	"Answer a new instance of me for the given MIDI port number."
+	"Details: All clients of a particular MIDI port should share the same instance of me. This allows accesses to the port to be serialized and shared port-related state state to be maintained."
+
+	SimpleMIDIPort allSubInstancesDo: [:p |
+		p portNumber = portNum ifTrue: [
+			"share the existing port object for this port number"
+			^ p]].
+
+	^ super new openOnPortNumber: portNum
+! !
+
+!SimpleMIDIPort class methodsFor: 'primitives' stamp: 'ar 2/2/2001 15:09'!
+primPortCount
+	"Answer the number of MIDI ports supported by this platform, or zero if this primitive is not implemented."
+
+	<primitive: 'primitiveMIDIGetPortCount' module: 'MIDIPlugin'>
+	^ 0
+! !
+
+!SimpleMIDIPort class methodsFor: 'primitives' stamp: 'ar 2/2/2001 15:09'!
+primPortDirectionalityOf: portNum
+	"Answer the platform-specific name for the given MIDI port."
+
+	<primitive: 'primitiveMIDIGetPortDirectionality' module: 'MIDIPlugin'>
+	self primitiveFailed.
+! !
+
+!SimpleMIDIPort class methodsFor: 'primitives' stamp: 'ar 2/2/2001 15:09'!
+primPortNameOf: portNum
+	"Answer the platform-specific name for the given MIDI port."
+
+	<primitive: 'primitiveMIDIGetPortName' module: 'MIDIPlugin'>
+	self primitiveFailed.
 ! !
 
 !AIFFFileReader methodsFor: 'accessing' stamp: 'jm 8/2/1998 21:25'!
@@ -3319,7 +5453,7 @@ fileOutSoundLibrary
 	self fileOutSoundLibrary: Sounds.
 ! !
 
-!AbstractSound class methodsFor: 'sound library-file in/out' stamp: 'pb 5/25/2016 01:35'!
+!AbstractSound class methodsFor: 'sound library-file in/out' stamp: 'jmv 9/12/2024 12:08:00'!
 fileOutSoundLibrary: aDictionary
 	"File out the given dictionary, which is assumed to contain sound and instrument objects keyed by their names."
 	"Note: This method is separated out so that one can file out edited sound libraries, as well as the system sound library. To make such a collection, you can inspect AbstractSound sounds and remove the items you don't want. Then do: 'AbstractSound fileOutSoundLibrary: self' from the Dictionary inspector."
@@ -3327,10 +5461,10 @@ fileOutSoundLibrary: aDictionary
 	| fileName refStream |
 	(aDictionary isKindOf: Dictionary)
 		ifFalse: [self error: 'arg should be a dictionary of sounds'].
-	fileName _ FillInTheBlankMorph request: 'Sound library file name?'.
+	fileName := StringRequestMorph request: 'Sound library file name?'.
 	fileName isEmptyOrNil ifTrue: [^ self].
 	(fileName, '.sounds') asFileEntry writeStreamDo: [ :file |
-		refStream _ SmartRefStream on: file.
+		refStream := SmartRefStream on: file.
 		[ refStream nextPut: aDictionary ]]! !
 
 !AbstractSound class methodsFor: 'sound library-file in/out' stamp: 'jm 9/12/1998 21:35'!
@@ -3482,6 +5616,674 @@ translatedPrimitives
 		(SampledSound mixSampleCount:into:startingAt:leftVol:rightVol:)
 		(ReverbSound applyReverbTo:startingAt:count:)
 	).
+! !
+
+!ScorePlayer methodsFor: 'copying' stamp: 'jm 1/29/98 18:32'!
+copySounds
+	"Private!! Support for copying."
+
+	instruments _ instruments copy.
+	leftVols _ leftVols copy.
+	rightVols _ rightVols copy.
+	muted _ muted copy.
+	self reset.
+! !
+
+!ScorePlayer methodsFor: 'copying' stamp: 'jmv 5/14/2015 09:58'!
+postCopy
+	"Copy my component sounds."
+
+	super postCopy.
+	self copySounds
+! !
+
+!ScorePlayer methodsFor: 'volume' stamp: 'jmv 12/30/2009 11:33'!
+adjustVolumeTo: vol overMSecs: mSecs
+	| normalizedVolume incr block |
+	normalizedVolume _ (vol asFloat min: 1.0) max: 0.0.
+	incr _ (self overallVolume - normalizedVolume) / mSecs * 50.0.
+	block _ normalizedVolume > 0.0
+		ifTrue: [
+			[[(normalizedVolume - self overallVolume) abs > 0.01] whileTrue: [self overallVolume: self overallVolume - incr. (Delay forMilliseconds: 50) wait]]]
+		ifFalse: [
+			[[self overallVolume > 0.0] whileTrue: [self overallVolume: self overallVolume - incr. (Delay forMilliseconds: 50) wait]. self pause]].
+	block fork
+! !
+
+!ScorePlayer methodsFor: 'midi output' stamp: 'jm 10/12/1998 17:13'!
+closeMIDIPort
+	"Stop using MIDI for output. Music will be played using the built-in sound synthesis."
+
+	self pause.
+	midiPort _ nil.
+! !
+
+!ScorePlayer methodsFor: 'midi output' stamp: 'jmv 4/17/2013 12:09'!
+midiPlayLoop
+
+	| mSecsPerStep tStart mSecs |
+	mSecsPerStep _ 5.
+	[done] whileFalse: [
+		tStart _ Time localMillisecondClock.
+		self processAllAtTick: ticksSinceStart asInteger.
+		(Delay forMilliseconds: mSecsPerStep) wait.
+		mSecs _ Time localMillisecondClock - tStart.
+		ticksSinceStart _ ticksSinceStart + (mSecs asFloat / (1000.0 * secsPerTick))]! !
+
+!ScorePlayer methodsFor: 'midi output' stamp: 'jm 10/12/1998 15:56'!
+openMIDIPort: portNum
+	"Open the given MIDI port. Music will be played as MIDI commands to the given MIDI port."
+
+	midiPort _ SimpleMIDIPort openOnPortNumber: portNum.
+! !
+
+!ScorePlayer methodsFor: 'midi output' stamp: 'jmv 3/1/2010 14:06'!
+processMIDIEventsAtTick: scoreTick
+	"Process note events through the given score tick using MIDI."
+
+	| j evt |
+	1 to: score tracks size do: [:i |
+		j _ trackEventIndex at: i.
+		[
+			evt _ score eventForTrack: i after: j ticks: scoreTick.
+			 evt notNil
+		] whileTrue: [
+			evt isNoteEvent
+				ifTrue: [
+					(muted at: i) ifFalse: [
+						evt startNoteOnMidiPort: midiPort.
+						activeMIDINotes add: (Array with: evt with: i)]]
+				ifFalse: [evt outputOnMidiPort: midiPort].
+			j _ j + 1.
+			trackEventIndex at: i put: j]].
+	self turnOffActiveMIDINotesAt: scoreTick.
+! !
+
+!ScorePlayer methodsFor: 'midi output' stamp: 'jmv 10/8/2012 22:14'!
+startMIDIPlaying
+	"Start up a process to play this score via MIDI."
+
+	midiPort ensureOpen.
+	midiPlayerProcess ifNotNil: [midiPlayerProcess terminate].
+	midiPlayerProcess _ [self midiPlayLoop] newProcess.
+	midiPlayerProcess
+		priority: Processor userInterruptPriority;
+		name: 'ScorePlayer';
+		resume.
+! !
+
+!ScorePlayer methodsFor: 'midi output' stamp: 'jm 9/10/1998 20:44'!
+stopMIDIPlaying
+	"Terminate the MIDI player process and turn off any active notes."
+
+	midiPlayerProcess ifNotNil: [midiPlayerProcess terminate].
+	midiPlayerProcess _ nil.
+	activeMIDINotes do: [:pair | pair first endNoteOnMidiPort: midiPort].
+	activeMIDINotes _ activeMIDINotes species new.
+! !
+
+!ScorePlayer methodsFor: 'midi output' stamp: 'jm 9/10/1998 17:48'!
+turnOffActiveMIDINotesAt: scoreTick
+	"Turn off any active MIDI notes that should be turned off at the given score tick."
+
+	| evt someNoteEnded |
+	midiPort ifNil: [^ self].
+	someNoteEnded _ false. 
+	activeMIDINotes do: [:pair |
+		evt _ pair first.
+		evt endTime <= scoreTick ifTrue: [
+			evt endNoteOnMidiPort: midiPort.
+			someNoteEnded _ true]].
+
+	someNoteEnded ifTrue: [
+		activeMIDINotes _ activeMIDINotes select: [:p | p first endTime > scoreTick]].
+! !
+
+!ScorePlayer methodsFor: 'operating' stamp: 'jm 1/30/98 14:03'!
+disableReverb: aBoolean
+
+	aBoolean
+		ifTrue: [SoundPlayer stopReverb]
+		ifFalse: [SoundPlayer startReverb].
+! !
+
+!ScorePlayer methodsFor: 'operating' stamp: 'jmv 4/6/2009 17:16'!
+pause
+	"Pause this sound. It can be resumed from this point, or reset and resumed to start from the beginning."
+
+	super pause.
+	activeSounds _ activeSounds species new.
+	midiPort ifNotNil: [self stopMIDIPlaying].
+! !
+
+!ScorePlayer methodsFor: 'operating' stamp: 'jmv 4/6/2009 17:16'!
+resumePlaying
+	"Resume playing. Start over if done."
+
+	done ifTrue: [self reset].
+	self jumpToTick: ticksSinceStart.  "Play up to here in case we got scrolled to new position."
+	midiPort
+		ifNil: [super resumePlaying]  "let the sound player drive sound generation" 
+		ifNotNil: [self startMIDIPlaying].  "start a process to drive MIDI output"
+! !
+
+!ScorePlayer methodsFor: 'operating' stamp: 'jm 9/10/1998 20:56'!
+tempoOrRateChanged
+	"This method should be called after changing the tempo or rate."
+
+	secsPerTick _ 60.0 / (tempo * rate * score ticksPerQuarterNote).
+	ticksClockIncr _ (1.0 / self controlRate) / secsPerTick.
+! !
+
+!ScorePlayer methodsFor: 'sound generation' stamp: 'jm 9/10/1998 19:07'!
+doControl
+
+	super doControl.
+	1 to: activeSounds size do: [:i | (activeSounds at: i) first doControl].
+	ticksSinceStart _ ticksSinceStart + ticksClockIncr.
+	self processAllAtTick: ticksSinceStart asInteger.
+! !
+
+!ScorePlayer methodsFor: 'sound generation' stamp: 'jmv 4/6/2009 17:14'!
+isDone
+
+	| track |
+	activeSounds size > 0 ifTrue: [^ false].
+	activeMIDINotes size > 0 ifTrue: [^ false].
+	1 to: score tracks size do: [:i |
+		track _ score tracks at: i.
+		(trackEventIndex at: i) <= track size ifTrue: [^ false]].
+	^ true
+! !
+
+!ScorePlayer methodsFor: 'sound generation' stamp: 'jmv 4/6/2009 17:14'!
+jumpToTick: startTick
+
+	| |
+	self reset.
+	self processTempoMapAtTick: startTick.
+	self skipNoteEventsThruTick: startTick.
+	ticksSinceStart _ startTick.
+! !
+
+!ScorePlayer methodsFor: 'sound generation' stamp: 'jm 7/4/1998 08:21'!
+mixSampleCount: n into: aSoundBuffer startingAt: startIndex leftVol: leftVol rightVol: rightVol
+	"Play a number of sounds concurrently. The level of each sound can be set independently for the left and right channels."
+
+	| myLeftVol myRightVol someSoundIsDone pair snd trk left right |
+	myLeftVol _ (leftVol * overallVolume) asInteger.
+	myRightVol _ (rightVol * overallVolume) asInteger.
+	someSoundIsDone _ false.
+	1 to: activeSounds size do: [:i |
+		pair _ activeSounds at: i.
+		snd _ pair at: 1.
+		trk _ pair at: 2.
+		left _ (myLeftVol * (leftVols at: trk)) // ScaleFactor.
+		right _ (myRightVol * (rightVols at: trk)) // ScaleFactor.
+		snd samplesRemaining > 0
+			ifTrue: [
+				snd mixSampleCount: n into: aSoundBuffer startingAt: startIndex leftVol: left rightVol: right]
+			ifFalse: [someSoundIsDone _ true]].
+
+	someSoundIsDone ifTrue: [
+		activeSounds _ activeSounds select: [:p | p first samplesRemaining > 0]].
+! !
+
+!ScorePlayer methodsFor: 'sound generation' stamp: 'jmv 4/6/2009 17:10'!
+processAllAtTick: scoreTick
+
+	self processTempoMapAtTick: scoreTick.
+	midiPort
+		ifNil: [self processNoteEventsAtTick: scoreTick]
+		ifNotNil: [self processMIDIEventsAtTick: scoreTick].
+	self isDone ifTrue: [
+		repeat
+			ifTrue: [self reset]
+			ifFalse: [done _ true]].
+! !
+
+!ScorePlayer methodsFor: 'sound generation' stamp: 'jmv 3/1/2010 14:06'!
+processNoteEventsAtTick: scoreTick
+	"Process note events through the given score tick using internal Squeak sound synthesis."
+
+	| instr j evt snd |
+	1 to: score tracks size do: [:i |
+		instr _ instruments at: i.
+		j _ trackEventIndex at: i.
+		[
+			evt _ score eventForTrack: i after: j ticks: scoreTick.
+			evt notNil
+		] whileTrue: [
+			(evt isNoteEvent and: [(muted at: i) not]) ifTrue: [
+				snd _ instr
+					soundForMidiKey: evt midiKey
+					dur: secsPerTick * evt duration
+					loudness: evt velocity asFloat / 127.0.
+				activeSounds add: (Array with: snd with: i)].
+			j _ j + 1.
+			trackEventIndex at: i put: j]].
+! !
+
+!ScorePlayer methodsFor: 'sound generation' stamp: 'jm 6/16/1999 21:04'!
+processTempoMapAtTick: scoreTick
+	"Process tempo changes through the given score tick."
+
+	| map tempoChanged |
+	map _ score tempoMap.
+	map ifNil: [^ self].
+	tempoChanged _ false.
+	[(tempoMapIndex <= map size) and:
+	 [(map at: tempoMapIndex) time <= scoreTick]] whileTrue: [
+		tempoChanged _ true.
+		tempoMapIndex _ tempoMapIndex + 1].
+
+	tempoChanged ifTrue: [
+		tempo _ (120.0 * (500000.0 / (map at: tempoMapIndex - 1) tempo)) roundTo: 0.01.
+		self tempoOrRateChanged].
+
+! !
+
+!ScorePlayer methodsFor: 'sound generation' stamp: 'jmv 4/6/2009 17:16'!
+reset
+
+	super reset.
+	tempo _ 120.0.
+	self tempoOrRateChanged.
+	done _ false.
+	ticksSinceStart _ 0.
+	"one index for each sound track, plus one for the ambient track..."
+	trackEventIndex _ Array new: score tracks size+1 withAll: 1.
+	tempoMapIndex _ 1.
+	activeSounds _ OrderedCollection new.
+	activeMIDINotes _ OrderedCollection new.
+	overallVolume ifNil: [overallVolume _ 0.5].
+! !
+
+!ScorePlayer methodsFor: 'sound generation' stamp: 'jm 12/30/97 17:38'!
+samplesRemaining
+
+	done
+		ifTrue: [^ 0]
+		ifFalse: [^ 1000000].
+! !
+
+!ScorePlayer methodsFor: 'sound generation' stamp: 'jmv 3/1/2010 13:18'!
+skipNoteEventsThruTick: startTick
+	"Skip note events through the given score tick using internal Squeak sound synthesis."
+
+	| j evt |
+	1 to: score tracks size do: [:i |
+		j _ trackEventIndex at: i.
+		[evt _ score eventForTrack: i after: j ticks: startTick.
+		 evt == nil] whileFalse: [
+			evt isNoteEvent
+				ifTrue: [
+					(((evt time + evt duration) > startTick) and: [(muted at: i) not]) ifTrue: [
+						self startNote: evt forStartTick: startTick trackIndex: i]]
+				ifFalse: [
+					midiPort ifNotNil: [evt outputOnMidiPort: midiPort]].
+			j _ j + 1].
+		trackEventIndex at: i put: j].
+! !
+
+!ScorePlayer methodsFor: 'sound generation' stamp: 'jm 6/16/1999 20:30'!
+startNote: noteEvent forStartTick: startTick trackIndex: trackIndex
+	"Prepare a note to begin playing at the given tick. Used to start playing at an arbitrary point in the score. Handle both MIDI and built-in synthesis cases."
+
+	| snd |
+	midiPort
+		ifNil: [
+			snd _ (instruments at: trackIndex)
+				soundForMidiKey: noteEvent midiKey
+				dur: secsPerTick * (noteEvent endTime - startTick)
+				loudness: noteEvent velocity asFloat / 127.0.
+			activeSounds add: (Array with: snd with: trackIndex)]
+		ifNotNil: [
+			noteEvent startNoteOnMidiPort: midiPort.
+			activeMIDINotes add: (Array with: noteEvent with: trackIndex)].
+! !
+
+!ScorePlayer methodsFor: 'accessing' stamp: 'jm 12/16/2001 11:59'!
+duration
+	"Answer the duration in seconds of my MIDI score when played at the current rate. Take tempo changes into account."
+
+	| totalSecs currentTempo lastTempoChangeTick |
+	totalSecs _ 0.0.
+	currentTempo _ 120.0.  "quarter notes per minute"
+	lastTempoChangeTick _ 0.
+	score tempoMap ifNotNil: [
+		score tempoMap do: [:tempoEvt |
+			"accumulate time up to this tempo change event"
+			secsPerTick _ 60.0 / (currentTempo * rate * score ticksPerQuarterNote).
+			totalSecs _ totalSecs + (secsPerTick * (tempoEvt time - lastTempoChangeTick)).
+
+			"set the new tempo"
+			currentTempo _ (120.0 * (500000.0 / tempoEvt tempo)) roundTo: 0.01.
+			lastTempoChangeTick _ tempoEvt time]].
+
+	"add remaining time through end of score"
+	secsPerTick _ 60.0 / (currentTempo * rate * score ticksPerQuarterNote).
+	totalSecs _ totalSecs + (secsPerTick * (score durationInTicks - lastTempoChangeTick)).
+	^ totalSecs
+! !
+
+!ScorePlayer methodsFor: 'accessing' stamp: 'jmv 3/1/2010 13:17'!
+durationInTicks
+
+	durationInTicks ifNil: [^ 1000].
+	^ durationInTicks! !
+
+!ScorePlayer methodsFor: 'accessing' stamp: 'jm 3/3/98 12:14'!
+infoForTrack: i
+	"Return the info string for the given track."
+	"Note: MIDI files follow varying conventions on their use of comment strings. Often, the first string in the track suggests the role of that track in the score, such as 'flute 1' or 'soprano'."
+
+	^ score trackInfo at: i
+! !
+
+!ScorePlayer methodsFor: 'accessing' stamp: 'jm 1/3/98 09:37'!
+instrumentForTrack: trackIndex
+
+	^ instruments at: trackIndex
+! !
+
+!ScorePlayer methodsFor: 'accessing' stamp: 'jm 9/1/1999 20:33'!
+instrumentForTrack: trackIndex put: aSoundProto
+
+	trackIndex > instruments size ifTrue: [^ self].
+	instruments at: trackIndex put: aSoundProto.
+! !
+
+!ScorePlayer methodsFor: 'accessing' stamp: 'jm 12/16/2001 20:20'!
+isStereo
+
+	^ true
+! !
+
+!ScorePlayer methodsFor: 'accessing' stamp: 'jm 9/28/1998 22:58'!
+midiPort
+
+	^ midiPort
+! !
+
+!ScorePlayer methodsFor: 'accessing' stamp: 'di 5/30/1999 12:46'!
+millisecondsSinceStart
+	"Answer the approximate number of milliseconds of real time since the beginning of the score. Since this calculation uses the current tempo, which can change throughout the piece, it is safer to use ticksSinceStart for synchronization."
+
+	^ (secsPerTick * ticksSinceStart * 1000) asInteger
+! !
+
+!ScorePlayer methodsFor: 'accessing' stamp: 'jm 1/29/98 18:33'!
+mutedForTrack: trackIndex
+
+	^ muted at: trackIndex
+! !
+
+!ScorePlayer methodsFor: 'accessing' stamp: 'jmv 3/2/2010 10:06'!
+mutedForTrack: trackIndex put: aBoolean
+
+	trackIndex > muted size ifTrue: [^ self].
+	muted at: trackIndex put: aBoolean.
+	aBoolean ifFalse: [^ self].
+
+	"silence any currently sounding notes for this track"
+	activeSounds do: [:pair |
+		pair last = trackIndex ifTrue: [activeSounds remove: pair ifAbsent: nil]].
+	midiPort ifNotNil: [
+		activeMIDINotes do: [:pair |
+			pair last = trackIndex ifTrue: [
+				pair first endNoteOnMidiPort: midiPort.
+				activeMIDINotes remove: pair ifAbsent: nil]]].
+! !
+
+!ScorePlayer methodsFor: 'accessing' stamp: 'jm 5/30/1999 17:16'!
+mutedState
+
+	^ muted
+! !
+
+!ScorePlayer methodsFor: 'accessing' stamp: 'jm 7/4/1998 08:17'!
+overallVolume
+
+	^ overallVolume
+! !
+
+!ScorePlayer methodsFor: 'accessing' stamp: 'jm 7/4/1998 08:18'!
+overallVolume: aNumber
+	"Set the overally playback volume to a value between 0.0 (off) and 1.0 (full blast)."
+
+	overallVolume _ (aNumber asFloat min: 1.0) max: 0.0.
+
+! !
+
+!ScorePlayer methodsFor: 'accessing' stamp: 'jm 7/4/1998 09:32'!
+panForTrack: i
+
+	| left right fullVol pan |
+	left _ leftVols at: i.
+	right _ rightVols at: i.
+	left = right ifTrue: [^ 0.5].  "centered"
+	fullVol _ left max: right.
+	left < fullVol
+		ifTrue: [pan _ left asFloat / (2.0 * fullVol)]
+		ifFalse: [pan _ 1.0 - (right asFloat / (2.0 * fullVol))].
+	^ pan roundTo: 0.001
+
+! !
+
+!ScorePlayer methodsFor: 'accessing' stamp: 'jm 9/2/1999 13:33'!
+panForTrack: trackIndex put: aNumber
+	"Set the left-right pan for this track to a value in the range [0.0..1.0], where 0.0 means full-left."
+
+	| fullVol pan left right |
+	trackIndex > leftVols size ifTrue: [^ self].
+	fullVol _ (leftVols at: trackIndex) max: (rightVols at: trackIndex).
+	pan _ (aNumber asFloat min: 1.0) max: 0.0.
+	pan <= 0.5
+		ifTrue: [  "attenuate right channel"
+			left _ fullVol.
+			right _ 2.0 * pan * fullVol]
+		ifFalse: [  "attenuate left channel"
+			left _ 2.0 * (1.0 - pan) * fullVol.
+			right _ fullVol].
+	rightVols at: trackIndex put: right asInteger.
+	leftVols at: trackIndex put: left asInteger.
+! !
+
+!ScorePlayer methodsFor: 'accessing' stamp: 'di 6/20/1999 00:42'!
+positionInScore
+
+	^ self ticksSinceStart asFloat / (self durationInTicks max: 1)! !
+
+!ScorePlayer methodsFor: 'accessing' stamp: 'jm 6/16/1999 22:50'!
+positionInScore: pos
+
+	self isPlaying ifTrue: [^ self "ignore rude intrusion"].
+	ticksSinceStart _ pos * durationInTicks.
+	done _ false.
+
+! !
+
+!ScorePlayer methodsFor: 'accessing' stamp: 'jm 1/3/98 09:33'!
+rate
+
+	^ rate
+! !
+
+!ScorePlayer methodsFor: 'accessing' stamp: 'jm 1/4/98 10:07'!
+rate: aNumber
+	"Set the playback rate. For example, a rate of 2.0 will playback at twice normal speed."
+
+	rate _ aNumber asFloat.
+	self tempoOrRateChanged.
+! !
+
+!ScorePlayer methodsFor: 'accessing' stamp: 'jm 3/4/98 09:30'!
+repeat
+	"Return true if this player will repeat when it gets to the end of the score, false otherwise."
+
+	^ repeat
+! !
+
+!ScorePlayer methodsFor: 'accessing' stamp: 'jm 3/4/98 09:31'!
+repeat: aBoolean
+	"Turn repeat mode on or off."
+
+	repeat _ aBoolean.
+! !
+
+!ScorePlayer methodsFor: 'accessing' stamp: 'jm 1/3/98 09:33'!
+score
+
+	^ score
+! !
+
+!ScorePlayer methodsFor: 'accessing' stamp: 'di 10/19/2000 21:12'!
+secsPerTick
+
+	^ secsPerTick! !
+
+!ScorePlayer methodsFor: 'accessing' stamp: 'jmv 3/13/2012 12:45'!
+settingsString
+
+	| s |
+	s _ WriteStream on: (String new: 1000).
+	s nextPutAll: 'player'; newLine.
+	s tab; nextPutAll: 'rate: ', self rate printString, ';'; newLine.
+	s tab; nextPutAll: 'overallVolume: ', self overallVolume printString, ';'; newLine.
+	1 to: self trackCount do: [:t |
+		s tab; nextPutAll: 'instrumentForTrack: ', t printString,
+			' put: (AbstractSound soundNamed: #default);'; newLine.
+		s tab; nextPutAll: 'mutedForTrack: ', t printString,
+			' put: ', (self mutedForTrack: t) printString, ';'; newLine.
+		s tab; nextPutAll: 'volumeForTrack: ', t printString,
+			' put: ', (self volumeForTrack: t) printString, ';'; newLine.
+		s tab; nextPutAll: 'panForTrack: ', t printString,
+			' put: ', (self panForTrack: t) printString, ';'; newLine].
+	s tab; nextPutAll: 'repeat: ', self repeat printString, '.'; newLine.
+	^ s contents
+! !
+
+!ScorePlayer methodsFor: 'accessing' stamp: 'jm 1/4/98 10:10'!
+tempo
+	"Return the current tempo in beats (quarter notes) per minute. The tempo at any given moment is defined by the score and cannot be changed by the client. To change the playback speed, the client may change the rate parameter."
+
+	^ tempo
+! !
+
+!ScorePlayer methodsFor: 'accessing' stamp: 'jm 9/22/1998 09:32'!
+ticksForMSecs: mSecs
+
+	^ (mSecs asFloat / (1000.0 * secsPerTick)) rounded
+! !
+
+!ScorePlayer methodsFor: 'accessing' stamp: 'jm 9/10/1998 20:48'!
+ticksSinceStart
+	"Answer the number of score ticks that have elapsed since this piece started playing. The duration of a tick is determined by the MIDI score."
+
+	^ ticksSinceStart
+! !
+
+!ScorePlayer methodsFor: 'accessing' stamp: 'di 6/19/1999 10:45'!
+ticksSinceStart: newTicks
+	"Adjust ticks to folow, eg, piano roll autoscrolling"
+
+	self isPlaying ifFalse: [ticksSinceStart _ newTicks]
+! !
+
+!ScorePlayer methodsFor: 'accessing' stamp: 'jm 1/3/98 09:35'!
+trackCount
+
+	^ score tracks size
+! !
+
+!ScorePlayer methodsFor: 'accessing' stamp: 'jm 7/4/1998 09:16'!
+volumeForTrack: i
+
+	| vol |
+	vol _ (leftVols at: i) max: (rightVols at: i).
+	^ (vol asFloat / ScaleFactor) roundTo: 0.0001
+! !
+
+!ScorePlayer methodsFor: 'accessing' stamp: 'jm 9/2/1999 13:34'!
+volumeForTrack: trackIndex put: aNumber
+
+	| newVol oldLeft oldRight oldFullVol left right |
+	trackIndex > leftVols size ifTrue: [^ self].
+	newVol _ ((aNumber asFloat max: 0.0) min: 1.0) * ScaleFactor.
+	oldLeft _ leftVols at: trackIndex.
+	oldRight _ rightVols at: trackIndex.
+	oldFullVol _ oldLeft max: oldRight.
+	oldFullVol = 0 ifTrue: [oldFullVol _ 1.0].
+	oldLeft < oldFullVol
+		ifTrue: [
+			left _ newVol * oldLeft / oldFullVol.
+			right _ newVol]
+		ifFalse: [
+			left _ newVol.
+			right _ newVol * oldRight / oldFullVol].
+	leftVols at: trackIndex put: left asInteger.
+	rightVols at: trackIndex put: right asInteger.
+! !
+
+!ScorePlayer methodsFor: 'initialization' stamp: 'jmv 12/2/2011 10:49'!
+initialize
+
+	super initialize.
+	score _ MIDIScore new.
+	instruments _ #().
+	overallVolume _ 0.5.
+	leftVols _ #().
+	rightVols _ #().
+	muted _ #().
+	rate _ 1.0.
+	repeat _ false.
+	durationInTicks _ 100! !
+
+!ScorePlayer methodsFor: 'initialization' stamp: 'di 6/15/1999 11:18'!
+onScore: aMIDIScore
+
+	| trackCount totalVol incr curr pan |
+	score _ aMIDIScore.
+	trackCount _ score tracks size.
+	durationInTicks _ score durationInTicks.
+	instruments _ (1 to: trackCount) collect: [:i | FMSound oboe1].
+	leftVols _ Array new: trackCount.
+	rightVols _ Array new: trackCount.
+	muted  _ Array new: trackCount withAll: false.
+	rate _ 1.0.
+	repeat _ false.
+	tempo _ 120.0.
+
+	trackCount = 0 ifTrue: [^ self].
+	1 to: trackCount do: [:i |
+		leftVols at: i put: ScaleFactor // 4.
+		rightVols at: i put: ScaleFactor // 4].
+
+	"distribute inital panning of tracks left-to-right"
+	totalVol _ 1.0.
+	incr _ totalVol / (((trackCount // 2) + 1) * 2).
+	curr _ 0.
+	1 to: trackCount do: [:t |
+		t even
+			ifTrue: [pan _ curr]
+			ifFalse: [
+				curr _ curr + incr.
+				pan _ totalVol - curr].
+		self panForTrack: t put: pan].
+
+! !
+
+!ScorePlayer methodsFor: 'initialization' stamp: 'di 6/20/1999 00:46'!
+updateDuration
+
+	durationInTicks _ score durationInTicks.
+! !
+
+!ScorePlayer class methodsFor: 'instance creation' stamp: 'jm 1/29/98 18:18'!
+onScore: aMIDIScore
+
+	^ self new onScore: aMIDIScore
 ! !
 
 !FMSound methodsFor: 'storing' stamp: 'jmv 3/13/2012 12:34'!
@@ -6425,674 +9227,6 @@ onFileNamed: fileName headerStart: anInteger
 	fileName asFileEntry readStreamDo: [ :f |
 		answer _ self new initStream: f headerStart: anInteger ].
 	^answer
-! !
-
-!ScorePlayer methodsFor: 'copying' stamp: 'jm 1/29/98 18:32'!
-copySounds
-	"Private!! Support for copying."
-
-	instruments _ instruments copy.
-	leftVols _ leftVols copy.
-	rightVols _ rightVols copy.
-	muted _ muted copy.
-	self reset.
-! !
-
-!ScorePlayer methodsFor: 'copying' stamp: 'jmv 5/14/2015 09:58'!
-postCopy
-	"Copy my component sounds."
-
-	super postCopy.
-	self copySounds
-! !
-
-!ScorePlayer methodsFor: 'volume' stamp: 'jmv 12/30/2009 11:33'!
-adjustVolumeTo: vol overMSecs: mSecs
-	| normalizedVolume incr block |
-	normalizedVolume _ (vol asFloat min: 1.0) max: 0.0.
-	incr _ (self overallVolume - normalizedVolume) / mSecs * 50.0.
-	block _ normalizedVolume > 0.0
-		ifTrue: [
-			[[(normalizedVolume - self overallVolume) abs > 0.01] whileTrue: [self overallVolume: self overallVolume - incr. (Delay forMilliseconds: 50) wait]]]
-		ifFalse: [
-			[[self overallVolume > 0.0] whileTrue: [self overallVolume: self overallVolume - incr. (Delay forMilliseconds: 50) wait]. self pause]].
-	block fork
-! !
-
-!ScorePlayer methodsFor: 'midi output' stamp: 'jm 10/12/1998 17:13'!
-closeMIDIPort
-	"Stop using MIDI for output. Music will be played using the built-in sound synthesis."
-
-	self pause.
-	midiPort _ nil.
-! !
-
-!ScorePlayer methodsFor: 'midi output' stamp: 'jmv 4/17/2013 12:09'!
-midiPlayLoop
-
-	| mSecsPerStep tStart mSecs |
-	mSecsPerStep _ 5.
-	[done] whileFalse: [
-		tStart _ Time localMillisecondClock.
-		self processAllAtTick: ticksSinceStart asInteger.
-		(Delay forMilliseconds: mSecsPerStep) wait.
-		mSecs _ Time localMillisecondClock - tStart.
-		ticksSinceStart _ ticksSinceStart + (mSecs asFloat / (1000.0 * secsPerTick))]! !
-
-!ScorePlayer methodsFor: 'midi output' stamp: 'jm 10/12/1998 15:56'!
-openMIDIPort: portNum
-	"Open the given MIDI port. Music will be played as MIDI commands to the given MIDI port."
-
-	midiPort _ SimpleMIDIPort openOnPortNumber: portNum.
-! !
-
-!ScorePlayer methodsFor: 'midi output' stamp: 'jmv 3/1/2010 14:06'!
-processMIDIEventsAtTick: scoreTick
-	"Process note events through the given score tick using MIDI."
-
-	| j evt |
-	1 to: score tracks size do: [:i |
-		j _ trackEventIndex at: i.
-		[
-			evt _ score eventForTrack: i after: j ticks: scoreTick.
-			 evt notNil
-		] whileTrue: [
-			evt isNoteEvent
-				ifTrue: [
-					(muted at: i) ifFalse: [
-						evt startNoteOnMidiPort: midiPort.
-						activeMIDINotes add: (Array with: evt with: i)]]
-				ifFalse: [evt outputOnMidiPort: midiPort].
-			j _ j + 1.
-			trackEventIndex at: i put: j]].
-	self turnOffActiveMIDINotesAt: scoreTick.
-! !
-
-!ScorePlayer methodsFor: 'midi output' stamp: 'jmv 10/8/2012 22:14'!
-startMIDIPlaying
-	"Start up a process to play this score via MIDI."
-
-	midiPort ensureOpen.
-	midiPlayerProcess ifNotNil: [midiPlayerProcess terminate].
-	midiPlayerProcess _ [self midiPlayLoop] newProcess.
-	midiPlayerProcess
-		priority: Processor userInterruptPriority;
-		name: 'ScorePlayer';
-		resume.
-! !
-
-!ScorePlayer methodsFor: 'midi output' stamp: 'jm 9/10/1998 20:44'!
-stopMIDIPlaying
-	"Terminate the MIDI player process and turn off any active notes."
-
-	midiPlayerProcess ifNotNil: [midiPlayerProcess terminate].
-	midiPlayerProcess _ nil.
-	activeMIDINotes do: [:pair | pair first endNoteOnMidiPort: midiPort].
-	activeMIDINotes _ activeMIDINotes species new.
-! !
-
-!ScorePlayer methodsFor: 'midi output' stamp: 'jm 9/10/1998 17:48'!
-turnOffActiveMIDINotesAt: scoreTick
-	"Turn off any active MIDI notes that should be turned off at the given score tick."
-
-	| evt someNoteEnded |
-	midiPort ifNil: [^ self].
-	someNoteEnded _ false. 
-	activeMIDINotes do: [:pair |
-		evt _ pair first.
-		evt endTime <= scoreTick ifTrue: [
-			evt endNoteOnMidiPort: midiPort.
-			someNoteEnded _ true]].
-
-	someNoteEnded ifTrue: [
-		activeMIDINotes _ activeMIDINotes select: [:p | p first endTime > scoreTick]].
-! !
-
-!ScorePlayer methodsFor: 'operating' stamp: 'jm 1/30/98 14:03'!
-disableReverb: aBoolean
-
-	aBoolean
-		ifTrue: [SoundPlayer stopReverb]
-		ifFalse: [SoundPlayer startReverb].
-! !
-
-!ScorePlayer methodsFor: 'operating' stamp: 'jmv 4/6/2009 17:16'!
-pause
-	"Pause this sound. It can be resumed from this point, or reset and resumed to start from the beginning."
-
-	super pause.
-	activeSounds _ activeSounds species new.
-	midiPort ifNotNil: [self stopMIDIPlaying].
-! !
-
-!ScorePlayer methodsFor: 'operating' stamp: 'jmv 4/6/2009 17:16'!
-resumePlaying
-	"Resume playing. Start over if done."
-
-	done ifTrue: [self reset].
-	self jumpToTick: ticksSinceStart.  "Play up to here in case we got scrolled to new position."
-	midiPort
-		ifNil: [super resumePlaying]  "let the sound player drive sound generation" 
-		ifNotNil: [self startMIDIPlaying].  "start a process to drive MIDI output"
-! !
-
-!ScorePlayer methodsFor: 'operating' stamp: 'jm 9/10/1998 20:56'!
-tempoOrRateChanged
-	"This method should be called after changing the tempo or rate."
-
-	secsPerTick _ 60.0 / (tempo * rate * score ticksPerQuarterNote).
-	ticksClockIncr _ (1.0 / self controlRate) / secsPerTick.
-! !
-
-!ScorePlayer methodsFor: 'sound generation' stamp: 'jm 9/10/1998 19:07'!
-doControl
-
-	super doControl.
-	1 to: activeSounds size do: [:i | (activeSounds at: i) first doControl].
-	ticksSinceStart _ ticksSinceStart + ticksClockIncr.
-	self processAllAtTick: ticksSinceStart asInteger.
-! !
-
-!ScorePlayer methodsFor: 'sound generation' stamp: 'jmv 4/6/2009 17:14'!
-isDone
-
-	| track |
-	activeSounds size > 0 ifTrue: [^ false].
-	activeMIDINotes size > 0 ifTrue: [^ false].
-	1 to: score tracks size do: [:i |
-		track _ score tracks at: i.
-		(trackEventIndex at: i) <= track size ifTrue: [^ false]].
-	^ true
-! !
-
-!ScorePlayer methodsFor: 'sound generation' stamp: 'jmv 4/6/2009 17:14'!
-jumpToTick: startTick
-
-	| |
-	self reset.
-	self processTempoMapAtTick: startTick.
-	self skipNoteEventsThruTick: startTick.
-	ticksSinceStart _ startTick.
-! !
-
-!ScorePlayer methodsFor: 'sound generation' stamp: 'jm 7/4/1998 08:21'!
-mixSampleCount: n into: aSoundBuffer startingAt: startIndex leftVol: leftVol rightVol: rightVol
-	"Play a number of sounds concurrently. The level of each sound can be set independently for the left and right channels."
-
-	| myLeftVol myRightVol someSoundIsDone pair snd trk left right |
-	myLeftVol _ (leftVol * overallVolume) asInteger.
-	myRightVol _ (rightVol * overallVolume) asInteger.
-	someSoundIsDone _ false.
-	1 to: activeSounds size do: [:i |
-		pair _ activeSounds at: i.
-		snd _ pair at: 1.
-		trk _ pair at: 2.
-		left _ (myLeftVol * (leftVols at: trk)) // ScaleFactor.
-		right _ (myRightVol * (rightVols at: trk)) // ScaleFactor.
-		snd samplesRemaining > 0
-			ifTrue: [
-				snd mixSampleCount: n into: aSoundBuffer startingAt: startIndex leftVol: left rightVol: right]
-			ifFalse: [someSoundIsDone _ true]].
-
-	someSoundIsDone ifTrue: [
-		activeSounds _ activeSounds select: [:p | p first samplesRemaining > 0]].
-! !
-
-!ScorePlayer methodsFor: 'sound generation' stamp: 'jmv 4/6/2009 17:10'!
-processAllAtTick: scoreTick
-
-	self processTempoMapAtTick: scoreTick.
-	midiPort
-		ifNil: [self processNoteEventsAtTick: scoreTick]
-		ifNotNil: [self processMIDIEventsAtTick: scoreTick].
-	self isDone ifTrue: [
-		repeat
-			ifTrue: [self reset]
-			ifFalse: [done _ true]].
-! !
-
-!ScorePlayer methodsFor: 'sound generation' stamp: 'jmv 3/1/2010 14:06'!
-processNoteEventsAtTick: scoreTick
-	"Process note events through the given score tick using internal Squeak sound synthesis."
-
-	| instr j evt snd |
-	1 to: score tracks size do: [:i |
-		instr _ instruments at: i.
-		j _ trackEventIndex at: i.
-		[
-			evt _ score eventForTrack: i after: j ticks: scoreTick.
-			evt notNil
-		] whileTrue: [
-			(evt isNoteEvent and: [(muted at: i) not]) ifTrue: [
-				snd _ instr
-					soundForMidiKey: evt midiKey
-					dur: secsPerTick * evt duration
-					loudness: evt velocity asFloat / 127.0.
-				activeSounds add: (Array with: snd with: i)].
-			j _ j + 1.
-			trackEventIndex at: i put: j]].
-! !
-
-!ScorePlayer methodsFor: 'sound generation' stamp: 'jm 6/16/1999 21:04'!
-processTempoMapAtTick: scoreTick
-	"Process tempo changes through the given score tick."
-
-	| map tempoChanged |
-	map _ score tempoMap.
-	map ifNil: [^ self].
-	tempoChanged _ false.
-	[(tempoMapIndex <= map size) and:
-	 [(map at: tempoMapIndex) time <= scoreTick]] whileTrue: [
-		tempoChanged _ true.
-		tempoMapIndex _ tempoMapIndex + 1].
-
-	tempoChanged ifTrue: [
-		tempo _ (120.0 * (500000.0 / (map at: tempoMapIndex - 1) tempo)) roundTo: 0.01.
-		self tempoOrRateChanged].
-
-! !
-
-!ScorePlayer methodsFor: 'sound generation' stamp: 'jmv 4/6/2009 17:16'!
-reset
-
-	super reset.
-	tempo _ 120.0.
-	self tempoOrRateChanged.
-	done _ false.
-	ticksSinceStart _ 0.
-	"one index for each sound track, plus one for the ambient track..."
-	trackEventIndex _ Array new: score tracks size+1 withAll: 1.
-	tempoMapIndex _ 1.
-	activeSounds _ OrderedCollection new.
-	activeMIDINotes _ OrderedCollection new.
-	overallVolume ifNil: [overallVolume _ 0.5].
-! !
-
-!ScorePlayer methodsFor: 'sound generation' stamp: 'jm 12/30/97 17:38'!
-samplesRemaining
-
-	done
-		ifTrue: [^ 0]
-		ifFalse: [^ 1000000].
-! !
-
-!ScorePlayer methodsFor: 'sound generation' stamp: 'jmv 3/1/2010 13:18'!
-skipNoteEventsThruTick: startTick
-	"Skip note events through the given score tick using internal Squeak sound synthesis."
-
-	| j evt |
-	1 to: score tracks size do: [:i |
-		j _ trackEventIndex at: i.
-		[evt _ score eventForTrack: i after: j ticks: startTick.
-		 evt == nil] whileFalse: [
-			evt isNoteEvent
-				ifTrue: [
-					(((evt time + evt duration) > startTick) and: [(muted at: i) not]) ifTrue: [
-						self startNote: evt forStartTick: startTick trackIndex: i]]
-				ifFalse: [
-					midiPort ifNotNil: [evt outputOnMidiPort: midiPort]].
-			j _ j + 1].
-		trackEventIndex at: i put: j].
-! !
-
-!ScorePlayer methodsFor: 'sound generation' stamp: 'jm 6/16/1999 20:30'!
-startNote: noteEvent forStartTick: startTick trackIndex: trackIndex
-	"Prepare a note to begin playing at the given tick. Used to start playing at an arbitrary point in the score. Handle both MIDI and built-in synthesis cases."
-
-	| snd |
-	midiPort
-		ifNil: [
-			snd _ (instruments at: trackIndex)
-				soundForMidiKey: noteEvent midiKey
-				dur: secsPerTick * (noteEvent endTime - startTick)
-				loudness: noteEvent velocity asFloat / 127.0.
-			activeSounds add: (Array with: snd with: trackIndex)]
-		ifNotNil: [
-			noteEvent startNoteOnMidiPort: midiPort.
-			activeMIDINotes add: (Array with: noteEvent with: trackIndex)].
-! !
-
-!ScorePlayer methodsFor: 'accessing' stamp: 'jm 12/16/2001 11:59'!
-duration
-	"Answer the duration in seconds of my MIDI score when played at the current rate. Take tempo changes into account."
-
-	| totalSecs currentTempo lastTempoChangeTick |
-	totalSecs _ 0.0.
-	currentTempo _ 120.0.  "quarter notes per minute"
-	lastTempoChangeTick _ 0.
-	score tempoMap ifNotNil: [
-		score tempoMap do: [:tempoEvt |
-			"accumulate time up to this tempo change event"
-			secsPerTick _ 60.0 / (currentTempo * rate * score ticksPerQuarterNote).
-			totalSecs _ totalSecs + (secsPerTick * (tempoEvt time - lastTempoChangeTick)).
-
-			"set the new tempo"
-			currentTempo _ (120.0 * (500000.0 / tempoEvt tempo)) roundTo: 0.01.
-			lastTempoChangeTick _ tempoEvt time]].
-
-	"add remaining time through end of score"
-	secsPerTick _ 60.0 / (currentTempo * rate * score ticksPerQuarterNote).
-	totalSecs _ totalSecs + (secsPerTick * (score durationInTicks - lastTempoChangeTick)).
-	^ totalSecs
-! !
-
-!ScorePlayer methodsFor: 'accessing' stamp: 'jmv 3/1/2010 13:17'!
-durationInTicks
-
-	durationInTicks ifNil: [^ 1000].
-	^ durationInTicks! !
-
-!ScorePlayer methodsFor: 'accessing' stamp: 'jm 3/3/98 12:14'!
-infoForTrack: i
-	"Return the info string for the given track."
-	"Note: MIDI files follow varying conventions on their use of comment strings. Often, the first string in the track suggests the role of that track in the score, such as 'flute 1' or 'soprano'."
-
-	^ score trackInfo at: i
-! !
-
-!ScorePlayer methodsFor: 'accessing' stamp: 'jm 1/3/98 09:37'!
-instrumentForTrack: trackIndex
-
-	^ instruments at: trackIndex
-! !
-
-!ScorePlayer methodsFor: 'accessing' stamp: 'jm 9/1/1999 20:33'!
-instrumentForTrack: trackIndex put: aSoundProto
-
-	trackIndex > instruments size ifTrue: [^ self].
-	instruments at: trackIndex put: aSoundProto.
-! !
-
-!ScorePlayer methodsFor: 'accessing' stamp: 'jm 12/16/2001 20:20'!
-isStereo
-
-	^ true
-! !
-
-!ScorePlayer methodsFor: 'accessing' stamp: 'jm 9/28/1998 22:58'!
-midiPort
-
-	^ midiPort
-! !
-
-!ScorePlayer methodsFor: 'accessing' stamp: 'di 5/30/1999 12:46'!
-millisecondsSinceStart
-	"Answer the approximate number of milliseconds of real time since the beginning of the score. Since this calculation uses the current tempo, which can change throughout the piece, it is safer to use ticksSinceStart for synchronization."
-
-	^ (secsPerTick * ticksSinceStart * 1000) asInteger
-! !
-
-!ScorePlayer methodsFor: 'accessing' stamp: 'jm 1/29/98 18:33'!
-mutedForTrack: trackIndex
-
-	^ muted at: trackIndex
-! !
-
-!ScorePlayer methodsFor: 'accessing' stamp: 'jmv 3/2/2010 10:06'!
-mutedForTrack: trackIndex put: aBoolean
-
-	trackIndex > muted size ifTrue: [^ self].
-	muted at: trackIndex put: aBoolean.
-	aBoolean ifFalse: [^ self].
-
-	"silence any currently sounding notes for this track"
-	activeSounds do: [:pair |
-		pair last = trackIndex ifTrue: [activeSounds remove: pair ifAbsent: nil]].
-	midiPort ifNotNil: [
-		activeMIDINotes do: [:pair |
-			pair last = trackIndex ifTrue: [
-				pair first endNoteOnMidiPort: midiPort.
-				activeMIDINotes remove: pair ifAbsent: nil]]].
-! !
-
-!ScorePlayer methodsFor: 'accessing' stamp: 'jm 5/30/1999 17:16'!
-mutedState
-
-	^ muted
-! !
-
-!ScorePlayer methodsFor: 'accessing' stamp: 'jm 7/4/1998 08:17'!
-overallVolume
-
-	^ overallVolume
-! !
-
-!ScorePlayer methodsFor: 'accessing' stamp: 'jm 7/4/1998 08:18'!
-overallVolume: aNumber
-	"Set the overally playback volume to a value between 0.0 (off) and 1.0 (full blast)."
-
-	overallVolume _ (aNumber asFloat min: 1.0) max: 0.0.
-
-! !
-
-!ScorePlayer methodsFor: 'accessing' stamp: 'jm 7/4/1998 09:32'!
-panForTrack: i
-
-	| left right fullVol pan |
-	left _ leftVols at: i.
-	right _ rightVols at: i.
-	left = right ifTrue: [^ 0.5].  "centered"
-	fullVol _ left max: right.
-	left < fullVol
-		ifTrue: [pan _ left asFloat / (2.0 * fullVol)]
-		ifFalse: [pan _ 1.0 - (right asFloat / (2.0 * fullVol))].
-	^ pan roundTo: 0.001
-
-! !
-
-!ScorePlayer methodsFor: 'accessing' stamp: 'jm 9/2/1999 13:33'!
-panForTrack: trackIndex put: aNumber
-	"Set the left-right pan for this track to a value in the range [0.0..1.0], where 0.0 means full-left."
-
-	| fullVol pan left right |
-	trackIndex > leftVols size ifTrue: [^ self].
-	fullVol _ (leftVols at: trackIndex) max: (rightVols at: trackIndex).
-	pan _ (aNumber asFloat min: 1.0) max: 0.0.
-	pan <= 0.5
-		ifTrue: [  "attenuate right channel"
-			left _ fullVol.
-			right _ 2.0 * pan * fullVol]
-		ifFalse: [  "attenuate left channel"
-			left _ 2.0 * (1.0 - pan) * fullVol.
-			right _ fullVol].
-	rightVols at: trackIndex put: right asInteger.
-	leftVols at: trackIndex put: left asInteger.
-! !
-
-!ScorePlayer methodsFor: 'accessing' stamp: 'di 6/20/1999 00:42'!
-positionInScore
-
-	^ self ticksSinceStart asFloat / (self durationInTicks max: 1)! !
-
-!ScorePlayer methodsFor: 'accessing' stamp: 'jm 6/16/1999 22:50'!
-positionInScore: pos
-
-	self isPlaying ifTrue: [^ self "ignore rude intrusion"].
-	ticksSinceStart _ pos * durationInTicks.
-	done _ false.
-
-! !
-
-!ScorePlayer methodsFor: 'accessing' stamp: 'jm 1/3/98 09:33'!
-rate
-
-	^ rate
-! !
-
-!ScorePlayer methodsFor: 'accessing' stamp: 'jm 1/4/98 10:07'!
-rate: aNumber
-	"Set the playback rate. For example, a rate of 2.0 will playback at twice normal speed."
-
-	rate _ aNumber asFloat.
-	self tempoOrRateChanged.
-! !
-
-!ScorePlayer methodsFor: 'accessing' stamp: 'jm 3/4/98 09:30'!
-repeat
-	"Return true if this player will repeat when it gets to the end of the score, false otherwise."
-
-	^ repeat
-! !
-
-!ScorePlayer methodsFor: 'accessing' stamp: 'jm 3/4/98 09:31'!
-repeat: aBoolean
-	"Turn repeat mode on or off."
-
-	repeat _ aBoolean.
-! !
-
-!ScorePlayer methodsFor: 'accessing' stamp: 'jm 1/3/98 09:33'!
-score
-
-	^ score
-! !
-
-!ScorePlayer methodsFor: 'accessing' stamp: 'di 10/19/2000 21:12'!
-secsPerTick
-
-	^ secsPerTick! !
-
-!ScorePlayer methodsFor: 'accessing' stamp: 'jmv 3/13/2012 12:45'!
-settingsString
-
-	| s |
-	s _ WriteStream on: (String new: 1000).
-	s nextPutAll: 'player'; newLine.
-	s tab; nextPutAll: 'rate: ', self rate printString, ';'; newLine.
-	s tab; nextPutAll: 'overallVolume: ', self overallVolume printString, ';'; newLine.
-	1 to: self trackCount do: [:t |
-		s tab; nextPutAll: 'instrumentForTrack: ', t printString,
-			' put: (AbstractSound soundNamed: #default);'; newLine.
-		s tab; nextPutAll: 'mutedForTrack: ', t printString,
-			' put: ', (self mutedForTrack: t) printString, ';'; newLine.
-		s tab; nextPutAll: 'volumeForTrack: ', t printString,
-			' put: ', (self volumeForTrack: t) printString, ';'; newLine.
-		s tab; nextPutAll: 'panForTrack: ', t printString,
-			' put: ', (self panForTrack: t) printString, ';'; newLine].
-	s tab; nextPutAll: 'repeat: ', self repeat printString, '.'; newLine.
-	^ s contents
-! !
-
-!ScorePlayer methodsFor: 'accessing' stamp: 'jm 1/4/98 10:10'!
-tempo
-	"Return the current tempo in beats (quarter notes) per minute. The tempo at any given moment is defined by the score and cannot be changed by the client. To change the playback speed, the client may change the rate parameter."
-
-	^ tempo
-! !
-
-!ScorePlayer methodsFor: 'accessing' stamp: 'jm 9/22/1998 09:32'!
-ticksForMSecs: mSecs
-
-	^ (mSecs asFloat / (1000.0 * secsPerTick)) rounded
-! !
-
-!ScorePlayer methodsFor: 'accessing' stamp: 'jm 9/10/1998 20:48'!
-ticksSinceStart
-	"Answer the number of score ticks that have elapsed since this piece started playing. The duration of a tick is determined by the MIDI score."
-
-	^ ticksSinceStart
-! !
-
-!ScorePlayer methodsFor: 'accessing' stamp: 'di 6/19/1999 10:45'!
-ticksSinceStart: newTicks
-	"Adjust ticks to folow, eg, piano roll autoscrolling"
-
-	self isPlaying ifFalse: [ticksSinceStart _ newTicks]
-! !
-
-!ScorePlayer methodsFor: 'accessing' stamp: 'jm 1/3/98 09:35'!
-trackCount
-
-	^ score tracks size
-! !
-
-!ScorePlayer methodsFor: 'accessing' stamp: 'jm 7/4/1998 09:16'!
-volumeForTrack: i
-
-	| vol |
-	vol _ (leftVols at: i) max: (rightVols at: i).
-	^ (vol asFloat / ScaleFactor) roundTo: 0.0001
-! !
-
-!ScorePlayer methodsFor: 'accessing' stamp: 'jm 9/2/1999 13:34'!
-volumeForTrack: trackIndex put: aNumber
-
-	| newVol oldLeft oldRight oldFullVol left right |
-	trackIndex > leftVols size ifTrue: [^ self].
-	newVol _ ((aNumber asFloat max: 0.0) min: 1.0) * ScaleFactor.
-	oldLeft _ leftVols at: trackIndex.
-	oldRight _ rightVols at: trackIndex.
-	oldFullVol _ oldLeft max: oldRight.
-	oldFullVol = 0 ifTrue: [oldFullVol _ 1.0].
-	oldLeft < oldFullVol
-		ifTrue: [
-			left _ newVol * oldLeft / oldFullVol.
-			right _ newVol]
-		ifFalse: [
-			left _ newVol.
-			right _ newVol * oldRight / oldFullVol].
-	leftVols at: trackIndex put: left asInteger.
-	rightVols at: trackIndex put: right asInteger.
-! !
-
-!ScorePlayer methodsFor: 'initialization' stamp: 'jmv 12/2/2011 10:49'!
-initialize
-
-	super initialize.
-	score _ MIDIScore new.
-	instruments _ #().
-	overallVolume _ 0.5.
-	leftVols _ #().
-	rightVols _ #().
-	muted _ #().
-	rate _ 1.0.
-	repeat _ false.
-	durationInTicks _ 100! !
-
-!ScorePlayer methodsFor: 'initialization' stamp: 'di 6/15/1999 11:18'!
-onScore: aMIDIScore
-
-	| trackCount totalVol incr curr pan |
-	score _ aMIDIScore.
-	trackCount _ score tracks size.
-	durationInTicks _ score durationInTicks.
-	instruments _ (1 to: trackCount) collect: [:i | FMSound oboe1].
-	leftVols _ Array new: trackCount.
-	rightVols _ Array new: trackCount.
-	muted  _ Array new: trackCount withAll: false.
-	rate _ 1.0.
-	repeat _ false.
-	tempo _ 120.0.
-
-	trackCount = 0 ifTrue: [^ self].
-	1 to: trackCount do: [:i |
-		leftVols at: i put: ScaleFactor // 4.
-		rightVols at: i put: ScaleFactor // 4].
-
-	"distribute inital panning of tracks left-to-right"
-	totalVol _ 1.0.
-	incr _ totalVol / (((trackCount // 2) + 1) * 2).
-	curr _ 0.
-	1 to: trackCount do: [:t |
-		t even
-			ifTrue: [pan _ curr]
-			ifFalse: [
-				curr _ curr + incr.
-				pan _ totalVol - curr].
-		self panForTrack: t put: pan].
-
-! !
-
-!ScorePlayer methodsFor: 'initialization' stamp: 'di 6/20/1999 00:46'!
-updateDuration
-
-	durationInTicks _ score durationInTicks.
-! !
-
-!ScorePlayer class methodsFor: 'instance creation' stamp: 'jm 1/29/98 18:18'!
-onScore: aMIDIScore
-
-	^ self new onScore: aMIDIScore
 ! !
 
 !CompressedSoundData methodsFor: 'asSound' stamp: 'di 2/17/1999 08:15'!
@@ -10534,2140 +12668,6 @@ stopRecording
 	mutex _ nil.
 ! !
 
-!AbstractScoreEvent methodsFor: 'accessing' stamp: 'di 6/17/1999 14:28'!
-adjustTimeBy: delta
-
-	time _ time + delta
-! !
-
-!AbstractScoreEvent methodsFor: 'accessing' stamp: 'jm 8/27/1998 16:38'!
-endTime
-	"Subclasses should override to return the ending time if the event has some duration."
-
-	^ time
-! !
-
-!AbstractScoreEvent methodsFor: 'accessing' stamp: 'jm 12/31/97 11:43'!
-time
-
-	^ time
-! !
-
-!AbstractScoreEvent methodsFor: 'accessing' stamp: 'jm 12/31/97 11:43'!
-time: aNumber
-
-	time _ aNumber.
-! !
-
-!AbstractScoreEvent methodsFor: 'classification' stamp: 'jm 9/10/1998 09:43'!
-isControlChange
-
-	^ false
-! !
-
-!AbstractScoreEvent methodsFor: 'classification' stamp: 'jm 12/31/97 11:46'!
-isNoteEvent
-
-	^ false
-! !
-
-!AbstractScoreEvent methodsFor: 'classification' stamp: 'jm 9/10/1998 09:43'!
-isPitchBend
-
-	^ false
-! !
-
-!AbstractScoreEvent methodsFor: 'classification' stamp: 'jm 9/10/1998 09:43'!
-isProgramChange
-
-	^ false
-! !
-
-!AbstractScoreEvent methodsFor: 'classification' stamp: 'jm 12/31/97 11:46'!
-isTempoEvent
-
-	^ false
-! !
-
-!AbstractScoreEvent methodsFor: 'midi' stamp: 'jm 9/10/1998 18:31'!
-outputOnMidiPort: aMidiPort
-	"Output this event to the given MIDI port. This default implementation does nothing."
-! !
-
-!ControlChangeEvent methodsFor: 'printing' stamp: 'sma 6/1/2000 09:34'!
-printOn: aStream
-	aStream
-		nextPut: $(;
-		print: time;
-		nextPutAll: ': ctrl[';
-		print: control;
-		nextPutAll: ']=';
-		print: value;
-		nextPut: $)! !
-
-!ControlChangeEvent methodsFor: 'accessing' stamp: 'jm 9/10/1998 07:47'!
-channel
-
-	^ channel
-! !
-
-!ControlChangeEvent methodsFor: 'accessing' stamp: 'jm 9/10/1998 07:47'!
-channel: midiChannel
-
-	channel _ midiChannel.
-! !
-
-!ControlChangeEvent methodsFor: 'accessing' stamp: 'jm 9/10/1998 07:49'!
-control
-
-	^ control
-! !
-
-!ControlChangeEvent methodsFor: 'accessing' stamp: 'jm 9/10/1998 07:48'!
-control: midiControl
-
-	control _ midiControl.
-! !
-
-!ControlChangeEvent methodsFor: 'accessing' stamp: 'jm 9/10/1998 08:03'!
-control: midiControl value: midiControlValue channel: midiChannel
-
-	control _ midiControl.
-	value _ midiControlValue.
-	channel _ midiChannel.
-! !
-
-!ControlChangeEvent methodsFor: 'accessing' stamp: 'jm 9/10/1998 08:02'!
-value
-
-	^ value
-! !
-
-!ControlChangeEvent methodsFor: 'accessing' stamp: 'jm 9/10/1998 08:03'!
-value: midiControlValue
-
-	value _ midiControlValue.
-! !
-
-!ControlChangeEvent methodsFor: 'classification' stamp: 'jm 9/10/1998 09:45'!
-isControlChange
-
-	^ true
-! !
-
-!ControlChangeEvent methodsFor: 'midi' stamp: 'jm 9/10/1998 18:31'!
-outputOnMidiPort: aMidiPort
-	"Output this event to the given MIDI port."
-
-	aMidiPort
-		midiCmd: 16rB0
-		channel: channel
-		byte: control
-		byte: value.
-! !
-
-!NoteEvent methodsFor: 'printing' stamp: 'jm 1/3/98 08:58'!
-keyName
-	"Return a note name for my pitch."
-
-	| pitchName octave |
-	pitchName _ #(c cs d ef e f fs g af a bf b) at: (midiKey \\ 12) + 1.
-	octave _ (#(-1 0 1 2 3 4 5 6 7 8 9) at: (midiKey // 12) + 1) printString.
-	^ pitchName, octave
-! !
-
-!NoteEvent methodsFor: 'printing' stamp: 'jm 1/3/98 08:59'!
-printOn: aStream
-
-	aStream nextPut: $(.
-	time printOn: aStream.
-	aStream nextPutAll: ': '.
-	aStream nextPutAll: self keyName.
-	aStream space.
-	duration printOn: aStream.
-	aStream nextPut: $).
-! !
-
-!NoteEvent methodsFor: 'accessing' stamp: 'jm 12/30/97 22:02'!
-channel
-
-	^ channel
-! !
-
-!NoteEvent methodsFor: 'accessing' stamp: 'jm 12/30/97 22:02'!
-channel: midiChannel
-
-	channel _ midiChannel.
-! !
-
-!NoteEvent methodsFor: 'accessing' stamp: 'jm 12/18/97 19:10'!
-duration
-
-	^ duration
-! !
-
-!NoteEvent methodsFor: 'accessing' stamp: 'jm 12/31/97 11:49'!
-duration: aNumber
-
-	duration _ aNumber.
-! !
-
-!NoteEvent methodsFor: 'accessing' stamp: 'jm 8/27/1998 16:38'!
-endTime
-
-	^ time + duration
-! !
-
-!NoteEvent methodsFor: 'accessing' stamp: 'jm 12/30/97 22:07'!
-key: midiKeyNum velocity: midiVelocity channel: midiChannel
-
-	midiKey _ midiKeyNum.
-	velocity _ midiVelocity.
-	channel _ midiChannel.
-! !
-
-!NoteEvent methodsFor: 'accessing' stamp: 'jm 12/18/97 20:58'!
-midiKey
-
-	^ midiKey
-! !
-
-!NoteEvent methodsFor: 'accessing' stamp: 'jm 12/30/97 09:35'!
-midiKey: midiKeyNum
-
-	midiKey _ midiKeyNum.
-! !
-
-!NoteEvent methodsFor: 'accessing' stamp: 'jm 8/3/1998 17:06'!
-pitch
-	"Convert my MIDI key number to a pitch and return it."
-
-	^ AbstractSound pitchForMIDIKey: midiKey
-! !
-
-!NoteEvent methodsFor: 'accessing' stamp: 'jm 12/30/97 09:32'!
-velocity
-
-	^ velocity
-! !
-
-!NoteEvent methodsFor: 'accessing' stamp: 'jm 12/31/97 11:51'!
-velocity: midiVelocity
-
-	velocity _ midiVelocity.
-! !
-
-!NoteEvent methodsFor: 'midi' stamp: 'jm 9/10/1998 15:58'!
-endNoteOnMidiPort: aMidiPort
-	"Output a noteOff event to the given MIDI port. (Actually, output a noteOff event with zero velocity. This does the same thing, but allows running status to be used when sending a mixture of note on and off commands.)"
-
-	aMidiPort
-		midiCmd: 16r90
-		channel: channel
-		byte: midiKey
-		byte: 0.
-! !
-
-!NoteEvent methodsFor: 'midi' stamp: 'jm 9/10/1998 15:56'!
-startNoteOnMidiPort: aMidiPort
-	"Output a noteOn event to the given MIDI port."
-
-	aMidiPort
-		midiCmd: 16r90
-		channel: channel
-		byte: midiKey
-		byte: velocity.
-! !
-
-!NoteEvent methodsFor: 'classification' stamp: 'jm 12/31/97 11:48'!
-isNoteEvent
-
-	^ true
-! !
-
-!PitchBendEvent methodsFor: 'printing' stamp: 'jm 9/10/1998 09:42'!
-printOn: aStream
-
-	aStream nextPut: $(.
-	time printOn: aStream.
-	aStream nextPutAll: ': bend '.
-	bend printOn: aStream.
-	aStream nextPut: $).
-! !
-
-!PitchBendEvent methodsFor: 'accessing' stamp: 'jm 9/10/1998 07:49'!
-bend
-
-	^ bend
-! !
-
-!PitchBendEvent methodsFor: 'accessing' stamp: 'jm 9/10/1998 07:48'!
-bend: midiPitchBend
-
-	bend _ midiPitchBend.
-! !
-
-!PitchBendEvent methodsFor: 'accessing' stamp: 'jm 9/10/1998 07:48'!
-bend: midiPitchBend channel: midiChannel
-
-	bend _ midiPitchBend.
-	channel _ midiChannel.
-! !
-
-!PitchBendEvent methodsFor: 'accessing' stamp: 'jm 9/10/1998 07:47'!
-channel
-
-	^ channel
-! !
-
-!PitchBendEvent methodsFor: 'accessing' stamp: 'jm 9/10/1998 07:47'!
-channel: midiChannel
-
-	channel _ midiChannel.
-! !
-
-!PitchBendEvent methodsFor: 'classification' stamp: 'jm 9/10/1998 09:45'!
-isPitchBend
-
-	^ true
-! !
-
-!PitchBendEvent methodsFor: 'midi' stamp: 'jm 9/10/1998 18:31'!
-outputOnMidiPort: aMidiPort
-	"Output this event to the given MIDI port."
-
-	aMidiPort
-		midiCmd: 16rE0
-		channel: channel
-		byte: (bend bitAnd: 16r7F)
-		byte: (bend bitShift: -7).
-! !
-
-!ProgramChangeEvent methodsFor: 'printing' stamp: 'jm 9/10/1998 08:28'!
-printOn: aStream
-
-	aStream nextPut: $(.
-	time printOn: aStream.
-	aStream nextPutAll: ': prog '.
-	program printOn: aStream.
-	aStream nextPut: $).
-! !
-
-!ProgramChangeEvent methodsFor: 'accessing' stamp: 'jm 9/10/1998 07:47'!
-channel
-
-	^ channel
-! !
-
-!ProgramChangeEvent methodsFor: 'accessing' stamp: 'jm 9/10/1998 07:47'!
-channel: midiChannel
-
-	channel _ midiChannel.
-! !
-
-!ProgramChangeEvent methodsFor: 'accessing' stamp: 'jm 9/10/1998 07:49'!
-program
-
-	^ program
-! !
-
-!ProgramChangeEvent methodsFor: 'accessing' stamp: 'jm 9/10/1998 07:48'!
-program: midiProgramChange
-
-	program _ midiProgramChange.
-! !
-
-!ProgramChangeEvent methodsFor: 'accessing' stamp: 'jm 9/10/1998 07:48'!
-program: midiProgramChange channel: midiChannel
-
-	program _ midiProgramChange.
-	channel _ midiChannel.
-! !
-
-!ProgramChangeEvent methodsFor: 'classification' stamp: 'jm 9/10/1998 09:46'!
-isProgramChange
-
-	^ true
-! !
-
-!ProgramChangeEvent methodsFor: 'midi' stamp: 'jm 9/10/1998 18:31'!
-outputOnMidiPort: aMidiPort
-	"Output this event to the given MIDI port."
-
-	aMidiPort
-		midiCmd: 16rC0
-		channel: channel
-		byte: program.
-! !
-
-!TempoEvent methodsFor: 'as yet unclassified' stamp: 'jm 12/30/97 10:10'!
-isTempoEvent
-
-	^ true
-! !
-
-!TempoEvent methodsFor: 'as yet unclassified' stamp: 'jm 9/10/1998 08:37'!
-printOn: aStream
-
-	aStream nextPut: $(.
-	time printOn: aStream.
-	aStream nextPutAll: ': tempo '.
-	((120.0 * (500000.0 / tempo)) roundTo: 0.01) printOn: aStream.
-	aStream nextPut: $).
-! !
-
-!TempoEvent methodsFor: 'as yet unclassified' stamp: 'jm 12/30/97 10:09'!
-tempo
-
-	^ tempo
-! !
-
-!TempoEvent methodsFor: 'as yet unclassified' stamp: 'jm 12/30/97 10:09'!
-tempo: anInteger
-
-	tempo _ anInteger.
-! !
-
-!MIDIFileReader methodsFor: 'chunk reading' stamp: 'jm 1/6/98 23:20'!
-asScore
-
-	^ MIDIScore new
-		tracks: tracks;
-		trackInfo: trackInfo;
-		tempoMap: tempoMap;
-		ticksPerQuarterNote: ticksPerQuarter
-! !
-
-!MIDIFileReader methodsFor: 'chunk reading' stamp: 'jmv 3/13/2012 12:37'!
-readHeaderChunk
-
-	| chunkType chunkSize division |
-	chunkType _ self readChunkType.
-	chunkType = 'RIFF' ifTrue:[chunkType _ self riffSkipToMidiChunk].
-	chunkType = 'MThd' ifFalse: [self scanForMIDIHeader].
-	chunkSize _ self readChunkSize.
-	fileType _ self next16BitWord.
-	trackCount _ self next16BitWord.
-	division _ self next16BitWord.
-	(division anyMask: 16r8000)
-		ifTrue: [self error: 'SMPTE time formats are not yet supported']
-		ifFalse: [ticksPerQuarter _ division].
-	maxNoteTicks _ 12 * 4 * ticksPerQuarter.
-		"longest acceptable note; used to detect stuck notes"
-
-	"sanity checks"
-	((chunkSize < 6) or: [chunkSize > 100])
-		ifTrue: [self error: 'unexpected MIDI header size ', chunkSize printString].
-	(#(0 1 2) includes: fileType)
-		ifFalse: [self error: 'unknown MIDI file type ', fileType printString].
-
-	Transcript
-		show: 'Reading Type ', fileType printString, ' MIDI File (';
-		show: trackCount printString, ' tracks, ';
-		show: ticksPerQuarter printString, ' ticks per quarter note)';
-		newLine.
-! !
-
-!MIDIFileReader methodsFor: 'chunk reading' stamp: 'jm 9/12/1998 19:08'!
-readMIDIFrom: aBinaryStream
-	"Read one or more MIDI tracks from the given binary stream."
-
-	stream _ aBinaryStream.
-	tracks _ OrderedCollection new.
-	trackInfo _ OrderedCollection new.
-	self readHeaderChunk.
-	trackCount timesRepeat: [self readTrackChunk].
-	stream atEnd ifFalse: [self report: 'data beyond final track'].
-	fileType = 0 ifTrue: [self splitIntoTracks].
-	self guessMissingInstrumentNames.
-! !
-
-!MIDIFileReader methodsFor: 'chunk reading' stamp: 'jm 12/31/97 10:41'!
-readTrackChunk
-
-	| chunkType chunkSize |
-	chunkType _ self readChunkType.
-	[chunkType = 'MTrk'] whileFalse: [
-		self report: 'skipping unexpected chunk type "', chunkType, '"'.
-		stream skip: (self readChunkSize).  "skip it"
-		chunkType _ (stream next: 4) asString].
-	chunkSize _ self readChunkSize.
-	chunkSize < 10000000 ifFalse: [
-		self error: 'suspiciously large track chunk; this may not be MIDI file'].
-
-	self readTrackContents: chunkSize.
-! !
-
-!MIDIFileReader methodsFor: 'track reading' stamp: 'jm 3/28/98 05:44'!
-endAllNotesAt: endTicks
-	"End of score; end any notes still sounding."
-	"Details: Some MIDI files have missing note-off events, resulting in very long notes. Truncate any such notes encountered."
-
-	| dur |
-	activeEvents do: [:e |
-		dur _ endTicks - e time.
-		dur > maxNoteTicks ifTrue: [dur _ ticksPerQuarter].  "truncate long note"
-		e duration: dur].
-	activeEvents _ activeEvents species new.
-! !
-
-!MIDIFileReader methodsFor: 'track reading' stamp: 'jmv 3/2/2010 09:56'!
-endNote: midiKey chan: channel at: endTicks
-
-	| evt |
-	evt _ activeEvents
-		detect: [:e | (e midiKey = midiKey) and: [e channel = channel]]
-		ifNone: [^ self].
-	evt duration: (endTicks - evt time).
-	activeEvents remove: evt ifAbsent: nil! !
-
-!MIDIFileReader methodsFor: 'track reading' stamp: 'jm 1/3/98 09:45'!
-isTempoTrack: anEventList
-	"Return true if the given event list is non-empty and contains only tempo change events."
-
-	anEventList isEmpty ifTrue: [^ false].
-	anEventList do: [:evt | evt isTempoEvent ifFalse: [^ false]].
-	^ true
-! !
-
-!MIDIFileReader methodsFor: 'track reading' stamp: 'jm 9/27/1998 22:15'!
-metaEventAt: ticks
-	"Read a meta event. Event types appear roughly in order of expected frequency."
-
-	| type length tempo |
-	type _ trackStream next.
-	length _ self readVarLengthIntFrom: trackStream.
-
-	type = 16r51 ifTrue: [  "tempo"
-		tempo _ 0.
-		length timesRepeat: [tempo _ (tempo bitShift: 8) + trackStream next].
-		track add: (TempoEvent new tempo: tempo; time: ticks).
-		^ self].
-
-	type = 16r2F ifTrue: [  "end of track"
-		length = 0 ifFalse: [self error: 'length of end-of-track chunk should be zero'].
-		self endAllNotesAt: ticks.
-		trackStream skip: length.
-		^ self].
-
-	type = 16r58 ifTrue: [  "time signature"
-		length = 4 ifFalse: [self error: 'length of time signature chunk should be four'].
-		trackStream skip: length.
-		^ self].
-
-	type = 16r59 ifTrue: [  "key signature"
-		length = 2 ifFalse: [self error: 'length of key signature chunk should be two'].
-		trackStream skip: length.
-		^ self].
-
-	((type >= 1) and: [type <= 7]) ifTrue: [  "string"
-		strings add: (trackStream next: length) asString.
-		^ self].
-
-	(  type = 16r21 or:   "mystery; found in MIDI files but not in MIDI File 1.0 Spec"
-	 [(type = 16r7F) or:  "sequencer specific meta event"
-	 [(type = 16r00) or:  "sequence number"
-	 [(type = 16r20)]]])  "MIDI channel prefix"
-		ifTrue: [
-			trackStream skip: length.
-			^ self].
-
-	type = 16r54 ifTrue: [
-		"SMPTE offset"
-		self report: 'Ignoring SMPTE offset'.
-		trackStream skip: length.
-		^ self].
-
-	"skip unrecognized meta event"
-	self report:
-		'skipping unrecognized meta event: ', (type printStringBase: 16),
-		' (', length printString, ' bytes)'.
-	trackStream skip: length.
-! !
-
-!MIDIFileReader methodsFor: 'track reading' stamp: 'jmv 3/13/2012 12:37'!
-readTrackContents: byteCount
-
-	| info |
-	strings _ OrderedCollection new.
-	track _ OrderedCollection new.
-	trackStream _ ReadStream on: (stream next: byteCount).
-	activeEvents _ OrderedCollection new.
-	self readTrackEvents.
-	(tracks isEmpty and: [self isTempoTrack: track])
-		ifTrue: [tempoMap _ track asArray]
-		ifFalse: [
-			"Note: Tracks without note events are currently not saved to
-			 eliminate clutter in the score player. In control applications,
-			 this can be easily changed by modifying the following test."
-			(self trackContainsNotes: track) ifTrue: [
-				tracks add: track asArray.
-				info _ WriteStream on: (String new: 100).
-				strings do: [:s | info nextPutAll: s; newLine].
-				trackInfo add: info contents]].
-	strings _ track _ trackStream _ activeEvents _ nil.
-! !
-
-!MIDIFileReader methodsFor: 'track reading' stamp: 'jm 9/10/1998 09:57'!
-readTrackEvents
-	"Read the events of the current track."
-
-	| cmd chan key vel ticks byte length evt |
-	cmd _ #unknown.
-	chan _ key _ vel _ 0.
-	ticks _ 0.
-	[trackStream atEnd] whileFalse: [
-		ticks _ ticks + (self readVarLengthIntFrom: trackStream).
-		byte _ trackStream next.
-		byte >= 16rF0
-			ifTrue: [  "meta or system exclusive event"
-				byte = 16rFF ifTrue: [self metaEventAt: ticks].
-				((byte = 16rF0) or: [byte = 16rF7]) ifTrue: [  "system exclusive data"
-					length _ self readVarLengthIntFrom: trackStream.
-					trackStream skip: length].
-				cmd _ #unknown]
-			ifFalse: [  "channel message event"
-				byte >= 16r80
-					ifTrue: [  "new command"
-						cmd _ byte bitAnd: 16rF0.
-						chan _ byte bitAnd: 16r0F.
-						key _ trackStream next]
-					ifFalse: [  "use running status"
-						cmd == #unknown
-							ifTrue: [self error: 'undefined running status; bad MIDI file?'].
-						key _ byte].
-
-				((cmd = 16rC0) or: [cmd = 16rD0]) ifFalse: [
-					"all but program change and channel pressure have two data bytes"
-					vel _ trackStream next].
-
-				cmd = 16r80 ifTrue: [  "note off"
-					self endNote: key chan: chan at: ticks].
-
-				cmd = 16r90 ifTrue: [  "note on"
-					vel = 0
-						ifTrue: [self endNote: key chan: chan at: ticks]
-						ifFalse: [self startNote: key vel: vel chan: chan at: ticks]].
-
-				"cmd = 16A0 -- polyphonic key pressure; skip"
-
-				cmd = 16rB0 ifTrue: [
-					evt _ ControlChangeEvent new control: key value: vel channel: chan.
-					evt time: ticks.
-					track add: evt].
-
-				cmd = 16rC0 ifTrue: [
-					evt _ ProgramChangeEvent new program: key channel: chan.
-					evt time: ticks.
-					track add: evt].
-
-				"cmd = 16D0 -- channel aftertouch pressure; skip"
-
-				cmd = 16rE0 ifTrue: [
-					evt _ PitchBendEvent new bend: key + (vel bitShift: 7) channel: chan.
-					evt time: ticks.
-					track add: evt]
-	]].
-! !
-
-!MIDIFileReader methodsFor: 'track reading' stamp: 'jmv 3/2/2010 09:56'!
-startNote: midiKey vel: vel chan: chan at: startTicks
-	"Record the beginning of a note."
-	"Details: Some MIDI scores have missing note-off events, causing a note-on to be received for a (key, channel) that is already sounding. If the previous note is suspiciously long, truncate it."
-
-	| newActiveEvents dur noteOnEvent |
-	newActiveEvents _ nil.
-	activeEvents do: [:e |
-		((e midiKey = midiKey) and: [e channel = chan]) ifTrue: [
-			"turn off key already sounding"
-			dur _ startTicks - e time.
-			dur > maxNoteTicks ifTrue: [dur _ ticksPerQuarter].  "truncate"
-			e duration: dur.
-			newActiveEvents ifNil: [newActiveEvents _ activeEvents copy].
-			newActiveEvents remove: e ifAbsent: nil]].
-	newActiveEvents ifNotNil: [activeEvents _ newActiveEvents].
-
-	noteOnEvent _ NoteEvent new key: midiKey velocity: vel channel: chan.
-	noteOnEvent time: startTicks.
-	track add: noteOnEvent.
-	activeEvents add: noteOnEvent! !
-
-!MIDIFileReader methodsFor: 'track reading' stamp: 'jm 9/12/1998 17:15'!
-trackContainsNotes: eventList
-	"Answer true if the given track contains at least one note event."
-
-	eventList do: [:e | e isNoteEvent ifTrue: [^ true]].
-	^ false
-! !
-
-!MIDIFileReader methodsFor: 'private' stamp: 'jmv 3/2/2010 09:56'!
-guessMissingInstrumentNames
-	"Attempt to guess missing instrument names from the first program change in that track."
-
-	| progChange instrIndex instrName |
-	1 to: tracks size do: [:i |
-		(trackInfo at: i) isEmpty ifTrue: [
-			progChange _ (tracks at: i) detect: [:e | e isProgramChange] ifNone: nil.
-			progChange ifNotNil: [
-				instrIndex _ progChange program + 1.
-				instrName _ self class standardMIDIInstrumentNames at: instrIndex.
-				trackInfo at: i put: instrName]]].
-! !
-
-!MIDIFileReader methodsFor: 'private' stamp: 'jm 12/31/97 10:30'!
-next16BitWord
-	"Read a 16-bit positive integer from the input stream, most significant byte first."
-	"Assume: Stream has at least two bytes left."
-
-	| n |
-	n _ stream next.
-	^ (n bitShift: 8) + stream next
-! !
-
-!MIDIFileReader methodsFor: 'private' stamp: 'ar 1/27/98 17:27'!
-next32BitWord: msbFirst
-	"Read a 32-bit positive integer from the input stream."
-	"Assume: Stream has at least four bytes left."
-
-	| n |
-	n _ stream next: 4.
-	^msbFirst
-		ifTrue:[((n at: 1) bitShift: 24) + ((n at: 2) bitShift: 16) + ((n at: 3) bitShift: 8) + (n at: 4)]
-		ifFalse:[((n at: 4) bitShift: 24) + ((n at: 3) bitShift: 16) + ((n at: 2) bitShift: 8) + (n at: 1)]
-! !
-
-!MIDIFileReader methodsFor: 'private' stamp: 'jm 12/31/97 10:29'!
-readChunkSize
-	"Read a 32-bit positive integer from the next 4 bytes, most significant byte first."
-	"Assume: Stream has at least four bytes left."
-
-	| n |
-	n _ 0.
-	1 to: 4 do: [:ignore | n _ (n bitShift: 8) + stream next].
-	^ n
-! !
-
-!MIDIFileReader methodsFor: 'private' stamp: 'jmv 1/9/2024 17:34:10'!
-readChunkType
-	"Read a chunk ID string from the next 4 bytes."
-	"Assume: Stream has at least four bytes left."
-
-	| s |
-	s := String new: 4.
-	1 to: 4 do: [:i | s at: i put: (Character codePoint: stream next) ].
-	^ s
-! !
-
-!MIDIFileReader methodsFor: 'private' stamp: 'jm 12/31/97 11:33'!
-readVarLengthIntFrom: aBinaryStream
-	"Read a one to four byte positive integer from the given stream, most significant byte first. Use only the lowest seven bits of each byte. The highest bit of a byte is set for all bytes except the last."
-
-	| n byte |
-	n _ 0.
-	1 to: 4 do: [:ignore |
-		byte _ aBinaryStream next.
-		byte < 128 ifTrue: [
-			n = 0
-				ifTrue: [^ byte]  "optimization for one-byte lengths"
-				ifFalse: [^ (n bitShift: 7) + byte]].
-		n _ (n bitShift: 7) + (byte bitAnd: 16r7F)].
-
-	self error: 'variable length quantity must not exceed four bytes'.
-! !
-
-!MIDIFileReader methodsFor: 'private' stamp: 'jmv 3/13/2012 12:37'!
-report: aString
-
-	Transcript show: aString; newLine! !
-
-!MIDIFileReader methodsFor: 'private' stamp: 'jm 2/1/98 19:20'!
-riffSkipToMidiChunk
-	"This file is a RIFF file which may (or may not) contain a MIDI chunk. Thanks to Andreas Raab for this code."
-
-	| dwLength fourcc |
-	"Read length of all data"
-	dwLength := self next32BitWord: false.
-	"Get RIFF contents type "
-	fourcc := self readChunkType.
-	fourcc = 'RMID' ifFalse:[^fourcc]. "We can only read RMID files here"
-	"Search for data"
-	[[fourcc := self readChunkType.
-	dwLength := self next32BitWord: false.
-	fourcc = 'data'] whileFalse:[
-		"Skip chunk - rounded to word boundary"
-		stream skip: (dwLength + 1 bitAnd: 16rFFFFFFFE).
-		stream atEnd ifTrue:[^'']].
-	"Data chunk is raw - look into if it contains MIDI data and skip if not"
-	fourcc := self readChunkType.
-	fourcc = 'MThd'] whileFalse:[
-		"Skip data (chunk - 4bytes) rounded to word boundary"
-		stream skip: (dwLength - 3 bitAnd: 16rFFFFFFFE)].
-	^fourcc! !
-
-!MIDIFileReader methodsFor: 'private' stamp: 'jmv 3/1/2010 14:05'!
-scanForMIDIHeader
-	"Scan the first part of this file in search of the MIDI header string 'MThd'. Report an error if it is not found. Otherwise, leave the input stream positioned to the first byte after this string."
-
-	| asciiM p lastSearchPosition byte restOfHeader |
-	asciiM _ $M asciiValue.
-	stream skip: -3.
-	p _ stream position.
-	lastSearchPosition _ p + 10000.  "search only the first 10000 bytes of the file"
-	[p < lastSearchPosition and: [stream atEnd not]] whileTrue: [
-		[(byte _ stream next) ~= asciiM and: [byte notNil]] whileTrue.  "find the next 'M' or file end"
-		restOfHeader _ (stream next: 3) asString.
-		restOfHeader = 'Thd'
-			ifTrue: [^ self]
-			ifFalse: [restOfHeader size = 3 ifTrue: [stream skip: -3]].
-		p _ stream position].
-
-	self error: 'MIDI header chunk not found'.
-! !
-
-!MIDIFileReader methodsFor: 'private' stamp: 'jm 9/12/1998 20:10'!
-splitIntoTracks
-	"Split a type zero MIDI file into separate tracks by channel number."
-
-	| newTempoMap newTracks |
-	tracks size = 1 ifFalse: [self error: 'expected exactly one track in type 0 file'].
-	tempoMap ifNotNil: [self error: 'did not expect a tempo map in type 0 file'].
-	newTempoMap _ OrderedCollection new.
-	newTracks _ (1 to: 16) collect: [:i | OrderedCollection new].
-	tracks first do: [:e |
-		e isTempoEvent
-			ifTrue: [newTempoMap addLast: e]
-			ifFalse: [(newTracks at: e channel + 1) addLast: e]].
-	newTempoMap size > 0 ifTrue: [tempoMap _ newTempoMap asArray].
-	newTracks _ newTracks select: [:t | self trackContainsNotes: t].
-	tracks _ newTracks collect: [:t | t asArray].
-	trackInfo _ trackInfo, ((2 to: tracks size) collect: [:i | '']).
-! !
-
-!MIDIFileReader class methodsFor: 'as yet unclassified' stamp: 'jmv 4/1/2009 21:42'!
-playFileNamed: fileName 
-"
-	ScorePlayerMorph openOn: (self scoreFromFileNamed: fileName)
-		title: (FileDirectory localNameFor: fileName)"! !
-
-!MIDIFileReader class methodsFor: 'as yet unclassified' stamp: 'jmv 4/1/2009 21:43'!
-playStream: binaryStream 
-"
-	ScorePlayerMorph openOn: (self scoreFromStream: binaryStream)
-		title: 'a MIDI stream'"! !
-
-!MIDIFileReader class methodsFor: 'as yet unclassified' stamp: 'jmv 4/1/2009 21:43'!
-playURLNamed: urlString 
-"
-	| titleString |
-	titleString := urlString copyFrom: (urlString findLast: [:c | c = $/]) + 1
-				to: urlString size.
-	ScorePlayerMorph openOn: (self scoreFromURL: urlString)
-		title: titleString"! !
-
-!MIDIFileReader class methodsFor: 'as yet unclassified' stamp: 'pb 5/25/2016 01:51'!
-scoreFromFileNamed: fileName
-
-	| f score |
-	f _ (fileName asFileEntry readStream) binary.
-	score _ (self new readMIDIFrom: f) asScore.
-	f close.
-	^ score
-! !
-
-!MIDIFileReader class methodsFor: 'as yet unclassified' stamp: 'ls 8/8/1998 03:14'!
-scoreFromStream: binaryStream
-
-	|  score |
-	score _ (self new readMIDIFrom: binaryStream) asScore.
-	^ score
-! !
-
-!MIDIFileReader class methodsFor: 'as yet unclassified' stamp: 'jm 9/12/1998 19:57'!
-standardMIDIInstrumentNames
-	"Answer an array of Standard MIDI instrument names."
-
-	^ #(
-		'Grand Piano'
-		'Bright Piano'
-		'Electric Grand Piano'
-		'Honky-tonk Piano'
-		'Electric Piano 1'
-		'Electric Piano 2'
-		'Harpsichord'
-		'Clavichord'
-		'Celesta'
-		'Glockenspiel'
-		'Music Box'
-		'Vibraphone'
-		'Marimba'
-		'Xylophone'
-		'Tubular Bells'
-		'Duclimer'
-		'Drawbar Organ'
-		'Percussive Organ'
-		'Rock Organ'
-		'Church Organ'
-		'Reed Organ'
-		'Accordion'
-		'Harmonica'
-		'Tango Accordion'
-		'Nylon Guitar'
-		'Steel Guitar'
-		'Electric Guitar 1'
-		'Electric Guitar 2'
-		'Electric Guitar 3'
-		'Overdrive Guitar'
-		'Distorted Guitar'
-		'Guitar Harmonics'
-		'Acoustic Bass'
-		'Electric Bass 1'
-		'Electric Bass 2'
-		'Fretless Bass'
-		'Slap Bass 1'
-		'Slap Bass 2'
-		'Synth Bass 1'
-		'Synth Bass 2'
-		'Violin'
-		'Viola'
-		'Cello'
-		'Contrabass'
-		'Tremolo Strings'
-		'Pizzicato Strings'
-		'Orchestral Harp'
-		'Timpani'
-		'String Ensemble 1'
-		'String Ensemble 2'
-		'Synth Strings 1'
-		'Synth Strings 2'
-		'Choir Ahhs'
-		'Choir Oohs'
-		'Synth Voice'
-		'Orchestra Hit'
-		'Trumpet'
-		'Trombone'
-		'Tuba'
-		'Muted Trumpet'
-		'French Horn'
-		'Brass Section'
-		'Synth Brass 1'
-		'Synth Brass 2'
-		'Soprano Sax'
-		'Alto Sax'
-		'Tenor Sax'
-		'Baritone Sax'
-		'Oboe'
-		'English Horn'
-		'Bassoon'
-		'Clarinet'
-		'Piccolo'
-		'Flute'
-		'Recorder'
-		'Pan Flute'
-		'Blown Bottle'
-		'Shakuhachi'
-		'Whistle'
-		'Ocarina'
-		'Lead 1 (square)'
-		'Lead 2 (sawtooth)'
-		'Lead 3 (calliope)'
-		'Lead 4 (chiff)'
-		'Lead 5 (charang)'
-		'Lead 6 (voice)'
-		'Lead 7 (fifths)'
-		'Lead 8 (bass+lead)'
-		'Pad 1 (new age)'
-		'Pad 2 (warm)'
-		'Pad 3 (polysynth)'
-		'Pad 4 (choir)'
-		'Pad 5 (bowed)'
-		'Pad 6 (metallic)'
-		'Pad 7 (halo)'
-		'Pad 8 (sweep)'
-		'FX 1 (rain)'
-		'FX 2 (soundtrack)'
-		'FX 3 (crystals)'
-		'FX 4 (atmosphere)'
-		'FX 5 (brightness)'
-		'FX 6 (goblins)'
-		'FX 7 (echoes)'
-		'FX 8 (sci-fi)'
-		'Sitar'
-		'Banjo'
-		'Shamisen'
-		'Koto'
-		'Kalimba'
-		'Bagpipe'
-		'Fiddle'
-		'Shanai'
-		'Tinkle Bell'
-		'Agogo'
-		'Steel Drum'
-		'Woodblock'
-		'Taiko Drum'
-		'Melodic Tom'
-		'Synth Drum'
-		'Reverse Cymbal'
-		'Guitar Fret Noise'
-		'Breath Noise'
-		'Seashore'
-		'Bird Tweet'
-		'Telephone Ring'
-		'Helicopter'
-		'Applause'
-		'Gunshot')
-! !
-
-!MIDIInputParser methodsFor: 'recording' stamp: 'jmv 2/6/2024 10:21:32'!
-clearBuffers
-	"Clear the MIDI record buffers. This should be called at the start of recording or real-time MIDI processing."	
-
-	received := received species new.
-	rawDataBuffer := ByteArray new: 1000.
-	sysExBuffer := WriteStream on: (ByteArray new: 100).
-	midiPort ifNotNil: [midiPort ensureOpen; flushInput].
-	startTime := Time localMillisecondClock.
-	state := #idle.
-! !
-
-!MIDIInputParser methodsFor: 'recording' stamp: 'jm 10/8/1998 21:06'!
-processMIDIData
-	"Process all MIDI data that has arrived since the last time this method was executed. This method should be called frequently to process, filter, and timestamp MIDI data as it arrives."
-
-	| bytesRead |
-	[(bytesRead _ midiPort readInto: rawDataBuffer) > 0] whileTrue: [
-		timeNow _ (midiPort bufferTimeStampFrom: rawDataBuffer) - startTime.
-		5 to: bytesRead do: [:i | self processByte: (rawDataBuffer at: i)]].
-! !
-
-!MIDIInputParser methodsFor: 'recording' stamp: 'jm 10/8/1998 20:24'!
-received
-	"Answer my current collection of all MIDI commands received. Items in this list have the form (<time><cmd byte>[<arg1>[<arg2>]]). Note that the real-time processing facility, midiDo:, removes items from this list as it processes them."
-
-	^ received
-! !
-
-!MIDIInputParser methodsFor: 'private-state machine' stamp: 'jm 10/8/1998 18:34'!
-endSysExclusive: cmdByte
-	"Error!! Received 'end system exclusive' command when not receiving system exclusive data."
-
-	self error: 'unexpected ''End of System Exclusive'' command'.
-! !
-
-!MIDIInputParser methodsFor: 'private-state machine' stamp: 'jm 10/8/1998 19:24'!
-ignoreOne: cmdByte
-	"Ignore a one argument command."	
-
-	lastCmdByte _ cmdByte.
-	lastSelector _ #ignoreOne:.
-	state _ #ignore1.
-! !
-
-!MIDIInputParser methodsFor: 'private-state machine' stamp: 'jm 10/8/1998 19:24'!
-ignoreTwo: cmdByte
-	"Ignore a two argument command."	
-
-	lastCmdByte _ cmdByte.
-	lastSelector _ #ignoreTwo:.
-	state _ #ignore2.
-! !
-
-!MIDIInputParser methodsFor: 'private-state machine' stamp: 'jm 10/9/1998 07:45'!
-ignoreZero: cmdByte
-	"Ignore a zero argument command, such as tune request or a real-time message. Stay in the current and don't change active status. Note that real-time messages can arrive between data bytes without disruption."	
-
-	"do nothing"
-! !
-
-!MIDIInputParser methodsFor: 'private-state machine' stamp: 'jm 10/9/1998 09:36'!
-processByte: aByte
-	"Process the given incoming MIDI byte and record completed commands."
-	"Details: Because this must be fast, it has been hand-tuned. Be careful!!"
-
-	aByte > 247 ifTrue: [  "real-time message; can arrive at any time"
-		^ self perform: (cmdActionTable at: aByte) with: aByte].
-
-	#idle = state ifTrue: [
-		aByte >= 128
-			ifTrue: [  "command byte in idle state: start new command"
-				^ self perform: (cmdActionTable at: aByte) with: aByte]
-			ifFalse: [  "data byte in idle state: use running status if possible"
-				lastCmdByte ifNil: [^ self].  "running status unknown; skip byte"
-				"process this data as if it had the last command byte in front of it"
-				 self perform: lastSelector with: lastCmdByte.
-
-				"the previous line put us into a new state; we now 'fall through'
-				 to process the data byte given this new state."]].
-
-	#ignore1 = state ifTrue: [^ state _ #idle].
-	#ignore2 = state ifTrue: [^ state _ #ignore1].
-
-	#want1of2 = state ifTrue: [
-		argByte1 _ aByte.
-		^ state _ #want2of2].
-
-	#want2of2 = state ifTrue: [
-		argByte2 _ aByte.
-		received addLast: (Array with: timeNow with: lastCmdByte with: argByte1 with: argByte2).
-		^ state _ #idle].
-
-	#want1only = state ifTrue: [
-		argByte1 _ aByte.
-		received addLast: (Array with: timeNow with: lastCmdByte with: argByte1).
-		^ state _ #idle].
-
-	#sysExclusive = state ifTrue: [
-		aByte < 128 ifTrue: [
-			"record a system exclusive data byte"
-			ignoreSysEx ifFalse: [sysExBuffer nextPut: aByte].
-			^ self]
-		ifFalse: [
-			aByte < 248 ifTrue: [
-				"a system exclusive message is terminated by any non-real-time command byte"
-				ignoreSysEx ifFalse: [
-					received addLast: (Array with: timeNow with: lastCmdByte with: sysExBuffer contents)].
-				state _ #idle.
-				aByte = 247
-					ifTrue: [^ self]							"endSysExclusive command, nothing left to do"
-					ifFalse: [^ self processByte: aByte]]]].  	"no endSysExclusive; just start the next command"
-! !
-
-!MIDIInputParser methodsFor: 'private-state machine' stamp: 'jm 10/8/1998 19:24'!
-recordOne: cmdByte
-	"Record a one argument command at the current time."	
-
-	lastCmdByte _ cmdByte.
-	lastSelector _ #recordOne:.
-	state _ #want1only.
-! !
-
-!MIDIInputParser methodsFor: 'private-state machine' stamp: 'jm 10/8/1998 19:24'!
-recordTwo: cmdByte
-	"Record a two argument command at the current time."	
-
-	lastCmdByte _ cmdByte.
-	lastSelector _ #recordTwo:.
-	state _ #want1of2.
-! !
-
-!MIDIInputParser methodsFor: 'private-state machine' stamp: 'jm 10/9/1998 07:43'!
-recordZero: cmdByte
-	"Record a zero-byte message, such as tune request or a real-time message. Don't change active status. Note that real-time messages can arrive between data bytes without disruption."	
-
-	received addLast: (Array with: timeNow with: cmdByte).
-! !
-
-!MIDIInputParser methodsFor: 'private-state machine' stamp: 'jm 10/9/1998 09:38'!
-startSysExclusive: cmdByte
-	"The beginning of a variable length 'system exclusive' command."
-
-	sysExBuffer resetContents.
-	lastCmdByte _ nil.  "system exclusive commands clear running status"
-	lastSelector _ nil.
-	state _ #sysExclusive.
-! !
-
-!MIDIInputParser methodsFor: 'private-state machine' stamp: 'jm 10/8/1998 17:12'!
-undefined: cmdByte
-	"We have received an unexpected MIDI byte (e.g., a data byte when we were expecting a command). This should never happen."
-
-	self error: 'unexpected MIDI byte ', cmdByte printString.
-! !
-
-!MIDIInputParser methodsFor: 'midi filtering' stamp: 'jm 10/8/1998 20:39'!
-ignoreChannel: channel
-	"Don't record any events arriving on the given MIDI channel (in the range 1-16)."
-
-	((channel isInteger not) | (channel < 1) | (channel > 16))
-		ifTrue: [^ self error: 'bad MIDI channel number', channel printString].
-
-	"two-arg channel messages"
-	#(128 144 160 176 224) do: [:i | cmdActionTable at: (i bitOr: channel - 1) put: #ignoreTwo:].
-
-	"one-arg channel messages"
-	#(192 208) do: [:i | cmdActionTable at: (i bitOr: channel - 1) put: #ignoreOne:].
-! !
-
-!MIDIInputParser methodsFor: 'midi filtering' stamp: 'jm 10/8/1998 20:40'!
-ignoreCommand: midiCmd
-	"Don't record the given MIDI command on any channel."
-
-	| cmd sel | 
-	((midiCmd isInteger not) | (midiCmd < 128) | (midiCmd > 255))
-		ifTrue: [^ self error: 'bad MIDI command'].
-
-	midiCmd < 240 ifTrue: [  "channel commands; ignore on all channels"
-		cmd _ midiCmd bitAnd: 2r11110000.
-		sel _ (#(128 144 160 176 224) includes: cmd)
-			ifTrue: [#ignoreTwo:]
-			ifFalse: [#ignoreOne:].
-		 1 to: 16 do: [:ch | cmdActionTable at: (cmd bitOr: ch - 1) put: sel].
-		^ self].
-
-	(#(240 241 244 245 247 249 253) includes: midiCmd) ifTrue: [
-		^ self error: 'You can''t ignore the undefined MIDI command: ', midiCmd printString].
-
-	midiCmd = 242 ifTrue: [  "two-arg command"
-		cmdActionTable at: midiCmd put: #ignoreTwo:.
-		 ^ self].
-
-	midiCmd = 243 ifTrue: [  "one-arg command"
-		cmdActionTable at: midiCmd put: #ignoreOne:.
-		^ self].
-
-	(#(246 248 250 251 252 254 255) includes: midiCmd) ifTrue:	[  "zero-arg command"
-		cmdActionTable at: midiCmd put: #ignore.
-		 ^ self].
-
-	"we should not get here"
-	self error: 'implementation error'.
-! !
-
-!MIDIInputParser methodsFor: 'midi filtering' stamp: 'jm 10/8/1998 20:38'!
-ignoreSysEx: aBoolean
-	"If the argument is true, then ignore incoming system exclusive message."
-
-	ignoreSysEx _ aBoolean.
-! !
-
-!MIDIInputParser methodsFor: 'midi filtering' stamp: 'jm 10/9/1998 07:46'!
-ignoreTuneAndRealTimeCommands
-	"Ignore tuning requests and real-time commands."
-
-	cmdActionTable at: 246 put: #ignoreZero:.	"tune request"
-	cmdActionTable at: 248 put: #ignoreZero:.	"timing clock"
-	cmdActionTable at: 250 put: #ignoreZero:.	"start"
-	cmdActionTable at: 251 put: #ignoreZero:.		"continue"
-	cmdActionTable at: 252 put: #ignoreZero:.	"stop/Clock"
-	cmdActionTable at: 254 put: #ignoreZero:.	"active sensing"
-	cmdActionTable at: 255 put: #ignoreZero:.	"system reset"
-! !
-
-!MIDIInputParser methodsFor: 'midi filtering' stamp: 'jmv 5/20/2011 11:14'!
-noFiltering
-	"Revert to accepting all MIDI commands on all channels. This undoes any earlier request to filter the incoming MIDI stream."
-
-	cmdActionTable _ DefaultMidiTable copy.
-	ignoreSysEx _ false! !
-
-!MIDIInputParser methodsFor: 'midi filtering' stamp: 'jm 10/9/1998 07:50'!
-recordOnlyChannels: channelList
-	"Record only MIDI data arriving on the given list of channel numbers (in the range 1-16)."
-
-	channelList do: [:ch |
-		((ch isInteger not) | (ch < 1) | (ch > 16))
-			ifTrue: [^ self error: 'bad Midi channel specification: ', ch printString]].
-
-	1 to: 16 do: [:ch | (channelList includes: ch) ifFalse: [self ignoreChannel: ch]].
-! !
-
-!MIDIInputParser methodsFor: 'real-time processing' stamp: 'jm 10/9/1998 07:53'!
-midiDo: aBlock
-	"Poll the incoming MIDI stream in real time and call the given block for each complete command that has been received. The block takes one argument, which is an array of the form (<time><cmd byte>[<arg1>[<arg2>]]). The number of arguments depends on the command byte. For system exclusive commands, the argument is a ByteArray containing the system exclusive message."
-
-	self processMIDIData.
-	[received isEmpty] whileFalse:
-		[aBlock value: received removeFirst].
-! !
-
-!MIDIInputParser methodsFor: 'real-time processing' stamp: 'jmv 1/14/2013 21:13'!
-midiDoUntilMouseDown: midiActionBlock
-	"Process the incoming MIDI stream in real time by calling midiActionBlock for each MIDI event. This block takes three arguments: the MIDI command byte and two argument bytes. One or both argument bytes may be nil, depending on the MIDI command. If not nil, evaluatue idleBlock regularly whether MIDI data is available or not. Pressing any mouse button terminates the interaction."
-
-	| time cmd arg1 arg2 |
-	self clearBuffers.
-	[ Sensor isAnyButtonPressed ] whileFalse: [
-		self midiDo: [ :item |
-			time _ item at: 1.
-			cmd _ item at: 2.
-			arg1 _ arg2 _ nil.
-			item size > 2 ifTrue: [
-				arg1 _ item at: 3.
-				item size > 3 ifTrue: [arg2 _ item at: 4]].
-				midiActionBlock value: cmd value: arg1 value: arg2]].
-! !
-
-!MIDIInputParser methodsFor: 'accessing' stamp: 'jm 1/6/1999 08:25'!
-midiPort
-
-	^ midiPort
-! !
-
-!MIDIInputParser methodsFor: 'accessing' stamp: 'jm 1/6/1999 08:24'!
-midiPort: aMIDIPort
-	"Use the given MIDI port."
-
-	midiPort _ aMIDIPort.
-	self clearBuffers.
-! !
-
-!MIDIInputParser methodsFor: 'midi monitor' stamp: 'jm 10/8/1998 21:22'!
-monitor
-	"Print MIDI messages to the transcript until any mouse button is pressed."
-
-	self midiDoUntilMouseDown: [:cmd :arg1 :arg2 |
-		self printCmd: cmd with: arg1 with: arg2].
-! !
-
-!MIDIInputParser methodsFor: 'midi monitor' stamp: 'jmv 3/13/2012 12:38'!
-printCmd: cmdByte with: arg1 with: arg2
-	"Print the given MIDI command."
-
-	| cmd ch bend |
-	cmdByte < 240
-		ifTrue: [  "channel message" 
-			cmd _ cmdByte bitAnd: 2r11110000.
-			ch _ (cmdByte bitAnd: 2r00001111) + 1]
-		ifFalse: [cmd _ cmdByte].  "system message"
-
-	cmd = 128 ifTrue: [
-		^ Transcript show: ('key up ', arg1 printString, ' vel: ', arg2 printString, ' chan: ', ch printString); newLine].
-	cmd = 144 ifTrue: [
-		^ Transcript show: ('key down: ', arg1 printString, ' vel: ', arg2 printString, ' chan: ', ch printString); newLine].
-	cmd = 160 ifTrue: [
-		^ Transcript show: ('key pressure: ', arg1 printString, ' val: ', arg2 printString, ' chan: ', ch printString); newLine].
-	cmd = 176 ifTrue: [
-		^ Transcript show: ('CC', arg1 printString, ': val: ', arg2 printString, ' chan: ', ch printString); newLine].
-	cmd = 192 ifTrue: [
-		^ Transcript show: ('prog: ', (arg1 + 1) printString, ' chan: ', ch printString); newLine].
-	cmd = 208 ifTrue: [
-		^ Transcript show: ('channel pressure ', arg1 printString, ' chan: ', ch printString); newLine].
-	cmd = 224 ifTrue: [
-		bend _ ((arg2 bitShift: 7) + arg1) - 8192.
-		^ Transcript show: ('bend: ', bend printString, ' chan: ', ch printString); newLine].
-
-	cmd = 240 ifTrue: [
-		^ Transcript show: ('system exclusive: ', (arg1 at: 1) printString, ' (', arg1 size printString, ' bytes)'); newLine].
-
-	Transcript show: 'cmd: ', cmd printString, ' arg1: ', arg1 printString, ' arg2: ', arg2 printString; newLine.
-! !
-
-!MIDIInputParser methodsFor: 'private-other' stamp: 'jm 10/9/1998 07:56'!
-setMIDIPort: aMIDIPort
-	"Initialize this instance for recording from the given MIDI port. Tune and real-time commands are filtered out by default; the client can send noFiltering to receive these messages."
-
-	midiPort _ aMIDIPort.
-	received _ OrderedCollection new.
-	self noFiltering.  "initializes cmdActionTable"
-	self ignoreTuneAndRealTimeCommands.
-! !
-
-!MIDIInputParser class methodsFor: 'class initialization' stamp: 'jm 10/9/1998 07:35'!
-initialize
-	"Build the default MIDI command-byte action table. This table maps MIDI command bytes to the action to be performed when that is received. Note that MIDI data bytes (bytes whose value is < 128) are never used to index into this table."
-	"MIDIInputParser initialize"
-
-	DefaultMidiTable _ Array new: 255 withAll: #undefined:.
-	128 to: 143 do: [:i | DefaultMidiTable at: i put: #recordTwo:].		"key off"
-	144 to: 159 do: [:i | DefaultMidiTable at: i put: #recordTwo:].		"key on"
-	160 to: 175 do: [:i | DefaultMidiTable at: i put: #recordTwo:].		"polyphonic after-touch"
-	176 to: 191 do: [:i | DefaultMidiTable at: i put: #recordTwo:].		"control change"
-	192 to: 207 do: [:i | DefaultMidiTable at: i put: #recordOne:].		"program change"
-	208 to: 223 do: [:i | DefaultMidiTable at: i put: #recordOne:].		"channel after-touch"
-	224 to: 239 do: [:i | DefaultMidiTable at: i put: #recordTwo:].		"pitch bend"
-
-	DefaultMidiTable at: 240 put: #startSysExclusive:.		"start a system exclusive block"
-	DefaultMidiTable at: 241 put: #recordOne:.			"MIDI time code quarter frame"
-	DefaultMidiTable at: 242 put: #recordTwo:.			"song position select"
-	DefaultMidiTable at: 243 put: #recordOne:.			"song select"
-	DefaultMidiTable at: 244 put: #undefined:.
-	DefaultMidiTable at: 245 put: #undefined:.
-	DefaultMidiTable at: 246 put: #recordZero:.			"tune request"
-	DefaultMidiTable at: 247 put: #endSysExclusive:.		"end a system exclusive block"
-	DefaultMidiTable at: 248 put: #recordZero:.			"timing clock"
-	DefaultMidiTable at: 249 put: #undefined:.
-	DefaultMidiTable at: 250 put: #recordZero:.			"start"
-	DefaultMidiTable at: 251 put: #recordZero:.			"continue"
-	DefaultMidiTable at: 252 put: #recordZero:.			"stop/Clock"
-	DefaultMidiTable at: 253 put: #undefined:.
-	DefaultMidiTable at: 254 put: #recordZero:.			"active sensing"
-	DefaultMidiTable at: 255 put: #recordZero:.			"system reset"
-! !
-
-!MIDIInputParser class methodsFor: 'instance creation' stamp: 'jm 10/8/1998 20:29'!
-on: aSimpleMIDIPort
-	"Answer a new MIDI parser on the given port."
-
-	^ super new setMIDIPort: aSimpleMIDIPort
-! !
-
-!MIDIScore methodsFor: 'editing' stamp: 'di 6/20/1999 00:08'!
-appendEvent: noteEvent fullDuration: fullDuration at: selection
-	"It is assumed that the noteEvent already has the proper time"
-
-	| track noteLoc |
-	track _ tracks at: selection first.
-	noteLoc _ selection third + 1.
-	noteEvent midiKey = -1
-		ifTrue: [noteLoc _ noteLoc - 1]
-		ifFalse: ["If not a rest..."
-				track _ track copyReplaceFrom: noteLoc to: noteLoc - 1
-								with: (Array with: noteEvent)].
-	track size >= (noteLoc + 1) ifTrue:
-		["Adjust times of following events"
-		noteLoc + 1 to: track size do:
-			[:i | (track at: i) adjustTimeBy: fullDuration]].
-	tracks at: selection first put: track! !
-
-!MIDIScore methodsFor: 'editing' stamp: 'di 6/17/1999 15:12'!
-cutSelection: selection
-
-	| track selStartTime delta |
-	track _ tracks at: selection first.
-	selStartTime _ (track at: selection second) time.
-	track _ track copyReplaceFrom: selection second to: selection third with: Array new.
-	track size >=  selection second ifTrue:
-		["Adjust times of following events"
-		delta _ selStartTime - (track at: selection second) time.
-		selection second to: track size do:
-			[:i | (track at: i) adjustTimeBy: delta]].
-	tracks at: selection first put: track! !
-
-!MIDIScore methodsFor: 'editing' stamp: 'jm 9/10/1998 17:22'!
-eventForTrack: trackIndex after: eventIndex ticks: scoreTick
-
-	| track evt |
-	track _ tracks at: trackIndex.
-	eventIndex > track size ifTrue: [^ nil].
-	evt _ track at: eventIndex.
-	evt time > scoreTick ifTrue: [^ nil].
-	^ evt
-! !
-
-!MIDIScore methodsFor: 'editing' stamp: 'di 6/17/1999 16:06'!
-gridToNextQuarterNote: tickTime
-
-	^ self gridToQuarterNote: tickTime + ticksPerQuarterNote! !
-
-!MIDIScore methodsFor: 'editing' stamp: 'di 6/17/1999 14:55'!
-gridToQuarterNote: tickTime
-
-	^ tickTime truncateTo: ticksPerQuarterNote! !
-
-!MIDIScore methodsFor: 'editing' stamp: 'di 6/17/1999 16:14'!
-gridTrack: trackIndex toQuarter: quarterDelta at: indexInTrack
-
-	| track selStartTime delta |
-	track _ tracks at: trackIndex.
-	selStartTime _ (track at: indexInTrack) time.
-	delta _ (self gridToQuarterNote: selStartTime + (quarterDelta*ticksPerQuarterNote))
-				- selStartTime.
-	indexInTrack to: track size do:
-		[:i | (track at: i) adjustTimeBy: delta].
-! !
-
-!MIDIScore methodsFor: 'editing' stamp: 'di 6/21/1999 10:56'!
-insertEvents: events at: selection
-
-	| track selStartTime delta |
-	track _ tracks at: selection first.
-	selection second = 0
-		ifTrue: [selStartTime _ 0.
-				selection at: 2 put: 1]
-		ifFalse: [selStartTime _ (track at: selection second) time].
-	track _ track copyReplaceFrom: selection second to: selection second - 1
-				with: (events collect: [:e | e copy]).
-	track size >=  (selection second + events size) ifTrue:
-		["Adjust times of following events"
-		delta _ selStartTime - (track at: selection second) time.
-		selection second to: selection second + events size - 1 do:
-			[:i | (track at: i) adjustTimeBy: delta].
-		delta _ (self gridToNextQuarterNote: (track at: selection second + events size - 1) endTime)
-					- (track at: selection second + events size) time.
-		selection second + events size to: track size do:
-			[:i | (track at: i) adjustTimeBy: delta].
-		].
-	tracks at: selection first put: track! !
-
-!MIDIScore methodsFor: 'editing' stamp: 'jm 8/6/1998 21:16'!
-jitterStartAndEndTimesBy: mSecs
-
-	| r range halfRange oldEnd newEnd newStart |
-	r _ Random new.
-	range _ 2.0 * mSecs.
-	halfRange _ mSecs.
-	tracks do: [:t |
-		t do: [:e |
-			e isNoteEvent ifTrue: [
-				oldEnd _ e time + e duration.
-				newEnd _ oldEnd + ((r next * range) asInteger - halfRange).
-				newStart _ e time + ((r next * range) asInteger - halfRange).
-				e time: newStart.
-				e duration: (newEnd - newStart)]]].
-
-				! !
-
-!MIDIScore methodsFor: 'nil' stamp: 'jmv 4/6/2009 17:15'!
-durationInTicks
-	
-	| t |
-	t _ 0.
-	tracks do: [ :track |
-		track do:
-			[:n | (n isNoteEvent)
-				ifTrue: [t _ t max: n endTime]
-				ifFalse: [t _ t max: n time]]].
-	^ t
-! !
-
-!MIDIScore methodsFor: 'initialization' stamp: 'jmv 4/6/2009 17:15'!
-initialize
-
-	tracks _ #().
-	tempoMap _ #().
-	ticksPerQuarterNote _ 100.
-! !
-
-!MIDIScore methodsFor: 'accessing' stamp: 'jm 1/3/98 07:36'!
-tempoMap
-
-	^ tempoMap
-! !
-
-!MIDIScore methodsFor: 'accessing' stamp: 'jm 1/29/98 18:09'!
-tempoMap: tempoEventList
-
-	tempoEventList ifNil: [
-		tempoMap _ #().
-		^ self].
-	tempoMap _ tempoEventList asArray.
-! !
-
-!MIDIScore methodsFor: 'accessing' stamp: 'jm 1/3/98 07:37'!
-ticksPerQuarterNote
-
-	^ ticksPerQuarterNote
-! !
-
-!MIDIScore methodsFor: 'accessing' stamp: 'jm 1/3/98 07:37'!
-ticksPerQuarterNote: anInteger
-
-	ticksPerQuarterNote _ anInteger.
-! !
-
-!MIDIScore methodsFor: 'accessing' stamp: 'di 10/21/2000 10:02'!
-trackInfo
-
-	^ trackInfo ifNil: [tracks collect: [:i | String new]]
-! !
-
-!MIDIScore methodsFor: 'accessing' stamp: 'jm 1/6/98 23:20'!
-trackInfo: trackInfoList
-
-	trackInfo _ trackInfoList asArray.
-! !
-
-!MIDIScore methodsFor: 'accessing' stamp: 'jm 1/3/98 08:15'!
-tracks
-
-	^ tracks
-! !
-
-!MIDIScore methodsFor: 'accessing' stamp: 'jmv 4/6/2009 17:14'!
-tracks: trackList
-
-	tracks _ trackList asArray collect: [:trackEvents | trackEvents asArray]! !
-
-!MIDISynth methodsFor: 'as yet unclassified' stamp: 'jm 10/14/1998 22:16'!
-channel: i
-
-	^ channels at: i
-! !
-
-!MIDISynth methodsFor: 'as yet unclassified' stamp: 'jm 1/6/1999 10:50'!
-closeMIDIPort
-
-	midiParser midiPort ifNil: [^ self].
-	midiParser midiPort close.
-	midiParser midiPort: nil.
-! !
-
-!MIDISynth methodsFor: 'as yet unclassified' stamp: 'jmv 12/2/2011 09:43'!
-initialize
-
-	midiParser _ MIDIInputParser on: nil.
-	channels _ (1 to: 16) collect: [:ch | MIDISynthChannel new]! !
-
-!MIDISynth methodsFor: 'as yet unclassified' stamp: 'jm 1/6/1999 08:13'!
-instrumentForChannel: channelIndex
-
-	^ (channels at: channelIndex) instrument
-! !
-
-!MIDISynth methodsFor: 'as yet unclassified' stamp: 'jm 1/6/1999 08:14'!
-instrumentForChannel: channelIndex put: aSoundProto
-
-	(channels at: channelIndex) instrument: aSoundProto.
-! !
-
-!MIDISynth methodsFor: 'as yet unclassified' stamp: 'jm 1/6/1999 10:27'!
-isOn
-
-	^ process notNil
-! !
-
-!MIDISynth methodsFor: 'as yet unclassified' stamp: 'jm 10/14/1998 21:52'!
-midiParser
-
-	^ midiParser
-! !
-
-!MIDISynth methodsFor: 'as yet unclassified' stamp: 'jm 1/6/1999 08:26'!
-midiPort
-
-	^ midiParser midiPort
-! !
-
-!MIDISynth methodsFor: 'as yet unclassified' stamp: 'jm 1/6/1999 16:32'!
-midiPort: aMIDIPortOrNil
-
-	midiParser midiPort: aMIDIPortOrNil.
-! !
-
-!MIDISynth methodsFor: 'as yet unclassified' stamp: 'jm 10/13/1998 12:09'!
-midiTrackingLoop
-
-	midiParser clearBuffers.
-	[true] whileTrue: [
-		self processMIDI ifFalse: [(Delay forMilliseconds: 5) wait]].
-! !
-
-!MIDISynth methodsFor: 'as yet unclassified' stamp: 'jm 1/6/1999 20:12'!
-mutedForChannel: channelIndex put: aBoolean
-
-	^ (channels at: channelIndex) muted: aBoolean
-! !
-
-!MIDISynth methodsFor: 'as yet unclassified' stamp: 'jm 1/6/1999 19:45'!
-panForChannel: channelIndex
-
-	^ (channels at: channelIndex) pan
-! !
-
-!MIDISynth methodsFor: 'as yet unclassified' stamp: 'jm 1/6/1999 19:45'!
-panForChannel: channelIndex put: newPan
-
-	(channels at: channelIndex) pan: newPan.
-! !
-
-!MIDISynth methodsFor: 'as yet unclassified' stamp: 'jm 10/14/1998 14:13'!
-processMIDI
-	"Process some MIDI commands. Answer true if any commands were processed."
-
-	| didSomething cmdByte byte1 byte2 cmd chan |
-	didSomething _ false.
-	midiParser midiDo: [:item |
-		didSomething _ true.
-		cmdByte _ item at: 2.
-		byte1 _ byte2 _ nil.
-		item size > 2 ifTrue: [
-			byte1 _ item at: 3.
-			item size > 3 ifTrue: [byte2 _ item at: 4]].
-		cmdByte < 240
-			ifTrue: [  "channel message" 
-				cmd _ cmdByte bitAnd: 2r11110000.
-				chan _ (cmdByte bitAnd: 2r00001111) + 1.
-				(channels at: chan) doChannelCmd: cmd byte1: byte1 byte2: byte2]
-			ifFalse: [  "system message"
-				"process system messages here"
-			]].
-	^ didSomething
-! !
-
-!MIDISynth methodsFor: 'as yet unclassified' stamp: 'jmv 1/14/2013 21:13'!
-processMIDIUntilMouseDown
-	"Used for debugging. Do MIDI processing until the mouse is pressed."
-
-	midiParser clearBuffers.
-	[ Sensor isAnyButtonPressed ] whileFalse: [ self processMIDI ]! !
-
-!MIDISynth methodsFor: 'as yet unclassified' stamp: 'jm 1/6/1999 16:36'!
-setAllChannelMasterVolumes: aNumber
-
-	| vol |
-	vol _ (aNumber asFloat min: 1.0) max: 0.0.
-	channels do: [:ch | ch masterVolume: vol].
-! !
-
-!MIDISynth methodsFor: 'as yet unclassified' stamp: 'jmv 10/8/2012 22:16'!
-startMIDITracking
-
-	midiParser ifNil: [^ self].
-	midiParser midiPort ifNil: [^ self].
-	midiParser midiPort ensureOpen.
-	self stopMIDITracking.
-	SoundPlayer useShortBuffer.
-	process _ [self midiTrackingLoop] newProcess.
-	process priority: Processor userInterruptPriority.
-	process name: 'MIDISynth'.
-	process resume! !
-
-!MIDISynth methodsFor: 'as yet unclassified' stamp: 'jm 1/6/1999 10:34'!
-stopMIDITracking
-
-	process ifNotNil: [
-		process terminate.
-		process _ nil].
-	SoundPlayer shutDown; initialize.  "revert to normal buffer size"
-! !
-
-!MIDISynth methodsFor: 'as yet unclassified' stamp: 'jm 1/6/1999 16:40'!
-volumeForChannel: channelIndex
-
-	^  (channels at: channelIndex) masterVolume
-! !
-
-!MIDISynth methodsFor: 'as yet unclassified' stamp: 'jm 1/6/1999 16:40'!
-volumeForChannel: channelIndex put: newVolume
-
-	(channels at: channelIndex) masterVolume: newVolume.
-! !
-
-!MIDISynth class methodsFor: 'examples' stamp: 'jm 1/6/1999 16:39'!
-example
-	"Here's one way to run the MIDI synth. It will get a nice Morphic UI later. Click the mouse to stop running it. (Mac users note: be sure you have MIDI interface adaptor plugged in, or Squeak will hang waiting for the external clock signal.)."
-	"MIDISynth example"
-
-	| portNum synth |
-	portNum _ SimpleMIDIPort inputPortNumFromUser.
-	portNum ifNil: [^ self].
-	SoundPlayer useShortBuffer.
-	synth _ MIDISynth new
-		midiPort: (SimpleMIDIPort openOnPortNumber: portNum).
-	synth midiParser ignoreCommand: 224.  "filter out pitch bends"
-	1 to: 16 do: [:i |
-		(synth channel: i) instrument:
- 			 (AbstractSound soundNamed: 'oboe1')].
-	1 to: 16 do: [:ch | synth volumeForChannel: ch put: 0.2].
-
-	synth processMIDIUntilMouseDown.
-	SoundPlayer shutDown; initialize.  "revert to normal buffer size"
-! !
-
-!MIDISynthChannel methodsFor: 'other' stamp: 'jm 10/14/1998 21:45'!
-adjustPitch: bend
-	"Handle a pitch-bend change."
-
-	| snd pitchAdj centerPitch |
-	pitchBend _ bend.
-	pitchAdj _ 2.0 raisedTo: (bend asFloat / 8192.0) / 6.0.
-	activeSounds copy do: [:entry |
-		snd _ entry at: 2.
-		centerPitch _ entry at: 3.
-		snd pitch: pitchAdj * centerPitch.
-		snd internalizeModulationAndRatio].
-! !
-
-!MIDISynthChannel methodsFor: 'other' stamp: 'jm 10/14/1998 15:43'!
-convertVelocity: valueByte
-	"Map a value in the range 0..127 to a volume in the range 0.0..1.0."
-	"Details: A quadratic function seems to give a good keyboard feel."
-
-	| r |
-	r _ (valueByte * valueByte) / 12000.0.
-	r > 1.0 ifTrue: [^ 1.0].
-	r < 0.08 ifTrue: [^ 0.08].
-	^ r
-! !
-
-!MIDISynthChannel methodsFor: 'other' stamp: 'jm 10/14/1998 15:41'!
-newVolume: valueByte
-	"Set the channel volume to the level given by the given number in the range 0..127."
-
-	| snd newVolume |
-	channelVolume _ valueByte asFloat / 127.0.
-	newVolume _ masterVolume * channelVolume.
-	activeSounds do: [:entry |
-		snd _ entry at: 2.
-		snd adjustVolumeTo: newVolume overMSecs: 10].
-! !
-
-!MIDISynthChannel methodsFor: 'midi dispatching' stamp: 'jm 10/14/1998 15:40'!
-channelPressure: newPressure
-	"Handle a channel pressure (channel aftertouch) change."
-
-	self newVolume: newPressure.
-! !
-
-!MIDISynthChannel methodsFor: 'midi dispatching' stamp: 'jm 10/14/1998 13:48'!
-control: control value: newValue
-	"Handle a continuous controller change."
-
-	control = 2 ifTrue: [self newVolume: newValue].  "breath controller"
-! !
-
-!MIDISynthChannel methodsFor: 'midi dispatching' stamp: 'jm 10/14/1998 13:44'!
-doChannelCmd: cmdByte byte1: byte1 byte2: byte2
-	"Dispatch a channel command with the given arguments."
-	"Details: Cases appear in order of expected frequency, most frequent cases first."
-
-	cmdByte = 144 ifTrue: [
-		byte2 = 0
-			ifTrue: [^ self keyUp: byte1 vel: 0]
-			ifFalse: [^ self keyDown: byte1 vel: byte2]].
-	cmdByte = 128 ifTrue: [^ self keyUp: byte1 vel: byte2].
-	cmdByte = 224 ifTrue: [^ self pitchBend: ((byte2 bitShift: 7) + byte1) - 8192].
-	cmdByte = 176 ifTrue: [^ self control: byte1 value: byte2].
-	cmdByte = 208 ifTrue: [^ self channelPressure: byte1].
-	cmdByte = 160 ifTrue: [^ self key: byte1 pressure: byte2].
-	cmdByte = 192 ifTrue: [^ self programChange: byte1].
-! !
-
-!MIDISynthChannel methodsFor: 'midi dispatching' stamp: 'jm 10/14/1998 13:49'!
-key: key pressure: press
-	"Handle a key pressure (polyphonic aftertouch) change. Rarely implemented."
-
-	"Do nothing for now."
-! !
-
-!MIDISynthChannel methodsFor: 'midi dispatching' stamp: 'jm 1/10/1999 08:42'!
-keyDown: key vel: vel
-	"Handle a key down event with non-zero velocity."
-
-	| pitch snd |
-	muted ifTrue: [^ self].
-	pitch _ AbstractSound pitchForMIDIKey: key.
-	snd _ instrument
-		soundForPitch: pitch
-		dur: 10000.0  "sustain a long time, or until turned off"
-		loudness: masterVolume * channelVolume * (self convertVelocity: vel).
-	snd _ (MixedSound new add: snd pan: pan) reset.
-	SoundPlayer resumePlaying: snd quickStart: false.
-	activeSounds add: (Array with: key with: snd with: pitch).
-! !
-
-!MIDISynthChannel methodsFor: 'midi dispatching' stamp: 'jm 10/14/1998 13:49'!
-keyUp: key vel: vel
-	"Handle a key up event."
-
-	| snd |
-	activeSounds copy do: [:entry |
-		(entry at: 1) = key ifTrue: [
-			snd _ entry at: 2.
-			snd stopGracefully.
-			activeSounds remove: entry]].
-! !
-
-!MIDISynthChannel methodsFor: 'midi dispatching' stamp: 'jm 1/11/1999 11:32'!
-pitchBend: bend
-	"Handle a pitch-bend change."
-
-	self adjustPitch: bend.
-! !
-
-!MIDISynthChannel methodsFor: 'midi dispatching' stamp: 'jm 10/14/1998 13:50'!
-programChange: newProgram
-	"Handle a program (instrument) change."
-
-	"Do nothing for now."
-! !
-
-!MIDISynthChannel methodsFor: 'initialization' stamp: 'jm 1/6/1999 20:10'!
-initialize
-
-	instrument _ FMSound default.
-	muted _ false.
-	masterVolume _ 0.5.
-	channelVolume _ 1.0.
-	pan _ 0.5.
-	pitchBend _ 0.0.
-	activeSounds _ OrderedCollection new.
-! !
-
-!MIDISynthChannel methodsFor: 'accessing' stamp: 'jm 10/13/1998 09:45'!
-instrument
-
-	^ instrument
-! !
-
-!MIDISynthChannel methodsFor: 'accessing' stamp: 'jm 10/13/1998 09:45'!
-instrument: aSound
-
-	instrument _ aSound.
-! !
-
-!MIDISynthChannel methodsFor: 'accessing' stamp: 'jm 10/13/1998 09:47'!
-masterVolume
-
-	^ masterVolume
-! !
-
-!MIDISynthChannel methodsFor: 'accessing' stamp: 'jm 10/13/1998 11:49'!
-masterVolume: aNumber
-	"Set the master volume the the given value (0.0 to 1.0)."
-
-	masterVolume _ aNumber asFloat.
-! !
-
-!MIDISynthChannel methodsFor: 'accessing' stamp: 'jm 1/6/1999 20:10'!
-muted
-
-	^ muted
-! !
-
-!MIDISynthChannel methodsFor: 'accessing' stamp: 'jm 1/6/1999 20:11'!
-muted: aBoolean
-
-	muted _ aBoolean.
-! !
-
-!MIDISynthChannel methodsFor: 'accessing' stamp: 'jm 1/6/1999 19:43'!
-pan
-
-	^ pan
-! !
-
-!MIDISynthChannel methodsFor: 'accessing' stamp: 'jm 1/6/1999 19:43'!
-pan: aNumber
-	"Set the left-right pan to the given value (0.0 to 1.0)."
-
-	pan _ aNumber asFloat.
-! !
-
-!SimpleMIDIPort methodsFor: 'input' stamp: 'jm 10/8/1998 19:47'!
-bufferTimeStampFrom: aByteArray
-	"Return the timestamp from the given MIDI input buffer. Assume the given buffer is at least 4 bytes long."
-
-	^ ((aByteArray at: 1) bitShift: 24) +
-	  ((aByteArray at: 2) bitShift: 16) +
-	  ((aByteArray at: 3) bitShift: 8) +
-	   (aByteArray at: 4)
-! !
-
-!SimpleMIDIPort methodsFor: 'input' stamp: 'jm 10/8/1998 19:53'!
-flushInput
-	"Read any lingering MIDI data from this port's input buffer."
-
-	| buf |
-	buf _ ByteArray new: 1000.
-	[(self readInto: buf) > 0] whileTrue.
-! !
-
-!SimpleMIDIPort methodsFor: 'input' stamp: 'jm 10/12/1998 15:49'!
-readInto: aByteArray
-	"Read any data from this port into the given buffer."
-
-	^ self primMIDIReadPort: portNumber into: aByteArray
-! !
-
-!SimpleMIDIPort methodsFor: 'open/close' stamp: 'jm 1/13/1999 08:10'!
-close
-	"Close this MIDI port."
-
-	portNumber ifNotNil: [self primMIDIClosePort: portNumber].
-	accessSema _ nil.
-	lastCommandByteOut _ nil.
-! !
-
-!SimpleMIDIPort methodsFor: 'open/close' stamp: 'jm 1/13/1999 08:23'!
-ensureOpen
-	"Make sure this MIDI port is open. It is good to call this before starting to use a port in case an intervening image save/restore has caused the underlying hardware port to get closed."
-
-	portNumber ifNil: [^ self error: 'Use "openOn:" to open a MIDI port initially'].
-	self primMIDIClosePort: portNumber.
-	self primMIDIOpenPort: portNumber readSemaIndex: 0 interfaceClockRate: InterfaceClockRate.
-	accessSema _ Semaphore forMutualExclusion.
-	lastCommandByteOut _ Array new: 16 withAll: 0.  "clear running status"
-! !
-
-!SimpleMIDIPort methodsFor: 'open/close' stamp: 'jm 1/13/1999 08:09'!
-openOnPortNumber: portNum
-	"Open this MIDI port on the given port number."
-
-	self close.
-	portNumber _ portNum.
-	accessSema _ Semaphore forMutualExclusion.
-	self ensureOpen.
-! !
-
-!SimpleMIDIPort methodsFor: 'open/close' stamp: 'jm 10/12/1998 15:48'!
-portNumber
-	"Answer my port number."
-
-	^ portNumber
-! !
-
-!SimpleMIDIPort methodsFor: 'output' stamp: 'jm 9/28/1998 22:00'!
-midiCmd: cmd channel: channel byte: dataByte
-	"Immediately output the given MIDI command with the given channel and argument byte to this MIDI port. Assume that the port is open."
-
-	accessSema critical: [
-		self primMIDIWritePort: portNumber
-			from: (ByteArray
-					with: (cmd bitOr: channel)
-					with: dataByte)
-			at: 0].
-! !
-
-!SimpleMIDIPort methodsFor: 'output' stamp: 'jm 9/28/1998 22:00'!
-midiCmd: cmd channel: channel byte: dataByte1 byte: dataByte2
-	"Immediately output the given MIDI command with the given channel and argument bytes to this MIDI port. Assume that the port is open."
-
-	accessSema critical: [
-		self primMIDIWritePort: portNumber
-			from: (ByteArray
-					with: (cmd bitOr: channel)
-					with: dataByte1
-					with: dataByte2)
-			at: 0].
-! !
-
-!SimpleMIDIPort methodsFor: 'output' stamp: 'jm 9/28/1998 22:00'!
-midiOutput: aByteArray
-	"Output the given bytes to this MIDI port immediately. Assume that the port is open."
-
-	accessSema critical: [
-		self primMIDIWritePort: portNumber from: aByteArray at: 0].
-! !
-
-!SimpleMIDIPort methodsFor: 'primitives' stamp: 'ar 2/2/2001 15:09'!
-primMIDIClosePort: portNum
-	"Close the given MIDI port. Don't fail if port is already closed."
-
-	<primitive: 'primitiveMIDIClosePort' module: 'MIDIPlugin'>
-! !
-
-!SimpleMIDIPort methodsFor: 'primitives' stamp: 'ar 2/2/2001 15:09'!
-primMIDIOpenPort: portNum readSemaIndex: readSemaIndex interfaceClockRate: interfaceClockRate
-	"Open the given MIDI port. If non-zero, readSemaIndex specifies the index in the external objects array of a semaphore to be signalled when incoming MIDI data is available. Not all platforms support signalling the read semaphore. InterfaceClockRate specifies the clock rate of the external MIDI interface adaptor on Macintosh computers; it is ignored on other platforms."
-
-	<primitive: 'primitiveMIDIOpenPort' module: 'MIDIPlugin'>
-	self primitiveFailed.
-! !
-
-!SimpleMIDIPort methodsFor: 'primitives' stamp: 'ar 2/2/2001 15:09'!
-primMIDIReadPort: portNum into: byteArray
-	"Read any available MIDI data into the given buffer (up to the size of the buffer) and answer the number of bytes read."
-
-	<primitive: 'primitiveMIDIRead' module: 'MIDIPlugin'>
-	self primitiveFailed.
-! !
-
-!SimpleMIDIPort methodsFor: 'primitives' stamp: 'ar 2/2/2001 15:09'!
-primMIDIWritePort: portNum from: byteArray at: midiClockValue
-	"Queue the given data to be sent through the given MIDI port at the given time. If midiClockValue is zero, send the data immediately."
-
-	<primitive: 'primitiveMIDIWrite' module: 'MIDIPlugin'>
-	self primitiveFailed.
-! !
-
-!SimpleMIDIPort class methodsFor: 'utilities' stamp: 'jm 1/13/1999 08:11'!
-closeAllPorts
-	"Close all MIDI ports."
-	"SimpleMIDIPort closeAllPorts"
-
-	| lastPortNum |
-	lastPortNum _ self primPortCount - 1.
-	0 to: lastPortNum do: [:portNum | self basicNew primMIDIClosePort: portNum].
-! !
-
-!SimpleMIDIPort class methodsFor: 'utilities' stamp: 'jmv 5/13/2018 19:06:00'!
-inputPortNumFromUser
-	"Prompt the user for a MIDI input port. Answer a port number, or nil if the user does not select a port or if MIDI is not supported on this platform."
-	"
-	SimpleMIDIPort inputPortNumFromUser
-	"
-
-	| portCount aMenu dir |
-	portCount _ self primPortCount.
-	portCount = 0 ifTrue: [^ nil].
-	aMenu _ PopUpMenu new label: 'MIDI port for input:'.
-	0 to: portCount - 1 do:[:i |
-		dir _ self primPortDirectionalityOf: i.
-		(dir = 1) | (dir = 3) ifTrue:[
-			aMenu add: (self portDescription: i) action: i]].
-	 ^ aMenu startUpMenu! !
-
-!SimpleMIDIPort class methodsFor: 'utilities' stamp: 'jm 10/12/1998 18:10'!
-midiIsSupported
-	"Answer true if this platform supports MIDI."
-
-	^ self primPortCount > 0
-! !
-
-!SimpleMIDIPort class methodsFor: 'utilities' stamp: 'jmv 5/13/2018 19:06:33'!
-outputPortNumFromUser
-	"Prompt the user for a MIDI output port. Answer a port number, or nil if the user does not select a port or if MIDI is not supported on this platform."
-	"
-	SimpleMIDIPort outputPortNumFromUser
-	"
-
-	| portCount aMenu dir |
-	portCount _ self primPortCount.
-	portCount = 0 ifTrue: [^ nil].
-	aMenu _ PopUpMenu new label: 'MIDI port for output:'.
-	0 to: portCount - 1 do:[:i |
-		dir _ self primPortDirectionalityOf: i.
-		(dir = 2) | (dir = 3) ifTrue:[
-			aMenu add: (self portDescription: i) action: i]].
-	 ^ aMenu startUpMenu! !
-
-!SimpleMIDIPort class methodsFor: 'utilities' stamp: 'jm 10/12/1998 17:46'!
-portDescription: portNum
-	"Answer a string indicating the directionality of the given MIDI port."
-	"(0 to: SimpleMIDIPort primPortCount - 1) collect:
-		[:i | SimpleMIDIPort portDescription: i]"
-
-	| portName dir |
-	portName _ self primPortNameOf: portNum.
-	dir _ self primPortDirectionalityOf: portNum.
-	dir = 1 ifTrue: [^ portName, ' (in)'].
-	dir = 2 ifTrue: [^ portName, ' (out)'].
-	dir = 3 ifTrue: [^ portName, ' (in/out)'].
-	^ self error: 'unknown MIDI port directionality'
-! !
-
-!SimpleMIDIPort class methodsFor: 'class initialization' stamp: 'jm 9/10/1998 15:33'!
-initialize
-	"SimpleMIDIPort initialize"
-
-	InterfaceClockRate _ 1000000.
-	DefaultPortNumber _ 0.
-! !
-
-!SimpleMIDIPort class methodsFor: 'instance creation' stamp: 'jm 9/10/1998 18:36'!
-openDefault
-	"Answer a new instance of me opened on the default MIDI port."
-
-	^ self openOnPortNumber: DefaultPortNumber
-! !
-
-!SimpleMIDIPort class methodsFor: 'instance creation' stamp: 'tk 6/24/1999 11:42'!
-openOnPortNumber: portNum
-	"Answer a new instance of me for the given MIDI port number."
-	"Details: All clients of a particular MIDI port should share the same instance of me. This allows accesses to the port to be serialized and shared port-related state state to be maintained."
-
-	SimpleMIDIPort allSubInstancesDo: [:p |
-		p portNumber = portNum ifTrue: [
-			"share the existing port object for this port number"
-			^ p]].
-
-	^ super new openOnPortNumber: portNum
-! !
-
-!SimpleMIDIPort class methodsFor: 'primitives' stamp: 'ar 2/2/2001 15:09'!
-primPortCount
-	"Answer the number of MIDI ports supported by this platform, or zero if this primitive is not implemented."
-
-	<primitive: 'primitiveMIDIGetPortCount' module: 'MIDIPlugin'>
-	^ 0
-! !
-
-!SimpleMIDIPort class methodsFor: 'primitives' stamp: 'ar 2/2/2001 15:09'!
-primPortDirectionalityOf: portNum
-	"Answer the platform-specific name for the given MIDI port."
-
-	<primitive: 'primitiveMIDIGetPortDirectionality' module: 'MIDIPlugin'>
-	self primitiveFailed.
-! !
-
-!SimpleMIDIPort class methodsFor: 'primitives' stamp: 'ar 2/2/2001 15:09'!
-primPortNameOf: portNum
-	"Answer the platform-specific name for the given MIDI port."
-
-	<primitive: 'primitiveMIDIGetPortName' module: 'MIDIPlugin'>
-	self primitiveFailed.
-! !
-
 !Beeper methodsFor: 'play interface' stamp: 'jmv 6/7/2013 22:03'!
 play
 	"This is how the default Beeper makes a beep,
@@ -12854,6 +12854,8 @@ initialize
 wavContents
 	^SampledSound fromFileEntry: self! !
 SoundBuffer initialize!
+MIDIInputParser initialize!
+SimpleMIDIPort initialize!
 AbstractSound initialize!
 FMSound initialize!
 LoopedSampledSound initialize!
@@ -12861,6 +12863,4 @@ SampledSound initialize!
 MuLawCodec initialize!
 SoundPlayer initialize!
 SoundRecorder initialize!
-MIDIInputParser initialize!
-SimpleMIDIPort initialize!
 SoundSystem initialize!

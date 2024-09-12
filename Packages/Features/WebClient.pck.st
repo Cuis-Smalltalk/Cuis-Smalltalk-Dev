@@ -1,9 +1,9 @@
-'From Cuis7.1 [latest update: #6379] on 19 May 2024 at 3:22:27 pm'!
+'From Cuis7.1 [latest update: #6713] on 12 September 2024 at 12:08:51 pm'!
 'Description Description - This package is a port and refactoring of WebClient from http://ss3.gemstone.com/ss/WebClient.html with moderate changes by David Graham, Nicola Mingotti, Juan Vuletich and Hernan Wilkinson.
 	- WebClient-Core-ul.100
 	- WebClient-Help-ar.10
 	- WebClient-Tests-topa.48'!
-!provides: 'WebClient' 1 35!
+!provides: 'WebClient' 1 36!
 !requires: 'Network-Kernel' 1 2 nil!
 !requires: 'Identities-UUID' 1 7 nil!
 !requires: 'Cryptography-DigitalSignatures' 1 7 nil!
@@ -5925,7 +5925,7 @@ webSocketHash07: key
 	uid := '258EAFA5-E914-47DA-95CA-C5AB0DC85B11'.
 	^(ByteArray newFrom: (SecureHashAlgorithm new hashMessage: key, uid)) reversed base64Encoded! !
 
-!WebUtils class methodsFor: 'auth' stamp: 'jmv 5/26/2022 12:07:05'!
+!WebUtils class methodsFor: 'auth' stamp: 'jmv 9/12/2024 12:08:20'!
 handleAuth: aBlock
 	"Utility method to handle web authentication requests interactively.
 
@@ -5939,11 +5939,11 @@ handleAuth: aBlock
 	^[aBlock value] on: WebAuthRequired do:[:ex|
 		"Allow outer handlers to take over authentication"
 		ex isNested ifFalse:[
-			user := FillInTheBlankMorph request:  ex message, 
+			user := StringRequestMorph request:  ex message, 
 				'\Please enter your user name:' initialAnswer:''.
 			user ifNotEmpty:[
 				"Just a little obfuscation to avoid completely plain passwords"
-				pass := (FillInTheBlankMorph request:
+				pass := (StringRequestMorph request:
 					'Please enter the password for "', user,'":') asUtf8Bytes base64Encoded.
 				 ex username: user password: [String fromUtf8Bytes: pass base64Decoded]]].
 		ex pass].! !
