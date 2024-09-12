@@ -32282,7 +32282,7 @@ getMainCanvas
 
 ----QUIT----(2 September 2024 16:04:34) Cuis7.1-6668.image priorSource: 1463542!
 
-----STARTUP---- (12 September 2024 10:24:32) as C:\Users\Juan Vuletich\Cuis-Smalltalk\Cuis-Smalltalk-Dev\CuisImage\Cuis7.1-6668.image!
+----STARTUP---- (12 September 2024 10:36:11) as C:\Users\Juan Vuletich\Cuis-Smalltalk\Cuis-Smalltalk-Dev\CuisImage\Cuis7.1-6668.image!
 
 
 'From Cuis7.1 [latest update: #6668] on 2 September 2024 at 4:39:39 pm'!
@@ -32949,7 +32949,7 @@ ok := (Smalltalk knownInitialsAndNames collect: [ :pair | pair first ]) asSet.
 
 WorldMorph removeSelector: #handsToDrawForDamage:do:!
 
-!methodRemoval: WorldMorph #handsToDrawForDamage:do: stamp: 'Install-6675-Cleanup-JuanVuletich-2024Sep04-14h52m-jmv.001.cs.st 9/12/2024 10:24:33'!
+!methodRemoval: WorldMorph #handsToDrawForDamage:do: stamp: 'Install-6675-Cleanup-JuanVuletich-2024Sep04-14h52m-jmv.001.cs.st 9/12/2024 10:36:11'!
 handsToDrawForDamage: aRectangle do: aBlock
 	"Select the set of hands that must be redrawn because either (a) the hand itself has changed or (b) the hand intersects some damage rectangle."
 
@@ -32965,14 +32965,14 @@ handsToDrawForDamage: aRectangle do: aBlock
 
 WorldMorph removeSelector: #handsDo:!
 
-!methodRemoval: WorldMorph #handsDo: stamp: 'Install-6675-Cleanup-JuanVuletich-2024Sep04-14h52m-jmv.001.cs.st 9/12/2024 10:24:33'!
+!methodRemoval: WorldMorph #handsDo: stamp: 'Install-6675-Cleanup-JuanVuletich-2024Sep04-14h52m-jmv.001.cs.st 9/12/2024 10:36:11'!
 handsDo: aBlock
 
 	^ hands do: aBlock!
 
 WorldMorph removeSelector: #hands!
 
-!methodRemoval: WorldMorph #hands stamp: 'Install-6675-Cleanup-JuanVuletich-2024Sep04-14h52m-jmv.001.cs.st 9/12/2024 10:24:33'!
+!methodRemoval: WorldMorph #hands stamp: 'Install-6675-Cleanup-JuanVuletich-2024Sep04-14h52m-jmv.001.cs.st 9/12/2024 10:36:11'!
 hands
 
 	^ hands!
@@ -33342,7 +33342,7 @@ PlacedMorph subclass: #BoxMorph
 	poolDictionaries: ''
 	category: 'Morphic-Kernel'!
 
-!classDefinition: #BoxMorph category: #'Morphic-Kernel' stamp: 'Install-6680-BoxMorph-BorderedBoxMorph-InitialDefinition-JuanVuletich-2024Sep09-14h08m-jmv.002.cs.st 9/12/2024 10:24:33'!
+!classDefinition: #BoxMorph category: #'Morphic-Kernel' stamp: 'Install-6680-BoxMorph-BorderedBoxMorph-InitialDefinition-JuanVuletich-2024Sep09-14h08m-jmv.002.cs.st 9/12/2024 10:36:11'!
 PlacedMorph subclass: #BoxMorph
 	instanceVariableNames: 'extent'
 	classVariableNames: ''
@@ -33359,7 +33359,7 @@ BoxMorph subclass: #BorderedBoxMorph
 	poolDictionaries: ''
 	category: 'Morphic-Kernel'!
 
-!classDefinition: #BorderedBoxMorph category: #'Morphic-Kernel' stamp: 'Install-6680-BoxMorph-BorderedBoxMorph-InitialDefinition-JuanVuletich-2024Sep09-14h08m-jmv.002.cs.st 9/12/2024 10:24:33'!
+!classDefinition: #BorderedBoxMorph category: #'Morphic-Kernel' stamp: 'Install-6680-BoxMorph-BorderedBoxMorph-InitialDefinition-JuanVuletich-2024Sep09-14h08m-jmv.002.cs.st 9/12/2024 10:36:11'!
 BoxMorph subclass: #BorderedBoxMorph
 	instanceVariableNames: 'color borderWidth borderColor'
 	classVariableNames: ''
@@ -33723,7 +33723,7 @@ BoxMorph subclass: #BorderedBoxMorph
 	poolDictionaries: ''
 	category: 'Morphic-Kernel'!
 
-!classDefinition: #BorderedBoxMorph category: #'Morphic-Kernel' stamp: 'Install-6681-BorderedBoxMorph-Add-padding-ivar-KenDickey-2024Sep09-17h48m-KenD.001.cs.st 9/12/2024 10:24:33'!
+!classDefinition: #BorderedBoxMorph category: #'Morphic-Kernel' stamp: 'Install-6681-BorderedBoxMorph-Add-padding-ivar-KenDickey-2024Sep09-17h48m-KenD.001.cs.st 9/12/2024 10:36:12'!
 BoxMorph subclass: #BorderedBoxMorph
 	instanceVariableNames: 'color borderWidth borderColor padding'
 	classVariableNames: ''
@@ -33803,7 +33803,7 @@ BoxMorph subclass: #BorderedBoxMorph
 	poolDictionaries: ''
 	category: 'Morphic-Kernel'!
 
-!classDefinition: #BorderedBoxMorph category: #'Morphic-Kernel' stamp: 'Install-6681-BorderedBoxMorph-Add-padding-ivar-KenDickey-2024Sep09-17h48m-KenD.001.cs.st 9/12/2024 10:24:33'!
+!classDefinition: #BorderedBoxMorph category: #'Morphic-Kernel' stamp: 'Install-6681-BorderedBoxMorph-Add-padding-ivar-KenDickey-2024Sep09-17h48m-KenD.001.cs.st 9/12/2024 10:36:12'!
 BoxMorph subclass: #BorderedBoxMorph
 	instanceVariableNames: 'color borderWidth borderColor padding'
 	classVariableNames: ''
@@ -33834,7 +33834,7 @@ BorderedBoxMorph subclass: #LayoutMorph
 	poolDictionaries: ''
 	category: 'Morphic-Layouts'!
 
-!classDefinition: #LayoutMorph category: #'Morphic-Layouts' stamp: 'Install-6682-LayoutMorph-subclassFrom-BorderedBoxMorph-p1-JuanVuletich-2024Sep09-15h00m-jmv.001.cs.st 9/12/2024 10:24:33'!
+!classDefinition: #LayoutMorph category: #'Morphic-Layouts' stamp: 'Install-6682-LayoutMorph-subclassFrom-BorderedBoxMorph-p1-JuanVuletich-2024Sep09-15h00m-jmv.001.cs.st 9/12/2024 10:36:12'!
 BorderedBoxMorph subclass: #LayoutMorph
 	instanceVariableNames: 'direction separation axisEdgeWeight doAdoptWidgetsColor useEdgeSpace'
 	classVariableNames: ''
@@ -34015,13 +34015,13 @@ exampleEdgesRow
 
 LayoutMorph removeSelector: #useEdgeSpace:!
 
-!methodRemoval: LayoutMorph #useEdgeSpace: stamp: 'Install-6683-LayoutMorph-subclassFrom-BorderedBoxMorph-p2-KenDickey-2024Sep09-18h05m-KenD.001.cs.st 9/12/2024 10:24:33'!
+!methodRemoval: LayoutMorph #useEdgeSpace: stamp: 'Install-6683-LayoutMorph-subclassFrom-BorderedBoxMorph-p2-KenDickey-2024Sep09-18h05m-KenD.001.cs.st 9/12/2024 10:36:12'!
 useEdgeSpace: aBoolean
 	useEdgeSpace := aBoolean!
 
 LayoutMorph removeSelector: #useEdgeSpace!
 
-!methodRemoval: LayoutMorph #useEdgeSpace stamp: 'Install-6683-LayoutMorph-subclassFrom-BorderedBoxMorph-p2-KenDickey-2024Sep09-18h05m-KenD.001.cs.st 9/12/2024 10:24:33'!
+!methodRemoval: LayoutMorph #useEdgeSpace stamp: 'Install-6683-LayoutMorph-subclassFrom-BorderedBoxMorph-p2-KenDickey-2024Sep09-18h05m-KenD.001.cs.st 9/12/2024 10:36:12'!
 useEdgeSpace
 	^ useEdgeSpace!
 
@@ -34031,7 +34031,7 @@ BorderedBoxMorph subclass: #LayoutMorph
 	poolDictionaries: ''
 	category: 'Morphic-Layouts'!
 
-!classDefinition: #LayoutMorph category: #'Morphic-Layouts' stamp: 'Install-6683-LayoutMorph-subclassFrom-BorderedBoxMorph-p2-KenDickey-2024Sep09-18h05m-KenD.001.cs.st 9/12/2024 10:24:33'!
+!classDefinition: #LayoutMorph category: #'Morphic-Layouts' stamp: 'Install-6683-LayoutMorph-subclassFrom-BorderedBoxMorph-p2-KenDickey-2024Sep09-18h05m-KenD.001.cs.st 9/12/2024 10:36:12'!
 BorderedBoxMorph subclass: #LayoutMorph
 	instanceVariableNames: 'direction separation axisEdgeWeight doAdoptWidgetsColor'
 	classVariableNames: ''
@@ -34056,7 +34056,7 @@ BorderedBoxMorph subclass: #ImageMorph
 	poolDictionaries: ''
 	category: 'Morphic-Widgets'!
 
-!classDefinition: #ImageMorph category: #'Morphic-Widgets' stamp: 'Install-6684-ImageMorph-subclassFrom-BorderedBoxMorph-KenDickey-2024Sep09-18h15m-KenD.001.cs.st 9/12/2024 10:24:33'!
+!classDefinition: #ImageMorph category: #'Morphic-Widgets' stamp: 'Install-6684-ImageMorph-subclassFrom-BorderedBoxMorph-KenDickey-2024Sep09-18h15m-KenD.001.cs.st 9/12/2024 10:36:12'!
 BorderedBoxMorph subclass: #ImageMorph
 	instanceVariableNames: 'image'
 	classVariableNames: 'DefaultForm'
@@ -34099,7 +34099,7 @@ BorderedBoxMorph subclass: #ImageMorph
 	poolDictionaries: ''
 	category: 'Morphic-Widgets'!
 
-!classDefinition: #ImageMorph category: #'Morphic-Widgets' stamp: 'Install-6684-ImageMorph-subclassFrom-BorderedBoxMorph-KenDickey-2024Sep09-18h15m-KenD.001.cs.st 9/12/2024 10:24:33'!
+!classDefinition: #ImageMorph category: #'Morphic-Widgets' stamp: 'Install-6684-ImageMorph-subclassFrom-BorderedBoxMorph-KenDickey-2024Sep09-18h15m-KenD.001.cs.st 9/12/2024 10:36:12'!
 BorderedBoxMorph subclass: #ImageMorph
 	instanceVariableNames: 'image'
 	classVariableNames: 'DefaultForm'
@@ -34116,7 +34116,7 @@ BorderedBoxMorph subclass: #LabelMorph
 	poolDictionaries: ''
 	category: 'Morphic-Widgets'!
 
-!classDefinition: #LabelMorph category: #'Morphic-Widgets' stamp: 'Install-6685-LabelMorph-subclassOf-BorderedBoxMorph-KenDickey-2024Sep09-18h23m-KenD.002.cs.st 9/12/2024 10:24:34'!
+!classDefinition: #LabelMorph category: #'Morphic-Widgets' stamp: 'Install-6685-LabelMorph-subclassOf-BorderedBoxMorph-KenDickey-2024Sep09-18h23m-KenD.002.cs.st 9/12/2024 10:36:12'!
 BorderedBoxMorph subclass: #LabelMorph
 	instanceVariableNames: 'font emphasis contents'
 	classVariableNames: ''
@@ -34150,7 +34150,7 @@ BorderedBoxMorph subclass: #LabelMorph
 	poolDictionaries: ''
 	category: 'Morphic-Widgets'!
 
-!classDefinition: #LabelMorph category: #'Morphic-Widgets' stamp: 'Install-6685-LabelMorph-subclassOf-BorderedBoxMorph-KenDickey-2024Sep09-18h23m-KenD.002.cs.st 9/12/2024 10:24:34'!
+!classDefinition: #LabelMorph category: #'Morphic-Widgets' stamp: 'Install-6685-LabelMorph-subclassOf-BorderedBoxMorph-KenDickey-2024Sep09-18h23m-KenD.002.cs.st 9/12/2024 10:36:12'!
 BorderedBoxMorph subclass: #LabelMorph
 	instanceVariableNames: 'font emphasis contents'
 	classVariableNames: ''
@@ -34174,7 +34174,7 @@ BorderedBoxMorph subclass: #TextParagraphMorph
 	poolDictionaries: ''
 	category: 'Morphic-Widgets'!
 
-!classDefinition: #TextParagraphMorph category: #'Morphic-Widgets' stamp: 'Install-6686-TextParagraphMorph-subclassOf-BorderedBoxMorph-KenDickey-2024Sep09-17h26m-KenD.001.cs.st 9/12/2024 10:24:34'!
+!classDefinition: #TextParagraphMorph category: #'Morphic-Widgets' stamp: 'Install-6686-TextParagraphMorph-subclassOf-BorderedBoxMorph-KenDickey-2024Sep09-17h26m-KenD.001.cs.st 9/12/2024 10:36:12'!
 BorderedBoxMorph subclass: #TextParagraphMorph
 	instanceVariableNames: 'textComposition setsHeightOnContent shrinkFromExtent'
 	classVariableNames: ''
@@ -34239,7 +34239,7 @@ BorderedBoxMorph subclass: #TextParagraphMorph
 	poolDictionaries: ''
 	category: 'Morphic-Widgets'!
 
-!classDefinition: #TextParagraphMorph category: #'Morphic-Widgets' stamp: 'Install-6686-TextParagraphMorph-subclassOf-BorderedBoxMorph-KenDickey-2024Sep09-17h26m-KenD.001.cs.st 9/12/2024 10:24:34'!
+!classDefinition: #TextParagraphMorph category: #'Morphic-Widgets' stamp: 'Install-6686-TextParagraphMorph-subclassOf-BorderedBoxMorph-KenDickey-2024Sep09-17h26m-KenD.001.cs.st 9/12/2024 10:36:12'!
 BorderedBoxMorph subclass: #TextParagraphMorph
 	instanceVariableNames: 'textComposition setsHeightOnContent shrinkFromExtent'
 	classVariableNames: ''
@@ -34252,7 +34252,7 @@ BorderedBoxMorph subclass: #TextParagraphMorph
 
 BorderedBoxMorph removeSelector: #extentBorder!
 
-!methodRemoval: BorderedBoxMorph #extentBorder stamp: 'Install-6687-Cleanup-JuanVuletich-2024Sep09-18h29m-jmv.001.cs.st 9/12/2024 10:24:34'!
+!methodRemoval: BorderedBoxMorph #extentBorder stamp: 'Install-6687-Cleanup-JuanVuletich-2024Sep09-18h29m-jmv.001.cs.st 9/12/2024 10:36:12'!
 extentBorder
 	"This is the number of pixels to add to internal minimum to calculate
 	my minimumExtent.  "
@@ -34348,7 +34348,7 @@ extentBorder
 
 BoxMorph removeSelector: #ensureMinimumExtent!
 
-!methodRemoval: BoxMorph #ensureMinimumExtent stamp: 'Install-6688-Honor-minimumExtent-JuanVuletich-2024Sep10-14h24m-jmv.001.cs.st 9/12/2024 10:24:34'!
+!methodRemoval: BoxMorph #ensureMinimumExtent stamp: 'Install-6688-Honor-minimumExtent-JuanVuletich-2024Sep10-14h24m-jmv.001.cs.st 9/12/2024 10:36:12'!
 ensureMinimumExtent
 
 	| oldExtent |
@@ -34381,7 +34381,7 @@ ensureMinimumExtent
 
 LayoutMorph removeSelector: #refreshExtent!
 
-!methodRemoval: LayoutMorph #refreshExtent stamp: 'Install-6689-Cleanup-JuanVuletich-2024Sep10-12h09m-jmv.001.cs.st 9/12/2024 10:24:34'!
+!methodRemoval: LayoutMorph #refreshExtent stamp: 'Install-6689-Cleanup-JuanVuletich-2024Sep10-12h09m-jmv.001.cs.st 9/12/2024 10:36:12'!
 refreshExtent
 	"Invariant: my morphExtent >= my minimumExtent"
 		
@@ -34417,7 +34417,7 @@ LayoutAdjustingMorph removeSelector: #minimumExtent!
 
 BoxedMorph removeSelector: #morphLocalBounds!
 
-!methodRemoval: BoxedMorph #morphLocalBounds stamp: 'Install-6691-Cleanup-JuanVuletich-2024Sep10-15h39m-jmv.001.cs.st 9/12/2024 10:24:34'!
+!methodRemoval: BoxedMorph #morphLocalBounds stamp: 'Install-6691-Cleanup-JuanVuletich-2024Sep10-15h39m-jmv.001.cs.st 9/12/2024 10:36:12'!
 morphLocalBounds
 
 	self flag: #deprecated.
@@ -34425,7 +34425,7 @@ morphLocalBounds
 
 BoxedMorph removeSelector: #morphPosition:extent:!
 
-!methodRemoval: BoxedMorph #morphPosition:extent: stamp: 'Install-6691-Cleanup-JuanVuletich-2024Sep10-15h39m-jmv.001.cs.st 9/12/2024 10:24:34'!
+!methodRemoval: BoxedMorph #morphPosition:extent: stamp: 'Install-6691-Cleanup-JuanVuletich-2024Sep10-15h39m-jmv.001.cs.st 9/12/2024 10:36:12'!
 morphPosition: newPos extent: newExtent
 	"Change the position and extent of this morph. Arguments are owner's coordinates."
 
@@ -34434,7 +34434,7 @@ morphPosition: newPos extent: newExtent
 
 BoxedMorph removeSelector: #morphExtentInWorld:!
 
-!methodRemoval: BoxedMorph #morphExtentInWorld: stamp: 'Install-6691-Cleanup-JuanVuletich-2024Sep10-15h39m-jmv.001.cs.st 9/12/2024 10:24:34'!
+!methodRemoval: BoxedMorph #morphExtentInWorld: stamp: 'Install-6691-Cleanup-JuanVuletich-2024Sep10-15h39m-jmv.001.cs.st 9/12/2024 10:36:12'!
 morphExtentInWorld: newExtent
 	"world coordinates"
 
@@ -34443,7 +34443,7 @@ morphExtentInWorld: newExtent
 
 BoxedMorph removeSelector: #morphWidthInOwner:!
 
-!methodRemoval: BoxedMorph #morphWidthInOwner: stamp: 'Install-6691-Cleanup-JuanVuletich-2024Sep10-15h39m-jmv.001.cs.st 9/12/2024 10:24:34'!
+!methodRemoval: BoxedMorph #morphWidthInOwner: stamp: 'Install-6691-Cleanup-JuanVuletich-2024Sep10-15h39m-jmv.001.cs.st 9/12/2024 10:36:12'!
 morphWidthInOwner: newWidth
 
 	self flag: #deprecated.
@@ -34451,7 +34451,7 @@ morphWidthInOwner: newWidth
 
 BoxedMorph removeSelector: #morphExtentInOwner:!
 
-!methodRemoval: BoxedMorph #morphExtentInOwner: stamp: 'Install-6691-Cleanup-JuanVuletich-2024Sep10-15h39m-jmv.001.cs.st 9/12/2024 10:24:34'!
+!methodRemoval: BoxedMorph #morphExtentInOwner: stamp: 'Install-6691-Cleanup-JuanVuletich-2024Sep10-15h39m-jmv.001.cs.st 9/12/2024 10:36:12'!
 morphExtentInOwner: newExtent
 
 	self flag: #deprecated.
@@ -34459,7 +34459,7 @@ morphExtentInOwner: newExtent
 
 BoxedMorph removeSelector: #morphExtentInWorld!
 
-!methodRemoval: BoxedMorph #morphExtentInWorld stamp: 'Install-6691-Cleanup-JuanVuletich-2024Sep10-15h39m-jmv.001.cs.st 9/12/2024 10:24:34'!
+!methodRemoval: BoxedMorph #morphExtentInWorld stamp: 'Install-6691-Cleanup-JuanVuletich-2024Sep10-15h39m-jmv.001.cs.st 9/12/2024 10:36:12'!
 morphExtentInWorld
 	"World coordinates"
 
@@ -34468,7 +34468,7 @@ morphExtentInWorld
 
 BoxedMorph removeSelector: #morphHeightInOwner:!
 
-!methodRemoval: BoxedMorph #morphHeightInOwner: stamp: 'Install-6691-Cleanup-JuanVuletich-2024Sep10-15h39m-jmv.001.cs.st 9/12/2024 10:24:34'!
+!methodRemoval: BoxedMorph #morphHeightInOwner: stamp: 'Install-6691-Cleanup-JuanVuletich-2024Sep10-15h39m-jmv.001.cs.st 9/12/2024 10:36:12'!
 morphHeightInOwner: newHeight
 
 	self flag: #deprecated.
@@ -34476,7 +34476,7 @@ morphHeightInOwner: newHeight
 
 Morph removeSelector: #morphExtentInOwner!
 
-!methodRemoval: Morph #morphExtentInOwner stamp: 'Install-6691-Cleanup-JuanVuletich-2024Sep10-15h39m-jmv.001.cs.st 9/12/2024 10:24:34'!
+!methodRemoval: Morph #morphExtentInOwner stamp: 'Install-6691-Cleanup-JuanVuletich-2024Sep10-15h39m-jmv.001.cs.st 9/12/2024 10:36:12'!
 morphExtentInOwner
 
 	self flag: #deprecated.
@@ -34484,7 +34484,7 @@ morphExtentInOwner
 
 Morph removeSelector: #morphPositionInWorld!
 
-!methodRemoval: Morph #morphPositionInWorld stamp: 'Install-6691-Cleanup-JuanVuletich-2024Sep10-15h39m-jmv.001.cs.st 9/12/2024 10:24:34'!
+!methodRemoval: Morph #morphPositionInWorld stamp: 'Install-6691-Cleanup-JuanVuletich-2024Sep10-15h39m-jmv.001.cs.st 9/12/2024 10:36:12'!
 morphPositionInWorld
 	"Answer is in world coordinates."
 
@@ -34493,7 +34493,7 @@ morphPositionInWorld
 
 Morph removeSelector: #morphPositionInWorld:!
 
-!methodRemoval: Morph #morphPositionInWorld: stamp: 'Install-6691-Cleanup-JuanVuletich-2024Sep10-15h39m-jmv.001.cs.st 9/12/2024 10:24:34'!
+!methodRemoval: Morph #morphPositionInWorld: stamp: 'Install-6691-Cleanup-JuanVuletich-2024Sep10-15h39m-jmv.001.cs.st 9/12/2024 10:36:12'!
 morphPositionInWorld: newPositionInWorld
 	"Change the position of this morph. Argument is in world coordinates.
 	Ignored by morphs that are not movable."
@@ -34610,7 +34610,7 @@ BorderedBoxMorph subclass: #LayoutMorph
 	poolDictionaries: ''
 	category: 'Morphic-Layouts'!
 
-!classDefinition: #LayoutMorph category: #'Morphic-Layouts' stamp: 'Install-6695-rename-separatio-as-gap-p1-JuanVuletich-2024Sep11-09h20m-jmv.001.cs.st 9/12/2024 10:24:34'!
+!classDefinition: #LayoutMorph category: #'Morphic-Layouts' stamp: 'Install-6695-rename-separatio-as-gap-p1-JuanVuletich-2024Sep11-09h20m-jmv.001.cs.st 9/12/2024 10:36:13'!
 BorderedBoxMorph subclass: #LayoutMorph
 	instanceVariableNames: 'direction separation axisEdgeWeight doAdoptWidgetsColor gap'
 	classVariableNames: ''
@@ -34657,7 +34657,7 @@ BorderedBoxMorph subclass: #LayoutMorph
 	poolDictionaries: ''
 	category: 'Morphic-Layouts'!
 
-!classDefinition: #LayoutMorph category: #'Morphic-Layouts' stamp: 'Install-6696-rename-separatio-as-gap-p2-JuanVuletich-2024Sep11-09h20m-jmv.001.cs.st 9/12/2024 10:24:34'!
+!classDefinition: #LayoutMorph category: #'Morphic-Layouts' stamp: 'Install-6696-rename-separatio-as-gap-p2-JuanVuletich-2024Sep11-09h20m-jmv.001.cs.st 9/12/2024 10:36:13'!
 BorderedBoxMorph subclass: #LayoutMorph
 	instanceVariableNames: 'direction gap axisEdgeWeight doAdoptWidgetsColor'
 	classVariableNames: ''
@@ -34808,7 +34808,7 @@ BorderedBoxMorph subclass: #LayoutMorph
 
 LayoutMorph removeSelector: #ySeparation!
 
-!methodRemoval: LayoutMorph #ySeparation stamp: 'Install-6697-separation-is-paddingPLUSgap-JuanVuletich-2024Sep11-09h20m-jmv.001.cs.st 9/12/2024 10:24:34'!
+!methodRemoval: LayoutMorph #ySeparation stamp: 'Install-6697-separation-is-paddingPLUSgap-JuanVuletich-2024Sep11-09h20m-jmv.001.cs.st 9/12/2024 10:36:13'!
 ySeparation
 	^gap isNumber
 		ifTrue: [ gap ]
@@ -34816,7 +34816,7 @@ ySeparation
 
 LayoutMorph removeSelector: #xSeparation!
 
-!methodRemoval: LayoutMorph #xSeparation stamp: 'Install-6697-separation-is-paddingPLUSgap-JuanVuletich-2024Sep11-09h20m-jmv.001.cs.st 9/12/2024 10:24:34'!
+!methodRemoval: LayoutMorph #xSeparation stamp: 'Install-6697-separation-is-paddingPLUSgap-JuanVuletich-2024Sep11-09h20m-jmv.001.cs.st 9/12/2024 10:36:13'!
 xSeparation
 	^gap isNumber
 		ifTrue: [ gap ]
@@ -34832,7 +34832,7 @@ BoxMorph subclass: #ColoredBoxMorph
 	poolDictionaries: ''
 	category: 'Morphic-Kernel'!
 
-!classDefinition: #ColoredBoxMorph category: #'Morphic-Kernel' stamp: 'Install-6698-ColoredBoxMorph-JuanVuletich-2024Sep11-16h01m-jmv.001.cs.st 9/12/2024 10:24:34'!
+!classDefinition: #ColoredBoxMorph category: #'Morphic-Kernel' stamp: 'Install-6698-ColoredBoxMorph-JuanVuletich-2024Sep11-16h01m-jmv.001.cs.st 9/12/2024 10:36:13'!
 BoxMorph subclass: #ColoredBoxMorph
 	instanceVariableNames: 'color'
 	classVariableNames: ''
@@ -34878,7 +34878,7 @@ ColoredBoxMorph subclass: #BorderedBoxMorph
 	poolDictionaries: ''
 	category: 'Morphic-Kernel'!
 
-!classDefinition: #BorderedBoxMorph category: #'Morphic-Kernel' stamp: 'Install-6699-BorderedBoxMorph-subClassOf-ColoredBoxMorph-JuanVuletich-2024Sep11-16h06m-jmv.001.cs.st 9/12/2024 10:24:35'!
+!classDefinition: #BorderedBoxMorph category: #'Morphic-Kernel' stamp: 'Install-6699-BorderedBoxMorph-subClassOf-ColoredBoxMorph-JuanVuletich-2024Sep11-16h06m-jmv.001.cs.st 9/12/2024 10:36:13'!
 ColoredBoxMorph subclass: #BorderedBoxMorph
 	instanceVariableNames: 'borderWidth borderColor padding'
 	classVariableNames: ''
@@ -34893,14 +34893,14 @@ ColoredBoxMorph subclass: #BorderedBoxMorph
 
 BorderedBoxMorph removeSelector: #color!
 
-!methodRemoval: BorderedBoxMorph #color stamp: 'Install-6699-BorderedBoxMorph-subClassOf-ColoredBoxMorph-JuanVuletich-2024Sep11-16h06m-jmv.001.cs.st 9/12/2024 10:24:35'!
+!methodRemoval: BorderedBoxMorph #color stamp: 'Install-6699-BorderedBoxMorph-subClassOf-ColoredBoxMorph-JuanVuletich-2024Sep11-16h06m-jmv.001.cs.st 9/12/2024 10:36:13'!
 color
 
 	^ color!
 
 BorderedBoxMorph removeSelector: #color:!
 
-!methodRemoval: BorderedBoxMorph #color: stamp: 'Install-6699-BorderedBoxMorph-subClassOf-ColoredBoxMorph-JuanVuletich-2024Sep11-16h06m-jmv.001.cs.st 9/12/2024 10:24:35'!
+!methodRemoval: BorderedBoxMorph #color: stamp: 'Install-6699-BorderedBoxMorph-subClassOf-ColoredBoxMorph-JuanVuletich-2024Sep11-16h06m-jmv.001.cs.st 9/12/2024 10:36:13'!
 color: aColor
 	"Set the receiver's color. "
 	color = aColor ifFalse: [
@@ -34955,7 +34955,7 @@ BoxMorph subclass: #DraggingGuideMorph
 	poolDictionaries: ''
 	category: 'Morphic-Widgets'!
 
-!classDefinition: #DraggingGuideMorph category: #'Morphic-Widgets' stamp: 'Install-6701-DraggingGuideMorph-subClassOf-BoxMorph-JuanVuletich-2024Sep11-15h24m-jmv.001.cs.st 9/12/2024 10:24:35'!
+!classDefinition: #DraggingGuideMorph category: #'Morphic-Widgets' stamp: 'Install-6701-DraggingGuideMorph-subClassOf-BoxMorph-JuanVuletich-2024Sep11-15h24m-jmv.001.cs.st 9/12/2024 10:36:13'!
 BoxMorph subclass: #DraggingGuideMorph
 	instanceVariableNames: ''
 	classVariableNames: ''
@@ -34967,14 +34967,14 @@ drawOn: aCanvas
 
 DraggingGuideMorph removeSelector: #defaultColor!
 
-!methodRemoval: DraggingGuideMorph #defaultColor stamp: 'Install-6701-DraggingGuideMorph-subClassOf-BoxMorph-JuanVuletich-2024Sep11-15h24m-jmv.001.cs.st 9/12/2024 10:24:35'!
+!methodRemoval: DraggingGuideMorph #defaultColor stamp: 'Install-6701-DraggingGuideMorph-subClassOf-BoxMorph-JuanVuletich-2024Sep11-15h24m-jmv.001.cs.st 9/12/2024 10:36:13'!
 defaultColor
 
 	^Color transparent!
 
 DraggingGuideMorph removeSelector: #initialize!
 
-!methodRemoval: DraggingGuideMorph #initialize stamp: 'Install-6701-DraggingGuideMorph-subClassOf-BoxMorph-JuanVuletich-2024Sep11-15h24m-jmv.001.cs.st 9/12/2024 10:24:35'!
+!methodRemoval: DraggingGuideMorph #initialize stamp: 'Install-6701-DraggingGuideMorph-subClassOf-BoxMorph-JuanVuletich-2024Sep11-15h24m-jmv.001.cs.st 9/12/2024 10:36:13'!
 initialize
 
 	super initialize.
@@ -34982,7 +34982,7 @@ initialize
 
 DraggingGuideMorph removeSelector: #defaultBorderWidth!
 
-!methodRemoval: DraggingGuideMorph #defaultBorderWidth stamp: 'Install-6701-DraggingGuideMorph-subClassOf-BoxMorph-JuanVuletich-2024Sep11-15h24m-jmv.001.cs.st 9/12/2024 10:24:35'!
+!methodRemoval: DraggingGuideMorph #defaultBorderWidth stamp: 'Install-6701-DraggingGuideMorph-subClassOf-BoxMorph-JuanVuletich-2024Sep11-15h24m-jmv.001.cs.st 9/12/2024 10:36:13'!
 defaultBorderWidth
 	"answer the default border width for the receiver"
 	^ 0!
@@ -34997,7 +34997,7 @@ BoxMorph subclass: #HaloMorph
 	poolDictionaries: ''
 	category: 'Morphic-Halos'!
 
-!classDefinition: #HaloMorph category: #'Morphic-Halos' stamp: 'Install-6702-HaloMorph-subClassOf-BoxMorph-JuanVuletich-2024Sep11-15h39m-jmv.001.cs.st 9/12/2024 10:24:35'!
+!classDefinition: #HaloMorph category: #'Morphic-Halos' stamp: 'Install-6702-HaloMorph-subClassOf-BoxMorph-JuanVuletich-2024Sep11-15h39m-jmv.001.cs.st 9/12/2024 10:36:13'!
 BoxMorph subclass: #HaloMorph
 	instanceVariableNames: 'target positionOffset angleOffset scaleOffset haloBox haloDelta'
 	classVariableNames: 'Icons'
@@ -35041,7 +35041,7 @@ BoxMorph subclass: #HaloMorph
 	poolDictionaries: ''
 	category: 'Morphic-Halos'!
 
-!classDefinition: #HaloMorph category: #'Morphic-Halos' stamp: 'Install-6702-HaloMorph-subClassOf-BoxMorph-JuanVuletich-2024Sep11-15h39m-jmv.001.cs.st 9/12/2024 10:24:35'!
+!classDefinition: #HaloMorph category: #'Morphic-Halos' stamp: 'Install-6702-HaloMorph-subClassOf-BoxMorph-JuanVuletich-2024Sep11-15h39m-jmv.001.cs.st 9/12/2024 10:36:13'!
 BoxMorph subclass: #HaloMorph
 	instanceVariableNames: 'target positionOffset angleOffset scaleOffset haloBox haloDelta'
 	classVariableNames: 'Icons'
@@ -35058,7 +35058,7 @@ BoxMorph subclass: #MenuLineMorph
 	poolDictionaries: ''
 	category: 'Morphic-Menus'!
 
-!classDefinition: #MenuLineMorph category: #'Morphic-Menus' stamp: 'Install-6703-MenuLineMorph-subClassOf-BoxMorph-JuanVuletich-2024Sep11-15h43m-jmv.001.cs.st 9/12/2024 10:24:35'!
+!classDefinition: #MenuLineMorph category: #'Morphic-Menus' stamp: 'Install-6703-MenuLineMorph-subClassOf-BoxMorph-JuanVuletich-2024Sep11-15h43m-jmv.001.cs.st 9/12/2024 10:36:13'!
 BoxMorph subclass: #MenuLineMorph
 	instanceVariableNames: ''
 	classVariableNames: ''
@@ -35075,7 +35075,7 @@ ColoredBoxMorph subclass: #HoverHelpMorph
 	poolDictionaries: ''
 	category: 'Morphic-Composite Widgets'!
 
-!classDefinition: #HoverHelpMorph category: #'Morphic-Composite Widgets' stamp: 'Install-6704-FiveMore-subClassesOf-ColoredBoxMorph-BorderedBoxMorph-JuanVuletich-2024Sep11-16h19m-jmv.001.cs.st 9/12/2024 10:24:35'!
+!classDefinition: #HoverHelpMorph category: #'Morphic-Composite Widgets' stamp: 'Install-6704-FiveMore-subClassesOf-ColoredBoxMorph-BorderedBoxMorph-JuanVuletich-2024Sep11-16h19m-jmv.001.cs.st 9/12/2024 10:36:13'!
 ColoredBoxMorph subclass: #HoverHelpMorph
 	instanceVariableNames: 'contents textComposition'
 	classVariableNames: ''
@@ -35088,7 +35088,7 @@ ColoredBoxMorph subclass: #TranscriptMorph
 	poolDictionaries: ''
 	category: 'Morphic-Composite Widgets'!
 
-!classDefinition: #TranscriptMorph category: #'Morphic-Composite Widgets' stamp: 'Install-6704-FiveMore-subClassesOf-ColoredBoxMorph-BorderedBoxMorph-JuanVuletich-2024Sep11-16h19m-jmv.001.cs.st 9/12/2024 10:24:35'!
+!classDefinition: #TranscriptMorph category: #'Morphic-Composite Widgets' stamp: 'Install-6704-FiveMore-subClassesOf-ColoredBoxMorph-BorderedBoxMorph-JuanVuletich-2024Sep11-16h19m-jmv.001.cs.st 9/12/2024 10:36:13'!
 ColoredBoxMorph subclass: #TranscriptMorph
 	instanceVariableNames: 'workspace lastIncludedIndex workspaceWindow lastUnfinishedEntrySize doImmediateUpdates'
 	classVariableNames: ''
@@ -35101,7 +35101,7 @@ ColoredBoxMorph subclass: #HaloHandleMorph
 	poolDictionaries: ''
 	category: 'Morphic-Halos'!
 
-!classDefinition: #HaloHandleMorph category: #'Morphic-Halos' stamp: 'Install-6704-FiveMore-subClassesOf-ColoredBoxMorph-BorderedBoxMorph-JuanVuletich-2024Sep11-16h19m-jmv.001.cs.st 9/12/2024 10:24:35'!
+!classDefinition: #HaloHandleMorph category: #'Morphic-Halos' stamp: 'Install-6704-FiveMore-subClassesOf-ColoredBoxMorph-BorderedBoxMorph-JuanVuletich-2024Sep11-16h19m-jmv.001.cs.st 9/12/2024 10:36:13'!
 ColoredBoxMorph subclass: #HaloHandleMorph
 	instanceVariableNames: 'mouseDownSelector mouseUpSelector mouseMoveSelector'
 	classVariableNames: ''
@@ -35114,7 +35114,7 @@ BorderedBoxMorph subclass: #ProgressBarMorph
 	poolDictionaries: ''
 	category: 'Morphic-Composite Widgets'!
 
-!classDefinition: #ProgressBarMorph category: #'Morphic-Composite Widgets' stamp: 'Install-6704-FiveMore-subClassesOf-ColoredBoxMorph-BorderedBoxMorph-JuanVuletich-2024Sep11-16h19m-jmv.001.cs.st 9/12/2024 10:24:35'!
+!classDefinition: #ProgressBarMorph category: #'Morphic-Composite Widgets' stamp: 'Install-6704-FiveMore-subClassesOf-ColoredBoxMorph-BorderedBoxMorph-JuanVuletich-2024Sep11-16h19m-jmv.001.cs.st 9/12/2024 10:36:13'!
 BorderedBoxMorph subclass: #ProgressBarMorph
 	instanceVariableNames: 'value progressColor'
 	classVariableNames: ''
@@ -35127,7 +35127,7 @@ ColoredBoxMorph subclass: #ResizeMorph
 	poolDictionaries: ''
 	category: 'Morphic-Widgets'!
 
-!classDefinition: #ResizeMorph category: #'Morphic-Widgets' stamp: 'Install-6704-FiveMore-subClassesOf-ColoredBoxMorph-BorderedBoxMorph-JuanVuletich-2024Sep11-16h19m-jmv.001.cs.st 9/12/2024 10:24:35'!
+!classDefinition: #ResizeMorph category: #'Morphic-Widgets' stamp: 'Install-6704-FiveMore-subClassesOf-ColoredBoxMorph-BorderedBoxMorph-JuanVuletich-2024Sep11-16h19m-jmv.001.cs.st 9/12/2024 10:36:13'!
 ColoredBoxMorph subclass: #ResizeMorph
 	instanceVariableNames: 'gridLineWidth gridColor selectionColor outlineMorph grid from to action'
 	classVariableNames: ''
@@ -35148,21 +35148,21 @@ ColoredBoxMorph subclass: #ResizeMorph
 
 ResizeMorph removeSelector: #defaultBorderWidth!
 
-!methodRemoval: ResizeMorph #defaultBorderWidth stamp: 'Install-6704-FiveMore-subClassesOf-ColoredBoxMorph-BorderedBoxMorph-JuanVuletich-2024Sep11-16h19m-jmv.001.cs.st 9/12/2024 10:24:35'!
+!methodRemoval: ResizeMorph #defaultBorderWidth stamp: 'Install-6704-FiveMore-subClassesOf-ColoredBoxMorph-BorderedBoxMorph-JuanVuletich-2024Sep11-16h19m-jmv.001.cs.st 9/12/2024 10:36:13'!
 defaultBorderWidth
 	"answer the default border width for the receiver"
 	^ 0!
 
 TranscriptMorph removeSelector: #defaultBorderWidth!
 
-!methodRemoval: TranscriptMorph #defaultBorderWidth stamp: 'Install-6704-FiveMore-subClassesOf-ColoredBoxMorph-BorderedBoxMorph-JuanVuletich-2024Sep11-16h19m-jmv.001.cs.st 9/12/2024 10:24:35'!
+!methodRemoval: TranscriptMorph #defaultBorderWidth stamp: 'Install-6704-FiveMore-subClassesOf-ColoredBoxMorph-BorderedBoxMorph-JuanVuletich-2024Sep11-16h19m-jmv.001.cs.st 9/12/2024 10:36:13'!
 defaultBorderWidth
 	"answer the default border width for the receiver"
 	^ 0!
 
 HoverHelpMorph removeSelector: #defaultBorderWidth!
 
-!methodRemoval: HoverHelpMorph #defaultBorderWidth stamp: 'Install-6704-FiveMore-subClassesOf-ColoredBoxMorph-BorderedBoxMorph-JuanVuletich-2024Sep11-16h19m-jmv.001.cs.st 9/12/2024 10:24:35'!
+!methodRemoval: HoverHelpMorph #defaultBorderWidth stamp: 'Install-6704-FiveMore-subClassesOf-ColoredBoxMorph-BorderedBoxMorph-JuanVuletich-2024Sep11-16h19m-jmv.001.cs.st 9/12/2024 10:36:13'!
 defaultBorderWidth
 	"answer the default border width for the receiver"
 	^ 0!
@@ -35173,7 +35173,7 @@ ColoredBoxMorph subclass: #HoverHelpMorph
 	poolDictionaries: ''
 	category: 'Morphic-Composite Widgets'!
 
-!classDefinition: #HoverHelpMorph category: #'Morphic-Composite Widgets' stamp: 'Install-6704-FiveMore-subClassesOf-ColoredBoxMorph-BorderedBoxMorph-JuanVuletich-2024Sep11-16h19m-jmv.001.cs.st 9/12/2024 10:24:35'!
+!classDefinition: #HoverHelpMorph category: #'Morphic-Composite Widgets' stamp: 'Install-6704-FiveMore-subClassesOf-ColoredBoxMorph-BorderedBoxMorph-JuanVuletich-2024Sep11-16h19m-jmv.001.cs.st 9/12/2024 10:36:13'!
 ColoredBoxMorph subclass: #HoverHelpMorph
 	instanceVariableNames: 'contents textComposition'
 	classVariableNames: ''
@@ -35186,7 +35186,7 @@ ColoredBoxMorph subclass: #TranscriptMorph
 	poolDictionaries: ''
 	category: 'Morphic-Composite Widgets'!
 
-!classDefinition: #TranscriptMorph category: #'Morphic-Composite Widgets' stamp: 'Install-6704-FiveMore-subClassesOf-ColoredBoxMorph-BorderedBoxMorph-JuanVuletich-2024Sep11-16h19m-jmv.001.cs.st 9/12/2024 10:24:35'!
+!classDefinition: #TranscriptMorph category: #'Morphic-Composite Widgets' stamp: 'Install-6704-FiveMore-subClassesOf-ColoredBoxMorph-BorderedBoxMorph-JuanVuletich-2024Sep11-16h19m-jmv.001.cs.st 9/12/2024 10:36:13'!
 ColoredBoxMorph subclass: #TranscriptMorph
 	instanceVariableNames: 'workspace lastIncludedIndex workspaceWindow lastUnfinishedEntrySize doImmediateUpdates'
 	classVariableNames: ''
@@ -35199,7 +35199,7 @@ ColoredBoxMorph subclass: #HaloHandleMorph
 	poolDictionaries: ''
 	category: 'Morphic-Halos'!
 
-!classDefinition: #HaloHandleMorph category: #'Morphic-Halos' stamp: 'Install-6704-FiveMore-subClassesOf-ColoredBoxMorph-BorderedBoxMorph-JuanVuletich-2024Sep11-16h19m-jmv.001.cs.st 9/12/2024 10:24:35'!
+!classDefinition: #HaloHandleMorph category: #'Morphic-Halos' stamp: 'Install-6704-FiveMore-subClassesOf-ColoredBoxMorph-BorderedBoxMorph-JuanVuletich-2024Sep11-16h19m-jmv.001.cs.st 9/12/2024 10:36:13'!
 ColoredBoxMorph subclass: #HaloHandleMorph
 	instanceVariableNames: 'mouseDownSelector mouseUpSelector mouseMoveSelector'
 	classVariableNames: ''
@@ -35212,7 +35212,7 @@ BorderedBoxMorph subclass: #ProgressBarMorph
 	poolDictionaries: ''
 	category: 'Morphic-Composite Widgets'!
 
-!classDefinition: #ProgressBarMorph category: #'Morphic-Composite Widgets' stamp: 'Install-6704-FiveMore-subClassesOf-ColoredBoxMorph-BorderedBoxMorph-JuanVuletich-2024Sep11-16h19m-jmv.001.cs.st 9/12/2024 10:24:35'!
+!classDefinition: #ProgressBarMorph category: #'Morphic-Composite Widgets' stamp: 'Install-6704-FiveMore-subClassesOf-ColoredBoxMorph-BorderedBoxMorph-JuanVuletich-2024Sep11-16h19m-jmv.001.cs.st 9/12/2024 10:36:13'!
 BorderedBoxMorph subclass: #ProgressBarMorph
 	instanceVariableNames: 'value progressColor'
 	classVariableNames: ''
@@ -35225,7 +35225,7 @@ ColoredBoxMorph subclass: #ResizeMorph
 	poolDictionaries: ''
 	category: 'Morphic-Widgets'!
 
-!classDefinition: #ResizeMorph category: #'Morphic-Widgets' stamp: 'Install-6704-FiveMore-subClassesOf-ColoredBoxMorph-BorderedBoxMorph-JuanVuletich-2024Sep11-16h19m-jmv.001.cs.st 9/12/2024 10:24:35'!
+!classDefinition: #ResizeMorph category: #'Morphic-Widgets' stamp: 'Install-6704-FiveMore-subClassesOf-ColoredBoxMorph-BorderedBoxMorph-JuanVuletich-2024Sep11-16h19m-jmv.001.cs.st 9/12/2024 10:36:13'!
 ColoredBoxMorph subclass: #ResizeMorph
 	instanceVariableNames: 'gridLineWidth gridColor selectionColor outlineMorph grid from to action'
 	classVariableNames: ''
@@ -35270,7 +35270,7 @@ BorderedBoxMorph subclass: #MenuMorph
 	poolDictionaries: ''
 	category: 'Morphic-Menus'!
 
-!classDefinition: #MenuMorph category: #'Morphic-Menus' stamp: 'Install-6706-Three-BorderedBoxMorph-subclasses-JuanVuletich-2024Sep11-16h27m-jmv.001.cs.st 9/12/2024 10:24:35'!
+!classDefinition: #MenuMorph category: #'Morphic-Menus' stamp: 'Install-6706-Three-BorderedBoxMorph-subclasses-JuanVuletich-2024Sep11-16h27m-jmv.001.cs.st 9/12/2024 10:36:14'!
 BorderedBoxMorph subclass: #MenuMorph
 	instanceVariableNames: 'defaultTarget selectedItem stayUp titleMorph activeSubMenu popUpOwner prevKbdFocus prevMouseFocus'
 	classVariableNames: ''
@@ -35283,7 +35283,7 @@ BorderedBoxMorph subclass: #TileResizeMorph
 	poolDictionaries: ''
 	category: 'Morphic-Widgets'!
 
-!classDefinition: #TileResizeMorph category: #'Morphic-Widgets' stamp: 'Install-6706-Three-BorderedBoxMorph-subclasses-JuanVuletich-2024Sep11-16h27m-jmv.001.cs.st 9/12/2024 10:24:35'!
+!classDefinition: #TileResizeMorph category: #'Morphic-Widgets' stamp: 'Install-6706-Three-BorderedBoxMorph-subclasses-JuanVuletich-2024Sep11-16h27m-jmv.001.cs.st 9/12/2024 10:36:14'!
 BorderedBoxMorph subclass: #TileResizeMorph
 	instanceVariableNames: 'selectedResize selectionColor action'
 	classVariableNames: ''
@@ -35296,7 +35296,7 @@ BorderedBoxMorph subclass: #AutoCompleterMorph
 	poolDictionaries: ''
 	category: 'Tools-Autocompletion'!
 
-!classDefinition: #AutoCompleterMorph category: #'Tools-Autocompletion' stamp: 'Install-6706-Three-BorderedBoxMorph-subclasses-JuanVuletich-2024Sep11-16h27m-jmv.001.cs.st 9/12/2024 10:24:35'!
+!classDefinition: #AutoCompleterMorph category: #'Tools-Autocompletion' stamp: 'Install-6706-Three-BorderedBoxMorph-subclasses-JuanVuletich-2024Sep11-16h27m-jmv.001.cs.st 9/12/2024 10:36:14'!
 BorderedBoxMorph subclass: #AutoCompleterMorph
 	instanceVariableNames: 'completer selected firstVisible itemHeight lastActivity originalPosition showUp itemsPerPage downButtonForm upButtonForm'
 	classVariableNames: ''
@@ -35314,7 +35314,7 @@ BorderedBoxMorph subclass: #MenuMorph
 	poolDictionaries: ''
 	category: 'Morphic-Menus'!
 
-!classDefinition: #MenuMorph category: #'Morphic-Menus' stamp: 'Install-6706-Three-BorderedBoxMorph-subclasses-JuanVuletich-2024Sep11-16h27m-jmv.001.cs.st 9/12/2024 10:24:35'!
+!classDefinition: #MenuMorph category: #'Morphic-Menus' stamp: 'Install-6706-Three-BorderedBoxMorph-subclasses-JuanVuletich-2024Sep11-16h27m-jmv.001.cs.st 9/12/2024 10:36:14'!
 BorderedBoxMorph subclass: #MenuMorph
 	instanceVariableNames: 'defaultTarget selectedItem stayUp titleMorph activeSubMenu popUpOwner prevKbdFocus prevMouseFocus'
 	classVariableNames: ''
@@ -35327,7 +35327,7 @@ BorderedBoxMorph subclass: #TileResizeMorph
 	poolDictionaries: ''
 	category: 'Morphic-Widgets'!
 
-!classDefinition: #TileResizeMorph category: #'Morphic-Widgets' stamp: 'Install-6706-Three-BorderedBoxMorph-subclasses-JuanVuletich-2024Sep11-16h27m-jmv.001.cs.st 9/12/2024 10:24:35'!
+!classDefinition: #TileResizeMorph category: #'Morphic-Widgets' stamp: 'Install-6706-Three-BorderedBoxMorph-subclasses-JuanVuletich-2024Sep11-16h27m-jmv.001.cs.st 9/12/2024 10:36:14'!
 BorderedBoxMorph subclass: #TileResizeMorph
 	instanceVariableNames: 'selectedResize selectionColor action'
 	classVariableNames: ''
@@ -35340,7 +35340,7 @@ BorderedBoxMorph subclass: #AutoCompleterMorph
 	poolDictionaries: ''
 	category: 'Tools-Autocompletion'!
 
-!classDefinition: #AutoCompleterMorph category: #'Tools-Autocompletion' stamp: 'Install-6706-Three-BorderedBoxMorph-subclasses-JuanVuletich-2024Sep11-16h27m-jmv.001.cs.st 9/12/2024 10:24:35'!
+!classDefinition: #AutoCompleterMorph category: #'Tools-Autocompletion' stamp: 'Install-6706-Three-BorderedBoxMorph-subclasses-JuanVuletich-2024Sep11-16h27m-jmv.001.cs.st 9/12/2024 10:36:14'!
 BorderedBoxMorph subclass: #AutoCompleterMorph
 	instanceVariableNames: 'completer selected firstVisible itemHeight lastActivity originalPosition showUp itemsPerPage downButtonForm upButtonForm'
 	classVariableNames: ''
@@ -35444,7 +35444,7 @@ BorderedBoxMorph subclass: #AutoCompleterMorph
 
 LayoutMorph removeSelector: #yGap!
 
-!methodRemoval: LayoutMorph #yGap stamp: 'Install-6707-gap-canOnlyBeANumber-JuanVuletich-2024Sep11-17h07m-jmv.001.cs.st 9/12/2024 10:24:35'!
+!methodRemoval: LayoutMorph #yGap stamp: 'Install-6707-gap-canOnlyBeANumber-JuanVuletich-2024Sep11-17h07m-jmv.001.cs.st 9/12/2024 10:36:14'!
 yGap
 	^gap isNumber
 		ifTrue: [ gap ]
@@ -35452,7 +35452,7 @@ yGap
 
 LayoutMorph removeSelector: #xGap!
 
-!methodRemoval: LayoutMorph #xGap stamp: 'Install-6707-gap-canOnlyBeANumber-JuanVuletich-2024Sep11-17h07m-jmv.001.cs.st 9/12/2024 10:24:35'!
+!methodRemoval: LayoutMorph #xGap stamp: 'Install-6707-gap-canOnlyBeANumber-JuanVuletich-2024Sep11-17h07m-jmv.001.cs.st 9/12/2024 10:36:14'!
 xGap
 	^gap isNumber
 		ifTrue: [ gap ]
@@ -35468,7 +35468,7 @@ BorderedBoxMorph subclass: #TileResizeMorph
 	poolDictionaries: ''
 	category: 'Morphic-Widgets'!
 
-!classDefinition: #TileResizeMorph category: #'Morphic-Widgets' stamp: 'Install-6708-RemoveDirectUsersOf-BoxedMorph-JuanVuletich-2024Sep11-17h13m-jmv.001.cs.st 9/12/2024 10:24:35'!
+!classDefinition: #TileResizeMorph category: #'Morphic-Widgets' stamp: 'Install-6708-RemoveDirectUsersOf-BoxedMorph-JuanVuletich-2024Sep11-17h13m-jmv.001.cs.st 9/12/2024 10:36:14'!
 BorderedBoxMorph subclass: #TileResizeMorph
 	instanceVariableNames: 'selectedResize selectionColor action'
 	classVariableNames: ''
@@ -36181,7 +36181,7 @@ addTitle: aString
 
 BorderedBoxMorph removeSelector: #noBorder!
 
-!methodRemoval: BorderedBoxMorph #noBorder stamp: 'Install-6708-RemoveDirectUsersOf-BoxedMorph-JuanVuletich-2024Sep11-17h13m-jmv.001.cs.st 9/12/2024 10:24:35'!
+!methodRemoval: BorderedBoxMorph #noBorder stamp: 'Install-6708-RemoveDirectUsersOf-BoxedMorph-JuanVuletich-2024Sep11-17h13m-jmv.001.cs.st 9/12/2024 10:36:14'!
 noBorder
 	self borderWidth: 0.!
 
@@ -36209,7 +36209,7 @@ ColoredBoxMorph subclass: #LayoutAdjustingMorph
 	poolDictionaries: ''
 	category: 'Morphic-Layouts'!
 
-!classDefinition: #LayoutAdjustingMorph category: #'Morphic-Layouts' stamp: 'Install-6710-LayoutAdjustingMorph-subclassOf-ColoredBoxMorph-JuanVuletich-2024Sep11-17h55m-jmv.001.cs.st 9/12/2024 10:24:35'!
+!classDefinition: #LayoutAdjustingMorph category: #'Morphic-Layouts' stamp: 'Install-6710-LayoutAdjustingMorph-subclassOf-ColoredBoxMorph-JuanVuletich-2024Sep11-17h55m-jmv.001.cs.st 9/12/2024 10:36:14'!
 ColoredBoxMorph subclass: #LayoutAdjustingMorph
 	instanceVariableNames: 'hand'
 	classVariableNames: ''
@@ -36270,7 +36270,7 @@ ColoredBoxMorph subclass: #LayoutAdjustingMorph
 
 WorldMorph removeSelector: #handsReverseDo:!
 
-!methodRemoval: WorldMorph #handsReverseDo: stamp: 'Install-6712-Hand-World-Pluggables-NewHierarchy-JuanVuletich-2024Sep12-08h32m-jmv.006.cs.st 9/12/2024 10:24:35'!
+!methodRemoval: WorldMorph #handsReverseDo: stamp: 'Install-6712-Hand-World-Pluggables-NewHierarchy-JuanVuletich-2024Sep12-08h32m-jmv.006.cs.st 9/12/2024 10:36:14'!
 handsReverseDo: aBlock
 
 	^ hands reverseDo: aBlock!
@@ -36330,41 +36330,44 @@ Select "yes" to continue.
 UISupervisor stopUIProcess.
 !
 
-!classDefinition: #InnerPluggableMorph category: #'Morphic-Widgets' stamp: 'Install-6712-Hand-World-Pluggables-NewHierarchy-JuanVuletich-2024Sep12-08h32m-jmv.006.cs.st 9/12/2024 10:24:38'!
+!classDefinition: #InnerPluggableMorph category: #'Morphic-Widgets' stamp: 'Install-6712-Hand-World-Pluggables-NewHierarchy-JuanVuletich-2024Sep12-08h32m-jmv.006.cs.st 9/12/2024 10:36:16'!
 ColoredBoxMorph subclass: #InnerPluggableMorph
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Morphic-Widgets'!
 
-!classDefinition: #PluggableMorph category: #'Morphic-Widgets' stamp: 'Install-6712-Hand-World-Pluggables-NewHierarchy-JuanVuletich-2024Sep12-08h32m-jmv.006.cs.st 9/12/2024 10:24:39'!
+!classDefinition: #PluggableMorph category: #'Morphic-Widgets' stamp: 'Install-6712-Hand-World-Pluggables-NewHierarchy-JuanVuletich-2024Sep12-08h32m-jmv.006.cs.st 9/12/2024 10:36:17'!
 BorderedBoxMorph subclass: #PluggableMorph
 	instanceVariableNames: 'model menuNshortcutsKey'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Morphic-Widgets'!
 
-!classDefinition: #HandMorph category: #'Morphic-Kernel' stamp: 'Install-6712-Hand-World-Pluggables-NewHierarchy-JuanVuletich-2024Sep12-08h32m-jmv.006.cs.st 9/12/2024 10:24:39'!
+!classDefinition: #HandMorph category: #'Morphic-Kernel' stamp: 'Install-6712-Hand-World-Pluggables-NewHierarchy-JuanVuletich-2024Sep12-08h32m-jmv.006.cs.st 9/12/2024 10:36:17'!
 BoxMorph subclass: #HandMorph
 	instanceVariableNames: 'mouseFocus keyboardFocus mouseClickState mouseOverHandler lastMouseEvent hasChanged savedPatch lastEventBuffer lastKeyDownValue lastMouseEventTime prevFullBounds grabMorphData lastPosition'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Morphic-Kernel'!
 
-!classDefinition: #PasteUpMorph category: #'Morphic-Kernel' stamp: 'Install-6712-Hand-World-Pluggables-NewHierarchy-JuanVuletich-2024Sep12-08h32m-jmv.006.cs.st 9/12/2024 10:24:39'!
+!classDefinition: #PasteUpMorph category: #'Morphic-Kernel' stamp: 'Install-6712-Hand-World-Pluggables-NewHierarchy-JuanVuletich-2024Sep12-08h32m-jmv.006.cs.st 9/12/2024 10:36:17'!
 ColoredBoxMorph subclass: #PasteUpMorph
 	instanceVariableNames: 'backgroundImage backgroundImageData'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Morphic-Kernel'!
 
-!classDefinition: #WorldMorph category: #'Morphic-Kernel' stamp: 'Install-6712-Hand-World-Pluggables-NewHierarchy-JuanVuletich-2024Sep12-08h32m-jmv.006.cs.st 9/12/2024 10:24:39'!
+!classDefinition: #WorldMorph category: #'Morphic-Kernel' stamp: 'Install-6712-Hand-World-Pluggables-NewHierarchy-JuanVuletich-2024Sep12-08h32m-jmv.006.cs.st 9/12/2024 10:36:17'!
 PasteUpMorph subclass: #WorldMorph
 	instanceVariableNames: 'activeHand canvas damageRecorder stepList lastCycleTime alarms lastAlarmTime deferredUIMessages drawingFailingMorphs waitDelay pause lastCycleHadAnyEvent taskbar'
 	classVariableNames: 'ScaleFactor'
 	poolDictionaries: ''
 	category: 'Morphic-Kernel'!
 
-Preferences at: #saveReleaseOptionsInWorldMenu put: true!
+----QUIT----(12 September 2024 10:36:21) Cuis7.1-6668.image priorSource: 1482502!
 
-----QUIT----(12 September 2024 10:25:52) Cuis7.1-6712.image priorSource: 1482502!
+----STARTUP---- (12 September 2024 10:36:24) as C:\Users\Juan Vuletich\Cuis-Smalltalk\Cuis-Smalltalk-Dev\CuisImage\Cuis7.1-6668.image!
+
+
+----QUIT----(12 September 2024 10:36:29) Cuis7.1-6712.image priorSource: 1662612!
