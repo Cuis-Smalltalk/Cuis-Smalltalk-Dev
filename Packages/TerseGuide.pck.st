@@ -1,6 +1,6 @@
-'From Cuis7.1 [latest update: #6713] on 12 September 2024 at 12:08:46 pm'!
+'From Cuis7.1 [latest update: #6715] on 12 September 2024 at 12:21:48 pm'!
 'Description Add ability to dynamically add topic pages from other sources.'!
-!provides: 'TerseGuide' 1 148!
+!provides: 'TerseGuide' 1 149!
 SystemOrganization addCategory: #TerseGuide!
 
 
@@ -1178,7 +1178,7 @@ To use any TrueTypeFont, just open the FileList, select any .ttf file, and click
 "
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 10/6/2018 17:01:26'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'jmv 9/12/2024 12:21:12'!
 form
 	"Forms"
 	^
@@ -1195,7 +1195,7 @@ x _ Form extent: 22@18 depth: 8.
 	
 y _ x getCanvas.			"convert form to canvas (a BitBltCanvas)"
 
-BoxedMorph new drawOn: y; morphExtent: 300@200; openInWorld.
+ColoredBoxMorph new drawOn: y; morphExtent: 300@200; openInWorld.
 	"Display a morph on a canvas"
 
 x _ Form fromUser.
@@ -1366,7 +1366,7 @@ y.
 y.
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'KenD 6/2/2020 20:59:34'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'jmv 9/12/2024 12:21:20'!
 layoutMorph
 	"Layout Morph"
 	^
@@ -1379,7 +1379,7 @@ myLayout _ LayoutMorph newRow color: Color cyan.
 myLayout openInWorld.
 myLayout morphExtent: (6 * myLayout morphExtent). "Make larger to hold submorphs"
 
-myLayout addAllMorphs: { BoxedMorph initializedInstance. ImageMorph initializedInstance. BoxedMorph initializedInstance. }.
+myLayout addAllMorphs: { ColoredBoxMorph initializedInstance. ImageMorph initializedInstance. ColoredBoxMorph initializedInstance. }.
 
 "When there is space left over, the submorphs can be shifted
  along the layout axis.  This is the axisEdgeWeight, a number from
@@ -1406,7 +1406,7 @@ myLayout beColumn.
 "Submorphs may also have a LayoutSpec to specify proportion and offAxis placement"
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'jmv 1/18/2022 09:38:18'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'jmv 9/12/2024 12:21:27'!
 layoutSpec
 	"Layout Specification"
 	^
@@ -1416,15 +1416,15 @@ layoutSpec
  a fixed or porportional extent, a minimum extent, an offAxisEdgeWeight."
 
 "Some Morphs to use"
-rect _ BoxedMorph initializedInstance.
+rect _ ColoredBoxMorph initializedInstance.
 image _ ImageMorph initializedInstance.
 rect layoutSpec: (LayoutSpec fixedWidth: 80 proportionalHeight: 0.6 offAxisEdgeWeight: #center).
 "Layouts can contain layouts"
 interiorLayout _ LayoutMorph newColumn.
 interiorLayout separation: 10@20.
 interiorLayout layoutSpec: (LayoutSpec proportionalWidth: 0.3 proportionalHeight: 0.8).
-interiorLayout addMorph: BoxedMorph initializedInstance.
-interiorLayout addAdjusterAndMorph: (BoxedMorph new) proportionalWidth: 1.0.
+interiorLayout addMorph: ColoredBoxMorph initializedInstance.
+interiorLayout addAdjusterAndMorph: (ColoredBoxMorph new) proportionalWidth: 1.0.
 "A LayoutMorph to contain them"
 layout _ LayoutMorph newRow.
 layout addAllMorphs: { image. interiorLayout. rect. }.
@@ -1509,7 +1509,7 @@ Object withAllSubclasses size.		"get total number of class entries"
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'KenD 5/1/2020 16:49:17'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'jmv 9/12/2024 12:21:33'!
 methodCall
 	"Method Calls"
 	^
@@ -1541,11 +1541,11 @@ Transcript									"cascading ; send multiple messages to first receiver"
    show: ''world'' ;
    newLine.
 "Without semicolon cascading"
-x := BoxedMorph new.
+x := ColoredBoxMorph new.
 x color: Color yellow.
 x openInWorld.
 "Using semicolon cascade -- we don''t need the variable, x"
-BoxedMorph new
+ColoredBoxMorph new
 	color: Color yellow; 
 	openInWorld.
 3 + 2; * 100.							"result=300. Sends message to same receiver (3)"

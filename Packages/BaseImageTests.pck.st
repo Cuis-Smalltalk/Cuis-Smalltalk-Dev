@@ -1,6 +1,6 @@
-'From Cuis7.1 [latest update: #6669] on 2 September 2024 at 8:11:09 pm'!
+'From Cuis7.1 [latest update: #6715] on 12 September 2024 at 12:20:32 pm'!
 'Description Rename extentions tests'!
-!provides: 'BaseImageTests' 1 411!
+!provides: 'BaseImageTests' 1 412!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Objects'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
@@ -20730,7 +20730,7 @@ testInverseTransformation
 	self assert: ((inverse internalizeDelta: 3@4) - (forward externalizeDelta: 3@4)) r < 0.0001.
 	self assert: ((inverse internalizeScalar: 7) - (forward externalizeScalar: 7)) abs < 0.0001.! !
 
-!LayoutMorphTest methodsFor: 'tests' stamp: 'jmv 10/11/2023 13:07:20'!
+!LayoutMorphTest methodsFor: 'tests' stamp: 'jmv 9/12/2024 12:19:23'!
 testLayout1
 	"
 	self new testLayout1
@@ -20740,33 +20740,33 @@ testLayout1
 	pane color: Color red.
 	row1 := LayoutMorph newRow separation: 5.
 	row1 color: Color red;
-		addMorph: (r1c1 := BoxedMorph new color: (Color h: 60 s: 0.6 v: 0.6))
+		addMorph: (r1c1 := ColoredBoxMorph new color: (Color h: 60 s: 0.6 v: 0.6))
 			layoutSpec: (LayoutSpec fixedWidth: 10);
-		addMorph: (r1c2 := BoxedMorph new color: Color blue)
+		addMorph: (r1c2 := ColoredBoxMorph new color: Color blue)
 			layoutSpec: (LayoutSpec proportionalWidth: 0.8);
-		addMorph: (r1c3 := BoxedMorph new color: (Color h: 30 s: 0.6 v: 0.6))
+		addMorph: (r1c3 := ColoredBoxMorph new color: (Color h: 30 s: 0.6 v: 0.6))
 			layoutSpec: (LayoutSpec proportionalWidth: 0.4);
-		addMorph: (r1c4 := BoxedMorph new color: (Color h: 30 s: 0.6 v: 0.6))
+		addMorph: (r1c4 := ColoredBoxMorph new color: (Color h: 30 s: 0.6 v: 0.6))
 			layoutSpec: (LayoutSpec proportionalWidth: 0.15);
-		addMorph: (r1c5 := BoxedMorph new color: (Color h: 60 s: 0.6 v: 0.6))
+		addMorph: (r1c5 := ColoredBoxMorph new color: (Color h: 60 s: 0.6 v: 0.6))
 			layoutSpec: (LayoutSpec fixedWidth: 20 fixedHeight: 20).
 	pane addMorph: row1 layoutSpec: LayoutSpec useAll.
 	row2 := LayoutMorph newRow separation: 5.
 	row2 color: Color red;
-		addMorph: (r2c1 := BoxedMorph new color: Color blue)
+		addMorph: (r2c1 := ColoredBoxMorph new color: Color blue)
 			layoutSpec: (LayoutSpec proportionalWidth: 0.8);
-		addMorph: (r2c2 := BoxedMorph new color: (Color h: 30 s: 0.6 v: 0.6))
+		addMorph: (r2c2 := ColoredBoxMorph new color: (Color h: 30 s: 0.6 v: 0.6))
 			layoutSpec: (LayoutSpec proportionalWidth: 0.4);
-		addMorph: (r2c3 := BoxedMorph new color: (Color h: 30 s: 0.6 v: 0.6))
+		addMorph: (r2c3 := ColoredBoxMorph new color: (Color h: 30 s: 0.6 v: 0.6))
 			layoutSpec: (LayoutSpec proportionalWidth: 0.2).
 	pane addMorph: row2 layoutSpec: LayoutSpec useAll.
 	row3 := LayoutMorph newRow separation: 5.
 	row3 color: Color red;
-		addMorph: (r3c1 := BoxedMorph new color: (Color h: 120 s: 0.6 v: 0.6))
+		addMorph: (r3c1 := ColoredBoxMorph new color: (Color h: 120 s: 0.6 v: 0.6))
 			layoutSpec: (LayoutSpec fixedWidth: 20 proportionalHeight: 0.8);
-		addMorph: (r3c2 := BoxedMorph new color: (Color h: 90 s: 0.6 v: 0.6))
+		addMorph: (r3c2 := ColoredBoxMorph new color: (Color h: 90 s: 0.6 v: 0.6))
 			layoutSpec: (LayoutSpec proportionalWidth: 0.5 fixedHeight: 40);
-		addMorph: (r3c3 := BoxedMorph new color: (Color h: 150 s: 0.6 v: 0.6))
+		addMorph: (r3c3 := ColoredBoxMorph new color: (Color h: 150 s: 0.6 v: 0.6))
 			layoutSpec: (LayoutSpec fixedWidth: 30 proportionalHeight: 1.0).
 	pane addMorph: row3 layoutSpec: (LayoutSpec fixedHeight: 60).
 	pane openInWorld: UISupervisor ui; morphExtent: 408@300.
@@ -20810,7 +20810,7 @@ testLayout1
 
 	pane delete! !
 
-!LayoutMorphTest methodsFor: 'tests' stamp: 'jmv 10/11/2023 13:07:34'!
+!LayoutMorphTest methodsFor: 'tests' stamp: 'jmv 9/12/2024 12:19:34'!
 testLayout2
 	"
 	self new testLayout2
@@ -20821,11 +20821,11 @@ testLayout2
 	row := LayoutMorph newRow separation: 5.
 	row
 		color: (Color h: 270 s: 0.2 v: 0.6);
-		addMorph: (c1 := BoxedMorph new color: (Color h: 120 s: 0.6 v: 0.6))
+		addMorph: (c1 := ColoredBoxMorph new color: (Color h: 120 s: 0.6 v: 0.6))
 			layoutSpec: (LayoutSpec fixedWidth: 20 proportionalHeight: 0.8 offAxisEdgeWeight: #rowBottom);
-		addMorph: (c2 := BoxedMorph new color: (Color h: 90 s: 0.6 v: 0.6))
+		addMorph: (c2 := ColoredBoxMorph new color: (Color h: 90 s: 0.6 v: 0.6))
 			layoutSpec: (LayoutSpec proportionalWidth: 0.8 fixedHeight: 40 offAxisEdgeWeight: #rowTop);
-		addMorph: (c3 := BoxedMorph new color: (Color h: 150 s: 0.6 v: 0.6))
+		addMorph: (c3 := ColoredBoxMorph new color: (Color h: 150 s: 0.6 v: 0.6))
 			layoutSpec: (LayoutSpec fixedWidth: 30 proportionalHeight: 0.7 offAxisEdgeWeight: #center).
 	pane addMorph: row layoutSpec: (LayoutSpec proportionalHeight: 1.0).
 	pane openInWorld: UISupervisor ui; morphExtent: 400@271.
@@ -20852,7 +20852,7 @@ testLayout2
 
 	pane delete! !
 
-!LayoutMorphTest methodsFor: 'tests' stamp: 'jmv 10/11/2023 13:07:41'!
+!LayoutMorphTest methodsFor: 'tests' stamp: 'jmv 9/12/2024 12:19:43'!
 testLayout3
 	"
 	self new testLayout3
@@ -20863,19 +20863,19 @@ testLayout3
 	row := LayoutMorph newRow separation: 5.
 	innerRow := LayoutMorph newRow color: Color red;  separation: 5.
 	innerRow
-		addMorph: (i1 := BoxedMorph new)
+		addMorph: (i1 := ColoredBoxMorph new)
 			layoutSpec: (LayoutSpec fixedWidth: 10 fixedHeight: 10);
-		addMorph: (i2 := BoxedMorph new)
+		addMorph: (i2 := ColoredBoxMorph new)
 			layoutSpec: (LayoutSpec fixedWidth: 10 fixedHeight: 10);
-		addMorph: (i3 := BoxedMorph new)
+		addMorph: (i3 := ColoredBoxMorph new)
 			layoutSpec: (LayoutSpec proportionalWidth: 1.0 fixedHeight: 10).
 	row
 		color: (Color h: 270 s: 0.2 v: 0.6);
 		addMorph: innerRow
 			layoutSpec: (LayoutSpec proportionalWidth: 0.5 fixedHeight: 30 offAxisEdgeWeight: #center);
-		addMorph: (c2 := BoxedMorph new color: (Color h: 90 s: 0.6 v: 0.6))
+		addMorph: (c2 := ColoredBoxMorph new color: (Color h: 90 s: 0.6 v: 0.6))
 			layoutSpec: (LayoutSpec proportionalWidth: 0.5 fixedHeight: 40 offAxisEdgeWeight: #rowTop);
-		addMorph: (c3 := BoxedMorph new color: (Color h: 150 s: 0.6 v: 0.6))
+		addMorph: (c3 := ColoredBoxMorph new color: (Color h: 150 s: 0.6 v: 0.6))
 			layoutSpec: (LayoutSpec fixedWidth: 30 proportionalHeight: 1.0).
 	pane addMorph: row layoutSpec: (LayoutSpec fixedHeight: 200).
 	pane openInWorld: UISupervisor ui; morphExtent: 400@300.
