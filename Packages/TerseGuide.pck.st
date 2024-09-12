@@ -1,6 +1,6 @@
-'From Cuis7.1 [latest update: #6715] on 12 September 2024 at 12:21:48 pm'!
+'From Cuis7.1 [latest update: #6717] on 12 September 2024 at 4:07:44 pm'!
 'Description Add ability to dynamically add topic pages from other sources.'!
-!provides: 'TerseGuide' 1 149!
+!provides: 'TerseGuide' 1 150!
 SystemOrganization addCategory: #TerseGuide!
 
 
@@ -1366,7 +1366,7 @@ y.
 y.
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'jmv 9/12/2024 12:21:20'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'jmv 9/12/2024 16:07:21'!
 layoutMorph
 	"Layout Morph"
 	^
@@ -1399,8 +1399,8 @@ myLayout beRow.
 myLayout direction. " #horizontal "
 
 myLayout separation: 10@20. "set the amount of separation for submorphs"	
-myLayout xSeparation.			"answer the x component of the specified separation"
-myLayout ySeparation.			"answer the y component of the specified separation"
+myLayout gap.				"answer the gap between submorphs"
+myLayout padding."answer the adding around submorphs"
 myLayout beColumn.
 
 "Submorphs may also have a LayoutSpec to specify proportion and offAxis placement"
