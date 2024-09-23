@@ -1,6 +1,6 @@
-'From Cuis7.1 [latest update: #6715] on 12 September 2024 at 12:20:32 pm'!
+'From Cuis7.1 [latest update: #6742] on 23 September 2024 at 2:17:18 pm'!
 'Description Rename extentions tests'!
-!provides: 'BaseImageTests' 1 412!
+!provides: 'BaseImageTests' 1 413!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Objects'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
@@ -20176,6 +20176,22 @@ testAtPut
 	self assert: b last = $π.
 	self assert: b = 'Agüitπ'.! !
 
+!UnicodeStringsTest methodsFor: 'testing' stamp: 'jmv 9/23/2024 10:58:45'!
+testEmpty
+
+	| s1 us1 us2 |
+	s1 := String new.
+	us1 := UnicodeString new.
+	us2 := UnicodeString fromUtf8Bytes:#[].
+
+	self assert: s1 hash = us1 hash.
+	self assert: s1 = us1.
+	self assert: us1 = s1.
+
+	self assert: us2 hash = us1 hash.
+	self assert: us2 = us1.
+	self assert: us1 = us2.! !
+
 !UnicodeStringsTest methodsFor: 'testing' stamp: 'jmv 4/14/2023 10:21:49'!
 testfromBytesStream
 
@@ -20526,7 +20542,7 @@ testUtf16WordsFromUtf8
 	utf16Words := UnicodeString utf16WordsFromUtf8: utf8 includeBOM: false.
 	self assert: utf16Words asArray = {16r24. 16r20AC. 16rD801. 16rDC37. 16rD852. 16rDF62}.! !
 
-!UnicodeTest methodsFor: 'testing utf16' stamp: 'jmv 11/15/2023 14:12:57'!
+!UnicodeTest methodsFor: 'testing utf16' stamp: 'jmv 9/23/2024 10:46:13'!
 testUtf8FromUtf16Bytes
 	"Four code point sample from https://en.wikipedia.org/wiki/UTF-16
 	CodePoint: 0x24
@@ -20574,9 +20590,13 @@ testUtf8FromUtf16Bytes
 	
 	self
 		assert: (UnicodeString utf8FromUtf16Bytes: #[16r0 16r24 16r20 16rAC 16rD8 16r1 16rDC 16r37 16rD8 16r52 16rDF 16r62] bigEndianHint: true)
-		equals: utf8.! !
+		equals: utf8.
 
-!UnicodeTest methodsFor: 'testing utf16' stamp: 'jmv 11/15/2023 14:12:51'!
+	self
+		assert: (UnicodeString utf8FromUtf16Bytes: #[])
+		equals: #[].! !
+
+!UnicodeTest methodsFor: 'testing utf16' stamp: 'jmv 9/23/2024 10:46:30'!
 testUtf8FromUtf16Words
 	"Four code point sample from https://en.wikipedia.org/wiki/UTF-16
 	CodePoint: 0x24
@@ -20612,7 +20632,11 @@ testUtf8FromUtf16Words
 	
 	self
 		assert: (UnicodeString utf8FromUtf16Words: {16r24. 16r20AC. 16rD801. 16rDC37. 16rD852. 16rDF62})
-		equals: utf8.! !
+		equals: utf8.
+
+	self
+		assert: (UnicodeString utf8FromUtf16Words: {})
+		equals: #[].! !
 
 !UnicodeTest class methodsFor: 'as yet unclassified' stamp: 'hjh 2/12/2013 19:25'!
 fileName
