@@ -83,5 +83,5 @@ Please use an image with all relevant packages already loaded, using updated ver
 
 For some ideas on how you can help Cuis, see [Helping Cuis](https://github.com/Cuis-Smalltalk/Cuis-Smalltalk-Dev/wiki/Helping-Cuis). You can contribute your own too.
 
-Cuis is distributed subject to the MIT License. See the [LICENSE](../LICENSE) file. Any contribution must also be under the MIT license.
+Cuis is distributed subject to the MIT License. See the [LICENSE](../LICENSE) file. Any contribution must also be under the MIT license. See [Controbuting](../CONTRIBUTING.md).
  
