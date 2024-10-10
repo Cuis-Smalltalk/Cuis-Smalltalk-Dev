@@ -1,9 +1,9 @@
-'From Cuis7.1 [latest update: #6713] on 12 September 2024 at 12:08:51 pm'!
+'From Cuis7.1 [latest update: #6765] on 10 October 2024 at 11:49:03 am'!
 'Description Description - This package is a port and refactoring of WebClient from http://ss3.gemstone.com/ss/WebClient.html with moderate changes by David Graham, Nicola Mingotti, Juan Vuletich and Hernan Wilkinson.
 	- WebClient-Core-ul.100
 	- WebClient-Help-ar.10
 	- WebClient-Tests-topa.48'!
-!provides: 'WebClient' 1 36!
+!provides: 'WebClient' 1 37!
 !requires: 'Network-Kernel' 1 2 nil!
 !requires: 'Identities-UUID' 1 7 nil!
 !requires: 'Cryptography-DigitalSignatures' 1 7 nil!
@@ -4877,7 +4877,7 @@ requestBenchmark: persistent
 		persistent: persistent] ensure:[WebServer reset].
 ! !
 
-!WebServer class methodsFor: 'examples' stamp: 'jmv 5/26/2022 12:08:02'!
+!WebServer class methodsFor: 'examples' stamp: 'jmv 10/10/2024 11:48:44'!
 browseDir: directory request: request
 	"Responds with a directory listing back to the original request"
 
@@ -4886,9 +4886,9 @@ browseDir: directory request: request
 	(url endsWith: '/') ifTrue:[url := url allButLast].
 
 	entries := directory children sort:[:e1 :e2|
-		e1 isDirectory = e2 isDirectory 
+		e1 isDirectoryEntry = e2 isDirectoryEntry 
 			ifTrue:[e1 name <= e2 name]
-			ifFalse:[e2 isDirectory]].
+			ifFalse:[e2 isDirectoryEntry]].
 
 	listing := String streamContents:[:s|
 		s nextPutAll:'<html><head><title>Index of ', request url,'</title></head><body>'.
@@ -4896,13 +4896,13 @@ browseDir: directory request: request
 		s nextPutAll:'<pre>      Name                      Last modified      Size  Description<hr>'.
 		s nextPutAll: '[up]  <a href="', (url copyUpToLast: $/),'">parent</a>'; cr; lf.
 		entries do:[:e|
-			s nextPutAll:(e isDirectory ifTrue:['[dir] '] ifFalse:['      ']).
+			s nextPutAll:(e isDirectoryEntry ifTrue:['[dir] '] ifFalse:['      ']).
 			s nextPutAll: '<a href="', url, '/', e name, '">'.
 			s nextPutAll: (e name truncateTo: 30).
 			s nextPutAll: '</a>'.
 			e name size < 30 ifTrue:[s nextPutAll: (String new: 30 - e name size withAll: $ )].
 			s nextPutAll: (e modificationTime asString padded: #right to: 20 with: $ ).
-			s nextPutAll: (e isDirectory ifTrue: [String new: 20] ifFalse: [e fileSize asString padded: #right to: 20 with: $ ]).
+			s nextPutAll: (e isDirectoryEntry ifTrue: [String new: 20] ifFalse: [e fileSize asString padded: #right to: 20 with: $ ]).
 			s cr; lf.
 		].
  	].
