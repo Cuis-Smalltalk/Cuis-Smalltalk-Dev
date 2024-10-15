@@ -1,17 +1,17 @@
-'From Cuis 6.0 [latest update: #5625] on 8 January 2023 at 9:00:15 pm'!
+'From Cuis7.1 [latest update: #6776] on 15 October 2024 at 1:02:21 pm'!
 'Description '!
-!provides: 'Tests-YAXO' 1 3!
+!provides: 'Tests-YAXO' 1 4!
 !requires: 'YAXO' 1 15 nil!
-SystemOrganization addCategory: 'Tests-YAXO'!
+SystemOrganization addCategory: #'Tests-YAXO'!
 
 
-!classDefinition: #YAXOTest category: 'Tests-YAXO'!
+!classDefinition: #YAXOTest category: #'Tests-YAXO'!
 TestCase subclass: #YAXOTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Tests-YAXO'!
-!classDefinition: 'YAXOTest class' category: 'Tests-YAXO'!
+!classDefinition: 'YAXOTest class' category: #'Tests-YAXO'!
 YAXOTest class
 	instanceVariableNames: ''!
 
@@ -64,45 +64,45 @@ test02
 <heading>„Sicherheitshinweise“</heading>
 <body>Don''t forget me this weekend!!</body></note>' ! !
 
-!YAXOTest methodsFor: 'tests' stamp: 'jmv 1/4/2023 12:56:56'!
+!YAXOTest methodsFor: 'tests' stamp: 'jmv 10/15/2024 13:02:00'!
 test03
 	| xmlDocument element subElements |
-	xmlDocument _ XMLDOMParser parseDocumentFrom: self exampleString03 readStream.
+	xmlDocument := XMLDOMParser parseDocumentFrom: self exampleString03 readStream.
 	self assert: xmlDocument version = '1.0'.
 	self assert: xmlDocument encoding = 'UTF-8' .
 	self assert: xmlDocument dtd isNil.
 	self assert: xmlDocument elements size = 1.
 	
-	element _ xmlDocument elements first.
+	element := xmlDocument elements first.
 	self assert: element name = #breakfast_menu.
-	subElements _ element elements.	
+	subElements := element elements.	
 	self assert: subElements size = 5.
 
-	element _ subElements third.
+	element := subElements third.
 	self assert: element name = #food.
-	subElements _ element elements.
+	subElements := element elements.
 	self assert: subElements size = 4.
 
-	element _ subElements first.
+	element := subElements first.
 	self assert: element name = #name.
 	self assert: element contents first string = 'Berry-Berry Belgian Waffles'.
 
-	element _ subElements second.
+	element := subElements second.
 	self assert: element name = #price.
 	self assert: element contents first string = '$8.95'.
 
-	element _ subElements third.
+	element := subElements third.
 	self assert: element name = #description.
 	self assert: element contents first string =
 		'Light Belgian waffles covered with an assortment of fresh berries and whipped cream'.
 
-	element _ subElements fourth.
+	element := subElements fourth.
 	self assert: element name = #calories.
 	self assert: element contents first string = '900'.
 	
 	self assert: xmlDocument printString =
 '<?xml  version="1.0" encoding="UTF-8" ?>
-<breakfast_menu>               
+<breakfast_menu>
 <food>
 <name>Belgian Waffles</name>
 <price>$5.95</price>
@@ -129,45 +129,45 @@ test03
 <description>Two eggs, bacon or sausage, toast, and our ever-popular hash browns</description>
 <calories>950</calories></food></breakfast_menu>' .! !
 
-!YAXOTest methodsFor: 'tests' stamp: 'jmv 1/8/2023 16:16:28'!
+!YAXOTest methodsFor: 'tests' stamp: 'jmv 10/15/2024 13:01:53'!
 test04
 	| xmlDocument element subElements |
-	xmlDocument _ XMLDOMParser parseDocumentFrom: self exampleString04 readStream.
+	xmlDocument := XMLDOMParser parseDocumentFrom: self exampleString04 readStream.
 	self assert: xmlDocument version = '1.0'.
 	self assert: xmlDocument encoding = 'UTF-8' .
 	self assert: xmlDocument dtd isNil.
 	self assert: xmlDocument elements size = 1.
 	
-	element _ xmlDocument elements first.
+	element := xmlDocument elements first.
 	self assert: element name = #breakfast_menu.
-	subElements _ element elements.	
+	subElements := element elements.	
 	self assert: subElements size = 5.
 
-	element _ subElements third.
+	element := subElements third.
 	self assert: element name = #food.
-	subElements _ element elements.
+	subElements := element elements.
 	self assert: subElements size = 4.
 
-	element _ subElements first.
+	element := subElements first.
 	self assert: element name = #name.
 	self assert: element contents first string = 'Berry-Berry Belgian Waffles'.
 
-	element _ subElements second.
+	element := subElements second.
 	self assert: element name = #price.
 	self assert: element contents first string = '$8.95'.
 
-	element _ subElements third.
+	element := subElements third.
 	self assert: element name = #description.
 	self assert: element contents first string =
 		'ლორემ იფსუმ დოლორ სით ამეთ, ყუო უთ დიცათ ალიყუიდ, ად ლიბრის ცეთეროს რეფრეჰენდუნთ ესთ.'.
 
-	element _ subElements fourth.
+	element := subElements fourth.
 	self assert: element name = #calories.
 	self assert: element contents first string = '900'.
 	
 	self assert: xmlDocument printString =
 '<?xml  version="1.0" encoding="UTF-8" ?>
-<breakfast_menu>               
+<breakfast_menu>
 <food>
 <name>Belgian Waffles</name>
 <price>$5.95</price>
@@ -194,45 +194,45 @@ test04
 <description>¿Querés agüita, ñandú?</description>
 <calories>950</calories></food></breakfast_menu>' .! !
 
-!YAXOTest methodsFor: 'tests' stamp: 'jmv 1/8/2023 16:35:43'!
+!YAXOTest methodsFor: 'tests' stamp: 'jmv 10/15/2024 13:01:42'!
 test05
 	| xmlDocument element subElements |
-	xmlDocument _ XMLDOMParser parseDocumentFrom: self exampleString05 readStream.
+	xmlDocument := XMLDOMParser parseDocumentFrom: self exampleString05 readStream.
 	self assert: xmlDocument version = '1.0'.
 	self assert: xmlDocument encoding = 'UTF-8' .
 	self assert: xmlDocument dtd isNil.
 	self assert: xmlDocument elements size = 1.
 	
-	element _ xmlDocument elements first.
+	element := xmlDocument elements first.
 	self assert: element name = #breakfast_menu.
-	subElements _ element elements.	
+	subElements := element elements.	
 	self assert: subElements size = 5.
 
-	element _ subElements third.
+	element := subElements third.
 	self assert: element name = #food.
-	subElements _ element elements.
+	subElements := element elements.
 	self assert: subElements size = 4.
 
-	element _ subElements first.
+	element := subElements first.
 	self assert: element name = 'agüita'.
 	self assert: element contents first string = 'Berry-Berry Belgian Waffles'.
 
-	element _ subElements second.
+	element := subElements second.
 	self assert: element name = 'ñandú'.
 	self assert: element contents first string = '$8.95'.
 
-	element _ subElements third.
+	element := subElements third.
 	self assert: element name = 'Лорем'.
 	self assert: element contents first string =
 		'ლორემ იფსუმ დოლორ სით ამეთ, ყუო უთ დიცათ ალიყუიდ, ად ლიბრის ცეთეროს რეფრეჰენდუნთ ესთ.'.
 
-	element _ subElements fourth.
+	element := subElements fourth.
 	self assert: element name = 'ελιτ'.
 	self assert: element contents first string = '900'.
 	
 	self assert: xmlDocument printString =
 '<?xml  version="1.0" encoding="UTF-8" ?>
-<breakfast_menu>               
+<breakfast_menu>
 <food>
 <agüita>Belgian Waffles</agüita>
 <ñandú>$5.95</ñandú>
