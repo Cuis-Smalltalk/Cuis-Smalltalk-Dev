@@ -1,6 +1,6 @@
-'From Cuis7.1 [latest update: #6742] on 15 October 2024 at 02:19:56 PM'!
+'From Cuis7.1 [latest update: #6742] on 18 October 2024 at 11:22:55 AM'!
 'Description '!
-!provides: 'Network-Kernel' 1 9!
+!provides: 'Network-Kernel' 1 10!
 SystemOrganization addCategory: #'Network-Kernel'!
 
 
@@ -2255,12 +2255,14 @@ primSocketSendDone: socketID
 primitiveFailed: selector
 	SocketPrimitiveFailed signal: selector asString, ' failed'! !
 
-!Socket methodsFor: 'printing' stamp: 'jm 11/23/1998 11:57'!
+!Socket methodsFor: 'printing' stamp: 'JMM 10/17/2024 13:19:41'!
 printOn: aStream
 
 	super printOn: aStream.
-	aStream nextPutAll: '[', self statusString, ']'.
-! !
+	aStream nextPutAll: '[', self statusString, '] '.
+	self remoteAddress printOn: aStream.
+	aStream nextPutAll: ' : '.
+	self remotePort printOn: aStream! !
 
 !Socket methodsFor: 'datagrams' stamp: 'ul 4/20/2011 01:55'!
 receiveDataInto: aStringOrByteArray fromHost: hostAddress port: portNumber
