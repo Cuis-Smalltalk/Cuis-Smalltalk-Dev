@@ -1,6 +1,6 @@
-'From Cuis7.1 [latest update: #6742] on 18 October 2024 at 01:40:41 PM'!
+'From Cuis7.1 [latest update: #6742] on 18 October 2024 at 02:08:01 PM'!
 'Description '!
-!provides: 'Network-Kernel' 1 11!
+!provides: 'Network-Kernel' 1 12!
 SystemOrganization addCategory: #'Network-Kernel'!
 
 
@@ -823,7 +823,7 @@ stringFromAddress: addr
 	^ s contents
 ! !
 
-!NetNameResolver class methodsFor: 'class initialization' stamp: 'dtl 12/18/2012 18:26'!
+!NetNameResolver class methodsFor: 'class initialization' stamp: 'JMM 10/18/2024 14:04:54'!
 initialize
 	"NetNameResolver initialize"
 	"Note: On the Mac, the name resolver is asynchronous (i.e., Squeak can do other things while it is working), but can only handle one request at a time. On other platforms, such as Unix, the resolver is synchronous; a call to, say, the name lookup primitive will block all Squeak processes until it returns."
@@ -836,7 +836,7 @@ initialize
 
 	DefaultHostName := ''.
 
-	self enableIPv6: true. "Initialize preference to permit use of new networking"
+	self enableIPv6: false. "Initialize preference to permit use of new networking"
 	Smalltalk addToStartUpList: self.
 
 ! !
