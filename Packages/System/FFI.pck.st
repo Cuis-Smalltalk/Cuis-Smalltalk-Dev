@@ -1,6 +1,6 @@
-'From Cuis7.1 [latest update: #6697] on 11 September 2024 at 11:39:22 am'!
+'From Cuis7.1 [latest update: #6786] on 18 October 2024 at 3:32:58 pm'!
 'Description FFI (Foreign Function Interface) provides access to foreign functions in external libraries, provided they use the platform''s Application Binary Interface (ABI), which is essentially the C calling convention for the platform. FFI supports callbacks, allowing one to pass callbacks that invoke Smalltalk blocks when called from foreign code. FFI provides support for defining classes that correspond to C struct types, with named fields, etc. See Tests-FFI for examples.'!
-!provides: 'FFI' 1 51!
+!provides: 'FFI' 1 52!
 !requires: 'Alien-Core' 1 0 nil!
 SystemOrganization addCategory: #'FFI-Pools'!
 SystemOrganization addCategory: #'FFI-Kernel'!
@@ -493,6 +493,10 @@ primFree
 	<primitive: #primitiveFFIFree module: #SqueakFFIPrims>
 	^self primitiveFailed! !
 
+!ExternalAddress methodsFor: 'testing' stamp: 'jfr 10/16/2024 10:10:04'!
+is: aSymbol
+	^#ExternalAddress = aSymbol or: [ super is: aSymbol ]! !
+
 !ExternalAddress methodsFor: 'testing' stamp: 'ar 11/16/2006 15:35'!
 isNull
 	"Answer true if I am a null pointer"
@@ -588,10 +592,38 @@ isExternalAddress
 	"Return true if the receiver describes the address of an object in the outside world"
 	^false! !
 
+!ExternalObject methodsFor: 'testing' stamp: 'jfr 10/18/2024 11:58:01'!
+isInExternalMemory
+	"Answer true if the handle is an external address"
+
+	^handle is: #ExternalAddress! !
+
 !ExternalObject methodsFor: 'testing' stamp: 'ar 11/16/2006 15:36'!
 isNull
 	"Answer true if the receiver currently is a NULL pointer"
 	^handle == nil or:[handle isNull]! !
+
+!ExternalObject methodsFor: 'converting' stamp: 'jfr 10/18/2024 13:28:51'!
+moveToExternalMemory
+	"Move the receiver to OS Memory and set the address as the new handle"
+
+	self isInExternalMemory not
+		ifTrue:[handle := handle copyToExternalMemory].! !
+
+!ExternalObject methodsFor: 'converting' stamp: 'jfr 10/18/2024 13:35:12'!
+moveToSmalltalkMemory
+	"Move the data to a ByteArray and set it as the new handle.
+	NOTE: The length of the data may be known by subclasses"
+
+	^self subclassResponsibility ! !
+
+!ExternalObject methodsFor: 'converting' stamp: 'jfr 10/18/2024 13:31:52'!
+moveToSmalltalkMemory: length
+	"Move the data to a ByteArray and set it as the new handle.
+	NOTE: The length of the data is not known so it must be specified"
+
+	self isInExternalMemory
+		ifTrue:[handle := handle bytesAt: 1 length: length].! !
 
 !ExternalObject class methodsFor: 'system startup' stamp: 'ar 11/28/1999 23:37'!
 install
@@ -949,6 +981,12 @@ free
 	"Free the handle pointed to by the receiver"
 	(handle ~~ nil and:[handle isExternalAddress]) ifTrue:[handle free].
 	handle := nil.! !
+
+!ExternalStructure methodsFor: 'converting' stamp: 'jfr 10/18/2024 13:33:20'!
+moveToSmalltalkMemory
+	"Move the data to a ByteArray and set it as the new handle"
+
+	^self moveToSmalltalkMemory: self class byteSize! !
 
 !ExternalStructure class methodsFor: 'class management' stamp: 'ar 11/22/1999 10:10'!
 doneCompiling
@@ -2324,6 +2362,18 @@ bytesAt: byteOffset maxLength: lengthInBytes stopAtNullWord: aBoolean
 			(aBoolean and: [byte1 + byte2 = 0])
 				ifTrue: [ mayContinue := false ]
 				ifFalse: [ strm nextPut: byte1; nextPut: byte2 ]]].! !
+
+!ByteArray methodsFor: '*FFI-Kernel' stamp: 'jfr 10/18/2024 12:44:01'!
+copyToExternalMemory
+	"Copy the receiver into external memory and answer the pointer"
+
+	|addr|
+	
+	(self size = 0)
+		ifTrue: [^ExternalAddress new].	
+	addr := ExternalAddress gcallocate: self size.
+	self withIndexDo: [:aByte :i | addr uint8At: i put: aByte].
+	^addr! !
 
 !ByteArray methodsFor: '*FFI-Kernel' stamp: 'eem 6/2/2024 17:15:23'!
 doubleAt: byteOffset

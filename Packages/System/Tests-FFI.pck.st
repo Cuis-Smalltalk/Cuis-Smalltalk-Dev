@@ -1,19 +1,9 @@
-'From Cuis7.1 [latest update: #6426] on 4 June 2024 at 4:36:32 pm'!
+'From Cuis7.1 [latest update: #6786] on 18 October 2024 at 3:33:05 pm'!
 'Description Tests for, and examples of the use of, the FFI package.'!
-!provides: 'Tests-FFI' 1 6!
+!provides: 'Tests-FFI' 1 7!
 !requires: 'FFI' 1 48 nil!
 SystemOrganization addCategory: #'Tests-FFI'!
 
-
-!classDefinition: #FFIPluginTests category: #'Tests-FFI'!
-TestCase subclass: #FFIPluginTests
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Tests-FFI'!
-!classDefinition: 'FFIPluginTests class' category: #'Tests-FFI'!
-FFIPluginTests class
-	instanceVariableNames: ''!
 
 !classDefinition: #FFITestLibrary category: #'Tests-FFI'!
 ExternalLibrary subclass: #FFITestLibrary
@@ -65,9 +55,26 @@ ExternalStructure subclass: #FFITestPoint4
 FFITestPoint4 class
 	instanceVariableNames: ''!
 
+!classDefinition: #FFIMemoryTests category: #'Tests-FFI'!
+TestCase subclass: #FFIMemoryTests
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Tests-FFI'!
+!classDefinition: 'FFIMemoryTests class' category: #'Tests-FFI'!
+FFIMemoryTests class
+	instanceVariableNames: ''!
 
-!FFIPluginTests commentStamp: '<historical>' prior: 0!
-SUnitized tests for the FFI (mostly the plugin side)!
+!classDefinition: #FFIPluginTests category: #'Tests-FFI'!
+TestCase subclass: #FFIPluginTests
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Tests-FFI'!
+!classDefinition: 'FFIPluginTests class' category: #'Tests-FFI'!
+FFIPluginTests class
+	instanceVariableNames: ''!
+
 
 !FFITestLibrary commentStamp: 'ar 8/14/2006 23:06' prior: 0!
 ExternalLibrarty used in FFI tests!
@@ -80,6 +87,547 @@ A class used for testing structures as arguments for the FFI.!
 
 !FFITestPoint4 commentStamp: 'ar 8/14/2006 23:06' prior: 0!
 A class used for testing structures as arguments for the FFI.!
+
+!FFIPluginTests commentStamp: '<historical>' prior: 0!
+SUnitized tests for the FFI (mostly the plugin side)!
+
+!FFITestLibrary methodsFor: 'primitives' stamp: 'jmv 1/6/2023 10:52:11'!
+ffiPrintString: aString
+	"FFITestLibrary new ffiPrintString: 'Hello' asUtf8BytesOrByteString"
+	<cdecl: char* 'ffiPrintString' (char *)>
+	^self externalCallFailed! !
+
+!FFITestLibrary methodsFor: 'primitives' stamp: 'KenD 2/4/2019 15:27:30'!
+ffiTestBiggerStruct: pt1 with: pt2
+	<cdecl: FFITestBiggerStruct 'ffiTestStructBigger' (FFITestPoint4 FFITestPoint4) module:'SqueakFFIPrims'>
+	^self externalCallFailed! !
+
+!FFITestLibrary methodsFor: 'primitives' stamp: 'ar 8/29/2011 21:59'!
+ffiTestChar: c1 with: c2 with: c3 with: c4
+	"FFITestLibrary new ffiTestChar: $A with: 65 with: 65.0 with: true"
+	<cdecl: char 'ffiTestChars' (char char char char)>
+	^self externalCallFailed! !
+
+!FFITestLibrary methodsFor: 'primitives' stamp: 'ar 8/29/2011 22:00'!
+ffiTestDoubles: f1 with: f2
+	"FFITestLibrary new ffiTestDoubles: $A with: 65.0"
+	<cdecl: double 'ffiTestDoubles' (double double)>
+	^self externalCallFailed! !
+
+!FFITestLibrary methodsFor: 'primitives' stamp: 'ar 8/29/2011 22:00'!
+ffiTestFloats: f1 with: f2
+	"FFITestLibrary new ffiTestFloats: $A with: 65.0"
+	<cdecl: float 'ffiTestFloats' (float float)>
+	^self externalCallFailed! !
+
+!FFITestLibrary methodsFor: 'primitives' stamp: 'jmv 11/14/2023 10:36:21'!
+ffiTestInt16: c1 with: c2 with: c3 with: c4
+	"FFITestLibrary new ffiTestInt16: $A with: 65 with: 65.0 with: $A"
+	<cdecl: int16 'ffiTestShorts' (int16 int16 int16 int16)>
+	^self externalCallFailed! !
+
+!FFITestLibrary methodsFor: 'primitives' stamp: 'jmv 11/14/2023 10:16:11'!
+ffiTestInt32: c1 with: c2 with: c3 with: c4
+	"FFITestLibrary new ffiTestInt: $A with: 65 with: 65.0 with: $A"
+	<cdecl: int32 'ffiTestInts' (int32 int32 int32 int32)>
+	^self externalCallFailed! !
+
+!FFITestLibrary methodsFor: 'old typeNames' stamp: 'jmv 11/14/2023 11:33:41'!
+ffiTestInt: c1 with: c2 with: c3 with: c4
+	"FFITestLibrary new ffiTestInt: $A with: 65 with: 65.0 with: $A"
+	<cdecl: long 'ffiTestInts' (long long long long)>
+	^self externalCallFailed! !
+
+!FFITestLibrary methodsFor: 'old typeNames' stamp: 'jmv 11/14/2023 11:33:30'!
+ffiTestShort: c1 with: c2 with: c3 with: c4
+	"FFITestLibrary new ffiTestShort: $A with: 65 with: 65.0 with: $A"
+	<cdecl: short 'ffiTestShorts' (short short short short)>
+	^self externalCallFailed! !
+
+!FFITestLibrary class methodsFor: 'accessing' stamp: 'ar 11/28/1999 19:51'!
+moduleName
+	"Use the fully qualified VM name so we ensure testing loading a library"
+	^'SqueakFFIPrims'! !
+
+!FFITestLibrary class methodsFor: 'primitives' stamp: 'jmv 1/6/2023 10:52:16'!
+ffiPrintString: aString
+	"FFITestLibrary ffiPrintString: 'Hello' asUtf8BytesOrByteString"
+	<cdecl: char* 'ffiPrintString' (char *) module:'SqueakFFIPrims'>
+	^self externalCallFailed! !
+
+!FFITestLibrary class methodsFor: 'primitives' stamp: 'KenD 2/7/2019 02:52:17'!
+ffiTestBiggerStruct: pt1 with: pt2
+	<cdecl: FFITestBiggerStruct 'ffiTestStructBigger' (FFITestPoint4 FFITestPoint4) module:'SqueakFFIPrims'>
+	^self externalCallFailed! !
+
+!FFITestLibrary class methodsFor: 'primitives' stamp: 'ar 8/14/2006 19:27'!
+ffiTestChar: c1 with: c2 with: c3 with: c4
+	"FFITestLibrary ffiTestChar: $A with: 65 with: 65.0 with: true"
+	<cdecl: char 'ffiTestChars' (char char char char) module:'SqueakFFIPrims'>
+	^self externalCallFailed! !
+
+!FFITestLibrary class methodsFor: 'primitives' stamp: 'ar 8/14/2006 19:27'!
+ffiTestDoubles: f1 with: f2
+	"FFITestLibrary ffiTestDoubles: $A with: 65.0"
+	<cdecl: double 'ffiTestDoubles' (double double) module:'SqueakFFIPrims'>
+	^self externalCallFailed! !
+
+!FFITestLibrary class methodsFor: 'primitives' stamp: 'djm 5/6/2014 02:39'!
+ffiTestDoubles9: f1 d: f2 d: f3 d: f4 d: f5 d: f6 d: f7 d: f8 d: f9
+	"FFITestLibrary ffiTestDoubles9: 1.0 d: 2.0 d: 3.0 d: 4.0 d: 5.0 d: 6.0 d: 7.0 d: 8.0 d: 9.0"
+	<cdecl: double 'ffiTestDoubles9' (double double double double double double double double double) module:'SqueakFFIPrims'>
+	^self externalCallFailed! !
+
+!FFITestLibrary class methodsFor: 'primitives' stamp: 'ar 8/14/2006 19:27'!
+ffiTestFloats: f1 with: f2
+	"FFITestLibrary ffiTestFloats: $A with: 65.0"
+	<cdecl: float 'ffiTestFloats' (float float) module:'SqueakFFIPrims'>
+	^self externalCallFailed! !
+
+!FFITestLibrary class methodsFor: 'primitives' stamp: 'jmv 11/14/2023 10:36:01'!
+ffiTestInt16: c1 with: c2 with: c3 with: c4
+	"FFITestLibrary ffiTestInt16: $A with: 65 with: 65.0 with:1"
+	<cdecl: int16 'ffiTestShorts' (int16 int16 int16 int16) module:'SqueakFFIPrims'>
+	^self externalCallFailed! !
+
+!FFITestLibrary class methodsFor: 'primitives' stamp: 'jmv 11/14/2023 10:15:28'!
+ffiTestInt32: c1 with: c2 with: c3 with: c4
+	"FFITestLibrary ffiTestInt32: $A with: 65 with: 65.0 with: true"
+	<cdecl: int32 'ffiTestInts' (int32 int32 int32 int32) module: 'SqueakFFIPrims'>
+	^self externalCallFailed! !
+
+!FFITestLibrary class methodsFor: 'primitives' stamp: 'jmv 11/14/2023 09:55:15'!
+ffiTestInt64: long1 with: long2
+	"FFITestLibrary ffiTestInt64: 3 with: 4"
+	<cdecl: int64 'ffiTestLongLong' (int64 int64) module:'SqueakFFIPrims'>
+	^self externalCallFailed! !
+
+!FFITestLibrary class methodsFor: 'primitives' stamp: 'jmv 11/14/2023 09:55:24'!
+ffiTestInt64A1: byte with: long1 with: long2
+	"FFITestLibrary ffiTestInt64A1: 3 with: 4 with: 5"
+	<cdecl: int64 'ffiTestLongLonga1' (char int64 int64) module: 'SqueakFFIPrims'>
+	^self externalCallFailed! !
+
+!FFITestLibrary class methodsFor: 'primitives' stamp: 'jmv 11/14/2023 09:55:34'!
+ffiTestInt64A3: byte1 with: long1 with: byte2
+	"FFITestLibrary ffiTestInt64A3: 3 with: 4 with: 5"
+	<cdecl: int64 'ffiTestLongLonga3' (char int64 char) module:'SqueakFFIPrims'>
+	^self externalCallFailed! !
+
+!FFITestLibrary class methodsFor: 'primitives' stamp: 'jmv 11/14/2023 10:38:01'!
+ffiTestMixedDoublesInt32AndStruct: f1 d: f2 d: f3 d: f4 d: f5 d: f6 d: f7 d: f8 d: f9 i: i1 s: s1
+	"FFITestLibrary ffiTestMixedDoublesIntAndStruct: 1.0 d: 2.0 d: 3.0 d: 4.0 d: 5.0 d: 6.0 d: 7.0 d: 8.0 d: 9.0 i: 42
+		s: (FFITestPoint4 new x: 3; y: 4; z: 5; w:6)"
+	<cdecl: double 'ffiTestMixedDoublesIntAndStruct' (double double double double double double double double double int32 FFITestPoint4) module:'SqueakFFIPrims'>
+	^self externalCallFailed! !
+
+!FFITestLibrary class methodsFor: 'primitives' stamp: 'djm 5/6/2014 05:08'!
+ffiTestMixedFloatsAndDouble: f1 with: d1 with: f2 with: f3
+	"FFITestLibrary ffiTestMixedFloatsAndDouble: 1.2 with: 3.4 with: 5.6 with: 7.8"
+	<cdecl: double 'ffiTestMixedFloatsAndDouble' (float double float float) module:'SqueakFFIPrims'>
+	^self externalCallFailed! !
+
+!FFITestLibrary class methodsFor: 'primitives' stamp: 'jmv 11/14/2023 10:18:26'!
+ffiTestMixedIntAndStruct: i with: pt1 with: pt2
+	"FFITestLibrary ffiTestMixedIntAndStruct: 2 with: (FFITestPoint2 new x: 3; y: 4) with: (FFITestPoint2 new x: 5; y: 6)"
+	<cdecl: int32 'ffiTestMixedIntAndStruct' (int32 FFITestPoint2 FFITestPoint2) module:'SqueakFFIPrims'>
+	^self externalCallFailed! !
+
+!FFITestLibrary class methodsFor: 'primitives' stamp: 'jmv 11/14/2023 10:17:56'!
+ffiTestMixedIntAndStruct2: i with: pt4
+	"FFITestLibrary ffiTestMixedIntAndStruct2: 2 with: (FFITestPoint4 new x: 3; y: 4; z: 5; w:6)"
+	<cdecl: int32 'ffiTestMixedIntAndStruct2' (int32 FFITestPoint4) module:'SqueakFFIPrims'>
+	^self externalCallFailed! !
+
+!FFITestLibrary class methodsFor: 'primitives' stamp: 'jmv 11/14/2023 10:18:14'!
+ffiTestMixedIntAndStruct3: i with: anFFISmallStruct1
+	"FFITestLibrary ffiTestMixedIntAndStruct3: 2 with: (FFISmallStruct1 new x: 3; y: 4)"
+	<cdecl: int32 'ffiTestMixedIntAndStruct3' (int32 FFISmallStruct1) module:'SqueakFFIPrims'>
+	^self externalCallFailed! !
+
+!FFITestLibrary class methodsFor: 'primitives' stamp: 'ar 11/28/1999 19:51'!
+ffiTestPoint2: pt1 with: pt2
+	<cdecl: FFITestPoint2 'ffiTestStruct64' (FFITestPoint2 FFITestPoint2) module:'SqueakFFIPrims'>
+	^self externalCallFailed! !
+
+!FFITestLibrary class methodsFor: 'primitives' stamp: 'ar 11/28/1999 19:51'!
+ffiTestPoint4: pt1 with: pt2
+	<cdecl: FFITestPoint4 'ffiTestStructBig' (FFITestPoint4 FFITestPoint4) module:'SqueakFFIPrims'>
+	^self externalCallFailed! !
+
+!FFITestLibrary class methodsFor: 'primitives' stamp: 'ar 12/1/1999 16:39'!
+ffiTestPointers: pt1 with: pt2
+	<cdecl: FFITestPoint4* 'ffiTestPointers' (FFITestPoint4* FFITestPoint4*) module:'SqueakFFIPrims'>
+	^self externalCallFailed! !
+
+!FFITestLibrary class methodsFor: 'primitives' stamp: 'djm 5/6/2014 05:30'!
+ffiTestSmallStructReturn
+	"FFITestLibrary ffiTestSmallStructReturn"
+	<cdecl: FFISmallStruct1 'ffiTestSmallStructReturn' (void) module:'SqueakFFIPrims'>
+	^self externalCallFailed! !
+
+!FFITestLibrary class methodsFor: 'primitives' stamp: 'jmv 11/14/2023 10:08:26'!
+ffiTestUInt32: c1 with: c2 with: c3 with: c4
+	"FFITestLibrary ffiTestUInt32: 3103854339 with: 3103854339 with: 3103854339 with: 3103854339"
+	<cdecl: int32 'ffiTestInts' (uint32 uint32 uint32 uint32) module:'SqueakFFIPrims'>
+	^self externalCallFailed! !
+
+!FFITestLibrary class methodsFor: 'old typeNames' stamp: 'jmv 11/14/2023 11:33:43'!
+ffiTestInt: c1 with: c2 with: c3 with: c4
+	"FFITestLibrary ffiTestInt: $A with: 65 with: 65.0 with: true"
+	<cdecl: long 'ffiTestInts' (long long long long) module:'SqueakFFIPrims'>
+	^self externalCallFailed! !
+
+!FFITestLibrary class methodsFor: 'old typeNames' stamp: 'jmv 11/14/2023 11:32:57'!
+ffiTestLongLong: long1 with: long2
+	"FFITestLibrary ffiTestLongLong: 3 with: 4"
+	<cdecl: longlong 'ffiTestLongLong' (longlong longlong) module:'SqueakFFIPrims'>
+	^self externalCallFailed! !
+
+!FFITestLibrary class methodsFor: 'old typeNames' stamp: 'jmv 11/14/2023 11:30:44'!
+ffiTestLongLongA1: byte with: long1 with: long2
+	"FFITestLibrary ffiTestLongLongA1: 3 with: 4 with: 5"
+	<cdecl: longlong 'ffiTestLongLonga1' (char longlong longlong) module:'SqueakFFIPrims'>
+	^self externalCallFailed! !
+
+!FFITestLibrary class methodsFor: 'old typeNames' stamp: 'jmv 11/14/2023 11:33:50'!
+ffiTestLongLongA3: byte1 with: long1 with: byte2
+	"FFITestLibrary ffiTestLongLongA3: 3 with: 4 with: 5"
+	<cdecl: longlong 'ffiTestLongLonga3' (char longlong char) module:'SqueakFFIPrims'>
+	^self externalCallFailed! !
+
+!FFITestLibrary class methodsFor: 'old typeNames' stamp: 'jmv 11/14/2023 11:33:20'!
+ffiTestMixedDoublesIntAndStruct: f1 d: f2 d: f3 d: f4 d: f5 d: f6 d: f7 d: f8 d: f9 i: i1 s: s1
+	"FFITestLibrary ffiTestMixedDoublesIntAndStruct: 1.0 d: 2.0 d: 3.0 d: 4.0 d: 5.0 d: 6.0 d: 7.0 d: 8.0 d: 9.0 i: 42
+		s: (FFITestPoint4 new x: 3; y: 4; z: 5; w:6)"
+	<cdecl: double 'ffiTestMixedDoublesIntAndStruct' (double double double double double double double double double long FFITestPoint4) module:'SqueakFFIPrims'>
+	^self externalCallFailed! !
+
+!FFITestLibrary class methodsFor: 'old typeNames' stamp: 'jmv 11/14/2023 11:33:33'!
+ffiTestShort: c1 with: c2 with: c3 with: c4
+	"FFITestLibrary ffiTestShort: $A with: 65 with: 65.0 with:1"
+	<cdecl: short 'ffiTestShorts' (short short short short) module:'SqueakFFIPrims'>
+	^self externalCallFailed! !
+
+!FFITestLibrary class methodsFor: 'old typeNames' stamp: 'jmv 11/14/2023 11:34:04'!
+ffiTestUlong: c1 with: c2 with: c3 with: c4
+	"FFITestLibrary ffiTestUlong: 3103854339 with: 3103854339 with: 3103854339 with: 3103854339"
+	<cdecl: long 'ffiTestInts' (ulong ulong ulong ulong) module:'SqueakFFIPrims'>
+	^self externalCallFailed! !
+
+!FFISmallStruct1 methodsFor: 'accessing'!
+x
+	"This method was automatically generated. See FFISmallStruct1 class>>fields."
+	<generated>
+	^handle uint8At: 1! !
+
+!FFISmallStruct1 methodsFor: 'accessing'!
+x: anObject
+	"This method was automatically generated. See FFISmallStruct1 class>>fields."
+	<generated>
+	handle uint8At: 1 put: anObject! !
+
+!FFISmallStruct1 methodsFor: 'accessing'!
+y
+	"This method was automatically generated. See FFISmallStruct1 class>>fields."
+	<generated>
+	^handle uint8At: 2! !
+
+!FFISmallStruct1 methodsFor: 'accessing'!
+y: anObject
+	"This method was automatically generated. See FFISmallStruct1 class>>fields."
+	<generated>
+	handle uint8At: 2 put: anObject! !
+
+!FFISmallStruct1 class methodsFor: 'as yet unclassified' stamp: 'jmv 11/14/2023 10:48:25'!
+fields
+	"FFISmallStruct1 defineFields"
+	^#(
+		(x	'uint8')
+		(y	'uint8')
+	)! !
+
+!FFISmallStruct1 class methodsFor: 'class initialization' stamp: 'jmv 12/19/2016 15:55:57'!
+initialize
+	self compileFields! !
+
+!FFITestBiggerStruct methodsFor: 'accessing'!
+r
+	"This method was automatically generated. See FFITestBiggerStruct class>>fields."
+	<generated>
+	^handle int64At: 33! !
+
+!FFITestBiggerStruct methodsFor: 'accessing'!
+r: anObject
+	"This method was automatically generated. See FFITestBiggerStruct class>>fields."
+	<generated>
+	handle int64At: 33 put: anObject! !
+
+!FFITestBiggerStruct methodsFor: 'accessing'!
+s
+	"This method was automatically generated. See FFITestBiggerStruct class>>fields."
+	<generated>
+	^handle int64At: 41! !
+
+!FFITestBiggerStruct methodsFor: 'accessing'!
+s: anObject
+	"This method was automatically generated. See FFITestBiggerStruct class>>fields."
+	<generated>
+	handle int64At: 41 put: anObject! !
+
+!FFITestBiggerStruct methodsFor: 'accessing'!
+t
+	"This method was automatically generated. See FFITestBiggerStruct class>>fields."
+	<generated>
+	^handle int64At: 49! !
+
+!FFITestBiggerStruct methodsFor: 'accessing'!
+t: anObject
+	"This method was automatically generated. See FFITestBiggerStruct class>>fields."
+	<generated>
+	handle int64At: 49 put: anObject! !
+
+!FFITestBiggerStruct methodsFor: 'accessing'!
+u
+	"This method was automatically generated. See FFITestBiggerStruct class>>fields."
+	<generated>
+	^handle int64At: 57! !
+
+!FFITestBiggerStruct methodsFor: 'accessing'!
+u: anObject
+	"This method was automatically generated. See FFITestBiggerStruct class>>fields."
+	<generated>
+	handle int64At: 57 put: anObject! !
+
+!FFITestBiggerStruct methodsFor: 'accessing'!
+w
+	"This method was automatically generated. See FFITestBiggerStruct class>>fields."
+	<generated>
+	^handle int64At: 25! !
+
+!FFITestBiggerStruct methodsFor: 'accessing'!
+w: anObject
+	"This method was automatically generated. See FFITestBiggerStruct class>>fields."
+	<generated>
+	handle int64At: 25 put: anObject! !
+
+!FFITestBiggerStruct methodsFor: 'accessing'!
+x
+	"This method was automatically generated. See FFITestBiggerStruct class>>fields."
+	<generated>
+	^handle int64At: 1! !
+
+!FFITestBiggerStruct methodsFor: 'accessing'!
+x: anObject
+	"This method was automatically generated. See FFITestBiggerStruct class>>fields."
+	<generated>
+	handle int64At: 1 put: anObject! !
+
+!FFITestBiggerStruct methodsFor: 'accessing'!
+y
+	"This method was automatically generated. See FFITestBiggerStruct class>>fields."
+	<generated>
+	^handle int64At: 9! !
+
+!FFITestBiggerStruct methodsFor: 'accessing'!
+y: anObject
+	"This method was automatically generated. See FFITestBiggerStruct class>>fields."
+	<generated>
+	handle int64At: 9 put: anObject! !
+
+!FFITestBiggerStruct methodsFor: 'accessing'!
+z
+	"This method was automatically generated. See FFITestBiggerStruct class>>fields."
+	<generated>
+	^handle int64At: 17! !
+
+!FFITestBiggerStruct methodsFor: 'accessing'!
+z: anObject
+	"This method was automatically generated. See FFITestBiggerStruct class>>fields."
+	<generated>
+	handle int64At: 17 put: anObject! !
+
+!FFITestBiggerStruct class methodsFor: 'field definition' stamp: 'jmv 11/14/2023 12:13:58'!
+fields
+	"FFITestBiggerStruct defineFields"
+	^#(
+		(x	'int64')
+		(y	'int64')
+		(z	'int64')
+		(w	'int64')
+		(r  	'int64')
+		(s  	'int64')
+		(t  	'int64')
+		(u  	'int64')
+	)! !
+
+!FFITestBiggerStruct class methodsFor: 'class initialization' stamp: 'KenD 2/7/2019 03:04:32'!
+initialize
+"
+	self defineFields; compileFields.
+"
+	self compileFields! !
+
+!FFITestPoint2 methodsFor: 'accessing'!
+x
+	"This method was automatically generated. See FFITestPoint2 class>>fields."
+	<generated>
+	^handle int32At: 1! !
+
+!FFITestPoint2 methodsFor: 'accessing'!
+x: anObject
+	"This method was automatically generated. See FFITestPoint2 class>>fields."
+	<generated>
+	handle int32At: 1 put: anObject! !
+
+!FFITestPoint2 methodsFor: 'accessing'!
+y
+	"This method was automatically generated. See FFITestPoint2 class>>fields."
+	<generated>
+	^handle int32At: 5! !
+
+!FFITestPoint2 methodsFor: 'accessing'!
+y: anObject
+	"This method was automatically generated. See FFITestPoint2 class>>fields."
+	<generated>
+	handle int32At: 5 put: anObject! !
+
+!FFITestPoint2 class methodsFor: 'field definition' stamp: 'jmv 11/14/2023 10:09:36'!
+fields
+	"FFITestPoint2 defineFields"
+	^#(
+		(x	'int32')
+		(y	'int32')
+	)! !
+
+!FFITestPoint2 class methodsFor: 'class initialization' stamp: 'jmv 8/21/2013 17:39'!
+initialize
+	self compileFields! !
+
+!FFITestPoint4 methodsFor: 'accessing'!
+w
+	"This method was automatically generated. See FFITestPoint4 class>>fields."
+	<generated>
+	^handle int32At: 13! !
+
+!FFITestPoint4 methodsFor: 'accessing'!
+w: anObject
+	"This method was automatically generated. See FFITestPoint4 class>>fields."
+	<generated>
+	handle int32At: 13 put: anObject! !
+
+!FFITestPoint4 methodsFor: 'accessing'!
+x
+	"This method was automatically generated. See FFITestPoint4 class>>fields."
+	<generated>
+	^handle int32At: 1! !
+
+!FFITestPoint4 methodsFor: 'accessing'!
+x: anObject
+	"This method was automatically generated. See FFITestPoint4 class>>fields."
+	<generated>
+	handle int32At: 1 put: anObject! !
+
+!FFITestPoint4 methodsFor: 'accessing'!
+y
+	"This method was automatically generated. See FFITestPoint4 class>>fields."
+	<generated>
+	^handle int32At: 5! !
+
+!FFITestPoint4 methodsFor: 'accessing'!
+y: anObject
+	"This method was automatically generated. See FFITestPoint4 class>>fields."
+	<generated>
+	handle int32At: 5 put: anObject! !
+
+!FFITestPoint4 methodsFor: 'accessing'!
+z
+	"This method was automatically generated. See FFITestPoint4 class>>fields."
+	<generated>
+	^handle int32At: 9! !
+
+!FFITestPoint4 methodsFor: 'accessing'!
+z: anObject
+	"This method was automatically generated. See FFITestPoint4 class>>fields."
+	<generated>
+	handle int32At: 9 put: anObject! !
+
+!FFITestPoint4 class methodsFor: 'field definition' stamp: 'jmv 11/14/2023 10:10:10'!
+fields
+	"FFITestPoint4 defineFields"
+	^#(
+		(x	'int32')
+		(y	'int32')
+		(z	'int32')
+		(w	'int32')
+	)! !
+
+!FFITestPoint4 class methodsFor: 'class initialization' stamp: 'jmv 8/21/2013 17:39'!
+initialize
+	self compileFields! !
+
+!FFIMemoryTests methodsFor: 'memory tests' stamp: 'jfr 10/18/2024 12:47:23'!
+testCopyToExternalMemory
+	"Test copyToExternalMemory"
+	
+	| sampleString sampleBytes addr bytes string |
+
+	sampleString := 'This is a test'.
+	sampleBytes := (sampleString, Character null asString) asUtf8Bytes.
+	addr := sampleBytes copyToExternalMemory.
+	self assert: (addr is: #ExternalAddress).
+	self assert: (addr isNull not).
+	
+	"Don't try to read from a null address"
+	(addr isNull not) 
+		ifTrue:[
+			bytes := addr bytesAt: 1 maxLength: sampleString size stopAtNullByte: true.
+			self assert: ((sampleBytes size - 1) = (bytes size)).
+			string := addr utf8StringAt: 1 maxLength: sampleString size stopAtNull: true.
+			self assert: (sampleString = string)].! !
+
+!FFIMemoryTests methodsFor: 'memory tests' stamp: 'jfr 10/18/2024 13:53:03'!
+testMoveToExternalMemoryAndBack
+	"Test moveToExternalMemory"
+	
+	| sample |
+
+	"Create a sample object and show it is in Smalltalk memory"
+	sample := FFITestBiggerStruct new
+		x: -100;
+		y: -50;
+		z: -25;
+		w: 0;
+		r: 25;
+		s: 50;
+		t: 100;
+		u: 5555;
+		yourself.
+	self assert: sample isInExternalMemory not.
+	
+	"Move the data to external memory and show the values still work"
+	sample moveToExternalMemory.
+	self assert: sample isInExternalMemory.
+	self assert: (sample x = -100).
+	self assert: (sample y = -50).
+	self assert: (sample z = -25).
+	self assert: (sample w = 0).
+	self assert: (sample r = 25).
+	self assert: (sample s = 50).
+	self assert: (sample t = 100).
+	self assert: (sample u = 5555).
+	
+	"Move the data back to smallalk memory and show the values still work"
+	sample moveToSmalltalkMemory.
+	self assert: sample isInExternalMemory not.
+	self assert: (sample x = -100).
+	self assert: (sample y = -50).
+	self assert: (sample z = -25).
+	self assert: (sample w = 0).
+	self assert: (sample r = 25).
+	self assert: (sample s = 50).
+	self assert: (sample t = 100).
+	self assert: (sample u = 5555).! !
 
 !FFIPluginTests methodsFor: 'external form tests' stamp: 'db 10/22/2020 01:37:34'!
 testBlitToAndFromExternalForm
@@ -522,481 +1070,6 @@ testLibcQsort
 		[:i| self assert: (sort at: i) <= (sort at: i + 1)].
 	values free.
 	^{ orig. sort. usecs. callbackCount }! !
-
-!FFITestLibrary methodsFor: 'primitives' stamp: 'jmv 1/6/2023 10:52:11'!
-ffiPrintString: aString
-	"FFITestLibrary new ffiPrintString: 'Hello' asUtf8BytesOrByteString"
-	<cdecl: char* 'ffiPrintString' (char *)>
-	^self externalCallFailed! !
-
-!FFITestLibrary methodsFor: 'primitives' stamp: 'KenD 2/4/2019 15:27:30'!
-ffiTestBiggerStruct: pt1 with: pt2
-	<cdecl: FFITestBiggerStruct 'ffiTestStructBigger' (FFITestPoint4 FFITestPoint4) module:'SqueakFFIPrims'>
-	^self externalCallFailed! !
-
-!FFITestLibrary methodsFor: 'primitives' stamp: 'ar 8/29/2011 21:59'!
-ffiTestChar: c1 with: c2 with: c3 with: c4
-	"FFITestLibrary new ffiTestChar: $A with: 65 with: 65.0 with: true"
-	<cdecl: char 'ffiTestChars' (char char char char)>
-	^self externalCallFailed! !
-
-!FFITestLibrary methodsFor: 'primitives' stamp: 'ar 8/29/2011 22:00'!
-ffiTestDoubles: f1 with: f2
-	"FFITestLibrary new ffiTestDoubles: $A with: 65.0"
-	<cdecl: double 'ffiTestDoubles' (double double)>
-	^self externalCallFailed! !
-
-!FFITestLibrary methodsFor: 'primitives' stamp: 'ar 8/29/2011 22:00'!
-ffiTestFloats: f1 with: f2
-	"FFITestLibrary new ffiTestFloats: $A with: 65.0"
-	<cdecl: float 'ffiTestFloats' (float float)>
-	^self externalCallFailed! !
-
-!FFITestLibrary methodsFor: 'primitives' stamp: 'jmv 11/14/2023 10:36:21'!
-ffiTestInt16: c1 with: c2 with: c3 with: c4
-	"FFITestLibrary new ffiTestInt16: $A with: 65 with: 65.0 with: $A"
-	<cdecl: int16 'ffiTestShorts' (int16 int16 int16 int16)>
-	^self externalCallFailed! !
-
-!FFITestLibrary methodsFor: 'primitives' stamp: 'jmv 11/14/2023 10:16:11'!
-ffiTestInt32: c1 with: c2 with: c3 with: c4
-	"FFITestLibrary new ffiTestInt: $A with: 65 with: 65.0 with: $A"
-	<cdecl: int32 'ffiTestInts' (int32 int32 int32 int32)>
-	^self externalCallFailed! !
-
-!FFITestLibrary methodsFor: 'old typeNames' stamp: 'jmv 11/14/2023 11:33:41'!
-ffiTestInt: c1 with: c2 with: c3 with: c4
-	"FFITestLibrary new ffiTestInt: $A with: 65 with: 65.0 with: $A"
-	<cdecl: long 'ffiTestInts' (long long long long)>
-	^self externalCallFailed! !
-
-!FFITestLibrary methodsFor: 'old typeNames' stamp: 'jmv 11/14/2023 11:33:30'!
-ffiTestShort: c1 with: c2 with: c3 with: c4
-	"FFITestLibrary new ffiTestShort: $A with: 65 with: 65.0 with: $A"
-	<cdecl: short 'ffiTestShorts' (short short short short)>
-	^self externalCallFailed! !
-
-!FFITestLibrary class methodsFor: 'accessing' stamp: 'ar 11/28/1999 19:51'!
-moduleName
-	"Use the fully qualified VM name so we ensure testing loading a library"
-	^'SqueakFFIPrims'! !
-
-!FFITestLibrary class methodsFor: 'primitives' stamp: 'jmv 1/6/2023 10:52:16'!
-ffiPrintString: aString
-	"FFITestLibrary ffiPrintString: 'Hello' asUtf8BytesOrByteString"
-	<cdecl: char* 'ffiPrintString' (char *) module:'SqueakFFIPrims'>
-	^self externalCallFailed! !
-
-!FFITestLibrary class methodsFor: 'primitives' stamp: 'KenD 2/7/2019 02:52:17'!
-ffiTestBiggerStruct: pt1 with: pt2
-	<cdecl: FFITestBiggerStruct 'ffiTestStructBigger' (FFITestPoint4 FFITestPoint4) module:'SqueakFFIPrims'>
-	^self externalCallFailed! !
-
-!FFITestLibrary class methodsFor: 'primitives' stamp: 'ar 8/14/2006 19:27'!
-ffiTestChar: c1 with: c2 with: c3 with: c4
-	"FFITestLibrary ffiTestChar: $A with: 65 with: 65.0 with: true"
-	<cdecl: char 'ffiTestChars' (char char char char) module:'SqueakFFIPrims'>
-	^self externalCallFailed! !
-
-!FFITestLibrary class methodsFor: 'primitives' stamp: 'djm 5/6/2014 02:39'!
-ffiTestDoubles9: f1 d: f2 d: f3 d: f4 d: f5 d: f6 d: f7 d: f8 d: f9
-	"FFITestLibrary ffiTestDoubles9: 1.0 d: 2.0 d: 3.0 d: 4.0 d: 5.0 d: 6.0 d: 7.0 d: 8.0 d: 9.0"
-	<cdecl: double 'ffiTestDoubles9' (double double double double double double double double double) module:'SqueakFFIPrims'>
-	^self externalCallFailed! !
-
-!FFITestLibrary class methodsFor: 'primitives' stamp: 'ar 8/14/2006 19:27'!
-ffiTestDoubles: f1 with: f2
-	"FFITestLibrary ffiTestDoubles: $A with: 65.0"
-	<cdecl: double 'ffiTestDoubles' (double double) module:'SqueakFFIPrims'>
-	^self externalCallFailed! !
-
-!FFITestLibrary class methodsFor: 'primitives' stamp: 'ar 8/14/2006 19:27'!
-ffiTestFloats: f1 with: f2
-	"FFITestLibrary ffiTestFloats: $A with: 65.0"
-	<cdecl: float 'ffiTestFloats' (float float) module:'SqueakFFIPrims'>
-	^self externalCallFailed! !
-
-!FFITestLibrary class methodsFor: 'primitives' stamp: 'jmv 11/14/2023 10:36:01'!
-ffiTestInt16: c1 with: c2 with: c3 with: c4
-	"FFITestLibrary ffiTestInt16: $A with: 65 with: 65.0 with:1"
-	<cdecl: int16 'ffiTestShorts' (int16 int16 int16 int16) module:'SqueakFFIPrims'>
-	^self externalCallFailed! !
-
-!FFITestLibrary class methodsFor: 'primitives' stamp: 'jmv 11/14/2023 10:15:28'!
-ffiTestInt32: c1 with: c2 with: c3 with: c4
-	"FFITestLibrary ffiTestInt32: $A with: 65 with: 65.0 with: true"
-	<cdecl: int32 'ffiTestInts' (int32 int32 int32 int32) module: 'SqueakFFIPrims'>
-	^self externalCallFailed! !
-
-!FFITestLibrary class methodsFor: 'primitives' stamp: 'jmv 11/14/2023 09:55:15'!
-ffiTestInt64: long1 with: long2
-	"FFITestLibrary ffiTestInt64: 3 with: 4"
-	<cdecl: int64 'ffiTestLongLong' (int64 int64) module:'SqueakFFIPrims'>
-	^self externalCallFailed! !
-
-!FFITestLibrary class methodsFor: 'primitives' stamp: 'jmv 11/14/2023 09:55:24'!
-ffiTestInt64A1: byte with: long1 with: long2
-	"FFITestLibrary ffiTestInt64A1: 3 with: 4 with: 5"
-	<cdecl: int64 'ffiTestLongLonga1' (char int64 int64) module: 'SqueakFFIPrims'>
-	^self externalCallFailed! !
-
-!FFITestLibrary class methodsFor: 'primitives' stamp: 'jmv 11/14/2023 09:55:34'!
-ffiTestInt64A3: byte1 with: long1 with: byte2
-	"FFITestLibrary ffiTestInt64A3: 3 with: 4 with: 5"
-	<cdecl: int64 'ffiTestLongLonga3' (char int64 char) module:'SqueakFFIPrims'>
-	^self externalCallFailed! !
-
-!FFITestLibrary class methodsFor: 'primitives' stamp: 'jmv 11/14/2023 10:38:01'!
-ffiTestMixedDoublesInt32AndStruct: f1 d: f2 d: f3 d: f4 d: f5 d: f6 d: f7 d: f8 d: f9 i: i1 s: s1
-	"FFITestLibrary ffiTestMixedDoublesIntAndStruct: 1.0 d: 2.0 d: 3.0 d: 4.0 d: 5.0 d: 6.0 d: 7.0 d: 8.0 d: 9.0 i: 42
-		s: (FFITestPoint4 new x: 3; y: 4; z: 5; w:6)"
-	<cdecl: double 'ffiTestMixedDoublesIntAndStruct' (double double double double double double double double double int32 FFITestPoint4) module:'SqueakFFIPrims'>
-	^self externalCallFailed! !
-
-!FFITestLibrary class methodsFor: 'primitives' stamp: 'djm 5/6/2014 05:08'!
-ffiTestMixedFloatsAndDouble: f1 with: d1 with: f2 with: f3
-	"FFITestLibrary ffiTestMixedFloatsAndDouble: 1.2 with: 3.4 with: 5.6 with: 7.8"
-	<cdecl: double 'ffiTestMixedFloatsAndDouble' (float double float float) module:'SqueakFFIPrims'>
-	^self externalCallFailed! !
-
-!FFITestLibrary class methodsFor: 'primitives' stamp: 'jmv 11/14/2023 10:17:56'!
-ffiTestMixedIntAndStruct2: i with: pt4
-	"FFITestLibrary ffiTestMixedIntAndStruct2: 2 with: (FFITestPoint4 new x: 3; y: 4; z: 5; w:6)"
-	<cdecl: int32 'ffiTestMixedIntAndStruct2' (int32 FFITestPoint4) module:'SqueakFFIPrims'>
-	^self externalCallFailed! !
-
-!FFITestLibrary class methodsFor: 'primitives' stamp: 'jmv 11/14/2023 10:18:14'!
-ffiTestMixedIntAndStruct3: i with: anFFISmallStruct1
-	"FFITestLibrary ffiTestMixedIntAndStruct3: 2 with: (FFISmallStruct1 new x: 3; y: 4)"
-	<cdecl: int32 'ffiTestMixedIntAndStruct3' (int32 FFISmallStruct1) module:'SqueakFFIPrims'>
-	^self externalCallFailed! !
-
-!FFITestLibrary class methodsFor: 'primitives' stamp: 'jmv 11/14/2023 10:18:26'!
-ffiTestMixedIntAndStruct: i with: pt1 with: pt2
-	"FFITestLibrary ffiTestMixedIntAndStruct: 2 with: (FFITestPoint2 new x: 3; y: 4) with: (FFITestPoint2 new x: 5; y: 6)"
-	<cdecl: int32 'ffiTestMixedIntAndStruct' (int32 FFITestPoint2 FFITestPoint2) module:'SqueakFFIPrims'>
-	^self externalCallFailed! !
-
-!FFITestLibrary class methodsFor: 'primitives' stamp: 'ar 11/28/1999 19:51'!
-ffiTestPoint2: pt1 with: pt2
-	<cdecl: FFITestPoint2 'ffiTestStruct64' (FFITestPoint2 FFITestPoint2) module:'SqueakFFIPrims'>
-	^self externalCallFailed! !
-
-!FFITestLibrary class methodsFor: 'primitives' stamp: 'ar 11/28/1999 19:51'!
-ffiTestPoint4: pt1 with: pt2
-	<cdecl: FFITestPoint4 'ffiTestStructBig' (FFITestPoint4 FFITestPoint4) module:'SqueakFFIPrims'>
-	^self externalCallFailed! !
-
-!FFITestLibrary class methodsFor: 'primitives' stamp: 'ar 12/1/1999 16:39'!
-ffiTestPointers: pt1 with: pt2
-	<cdecl: FFITestPoint4* 'ffiTestPointers' (FFITestPoint4* FFITestPoint4*) module:'SqueakFFIPrims'>
-	^self externalCallFailed! !
-
-!FFITestLibrary class methodsFor: 'primitives' stamp: 'djm 5/6/2014 05:30'!
-ffiTestSmallStructReturn
-	"FFITestLibrary ffiTestSmallStructReturn"
-	<cdecl: FFISmallStruct1 'ffiTestSmallStructReturn' (void) module:'SqueakFFIPrims'>
-	^self externalCallFailed! !
-
-!FFITestLibrary class methodsFor: 'primitives' stamp: 'jmv 11/14/2023 10:08:26'!
-ffiTestUInt32: c1 with: c2 with: c3 with: c4
-	"FFITestLibrary ffiTestUInt32: 3103854339 with: 3103854339 with: 3103854339 with: 3103854339"
-	<cdecl: int32 'ffiTestInts' (uint32 uint32 uint32 uint32) module:'SqueakFFIPrims'>
-	^self externalCallFailed! !
-
-!FFITestLibrary class methodsFor: 'old typeNames' stamp: 'jmv 11/14/2023 11:33:43'!
-ffiTestInt: c1 with: c2 with: c3 with: c4
-	"FFITestLibrary ffiTestInt: $A with: 65 with: 65.0 with: true"
-	<cdecl: long 'ffiTestInts' (long long long long) module:'SqueakFFIPrims'>
-	^self externalCallFailed! !
-
-!FFITestLibrary class methodsFor: 'old typeNames' stamp: 'jmv 11/14/2023 11:32:57'!
-ffiTestLongLong: long1 with: long2
-	"FFITestLibrary ffiTestLongLong: 3 with: 4"
-	<cdecl: longlong 'ffiTestLongLong' (longlong longlong) module:'SqueakFFIPrims'>
-	^self externalCallFailed! !
-
-!FFITestLibrary class methodsFor: 'old typeNames' stamp: 'jmv 11/14/2023 11:30:44'!
-ffiTestLongLongA1: byte with: long1 with: long2
-	"FFITestLibrary ffiTestLongLongA1: 3 with: 4 with: 5"
-	<cdecl: longlong 'ffiTestLongLonga1' (char longlong longlong) module:'SqueakFFIPrims'>
-	^self externalCallFailed! !
-
-!FFITestLibrary class methodsFor: 'old typeNames' stamp: 'jmv 11/14/2023 11:33:50'!
-ffiTestLongLongA3: byte1 with: long1 with: byte2
-	"FFITestLibrary ffiTestLongLongA3: 3 with: 4 with: 5"
-	<cdecl: longlong 'ffiTestLongLonga3' (char longlong char) module:'SqueakFFIPrims'>
-	^self externalCallFailed! !
-
-!FFITestLibrary class methodsFor: 'old typeNames' stamp: 'jmv 11/14/2023 11:33:20'!
-ffiTestMixedDoublesIntAndStruct: f1 d: f2 d: f3 d: f4 d: f5 d: f6 d: f7 d: f8 d: f9 i: i1 s: s1
-	"FFITestLibrary ffiTestMixedDoublesIntAndStruct: 1.0 d: 2.0 d: 3.0 d: 4.0 d: 5.0 d: 6.0 d: 7.0 d: 8.0 d: 9.0 i: 42
-		s: (FFITestPoint4 new x: 3; y: 4; z: 5; w:6)"
-	<cdecl: double 'ffiTestMixedDoublesIntAndStruct' (double double double double double double double double double long FFITestPoint4) module:'SqueakFFIPrims'>
-	^self externalCallFailed! !
-
-!FFITestLibrary class methodsFor: 'old typeNames' stamp: 'jmv 11/14/2023 11:33:33'!
-ffiTestShort: c1 with: c2 with: c3 with: c4
-	"FFITestLibrary ffiTestShort: $A with: 65 with: 65.0 with:1"
-	<cdecl: short 'ffiTestShorts' (short short short short) module:'SqueakFFIPrims'>
-	^self externalCallFailed! !
-
-!FFITestLibrary class methodsFor: 'old typeNames' stamp: 'jmv 11/14/2023 11:34:04'!
-ffiTestUlong: c1 with: c2 with: c3 with: c4
-	"FFITestLibrary ffiTestUlong: 3103854339 with: 3103854339 with: 3103854339 with: 3103854339"
-	<cdecl: long 'ffiTestInts' (ulong ulong ulong ulong) module:'SqueakFFIPrims'>
-	^self externalCallFailed! !
-
-!FFISmallStruct1 methodsFor: 'accessing'!
-x
-	"This method was automatically generated. See FFISmallStruct1 class>>fields."
-	<generated>
-	^handle uint8At: 1! !
-
-!FFISmallStruct1 methodsFor: 'accessing'!
-x: anObject
-	"This method was automatically generated. See FFISmallStruct1 class>>fields."
-	<generated>
-	handle uint8At: 1 put: anObject! !
-
-!FFISmallStruct1 methodsFor: 'accessing'!
-y
-	"This method was automatically generated. See FFISmallStruct1 class>>fields."
-	<generated>
-	^handle uint8At: 2! !
-
-!FFISmallStruct1 methodsFor: 'accessing'!
-y: anObject
-	"This method was automatically generated. See FFISmallStruct1 class>>fields."
-	<generated>
-	handle uint8At: 2 put: anObject! !
-
-!FFISmallStruct1 class methodsFor: 'as yet unclassified' stamp: 'jmv 11/14/2023 10:48:25'!
-fields
-	"FFISmallStruct1 defineFields"
-	^#(
-		(x	'uint8')
-		(y	'uint8')
-	)! !
-
-!FFISmallStruct1 class methodsFor: 'class initialization' stamp: 'jmv 12/19/2016 15:55:57'!
-initialize
-	self compileFields! !
-
-!FFITestBiggerStruct methodsFor: 'accessing'!
-r
-	"This method was automatically generated. See FFITestBiggerStruct class>>fields."
-	<generated>
-	^handle int64At: 33! !
-
-!FFITestBiggerStruct methodsFor: 'accessing'!
-r: anObject
-	"This method was automatically generated. See FFITestBiggerStruct class>>fields."
-	<generated>
-	handle int64At: 33 put: anObject! !
-
-!FFITestBiggerStruct methodsFor: 'accessing'!
-s
-	"This method was automatically generated. See FFITestBiggerStruct class>>fields."
-	<generated>
-	^handle int64At: 41! !
-
-!FFITestBiggerStruct methodsFor: 'accessing'!
-s: anObject
-	"This method was automatically generated. See FFITestBiggerStruct class>>fields."
-	<generated>
-	handle int64At: 41 put: anObject! !
-
-!FFITestBiggerStruct methodsFor: 'accessing'!
-t
-	"This method was automatically generated. See FFITestBiggerStruct class>>fields."
-	<generated>
-	^handle int64At: 49! !
-
-!FFITestBiggerStruct methodsFor: 'accessing'!
-t: anObject
-	"This method was automatically generated. See FFITestBiggerStruct class>>fields."
-	<generated>
-	handle int64At: 49 put: anObject! !
-
-!FFITestBiggerStruct methodsFor: 'accessing'!
-u
-	"This method was automatically generated. See FFITestBiggerStruct class>>fields."
-	<generated>
-	^handle int64At: 57! !
-
-!FFITestBiggerStruct methodsFor: 'accessing'!
-u: anObject
-	"This method was automatically generated. See FFITestBiggerStruct class>>fields."
-	<generated>
-	handle int64At: 57 put: anObject! !
-
-!FFITestBiggerStruct methodsFor: 'accessing'!
-w
-	"This method was automatically generated. See FFITestBiggerStruct class>>fields."
-	<generated>
-	^handle int64At: 25! !
-
-!FFITestBiggerStruct methodsFor: 'accessing'!
-w: anObject
-	"This method was automatically generated. See FFITestBiggerStruct class>>fields."
-	<generated>
-	handle int64At: 25 put: anObject! !
-
-!FFITestBiggerStruct methodsFor: 'accessing'!
-x
-	"This method was automatically generated. See FFITestBiggerStruct class>>fields."
-	<generated>
-	^handle int64At: 1! !
-
-!FFITestBiggerStruct methodsFor: 'accessing'!
-x: anObject
-	"This method was automatically generated. See FFITestBiggerStruct class>>fields."
-	<generated>
-	handle int64At: 1 put: anObject! !
-
-!FFITestBiggerStruct methodsFor: 'accessing'!
-y
-	"This method was automatically generated. See FFITestBiggerStruct class>>fields."
-	<generated>
-	^handle int64At: 9! !
-
-!FFITestBiggerStruct methodsFor: 'accessing'!
-y: anObject
-	"This method was automatically generated. See FFITestBiggerStruct class>>fields."
-	<generated>
-	handle int64At: 9 put: anObject! !
-
-!FFITestBiggerStruct methodsFor: 'accessing'!
-z
-	"This method was automatically generated. See FFITestBiggerStruct class>>fields."
-	<generated>
-	^handle int64At: 17! !
-
-!FFITestBiggerStruct methodsFor: 'accessing'!
-z: anObject
-	"This method was automatically generated. See FFITestBiggerStruct class>>fields."
-	<generated>
-	handle int64At: 17 put: anObject! !
-
-!FFITestBiggerStruct class methodsFor: 'field definition' stamp: 'jmv 11/14/2023 12:13:58'!
-fields
-	"FFITestBiggerStruct defineFields"
-	^#(
-		(x	'int64')
-		(y	'int64')
-		(z	'int64')
-		(w	'int64')
-		(r  	'int64')
-		(s  	'int64')
-		(t  	'int64')
-		(u  	'int64')
-	)! !
-
-!FFITestBiggerStruct class methodsFor: 'class initialization' stamp: 'KenD 2/7/2019 03:04:32'!
-initialize
-"
-	self defineFields; compileFields.
-"
-	self compileFields! !
-
-!FFITestPoint2 methodsFor: 'accessing'!
-x
-	"This method was automatically generated. See FFITestPoint2 class>>fields."
-	<generated>
-	^handle int32At: 1! !
-
-!FFITestPoint2 methodsFor: 'accessing'!
-x: anObject
-	"This method was automatically generated. See FFITestPoint2 class>>fields."
-	<generated>
-	handle int32At: 1 put: anObject! !
-
-!FFITestPoint2 methodsFor: 'accessing'!
-y
-	"This method was automatically generated. See FFITestPoint2 class>>fields."
-	<generated>
-	^handle int32At: 5! !
-
-!FFITestPoint2 methodsFor: 'accessing'!
-y: anObject
-	"This method was automatically generated. See FFITestPoint2 class>>fields."
-	<generated>
-	handle int32At: 5 put: anObject! !
-
-!FFITestPoint2 class methodsFor: 'field definition' stamp: 'jmv 11/14/2023 10:09:36'!
-fields
-	"FFITestPoint2 defineFields"
-	^#(
-		(x	'int32')
-		(y	'int32')
-	)! !
-
-!FFITestPoint2 class methodsFor: 'class initialization' stamp: 'jmv 8/21/2013 17:39'!
-initialize
-	self compileFields! !
-
-!FFITestPoint4 methodsFor: 'accessing'!
-w
-	"This method was automatically generated. See FFITestPoint4 class>>fields."
-	<generated>
-	^handle int32At: 13! !
-
-!FFITestPoint4 methodsFor: 'accessing'!
-w: anObject
-	"This method was automatically generated. See FFITestPoint4 class>>fields."
-	<generated>
-	handle int32At: 13 put: anObject! !
-
-!FFITestPoint4 methodsFor: 'accessing'!
-x
-	"This method was automatically generated. See FFITestPoint4 class>>fields."
-	<generated>
-	^handle int32At: 1! !
-
-!FFITestPoint4 methodsFor: 'accessing'!
-x: anObject
-	"This method was automatically generated. See FFITestPoint4 class>>fields."
-	<generated>
-	handle int32At: 1 put: anObject! !
-
-!FFITestPoint4 methodsFor: 'accessing'!
-y
-	"This method was automatically generated. See FFITestPoint4 class>>fields."
-	<generated>
-	^handle int32At: 5! !
-
-!FFITestPoint4 methodsFor: 'accessing'!
-y: anObject
-	"This method was automatically generated. See FFITestPoint4 class>>fields."
-	<generated>
-	handle int32At: 5 put: anObject! !
-
-!FFITestPoint4 methodsFor: 'accessing'!
-z
-	"This method was automatically generated. See FFITestPoint4 class>>fields."
-	<generated>
-	^handle int32At: 9! !
-
-!FFITestPoint4 methodsFor: 'accessing'!
-z: anObject
-	"This method was automatically generated. See FFITestPoint4 class>>fields."
-	<generated>
-	handle int32At: 9 put: anObject! !
-
-!FFITestPoint4 class methodsFor: 'field definition' stamp: 'jmv 11/14/2023 10:10:10'!
-fields
-	"FFITestPoint4 defineFields"
-	^#(
-		(x	'int32')
-		(y	'int32')
-		(z	'int32')
-		(w	'int32')
-	)! !
-
-!FFITestPoint4 class methodsFor: 'class initialization' stamp: 'jmv 8/21/2013 17:39'!
-initialize
-	self compileFields! !
 FFISmallStruct1 initialize!
 FFITestBiggerStruct initialize!
 FFITestPoint2 initialize!
