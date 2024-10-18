@@ -1,6 +1,6 @@
 'From Cuis 5.0 [latest update: #4911] on 26 October 2022 at 10:46:22 am'!
 'Description '!
-!provides: 'VectorEnginePlugin' 1 33!
+!provides: 'VectorEnginePlugin' 1 34!
 !requires: 'VMMaker' 1 7 nil!
 SystemOrganization addCategory: 'VectorEnginePlugin'!
 
@@ -1091,10 +1091,11 @@ displayUtf32: aWordArray from: startIndex to: stopIndex atx: destX y: destY scal
 	nextGlyphY := destY / sy.
 	startIndex-1 to: stopIndex-1 do: [ :utf32Index |
 		utf32 := aWordArray at: utf32Index.
-		aBoolean ifTrue: [
-			utf32 = 95 ifTrue: [ utf32 := 8592 ].												"If underscore, use left arrow"
-			utf32 = 94 ifTrue: [ utf32 := 8593 ].												"If caret, use up arrow"
-			].
+		"If underscore, use left arrow"
+		"If caret, use up arrow"
+		"aBoolean ifTrue: [
+			utf32 = 95 ifTrue: [ utf32 := 8592 ].
+			utf32 = 94 ifTrue: [ utf32 := 8593 ]]."
 		utf32 <= 16r7F
 			ifTrue: [
 				utf8Byte := utf32.
@@ -2738,10 +2739,11 @@ displayUtf32WP: aWordArray from: startIndex to: stopIndex atx: destX y: destY sc
 	nextGlyphY := destY / sy.
 	startIndex-1 to: stopIndex-1 do: [ :utf32Index |
 		utf32 := aWordArray at: utf32Index.
-		aBoolean ifTrue: [
-			utf32 = 95 ifTrue: [ utf32 := 8592 ].												"If underscore, use left arrow"
-			utf32 = 94 ifTrue: [ utf32 := 8593 ].												"If caret, use up arrow"
-			].
+		"If underscore, use left arrow"
+		"If caret, use up arrow"
+		"aBoolean ifTrue: [
+			utf32 = 95 ifTrue: [ utf32 := 8592 ].
+			utf32 = 94 ifTrue: [ utf32 := 8593 ]]."
 		utf32 <= 16r7F
 			ifTrue: [
 				utf8Byte := utf32.
