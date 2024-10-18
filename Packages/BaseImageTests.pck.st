@@ -1,6 +1,6 @@
-'From Cuis7.1 [latest update: #6742] on 23 September 2024 at 2:17:18 pm'!
+'From Cuis7.1 [latest update: #6786] on 18 October 2024 at 3:48:01 pm'!
 'Description Rename extentions tests'!
-!provides: 'BaseImageTests' 1 413!
+!provides: 'BaseImageTests' 1 414!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Objects'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
@@ -22120,37 +22120,27 @@ testWriteMultipleSections2
 	self assert: ((in sectionNamed: 'bar') at: 'key1') = 'val1x'.
 	self assert: ((in sectionNamed: 'bar') at: 'key2') = 'val2y'.! !
 
-!IniFileTest methodsFor: 'tests' stamp: 'jmv 7/10/2024 11:34:09'!
+!IniFileTest methodsFor: 'tests' stamp: 'jmv 10/18/2024 15:44:51'!
 testWriteNilGlobalValue
 	| ini written expected |
 	ini := IniFile new.
 	ini globalEntry: 'key1' put: nil.
 	written := String streamContents: [ :stream | ini writeOn: stream ].
-	
 	expected := 'key1=
-
 '.
-	
-	self assert: written equals: expected.
+	self assert: written equals: expected.! !
 
-
-	! !
-
-!IniFileTest methodsFor: 'tests' stamp: 'jmv 7/10/2024 11:28:28'!
+!IniFileTest methodsFor: 'tests' stamp: 'jmv 10/18/2024 15:44:45'!
 testWriteNilValue
 	| ini written expected |
 	ini := IniFile new.
 	ini atSection: 'foo' entry: 'key1' put: nil.
 	written := String streamContents: [ :stream | ini writeOn: stream ].
-	
 	expected := '[foo]
 key1=
+
 '.
-	
-	self assert: written equals: expected.
-
-
-	! !
+	self assert: written equals: expected.! !
 
 !IniFileTest methodsFor: 'tests' stamp: 'jmv 7/10/2024 11:28:51'!
 testWriteSingleSection
