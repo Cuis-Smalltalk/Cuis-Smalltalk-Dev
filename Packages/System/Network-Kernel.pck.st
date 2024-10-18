@@ -1,6 +1,6 @@
-'From Cuis7.1 [latest update: #6742] on 18 October 2024 at 11:22:55 AM'!
+'From Cuis7.1 [latest update: #6742] on 18 October 2024 at 01:40:41 PM'!
 'Description '!
-!provides: 'Network-Kernel' 1 10!
+!provides: 'Network-Kernel' 1 11!
 SystemOrganization addCategory: #'Network-Kernel'!
 
 
@@ -736,7 +736,7 @@ nameForAddress: hostAddress
 
 	^self nameForAddress: hostAddress timeout: 60! !
 
-!NetNameResolver class methodsFor: 'lookups' stamp: 'JMM 10/3/2024 15:54:44'!
+!NetNameResolver class methodsFor: 'lookups' stamp: 'eem 1/5/2016 13:07'!
 nameForAddress: hostAddress timeout: secs
 	"Look up the given host address and return its name. Return nil if the lookup fails or is not completed in the given number of seconds. Depends on the given host address being known to the gateway, which may not be the case for dynamically allocated addresses."
 	"NetNameResolver
@@ -745,7 +745,7 @@ nameForAddress: hostAddress timeout: secs
 
 	| deadline |
 	self initializeNetwork.
-	deadline := Time localMillisecondClock + (secs * 1000).
+	deadline := Time utcMicrosecondClock + (secs * 1000000).
 	"Protect the execution of this block, as the ResolverSemaphore is used for both parts of the transaction."
 	^self resolverMutex critical: [
 		(self waitForResolverReadyUntil: deadline) ifTrue: [
@@ -841,26 +841,24 @@ initialize
 
 ! !
 
-!NetNameResolver class methodsFor: 'network initialization' stamp: 'JMM 10/3/2024 15:31:56'!
+!NetNameResolver class methodsFor: 'network initialization' stamp: 'tpr 8/2/2017 12:45'!
 initializeNetwork
 	"Initialize the network drivers and record the semaphore to be used by the resolver. Do nothing if the network is already initialized. Signal NoNetworkError if network initialization fails."
 	"NetNameResolver initializeNetwork" 
 
-	| semaIndex |
 	self resolverStatus = ResolverUninitialized
 		ifFalse: [^HaveNetwork := true].  "network is already initialized"
 
 	HaveNetwork := false.	"in case abort"
-	ResolverSemaphore := Semaphore new.
-	semaIndex := Smalltalk registerExternalObject: ResolverSemaphore.
-
+	Smalltalk newExternalSemaphoreDo: [ :semaphore :index |
+		ResolverSemaphore := semaphore.
 		"result is nil if network initialization failed, self if it succeeds"
-		(self primInitializeNetwork: semaIndex)
+		(self primInitializeNetwork: index)
 			ifNil: [
 				Smalltalk unregisterExternalObject: ResolverSemaphore.
 				ResolverSemaphore := nil.
 				NoNetworkError signal: 'failed network initialization']
-			ifNotNil: [ HaveNetwork := true ].
+			ifNotNil: [ HaveNetwork := true ] ].
 
 	self initializeOldNetworkFlag! !
 
@@ -937,7 +935,7 @@ primStartLookupOfName: hostName
 	self primitiveFailed
 ! !
 
-!NetNameResolver class methodsFor: 'private' stamp: 'JMM 10/2/2024 16:39:11'!
+!NetNameResolver class methodsFor: 'private' stamp: 'ikp 6/8/2007 18:12'!
 nextSocketAddressInformation
 
 	| addrSize addr info |
