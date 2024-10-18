@@ -1,6 +1,6 @@
 'From Cuis7.1 [latest update: #6713] on 12 September 2024 at 12:08:43 pm'!
 'Description '!
-!provides: 'Sound' 1 32!
+!provides: 'Sound' 1 33!
 !requires: 'Compression' 1 nil nil!
 SystemOrganization addCategory: #'Sound-Synthesis'!
 SystemOrganization addCategory: #'Sound-Scores'!
@@ -12580,6 +12580,7 @@ initialize
 	"Details: Some computers cannot record and playback sound at the same time. If CanRecordWhilePlaying is false, then the SoundRecorder alternates between recording and playing. If it is true, sounds can be playing during recording."
 
 	CanRecordWhilePlaying _ true. "Until proven otherwise!!"
+	CanRecordWhilePlaying _ false. "Or `SoundSystem new randomBitsFromSoundInput: 512` fails..."
 ! !
 
 !SoundInputStream methodsFor: 'private' stamp: 'jm 9/8/1999 15:24'!
@@ -12743,7 +12744,7 @@ primitiveBeep
 !SoundSystem methodsFor: 'misc' stamp: 'jmv 6/7/2013 21:58'!
 randomBitsFromSoundInput: bitCount
 	"Answer a positive integer with the given number of random bits of 'noise' from a sound input source. Typically, one would use a microphone or line input as the sound source, although many sound cards have enough thermal noise that you get random low-order sample bits even with no microphone connected. Only the least signficant bit of the samples is used. Since not all sound cards support 16-bits of sample resolution, we use the lowest bit that changes."
-	"(1 to: 10) collect: [:i | BaseSoundSystem new randomBitsFromSoundInput: 512]"
+	"(1 to: 10) collect: [:i | SoundSystem new randomBitsFromSoundInput: 512]"
 
 	| recorder buf mid samples bitMask randomBits bit |
 	"collect some sound data"
