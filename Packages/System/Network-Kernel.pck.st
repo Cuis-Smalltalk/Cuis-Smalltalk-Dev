@@ -1,6 +1,6 @@
-'From Cuis7.1 [latest update: #6742] on 18 October 2024 at 02:08:01 PM'!
+'From Cuis7.1 [latest update: #6742] on 21 October 2024 at 11:03:09 AM'!
 'Description '!
-!provides: 'Network-Kernel' 1 12!
+!provides: 'Network-Kernel' 1 14!
 SystemOrganization addCategory: #'Network-Kernel'!
 
 
@@ -761,7 +761,7 @@ promptUserForHostAddress
 	^ NetNameResolver promptUserForHostAddressDefault: ''
 ! !
 
-!NetNameResolver class methodsFor: 'lookups' stamp: 'rbb 3/1/2005 11:01'!
+!NetNameResolver class methodsFor: 'lookups' stamp: 'jmv 9/12/2024 12:07:52'!
 promptUserForHostAddressDefault: defaultName
 	"Ask the user for a host name and return its address. If the default name is the empty string, use the last host name as the default."
 	"NetNameResolver promptUserForHostAddressDefault: ''"
@@ -770,7 +770,7 @@ promptUserForHostAddressDefault: defaultName
 	defaultName isEmpty
 		ifTrue: [default := DefaultHostName]
 		ifFalse: [default := defaultName].
-	hostName := UIManager default
+	hostName := StringRequestMorph
 		request: 'Host name or address?'
 		initialAnswer: default.
 	hostName isEmpty ifTrue: [^ 0].
@@ -1194,12 +1194,10 @@ primHostNameSize
 	self primitiveFailed
 ! !
 
-!NetNameResolver class methodsFor: 'tests' stamp: 'dtl 11/13/2017 21:10'!
+!NetNameResolver class methodsFor: 'tests' stamp: 'JMM 10/21/2024 10:48:03'!
 testIPv6
 	"NetNameResolver testIPv6"
-	| world infos addr sock size host serverSocket listeningSocket clientSocket |
-	world := Project current world.
-	world findATranscript: world currentEvent.
+	| infos addr sock size host serverSocket listeningSocket clientSocket |
 	Transcript clear.
 	"Transcript show: Smalltalk listLoadedModules; cr."
 	self initializeNetwork.
@@ -3030,7 +3028,7 @@ newAcceptCheck
 		self inform: 'It appears that you DO NOT have support for the BSD style accept()'].
 	socket destroy! !
 
-!Socket class methodsFor: 'tests' stamp: 'JMM 10/10/2024 13:32:42'!
+!Socket class methodsFor: 'tests' stamp: 'JMM 10/21/2024 10:36:55'!
 sendTest
 	"Send data to the 'discard' socket of the given host.
 	Tests the speed of one-way data transfers across the
@@ -3064,7 +3062,7 @@ sendTest
 	sock destroy.
 	Transcript show: '---------- Connection Closed ----------'; cr;
 		show: 'send test done; time = ' , t printString; cr;
-		show: (bytesToSend asFloat / t roundTo: 0.01), ' * 1000 bytes/sec';cr;endEntry! !
+		show: (bytesToSend asFloat / t roundTo: 0.01) printString, ' * 1000 bytes/sec';cr;endEntry! !
 
 !Socket class methodsFor: 'registry' stamp: 'ul 8/27/2010 23:24'!
 register: anObject
@@ -4013,18 +4011,15 @@ upTo: aCharacterOrByte
 
 	^self upTo: aCharacterOrByte limit: nil! !
 
-!SocketStream methodsFor: 'stream in' stamp: 'JMM 10/10/2024 13:07:29'!
+!SocketStream methodsFor: 'stream in' stamp: 'ul 2/27/2017 00:42'!
 upTo: aCharacterOrByte limit: nBytes
 	"Return data up to, but not including given character or byte. If the character is not in the stream, or not found within nBytes answer the available contents of the stream"
 
 	| target index result searchedSoFar |
 	"Deal with ascii vs. binary"
-	target := aCharacterOrByte.
 	self isBinary 
-		ifTrue: [
-			aCharacterOrByte isCharacter ifTrue: [			target := aCharacterOrByte codePoint ]]
-		ifFalse: [
-			aCharacterOrByte isNumber ifTrue: [			target := Character codePoint: aCharacterOrByte ]].
+		ifTrue:[target := aCharacterOrByte asInteger] 
+		ifFalse:[target := aCharacterOrByte asCharacter].
 
 	"Look in the current inBuffer first"
 	index := inBuffer indexOf: target startingAt: lastRead + 1.
@@ -4131,7 +4126,7 @@ receiveData
 	self waitForData.
 	^self receiveAvailableData! !
 
-!SocketStream methodsFor: 'private-socket' stamp: 'JMM 10/10/2024 12:59:43'!
+!SocketStream methodsFor: 'private-socket' stamp: 'pre 12/16/2020 09:37'!
 receiveDataIfAvailable
 
 	self deprecated: 'Use #receiveAvailableData instead'.
@@ -4235,6 +4230,33 @@ openConnectionToHostNamed: hostName port: portNumber
 					ifFalse:
 						["retry with next address"
 						exc retry]].! !
+
+!Object methodsFor: '*Network-Kernel' stamp: 'MPW 1/1/1901 00:49'!
+putOn:aStream
+	^aStream nextPut:self.
+! !
+
+!SequenceableCollection methodsFor: '*Network-Kernel' stamp: 'kph 9/27/2007 21:18'!
+putOn: aStream
+
+	self do: [ :each | each putOn: aStream ]! !
+
+!String methodsFor: '*Network-Kernel' stamp: 'yo 8/26/2002 22:31'!
+putOn:aStream
+
+	^aStream nextPutAll: self.
+! !
+
+!String methodsFor: '*Network-Kernel' stamp: 'JMM 10/17/2024 10:04:10'!
+translated
+	^self! !
+
+!Magnitude methodsFor: '*Network-Kernel' stamp: 'kph 9/27/2007 22:10'!
+putOn: aStream
+
+	(aStream isBinary ifTrue: [ self asByteArray ] ifFalse: [ self asString]) putOn: aStream
+	
+ ! !
 NetNameResolver initialize!
 Socket initialize!
 SocketAddressInformation initialize!
