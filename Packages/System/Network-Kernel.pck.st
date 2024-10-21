@@ -1,4 +1,4 @@
-'From Cuis7.1 [latest update: #6742] on 21 October 2024 at 11:38:19 AM'!
+'From Cuis7.1 [latest update: #6742] on 21 October 2024 at 12:23:22 PM'!
 'Description '!
 !provides: 'Network-Kernel' 1 16!
 SystemOrganization addCategory: #'Network-Kernel'!
