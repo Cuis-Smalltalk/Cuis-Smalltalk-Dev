@@ -1,6 +1,6 @@
-'From Cuis7.1 [latest update: #6742] on 21 October 2024 at 11:03:09 AM'!
+'From Cuis7.1 [latest update: #6742] on 21 October 2024 at 11:09:59 AM'!
 'Description '!
-!provides: 'Network-Kernel' 1 14!
+!provides: 'Network-Kernel' 1 15!
 SystemOrganization addCategory: #'Network-Kernel'!
 
 
@@ -104,6 +104,16 @@ Object subclass: #ConnectionQueue
 ConnectionQueue class
 	instanceVariableNames: ''!
 
+!classDefinition: #ExternalObjectTable category: #'Network-Kernel'!
+Object subclass: #ExternalObjectTable
+	instanceVariableNames: 'semaphore externalObjectsArray freeSlotIndexes indexesByObjects'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Network-Kernel'!
+!classDefinition: 'ExternalObjectTable class' category: #'Network-Kernel'!
+ExternalObjectTable class
+	instanceVariableNames: 'current'!
+
 !classDefinition: #NetNameResolver category: #'Network-Kernel'!
 Object subclass: #NetNameResolver
 	instanceVariableNames: ''
@@ -178,6 +188,9 @@ Signals that no network was found. This could happen, e.g., on dial-up connectio
 
 !ConnectionQueue commentStamp: '<historical>' prior: 0!
 A ConnectionQueue listens on a given port number and collects a queue of client connections. In order to handle state changes quickly, a ConnectionQueue has its own process that: (a) tries to keep a socket listening on the port whenever the queue isn't already full of connections and (b) prunes stale connections out of the queue to make room for fresh ones.The portNumber can be initialized to a collection, in which case all ports will be probed to create a listening socket. Once successfull, the portNumber is set to the chosen port.!
+
+!ExternalObjectTable commentStamp: 'ul 10/27/2014 16:26' prior: 0!
+I'm an enhanced version of JMM's ExternalSemaphoreTable.I'm responsible for maintaining the externalObjectsArray, which can be found at slot 39 of Smalltalk specialObjectsArray. Manipulating the array directly is highly discouraged.My services are available via the methods of the "external objects" category of SmalltalkImage.To register anObject simply use Smalltalk registerExternalObject: anObject. Use #unregisterExternalObject: to unregister it. It your responsibility to always unregister these objects.If you'd like the create one or more new Semaphores, and register them for external use, then you should use one of #newExternalSemaphore, #newExternalSemaphoreDo: and #newExternalSemaphores:. If you want to unregister more than one external objects at the same time, then #unregisterExternalObjects: is the method you're looking for.Implementation details:I maintain a single instance (#current), which can automatically synchronize with externalObjectsArray.All accesses are protected by the semaphore instance variable.To ensure fast access, I keep track of the indexes of the external objects in the externalObjectArray in my indexesByObjects IdentityDictionary.To ensure fast insertion, I keep track of the free slots of the externalObjectsArray in the freeSlotIndexes OrderedCollection. The access pattern is LIFO to avoid unnecessary growth and reordering of the OrderedCollection.I can grow the externalObjectsArray (see #ensureFreeSlot), but I never shrink it.!
 
 !NetNameResolver commentStamp: '<historical>' prior: 0!
 This class implements TCP/IP style network name lookup and translation facilities.Attempt to keep track of whether there is a network available.HaveNetwork	true if last attempt to contact the network was successful.LastContact		Time of that contact (totalSeconds).haveNetwork	returns true, false, or #expired.  True means there was contact in the last 30 minutes.  False means contact failed or was false last time we asked.  Get out of false state by making contact with a server in some way (FileList or updates).!
@@ -643,6 +656,232 @@ portNumber: anInteger queueLength: queueLength
 
 	^ self new initPortNumber: anInteger queueLength: queueLength
 ! !
+
+!ExternalObjectTable methodsFor: 'accessing' stamp: 'ul 10/27/2014 15:53'!
+clearExternalObjects
+	"Clear the array of objects that have been registered for use in non-Smalltalk code."
+
+	semaphore critical: [
+		Smalltalk specialObjectsArray at: 39 put: Array new.
+		self 
+			initializeCaches;
+			synchronizeExternalObjectsArrayAndForceUpdate: true ]! !
+
+!ExternalObjectTable methodsFor: 'accessing' stamp: 'eem 10/16/2020 10:24'!
+externalObjectAt: index ifAbsent: errorBlock
+	"Answer the externalObject at index, or the result of errorBlock if none."
+
+	^(semaphore critical: [externalObjectsArray at: index ifAbsent: nil]) ifNil:
+		[errorBlock value]! !
+
+!ExternalObjectTable methodsFor: 'accessing' stamp: 'ul 10/27/2014 15:53'!
+externalObjects
+	"Return a copy of the externalObjectsArray."
+
+	^semaphore critical: [
+		self synchronizeExternalObjectsArrayAndForceUpdate: false.
+		externalObjectsArray copy ]! !
+
+!ExternalObjectTable methodsFor: 'accessing' stamp: 'ul 10/27/2014 15:53'!
+newExternalSemaphore
+	"Create and register a new Semaphore, and return an array containing itself and its index."
+
+	| newSemaphore |
+	^{
+		newSemaphore := Semaphore new.
+		semaphore critical: [
+			self 
+				synchronizeExternalObjectsArrayAndForceUpdate: false;
+				safelyRegisterNewExternalObject: newSemaphore ] }! !
+
+!ExternalObjectTable methodsFor: 'accessing' stamp: 'ul 10/27/2014 15:53'!
+newExternalSemaphoreDo: aBlock
+	"Create and register a new Semaphore, then evaluate aBlock with it and its index."
+
+	| newSemaphore |
+	^aBlock
+		value: (newSemaphore := Semaphore new)
+		value: (semaphore critical: [
+			self 
+				synchronizeExternalObjectsArrayAndForceUpdate: false;
+				safelyRegisterNewExternalObject: newSemaphore ])! !
+
+!ExternalObjectTable methodsFor: 'accessing' stamp: 'ul 10/27/2014 15:53'!
+newExternalSemaphores: count
+	"Create and register multiple Semaphores, and return an array containing the semaphores and their indexes in separate arrays."
+
+	| semaphores indexes |
+	semaphores := Array new: count.
+	1 to: count do: [ :index | semaphores at: index put: Semaphore new ].
+	indexes := Array new: count.
+	semaphore critical: [
+		self synchronizeExternalObjectsArrayAndForceUpdate: false.
+		1 to: count do: [ :index |
+			indexes at: index put: (
+				self safelyRegisterNewExternalObject: (semaphores at: index)) ] ].
+	^{ semaphores. indexes }! !
+
+!ExternalObjectTable methodsFor: 'accessing' stamp: 'ul 10/27/2014 15:53'!
+registerExternalObject: anObject
+	"Register the given object in the external objects array and return its index. If it is already there, just return its index."
+
+	anObject ifNil: [ ^nil ].
+	^semaphore critical: [
+		self 
+			synchronizeExternalObjectsArrayAndForceUpdate: false;
+			safelyRegisterExternalObject: anObject ]! !
+
+!ExternalObjectTable methodsFor: 'accessing' stamp: 'ul 10/27/2014 15:53'!
+unregisterExternalObject: anObject
+	"Unregister the given object from the external objects array. Do nothing if it isn't registered."
+
+	anObject ifNil: [ ^self ].
+	semaphore critical: [
+		self 
+			synchronizeExternalObjectsArrayAndForceUpdate: false;
+			safelyUnregisterExternalObject: anObject ]! !
+
+!ExternalObjectTable methodsFor: 'accessing' stamp: 'ul 10/27/2014 15:53'!
+unregisterExternalObjects: aCollection
+	"Unregister the given objects from the external objects array. Do nothing if they aren't registered."
+
+	semaphore critical: [
+		self synchronizeExternalObjectsArrayAndForceUpdate: false.
+		aCollection do: [ :each |
+			each ifNotNil: [
+				self safelyUnregisterExternalObject: each ] ] ]! !
+
+!ExternalObjectTable methodsFor: 'private' stamp: 'ul 10/27/2014 16:30'!
+ensureFreeSlot
+	"Make sure there's at least one free slot."
+
+	| oldSize newSize newExternalObjectsArray specialObjectsArray |
+	freeSlotIndexes isEmpty ifFalse: [ ^self ].
+	oldSize := externalObjectsArray size.
+	newSize := oldSize + 20. "Linear growth is not really a problem, because we never shrink the array."
+	newExternalObjectsArray := externalObjectsArray species new: newSize.
+	newExternalObjectsArray
+		replaceFrom: 1
+		to: oldSize
+		with: externalObjectsArray
+		startingAt: 1.
+	specialObjectsArray := Smalltalk specialObjectsArray.
+	(specialObjectsArray at: 39) == externalObjectsArray
+		ifFalse: [
+			"We're not in sync. Try again."
+			^self
+				synchronizeExternalObjectsArrayAndForceUpdate: true;
+				ensureFreeSlot ].
+	specialObjectsArray at: 39 put: newExternalObjectsArray.
+	externalObjectsArray := newExternalObjectsArray.
+	newSize to: oldSize + 1 by: -1 do: [ :each |
+		freeSlotIndexes addFirst: each ].
+	Smalltalk maxExternalSemaphores ifNotNil: [ :maxExternalSemaphores |
+		"Make sure that those new external semaphores can be signaled by the VM. This is not entirely safe, but not incrementing at all is worse."
+		newSize > maxExternalSemaphores ifTrue: [
+			Smalltalk maxExternalSemaphores: newSize ] ]	
+
+	! !
+
+!ExternalObjectTable methodsFor: 'private' stamp: 'ul 10/27/2014 16:30'!
+externalObjectsArray: anArray
+	"Update the index mapping using anArray as the new externalObjectsArray."
+
+	externalObjectsArray := anArray.
+	freeSlotIndexes reset.
+	indexesByObjects removeAll.
+	1 to: externalObjectsArray size do: [ :index |
+		(anArray at: index) 
+			ifNil: [ freeSlotIndexes addFirst: index ]
+			ifNotNil: [ :object | indexesByObjects at: object put: index ] ]! !
+
+!ExternalObjectTable methodsFor: 'private' stamp: 'ul 10/27/2014 15:53'!
+initializeCaches
+
+	freeSlotIndexes := OrderedCollection new.
+	indexesByObjects := IdentityDictionary new! !
+
+!ExternalObjectTable methodsFor: 'private' stamp: 'ul 10/27/2014 15:53'!
+safelyRegisterExternalObject: anObject
+
+	| index |
+	(index := indexesByObjects at: anObject ifAbsent: nil) ifNotNil: [
+		(externalObjectsArray at: index) == anObject ifTrue: [ ^index ].
+		"indexesByObjects is out of sync. Try again."
+		^self
+			synchronizeExternalObjectsArrayAndForceUpdate: true;
+			safelyRegisterExternalObject: anObject ].
+	^self safelyRegisterNewExternalObject: anObject! !
+
+!ExternalObjectTable methodsFor: 'private' stamp: 'ul 10/27/2014 15:53'!
+safelyRegisterNewExternalObject: anObject
+
+	| index |
+	self ensureFreeSlot.
+	index := freeSlotIndexes removeLast.
+	(externalObjectsArray at: index) ifNotNil: [
+		"Free slot is not empty. Try again."
+		^self 
+			synchronizeExternalObjectsArrayAndForceUpdate: true;
+			safelyRegisterNewExternalObject: anObject ].
+	externalObjectsArray at: index put: anObject.
+	indexesByObjects at: anObject put: index.
+	^index! !
+
+!ExternalObjectTable methodsFor: 'private' stamp: 'JMM 10/18/2024 11:08:52'!
+safelyUnregisterExternalObject: anObject
+
+	(indexesByObjects removeKey: anObject ifAbsent: nil)
+		ifNotNil: [ :index |
+			(externalObjectsArray at: index) == anObject ifFalse: [
+				"We're not in sync. Try again."
+				^self
+					synchronizeExternalObjectsArrayAndForceUpdate: true;
+					safelyUnregisterExternalObject: anObject ].
+			externalObjectsArray at: index put: nil.
+			freeSlotIndexes add: index ]
+		ifNil: [
+			"Check if we're just out of sync."
+			(externalObjectsArray statePointsTo: anObject) ifFalse: [ ^self ].
+			"We're not in sync. Try again."
+			^self
+				synchronizeExternalObjectsArrayAndForceUpdate: true;
+				safelyUnregisterExternalObject: anObject ]! !
+
+!ExternalObjectTable methodsFor: 'private' stamp: 'ul 10/27/2014 15:53'!
+synchronizeExternalObjectsArrayAndForceUpdate: forceUpdate
+
+	| actualExternalObjectsArray |
+	actualExternalObjectsArray := Smalltalk specialObjectsArray at: 39.
+	(actualExternalObjectsArray == externalObjectsArray and: [ forceUpdate not ])
+		ifTrue: [ ^self ].
+	self externalObjectsArray: actualExternalObjectsArray! !
+
+!ExternalObjectTable methodsFor: 'initialize-release' stamp: 'ul 10/27/2014 15:53'!
+initialize
+
+	semaphore := Semaphore forMutualExclusion.
+	self initializeCaches! !
+
+!ExternalObjectTable class methodsFor: 'initialize-release' stamp: 'ul 10/27/2014 15:53'!
+cleanUp: aggressive
+	"It's safe to release the instance"
+
+	self reset! !
+
+!ExternalObjectTable class methodsFor: 'accessing' stamp: 'ul 10/27/2014 15:53'!
+current
+
+	^current ifNil: [
+		| newInstance |
+		newInstance := self new.
+		" Check again, because another process might have registered another instance. "
+		current ifNil: [ current := newInstance ] ]! !
+
+!ExternalObjectTable class methodsFor: 'accessing' stamp: 'ul 10/27/2014 15:53'!
+reset
+
+	current := nil! !
 
 !NetNameResolver class methodsFor: 'lookups' stamp: 'mir 6/26/2007 18:29'!
 addressForName: hostName
@@ -4250,6 +4489,65 @@ putOn:aStream
 !String methodsFor: '*Network-Kernel' stamp: 'JMM 10/17/2024 10:04:10'!
 translated
 	^self! !
+
+!SystemDictionary methodsFor: '*Network-Kernel' stamp: 'ul 10/27/2014 16:37'!
+clearExternalObjects
+	"Clear the array of objects that have been registered for use in non-Smalltalk code."
+	"Smalltalk clearExternalObjects"
+
+	ExternalObjectTable current clearExternalObjects
+! !
+
+!SystemDictionary methodsFor: '*Network-Kernel' stamp: 'eem 10/16/2020 10:25'!
+externalObjectAt: index ifAbsent: errorBlock
+	"Answer the externalObject at index, or the result of errorBlock if none."
+
+	^ExternalObjectTable current externalObjectAt: index ifAbsent: errorBlock! !
+
+!SystemDictionary methodsFor: '*Network-Kernel' stamp: 'ul 10/27/2014 16:38'!
+externalObjects
+	"Return an array of objects that have been registered for use in non-Smalltalk code. Smalltalk objects should be referrenced by external code only via indirection through this array, thus allowing the objects to move during compaction. This array can be cleared when the VM re-starts, since variables in external code do not survive snapshots. Note that external code should not attempt to access a Smalltalk object, even via this mechanism, while garbage collection is in progress."
+	"Note that this is just a copy of the array used by the VM."
+	"Smalltalk externalObjects"
+
+	^ExternalObjectTable current externalObjects
+! !
+
+!SystemDictionary methodsFor: '*Network-Kernel' stamp: 'ul 10/27/2014 16:38'!
+newExternalSemaphore
+	"Create and register a new Semaphore, and return an array containing itself and its index."
+
+	^ExternalObjectTable current newExternalSemaphore! !
+
+!SystemDictionary methodsFor: '*Network-Kernel' stamp: 'ul 10/27/2014 16:38'!
+newExternalSemaphoreDo: aBlock 
+	"Create and register a new Semaphore, then evaluate aBlock with it and its index."
+
+	^ExternalObjectTable current newExternalSemaphoreDo: aBlock! !
+
+!SystemDictionary methodsFor: '*Network-Kernel' stamp: 'ul 10/27/2014 16:39'!
+newExternalSemaphores: count 
+	"Create and register multiple Semaphores, and return an array containing the semaphores and their indexes in separate arrays."
+
+	^ExternalObjectTable current newExternalSemaphores: count! !
+
+!SystemDictionary methodsFor: '*Network-Kernel' stamp: 'ul 10/27/2014 16:36'!
+registerExternalObject: anObject
+	"Register the given object in the external objects array and return its index. If it is already there, just return its index."
+
+	^ExternalObjectTable current registerExternalObject: anObject! !
+
+!SystemDictionary methodsFor: '*Network-Kernel' stamp: 'ul 10/27/2014 16:36'!
+unregisterExternalObject: anObject
+	"Unregister the given object in the external objects array. Do nothing if it isn't registered."
+
+	ExternalObjectTable current unregisterExternalObject: anObject! !
+
+!SystemDictionary methodsFor: '*Network-Kernel' stamp: 'ul 10/27/2014 16:36'!
+unregisterExternalObjects: aCollection
+	"Unregister the given objects from the external objects array. Do nothing if they aren't registered."
+
+	ExternalObjectTable current unregisterExternalObjects: aCollection! !
 
 !Magnitude methodsFor: '*Network-Kernel' stamp: 'kph 9/27/2007 22:10'!
 putOn: aStream
