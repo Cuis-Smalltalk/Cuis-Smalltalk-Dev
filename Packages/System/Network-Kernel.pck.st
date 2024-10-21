@@ -1,6 +1,6 @@
-'From Cuis7.1 [latest update: #6742] on 21 October 2024 at 12:23:22 PM'!
+'From Cuis7.1 [latest update: #6742] on 21 October 2024 at 02:56:09 PM'!
 'Description '!
-!provides: 'Network-Kernel' 1 16!
+!provides: 'Network-Kernel' 1 18!
 SystemOrganization addCategory: #'Network-Kernel'!
 
 
@@ -562,7 +562,7 @@ createListeningSocketWithBacklog: aNumber
 			^ sock]].
 	^ nil! !
 
-!ConnectionQueue methodsFor: 'private' stamp: 'jm 3/10/98 11:07'!
+!ConnectionQueue methodsFor: 'private' stamp: 'JMM 10/21/2024 13:22:39'!
 initPortNumber: anInteger queueLength: queueLength
 	"Private!! Initialize the receiver to listen on the given port number. Up to queueLength connections will be queued."
 
@@ -573,6 +573,7 @@ initPortNumber: anInteger queueLength: queueLength
 	socket := nil.
 	process := [self listenLoop] newProcess.
 	process priority: Processor highIOPriority.
+	process name: 'ConnectionQueue'.
 	process resume.
 ! !
 
@@ -1553,11 +1554,11 @@ testPort80
 						addressFamily: 0 socketType: 0 protocol: 0) printString; cr.
 ! !
 
-!Socket methodsFor: 'connection open/close' stamp: 'bolot 7/16/1999 14:36'!
+!Socket methodsFor: 'connection open/close' stamp: 'JMM 10/21/2024 13:47:16'!
 accept
 	"Accept a connection from the receiver socket.
 	Return a new socket that is connected to the client"
-	^Socket acceptFrom: self.! !
+	^self class acceptFrom: self.! !
 
 !Socket methodsFor: 'connection open/close' stamp: 'jm 9/11/97 20:29'!
 close
@@ -1972,14 +1973,14 @@ statusString
 	^ 'unknown socket status'
 ! !
 
-!Socket methodsFor: 'receiving' stamp: 'jm 9/15/97 12:22'!
+!Socket methodsFor: 'receiving' stamp: 'gk 12/14/2005 10:02'!
 discardReceivedData
 	"Discard any data received up until now, and return the number of bytes discarded."
 
 	| buf totalBytesDiscarded |
 	buf := String new: 10000.
 	totalBytesDiscarded := 0.
-	[self isConnected and: [self dataAvailable]] whileTrue: [
+	[self isConnected] whileTrue: [
 		totalBytesDiscarded :=
 			totalBytesDiscarded + (self receiveDataInto: buf)].
 	^ totalBytesDiscarded
@@ -2529,27 +2530,26 @@ sendData: aStringOrByteArray toHost: hostAddress port: portNumber
 
 	^self sendUDPData: aStringOrByteArray toHost: hostAddress port: portNumber! !
 
-!Socket methodsFor: 'datagrams' stamp: 'dtl 6/19/2012 22:14'!
+!Socket methodsFor: 'datagrams' stamp: 'jmv 1/19/2023 13:37:38'!
 sendUDPData: aStringOrByteArray toHost: hostAddress port: portNumber
 	"Send a UDP packet containing the given data to the specified host/port."
-	| bytesToSend bytesSent count |
 
-	bytesToSend := aStringOrByteArray size.
-	bytesSent := 0.
+	| stringOrByteArray bytesToSend bytesSent count |
+	stringOrByteArray _ aStringOrByteArray asUtf8BytesOrByteStringOrByteArray.
+	bytesToSend _ stringOrByteArray size.
+	bytesSent _ 0.
 	[bytesSent < bytesToSend] whileTrue: [
 		(self waitForSendDoneFor: 20)
 			ifFalse: [ConnectionTimedOut signal: 'send data timeout; data not sent'].
-		count := self primSocket: socketHandle
-			sendUDPData: aStringOrByteArray
-			toHost: hostAddress asByteArray
+		count _ self primSocket: socketHandle
+			sendUDPData: stringOrByteArray
+			toHost: hostAddress
 			port: portNumber
 			startIndex: bytesSent + 1
 			count: bytesToSend - bytesSent.
-		count isZero ifTrue: [NetworkError signal: 'failed to send data']..
-		bytesSent := bytesSent + count].
+		bytesSent _ bytesSent + count].
 
-	^ bytesSent
-! !
+	^ bytesSent! !
 
 !Socket methodsFor: 'datagrams' stamp: 'dtl 6/3/2012 19:32'!
 setPeer: hostAddress port: port
@@ -2580,23 +2580,24 @@ register
 unregister
 	^self class unregister: self! !
 
-!Socket methodsFor: 'sending' stamp: 'klub 7/13/2016 18:01'!
+!Socket methodsFor: 'sending' stamp: 'jmv 1/19/2023 13:07:15'!
 sendData: aStringOrByteArray
 	"Send all of the data in the given array, even if it requires multiple calls to send it all. Return the number of bytes sent."
 
 	"An experimental version use on slow lines: Longer timeout and smaller writes to try to avoid spurious timeouts."
 
-	| bytesSent bytesToSend count |
-	bytesToSend := aStringOrByteArray size.
-	bytesSent := 0.
+	| stringOrByteArray bytesSent bytesToSend count |
+	stringOrByteArray _ aStringOrByteArray asUtf8BytesOrByteStringOrByteArray.
+	bytesToSend _ stringOrByteArray size.
+	bytesSent _ 0.
 	[bytesSent < bytesToSend] whileTrue: [
 		(self waitForSendDoneFor: 60)
 			ifFalse: [ConnectionTimedOut signal: 'send data timeout; data not sent'].
-		count := self primSocket: socketHandle
-			sendData: aStringOrByteArray
+		count _ self primSocket: socketHandle
+			sendData: stringOrByteArray
 			startIndex: bytesSent + 1
-			count: bytesToSend - bytesSent.
-		bytesSent := bytesSent + count].
+			count: (bytesToSend - bytesSent min: 5000).
+		bytesSent _ bytesSent + count].
 
 	^ bytesSent
 ! !
@@ -2636,18 +2637,22 @@ sendSomeData: aStringOrByteArray startIndex: startIndex
 sendSomeData: aStringOrByteArray startIndex: startIndex count: count
 	^ self sendSomeData: aStringOrByteArray startIndex: startIndex count: count for: Socket standardTimeout! !
 
-!Socket methodsFor: 'sending' stamp: 'ul 3/26/2016 05:05'!
+!Socket methodsFor: 'sending' stamp: 'jmv 1/19/2023 13:15:19'!
 sendSomeData: aStringOrByteArray startIndex: startIndex count: count for: aTimeoutInSeconds
 	"Send up to count bytes of the given data starting at the given index. Answer the number of bytes actually sent."
 	"Note: This operation may have to be repeated multiple times to send a large amount of data."
 
-	(self waitForSendDoneFor: aTimeoutInSeconds) ifFalse: [
-		ConnectionTimedOut signal: 'send data timeout; data not sent'.
-		^0 ].
-	^self primSocket: socketHandle
-		sendData: aStringOrByteArray
-		startIndex: startIndex
-		count: count! !
+	| stringOrByteArray bytesSent |
+	stringOrByteArray _ aStringOrByteArray asUtf8BytesOrByteStringOrByteArray.
+	(self waitForSendDoneFor: aTimeoutInSeconds)
+		ifTrue: [
+			bytesSent := self primSocket: socketHandle
+				sendData: stringOrByteArray
+				startIndex: startIndex
+				count: count]
+		ifFalse: [ConnectionTimedOut signal: 'send data timeout; data not sent'].
+	^ bytesSent
+! !
 
 !Socket methodsFor: 'sending' stamp: 'mir 2/19/2002 18:33'!
 sendStreamContents: stream
@@ -4253,18 +4258,21 @@ upTo: aCharacterOrByte
 
 	^self upTo: aCharacterOrByte limit: nil! !
 
-!SocketStream methodsFor: 'stream in' stamp: 'ul 2/27/2017 00:42'!
+!SocketStream methodsFor: 'stream in' stamp: 'jmv 1/9/2024 17:36:06'!
 upTo: aCharacterOrByte limit: nBytes
 	"Return data up to, but not including given character or byte. If the character is not in the stream, or not found within nBytes answer the available contents of the stream"
 
 	| target index result searchedSoFar |
 	"Deal with ascii vs. binary"
+	target := aCharacterOrByte.
 	self isBinary 
-		ifTrue:[target := aCharacterOrByte asInteger] 
-		ifFalse:[target := aCharacterOrByte asCharacter].
+		ifTrue: [
+			aCharacterOrByte isCharacter ifTrue: [			target := aCharacterOrByte codePoint ]]
+		ifFalse: [
+			aCharacterOrByte isNumber ifTrue: [			target := Character codePoint: aCharacterOrByte ]].
 
 	"Look in the current inBuffer first"
-	index := inBuffer indexOf: target startingAt: lastRead + 1.
+	index := inBuffer indexOf: target startingAt: lastRead + 1 ifAbsent:[0].
 
 	(index > 0 and: [(index + 1) <= inNextToWrite]) ifTrue: ["found it"
 		result := self nextInBuffer: index - lastRead - 1.
@@ -4279,7 +4287,9 @@ upTo: aCharacterOrByte limit: nBytes
 	recentlyRead > 0] whileTrue:[
 		"Data begins at lastRead + 1, we add searchedSoFar as offset."
 
-		index := inBuffer indexOf: target startingAt: (lastRead + searchedSoFar + 1).
+		index := inBuffer indexOf: target
+						startingAt: (lastRead + searchedSoFar + 1)
+						ifAbsent:[0].
 		(index > 0 and: [(index + 1) <= inNextToWrite]) ifTrue: ["found it"
 			result := self nextInBuffer: index - lastRead - 1.
 			self skip: 1.
@@ -4558,6 +4568,29 @@ putOn: aStream
 	(aStream isBinary ifTrue: [ self asByteArray ] ifFalse: [ self asString]) putOn: aStream
 	
  ! !
+
+!Time class methodsFor: '*Network-Kernel' stamp: 'JMM 10/10/2024 13:30:17'!
+milliseconds: currentTime since: lastTime
+	"Answer the elapsed time since last recorded in milliseconds (i.e. of millisecondClockValue).
+	 Since the time basis is now a 61-bit or greater UTC microsecond clock, rollover is no longer an issue."
+
+	^currentTime - lastTime! !
+
+!Time class methodsFor: '*Network-Kernel' stamp: 'JMM 10/10/2024 13:29:53'!
+millisecondsSince: lastTime
+	"Answer the elapsed time since last recorded in milliseconds.
+	Compensate for rollover."
+
+	^self milliseconds: self millisecondClockValue since: lastTime
+! !
+
+!Time class methodsFor: '*Network-Kernel' stamp: 'JMM 10/4/2024 14:11:19'!
+utcMicrosecondClock
+	"Answer the UTC microseconds since the Smalltalk epoch (January 1st 1901, the start of the 20th century).
+	 The value is derived from the Posix epoch with a constant offset corresponding to elapsed microseconds
+	 between the two epochs according to RFC 868."
+	<primitive: 240>
+	^0! !
 NetNameResolver initialize!
 Socket initialize!
 SocketAddressInformation initialize!
