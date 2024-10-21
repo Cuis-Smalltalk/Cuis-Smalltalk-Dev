@@ -1,6 +1,6 @@
-'From Cuis7.1 [latest update: #6786] on 18 October 2024 at 3:32:58 pm'!
+'From Cuis7.1 [latest update: #6787] on 21 October 2024 at 12:03:24 pm'!
 'Description FFI (Foreign Function Interface) provides access to foreign functions in external libraries, provided they use the platform''s Application Binary Interface (ABI), which is essentially the C calling convention for the platform. FFI supports callbacks, allowing one to pass callbacks that invoke Smalltalk blocks when called from foreign code. FFI provides support for defining classes that correspond to C struct types, with named fields, etc. See Tests-FFI for examples.'!
-!provides: 'FFI' 1 52!
+!provides: 'FFI' 1 53!
 !requires: 'Alien-Core' 1 0 nil!
 SystemOrganization addCategory: #'FFI-Pools'!
 SystemOrganization addCategory: #'FFI-Kernel'!
@@ -2324,7 +2324,7 @@ bytesAt: byteOffset length: length
 
 	^self bytesAt: byteOffset maxLength: length stopAtNullByte: false! !
 
-!ByteArray methodsFor: '*FFI-Kernel' stamp: 'jmv 9/11/2024 11:37:59'!
+!ByteArray methodsFor: '*FFI-Kernel' stamp: 'jfr 10/19/2024 16:51:56'!
 bytesAt: byteOffset maxLength: lengthInBytes stopAtNullByte: aBoolean
 	"Answer a ByteArray of the given length starting at the indicated byte offset.
 	Stop at the first null byte if aBoolean, and don't include it in the result."
@@ -2335,14 +2335,14 @@ bytesAt: byteOffset maxLength: lengthInBytes stopAtNullByte: aBoolean
 	^ ByteArray streamContents: [ :strm | | byteIndex mayContinue byte |
 		byteIndex := byteOffset.
 		mayContinue := true.
-		[ mayContinue and: [ byteIndex <= lengthInBytes ]] whileTrue: [
+		[ mayContinue and: [ lengthInBytes isNil or:[ byteIndex <= lengthInBytes ]]] whileTrue: [
 			byte := self uint8At: byteIndex.
 			(aBoolean and: [byte = 0])
 				ifTrue: [ mayContinue := false ]
 				ifFalse: [ strm nextPut: byte ].
 			byteIndex := byteIndex + 1 ]].! !
 
-!ByteArray methodsFor: '*FFI-Kernel' stamp: 'jmv 9/11/2024 11:37:38'!
+!ByteArray methodsFor: '*FFI-Kernel' stamp: 'jfr 10/19/2024 16:52:22'!
 bytesAt: byteOffset maxLength: lengthInBytes stopAtNullWord: aBoolean
 	"Answer a ByteArray of the given length starting at the indicated byte offset.
 	lengthInBytes is assumed to be even.
@@ -2354,7 +2354,7 @@ bytesAt: byteOffset maxLength: lengthInBytes stopAtNullWord: aBoolean
 	^ ByteArray streamContents: [ :strm | | byteIndex mayContinue byte1 byte2 |
 		byteIndex := byteOffset.
 		mayContinue := true.
-		[ mayContinue and: [ byteIndex < lengthInBytes ]] whileTrue: [
+		[ mayContinue and: [ lengthInBytes isNil or:[ byteIndex <= lengthInBytes ]]] whileTrue: [
 			byte1 := self uint8At: byteIndex.
 			byteIndex := byteIndex + 1.
 			byte2 := self uint8At: byteIndex.
@@ -2567,14 +2567,14 @@ pointerAt: byteOffset length: length
 
 	^ ExternalAddress fromInteger: (self integerAt: byteOffset size: length signed: false)! !
 
-!ByteArray methodsFor: '*FFI-Kernel' stamp: 'eem 6/4/2024 15:18:51'!
+!ByteArray methodsFor: '*FFI-Kernel' stamp: 'jfr 10/19/2024 09:24:33'!
 pointerAt: byteOffset put: value
 	"Store a pointer object at the given byte address"
 	"If a regular ByteArray, byteOffset is the start position in self.
 	If an ExternalAddress, take us as a pointer. byteOffset is applied to the pointer. Access memory at pointer+offset."
-	(ExternalAddress wordSize = 8
+	(ExternalAddress wordSize = 8)
 		ifTrue: [self uint64At: byteOffset put: value asInteger]
-		ifFalse: [self uint32At: byteOffset put: value asInteger])
+		ifFalse: [self uint32At: byteOffset put: value asInteger].
 	^value! !
 
 !ByteArray methodsFor: '*FFI-Kernel' stamp: 'eem 06/02/2024 17:35'!
@@ -2926,6 +2926,12 @@ voidAt: byteOffset
 voidAt: byteOffset put: value
 	"no accessors for void"
 	^self shouldNotImplement! !
+
+!CharacterSequence methodsFor: '*FFI-Kernel' stamp: 'jfr 10/19/2024 17:45:15'!
+asUtf16BytesLENoBOM
+	"Answer the receiver as UTF16 bytes in little endian with no BOM"
+
+	^UnicodeString utf16BytesFromUtf8: self asUtf8Bytes bigEndian: false includeBOM: false! !
 FFIConstants initialize!
 ExternalAddress initialize!
 ExternalObject initialize!
