@@ -1,4 +1,4 @@
-'From Cuis7.1 [latest update: #6742] on 22 October 2024 at 11:06:55 AM'!
+'From Cuis7.1 [latest update: #6742] on 22 October 2024 at 03:40:00 PM'!
 'Description '!
 !provides: 'Network-Kernel' 1 9!
 SystemOrganization addCategory: #'Network-Kernel'!
@@ -365,23 +365,23 @@ loopback6
 
 	^self loopbacks6 first! !
 
-!SocketAddress class methodsFor: 'accessing' stamp: 'ikp 6/9/2007 10:02'!
+!SocketAddress class methodsFor: 'accessing' stamp: 'JMM 10/22/2024 14:07:42'!
 loopbacks
 
 	^SocketAddressInformation forHost: '' service: '0'
 		flags:			0
 		addressFamily:	0
-		socketType:		0
-		protocol:		0! !
+		socketType:SocketAddressInformation socketTypeStream
+		protocol:		 SocketAddressInformation protocolTCP! !
 
-!SocketAddress class methodsFor: 'accessing' stamp: 'ikp 6/11/2007 10:35'!
+!SocketAddress class methodsFor: 'accessing' stamp: 'JMM 10/22/2024 14:08:51'!
 loopbacks4
 
 	^SocketAddressInformation forHost: 'localhost' service: ''
 		flags:			0
 		addressFamily:	SocketAddressInformation addressFamilyINET4
-		socketType:		0
-		protocol:		0! !
+		socketType: SocketAddressInformation socketTypeStream 
+		protocol: SocketAddressInformation protocolTCP! !
 
 !SocketAddress class methodsFor: 'accessing' stamp: 'ikp 6/9/2007 10:02'!
 loopbacks6
@@ -402,23 +402,23 @@ wildcard6
 
 	^self wildcards6 first! !
 
-!SocketAddress class methodsFor: 'accessing' stamp: 'ikp 6/9/2007 10:03'!
+!SocketAddress class methodsFor: 'accessing' stamp: 'JMM 10/22/2024 14:08:30'!
 wildcards
 
 	^SocketAddressInformation forHost: '' service: '0'
 		flags:			SocketAddressInformation passiveFlag
 		addressFamily:	0
-		socketType:		0
-		protocol:		0! !
+		socketType: SocketAddressInformation socketTypeStream
+		protocol: SocketAddressInformation protocolTCP! !
 
-!SocketAddress class methodsFor: 'accessing' stamp: 'ikp 6/11/2007 10:40'!
+!SocketAddress class methodsFor: 'accessing' stamp: 'JMM 10/22/2024 14:10:02'!
 wildcards4
 
 	^SocketAddressInformation forHost: '' service: '0'
 		flags:			SocketAddressInformation passiveFlag
 		addressFamily:	SocketAddressInformation addressFamilyINET4
-		socketType:		SocketAddressInformation socketTypeStream
-		protocol:		0! !
+		socketType:		 SocketAddressInformation socketTypeStream
+		protocol:		 SocketAddressInformation protocolTCP! !
 
 !SocketAddress class methodsFor: 'accessing' stamp: 'ikp 6/9/2007 10:03'!
 wildcards6
@@ -1434,7 +1434,7 @@ primHostNameSize
 	self primitiveFailed
 ! !
 
-!NetNameResolver class methodsFor: 'tests' stamp: 'JMM 10/21/2024 10:48:03'!
+!NetNameResolver class methodsFor: 'tests' stamp: 'JMM 10/22/2024 15:37:05'!
 testIPv6
 	"NetNameResolver testIPv6"
 	| infos addr sock size host serverSocket listeningSocket clientSocket |
@@ -1449,7 +1449,7 @@ testIPv6
 	Transcript show: '---- address information ----'; cr.
 	Transcript show: (infos := SocketAddressInformation
 						forHost: 'localhost' service: 'echo' flags: 0
-						addressFamily: 0 socketType: 0 protocol: 0) printString; cr.
+						addressFamily: 0 socketType: SocketAddressInformation socketTypeStream protocol: SocketAddressInformation protocolTCP) printString; cr.
 	Transcript show: '---- port manipulation ----'; cr.
 	addr := infos first socketAddress.
 	Transcript show: addr port printString; cr.
@@ -1496,7 +1496,9 @@ testIPv6
 						socketType:		SocketAddressInformation socketTypeStream
 						protocol:		SocketAddressInformation protocolTCP) printString; cr.
 	clientSocket := infos first connect.
+	(Delay forSeconds: 2) wait.
 	serverSocket := listeningSocket accept.
+	(Delay forSeconds: 2) wait.
 	serverSocket sendData: 'Hi there!!' count: 9.
 	Transcript show: clientSocket receiveData; cr.
 	Transcript nextPutAll: 'client side local/remote: ';
@@ -1527,7 +1529,9 @@ testIPv6
 								socketType:		SocketAddressInformation socketTypeStream
 								protocol:		SocketAddressInformation protocolTCP) printString; cr.
 			clientSocket := infos first connect.
+			(Delay forSeconds: 2) wait.
 			serverSocket := listeningSocket accept.
+			(Delay forSeconds: 2) wait.
 			serverSocket sendData: 'Hi there!!' count: 9.
 			Transcript show: clientSocket receiveData; cr.
 			Transcript nextPutAll: 'client side local/remote: ';
@@ -2494,14 +2498,14 @@ primSocketSendDone: socketID
 primitiveFailed: selector
 	SocketPrimitiveFailed signal: selector asString, ' failed'! !
 
-!Socket methodsFor: 'printing' stamp: 'JMM 10/17/2024 13:19:41'!
+!Socket methodsFor: 'printing' stamp: 'JMM 10/22/2024 14:15:48'!
 printOn: aStream
 
 	super printOn: aStream.
 	aStream nextPutAll: '[', self statusString, '] '.
-	self remoteAddress printOn: aStream.
+	[self remoteAddress printOn: aStream] on: Error do: [:ex | '-'].
 	aStream nextPutAll: ' : '.
-	self remotePort printOn: aStream! !
+	[self remotePort printOn: aStream] on: Error do: [:ex | '-'].! !
 
 !Socket methodsFor: 'datagrams' stamp: 'ul 4/20/2011 01:55'!
 receiveDataInto: aStringOrByteArray fromHost: hostAddress port: portNumber
