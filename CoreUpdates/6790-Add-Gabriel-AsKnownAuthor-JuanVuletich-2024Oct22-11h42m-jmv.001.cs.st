@@ -226,7 +226,7 @@ ok := (Smalltalk knownInitialsAndNames collect: [ :pair | pair first ]) asSet.
 	#('tween' 						'Andy Tween')
 	#('ul' 						'Levente Uzonyi')
 	#('vb' 						'Vassili Bykov')
-	#('VGF' 						'Víctor Gabriel Fierro')
+	#('VGF' 						'Gabriel Fierro')
 	#('ward' 						'Ward Cunningham')
 	#('wiz' 						'Jerome Peace')
 	#('wod' 						'Bill Dargel')
