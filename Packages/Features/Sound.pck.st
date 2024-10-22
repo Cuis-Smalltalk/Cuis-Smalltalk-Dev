@@ -1,4 +1,4 @@
-'From Cuis7.1 [latest update: #6713] on 12 September 2024 at 12:08:43 pm'!
+'From Cuis7.1 [latest update: #6742] on 18 October 2024 at 11:21:19 AM'!
 'Description '!
 !provides: 'Sound' 1 33!
 !requires: 'Compression' 1 nil nil!
@@ -11864,32 +11864,33 @@ startPlayerProcessBufferSize: bufferSize rate: samplesPerSecond stereo: stereoFl
 			stereo: stereoFlag 
 			sound: nil! !
 
-!SoundPlayer class methodsFor: 'player process' stamp: 'jmv 10/8/2012 22:14'!
+!SoundPlayer class methodsFor: 'player process' stamp: 'JMM 10/18/2024 11:18:33'!
 startPlayerProcessBufferSize: bufferSize rate: samplesPerSecond stereo: stereoFlag sound: aSound
 	"Start the sound player process. Terminate the old process, if any."
 	"SoundPlayer startPlayerProcessBufferSize: 1000 rate: 11025 stereo: false"
 
 	self stopPlayerProcess.
 	aSound
-		ifNil:[ActiveSounds _ OrderedCollection new]
-		ifNotNil:[ActiveSounds _ OrderedCollection with: aSound].
-	Buffer _ SoundBuffer newStereoSampleCount: (bufferSize // 4) * 4.
-	LastBuffer ifNotNil:[LastBuffer _ SoundBuffer basicNew: Buffer basicSize].
-	PlayerSemaphore _ Semaphore forMutualExclusion.
-	SamplingRate _ samplesPerSecond.
-	Stereo _ stereoFlag.
-	ReadyForBuffer _ Semaphore new.
-	SoundSupported _ true. "Assume so"
-	UseReadySemaphore _ true.  "set to false if ready semaphore not supported by VM"
-	self primSoundStartBufferSize: Buffer stereoSampleCount
-		rate: samplesPerSecond
-		stereo: Stereo
-		semaIndex: (Smalltalk registerExternalObject: ReadyForBuffer).
+		ifNil:[ActiveSounds := OrderedCollection new]
+		ifNotNil:[ActiveSounds := OrderedCollection with: aSound].
+	Buffer := SoundBuffer newStereoSampleCount: (bufferSize // 4) * 4.
+	LastBuffer ifNotNil:[LastBuffer := SoundBuffer basicNew: Buffer basicSize].
+	PlayerSemaphore := Semaphore forMutualExclusion.
+	SamplingRate := samplesPerSecond.
+	Stereo := stereoFlag.
+	SoundSupported := true. "Assume so"
+	UseReadySemaphore := true.  "set to false if ready semaphore not supported by VM"	
+	Smalltalk newExternalSemaphoreDo: [ :semaphore :index |
+		ReadyForBuffer := semaphore.
+		self primSoundStartBufferSize: Buffer stereoSampleCount
+			rate: samplesPerSecond
+			stereo: Stereo
+			semaIndex: index ].
 	"Check if sound start prim was successful"
 	SoundSupported ifFalse:[^self].
 	UseReadySemaphore
-		ifTrue: [PlayerProcess _ [SoundPlayer playLoop] newProcess]
-		ifFalse: [PlayerProcess _ [SoundPlayer oldStylePlayLoop] newProcess].
+		ifTrue: [PlayerProcess := [SoundPlayer playLoop] newProcess]
+		ifFalse: [PlayerProcess := [SoundPlayer oldStylePlayLoop] newProcess].
 	UseReverb ifTrue: [self startReverb].
 
 	PlayerProcess
@@ -12072,27 +12073,27 @@ resumeRecording
 	paused _ false.
 ! !
 
-!SoundRecorder methodsFor: 'recording controls' stamp: 'jmv 1/18/2023 10:05:27'!
+!SoundRecorder methodsFor: 'recording controls' stamp: 'JMM 10/18/2024 11:20:10'!
 startRecording
 	"Turn of the sound input driver and start the recording process. Initially, recording is paused."
 
-	| semaIndex |
-	recordLevel ifNil: [recordLevel _ 0.5].  "lazy initialization"
+	
+	recordLevel ifNil: [recordLevel := 0.5].  "lazy initialization"
 	SoundRecorder canRecordWhilePlaying ifFalse: [SoundPlayer shutDown].
 	recordProcess ifNotNil: [self stopRecording].
-	paused _ true.
-	meteringBuffer _ SoundBuffer newMonoSampleCount: 1024.
-	meterLevel _ 0.
+	paused := true.
+	meteringBuffer := SoundBuffer newMonoSampleCount: 1024.
+	meterLevel := 0.
 	self allocateBuffer.
-	bufferAvailableSema _ Semaphore new.
-	semaIndex _ Smalltalk registerExternalObject: bufferAvailableSema.
-	self primStartRecordingDesiredSampleRate: samplingRate asInteger
-		stereo: stereo
-		semaIndex: semaIndex.
-	RecorderActive _ true.
-	samplingRate _ self primGetActualRecordingSampleRate.
+	Smalltalk newExternalSemaphoreDo: [ :semaphore :index |
+		bufferAvailableSema := semaphore.
+		self primStartRecordingDesiredSampleRate: samplingRate asInteger
+			stereo: stereo
+			semaIndex: index ].
+	RecorderActive := true.
+	samplingRate := self primGetActualRecordingSampleRate.
 	self primSetRecordLevel: (1000.0 * recordLevel) asInteger.
-	recordProcess _ [self recordLoop] newProcess.
+	recordProcess := [self recordLoop] newProcess.
 	recordProcess
 		priority: Processor userInterruptPriority;
 		name: 'Sound Recorder';
