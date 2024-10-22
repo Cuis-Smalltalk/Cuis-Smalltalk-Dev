@@ -1,6 +1,6 @@
-'From Cuis7.1 [latest update: #6742] on 21 October 2024 at 02:56:09 PM'!
+'From Cuis7.1 [latest update: #6742] on 22 October 2024 at 11:06:55 AM'!
 'Description '!
-!provides: 'Network-Kernel' 1 18!
+!provides: 'Network-Kernel' 1 19!
 SystemOrganization addCategory: #'Network-Kernel'!
 
 
@@ -1554,11 +1554,11 @@ testPort80
 						addressFamily: 0 socketType: 0 protocol: 0) printString; cr.
 ! !
 
-!Socket methodsFor: 'connection open/close' stamp: 'JMM 10/21/2024 13:47:16'!
+!Socket methodsFor: 'connection open/close' stamp: 'JMM 10/22/2024 10:56:55'!
 accept
 	"Accept a connection from the receiver socket.
 	Return a new socket that is connected to the client"
-	^self class acceptFrom: self.! !
+	^self class acceptFrom: self! !
 
 !Socket methodsFor: 'connection open/close' stamp: 'jm 9/11/97 20:29'!
 close
