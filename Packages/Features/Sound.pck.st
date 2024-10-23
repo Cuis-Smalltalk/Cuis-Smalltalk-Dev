@@ -1,6 +1,6 @@
 'From Cuis7.1 [latest update: #6742] on 18 October 2024 at 11:21:19 AM'!
 'Description '!
-!provides: 'Sound' 1 33!
+!provides: 'Sound' 1 34!
 !requires: 'Compression' 1 nil nil!
 SystemOrganization addCategory: #'Sound-Synthesis'!
 SystemOrganization addCategory: #'Sound-Scores'!
