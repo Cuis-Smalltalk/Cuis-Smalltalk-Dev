@@ -1,6 +1,6 @@
-'From Cuis7.1 [latest update: #6742] on 22 October 2024 at 03:40:00 PM'!
+'From Cuis7.1 [latest update: #6742] on 25 October 2024 at 11:46:36 AM'!
 'Description '!
-!provides: 'Network-Kernel' 1 9!
+!provides: 'Network-Kernel' 1 10!
 SystemOrganization addCategory: #'Network-Kernel'!
 
 
@@ -971,6 +971,10 @@ localHostName
 	NetNameResolver primHostNameResult: host.
 	^host! !
 
+!NetNameResolver class methodsFor: 'lookups' stamp: 'JMM 10/22/2024 12:08:07'!
+loopBackName
+	^'localhost'! !
+
 !NetNameResolver class methodsFor: 'lookups' stamp: 'ul 10/9/2015 21:20'!
 nameForAddress: hostAddress
 
@@ -1433,6 +1437,15 @@ primHostNameSize
 	<primitive: 'primitiveResolverHostNameSize' module: 'SocketPlugin'>
 	self primitiveFailed
 ! !
+
+!NetNameResolver class methodsFor: 'tests' stamp: 'JMM 10/22/2024 12:06:48'!
+isConnected
+	"Dirty, but avoids fixing the plugin bug"
+
+	[ NetNameResolver addressForName: 'www.google.com' ]
+		on: NameLookupFailure
+		do: [ :exception | ^ false ].
+	^ true! !
 
 !NetNameResolver class methodsFor: 'tests' stamp: 'JMM 10/22/2024 15:37:05'!
 testIPv6
