@@ -187,19 +187,74 @@ Signals that a name lookup operation failed.
 Signals that no network was found. This could happen, e.g., on dial-up connection when no connection was established when Squeak tried to access it.!
 
 !ConnectionQueue commentStamp: '<historical>' prior: 0!
-A ConnectionQueue listens on a given port number and collects a queue of client connections. In order to handle state changes quickly, a ConnectionQueue has its own process that: (a) tries to keep a socket listening on the port whenever the queue isn't already full of connections and (b) prunes stale connections out of the queue to make room for fresh ones.The portNumber can be initialized to a collection, in which case all ports will be probed to create a listening socket. Once successfull, the portNumber is set to the chosen port.!
+A ConnectionQueue listens on a given port number and collects a queue of client connections. In order to handle state changes quickly, a ConnectionQueue has its own process that: (a) tries to keep a socket listening on the port whenever the queue isn't already full of connections and (b) prunes stale connections out of the queue to make room for fresh ones.
+
+The portNumber can be initialized to a collection, in which case all ports will be probed to create a listening socket. Once successfull, the portNumber is set to the chosen port.!
 
 !ExternalObjectTable commentStamp: 'ul 10/27/2014 16:26' prior: 0!
-I'm an enhanced version of JMM's ExternalSemaphoreTable.I'm responsible for maintaining the externalObjectsArray, which can be found at slot 39 of Smalltalk specialObjectsArray. Manipulating the array directly is highly discouraged.My services are available via the methods of the "external objects" category of SmalltalkImage.To register anObject simply use Smalltalk registerExternalObject: anObject. Use #unregisterExternalObject: to unregister it. It your responsibility to always unregister these objects.If you'd like the create one or more new Semaphores, and register them for external use, then you should use one of #newExternalSemaphore, #newExternalSemaphoreDo: and #newExternalSemaphores:. If you want to unregister more than one external objects at the same time, then #unregisterExternalObjects: is the method you're looking for.Implementation details:I maintain a single instance (#current), which can automatically synchronize with externalObjectsArray.All accesses are protected by the semaphore instance variable.To ensure fast access, I keep track of the indexes of the external objects in the externalObjectArray in my indexesByObjects IdentityDictionary.To ensure fast insertion, I keep track of the free slots of the externalObjectsArray in the freeSlotIndexes OrderedCollection. The access pattern is LIFO to avoid unnecessary growth and reordering of the OrderedCollection.I can grow the externalObjectsArray (see #ensureFreeSlot), but I never shrink it.!
+I'm an enhanced version of JMM's ExternalSemaphoreTable.
+I'm responsible for maintaining the externalObjectsArray, which can be found at slot 39 of Smalltalk specialObjectsArray. Manipulating the array directly is highly discouraged.
+
+My services are available via the methods of the "external objects" category of SmalltalkImage.
+
+To register anObject simply use Smalltalk registerExternalObject: anObject. Use #unregisterExternalObject: to unregister it. It your responsibility to always unregister these objects.
+If you'd like the create one or more new Semaphores, and register them for external use, then you should use one of #newExternalSemaphore, #newExternalSemaphoreDo: and #newExternalSemaphores:. If you want to unregister more than one external objects at the same time, then #unregisterExternalObjects: is the method you're looking for.
+
+Implementation details:
+I maintain a single instance (#current), which can automatically synchronize with externalObjectsArray.
+All accesses are protected by the semaphore instance variable.
+To ensure fast access, I keep track of the indexes of the external objects in the externalObjectArray in my indexesByObjects IdentityDictionary.
+To ensure fast insertion, I keep track of the free slots of the externalObjectsArray in the freeSlotIndexes OrderedCollection. The access pattern is LIFO to avoid unnecessary growth and reordering of the OrderedCollection.
+I can grow the externalObjectsArray (see #ensureFreeSlot), but I never shrink it.!
+
+!ExternalObjectTable commentStamp: 'ul 10/27/2014 16:26' prior: 0!
+I'm an enhanced version of JMM's ExternalSemaphoreTable.
+I'm responsible for maintaining the externalObjectsArray, which can be found at slot 39 of Smalltalk specialObjectsArray. Manipulating the array directly is highly discouraged.
+
+My services are available via the methods of the "external objects" category of SmalltalkImage.
+
+To register anObject simply use Smalltalk registerExternalObject: anObject. Use #unregisterExternalObject: to unregister it. It your responsibility to always unregister these objects.
+If you'd like the create one or more new Semaphores, and register them for external use, then you should use one of #newExternalSemaphore, #newExternalSemaphoreDo: and #newExternalSemaphores:. If you want to unregister more than one external objects at the same time, then #unregisterExternalObjects: is the method you're looking for.
+
+Implementation details:
+I maintain a single instance (#current), which can automatically synchronize with externalObjectsArray.
+All accesses are protected by the semaphore instance variable.
+To ensure fast access, I keep track of the indexes of the external objects in the externalObjectArray in my indexesByObjects IdentityDictionary.
+To ensure fast insertion, I keep track of the free slots of the externalObjectsArray in the freeSlotIndexes OrderedCollection. The access pattern is LIFO to avoid unnecessary growth and reordering of the OrderedCollection.
+I can grow the externalObjectsArray (see #ensureFreeSlot), but I never shrink it.!
 
 !NetNameResolver commentStamp: '<historical>' prior: 0!
-This class implements TCP/IP style network name lookup and translation facilities.Attempt to keep track of whether there is a network available.HaveNetwork	true if last attempt to contact the network was successful.LastContact		Time of that contact (totalSeconds).haveNetwork	returns true, false, or #expired.  True means there was contact in the last 30 minutes.  False means contact failed or was false last time we asked.  Get out of false state by making contact with a server in some way (FileList or updates).!
+This class implements TCP/IP style network name lookup and translation facilities.
+
+Attempt to keep track of whether there is a network available.
+HaveNetwork	true if last attempt to contact the network was successful.
+LastContact		Time of that contact (totalSeconds).
+haveNetwork	returns true, false, or #expired.  True means there was contact in the last 30 minutes.  False means contact failed or was false last time we asked.  Get out of false state by making contact with a server in some way (FileList or updates).!
 
 !Socket commentStamp: 'gk 12/13/2005 00:43' prior: 0!
-A Socket represents a network connection point. Current sockets are designed to support the TCP/IP and UDP protocols. Sockets are the lowest level of networking object in Squeak and are not normally used directly. SocketStream is a higher level object wrapping a Socket in a stream like protocol.ProtocolClient and subclasses are in turn wrappers around a SocketStream to provide support for specific network protocols such as POP, NNTP, HTTP, and FTP.!
+A Socket represents a network connection point. Current sockets are designed to support the TCP/IP and UDP protocols. Sockets are the lowest level of networking object in Squeak and are not normally used directly. SocketStream is a higher level object wrapping a Socket in a stream like protocol.
+
+ProtocolClient and subclasses are in turn wrappers around a SocketStream to provide support for specific network protocols such as POP, NNTP, HTTP, and FTP.!
 
 !SocketAddressInformation commentStamp: '<historical>' prior: 0!
-I represent a local or remote network service.Instance Variables	addressFamily:	<SmallInteger> the address family (unix, inet4, inet6, ...) in which the service address is available.	protocol:		<SmallInteger> the protocol (tcp, udp, ...) that the service uses.	socketAddress:	<SocketAddress> the socket address at which the service can be contacted or created.	socketType:		<SmallInteger> the type (stream, dgram) of the socket that should be created for communication with the service.!
+I represent a local or remote network service.
+
+Instance Variables
+	addressFamily:	<SmallInteger> the address family (unix, inet4, inet6, ...) in which the service address is available.
+	protocol:		<SmallInteger> the protocol (tcp, udp, ...) that the service uses.
+	socketAddress:	<SocketAddress> the socket address at which the service can be contacted or created.
+	socketType:		<SmallInteger> the type (stream, dgram) of the socket that should be created for communication with the service.
+!
+
+!SocketAddressInformation commentStamp: '<historical>' prior: 0!
+I represent a local or remote network service.
+
+Instance Variables
+	addressFamily:	<SmallInteger> the address family (unix, inet4, inet6, ...) in which the service address is available.
+	protocol:		<SmallInteger> the protocol (tcp, udp, ...) that the service uses.
+	socketAddress:	<SocketAddress> the socket address at which the service can be contacted or created.
+	socketType:		<SmallInteger> the type (stream, dgram) of the socket that should be created for communication with the service.
+!
 
 !SocketStream commentStamp: '<historical>' prior: 0!
 SocketStream is a wrapper for class Socket making it easy to write networking code by giving the programmer a stream-like protocol. A Socket is a two way communication link with two logically separate channels - input and output. The Socket class is the lowest level in Squeak for network communication and using it directly can be difficult and bug prone.
