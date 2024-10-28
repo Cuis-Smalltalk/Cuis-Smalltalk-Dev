@@ -1,6 +1,6 @@
-'From Cuis7.1 [latest update: #6742] on 18 October 2024 at 11:21:19 AM'!
+'From Cuis7.1 [latest update: #6792] on 28 October 2024 at 11:13:55 am'!
 'Description '!
-!provides: 'Sound' 1 34!
+!provides: 'Sound' 1 35!
 !requires: 'Compression' 1 nil nil!
 SystemOrganization addCategory: #'Sound-Synthesis'!
 SystemOrganization addCategory: #'Sound-Scores'!
@@ -11864,7 +11864,7 @@ startPlayerProcessBufferSize: bufferSize rate: samplesPerSecond stereo: stereoFl
 			stereo: stereoFlag 
 			sound: nil! !
 
-!SoundPlayer class methodsFor: 'player process' stamp: 'JMM 10/18/2024 11:18:33'!
+!SoundPlayer class methodsFor: 'player process' stamp: 'jmv 10/28/2024 11:13:07'!
 startPlayerProcessBufferSize: bufferSize rate: samplesPerSecond stereo: stereoFlag sound: aSound
 	"Start the sound player process. Terminate the old process, if any."
 	"SoundPlayer startPlayerProcessBufferSize: 1000 rate: 11025 stereo: false"
@@ -11878,14 +11878,13 @@ startPlayerProcessBufferSize: bufferSize rate: samplesPerSecond stereo: stereoFl
 	PlayerSemaphore := Semaphore forMutualExclusion.
 	SamplingRate := samplesPerSecond.
 	Stereo := stereoFlag.
+	ReadyForBuffer := Semaphore new.
 	SoundSupported := true. "Assume so"
-	UseReadySemaphore := true.  "set to false if ready semaphore not supported by VM"	
-	Smalltalk newExternalSemaphoreDo: [ :semaphore :index |
-		ReadyForBuffer := semaphore.
-		self primSoundStartBufferSize: Buffer stereoSampleCount
-			rate: samplesPerSecond
-			stereo: Stereo
-			semaIndex: index ].
+	UseReadySemaphore := true.  "set to false if ready semaphore not supported by VM"
+	self primSoundStartBufferSize: Buffer stereoSampleCount
+		rate: samplesPerSecond
+		stereo: Stereo
+		semaIndex: (Smalltalk registerExternalObject: ReadyForBuffer).
 	"Check if sound start prim was successful"
 	SoundSupported ifFalse:[^self].
 	UseReadySemaphore
@@ -11896,7 +11895,7 @@ startPlayerProcessBufferSize: bufferSize rate: samplesPerSecond stereo: stereoFl
 	PlayerProcess
 		priority: Processor userInterruptPriority;
 		name: 'Sound Player';
-		resume! !
+		resume.! !
 
 !SoundPlayer class methodsFor: 'player process' stamp: 'jm 6/7/1999 10:40'!
 startReverb
@@ -12073,11 +12072,11 @@ resumeRecording
 	paused _ false.
 ! !
 
-!SoundRecorder methodsFor: 'recording controls' stamp: 'JMM 10/18/2024 11:20:10'!
+!SoundRecorder methodsFor: 'recording controls' stamp: 'jmv 10/28/2024 11:13:11'!
 startRecording
 	"Turn of the sound input driver and start the recording process. Initially, recording is paused."
 
-	
+	| semaIndex |
 	recordLevel ifNil: [recordLevel := 0.5].  "lazy initialization"
 	SoundRecorder canRecordWhilePlaying ifFalse: [SoundPlayer shutDown].
 	recordProcess ifNotNil: [self stopRecording].
@@ -12085,11 +12084,11 @@ startRecording
 	meteringBuffer := SoundBuffer newMonoSampleCount: 1024.
 	meterLevel := 0.
 	self allocateBuffer.
-	Smalltalk newExternalSemaphoreDo: [ :semaphore :index |
-		bufferAvailableSema := semaphore.
-		self primStartRecordingDesiredSampleRate: samplingRate asInteger
-			stereo: stereo
-			semaIndex: index ].
+	bufferAvailableSema := Semaphore new.
+	semaIndex := Smalltalk registerExternalObject: bufferAvailableSema.
+	self primStartRecordingDesiredSampleRate: samplingRate asInteger
+		stereo: stereo
+		semaIndex: semaIndex.
 	RecorderActive := true.
 	samplingRate := self primGetActualRecordingSampleRate.
 	self primSetRecordLevel: (1000.0 * recordLevel) asInteger.
