@@ -1,6 +1,6 @@
-'From Cuis7.1 [latest update: #6786] on 18 October 2024 at 3:48:01 pm'!
+'From Cuis7.1 [latest update: #6793] on 28 October 2024 at 8:30:54 pm'!
 'Description Rename extentions tests'!
-!provides: 'BaseImageTests' 1 414!
+!provides: 'BaseImageTests' 1 415!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Objects'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
@@ -3787,6 +3787,16 @@ testSum
 	self assert: ({0.0. 1.0. Float pi. Float e} asFloat64Array + 1) = ({0.0+1. 1.0+1. Float pi+1. Float e+1} asFloat64Array).
 	a _ {0.0. 1.0. Float pi. Float e} asFloat64Array.
 	self assert: (a + a) = (a * 2 )! !
+
+!ReadStreamTest methodsFor: 'tests' stamp: 'jmv 10/28/2024 20:25:49'!
+testMatchStart
+	| string matchStart |
+	string := UnicodeString fromUtf8Bytes: #[57 194 160 226 130 172 64 226 130 172 226 130 172].
+
+	1 to: string size do: [ :i |
+		i to: string size do: [ :j |
+			matchStart := string readStream matchStart: (string copyFrom: i to: j).
+			self assert: (string at: matchStart) = (string at: i)]].! !
 
 !ReadStreamTest methodsFor: 'tests' stamp: 'NM 10/25/2021 10:21:47'!
 testUpTo1ShortRecords
