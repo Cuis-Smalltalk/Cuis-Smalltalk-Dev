@@ -1,6 +1,6 @@
-'From Cuis7.1 [latest update: #6742] on 25 October 2024 at 11:07:42 AM'!
+'From Cuis7.1 [latest update: #6795] on 28 October 2024 at 9:45:45 pm'!
 'Description '!
-!provides: 'Promise' 1 0!
+!provides: 'Promise' 1 1!
 SystemOrganization addCategory: #Promise!
 
 
@@ -266,13 +266,13 @@ waitTimeoutSeconds: seconds
 	"Wait for at most the given number of seconds for this promise to resolve. Answer true if it is resolved, false otherwise."
 	^self waitTimeoutMSecs: seconds*1000! !
 
-!Promise methodsFor: 'private' stamp: 'fbs 5/20/2013 09:41'!
+!Promise methodsFor: 'private' stamp: 'jmv 10/28/2024 21:16:55'!
 evaluateRejecter: rejecterBlock
-	^ rejecterBlock cull: error.! !
+	^ rejecterBlock valueWithPossibleArgument: error.! !
 
-!Promise methodsFor: 'private' stamp: 'fbs 5/20/2013 09:29'!
+!Promise methodsFor: 'private' stamp: 'jmv 10/28/2024 21:17:34'!
 evaluateResolver: resolverBlock
-	^ resolverBlock cull: value.! !
+	^ resolverBlock valueWithPossibleArgument: value.! !
 
 !Promise class methodsFor: 'instance creation' stamp: 'tonyg 10/8/2020 18:05'!
 ifRejected: aBlock
