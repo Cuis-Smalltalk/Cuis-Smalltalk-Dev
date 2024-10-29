@@ -1,68 +1,8 @@
-'From Cuis7.1 [latest update: #6426] on 3 June 2024 at 11:06:47 am'!
+'From Cuis7.1 [latest update: #6797] on 29 October 2024 at 3:02:58 pm'!
 'Description Alien provides the infrastructure for FFI Callbacks, implementing the Callback hierarchy and marshalling methods within it.'!
-!provides: 'Alien-Core' 1 0!
+!provides: 'Alien-Core' 1 1!
 SystemOrganization addCategory: #'Alien-Core'!
 
-
-!classDefinition: #Alien category: #'Alien-Core'!
-ByteArray variableByteSubclass: #Alien
-	instanceVariableNames: ''
-	classVariableNames: 'GCMallocedAliens LoadedLibraries ProcessIoEvents WordSize'
-	poolDictionaries: ''
-	category: 'Alien-Core'!
-!classDefinition: 'Alien class' category: #'Alien-Core'!
-Alien class
-	instanceVariableNames: 'lifoCallbackSemaphore vmCallbackContextClass'!
-
-!classDefinition: #AbstractVMCallbackContext category: #'Alien-Core'!
-Alien variableByteSubclass: #AbstractVMCallbackContext
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Alien-Core'!
-!classDefinition: 'AbstractVMCallbackContext class' category: #'Alien-Core'!
-AbstractVMCallbackContext class
-	instanceVariableNames: ''!
-
-!classDefinition: #VMCallbackContext32 category: #'Alien-Core'!
-AbstractVMCallbackContext variableByteSubclass: #VMCallbackContext32
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Alien-Core'!
-!classDefinition: 'VMCallbackContext32 class' category: #'Alien-Core'!
-VMCallbackContext32 class
-	instanceVariableNames: ''!
-
-!classDefinition: #VMCallbackContext64 category: #'Alien-Core'!
-AbstractVMCallbackContext variableByteSubclass: #VMCallbackContext64
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Alien-Core'!
-!classDefinition: 'VMCallbackContext64 class' category: #'Alien-Core'!
-VMCallbackContext64 class
-	instanceVariableNames: ''!
-
-!classDefinition: #FFICallbackThunk category: #'Alien-Core'!
-Alien variableByteSubclass: #FFICallbackThunk
-	instanceVariableNames: ''
-	classVariableNames: 'AccessProtect AllocatedThunks ExecutablePages'
-	poolDictionaries: ''
-	category: 'Alien-Core'!
-!classDefinition: 'FFICallbackThunk class' category: #'Alien-Core'!
-FFICallbackThunk class
-	instanceVariableNames: 'initializer'!
-
-!classDefinition: #LibrarySymbolNotFoundError category: #'Alien-Core'!
-Error subclass: #LibrarySymbolNotFoundError
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Alien-Core'!
-!classDefinition: 'LibrarySymbolNotFoundError class' category: #'Alien-Core'!
-LibrarySymbolNotFoundError class
-	instanceVariableNames: ''!
 
 !classDefinition: #AlienWeakTable category: #'Alien-Core'!
 Object subclass: #AlienWeakTable
@@ -144,6 +84,151 @@ Callback subclass: #CallbackForX64
 CallbackForX64 class
 	instanceVariableNames: ''!
 
+!classDefinition: #Alien category: #'Alien-Core'!
+ByteArray variableByteSubclass: #Alien
+	instanceVariableNames: ''
+	classVariableNames: 'GCMallocedAliens LoadedLibraries ProcessIoEvents WordSize'
+	poolDictionaries: ''
+	category: 'Alien-Core'!
+!classDefinition: 'Alien class' category: #'Alien-Core'!
+Alien class
+	instanceVariableNames: 'lifoCallbackSemaphore vmCallbackContextClass'!
+
+!classDefinition: #AbstractVMCallbackContext category: #'Alien-Core'!
+Alien variableByteSubclass: #AbstractVMCallbackContext
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Alien-Core'!
+!classDefinition: 'AbstractVMCallbackContext class' category: #'Alien-Core'!
+AbstractVMCallbackContext class
+	instanceVariableNames: ''!
+
+!classDefinition: #VMCallbackContext32 category: #'Alien-Core'!
+AbstractVMCallbackContext variableByteSubclass: #VMCallbackContext32
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Alien-Core'!
+!classDefinition: 'VMCallbackContext32 class' category: #'Alien-Core'!
+VMCallbackContext32 class
+	instanceVariableNames: ''!
+
+!classDefinition: #VMCallbackContext64 category: #'Alien-Core'!
+AbstractVMCallbackContext variableByteSubclass: #VMCallbackContext64
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Alien-Core'!
+!classDefinition: 'VMCallbackContext64 class' category: #'Alien-Core'!
+VMCallbackContext64 class
+	instanceVariableNames: ''!
+
+!classDefinition: #FFICallbackThunk category: #'Alien-Core'!
+Alien variableByteSubclass: #FFICallbackThunk
+	instanceVariableNames: ''
+	classVariableNames: 'AccessProtect AllocatedThunks ExecutablePages'
+	poolDictionaries: ''
+	category: 'Alien-Core'!
+!classDefinition: 'FFICallbackThunk class' category: #'Alien-Core'!
+FFICallbackThunk class
+	instanceVariableNames: 'initializer'!
+
+!classDefinition: #LibrarySymbolNotFoundError category: #'Alien-Core'!
+Error subclass: #LibrarySymbolNotFoundError
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Alien-Core'!
+!classDefinition: 'LibrarySymbolNotFoundError class' category: #'Alien-Core'!
+LibrarySymbolNotFoundError class
+	instanceVariableNames: ''!
+
+
+!AlienWeakTable commentStamp: '<historical>' prior: 0!
+This class supports simple post-mortem finalization of values associated with gc'ed objects.  An object to be finalized is registered in the table together with another object called 'the tag'. The finalizable object is held onto by the table weakly, the tag object--strongly. A table is initialized with the owner object, which is the object that performs the actual finalization. Some time after a finalizable object is garbage-collected, the owner is sent the #finalize: message with the object's tag as the argument.
+
+Instance Variables:
+	accessProtect <Semaphore>  - A mutex protecting state
+	firstUnusedIndex <Integer> - The lowest index in strongArray that is empty (an invariant)
+	lastUsedIndex <Integer> - The highest index in strongArray that is not empty (an invariant)
+	weakArray <WeakArray> - The array of objects whose death we're interested in.
+	strongArray <Array> - The array of corresponding objects that wll be passed to the owner when their corresponding element in weakArray is garbage collected.
+	owner <Object> - The object that is sent finalize: with the tag of an object that has been garbage-collected.!
+
+!Callback commentStamp: '<historical>' prior: 0!
+Callbacks encapsulate callbacks from the outside world.  They allow Smalltalk blocks to be evaluated and answer their results to external (e.g. C) callees.  Callbacks are created with signature:block:, e.g.
+
+	cb := Callback
+			signature:  #(int (*)(const void *, const void *))
+			block: [ :arg1 :arg2 | ((arg1 doubleAt: 1) - (arg2 doubleAt: 1)) sign].
+
+and passed through the FFI by passing their pointer, e.g.
+
+	self qui: data ck: data size so: 8 rt: cb pointer
+
+When the callback is made, the system arranges that the block is invoked with the arguments as defined by the signature, and the result of the block passed back, again as defined by the signature.  See methods in the signatures protocol in subclasses of Callback for signature methods that decode the C stack and registers to invoke a callback with parsed arguments.  See Callback>>valueInContext: and subclass implementations for the evaluation of the signature method that invokes the callback block with correctly parsed arguments.  See Alien class>>invokeCallbackContext: for the entry-point for callbacks into the system from the VM.
+
+Instance Variables:
+block <BlockClosure> - The Smalltalk code to be run in response to external code invoking the callback.
+thunk <FFICallbackThunk> - the wrapper around the machine-code thunk that initiates the callback and whose address should be passed to C
+evaluator <Symbol> - the selector of the marshalling method to use; see methods in the signatures protocol in subclasses of Callback.
+numEvaluatorArgs <Integer> - the arity of evaluator
+argsProxyClass <Alien subclass> - legacy; unused; the wrapper around the thunk's incoming stack pointer, used to extract arguments from the stack.
+
+Class Variables:
+ThunkToCallbackMap <Dictionary of: thunkAddress <Integer> -> callback <Callback>> - used to lookup the Callback associated with a specific thunk address on callback.  See FFICallbackThunk.
+ABI <String> - the name of the current ABI
+
+Class Instance Variables
+concreteClass <Callback subclass> - the concrete class for callbacks on the current platform, or nil if one doesn't yet exist.
+
+Implementation:
+The way that it works is in two parts
+- on callback the VM passes up a pointer to a structure from which all arguments, stacked and in registers (because the VM has copied any register args into the struct) can be accessed, and through which the result can be returned.
+- the image level provides marshalling methods that match the signature in the callback.  Marshalling methods belong in concrete subclasses, one subclass for each ABI.
+
+So e.g. with a callback of
+		Callback
+			signature:  #(int (*)(const void *, const void *))
+			block: [ :arg1 :arg2 | ((arg1 doubleAt: 1) - (arg2 doubleAt: 1)) sign]
+the marshalling methods are in one of Callback's concrete subclasses signatures protocol, for example
+
+CallbackForIA32>>voidstarvoidstarRetint: callbackContext sp: spAlien
+	<signature: #(int (*)(const void *, const void *))>
+	^callbackContext wordResult:
+		(block
+			value: (Alien forPointer: (spAlien unsignedLongAt: 1))
+			value: (Alien forPointer: (spAlien unsignedLongAt: 5)))
+
+where spAlien is an Alien pointing to a VMCallbackContext32.
+
+For ARM support, where there the first four integer arguments are passed in registers, we can use
+
+CallbackForARM32>>voidstarvoidstarRetint: callbackContext regs: regsAlien
+	<signature: #(int (*)(const void *, const void *))>
+	^callbackContext wordResult:
+		(block
+			value: (Alien forPointer: (regsAlien unsignedLongAt: 1))
+			value: (Alien forPointer: (regsAlien unsignedLongAt: 5)))
+
+The selector of the method doesn't matter, providing it doesn't conflict with any other, except for the number of arguments.  What's important is the pragma which defines the signature and the ABI for which this is a valid marshalling method.  Support for callee pop callbacks (Pascal calling convention such as the Win32 stdcall: convention) are supported using the <calleepops: N> pragma which specifies how many bytes to pop.
+
+When a callback is instantiated, Callback introspects to find the marshalling method that matches the signature for the current ABI.  If one doesn't already exist you can write one.  Hopefully we'll write an ABI compiler that will automatically generate these marshalling methods according to the platform's ABI, but for now its a manual process.; at least it's open and flexible.  When the callback is invoked the evaluator is performed with the current callbackContext and pointer(s) to the arguments.  There is a 32-bit and a 64-bit callback context, and it can have a stack pointer, integer register args and floating point register args, so it's general enough for any callback.
+
+To pass back the result, a value is assigned into the struct via the accessor in the marshalling method and control returns to teh point where teh callback comes in, and this uses a primitive to return.  Inside the callbackContext is a jmpbuf from a setjmp.  The primitive longjmp's back to the entry point in the VM which extracts the result and the code for the kind of result and returns.  See Callback class>>invokeCallbackContext:!
+
+!CallbackForARM32 commentStamp: 'eem 6/17/2016 13:56' prior: 0!
+A CallbackForARM32 is a callback for platforms with ARMv4/v5/v6/v7 processors using the System V ABI.!
+
+!CallbackForIA32 commentStamp: 'eem 6/17/2016 13:55' prior: 0!
+A CallbackForIA32 is a callback for platforms with x86 processors using the System V ABI.!
+
+!CallbackForWin64X64 commentStamp: 'eem 6/17/2016 13:55' prior: 0!
+A CallbackForWin64X64 is a callback for platforms with x64/x86_64 processors using the Win64 ABI.!
+
+!CallbackForX64 commentStamp: 'eem 6/17/2016 13:55' prior: 0!
+A CallbackForX64 is a callback for platforms with x64/x86_64 processors using the System V ABI.!
 
 !Alien commentStamp: '<historical>' prior: 0!
 Copyright 2008 Cadence Design Systems, Inc.
@@ -247,90 +332,501 @@ ExecutablePages <Set of: Alien "executable page"> - collection of pages with exe
 !LibrarySymbolNotFoundError commentStamp: 'TorstenBergmann 6/14/2019 21:47' prior: 0!
 A symbol within a library was not found, see Alien>>#primFindSymbol:!
 
-!AlienWeakTable commentStamp: '<historical>' prior: 0!
-This class supports simple post-mortem finalization of values associated with gc'ed objects.  An object to be finalized is registered in the table together with another object called 'the tag'. The finalizable object is held onto by the table weakly, the tag object--strongly. A table is initialized with the owner object, which is the object that performs the actual finalization. Some time after a finalizable object is garbage-collected, the owner is sent the #finalize: message with the object's tag as the argument.
+!AlienWeakTable methodsFor: 'adding' stamp: 'vb 5/7/2008 08:34'!
+add: anObject finalizing: postMortemFinalizationTag
+	"Register a new object in the table, with the associated tag. The object is held onto weakly, the tag--strongly. The tag will be passed to the owner as the argument of #finalize: some time after the object is garbage collected."
 
-Instance Variables:
-	accessProtect <Semaphore>  - A mutex protecting state
-	firstUnusedIndex <Integer> - The lowest index in strongArray that is empty (an invariant)
-	lastUsedIndex <Integer> - The highest index in strongArray that is not empty (an invariant)
-	weakArray <WeakArray> - The array of objects whose death we're interested in.
-	strongArray <Array> - The array of corresponding objects that wll be passed to the owner when their corresponding element in weakArray is garbage collected.
-	owner <Object> - The object that is sent finalize: with the tag of an object that has been garbage-collected.!
+	| size start delta |
+	accessProtect critical:
+		[size := strongArray size.
+		 start := firstUnusedIndex].
+	start to: size do:
+		[:i|
+		(strongArray at: i) == nil ifTrue:
+			[accessProtect critical:
+				[weakArray at: i put: anObject.
+				 strongArray at: i put: postMortemFinalizationTag.
+				 firstUnusedIndex := i + 1.
+				 i > lastUsedIndex ifTrue: [lastUsedIndex := i]].
+			 ^anObject]].
+	delta := size min: 4096.
+	accessProtect critical:
+		[(weakArray := weakArray copyGrownBy: delta)
+			 at: size + 1 put: anObject.
+		 (strongArray := strongArray  copyGrownBy: delta)
+			at: size put: postMortemFinalizationTag.
+		 firstUnusedIndex := size + 1.
+		 lastUsedIndex := size].
+	^anObject! !
 
-!Callback commentStamp: '<historical>' prior: 0!
-Callbacks encapsulate callbacks from the outside world.  They allow Smalltalk blocks to be evaluated and answer their results to external (e.g. C) callees.  Callbacks are created with signature:block:, e.g.
+!AlienWeakTable methodsFor: 'finalization' stamp: 'vb 5/7/2008 08:35'!
+finalizeValues
+	"Sent periodically by the finalization loop to check for any dead objects and report their death to the owner."
+	
+	accessProtect critical:
+		[| usedIndex value newLastUsedIndex |
+		 newLastUsedIndex := 0.
+		 1 to: lastUsedIndex do:
+			[:i|
+			(value := strongArray at: i) ifNotNil:
+				[(weakArray at: i)
+					ifNil:
+						[strongArray at: i put: nil.
+						 owner finalize: value.
+						 firstUnusedIndex > i ifTrue:
+							[firstUnusedIndex := i]]
+					ifNotNil: [newLastUsedIndex := i]]].
+		 lastUsedIndex := newLastUsedIndex]! !
 
-	cb := Callback
-			signature:  #(int (*)(const void *, const void *))
-			block: [ :arg1 :arg2 | ((arg1 doubleAt: 1) - (arg2 doubleAt: 1)) sign].
+!AlienWeakTable methodsFor: 'initialize-release' stamp: 'vb 5/8/2008 11:32'!
+initializeWithOwner: anObject
+	accessProtect := Semaphore forMutualExclusion.
+	firstUnusedIndex := 1.
+	lastUsedIndex := 0.
+	weakArray := WeakArray new: 1024.
+	strongArray := Array new: 1024.
+	owner := anObject.
+	WeakArray addWeakDependent: self! !
 
-and passed through the FFI by passing their pointer, e.g.
+!AlienWeakTable methodsFor: 'removing' stamp: 'eem 1/11/2008 12:10'!
+remove: anObject
+	1 to: lastUsedIndex do:
+		[:i|
+		(weakArray at: i) == anObject ifTrue:
+			[accessProtect critical:
+				[strongArray at: i put: nil.
+				 firstUnusedIndex > i ifTrue:
+					[firstUnusedIndex := i].
+				 i = lastUsedIndex ifTrue:
+					[lastUsedIndex := i - 1]].
+			 ^anObject]].
+	^anObject! !
 
-	self qui: data ck: data size so: 8 rt: cb pointer
+!AlienWeakTable methodsFor: 'removing' stamp: 'vb 5/8/2008 11:31'!
+removeAll
 
-When the callback is made, the system arranges that the block is invoked with the arguments as defined by the signature, and the result of the block passed back, again as defined by the signature.  See methods in the signatures protocol in subclasses of Callback for signature methods that decode the C stack and registers to invoke a callback with parsed arguments.  See Callback>>valueInContext: and subclass implementations for the evaluation of the signature method that invokes the callback block with correctly parsed arguments.  See Alien class>>invokeCallbackContext: for the entry-point for callbacks into the system from the VM.
+	accessProtect critical:
+		[1 to: lastUsedIndex do:
+			[:index |
+			strongArray at: index put: nil.
+			weakArray at: index put: nil].
+		firstUnusedIndex := 1.
+		lastUsedIndex := 0]! !
 
-Instance Variables:
-block <BlockClosure> - The Smalltalk code to be run in response to external code invoking the callback.
-thunk <FFICallbackThunk> - the wrapper around the machine-code thunk that initiates the callback and whose address should be passed to C
-evaluator <Symbol> - the selector of the marshalling method to use; see methods in the signatures protocol in subclasses of Callback.
-numEvaluatorArgs <Integer> - the arity of evaluator
-argsProxyClass <Alien subclass> - legacy; unused; the wrapper around the thunk's incoming stack pointer, used to extract arguments from the stack.
+!AlienWeakTable class methodsFor: 'instance creation' stamp: 'eem 12/21/2007 15:00'!
+newForOwner: anOwner
+	^self basicNew initializeWithOwner: anOwner! !
 
-Class Variables:
-ThunkToCallbackMap <Dictionary of: thunkAddress <Integer> -> callback <Callback>> - used to lookup the Callback associated with a specific thunk address on callback.  See FFICallbackThunk.
-ABI <String> - the name of the current ABI
+!Callback methodsFor: 'private' stamp: 'KenD 8/1/2022 16:05'!
+addToThunkTable
+	FlushThunkToCallbackMap ifTrue:
+		[FlushThunkToCallbackMap := false.
+		 ThunkToCallbackMap keys do:
+			[:k| (ThunkToCallbackMap at: k) ifNil: [ThunkToCallbackMap removeKey: k]]].
+	ThunkToCallbackMap at: thunk addressField put: self! !
 
-Class Instance Variables
-concreteClass <Callback subclass> - the concrete class for callbacks on the current platform, or nil if one doesn't yet exist.
+!Callback methodsFor: 'private' stamp: 'eem 6/17/2016 18:51'!
+evaluatorForSignature: signature "<String|Array>"
+	"Search the methods marked with the signature: primtiive for those that match signature.
+	 signature is typically a literal Array for the function's C signature, e.g. #(int (*)(int, char *))."
+	Pragma withPragmasIn: self class do:
+		[:pragma|
+		 (pragma key == #signature:
+		  and: [(pragma argumentAt: 1) = signature]) ifTrue:
+			[^pragma method]].
+	self error: 'could not find Callback signature'! !
 
-Implementation:
-The way that it works is in two parts
-- on callback the VM passes up a pointer to a structure from which all arguments, stacked and in registers (because the VM has copied any register args into the struct) can be accessed, and through which the result can be returned.
-- the image level provides marshalling methods that match the signature in the callback.  Marshalling methods belong in concrete subclasses, one subclass for each ABI.
+!Callback methodsFor: 'private' stamp: 'eem 10/17/2020 14:03'!
+printSignature: aLiteralArray on: aStream
+	aStream nextPut: $(.
+	aLiteralArray
+		do:
+			[:thing|
+			thing isArray
+				ifTrue: [self printSignature: thing on: aStream]
+				ifFalse:
+					[thing isString
+						ifTrue: [aStream nextPutAll: thing]
+						ifFalse: [aStream print: thing]]]
+		separatedBy: [aStream space].
+	aStream nextPut: $)! !
 
-So e.g. with a callback of
-		Callback
-			signature:  #(int (*)(const void *, const void *))
-			block: [ :arg1 :arg2 | ((arg1 doubleAt: 1) - (arg2 doubleAt: 1)) sign]
-the marshalling methods are in one of Callback's concrete subclasses signatures protocol, for example
+!Callback methodsFor: 'evaluation' stamp: 'eem 9/27/2020 16:37'!
+valueInContext: callbackContext "<VMCallbackContext32|VMCallbackContext64> ^<Integer>"
+	"Perform the evaluator with arguments derived from the callback context in an order most appropriate for the ABI.
+	 On x86 the order is callbackContext, stackPointerAlien.
+	 On ``RISCS'' it is callbackContext, integerRegsAlien, stackPointerAlien, floatRegsAlien.
+	 Here we provide the RISC version; CISC subclasses override."
+	numEvaluatorArgs = 2 ifTrue:
+		[^self perform: evaluator
+			with: callbackContext
+			with: callbackContext intregargsp].
+	numEvaluatorArgs = 3 ifTrue:
+		[^self perform: evaluator
+			with: callbackContext
+			with: callbackContext intregargsp
+			with: callbackContext stackp].
+	numEvaluatorArgs = 4 ifTrue:
+		[^self perform: evaluator
+			with: callbackContext
+			with: callbackContext intregargsp
+			with: callbackContext stackp
+			with: callbackContext floatregargsp].
+	numEvaluatorArgs = 1 ifTrue: "legacy support"
+		[^self perform: evaluator
+			with: callbackContext].
+	self error: 'invalid evaluator argument count'! !
 
-CallbackForIA32>>voidstarvoidstarRetint: callbackContext sp: spAlien
+!Callback methodsFor: 'signatures' stamp: 'eem 6/17/2016 18:29'!
+intcharstarRetint: callbackContext regs: regsAlien
+	<signature: #(int (*)(int, char *))>
+	self subclassResponsibility! !
+
+!Callback methodsFor: 'signatures' stamp: 'eem 6/17/2016 18:29'!
+intcharstarRetint: callbackContext sp: spAlien
+	<signature: #(int (*)(int, char *))>
+	self subclassResponsibility! !
+
+!Callback methodsFor: 'signatures' stamp: 'eem 6/17/2016 18:28'!
+voidstarvoidstarRetint: callbackContext regs: regsAlien
 	<signature: #(int (*)(const void *, const void *))>
+	self subclassResponsibility! !
+
+!Callback methodsFor: 'signatures' stamp: 'eem 6/17/2016 18:28'!
+voidstarvoidstarRetint: callbackContext sp: spAlien
+	<signature: #(int (*)(const void *, const void *))>
+	self subclassResponsibility! !
+
+!Callback methodsFor: 'instance initialization' stamp: 'eem 10/15/2010 10:51'!
+signature: signature "<String>" block: aBlock "<BlockClosure>"
+	| method |
+	method := self evaluatorForSignature: signature.
+	block := aBlock.
+	thunk := (method pragmaAt: #calleepops:)
+				ifNil: [FFICallbackThunk newCCall]
+				ifNotNil:
+					[:pragma|
+					FFICallbackThunk newStdCall: (pragma argumentAt: 1)].
+	numEvaluatorArgs := (evaluator := method selector) numArgs.
+	self addToThunkTable! !
+
+!Callback methodsFor: 'accessing' stamp: 'eem 11/19/2007 16:54'!
+thunk
+	^thunk! !
+
+!Callback methodsFor: 'printing' stamp: 'eem 10/17/2020 18:33'!
+printOn: aStream
+	super printOn: aStream.
+	(self class lookupSelector: evaluator) ifNotNil:
+		[:method|
+		(method pragmaAt: #signature:) ifNotNil:
+			[:pragma|
+			aStream nextPutAll: ' signature: #'.
+			self printSignature: pragma arguments first on: aStream]].
+	block ifNotNil:
+		[aStream nextPutAll: ' block: '; print: block]! !
+
+!Callback class methodsFor: 'accessing' stamp: 'eem 6/17/2016 10:48'!
+abi
+	^ABI! !
+
+!Callback class methodsFor: 'class initialization' stamp: 'nice 3/2/2020 10:31'!
+ensureNotifiedAtStartup
+	"Callback needs to be notified at system startup to clear the ThunkToCallbackMap and determine concreteClass."
+	self ~~ Callback ifTrue: [^self].
+	(Smalltalk classNamed: #SessionManager)
+		ifNotNil: [:sessionManagerClass|
+			sessionManagerClass default
+				registerSystemClassNamed: self name
+				atPriority: 60]
+		ifNil:
+			[FFICallbackThunk ensureNotifiedAtStartup.
+			Smalltalk addToStartUpList: self after: FFICallbackThunk]! !
+
+!Callback class methodsFor: 'class initialization' stamp: 'eem 5/31/2024 17:10:00'!
+initialize
+	"Callback initialize"
+	self ensureNotifiedAtStartup.
+	[self startUp: false] "Monticello... grrr...."
+		on: Error
+		do: [:ex| ].
+	(Smalltalk specialObjectsArray at: 54) ~~ #invokeCallbackContext: ifTrue:
+		[self inform: (Character cr asString join: #('this version of Callbacks requires the callback selector to be' '#invokeCallbackContext:.  recreate the specialObjects Array.'))]! !
+
+!Callback class methodsFor: 'class initialization' stamp: 'eem 6/21/2016 12:57'!
+startUp: isInANewSession
+	"Callback startUp: false"
+	| prevMap |
+	concreteClass := subclasses detect: [:subclass| subclass isForCurrentPlatform] ifNone: [].
+	ABI := concreteClass ifNotNil: [concreteClass abi] ifNil: ['UNKNOWN'].
+	FlushThunkToCallbackMap := false.
+	(WeakArray hasWeakDependent: self) ifFalse:
+		[WeakArray addWeakDependent: self].
+	prevMap := isInANewSession ifFalse: [ThunkToCallbackMap].
+	ThunkToCallbackMap := WeakValueDictionary new.
+	prevMap ifNotNil:
+		[prevMap keysAndValuesDo:
+			[:thunkAddress :callback|
+			ThunkToCallbackMap at: thunkAddress put: callback]]! !
+
+!Callback class methodsFor: 'evaluation' stamp: 'eem 10/17/2010 15:06'!
+evaluateCallbackForContext: callbackContext "<VMCallbackContext32|VMCallbackContext64> ^<FFICallbackReturnValue>"
+	(ThunkToCallbackMap
+		at: callbackContext thunkp
+		ifAbsent: [^self error: 'could not locate Callback instance corresponding to thunk address'])
+		ifNil: [self error: 'Callback instance for this thunk address has been garbage collected']
+		ifNotNil:
+			[:callback|
+			^callback valueInContext: callbackContext]! !
+
+!Callback class methodsFor: 'finalization' stamp: 'eem 2/20/2008 16:11'!
+finalizeValues
+	FlushThunkToCallbackMap := true! !
+
+!Callback class methodsFor: 'instance creation' stamp: 'eem 6/17/2016 13:58'!
+newForPlatform
+	"Answer an instance of the subclass for this platform's ABI, if any."
+	^concreteClass
+		ifNotNil: [:cc| cc new]
+		ifNil: [self error: 'could not find a concrete Callback class for this platform']! !
+
+!Callback class methodsFor: 'instance creation' stamp: 'eem 6/18/2016 16:35'!
+signature: signature "<String>" block: aBlock "<BlockClosure> ^<Callback>"
+	"Answer a Callback that evaluates aBlock whose C signature is signature 
+	 and whose thunk should conform to the C calling convention."
+	^self newForPlatform signature: signature block: aBlock! !
+
+!CallbackForARM32 methodsFor: 'signatures' stamp: 'eem 2/15/2018 09:48'!
+hwndlparamRetbool: callbackContext regs: regsAlien
+	<signature: #(BOOL CALLBACK (*)(HWND, LPARAM))>
 	^callbackContext wordResult:
 		(block
-			value: (Alien forPointer: (spAlien unsignedLongAt: 1))
-			value: (Alien forPointer: (spAlien unsignedLongAt: 5)))
+			value: (Alien forPointer: (regsAlien unsignedLongAt: 1))
+			value: (regsAlien unsignedLongAt: 5)) asAlien "i.e. coerce true to 1 and false to 0"! !
 
-where spAlien is an Alien pointing to a VMCallbackContext32.
+!CallbackForARM32 methodsFor: 'signatures' stamp: 'eem 6/17/2016 18:45'!
+intcharstarRetint: callbackContext regs: regsAlien
+	<signature: #(int (*)(int, char *))>
+	^callbackContext wordResult:
+		(block
+			value: (regsAlien signedLongAt: 1)
+			value: (Alien forPointer: (regsAlien unsignedLongAt: 5)))! !
 
-For ARM support, where there the first four integer arguments are passed in registers, we can use
+!CallbackForARM32 methodsFor: 'signatures' stamp: 'eem 2/15/2018 09:04'!
+logfontstartextmetricstardwordlparamRetint: callbackContext regs: regsAlien
+	<signature: #(int CALLBACK (*)(const LOGFONT *, const TEXTMETRIC *, DWORD, LPARAM))>
+	^callbackContext wordResult:
+		(block
+			value: (Alien forPointer: (regsAlien unsignedLongAt: 1))
+			value: (Alien forPointer: (regsAlien unsignedLongAt: 5))
+			value: (regsAlien unsignedLongAt: 9)
+			value: (regsAlien signedLongAt: 13))! !
 
-CallbackForARM32>>voidstarvoidstarRetint: callbackContext regs: regsAlien
+!CallbackForARM32 methodsFor: 'signatures' stamp: 'eem 6/17/2016 18:26'!
+voidstarvoidstarRetint: callbackContext regs: regsAlien
 	<signature: #(int (*)(const void *, const void *))>
 	^callbackContext wordResult:
 		(block
 			value: (Alien forPointer: (regsAlien unsignedLongAt: 1))
-			value: (Alien forPointer: (regsAlien unsignedLongAt: 5)))
+			value: (Alien forPointer: (regsAlien unsignedLongAt: 5)))! !
 
-The selector of the method doesn't matter, providing it doesn't conflict with any other, except for the number of arguments.  What's important is the pragma which defines the signature and the ABI for which this is a valid marshalling method.  Support for callee pop callbacks (Pascal calling convention such as the Win32 stdcall: convention) are supported using the <calleepops: N> pragma which specifies how many bytes to pop.
+!CallbackForARM32 class methodsFor: 'accessing' stamp: 'eem 6/17/2016 13:44'!
+abi
+	^'ARM32'! !
 
-When a callback is instantiated, Callback introspects to find the marshalling method that matches the signature for the current ABI.  If one doesn't already exist you can write one.  Hopefully we'll write an ABI compiler that will automatically generate these marshalling methods according to the platform's ABI, but for now its a manual process.; at least it's open and flexible.  When the callback is invoked the evaluator is performed with the current callbackContext and pointer(s) to the arguments.  There is a 32-bit and a 64-bit callback context, and it can have a stack pointer, integer register args and floating point register args, so it's general enough for any callback.
+!CallbackForARM32 class methodsFor: 'class initialization' stamp: 'eem 05/31/2024 17:35'!
+isForCurrentPlatform
+	| processor |
+	processor := (Smalltalk getSystemAttribute: 1003) asLowercase.
+	^processor = 'arm' or: [(processor beginsWith: 'armv') and: [processor fifth <= $7]]! !
 
-To pass back the result, a value is assigned into the struct via the accessor in the marshalling method and control returns to teh point where teh callback comes in, and this uses a primitive to return.  Inside the callbackContext is a jmpbuf from a setjmp.  The primitive longjmp's back to the entry point in the VM which extracts the result and the code for the kind of result and returns.  See Callback class>>invokeCallbackContext:!
+!CallbackForARMv8 methodsFor: 'signatures' stamp: 'eem 6/17/2016 18:45'!
+intcharstarRetint: callbackContext regs: regsAlien
+	<signature: #(int (*)(int, char *))>
+	^callbackContext wordResult:
+		(block
+			value: (regsAlien signedLongLongAt: 1)
+			value: (Alien forPointer: (regsAlien unsignedLongLongAt: 9)))! !
 
-!CallbackForARM32 commentStamp: 'eem 6/17/2016 13:56' prior: 0!
-A CallbackForARM32 is a callback for platforms with ARMv4/v5/v6/v7 processors using the System V ABI.!
+!CallbackForARMv8 methodsFor: 'signatures' stamp: 'eem 6/17/2016 18:40'!
+voidstarvoidstarRetint: callbackContext regs: regsAlien
+	<signature: #(int (*)(const void *, const void *))>
+	^callbackContext wordResult:
+		(block
+			value: (Alien forPointer: (regsAlien unsignedLongLongAt: 1))
+			value: (Alien forPointer: (regsAlien unsignedLongLongAt: 9)))! !
 
-!CallbackForIA32 commentStamp: 'eem 6/17/2016 13:55' prior: 0!
-A CallbackForIA32 is a callback for platforms with x86 processors using the System V ABI.!
+!CallbackForARMv8 class methodsFor: 'class initialization' stamp: 'eem 05/31/2024 17:35'!
+isForCurrentPlatform
+	^#('aarch64' 'arm64') includes: (Smalltalk getSystemAttribute: 1003)! !
 
-!CallbackForWin64X64 commentStamp: 'eem 6/17/2016 13:55' prior: 0!
-A CallbackForWin64X64 is a callback for platforms with x64/x86_64 processors using the Win64 ABI.!
+!CallbackForARMv8 class methodsFor: 'accessing' stamp: 'eem 9/30/2020 08:17'!
+abi
+	^'ARMv8'! !
 
-!CallbackForX64 commentStamp: 'eem 6/17/2016 13:55' prior: 0!
-A CallbackForX64 is a callback for platforms with x64/x86_64 processors using the System V ABI.!
+!CallbackForIA32 methodsFor: 'signatures' stamp: 'eem 2/15/2018 09:49'!
+hwndlparamRetbool: callbackContext sp: spAlien
+	<signature: #(BOOL CALLBACK (*)(HWND, LPARAM))>
+	^callbackContext wordResult:
+		(block
+			value: (Alien forPointer: (spAlien unsignedLongAt: 1))
+			value: (spAlien unsignedLongAt: 5)) asAlien "i.e. coerce true to 1 and false to 0"! !
+
+!CallbackForIA32 methodsFor: 'signatures' stamp: 'eem 6/17/2016 18:46'!
+intcharstarRetint: callbackContext sp: spAlien
+	<signature: #(int (*)(int, char *))>
+	^callbackContext wordResult:
+		(block
+			value: (spAlien signedLongAt: 1)
+			value: (Alien forPointer: (spAlien unsignedLongAt: 5)))! !
+
+!CallbackForIA32 methodsFor: 'signatures' stamp: 'eem 2/15/2018 09:07'!
+logfontstartextmetricstardwordlparamRetint: callbackContext sp: spAlien
+	<signature: #(int CALLBACK (*)(const LOGFONT *, const TEXTMETRIC *, DWORD, LPARAM))>
+	^callbackContext wordResult:
+		(block
+			value: (Alien forPointer: (spAlien unsignedLongAt: 1))
+			value: (Alien forPointer: (spAlien unsignedLongAt: 5))
+			value: (spAlien unsignedLongAt: 9)
+			value: (spAlien signedLongAt: 13))! !
+
+!CallbackForIA32 methodsFor: 'signatures' stamp: 'eem 6/17/2016 18:27'!
+voidstarvoidstarRetint: callbackContext sp: spAlien
+	<signature: #(int (*)(const void *, const void *))>
+	^callbackContext wordResult:
+		(block
+			value: (Alien forPointer: (spAlien unsignedLongAt: 1))
+			value: (Alien forPointer: (spAlien unsignedLongAt: 5)))! !
+
+!CallbackForIA32 methodsFor: 'evaluation' stamp: 'eem 6/17/2016 18:39'!
+valueInContext: callbackContext "<VMCallbackContext32|VMCallbackContext64> ^<Integer>"
+	numEvaluatorArgs = 2 ifTrue:
+		[^self perform: evaluator
+			with: callbackContext
+			with: callbackContext stackp].
+	numEvaluatorArgs = 3 ifTrue:
+		[^self perform: evaluator
+			with: callbackContext
+			with: callbackContext stackp
+			with: callbackContext intregargsp].
+	numEvaluatorArgs = 4 ifTrue:
+		[^self perform: evaluator
+			with: callbackContext
+			with: callbackContext stackp
+			with: callbackContext intregargsp
+			with: callbackContext floatregargsp].
+	numEvaluatorArgs = 1 ifTrue: "legacy support"
+		[^self perform: evaluator
+			with: callbackContext].
+	self error: 'invalid evaluator argument count'! !
+
+!CallbackForIA32 class methodsFor: 'accessing' stamp: 'eem 6/17/2016 13:45'!
+abi
+	^'IA32'! !
+
+!CallbackForIA32 class methodsFor: 'class initialization' stamp: 'eem 05/31/2024 17:35'!
+isForCurrentPlatform
+	| processor |
+	processor := (Smalltalk getSystemAttribute: 1003) asLowercase.
+	^processor first = $i and: [processor = 'intel' or: ['i#86' match: processor]]! !
+
+!CallbackForRiscV64 methodsFor: 'signatures' stamp: 'KenD 6/26/2022 14:50'!
+intcharstarRetint: callbackContext regs: regsAlien
+	<signature: #(int (*)(int, char *))>
+	^callbackContext wordResult:
+		(block
+			value: (regsAlien signedLongLongAt: 1)
+			value: (Alien forPointer: (regsAlien unsignedLongLongAt: 9)))! !
+
+!CallbackForRiscV64 methodsFor: 'signatures' stamp: 'KenD 6/26/2022 14:50'!
+voidstarvoidstarRetint: callbackContext regs: regsAlien
+	<signature: #(int (*)(const void *, const void *))>
+	^callbackContext wordResult:
+		(block
+			value: (Alien forPointer: (regsAlien unsignedLongLongAt: 1))
+			value: (Alien forPointer: (regsAlien unsignedLongLongAt: 9)))! !
+
+!CallbackForRiscV64 class methodsFor: 'class initialization' stamp: 'eem 05/31/2024 17:35'!
+isForCurrentPlatform
+	^#('riscv64' 'RiscV64') includes: (Smalltalk getSystemAttribute: 1003)! !
+
+!CallbackForRiscV64 class methodsFor: 'accessing' stamp: 'KenD 6/26/2022 14:49'!
+abi
+	^'RiscV64'! !
+
+!CallbackForWin64X64 methodsFor: 'signatures' stamp: 'eem 2/15/2018 09:47'!
+hwndlparamRetbool: callbackContext regs: regsAlien
+	<signature: #(BOOL CALLBACK (*)(HWND, LPARAM))>
+	^callbackContext wordResult:
+		(block
+			value: (Alien forPointer: (regsAlien unsignedLongLongAt: 1))
+			value: (regsAlien unsignedLongLongAt: 9)) asAlien "i.e. coerce true to 1 and false to 0"! !
+
+!CallbackForWin64X64 methodsFor: 'signatures' stamp: 'eem 6/17/2016 18:46'!
+intcharstarRetint: callbackContext regs: regsAlien
+	<signature: #(int (*)(int, char *))>
+	^callbackContext wordResult:
+		(block
+			value: (regsAlien signedLongLongAt: 1)
+			value: (Alien forPointer: (regsAlien unsignedLongLongAt: 9)))! !
+
+!CallbackForWin64X64 methodsFor: 'signatures' stamp: 'eem 2/15/2018 09:09'!
+logfontstartextmetricstardwordlparamRetint: callbackContext regs: regsAlien
+	<signature: #(int CALLBACK (*)(const LOGFONT *, const TEXTMETRIC *, DWORD, LPARAM))>
+	^callbackContext wordResult:
+		(block
+			value: (Alien forPointer: (regsAlien unsignedLongLongAt: 1))
+			value: (Alien forPointer: (regsAlien unsignedLongLongAt: 9))
+			value: (regsAlien unsignedLongAt: 17)
+			value: (regsAlien signedLongLongAt: 25))! !
+
+!CallbackForWin64X64 methodsFor: 'signatures' stamp: 'eem 6/17/2016 18:37'!
+voidstarvoidstarRetint: callbackContext regs: regsAlien
+	<signature: #(int (*)(const void *, const void *))>
+	^callbackContext wordResult:
+		(block
+			value: (Alien forPointer: (regsAlien unsignedLongLongAt: 1))
+			value: (Alien forPointer: (regsAlien unsignedLongLongAt: 9)))! !
+
+!CallbackForWin64X64 class methodsFor: 'accessing' stamp: 'nice 8/21/2016 11:59'!
+abi
+	^'X64Win64'! !
+
+!CallbackForWin64X64 class methodsFor: 'class initialization' stamp: 'eem 05/31/2024 17:35'!
+isForCurrentPlatform
+	| processor |
+	(#('Win32' 'Win64') includes: (Smalltalk getSystemAttribute: 1001)) ifFalse:
+		[^false].
+	processor := (Smalltalk getSystemAttribute: 1003) asLowercase.
+	^processor first = $x and: [processor = 'x64' or: [('x86#64*' match: processor)]]! !
+
+!CallbackForX64 methodsFor: 'signatures' stamp: 'eem 6/17/2016 18:45'!
+intcharstarRetint: callbackContext regs: regsAlien
+	<signature: #(int (*)(int, char *))>
+	^callbackContext wordResult:
+		(block
+			value: (regsAlien signedLongLongAt: 1)
+			value: (Alien forPointer: (regsAlien unsignedLongLongAt: 9)))! !
+
+!CallbackForX64 methodsFor: 'signatures' stamp: 'eem 6/17/2016 18:40'!
+voidstarvoidstarRetint: callbackContext regs: regsAlien
+	<signature: #(int (*)(const void *, const void *))>
+	^callbackContext wordResult:
+		(block
+			value: (Alien forPointer: (regsAlien unsignedLongLongAt: 1))
+			value: (Alien forPointer: (regsAlien unsignedLongLongAt: 9)))! !
+
+!CallbackForX64 class methodsFor: 'accessing' stamp: 'eem 6/17/2016 13:44'!
+abi
+	^'X64'! !
+
+!CallbackForX64 class methodsFor: 'class initialization' stamp: 'eem 05/31/2024 17:35'!
+isForCurrentPlatform
+	| processor |
+	CallbackForWin64X64 isForCurrentPlatform ifTrue:
+		[^false].
+	processor := (Smalltalk getSystemAttribute: 1003) asLowercase.
+	^processor first = $x and: [processor = 'x64' or: [('x86#64*' match: processor)]]! !
 
 !Alien methodsFor: 'accessing' stamp: 'eem 2/5/2008 16:27'!
 address
@@ -705,7 +1201,7 @@ primFree
 	<primitive: 'primBoxedFree' module: 'IA32ABI' error: errorCode>
 	^self primitiveFailed! !
 
-!Alien methodsFor: 'printing' stamp: 'eem 12/14/2015 12:04'!
+!Alien methodsFor: 'printing' stamp: 'jmv 10/29/2024 14:56:09'!
 storeOn: aStream
 	| sizeField |
 	(sizeField := self sizeField) ~= 0 ifTrue:
@@ -722,10 +1218,10 @@ storeOn: aStream
 				[:i| | v |
 				(v := self unsignedLongAt: i) ~= 0 ifTrue:
 					[aStream
-						crtab;
+						newLineTab;
 						nextPutAll: 'unsignedLongAt: '; print: i;
 						nextPutAll: ' put: '; print: v; nextPut: $;]].
-			 aStream crtab; nextPutAll: #yourself].
+			 aStream newLineTab; nextPutAll: #yourself].
 	aStream nextPut: $)
 
 	"{	(Alien forPointer: 0) storeString.
@@ -1625,512 +2121,9 @@ startUp: inANewImageSession
 finalize: address
 	self freeBlockInExecutablePage: address! !
 
-!AlienWeakTable methodsFor: 'adding' stamp: 'vb 5/7/2008 08:34'!
-add: anObject finalizing: postMortemFinalizationTag
-	"Register a new object in the table, with the associated tag. The object is held onto weakly, the tag--strongly. The tag will be passed to the owner as the argument of #finalize: some time after the object is garbage collected."
-
-	| size start delta |
-	accessProtect critical:
-		[size := strongArray size.
-		 start := firstUnusedIndex].
-	start to: size do:
-		[:i|
-		(strongArray at: i) == nil ifTrue:
-			[accessProtect critical:
-				[weakArray at: i put: anObject.
-				 strongArray at: i put: postMortemFinalizationTag.
-				 firstUnusedIndex := i + 1.
-				 i > lastUsedIndex ifTrue: [lastUsedIndex := i]].
-			 ^anObject]].
-	delta := size min: 4096.
-	accessProtect critical:
-		[(weakArray := weakArray copyGrownBy: delta)
-			 at: size + 1 put: anObject.
-		 (strongArray := strongArray  copyGrownBy: delta)
-			at: size put: postMortemFinalizationTag.
-		 firstUnusedIndex := size + 1.
-		 lastUsedIndex := size].
-	^anObject! !
-
-!AlienWeakTable methodsFor: 'finalization' stamp: 'vb 5/7/2008 08:35'!
-finalizeValues
-	"Sent periodically by the finalization loop to check for any dead objects and report their death to the owner."
-	
-	accessProtect critical:
-		[| usedIndex value newLastUsedIndex |
-		 newLastUsedIndex := 0.
-		 1 to: lastUsedIndex do:
-			[:i|
-			(value := strongArray at: i) ifNotNil:
-				[(weakArray at: i)
-					ifNil:
-						[strongArray at: i put: nil.
-						 owner finalize: value.
-						 firstUnusedIndex > i ifTrue:
-							[firstUnusedIndex := i]]
-					ifNotNil: [newLastUsedIndex := i]]].
-		 lastUsedIndex := newLastUsedIndex]! !
-
-!AlienWeakTable methodsFor: 'initialize-release' stamp: 'vb 5/8/2008 11:32'!
-initializeWithOwner: anObject
-	accessProtect := Semaphore forMutualExclusion.
-	firstUnusedIndex := 1.
-	lastUsedIndex := 0.
-	weakArray := WeakArray new: 1024.
-	strongArray := Array new: 1024.
-	owner := anObject.
-	WeakArray addWeakDependent: self! !
-
-!AlienWeakTable methodsFor: 'removing' stamp: 'eem 1/11/2008 12:10'!
-remove: anObject
-	1 to: lastUsedIndex do:
-		[:i|
-		(weakArray at: i) == anObject ifTrue:
-			[accessProtect critical:
-				[strongArray at: i put: nil.
-				 firstUnusedIndex > i ifTrue:
-					[firstUnusedIndex := i].
-				 i = lastUsedIndex ifTrue:
-					[lastUsedIndex := i - 1]].
-			 ^anObject]].
-	^anObject! !
-
-!AlienWeakTable methodsFor: 'removing' stamp: 'vb 5/8/2008 11:31'!
-removeAll
-
-	accessProtect critical:
-		[1 to: lastUsedIndex do:
-			[:index |
-			strongArray at: index put: nil.
-			weakArray at: index put: nil].
-		firstUnusedIndex := 1.
-		lastUsedIndex := 0]! !
-
-!AlienWeakTable class methodsFor: 'instance creation' stamp: 'eem 12/21/2007 15:00'!
-newForOwner: anOwner
-	^self basicNew initializeWithOwner: anOwner! !
-
-!Callback methodsFor: 'private' stamp: 'KenD 8/1/2022 16:05'!
-addToThunkTable
-	FlushThunkToCallbackMap ifTrue:
-		[FlushThunkToCallbackMap := false.
-		 ThunkToCallbackMap keys do:
-			[:k| (ThunkToCallbackMap at: k) ifNil: [ThunkToCallbackMap removeKey: k]]].
-	ThunkToCallbackMap at: thunk addressField put: self! !
-
-!Callback methodsFor: 'private' stamp: 'eem 6/17/2016 18:51'!
-evaluatorForSignature: signature "<String|Array>"
-	"Search the methods marked with the signature: primtiive for those that match signature.
-	 signature is typically a literal Array for the function's C signature, e.g. #(int (*)(int, char *))."
-	Pragma withPragmasIn: self class do:
-		[:pragma|
-		 (pragma key == #signature:
-		  and: [(pragma argumentAt: 1) = signature]) ifTrue:
-			[^pragma method]].
-	self error: 'could not find Callback signature'! !
-
-!Callback methodsFor: 'private' stamp: 'eem 10/17/2020 14:03'!
-printSignature: aLiteralArray on: aStream
-	aStream nextPut: $(.
-	aLiteralArray
-		do:
-			[:thing|
-			thing isArray
-				ifTrue: [self printSignature: thing on: aStream]
-				ifFalse:
-					[thing isString
-						ifTrue: [aStream nextPutAll: thing]
-						ifFalse: [aStream print: thing]]]
-		separatedBy: [aStream space].
-	aStream nextPut: $)! !
-
-!Callback methodsFor: 'evaluation' stamp: 'eem 9/27/2020 16:37'!
-valueInContext: callbackContext "<VMCallbackContext32|VMCallbackContext64> ^<Integer>"
-	"Perform the evaluator with arguments derived from the callback context in an order most appropriate for the ABI.
-	 On x86 the order is callbackContext, stackPointerAlien.
-	 On ``RISCS'' it is callbackContext, integerRegsAlien, stackPointerAlien, floatRegsAlien.
-	 Here we provide the RISC version; CISC subclasses override."
-	numEvaluatorArgs = 2 ifTrue:
-		[^self perform: evaluator
-			with: callbackContext
-			with: callbackContext intregargsp].
-	numEvaluatorArgs = 3 ifTrue:
-		[^self perform: evaluator
-			with: callbackContext
-			with: callbackContext intregargsp
-			with: callbackContext stackp].
-	numEvaluatorArgs = 4 ifTrue:
-		[^self perform: evaluator
-			with: callbackContext
-			with: callbackContext intregargsp
-			with: callbackContext stackp
-			with: callbackContext floatregargsp].
-	numEvaluatorArgs = 1 ifTrue: "legacy support"
-		[^self perform: evaluator
-			with: callbackContext].
-	self error: 'invalid evaluator argument count'! !
-
-!Callback methodsFor: 'signatures' stamp: 'eem 6/17/2016 18:29'!
-intcharstarRetint: callbackContext regs: regsAlien
-	<signature: #(int (*)(int, char *))>
-	self subclassResponsibility! !
-
-!Callback methodsFor: 'signatures' stamp: 'eem 6/17/2016 18:29'!
-intcharstarRetint: callbackContext sp: spAlien
-	<signature: #(int (*)(int, char *))>
-	self subclassResponsibility! !
-
-!Callback methodsFor: 'signatures' stamp: 'eem 6/17/2016 18:28'!
-voidstarvoidstarRetint: callbackContext regs: regsAlien
-	<signature: #(int (*)(const void *, const void *))>
-	self subclassResponsibility! !
-
-!Callback methodsFor: 'signatures' stamp: 'eem 6/17/2016 18:28'!
-voidstarvoidstarRetint: callbackContext sp: spAlien
-	<signature: #(int (*)(const void *, const void *))>
-	self subclassResponsibility! !
-
-!Callback methodsFor: 'instance initialization' stamp: 'eem 10/15/2010 10:51'!
-signature: signature "<String>" block: aBlock "<BlockClosure>"
-	| method |
-	method := self evaluatorForSignature: signature.
-	block := aBlock.
-	thunk := (method pragmaAt: #calleepops:)
-				ifNil: [FFICallbackThunk newCCall]
-				ifNotNil:
-					[:pragma|
-					FFICallbackThunk newStdCall: (pragma argumentAt: 1)].
-	numEvaluatorArgs := (evaluator := method selector) numArgs.
-	self addToThunkTable! !
-
-!Callback methodsFor: 'accessing' stamp: 'eem 11/19/2007 16:54'!
-thunk
-	^thunk! !
-
-!Callback methodsFor: 'printing' stamp: 'eem 10/17/2020 18:33'!
-printOn: aStream
-	super printOn: aStream.
-	(self class lookupSelector: evaluator) ifNotNil:
-		[:method|
-		(method pragmaAt: #signature:) ifNotNil:
-			[:pragma|
-			aStream nextPutAll: ' signature: #'.
-			self printSignature: pragma arguments first on: aStream]].
-	block ifNotNil:
-		[aStream nextPutAll: ' block: '; print: block]! !
-
-!Callback class methodsFor: 'accessing' stamp: 'eem 6/17/2016 10:48'!
-abi
-	^ABI! !
-
-!Callback class methodsFor: 'class initialization' stamp: 'nice 3/2/2020 10:31'!
-ensureNotifiedAtStartup
-	"Callback needs to be notified at system startup to clear the ThunkToCallbackMap and determine concreteClass."
-	self ~~ Callback ifTrue: [^self].
-	(Smalltalk classNamed: #SessionManager)
-		ifNotNil: [:sessionManagerClass|
-			sessionManagerClass default
-				registerSystemClassNamed: self name
-				atPriority: 60]
-		ifNil:
-			[FFICallbackThunk ensureNotifiedAtStartup.
-			Smalltalk addToStartUpList: self after: FFICallbackThunk]! !
-
-!Callback class methodsFor: 'class initialization' stamp: 'eem 5/31/2024 17:10:00'!
-initialize
-	"Callback initialize"
-	self ensureNotifiedAtStartup.
-	[self startUp: false] "Monticello... grrr...."
-		on: Error
-		do: [:ex| ].
-	(Smalltalk specialObjectsArray at: 54) ~~ #invokeCallbackContext: ifTrue:
-		[self inform: (Character cr asString join: #('this version of Callbacks requires the callback selector to be' '#invokeCallbackContext:.  recreate the specialObjects Array.'))]! !
-
-!Callback class methodsFor: 'class initialization' stamp: 'eem 6/21/2016 12:57'!
-startUp: isInANewSession
-	"Callback startUp: false"
-	| prevMap |
-	concreteClass := subclasses detect: [:subclass| subclass isForCurrentPlatform] ifNone: [].
-	ABI := concreteClass ifNotNil: [concreteClass abi] ifNil: ['UNKNOWN'].
-	FlushThunkToCallbackMap := false.
-	(WeakArray hasWeakDependent: self) ifFalse:
-		[WeakArray addWeakDependent: self].
-	prevMap := isInANewSession ifFalse: [ThunkToCallbackMap].
-	ThunkToCallbackMap := WeakValueDictionary new.
-	prevMap ifNotNil:
-		[prevMap keysAndValuesDo:
-			[:thunkAddress :callback|
-			ThunkToCallbackMap at: thunkAddress put: callback]]! !
-
-!Callback class methodsFor: 'evaluation' stamp: 'eem 10/17/2010 15:06'!
-evaluateCallbackForContext: callbackContext "<VMCallbackContext32|VMCallbackContext64> ^<FFICallbackReturnValue>"
-	(ThunkToCallbackMap
-		at: callbackContext thunkp
-		ifAbsent: [^self error: 'could not locate Callback instance corresponding to thunk address'])
-		ifNil: [self error: 'Callback instance for this thunk address has been garbage collected']
-		ifNotNil:
-			[:callback|
-			^callback valueInContext: callbackContext]! !
-
-!Callback class methodsFor: 'finalization' stamp: 'eem 2/20/2008 16:11'!
-finalizeValues
-	FlushThunkToCallbackMap := true! !
-
-!Callback class methodsFor: 'instance creation' stamp: 'eem 6/17/2016 13:58'!
-newForPlatform
-	"Answer an instance of the subclass for this platform's ABI, if any."
-	^concreteClass
-		ifNotNil: [:cc| cc new]
-		ifNil: [self error: 'could not find a concrete Callback class for this platform']! !
-
-!Callback class methodsFor: 'instance creation' stamp: 'eem 6/18/2016 16:35'!
-signature: signature "<String>" block: aBlock "<BlockClosure> ^<Callback>"
-	"Answer a Callback that evaluates aBlock whose C signature is signature 
-	 and whose thunk should conform to the C calling convention."
-	^self newForPlatform signature: signature block: aBlock! !
-
-!CallbackForARM32 methodsFor: 'signatures' stamp: 'eem 2/15/2018 09:48'!
-hwndlparamRetbool: callbackContext regs: regsAlien
-	<signature: #(BOOL CALLBACK (*)(HWND, LPARAM))>
-	^callbackContext wordResult:
-		(block
-			value: (Alien forPointer: (regsAlien unsignedLongAt: 1))
-			value: (regsAlien unsignedLongAt: 5)) asAlien "i.e. coerce true to 1 and false to 0"! !
-
-!CallbackForARM32 methodsFor: 'signatures' stamp: 'eem 6/17/2016 18:45'!
-intcharstarRetint: callbackContext regs: regsAlien
-	<signature: #(int (*)(int, char *))>
-	^callbackContext wordResult:
-		(block
-			value: (regsAlien signedLongAt: 1)
-			value: (Alien forPointer: (regsAlien unsignedLongAt: 5)))! !
-
-!CallbackForARM32 methodsFor: 'signatures' stamp: 'eem 2/15/2018 09:04'!
-logfontstartextmetricstardwordlparamRetint: callbackContext regs: regsAlien
-	<signature: #(int CALLBACK (*)(const LOGFONT *, const TEXTMETRIC *, DWORD, LPARAM))>
-	^callbackContext wordResult:
-		(block
-			value: (Alien forPointer: (regsAlien unsignedLongAt: 1))
-			value: (Alien forPointer: (regsAlien unsignedLongAt: 5))
-			value: (regsAlien unsignedLongAt: 9)
-			value: (regsAlien signedLongAt: 13))! !
-
-!CallbackForARM32 methodsFor: 'signatures' stamp: 'eem 6/17/2016 18:26'!
-voidstarvoidstarRetint: callbackContext regs: regsAlien
-	<signature: #(int (*)(const void *, const void *))>
-	^callbackContext wordResult:
-		(block
-			value: (Alien forPointer: (regsAlien unsignedLongAt: 1))
-			value: (Alien forPointer: (regsAlien unsignedLongAt: 5)))! !
-
-!CallbackForARM32 class methodsFor: 'accessing' stamp: 'eem 6/17/2016 13:44'!
-abi
-	^'ARM32'! !
-
-!CallbackForARM32 class methodsFor: 'class initialization' stamp: 'eem 05/31/2024 17:35'!
-isForCurrentPlatform
-	| processor |
-	processor := (Smalltalk getSystemAttribute: 1003) asLowercase.
-	^processor = 'arm' or: [(processor beginsWith: 'armv') and: [processor fifth <= $7]]! !
-
-!CallbackForARMv8 methodsFor: 'signatures' stamp: 'eem 6/17/2016 18:45'!
-intcharstarRetint: callbackContext regs: regsAlien
-	<signature: #(int (*)(int, char *))>
-	^callbackContext wordResult:
-		(block
-			value: (regsAlien signedLongLongAt: 1)
-			value: (Alien forPointer: (regsAlien unsignedLongLongAt: 9)))! !
-
-!CallbackForARMv8 methodsFor: 'signatures' stamp: 'eem 6/17/2016 18:40'!
-voidstarvoidstarRetint: callbackContext regs: regsAlien
-	<signature: #(int (*)(const void *, const void *))>
-	^callbackContext wordResult:
-		(block
-			value: (Alien forPointer: (regsAlien unsignedLongLongAt: 1))
-			value: (Alien forPointer: (regsAlien unsignedLongLongAt: 9)))! !
-
-!CallbackForARMv8 class methodsFor: 'class initialization' stamp: 'eem 05/31/2024 17:35'!
-isForCurrentPlatform
-	^#('aarch64' 'arm64') includes: (Smalltalk getSystemAttribute: 1003)! !
-
-!CallbackForARMv8 class methodsFor: 'accessing' stamp: 'eem 9/30/2020 08:17'!
-abi
-	^'ARMv8'! !
-
-!CallbackForIA32 methodsFor: 'signatures' stamp: 'eem 2/15/2018 09:49'!
-hwndlparamRetbool: callbackContext sp: spAlien
-	<signature: #(BOOL CALLBACK (*)(HWND, LPARAM))>
-	^callbackContext wordResult:
-		(block
-			value: (Alien forPointer: (spAlien unsignedLongAt: 1))
-			value: (spAlien unsignedLongAt: 5)) asAlien "i.e. coerce true to 1 and false to 0"! !
-
-!CallbackForIA32 methodsFor: 'signatures' stamp: 'eem 6/17/2016 18:46'!
-intcharstarRetint: callbackContext sp: spAlien
-	<signature: #(int (*)(int, char *))>
-	^callbackContext wordResult:
-		(block
-			value: (spAlien signedLongAt: 1)
-			value: (Alien forPointer: (spAlien unsignedLongAt: 5)))! !
-
-!CallbackForIA32 methodsFor: 'signatures' stamp: 'eem 2/15/2018 09:07'!
-logfontstartextmetricstardwordlparamRetint: callbackContext sp: spAlien
-	<signature: #(int CALLBACK (*)(const LOGFONT *, const TEXTMETRIC *, DWORD, LPARAM))>
-	^callbackContext wordResult:
-		(block
-			value: (Alien forPointer: (spAlien unsignedLongAt: 1))
-			value: (Alien forPointer: (spAlien unsignedLongAt: 5))
-			value: (spAlien unsignedLongAt: 9)
-			value: (spAlien signedLongAt: 13))! !
-
-!CallbackForIA32 methodsFor: 'signatures' stamp: 'eem 6/17/2016 18:27'!
-voidstarvoidstarRetint: callbackContext sp: spAlien
-	<signature: #(int (*)(const void *, const void *))>
-	^callbackContext wordResult:
-		(block
-			value: (Alien forPointer: (spAlien unsignedLongAt: 1))
-			value: (Alien forPointer: (spAlien unsignedLongAt: 5)))! !
-
-!CallbackForIA32 methodsFor: 'evaluation' stamp: 'eem 6/17/2016 18:39'!
-valueInContext: callbackContext "<VMCallbackContext32|VMCallbackContext64> ^<Integer>"
-	numEvaluatorArgs = 2 ifTrue:
-		[^self perform: evaluator
-			with: callbackContext
-			with: callbackContext stackp].
-	numEvaluatorArgs = 3 ifTrue:
-		[^self perform: evaluator
-			with: callbackContext
-			with: callbackContext stackp
-			with: callbackContext intregargsp].
-	numEvaluatorArgs = 4 ifTrue:
-		[^self perform: evaluator
-			with: callbackContext
-			with: callbackContext stackp
-			with: callbackContext intregargsp
-			with: callbackContext floatregargsp].
-	numEvaluatorArgs = 1 ifTrue: "legacy support"
-		[^self perform: evaluator
-			with: callbackContext].
-	self error: 'invalid evaluator argument count'! !
-
-!CallbackForIA32 class methodsFor: 'accessing' stamp: 'eem 6/17/2016 13:45'!
-abi
-	^'IA32'! !
-
-!CallbackForIA32 class methodsFor: 'class initialization' stamp: 'eem 05/31/2024 17:35'!
-isForCurrentPlatform
-	| processor |
-	processor := (Smalltalk getSystemAttribute: 1003) asLowercase.
-	^processor first = $i and: [processor = 'intel' or: ['i#86' match: processor]]! !
-
-!CallbackForRiscV64 methodsFor: 'signatures' stamp: 'KenD 6/26/2022 14:50'!
-intcharstarRetint: callbackContext regs: regsAlien
-	<signature: #(int (*)(int, char *))>
-	^callbackContext wordResult:
-		(block
-			value: (regsAlien signedLongLongAt: 1)
-			value: (Alien forPointer: (regsAlien unsignedLongLongAt: 9)))! !
-
-!CallbackForRiscV64 methodsFor: 'signatures' stamp: 'KenD 6/26/2022 14:50'!
-voidstarvoidstarRetint: callbackContext regs: regsAlien
-	<signature: #(int (*)(const void *, const void *))>
-	^callbackContext wordResult:
-		(block
-			value: (Alien forPointer: (regsAlien unsignedLongLongAt: 1))
-			value: (Alien forPointer: (regsAlien unsignedLongLongAt: 9)))! !
-
-!CallbackForRiscV64 class methodsFor: 'class initialization' stamp: 'eem 05/31/2024 17:35'!
-isForCurrentPlatform
-	^#('riscv64' 'RiscV64') includes: (Smalltalk getSystemAttribute: 1003)! !
-
-!CallbackForRiscV64 class methodsFor: 'accessing' stamp: 'KenD 6/26/2022 14:49'!
-abi
-	^'RiscV64'! !
-
-!CallbackForWin64X64 methodsFor: 'signatures' stamp: 'eem 2/15/2018 09:47'!
-hwndlparamRetbool: callbackContext regs: regsAlien
-	<signature: #(BOOL CALLBACK (*)(HWND, LPARAM))>
-	^callbackContext wordResult:
-		(block
-			value: (Alien forPointer: (regsAlien unsignedLongLongAt: 1))
-			value: (regsAlien unsignedLongLongAt: 9)) asAlien "i.e. coerce true to 1 and false to 0"! !
-
-!CallbackForWin64X64 methodsFor: 'signatures' stamp: 'eem 6/17/2016 18:46'!
-intcharstarRetint: callbackContext regs: regsAlien
-	<signature: #(int (*)(int, char *))>
-	^callbackContext wordResult:
-		(block
-			value: (regsAlien signedLongLongAt: 1)
-			value: (Alien forPointer: (regsAlien unsignedLongLongAt: 9)))! !
-
-!CallbackForWin64X64 methodsFor: 'signatures' stamp: 'eem 2/15/2018 09:09'!
-logfontstartextmetricstardwordlparamRetint: callbackContext regs: regsAlien
-	<signature: #(int CALLBACK (*)(const LOGFONT *, const TEXTMETRIC *, DWORD, LPARAM))>
-	^callbackContext wordResult:
-		(block
-			value: (Alien forPointer: (regsAlien unsignedLongLongAt: 1))
-			value: (Alien forPointer: (regsAlien unsignedLongLongAt: 9))
-			value: (regsAlien unsignedLongAt: 17)
-			value: (regsAlien signedLongLongAt: 25))! !
-
-!CallbackForWin64X64 methodsFor: 'signatures' stamp: 'eem 6/17/2016 18:37'!
-voidstarvoidstarRetint: callbackContext regs: regsAlien
-	<signature: #(int (*)(const void *, const void *))>
-	^callbackContext wordResult:
-		(block
-			value: (Alien forPointer: (regsAlien unsignedLongLongAt: 1))
-			value: (Alien forPointer: (regsAlien unsignedLongLongAt: 9)))! !
-
-!CallbackForWin64X64 class methodsFor: 'accessing' stamp: 'nice 8/21/2016 11:59'!
-abi
-	^'X64Win64'! !
-
-!CallbackForWin64X64 class methodsFor: 'class initialization' stamp: 'eem 05/31/2024 17:35'!
-isForCurrentPlatform
-	| processor |
-	(#('Win32' 'Win64') includes: (Smalltalk getSystemAttribute: 1001)) ifFalse:
-		[^false].
-	processor := (Smalltalk getSystemAttribute: 1003) asLowercase.
-	^processor first = $x and: [processor = 'x64' or: [('x86#64*' match: processor)]]! !
-
-!CallbackForX64 methodsFor: 'signatures' stamp: 'eem 6/17/2016 18:45'!
-intcharstarRetint: callbackContext regs: regsAlien
-	<signature: #(int (*)(int, char *))>
-	^callbackContext wordResult:
-		(block
-			value: (regsAlien signedLongLongAt: 1)
-			value: (Alien forPointer: (regsAlien unsignedLongLongAt: 9)))! !
-
-!CallbackForX64 methodsFor: 'signatures' stamp: 'eem 6/17/2016 18:40'!
-voidstarvoidstarRetint: callbackContext regs: regsAlien
-	<signature: #(int (*)(const void *, const void *))>
-	^callbackContext wordResult:
-		(block
-			value: (Alien forPointer: (regsAlien unsignedLongLongAt: 1))
-			value: (Alien forPointer: (regsAlien unsignedLongLongAt: 9)))! !
-
-!CallbackForX64 class methodsFor: 'accessing' stamp: 'eem 6/17/2016 13:44'!
-abi
-	^'X64'! !
-
-!CallbackForX64 class methodsFor: 'class initialization' stamp: 'eem 05/31/2024 17:35'!
-isForCurrentPlatform
-	| processor |
-	CallbackForWin64X64 isForCurrentPlatform ifTrue:
-		[^false].
-	processor := (Smalltalk getSystemAttribute: 1003) asLowercase.
-	^processor first = $x and: [processor = 'x64' or: [('x86#64*' match: processor)]]! !
-
-!False methodsFor: '*Alien-Core' stamp: 'John M McIntosh 11/17/2008 17:02'!
-asAlien
-	^ 0! !
-
-!True methodsFor: '*Alien-Core' stamp: 'eem 1/25/2008 13:09'!
-asAlien	^ 1! !
-
-!UndefinedObject methodsFor: '*Alien-Core' stamp: 'eem 1/25/2008 13:10'!
-asAlien
-	^0! !
+!WeakArray class methodsFor: '*Alien-Core' stamp: 'eem 5/31/2024 19:07:59'!
+hasWeakDependent: anObject
+	^FinalizationDependents includes: anObject! !
 
 !String methodsFor: '*Alien-Core' stamp: 'eem 2/21/2008 15:45'!
 asAlien
@@ -2138,9 +2131,17 @@ asAlien
 	^(Alien newC: (bs := self byteSize) + 1)
 		replaceFrom: 1 to: bs with: self startingAt: 1! !
 
-!WeakArray class methodsFor: '*Alien-Core' stamp: 'eem 5/31/2024 19:07:59'!
-hasWeakDependent: anObject
-	^FinalizationDependents includes: anObject! !
+!False methodsFor: '*Alien-Core' stamp: 'John M McIntosh 11/17/2008 17:02'!
+asAlien
+	^ 0! !
+
+!True methodsFor: '*Alien-Core' stamp: 'eem 1/25/2008 13:09'!
+asAlien
+	^ 1! !
+
+!UndefinedObject methodsFor: '*Alien-Core' stamp: 'eem 1/25/2008 13:10'!
+asAlien
+	^0! !
+Callback initialize!
 Alien initialize!
 FFICallbackThunk initialize!
-Callback initialize!
