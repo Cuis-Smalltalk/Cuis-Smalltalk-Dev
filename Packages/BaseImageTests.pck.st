@@ -1,6 +1,6 @@
-'From Cuis7.1 [latest update: #6793] on 28 October 2024 at 8:30:54 pm'!
+'From Cuis7.1 [latest update: #6796] on 29 October 2024 at 7:35:31 am'!
 'Description Rename extentions tests'!
-!provides: 'BaseImageTests' 1 415!
+!provides: 'BaseImageTests' 1 416!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Objects'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
@@ -3883,6 +3883,20 @@ testUpTo6TerminatedLongRecords
 	read _ stream upTo: $X.
 	self assert: read size = 2999.
 	self assert: (read at: 1) = $b.! !
+
+!ReadStreamTest methodsFor: 'tests' stamp: 'jmv 10/29/2024 07:23:45'!
+testUpToAll
+	| string prefix |
+
+	prefix := 'https://webmail.gandi.net/SOGo/so/juan@cuis.st/Mail/view#!!/Mail/0/INBOX/7020'
+		readStream upToAll: '://'.
+	self assert: prefix = 'https'.
+
+	string := UnicodeString fromUtf8Bytes: #[57 194 160 226 130 172 64 226 130 172 226 130 172].
+	1 to: string size do: [ :i |
+		i to: string size do: [ :j |
+			prefix := string readStream upToAll: (string copyFrom: i to: j).
+			self assert: (string at: prefix size + 1) = (string at: i)]].! !
 
 !ReadStreamTest methodsFor: 'tests' stamp: 'NM 10/25/2021 11:00:52'!
 testUpToTerminator1ShortRecords
