@@ -2,6 +2,8 @@
 
 This folder contains notes, papers, presentations and books on Cuis Smalltalk.
 
+A [general introduction to Smalltalk](https://mvolkmann.github.io/blog/topics/#/blog/smalltalk/01-quick-introduction/) by Mark Volkmann.
+
 This is a great series of [introductory videos](https://www.youtube.com/playlist?list=PLMkq_h36PcLCtLKrrdOKKFV2r267VFH_t) in Spanish by Hernán Wilkinson.
 
 A [general introduction to Smalltalk](https://www.youtube.com/watch?v=8GRwNM3hBDA) from Reykjavik University.
