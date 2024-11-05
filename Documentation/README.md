@@ -1,4 +1,4 @@
-# Cuis-Documentation
+# Cuis Smalltalk Documentation
 
 ## Recommended reading for everybody
 
