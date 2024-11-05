@@ -6,7 +6,7 @@ These are about Smalltalk and Cuis. The ideas behind them. Why they are the way 
 
 [Design Principles Behind Smalltalk](http://www.cs.virginia.edu/~evans/cs655/readings/smalltalk.html).
 
-[About Cuis](AboutCuis.md).
+[About Cuis Smalltalk](AboutCuis.md).
 
 ## Smalltalk introductory material
 
