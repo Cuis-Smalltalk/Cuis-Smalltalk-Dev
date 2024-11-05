@@ -2,7 +2,7 @@
 
 ## Recommended reading for everybody
 
-These are about Smalltalk and Cuis. The ideas behind them. Why they are the way they are. The most fundamental concepts to havein mind when learning about and using Smalltalk and Cuis.
+These are about Smalltalk and Cuis. The ideas behind them. Why they are the way they are. The most fundamental concepts to have in mind when learning about and using Smalltalk and Cuis.
 
 [Design Principles Behind Smalltalk](http://www.cs.virginia.edu/~evans/cs655/readings/smalltalk.html).
 
