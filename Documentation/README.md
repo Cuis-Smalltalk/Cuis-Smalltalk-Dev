@@ -24,7 +24,7 @@ An [introductory video](https://www.youtube.com/watch?v=8GRwNM3hBDA) from Reykja
 
 ## Recommended reading for using Cuis
 
-All the files in this folder are relevant. Reading them is highly recommended to effectively use Cuis.
+All the files in this folder are relevant. Reading them is highly recommended to effectively use Cuis. Please remember to come back to them, as you move forward exploring the system.
 
 ## Additional material
 
