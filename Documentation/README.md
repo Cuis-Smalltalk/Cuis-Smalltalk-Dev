@@ -2,9 +2,11 @@
 
 ## Recommended reading for everybody
 
-[About Cuis](https://github.com/Cuis-Smalltalk/Cuis-Smalltalk-Dev/blob/master/Documentation/AboutCuis.md).
-[About Cuis](AboutCuis.md).
+These are about Smalltalk and Cuis. The ideas behind them. Why they are the way they are. The most fundamental concepts to havein mind when learning about and using Smalltalk and Cuis.
+
 [Design Principles Behind Smalltalk](http://www.cs.virginia.edu/~evans/cs655/readings/smalltalk.html).
+
+[About Cuis](AboutCuis.md).
 
 ## Smalltalk introductory material
 
@@ -20,9 +22,13 @@ This is a great series of [introductory videos](https://www.youtube.com/playlist
 
 An [introductory video](https://www.youtube.com/watch?v=8GRwNM3hBDA) from Reykjavik University.
 
+## Recommended reading for using Cuis
+
+All the files in this folder are relevant. Reading them is highly recommended to effectively use Cuis.
+
 ## Additional material
 
-This folder contains notes, papers and presentations about Cuis Smalltalk. Some are of general in tone, and others are more specific and technical. Have fun while exploring them!
+Subdirectories contain notes, papers and presentations about Cuis Smalltalk. Some are of general in tone, and others are more specific and technical. Have fun while exploring them!
 
 In addition to this, check the [Montly Community Meetings](https://cuis.st/community#meetings-archive) are recorded in video. See the [Video playlist](https://www.youtube.com/playlist?list=PL8jfzXKiS6Xin_VUpK_QaUn_MGH2S-oPd).
 
