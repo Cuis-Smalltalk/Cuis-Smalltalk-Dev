@@ -11,7 +11,7 @@ There is more to be said about Cuis. Please see the
 
 ## Running Cuis
 
-The easiest way to download and run Cuis is to download the [Zip file](https://github.com/Cuis-Smalltalk/Cuis-Smalltalk-Dev/archive/refs/heads/master.zip). Double click on it to unzip. Or you can just clone this Git repo instead.
+The easiest way to download and run Cuis is to clone this Git repository. Alternatively, you can download the [Zip file](https://github.com/Cuis-Smalltalk/Cuis-Smalltalk-Dev/archive/refs/heads/master.zip). Double click on it to unzip.
 
 Run the appropriate start script (RunCuisOnWindows.bat, RunCuisOnLinux.sh, CuisVM.app). To start Cuis on a Mac from Terminal, run RunCuisOnMac.sh.
 
