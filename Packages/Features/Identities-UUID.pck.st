@@ -1,27 +1,26 @@
-'From Cuis 6.0 [latest update: #5552] on 15 November 2022 at 10:49:23 am'!
+'From Cuis7.1 [latest update: #6817] on 16 November 2024 at 8:58:46 am'!
 'Description Code was filed out from Squeak 4.5 and ported to Cuis with few changes by David Graham.'!
-!provides: 'Identities-UUID' 1 10!
-!requires: 'Sound' 1 3 nil!
-SystemOrganization addCategory: 'Identities-UUID'!
+!provides: 'Identities-UUID' 1 11!
+SystemOrganization addCategory: #'Identities-UUID'!
 
 
-!classDefinition: #UUID category: 'Identities-UUID'!
+!classDefinition: #UUID category: #'Identities-UUID'!
 ByteArray variableByteSubclass: #UUID
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Identities-UUID'!
-!classDefinition: 'UUID class' category: 'Identities-UUID'!
+!classDefinition: 'UUID class' category: #'Identities-UUID'!
 UUID class
 	instanceVariableNames: ''!
 
-!classDefinition: #UUIDGenerator category: 'Identities-UUID'!
+!classDefinition: #UUIDGenerator category: #'Identities-UUID'!
 Object subclass: #UUIDGenerator
 	instanceVariableNames: 'timeLow timeMid timeHiAndVersion clockSeqHiAndReserved clockSeqLow node randomCounter randomGenerator semaphoreForGenerator'
 	classVariableNames: 'Default'
 	poolDictionaries: ''
 	category: 'Identities-UUID'!
-!classDefinition: 'UUIDGenerator class' category: 'Identities-UUID'!
+!classDefinition: 'UUIDGenerator class' category: #'Identities-UUID'!
 UUIDGenerator class
 	instanceVariableNames: ''!
 
@@ -228,22 +227,35 @@ makeSeed
 	^seed
 ! !
 
-!UUIDGenerator methodsFor: 'random seed' stamp: 'DSG 12/4/2013 20:39'!
+!UUIDGenerator methodsFor: 'random seed' stamp: 'jmv 11/16/2024 08:58:26'!
 makeSeedFromSound
+	"
+	UUIDGenerator new makeSeedFromSound
+	Load the Sound package and uncomment code to use.
+	"
+	"
 	^[SoundSystem default randomBitsFromSoundInput: 32]
-		ifError: [nil].! !
+		ifError: [nil].
+	"! !
 
-!UUIDGenerator methodsFor: 'random seed' stamp: 'pb 5/25/2016 01:34'!
+!UUIDGenerator methodsFor: 'random seed' stamp: 'jmv 11/16/2024 08:57:04'!
 makeUnixSeed
+	"
+	UUIDGenerator new makeUnixSeed
+	"
 	
 	^[
 		'/dev/urandom' asFileEntry readStreamDo: [ :stream |
 			stream binary.
-			(Integer
+			(stream next bitShift: 24)
+			 + (stream next bitShift: 16)
+			 + (stream next bitShift: 8)
+			 + stream next
+			"(Integer
 				byte1: stream next
 				byte2: stream next
 				byte3: stream next
-				byte4: stream next) ] ] 
+				byte4: stream next)" ] ] 
 		on: Error
 		do: [ nil ]! !
 
