@@ -1,6 +1,6 @@
-'From Cuis7.1 [latest update: #6787] on 21 October 2024 at 12:03:24 pm'!
+'From Cuis7.1 [latest update: #6828] on 20 November 2024 at 4:02:07 pm'!
 'Description FFI (Foreign Function Interface) provides access to foreign functions in external libraries, provided they use the platform''s Application Binary Interface (ABI), which is essentially the C calling convention for the platform. FFI supports callbacks, allowing one to pass callbacks that invoke Smalltalk blocks when called from foreign code. FFI provides support for defining classes that correspond to C struct types, with named fields, etc. See Tests-FFI for examples.'!
-!provides: 'FFI' 1 53!
+!provides: 'FFI' 1 54!
 !requires: 'Alien-Core' 1 0 nil!
 SystemOrganization addCategory: #'FFI-Pools'!
 SystemOrganization addCategory: #'FFI-Kernel'!
@@ -2300,6 +2300,14 @@ asExternalPointer
 
 	^self asExternalAddress! !
 
+!ByteArray methodsFor: '*FFI-Kernel' stamp: 'jfr 11/20/2024 14:44:24'!
+asNullTerminated
+	"Answer the receiver with a null as the last character"
+
+	(self isNullTerminated) 
+		ifTrue:[^self].
+	^self copyWith: 0! !
+
 !ByteArray methodsFor: '*FFI-Kernel' stamp: 'eem 6/4/2024 14:11:14'!
 booleanAt: byteOffset
 	"Booleans are just integers in C word"
@@ -2500,6 +2508,12 @@ isExternalAddress
 isNull
 	"Answer false since only external addresses can be null"
 	^false! !
+
+!ByteArray methodsFor: '*FFI-Kernel' stamp: 'jfr 11/20/2024 14:44:15'!
+isNullTerminated
+	"Answer true if the receiver is null terminated"
+	
+	^(self size > 0) and:[self last = 0] ! !
 
 !ByteArray methodsFor: '*FFI-Kernel-oldTypeNames' stamp: 'eem 06/04/2024 14:28'!
 longPointerAt: byteOffset
@@ -2927,11 +2941,25 @@ voidAt: byteOffset put: value
 	"no accessors for void"
 	^self shouldNotImplement! !
 
+!CharacterSequence methodsFor: '*FFI-Kernel' stamp: 'jfr 11/20/2024 14:22:50'!
+asNullTerminated
+	"Answer the receiver with a null as the last character"
+
+	(self isNullTerminated) 
+		ifTrue:[^self].
+	^self copyWith: Character null! !
+
 !CharacterSequence methodsFor: '*FFI-Kernel' stamp: 'jfr 10/19/2024 17:45:15'!
 asUtf16BytesLENoBOM
 	"Answer the receiver as UTF16 bytes in little endian with no BOM"
 
 	^UnicodeString utf16BytesFromUtf8: self asUtf8Bytes bigEndian: false includeBOM: false! !
+
+!CharacterSequence methodsFor: '*FFI-Kernel' stamp: 'jfr 11/20/2024 14:25:26'!
+isNullTerminated
+	"Answer true if the receiver is null terminated"
+	
+	^(self size > 0) and:[self last = Character null] ! !
 FFIConstants initialize!
 ExternalAddress initialize!
 ExternalObject initialize!
