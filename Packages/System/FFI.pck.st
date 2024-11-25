@@ -1,6 +1,6 @@
-'From Cuis7.1 [latest update: #6828] on 20 November 2024 at 4:02:07 pm'!
+'From Cuis7.1 [latest update: #6770] on 25 November 2024 at 1:34:23 pm'!
 'Description FFI (Foreign Function Interface) provides access to foreign functions in external libraries, provided they use the platform''s Application Binary Interface (ABI), which is essentially the C calling convention for the platform. FFI supports callbacks, allowing one to pass callbacks that invoke Smalltalk blocks when called from foreign code. FFI provides support for defining classes that correspond to C struct types, with named fields, etc. See Tests-FFI for examples.'!
-!provides: 'FFI' 1 54!
+!provides: 'FFI' 1 55!
 !requires: 'Alien-Core' 1 0 nil!
 SystemOrganization addCategory: #'FFI-Pools'!
 SystemOrganization addCategory: #'FFI-Kernel'!
@@ -9,7 +9,7 @@ SystemOrganization addCategory: #'FFI-Kernel'!
 !classDefinition: #FFIConstants category: #'FFI-Pools'!
 SharedPool subclass: #FFIConstants
 	instanceVariableNames: ''
-	classVariableNames: 'FFIAtomicTypeMask FFIAtomicTypeShift FFICallFlagThreaded FFICallTypeApi FFICallTypeCDecl FFICallTypesMask FFIErrorAddressNotFound FFIErrorAttemptToPassVoid FFIErrorBadAddress FFIErrorBadArg FFIErrorBadArgs FFIErrorBadAtomicType FFIErrorBadExternalFunction FFIErrorBadExternalLibrary FFIErrorBadReturn FFIErrorCallFrameTooBig FFIErrorCallType FFIErrorCoercionFailed FFIErrorGenericError FFIErrorIntAsPointer FFIErrorInvalidPointer FFIErrorModuleNotFound FFIErrorNoModule FFIErrorNotFunction FFIErrorStructSize FFIErrorWrongType FFIFlagAtomic FFIFlagPointer FFIFlagStructure FFINoCalloutAvailable FFIStructSizeMask FFITypeBool FFITypeDoubleFloat FFITypeInt16 FFITypeInt32 FFITypeInt64 FFITypeInt8 FFITypeSignedChar FFITypeSingleFloat FFITypeUint16 FFITypeUint32 FFITypeUint64 FFITypeUint8 FFITypeUnsignedChar FFITypeVoid'
+	classVariableNames: 'FFIAtomicTypeMask FFIAtomicTypeShift FFICallFlagThreaded FFICallTypeApi FFICallTypeCDecl FFICallTypesMask FFIErrorAddressNotFound FFIErrorAttemptToPassVoid FFIErrorBadAddress FFIErrorBadArg FFIErrorBadArgs FFIErrorBadAtomicType FFIErrorBadExternalFunction FFIErrorBadExternalLibrary FFIErrorBadReturn FFIErrorCallFrameTooBig FFIErrorCallType FFIErrorCoercionFailed FFIErrorGenericError FFIErrorIntAsPointer FFIErrorInvalidPointer FFIErrorModuleNotFound FFIErrorNoModule FFIErrorNotFunction FFIErrorStructSize FFIErrorWrongType FFIFlagAtomic FFIFlagPointer FFIFlagStructure FFIFlagVariadic FFINoCalloutAvailable FFIStructSizeMask FFITypeBool FFITypeDoubleFloat FFITypeInt16 FFITypeInt32 FFITypeInt64 FFITypeInt8 FFITypeSignedChar FFITypeSingleFloat FFITypeUint16 FFITypeUint32 FFITypeUint64 FFITypeUint8 FFITypeUnsignedChar FFITypeVoid'
 	poolDictionaries: ''
 	category: 'FFI-Pools'!
 !classDefinition: 'FFIConstants class' category: #'FFI-Pools'!
@@ -104,6 +104,16 @@ Object subclass: #ExternalType
 	category: 'FFI-Kernel'!
 !classDefinition: 'ExternalType class' category: #'FFI-Kernel'!
 ExternalType class
+	instanceVariableNames: ''!
+
+!classDefinition: #ExternalTypePunctuator category: #'FFI-Kernel'!
+Object subclass: #ExternalTypePunctuator
+	instanceVariableNames: 'compiledSpec referentClass referencedType token'
+	classVariableNames: ''
+	poolDictionaries: 'FFIConstants'
+	category: 'FFI-Kernel'!
+!classDefinition: 'ExternalTypePunctuator class' category: #'FFI-Kernel'!
+ExternalTypePunctuator class
 	instanceVariableNames: ''!
 
 !classDefinition: #ExternalForm category: #'FFI-Kernel'!
@@ -254,13 +264,14 @@ We see that color and name fields both interpret the same zone of data (starting
 The size of the union can be verified with:
 	UnionExample byteSize = (Smalltalk wordSize max: 4).!
 
-!ExternalType commentStamp: '<historical>' prior: 0!
+!ExternalType commentStamp: 'eem 11/22/2024 09:23' prior: 0!
 An external type represents the type of external objects.
 
 Instance variables:
 	compiledSpec	<WordArray>		Compiled specification of the external type
 	referentClass	<Behavior | nil>	Class type of argument required
 	referencedType	<ExternalType>	Associated (non)pointer type with the receiver
+	byteAlignment	<Integer | nil>		The desired alignment for a field of the external type within a structure.  If nil it has yet to be computed.
 
 Compiled Spec:
 The compiled spec defines the type in terms which are understood by the VM. Each word is defined as:
@@ -274,7 +285,9 @@ The compiled spec defines the type in terms which are understood by the VM. Each
 				  If the flag is set the atomic type bits are valid.
 	bits 19...23	- unused
 	bits 24...27	- atomic type (FFITypeVoid ... FFITypeDoubleFloat)
-	bits 28...31	- unused
+	bits 28...30	- unused
+	bit 31		- variadic arg flag FFIFlagVariadic
+				  This flag is set for a variadic argument, and is automatically applied to all arguments following a '...' punctuator
 
 Note that all combinations of the flags FFIFlagPointer, FFIFlagAtomic, and FFIFlagStructure are invalid, EXCEPT from the following:
 
@@ -286,10 +299,21 @@ Note that all combinations of the flags FFIFlagPointer, FFIFlagAtomic, and FFIFl
 		This defines a structure which is a typedef of a pointer type as in
 			typedef void* VoidPointer;
 			typedef Pixmap* PixmapPtr;
-		It requires a byte size of four (e.g. a 32bit pointer) to work correctly.
+		It requires a byte size of four or eight (e.g. a 32-bit or 64-bit pointer) to work correctly.
 
 [Note: Other combinations may be allowed in the future]
 !
+
+!ExternalTypePunctuator commentStamp: 'eem 11/25/2024 13:31:19' prior: 0!
+ExternalTypePuncuator is a general scheme for handling the specific case of a "..." optional/variadic arguments in an ExternalFunciton deifnition. Instances are created from definitions like this potential printf definition.
+
+	printf: format with: arg1 with: arg2
+		"int printf(const char *format, ...);"
+
+		<cdecl: int32 'printf' (void* ... uint3264 uint3264)>
+		^ self externalCallFailed
+
+They are laid out like ExternalTypes so they can be parsed by the SqueakFFIPrims plugin when marshalling call-outs. But they do not function like types. See FFIFlagVariadic from FFIConstants.!
 
 !ExternalForm commentStamp: '<historical>' prior: 0!
 An ExternalForm is a specialized Form whose pixel-data is stored in memory that the user provides a pointer to.  This can simply be memory on the C heap, or (the motivating use-case...) it can be a pointer that is temporarily "mapped" from GPU memory by an API such as OpenCL.
@@ -374,7 +398,7 @@ initializeErrorConstants
 	"Stack frame required more than 16k bytes to pass arguments."
 	FFIErrorCallFrameTooBig := 19! !
 
-!FFIConstants class methodsFor: 'pool initialization' stamp: 'jmv 11/14/2023 10:52:06'!
+!FFIConstants class methodsFor: 'pool initialization' stamp: 'eem 11/25/2024 13:33:41'!
 initializeTypeConstants
 	"type void"
 	FFITypeVoid := 0.
@@ -409,7 +433,9 @@ initializeTypeConstants
 	FFIStructSizeMask := 16rFFFF. "mask for max size of structure"
 	FFIAtomicTypeMask := 16r0F000000. "mask for atomic type spec"
 	FFIAtomicTypeShift := 24. "shift for atomic type"
-! !
+
+	"argument qualifier flags"
+	FFIFlagVariadic := 16r80000000 "if set, argument is variadic (follows a '...' punctuator)"! !
 
 !ExternalAddress methodsFor: 'printing' stamp: 'jmv 1/9/2014 21:37'!
 printOn: aStream
@@ -1771,6 +1797,10 @@ isPointerType
 	"Return true if the receiver represents a pointer type"
 	^self isStructureType not and:[self headerWord anyMask: FFIFlagPointer]! !
 
+!ExternalType methodsFor: 'testing' stamp: 'eem 11/21/2024 18:10'!
+isPunctuator
+	^false! !
+
 !ExternalType methodsFor: 'testing' stamp: 'ar 12/2/1999 14:15'!
 isSigned
 	"Return true if the receiver is a signed type.
@@ -2175,6 +2205,36 @@ primitiveSizesInto: aByteArrayOfSizeNine
 	"(#(char short int long #'long long' wchar_t float double #'void *')
 		with: (self primitiveSizesInto: (ByteArray new: 9))
 		collect: [:n :s| {n. s}]) flatten"! !
+
+!ExternalTypePunctuator methodsFor: 'testing' stamp: 'eem 11/21/2024 18:15'!
+isPointerType
+	^false! !
+
+!ExternalTypePunctuator methodsFor: 'testing' stamp: 'eem 11/21/2024 18:11'!
+isPunctuator
+	^true! !
+
+!ExternalTypePunctuator methodsFor: 'testing' stamp: 'eem 11/21/2024 18:15'!
+isVoid
+	^false! !
+
+!ExternalTypePunctuator methodsFor: 'accessing' stamp: 'eem 11/21/2024 18:10'!
+token
+
+	^ token! !
+
+!ExternalTypePunctuator methodsFor: 'accessing' stamp: 'eem 11/22/2024 10:21'!
+token: anObject
+
+	token := anObject.
+	token == #'...' ifTrue:
+		[compiledSpec := WordArray with: FFIFlagVariadic]! !
+
+!ExternalTypePunctuator methodsFor: 'printing' stamp: 'eem 11/25/2024 13:24:11'!
+printOn: aStream
+	token isSymbol ifFalse:
+		[^super printOn: aStream].
+	aStream nextPutAll: token! !
 
 !ExternalForm methodsFor: 'initialization' stamp: 'jmv 5/4/2016 12:43'!
 allocateSpace
