@@ -1,3 +1,6 @@
+[_metadata_:author]:- "Eliot Miranda, Jon Raiford"
+[_metadata_:last edited]:- "25 Nov 2024"
+[_metadata_:viewer]:- "previewed using grip (homebrew install grip)"
 # Cuis FFI Primer
 
 Cuis has the ability to interoperate with foreign code that conforms to a given platform's Application Binary Interface (ABI) specification, essentially a codification of the C calling convention and data representation [^1].  FFI is an abbreviation of Foreign Function Interface. The Cuis FFI allows the programmer to
@@ -14,20 +17,21 @@ This document aims to convey the necessary information to make effective use of 
 
 [^1]: The ABI is sufficient to describe fully the C calling convention. Foreign code therefore is typically C libraries. C++ includes C as a subset, and therefore the C parts of C++ library APIs may be used directly. But C++ itself cannot be used directly; instead, define a suitable C interface using extern C { ... }, and create a library from that.
 
-The structure of the document is as follows.
+## The structure of this document is as follows:
 
-  - [Define Library Class](#define-library-class)
-  - [Opening and Closing Dynamic Libraries](#opening-and-closing-dynamic-libraries)
-  - [Defining Interface Methods to Library Functions](#defining-interface-methods-to-library-functions)
-    - [Interface Method ExternalFunction Pragma Syntax](#interface-method-externalfunction-pragma-syntax)
-    - [Example C Function Interface Method](#example-c-function-interface-method)
-    - [Using ExternalFunctions via invokeWith:...](#using-externalfunctions)
-  - [Representing and Managing Data](#representing-and-managing-data)
-    - [Primitive types](#primitive-types)
-    - [Defining Structure types](#defining-structure-types)
-    - [Garbage Collection and Object Lifetime](#garbage-collection-and-object-lifetime)
-    - [Deprecated Argument Types](#deprecated-argument-types)
-  - [Callbacks](#callbacks)
+  - [**Define Library Class**](#define-library-class)
+  - [**Opening and Closing Dynamic Libraries**](#opening-and-closing-dynamic-libraries)
+  - [**Defining Interface Methods to Library Functions**](#defining-interface-methods-to-library-functions)
+    - [**Interface Method ExternalFunction Pragma Syntax**](#interface-method-externalfunction-pragma-syntax)
+    - [**Example C Function Interface Method**](#example-c-function-interface-method)
+    - [**Example Variadic C Function Interface Method**](#example-variadic-c-function-interface-method)
+    - [**Using ExternalFunctions via invokeWith:...**](#using-externalfunctions)
+  - [**Representing and Managing Data**](#representing-and-managing-data)
+    - [**Primitive types**](#primitive-types)
+    - [**Defining Structure types**](#defining-structure-types)
+    - [**Garbage Collection, Object Lifetime, and Pinning**](#garbage-collection-object-lifetime-and-pinning)
+    - [**Deprecated Argument Types**](#deprecated-argument-types)
+  - [**Callbacks**](#callbacks)
 
 ## Define Library Class
 
@@ -114,6 +118,7 @@ An interface method pragma defining a foreign function is composed of the follow
 - The function's name as a string
 - a left parenthesis `(`
 - zero or more argument types#(argtype), one for each interface method argument/function argument pair, separated by whitespace. There is no checking beyond syntax. Chaos may ensue is you define too few arguments to a given function.[^5]
+- one may include an "optional arguments" puncuator (```...```) at the relevant point. On most platforms ```...``` is unnecessary but on Apple ARMv8 (Apple Silicon) it is required for correct operation because there-on all optional arguments are passed on the stack and none in registers.
 [^5]: Defining too many should be fine but is pointless and confusing.
 - ends with `>`.
 
@@ -126,7 +131,7 @@ A return or argument type is a sequence of
 
 #### Example C Function Interface Method
 
-*ODBC3Library class methods for 'ODBC3-primitives'*<br><br>
+*ODBC3Library class methods for 'ODBC3-primitives'*<br>
 **sqlBindParameter:** statementHandle<br>
 **parameterNumber:** parameterNumber<br>
 **inputOutputType:** inputOutputType<br>
@@ -137,7 +142,6 @@ A return or argument type is a sequence of
 **parameterValuePtr:** parameterValuePtr<br>
 **bufferLength:** bufferLength<br>
 **strLenOrIndPtr:** strLenOrIndPtr<br>
-
 ```
     "SQLRETURN SQLBindParameter(  
         SQLHSTMT        StatementHandle,  
@@ -156,10 +160,19 @@ A return or argument type is a sequence of
 ```  
 This function "SQLBindParameter" takes ten parameters and answers a SQLRETURN. It is necessary to look at the header file(s) to determine the atomic datatypes being used. In this case, SQLRETURN turns out to be a 16-bit integer. The first and last arguments for this function are passed as structures. StatementHandle is using the structure SQLHSTMT, which is defined as a subclass of ExternalStructure. Similarly, StrLen_or_IndPtr is defined as a SQLInteger* structure. The asterisk indicates that a pointer to the structure should be sent.
 
+#### Example Variadic C Function Interface Method
+*LibCLibrary methods for 'printing'*<br>
+**printf:** format **with:** arg1 **with:** arg2
+```
+    "int printf(const char *format, ...);"
+
+    <cdecl: int32 'printf' (char* ... uint3264 uint3264)>
+    ^self externalCallFailed
+```
 <a id="using-externalfunctions"></a>
 #### Using ExternalFunctions via invokeWith:...
 
-Defining an interface method's pragma actually creates a hidden instance of ExternalLibraryFunction which is stored as the method's first literal (e.g. use "inspect method" on a library interface method to see it). The ExternalLibraryFunction includes data that is used by the SqueakFFIPrims plugin to marshall the arguments and return value from Smalltalk objects to C arguments, and from C return type to Smalltalk return value. Such objects can be created programmatically and used directly. ExternalLibraryFunction inherits from ExternalFunction. ExternalFunction can be used to wrap pointers to functions returned by foreign code, and invoke them. ExternalLibraryFunction can be used to refer to named functions in libraries. The function call mechanism is the same for both. As of this writing there is no direct support for instantiating ExternalFunction. Here is a realistic example of an ExternalLibraryFunction to invoke the C library's qsort function, `void qsort(void *base, size_t nel, size_t width, int (*compar)(const void *, const void *))` on a 64-bit platform.
+Sometimes it is more convenient to refer to an external function via a variable, analogous to using function pointers in C, rather than through an interface method. Defining an interface method's pragma actually creates a hidden instance of ExternalLibraryFunction which is stored as the method's first literal (e.g. use "inspect method" on a library interface method to see it). The ExternalLibraryFunction includes data that is used by the SqueakFFIPrims plugin to marshall the arguments and return value from Smalltalk objects to C arguments, and from C return type to Smalltalk return value. Such objects can be created programmatically and used directly. ExternalLibraryFunction inherits from ExternalFunction. ExternalFunction can be used to wrap pointers to functions returned by foreign code, and invoke them. ExternalLibraryFunction can be used to refer to named functions in libraries. The function call mechanism is the same for both. As of this writing there is no direct support for instantiating ExternalFunction. Here is a realistic example of an ExternalLibraryFunction to invoke the C library's qsort function, `void qsort(void *base, size_t nel, size_t width, int (*compar)(const void *, const void *))` on a 64-bit platform.
 
 ```
 	qsort := ExternalLibraryFunction
@@ -245,9 +258,9 @@ If a formal parameter is a pointer then as far as the SqueakFFIPrims plugin is c
 If a formal parameter is a structure type then the actual parameter *must* be a general instance of ExternalStructure, and as many bytes as the sizeof the type of the formal parameter is passed. N.B. if the actual parameter is too small then garbage byets will be passed following the bytes of the actual parameter.[^10]
 [^10]: The SqueakFFIPrims plugin can easily be extended to pass the memory pointed to by an ExternalAddress. Please inform Eliot if this is a pressing need.
 
-#### Result Returning
+#### Returning Results
 
-The same set of objects are answered as values from interface methods whose return types are those of the above.
+The same set of objects are answered as values from interface methods whose return types are the same as the above.
 - for bool the full word of the function's result is tested and if zero then false, otherwise true, is answered.
 - for char and schar the least significant 8 bits of the function's result is answered as a Character[^6]
 - for the integer types, the appropriate width of the result is collected, and then sign-extended if necessary, and answered as a suitable Integer instance.
@@ -260,11 +273,14 @@ If the return type is pointer then
 
 If the return type is a general instance of ExternalStructure, an instance of that class will be answered, whose data will be a ByteArray.
 
-#### Garbage Collection and Object Lifetime
-Given the Cuis garbage collector moves objects, and the FFI supports callbacks, during which the garbage collector may run, it is unsafe to pass reference parameters that live on the Cuis heap, unless the actual parameter has been pinned, or the function being called does not call-back. If and when the threaded FFI is available it will never be safe to pass objects that live on the Cuis heap unless they have been pinned, because Smalltalk execution can overlap with FFI callouts.  It is always safe to pass data stored on the external C heap (general instances of ExternalData, things pointed to by general isnatnces of ExternalAddress), provided this data is live.
+#### Garbage Collection, Object Lifetime, and Pinning
+The OpenSmalltalk VM's Spur garbage collection scheme is the classical pairing of a generation scavenger for young objects with a mark-sweep collector for old objects. Most young objects are created in "eden", one of three small spaces, eden, past survivor space, and future survivor space, used to collect efficiently newly created objects. Large objects (64k words or larger) are created in old space. Objects living in new space are moved to old space when new space fills up with objects that survive; objects survive a scavenge when they are referenced from old objects. Objects living in new space are moved often, i.e. once every scavenge. Much less frequently old space is collected using the conventional recursive marking algorithm, and then compacted using a three finger algorithm that moves ordinary objects around "pinned" objects, leaving "pinned" objects where they are.
+
+Given the Cuis VM's garbage collector moves objects, and the FFI supports callbacks, during which the garbage collector may run, and hence move objects, it is unsafe to pass reference parameters that live on the Cuis heap, unless the actual parameter has been pinned, or the function being called does not call-back. If and when the threaded FFI is available it will never be safe to pass objects that live on the Cuis heap unless they have been pinned, because Smalltalk execution can overlap with FFI callouts, and therefore objects may be moved during a callout.  It is always safe to pass data stored on the external C heap (general instances of ExternalData, things pointed to by general instances of ExternalAddress), provided this data is live.
 
 The garbage collector will reclaim any and all unreferenced instances, including instances of ExternalAddress, et al, which will be finalized and hence the data they refer to will be freed back to the C heap. Therefore you ***must*** store objects somewhere (e.g. in instance variables of some object that is alive for as long as a library is used) whose data have been passed as actual parameters through interface methods. The garbage collector has no information on the lifetime of C data. It is your responsibility to keep objects used in the FFI safe from the garbage collector. You have been warned.
 
+Objects may be "pinned" by sending them the "pin" message (which answers whether the object was already pinned, not the object itself).  If an object is in old space, this merely marks the object as pinned which has the effect of leaving the object where it is until it is collected (pinning an object does *not* prevent it from being garbage collected). Objects in new space which are pinned are first moved to old space. This is not a cheap operation, the cost being proportional to object size. Therefore it is a good idea to try and reuse pinned objects over the course of several FFI calls.
 ### Defining Structure types
 Structure types are C's objects and it is important to be able to access fields within them, not just deal with them as blobs of data. The Cuis FFI provides the ExternalStructure hierarchy to do so. To define a structure type you create a subclass of ExternalStructure and fill in a class side method to define the fields and the field types of the structure. Structure fields can be other structures, but care must be taken when redefining a structure tyep used in another structure. Currently the containing structure is not automatically resized when a structure it contains is redefined.
 
@@ -326,7 +342,7 @@ On evaluating `FFITestCompoundStruct defineFields` on a 64-bit platform the FFI 
 &emsp;\<generated><br>
 &emsp;handle pointerAt: 9 put: t1 getHandle length: 8<br>
 
-The handle of a general instance of ExternalStructure may be either a ByteArray, in which case its data exists on the Cuis heap, (and it may be wise to pin the handle), or an ExternalAddress, in which case its data exists on the C heap. In either case pay careful attention to [Garbage Collection and Object Lifetime](#garbage-collection-and-object-lifetime).
+The handle of a general instance of ExternalStructure may be either a ByteArray, in which case its data exists on the Cuis heap, (and it may be wise to pin the handle), or an ExternalAddress, in which case its data exists on the C heap. In either case pay careful attention to [Garbage Collection, Object Lifetime, and Pinning](#garbage-collection-object-lifetime-and-pinning).
 
 ### Callbacks
 
@@ -341,8 +357,8 @@ The Cuis FFI supports callbacks which may be passed as actual parameters to fore
 
 The type signature is in a different syntax to that used in interface methods.[^11]
 
-To pass a Callback as an actual parameter in an interface method send one must send thunk to the Callback:[^12]
-[^12]: this limitation will be corrected asap
+To pass a Callback as an actual parameter in an interface method send one simply passes the Callback:[^12]
+[^12]: older versions of the SqueakFFIPrims plugin required that one send thunk to the Callback
 ```
 	libc qsort: myDoubles _: nDoubles _: ExternalType double byteSize _: callback thunk
 ```
