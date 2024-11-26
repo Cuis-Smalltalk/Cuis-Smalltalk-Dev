@@ -1,6 +1,6 @@
-'From Cuis7.1 [latest update: #6796] on 29 October 2024 at 7:35:31 am'!
+'From Cuis7.1 [latest update: #6857] on 26 November 2024 at 12:06:58 pm'!
 'Description Rename extentions tests'!
-!provides: 'BaseImageTests' 1 416!
+!provides: 'BaseImageTests' 1 417!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Objects'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
@@ -25205,8 +25205,8 @@ referencesRefactoringWarning
 
 	^ Refactoring referencesWarningClass - MessageNotUnderstood.! !
 
-!AddAsSubclassResponsabilityTest methodsFor: 'tests' stamp: 'HAW 7/12/2023 20:23:39'!
-test01AMethodOnClassToRefactorShouldBeAddedAsSubclassResponsabilityInSuperclass
+!AddAsSubclassResponsabilityTest methodsFor: 'tests' stamp: 'jmv 11/26/2024 12:06:20'!
+test01AMethodOnClassToRefactorShouldBeAddedAsSubclassResponsibilityInSuperclass
 
 	| classToRefactorSuperclass classToRefactor selector push methodCategory |
 
@@ -25217,14 +25217,14 @@ test01AMethodOnClassToRefactorShouldBeAddedAsSubclassResponsabilityInSuperclass
 	methodCategory := 'xyz'.
 	classToRefactor compile: selector asString classified: methodCategory. 
            
-	push := AddAsSubclassResponsability for: classToRefactor >> selector.
+	push := AddAsSubclassResponsibility for: classToRefactor >> selector.
 	push apply.
    
 	self assert: (classToRefactorSuperclass includesSelector: selector).
 	self assert: (classToRefactor includesSelector: selector).
 	self assert: methodCategory equals: (classToRefactorSuperclass organization categoryOfElement: selector)! !
 
-!AddAsSubclassResponsabilityTest methodsFor: 'tests' stamp: 'HAW 7/12/2023 20:37:43'!
+!AddAsSubclassResponsabilityTest methodsFor: 'tests' stamp: 'jmv 11/26/2024 12:06:30'!
 test02ShouldWarnWhenMethodWithSameNameExistsInSuperclass
 	
 	| classToRefactor classToRefactorSuperclass selector |
@@ -25237,12 +25237,12 @@ test02ShouldWarnWhenMethodWithSameNameExistsInSuperclass
 	classToRefactor compile: selector asString.
 
 	self 
-		assertCreation: [ AddAsSubclassResponsability for: classToRefactor >> selector ]
-		warnsWith: [ AddAsSubclassResponsability methodImplementedInSuperclassWarningMessage ].
+		assertCreation: [ AddAsSubclassResponsibility for: classToRefactor >> selector ]
+		warnsWith: [ AddAsSubclassResponsibility methodImplementedInSuperclassWarningMessage ].
 		
 	! !
 
-!AddAsSubclassResponsabilityTest methodsFor: 'tests' stamp: 'HAW 7/12/2023 20:13:40'!
+!AddAsSubclassResponsabilityTest methodsFor: 'tests' stamp: 'jmv 11/26/2024 12:06:35'!
 test03ShouldNotWarnWhenMethodInSuperclassIsAbstract
 	
 	| classToRefactor classToRefactorSuperclass selector |
@@ -25255,14 +25255,14 @@ test03ShouldNotWarnWhenMethodInSuperclassIsAbstract
 	classToRefactor compile: selector.
 
 	self 
-		shouldnt: [ AddAsSubclassResponsability for: classToRefactor >> selector ]
+		shouldnt: [ AddAsSubclassResponsibility for: classToRefactor >> selector ]
 		raise: self refactoringWarning 
 	! !
 
-!AddAsSubclassResponsabilityTest methodsFor: 'class factory' stamp: 'PB 6/10/2023 22:46:51'!
+!AddAsSubclassResponsabilityTest methodsFor: 'class factory' stamp: 'jmv 11/26/2024 12:06:08'!
 classToRefactorName	
 
-	^#ClassToAddMethodInSuperClassAsSubclassResponsability! !
+	^#ClassToAddMethodInSuperClassAsSubclassResponsibility! !
 
 !AddInstanceVariableTest methodsFor: 'class factory' stamp: 'HAW 6/11/2017 18:12:55'!
 classToRefactorName
