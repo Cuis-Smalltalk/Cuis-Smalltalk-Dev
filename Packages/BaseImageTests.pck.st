@@ -1,6 +1,6 @@
-'From Cuis7.1 [latest update: #6857] on 26 November 2024 at 12:06:58 pm'!
+'From Cuis7.1 [latest update: #6864] on 27 November 2024 at 6:55:27 pm'!
 'Description Rename extentions tests'!
-!provides: 'BaseImageTests' 1 417!
+!provides: 'BaseImageTests' 1 418!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Objects'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
@@ -11571,10 +11571,10 @@ assertIsPositiveZero: aFloat
 	"Assert that aFloat is Float zero (the positive one)"
 	self assert: aFloat hex = 0.0 hex! !
 
-!FloatTest methodsFor: 'helpers' stamp: 'jmv 1/24/2023 15:34:34'!
+!FloatTest methodsFor: 'helpers' stamp: 'jmv 11/27/2024 18:49:57'!
 expectedFailures
 	Smalltalk platformName = 'Mac OS' ifTrue: [
-		^#(testE testExp testPrimExpAndLn testNaNPropagationUnary) ].
+		^#(testE testExp testPrimExpAndLn) ].
 	^#().! !
 
 !FloatTest methodsFor: 'tests - primitives' stamp: 'jmv 2/27/2019 15:25:35'!
