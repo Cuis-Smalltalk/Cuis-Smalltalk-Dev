@@ -1,6 +1,6 @@
-'From Cuis6.3 [latest update: #6189] on 9 January 2024 at 5:52:13 pm'!
+'From Cuis7.1 [latest update: #6861] on 27 November 2024 at 3:37:42 pm'!
 'Description '!
-!provides: 'JSON' 1 26!
+!provides: 'JSON' 1 27!
 !requires: 'Cuis-Base' 60 5557 nil!
 SystemOrganization addCategory: #JSON!
 
@@ -292,10 +292,10 @@ readFrom: aStream
 	self stream: aStream.
 	^ self readAny! !
 
-!Json class methodsFor: 'as yet unclassified' stamp: 'KenD 11/24/2022 08:39:30'!
+!Json class methodsFor: 'as yet unclassified' stamp: 'jmv 11/27/2024 15:18:03'!
 escapeForCharacter: c
 	
-	(c asciiValue) ifNotNil:  [ ^escapeArray at: (c asciiValue) + 1 ].
+	c isAscii ifTrue:  [ ^escapeArray at: (c asciiValue) + 1 ].
 	^nil! !
 
 !Json class methodsFor: 'as yet unclassified' stamp: 'ul 11/4/2008 06:23'!
@@ -365,34 +365,6 @@ asJsonString
 	^ String streamContents: [:str |
 		self jsonWriteOn: str ]! !
 
-!False methodsFor: '*JSON-writing' stamp: 'tonyg 8/17/2005 00:43'!
-jsonWriteOn: aStream
-	aStream nextPutAll: 'false'! !
-
-!True methodsFor: '*JSON-writing' stamp: 'tonyg 8/17/2005 00:44'!
-jsonWriteOn: aStream
-	aStream nextPutAll: 'true'! !
-
-!Number methodsFor: '*JSON-writing' stamp: 'ul 11/4/2008 04:46'!
-jsonWriteOn: aWriteStream 
-
-	self printOn: aWriteStream base: 10! !
-
-!Integer methodsFor: '*JSON-writing' stamp: 'Igor.Stasenko 12/27/2009 08:05'!
-jsonWriteOn: aWriteStream
-	^ self printOn: aWriteStream base: 10
-! !
-
-!Association methodsFor: '*JSON-writing' stamp: 'jmv 6/2/2016 09:35'!
-jsonWriteOn: aStream
-	self key asString jsonWriteOn: aStream.
-	aStream nextPut: $:; space.
-	self value jsonWriteOn: aStream.! !
-
-!UndefinedObject methodsFor: '*JSON-writing' stamp: 'tonyg 8/17/2005 00:45'!
-jsonWriteOn: aWriteStream 
-	aWriteStream nextPutAll: 'null'! !
-
 !Collection methodsFor: '*JSON' stamp: 'jmv 5/17/2016 13:11'!
 jsonObjectWriteOn: aStream
 	"Write as 'JSON Object' format
@@ -434,6 +406,13 @@ jsonWriteOn: aStream
 
 	aStream nextPut: $]! !
 
+!FloatArray methodsFor: '*JSON' stamp: 'jmv 7/11/2018 18:14:09'!
+jsonWriteElement: element on: aStream
+	"FloatArray elements are answered as 64 bit Float, but are really 32 bit Float.
+	When writing to JSON (or printing), print them as 32 bit Float."
+
+	element printAsIEEE32BitPrecisionFloatOn: aStream base: 10! !
+
 !CharacterSequence methodsFor: '*JSON-writing' stamp: 'jmv 11/25/2022 12:38:09'!
 jsonWriteOn: aStream
 
@@ -445,13 +424,6 @@ jsonWriteOn: aStream
 				aStream nextPutAll: replacement ] ].
 	aStream nextPut: $".
 ! !
-
-!FloatArray methodsFor: '*JSON' stamp: 'jmv 7/11/2018 18:14:09'!
-jsonWriteElement: element on: aStream
-	"FloatArray elements are answered as 64 bit Float, but are really 32 bit Float.
-	When writing to JSON (or printing), print them as 32 bit Float."
-
-	element printAsIEEE32BitPrecisionFloatOn: aStream base: 10! !
 
 !Text methodsFor: '*JSON-printing' stamp: 'cwp 10/26/2006 22:25'!
 jsonWriteOn: aStream
@@ -481,6 +453,34 @@ jsonWriteOn: aStream
 !WriteStream methodsFor: '*JSON-printing' stamp: 'cwp 10/25/2006 12:27'!
 jsonPrint: anObject
 	anObject jsonWriteOn: self! !
+
+!False methodsFor: '*JSON-writing' stamp: 'tonyg 8/17/2005 00:43'!
+jsonWriteOn: aStream
+	aStream nextPutAll: 'false'! !
+
+!True methodsFor: '*JSON-writing' stamp: 'tonyg 8/17/2005 00:44'!
+jsonWriteOn: aStream
+	aStream nextPutAll: 'true'! !
+
+!Association methodsFor: '*JSON-writing' stamp: 'jmv 6/2/2016 09:35'!
+jsonWriteOn: aStream
+	self key asString jsonWriteOn: aStream.
+	aStream nextPut: $:; space.
+	self value jsonWriteOn: aStream.! !
+
+!Number methodsFor: '*JSON-writing' stamp: 'ul 11/4/2008 04:46'!
+jsonWriteOn: aWriteStream 
+
+	self printOn: aWriteStream base: 10! !
+
+!Integer methodsFor: '*JSON-writing' stamp: 'Igor.Stasenko 12/27/2009 08:05'!
+jsonWriteOn: aWriteStream
+	^ self printOn: aWriteStream base: 10
+! !
+
+!UndefinedObject methodsFor: '*JSON-writing' stamp: 'tonyg 8/17/2005 00:45'!
+jsonWriteOn: aWriteStream 
+	aWriteStream nextPutAll: 'null'! !
 
 !FileEntry methodsFor: '*json' stamp: 'pb 5/25/2016 01:32'!
 jsonContents

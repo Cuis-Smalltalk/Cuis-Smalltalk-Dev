@@ -1,6 +1,6 @@
-'From Cuis6.3 [latest update: #6213] on 6 February 2024 at 10:27:23 am'!
+'From Cuis7.1 [latest update: #6861] on 27 November 2024 at 3:39:41 pm'!
 'Description '!
-!provides: 'YAXO' 1 27!
+!provides: 'YAXO' 1 28!
 SystemOrganization addCategory: #YAXO!
 
 
@@ -1663,44 +1663,44 @@ nextIncludeSection: parseSection
 		ifTrue: [
 			self pushStream: (ReadStream on: section)]! !
 
-!XMLTokenizer methodsFor: 'tokenizing' stamp: 'jmv 1/8/2023 16:56:39'!
+!XMLTokenizer methodsFor: 'tokenizing' stamp: 'jmv 11/27/2024 15:19:59'!
 nextLiteral
 	| continue nextChar resultString |
-	((nextChar _ self peek) isLetter
+	((nextChar := self peek) isLetter
 		or: [nextChar = $_])
 		ifFalse: [self errorExpected: 'Name literal.'].
-	continue _ true.
-	resultString _ UnicodeString streamContents: [ :strm |
+	continue := true.
+	resultString := UnicodeString streamContents: [ :strm |
 		[
-			nextChar _ self peek.
-			(nextChar asciiValue notNil and: [LiteralChars at: nextChar asciiValue+1])
+			nextChar := self peek.
+			(nextChar isAscii and: [LiteralChars at: nextChar asciiValue+1])
 				ifTrue: [
 					nextChar = $&
 						ifTrue: [
-							nextChar _ self next.
+							nextChar := self next.
 							self peek = $#
 								ifTrue: [strm nextPutAll: self nextCharReference asString]
-								ifFalse: [continue _ false]]
+								ifFalse: [continue := false]]
 						ifFalse: [
 							strm nextPut: self next]]
 				ifFalse: [
-					continue _ false].
+					continue := false].
 			continue ] whileTrue.
 	].
 	resultString isEmpty
 		ifTrue: [self errorExpected: 'Name literal'].
 	^resultString! !
 
-!XMLTokenizer methodsFor: 'tokenizing' stamp: 'jmv 1/8/2023 16:27:53'!
+!XMLTokenizer methodsFor: 'tokenizing' stamp: 'jmv 11/27/2024 15:21:31'!
 nextName
 	| nextChar |
 	nameBuffer reset.
 	self peek = $.
 		ifTrue: [self malformedError: 'Character expected.'].
 	[
-		(nextChar _ self peek)
+		(nextChar := self peek)
 			ifNil: [self errorExpected: 'Character expected.'].
-		nextChar asciiValue ifNil: [false] ifNotNil: [:a | NameDelimiters at: a]
+		nextChar isAscii ifFalse: [false] ifTrue: [NameDelimiters at: nextChar asciiValue]
 	] whileFalse: [
 		nameBuffer nextPut: self next].
 	^nameBuffer contents! !
@@ -1959,30 +1959,30 @@ nestedStreams
 parsingMarkup
 	^parsingMarkup! !
 
-!XMLTokenizer methodsFor: 'private' stamp: 'jmv 1/8/2023 16:23:35'!
+!XMLTokenizer methodsFor: 'private' stamp: 'jmv 11/27/2024 15:23:05'!
 readNumberBase: base
 	"Read a hex number from stream until encountering $; "
 
 	| value digit |
 
 	base = 10 ifFalse: [	| numberString | 
-		numberString _ self nextUpTo: $;.
+		numberString := self nextUpTo: $;.
 		self stream skip: -1.
 		^Integer readFrom: numberString asUppercase readStream base: base. 
 	].
 
-	value _ 0.
-	digit _ self peek asciiValue ifNil: [-1] ifNotNil: [:a | DigitTable at: a].
+	value := 0.
+	digit := self peek isAscii ifFalse: [-1] ifTrue: [DigitTable at: self peek asciiValue].
 	digit < 0
 		ifTrue: [self error: 'At least one digit expected here'].
 	self next.
-	value _ digit.
-	[digit _ self peek asciiValue ifNil: [-1] ifNotNil: [:a | DigitTable at: a].
+	value := digit.
+	[digit := self peek isAscii ifFalse: [-1] ifTrue: [DigitTable at: self peek asciiValue].
 	digit < 0
 		ifTrue: [^value]
 		ifFalse: [
 			self next.
-			value _ value * base + digit]
+			value := value * base + digit]
 		] repeat.
 	^ value! !
 
