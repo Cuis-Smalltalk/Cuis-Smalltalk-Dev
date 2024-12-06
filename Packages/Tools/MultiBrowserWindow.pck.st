@@ -1,6 +1,6 @@
-'From Cuis7.1 [latest update: #6895] on 5 December 2024 at 4:33:41 pm'!
+'From Cuis7.3 [latest update: #6895] on 6 December 2024 at 4:46:34 pm'!
 'Description '!
-!provides: 'MultiBrowserWindow' 1 2!
+!provides: 'MultiBrowserWindow' 1 3!
 SystemOrganization addCategory: #MultiBrowserWindow!
 
 
@@ -25,7 +25,7 @@ BrowserWindowState class
 	instanceVariableNames: ''!
 
 
-!MultiBrowserWindow commentStamp: 'jmv 12/3/2024 10:21:43' prior: 0!
+!MultiBrowserWindow commentStamp: 'jmv 12/6/2024 16:37:14' prior: 0!
 BrowserWindow new openInWorld
 MultiBrowserWindow new openInWorld
 
@@ -35,7 +35,6 @@ BrowserWindow hierarchyOnClass: Float selector: #abs
 
 MultiBrowserWindow findAndBrowseClass
 MultiBrowserWindow fullOnClass: Float selector: #abs
-MultiBrowserWindow hierarchyOnClass: Float selector: #abs
 MultiBrowserWindow openOnClasses: (Magnitude withAllSubclasses select: [ :c | c hasSubclasses ])
 MultiBrowserWindow openOnClasses: {Number. Float. Point} selectors: { #abs. #abs. #x}!
 
@@ -118,16 +117,23 @@ offerMultiBrowserMenu
 
 	aMenu popUpInWorld: self world! !
 
-!MultiBrowserWindow methodsFor: 'geometry' stamp: 'jmv 12/3/2024 11:11:40'!
+!MultiBrowserWindow methodsFor: 'geometry' stamp: 'jmv 12/6/2024 16:04:30'!
 labelXPosition
 	| f |
 	f := Preferences at: #windowTitleFont.
-	^ f lineSpacing * 8 + borderWidth! !
+	^ f lineSpacing * 9 + borderWidth! !
 
-!MultiBrowserWindow methodsFor: 'initialization' stamp: 'jmv 12/2/2024 15:09:43'!
+!MultiBrowserWindow methodsFor: 'initialization' stamp: 'jmv 12/6/2024 16:28:50'!
+createMultiBrowserCloseButton
+	^ (PluggableButtonMorph model: self action: #closeTab)
+		iconDrawSelector: #drawSquareCloseIcon;
+		setBalloonText: 'close this browser tab';
+		morphExtent: Theme current titleBarButtonsExtent! !
+
+!MultiBrowserWindow methodsFor: 'initialization' stamp: 'jmv 12/6/2024 16:36:29'!
 createMultiBrowserMenuButton
 	^ (PluggableButtonMorph model: self action: #offerMultiBrowserMenu)
-		iconDrawSelector: #drawExpandIcon;
+		iconDrawSelector: #drawSquareExpandIcon;
 		setBalloonText: 'multi browser menu';
 		morphExtent: Theme current titleBarButtonsExtent! !
 
@@ -151,7 +157,7 @@ initialize
 	browserWindowsState := OrderedCollection new.
 ! !
 
-!MultiBrowserWindow methodsFor: 'initialization' stamp: 'jmv 12/2/2024 16:00:17'!
+!MultiBrowserWindow methodsFor: 'initialization' stamp: 'jmv 12/6/2024 16:02:51'!
 initializeLabelArea
 	"Initialize the label area (titlebar) for the window."
 
@@ -161,7 +167,8 @@ initializeLabelArea
 	spacing := Theme current titleBarButtonsExtent x *13//10.
 	self addMorph: self createMultiBrowserPrevButton position: spacing*4@0 + topLeft.
 	self addMorph: self createMultiBrowserMenuButton position: spacing*5@0 + topLeft.
-	self addMorph: self createMultiBrowserNextButton position: spacing*6@0 + topLeft.! !
+	self addMorph: self createMultiBrowserCloseButton position: spacing*6@0 + topLeft.
+	self addMorph: self createMultiBrowserNextButton position: spacing*7@0 + topLeft.! !
 
 !MultiBrowserWindow methodsFor: 'label' stamp: 'jmv 12/3/2024 10:48:32'!
 setLabel: aString
