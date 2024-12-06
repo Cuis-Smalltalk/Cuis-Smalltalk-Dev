@@ -1,6 +1,6 @@
-'From Cuis7.1 [latest update: #6886] on 3 December 2024 at 11:13:19 am'!
+'From Cuis7.1 [latest update: #6895] on 5 December 2024 at 4:33:41 pm'!
 'Description '!
-!provides: 'MultiBrowserWindow' 1 1!
+!provides: 'MultiBrowserWindow' 1 2!
 SystemOrganization addCategory: #MultiBrowserWindow!
 
 
@@ -200,7 +200,14 @@ mainLayoutAt: i
 mainLayoutsDo: aBlock
 	browserWindowsState do: [ :bws | aBlock value: bws mainLayout ].! !
 
-!MultiBrowserWindow class methodsFor: 'as yet unclassified' stamp: 'jmv 12/2/2024 16:59:58'!
+!MultiBrowserWindow class methodsFor: 'utilities' stamp: 'eem 12/5/2024 16:30:28'!
+beDefaultBrowserWindowClass
+	PreferenceSet sysPreferences
+		name: #browserWindowClass
+		category: #programming
+		value: self! !
+
+!MultiBrowserWindow class methodsFor: 'instance creation' stamp: 'jmv 12/2/2024 16:59:58'!
 openOnClasses: aCollection
 	"
 	MultiBrowserWindow openOnClasses: (Magnitude withAllSubclasses select: [ :c | c hasSubclasses ])
@@ -217,7 +224,7 @@ openOnClasses: aCollection
 	w showTab: 1.
 ! !
 
-!MultiBrowserWindow class methodsFor: 'as yet unclassified' stamp: 'jmv 12/3/2024 10:21:14'!
+!MultiBrowserWindow class methodsFor: 'instance creation' stamp: 'jmv 12/3/2024 10:21:14'!
 openOnClasses: aCollection selectors: another
 	"
 	MultiBrowserWindow openOnClasses: {Number. Float. Point} selectors: { #abs. #abs. #x}
