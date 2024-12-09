@@ -15,10 +15,10 @@
 	<key>CFBundlePackageType</key>
 	<string>BNDL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>5.0-202312181441-64bit</string>
+	<string>5.0-202412090037-64bit</string>
 	<key>CFBundleSignature</key>
 	<string>FAST</string>
 	<key>CFBundleVersion</key>
-	<string>5.0-202312181441-64bit</string>
+	<string>5.0-202412090037-64bit</string>
 </dict>
 </plist>

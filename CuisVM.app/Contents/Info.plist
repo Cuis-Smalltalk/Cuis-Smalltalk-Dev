@@ -352,9 +352,9 @@
 	<key>CFBundleExecutable</key>
 	<string>Squeak</string>
 	<key>CFBundleGetInfoString</key>
-	<string>Squeak 5.0, Cog Spur VM 5.0-202312181441-64bit</string>
+	<string>Squeak 5.0, Cog Spur VM 5.0-202412090037-64bit</string>
 	<key>CFBundleShortVersionString</key>
-	<string>5.20231218.1441</string>
+	<string>5.20241209.0037</string>
 	<key>CFBundleIconFile</key>
 	<string>Squeak.icns</string>
 	<key>CFBundleIdentifier</key>
@@ -368,7 +368,7 @@
 	<key>CFBundleSignature</key>
 	<string>FAST</string>
 	<key>CFBundleVersion</key>
-	<string>5.20231218.1441</string>
+	<string>5.20241209.0037</string>
 	<key>LSBackgroundOnly</key>
 	<false/>
 	<key>LSMinimumSystemVersion</key>
@@ -524,7 +524,7 @@
 	<key>SqueakExplicitWindowOpenNeeded</key>
 	<false/>
 	<key>SqueakImageName</key>
-	<string>CuisImage/Cuis6.3-6202.image</string>
+	<string>Squeak5.0-15113.image</string>
 <!-- Uncomment and set this if you want to restrict the maximum heap size
 	<key>SqueakMaxHeapSize</key>
 	<integer>536870912</integer>
