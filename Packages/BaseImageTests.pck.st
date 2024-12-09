@@ -1,6 +1,6 @@
-'From Cuis7.1 [latest update: #6864] on 27 November 2024 at 6:55:27 pm'!
+'From Cuis7.3 [latest update: #6898] on 9 December 2024 at 11:30:06 am'!
 'Description Rename extentions tests'!
-!provides: 'BaseImageTests' 1 418!
+!provides: 'BaseImageTests' 1 419!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Objects'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
@@ -9759,13 +9759,13 @@ testArcTan
 	self verify: (0 arcTan: Float negativeZero) isTrigonometricallyEqualTo: Float pi.
 	self verify: (Float negativeZero arcTan: Float negativeZero) isTrigonometricallyEqualTo: Float pi negated.! !
 
-!FloatTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 11/27/2018 13:11:53'!
+!FloatTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 12/9/2024 11:29:19'!
 testArcTanNonPrimitive
 
-	#[0.0 0.01 0.1 0.3 0.5 0.7 0.8 1.0 2.0 5.0 20.0] do: [ :x | | computed |
-		computed _ x arcTanNonPrimitive.
-		self assert: (computed tan -x ) abs <= (computed predecessor tan -x ) abs.
-		self assert: (computed tan -x ) abs <= (computed successor tan -x ) abs.
+	#[0.0 0.01 0.1 0.3 0.5 0.7 0.8 1.0 3.0 5.0 20.0] do: [ :x | 
+		self assert: (x predecessor arcTanNonPrimitive - x predecessor arcTan) abs < 1.0e-15.
+		self assert: (x arcTanNonPrimitive - x arcTan) abs < 1.0e-15.
+		self assert: (x successor arcTanNonPrimitive - x successor arcTan) abs < 1.0e-15.
 		]! !
 
 !FloatTest methodsFor: 'tests - mathematical functions' stamp: 'sqr 12/15/2018 00:48:21'!
