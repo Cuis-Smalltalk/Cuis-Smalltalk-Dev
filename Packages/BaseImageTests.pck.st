@@ -1,6 +1,6 @@
-'From Cuis7.3 [latest update: #6913] on 17 December 2024 at 3:48:47 pm'!
+'From Cuis7.3 [latest update: #6926] on 17 December 2024 at 5:08:50 pm'!
 'Description Rename extentions tests'!
-!provides: 'BaseImageTests' 1 421!
+!provides: 'BaseImageTests' 1 422!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Objects'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
@@ -1148,6 +1148,26 @@ TestCase subclass: #FileStreamTest
 FileStreamTest class
 	instanceVariableNames: ''!
 
+!classDefinition: #EphemeronIdentityDictionaryTest category: #'BaseImageTests-System-Finalization'!
+TestCase subclass: #EphemeronIdentityDictionaryTest
+	instanceVariableNames: 'keys dict'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-System-Finalization'!
+!classDefinition: 'EphemeronIdentityDictionaryTest class' category: #'BaseImageTests-System-Finalization'!
+EphemeronIdentityDictionaryTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #FinalizationRegistryTest category: #'BaseImageTests-System-Finalization'!
+TestCase subclass: #FinalizationRegistryTest
+	instanceVariableNames: 'finalizationRegistry finalizerThatSignals finalizerFired waitSemaphore finalizerThatRaisesError failed'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-System-Finalization'!
+!classDefinition: 'FinalizationRegistryTest class' category: #'BaseImageTests-System-Finalization'!
+FinalizationRegistryTest class
+	instanceVariableNames: ''!
+
 !classDefinition: #FinalizationTest category: #'BaseImageTests-System-Finalization'!
 TestCase subclass: #FinalizationTest
 	instanceVariableNames: ''
@@ -1896,6 +1916,9 @@ This test documents the source pointer address conversion methods for CuisSource
 
 See class comment there. 
 !
+
+!EphemeronIdentityDictionaryTest commentStamp: '' prior: 0!
+SUnit tests for weak identity key dictionaries!
 
 !SystemConsistencyTest commentStamp: '<historical>' prior: 0!
 General system - wide image health tests.!
@@ -21943,6 +21966,245 @@ testUpToTerminator6TerminatedLongRecords
 	self assert: (read at: 1) = $b.
 	fs close.
 	path asFileEntry delete.! !
+
+!EphemeronIdentityDictionaryTest methodsFor: 'running' stamp: 'JMM 12/6/2024 10:38:47'!
+setUp
+	super setUp.
+	keys := (1 to: 1000) collect:[:n| 'key', n asString].
+	dict := EphemeronIdentityDictionary new.
+	keys do:[:n| dict at: n put: n,n].
+	super setUp! !
+
+!EphemeronIdentityDictionaryTest methodsFor: 'running' stamp: 'JMM 12/3/2024 16:07:10'!
+triggerFinalization
+
+	| x | 
+	
+	x := (Interval from: 1 to: 100000) asOrderedCollection.
+	x := nil.
+	Smalltalk garbageCollect.
+	Smalltalk garbageCollectMost.
+	Smalltalk garbageCollect.! !
+
+!EphemeronIdentityDictionaryTest methodsFor: 'coverage' stamp: '9/24/2024 06:45'!
+classToBeTested
+
+	^ EphemeronIdentityDictionary! !
+
+!EphemeronIdentityDictionaryTest methodsFor: 'tests' stamp: 'JMM 12/13/2024 14:48:29'!
+testFinalizeValuesWhenLastChainContinuesAtFront
+	| objectWithHashModulo dictionary capacity a b c |
+	objectWithHashModulo := [ :requestedHash :modulo |
+	| object |
+	[ object := Object new.
+	object hash \\ modulo = requestedHash ] whileFalse.
+	object ].
+
+	dictionary := self classToBeTested new.
+	capacity := (dictionary instVarNamed: 'array') size.
+	a := objectWithHashModulo value: capacity - 2 value: capacity.
+	dictionary at: a put: 1.
+	b := objectWithHashModulo value: capacity - 1 value: capacity.
+	dictionary at: b put: 2.
+	c := objectWithHashModulo value: capacity - 2 value: capacity.
+	dictionary at: c put: 3.
+	self assert: (dictionary instVarNamed: 'array') size equals: capacity.
+	self assert: (dictionary array at: capacity - 1) key == a.
+	self assert: (dictionary array at: capacity) key == b.
+	self assert: (dictionary array at: 1) key == c.
+	a := nil.
+		self triggerFinalization.
+
+	self assert: (dictionary includesKey: b).
+	self assert: (dictionary includesKey: c).
+	self assert: dictionary size equals: 2! !
+
+!EphemeronIdentityDictionaryTest methodsFor: 'tests' stamp: 'JMM 12/3/2024 15:09:56'!
+testGrow
+	keys := nil.
+	dict at: self put: nil.
+		self triggerFinalization.
+
+	"Keys are gone but not yet finalized."
+	dict grow! !
+
+!EphemeronIdentityDictionaryTest methodsFor: 'tests' stamp: 'JMM 12/4/2024 10:03:22'!
+testNoNils
+	| d |
+	d := EphemeronIdentityDictionary new
+	at: 'hello' copy put: 'world';
+		yourself.
+		self triggerFinalization.
+	self deny: (d keys includes: nil)! !
+
+!FinalizationRegistryTest methodsFor: 'tests' stamp: 'JMM 11/29/2024 09:33:05'!
+handleErrorsDuring: aBlock
+
+	"Extending the error handler from the finalization registry"
+
+	aBlock
+		on: Error
+		do: [ :e | failed := true ]! !
+
+!FinalizationRegistryTest methodsFor: 'tests' stamp: 'JMM 11/28/2024 11:20:54'!
+testAddGC
+	| x |
+
+	
+	x := Object new.
+	finalizationRegistry add: x.
+	self assert: (finalizationRegistry size = 1).
+	self assert: (finalizationRegistry isEmpty not).
+	x := nil.
+	self triggerFinalization.
+	self assert: (finalizationRegistry size = 0).
+	self assert: (finalizationRegistry isEmpty).! !
+
+!FinalizationRegistryTest methodsFor: 'tests' stamp: 'JMM 11/29/2024 11:13:21'!
+testAddWeakRegistry
+	| x r |
+
+	
+	x := Object new.
+	r := WeakRegistry new.
+	r add: x.
+	self assert: (r size = 1).
+	x := nil.
+	self triggerFinalization.
+	self assert: (r size = 0).
+! !
+
+!FinalizationRegistryTest methodsFor: 'tests' stamp: 'JMM 11/29/2024 08:28:48'!
+testDo
+	| x |
+
+	
+	x := Object new.
+	finalizationRegistry add: x.
+	self assert: finalizationRegistry size = 1.
+	finalizationRegistry keysDo: [:v | self assert: v = x]! !
+
+!FinalizationRegistryTest methodsFor: 'tests' stamp: 'JMM 12/6/2024 10:39:00'!
+testEKeyDictionary
+	
+	| d x |
+	d := EphemeronIdentityDictionary new.
+	x := Object new.
+	d at: x put: 5.
+	x := nil.
+	self triggerFinalization.
+	self assert: d isEmpty
+! !
+
+!FinalizationRegistryTest methodsFor: 'tests' stamp: 'JMM 11/29/2024 09:32:20'!
+testFinalizationWithError
+
+	finalizationRegistry
+		add: Object new
+		executor: finalizerThatRaisesError.
+		
+	self triggerFinalization.
+	self assert: failed! !
+
+!FinalizationRegistryTest methodsFor: 'tests' stamp: 'JMM 11/29/2024 08:34:57'!
+testLegacy 
+	| x |
+
+	
+	x := Object new.
+	finalizationRegistry add: x.
+	x := nil.
+	finalizationRegistry finalizeValues! !
+
+!FinalizationRegistryTest methodsFor: 'tests' stamp: 'JMM 12/6/2024 14:47:26'!
+testRemove
+	| x |
+
+	
+	x := Object new.
+	finalizationRegistry add: x.
+	self assert: finalizationRegistry size = 1.
+	finalizationRegistry removeKey: x ifAbsent: [self assert: false].
+	finalizationRegistry removeKey: x ifAbsent: [^self assert: true].
+	self assert: false.
+! !
+
+!FinalizationRegistryTest methodsFor: 'tests' stamp: 'JMM 11/29/2024 08:52:39'!
+testRemoveAll
+	| x y |
+
+	
+	x := Object new.
+	finalizationRegistry add: x.
+	y := Object new.
+	finalizationRegistry add: y.
+	self assert: finalizationRegistry size = 2.
+	finalizationRegistry removeAll.
+	self assert: finalizationRegistry size = 0.
+! !
+
+!FinalizationRegistryTest methodsFor: 'tests' stamp: 'JMM 12/2/2024 11:28:55'!
+testWRFV
+	| r f x |
+
+	
+	
+	r := WeakRegistry new.
+	x := Object new.
+	f := ObjectFinalizer new receiver: [
+		finalizerFired := true] selector: #value.
+	r
+		add: x
+		executor: f.
+	self assert: (r size = 1).
+	x := nil.
+	r finalizeValues.
+	Delay forMilliseconds: 500.
+	self assert: finalizerFired = false.
+	self triggerFinalization.
+	self assert: finalizerFired = true.
+! !
+
+!FinalizationRegistryTest methodsFor: 'tests' stamp: 'JMM 11/29/2024 08:49:29'!
+testkey
+	| x |
+
+	
+	x := Object new.
+	finalizationRegistry add: x.
+	self assert: finalizationRegistry size = 1.
+	self assert: (finalizationRegistry keys size = 1).
+	finalizationRegistry keys do: [:k | self assert: k = x].
+	! !
+
+!FinalizationRegistryTest methodsFor: 'running' stamp: 'JMM 11/29/2024 14:51:41'!
+setUp
+
+	super setUp.
+	waitSemaphore := Semaphore new.
+
+	finalizationRegistry := FinalizationRegistry new.
+	finalizationRegistry errorHandler: self.
+
+	finalizerFired := false.
+	finalizerThatSignals := ObjectFinalizer new receiver: [
+		finalizerFired := true.
+		waitSemaphore signal ] selector: #value.
+
+	failed := false.
+	finalizerThatRaisesError := ObjectFinalizer new receiver: [ 
+		Error signal ] selector: #value.! !
+
+!FinalizationRegistryTest methodsFor: 'helpers' stamp: 'JMM 11/29/2024 15:00:32'!
+triggerFinalization
+
+	| x | 
+	
+	x := (Interval from: 1 to: 100000) asOrderedCollection.
+	x := nil.
+	Smalltalk garbageCollect.
+	Smalltalk garbageCollectMost.
+	Smalltalk garbageCollect.! !
 
 !FinalizationTest methodsFor: 'tests' stamp: 'jmv 12/17/2024 09:15:39'!
 testFinalization
