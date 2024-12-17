@@ -1,6 +1,6 @@
-'From Cuis7.3 [latest update: #6906] on 9 December 2024 at 4:46:15 pm'!
+'From Cuis7.3 [latest update: #6913] on 17 December 2024 at 3:48:47 pm'!
 'Description Rename extentions tests'!
-!provides: 'BaseImageTests' 1 420!
+!provides: 'BaseImageTests' 1 421!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Objects'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
@@ -35,6 +35,7 @@ SystemOrganization addCategory: #'BaseImageTests-Tools-Code Differ'!
 SystemOrganization addCategory: #'BaseImageTests-Tools-Refactoring'!
 SystemOrganization addCategory: #'BaseImageTests-Fixed Bugs'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel'!
+SystemOrganization addCategory: #'BaseImageTests-System-Finalization'!
 
 
 !classDefinition: #ExceptionTester category: #'BaseImageTests-Exceptions'!
@@ -55,6 +56,16 @@ Object subclass: #BecomeTestExperiment
 	category: 'BaseImageTests-Kernel'!
 !classDefinition: 'BecomeTestExperiment class' category: #'BaseImageTests-Kernel'!
 BecomeTestExperiment class
+	instanceVariableNames: ''!
+
+!classDefinition: #FinalizationTestObject category: #'BaseImageTests-System-Finalization'!
+Object subclass: #FinalizationTestObject
+	instanceVariableNames: 'finalizeAction'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-System-Finalization'!
+!classDefinition: 'FinalizationTestObject class' category: #'BaseImageTests-System-Finalization'!
+FinalizationTestObject class
 	instanceVariableNames: ''!
 
 !classDefinition: #RefactoringClassTestData category: #'BaseImageTests-Tools-Refactoring'!
@@ -1135,6 +1146,16 @@ TestCase subclass: #FileStreamTest
 	category: 'BaseImageTests-System-Files'!
 !classDefinition: 'FileStreamTest class' category: #'BaseImageTests-System-Files'!
 FileStreamTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #FinalizationTest category: #'BaseImageTests-System-Finalization'!
+TestCase subclass: #FinalizationTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-System-Finalization'!
+!classDefinition: 'FinalizationTest class' category: #'BaseImageTests-System-Finalization'!
+FinalizationTest class
 	instanceVariableNames: ''!
 
 !classDefinition: #ReferenceStreamTest category: #'BaseImageTests-System-Object Storage'!
@@ -2570,6 +2591,14 @@ twoVars
 		classVariableNames: ''
 		poolDictionaries: ''
 		category: 'BaseImageTests-Kernel'! !
+
+!FinalizationTestObject methodsFor: 'accessing' stamp: 'jmv 12/17/2024 09:20:13'!
+finalizeAction: aBlock
+	finalizeAction := aBlock! !
+
+!FinalizationTestObject methodsFor: 'finalization' stamp: 'jmv 12/17/2024 09:20:29'!
+finalize
+	finalizeAction value! !
 
 !RefactoringClassTestData class methodsFor: 'compiling' stamp: 'HAW 12/18/2019 19:55:32'!
 wantsChangeSetLogging 
@@ -21914,6 +21943,42 @@ testUpToTerminator6TerminatedLongRecords
 	self assert: (read at: 1) = $b.
 	fs close.
 	path asFileEntry delete.! !
+
+!FinalizationTest methodsFor: 'tests' stamp: 'jmv 12/17/2024 09:15:39'!
+testFinalization
+	| object finalizationWasRun finalizationAction |
+	object := Object new.
+	finalizationWasRun := false.
+	finalizationAction := [ finalizationWasRun := true ].
+	object toFinalizeSend: #value to: finalizationAction.
+	self deny: finalizationWasRun.
+	object := nil.
+	self triggerFinalization.
+	self assert: finalizationWasRun.! !
+
+!FinalizationTest methodsFor: 'tests' stamp: 'jmv 12/17/2024 09:22:59'!
+testFinalization2
+	| object finalizationWasRun finalizationAction |
+	object := FinalizationTestObject new.
+	finalizationWasRun := false.
+	finalizationAction := [ finalizationWasRun := true ].
+	object finalizeAction: finalizationAction.
+	object finalizationRegistry add: object.
+	self deny: finalizationWasRun.
+	object := nil.
+	self triggerFinalization.
+	self assert: finalizationWasRun.! !
+
+!FinalizationTest methodsFor: 'helpers' stamp: 'jmv 12/17/2024 09:15:15'!
+triggerFinalization
+
+	| x | 
+	
+	x := (Interval from: 1 to: 100000) asOrderedCollection.
+	x := nil.
+	Smalltalk garbageCollect.
+	Smalltalk garbageCollectMost.
+	Smalltalk garbageCollect.! !
 
 !ReferenceStreamTest methodsFor: 'testing' stamp: 'jmv 9/25/2012 22:42'!
 testDiskProxy
