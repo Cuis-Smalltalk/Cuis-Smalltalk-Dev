@@ -1,6 +1,6 @@
-'From Cuis6.3 [latest update: #6200] on 29 January 2024 at 4:39:14 pm'!
+'From Cuis6.3 [latest update: #6895] on 13 December 2024 at 10:19:14 am'!
 'Description '!
-!provides: 'OpenCL' 1 52!
+!provides: 'OpenCL' 1 53!
 !requires: 'FFI' 1 nil nil!
 SystemOrganization addCategory: #'OpenCL-Constants'!
 SystemOrganization addCategory: #OpenCL!
@@ -322,7 +322,7 @@ OpenCLKernel class
 !classDefinition: #OpenCLPrimitiveInterface category: #OpenCL!
 Object subclass: #OpenCLPrimitiveInterface
 	instanceVariableNames: ''
-	classVariableNames: 'ActiveSubclass FinalizationRegistry'
+	classVariableNames: 'ActiveSubclass MyFinalizationRegistry'
 	poolDictionaries: 'OpenCLConstants'
 	category: 'OpenCL'!
 !classDefinition: 'OpenCLPrimitiveInterface class' category: #OpenCL!
@@ -6843,7 +6843,7 @@ current
 
 !OpenCLPrimitiveInterface class methodsFor: 'finalization' stamp: 'jmv 8/20/2015 13:05'!
 finalizationRegistry
-	^FinalizationRegistry ifNil: [FinalizationRegistry := WeakRegistry new]! !
+	^MyFinalizationRegistry ifNil: [MyFinalizationRegistry := WeakRegistry new]! !
 
 !OpenCLPrimitiveInterface class methodsFor: 'finalization' stamp: 'jmv 8/20/2015 13:05'!
 finalizeValues
