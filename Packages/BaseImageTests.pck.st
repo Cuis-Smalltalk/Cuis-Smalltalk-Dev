@@ -1,6 +1,6 @@
-'From Cuis7.3 [latest update: #6926] on 17 December 2024 at 5:08:50 pm'!
+'From Cuis7.3 [latest update: #6933] on 18 December 2024 at 8:46:43 pm'!
 'Description Rename extentions tests'!
-!provides: 'BaseImageTests' 1 422!
+!provides: 'BaseImageTests' 1 424!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Objects'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
@@ -1160,7 +1160,7 @@ EphemeronIdentityDictionaryTest class
 
 !classDefinition: #FinalizationRegistryTest category: #'BaseImageTests-System-Finalization'!
 TestCase subclass: #FinalizationRegistryTest
-	instanceVariableNames: 'finalizationRegistry finalizerThatSignals finalizerFired waitSemaphore finalizerThatRaisesError failed'
+	instanceVariableNames: 'finalizationRegistry finalizerThatSignals finalizerFired finalizerThatRaisesError'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BaseImageTests-System-Finalization'!
@@ -22037,15 +22037,6 @@ testNoNils
 		self triggerFinalization.
 	self deny: (d keys includes: nil)! !
 
-!FinalizationRegistryTest methodsFor: 'tests' stamp: 'JMM 11/29/2024 09:33:05'!
-handleErrorsDuring: aBlock
-
-	"Extending the error handler from the finalization registry"
-
-	aBlock
-		on: Error
-		do: [ :e | failed := true ]! !
-
 !FinalizationRegistryTest methodsFor: 'tests' stamp: 'JMM 11/28/2024 11:20:54'!
 testAddGC
 	| x |
@@ -22096,15 +22087,24 @@ testEKeyDictionary
 	self assert: d isEmpty
 ! !
 
-!FinalizationRegistryTest methodsFor: 'tests' stamp: 'JMM 11/29/2024 09:32:20'!
+!FinalizationRegistryTest methodsFor: 'tests' stamp: 'eem 12/18/2024 11:17:40'!
 testFinalizationWithError
-
+	| reference |
 	finalizationRegistry
 		add: Object new
 		executor: finalizerThatRaisesError.
-		
+	finalizationRegistry
+		add: (reference := Object new)
+		executor: finalizerThatSignals.
+
 	self triggerFinalization.
-	self assert: failed! !
+	self deny: finalizerFired.
+	reference := nil.
+	self triggerFinalization.
+	self assert: finalizerFired.
+	UISupervisor whenUIinSafeState:
+		[DebuggerWindow closeAllDebuggersSuchThat:
+			[:dbgWindow| '*Ephemeron Mourning*' match: dbgWindow label]]! !
 
 !FinalizationRegistryTest methodsFor: 'tests' stamp: 'JMM 11/29/2024 08:34:57'!
 testLegacy 
@@ -22177,21 +22177,17 @@ testkey
 	finalizationRegistry keys do: [:k | self assert: k = x].
 	! !
 
-!FinalizationRegistryTest methodsFor: 'running' stamp: 'JMM 11/29/2024 14:51:41'!
+!FinalizationRegistryTest methodsFor: 'running' stamp: 'eem 12/18/2024 20:44:35'!
 setUp
 
 	super setUp.
-	waitSemaphore := Semaphore new.
 
 	finalizationRegistry := FinalizationRegistry new.
-	finalizationRegistry errorHandler: self.
 
 	finalizerFired := false.
 	finalizerThatSignals := ObjectFinalizer new receiver: [
-		finalizerFired := true.
-		waitSemaphore signal ] selector: #value.
+		finalizerFired := true ] selector: #value.
 
-	failed := false.
 	finalizerThatRaisesError := ObjectFinalizer new receiver: [ 
 		Error signal ] selector: #value.! !
 
