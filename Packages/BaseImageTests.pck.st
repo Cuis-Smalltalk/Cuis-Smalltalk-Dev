@@ -1,6 +1,6 @@
-'From Cuis7.3 [latest update: #6933] on 18 December 2024 at 8:46:43 pm'!
+'From Cuis7.3 [latest update: #6933] on 18 December 2024 at 8:54:39 pm'!
 'Description Rename extentions tests'!
-!provides: 'BaseImageTests' 1 424!
+!provides: 'BaseImageTests' 1 425!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Objects'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
@@ -22087,9 +22087,16 @@ testEKeyDictionary
 	self assert: d isEmpty
 ! !
 
-!FinalizationRegistryTest methodsFor: 'tests' stamp: 'eem 12/18/2024 11:17:40'!
+!FinalizationRegistryTest methodsFor: 'tests' stamp: 'jmv 12/18/2024 20:54:29'!
 testFinalizationWithError
 	| reference |
+
+	"This test can not run without the dev environment:
+	It is expected to raise an UnhandledException, and the trick at the end to close
+	the debugger can only be done if #isDevelopmentEnvironmentPresent"
+	Smalltalk isDevelopmentEnvironmentPresent ifFalse:
+		[ ^self ].
+
 	finalizationRegistry
 		add: Object new
 		executor: finalizerThatRaisesError.
