@@ -1,6 +1,6 @@
-'From Cuis7.3 [latest update: #6933] on 18 December 2024 at 8:54:39 pm'!
+'From Cuis7.3 [latest update: #6949] on 24 December 2024 at 1:30:30 pm'!
 'Description Rename extentions tests'!
-!provides: 'BaseImageTests' 1 425!
+!provides: 'BaseImageTests' 1 426!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Objects'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
@@ -21991,14 +21991,18 @@ classToBeTested
 
 	^ EphemeronIdentityDictionary! !
 
-!EphemeronIdentityDictionaryTest methodsFor: 'tests' stamp: 'JMM 12/13/2024 14:48:29'!
+!EphemeronIdentityDictionaryTest methodsFor: 'tests' stamp: 'jmv 12/24/2024 13:30:14'!
 testFinalizeValuesWhenLastChainContinuesAtFront
 	| objectWithHashModulo dictionary capacity a b c |
-	objectWithHashModulo := [ :requestedHash :modulo |
-	| object |
-	[ object := Object new.
-	object hash \\ modulo = requestedHash ] whileFalse.
-	object ].
+	objectWithHashModulo :=
+		[ :requestedHash :modulo |
+			| object allOfThem |
+			allOfThem := OrderedCollection new.
+			[
+				object := Object new.
+				allOfThem add: object.
+				object hash \\ modulo = requestedHash ] whileFalse.
+			object ].
 
 	dictionary := self classToBeTested new.
 	capacity := (dictionary instVarNamed: 'array') size.
