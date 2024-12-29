@@ -1333,7 +1333,7 @@ This text pane is refreshed each time it is accessed. You can change the example
 The Terse Guide does not attempt to provide the entire protocol of a topic. You are encouraged to explore further by using the Protocol Browser as follows:
 
 Button 1>World>Open...>Browser 
-then in the upper right pane:
+then in the second from left upper pane:
 Button 2>Message List>browse protocol
 
 You can narrow the scope of protocol browsing by selecting a class in the upper left pane of the Protocol Browser.
