@@ -1,6 +1,6 @@
 ## How to create a Mac Unified VM
 
-This procedure builds a VM that includes both the Apple Silicon and Intel binaries and runs natively on both flavors of Mac hardware. It was tested on an Intel Mac. It is expected to work also on Apple Silicon Macs.
+This procedure builds a VM that includes both the Apple Silicon and Intel binaries and runs natively on both flavors of Mac hardware. This Mac Unified VM is the base of the MultiPlatform Cuis VM Bundle.
 
 1) Build or download Mac VM builds from https://github.com/OpenSmalltalk/opensmalltalk-vm/actions or from https://github.com/OpenSmalltalk/opensmalltalk-vm/releases . Use squeak.cog.spur_macos64x64_202412090037.zip, squeak.cog.spur_macos64ARMv8_202412090037.zip or similarly named files. Or your pick, if you know the differences. 
 

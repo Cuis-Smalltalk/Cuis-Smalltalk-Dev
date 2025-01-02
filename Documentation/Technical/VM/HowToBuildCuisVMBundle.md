@@ -13,4 +13,7 @@ This procedure bundles together the VMs for various platforms (MacOSx64, MacOSAR
 5) Fill them with the contents of 
 squeak.cog.spur_win64x64_????????????.zip, squeak.cog.spur_linux64x64_????????????.zip, squeak.cog.spur_linux64ARMv8_????????????.zip
 
+6) in the Windows folder, do:
+chmod +x *
+
 The result is a CuisVM.app that by doing rightClick / Quick Look is about 34.7Mb
