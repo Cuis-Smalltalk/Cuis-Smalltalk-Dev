@@ -2,20 +2,6 @@
 
 set -euo pipefail
 
-IMAGE_FILE="$(ls CuisImage/ | grep 'Cuis7.3-[0-9]\+.image')"
-RUN_TESTS_SCRIPT_FILEPATH=".ContinuousIntegrationScripts/runTests.st"
+CURRENT_SCRIPT_FOLDER=$(dirname "$(realpath "$0")")
 
-runTestsOnLinux() {
-  "$GITHUB_WORKSPACE"/sqcogspur64linux/squeak -vm-display-null CuisImage/"$IMAGE_FILE" -s "$RUN_TESTS_SCRIPT_FILEPATH"
-}
-
-runTestsOnMacOS() {
-  /Applications/Squeak.app/Contents/MacOS/Squeak -headless CuisImage/"$IMAGE_FILE" -s "$RUN_TESTS_SCRIPT_FILEPATH"
-}
-
-case $RUNNER_OS in
-  "Linux")
-    runTestsOnLinux ;;
-  "macOS")
-    runTestsOnMacOS ;;
-esac
+"$CURRENT_SCRIPT_FOLDER/runCuis.sh" -s .ContinuousIntegrationScripts/runTests.st
