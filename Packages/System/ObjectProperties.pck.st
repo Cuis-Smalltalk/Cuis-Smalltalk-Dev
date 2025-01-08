@@ -1,6 +1,6 @@
-'From Cuis6.0 [latest update: #6114] on 8 December 2023 at 11:09:01 am'!
+'From Cuis7.3 [latest update: #6971] on 8 January 2025 at 11:08:32 am'!
 'Description '!
-!provides: 'ObjectProperties' 1 1!
+!provides: 'ObjectProperties' 1 2!
 SystemOrganization addCategory: #ObjectProperties!
 
 
@@ -47,11 +47,11 @@ propertyMapOrNilFor: anObject
 		at: anObject
 		ifAbsent: nil! !
 
-!ObjectWithProperties class methodsFor: 'accessing' stamp: 'jmv 11/16/2023 10:43:09'!
+!ObjectWithProperties class methodsFor: 'accessing' stamp: 'jmv 1/8/2025 11:03:53'!
 propertyMaps
 
 	PropertyMaps ifNil: [
-		PropertyMaps := WeakIdentityKeyDictionary new ].
+		PropertyMaps := EphemeronIdentityDictionary new ].
 	^PropertyMaps! !
 
 !ObjectWithProperties class methodsFor: 'releasing' stamp: 'jmv 11/16/2023 10:43:14'!
