@@ -2,7 +2,7 @@
 
 set -euo pipefail
 
-IMAGE_FILE="$(ls CuisImage/ | grep 'Cuis7.3-[0-9]\+.image')"
+CURRENT_SCRIPT_FOLDER=$(dirname "$(realpath "$0")")
 
 INSTALL_UPDATES_SCRIPT="\
   Utilities classPool at: #AuthorName put: 'TravisCI'.
@@ -11,17 +11,4 @@ INSTALL_UPDATES_SCRIPT="\
   Smalltalk saveAndQuit.\
 "
 
-installUpdatesLinux() {
-  /home/runner/work/Cuis-Smalltalk-Dev/Cuis-Smalltalk-Dev/sqcogspur64linux/squeak -vm-display-null CuisImage/"$IMAGE_FILE" -d "$INSTALL_UPDATES_SCRIPT"
-}
-
-installUpdatesMacOS() {
-  /Applications/Squeak.app/Contents/MacOS/Squeak -headless CuisImage/"$IMAGE_FILE" -d "$INSTALL_UPDATES_SCRIPT"
-}
-
-case $RUNNER_OS in
-  "Linux")
-    installUpdatesLinux ;;
-  "macOS")
-    installUpdatesMacOS ;;
-esac
+"$CURRENT_SCRIPT_FOLDER/runCuis.sh" -d "$INSTALL_UPDATES_SCRIPT"

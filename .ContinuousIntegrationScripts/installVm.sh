@@ -13,7 +13,10 @@ installVmLinux() {
 
   wget "$BASE_VM_DOWNLOAD_PATH/$VM_FILENAME.tar.gz"
   tar -xvzf "$VM_FILENAME.tar.gz"
-  sqcogspur64linux/squeak --version
+
+  CUIS_VM_PATH="$GITHUB_WORKSPACE"/sqcogspur64linux/squeak
+  CUIS_VM_ARGUMENTS="-vm-display-null"
+  "$CUIS_VM_PATH" --version
 }
 
 installVmMacOS() {
@@ -23,6 +26,10 @@ installVmMacOS() {
   sudo hdiutil attach "$VM_FILENAME.dmg"
   cd "/Volumes/$VM_FILENAME"
   sudo cp -rf Squeak.app /Applications
+
+  CUIS_VM_PATH=/Applications/Squeak.app/Contents/MacOS/Squeak
+  CUIS_VM_ARGUMENTS="-headless"
+  "$CUIS_VM_PATH" -version
 }
 
 case $RUNNER_OS in
@@ -31,3 +38,7 @@ case $RUNNER_OS in
   "macOS")
     installVmMacOS ;;
 esac
+
+# Make the environment variables available to other scripts
+echo "CUIS_VM_PATH=$CUIS_VM_PATH" >> "$GITHUB_ENV"
+echo "CUIS_VM_ARGUMENTS=$CUIS_VM_ARGUMENTS" >> "$GITHUB_ENV"
