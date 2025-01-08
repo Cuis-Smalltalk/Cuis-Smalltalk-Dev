@@ -12,7 +12,7 @@ INSTALL_UPDATES_SCRIPT="\
 "
 
 installUpdatesLinux() {
-  /home/runner/work/Cuis-Smalltalk-Dev/Cuis-Smalltalk-Dev/sqcogspur64linux/squeak -vm-display-null CuisImage/"$IMAGE_FILE" -d "$INSTALL_UPDATES_SCRIPT"
+  "$GITHUB_WORKSPACE"/sqcogspur64linux/squeak -vm-display-null CuisImage/"$IMAGE_FILE" -d "$INSTALL_UPDATES_SCRIPT"
 }
 
 installUpdatesMacOS() {
