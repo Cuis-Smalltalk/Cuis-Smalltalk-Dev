@@ -1,6 +1,6 @@
-'From Cuis7.3 [latest update: #6971] on 8 January 2025 at 11:08:32 am'!
+'From Cuis7.3 [latest update: #6978] on 10 January 2025 at 7:12:35 pm'!
 'Description '!
-!provides: 'ObjectProperties' 1 2!
+!provides: 'ObjectProperties' 1 3!
 SystemOrganization addCategory: #ObjectProperties!
 
 
@@ -47,11 +47,14 @@ propertyMapOrNilFor: anObject
 		at: anObject
 		ifAbsent: nil! !
 
-!ObjectWithProperties class methodsFor: 'accessing' stamp: 'jmv 1/8/2025 11:03:53'!
+!ObjectWithProperties class methodsFor: 'accessing' stamp: 'jmv 1/10/2025 19:12:21'!
 propertyMaps
 
 	PropertyMaps ifNil: [
-		PropertyMaps := EphemeronIdentityDictionary new ].
+		"PropertyMaps := EphemeronIdentityDictionary new."
+		"A problem was detected with heavy use of Ephemerons. Go back to the old implementation until resolved."
+		PropertyMaps := WeakIdentityKeyDictionary new.
+		].
 	^PropertyMaps! !
 
 !ObjectWithProperties class methodsFor: 'releasing' stamp: 'jmv 11/16/2023 10:43:14'!
