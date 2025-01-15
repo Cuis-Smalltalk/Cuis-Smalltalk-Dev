@@ -57,7 +57,7 @@ Cuis is maintained on our [Main GitHub repo](https://github.com/Cuis-Smalltalk/C
 
 This is our main [Project Website](https://www.cuis.st). It includes a general overview of the project. You can find the schedule for our future onlime monthly meetings, and watch video recordings for past ones.
 
-Cuis has an active community of developers and users. Our main meeting point is the [mailing list](https://lists.cuis.st/mailman/listinfo/cuis-dev). You can browse the archives for a glimpse of our discussions. Before April 2019, we used cuis-dev @ cuis-smalltalk.org. [Zip with Messages](MailList/cuis-dev_cuis-smalltalk.org.txt.zip). Before April 2016, we used cuis @j vuletich.org: [Archives](http://jvuletich.org/mailman/listinfo/cuis_jvuletich.org). You are welcome in our community! If you use Cuis or are curious about our work, subscribe to the mail list to ask questions and tell us about your own projects and ideas.
+Cuis has an active community of developers and users. Our main meeting point is the [mailing list](https://lists.cuis.st/mailman/listinfo/cuis-dev). You can browse the archives for a glimpse of our discussions. Before April 2019, we used cuis-dev @ cuis-smalltalk.org. [Zip with Messages](MailList/cuis-dev_cuis-smalltalk.org.txt.zip). Before April 2016, we used cuis @ jvuletich.org: [Archives](http://jvuletich.org/mailman/listinfo/cuis_jvuletich.org). You are welcome in our community! If you use Cuis or are curious about our work, subscribe to the mail list to ask questions and tell us about your own projects and ideas.
 
 ## Learning about Cuis Smalltalk
 [(back to ToC)](#table-of-contents)
