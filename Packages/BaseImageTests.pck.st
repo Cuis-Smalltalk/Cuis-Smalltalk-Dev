@@ -1,6 +1,6 @@
-'From Cuis7.3 [latest update: #6949] on 24 December 2024 at 1:38:18 pm'!
+'From Cuis7.3 [latest update: #6981] on 15 January 2025 at 9:55:42 am'!
 'Description Rename extentions tests'!
-!provides: 'BaseImageTests' 1 428!
+!provides: 'BaseImageTests' 1 429!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Objects'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
@@ -3420,24 +3420,24 @@ testWithIndexDoSeparatedByDoesNothingForEmptyCollection
 testIsText
 	self assert: (Text new is: #Text).! !
 
-!WeakIdentitySetTest methodsFor: 'testing' stamp: 'jmv 8/24/2012 08:24'!
+!WeakIdentitySetTest methodsFor: 'testing' stamp: 'jmv 1/15/2025 09:54:47'!
 test
 	"
 	(also tests WeakSet a bit)
 	WeakIdentitySetTest new test
 	"
 	| ary1 ary2 count w wi |
-	ary1 _ { 3@4 . 4@5 }.
-	ary2 _ { 13@4 . 14@5 }.
-	w _ WeakSet new.
+	ary1 := { 3@4 . 4@5 }.
+	ary2 := { 13@4 . 14@5 }.
+	w := WeakSet new.
 	w addAll: ary1.
-	wi _ WeakIdentitySet new.
+	wi := WeakIdentitySet new.
 	wi addAll: ary2.
 	
 	self assert: w size = 2.
-	count _ 0.
+	count := 0.
 	w do: [ :each |
-		count _ count + 1.
+		count := count + 1.
 		self assert: each class == Point ].
 	self assert: count = 2.
 	self assert: (w includes: ary1 first).
@@ -3446,9 +3446,9 @@ test
 	self assert: (w includes: 4@5).
 
 	self assert: wi size = 2.
-	count _ 0.
+	count := 0.
 	wi do: [ :each |
-		count _ count + 1.
+		count := count + 1.
 		self assert: each class == Point ].
 	self assert: count = 2.
 	self assert: (wi includes: ary2 first).
@@ -3461,19 +3461,20 @@ test
 	ary2 at: 1 put: 99.
 	Smalltalk garbageCollect.
 
-	"A little weird, but yes, elements that disappeared are still counted, but NOT iterated!!"
-	self assert: w size = 2.
-	count _ 0.
+	self assert: w size = 1.
+	self assert: w estimatedSize = 2.
+	count := 0.
 	w do: [ :each |
-		count _ count + 1 ].
+		count := count + 1 ].
 	self assert: count = 1.
 	self deny: (w includes: ary1 first).
 	self assert: (w includes: ary1 second).
 
-	self assert: wi size = 2. 	"A little weird, but yes, elements that disappeared are still counted"
-	count _ 0.
+	self assert: wi size = 1.
+	self assert: wi estimatedSize = 2.
+	count := 0.
 	wi do: [ :each |
-		count _ count + 1 ].
+		count := count + 1 ].
 	self assert: count = 1.
 	self deny: (wi includes: ary2 first).
 	self assert: (wi includes: ary2 second).! !
@@ -19851,6 +19852,16 @@ testIsValidKeywordSelectorIfItContainsKeywordsWithColons
 testIsValidUnarySelectorIfItStartsWithALetterAndDoesNotContainSeparators
 
 	self assert: #t234 isValidSelector! !
+
+!SymbolTest methodsFor: 'tests - symbol consistency' stamp: 'sqr 12/30/2021 09:01:46'!
+testNoDuplicateSymbols
+
+	| symbols |
+	symbols := Symbol allInstances sort.
+	1 to: symbols size - 1 do:
+		[:k |
+			self deny: ((symbols at: k) hasEqualElements: (symbols at: k + 1))
+		]! !
 
 !UnicodeNormalizationTest methodsFor: 'tests' stamp: 'jmv 12/11/2022 19:35:18'!
 testCanonicalComposites
