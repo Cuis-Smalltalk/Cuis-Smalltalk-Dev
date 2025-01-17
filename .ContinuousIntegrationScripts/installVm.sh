@@ -11,7 +11,9 @@ installVmLinux() {
   sudo apt-get install pulseaudio
   VM_FILENAME="squeak.cog.spur_linux64x64_itimer"
 
-  wget "$BASE_VM_DOWNLOAD_PATH/$VM_FILENAME.tar.gz"
+  #Use an unreleased, recent build
+  #wget "$BASE_VM_DOWNLOAD_PATH/$VM_FILENAME.tar.gz"
+  wget https://github.com/OpenSmalltalk/opensmalltalk-vm/actions/runs/12757798924/artifacts/2425377956
   tar -xvzf "$VM_FILENAME.tar.gz"
 
   CUIS_VM_PATH="$GITHUB_WORKSPACE"/sqcogspur64linux/squeak
@@ -22,7 +24,9 @@ installVmLinux() {
 installVmMacOS() {
   VM_FILENAME="squeak.cog.spur_macos64x64"
 
-  wget "$BASE_VM_DOWNLOAD_PATH/$VM_FILENAME.dmg"
+  #Use an unreleased, recent build
+  #wget "$BASE_VM_DOWNLOAD_PATH/$VM_FILENAME.dmg"
+  wget https://github.com/OpenSmalltalk/opensmalltalk-vm/actions/runs/12757798952/artifacts/2425374280
   sudo hdiutil attach "$VM_FILENAME.dmg"
   cd "/Volumes/$VM_FILENAME"
   sudo cp -rf Squeak.app /Applications
