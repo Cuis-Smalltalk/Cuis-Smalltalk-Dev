@@ -1,6 +1,6 @@
 'From Cuis6.3 [latest update: #6221] on 7 February 2024 at 5:21:36 pm'!
 'Description Various code used in Squeak which is not in Cuis.'!
-!provides: 'SqueakCompatibility' 1 43!
+!provides: 'SqueakCompatibility' 1 44!
 !requires: 'Cuis-Base' 6 3 nil!
 SystemOrganization addCategory: #SqueakCompatibility!
 SystemOrganization addCategory: #'SqueakCompatibility-System-Files'!
@@ -1492,7 +1492,7 @@ register: anObject
 !StandardFileStream class methodsFor: 'registry' stamp: 'ul 8/27/2010 23:24'!
 registry
 	
-	^Registry ifNil: [ Registry := WeakRegistry new ]! !
+	^Registry ifNil: [ Registry := FinalizationRegistry new ]! !
 
 !StandardFileStream class methodsFor: 'registry' stamp: 'jmv 4/25/2016 15:14'!
 retryWithGC: execBlock until: testBlock forFileNamed: fullName
@@ -3393,7 +3393,7 @@ new: nElements
 datedVersion
 	^ self version! !
 
-!WeakRegistry class methodsFor: '*squeakCompatibility' stamp: 'jmv 2/6/2024 16:04:57'!
+!FinalizationRegistry class methodsFor: '*squeakCompatibility' stamp: 'jmv 2/6/2024 16:04:57'!
 new: nElements
 	"Answer an instance that can hold nElements objects without growing.
 	Smalltalk-80 protocol. It is better to be explicit and call #newWithRoomForMoreThan: if needed."

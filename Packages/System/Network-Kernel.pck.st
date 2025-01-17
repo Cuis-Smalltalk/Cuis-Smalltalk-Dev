@@ -1,6 +1,6 @@
-'From Cuis7.1 [latest update: #6742] on 25 October 2024 at 11:46:36 AM'!
+'From Cuis7.3 [latest update: #6990] on 17 January 2025 at 9:58:02 am'!
 'Description '!
-!provides: 'Network-Kernel' 1 10!
+!provides: 'Network-Kernel' 1 11!
 SystemOrganization addCategory: #'Network-Kernel'!
 
 
@@ -207,22 +207,6 @@ To ensure fast access, I keep track of the indexes of the external objects in th
 To ensure fast insertion, I keep track of the free slots of the externalObjectsArray in the freeSlotIndexes OrderedCollection. The access pattern is LIFO to avoid unnecessary growth and reordering of the OrderedCollection.
 I can grow the externalObjectsArray (see #ensureFreeSlot), but I never shrink it.!
 
-!ExternalObjectTable commentStamp: 'ul 10/27/2014 16:26' prior: 0!
-I'm an enhanced version of JMM's ExternalSemaphoreTable.
-I'm responsible for maintaining the externalObjectsArray, which can be found at slot 39 of Smalltalk specialObjectsArray. Manipulating the array directly is highly discouraged.
-
-My services are available via the methods of the "external objects" category of SmalltalkImage.
-
-To register anObject simply use Smalltalk registerExternalObject: anObject. Use #unregisterExternalObject: to unregister it. It your responsibility to always unregister these objects.
-If you'd like the create one or more new Semaphores, and register them for external use, then you should use one of #newExternalSemaphore, #newExternalSemaphoreDo: and #newExternalSemaphores:. If you want to unregister more than one external objects at the same time, then #unregisterExternalObjects: is the method you're looking for.
-
-Implementation details:
-I maintain a single instance (#current), which can automatically synchronize with externalObjectsArray.
-All accesses are protected by the semaphore instance variable.
-To ensure fast access, I keep track of the indexes of the external objects in the externalObjectArray in my indexesByObjects IdentityDictionary.
-To ensure fast insertion, I keep track of the free slots of the externalObjectsArray in the freeSlotIndexes OrderedCollection. The access pattern is LIFO to avoid unnecessary growth and reordering of the OrderedCollection.
-I can grow the externalObjectsArray (see #ensureFreeSlot), but I never shrink it.!
-
 !NetNameResolver commentStamp: '<historical>' prior: 0!
 This class implements TCP/IP style network name lookup and translation facilities.
 
@@ -235,16 +219,6 @@ haveNetwork	returns true, false, or #expired.  True means there was contact in t
 A Socket represents a network connection point. Current sockets are designed to support the TCP/IP and UDP protocols. Sockets are the lowest level of networking object in Squeak and are not normally used directly. SocketStream is a higher level object wrapping a Socket in a stream like protocol.
 
 ProtocolClient and subclasses are in turn wrappers around a SocketStream to provide support for specific network protocols such as POP, NNTP, HTTP, and FTP.!
-
-!SocketAddressInformation commentStamp: '<historical>' prior: 0!
-I represent a local or remote network service.
-
-Instance Variables
-	addressFamily:	<SmallInteger> the address family (unix, inet4, inet6, ...) in which the service address is available.
-	protocol:		<SmallInteger> the protocol (tcp, udp, ...) that the service uses.
-	socketAddress:	<SocketAddress> the socket address at which the service can be contacted or created.
-	socketType:		<SmallInteger> the type (stream, dgram) of the socket that should be created for communication with the service.
-!
 
 !SocketAddressInformation commentStamp: '<historical>' prior: 0!
 I represent a local or remote network service.
@@ -3388,10 +3362,10 @@ register: anObject
 	
 	^self registry add: anObject! !
 
-!Socket class methodsFor: 'registry' stamp: 'ul 8/27/2010 23:24'!
+!Socket class methodsFor: 'registry' stamp: 'jmv 1/17/2025 09:35:22'!
 registry
 
-	^Registry ifNil: [ Registry := WeakRegistry new ]! !
+	^Registry ifNil: [ Registry := FinalizationRegistry new ]! !
 
 !Socket class methodsFor: 'registry' stamp: 'ul 8/27/2010 23:24'!
 unregister: anObject

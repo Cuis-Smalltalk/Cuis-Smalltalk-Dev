@@ -1,6 +1,6 @@
-'From Cuis7.3 [latest update: #6981] on 15 January 2025 at 9:55:42 am'!
+'From Cuis7.3 [latest update: #6990] on 17 January 2025 at 9:56:24 am'!
 'Description Rename extentions tests'!
-!provides: 'BaseImageTests' 1 429!
+!provides: 'BaseImageTests' 1 430!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Objects'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
@@ -22070,20 +22070,6 @@ testAddGC
 	self assert: (finalizationRegistry size = 0).
 	self assert: (finalizationRegistry isEmpty).! !
 
-!FinalizationRegistryTest methodsFor: 'tests' stamp: 'JMM 11/29/2024 11:13:21'!
-testAddWeakRegistry
-	| x r |
-
-	
-	x := Object new.
-	r := WeakRegistry new.
-	r add: x.
-	self assert: (r size = 1).
-	x := nil.
-	self triggerFinalization.
-	self assert: (r size = 0).
-! !
-
 !FinalizationRegistryTest methodsFor: 'tests' stamp: 'JMM 11/29/2024 08:28:48'!
 testDo
 	| x |
@@ -22167,28 +22153,6 @@ testRemoveAll
 	self assert: finalizationRegistry size = 2.
 	finalizationRegistry removeAll.
 	self assert: finalizationRegistry size = 0.
-! !
-
-!FinalizationRegistryTest methodsFor: 'tests' stamp: 'JMM 12/2/2024 11:28:55'!
-testWRFV
-	| r f x |
-
-	
-	
-	r := WeakRegistry new.
-	x := Object new.
-	f := ObjectFinalizer new receiver: [
-		finalizerFired := true] selector: #value.
-	r
-		add: x
-		executor: f.
-	self assert: (r size = 1).
-	x := nil.
-	r finalizeValues.
-	Delay forMilliseconds: 500.
-	self assert: finalizerFired = false.
-	self triggerFinalization.
-	self assert: finalizerFired = true.
 ! !
 
 !FinalizationRegistryTest methodsFor: 'tests' stamp: 'JMM 11/29/2024 08:49:29'!
