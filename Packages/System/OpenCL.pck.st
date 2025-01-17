@@ -1,6 +1,6 @@
-'From Cuis6.3 [latest update: #6895] on 13 December 2024 at 10:19:14 am'!
+'From Cuis7.3 [latest update: #6989] on 17 January 2025 at 10:10:56 am'!
 'Description '!
-!provides: 'OpenCL' 1 53!
+!provides: 'OpenCL' 1 54!
 !requires: 'FFI' 1 nil nil!
 SystemOrganization addCategory: #'OpenCL-Constants'!
 SystemOrganization addCategory: #OpenCL!
@@ -12,7 +12,7 @@ SystemOrganization addCategory: #'OpenCL-Plugin'!
 !classDefinition: #OpenCLConstants category: #'OpenCL-Constants'!
 SharedPool subclass: #OpenCLConstants
 	instanceVariableNames: ''
-	classVariableNames: 'CL_A CL_ABGR CL_ADDRESS_CLAMP CL_ADDRESS_CLAMP_TO_EDGE CL_ADDRESS_MIRRORED_REPEAT CL_ADDRESS_NONE CL_ADDRESS_REPEAT CL_ARGB CL_BGRA CL_BLOCKING CL_BUFFER_CREATE_TYPE_REGION CL_BUILD_ERROR CL_BUILD_IN_PROGRESS CL_BUILD_NONE CL_BUILD_PROGRAM_FAILURE CL_BUILD_SUCCESS CL_COMMAND_ACQUIRE_GL_OBJECTS CL_COMMAND_BARRIER CL_COMMAND_COPY_BUFFER CL_COMMAND_COPY_BUFFER_RECT CL_COMMAND_COPY_BUFFER_TO_IMAGE CL_COMMAND_COPY_IMAGE CL_COMMAND_COPY_IMAGE_TO_BUFFER CL_COMMAND_FILL_BUFFER CL_COMMAND_FILL_IMAGE CL_COMMAND_MAP_BUFFER CL_COMMAND_MAP_IMAGE CL_COMMAND_MARKER CL_COMMAND_MIGRATE_MEM_OBJECTS CL_COMMAND_NATIVE_KERNEL CL_COMMAND_NDRANGE_KERNEL CL_COMMAND_READ_BUFFER CL_COMMAND_READ_BUFFER_RECT CL_COMMAND_READ_IMAGE CL_COMMAND_RELEASE_GL_OBJECTS CL_COMMAND_SVM_FREE CL_COMMAND_SVM_MAP CL_COMMAND_SVM_MEMCPY CL_COMMAND_SVM_MEMFILL CL_COMMAND_SVM_UNMAP CL_COMMAND_TASK CL_COMMAND_UNMAP_MEM_OBJECT CL_COMMAND_USER CL_COMMAND_WRITE_BUFFER CL_COMMAND_WRITE_BUFFER_RECT CL_COMMAND_WRITE_IMAGE CL_COMPILER_NOT_AVAILABLE CL_COMPILE_PROGRAM_FAILURE CL_COMPLETE CL_CONTEXT_DEVICES CL_CONTEXT_INTEROP_USER_SYNC CL_CONTEXT_NUM_DEVICES CL_CONTEXT_PLATFORM CL_CONTEXT_PROPERTIES CL_CONTEXT_REFERENCE_COUNT CL_DEPTH CL_DEPTH_STENCIL CL_DEVICE_ADDRESS_BITS CL_DEVICE_AFFINITY_DOMAIN_L1_CACHE CL_DEVICE_AFFINITY_DOMAIN_L2_CACHE CL_DEVICE_AFFINITY_DOMAIN_L3_CACHE CL_DEVICE_AFFINITY_DOMAIN_L4_CACHE CL_DEVICE_AFFINITY_DOMAIN_NEXT_PARTITIONABLE CL_DEVICE_AFFINITY_DOMAIN_NUMA CL_DEVICE_AVAILABLE CL_DEVICE_BUILT_IN_KERNELS CL_DEVICE_COMPILER_AVAILABLE CL_DEVICE_DOUBLE_FP_CONFIG CL_DEVICE_ENDIAN_LITTLE CL_DEVICE_ERROR_CORRECTION_SUPPORT CL_DEVICE_EXECUTION_CAPABILITIES CL_DEVICE_EXTENSIONS CL_DEVICE_GLOBAL_MEM_CACHELINE_SIZE CL_DEVICE_GLOBAL_MEM_CACHE_SIZE CL_DEVICE_GLOBAL_MEM_CACHE_TYPE CL_DEVICE_GLOBAL_MEM_SIZE CL_DEVICE_GLOBAL_VARIABLE_PREFERRED_TOTAL_SIZE CL_DEVICE_HOST_UNIFIED_MEMORY CL_DEVICE_IMAGE2D_MAX_HEIGHT CL_DEVICE_IMAGE2D_MAX_WIDTH CL_DEVICE_IMAGE3D_MAX_DEPTH CL_DEVICE_IMAGE3D_MAX_HEIGHT CL_DEVICE_IMAGE3D_MAX_WIDTH CL_DEVICE_IMAGE_BASE_ADDRESS_ALIGNMENT CL_DEVICE_IMAGE_MAX_ARRAY_SIZE CL_DEVICE_IMAGE_MAX_BUFFER_SIZE CL_DEVICE_IMAGE_PITCH_ALIGNMENT CL_DEVICE_IMAGE_SUPPORT CL_DEVICE_LINKER_AVAILABLE CL_DEVICE_LOCAL_MEM_SIZE CL_DEVICE_LOCAL_MEM_TYPE CL_DEVICE_MAX_CLOCK_FREQUENCY CL_DEVICE_MAX_COMPUTE_UNITS CL_DEVICE_MAX_CONSTANT_ARGS CL_DEVICE_MAX_CONSTANT_BUFFER_SIZE CL_DEVICE_MAX_GLOBAL_VARIABLE_SIZE CL_DEVICE_MAX_MEM_ALLOC_SIZE CL_DEVICE_MAX_ON_DEVICE_EVENTS CL_DEVICE_MAX_ON_DEVICE_QUEUES CL_DEVICE_MAX_PARAMETER_SIZE CL_DEVICE_MAX_PIPE_ARGS CL_DEVICE_MAX_READ_IMAGE_ARGS CL_DEVICE_MAX_READ_WRITE_IMAGE_ARGS CL_DEVICE_MAX_SAMPLERS CL_DEVICE_MAX_WORK_GROUP_SIZE CL_DEVICE_MAX_WORK_ITEM_DIMENSIONS CL_DEVICE_MAX_WORK_ITEM_SIZES CL_DEVICE_MAX_WRITE_IMAGE_ARGS CL_DEVICE_MEM_BASE_ADDR_ALIGN CL_DEVICE_MIN_DATA_TYPE_ALIGN_SIZE CL_DEVICE_NAME CL_DEVICE_NATIVE_VECTOR_WIDTH_CHAR CL_DEVICE_NATIVE_VECTOR_WIDTH_DOUBLE CL_DEVICE_NATIVE_VECTOR_WIDTH_FLOAT CL_DEVICE_NATIVE_VECTOR_WIDTH_HALF CL_DEVICE_NATIVE_VECTOR_WIDTH_INT CL_DEVICE_NATIVE_VECTOR_WIDTH_LONG CL_DEVICE_NATIVE_VECTOR_WIDTH_SHORT CL_DEVICE_NOT_AVAILABLE CL_DEVICE_NOT_FOUND CL_DEVICE_OPENCL_C_VERSION CL_DEVICE_PARENT_DEVICE CL_DEVICE_PARTITION_AFFINITY_DOMAIN CL_DEVICE_PARTITION_BY_AFFINITY_DOMAIN CL_DEVICE_PARTITION_BY_COUNTS CL_DEVICE_PARTITION_BY_COUNTS_LIST_END CL_DEVICE_PARTITION_EQUALLY CL_DEVICE_PARTITION_FAILED CL_DEVICE_PARTITION_MAX_SUB_DEVICES CL_DEVICE_PARTITION_PROPERTIES CL_DEVICE_PARTITION_TYPE CL_DEVICE_PIPE_MAX_ACTIVE_RESERVATIONS CL_DEVICE_PIPE_MAX_PACKET_SIZE CL_DEVICE_PLATFORM CL_DEVICE_PREFERRED_GLOBAL_ATOMIC_ALIGNMENT CL_DEVICE_PREFERRED_INTEROP_USER_SYNC CL_DEVICE_PREFERRED_LOCAL_ATOMIC_ALIGNMENT CL_DEVICE_PREFERRED_PLATFORM_ATOMIC_ALIGNMENT CL_DEVICE_PREFERRED_VECTOR_WIDTH_CHAR CL_DEVICE_PREFERRED_VECTOR_WIDTH_DOUBLE CL_DEVICE_PREFERRED_VECTOR_WIDTH_FLOAT CL_DEVICE_PREFERRED_VECTOR_WIDTH_HALF CL_DEVICE_PREFERRED_VECTOR_WIDTH_INT CL_DEVICE_PREFERRED_VECTOR_WIDTH_LONG CL_DEVICE_PREFERRED_VECTOR_WIDTH_SHORT CL_DEVICE_PRINTF_BUFFER_SIZE CL_DEVICE_PROFILE CL_DEVICE_PROFILING_TIMER_RESOLUTION CL_DEVICE_QUEUE_ON_DEVICE_MAX_SIZE CL_DEVICE_QUEUE_ON_DEVICE_PREFERRED_SIZE CL_DEVICE_QUEUE_ON_DEVICE_PROPERTIES CL_DEVICE_QUEUE_ON_HOST_PROPERTIES CL_DEVICE_QUEUE_PROPERTIES CL_DEVICE_REFERENCE_COUNT CL_DEVICE_SINGLE_FP_CONFIG CL_DEVICE_SVM_ATOMICS CL_DEVICE_SVM_CAPABILITIES CL_DEVICE_SVM_COARSE_GRAIN_BUFFER CL_DEVICE_SVM_FINE_GRAIN_BUFFER CL_DEVICE_SVM_FINE_GRAIN_SYSTEM CL_DEVICE_TYPE CL_DEVICE_TYPE_ACCELERATOR CL_DEVICE_TYPE_ALL CL_DEVICE_TYPE_CPU CL_DEVICE_TYPE_CUSTOM CL_DEVICE_TYPE_DEFAULT CL_DEVICE_TYPE_GPU CL_DEVICE_VENDOR CL_DEVICE_VENDOR_ID CL_DEVICE_VERSION CL_DRIVER_VERSION CL_EVENT_COMMAND_EXECUTION_STATUS CL_EVENT_COMMAND_QUEUE CL_EVENT_COMMAND_TYPE CL_EVENT_CONTEXT CL_EVENT_REFERENCE_COUNT CL_EXEC_KERNEL CL_EXEC_NATIVE_KERNEL CL_EXEC_STATUS_ERROR_FOR_EVENTS_IN_WAIT_LIST CL_FALSE CL_FILTER_LINEAR CL_FILTER_NEAREST CL_FLOAT CL_FP_CORRECTLY_ROUNDED_DIVIDE_SQRT CL_FP_DENORM CL_FP_FMA CL_FP_INF_NAN CL_FP_ROUND_TO_INF CL_FP_ROUND_TO_NEAREST CL_FP_ROUND_TO_ZERO CL_FP_SOFT_FLOAT CL_GLOBAL CL_HALF_FLOAT CL_IMAGE_ARRAY_SIZE CL_IMAGE_BUFFER CL_IMAGE_DEPTH CL_IMAGE_ELEMENT_SIZE CL_IMAGE_FORMAT CL_IMAGE_FORMAT_MISMATCH CL_IMAGE_FORMAT_NOT_SUPPORTED CL_IMAGE_HEIGHT CL_IMAGE_NUM_MIP_LEVELS CL_IMAGE_NUM_SAMPLES CL_IMAGE_ROW_PITCH CL_IMAGE_SLICE_PITCH CL_IMAGE_WIDTH CL_INTENSITY CL_INVALID_ARG_INDEX CL_INVALID_ARG_SIZE CL_INVALID_ARG_VALUE CL_INVALID_BINARY CL_INVALID_BUFFER_SIZE CL_INVALID_BUILD_OPTIONS CL_INVALID_COMMAND_QUEUE CL_INVALID_COMPILER_OPTIONS CL_INVALID_CONTEXT CL_INVALID_DEVICE CL_INVALID_DEVICE_PARTITION_COUNT CL_INVALID_DEVICE_QUEUE CL_INVALID_DEVICE_TYPE CL_INVALID_EVENT CL_INVALID_EVENT_WAIT_LIST CL_INVALID_GLOBAL_OFFSET CL_INVALID_GLOBAL_WORK_SIZE CL_INVALID_GL_OBJECT CL_INVALID_HOST_PTR CL_INVALID_IMAGE_DESCRIPTOR CL_INVALID_IMAGE_FORMAT_DESCRIPTOR CL_INVALID_IMAGE_SIZE CL_INVALID_KERNEL CL_INVALID_KERNEL_ARGS CL_INVALID_KERNEL_DEFINITION CL_INVALID_KERNEL_NAME CL_INVALID_LINKER_OPTIONS CL_INVALID_MEM_OBJECT CL_INVALID_MIP_LEVEL CL_INVALID_OPERATION CL_INVALID_PIPE_SIZE CL_INVALID_PLATFORM CL_INVALID_PROGRAM CL_INVALID_PROGRAM_EXECUTABLE CL_INVALID_PROPERTY CL_INVALID_QUEUE_PROPERTIES CL_INVALID_SAMPLER CL_INVALID_VALUE CL_INVALID_WORK_DIMENSION CL_INVALID_WORK_GROUP_SIZE CL_INVALID_WORK_ITEM_SIZE CL_KERNEL_ARG_ACCESS_NONE CL_KERNEL_ARG_ACCESS_QUALIFIER CL_KERNEL_ARG_ACCESS_READ_ONLY CL_KERNEL_ARG_ACCESS_READ_WRITE CL_KERNEL_ARG_ACCESS_WRITE_ONLY CL_KERNEL_ARG_ADDRESS_CONSTANT CL_KERNEL_ARG_ADDRESS_GLOBAL CL_KERNEL_ARG_ADDRESS_LOCAL CL_KERNEL_ARG_ADDRESS_PRIVATE CL_KERNEL_ARG_ADDRESS_QUALIFIER CL_KERNEL_ARG_INFO_NOT_AVAILABLE CL_KERNEL_ARG_NAME CL_KERNEL_ARG_TYPE_CONST CL_KERNEL_ARG_TYPE_NAME CL_KERNEL_ARG_TYPE_NONE CL_KERNEL_ARG_TYPE_PIPE CL_KERNEL_ARG_TYPE_QUALIFIER CL_KERNEL_ARG_TYPE_RESTRICT CL_KERNEL_ARG_TYPE_VOLATILE CL_KERNEL_ATTRIBUTES CL_KERNEL_COMPILE_WORK_GROUP_SIZE CL_KERNEL_CONTEXT CL_KERNEL_EXEC_INFO_SVM_FINE_GRAIN_SYSTEM CL_KERNEL_EXEC_INFO_SVM_PTRS CL_KERNEL_FUNCTION_NAME CL_KERNEL_GLOBAL_WORK_SIZE CL_KERNEL_LOCAL_MEM_SIZE CL_KERNEL_NUM_ARGS CL_KERNEL_PREFERRED_WORK_GROUP_SIZE_MULTIPLE CL_KERNEL_PRIVATE_MEM_SIZE CL_KERNEL_PROGRAM CL_KERNEL_REFERENCE_COUNT CL_KERNEL_WORK_GROUP_SIZE CL_LINKER_NOT_AVAILABLE CL_LINK_PROGRAM_FAILURE CL_LOCAL CL_LUMINANCE CL_MAP_FAILURE CL_MAP_READ CL_MAP_WRITE CL_MAP_WRITE_INVALIDATE_REGION CL_MEM_ALLOC_HOST_PTR CL_MEM_ASSOCIATED_MEMOBJECT CL_MEM_CONTEXT CL_MEM_COPY_HOST_PTR CL_MEM_COPY_OVERLAP CL_MEM_FLAGS CL_MEM_HOST_NO_ACCESS CL_MEM_HOST_PTR CL_MEM_HOST_READ_ONLY CL_MEM_HOST_WRITE_ONLY CL_MEM_KERNEL_READ_AND_WRITE CL_MEM_MAP_COUNT CL_MEM_OBJECT_ALLOCATION_FAILURE CL_MEM_OBJECT_BUFFER CL_MEM_OBJECT_IMAGE1D CL_MEM_OBJECT_IMAGE1D_ARRAY CL_MEM_OBJECT_IMAGE1D_BUFFER CL_MEM_OBJECT_IMAGE2D CL_MEM_OBJECT_IMAGE2D_ARRAY CL_MEM_OBJECT_IMAGE3D CL_MEM_OBJECT_PIPE CL_MEM_OFFSET CL_MEM_READ_ONLY CL_MEM_READ_WRITE CL_MEM_REFERENCE_COUNT CL_MEM_SIZE CL_MEM_SVM_ATOMICS CL_MEM_SVM_FINE_GRAIN_BUFFER CL_MEM_TYPE CL_MEM_USES_SVM_POINTER CL_MEM_USE_HOST_PTR CL_MEM_WRITE_ONLY CL_MIGRATE_MEM_OBJECT_CONTENT_UNDEFINED CL_MIGRATE_MEM_OBJECT_HOST CL_MISALIGNED_SUB_BUFFER_OFFSET CL_NONE CL_NON_BLOCKING CL_OUT_OF_HOST_MEMORY CL_OUT_OF_RESOURCES CL_PIPE_MAX_PACKETS CL_PIPE_PACKET_SIZE CL_PLATFORM_EXTENSIONS CL_PLATFORM_NAME CL_PLATFORM_PROFILE CL_PLATFORM_VENDOR CL_PLATFORM_VERSION CL_PROFILING_COMMAND_COMPLETE CL_PROFILING_COMMAND_END CL_PROFILING_COMMAND_QUEUED CL_PROFILING_COMMAND_START CL_PROFILING_COMMAND_SUBMIT CL_PROFILING_INFO_NOT_AVAILABLE CL_PROGRAM_BINARIES CL_PROGRAM_BINARY_SIZES CL_PROGRAM_BINARY_TYPE CL_PROGRAM_BINARY_TYPE_COMPILED_OBJECT CL_PROGRAM_BINARY_TYPE_EXECUTABLE CL_PROGRAM_BINARY_TYPE_LIBRARY CL_PROGRAM_BINARY_TYPE_NONE CL_PROGRAM_BUILD_GLOBAL_VARIABLE_TOTAL_SIZE CL_PROGRAM_BUILD_LOG CL_PROGRAM_BUILD_OPTIONS CL_PROGRAM_BUILD_STATUS CL_PROGRAM_CONTEXT CL_PROGRAM_DEVICES CL_PROGRAM_KERNEL_NAMES CL_PROGRAM_NUM_DEVICES CL_PROGRAM_NUM_KERNELS CL_PROGRAM_REFERENCE_COUNT CL_PROGRAM_SOURCE CL_QUEUED CL_QUEUE_CONTEXT CL_QUEUE_DEVICE CL_QUEUE_ON_DEVICE CL_QUEUE_ON_DEVICE_DEFAULT CL_QUEUE_OUT_OF_ORDER_EXEC_MODE_ENABLE CL_QUEUE_PROFILING_ENABLE CL_QUEUE_PROPERTIES CL_QUEUE_REFERENCE_COUNT CL_QUEUE_SIZE CL_R CL_RA CL_READ_ONLY_CACHE CL_READ_WRITE_CACHE CL_RG CL_RGB CL_RGBA CL_RGBx CL_RGx CL_RUNNING CL_Rx CL_SAMPLER_ADDRESSING_MODE CL_SAMPLER_CONTEXT CL_SAMPLER_FILTER_MODE CL_SAMPLER_LOD_MAX CL_SAMPLER_LOD_MIN CL_SAMPLER_MIP_FILTER_MODE CL_SAMPLER_NORMALIZED_COORDS CL_SAMPLER_REFERENCE_COUNT CL_SIGNED_INT16 CL_SIGNED_INT32 CL_SIGNED_INT8 CL_SNORM_INT16 CL_SNORM_INT8 CL_SUBMITTED CL_SUCCESS CL_TRUE CL_UNORM_INT16 CL_UNORM_INT24 CL_UNORM_INT8 CL_UNORM_INT_101010 CL_UNORM_SHORT_555 CL_UNORM_SHORT_565 CL_UNSIGNED_INT16 CL_UNSIGNED_INT32 CL_UNSIGNED_INT8 CL_VERSION_1_0 CL_VERSION_1_1 CL_VERSION_1_2 CL_VERSION_2_0 CL_sBGRA CL_sRGB CL_sRGBA CL_sRGBx'
+	classVariableNames: 'CL_A CL_ABGR CL_ADDRESS_CLAMP CL_ADDRESS_CLAMP_TO_EDGE CL_ADDRESS_MIRRORED_REPEAT CL_ADDRESS_NONE CL_ADDRESS_REPEAT CL_ARGB CL_BGRA CL_BLOCKING CL_BUFFER_CREATE_TYPE_REGION CL_BUILD_ERROR CL_BUILD_IN_PROGRESS CL_BUILD_NONE CL_BUILD_PROGRAM_FAILURE CL_BUILD_SUCCESS CL_COMMAND_ACQUIRE_GL_OBJECTS CL_COMMAND_BARRIER CL_COMMAND_COPY_BUFFER CL_COMMAND_COPY_BUFFER_RECT CL_COMMAND_COPY_BUFFER_TO_IMAGE CL_COMMAND_COPY_IMAGE CL_COMMAND_COPY_IMAGE_TO_BUFFER CL_COMMAND_FILL_BUFFER CL_COMMAND_FILL_IMAGE CL_COMMAND_MAP_BUFFER CL_COMMAND_MAP_IMAGE CL_COMMAND_MARKER CL_COMMAND_MIGRATE_MEM_OBJECTS CL_COMMAND_NATIVE_KERNEL CL_COMMAND_NDRANGE_KERNEL CL_COMMAND_READ_BUFFER CL_COMMAND_READ_BUFFER_RECT CL_COMMAND_READ_IMAGE CL_COMMAND_RELEASE_GL_OBJECTS CL_COMMAND_SVM_FREE CL_COMMAND_SVM_MAP CL_COMMAND_SVM_MEMCPY CL_COMMAND_SVM_MEMFILL CL_COMMAND_SVM_UNMAP CL_COMMAND_TASK CL_COMMAND_UNMAP_MEM_OBJECT CL_COMMAND_USER CL_COMMAND_WRITE_BUFFER CL_COMMAND_WRITE_BUFFER_RECT CL_COMMAND_WRITE_IMAGE CL_COMPILE_PROGRAM_FAILURE CL_COMPILER_NOT_AVAILABLE CL_COMPLETE CL_CONTEXT_DEVICES CL_CONTEXT_INTEROP_USER_SYNC CL_CONTEXT_NUM_DEVICES CL_CONTEXT_PLATFORM CL_CONTEXT_PROPERTIES CL_CONTEXT_REFERENCE_COUNT CL_DEPTH CL_DEPTH_STENCIL CL_DEVICE_ADDRESS_BITS CL_DEVICE_AFFINITY_DOMAIN_L1_CACHE CL_DEVICE_AFFINITY_DOMAIN_L2_CACHE CL_DEVICE_AFFINITY_DOMAIN_L3_CACHE CL_DEVICE_AFFINITY_DOMAIN_L4_CACHE CL_DEVICE_AFFINITY_DOMAIN_NEXT_PARTITIONABLE CL_DEVICE_AFFINITY_DOMAIN_NUMA CL_DEVICE_AVAILABLE CL_DEVICE_BUILT_IN_KERNELS CL_DEVICE_COMPILER_AVAILABLE CL_DEVICE_DOUBLE_FP_CONFIG CL_DEVICE_ENDIAN_LITTLE CL_DEVICE_ERROR_CORRECTION_SUPPORT CL_DEVICE_EXECUTION_CAPABILITIES CL_DEVICE_EXTENSIONS CL_DEVICE_GLOBAL_MEM_CACHE_SIZE CL_DEVICE_GLOBAL_MEM_CACHE_TYPE CL_DEVICE_GLOBAL_MEM_CACHELINE_SIZE CL_DEVICE_GLOBAL_MEM_SIZE CL_DEVICE_GLOBAL_VARIABLE_PREFERRED_TOTAL_SIZE CL_DEVICE_HOST_UNIFIED_MEMORY CL_DEVICE_IMAGE_BASE_ADDRESS_ALIGNMENT CL_DEVICE_IMAGE_MAX_ARRAY_SIZE CL_DEVICE_IMAGE_MAX_BUFFER_SIZE CL_DEVICE_IMAGE_PITCH_ALIGNMENT CL_DEVICE_IMAGE_SUPPORT CL_DEVICE_IMAGE2D_MAX_HEIGHT CL_DEVICE_IMAGE2D_MAX_WIDTH CL_DEVICE_IMAGE3D_MAX_DEPTH CL_DEVICE_IMAGE3D_MAX_HEIGHT CL_DEVICE_IMAGE3D_MAX_WIDTH CL_DEVICE_LINKER_AVAILABLE CL_DEVICE_LOCAL_MEM_SIZE CL_DEVICE_LOCAL_MEM_TYPE CL_DEVICE_MAX_CLOCK_FREQUENCY CL_DEVICE_MAX_COMPUTE_UNITS CL_DEVICE_MAX_CONSTANT_ARGS CL_DEVICE_MAX_CONSTANT_BUFFER_SIZE CL_DEVICE_MAX_GLOBAL_VARIABLE_SIZE CL_DEVICE_MAX_MEM_ALLOC_SIZE CL_DEVICE_MAX_ON_DEVICE_EVENTS CL_DEVICE_MAX_ON_DEVICE_QUEUES CL_DEVICE_MAX_PARAMETER_SIZE CL_DEVICE_MAX_PIPE_ARGS CL_DEVICE_MAX_READ_IMAGE_ARGS CL_DEVICE_MAX_READ_WRITE_IMAGE_ARGS CL_DEVICE_MAX_SAMPLERS CL_DEVICE_MAX_WORK_GROUP_SIZE CL_DEVICE_MAX_WORK_ITEM_DIMENSIONS CL_DEVICE_MAX_WORK_ITEM_SIZES CL_DEVICE_MAX_WRITE_IMAGE_ARGS CL_DEVICE_MEM_BASE_ADDR_ALIGN CL_DEVICE_MIN_DATA_TYPE_ALIGN_SIZE CL_DEVICE_NAME CL_DEVICE_NATIVE_VECTOR_WIDTH_CHAR CL_DEVICE_NATIVE_VECTOR_WIDTH_DOUBLE CL_DEVICE_NATIVE_VECTOR_WIDTH_FLOAT CL_DEVICE_NATIVE_VECTOR_WIDTH_HALF CL_DEVICE_NATIVE_VECTOR_WIDTH_INT CL_DEVICE_NATIVE_VECTOR_WIDTH_LONG CL_DEVICE_NATIVE_VECTOR_WIDTH_SHORT CL_DEVICE_NOT_AVAILABLE CL_DEVICE_NOT_FOUND CL_DEVICE_OPENCL_C_VERSION CL_DEVICE_PARENT_DEVICE CL_DEVICE_PARTITION_AFFINITY_DOMAIN CL_DEVICE_PARTITION_BY_AFFINITY_DOMAIN CL_DEVICE_PARTITION_BY_COUNTS CL_DEVICE_PARTITION_BY_COUNTS_LIST_END CL_DEVICE_PARTITION_EQUALLY CL_DEVICE_PARTITION_FAILED CL_DEVICE_PARTITION_MAX_SUB_DEVICES CL_DEVICE_PARTITION_PROPERTIES CL_DEVICE_PARTITION_TYPE CL_DEVICE_PIPE_MAX_ACTIVE_RESERVATIONS CL_DEVICE_PIPE_MAX_PACKET_SIZE CL_DEVICE_PLATFORM CL_DEVICE_PREFERRED_GLOBAL_ATOMIC_ALIGNMENT CL_DEVICE_PREFERRED_INTEROP_USER_SYNC CL_DEVICE_PREFERRED_LOCAL_ATOMIC_ALIGNMENT CL_DEVICE_PREFERRED_PLATFORM_ATOMIC_ALIGNMENT CL_DEVICE_PREFERRED_VECTOR_WIDTH_CHAR CL_DEVICE_PREFERRED_VECTOR_WIDTH_DOUBLE CL_DEVICE_PREFERRED_VECTOR_WIDTH_FLOAT CL_DEVICE_PREFERRED_VECTOR_WIDTH_HALF CL_DEVICE_PREFERRED_VECTOR_WIDTH_INT CL_DEVICE_PREFERRED_VECTOR_WIDTH_LONG CL_DEVICE_PREFERRED_VECTOR_WIDTH_SHORT CL_DEVICE_PRINTF_BUFFER_SIZE CL_DEVICE_PROFILE CL_DEVICE_PROFILING_TIMER_RESOLUTION CL_DEVICE_QUEUE_ON_DEVICE_MAX_SIZE CL_DEVICE_QUEUE_ON_DEVICE_PREFERRED_SIZE CL_DEVICE_QUEUE_ON_DEVICE_PROPERTIES CL_DEVICE_QUEUE_ON_HOST_PROPERTIES CL_DEVICE_QUEUE_PROPERTIES CL_DEVICE_REFERENCE_COUNT CL_DEVICE_SINGLE_FP_CONFIG CL_DEVICE_SVM_ATOMICS CL_DEVICE_SVM_CAPABILITIES CL_DEVICE_SVM_COARSE_GRAIN_BUFFER CL_DEVICE_SVM_FINE_GRAIN_BUFFER CL_DEVICE_SVM_FINE_GRAIN_SYSTEM CL_DEVICE_TYPE CL_DEVICE_TYPE_ACCELERATOR CL_DEVICE_TYPE_ALL CL_DEVICE_TYPE_CPU CL_DEVICE_TYPE_CUSTOM CL_DEVICE_TYPE_DEFAULT CL_DEVICE_TYPE_GPU CL_DEVICE_VENDOR CL_DEVICE_VENDOR_ID CL_DEVICE_VERSION CL_DRIVER_VERSION CL_EVENT_COMMAND_EXECUTION_STATUS CL_EVENT_COMMAND_QUEUE CL_EVENT_COMMAND_TYPE CL_EVENT_CONTEXT CL_EVENT_REFERENCE_COUNT CL_EXEC_KERNEL CL_EXEC_NATIVE_KERNEL CL_EXEC_STATUS_ERROR_FOR_EVENTS_IN_WAIT_LIST CL_FALSE CL_FILTER_LINEAR CL_FILTER_NEAREST CL_FLOAT CL_FP_CORRECTLY_ROUNDED_DIVIDE_SQRT CL_FP_DENORM CL_FP_FMA CL_FP_INF_NAN CL_FP_ROUND_TO_INF CL_FP_ROUND_TO_NEAREST CL_FP_ROUND_TO_ZERO CL_FP_SOFT_FLOAT CL_GLOBAL CL_HALF_FLOAT CL_IMAGE_ARRAY_SIZE CL_IMAGE_BUFFER CL_IMAGE_DEPTH CL_IMAGE_ELEMENT_SIZE CL_IMAGE_FORMAT CL_IMAGE_FORMAT_MISMATCH CL_IMAGE_FORMAT_NOT_SUPPORTED CL_IMAGE_HEIGHT CL_IMAGE_NUM_MIP_LEVELS CL_IMAGE_NUM_SAMPLES CL_IMAGE_ROW_PITCH CL_IMAGE_SLICE_PITCH CL_IMAGE_WIDTH CL_INTENSITY CL_INVALID_ARG_INDEX CL_INVALID_ARG_SIZE CL_INVALID_ARG_VALUE CL_INVALID_BINARY CL_INVALID_BUFFER_SIZE CL_INVALID_BUILD_OPTIONS CL_INVALID_COMMAND_QUEUE CL_INVALID_COMPILER_OPTIONS CL_INVALID_CONTEXT CL_INVALID_DEVICE CL_INVALID_DEVICE_PARTITION_COUNT CL_INVALID_DEVICE_QUEUE CL_INVALID_DEVICE_TYPE CL_INVALID_EVENT CL_INVALID_EVENT_WAIT_LIST CL_INVALID_GL_OBJECT CL_INVALID_GLOBAL_OFFSET CL_INVALID_GLOBAL_WORK_SIZE CL_INVALID_HOST_PTR CL_INVALID_IMAGE_DESCRIPTOR CL_INVALID_IMAGE_FORMAT_DESCRIPTOR CL_INVALID_IMAGE_SIZE CL_INVALID_KERNEL CL_INVALID_KERNEL_ARGS CL_INVALID_KERNEL_DEFINITION CL_INVALID_KERNEL_NAME CL_INVALID_LINKER_OPTIONS CL_INVALID_MEM_OBJECT CL_INVALID_MIP_LEVEL CL_INVALID_OPERATION CL_INVALID_PIPE_SIZE CL_INVALID_PLATFORM CL_INVALID_PROGRAM CL_INVALID_PROGRAM_EXECUTABLE CL_INVALID_PROPERTY CL_INVALID_QUEUE_PROPERTIES CL_INVALID_SAMPLER CL_INVALID_VALUE CL_INVALID_WORK_DIMENSION CL_INVALID_WORK_GROUP_SIZE CL_INVALID_WORK_ITEM_SIZE CL_KERNEL_ARG_ACCESS_NONE CL_KERNEL_ARG_ACCESS_QUALIFIER CL_KERNEL_ARG_ACCESS_READ_ONLY CL_KERNEL_ARG_ACCESS_READ_WRITE CL_KERNEL_ARG_ACCESS_WRITE_ONLY CL_KERNEL_ARG_ADDRESS_CONSTANT CL_KERNEL_ARG_ADDRESS_GLOBAL CL_KERNEL_ARG_ADDRESS_LOCAL CL_KERNEL_ARG_ADDRESS_PRIVATE CL_KERNEL_ARG_ADDRESS_QUALIFIER CL_KERNEL_ARG_INFO_NOT_AVAILABLE CL_KERNEL_ARG_NAME CL_KERNEL_ARG_TYPE_CONST CL_KERNEL_ARG_TYPE_NAME CL_KERNEL_ARG_TYPE_NONE CL_KERNEL_ARG_TYPE_PIPE CL_KERNEL_ARG_TYPE_QUALIFIER CL_KERNEL_ARG_TYPE_RESTRICT CL_KERNEL_ARG_TYPE_VOLATILE CL_KERNEL_ATTRIBUTES CL_KERNEL_COMPILE_WORK_GROUP_SIZE CL_KERNEL_CONTEXT CL_KERNEL_EXEC_INFO_SVM_FINE_GRAIN_SYSTEM CL_KERNEL_EXEC_INFO_SVM_PTRS CL_KERNEL_FUNCTION_NAME CL_KERNEL_GLOBAL_WORK_SIZE CL_KERNEL_LOCAL_MEM_SIZE CL_KERNEL_NUM_ARGS CL_KERNEL_PREFERRED_WORK_GROUP_SIZE_MULTIPLE CL_KERNEL_PRIVATE_MEM_SIZE CL_KERNEL_PROGRAM CL_KERNEL_REFERENCE_COUNT CL_KERNEL_WORK_GROUP_SIZE CL_LINK_PROGRAM_FAILURE CL_LINKER_NOT_AVAILABLE CL_LOCAL CL_LUMINANCE CL_MAP_FAILURE CL_MAP_READ CL_MAP_WRITE CL_MAP_WRITE_INVALIDATE_REGION CL_MEM_ALLOC_HOST_PTR CL_MEM_ASSOCIATED_MEMOBJECT CL_MEM_CONTEXT CL_MEM_COPY_HOST_PTR CL_MEM_COPY_OVERLAP CL_MEM_FLAGS CL_MEM_HOST_NO_ACCESS CL_MEM_HOST_PTR CL_MEM_HOST_READ_ONLY CL_MEM_HOST_WRITE_ONLY CL_MEM_KERNEL_READ_AND_WRITE CL_MEM_MAP_COUNT CL_MEM_OBJECT_ALLOCATION_FAILURE CL_MEM_OBJECT_BUFFER CL_MEM_OBJECT_IMAGE1D CL_MEM_OBJECT_IMAGE1D_ARRAY CL_MEM_OBJECT_IMAGE1D_BUFFER CL_MEM_OBJECT_IMAGE2D CL_MEM_OBJECT_IMAGE2D_ARRAY CL_MEM_OBJECT_IMAGE3D CL_MEM_OBJECT_PIPE CL_MEM_OFFSET CL_MEM_READ_ONLY CL_MEM_READ_WRITE CL_MEM_REFERENCE_COUNT CL_MEM_SIZE CL_MEM_SVM_ATOMICS CL_MEM_SVM_FINE_GRAIN_BUFFER CL_MEM_TYPE CL_MEM_USE_HOST_PTR CL_MEM_USES_SVM_POINTER CL_MEM_WRITE_ONLY CL_MIGRATE_MEM_OBJECT_CONTENT_UNDEFINED CL_MIGRATE_MEM_OBJECT_HOST CL_MISALIGNED_SUB_BUFFER_OFFSET CL_NON_BLOCKING CL_NONE CL_OUT_OF_HOST_MEMORY CL_OUT_OF_RESOURCES CL_PIPE_MAX_PACKETS CL_PIPE_PACKET_SIZE CL_PLATFORM_EXTENSIONS CL_PLATFORM_NAME CL_PLATFORM_PROFILE CL_PLATFORM_VENDOR CL_PLATFORM_VERSION CL_PROFILING_COMMAND_COMPLETE CL_PROFILING_COMMAND_END CL_PROFILING_COMMAND_QUEUED CL_PROFILING_COMMAND_START CL_PROFILING_COMMAND_SUBMIT CL_PROFILING_INFO_NOT_AVAILABLE CL_PROGRAM_BINARIES CL_PROGRAM_BINARY_SIZES CL_PROGRAM_BINARY_TYPE CL_PROGRAM_BINARY_TYPE_COMPILED_OBJECT CL_PROGRAM_BINARY_TYPE_EXECUTABLE CL_PROGRAM_BINARY_TYPE_LIBRARY CL_PROGRAM_BINARY_TYPE_NONE CL_PROGRAM_BUILD_GLOBAL_VARIABLE_TOTAL_SIZE CL_PROGRAM_BUILD_LOG CL_PROGRAM_BUILD_OPTIONS CL_PROGRAM_BUILD_STATUS CL_PROGRAM_CONTEXT CL_PROGRAM_DEVICES CL_PROGRAM_KERNEL_NAMES CL_PROGRAM_NUM_DEVICES CL_PROGRAM_NUM_KERNELS CL_PROGRAM_REFERENCE_COUNT CL_PROGRAM_SOURCE CL_QUEUE_CONTEXT CL_QUEUE_DEVICE CL_QUEUE_ON_DEVICE CL_QUEUE_ON_DEVICE_DEFAULT CL_QUEUE_OUT_OF_ORDER_EXEC_MODE_ENABLE CL_QUEUE_PROFILING_ENABLE CL_QUEUE_PROPERTIES CL_QUEUE_REFERENCE_COUNT CL_QUEUE_SIZE CL_QUEUED CL_R CL_RA CL_READ_ONLY_CACHE CL_READ_WRITE_CACHE CL_RG CL_RGB CL_RGBA CL_RGBx CL_RGx CL_RUNNING CL_Rx CL_SAMPLER_ADDRESSING_MODE CL_SAMPLER_CONTEXT CL_SAMPLER_FILTER_MODE CL_SAMPLER_LOD_MAX CL_SAMPLER_LOD_MIN CL_SAMPLER_MIP_FILTER_MODE CL_SAMPLER_NORMALIZED_COORDS CL_SAMPLER_REFERENCE_COUNT CL_SIGNED_INT16 CL_SIGNED_INT32 CL_SIGNED_INT8 CL_SNORM_INT16 CL_SNORM_INT8 CL_SUBMITTED CL_SUCCESS CL_TRUE CL_UNORM_INT_101010 CL_UNORM_INT16 CL_UNORM_INT24 CL_UNORM_INT8 CL_UNORM_SHORT_555 CL_UNORM_SHORT_565 CL_UNSIGNED_INT16 CL_UNSIGNED_INT32 CL_UNSIGNED_INT8 CL_VERSION_1_0 CL_VERSION_1_1 CL_VERSION_1_2 CL_VERSION_2_0 CL_sBGRA CL_sRGB CL_sRGBA CL_sRGBx'
 	poolDictionaries: ''
 	category: 'OpenCL-Constants'!
 !classDefinition: 'OpenCLConstants class' category: #'OpenCL-Constants'!
@@ -27,16 +27,6 @@ Error subclass: #OpenCLError
 	category: 'OpenCL'!
 !classDefinition: 'OpenCLError class' category: #OpenCL!
 OpenCLError class
-	instanceVariableNames: ''!
-
-!classDefinition: #OpenCLJuliaSetMorph category: #'OpenCL-Examples'!
-ImageMorph subclass: #OpenCLJuliaSetMorph
-	instanceVariableNames: 'julia'
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'OpenCL-Examples'!
-!classDefinition: 'OpenCLJuliaSetMorph class' category: #'OpenCL-Examples'!
-OpenCLJuliaSetMorph class
 	instanceVariableNames: ''!
 
 !classDefinition: #CLBufferRegionStruct category: #'OpenCL-FFI'!
@@ -167,6 +157,16 @@ OpenCLOpaqueHandle subclass: #CLSampler
 	category: 'OpenCL-FFI'!
 !classDefinition: 'CLSampler class' category: #'OpenCL-FFI'!
 CLSampler class
+	instanceVariableNames: ''!
+
+!classDefinition: #OpenCLJuliaSetMorph category: #'OpenCL-Examples'!
+ImageMorph subclass: #OpenCLJuliaSetMorph
+	instanceVariableNames: 'julia'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'OpenCL-Examples'!
+!classDefinition: 'OpenCLJuliaSetMorph class' category: #'OpenCL-Examples'!
+OpenCLJuliaSetMorph class
 	instanceVariableNames: ''!
 
 !classDefinition: #OpenCLObject category: #OpenCL!
@@ -509,9 +509,6 @@ Initialization is autogenerated. See also OpenCLPrimitiveInterface.
 !OpenCLError commentStamp: 'jcg 1/11/2010 23:22' prior: 0!
 Error that knows how to look up a human-readable string corresponding to the OpenCL error code.!
 
-!OpenCLJuliaSetMorph commentStamp: '<historical>' prior: 0!
-OpenCLJuliaSetMorph new openInHand!
-
 !CLBufferRegionStruct commentStamp: '<historical>' prior: 0!
 Similar to CLImageFormatStruct and CLImageDescStruct. For OpenCL's cl_buffer_region
 
@@ -601,6 +598,9 @@ typedef struct _cl_program *        cl_program;!
 
 !CLSampler commentStamp: '<historical>' prior: 0!
 typedef struct _cl_sampler *        cl_sampler;!
+
+!OpenCLJuliaSetMorph commentStamp: '<historical>' prior: 0!
+OpenCLJuliaSetMorph new openInHand!
 
 !OpenCLObject commentStamp: 'jcg 1/13/2010 22:27' prior: 0!
 Subclasses wrap an instance of the corresponding OpenCLOpaqueHandle type.  Provides convenience methods for calling FFI functions on the handle.!
@@ -1726,98 +1726,29 @@ signal: signalerText code: errCode
 signalCode: errCode
 	^self new code: errCode; signal: (self errorStringForCode: errCode)! !
 
-!OpenCLJuliaSetMorph methodsFor: 'private' stamp: 'jcg 5/1/2010 01:57'!
-changeIfDirty
-	"If the Julia set needs to be redrawn, then so does this morph."
-	julia isDirty ifTrue: [self changed].! !
-
-!OpenCLJuliaSetMorph methodsFor: 'private' stamp: 'jcg 5/1/2010 11:32'!
-initializeJuliaIfNecessary
-	"If the OpenCL context is absent or destroyed, we need to re-initialize 'julia'."
-	(julia context isNil or: [julia context isDestroyed]) 
-		ifTrue: [julia initialize.
-				self image: julia outputForm]! !
-
-!OpenCLJuliaSetMorph methodsFor: 'drawing' stamp: 'jcg 5/1/2010 10:52'!
-drawOn: aCanvas
-	self initializeJuliaIfNecessary.
-	julia isDirty ifTrue: [julia runKernel].
-	super drawOn: aCanvas! !
-
-!OpenCLJuliaSetMorph methodsFor: 'geometry' stamp: 'jcg 5/1/2010 01:28'!
-extent: aPoint
-	julia extent: aPoint.
-	self image: julia outputForm.
-	julia runKernel.
-	self changed.
-	! !
-
-!OpenCLJuliaSetMorph methodsFor: 'accessing' stamp: 'jcg 5/1/2010 01:51'!
-imaginary
-	"Answer the 'imaginary' parameter of the Julia set."
-	^julia imaginary! !
-
-!OpenCLJuliaSetMorph methodsFor: 'accessing' stamp: 'jcg 5/1/2010 01:55'!
-imaginary: newImaginary
-	"Set the 'imaginary' parameter of the Julia set."
-	julia imaginary: newImaginary.
-	self changeIfDirty.! !
-
-!OpenCLJuliaSetMorph methodsFor: 'accessing' stamp: 'jcg 5/1/2010 01:51'!
-real
-	"Answer the 'real' parameter of the Julia set."
-	^julia real! !
-
-!OpenCLJuliaSetMorph methodsFor: 'accessing' stamp: 'jcg 5/1/2010 13:45'!
-real: newReal
-	"Set the 'real' parameter of the Julia set."
-	julia real: newReal.
-	self changeIfDirty.! !
-
-!OpenCLJuliaSetMorph methodsFor: 'initialize' stamp: 'jcg 5/1/2010 01:26'!
-initialize
-	super initialize.
-	julia := OpenCLJuliaSet new.
-	self useRainbowToneMap.
-	self extent: 512@512.
-	julia runKernel.
-	self changed.
-	
-! !
-
-!OpenCLJuliaSetMorph methodsFor: 'geometry testing' stamp: 'jmv 8/5/2015 17:26'!
-isOrthoRectangularMorph
-	^false! !
-
-!OpenCLJuliaSetMorph methodsFor: 'tone-maps' stamp: 'jmv 8/5/2015 17:27'!
-useRainbowToneMap
-	"Generate a tone-map that cycles through the color-wheel.."
-	self initializeJuliaIfNecessary.
-	julia useRainbowToneMap! !
-
 !CLBufferRegionStruct methodsFor: 'accessing'!
 origin
 	"This method was automatically generated. See CLBufferRegionStruct class>>fields."
 	<generated>
-	^handle ffiUint64At: 1! !
+	^handle uint64At: 1! !
 
 !CLBufferRegionStruct methodsFor: 'accessing'!
 origin: anObject
 	"This method was automatically generated. See CLBufferRegionStruct class>>fields."
 	<generated>
-	handle ffiUint64At: 1 put: anObject! !
+	handle uint64At: 1 put: anObject! !
 
 !CLBufferRegionStruct methodsFor: 'accessing'!
 size
 	"This method was automatically generated. See CLBufferRegionStruct class>>fields."
 	<generated>
-	^handle ffiUint64At: 9! !
+	^handle uint64At: 9! !
 
 !CLBufferRegionStruct methodsFor: 'accessing'!
 size: anObject
 	"This method was automatically generated. See CLBufferRegionStruct class>>fields."
 	<generated>
-	handle ffiUint64At: 9 put: anObject! !
+	handle uint64At: 9 put: anObject! !
 
 !CLBufferRegionStruct class methodsFor: 'accessing' stamp: 'jmv 12/26/2016 15:10:41'!
 fields
@@ -1855,97 +1786,97 @@ printOn: aStream
 buffer
 	"This method was automatically generated. See CLImageDescStruct class>>fields."
 	<generated>
-	^handle ffiUint32At: 65! !
+	^handle uint32At: 65! !
 
 !CLImageDescStruct methodsFor: 'accessing'!
 buffer: anObject
 	"This method was automatically generated. See CLImageDescStruct class>>fields."
 	<generated>
-	handle ffiUint32At: 65 put: anObject! !
+	handle uint32At: 65 put: anObject! !
 
 !CLImageDescStruct methodsFor: 'accessing'!
 image_array_size
 	"This method was automatically generated. See CLImageDescStruct class>>fields."
 	<generated>
-	^handle ffiUint64At: 33! !
+	^handle uint64At: 33! !
 
 !CLImageDescStruct methodsFor: 'accessing'!
 image_array_size: anObject
 	"This method was automatically generated. See CLImageDescStruct class>>fields."
 	<generated>
-	handle ffiUint64At: 33 put: anObject! !
+	handle uint64At: 33 put: anObject! !
 
 !CLImageDescStruct methodsFor: 'accessing'!
 image_depth
 	"This method was automatically generated. See CLImageDescStruct class>>fields."
 	<generated>
-	^handle ffiUint64At: 25! !
+	^handle uint64At: 25! !
 
 !CLImageDescStruct methodsFor: 'accessing'!
 image_depth: anObject
 	"This method was automatically generated. See CLImageDescStruct class>>fields."
 	<generated>
-	handle ffiUint64At: 25 put: anObject! !
+	handle uint64At: 25 put: anObject! !
 
 !CLImageDescStruct methodsFor: 'accessing'!
 image_height
 	"This method was automatically generated. See CLImageDescStruct class>>fields."
 	<generated>
-	^handle ffiUint64At: 17! !
+	^handle uint64At: 17! !
 
 !CLImageDescStruct methodsFor: 'accessing'!
 image_height: anObject
 	"This method was automatically generated. See CLImageDescStruct class>>fields."
 	<generated>
-	handle ffiUint64At: 17 put: anObject! !
+	handle uint64At: 17 put: anObject! !
 
 !CLImageDescStruct methodsFor: 'accessing'!
 image_row_pitch
 	"This method was automatically generated. See CLImageDescStruct class>>fields."
 	<generated>
-	^handle ffiUint64At: 41! !
+	^handle uint64At: 41! !
 
 !CLImageDescStruct methodsFor: 'accessing'!
 image_row_pitch: anObject
 	"This method was automatically generated. See CLImageDescStruct class>>fields."
 	<generated>
-	handle ffiUint64At: 41 put: anObject! !
+	handle uint64At: 41 put: anObject! !
 
 !CLImageDescStruct methodsFor: 'accessing'!
 image_slice_pitch
 	"This method was automatically generated. See CLImageDescStruct class>>fields."
 	<generated>
-	^handle ffiUint64At: 49! !
+	^handle uint64At: 49! !
 
 !CLImageDescStruct methodsFor: 'accessing'!
 image_slice_pitch: anObject
 	"This method was automatically generated. See CLImageDescStruct class>>fields."
 	<generated>
-	handle ffiUint64At: 49 put: anObject! !
+	handle uint64At: 49 put: anObject! !
 
 !CLImageDescStruct methodsFor: 'accessing'!
 image_type
 	"This method was automatically generated. See CLImageDescStruct class>>fields."
 	<generated>
-	^handle ffiUint64At: 1! !
+	^handle uint64At: 1! !
 
 !CLImageDescStruct methodsFor: 'accessing'!
 image_type: anObject
 	"This method was automatically generated. See CLImageDescStruct class>>fields."
 	<generated>
-	handle ffiUint64At: 1 put: anObject! !
+	handle uint64At: 1 put: anObject! !
 
 !CLImageDescStruct methodsFor: 'accessing'!
 image_width
 	"This method was automatically generated. See CLImageDescStruct class>>fields."
 	<generated>
-	^handle ffiUint64At: 9! !
+	^handle uint64At: 9! !
 
 !CLImageDescStruct methodsFor: 'accessing'!
 image_width: anObject
 	"This method was automatically generated. See CLImageDescStruct class>>fields."
 	<generated>
-	handle ffiUint64At: 9 put: anObject! !
+	handle uint64At: 9 put: anObject! !
 
 !CLImageDescStruct methodsFor: 'accessing' stamp: 'jmv 10/29/2015 14:57'!
 mem_object
@@ -1963,25 +1894,25 @@ mem_object: aMemObjectId
 num_mip_levels
 	"This method was automatically generated. See CLImageDescStruct class>>fields."
 	<generated>
-	^handle ffiUint32At: 57! !
+	^handle uint32At: 57! !
 
 !CLImageDescStruct methodsFor: 'accessing'!
 num_mip_levels: anObject
 	"This method was automatically generated. See CLImageDescStruct class>>fields."
 	<generated>
-	handle ffiUint32At: 57 put: anObject! !
+	handle uint32At: 57 put: anObject! !
 
 !CLImageDescStruct methodsFor: 'accessing'!
 num_samples
 	"This method was automatically generated. See CLImageDescStruct class>>fields."
 	<generated>
-	^handle ffiUint32At: 61! !
+	^handle uint32At: 61! !
 
 !CLImageDescStruct methodsFor: 'accessing'!
 num_samples: anObject
 	"This method was automatically generated. See CLImageDescStruct class>>fields."
 	<generated>
-	handle ffiUint32At: 61 put: anObject! !
+	handle uint32At: 61 put: anObject! !
 
 !CLImageDescStruct class methodsFor: 'accessing' stamp: 'jmv 12/26/2016 16:11:09'!
 fields
@@ -2294,6 +2225,75 @@ release
 retain
 	"Called only by OpenCLRefCount."
 	OpenCLError check: (OpenCLPrimitiveInterface current clRetainSampler__cl_sampler: self)! !
+
+!OpenCLJuliaSetMorph methodsFor: 'private' stamp: 'jcg 5/1/2010 01:57'!
+changeIfDirty
+	"If the Julia set needs to be redrawn, then so does this morph."
+	julia isDirty ifTrue: [self changed].! !
+
+!OpenCLJuliaSetMorph methodsFor: 'private' stamp: 'jcg 5/1/2010 11:32'!
+initializeJuliaIfNecessary
+	"If the OpenCL context is absent or destroyed, we need to re-initialize 'julia'."
+	(julia context isNil or: [julia context isDestroyed]) 
+		ifTrue: [julia initialize.
+				self image: julia outputForm]! !
+
+!OpenCLJuliaSetMorph methodsFor: 'drawing' stamp: 'jcg 5/1/2010 10:52'!
+drawOn: aCanvas
+	self initializeJuliaIfNecessary.
+	julia isDirty ifTrue: [julia runKernel].
+	super drawOn: aCanvas! !
+
+!OpenCLJuliaSetMorph methodsFor: 'geometry' stamp: 'jcg 5/1/2010 01:28'!
+extent: aPoint
+	julia extent: aPoint.
+	self image: julia outputForm.
+	julia runKernel.
+	self changed.
+	! !
+
+!OpenCLJuliaSetMorph methodsFor: 'accessing' stamp: 'jcg 5/1/2010 01:51'!
+imaginary
+	"Answer the 'imaginary' parameter of the Julia set."
+	^julia imaginary! !
+
+!OpenCLJuliaSetMorph methodsFor: 'accessing' stamp: 'jcg 5/1/2010 01:55'!
+imaginary: newImaginary
+	"Set the 'imaginary' parameter of the Julia set."
+	julia imaginary: newImaginary.
+	self changeIfDirty.! !
+
+!OpenCLJuliaSetMorph methodsFor: 'accessing' stamp: 'jcg 5/1/2010 01:51'!
+real
+	"Answer the 'real' parameter of the Julia set."
+	^julia real! !
+
+!OpenCLJuliaSetMorph methodsFor: 'accessing' stamp: 'jcg 5/1/2010 13:45'!
+real: newReal
+	"Set the 'real' parameter of the Julia set."
+	julia real: newReal.
+	self changeIfDirty.! !
+
+!OpenCLJuliaSetMorph methodsFor: 'initialize' stamp: 'jcg 5/1/2010 01:26'!
+initialize
+	super initialize.
+	julia := OpenCLJuliaSet new.
+	self useRainbowToneMap.
+	self extent: 512@512.
+	julia runKernel.
+	self changed.
+	
+! !
+
+!OpenCLJuliaSetMorph methodsFor: 'geometry testing' stamp: 'jmv 8/5/2015 17:26'!
+isOrthoRectangularMorph
+	^false! !
+
+!OpenCLJuliaSetMorph methodsFor: 'tone-maps' stamp: 'jmv 8/5/2015 17:27'!
+useRainbowToneMap
+	"Generate a tone-map that cycles through the color-wheel.."
+	self initializeJuliaIfNecessary.
+	julia useRainbowToneMap! !
 
 !OpenCLObject methodsFor: 'converting' stamp: 'jcg 2/18/2010 03:03'!
 asOpenCLArg
@@ -4347,6 +4347,16 @@ privateDestroy
 	program := nil.
 	! !
 
+!OpenCLKernel methodsFor: 'arguments' stamp: 'jmv 1/5/2016 11:46'!
+argAt: index putDouble: aNumber
+	"To be used with arguments declared in OpenCL as double.
+	They are 64 bit floating point.
+
+	Argument to this method is a Smalltalk object. Argument passed to #argAt:putBytesOf: is also a Smalltalk object.
+	Given that bytes are copied right away, there's no problem with Garbage Collection moving or reclaiming them."
+
+	^ self argAt: index putBytesOf: aNumber asFloat! !
+
 !OpenCLKernel methodsFor: 'arguments' stamp: 'jmv 1/5/2016 11:45'!
 argAt: index putDouble4: aCollectionOfNumbers
 	"To be used with arguments declared in OpenCL as double4.
@@ -4357,15 +4367,15 @@ argAt: index putDouble4: aCollectionOfNumbers
 
 	^ self argAt: index putBytesOf: (Float64Array new: 4 from: aCollectionOfNumbers)! !
 
-!OpenCLKernel methodsFor: 'arguments' stamp: 'jmv 1/5/2016 11:46'!
-argAt: index putDouble: aNumber
-	"To be used with arguments declared in OpenCL as double.
-	They are 64 bit floating point.
+!OpenCLKernel methodsFor: 'arguments' stamp: 'jmv 9/3/2020 17:12:44'!
+argAt: index putFloat: aNumber
+	"To be used with arguments declared in OpenCL as float.
+	They are 32 bit floating point.
 
 	Argument to this method is a Smalltalk object. Argument passed to #argAt:putBytesOf: is also a Smalltalk object.
 	Given that bytes are copied right away, there's no problem with Garbage Collection moving or reclaiming them."
 
-	^ self argAt: index putBytesOf: aNumber asFloat! !
+	^ self argAt: index putBytesOf: (Float32Array with: aNumber asFloat)! !
 
 !OpenCLKernel methodsFor: 'arguments' stamp: 'jmv 9/3/2020 17:12:45'!
 argAt: index putFloat2: aCollectionOfNumbers
@@ -4386,16 +4396,6 @@ argAt: index putFloat4: aCollectionOfNumbers
 	Given that bytes are copied right away, there's no problem with Garbage Collection moving or reclaiming them."
 
 	^ self argAt: index putBytesOf: (Float32Array new: 4 from: aCollectionOfNumbers)! !
-
-!OpenCLKernel methodsFor: 'arguments' stamp: 'jmv 9/3/2020 17:12:44'!
-argAt: index putFloat: aNumber
-	"To be used with arguments declared in OpenCL as float.
-	They are 32 bit floating point.
-
-	Argument to this method is a Smalltalk object. Argument passed to #argAt:putBytesOf: is also a Smalltalk object.
-	Given that bytes are copied right away, there's no problem with Garbage Collection moving or reclaiming them."
-
-	^ self argAt: index putBytesOf: (Float32Array with: aNumber asFloat)! !
 
 !OpenCLKernel methodsFor: 'arguments' stamp: 'jmv 1/5/2016 11:46'!
 argAt: index putInt: aNumber
@@ -6841,9 +6841,9 @@ current
 	ActiveSubclass ifNil: [ ActiveSubclass _ self subclassForCurrentPlatform].
 	^ActiveSubclass! !
 
-!OpenCLPrimitiveInterface class methodsFor: 'finalization' stamp: 'jmv 8/20/2015 13:05'!
+!OpenCLPrimitiveInterface class methodsFor: 'finalization' stamp: 'jmv 1/17/2025 10:09:23'!
 finalizationRegistry
-	^MyFinalizationRegistry ifNil: [MyFinalizationRegistry := WeakRegistry new]! !
+	^MyFinalizationRegistry ifNil: [MyFinalizationRegistry := FinalizationRegistry new]! !
 
 !OpenCLPrimitiveInterface class methodsFor: 'finalization' stamp: 'jmv 8/20/2015 13:05'!
 finalizeValues
@@ -7422,25 +7422,6 @@ clEnqueueTask__cl_command_queue: command_queue
 	^ answer! !
 
 !OpenCLMacOSInterface class methodsFor: 'FFI-generated-Context APIs'!
-clCreateContextFromType__const__cl_context_properties__ptr: properties 
-						cl_device_type: device_type 
-						void__ptrpfn_notifyconst__char__ptrconst__void__ptrsize_tvoid__ptr: pfn_notify 
-						void__ptr: user_data 
-						cl_int__ptr: errcode_ret 
-
-	"Public method. Needed for calling #getHandle on OpenCLOpaqueHandle arguments"
-
-	| answer |
-	answer := self private_clCreateContextFromType__const__cl_context_properties__ptr: properties 
-						cl_device_type: device_type 
-						void__ptrpfn_notifyconst__char__ptrconst__void__ptrsize_tvoid__ptr: pfn_notify 
-						void__ptr: user_data 
-						cl_int__ptr: errcode_ret .
-
-	answer := CLContext new setHandle: answer getHandle asByteArrayPointer.
-	^ answer! !
-
-!OpenCLMacOSInterface class methodsFor: 'FFI-generated-Context APIs'!
 clCreateContext__const__cl_context_properties__ptr: properties 
 						cl_uint: num_devices 
 						const__cl_device_id__ptr: devices 
@@ -7454,6 +7435,25 @@ clCreateContext__const__cl_context_properties__ptr: properties
 	answer := self private_clCreateContext__const__cl_context_properties__ptr: properties 
 						cl_uint: num_devices 
 						const__cl_device_id__ptr: devices 
+						void__ptrpfn_notifyconst__char__ptrconst__void__ptrsize_tvoid__ptr: pfn_notify 
+						void__ptr: user_data 
+						cl_int__ptr: errcode_ret .
+
+	answer := CLContext new setHandle: answer getHandle asByteArrayPointer.
+	^ answer! !
+
+!OpenCLMacOSInterface class methodsFor: 'FFI-generated-Context APIs'!
+clCreateContextFromType__const__cl_context_properties__ptr: properties 
+						cl_device_type: device_type 
+						void__ptrpfn_notifyconst__char__ptrconst__void__ptrsize_tvoid__ptr: pfn_notify 
+						void__ptr: user_data 
+						cl_int__ptr: errcode_ret 
+
+	"Public method. Needed for calling #getHandle on OpenCLOpaqueHandle arguments"
+
+	| answer |
+	answer := self private_clCreateContextFromType__const__cl_context_properties__ptr: properties 
+						cl_device_type: device_type 
 						void__ptrpfn_notifyconst__char__ptrconst__void__ptrsize_tvoid__ptr: pfn_notify 
 						void__ptr: user_data 
 						cl_int__ptr: errcode_ret .
@@ -7613,6 +7613,21 @@ clUnloadCompiler
 	^self externalCallFailed! !
 
 !OpenCLMacOSInterface class methodsFor: 'FFI-generated-Kernel Object APIs'!
+clCreateKernel__cl_program: program 
+						const__char__ptr: kernel_name 
+						cl_int__ptr: errcode_ret 
+
+	"Public method. Needed for calling #getHandle on OpenCLOpaqueHandle arguments"
+
+	| answer |
+	answer := self private_clCreateKernel__cl_program: program getHandle asExternalPointer
+						const__char__ptr: kernel_name 
+						cl_int__ptr: errcode_ret .
+
+	answer := CLKernel new setHandle: answer getHandle asByteArrayPointer.
+	^ answer! !
+
+!OpenCLMacOSInterface class methodsFor: 'FFI-generated-Kernel Object APIs'!
 clCreateKernelsInProgram__cl_program: program 
 						cl_uint: num_kernels 
 						cl_kernel__ptr: kernels 
@@ -7626,21 +7641,6 @@ clCreateKernelsInProgram__cl_program: program
 						cl_kernel__ptr: kernels 
 						cl_uint__ptr: num_kernels_ret .
 
-	^ answer! !
-
-!OpenCLMacOSInterface class methodsFor: 'FFI-generated-Kernel Object APIs'!
-clCreateKernel__cl_program: program 
-						const__char__ptr: kernel_name 
-						cl_int__ptr: errcode_ret 
-
-	"Public method. Needed for calling #getHandle on OpenCLOpaqueHandle arguments"
-
-	| answer |
-	answer := self private_clCreateKernel__cl_program: program getHandle asExternalPointer
-						const__char__ptr: kernel_name 
-						cl_int__ptr: errcode_ret .
-
-	answer := CLKernel new setHandle: answer getHandle asByteArrayPointer.
 	^ answer! !
 
 !OpenCLMacOSInterface class methodsFor: 'FFI-generated-Kernel Object APIs'!
@@ -7722,20 +7722,6 @@ clRetainKernel__cl_kernel: kernel
 	^ answer! !
 
 !OpenCLMacOSInterface class methodsFor: 'FFI-generated-Kernel Object APIs'!
-clSetKernelArgSVMPointer__cl_kernel: kernel 
-						cl_uint: arg_index 
-						const__void__ptr: arg_value 
-
-	"Public method. Needed for calling #getHandle on OpenCLOpaqueHandle arguments"
-
-	| answer |
-	answer := self private_clSetKernelArgSVMPointer__cl_kernel: kernel getHandle asExternalPointer
-						cl_uint: arg_index 
-						const__void__ptr: arg_value .
-
-	^ answer! !
-
-!OpenCLMacOSInterface class methodsFor: 'FFI-generated-Kernel Object APIs'!
 clSetKernelArg__cl_kernel: kernel 
 						cl_uint: arg_index 
 						size_t: arg_size 
@@ -7747,6 +7733,20 @@ clSetKernelArg__cl_kernel: kernel
 	answer := self private_clSetKernelArg__cl_kernel: kernel getHandle asExternalPointer
 						cl_uint: arg_index 
 						size_t: arg_size 
+						const__void__ptr: arg_value .
+
+	^ answer! !
+
+!OpenCLMacOSInterface class methodsFor: 'FFI-generated-Kernel Object APIs'!
+clSetKernelArgSVMPointer__cl_kernel: kernel 
+						cl_uint: arg_index 
+						const__void__ptr: arg_value 
+
+	"Public method. Needed for calling #getHandle on OpenCLOpaqueHandle arguments"
+
+	| answer |
+	answer := self private_clSetKernelArgSVMPointer__cl_kernel: kernel getHandle asExternalPointer
+						cl_uint: arg_index 
 						const__void__ptr: arg_value .
 
 	^ answer! !
@@ -8004,6 +8004,32 @@ clEnqueueBarrierWithWaitList__cl_command_queue: command_queue
 	^ answer! !
 
 !OpenCLMacOSInterface class methodsFor: 'FFI-generated-Enqueued Commands APIs'!
+clEnqueueCopyBuffer__cl_command_queue: command_queue 
+						cl_mem: src_buffer 
+						cl_mem: dst_buffer 
+						size_t: src_offset 
+						size_t: dst_offset 
+						size_t: size 
+						cl_uint: num_events_in_wait_list 
+						const__cl_event__ptr: event_wait_list 
+						cl_event__ptr: event 
+
+	"Public method. Needed for calling #getHandle on OpenCLOpaqueHandle arguments"
+
+	| answer |
+	answer := self private_clEnqueueCopyBuffer__cl_command_queue: command_queue getHandle asExternalPointer
+						cl_mem: src_buffer getHandle asExternalPointer
+						cl_mem: dst_buffer getHandle asExternalPointer
+						size_t: src_offset 
+						size_t: dst_offset 
+						size_t: size 
+						cl_uint: num_events_in_wait_list 
+						const__cl_event__ptr: event_wait_list 
+						cl_event__ptr: event .
+
+	^ answer! !
+
+!OpenCLMacOSInterface class methodsFor: 'FFI-generated-Enqueued Commands APIs'!
 clEnqueueCopyBufferRect__cl_command_queue: command_queue 
 						cl_mem: src_buffer 
 						cl_mem: dst_buffer 
@@ -8064,12 +8090,12 @@ clEnqueueCopyBufferToImage__cl_command_queue: command_queue
 	^ answer! !
 
 !OpenCLMacOSInterface class methodsFor: 'FFI-generated-Enqueued Commands APIs'!
-clEnqueueCopyBuffer__cl_command_queue: command_queue 
-						cl_mem: src_buffer 
-						cl_mem: dst_buffer 
-						size_t: src_offset 
-						size_t: dst_offset 
-						size_t: size 
+clEnqueueCopyImage__cl_command_queue: command_queue 
+						cl_mem: src_image 
+						cl_mem: dst_image 
+						const__size_t__ptr: src_origin 
+						const__size_t__ptr: dst_origin 
+						const__size_t__ptr: region 
 						cl_uint: num_events_in_wait_list 
 						const__cl_event__ptr: event_wait_list 
 						cl_event__ptr: event 
@@ -8077,12 +8103,12 @@ clEnqueueCopyBuffer__cl_command_queue: command_queue
 	"Public method. Needed for calling #getHandle on OpenCLOpaqueHandle arguments"
 
 	| answer |
-	answer := self private_clEnqueueCopyBuffer__cl_command_queue: command_queue getHandle asExternalPointer
-						cl_mem: src_buffer getHandle asExternalPointer
-						cl_mem: dst_buffer getHandle asExternalPointer
-						size_t: src_offset 
-						size_t: dst_offset 
-						size_t: size 
+	answer := self private_clEnqueueCopyImage__cl_command_queue: command_queue getHandle asExternalPointer
+						cl_mem: src_image getHandle asExternalPointer
+						cl_mem: dst_image getHandle asExternalPointer
+						const__size_t__ptr: src_origin 
+						const__size_t__ptr: dst_origin 
+						const__size_t__ptr: region 
 						cl_uint: num_events_in_wait_list 
 						const__cl_event__ptr: event_wait_list 
 						cl_event__ptr: event .
@@ -8109,32 +8135,6 @@ clEnqueueCopyImageToBuffer__cl_command_queue: command_queue
 						const__size_t__ptr: src_origin 
 						const__size_t__ptr: region 
 						size_t: dst_offset 
-						cl_uint: num_events_in_wait_list 
-						const__cl_event__ptr: event_wait_list 
-						cl_event__ptr: event .
-
-	^ answer! !
-
-!OpenCLMacOSInterface class methodsFor: 'FFI-generated-Enqueued Commands APIs'!
-clEnqueueCopyImage__cl_command_queue: command_queue 
-						cl_mem: src_image 
-						cl_mem: dst_image 
-						const__size_t__ptr: src_origin 
-						const__size_t__ptr: dst_origin 
-						const__size_t__ptr: region 
-						cl_uint: num_events_in_wait_list 
-						const__cl_event__ptr: event_wait_list 
-						cl_event__ptr: event 
-
-	"Public method. Needed for calling #getHandle on OpenCLOpaqueHandle arguments"
-
-	| answer |
-	answer := self private_clEnqueueCopyImage__cl_command_queue: command_queue getHandle asExternalPointer
-						cl_mem: src_image getHandle asExternalPointer
-						cl_mem: dst_image getHandle asExternalPointer
-						const__size_t__ptr: src_origin 
-						const__size_t__ptr: dst_origin 
-						const__size_t__ptr: region 
 						cl_uint: num_events_in_wait_list 
 						const__cl_event__ptr: event_wait_list 
 						cl_event__ptr: event .
@@ -8342,6 +8342,32 @@ clEnqueueNativeKernel__cl_command_queue: command_queue
 	^ answer! !
 
 !OpenCLMacOSInterface class methodsFor: 'FFI-generated-Enqueued Commands APIs'!
+clEnqueueReadBuffer__cl_command_queue: command_queue 
+						cl_mem: buffer 
+						cl_bool: blocking_read 
+						size_t: offset 
+						size_t: size 
+						void__ptr: ptr 
+						cl_uint: num_events_in_wait_list 
+						const__cl_event__ptr: event_wait_list 
+						cl_event__ptr: event 
+
+	"Public method. Needed for calling #getHandle on OpenCLOpaqueHandle arguments"
+
+	| answer |
+	answer := self private_clEnqueueReadBuffer__cl_command_queue: command_queue getHandle asExternalPointer
+						cl_mem: buffer getHandle asExternalPointer
+						cl_bool: blocking_read 
+						size_t: offset 
+						size_t: size 
+						void__ptr: ptr 
+						cl_uint: num_events_in_wait_list 
+						const__cl_event__ptr: event_wait_list 
+						cl_event__ptr: event .
+
+	^ answer! !
+
+!OpenCLMacOSInterface class methodsFor: 'FFI-generated-Enqueued Commands APIs'!
 clEnqueueReadBufferRect__cl_command_queue: command_queue 
 						cl_mem: buffer 
 						cl_bool: blocking_read 
@@ -8370,32 +8396,6 @@ clEnqueueReadBufferRect__cl_command_queue: command_queue
 						size_t: buffer_slice_pitch 
 						size_t: host_row_pitch 
 						size_t: host_slice_pitch 
-						void__ptr: ptr 
-						cl_uint: num_events_in_wait_list 
-						const__cl_event__ptr: event_wait_list 
-						cl_event__ptr: event .
-
-	^ answer! !
-
-!OpenCLMacOSInterface class methodsFor: 'FFI-generated-Enqueued Commands APIs'!
-clEnqueueReadBuffer__cl_command_queue: command_queue 
-						cl_mem: buffer 
-						cl_bool: blocking_read 
-						size_t: offset 
-						size_t: size 
-						void__ptr: ptr 
-						cl_uint: num_events_in_wait_list 
-						const__cl_event__ptr: event_wait_list 
-						cl_event__ptr: event 
-
-	"Public method. Needed for calling #getHandle on OpenCLOpaqueHandle arguments"
-
-	| answer |
-	answer := self private_clEnqueueReadBuffer__cl_command_queue: command_queue getHandle asExternalPointer
-						cl_mem: buffer getHandle asExternalPointer
-						cl_bool: blocking_read 
-						size_t: offset 
-						size_t: size 
 						void__ptr: ptr 
 						cl_uint: num_events_in_wait_list 
 						const__cl_event__ptr: event_wait_list 
@@ -8568,6 +8568,32 @@ clEnqueueUnmapMemObject__cl_command_queue: command_queue
 	^ answer! !
 
 !OpenCLMacOSInterface class methodsFor: 'FFI-generated-Enqueued Commands APIs'!
+clEnqueueWriteBuffer__cl_command_queue: command_queue 
+						cl_mem: buffer 
+						cl_bool: blocking_write 
+						size_t: offset 
+						size_t: size 
+						const__void__ptr: ptr 
+						cl_uint: num_events_in_wait_list 
+						const__cl_event__ptr: event_wait_list 
+						cl_event__ptr: event 
+
+	"Public method. Needed for calling #getHandle on OpenCLOpaqueHandle arguments"
+
+	| answer |
+	answer := self private_clEnqueueWriteBuffer__cl_command_queue: command_queue getHandle asExternalPointer
+						cl_mem: buffer getHandle asExternalPointer
+						cl_bool: blocking_write 
+						size_t: offset 
+						size_t: size 
+						const__void__ptr: ptr 
+						cl_uint: num_events_in_wait_list 
+						const__cl_event__ptr: event_wait_list 
+						cl_event__ptr: event .
+
+	^ answer! !
+
+!OpenCLMacOSInterface class methodsFor: 'FFI-generated-Enqueued Commands APIs'!
 clEnqueueWriteBufferRect__cl_command_queue: command_queue 
 						cl_mem: buffer 
 						cl_bool: blocking_write 
@@ -8596,32 +8622,6 @@ clEnqueueWriteBufferRect__cl_command_queue: command_queue
 						size_t: buffer_slice_pitch 
 						size_t: host_row_pitch 
 						size_t: host_slice_pitch 
-						const__void__ptr: ptr 
-						cl_uint: num_events_in_wait_list 
-						const__cl_event__ptr: event_wait_list 
-						cl_event__ptr: event .
-
-	^ answer! !
-
-!OpenCLMacOSInterface class methodsFor: 'FFI-generated-Enqueued Commands APIs'!
-clEnqueueWriteBuffer__cl_command_queue: command_queue 
-						cl_mem: buffer 
-						cl_bool: blocking_write 
-						size_t: offset 
-						size_t: size 
-						const__void__ptr: ptr 
-						cl_uint: num_events_in_wait_list 
-						const__cl_event__ptr: event_wait_list 
-						cl_event__ptr: event 
-
-	"Public method. Needed for calling #getHandle on OpenCLOpaqueHandle arguments"
-
-	| answer |
-	answer := self private_clEnqueueWriteBuffer__cl_command_queue: command_queue getHandle asExternalPointer
-						cl_mem: buffer getHandle asExternalPointer
-						cl_bool: blocking_write 
-						size_t: offset 
-						size_t: size 
 						const__void__ptr: ptr 
 						cl_uint: num_events_in_wait_list 
 						const__cl_event__ptr: event_wait_list 
@@ -9327,26 +9327,6 @@ private_clEnqueueTask__cl_command_queue: command_queue
 	^self externalCallFailed! !
 
 !OpenCLMacOSInterface class methodsFor: 'FFI-generated-private-Context APIs'!
-private_clCreateContextFromType__const__cl_context_properties__ptr: properties 
-						cl_device_type: device_type 
-						void__ptrpfn_notifyconst__char__ptrconst__void__ptrsize_tvoid__ptr: pfn_notify 
-						void__ptr: user_data 
-						cl_int__ptr: errcode_ret 
-
-	"This method was automatically generated."
-
-	"cl_context clCreateContextFromType(
-			const cl_context_properties * properties, 
-			cl_device_type device_type, 
-			void (*pfn_notify)(const char *, const void *, size_t, void *) pfn_notify, 
-			void * user_data, 
-			cl_int * errcode_ret
-	);"
-	<apicall: void* 'clCreateContextFromType' (void* ulonglong void* void* long*) module: 'OpenCL.framework'>
-
-	^self externalCallFailed! !
-
-!OpenCLMacOSInterface class methodsFor: 'FFI-generated-private-Context APIs'!
 private_clCreateContext__const__cl_context_properties__ptr: properties 
 						cl_uint: num_devices 
 						const__cl_device_id__ptr: devices 
@@ -9365,6 +9345,26 @@ private_clCreateContext__const__cl_context_properties__ptr: properties
 			cl_int * errcode_ret
 	);"
 	<apicall: void* 'clCreateContext' (void* ulong CLDeviceID* void* void* long*) module: 'OpenCL.framework'>
+
+	^self externalCallFailed! !
+
+!OpenCLMacOSInterface class methodsFor: 'FFI-generated-private-Context APIs'!
+private_clCreateContextFromType__const__cl_context_properties__ptr: properties 
+						cl_device_type: device_type 
+						void__ptrpfn_notifyconst__char__ptrconst__void__ptrsize_tvoid__ptr: pfn_notify 
+						void__ptr: user_data 
+						cl_int__ptr: errcode_ret 
+
+	"This method was automatically generated."
+
+	"cl_context clCreateContextFromType(
+			const cl_context_properties * properties, 
+			cl_device_type device_type, 
+			void (*pfn_notify)(const char *, const void *, size_t, void *) pfn_notify, 
+			void * user_data, 
+			cl_int * errcode_ret
+	);"
+	<apicall: void* 'clCreateContextFromType' (void* ulonglong void* void* long*) module: 'OpenCL.framework'>
 
 	^self externalCallFailed! !
 
@@ -9511,6 +9511,22 @@ private_clEnqueueWaitForEvents__cl_command_queue: command_queue
 	^self externalCallFailed! !
 
 !OpenCLMacOSInterface class methodsFor: 'FFI-generated-private-Kernel Object APIs'!
+private_clCreateKernel__cl_program: program 
+						const__char__ptr: kernel_name 
+						cl_int__ptr: errcode_ret 
+
+	"This method was automatically generated."
+
+	"cl_kernel clCreateKernel(
+			cl_program program, 
+			const char * kernel_name, 
+			cl_int * errcode_ret
+	);"
+	<apicall: void* 'clCreateKernel' (void* schar* long*) module: 'OpenCL.framework'>
+
+	^self externalCallFailed! !
+
+!OpenCLMacOSInterface class methodsFor: 'FFI-generated-private-Kernel Object APIs'!
 private_clCreateKernelsInProgram__cl_program: program 
 						cl_uint: num_kernels 
 						cl_kernel__ptr: kernels 
@@ -9525,22 +9541,6 @@ private_clCreateKernelsInProgram__cl_program: program
 			cl_uint * num_kernels_ret
 	);"
 	<apicall: long 'clCreateKernelsInProgram' (void* ulong CLKernel* ulong*) module: 'OpenCL.framework'>
-
-	^self externalCallFailed! !
-
-!OpenCLMacOSInterface class methodsFor: 'FFI-generated-private-Kernel Object APIs'!
-private_clCreateKernel__cl_program: program 
-						const__char__ptr: kernel_name 
-						cl_int__ptr: errcode_ret 
-
-	"This method was automatically generated."
-
-	"cl_kernel clCreateKernel(
-			cl_program program, 
-			const char * kernel_name, 
-			cl_int * errcode_ret
-	);"
-	<apicall: void* 'clCreateKernel' (void* schar* long*) module: 'OpenCL.framework'>
 
 	^self externalCallFailed! !
 
@@ -9633,22 +9633,6 @@ private_clRetainKernel__cl_kernel: kernel
 	^self externalCallFailed! !
 
 !OpenCLMacOSInterface class methodsFor: 'FFI-generated-private-Kernel Object APIs'!
-private_clSetKernelArgSVMPointer__cl_kernel: kernel 
-						cl_uint: arg_index 
-						const__void__ptr: arg_value 
-
-	"This method was automatically generated."
-
-	"cl_int clSetKernelArgSVMPointer(
-			cl_kernel kernel, 
-			cl_uint arg_index, 
-			const void * arg_value
-	);"
-	<apicall: long 'clSetKernelArgSVMPointer' (void* ulong void*) module: 'OpenCL.framework'>
-
-	^self externalCallFailed! !
-
-!OpenCLMacOSInterface class methodsFor: 'FFI-generated-private-Kernel Object APIs'!
 private_clSetKernelArg__cl_kernel: kernel 
 						cl_uint: arg_index 
 						size_t: arg_size 
@@ -9663,6 +9647,22 @@ private_clSetKernelArg__cl_kernel: kernel
 			const void * arg_value
 	);"
 	<apicall: long 'clSetKernelArg' (void* ulong ulong void*) module: 'OpenCL.framework'>
+
+	^self externalCallFailed! !
+
+!OpenCLMacOSInterface class methodsFor: 'FFI-generated-private-Kernel Object APIs'!
+private_clSetKernelArgSVMPointer__cl_kernel: kernel 
+						cl_uint: arg_index 
+						const__void__ptr: arg_value 
+
+	"This method was automatically generated."
+
+	"cl_int clSetKernelArgSVMPointer(
+			cl_kernel kernel, 
+			cl_uint arg_index, 
+			const void * arg_value
+	);"
+	<apicall: long 'clSetKernelArgSVMPointer' (void* ulong void*) module: 'OpenCL.framework'>
 
 	^self externalCallFailed! !
 
@@ -9937,6 +9937,34 @@ private_clEnqueueBarrierWithWaitList__cl_command_queue: command_queue
 	^self externalCallFailed! !
 
 !OpenCLMacOSInterface class methodsFor: 'FFI-generated-private-Enqueued Commands APIs'!
+private_clEnqueueCopyBuffer__cl_command_queue: command_queue 
+						cl_mem: src_buffer 
+						cl_mem: dst_buffer 
+						size_t: src_offset 
+						size_t: dst_offset 
+						size_t: size 
+						cl_uint: num_events_in_wait_list 
+						const__cl_event__ptr: event_wait_list 
+						cl_event__ptr: event 
+
+	"This method was automatically generated."
+
+	"cl_int clEnqueueCopyBuffer(
+			cl_command_queue command_queue, 
+			cl_mem src_buffer, 
+			cl_mem dst_buffer, 
+			size_t src_offset, 
+			size_t dst_offset, 
+			size_t size, 
+			cl_uint num_events_in_wait_list, 
+			const cl_event * event_wait_list, 
+			cl_event * event
+	);"
+	<apicall: long 'clEnqueueCopyBuffer' (void* void* void* ulong ulong ulong ulong CLEvent* CLEvent*) module: 'OpenCL.framework'>
+
+	^self externalCallFailed! !
+
+!OpenCLMacOSInterface class methodsFor: 'FFI-generated-private-Enqueued Commands APIs'!
 private_clEnqueueCopyBufferRect__cl_command_queue: command_queue 
 						cl_mem: src_buffer 
 						cl_mem: dst_buffer 
@@ -10001,30 +10029,30 @@ private_clEnqueueCopyBufferToImage__cl_command_queue: command_queue
 	^self externalCallFailed! !
 
 !OpenCLMacOSInterface class methodsFor: 'FFI-generated-private-Enqueued Commands APIs'!
-private_clEnqueueCopyBuffer__cl_command_queue: command_queue 
-						cl_mem: src_buffer 
-						cl_mem: dst_buffer 
-						size_t: src_offset 
-						size_t: dst_offset 
-						size_t: size 
+private_clEnqueueCopyImage__cl_command_queue: command_queue 
+						cl_mem: src_image 
+						cl_mem: dst_image 
+						const__size_t__ptr: src_origin 
+						const__size_t__ptr: dst_origin 
+						const__size_t__ptr: region 
 						cl_uint: num_events_in_wait_list 
 						const__cl_event__ptr: event_wait_list 
 						cl_event__ptr: event 
 
 	"This method was automatically generated."
 
-	"cl_int clEnqueueCopyBuffer(
+	"cl_int clEnqueueCopyImage(
 			cl_command_queue command_queue, 
-			cl_mem src_buffer, 
-			cl_mem dst_buffer, 
-			size_t src_offset, 
-			size_t dst_offset, 
-			size_t size, 
+			cl_mem src_image, 
+			cl_mem dst_image, 
+			const size_t * src_origin[3], 
+			const size_t * dst_origin[3], 
+			const size_t * region[3], 
 			cl_uint num_events_in_wait_list, 
 			const cl_event * event_wait_list, 
 			cl_event * event
 	);"
-	<apicall: long 'clEnqueueCopyBuffer' (void* void* void* ulong ulong ulong ulong CLEvent* CLEvent*) module: 'OpenCL.framework'>
+	<apicall: long 'clEnqueueCopyImage' (void* void* void* ulong* ulong* ulong* ulong CLEvent* CLEvent*) module: 'OpenCL.framework'>
 
 	^self externalCallFailed! !
 
@@ -10053,34 +10081,6 @@ private_clEnqueueCopyImageToBuffer__cl_command_queue: command_queue
 			cl_event * event
 	);"
 	<apicall: long 'clEnqueueCopyImageToBuffer' (void* void* void* ulong* ulong* ulong ulong CLEvent* CLEvent*) module: 'OpenCL.framework'>
-
-	^self externalCallFailed! !
-
-!OpenCLMacOSInterface class methodsFor: 'FFI-generated-private-Enqueued Commands APIs'!
-private_clEnqueueCopyImage__cl_command_queue: command_queue 
-						cl_mem: src_image 
-						cl_mem: dst_image 
-						const__size_t__ptr: src_origin 
-						const__size_t__ptr: dst_origin 
-						const__size_t__ptr: region 
-						cl_uint: num_events_in_wait_list 
-						const__cl_event__ptr: event_wait_list 
-						cl_event__ptr: event 
-
-	"This method was automatically generated."
-
-	"cl_int clEnqueueCopyImage(
-			cl_command_queue command_queue, 
-			cl_mem src_image, 
-			cl_mem dst_image, 
-			const size_t * src_origin[3], 
-			const size_t * dst_origin[3], 
-			const size_t * region[3], 
-			cl_uint num_events_in_wait_list, 
-			const cl_event * event_wait_list, 
-			cl_event * event
-	);"
-	<apicall: long 'clEnqueueCopyImage' (void* void* void* ulong* ulong* ulong* ulong CLEvent* CLEvent*) module: 'OpenCL.framework'>
 
 	^self externalCallFailed! !
 
@@ -10302,6 +10302,34 @@ private_clEnqueueNativeKernel__cl_command_queue: command_queue
 	^self externalCallFailed! !
 
 !OpenCLMacOSInterface class methodsFor: 'FFI-generated-private-Enqueued Commands APIs'!
+private_clEnqueueReadBuffer__cl_command_queue: command_queue 
+						cl_mem: buffer 
+						cl_bool: blocking_read 
+						size_t: offset 
+						size_t: size 
+						void__ptr: ptr 
+						cl_uint: num_events_in_wait_list 
+						const__cl_event__ptr: event_wait_list 
+						cl_event__ptr: event 
+
+	"This method was automatically generated."
+
+	"cl_int clEnqueueReadBuffer(
+			cl_command_queue command_queue, 
+			cl_mem buffer, 
+			cl_bool blocking_read, 
+			size_t offset, 
+			size_t size, 
+			void * ptr, 
+			cl_uint num_events_in_wait_list, 
+			const cl_event * event_wait_list, 
+			cl_event * event
+	);"
+	<apicall: long 'clEnqueueReadBuffer' (void* void* ulong ulong ulong void* ulong CLEvent* CLEvent*) module: 'OpenCL.framework'>
+
+	^self externalCallFailed! !
+
+!OpenCLMacOSInterface class methodsFor: 'FFI-generated-private-Enqueued Commands APIs'!
 private_clEnqueueReadBufferRect__cl_command_queue: command_queue 
 						cl_mem: buffer 
 						cl_bool: blocking_read 
@@ -10336,34 +10364,6 @@ private_clEnqueueReadBufferRect__cl_command_queue: command_queue
 			cl_event * event
 	);"
 	<apicall: long 'clEnqueueReadBufferRect' (void* void* ulong ulong* ulong* ulong* ulong ulong ulong ulong void* ulong CLEvent* CLEvent*) module: 'OpenCL.framework'>
-
-	^self externalCallFailed! !
-
-!OpenCLMacOSInterface class methodsFor: 'FFI-generated-private-Enqueued Commands APIs'!
-private_clEnqueueReadBuffer__cl_command_queue: command_queue 
-						cl_mem: buffer 
-						cl_bool: blocking_read 
-						size_t: offset 
-						size_t: size 
-						void__ptr: ptr 
-						cl_uint: num_events_in_wait_list 
-						const__cl_event__ptr: event_wait_list 
-						cl_event__ptr: event 
-
-	"This method was automatically generated."
-
-	"cl_int clEnqueueReadBuffer(
-			cl_command_queue command_queue, 
-			cl_mem buffer, 
-			cl_bool blocking_read, 
-			size_t offset, 
-			size_t size, 
-			void * ptr, 
-			cl_uint num_events_in_wait_list, 
-			const cl_event * event_wait_list, 
-			cl_event * event
-	);"
-	<apicall: long 'clEnqueueReadBuffer' (void* void* ulong ulong ulong void* ulong CLEvent* CLEvent*) module: 'OpenCL.framework'>
 
 	^self externalCallFailed! !
 
@@ -10546,6 +10546,34 @@ private_clEnqueueUnmapMemObject__cl_command_queue: command_queue
 	^self externalCallFailed! !
 
 !OpenCLMacOSInterface class methodsFor: 'FFI-generated-private-Enqueued Commands APIs'!
+private_clEnqueueWriteBuffer__cl_command_queue: command_queue 
+						cl_mem: buffer 
+						cl_bool: blocking_write 
+						size_t: offset 
+						size_t: size 
+						const__void__ptr: ptr 
+						cl_uint: num_events_in_wait_list 
+						const__cl_event__ptr: event_wait_list 
+						cl_event__ptr: event 
+
+	"This method was automatically generated."
+
+	"cl_int clEnqueueWriteBuffer(
+			cl_command_queue command_queue, 
+			cl_mem buffer, 
+			cl_bool blocking_write, 
+			size_t offset, 
+			size_t size, 
+			const void * ptr, 
+			cl_uint num_events_in_wait_list, 
+			const cl_event * event_wait_list, 
+			cl_event * event
+	);"
+	<apicall: long 'clEnqueueWriteBuffer' (void* void* ulong ulong ulong void* ulong CLEvent* CLEvent*) module: 'OpenCL.framework'>
+
+	^self externalCallFailed! !
+
+!OpenCLMacOSInterface class methodsFor: 'FFI-generated-private-Enqueued Commands APIs'!
 private_clEnqueueWriteBufferRect__cl_command_queue: command_queue 
 						cl_mem: buffer 
 						cl_bool: blocking_write 
@@ -10580,34 +10608,6 @@ private_clEnqueueWriteBufferRect__cl_command_queue: command_queue
 			cl_event * event
 	);"
 	<apicall: long 'clEnqueueWriteBufferRect' (void* void* ulong ulong* ulong* ulong* ulong ulong ulong ulong void* ulong CLEvent* CLEvent*) module: 'OpenCL.framework'>
-
-	^self externalCallFailed! !
-
-!OpenCLMacOSInterface class methodsFor: 'FFI-generated-private-Enqueued Commands APIs'!
-private_clEnqueueWriteBuffer__cl_command_queue: command_queue 
-						cl_mem: buffer 
-						cl_bool: blocking_write 
-						size_t: offset 
-						size_t: size 
-						const__void__ptr: ptr 
-						cl_uint: num_events_in_wait_list 
-						const__cl_event__ptr: event_wait_list 
-						cl_event__ptr: event 
-
-	"This method was automatically generated."
-
-	"cl_int clEnqueueWriteBuffer(
-			cl_command_queue command_queue, 
-			cl_mem buffer, 
-			cl_bool blocking_write, 
-			size_t offset, 
-			size_t size, 
-			const void * ptr, 
-			cl_uint num_events_in_wait_list, 
-			const cl_event * event_wait_list, 
-			cl_event * event
-	);"
-	<apicall: long 'clEnqueueWriteBuffer' (void* void* ulong ulong ulong void* ulong CLEvent* CLEvent*) module: 'OpenCL.framework'>
 
 	^self externalCallFailed! !
 
@@ -11253,25 +11253,6 @@ clEnqueueTask__cl_command_queue: command_queue
 	^ answer! !
 
 !OpenCLUnixInterface class methodsFor: 'FFI-generated-Context APIs'!
-clCreateContextFromType__const__cl_context_properties__ptr: properties 
-						cl_device_type: device_type 
-						void__ptrpfn_notifyconst__char__ptrconst__void__ptrsize_tvoid__ptr: pfn_notify 
-						void__ptr: user_data 
-						cl_int__ptr: errcode_ret 
-
-	"Public method. Needed for calling #getHandle on OpenCLOpaqueHandle arguments"
-
-	| answer |
-	answer := self private_clCreateContextFromType__const__cl_context_properties__ptr: properties 
-						cl_device_type: device_type 
-						void__ptrpfn_notifyconst__char__ptrconst__void__ptrsize_tvoid__ptr: pfn_notify 
-						void__ptr: user_data 
-						cl_int__ptr: errcode_ret .
-
-	answer := CLContext new setHandle: answer getHandle asByteArrayPointer.
-	^ answer! !
-
-!OpenCLUnixInterface class methodsFor: 'FFI-generated-Context APIs'!
 clCreateContext__const__cl_context_properties__ptr: properties 
 						cl_uint: num_devices 
 						const__cl_device_id__ptr: devices 
@@ -11285,6 +11266,25 @@ clCreateContext__const__cl_context_properties__ptr: properties
 	answer := self private_clCreateContext__const__cl_context_properties__ptr: properties 
 						cl_uint: num_devices 
 						const__cl_device_id__ptr: devices 
+						void__ptrpfn_notifyconst__char__ptrconst__void__ptrsize_tvoid__ptr: pfn_notify 
+						void__ptr: user_data 
+						cl_int__ptr: errcode_ret .
+
+	answer := CLContext new setHandle: answer getHandle asByteArrayPointer.
+	^ answer! !
+
+!OpenCLUnixInterface class methodsFor: 'FFI-generated-Context APIs'!
+clCreateContextFromType__const__cl_context_properties__ptr: properties 
+						cl_device_type: device_type 
+						void__ptrpfn_notifyconst__char__ptrconst__void__ptrsize_tvoid__ptr: pfn_notify 
+						void__ptr: user_data 
+						cl_int__ptr: errcode_ret 
+
+	"Public method. Needed for calling #getHandle on OpenCLOpaqueHandle arguments"
+
+	| answer |
+	answer := self private_clCreateContextFromType__const__cl_context_properties__ptr: properties 
+						cl_device_type: device_type 
 						void__ptrpfn_notifyconst__char__ptrconst__void__ptrsize_tvoid__ptr: pfn_notify 
 						void__ptr: user_data 
 						cl_int__ptr: errcode_ret .
@@ -11444,6 +11444,21 @@ clUnloadCompiler
 	^self externalCallFailed! !
 
 !OpenCLUnixInterface class methodsFor: 'FFI-generated-Kernel Object APIs'!
+clCreateKernel__cl_program: program 
+						const__char__ptr: kernel_name 
+						cl_int__ptr: errcode_ret 
+
+	"Public method. Needed for calling #getHandle on OpenCLOpaqueHandle arguments"
+
+	| answer |
+	answer := self private_clCreateKernel__cl_program: program getHandle asExternalPointer
+						const__char__ptr: kernel_name 
+						cl_int__ptr: errcode_ret .
+
+	answer := CLKernel new setHandle: answer getHandle asByteArrayPointer.
+	^ answer! !
+
+!OpenCLUnixInterface class methodsFor: 'FFI-generated-Kernel Object APIs'!
 clCreateKernelsInProgram__cl_program: program 
 						cl_uint: num_kernels 
 						cl_kernel__ptr: kernels 
@@ -11457,21 +11472,6 @@ clCreateKernelsInProgram__cl_program: program
 						cl_kernel__ptr: kernels 
 						cl_uint__ptr: num_kernels_ret .
 
-	^ answer! !
-
-!OpenCLUnixInterface class methodsFor: 'FFI-generated-Kernel Object APIs'!
-clCreateKernel__cl_program: program 
-						const__char__ptr: kernel_name 
-						cl_int__ptr: errcode_ret 
-
-	"Public method. Needed for calling #getHandle on OpenCLOpaqueHandle arguments"
-
-	| answer |
-	answer := self private_clCreateKernel__cl_program: program getHandle asExternalPointer
-						const__char__ptr: kernel_name 
-						cl_int__ptr: errcode_ret .
-
-	answer := CLKernel new setHandle: answer getHandle asByteArrayPointer.
 	^ answer! !
 
 !OpenCLUnixInterface class methodsFor: 'FFI-generated-Kernel Object APIs'!
@@ -11553,20 +11553,6 @@ clRetainKernel__cl_kernel: kernel
 	^ answer! !
 
 !OpenCLUnixInterface class methodsFor: 'FFI-generated-Kernel Object APIs'!
-clSetKernelArgSVMPointer__cl_kernel: kernel 
-						cl_uint: arg_index 
-						const__void__ptr: arg_value 
-
-	"Public method. Needed for calling #getHandle on OpenCLOpaqueHandle arguments"
-
-	| answer |
-	answer := self private_clSetKernelArgSVMPointer__cl_kernel: kernel getHandle asExternalPointer
-						cl_uint: arg_index 
-						const__void__ptr: arg_value .
-
-	^ answer! !
-
-!OpenCLUnixInterface class methodsFor: 'FFI-generated-Kernel Object APIs'!
 clSetKernelArg__cl_kernel: kernel 
 						cl_uint: arg_index 
 						size_t: arg_size 
@@ -11578,6 +11564,20 @@ clSetKernelArg__cl_kernel: kernel
 	answer := self private_clSetKernelArg__cl_kernel: kernel getHandle asExternalPointer
 						cl_uint: arg_index 
 						size_t: arg_size 
+						const__void__ptr: arg_value .
+
+	^ answer! !
+
+!OpenCLUnixInterface class methodsFor: 'FFI-generated-Kernel Object APIs'!
+clSetKernelArgSVMPointer__cl_kernel: kernel 
+						cl_uint: arg_index 
+						const__void__ptr: arg_value 
+
+	"Public method. Needed for calling #getHandle on OpenCLOpaqueHandle arguments"
+
+	| answer |
+	answer := self private_clSetKernelArgSVMPointer__cl_kernel: kernel getHandle asExternalPointer
+						cl_uint: arg_index 
 						const__void__ptr: arg_value .
 
 	^ answer! !
@@ -11835,6 +11835,32 @@ clEnqueueBarrierWithWaitList__cl_command_queue: command_queue
 	^ answer! !
 
 !OpenCLUnixInterface class methodsFor: 'FFI-generated-Enqueued Commands APIs'!
+clEnqueueCopyBuffer__cl_command_queue: command_queue 
+						cl_mem: src_buffer 
+						cl_mem: dst_buffer 
+						size_t: src_offset 
+						size_t: dst_offset 
+						size_t: size 
+						cl_uint: num_events_in_wait_list 
+						const__cl_event__ptr: event_wait_list 
+						cl_event__ptr: event 
+
+	"Public method. Needed for calling #getHandle on OpenCLOpaqueHandle arguments"
+
+	| answer |
+	answer := self private_clEnqueueCopyBuffer__cl_command_queue: command_queue getHandle asExternalPointer
+						cl_mem: src_buffer getHandle asExternalPointer
+						cl_mem: dst_buffer getHandle asExternalPointer
+						size_t: src_offset 
+						size_t: dst_offset 
+						size_t: size 
+						cl_uint: num_events_in_wait_list 
+						const__cl_event__ptr: event_wait_list 
+						cl_event__ptr: event .
+
+	^ answer! !
+
+!OpenCLUnixInterface class methodsFor: 'FFI-generated-Enqueued Commands APIs'!
 clEnqueueCopyBufferRect__cl_command_queue: command_queue 
 						cl_mem: src_buffer 
 						cl_mem: dst_buffer 
@@ -11895,12 +11921,12 @@ clEnqueueCopyBufferToImage__cl_command_queue: command_queue
 	^ answer! !
 
 !OpenCLUnixInterface class methodsFor: 'FFI-generated-Enqueued Commands APIs'!
-clEnqueueCopyBuffer__cl_command_queue: command_queue 
-						cl_mem: src_buffer 
-						cl_mem: dst_buffer 
-						size_t: src_offset 
-						size_t: dst_offset 
-						size_t: size 
+clEnqueueCopyImage__cl_command_queue: command_queue 
+						cl_mem: src_image 
+						cl_mem: dst_image 
+						const__size_t__ptr: src_origin 
+						const__size_t__ptr: dst_origin 
+						const__size_t__ptr: region 
 						cl_uint: num_events_in_wait_list 
 						const__cl_event__ptr: event_wait_list 
 						cl_event__ptr: event 
@@ -11908,12 +11934,12 @@ clEnqueueCopyBuffer__cl_command_queue: command_queue
 	"Public method. Needed for calling #getHandle on OpenCLOpaqueHandle arguments"
 
 	| answer |
-	answer := self private_clEnqueueCopyBuffer__cl_command_queue: command_queue getHandle asExternalPointer
-						cl_mem: src_buffer getHandle asExternalPointer
-						cl_mem: dst_buffer getHandle asExternalPointer
-						size_t: src_offset 
-						size_t: dst_offset 
-						size_t: size 
+	answer := self private_clEnqueueCopyImage__cl_command_queue: command_queue getHandle asExternalPointer
+						cl_mem: src_image getHandle asExternalPointer
+						cl_mem: dst_image getHandle asExternalPointer
+						const__size_t__ptr: src_origin 
+						const__size_t__ptr: dst_origin 
+						const__size_t__ptr: region 
 						cl_uint: num_events_in_wait_list 
 						const__cl_event__ptr: event_wait_list 
 						cl_event__ptr: event .
@@ -11940,32 +11966,6 @@ clEnqueueCopyImageToBuffer__cl_command_queue: command_queue
 						const__size_t__ptr: src_origin 
 						const__size_t__ptr: region 
 						size_t: dst_offset 
-						cl_uint: num_events_in_wait_list 
-						const__cl_event__ptr: event_wait_list 
-						cl_event__ptr: event .
-
-	^ answer! !
-
-!OpenCLUnixInterface class methodsFor: 'FFI-generated-Enqueued Commands APIs'!
-clEnqueueCopyImage__cl_command_queue: command_queue 
-						cl_mem: src_image 
-						cl_mem: dst_image 
-						const__size_t__ptr: src_origin 
-						const__size_t__ptr: dst_origin 
-						const__size_t__ptr: region 
-						cl_uint: num_events_in_wait_list 
-						const__cl_event__ptr: event_wait_list 
-						cl_event__ptr: event 
-
-	"Public method. Needed for calling #getHandle on OpenCLOpaqueHandle arguments"
-
-	| answer |
-	answer := self private_clEnqueueCopyImage__cl_command_queue: command_queue getHandle asExternalPointer
-						cl_mem: src_image getHandle asExternalPointer
-						cl_mem: dst_image getHandle asExternalPointer
-						const__size_t__ptr: src_origin 
-						const__size_t__ptr: dst_origin 
-						const__size_t__ptr: region 
 						cl_uint: num_events_in_wait_list 
 						const__cl_event__ptr: event_wait_list 
 						cl_event__ptr: event .
@@ -12173,6 +12173,32 @@ clEnqueueNativeKernel__cl_command_queue: command_queue
 	^ answer! !
 
 !OpenCLUnixInterface class methodsFor: 'FFI-generated-Enqueued Commands APIs'!
+clEnqueueReadBuffer__cl_command_queue: command_queue 
+						cl_mem: buffer 
+						cl_bool: blocking_read 
+						size_t: offset 
+						size_t: size 
+						void__ptr: ptr 
+						cl_uint: num_events_in_wait_list 
+						const__cl_event__ptr: event_wait_list 
+						cl_event__ptr: event 
+
+	"Public method. Needed for calling #getHandle on OpenCLOpaqueHandle arguments"
+
+	| answer |
+	answer := self private_clEnqueueReadBuffer__cl_command_queue: command_queue getHandle asExternalPointer
+						cl_mem: buffer getHandle asExternalPointer
+						cl_bool: blocking_read 
+						size_t: offset 
+						size_t: size 
+						void__ptr: ptr 
+						cl_uint: num_events_in_wait_list 
+						const__cl_event__ptr: event_wait_list 
+						cl_event__ptr: event .
+
+	^ answer! !
+
+!OpenCLUnixInterface class methodsFor: 'FFI-generated-Enqueued Commands APIs'!
 clEnqueueReadBufferRect__cl_command_queue: command_queue 
 						cl_mem: buffer 
 						cl_bool: blocking_read 
@@ -12201,32 +12227,6 @@ clEnqueueReadBufferRect__cl_command_queue: command_queue
 						size_t: buffer_slice_pitch 
 						size_t: host_row_pitch 
 						size_t: host_slice_pitch 
-						void__ptr: ptr 
-						cl_uint: num_events_in_wait_list 
-						const__cl_event__ptr: event_wait_list 
-						cl_event__ptr: event .
-
-	^ answer! !
-
-!OpenCLUnixInterface class methodsFor: 'FFI-generated-Enqueued Commands APIs'!
-clEnqueueReadBuffer__cl_command_queue: command_queue 
-						cl_mem: buffer 
-						cl_bool: blocking_read 
-						size_t: offset 
-						size_t: size 
-						void__ptr: ptr 
-						cl_uint: num_events_in_wait_list 
-						const__cl_event__ptr: event_wait_list 
-						cl_event__ptr: event 
-
-	"Public method. Needed for calling #getHandle on OpenCLOpaqueHandle arguments"
-
-	| answer |
-	answer := self private_clEnqueueReadBuffer__cl_command_queue: command_queue getHandle asExternalPointer
-						cl_mem: buffer getHandle asExternalPointer
-						cl_bool: blocking_read 
-						size_t: offset 
-						size_t: size 
 						void__ptr: ptr 
 						cl_uint: num_events_in_wait_list 
 						const__cl_event__ptr: event_wait_list 
@@ -12399,6 +12399,32 @@ clEnqueueUnmapMemObject__cl_command_queue: command_queue
 	^ answer! !
 
 !OpenCLUnixInterface class methodsFor: 'FFI-generated-Enqueued Commands APIs'!
+clEnqueueWriteBuffer__cl_command_queue: command_queue 
+						cl_mem: buffer 
+						cl_bool: blocking_write 
+						size_t: offset 
+						size_t: size 
+						const__void__ptr: ptr 
+						cl_uint: num_events_in_wait_list 
+						const__cl_event__ptr: event_wait_list 
+						cl_event__ptr: event 
+
+	"Public method. Needed for calling #getHandle on OpenCLOpaqueHandle arguments"
+
+	| answer |
+	answer := self private_clEnqueueWriteBuffer__cl_command_queue: command_queue getHandle asExternalPointer
+						cl_mem: buffer getHandle asExternalPointer
+						cl_bool: blocking_write 
+						size_t: offset 
+						size_t: size 
+						const__void__ptr: ptr 
+						cl_uint: num_events_in_wait_list 
+						const__cl_event__ptr: event_wait_list 
+						cl_event__ptr: event .
+
+	^ answer! !
+
+!OpenCLUnixInterface class methodsFor: 'FFI-generated-Enqueued Commands APIs'!
 clEnqueueWriteBufferRect__cl_command_queue: command_queue 
 						cl_mem: buffer 
 						cl_bool: blocking_write 
@@ -12427,32 +12453,6 @@ clEnqueueWriteBufferRect__cl_command_queue: command_queue
 						size_t: buffer_slice_pitch 
 						size_t: host_row_pitch 
 						size_t: host_slice_pitch 
-						const__void__ptr: ptr 
-						cl_uint: num_events_in_wait_list 
-						const__cl_event__ptr: event_wait_list 
-						cl_event__ptr: event .
-
-	^ answer! !
-
-!OpenCLUnixInterface class methodsFor: 'FFI-generated-Enqueued Commands APIs'!
-clEnqueueWriteBuffer__cl_command_queue: command_queue 
-						cl_mem: buffer 
-						cl_bool: blocking_write 
-						size_t: offset 
-						size_t: size 
-						const__void__ptr: ptr 
-						cl_uint: num_events_in_wait_list 
-						const__cl_event__ptr: event_wait_list 
-						cl_event__ptr: event 
-
-	"Public method. Needed for calling #getHandle on OpenCLOpaqueHandle arguments"
-
-	| answer |
-	answer := self private_clEnqueueWriteBuffer__cl_command_queue: command_queue getHandle asExternalPointer
-						cl_mem: buffer getHandle asExternalPointer
-						cl_bool: blocking_write 
-						size_t: offset 
-						size_t: size 
 						const__void__ptr: ptr 
 						cl_uint: num_events_in_wait_list 
 						const__cl_event__ptr: event_wait_list 
@@ -13158,26 +13158,6 @@ private_clEnqueueTask__cl_command_queue: command_queue
 	^self externalCallFailed! !
 
 !OpenCLUnixInterface class methodsFor: 'FFI-generated-private-Context APIs'!
-private_clCreateContextFromType__const__cl_context_properties__ptr: properties 
-						cl_device_type: device_type 
-						void__ptrpfn_notifyconst__char__ptrconst__void__ptrsize_tvoid__ptr: pfn_notify 
-						void__ptr: user_data 
-						cl_int__ptr: errcode_ret 
-
-	"This method was automatically generated."
-
-	"cl_context clCreateContextFromType(
-			const cl_context_properties * properties, 
-			cl_device_type device_type, 
-			void (*pfn_notify)(const char *, const void *, size_t, void *) pfn_notify, 
-			void * user_data, 
-			cl_int * errcode_ret
-	);"
-	<apicall: void* 'clCreateContextFromType' (void* ulonglong void* void* long*) module: 'libOpenCL.so.1'>
-
-	^self externalCallFailed! !
-
-!OpenCLUnixInterface class methodsFor: 'FFI-generated-private-Context APIs'!
 private_clCreateContext__const__cl_context_properties__ptr: properties 
 						cl_uint: num_devices 
 						const__cl_device_id__ptr: devices 
@@ -13196,6 +13176,26 @@ private_clCreateContext__const__cl_context_properties__ptr: properties
 			cl_int * errcode_ret
 	);"
 	<apicall: void* 'clCreateContext' (void* ulong CLDeviceID* void* void* long*) module: 'libOpenCL.so.1'>
+
+	^self externalCallFailed! !
+
+!OpenCLUnixInterface class methodsFor: 'FFI-generated-private-Context APIs'!
+private_clCreateContextFromType__const__cl_context_properties__ptr: properties 
+						cl_device_type: device_type 
+						void__ptrpfn_notifyconst__char__ptrconst__void__ptrsize_tvoid__ptr: pfn_notify 
+						void__ptr: user_data 
+						cl_int__ptr: errcode_ret 
+
+	"This method was automatically generated."
+
+	"cl_context clCreateContextFromType(
+			const cl_context_properties * properties, 
+			cl_device_type device_type, 
+			void (*pfn_notify)(const char *, const void *, size_t, void *) pfn_notify, 
+			void * user_data, 
+			cl_int * errcode_ret
+	);"
+	<apicall: void* 'clCreateContextFromType' (void* ulonglong void* void* long*) module: 'libOpenCL.so.1'>
 
 	^self externalCallFailed! !
 
@@ -13342,6 +13342,22 @@ private_clEnqueueWaitForEvents__cl_command_queue: command_queue
 	^self externalCallFailed! !
 
 !OpenCLUnixInterface class methodsFor: 'FFI-generated-private-Kernel Object APIs'!
+private_clCreateKernel__cl_program: program 
+						const__char__ptr: kernel_name 
+						cl_int__ptr: errcode_ret 
+
+	"This method was automatically generated."
+
+	"cl_kernel clCreateKernel(
+			cl_program program, 
+			const char * kernel_name, 
+			cl_int * errcode_ret
+	);"
+	<apicall: void* 'clCreateKernel' (void* schar* long*) module: 'libOpenCL.so.1'>
+
+	^self externalCallFailed! !
+
+!OpenCLUnixInterface class methodsFor: 'FFI-generated-private-Kernel Object APIs'!
 private_clCreateKernelsInProgram__cl_program: program 
 						cl_uint: num_kernels 
 						cl_kernel__ptr: kernels 
@@ -13356,22 +13372,6 @@ private_clCreateKernelsInProgram__cl_program: program
 			cl_uint * num_kernels_ret
 	);"
 	<apicall: long 'clCreateKernelsInProgram' (void* ulong CLKernel* ulong*) module: 'libOpenCL.so.1'>
-
-	^self externalCallFailed! !
-
-!OpenCLUnixInterface class methodsFor: 'FFI-generated-private-Kernel Object APIs'!
-private_clCreateKernel__cl_program: program 
-						const__char__ptr: kernel_name 
-						cl_int__ptr: errcode_ret 
-
-	"This method was automatically generated."
-
-	"cl_kernel clCreateKernel(
-			cl_program program, 
-			const char * kernel_name, 
-			cl_int * errcode_ret
-	);"
-	<apicall: void* 'clCreateKernel' (void* schar* long*) module: 'libOpenCL.so.1'>
 
 	^self externalCallFailed! !
 
@@ -13464,22 +13464,6 @@ private_clRetainKernel__cl_kernel: kernel
 	^self externalCallFailed! !
 
 !OpenCLUnixInterface class methodsFor: 'FFI-generated-private-Kernel Object APIs'!
-private_clSetKernelArgSVMPointer__cl_kernel: kernel 
-						cl_uint: arg_index 
-						const__void__ptr: arg_value 
-
-	"This method was automatically generated."
-
-	"cl_int clSetKernelArgSVMPointer(
-			cl_kernel kernel, 
-			cl_uint arg_index, 
-			const void * arg_value
-	);"
-	<apicall: long 'clSetKernelArgSVMPointer' (void* ulong void*) module: 'libOpenCL.so.1'>
-
-	^self externalCallFailed! !
-
-!OpenCLUnixInterface class methodsFor: 'FFI-generated-private-Kernel Object APIs'!
 private_clSetKernelArg__cl_kernel: kernel 
 						cl_uint: arg_index 
 						size_t: arg_size 
@@ -13494,6 +13478,22 @@ private_clSetKernelArg__cl_kernel: kernel
 			const void * arg_value
 	);"
 	<apicall: long 'clSetKernelArg' (void* ulong ulong void*) module: 'libOpenCL.so.1'>
+
+	^self externalCallFailed! !
+
+!OpenCLUnixInterface class methodsFor: 'FFI-generated-private-Kernel Object APIs'!
+private_clSetKernelArgSVMPointer__cl_kernel: kernel 
+						cl_uint: arg_index 
+						const__void__ptr: arg_value 
+
+	"This method was automatically generated."
+
+	"cl_int clSetKernelArgSVMPointer(
+			cl_kernel kernel, 
+			cl_uint arg_index, 
+			const void * arg_value
+	);"
+	<apicall: long 'clSetKernelArgSVMPointer' (void* ulong void*) module: 'libOpenCL.so.1'>
 
 	^self externalCallFailed! !
 
@@ -13768,6 +13768,34 @@ private_clEnqueueBarrierWithWaitList__cl_command_queue: command_queue
 	^self externalCallFailed! !
 
 !OpenCLUnixInterface class methodsFor: 'FFI-generated-private-Enqueued Commands APIs'!
+private_clEnqueueCopyBuffer__cl_command_queue: command_queue 
+						cl_mem: src_buffer 
+						cl_mem: dst_buffer 
+						size_t: src_offset 
+						size_t: dst_offset 
+						size_t: size 
+						cl_uint: num_events_in_wait_list 
+						const__cl_event__ptr: event_wait_list 
+						cl_event__ptr: event 
+
+	"This method was automatically generated."
+
+	"cl_int clEnqueueCopyBuffer(
+			cl_command_queue command_queue, 
+			cl_mem src_buffer, 
+			cl_mem dst_buffer, 
+			size_t src_offset, 
+			size_t dst_offset, 
+			size_t size, 
+			cl_uint num_events_in_wait_list, 
+			const cl_event * event_wait_list, 
+			cl_event * event
+	);"
+	<apicall: long 'clEnqueueCopyBuffer' (void* void* void* ulong ulong ulong ulong CLEvent* CLEvent*) module: 'libOpenCL.so.1'>
+
+	^self externalCallFailed! !
+
+!OpenCLUnixInterface class methodsFor: 'FFI-generated-private-Enqueued Commands APIs'!
 private_clEnqueueCopyBufferRect__cl_command_queue: command_queue 
 						cl_mem: src_buffer 
 						cl_mem: dst_buffer 
@@ -13832,30 +13860,30 @@ private_clEnqueueCopyBufferToImage__cl_command_queue: command_queue
 	^self externalCallFailed! !
 
 !OpenCLUnixInterface class methodsFor: 'FFI-generated-private-Enqueued Commands APIs'!
-private_clEnqueueCopyBuffer__cl_command_queue: command_queue 
-						cl_mem: src_buffer 
-						cl_mem: dst_buffer 
-						size_t: src_offset 
-						size_t: dst_offset 
-						size_t: size 
+private_clEnqueueCopyImage__cl_command_queue: command_queue 
+						cl_mem: src_image 
+						cl_mem: dst_image 
+						const__size_t__ptr: src_origin 
+						const__size_t__ptr: dst_origin 
+						const__size_t__ptr: region 
 						cl_uint: num_events_in_wait_list 
 						const__cl_event__ptr: event_wait_list 
 						cl_event__ptr: event 
 
 	"This method was automatically generated."
 
-	"cl_int clEnqueueCopyBuffer(
+	"cl_int clEnqueueCopyImage(
 			cl_command_queue command_queue, 
-			cl_mem src_buffer, 
-			cl_mem dst_buffer, 
-			size_t src_offset, 
-			size_t dst_offset, 
-			size_t size, 
+			cl_mem src_image, 
+			cl_mem dst_image, 
+			const size_t * src_origin[3], 
+			const size_t * dst_origin[3], 
+			const size_t * region[3], 
 			cl_uint num_events_in_wait_list, 
 			const cl_event * event_wait_list, 
 			cl_event * event
 	);"
-	<apicall: long 'clEnqueueCopyBuffer' (void* void* void* ulong ulong ulong ulong CLEvent* CLEvent*) module: 'libOpenCL.so.1'>
+	<apicall: long 'clEnqueueCopyImage' (void* void* void* ulong* ulong* ulong* ulong CLEvent* CLEvent*) module: 'libOpenCL.so.1'>
 
 	^self externalCallFailed! !
 
@@ -13884,34 +13912,6 @@ private_clEnqueueCopyImageToBuffer__cl_command_queue: command_queue
 			cl_event * event
 	);"
 	<apicall: long 'clEnqueueCopyImageToBuffer' (void* void* void* ulong* ulong* ulong ulong CLEvent* CLEvent*) module: 'libOpenCL.so.1'>
-
-	^self externalCallFailed! !
-
-!OpenCLUnixInterface class methodsFor: 'FFI-generated-private-Enqueued Commands APIs'!
-private_clEnqueueCopyImage__cl_command_queue: command_queue 
-						cl_mem: src_image 
-						cl_mem: dst_image 
-						const__size_t__ptr: src_origin 
-						const__size_t__ptr: dst_origin 
-						const__size_t__ptr: region 
-						cl_uint: num_events_in_wait_list 
-						const__cl_event__ptr: event_wait_list 
-						cl_event__ptr: event 
-
-	"This method was automatically generated."
-
-	"cl_int clEnqueueCopyImage(
-			cl_command_queue command_queue, 
-			cl_mem src_image, 
-			cl_mem dst_image, 
-			const size_t * src_origin[3], 
-			const size_t * dst_origin[3], 
-			const size_t * region[3], 
-			cl_uint num_events_in_wait_list, 
-			const cl_event * event_wait_list, 
-			cl_event * event
-	);"
-	<apicall: long 'clEnqueueCopyImage' (void* void* void* ulong* ulong* ulong* ulong CLEvent* CLEvent*) module: 'libOpenCL.so.1'>
 
 	^self externalCallFailed! !
 
@@ -14133,6 +14133,34 @@ private_clEnqueueNativeKernel__cl_command_queue: command_queue
 	^self externalCallFailed! !
 
 !OpenCLUnixInterface class methodsFor: 'FFI-generated-private-Enqueued Commands APIs'!
+private_clEnqueueReadBuffer__cl_command_queue: command_queue 
+						cl_mem: buffer 
+						cl_bool: blocking_read 
+						size_t: offset 
+						size_t: size 
+						void__ptr: ptr 
+						cl_uint: num_events_in_wait_list 
+						const__cl_event__ptr: event_wait_list 
+						cl_event__ptr: event 
+
+	"This method was automatically generated."
+
+	"cl_int clEnqueueReadBuffer(
+			cl_command_queue command_queue, 
+			cl_mem buffer, 
+			cl_bool blocking_read, 
+			size_t offset, 
+			size_t size, 
+			void * ptr, 
+			cl_uint num_events_in_wait_list, 
+			const cl_event * event_wait_list, 
+			cl_event * event
+	);"
+	<apicall: long 'clEnqueueReadBuffer' (void* void* ulong ulong ulong void* ulong CLEvent* CLEvent*) module: 'libOpenCL.so.1'>
+
+	^self externalCallFailed! !
+
+!OpenCLUnixInterface class methodsFor: 'FFI-generated-private-Enqueued Commands APIs'!
 private_clEnqueueReadBufferRect__cl_command_queue: command_queue 
 						cl_mem: buffer 
 						cl_bool: blocking_read 
@@ -14167,34 +14195,6 @@ private_clEnqueueReadBufferRect__cl_command_queue: command_queue
 			cl_event * event
 	);"
 	<apicall: long 'clEnqueueReadBufferRect' (void* void* ulong ulong* ulong* ulong* ulong ulong ulong ulong void* ulong CLEvent* CLEvent*) module: 'libOpenCL.so.1'>
-
-	^self externalCallFailed! !
-
-!OpenCLUnixInterface class methodsFor: 'FFI-generated-private-Enqueued Commands APIs'!
-private_clEnqueueReadBuffer__cl_command_queue: command_queue 
-						cl_mem: buffer 
-						cl_bool: blocking_read 
-						size_t: offset 
-						size_t: size 
-						void__ptr: ptr 
-						cl_uint: num_events_in_wait_list 
-						const__cl_event__ptr: event_wait_list 
-						cl_event__ptr: event 
-
-	"This method was automatically generated."
-
-	"cl_int clEnqueueReadBuffer(
-			cl_command_queue command_queue, 
-			cl_mem buffer, 
-			cl_bool blocking_read, 
-			size_t offset, 
-			size_t size, 
-			void * ptr, 
-			cl_uint num_events_in_wait_list, 
-			const cl_event * event_wait_list, 
-			cl_event * event
-	);"
-	<apicall: long 'clEnqueueReadBuffer' (void* void* ulong ulong ulong void* ulong CLEvent* CLEvent*) module: 'libOpenCL.so.1'>
 
 	^self externalCallFailed! !
 
@@ -14377,6 +14377,34 @@ private_clEnqueueUnmapMemObject__cl_command_queue: command_queue
 	^self externalCallFailed! !
 
 !OpenCLUnixInterface class methodsFor: 'FFI-generated-private-Enqueued Commands APIs'!
+private_clEnqueueWriteBuffer__cl_command_queue: command_queue 
+						cl_mem: buffer 
+						cl_bool: blocking_write 
+						size_t: offset 
+						size_t: size 
+						const__void__ptr: ptr 
+						cl_uint: num_events_in_wait_list 
+						const__cl_event__ptr: event_wait_list 
+						cl_event__ptr: event 
+
+	"This method was automatically generated."
+
+	"cl_int clEnqueueWriteBuffer(
+			cl_command_queue command_queue, 
+			cl_mem buffer, 
+			cl_bool blocking_write, 
+			size_t offset, 
+			size_t size, 
+			const void * ptr, 
+			cl_uint num_events_in_wait_list, 
+			const cl_event * event_wait_list, 
+			cl_event * event
+	);"
+	<apicall: long 'clEnqueueWriteBuffer' (void* void* ulong ulong ulong void* ulong CLEvent* CLEvent*) module: 'libOpenCL.so.1'>
+
+	^self externalCallFailed! !
+
+!OpenCLUnixInterface class methodsFor: 'FFI-generated-private-Enqueued Commands APIs'!
 private_clEnqueueWriteBufferRect__cl_command_queue: command_queue 
 						cl_mem: buffer 
 						cl_bool: blocking_write 
@@ -14411,34 +14439,6 @@ private_clEnqueueWriteBufferRect__cl_command_queue: command_queue
 			cl_event * event
 	);"
 	<apicall: long 'clEnqueueWriteBufferRect' (void* void* ulong ulong* ulong* ulong* ulong ulong ulong ulong void* ulong CLEvent* CLEvent*) module: 'libOpenCL.so.1'>
-
-	^self externalCallFailed! !
-
-!OpenCLUnixInterface class methodsFor: 'FFI-generated-private-Enqueued Commands APIs'!
-private_clEnqueueWriteBuffer__cl_command_queue: command_queue 
-						cl_mem: buffer 
-						cl_bool: blocking_write 
-						size_t: offset 
-						size_t: size 
-						const__void__ptr: ptr 
-						cl_uint: num_events_in_wait_list 
-						const__cl_event__ptr: event_wait_list 
-						cl_event__ptr: event 
-
-	"This method was automatically generated."
-
-	"cl_int clEnqueueWriteBuffer(
-			cl_command_queue command_queue, 
-			cl_mem buffer, 
-			cl_bool blocking_write, 
-			size_t offset, 
-			size_t size, 
-			const void * ptr, 
-			cl_uint num_events_in_wait_list, 
-			const cl_event * event_wait_list, 
-			cl_event * event
-	);"
-	<apicall: long 'clEnqueueWriteBuffer' (void* void* ulong ulong ulong void* ulong CLEvent* CLEvent*) module: 'libOpenCL.so.1'>
 
 	^self externalCallFailed! !
 
@@ -15084,25 +15084,6 @@ clEnqueueTask__cl_command_queue: command_queue
 	^ answer! !
 
 !OpenCLWindowsInterface class methodsFor: 'FFI-generated-Context APIs'!
-clCreateContextFromType__const__cl_context_properties__ptr: properties 
-						cl_device_type: device_type 
-						void__ptrpfn_notifyconst__char__ptrconst__void__ptrsize_tvoid__ptr: pfn_notify 
-						void__ptr: user_data 
-						cl_int__ptr: errcode_ret 
-
-	"Public method. Needed for calling #getHandle on OpenCLOpaqueHandle arguments"
-
-	| answer |
-	answer := self private_clCreateContextFromType__const__cl_context_properties__ptr: properties 
-						cl_device_type: device_type 
-						void__ptrpfn_notifyconst__char__ptrconst__void__ptrsize_tvoid__ptr: pfn_notify 
-						void__ptr: user_data 
-						cl_int__ptr: errcode_ret .
-
-	answer := CLContext new setHandle: answer getHandle asByteArrayPointer.
-	^ answer! !
-
-!OpenCLWindowsInterface class methodsFor: 'FFI-generated-Context APIs'!
 clCreateContext__const__cl_context_properties__ptr: properties 
 						cl_uint: num_devices 
 						const__cl_device_id__ptr: devices 
@@ -15116,6 +15097,25 @@ clCreateContext__const__cl_context_properties__ptr: properties
 	answer := self private_clCreateContext__const__cl_context_properties__ptr: properties 
 						cl_uint: num_devices 
 						const__cl_device_id__ptr: devices 
+						void__ptrpfn_notifyconst__char__ptrconst__void__ptrsize_tvoid__ptr: pfn_notify 
+						void__ptr: user_data 
+						cl_int__ptr: errcode_ret .
+
+	answer := CLContext new setHandle: answer getHandle asByteArrayPointer.
+	^ answer! !
+
+!OpenCLWindowsInterface class methodsFor: 'FFI-generated-Context APIs'!
+clCreateContextFromType__const__cl_context_properties__ptr: properties 
+						cl_device_type: device_type 
+						void__ptrpfn_notifyconst__char__ptrconst__void__ptrsize_tvoid__ptr: pfn_notify 
+						void__ptr: user_data 
+						cl_int__ptr: errcode_ret 
+
+	"Public method. Needed for calling #getHandle on OpenCLOpaqueHandle arguments"
+
+	| answer |
+	answer := self private_clCreateContextFromType__const__cl_context_properties__ptr: properties 
+						cl_device_type: device_type 
 						void__ptrpfn_notifyconst__char__ptrconst__void__ptrsize_tvoid__ptr: pfn_notify 
 						void__ptr: user_data 
 						cl_int__ptr: errcode_ret .
@@ -15275,6 +15275,21 @@ clUnloadCompiler
 	^self externalCallFailed! !
 
 !OpenCLWindowsInterface class methodsFor: 'FFI-generated-Kernel Object APIs'!
+clCreateKernel__cl_program: program 
+						const__char__ptr: kernel_name 
+						cl_int__ptr: errcode_ret 
+
+	"Public method. Needed for calling #getHandle on OpenCLOpaqueHandle arguments"
+
+	| answer |
+	answer := self private_clCreateKernel__cl_program: program getHandle asExternalPointer
+						const__char__ptr: kernel_name 
+						cl_int__ptr: errcode_ret .
+
+	answer := CLKernel new setHandle: answer getHandle asByteArrayPointer.
+	^ answer! !
+
+!OpenCLWindowsInterface class methodsFor: 'FFI-generated-Kernel Object APIs'!
 clCreateKernelsInProgram__cl_program: program 
 						cl_uint: num_kernels 
 						cl_kernel__ptr: kernels 
@@ -15288,21 +15303,6 @@ clCreateKernelsInProgram__cl_program: program
 						cl_kernel__ptr: kernels 
 						cl_uint__ptr: num_kernels_ret .
 
-	^ answer! !
-
-!OpenCLWindowsInterface class methodsFor: 'FFI-generated-Kernel Object APIs'!
-clCreateKernel__cl_program: program 
-						const__char__ptr: kernel_name 
-						cl_int__ptr: errcode_ret 
-
-	"Public method. Needed for calling #getHandle on OpenCLOpaqueHandle arguments"
-
-	| answer |
-	answer := self private_clCreateKernel__cl_program: program getHandle asExternalPointer
-						const__char__ptr: kernel_name 
-						cl_int__ptr: errcode_ret .
-
-	answer := CLKernel new setHandle: answer getHandle asByteArrayPointer.
 	^ answer! !
 
 !OpenCLWindowsInterface class methodsFor: 'FFI-generated-Kernel Object APIs'!
@@ -15384,20 +15384,6 @@ clRetainKernel__cl_kernel: kernel
 	^ answer! !
 
 !OpenCLWindowsInterface class methodsFor: 'FFI-generated-Kernel Object APIs'!
-clSetKernelArgSVMPointer__cl_kernel: kernel 
-						cl_uint: arg_index 
-						const__void__ptr: arg_value 
-
-	"Public method. Needed for calling #getHandle on OpenCLOpaqueHandle arguments"
-
-	| answer |
-	answer := self private_clSetKernelArgSVMPointer__cl_kernel: kernel getHandle asExternalPointer
-						cl_uint: arg_index 
-						const__void__ptr: arg_value .
-
-	^ answer! !
-
-!OpenCLWindowsInterface class methodsFor: 'FFI-generated-Kernel Object APIs'!
 clSetKernelArg__cl_kernel: kernel 
 						cl_uint: arg_index 
 						size_t: arg_size 
@@ -15409,6 +15395,20 @@ clSetKernelArg__cl_kernel: kernel
 	answer := self private_clSetKernelArg__cl_kernel: kernel getHandle asExternalPointer
 						cl_uint: arg_index 
 						size_t: arg_size 
+						const__void__ptr: arg_value .
+
+	^ answer! !
+
+!OpenCLWindowsInterface class methodsFor: 'FFI-generated-Kernel Object APIs'!
+clSetKernelArgSVMPointer__cl_kernel: kernel 
+						cl_uint: arg_index 
+						const__void__ptr: arg_value 
+
+	"Public method. Needed for calling #getHandle on OpenCLOpaqueHandle arguments"
+
+	| answer |
+	answer := self private_clSetKernelArgSVMPointer__cl_kernel: kernel getHandle asExternalPointer
+						cl_uint: arg_index 
 						const__void__ptr: arg_value .
 
 	^ answer! !
@@ -15666,6 +15666,32 @@ clEnqueueBarrierWithWaitList__cl_command_queue: command_queue
 	^ answer! !
 
 !OpenCLWindowsInterface class methodsFor: 'FFI-generated-Enqueued Commands APIs'!
+clEnqueueCopyBuffer__cl_command_queue: command_queue 
+						cl_mem: src_buffer 
+						cl_mem: dst_buffer 
+						size_t: src_offset 
+						size_t: dst_offset 
+						size_t: size 
+						cl_uint: num_events_in_wait_list 
+						const__cl_event__ptr: event_wait_list 
+						cl_event__ptr: event 
+
+	"Public method. Needed for calling #getHandle on OpenCLOpaqueHandle arguments"
+
+	| answer |
+	answer := self private_clEnqueueCopyBuffer__cl_command_queue: command_queue getHandle asExternalPointer
+						cl_mem: src_buffer getHandle asExternalPointer
+						cl_mem: dst_buffer getHandle asExternalPointer
+						size_t: src_offset 
+						size_t: dst_offset 
+						size_t: size 
+						cl_uint: num_events_in_wait_list 
+						const__cl_event__ptr: event_wait_list 
+						cl_event__ptr: event .
+
+	^ answer! !
+
+!OpenCLWindowsInterface class methodsFor: 'FFI-generated-Enqueued Commands APIs'!
 clEnqueueCopyBufferRect__cl_command_queue: command_queue 
 						cl_mem: src_buffer 
 						cl_mem: dst_buffer 
@@ -15726,12 +15752,12 @@ clEnqueueCopyBufferToImage__cl_command_queue: command_queue
 	^ answer! !
 
 !OpenCLWindowsInterface class methodsFor: 'FFI-generated-Enqueued Commands APIs'!
-clEnqueueCopyBuffer__cl_command_queue: command_queue 
-						cl_mem: src_buffer 
-						cl_mem: dst_buffer 
-						size_t: src_offset 
-						size_t: dst_offset 
-						size_t: size 
+clEnqueueCopyImage__cl_command_queue: command_queue 
+						cl_mem: src_image 
+						cl_mem: dst_image 
+						const__size_t__ptr: src_origin 
+						const__size_t__ptr: dst_origin 
+						const__size_t__ptr: region 
 						cl_uint: num_events_in_wait_list 
 						const__cl_event__ptr: event_wait_list 
 						cl_event__ptr: event 
@@ -15739,12 +15765,12 @@ clEnqueueCopyBuffer__cl_command_queue: command_queue
 	"Public method. Needed for calling #getHandle on OpenCLOpaqueHandle arguments"
 
 	| answer |
-	answer := self private_clEnqueueCopyBuffer__cl_command_queue: command_queue getHandle asExternalPointer
-						cl_mem: src_buffer getHandle asExternalPointer
-						cl_mem: dst_buffer getHandle asExternalPointer
-						size_t: src_offset 
-						size_t: dst_offset 
-						size_t: size 
+	answer := self private_clEnqueueCopyImage__cl_command_queue: command_queue getHandle asExternalPointer
+						cl_mem: src_image getHandle asExternalPointer
+						cl_mem: dst_image getHandle asExternalPointer
+						const__size_t__ptr: src_origin 
+						const__size_t__ptr: dst_origin 
+						const__size_t__ptr: region 
 						cl_uint: num_events_in_wait_list 
 						const__cl_event__ptr: event_wait_list 
 						cl_event__ptr: event .
@@ -15771,32 +15797,6 @@ clEnqueueCopyImageToBuffer__cl_command_queue: command_queue
 						const__size_t__ptr: src_origin 
 						const__size_t__ptr: region 
 						size_t: dst_offset 
-						cl_uint: num_events_in_wait_list 
-						const__cl_event__ptr: event_wait_list 
-						cl_event__ptr: event .
-
-	^ answer! !
-
-!OpenCLWindowsInterface class methodsFor: 'FFI-generated-Enqueued Commands APIs'!
-clEnqueueCopyImage__cl_command_queue: command_queue 
-						cl_mem: src_image 
-						cl_mem: dst_image 
-						const__size_t__ptr: src_origin 
-						const__size_t__ptr: dst_origin 
-						const__size_t__ptr: region 
-						cl_uint: num_events_in_wait_list 
-						const__cl_event__ptr: event_wait_list 
-						cl_event__ptr: event 
-
-	"Public method. Needed for calling #getHandle on OpenCLOpaqueHandle arguments"
-
-	| answer |
-	answer := self private_clEnqueueCopyImage__cl_command_queue: command_queue getHandle asExternalPointer
-						cl_mem: src_image getHandle asExternalPointer
-						cl_mem: dst_image getHandle asExternalPointer
-						const__size_t__ptr: src_origin 
-						const__size_t__ptr: dst_origin 
-						const__size_t__ptr: region 
 						cl_uint: num_events_in_wait_list 
 						const__cl_event__ptr: event_wait_list 
 						cl_event__ptr: event .
@@ -16004,6 +16004,32 @@ clEnqueueNativeKernel__cl_command_queue: command_queue
 	^ answer! !
 
 !OpenCLWindowsInterface class methodsFor: 'FFI-generated-Enqueued Commands APIs'!
+clEnqueueReadBuffer__cl_command_queue: command_queue 
+						cl_mem: buffer 
+						cl_bool: blocking_read 
+						size_t: offset 
+						size_t: size 
+						void__ptr: ptr 
+						cl_uint: num_events_in_wait_list 
+						const__cl_event__ptr: event_wait_list 
+						cl_event__ptr: event 
+
+	"Public method. Needed for calling #getHandle on OpenCLOpaqueHandle arguments"
+
+	| answer |
+	answer := self private_clEnqueueReadBuffer__cl_command_queue: command_queue getHandle asExternalPointer
+						cl_mem: buffer getHandle asExternalPointer
+						cl_bool: blocking_read 
+						size_t: offset 
+						size_t: size 
+						void__ptr: ptr 
+						cl_uint: num_events_in_wait_list 
+						const__cl_event__ptr: event_wait_list 
+						cl_event__ptr: event .
+
+	^ answer! !
+
+!OpenCLWindowsInterface class methodsFor: 'FFI-generated-Enqueued Commands APIs'!
 clEnqueueReadBufferRect__cl_command_queue: command_queue 
 						cl_mem: buffer 
 						cl_bool: blocking_read 
@@ -16032,32 +16058,6 @@ clEnqueueReadBufferRect__cl_command_queue: command_queue
 						size_t: buffer_slice_pitch 
 						size_t: host_row_pitch 
 						size_t: host_slice_pitch 
-						void__ptr: ptr 
-						cl_uint: num_events_in_wait_list 
-						const__cl_event__ptr: event_wait_list 
-						cl_event__ptr: event .
-
-	^ answer! !
-
-!OpenCLWindowsInterface class methodsFor: 'FFI-generated-Enqueued Commands APIs'!
-clEnqueueReadBuffer__cl_command_queue: command_queue 
-						cl_mem: buffer 
-						cl_bool: blocking_read 
-						size_t: offset 
-						size_t: size 
-						void__ptr: ptr 
-						cl_uint: num_events_in_wait_list 
-						const__cl_event__ptr: event_wait_list 
-						cl_event__ptr: event 
-
-	"Public method. Needed for calling #getHandle on OpenCLOpaqueHandle arguments"
-
-	| answer |
-	answer := self private_clEnqueueReadBuffer__cl_command_queue: command_queue getHandle asExternalPointer
-						cl_mem: buffer getHandle asExternalPointer
-						cl_bool: blocking_read 
-						size_t: offset 
-						size_t: size 
 						void__ptr: ptr 
 						cl_uint: num_events_in_wait_list 
 						const__cl_event__ptr: event_wait_list 
@@ -16230,6 +16230,32 @@ clEnqueueUnmapMemObject__cl_command_queue: command_queue
 	^ answer! !
 
 !OpenCLWindowsInterface class methodsFor: 'FFI-generated-Enqueued Commands APIs'!
+clEnqueueWriteBuffer__cl_command_queue: command_queue 
+						cl_mem: buffer 
+						cl_bool: blocking_write 
+						size_t: offset 
+						size_t: size 
+						const__void__ptr: ptr 
+						cl_uint: num_events_in_wait_list 
+						const__cl_event__ptr: event_wait_list 
+						cl_event__ptr: event 
+
+	"Public method. Needed for calling #getHandle on OpenCLOpaqueHandle arguments"
+
+	| answer |
+	answer := self private_clEnqueueWriteBuffer__cl_command_queue: command_queue getHandle asExternalPointer
+						cl_mem: buffer getHandle asExternalPointer
+						cl_bool: blocking_write 
+						size_t: offset 
+						size_t: size 
+						const__void__ptr: ptr 
+						cl_uint: num_events_in_wait_list 
+						const__cl_event__ptr: event_wait_list 
+						cl_event__ptr: event .
+
+	^ answer! !
+
+!OpenCLWindowsInterface class methodsFor: 'FFI-generated-Enqueued Commands APIs'!
 clEnqueueWriteBufferRect__cl_command_queue: command_queue 
 						cl_mem: buffer 
 						cl_bool: blocking_write 
@@ -16258,32 +16284,6 @@ clEnqueueWriteBufferRect__cl_command_queue: command_queue
 						size_t: buffer_slice_pitch 
 						size_t: host_row_pitch 
 						size_t: host_slice_pitch 
-						const__void__ptr: ptr 
-						cl_uint: num_events_in_wait_list 
-						const__cl_event__ptr: event_wait_list 
-						cl_event__ptr: event .
-
-	^ answer! !
-
-!OpenCLWindowsInterface class methodsFor: 'FFI-generated-Enqueued Commands APIs'!
-clEnqueueWriteBuffer__cl_command_queue: command_queue 
-						cl_mem: buffer 
-						cl_bool: blocking_write 
-						size_t: offset 
-						size_t: size 
-						const__void__ptr: ptr 
-						cl_uint: num_events_in_wait_list 
-						const__cl_event__ptr: event_wait_list 
-						cl_event__ptr: event 
-
-	"Public method. Needed for calling #getHandle on OpenCLOpaqueHandle arguments"
-
-	| answer |
-	answer := self private_clEnqueueWriteBuffer__cl_command_queue: command_queue getHandle asExternalPointer
-						cl_mem: buffer getHandle asExternalPointer
-						cl_bool: blocking_write 
-						size_t: offset 
-						size_t: size 
 						const__void__ptr: ptr 
 						cl_uint: num_events_in_wait_list 
 						const__cl_event__ptr: event_wait_list 
@@ -16989,26 +16989,6 @@ private_clEnqueueTask__cl_command_queue: command_queue
 	^self externalCallFailed! !
 
 !OpenCLWindowsInterface class methodsFor: 'FFI-generated-private-Context APIs'!
-private_clCreateContextFromType__const__cl_context_properties__ptr: properties 
-						cl_device_type: device_type 
-						void__ptrpfn_notifyconst__char__ptrconst__void__ptrsize_tvoid__ptr: pfn_notify 
-						void__ptr: user_data 
-						cl_int__ptr: errcode_ret 
-
-	"This method was automatically generated."
-
-	"cl_context clCreateContextFromType(
-			const cl_context_properties * properties, 
-			cl_device_type device_type, 
-			void (*pfn_notify)(const char *, const void *, size_t, void *) pfn_notify, 
-			void * user_data, 
-			cl_int * errcode_ret
-	);"
-	<apicall: void* 'clCreateContextFromType' (void* ulonglong void* void* long*) module: 'OpenCL.dll'>
-
-	^self externalCallFailed! !
-
-!OpenCLWindowsInterface class methodsFor: 'FFI-generated-private-Context APIs'!
 private_clCreateContext__const__cl_context_properties__ptr: properties 
 						cl_uint: num_devices 
 						const__cl_device_id__ptr: devices 
@@ -17027,6 +17007,26 @@ private_clCreateContext__const__cl_context_properties__ptr: properties
 			cl_int * errcode_ret
 	);"
 	<apicall: void* 'clCreateContext' (void* ulong CLDeviceID* void* void* long*) module: 'OpenCL.dll'>
+
+	^self externalCallFailed! !
+
+!OpenCLWindowsInterface class methodsFor: 'FFI-generated-private-Context APIs'!
+private_clCreateContextFromType__const__cl_context_properties__ptr: properties 
+						cl_device_type: device_type 
+						void__ptrpfn_notifyconst__char__ptrconst__void__ptrsize_tvoid__ptr: pfn_notify 
+						void__ptr: user_data 
+						cl_int__ptr: errcode_ret 
+
+	"This method was automatically generated."
+
+	"cl_context clCreateContextFromType(
+			const cl_context_properties * properties, 
+			cl_device_type device_type, 
+			void (*pfn_notify)(const char *, const void *, size_t, void *) pfn_notify, 
+			void * user_data, 
+			cl_int * errcode_ret
+	);"
+	<apicall: void* 'clCreateContextFromType' (void* ulonglong void* void* long*) module: 'OpenCL.dll'>
 
 	^self externalCallFailed! !
 
@@ -17173,6 +17173,22 @@ private_clEnqueueWaitForEvents__cl_command_queue: command_queue
 	^self externalCallFailed! !
 
 !OpenCLWindowsInterface class methodsFor: 'FFI-generated-private-Kernel Object APIs'!
+private_clCreateKernel__cl_program: program 
+						const__char__ptr: kernel_name 
+						cl_int__ptr: errcode_ret 
+
+	"This method was automatically generated."
+
+	"cl_kernel clCreateKernel(
+			cl_program program, 
+			const char * kernel_name, 
+			cl_int * errcode_ret
+	);"
+	<apicall: void* 'clCreateKernel' (void* schar* long*) module: 'OpenCL.dll'>
+
+	^self externalCallFailed! !
+
+!OpenCLWindowsInterface class methodsFor: 'FFI-generated-private-Kernel Object APIs'!
 private_clCreateKernelsInProgram__cl_program: program 
 						cl_uint: num_kernels 
 						cl_kernel__ptr: kernels 
@@ -17187,22 +17203,6 @@ private_clCreateKernelsInProgram__cl_program: program
 			cl_uint * num_kernels_ret
 	);"
 	<apicall: long 'clCreateKernelsInProgram' (void* ulong CLKernel* ulong*) module: 'OpenCL.dll'>
-
-	^self externalCallFailed! !
-
-!OpenCLWindowsInterface class methodsFor: 'FFI-generated-private-Kernel Object APIs'!
-private_clCreateKernel__cl_program: program 
-						const__char__ptr: kernel_name 
-						cl_int__ptr: errcode_ret 
-
-	"This method was automatically generated."
-
-	"cl_kernel clCreateKernel(
-			cl_program program, 
-			const char * kernel_name, 
-			cl_int * errcode_ret
-	);"
-	<apicall: void* 'clCreateKernel' (void* schar* long*) module: 'OpenCL.dll'>
 
 	^self externalCallFailed! !
 
@@ -17295,22 +17295,6 @@ private_clRetainKernel__cl_kernel: kernel
 	^self externalCallFailed! !
 
 !OpenCLWindowsInterface class methodsFor: 'FFI-generated-private-Kernel Object APIs'!
-private_clSetKernelArgSVMPointer__cl_kernel: kernel 
-						cl_uint: arg_index 
-						const__void__ptr: arg_value 
-
-	"This method was automatically generated."
-
-	"cl_int clSetKernelArgSVMPointer(
-			cl_kernel kernel, 
-			cl_uint arg_index, 
-			const void * arg_value
-	);"
-	<apicall: long 'clSetKernelArgSVMPointer' (void* ulong void*) module: 'OpenCL.dll'>
-
-	^self externalCallFailed! !
-
-!OpenCLWindowsInterface class methodsFor: 'FFI-generated-private-Kernel Object APIs'!
 private_clSetKernelArg__cl_kernel: kernel 
 						cl_uint: arg_index 
 						size_t: arg_size 
@@ -17325,6 +17309,22 @@ private_clSetKernelArg__cl_kernel: kernel
 			const void * arg_value
 	);"
 	<apicall: long 'clSetKernelArg' (void* ulong ulong void*) module: 'OpenCL.dll'>
+
+	^self externalCallFailed! !
+
+!OpenCLWindowsInterface class methodsFor: 'FFI-generated-private-Kernel Object APIs'!
+private_clSetKernelArgSVMPointer__cl_kernel: kernel 
+						cl_uint: arg_index 
+						const__void__ptr: arg_value 
+
+	"This method was automatically generated."
+
+	"cl_int clSetKernelArgSVMPointer(
+			cl_kernel kernel, 
+			cl_uint arg_index, 
+			const void * arg_value
+	);"
+	<apicall: long 'clSetKernelArgSVMPointer' (void* ulong void*) module: 'OpenCL.dll'>
 
 	^self externalCallFailed! !
 
@@ -17599,6 +17599,34 @@ private_clEnqueueBarrierWithWaitList__cl_command_queue: command_queue
 	^self externalCallFailed! !
 
 !OpenCLWindowsInterface class methodsFor: 'FFI-generated-private-Enqueued Commands APIs'!
+private_clEnqueueCopyBuffer__cl_command_queue: command_queue 
+						cl_mem: src_buffer 
+						cl_mem: dst_buffer 
+						size_t: src_offset 
+						size_t: dst_offset 
+						size_t: size 
+						cl_uint: num_events_in_wait_list 
+						const__cl_event__ptr: event_wait_list 
+						cl_event__ptr: event 
+
+	"This method was automatically generated."
+
+	"cl_int clEnqueueCopyBuffer(
+			cl_command_queue command_queue, 
+			cl_mem src_buffer, 
+			cl_mem dst_buffer, 
+			size_t src_offset, 
+			size_t dst_offset, 
+			size_t size, 
+			cl_uint num_events_in_wait_list, 
+			const cl_event * event_wait_list, 
+			cl_event * event
+	);"
+	<apicall: long 'clEnqueueCopyBuffer' (void* void* void* ulong ulong ulong ulong CLEvent* CLEvent*) module: 'OpenCL.dll'>
+
+	^self externalCallFailed! !
+
+!OpenCLWindowsInterface class methodsFor: 'FFI-generated-private-Enqueued Commands APIs'!
 private_clEnqueueCopyBufferRect__cl_command_queue: command_queue 
 						cl_mem: src_buffer 
 						cl_mem: dst_buffer 
@@ -17663,30 +17691,30 @@ private_clEnqueueCopyBufferToImage__cl_command_queue: command_queue
 	^self externalCallFailed! !
 
 !OpenCLWindowsInterface class methodsFor: 'FFI-generated-private-Enqueued Commands APIs'!
-private_clEnqueueCopyBuffer__cl_command_queue: command_queue 
-						cl_mem: src_buffer 
-						cl_mem: dst_buffer 
-						size_t: src_offset 
-						size_t: dst_offset 
-						size_t: size 
+private_clEnqueueCopyImage__cl_command_queue: command_queue 
+						cl_mem: src_image 
+						cl_mem: dst_image 
+						const__size_t__ptr: src_origin 
+						const__size_t__ptr: dst_origin 
+						const__size_t__ptr: region 
 						cl_uint: num_events_in_wait_list 
 						const__cl_event__ptr: event_wait_list 
 						cl_event__ptr: event 
 
 	"This method was automatically generated."
 
-	"cl_int clEnqueueCopyBuffer(
+	"cl_int clEnqueueCopyImage(
 			cl_command_queue command_queue, 
-			cl_mem src_buffer, 
-			cl_mem dst_buffer, 
-			size_t src_offset, 
-			size_t dst_offset, 
-			size_t size, 
+			cl_mem src_image, 
+			cl_mem dst_image, 
+			const size_t * src_origin[3], 
+			const size_t * dst_origin[3], 
+			const size_t * region[3], 
 			cl_uint num_events_in_wait_list, 
 			const cl_event * event_wait_list, 
 			cl_event * event
 	);"
-	<apicall: long 'clEnqueueCopyBuffer' (void* void* void* ulong ulong ulong ulong CLEvent* CLEvent*) module: 'OpenCL.dll'>
+	<apicall: long 'clEnqueueCopyImage' (void* void* void* ulong* ulong* ulong* ulong CLEvent* CLEvent*) module: 'OpenCL.dll'>
 
 	^self externalCallFailed! !
 
@@ -17715,34 +17743,6 @@ private_clEnqueueCopyImageToBuffer__cl_command_queue: command_queue
 			cl_event * event
 	);"
 	<apicall: long 'clEnqueueCopyImageToBuffer' (void* void* void* ulong* ulong* ulong ulong CLEvent* CLEvent*) module: 'OpenCL.dll'>
-
-	^self externalCallFailed! !
-
-!OpenCLWindowsInterface class methodsFor: 'FFI-generated-private-Enqueued Commands APIs'!
-private_clEnqueueCopyImage__cl_command_queue: command_queue 
-						cl_mem: src_image 
-						cl_mem: dst_image 
-						const__size_t__ptr: src_origin 
-						const__size_t__ptr: dst_origin 
-						const__size_t__ptr: region 
-						cl_uint: num_events_in_wait_list 
-						const__cl_event__ptr: event_wait_list 
-						cl_event__ptr: event 
-
-	"This method was automatically generated."
-
-	"cl_int clEnqueueCopyImage(
-			cl_command_queue command_queue, 
-			cl_mem src_image, 
-			cl_mem dst_image, 
-			const size_t * src_origin[3], 
-			const size_t * dst_origin[3], 
-			const size_t * region[3], 
-			cl_uint num_events_in_wait_list, 
-			const cl_event * event_wait_list, 
-			cl_event * event
-	);"
-	<apicall: long 'clEnqueueCopyImage' (void* void* void* ulong* ulong* ulong* ulong CLEvent* CLEvent*) module: 'OpenCL.dll'>
 
 	^self externalCallFailed! !
 
@@ -17964,6 +17964,34 @@ private_clEnqueueNativeKernel__cl_command_queue: command_queue
 	^self externalCallFailed! !
 
 !OpenCLWindowsInterface class methodsFor: 'FFI-generated-private-Enqueued Commands APIs'!
+private_clEnqueueReadBuffer__cl_command_queue: command_queue 
+						cl_mem: buffer 
+						cl_bool: blocking_read 
+						size_t: offset 
+						size_t: size 
+						void__ptr: ptr 
+						cl_uint: num_events_in_wait_list 
+						const__cl_event__ptr: event_wait_list 
+						cl_event__ptr: event 
+
+	"This method was automatically generated."
+
+	"cl_int clEnqueueReadBuffer(
+			cl_command_queue command_queue, 
+			cl_mem buffer, 
+			cl_bool blocking_read, 
+			size_t offset, 
+			size_t size, 
+			void * ptr, 
+			cl_uint num_events_in_wait_list, 
+			const cl_event * event_wait_list, 
+			cl_event * event
+	);"
+	<apicall: long 'clEnqueueReadBuffer' (void* void* ulong ulong ulong void* ulong CLEvent* CLEvent*) module: 'OpenCL.dll'>
+
+	^self externalCallFailed! !
+
+!OpenCLWindowsInterface class methodsFor: 'FFI-generated-private-Enqueued Commands APIs'!
 private_clEnqueueReadBufferRect__cl_command_queue: command_queue 
 						cl_mem: buffer 
 						cl_bool: blocking_read 
@@ -17998,34 +18026,6 @@ private_clEnqueueReadBufferRect__cl_command_queue: command_queue
 			cl_event * event
 	);"
 	<apicall: long 'clEnqueueReadBufferRect' (void* void* ulong ulong* ulong* ulong* ulong ulong ulong ulong void* ulong CLEvent* CLEvent*) module: 'OpenCL.dll'>
-
-	^self externalCallFailed! !
-
-!OpenCLWindowsInterface class methodsFor: 'FFI-generated-private-Enqueued Commands APIs'!
-private_clEnqueueReadBuffer__cl_command_queue: command_queue 
-						cl_mem: buffer 
-						cl_bool: blocking_read 
-						size_t: offset 
-						size_t: size 
-						void__ptr: ptr 
-						cl_uint: num_events_in_wait_list 
-						const__cl_event__ptr: event_wait_list 
-						cl_event__ptr: event 
-
-	"This method was automatically generated."
-
-	"cl_int clEnqueueReadBuffer(
-			cl_command_queue command_queue, 
-			cl_mem buffer, 
-			cl_bool blocking_read, 
-			size_t offset, 
-			size_t size, 
-			void * ptr, 
-			cl_uint num_events_in_wait_list, 
-			const cl_event * event_wait_list, 
-			cl_event * event
-	);"
-	<apicall: long 'clEnqueueReadBuffer' (void* void* ulong ulong ulong void* ulong CLEvent* CLEvent*) module: 'OpenCL.dll'>
 
 	^self externalCallFailed! !
 
@@ -18208,6 +18208,34 @@ private_clEnqueueUnmapMemObject__cl_command_queue: command_queue
 	^self externalCallFailed! !
 
 !OpenCLWindowsInterface class methodsFor: 'FFI-generated-private-Enqueued Commands APIs'!
+private_clEnqueueWriteBuffer__cl_command_queue: command_queue 
+						cl_mem: buffer 
+						cl_bool: blocking_write 
+						size_t: offset 
+						size_t: size 
+						const__void__ptr: ptr 
+						cl_uint: num_events_in_wait_list 
+						const__cl_event__ptr: event_wait_list 
+						cl_event__ptr: event 
+
+	"This method was automatically generated."
+
+	"cl_int clEnqueueWriteBuffer(
+			cl_command_queue command_queue, 
+			cl_mem buffer, 
+			cl_bool blocking_write, 
+			size_t offset, 
+			size_t size, 
+			const void * ptr, 
+			cl_uint num_events_in_wait_list, 
+			const cl_event * event_wait_list, 
+			cl_event * event
+	);"
+	<apicall: long 'clEnqueueWriteBuffer' (void* void* ulong ulong ulong void* ulong CLEvent* CLEvent*) module: 'OpenCL.dll'>
+
+	^self externalCallFailed! !
+
+!OpenCLWindowsInterface class methodsFor: 'FFI-generated-private-Enqueued Commands APIs'!
 private_clEnqueueWriteBufferRect__cl_command_queue: command_queue 
 						cl_mem: buffer 
 						cl_bool: blocking_write 
@@ -18242,34 +18270,6 @@ private_clEnqueueWriteBufferRect__cl_command_queue: command_queue
 			cl_event * event
 	);"
 	<apicall: long 'clEnqueueWriteBufferRect' (void* void* ulong ulong* ulong* ulong* ulong ulong ulong ulong void* ulong CLEvent* CLEvent*) module: 'OpenCL.dll'>
-
-	^self externalCallFailed! !
-
-!OpenCLWindowsInterface class methodsFor: 'FFI-generated-private-Enqueued Commands APIs'!
-private_clEnqueueWriteBuffer__cl_command_queue: command_queue 
-						cl_mem: buffer 
-						cl_bool: blocking_write 
-						size_t: offset 
-						size_t: size 
-						const__void__ptr: ptr 
-						cl_uint: num_events_in_wait_list 
-						const__cl_event__ptr: event_wait_list 
-						cl_event__ptr: event 
-
-	"This method was automatically generated."
-
-	"cl_int clEnqueueWriteBuffer(
-			cl_command_queue command_queue, 
-			cl_mem buffer, 
-			cl_bool blocking_write, 
-			size_t offset, 
-			size_t size, 
-			const void * ptr, 
-			cl_uint num_events_in_wait_list, 
-			const cl_event * event_wait_list, 
-			cl_event * event
-	);"
-	<apicall: long 'clEnqueueWriteBuffer' (void* void* ulong ulong ulong void* ulong CLEvent* CLEvent*) module: 'OpenCL.dll'>
 
 	^self externalCallFailed! !
 
@@ -18962,26 +18962,6 @@ clEnqueueTask__cl_command_queue: command_queue
 	^self externalCallFailed! !
 
 !OpenCLMacOS32BitsInterface class methodsFor: 'FFI-generated-Context APIs'!
-clCreateContextFromType__const__cl_context_properties__ptr: properties 
-						cl_device_type: device_type 
-						void__ptrpfn_notifyconst__char__ptrconst__void__ptrsize_tvoid__ptr: pfn_notify 
-						void__ptr: user_data 
-						cl_int__ptr: errcode_ret 
-
-	"This method was automatically generated."
-
-	"cl_context clCreateContextFromType(
-			const cl_context_properties * properties, 
-			cl_device_type device_type, 
-			void (*pfn_notify)(const char *, const void *, size_t, void *) pfn_notify, 
-			void * user_data, 
-			cl_int * errcode_ret
-	);"
-	<apicall: CLContext 'clCreateContextFromType' (void* ulonglong void* void* long*) module: 'OpenCL.framework'>
-
-	^self externalCallFailed! !
-
-!OpenCLMacOS32BitsInterface class methodsFor: 'FFI-generated-Context APIs'!
 clCreateContext__const__cl_context_properties__ptr: properties 
 						cl_uint: num_devices 
 						const__cl_device_id__ptr: devices 
@@ -19000,6 +18980,26 @@ clCreateContext__const__cl_context_properties__ptr: properties
 			cl_int * errcode_ret
 	);"
 	<apicall: CLContext 'clCreateContext' (void* ulong CLDeviceID* void* void* long*) module: 'OpenCL.framework'>
+
+	^self externalCallFailed! !
+
+!OpenCLMacOS32BitsInterface class methodsFor: 'FFI-generated-Context APIs'!
+clCreateContextFromType__const__cl_context_properties__ptr: properties 
+						cl_device_type: device_type 
+						void__ptrpfn_notifyconst__char__ptrconst__void__ptrsize_tvoid__ptr: pfn_notify 
+						void__ptr: user_data 
+						cl_int__ptr: errcode_ret 
+
+	"This method was automatically generated."
+
+	"cl_context clCreateContextFromType(
+			const cl_context_properties * properties, 
+			cl_device_type device_type, 
+			void (*pfn_notify)(const char *, const void *, size_t, void *) pfn_notify, 
+			void * user_data, 
+			cl_int * errcode_ret
+	);"
+	<apicall: CLContext 'clCreateContextFromType' (void* ulonglong void* void* long*) module: 'OpenCL.framework'>
 
 	^self externalCallFailed! !
 
@@ -19169,6 +19169,22 @@ clUnloadCompiler
 	^self externalCallFailed! !
 
 !OpenCLMacOS32BitsInterface class methodsFor: 'FFI-generated-Kernel Object APIs'!
+clCreateKernel__cl_program: program 
+						const__char__ptr: kernel_name 
+						cl_int__ptr: errcode_ret 
+
+	"This method was automatically generated."
+
+	"cl_kernel clCreateKernel(
+			cl_program program, 
+			const char * kernel_name, 
+			cl_int * errcode_ret
+	);"
+	<apicall: CLKernel 'clCreateKernel' (CLProgram schar* long*) module: 'OpenCL.framework'>
+
+	^self externalCallFailed! !
+
+!OpenCLMacOS32BitsInterface class methodsFor: 'FFI-generated-Kernel Object APIs'!
 clCreateKernelsInProgram__cl_program: program 
 						cl_uint: num_kernels 
 						cl_kernel__ptr: kernels 
@@ -19183,22 +19199,6 @@ clCreateKernelsInProgram__cl_program: program
 			cl_uint * num_kernels_ret
 	);"
 	<apicall: long 'clCreateKernelsInProgram' (CLProgram ulong CLKernel* ulong*) module: 'OpenCL.framework'>
-
-	^self externalCallFailed! !
-
-!OpenCLMacOS32BitsInterface class methodsFor: 'FFI-generated-Kernel Object APIs'!
-clCreateKernel__cl_program: program 
-						const__char__ptr: kernel_name 
-						cl_int__ptr: errcode_ret 
-
-	"This method was automatically generated."
-
-	"cl_kernel clCreateKernel(
-			cl_program program, 
-			const char * kernel_name, 
-			cl_int * errcode_ret
-	);"
-	<apicall: CLKernel 'clCreateKernel' (CLProgram schar* long*) module: 'OpenCL.framework'>
 
 	^self externalCallFailed! !
 
@@ -19291,22 +19291,6 @@ clRetainKernel__cl_kernel: kernel
 	^self externalCallFailed! !
 
 !OpenCLMacOS32BitsInterface class methodsFor: 'FFI-generated-Kernel Object APIs'!
-clSetKernelArgSVMPointer__cl_kernel: kernel 
-						cl_uint: arg_index 
-						const__void__ptr: arg_value 
-
-	"This method was automatically generated."
-
-	"cl_int clSetKernelArgSVMPointer(
-			cl_kernel kernel, 
-			cl_uint arg_index, 
-			const void * arg_value
-	);"
-	<apicall: long 'clSetKernelArgSVMPointer' (CLKernel ulong void*) module: 'OpenCL.framework'>
-
-	^self externalCallFailed! !
-
-!OpenCLMacOS32BitsInterface class methodsFor: 'FFI-generated-Kernel Object APIs'!
 clSetKernelArg__cl_kernel: kernel 
 						cl_uint: arg_index 
 						size_t: arg_size 
@@ -19321,6 +19305,22 @@ clSetKernelArg__cl_kernel: kernel
 			const void * arg_value
 	);"
 	<apicall: long 'clSetKernelArg' (CLKernel ulong ulong void*) module: 'OpenCL.framework'>
+
+	^self externalCallFailed! !
+
+!OpenCLMacOS32BitsInterface class methodsFor: 'FFI-generated-Kernel Object APIs'!
+clSetKernelArgSVMPointer__cl_kernel: kernel 
+						cl_uint: arg_index 
+						const__void__ptr: arg_value 
+
+	"This method was automatically generated."
+
+	"cl_int clSetKernelArgSVMPointer(
+			cl_kernel kernel, 
+			cl_uint arg_index, 
+			const void * arg_value
+	);"
+	<apicall: long 'clSetKernelArgSVMPointer' (CLKernel ulong void*) module: 'OpenCL.framework'>
 
 	^self externalCallFailed! !
 
@@ -19609,6 +19609,34 @@ clEnqueueBarrierWithWaitList__cl_command_queue: command_queue
 	^self externalCallFailed! !
 
 !OpenCLMacOS32BitsInterface class methodsFor: 'FFI-generated-Enqueued Commands APIs'!
+clEnqueueCopyBuffer__cl_command_queue: command_queue 
+						cl_mem: src_buffer 
+						cl_mem: dst_buffer 
+						size_t: src_offset 
+						size_t: dst_offset 
+						size_t: size 
+						cl_uint: num_events_in_wait_list 
+						const__cl_event__ptr: event_wait_list 
+						cl_event__ptr: event 
+
+	"This method was automatically generated."
+
+	"cl_int clEnqueueCopyBuffer(
+			cl_command_queue command_queue, 
+			cl_mem src_buffer, 
+			cl_mem dst_buffer, 
+			size_t src_offset, 
+			size_t dst_offset, 
+			size_t size, 
+			cl_uint num_events_in_wait_list, 
+			const cl_event * event_wait_list, 
+			cl_event * event
+	);"
+	<apicall: long 'clEnqueueCopyBuffer' (CLCommandQueue CLMem CLMem ulong ulong ulong ulong CLEvent* CLEvent*) module: 'OpenCL.framework'>
+
+	^self externalCallFailed! !
+
+!OpenCLMacOS32BitsInterface class methodsFor: 'FFI-generated-Enqueued Commands APIs'!
 clEnqueueCopyBufferRect__cl_command_queue: command_queue 
 						cl_mem: src_buffer 
 						cl_mem: dst_buffer 
@@ -19673,30 +19701,30 @@ clEnqueueCopyBufferToImage__cl_command_queue: command_queue
 	^self externalCallFailed! !
 
 !OpenCLMacOS32BitsInterface class methodsFor: 'FFI-generated-Enqueued Commands APIs'!
-clEnqueueCopyBuffer__cl_command_queue: command_queue 
-						cl_mem: src_buffer 
-						cl_mem: dst_buffer 
-						size_t: src_offset 
-						size_t: dst_offset 
-						size_t: size 
+clEnqueueCopyImage__cl_command_queue: command_queue 
+						cl_mem: src_image 
+						cl_mem: dst_image 
+						const__size_t__ptr: src_origin 
+						const__size_t__ptr: dst_origin 
+						const__size_t__ptr: region 
 						cl_uint: num_events_in_wait_list 
 						const__cl_event__ptr: event_wait_list 
 						cl_event__ptr: event 
 
 	"This method was automatically generated."
 
-	"cl_int clEnqueueCopyBuffer(
+	"cl_int clEnqueueCopyImage(
 			cl_command_queue command_queue, 
-			cl_mem src_buffer, 
-			cl_mem dst_buffer, 
-			size_t src_offset, 
-			size_t dst_offset, 
-			size_t size, 
+			cl_mem src_image, 
+			cl_mem dst_image, 
+			const size_t * src_origin[3], 
+			const size_t * dst_origin[3], 
+			const size_t * region[3], 
 			cl_uint num_events_in_wait_list, 
 			const cl_event * event_wait_list, 
 			cl_event * event
 	);"
-	<apicall: long 'clEnqueueCopyBuffer' (CLCommandQueue CLMem CLMem ulong ulong ulong ulong CLEvent* CLEvent*) module: 'OpenCL.framework'>
+	<apicall: long 'clEnqueueCopyImage' (CLCommandQueue CLMem CLMem ulong* ulong* ulong* ulong CLEvent* CLEvent*) module: 'OpenCL.framework'>
 
 	^self externalCallFailed! !
 
@@ -19725,34 +19753,6 @@ clEnqueueCopyImageToBuffer__cl_command_queue: command_queue
 			cl_event * event
 	);"
 	<apicall: long 'clEnqueueCopyImageToBuffer' (CLCommandQueue CLMem CLMem ulong* ulong* ulong ulong CLEvent* CLEvent*) module: 'OpenCL.framework'>
-
-	^self externalCallFailed! !
-
-!OpenCLMacOS32BitsInterface class methodsFor: 'FFI-generated-Enqueued Commands APIs'!
-clEnqueueCopyImage__cl_command_queue: command_queue 
-						cl_mem: src_image 
-						cl_mem: dst_image 
-						const__size_t__ptr: src_origin 
-						const__size_t__ptr: dst_origin 
-						const__size_t__ptr: region 
-						cl_uint: num_events_in_wait_list 
-						const__cl_event__ptr: event_wait_list 
-						cl_event__ptr: event 
-
-	"This method was automatically generated."
-
-	"cl_int clEnqueueCopyImage(
-			cl_command_queue command_queue, 
-			cl_mem src_image, 
-			cl_mem dst_image, 
-			const size_t * src_origin[3], 
-			const size_t * dst_origin[3], 
-			const size_t * region[3], 
-			cl_uint num_events_in_wait_list, 
-			const cl_event * event_wait_list, 
-			cl_event * event
-	);"
-	<apicall: long 'clEnqueueCopyImage' (CLCommandQueue CLMem CLMem ulong* ulong* ulong* ulong CLEvent* CLEvent*) module: 'OpenCL.framework'>
 
 	^self externalCallFailed! !
 
@@ -19974,6 +19974,34 @@ clEnqueueNativeKernel__cl_command_queue: command_queue
 	^self externalCallFailed! !
 
 !OpenCLMacOS32BitsInterface class methodsFor: 'FFI-generated-Enqueued Commands APIs'!
+clEnqueueReadBuffer__cl_command_queue: command_queue 
+						cl_mem: buffer 
+						cl_bool: blocking_read 
+						size_t: offset 
+						size_t: size 
+						void__ptr: ptr 
+						cl_uint: num_events_in_wait_list 
+						const__cl_event__ptr: event_wait_list 
+						cl_event__ptr: event 
+
+	"This method was automatically generated."
+
+	"cl_int clEnqueueReadBuffer(
+			cl_command_queue command_queue, 
+			cl_mem buffer, 
+			cl_bool blocking_read, 
+			size_t offset, 
+			size_t size, 
+			void * ptr, 
+			cl_uint num_events_in_wait_list, 
+			const cl_event * event_wait_list, 
+			cl_event * event
+	);"
+	<apicall: long 'clEnqueueReadBuffer' (CLCommandQueue CLMem ulong ulong ulong void* ulong CLEvent* CLEvent*) module: 'OpenCL.framework'>
+
+	^self externalCallFailed! !
+
+!OpenCLMacOS32BitsInterface class methodsFor: 'FFI-generated-Enqueued Commands APIs'!
 clEnqueueReadBufferRect__cl_command_queue: command_queue 
 						cl_mem: buffer 
 						cl_bool: blocking_read 
@@ -20008,34 +20036,6 @@ clEnqueueReadBufferRect__cl_command_queue: command_queue
 			cl_event * event
 	);"
 	<apicall: long 'clEnqueueReadBufferRect' (CLCommandQueue CLMem ulong ulong* ulong* ulong* ulong ulong ulong ulong void* ulong CLEvent* CLEvent*) module: 'OpenCL.framework'>
-
-	^self externalCallFailed! !
-
-!OpenCLMacOS32BitsInterface class methodsFor: 'FFI-generated-Enqueued Commands APIs'!
-clEnqueueReadBuffer__cl_command_queue: command_queue 
-						cl_mem: buffer 
-						cl_bool: blocking_read 
-						size_t: offset 
-						size_t: size 
-						void__ptr: ptr 
-						cl_uint: num_events_in_wait_list 
-						const__cl_event__ptr: event_wait_list 
-						cl_event__ptr: event 
-
-	"This method was automatically generated."
-
-	"cl_int clEnqueueReadBuffer(
-			cl_command_queue command_queue, 
-			cl_mem buffer, 
-			cl_bool blocking_read, 
-			size_t offset, 
-			size_t size, 
-			void * ptr, 
-			cl_uint num_events_in_wait_list, 
-			const cl_event * event_wait_list, 
-			cl_event * event
-	);"
-	<apicall: long 'clEnqueueReadBuffer' (CLCommandQueue CLMem ulong ulong ulong void* ulong CLEvent* CLEvent*) module: 'OpenCL.framework'>
 
 	^self externalCallFailed! !
 
@@ -20218,6 +20218,34 @@ clEnqueueUnmapMemObject__cl_command_queue: command_queue
 	^self externalCallFailed! !
 
 !OpenCLMacOS32BitsInterface class methodsFor: 'FFI-generated-Enqueued Commands APIs'!
+clEnqueueWriteBuffer__cl_command_queue: command_queue 
+						cl_mem: buffer 
+						cl_bool: blocking_write 
+						size_t: offset 
+						size_t: size 
+						const__void__ptr: ptr 
+						cl_uint: num_events_in_wait_list 
+						const__cl_event__ptr: event_wait_list 
+						cl_event__ptr: event 
+
+	"This method was automatically generated."
+
+	"cl_int clEnqueueWriteBuffer(
+			cl_command_queue command_queue, 
+			cl_mem buffer, 
+			cl_bool blocking_write, 
+			size_t offset, 
+			size_t size, 
+			const void * ptr, 
+			cl_uint num_events_in_wait_list, 
+			const cl_event * event_wait_list, 
+			cl_event * event
+	);"
+	<apicall: long 'clEnqueueWriteBuffer' (CLCommandQueue CLMem ulong ulong ulong void* ulong CLEvent* CLEvent*) module: 'OpenCL.framework'>
+
+	^self externalCallFailed! !
+
+!OpenCLMacOS32BitsInterface class methodsFor: 'FFI-generated-Enqueued Commands APIs'!
 clEnqueueWriteBufferRect__cl_command_queue: command_queue 
 						cl_mem: buffer 
 						cl_bool: blocking_write 
@@ -20252,34 +20280,6 @@ clEnqueueWriteBufferRect__cl_command_queue: command_queue
 			cl_event * event
 	);"
 	<apicall: long 'clEnqueueWriteBufferRect' (CLCommandQueue CLMem ulong ulong* ulong* ulong* ulong ulong ulong ulong void* ulong CLEvent* CLEvent*) module: 'OpenCL.framework'>
-
-	^self externalCallFailed! !
-
-!OpenCLMacOS32BitsInterface class methodsFor: 'FFI-generated-Enqueued Commands APIs'!
-clEnqueueWriteBuffer__cl_command_queue: command_queue 
-						cl_mem: buffer 
-						cl_bool: blocking_write 
-						size_t: offset 
-						size_t: size 
-						const__void__ptr: ptr 
-						cl_uint: num_events_in_wait_list 
-						const__cl_event__ptr: event_wait_list 
-						cl_event__ptr: event 
-
-	"This method was automatically generated."
-
-	"cl_int clEnqueueWriteBuffer(
-			cl_command_queue command_queue, 
-			cl_mem buffer, 
-			cl_bool blocking_write, 
-			size_t offset, 
-			size_t size, 
-			const void * ptr, 
-			cl_uint num_events_in_wait_list, 
-			const cl_event * event_wait_list, 
-			cl_event * event
-	);"
-	<apicall: long 'clEnqueueWriteBuffer' (CLCommandQueue CLMem ulong ulong ulong void* ulong CLEvent* CLEvent*) module: 'OpenCL.framework'>
 
 	^self externalCallFailed! !
 
@@ -20997,26 +20997,6 @@ clEnqueueTask__cl_command_queue: command_queue
 	^self externalCallFailed! !
 
 !OpenCLUnix32BitsInterface class methodsFor: 'FFI-generated-Context APIs'!
-clCreateContextFromType__const__cl_context_properties__ptr: properties 
-						cl_device_type: device_type 
-						void__ptrpfn_notifyconst__char__ptrconst__void__ptrsize_tvoid__ptr: pfn_notify 
-						void__ptr: user_data 
-						cl_int__ptr: errcode_ret 
-
-	"This method was automatically generated."
-
-	"cl_context clCreateContextFromType(
-			const cl_context_properties * properties, 
-			cl_device_type device_type, 
-			void (*pfn_notify)(const char *, const void *, size_t, void *) pfn_notify, 
-			void * user_data, 
-			cl_int * errcode_ret
-	);"
-	<apicall: CLContext 'clCreateContextFromType' (void* ulonglong void* void* long*) module: 'libOpenCL.so.1'>
-
-	^self externalCallFailed! !
-
-!OpenCLUnix32BitsInterface class methodsFor: 'FFI-generated-Context APIs'!
 clCreateContext__const__cl_context_properties__ptr: properties 
 						cl_uint: num_devices 
 						const__cl_device_id__ptr: devices 
@@ -21035,6 +21015,26 @@ clCreateContext__const__cl_context_properties__ptr: properties
 			cl_int * errcode_ret
 	);"
 	<apicall: CLContext 'clCreateContext' (void* ulong CLDeviceID* void* void* long*) module: 'libOpenCL.so.1'>
+
+	^self externalCallFailed! !
+
+!OpenCLUnix32BitsInterface class methodsFor: 'FFI-generated-Context APIs'!
+clCreateContextFromType__const__cl_context_properties__ptr: properties 
+						cl_device_type: device_type 
+						void__ptrpfn_notifyconst__char__ptrconst__void__ptrsize_tvoid__ptr: pfn_notify 
+						void__ptr: user_data 
+						cl_int__ptr: errcode_ret 
+
+	"This method was automatically generated."
+
+	"cl_context clCreateContextFromType(
+			const cl_context_properties * properties, 
+			cl_device_type device_type, 
+			void (*pfn_notify)(const char *, const void *, size_t, void *) pfn_notify, 
+			void * user_data, 
+			cl_int * errcode_ret
+	);"
+	<apicall: CLContext 'clCreateContextFromType' (void* ulonglong void* void* long*) module: 'libOpenCL.so.1'>
 
 	^self externalCallFailed! !
 
@@ -21204,6 +21204,22 @@ clUnloadCompiler
 	^self externalCallFailed! !
 
 !OpenCLUnix32BitsInterface class methodsFor: 'FFI-generated-Kernel Object APIs'!
+clCreateKernel__cl_program: program 
+						const__char__ptr: kernel_name 
+						cl_int__ptr: errcode_ret 
+
+	"This method was automatically generated."
+
+	"cl_kernel clCreateKernel(
+			cl_program program, 
+			const char * kernel_name, 
+			cl_int * errcode_ret
+	);"
+	<apicall: CLKernel 'clCreateKernel' (CLProgram schar* long*) module: 'libOpenCL.so.1'>
+
+	^self externalCallFailed! !
+
+!OpenCLUnix32BitsInterface class methodsFor: 'FFI-generated-Kernel Object APIs'!
 clCreateKernelsInProgram__cl_program: program 
 						cl_uint: num_kernels 
 						cl_kernel__ptr: kernels 
@@ -21218,22 +21234,6 @@ clCreateKernelsInProgram__cl_program: program
 			cl_uint * num_kernels_ret
 	);"
 	<apicall: long 'clCreateKernelsInProgram' (CLProgram ulong CLKernel* ulong*) module: 'libOpenCL.so.1'>
-
-	^self externalCallFailed! !
-
-!OpenCLUnix32BitsInterface class methodsFor: 'FFI-generated-Kernel Object APIs'!
-clCreateKernel__cl_program: program 
-						const__char__ptr: kernel_name 
-						cl_int__ptr: errcode_ret 
-
-	"This method was automatically generated."
-
-	"cl_kernel clCreateKernel(
-			cl_program program, 
-			const char * kernel_name, 
-			cl_int * errcode_ret
-	);"
-	<apicall: CLKernel 'clCreateKernel' (CLProgram schar* long*) module: 'libOpenCL.so.1'>
 
 	^self externalCallFailed! !
 
@@ -21326,22 +21326,6 @@ clRetainKernel__cl_kernel: kernel
 	^self externalCallFailed! !
 
 !OpenCLUnix32BitsInterface class methodsFor: 'FFI-generated-Kernel Object APIs'!
-clSetKernelArgSVMPointer__cl_kernel: kernel 
-						cl_uint: arg_index 
-						const__void__ptr: arg_value 
-
-	"This method was automatically generated."
-
-	"cl_int clSetKernelArgSVMPointer(
-			cl_kernel kernel, 
-			cl_uint arg_index, 
-			const void * arg_value
-	);"
-	<apicall: long 'clSetKernelArgSVMPointer' (CLKernel ulong void*) module: 'libOpenCL.so.1'>
-
-	^self externalCallFailed! !
-
-!OpenCLUnix32BitsInterface class methodsFor: 'FFI-generated-Kernel Object APIs'!
 clSetKernelArg__cl_kernel: kernel 
 						cl_uint: arg_index 
 						size_t: arg_size 
@@ -21356,6 +21340,22 @@ clSetKernelArg__cl_kernel: kernel
 			const void * arg_value
 	);"
 	<apicall: long 'clSetKernelArg' (CLKernel ulong ulong void*) module: 'libOpenCL.so.1'>
+
+	^self externalCallFailed! !
+
+!OpenCLUnix32BitsInterface class methodsFor: 'FFI-generated-Kernel Object APIs'!
+clSetKernelArgSVMPointer__cl_kernel: kernel 
+						cl_uint: arg_index 
+						const__void__ptr: arg_value 
+
+	"This method was automatically generated."
+
+	"cl_int clSetKernelArgSVMPointer(
+			cl_kernel kernel, 
+			cl_uint arg_index, 
+			const void * arg_value
+	);"
+	<apicall: long 'clSetKernelArgSVMPointer' (CLKernel ulong void*) module: 'libOpenCL.so.1'>
 
 	^self externalCallFailed! !
 
@@ -21644,6 +21644,34 @@ clEnqueueBarrierWithWaitList__cl_command_queue: command_queue
 	^self externalCallFailed! !
 
 !OpenCLUnix32BitsInterface class methodsFor: 'FFI-generated-Enqueued Commands APIs'!
+clEnqueueCopyBuffer__cl_command_queue: command_queue 
+						cl_mem: src_buffer 
+						cl_mem: dst_buffer 
+						size_t: src_offset 
+						size_t: dst_offset 
+						size_t: size 
+						cl_uint: num_events_in_wait_list 
+						const__cl_event__ptr: event_wait_list 
+						cl_event__ptr: event 
+
+	"This method was automatically generated."
+
+	"cl_int clEnqueueCopyBuffer(
+			cl_command_queue command_queue, 
+			cl_mem src_buffer, 
+			cl_mem dst_buffer, 
+			size_t src_offset, 
+			size_t dst_offset, 
+			size_t size, 
+			cl_uint num_events_in_wait_list, 
+			const cl_event * event_wait_list, 
+			cl_event * event
+	);"
+	<apicall: long 'clEnqueueCopyBuffer' (CLCommandQueue CLMem CLMem ulong ulong ulong ulong CLEvent* CLEvent*) module: 'libOpenCL.so.1'>
+
+	^self externalCallFailed! !
+
+!OpenCLUnix32BitsInterface class methodsFor: 'FFI-generated-Enqueued Commands APIs'!
 clEnqueueCopyBufferRect__cl_command_queue: command_queue 
 						cl_mem: src_buffer 
 						cl_mem: dst_buffer 
@@ -21708,30 +21736,30 @@ clEnqueueCopyBufferToImage__cl_command_queue: command_queue
 	^self externalCallFailed! !
 
 !OpenCLUnix32BitsInterface class methodsFor: 'FFI-generated-Enqueued Commands APIs'!
-clEnqueueCopyBuffer__cl_command_queue: command_queue 
-						cl_mem: src_buffer 
-						cl_mem: dst_buffer 
-						size_t: src_offset 
-						size_t: dst_offset 
-						size_t: size 
+clEnqueueCopyImage__cl_command_queue: command_queue 
+						cl_mem: src_image 
+						cl_mem: dst_image 
+						const__size_t__ptr: src_origin 
+						const__size_t__ptr: dst_origin 
+						const__size_t__ptr: region 
 						cl_uint: num_events_in_wait_list 
 						const__cl_event__ptr: event_wait_list 
 						cl_event__ptr: event 
 
 	"This method was automatically generated."
 
-	"cl_int clEnqueueCopyBuffer(
+	"cl_int clEnqueueCopyImage(
 			cl_command_queue command_queue, 
-			cl_mem src_buffer, 
-			cl_mem dst_buffer, 
-			size_t src_offset, 
-			size_t dst_offset, 
-			size_t size, 
+			cl_mem src_image, 
+			cl_mem dst_image, 
+			const size_t * src_origin[3], 
+			const size_t * dst_origin[3], 
+			const size_t * region[3], 
 			cl_uint num_events_in_wait_list, 
 			const cl_event * event_wait_list, 
 			cl_event * event
 	);"
-	<apicall: long 'clEnqueueCopyBuffer' (CLCommandQueue CLMem CLMem ulong ulong ulong ulong CLEvent* CLEvent*) module: 'libOpenCL.so.1'>
+	<apicall: long 'clEnqueueCopyImage' (CLCommandQueue CLMem CLMem ulong* ulong* ulong* ulong CLEvent* CLEvent*) module: 'libOpenCL.so.1'>
 
 	^self externalCallFailed! !
 
@@ -21760,34 +21788,6 @@ clEnqueueCopyImageToBuffer__cl_command_queue: command_queue
 			cl_event * event
 	);"
 	<apicall: long 'clEnqueueCopyImageToBuffer' (CLCommandQueue CLMem CLMem ulong* ulong* ulong ulong CLEvent* CLEvent*) module: 'libOpenCL.so.1'>
-
-	^self externalCallFailed! !
-
-!OpenCLUnix32BitsInterface class methodsFor: 'FFI-generated-Enqueued Commands APIs'!
-clEnqueueCopyImage__cl_command_queue: command_queue 
-						cl_mem: src_image 
-						cl_mem: dst_image 
-						const__size_t__ptr: src_origin 
-						const__size_t__ptr: dst_origin 
-						const__size_t__ptr: region 
-						cl_uint: num_events_in_wait_list 
-						const__cl_event__ptr: event_wait_list 
-						cl_event__ptr: event 
-
-	"This method was automatically generated."
-
-	"cl_int clEnqueueCopyImage(
-			cl_command_queue command_queue, 
-			cl_mem src_image, 
-			cl_mem dst_image, 
-			const size_t * src_origin[3], 
-			const size_t * dst_origin[3], 
-			const size_t * region[3], 
-			cl_uint num_events_in_wait_list, 
-			const cl_event * event_wait_list, 
-			cl_event * event
-	);"
-	<apicall: long 'clEnqueueCopyImage' (CLCommandQueue CLMem CLMem ulong* ulong* ulong* ulong CLEvent* CLEvent*) module: 'libOpenCL.so.1'>
 
 	^self externalCallFailed! !
 
@@ -22009,6 +22009,34 @@ clEnqueueNativeKernel__cl_command_queue: command_queue
 	^self externalCallFailed! !
 
 !OpenCLUnix32BitsInterface class methodsFor: 'FFI-generated-Enqueued Commands APIs'!
+clEnqueueReadBuffer__cl_command_queue: command_queue 
+						cl_mem: buffer 
+						cl_bool: blocking_read 
+						size_t: offset 
+						size_t: size 
+						void__ptr: ptr 
+						cl_uint: num_events_in_wait_list 
+						const__cl_event__ptr: event_wait_list 
+						cl_event__ptr: event 
+
+	"This method was automatically generated."
+
+	"cl_int clEnqueueReadBuffer(
+			cl_command_queue command_queue, 
+			cl_mem buffer, 
+			cl_bool blocking_read, 
+			size_t offset, 
+			size_t size, 
+			void * ptr, 
+			cl_uint num_events_in_wait_list, 
+			const cl_event * event_wait_list, 
+			cl_event * event
+	);"
+	<apicall: long 'clEnqueueReadBuffer' (CLCommandQueue CLMem ulong ulong ulong void* ulong CLEvent* CLEvent*) module: 'libOpenCL.so.1'>
+
+	^self externalCallFailed! !
+
+!OpenCLUnix32BitsInterface class methodsFor: 'FFI-generated-Enqueued Commands APIs'!
 clEnqueueReadBufferRect__cl_command_queue: command_queue 
 						cl_mem: buffer 
 						cl_bool: blocking_read 
@@ -22043,34 +22071,6 @@ clEnqueueReadBufferRect__cl_command_queue: command_queue
 			cl_event * event
 	);"
 	<apicall: long 'clEnqueueReadBufferRect' (CLCommandQueue CLMem ulong ulong* ulong* ulong* ulong ulong ulong ulong void* ulong CLEvent* CLEvent*) module: 'libOpenCL.so.1'>
-
-	^self externalCallFailed! !
-
-!OpenCLUnix32BitsInterface class methodsFor: 'FFI-generated-Enqueued Commands APIs'!
-clEnqueueReadBuffer__cl_command_queue: command_queue 
-						cl_mem: buffer 
-						cl_bool: blocking_read 
-						size_t: offset 
-						size_t: size 
-						void__ptr: ptr 
-						cl_uint: num_events_in_wait_list 
-						const__cl_event__ptr: event_wait_list 
-						cl_event__ptr: event 
-
-	"This method was automatically generated."
-
-	"cl_int clEnqueueReadBuffer(
-			cl_command_queue command_queue, 
-			cl_mem buffer, 
-			cl_bool blocking_read, 
-			size_t offset, 
-			size_t size, 
-			void * ptr, 
-			cl_uint num_events_in_wait_list, 
-			const cl_event * event_wait_list, 
-			cl_event * event
-	);"
-	<apicall: long 'clEnqueueReadBuffer' (CLCommandQueue CLMem ulong ulong ulong void* ulong CLEvent* CLEvent*) module: 'libOpenCL.so.1'>
 
 	^self externalCallFailed! !
 
@@ -22253,6 +22253,34 @@ clEnqueueUnmapMemObject__cl_command_queue: command_queue
 	^self externalCallFailed! !
 
 !OpenCLUnix32BitsInterface class methodsFor: 'FFI-generated-Enqueued Commands APIs'!
+clEnqueueWriteBuffer__cl_command_queue: command_queue 
+						cl_mem: buffer 
+						cl_bool: blocking_write 
+						size_t: offset 
+						size_t: size 
+						const__void__ptr: ptr 
+						cl_uint: num_events_in_wait_list 
+						const__cl_event__ptr: event_wait_list 
+						cl_event__ptr: event 
+
+	"This method was automatically generated."
+
+	"cl_int clEnqueueWriteBuffer(
+			cl_command_queue command_queue, 
+			cl_mem buffer, 
+			cl_bool blocking_write, 
+			size_t offset, 
+			size_t size, 
+			const void * ptr, 
+			cl_uint num_events_in_wait_list, 
+			const cl_event * event_wait_list, 
+			cl_event * event
+	);"
+	<apicall: long 'clEnqueueWriteBuffer' (CLCommandQueue CLMem ulong ulong ulong void* ulong CLEvent* CLEvent*) module: 'libOpenCL.so.1'>
+
+	^self externalCallFailed! !
+
+!OpenCLUnix32BitsInterface class methodsFor: 'FFI-generated-Enqueued Commands APIs'!
 clEnqueueWriteBufferRect__cl_command_queue: command_queue 
 						cl_mem: buffer 
 						cl_bool: blocking_write 
@@ -22287,34 +22315,6 @@ clEnqueueWriteBufferRect__cl_command_queue: command_queue
 			cl_event * event
 	);"
 	<apicall: long 'clEnqueueWriteBufferRect' (CLCommandQueue CLMem ulong ulong* ulong* ulong* ulong ulong ulong ulong void* ulong CLEvent* CLEvent*) module: 'libOpenCL.so.1'>
-
-	^self externalCallFailed! !
-
-!OpenCLUnix32BitsInterface class methodsFor: 'FFI-generated-Enqueued Commands APIs'!
-clEnqueueWriteBuffer__cl_command_queue: command_queue 
-						cl_mem: buffer 
-						cl_bool: blocking_write 
-						size_t: offset 
-						size_t: size 
-						const__void__ptr: ptr 
-						cl_uint: num_events_in_wait_list 
-						const__cl_event__ptr: event_wait_list 
-						cl_event__ptr: event 
-
-	"This method was automatically generated."
-
-	"cl_int clEnqueueWriteBuffer(
-			cl_command_queue command_queue, 
-			cl_mem buffer, 
-			cl_bool blocking_write, 
-			size_t offset, 
-			size_t size, 
-			const void * ptr, 
-			cl_uint num_events_in_wait_list, 
-			const cl_event * event_wait_list, 
-			cl_event * event
-	);"
-	<apicall: long 'clEnqueueWriteBuffer' (CLCommandQueue CLMem ulong ulong ulong void* ulong CLEvent* CLEvent*) module: 'libOpenCL.so.1'>
 
 	^self externalCallFailed! !
 
@@ -23032,26 +23032,6 @@ clEnqueueTask__cl_command_queue: command_queue
 	^self externalCallFailed! !
 
 !OpenCLWindows32BitsInterface class methodsFor: 'FFI-generated-Context APIs'!
-clCreateContextFromType__const__cl_context_properties__ptr: properties 
-						cl_device_type: device_type 
-						void__ptrpfn_notifyconst__char__ptrconst__void__ptrsize_tvoid__ptr: pfn_notify 
-						void__ptr: user_data 
-						cl_int__ptr: errcode_ret 
-
-	"This method was automatically generated."
-
-	"cl_context clCreateContextFromType(
-			const cl_context_properties * properties, 
-			cl_device_type device_type, 
-			void (*pfn_notify)(const char *, const void *, size_t, void *) pfn_notify, 
-			void * user_data, 
-			cl_int * errcode_ret
-	);"
-	<apicall: CLContext 'clCreateContextFromType' (void* ulonglong void* void* long*) module: 'OpenCL.dll'>
-
-	^self externalCallFailed! !
-
-!OpenCLWindows32BitsInterface class methodsFor: 'FFI-generated-Context APIs'!
 clCreateContext__const__cl_context_properties__ptr: properties 
 						cl_uint: num_devices 
 						const__cl_device_id__ptr: devices 
@@ -23070,6 +23050,26 @@ clCreateContext__const__cl_context_properties__ptr: properties
 			cl_int * errcode_ret
 	);"
 	<apicall: CLContext 'clCreateContext' (void* ulong CLDeviceID* void* void* long*) module: 'OpenCL.dll'>
+
+	^self externalCallFailed! !
+
+!OpenCLWindows32BitsInterface class methodsFor: 'FFI-generated-Context APIs'!
+clCreateContextFromType__const__cl_context_properties__ptr: properties 
+						cl_device_type: device_type 
+						void__ptrpfn_notifyconst__char__ptrconst__void__ptrsize_tvoid__ptr: pfn_notify 
+						void__ptr: user_data 
+						cl_int__ptr: errcode_ret 
+
+	"This method was automatically generated."
+
+	"cl_context clCreateContextFromType(
+			const cl_context_properties * properties, 
+			cl_device_type device_type, 
+			void (*pfn_notify)(const char *, const void *, size_t, void *) pfn_notify, 
+			void * user_data, 
+			cl_int * errcode_ret
+	);"
+	<apicall: CLContext 'clCreateContextFromType' (void* ulonglong void* void* long*) module: 'OpenCL.dll'>
 
 	^self externalCallFailed! !
 
@@ -23239,6 +23239,22 @@ clUnloadCompiler
 	^self externalCallFailed! !
 
 !OpenCLWindows32BitsInterface class methodsFor: 'FFI-generated-Kernel Object APIs'!
+clCreateKernel__cl_program: program 
+						const__char__ptr: kernel_name 
+						cl_int__ptr: errcode_ret 
+
+	"This method was automatically generated."
+
+	"cl_kernel clCreateKernel(
+			cl_program program, 
+			const char * kernel_name, 
+			cl_int * errcode_ret
+	);"
+	<apicall: CLKernel 'clCreateKernel' (CLProgram schar* long*) module: 'OpenCL.dll'>
+
+	^self externalCallFailed! !
+
+!OpenCLWindows32BitsInterface class methodsFor: 'FFI-generated-Kernel Object APIs'!
 clCreateKernelsInProgram__cl_program: program 
 						cl_uint: num_kernels 
 						cl_kernel__ptr: kernels 
@@ -23253,22 +23269,6 @@ clCreateKernelsInProgram__cl_program: program
 			cl_uint * num_kernels_ret
 	);"
 	<apicall: long 'clCreateKernelsInProgram' (CLProgram ulong CLKernel* ulong*) module: 'OpenCL.dll'>
-
-	^self externalCallFailed! !
-
-!OpenCLWindows32BitsInterface class methodsFor: 'FFI-generated-Kernel Object APIs'!
-clCreateKernel__cl_program: program 
-						const__char__ptr: kernel_name 
-						cl_int__ptr: errcode_ret 
-
-	"This method was automatically generated."
-
-	"cl_kernel clCreateKernel(
-			cl_program program, 
-			const char * kernel_name, 
-			cl_int * errcode_ret
-	);"
-	<apicall: CLKernel 'clCreateKernel' (CLProgram schar* long*) module: 'OpenCL.dll'>
 
 	^self externalCallFailed! !
 
@@ -23361,22 +23361,6 @@ clRetainKernel__cl_kernel: kernel
 	^self externalCallFailed! !
 
 !OpenCLWindows32BitsInterface class methodsFor: 'FFI-generated-Kernel Object APIs'!
-clSetKernelArgSVMPointer__cl_kernel: kernel 
-						cl_uint: arg_index 
-						const__void__ptr: arg_value 
-
-	"This method was automatically generated."
-
-	"cl_int clSetKernelArgSVMPointer(
-			cl_kernel kernel, 
-			cl_uint arg_index, 
-			const void * arg_value
-	);"
-	<apicall: long 'clSetKernelArgSVMPointer' (CLKernel ulong void*) module: 'OpenCL.dll'>
-
-	^self externalCallFailed! !
-
-!OpenCLWindows32BitsInterface class methodsFor: 'FFI-generated-Kernel Object APIs'!
 clSetKernelArg__cl_kernel: kernel 
 						cl_uint: arg_index 
 						size_t: arg_size 
@@ -23391,6 +23375,22 @@ clSetKernelArg__cl_kernel: kernel
 			const void * arg_value
 	);"
 	<apicall: long 'clSetKernelArg' (CLKernel ulong ulong void*) module: 'OpenCL.dll'>
+
+	^self externalCallFailed! !
+
+!OpenCLWindows32BitsInterface class methodsFor: 'FFI-generated-Kernel Object APIs'!
+clSetKernelArgSVMPointer__cl_kernel: kernel 
+						cl_uint: arg_index 
+						const__void__ptr: arg_value 
+
+	"This method was automatically generated."
+
+	"cl_int clSetKernelArgSVMPointer(
+			cl_kernel kernel, 
+			cl_uint arg_index, 
+			const void * arg_value
+	);"
+	<apicall: long 'clSetKernelArgSVMPointer' (CLKernel ulong void*) module: 'OpenCL.dll'>
 
 	^self externalCallFailed! !
 
@@ -23679,6 +23679,34 @@ clEnqueueBarrierWithWaitList__cl_command_queue: command_queue
 	^self externalCallFailed! !
 
 !OpenCLWindows32BitsInterface class methodsFor: 'FFI-generated-Enqueued Commands APIs'!
+clEnqueueCopyBuffer__cl_command_queue: command_queue 
+						cl_mem: src_buffer 
+						cl_mem: dst_buffer 
+						size_t: src_offset 
+						size_t: dst_offset 
+						size_t: size 
+						cl_uint: num_events_in_wait_list 
+						const__cl_event__ptr: event_wait_list 
+						cl_event__ptr: event 
+
+	"This method was automatically generated."
+
+	"cl_int clEnqueueCopyBuffer(
+			cl_command_queue command_queue, 
+			cl_mem src_buffer, 
+			cl_mem dst_buffer, 
+			size_t src_offset, 
+			size_t dst_offset, 
+			size_t size, 
+			cl_uint num_events_in_wait_list, 
+			const cl_event * event_wait_list, 
+			cl_event * event
+	);"
+	<apicall: long 'clEnqueueCopyBuffer' (CLCommandQueue CLMem CLMem ulong ulong ulong ulong CLEvent* CLEvent*) module: 'OpenCL.dll'>
+
+	^self externalCallFailed! !
+
+!OpenCLWindows32BitsInterface class methodsFor: 'FFI-generated-Enqueued Commands APIs'!
 clEnqueueCopyBufferRect__cl_command_queue: command_queue 
 						cl_mem: src_buffer 
 						cl_mem: dst_buffer 
@@ -23743,30 +23771,30 @@ clEnqueueCopyBufferToImage__cl_command_queue: command_queue
 	^self externalCallFailed! !
 
 !OpenCLWindows32BitsInterface class methodsFor: 'FFI-generated-Enqueued Commands APIs'!
-clEnqueueCopyBuffer__cl_command_queue: command_queue 
-						cl_mem: src_buffer 
-						cl_mem: dst_buffer 
-						size_t: src_offset 
-						size_t: dst_offset 
-						size_t: size 
+clEnqueueCopyImage__cl_command_queue: command_queue 
+						cl_mem: src_image 
+						cl_mem: dst_image 
+						const__size_t__ptr: src_origin 
+						const__size_t__ptr: dst_origin 
+						const__size_t__ptr: region 
 						cl_uint: num_events_in_wait_list 
 						const__cl_event__ptr: event_wait_list 
 						cl_event__ptr: event 
 
 	"This method was automatically generated."
 
-	"cl_int clEnqueueCopyBuffer(
+	"cl_int clEnqueueCopyImage(
 			cl_command_queue command_queue, 
-			cl_mem src_buffer, 
-			cl_mem dst_buffer, 
-			size_t src_offset, 
-			size_t dst_offset, 
-			size_t size, 
+			cl_mem src_image, 
+			cl_mem dst_image, 
+			const size_t * src_origin[3], 
+			const size_t * dst_origin[3], 
+			const size_t * region[3], 
 			cl_uint num_events_in_wait_list, 
 			const cl_event * event_wait_list, 
 			cl_event * event
 	);"
-	<apicall: long 'clEnqueueCopyBuffer' (CLCommandQueue CLMem CLMem ulong ulong ulong ulong CLEvent* CLEvent*) module: 'OpenCL.dll'>
+	<apicall: long 'clEnqueueCopyImage' (CLCommandQueue CLMem CLMem ulong* ulong* ulong* ulong CLEvent* CLEvent*) module: 'OpenCL.dll'>
 
 	^self externalCallFailed! !
 
@@ -23795,34 +23823,6 @@ clEnqueueCopyImageToBuffer__cl_command_queue: command_queue
 			cl_event * event
 	);"
 	<apicall: long 'clEnqueueCopyImageToBuffer' (CLCommandQueue CLMem CLMem ulong* ulong* ulong ulong CLEvent* CLEvent*) module: 'OpenCL.dll'>
-
-	^self externalCallFailed! !
-
-!OpenCLWindows32BitsInterface class methodsFor: 'FFI-generated-Enqueued Commands APIs'!
-clEnqueueCopyImage__cl_command_queue: command_queue 
-						cl_mem: src_image 
-						cl_mem: dst_image 
-						const__size_t__ptr: src_origin 
-						const__size_t__ptr: dst_origin 
-						const__size_t__ptr: region 
-						cl_uint: num_events_in_wait_list 
-						const__cl_event__ptr: event_wait_list 
-						cl_event__ptr: event 
-
-	"This method was automatically generated."
-
-	"cl_int clEnqueueCopyImage(
-			cl_command_queue command_queue, 
-			cl_mem src_image, 
-			cl_mem dst_image, 
-			const size_t * src_origin[3], 
-			const size_t * dst_origin[3], 
-			const size_t * region[3], 
-			cl_uint num_events_in_wait_list, 
-			const cl_event * event_wait_list, 
-			cl_event * event
-	);"
-	<apicall: long 'clEnqueueCopyImage' (CLCommandQueue CLMem CLMem ulong* ulong* ulong* ulong CLEvent* CLEvent*) module: 'OpenCL.dll'>
 
 	^self externalCallFailed! !
 
@@ -24044,6 +24044,34 @@ clEnqueueNativeKernel__cl_command_queue: command_queue
 	^self externalCallFailed! !
 
 !OpenCLWindows32BitsInterface class methodsFor: 'FFI-generated-Enqueued Commands APIs'!
+clEnqueueReadBuffer__cl_command_queue: command_queue 
+						cl_mem: buffer 
+						cl_bool: blocking_read 
+						size_t: offset 
+						size_t: size 
+						void__ptr: ptr 
+						cl_uint: num_events_in_wait_list 
+						const__cl_event__ptr: event_wait_list 
+						cl_event__ptr: event 
+
+	"This method was automatically generated."
+
+	"cl_int clEnqueueReadBuffer(
+			cl_command_queue command_queue, 
+			cl_mem buffer, 
+			cl_bool blocking_read, 
+			size_t offset, 
+			size_t size, 
+			void * ptr, 
+			cl_uint num_events_in_wait_list, 
+			const cl_event * event_wait_list, 
+			cl_event * event
+	);"
+	<apicall: long 'clEnqueueReadBuffer' (CLCommandQueue CLMem ulong ulong ulong void* ulong CLEvent* CLEvent*) module: 'OpenCL.dll'>
+
+	^self externalCallFailed! !
+
+!OpenCLWindows32BitsInterface class methodsFor: 'FFI-generated-Enqueued Commands APIs'!
 clEnqueueReadBufferRect__cl_command_queue: command_queue 
 						cl_mem: buffer 
 						cl_bool: blocking_read 
@@ -24078,34 +24106,6 @@ clEnqueueReadBufferRect__cl_command_queue: command_queue
 			cl_event * event
 	);"
 	<apicall: long 'clEnqueueReadBufferRect' (CLCommandQueue CLMem ulong ulong* ulong* ulong* ulong ulong ulong ulong void* ulong CLEvent* CLEvent*) module: 'OpenCL.dll'>
-
-	^self externalCallFailed! !
-
-!OpenCLWindows32BitsInterface class methodsFor: 'FFI-generated-Enqueued Commands APIs'!
-clEnqueueReadBuffer__cl_command_queue: command_queue 
-						cl_mem: buffer 
-						cl_bool: blocking_read 
-						size_t: offset 
-						size_t: size 
-						void__ptr: ptr 
-						cl_uint: num_events_in_wait_list 
-						const__cl_event__ptr: event_wait_list 
-						cl_event__ptr: event 
-
-	"This method was automatically generated."
-
-	"cl_int clEnqueueReadBuffer(
-			cl_command_queue command_queue, 
-			cl_mem buffer, 
-			cl_bool blocking_read, 
-			size_t offset, 
-			size_t size, 
-			void * ptr, 
-			cl_uint num_events_in_wait_list, 
-			const cl_event * event_wait_list, 
-			cl_event * event
-	);"
-	<apicall: long 'clEnqueueReadBuffer' (CLCommandQueue CLMem ulong ulong ulong void* ulong CLEvent* CLEvent*) module: 'OpenCL.dll'>
 
 	^self externalCallFailed! !
 
@@ -24288,6 +24288,34 @@ clEnqueueUnmapMemObject__cl_command_queue: command_queue
 	^self externalCallFailed! !
 
 !OpenCLWindows32BitsInterface class methodsFor: 'FFI-generated-Enqueued Commands APIs'!
+clEnqueueWriteBuffer__cl_command_queue: command_queue 
+						cl_mem: buffer 
+						cl_bool: blocking_write 
+						size_t: offset 
+						size_t: size 
+						const__void__ptr: ptr 
+						cl_uint: num_events_in_wait_list 
+						const__cl_event__ptr: event_wait_list 
+						cl_event__ptr: event 
+
+	"This method was automatically generated."
+
+	"cl_int clEnqueueWriteBuffer(
+			cl_command_queue command_queue, 
+			cl_mem buffer, 
+			cl_bool blocking_write, 
+			size_t offset, 
+			size_t size, 
+			const void * ptr, 
+			cl_uint num_events_in_wait_list, 
+			const cl_event * event_wait_list, 
+			cl_event * event
+	);"
+	<apicall: long 'clEnqueueWriteBuffer' (CLCommandQueue CLMem ulong ulong ulong void* ulong CLEvent* CLEvent*) module: 'OpenCL.dll'>
+
+	^self externalCallFailed! !
+
+!OpenCLWindows32BitsInterface class methodsFor: 'FFI-generated-Enqueued Commands APIs'!
 clEnqueueWriteBufferRect__cl_command_queue: command_queue 
 						cl_mem: buffer 
 						cl_bool: blocking_write 
@@ -24322,34 +24350,6 @@ clEnqueueWriteBufferRect__cl_command_queue: command_queue
 			cl_event * event
 	);"
 	<apicall: long 'clEnqueueWriteBufferRect' (CLCommandQueue CLMem ulong ulong* ulong* ulong* ulong ulong ulong ulong void* ulong CLEvent* CLEvent*) module: 'OpenCL.dll'>
-
-	^self externalCallFailed! !
-
-!OpenCLWindows32BitsInterface class methodsFor: 'FFI-generated-Enqueued Commands APIs'!
-clEnqueueWriteBuffer__cl_command_queue: command_queue 
-						cl_mem: buffer 
-						cl_bool: blocking_write 
-						size_t: offset 
-						size_t: size 
-						const__void__ptr: ptr 
-						cl_uint: num_events_in_wait_list 
-						const__cl_event__ptr: event_wait_list 
-						cl_event__ptr: event 
-
-	"This method was automatically generated."
-
-	"cl_int clEnqueueWriteBuffer(
-			cl_command_queue command_queue, 
-			cl_mem buffer, 
-			cl_bool blocking_write, 
-			size_t offset, 
-			size_t size, 
-			const void * ptr, 
-			cl_uint num_events_in_wait_list, 
-			const cl_event * event_wait_list, 
-			cl_event * event
-	);"
-	<apicall: long 'clEnqueueWriteBuffer' (CLCommandQueue CLMem ulong ulong ulong void* ulong CLEvent* CLEvent*) module: 'OpenCL.dll'>
 
 	^self externalCallFailed! !
 
@@ -26105,6 +26105,21 @@ asOpenCLArg
 	"Default is to pass self as arg to FFI call."
 	^self! !
 
+!ExternalObject methodsFor: '*OpenCL' stamp: 'jcg 2/18/2010 03:02'!
+asOpenCLArg
+	"Pass pointer to external memory (or potentially, a ByteArray) as an argument to a kernel or other function."
+	^self getHandle! !
+
+!Form methodsFor: '*OpenCL' stamp: 'jcg 2/18/2010 03:05'!
+asOpenCLArg
+	"Pass pointer to our bitmap."
+	^bits! !
+
+!ExternalForm methodsFor: '*OpenCL' stamp: 'jcg 6/4/2010 02:20'!
+asOpenCLArg
+	"Pass pointer to our pixels."
+	^pointer ifNil: [self error: 'pointer is nil'].! !
+
 !False methodsFor: '*OpenCL' stamp: 'jcg 2/16/2010 01:24'!
 asOpenCLBoolean
 	^0 "CLFalse"
@@ -26129,21 +26144,6 @@ asOpenCLArg
 asOpenCLBoolean
 	"Assume that we're already CLTrue or CLFalse (if not, there will be an error anyway)."
 	^self! !
-
-!Form methodsFor: '*OpenCL' stamp: 'jcg 2/18/2010 03:05'!
-asOpenCLArg
-	"Pass pointer to our bitmap."
-	^bits! !
-
-!ExternalForm methodsFor: '*OpenCL' stamp: 'jcg 6/4/2010 02:20'!
-asOpenCLArg
-	"Pass pointer to our pixels."
-	^pointer ifNil: [self error: 'pointer is nil'].! !
-
-!ExternalObject methodsFor: '*OpenCL' stamp: 'jcg 2/18/2010 03:02'!
-asOpenCLArg
-	"Pass pointer to external memory (or potentially, a ByteArray) as an argument to a kernel or other function."
-	^self getHandle! !
 OpenCLConstants initialize!
 CLBufferRegionStruct initialize!
 CLImageDescStruct initialize!
