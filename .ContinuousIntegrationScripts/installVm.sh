@@ -17,7 +17,7 @@ installVmLinux() {
 
   #Use VM included with Cuis in this repo
   CUIS_VM_PATH=CuisVM.app/Contents/Linux-x86_64/squeak
-  CUIS_VM_PATH=./CuisVM.app
+  #CUIS_VM_PATH=./CuisVM.app
   CUIS_VM_ARGUMENTS="-vm-display-null"
   pwd
   "$CUIS_VM_PATH" --version
@@ -34,7 +34,7 @@ installVmMacOS() {
 
   #Use VM included with Cuis in this repo
   CUIS_VM_PATH=CuisVM.app/Contents/MacOS/Squeak
-  CUIS_VM_PATH=./CuisVM.app
+  #CUIS_VM_PATH=./CuisVM.app
   CUIS_VM_ARGUMENTS="-headless"
   pwd
   "$CUIS_VM_PATH" -version
