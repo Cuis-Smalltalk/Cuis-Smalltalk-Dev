@@ -11,30 +11,32 @@ installVmLinux() {
   sudo apt-get install pulseaudio
   VM_FILENAME="squeak.cog.spur_linux64x64_itimer"
 
-  wget "$BASE_VM_DOWNLOAD_PATH/$VM_FILENAME.tar.gz"
-  tar -xvzf "$VM_FILENAME.tar.gz"
+  #wget "$BASE_VM_DOWNLOAD_PATH/$VM_FILENAME.tar.gz"
+  #tar -xvzf "$VM_FILENAME.tar.gz"
+  #CUIS_VM_PATH="$GITHUB_WORKSPACE"/sqcogspur64linux/squeak
 
   #Use VM included with Cuis in this repo
-  CUIS_VM_PATH="$GITHUB_WORKSPACE"/sqcogspur64linux/squeak
   CUIS_VM_PATH=CuisVM.app/Contents/Linux-x86_64/squeak
   CUIS_VM_PATH=./CuisVM.app
   CUIS_VM_ARGUMENTS="-vm-display-null"
+  pwd
   "$CUIS_VM_PATH" --version
 }
 
 installVmMacOS() {
   VM_FILENAME="squeak.cog.spur_macos64x64"
 
-  wget "$BASE_VM_DOWNLOAD_PATH/$VM_FILENAME.dmg"
-  sudo hdiutil attach "$VM_FILENAME.dmg"
-  cd "/Volumes/$VM_FILENAME"
-  sudo cp -rf Squeak.app /Applications
+  #wget "$BASE_VM_DOWNLOAD_PATH/$VM_FILENAME.dmg"
+  #sudo hdiutil attach "$VM_FILENAME.dmg"
+  #cd "/Volumes/$VM_FILENAME"
+  #sudo cp -rf Squeak.app /Applications
+  #CUIS_VM_PATH=/Applications/Squeak.app/Contents/MacOS/Squeak
 
   #Use VM included with Cuis in this repo
-  CUIS_VM_PATH=/Applications/Squeak.app/Contents/MacOS/Squeak
   CUIS_VM_PATH=CuisVM.app/Contents/MacOS/Squeak
   CUIS_VM_PATH=./CuisVM.app
   CUIS_VM_ARGUMENTS="-headless"
+  pwd
   "$CUIS_VM_PATH" -version
 }
 
