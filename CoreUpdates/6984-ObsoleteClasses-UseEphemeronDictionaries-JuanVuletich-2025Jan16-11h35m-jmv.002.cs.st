@@ -7,8 +7,10 @@ recreateObsoleteSubclassesCollection
 	"
 	| newOne |
 	newOne := EphemeronIdentityDictionary new.
-	ObsoleteSubclasses keysAndValuesDo: [ :k :v |
-		newOne at: k put: v ].
+	ObsoleteSubclasses ifNotNil:
+		[:oldOne|
+		oldOne keysAndValuesDo:
+			[ :k :v | newOne at: k put: v ] ].
 	ObsoleteSubclasses := newOne.! !
 
 
