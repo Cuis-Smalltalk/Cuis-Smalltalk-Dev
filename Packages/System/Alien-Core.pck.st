@@ -1,18 +1,8 @@
-'From Cuis7.1 [latest update: #6797] on 29 October 2024 at 3:02:58 pm'!
+'From Cuis7.3 [latest update: #6989] on 17 January 2025 at 4:00:57 pm'!
 'Description Alien provides the infrastructure for FFI Callbacks, implementing the Callback hierarchy and marshalling methods within it.'!
-!provides: 'Alien-Core' 1 1!
+!provides: 'Alien-Core' 1 2!
 SystemOrganization addCategory: #'Alien-Core'!
 
-
-!classDefinition: #AlienWeakTable category: #'Alien-Core'!
-Object subclass: #AlienWeakTable
-	instanceVariableNames: 'accessProtect firstUnusedIndex lastUsedIndex weakArray strongArray owner'
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Alien-Core'!
-!classDefinition: 'AlienWeakTable class' category: #'Alien-Core'!
-AlienWeakTable class
-	instanceVariableNames: ''!
 
 !classDefinition: #Callback category: #'Alien-Core'!
 Object subclass: #Callback
@@ -144,17 +134,6 @@ Error subclass: #LibrarySymbolNotFoundError
 LibrarySymbolNotFoundError class
 	instanceVariableNames: ''!
 
-
-!AlienWeakTable commentStamp: '<historical>' prior: 0!
-This class supports simple post-mortem finalization of values associated with gc'ed objects.  An object to be finalized is registered in the table together with another object called 'the tag'. The finalizable object is held onto by the table weakly, the tag object--strongly. A table is initialized with the owner object, which is the object that performs the actual finalization. Some time after a finalizable object is garbage-collected, the owner is sent the #finalize: message with the object's tag as the argument.
-
-Instance Variables:
-	accessProtect <Semaphore>  - A mutex protecting state
-	firstUnusedIndex <Integer> - The lowest index in strongArray that is empty (an invariant)
-	lastUsedIndex <Integer> - The highest index in strongArray that is not empty (an invariant)
-	weakArray <WeakArray> - The array of objects whose death we're interested in.
-	strongArray <Array> - The array of corresponding objects that wll be passed to the owner when their corresponding element in weakArray is garbage collected.
-	owner <Object> - The object that is sent finalize: with the tag of an object that has been garbage-collected.!
 
 !Callback commentStamp: '<historical>' prior: 0!
 Callbacks encapsulate callbacks from the outside world.  They allow Smalltalk blocks to be evaluated and answer their results to external (e.g. C) callees.  Callbacks are created with signature:block:, e.g.
@@ -332,91 +311,6 @@ ExecutablePages <Set of: Alien "executable page"> - collection of pages with exe
 !LibrarySymbolNotFoundError commentStamp: 'TorstenBergmann 6/14/2019 21:47' prior: 0!
 A symbol within a library was not found, see Alien>>#primFindSymbol:!
 
-!AlienWeakTable methodsFor: 'adding' stamp: 'vb 5/7/2008 08:34'!
-add: anObject finalizing: postMortemFinalizationTag
-	"Register a new object in the table, with the associated tag. The object is held onto weakly, the tag--strongly. The tag will be passed to the owner as the argument of #finalize: some time after the object is garbage collected."
-
-	| size start delta |
-	accessProtect critical:
-		[size := strongArray size.
-		 start := firstUnusedIndex].
-	start to: size do:
-		[:i|
-		(strongArray at: i) == nil ifTrue:
-			[accessProtect critical:
-				[weakArray at: i put: anObject.
-				 strongArray at: i put: postMortemFinalizationTag.
-				 firstUnusedIndex := i + 1.
-				 i > lastUsedIndex ifTrue: [lastUsedIndex := i]].
-			 ^anObject]].
-	delta := size min: 4096.
-	accessProtect critical:
-		[(weakArray := weakArray copyGrownBy: delta)
-			 at: size + 1 put: anObject.
-		 (strongArray := strongArray  copyGrownBy: delta)
-			at: size put: postMortemFinalizationTag.
-		 firstUnusedIndex := size + 1.
-		 lastUsedIndex := size].
-	^anObject! !
-
-!AlienWeakTable methodsFor: 'finalization' stamp: 'vb 5/7/2008 08:35'!
-finalizeValues
-	"Sent periodically by the finalization loop to check for any dead objects and report their death to the owner."
-	
-	accessProtect critical:
-		[| usedIndex value newLastUsedIndex |
-		 newLastUsedIndex := 0.
-		 1 to: lastUsedIndex do:
-			[:i|
-			(value := strongArray at: i) ifNotNil:
-				[(weakArray at: i)
-					ifNil:
-						[strongArray at: i put: nil.
-						 owner finalize: value.
-						 firstUnusedIndex > i ifTrue:
-							[firstUnusedIndex := i]]
-					ifNotNil: [newLastUsedIndex := i]]].
-		 lastUsedIndex := newLastUsedIndex]! !
-
-!AlienWeakTable methodsFor: 'initialize-release' stamp: 'vb 5/8/2008 11:32'!
-initializeWithOwner: anObject
-	accessProtect := Semaphore forMutualExclusion.
-	firstUnusedIndex := 1.
-	lastUsedIndex := 0.
-	weakArray := WeakArray new: 1024.
-	strongArray := Array new: 1024.
-	owner := anObject.
-	WeakArray addWeakDependent: self! !
-
-!AlienWeakTable methodsFor: 'removing' stamp: 'eem 1/11/2008 12:10'!
-remove: anObject
-	1 to: lastUsedIndex do:
-		[:i|
-		(weakArray at: i) == anObject ifTrue:
-			[accessProtect critical:
-				[strongArray at: i put: nil.
-				 firstUnusedIndex > i ifTrue:
-					[firstUnusedIndex := i].
-				 i = lastUsedIndex ifTrue:
-					[lastUsedIndex := i - 1]].
-			 ^anObject]].
-	^anObject! !
-
-!AlienWeakTable methodsFor: 'removing' stamp: 'vb 5/8/2008 11:31'!
-removeAll
-
-	accessProtect critical:
-		[1 to: lastUsedIndex do:
-			[:index |
-			strongArray at: index put: nil.
-			weakArray at: index put: nil].
-		firstUnusedIndex := 1.
-		lastUsedIndex := 0]! !
-
-!AlienWeakTable class methodsFor: 'instance creation' stamp: 'eem 12/21/2007 15:00'!
-newForOwner: anOwner
-	^self basicNew initializeWithOwner: anOwner! !
-
 !Callback methodsFor: 'private' stamp: 'KenD 8/1/2022 16:05'!
 addToThunkTable
 	FlushThunkToCallbackMap ifTrue:
@@ -553,15 +447,13 @@ initialize
 	(Smalltalk specialObjectsArray at: 54) ~~ #invokeCallbackContext: ifTrue:
 		[self inform: (Character cr asString join: #('this version of Callbacks requires the callback selector to be' '#invokeCallbackContext:.  recreate the specialObjects Array.'))]! !
 
-!Callback class methodsFor: 'class initialization' stamp: 'eem 6/21/2016 12:57'!
+!Callback class methodsFor: 'class initialization' stamp: 'jmv 1/17/2025 15:51:45'!
 startUp: isInANewSession
 	"Callback startUp: false"
 	| prevMap |
 	concreteClass := subclasses detect: [:subclass| subclass isForCurrentPlatform] ifNone: [].
 	ABI := concreteClass ifNotNil: [concreteClass abi] ifNil: ['UNKNOWN'].
 	FlushThunkToCallbackMap := false.
-	(WeakArray hasWeakDependent: self) ifFalse:
-		[WeakArray addWeakDependent: self].
 	prevMap := isInANewSession ifFalse: [ThunkToCallbackMap].
 	ThunkToCallbackMap := WeakValueDictionary new.
 	prevMap ifNotNil:
@@ -1228,6 +1120,10 @@ storeOn: aStream
 		(Alien new: 8) storeString.
 		(Alien newC: 8) storeString }"! !
 
+!Alien methodsFor: 'finalization' stamp: 'jmv 1/17/2025 15:46:21'!
+finalizationRegistry
+	^GCMallocedAliens! !
+
 !Alien class methodsFor: 'primitives-memory management' stamp: 'eem 12/5/2008 09:41'!
 Ccalloc: byteSize "<Integer> ^<Integer>"
 	<primitive: 'primCalloc' module: 'IA32ABI' error: errorCode>
@@ -1325,7 +1221,7 @@ newGC
 	 and whose data will be reclaimed automatically when the instance is garbage collected."
 	^self newGC: self dataSize! !
 
-!Alien class methodsFor: 'instance creation' stamp: 'eem 12/14/2015 11:45'!
+!Alien class methodsFor: 'instance creation' stamp: 'jmv 1/17/2025 15:47:29'!
 newGC: byteSize
 	"Answer a new instance of the given byte size whose data resides on the external C heap,
 	 and whose data will be reclaimed automatically when the instance is garbage collected.
@@ -1334,10 +1230,11 @@ newGC: byteSize
 	(alien := self basicNew: WordSize * 2)
 		sizeFieldPut: byteSize negated.
 	address := self Ccalloc: byteSize.
-	GCMallocedAliens add: alien finalizing: address.
-	^alien
+	alien toFinalizeSend: #finalize: to: self with: address.
+	alien
 		addressFieldPut: address;
-		initialize! !
+		initialize.
+	^alien! !
 
 !Alien class methodsFor: 'instance creation' stamp: 'eem 12/14/2015 11:45'!
 rawNewC: byteSize
@@ -1388,13 +1285,13 @@ ensureNotifiedAtStartup
 				atPriority: 60]
 		ifNil: [Smalltalk addToStartUpList: self after: Delay]! !
 
-!Alien class methodsFor: 'class initialization' stamp: 'eem 10/17/2020 17:55'!
+!Alien class methodsFor: 'class initialization' stamp: 'jmv 1/17/2025 15:48:56'!
 initialize
 	"Alien initialize"
 	LoadedLibraries ifNil:
 		[LoadedLibraries := Dictionary new].
 	GCMallocedAliens ifNil:
-		[GCMallocedAliens := AlienWeakTable newForOwner: self].
+		[GCMallocedAliens := FinalizationRegistry new].
 	lifoCallbackSemaphore ifNil:
 		[lifoCallbackSemaphore := Semaphore new].
 	vmCallbackContextClass := (WordSize := Smalltalk wordSize) = 4
@@ -2003,6 +1900,10 @@ primThunkEntryAddress "^<Integer>"
 	<primitive: 'primThunkEntryAddress' module: 'IA32ABI' error: errorCode>
 	^self primitiveFailed! !
 
+!FFICallbackThunk methodsFor: 'finalization' stamp: 'jmv 1/17/2025 15:46:03'!
+finalizationRegistry
+	^AllocatedThunks! !
+
 !FFICallbackThunk class methodsFor: 'executable page management' stamp: 'eem 12/5/2008 09:41'!
 allocateExecutablePage "^<Alien>"
 	"Answer an Alien around a piece of (probably malloced) memory, of some multiple
@@ -2076,14 +1977,14 @@ newStdCall: argBytes
 	 size of the arguments in bytes (bytes to cut-back from the stack on return)."
 	^self privateFinalizingNew initializeStdcall: argBytes! !
 
-!FFICallbackThunk class methodsFor: 'instance creation' stamp: 'eem 1/12/2010 13:42'!
+!FFICallbackThunk class methodsFor: 'instance creation' stamp: 'jmv 1/17/2025 15:47:33'!
 privateFinalizingNew
 	"Answer a new instance that will free its page when garbage collected."
-	| address |
+	| address answer |
 	address := self unusedBlockInExecutablePage.
-	^AllocatedThunks
-		add: (self forPointer: address)
-		finalizing: address ! !
+	answer := self forPointer: address.
+	answer toFinalizeSend: #finalize: to: self with: address.
+	^answer! !
 
 !FFICallbackThunk class methodsFor: 'class initialization' stamp: 'nice 3/2/2020 10:32'!
 ensureNotifiedAtStartup
@@ -2098,11 +1999,11 @@ ensureNotifiedAtStartup
 			[Alien ensureNotifiedAtStartup.
 			Smalltalk addToStartUpList: self after: Alien]! !
 
-!FFICallbackThunk class methodsFor: 'class initialization' stamp: 'eem 2/27/2008 16:47'!
+!FFICallbackThunk class methodsFor: 'class initialization' stamp: 'jmv 1/17/2025 15:49:03'!
 initialize
 	"FFICallbackThunk initialize"
 	AccessProtect := Semaphore forMutualExclusion.
-	AllocatedThunks := AlienWeakTable newForOwner: self.
+	AllocatedThunks := FinalizationRegistry new.
 	ExecutablePages := Set new.
 	self ensureNotifiedAtStartup! !
 
@@ -2120,10 +2021,6 @@ startUp: inANewImageSession
 !FFICallbackThunk class methodsFor: 'finalization' stamp: 'eem 12/21/2007 15:17'!
 finalize: address
 	self freeBlockInExecutablePage: address! !
-
-!WeakArray class methodsFor: '*Alien-Core' stamp: 'eem 5/31/2024 19:07:59'!
-hasWeakDependent: anObject
-	^FinalizationDependents includes: anObject! !
 
 !String methodsFor: '*Alien-Core' stamp: 'eem 2/21/2008 15:45'!
 asAlien
