@@ -1,7 +1,8 @@
-'From Cuis7.3 [latest update: #6990] on 17 January 2025 at 9:56:24 am'!
+'From Cuis7.3 [latest update: #6996] on 21 January 2025 at 3:43:17 pm'!
 'Description Rename extentions tests'!
-!provides: 'BaseImageTests' 1 430!
+!provides: 'BaseImageTests' 1 432!
 !requires: '__Refactoring-TestData__' 1 0 nil!
+SystemOrganization addCategory: #'BaseImageTests-Compiler'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Objects'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Numbers'!
@@ -13,7 +14,6 @@ SystemOrganization addCategory: #'BaseImageTests-Collections'!
 SystemOrganization addCategory: #'BaseImageTests-Collections-Arrayed'!
 SystemOrganization addCategory: #'BaseImageTests-Collections-Streams'!
 SystemOrganization addCategory: #'BaseImageTests-Exceptions'!
-SystemOrganization addCategory: #'BaseImageTests-Compiler'!
 SystemOrganization addCategory: #'BaseImageTests-System-Support'!
 SystemOrganization addCategory: #'BaseImageTests-System-Text'!
 SystemOrganization addCategory: #'BaseImageTests-System-FileMan'!
@@ -1720,163 +1720,16 @@ Here are a bunch of methods that can help improving the decompiler:
 	- decompilerDiscrepancies are the results of running decompileTestHelper..as you see the pattern 	
 	is quite present.!
 
-!DecompilerTestFailuresCollector commentStamp: 'jmv 10/16/2013 19:44' prior: 0!
+!DecompilerTestFailuresCollector commentStamp: 'eem 1/16/2025 18:40:11' prior: 0!
 (| dtfc |
 dtfc := DecompilerTestFailuresCollector new.
 (dtfc class superclass organization listAtCategoryNamed: #tests) do:
 	[:s| dtfc perform: s].
-dtfc failures)
+dtfc failures asArray)
 
 (Transcript nextPut: ${.
 self do: [:mr| Transcript print: mr actualClass; nextPut: $.; space; store: mr methodSymbol; nextPut: $.; cr; flush].
-Transcript nextPut: $}; flush)
-
-eem 7/1/2009 16:13
-{AdditionalMethodState. #keysAndValuesDo:.
-AdditionalMethodState. #propertyKeysAndValuesDo:.
-AdditionalMethodState. #at:ifAbsent:.
-AdditionalMethodState. #removeKey:ifAbsent:.
-AdditionalMethodState. #at:ifAbsentPut:.
-AdditionalMethodState. #setMethod:.
-AdditionalMethodState. #at:put:.
-AdditionalMethodState. #pragmas.
-AdditionalMethodState. #includesProperty:.
-AdditionalMethodState. #properties.
-AdditionalMethodState. #hasLiteralSuchThat:.
-AdditionalMethodState. #propertyValueAt:ifAbsent:.
-AdditionalMethodState. #hasLiteralThorough:.
-Array. #hasLiteralSuchThat:.
-BitBltSimulation. #initDither8Lookup.
-BlockNode. #sizeCodeExceptLast:.
-BlockNode. #emitCodeExceptLast:encoder:.
-Categorizer. #changeFromCategorySpecs:.
-Categorizer. #elementCategoryDict.
-CColorPicker. #colors:.
-CCustomDrawListCostume. #drawListOn:in:.
-ChangeList. #browseCurrentVersionsOfSelections.
-ClosureTests. #testToDoInsideTemp.
-Cogit. #computeMaximumSizes.
-Cogit. #outputInstructionsAt:.
-Cogit. #generateMapAt:start:.
-CogVMSimulator. #printFrameThing:at:.
-CogVMSimulator. #str:n:cmp:.
-CoInterpreter. #validStackPageBaseFrames.
-CoInterpreter. #markAndTraceTraceLog.
-CoInterpreter. #mapTraceLog.
-CoInterpreter. #checkStackIntegrity.
-CoInterpreter. #mapStackPages.
-CoInterpreter. #updateStackZoneReferencesToCompiledCodePreCompaction.
-CoInterpreter. #ceActivateFailingPrimitiveMethod:.
-CoInterpreterStackPages. #initializeStack:numSlots:pageSize:stackLimitOffset:stackPageHeadroom:.
-CompiledMethod. #=.
-CompiledMethod. #getPreambleFrom:at:.
-CompiledMethod. #hasLiteralThorough:.
-CompiledMethod. #hasLiteralSuchThat:.
-CPopUpMenuCostume. #drawMenu:on:in:.
-CroquetParticipant. #dropFiles:.
-CTextParagraph. #selectionRectsFrom:to:.
-CWheelWidgetCostume. #drawOn:in:.
-Dictionary. #scanFor:.
-Float. #printPaddedWith:to:.
-FMSound. #mixSampleCount:into:startingAt:leftVol:rightVol:.
-Form. #transformColors:.
-FTPClient. #getDataInto:.
-GIFReadWriter. #nextImageWithPlugin.
-GraphMorph. #drawDataOn:.
-GZipReadStream. #on:from:to:.
-HTTPServiceDispatcher. #errorReportFor:stack:on:.
-HttpUrl. #checkAuthorization:retry:.
-Integer. #benchSwitch:.
-Interpreter. #primitiveClosureValueWithArgs.
-Interpreter. #primitivePerformAt:.
-Interpreter. #primitiveDoPrimitiveWithArgs.
-Interpreter. #primitiveNewMethod.
-InterpreterStackPages. #initializeStack:numSlots:pageSize:stackLimitOffset:stackPageHeadroom:.
-JPEGReadWriter. #decodeBlockInto:component:dcTable:acTable:.
-KeyedIdentitySet. #scanFor:.
-KeyedSet. #scanFor:.
-LargeIntegersPlugin. #isNormalized:.
-LargeIntegersPlugin. #cBytesCopyFrom:to:len:.
-LargeIntegersPlugin. #cDigitMultiply:len:with:len:into:.
-LiteralDictionary. #scanFor:.
-LoopedSampledSound. #mixSampleCount:into:startingAt:leftVol:rightVol:.
-MethodDictionary. #scanFor:.
-MP4BoxInfoParser. #parseMP4BoxOutput:.
-MP4BoxNHMLTrack. #computeDTSDeltas.
-MultiByteBinaryOrTextStream. #next:.
-MultiByteFileStream. #next:.
-MViewPane. #reconstructEnabledDocuments.
-MViewPane. #reconstructOpenDocuments.
-MViewPane. #reconstructSelectionList.
-TextComposition. #selectionRectsFrom:to:.
-Object. #instanceFields.
-OldSocket. #getResponseNoLF.
-PasteUpMorph. #dropFiles:.
-PlotMorphGrid. #bestStep:.
-PluckedSound. #reset.
-PluggableDictionary. #scanFor:.
-PluggableSet. #scanFor:.
-PluggableTabButtonMorph. #calculateArcLengths.
-PluggableTabButtonMorph. #drawTabOn:.
-PNGReadWriter. #copyPixelsGray:.
-PNMReadWriter. #readPlainRGB.
-PNMReadWriter. #readBWreverse:.
-PNMReadWriter. #nextPutRGB:.
-PNMReadWriter. #nextPutBW:reverse:.
-PopUpMenu. #readKeyboard.
-QFloorFan. #initialize.
-QMinimalForum. #demoDesksUnused.
-QNetVidReorderingBuffer. #popFramesForCTS:.
-QNetVidTrackStreamer. #sampleIndexWithCTS:.
-QServiceProvider. #statusReport.
-QServicesPane. #forumMenuInto:.
-QUserListItem. #drawOn:in:.
-QVMProfiler. #computeHistograms:.
-QVMProfiler. #selectSymbolsInRange.
-QwaqParticipantUI. #onDropFiles:.
-RelativeInstructionPrinter. #print:.
-RemoteHandMorph. #appendNewDataToReceiveBuffer.
-SchizophrenicClosureFormatStackInterpreter. #primitiveClosureValueWithArgs.
-Set. #do:.
-Set. #scanFor:.
-SHParserST80. #isBinary.
-ShootoutMall. #processVisitors.
-SparseLargeArray. #analyzeSpaceSaving.
-StackInterpreter. #validStackPageBaseFrames.
-StackInterpreter. #divorceAllFrames.
-StackInterpreter. #checkStackIntegrity.
-StackInterpreter. #primitiveDoPrimitiveWithArgs.
-StackInterpreter. #reverseDisplayFrom:to:.
-StackInterpreter. #printOop:.
-StackInterpreter. #mapStackPages.
-StackInterpreter. #primitiveNewMethod.
-StackInterpreter. #primitiveClosureValueWithArgs.
-StrikeFontSet. #displayStringR2L:on:from:to:at:kern:.
-String. #howManyMatch:.
-Text. #asHtmlFragmentTextStyle:useBreaks:.
-TextURL. #actOnClickFor:.
-TFractalTerrain. #heightAt:.
-TFractalTerrain. #makeFaces.
-TFractalTerrain. #makeVertices.
-TFractalTerrain. #makeTextureUV.
-TFractalTerrain. #makeVertexNormals.
-TFrame. #computeUnionSphere.
-TMethod. #emitCCommentOn:.
-TRFBStreamOutput. #handleRequest:.
-TTCFontReader. #processCharacterMappingTable:.
-TTContourConstruction. #segmentsDo:.
-TTensor. #projectionIntegrate:.
-TTFontReader. #processHorizontalMetricsTable:length:.
-TTFontReader. #processCharacterMappingTable:.
-TWaves. #step.
-Vector. #copyFrom:.
-Vector. #asVector3.
-VectorColor. #copyFrom:.
-WeakKeyDictionary. #scanForNil:.
-WeakKeyDictionary. #scanFor:.
-WeakSet. #scanFor:.
-WeakSet. #scanForLoadedSymbol:.
-}!
+Transcript nextPut: $}; flush)!
 
 !FloatTest commentStamp: 'fbs 3/8/2004 22:13' prior: 0!
 I provide a test suite for Float values. Examine my tests to see how Floats should behave, and see how to use them.!
@@ -5911,13 +5764,28 @@ checkDecompileMethod: oldMethod
 			description: cls name asString, ' ', selector asString
 			resumable: true ]! !
 
-!DecompilerTests methodsFor: 'utilities' stamp: 'jmv 5/27/2015 13:58'!
+!DecompilerTests methodsFor: 'utilities' stamp: 'eem 1/17/2025 12:20:53'!
 decompileClassesSelect: aBlock
-	| cls |
-	(Smalltalk classNames select: aBlock) do: [ :cn |
-		cls _ Smalltalk at: cn.
-		 cls selectorsAndMethodsDo: [ :selector :meth |
-				self checkDecompileMethod: meth ]]! !
+
+	(Smalltalk classNames select: aBlock) do:
+		[ :cn | | class |
+		(class := Smalltalk classNamed: cn) selectorsAndMethodsDo:
+			[ :selector :method |
+			(self exceptionClassForFailureFor: class selector: selector)
+				ifNil: [ self checkDecompileMethod: method ]
+				ifNotNil:
+					[ :exceptionClass |
+					self
+						should: [ self checkDecompileMethod: method ]
+						raise: exceptionClass ] ] ]! !
+
+!DecompilerTests methodsFor: 'utilities' stamp: 'ul 5/6/2015 15:59'!
+exceptionClassForFailureFor: class selector: selector
+	
+	^self decompilerFailures
+		detect: [ :each | each first = class name and: [ each second = selector ] ]
+		ifFound: [ :each | each third ifNotNil: [ Smalltalk classNamed: each third ] ]
+		ifNone: [ nil ]! !
 
 !DecompilerTests methodsFor: 'utilities' stamp: 'jmv 6/1/2021 14:00:00'!
 withFixedTempNumbering: aString
@@ -6166,19 +6034,85 @@ testRemoteTemp
 	self shouldnt: [aBlock decompile] raise: Error
 	! !
 
-!DecompilerTestFailuresCollector methodsFor: 'accessing' stamp: 'HAW 3/17/2019 07:26:22'!
-assert: aBoolean description: aString resumable: resumableBoolean 
+!DecompilerTests methodsFor: 'filtering errors' stamp: 'eem 1/21/2025 15:41:42'!
+decompilerFailures
+	"Here is the list of failures: either a syntax error, a hard error or some failure to decompile correctly.
+	 Collected initially via 
+		DecompilerTestFailuresCollector new computeFailures.
+	 But can be maintained manually."
+
+	"class name, selector, error class name or nil"
+	^#(
+		(Character isValidInIdentifiers TestFailure)
+		(Dictionary scanFor: TestFailure)
+		(Editor normalCharacter: TestFailure)
+		(IdentityDictionary scanFor: TestFailure)
+		(IdentitySet scanFor: TestFailure)
+		(Integer lowBit TestFailure)
+		(MethodDictionary scanFor: TestFailure)
+		(Scanner xLetter TestFailure)
+		(Set scanFor: TestFailure)
+		(WeakIdentityKeyDictionary scanFor: TestFailure)
+		(WeakKeyDictionary scanFor: TestFailure))! !
+
+!DecompilerTestFailuresCollector methodsFor: 'accessing' stamp: 'ul 5/6/2015 16:36'!
+assert: aBoolean description: aString resumable: resumableBoolean
+
+	| method |
+	aBoolean ifTrue: [ ^self ].
+	method := thisContext sender home tempAt: 1.
+	self noteFailure: TestFailure for: method! !
+
+!DecompilerTestFailuresCollector methodsFor: 'accessing' stamp: 'eem 1/16/2025 18:45:07'!
+computeFailures
 	
-	aBoolean ifFalse: [
-		failures ifNil: [ failures := OrderedCollection new].
-		 failures addLast: (thisContext sender tempAt: 1) methodReference].
-	
-	^super assert: aBoolean description: aString resumable: resumableBoolean 
-! !
+	| tests |
+	failures := nil.
+	tests := (DecompilerTests organization listAtCategoryNamed: #tests) select:
+				[ :s | s beginsWith: 'testDecompilerInClasses' ].
+	tests
+		do: [ :each | self perform: each ]
+		displayingProgress: 'Computing failures...'.
+	^self decompilerFailures! !
+
+!DecompilerTestFailuresCollector methodsFor: 'accessing' stamp: 'ul 5/6/2015 16:53'!
+decompilerFailures
+
+	failures ifNil: [ ^#() ].
+	^failures asArray sort: [ :a :b |
+		| r |
+		r := a first compare: b first caseSensitive: false.
+		r = 1 or: [ r = 2 and: [
+			(a second compare: b second caseSensitive: false) <= 2 ] ] ]! !
 
 !DecompilerTestFailuresCollector methodsFor: 'accessing' stamp: 'eem 11/10/2008 15:47'!
 failures
 	^failures! !
+
+!DecompilerTestFailuresCollector methodsFor: 'utilities' stamp: 'ul 5/6/2015 16:38'!
+checkDecompileMethod: oldMethod
+	
+	[ super checkDecompileMethod: oldMethod ]
+		on: Error
+		do: [ :error | self noteFailure: error class for: oldMethod ]! !
+
+!DecompilerTestFailuresCollector methodsFor: 'utilities' stamp: 'ul 5/6/2015 16:24'!
+exceptionClassForFailureFor: class  selector: selector
+	
+	^nil! !
+
+!DecompilerTestFailuresCollector methodsFor: 'utilities' stamp: 'ul 5/6/2015 16:40'!
+noteFailure: exceptionClass for: method
+
+	(failures ifNil: [ failures := OrderedCollection new ]) add: {
+		method methodClass name.
+		method selector.
+		exceptionClass name }! !
+
+!DecompilerTestFailuresCollector class methodsFor: 'as yet unclassified' stamp: 'mt 9/3/2019 09:08'!
+isAbstract
+
+	^ true! !
 
 !MirrorPrimitiveTests methodsFor: 'tests' stamp: 'jmv 12/28/2013 19:06'!
 testMirrorAt
@@ -25024,6 +24958,61 @@ unusedVariableSource
 	^ 'griffle 
 		| goo |
 		^ nil'! !
+
+!CompilerTest methodsFor: 'tests - limits' stamp: 'eem 12/28/2024 13:58:04'!
+testMaxLiterals
+	"Document the maximum number of literals in a compiled method"
+
+	| bytecodeSetEncoder maxLiterals stringThatCanBeCompiled stringWithOneTooManyLiterals |
+	"Why 6?  It's rather implementation dependent.  But the {... construct is compiled as
+		(Array braceStream: size)
+			nextPut: expr;
+			...;
+			braceArray
+	 where nextPut: is a special selector.  So one each for Array binding, #braceStream, #braceArray and possibly the size,
+	 one for the selector and one for the methodClass makes 5 or 6."
+	bytecodeSetEncoder := CompiledMethod preferredBytecodeSetEncoderClass new.
+	maxLiterals := bytecodeSetEncoder maxNumLiterals - 6.
+	"If the bytecode set can push the size of the brace stream with a bytecode (not needing a literal) then we need one more literal."
+	(bytecodeSetEncoder isSpecialLiteralForPush: maxLiterals) ifTrue:
+		[maxLiterals := maxLiterals + 1].
+	stringThatCanBeCompiled := '{ ', (String streamContents: [:strm |
+					1 to: maxLiterals do: [:e | strm nextPutAll: '''', e asString, '''', ' . ']]), '}'.
+	stringWithOneTooManyLiterals := '{ ', (String streamContents: [:strm |
+					1 to: maxLiterals + 1 do: [:e | strm nextPutAll: '''', e asString, '''', ' . ']]), '}'.
+	self assert: ((1 to: maxLiterals) collect: #printString) equals: (Compiler evaluate: stringThatCanBeCompiled).
+	
+	"If the following test fails, it means that the limit has been raised or eliminated,
+	and this test should be updated to reflect the improvement."
+	self should: [Compiler evaluate: stringWithOneTooManyLiterals for: nil logged: false] raise: SyntaxErrorNotification.
+! !
+
+!CompilerTest methodsFor: 'tests - limits' stamp: 'eem 12/28/2024 13:57:19'!
+testMaxLiteralsWithClassReferenceInClosure
+	"Document the maximum number of literals in a compiled method. A class
+	reference in a closure reduces the maximum literals."
+
+	| bytecodeSetEncoder maxLiterals stringThatCanBeCompiled stringWithOneTooManyLiterals |
+	bytecodeSetEncoder := CompiledMethod preferredBytecodeSetEncoderClass new.
+	maxLiterals := bytecodeSetEncoder maxNumLiterals
+					- 2 "for selector & methodClass"
+					- (bytecodeSetEncoder supportsFullBlocks ifTrue: [1] ifFalse: [5 "For this example. See below"])
+					- 4 "for the implicit stream processing into which the brace construct is compiled: (Array braceStream: size) braceArray".
+	"If the bytecode set can push the size of the brace stream with a bytecode (not needing a literal) then we need one more literal."
+	(bytecodeSetEncoder isSpecialLiteralForPush: maxLiterals) ifTrue:
+		[maxLiterals := maxLiterals + 1].
+	stringThatCanBeCompiled := '[ DateAndTime now. Date today. Time ]. { ',
+			(String streamContents: [:strm |
+					1 to: maxLiterals do: [:e | strm nextPutAll: '''', e asString, '''', ' . ']]), '}'.
+	stringWithOneTooManyLiterals := '[ DateAndTime now. Date today. Time ]. { ',
+			(String streamContents: [:strm |
+					1 to: maxLiterals + 1 do: [:e | strm nextPutAll: '''', e asString, '''', ' . ']]), '}'.
+	self assert: maxLiterals equals: (Compiler evaluate: stringThatCanBeCompiled) size.
+	
+	"If the following test fails, it means that the limit has been raised or eliminated,
+	and this test should be updated to reflect the improvement."
+	self should: [Compiler evaluate: stringWithOneTooManyLiterals for: nil logged: false] raise: SyntaxErrorNotification.
+! !
 
 !SystemOrganizerTest methodsFor: 'testing' stamp: 'HAW 5/16/2024 10:00:12'!
 testRenameSystemCategoryAlsoRenameClassExtensions
