@@ -1,6 +1,6 @@
-'From Cuis7.3 [latest update: #6996] on 21 January 2025 at 3:43:17 pm'!
+'From Cuis7.3 [latest update: #7000] on 22 January 2025 at 3:02:25 pm'!
 'Description Rename extentions tests'!
-!provides: 'BaseImageTests' 1 432!
+!provides: 'BaseImageTests' 1 433!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Compiler'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Objects'!
@@ -6034,7 +6034,7 @@ testRemoteTemp
 	self shouldnt: [aBlock decompile] raise: Error
 	! !
 
-!DecompilerTests methodsFor: 'filtering errors' stamp: 'eem 1/21/2025 15:41:42'!
+!DecompilerTests methodsFor: 'filtering errors' stamp: 'jmv 1/22/2025 14:47:23'!
 decompilerFailures
 	"Here is the list of failures: either a syntax error, a hard error or some failure to decompile correctly.
 	 Collected initially via 
@@ -6043,14 +6043,11 @@ decompilerFailures
 
 	"class name, selector, error class name or nil"
 	^#(
-		(Character isValidInIdentifiers TestFailure)
 		(Dictionary scanFor: TestFailure)
-		(Editor normalCharacter: TestFailure)
 		(IdentityDictionary scanFor: TestFailure)
 		(IdentitySet scanFor: TestFailure)
 		(Integer lowBit TestFailure)
 		(MethodDictionary scanFor: TestFailure)
-		(Scanner xLetter TestFailure)
 		(Set scanFor: TestFailure)
 		(WeakIdentityKeyDictionary scanFor: TestFailure)
 		(WeakKeyDictionary scanFor: TestFailure))! !
@@ -24313,13 +24310,13 @@ debuggerOn: aBlock
 		
 	^ debugger! !
 
-!QuickReturnDebuggingTest methodsFor: 'private' stamp: 'FJG 11/8/2023 19:12:58'!
+!QuickReturnDebuggingTest methodsFor: 'private' stamp: 'jmv 1/22/2025 14:53:52'!
 quickReturn
 	" Example:
 		QuickReturnDebuggingTest new halt quickReturn
 	"
 	
-	^ 2! !
+	^ 2 + 4! !
 
 !QuickReturnDebuggingTest methodsFor: 'tests' stamp: 'FJG 11/8/2023 19:12:03'!
 test01_debuggerCanStepIntoQuickReturnMethods
