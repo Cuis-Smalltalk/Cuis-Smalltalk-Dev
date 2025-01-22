@@ -1,6 +1,6 @@
-'From Cuis7.3 [latest update: #7000] on 22 January 2025 at 3:02:25 pm'!
+'From Cuis7.3 [latest update: #7000] on 22 January 2025 at 3:10:27 pm'!
 'Description Rename extentions tests'!
-!provides: 'BaseImageTests' 1 433!
+!provides: 'BaseImageTests' 1 435!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Compiler'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Objects'!
@@ -24310,13 +24310,13 @@ debuggerOn: aBlock
 		
 	^ debugger! !
 
-!QuickReturnDebuggingTest methodsFor: 'private' stamp: 'jmv 1/22/2025 14:53:52'!
+!QuickReturnDebuggingTest methodsFor: 'private' stamp: 'FJG 11/8/2023 19:12:58'!
 quickReturn
 	" Example:
 		QuickReturnDebuggingTest new halt quickReturn
 	"
 	
-	^ 2 + 4! !
+	^ 2! !
 
 !QuickReturnDebuggingTest methodsFor: 'tests' stamp: 'FJG 11/8/2023 19:12:03'!
 test01_debuggerCanStepIntoQuickReturnMethods
