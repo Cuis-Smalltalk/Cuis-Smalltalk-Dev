@@ -1,6 +1,6 @@
-'From Cuis7.3 [latest update: #7003] on 24 January 2025 at 12:37:25 pm'!
+'From Cuis7.3 [latest update: #7012] on 27 January 2025 at 10:04:48 am'!
 'Description Rename extentions tests'!
-!provides: 'BaseImageTests' 1 436!
+!provides: 'BaseImageTests' 1 437!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Compiler'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Objects'!
@@ -14780,12 +14780,14 @@ testGCDAndLCM
 testGCDExample
 	self assert: (120 gcd: 70) = 10! !
 
-!IntegerTest methodsFor: 'gcd and lcm' stamp: 'len 6/27/2019 10:38:26'!
+!IntegerTest methodsFor: 'gcd and lcm' stamp: 'jmv 1/27/2025 10:04:37'!
 testGCDProperties
 	| a b c |
-	a _ (-20 to: 20) atRandom.
-	b _ (-20 to: 20) atRandom.
-	c _ (-20 to: 20) atRandom.
+	[
+		a := (-20 to: 20) atRandom.
+		b := (-20 to: 20) atRandom.
+		c := (-20 to: 20) atRandom.
+		a = 0 and: [ b = 0 ]] whileTrue. "yes, it can happen"
 	self assert: a \\ (a gcd: b) = 0. "divides a"
 	self assert: b \\ (a gcd: b) = 0. "divides b"
 	self assert: (a gcd: b) = (a gcd: b) abs. "it is normalized to be >= 0"
