@@ -1,6 +1,6 @@
 'From Cuis7.3 [latest update: #7009] on 27 January 2025 at 9:50:44 am'!
 
-!ContextPart methodsFor: 'controlling' stamp: 'Ez3 1/25/2025 15:06:53'!
+!ContextPart methodsFor: 'controlling' stamp: 'eem 4/13/2017 13:02'!
 quickSend: selector to: rcvr with: arguments lookupIn: lookupClass
 	"Send the given selector with arguments in an environment which closely resembles
 	 the non-simulating environment, with an interjected unwind-protected block to catch
