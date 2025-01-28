@@ -1,6 +1,6 @@
-'From Cuis7.3 [latest update: #7012] on 27 January 2025 at 10:04:48 am'!
+'From Cuis7.3 [latest update: #7028] on 28 January 2025 at 2:00:21 pm'!
 'Description Rename extentions tests'!
-!provides: 'BaseImageTests' 1 437!
+!provides: 'BaseImageTests' 1 438!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Compiler'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Objects'!
@@ -8920,15 +8920,15 @@ categoryWithTrailingBlanks
 
 	^ 'withTrailingBlanks '! !
 
-!CategorizerTest methodsFor: 'support' stamp: 'HAW 9/24/2020 19:46:47'!
+!CategorizerTest methodsFor: 'support' stamp: 'jmv 1/28/2025 13:59:53'!
 createCategorizer
 
-	^ Categorizer defaultList: #()! !
+	^ Categorizer empty! !
 
-!ClassOrganizerTest methodsFor: 'support' stamp: 'HAW 9/24/2020 19:53:00'!
+!ClassOrganizerTest methodsFor: 'support' stamp: 'jmv 1/28/2025 13:59:59'!
 createCategorizer
 
-	^ ClassOrganizer defaultList: #()! !
+	^ ClassOrganizer empty! !
 
 !ClassTest methodsFor: 'definition tests' stamp: 'HAW 10/24/2019 09:34:44'!
 testDefinitionReplacingCategoryWithReplacesTheCategoryWithTheGivenOne
