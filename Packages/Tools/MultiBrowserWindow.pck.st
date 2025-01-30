@@ -1,6 +1,6 @@
-'From Cuis7.3 [latest update: #6895] on 6 December 2024 at 4:46:34 pm'!
+'From Cuis7.3 [latest update: #7040] on 30 January 2025 at 4:34:57 pm'!
 'Description '!
-!provides: 'MultiBrowserWindow' 1 3!
+!provides: 'MultiBrowserWindow' 1 4!
 SystemOrganization addCategory: #MultiBrowserWindow!
 
 
@@ -47,7 +47,7 @@ buildMorphicWindow
 	self browserModelsDo: [ :m |
 		m addDependent: self ].! !
 
-!MultiBrowserWindow methodsFor: 'menu commands' stamp: 'jmv 12/3/2024 09:44:12'!
+!MultiBrowserWindow methodsFor: 'menu commands' stamp: 'jmv 1/30/2025 16:34:14'!
 addNew
 	| browser |
 	browser := Browser new.
@@ -56,6 +56,7 @@ addNew
 	self beColumn.
 	self buildMorphicWindow.
 	self adoptWidgetsColor: borderColor.
+	self extentChanged: extent.
 	self update: #relabel.! !
 
 !MultiBrowserWindow methodsFor: 'menu commands' stamp: 'jmv 12/3/2024 11:06:04'!
@@ -117,6 +118,15 @@ offerMultiBrowserMenu
 
 	aMenu popUpInWorld: self world! !
 
+!MultiBrowserWindow methodsFor: 'geometry' stamp: 'jmv 1/30/2025 16:29:21'!
+extentChanged: oldExtent
+	| pos e |
+	super extentChanged: oldExtent.
+	pos := self interiorOrigin.
+	e := self interiorExtent.
+	self mainLayoutsDo: [ :lm |
+		lm position: pos extent: e ].! !
+
 !MultiBrowserWindow methodsFor: 'geometry' stamp: 'jmv 12/6/2024 16:04:30'!
 labelXPosition
 	| f |
@@ -173,15 +183,6 @@ initializeLabelArea
 !MultiBrowserWindow methodsFor: 'label' stamp: 'jmv 12/3/2024 10:48:32'!
 setLabel: aString
 	super setLabel: self indexOfModel printString, '. ', aString.! !
-
-!MultiBrowserWindow methodsFor: 'layout' stamp: 'jmv 12/3/2024 10:57:19'!
-layoutSubmorphs
-
-	| pos |
-	super layoutSubmorphs.
-	pos := borderWidth @ (borderWidth + self labelHeight).
-	self mainLayoutsDo: [ :lm |
-		lm position: pos extent: extent - pos - borderWidth ].! !
 
 !MultiBrowserWindow methodsFor: 'private' stamp: 'jmv 12/3/2024 11:01:58'!
 browserModelAt: i
