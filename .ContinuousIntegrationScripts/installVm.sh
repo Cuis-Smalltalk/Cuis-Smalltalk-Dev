@@ -5,12 +5,9 @@ set -euo pipefail
 echo "Setting up VM for $RUNNER_OS"
 
 installVmLinux() {
-  sudo apt-get update
-  sudo apt-get install pulseaudio
-
   #Use VM included with Cuis in this repo
   CUIS_VM_PATH=CuisVM.app/Contents/Linux-x86_64/squeak
-  CUIS_VM_ARGUMENTS="-vm-display-null"
+  CUIS_VM_ARGUMENTS="-vm-sound-null -vm-display-null"
   pwd
   "$CUIS_VM_PATH" --version
 }
