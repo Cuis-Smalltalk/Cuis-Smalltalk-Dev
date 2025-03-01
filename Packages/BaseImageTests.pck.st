@@ -1,6 +1,6 @@
-'From Cuis7.3 [latest update: #7028] on 28 January 2025 at 2:00:21 pm'!
+'From Cuis7.3 [latest update: #7061] on 1 March 2025 at 5:49:19 pm'!
 'Description Rename extentions tests'!
-!provides: 'BaseImageTests' 1 438!
+!provides: 'BaseImageTests' 1 439!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Compiler'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Objects'!
@@ -5469,18 +5469,18 @@ bc10
 
 	^ [ :a :b | a + b ]! !
 
-!ClosureSerializationTest methodsFor: 'sample closures' stamp: 'jmv 9/26/2019 23:19:41'!
+!ClosureSerializationTest methodsFor: 'sample closures' stamp: 'jmv 3/1/2025 17:39:45'!
 bc11
 	| a b c d e f g |
-	a _ self gimme5 + 1.
-	b _ self gimme5 + 2.
-	c _ self gimme5 + 3.
-	d _ self gimme5 + 4.
-	e _ self gimme5 + 5.
-	f _ self gimme5 + 6.
-	g _ self gimme5 + 7.
-	{ b. d. e. f } print.
-	^{[ g + a * 10 + a + a + g + c ]. [ b _ 7. c _ c * 2 ]}.! !
+	a := self gimme5 + 1.
+	b := self gimme5 + 2.
+	c := self gimme5 + 3.
+	d := self gimme5 + 4.
+	e := self gimme5 + 5.
+	f := self gimme5 + 6.
+	g := self gimme5 + 7.
+	{ b. d. e. f }"print".
+	^{[ g + a * 10 + a + a + g + c ]. [ b := 7. c := c * 2 ]}.! !
 
 !ClosureSerializationTest methodsFor: 'setUp/tearDown' stamp: 'jmv 3/20/2024 15:45:08'!
 setUp
@@ -7337,20 +7337,20 @@ testNoTimeout
 testTimeoutWithZeroDuration
 	self assertSuccess: (ExceptionTester new runTest: #simpleTimeoutWithZeroDurationTest ) ! !
 
-!ProgressInitiationExceptionTest methodsFor: 'testing' stamp: 'jmv 5/1/2021 20:11:23'!
+!ProgressInitiationExceptionTest methodsFor: 'testing' stamp: 'jmv 3/1/2025 17:35:42'!
 test01
 	| countStorage |
-	countStorage _ {0}.
+	countStorage := {0}.
 	self
 		should: [ self sampleProgress: countStorage ]
 		raise: ZeroDivide.
-	self assert: countStorage first = 5.
+	self assert: countStorage first = 3.
 	! !
 
-!ProgressInitiationExceptionTest methodsFor: 'testing' stamp: 'jmv 5/1/2021 20:11:36'!
+!ProgressInitiationExceptionTest methodsFor: 'testing' stamp: 'jmv 3/1/2025 17:36:37'!
 test02
 	| countStorage |
-	countStorage _ {0}.
+	countStorage := {0}.
 	self
 		shouldnt: [
 			[self sampleProgress: countStorage]
@@ -7358,13 +7358,13 @@ test02
 				do: [ :ex | ex resume]
 			]
 		raise: Error.
-	self assert: countStorage first = 10.
+	self assert: countStorage first = 4.
 	! !
 
-!ProgressInitiationExceptionTest methodsFor: 'testing' stamp: 'jmv 5/1/2021 20:12:24'!
+!ProgressInitiationExceptionTest methodsFor: 'testing' stamp: 'jmv 3/1/2025 17:36:43'!
 test03
 	| countStorage |
-	countStorage _ {0}.
+	countStorage := {0}.
 	self
 		should: [
 			[self sampleProgress: countStorage]
@@ -7372,13 +7372,13 @@ test03
 				do: [ :ex | ex sendNotificationsTo: [ :min :max :curr | Transcript show: min printString, '  ', max printString, '  ', curr printString; newLine ]]
 			]
 		raise: Error.
-	self assert: countStorage first = 5.
+	self assert: countStorage first = 3.
 	! !
 
-!ProgressInitiationExceptionTest methodsFor: 'testing' stamp: 'jmv 5/1/2021 20:15:12'!
+!ProgressInitiationExceptionTest methodsFor: 'testing' stamp: 'jmv 3/1/2025 17:36:48'!
 test04
 	| countStorage |
-	countStorage _ {0}.
+	countStorage := {0}.
 	self
 		shouldnt: [
 			[
@@ -7390,13 +7390,13 @@ test04
 				do: [ :ex | ex sendNotificationsTo: [ :min :max :curr | Transcript show: min printString, '  ', max printString, '  ', curr printString; newLine ]]
 			]
 		raise: Error.
-	self assert: countStorage first = 10.
+	self assert: countStorage first = 4.
 	! !
 
-!ProgressInitiationExceptionTest methodsFor: 'testing' stamp: 'jmv 5/1/2021 20:15:48'!
+!ProgressInitiationExceptionTest methodsFor: 'testing' stamp: 'jmv 3/1/2025 17:31:04'!
 test05
 	| countStorage |
-	countStorage _ {0}.
+	countStorage := {0}.
 	self
 		shouldnt: [
 			[
@@ -7408,26 +7408,26 @@ test05
 				do: [ :ex | ex resume]
 			]
 		raise: Error.
-	self assert: countStorage first = 10.
+	self assert: countStorage first = 4.
 	! !
 
-!ProgressInitiationExceptionTest methodsFor: 'aux' stamp: 'jmv 5/1/2021 20:09:48'!
+!ProgressInitiationExceptionTest methodsFor: 'aux' stamp: 'jmv 3/1/2025 17:35:15'!
 sampleProgress: countStorage
 "
 self new sampleProgress: {0}
 "
 	| d |
-	d _ Delay forMilliseconds: 10.
+	d := Delay forMilliseconds: 10.
 	^'Now here''s some Real Progress'
 		displayProgressAt: Sensor mousePoint
 		from: 0
-		to: 10
+		to: 4
 		during: [ :barBlock |
-			1 to: 10 do: [ :x |
+			1 to: 4 do: [ :x |
 				countStorage at: 1 put: countStorage first + 1.
 				barBlock value: x.
 				d wait.
-				x = 5 ifTrue: [1/0].	"just to make life interesting"
+				x = 3 ifTrue: [1/0].	"just to make life interesting"
 			].
 			'done'
 		].
@@ -10726,30 +10726,30 @@ testPrintShowingDecimalPlaces4
 	0 to: 100 do: [ :extra |
 		self assert: (Float pi printStringFractionDigits: requiredDigits + extra) asNumber = Float pi ]! !
 
-!FloatTest methodsFor: 'tests - conversion from to String' stamp: 'jmv 12/27/2018 16:50:31'!
+!FloatTest methodsFor: 'tests - conversion from to String' stamp: 'jmv 3/1/2025 17:22:39'!
 testPrintStringStress
 	| eWidth mWidth ePrimeScale mPrimeScale |
-	eWidth _ Float emax - Float emin.
+	eWidth := Float emax - Float emin.
 	"211 for a more exhaustive but slower test. 41 for a quick run."
-	ePrimeScale _ 211.
-	ePrimeScale _ 41.
-	mWidth _ 1 bitShift: Float precision.
+	ePrimeScale := 211.
+	ePrimeScale := 41.
+	mWidth := 1 bitShift: Float precision.
 	"9931 for a more exhaustive but slower test. 37 for a quick run."
-	mPrimeScale _ 9931.
-	mPrimeScale _ 37.
+	mPrimeScale := 9931.
+	mPrimeScale := 37.
 	0
 		to: mWidth - 1 * mPrimeScale
 		by: mWidth
 		do: [ :mScaled | | m eAdjustment |
-			m _ mScaled // mPrimeScale.
-			eAdjustment _ m highBit - 1.
-			{mScaled. m. m hex. eAdjustment } print.
+			m := mScaled // mPrimeScale.
+			eAdjustment := m highBit - 1.
+			"{mScaled. m. m hex. eAdjustment } print."
 			Float emin * ePrimeScale
 				to: Float emax * ePrimeScale
 				by: eWidth
 				do: [ :eFraction | | e fp |
-					e _ eFraction // ePrimeScale - eAdjustment.
-					fp _ m asFloat timesTwoPower: e.
+					e := eFraction // ePrimeScale - eAdjustment.
+					fp := m asFloat timesTwoPower: e.
 					self assert: fp printString asNumber = fp.
 					self assert: fp negated printString asNumber = fp negated ]]! !
 
@@ -22688,20 +22688,20 @@ testTabWhenConditionIsTruePutsATabInStream
 
 	self assertTranscriptContentsAdded: Character tab asString after: [ Transcript tabWhen: true ]! !
 
-!TranscriptTest methodsFor: 'assertions' stamp: 'jmv 7/31/2023 12:24:46'!
+!TranscriptTest methodsFor: 'assertions' stamp: 'jmv 3/1/2025 17:19:12'!
 assertTranscriptContentsAdded: expectedAddedString after: aBlock
 	
 	| transcriptContentsBeforeBlockEvaluation |
-	Transcript clear.
+	"Transcript clear."
 	transcriptContentsBeforeBlockEvaluation := Transcript contents.
 	aBlock value.
 	self assert: Transcript contents equals: transcriptContentsBeforeBlockEvaluation, expectedAddedString.! !
 
-!TranscriptTest methodsFor: 'assertions' stamp: 'jmv 7/31/2023 12:23:57'!
+!TranscriptTest methodsFor: 'assertions' stamp: 'jmv 3/1/2025 17:19:06'!
 assertTranscriptContentsAdded2: expectedAddedString after: aBlock
 	
 	| transcriptContentsBeforeBlockEvaluation |
-	Transcript clear.
+	"Transcript clear."
 	transcriptContentsBeforeBlockEvaluation := Transcript contents.
 	aBlock value.
 	{transcriptContentsBeforeBlockEvaluation. expectedAddedString.Transcript contents} inspect.
