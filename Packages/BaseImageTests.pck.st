@@ -1,6 +1,6 @@
-'From Cuis7.3 [latest update: #7061] on 1 March 2025 at 5:49:19 pm'!
+'From Cuis7.3 [latest update: #7067] on 12 March 2025 at 5:43:27 pm'!
 'Description Rename extentions tests'!
-!provides: 'BaseImageTests' 1 439!
+!provides: 'BaseImageTests' 1 440!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Compiler'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Objects'!
@@ -24601,20 +24601,20 @@ createClassNamed: aName subclassOf: superclass instanceVariableNames: instanceVa
 		category: self classCategoryOfTestData 
 ! !
 
-!DynamicallyCodeCreationTest methodsFor: 'class factory' stamp: 'HAW 12/17/2019 10:32:28'!
+!DynamicallyCodeCreationTest methodsFor: 'class factory' stamp: 'HAW 3/11/2025 18:49:47'!
 createClassNamed: aName subclassOf: superclass instanceVariableNames: instanceVariables classVariableNames: classVariables poolDictionaries: poolDictionaries category: category
 
 	self assert: (Smalltalk classNamed: aName) isNil description: 'Class ', aName, ' already exists'.
 	
 	classCategories add: category.
 	
-	^superclass
-		subclass: aName
-		instanceVariableNames: instanceVariables 
-		classVariableNames: classVariables 
-		poolDictionaries: poolDictionaries 
-		category: category 
-! !
+	^SystemChangeNotifier uniqueInstance doSilently: [ 
+		superclass
+			subclass: aName
+			instanceVariableNames: instanceVariables 
+			classVariableNames: classVariables 
+			poolDictionaries: poolDictionaries 
+			category: category ]! !
 
 !DynamicallyCodeCreationTest methodsFor: 'assertions' stamp: 'HAW 12/17/2019 10:32:57'!
 assertAllClassCategoriesAreExpectedToBeRemoved
@@ -24630,16 +24630,18 @@ assertCanRunTest
 	self assertNoTestDataClassCategoryExist.
 	! !
 
-!DynamicallyCodeCreationTest methodsFor: 'assertions' stamp: 'HAW 12/17/2019 10:33:17'!
+!DynamicallyCodeCreationTest methodsFor: 'assertions' stamp: 'HAW 3/11/2025 18:33:45'!
+assertClassCategoryIsEmpty: aClassCategory
+		
+	self 
+		assert: (SystemOrganization listAtCategoryNamed: aClassCategory) isEmpty 
+		description: 'Can not run test because class category ', aClassCategory, ' is not empty'! !
+
+!DynamicallyCodeCreationTest methodsFor: 'assertions' stamp: 'HAW 3/11/2025 18:30:05'!
 assertNoTestDataClassCategoryExist
 
-	self allClassCategoriesOfTestData do: [ :aClassCategory | self denyExistsClassCategory: aClassCategory ]
+	self allClassCategoriesOfTestData do: [ :aClassCategory | self assertClassCategoryIsEmpty: aClassCategory ]
 		! !
-
-!DynamicallyCodeCreationTest methodsFor: 'assertions' stamp: 'HAW 12/17/2019 10:33:26'!
-denyExistsClassCategory: aClassCategory
-		
-	self deny: (SystemOrganization hasCategory: aClassCategory) description: 'Can not run test because class category ', aClassCategory, ' already exists'! !
 
 !DynamicallyCodeCreationTest methodsFor: 'setup/teardown' stamp: 'jmv 3/20/2024 15:45:28'!
 setUp
@@ -24655,15 +24657,17 @@ setUp
 	
 	classCategories := Set new.! !
 
-!DynamicallyCodeCreationTest methodsFor: 'setup/teardown' stamp: 'HAW 12/17/2019 10:33:41'!
+!DynamicallyCodeCreationTest methodsFor: 'setup/teardown' stamp: 'HAW 3/11/2025 18:50:14'!
 tearDown
 
 	setUpAssertionsPassed ifTrue: [
 		self assertAllClassCategoriesAreExpectedToBeRemoved.
-		SystemOrganization removeSystemCategories: classCategories.
-		"I commented this because it took too much time and the only ones running these tests 
-		are the ones developing refactorings that know about creating/removing test data category - Hernan
-		Browser allInstancesDo: [:aBrowser | aBrowser changed: #systemCategoryList ]"]! !
+		
+		"I'm doing this instead of SystemOrganization removeSystemCategories: classCategories
+		because it is faster - Hernan"
+		SystemChangeNotifier uniqueInstance doSilently: [
+			classCategories do: [ :aCategory | 
+				(SystemOrganization classesAt: aCategory) do: [ :aClass | aClass removeFromSystem ]]]]! !
 
 !DynamicallyCodeCreationTest class methodsFor: 'class factory' stamp: 'HAW 12/17/2019 10:34:07'!
 classCategoryOfTestData
