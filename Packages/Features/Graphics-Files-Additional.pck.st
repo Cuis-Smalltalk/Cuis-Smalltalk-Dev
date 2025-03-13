@@ -1,6 +1,6 @@
-'From Cuis6.3 [latest update: #6213] on 6 February 2024 at 10:25:23 am'!
+'From Cuis7.3 [latest update: #7067] on 13 March 2025 at 12:39:03 pm'!
 'Description '!
-!provides: 'Graphics-Files-Additional' 1 29!
+!provides: 'Graphics-Files-Additional' 1 30!
 !requires: 'Compression' 1 nil nil!
 SystemOrganization addCategory: #'Graphics-Files-Additional'!
 
@@ -2481,5 +2481,12 @@ writePNGfileNamed: fName
 	Display writePNGfileNamed: 'display.png'
 	"
 	PNGReadWriter putForm: self onFileNamed: fName! !
+
+!Morph methodsFor: '*Graphics-Files-Additional' stamp: 'hlsf 3/10/2025 21:41:54'!
+exportAsPNG
+	"Export the receiver's image as a PNG."
+	self request: 'Enter file name'
+		initialAnswer: (self printStringLimitedTo: 20),'.png'
+		do: [:aString| (self imageForm: 32) writePNGfileNamed: aString]! !
 PNGReadWriter initialize!
 TIFFField initialize!
