@@ -1,6 +1,6 @@
-'From Cuis7.3 [latest update: #7067] on 12 March 2025 at 5:43:27 pm'!
+'From Cuis7.3 [latest update: #7070] on 14 March 2025 at 2:38:13 pm'!
 'Description Rename extentions tests'!
-!provides: 'BaseImageTests' 1 440!
+!provides: 'BaseImageTests' 1 441!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Compiler'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Objects'!
@@ -23152,16 +23152,20 @@ test03
 	self assert: (all includes: {'car'. String. Float pi. SmallFloat64}).
 	self assert: (all includes: {'cat'. UnicodeString. Date today. Date}).! !
 
-!SmalltalkCompleterTest methodsFor: 'testing' stamp: 'jmv 7/5/2022 23:08:14'!
+!SmalltalkCompleterTest methodsFor: 'testing' stamp: 'jmv 3/14/2025 10:24:30'!
 testMessages
 	"
 	SmalltalkCompleterTest new testMessages
 	"
 	| fromSmalltalk fromUCompleter |
-	fromSmalltalk _ Smalltalk allImplementedMessages.
-	fromUCompleter _ Symbol allSymbols select: [ :s |
+	fromSmalltalk := Smalltalk allImplementedMessages.
+	fromUCompleter := Symbol allSymbols select: [ :s |
 		SmalltalkCompleter isThereAnImplementorOf: s].
-	self assert: fromSmalltalk = fromUCompleter asSet! !
+
+	"Some tests use #doSilently: when removing classes.
+	This means that selectors may be garbage collected and not removed from SmalltalkCompleter."
+	"self assert: fromSmalltalk = fromUCompleter asSet."
+	self assert: (fromUCompleter includesAllOf: fromSmalltalk).! !
 
 !SmalltalkCompleterTest methodsFor: 'tests' stamp: 'HAW 5/2/2020 20:56:42'!
 test000_AutocompletesMessagesFor_GlobalVariables_WithSelectorsFromTheirClasses
@@ -24517,36 +24521,36 @@ classCategoryOfTestData
 	
 	^self class classCategoryOfTestData! !
 
-!DynamicallyCodeCreationTest methodsFor: 'class factory' stamp: 'HAW 12/18/2019 19:55:52'!
+!DynamicallyCodeCreationTest methodsFor: 'class factory' stamp: 'HAW 3/13/2025 13:59:15'!
 createClassNamed: aName 
 
 	^self 
 		createClassNamed: aName asSymbol "Just in case it is a string... - Hernan"
-		subclassOf: RefactoringClassTestData 
+		subclassOf: self defaultSuperclass 
 		instanceVariableNames: '' 
 		classVariableNames: ''
 		poolDictionaries: ''
 		category: self classCategoryOfTestData.
 ! !
 
-!DynamicallyCodeCreationTest methodsFor: 'class factory' stamp: 'HAW 12/18/2019 19:55:56'!
+!DynamicallyCodeCreationTest methodsFor: 'class factory' stamp: 'HAW 3/13/2025 13:59:15'!
 createClassNamed: aName category: aCategory
 
 	^self 
 		createClassNamed: aName
-		subclassOf: RefactoringClassTestData 
+		subclassOf: self defaultSuperclass 
 		instanceVariableNames: '' 
 		classVariableNames: ''
 		poolDictionaries: ''
 		category: aCategory 
 ! !
 
-!DynamicallyCodeCreationTest methodsFor: 'class factory' stamp: 'HAW 12/18/2019 19:56:00'!
+!DynamicallyCodeCreationTest methodsFor: 'class factory' stamp: 'HAW 3/13/2025 13:59:15'!
 createClassNamed: aName instanceVariableNames: instanceVariables
 
 	^self 
 		createClassNamed: aName
-		subclassOf: RefactoringClassTestData 
+		subclassOf: self defaultSuperclass 
 		instanceVariableNames: instanceVariables 
 		classVariableNames: ''
 		poolDictionaries: ''
@@ -24615,6 +24619,11 @@ createClassNamed: aName subclassOf: superclass instanceVariableNames: instanceVa
 			classVariableNames: classVariables 
 			poolDictionaries: poolDictionaries 
 			category: category ]! !
+
+!DynamicallyCodeCreationTest methodsFor: 'class factory' stamp: 'HAW 3/13/2025 13:59:15'!
+defaultSuperclass
+
+	^ RefactoringClassTestData! !
 
 !DynamicallyCodeCreationTest methodsFor: 'assertions' stamp: 'HAW 12/17/2019 10:32:57'!
 assertAllClassCategoriesAreExpectedToBeRemoved
@@ -28034,12 +28043,12 @@ classVarName
 	
 	^'ClassVar1'! !
 
-!ExtractAsParameterTest methodsFor: 'class factory' stamp: 'HAW 7/8/2024 11:22:22'!
+!ExtractAsParameterTest methodsFor: 'class factory' stamp: 'HAW 3/13/2025 13:59:28'!
 createDefaultClassToRefactor
 
 	^ self 
 		createClassNamed: self classToRefactorName 
-		subclassOf: Object 
+		subclassOf: self defaultSuperclass 
 		instanceVariableNames: self instVarName 
 		classVariableNames: self classVarName! !
 
@@ -31132,7 +31141,7 @@ test01ChangesTheSuperclassOfTheClassToRefactor
 	self assert: (newSuperclass subclasses includes: classToRefactor).
 	self assert: oldSuperclass equals: newSuperclass superclass.! !
 
-!InsertSuperclassTest methodsFor: 'tests' stamp: 'HAW 12/18/2019 20:02:51'!
+!InsertSuperclassTest methodsFor: 'tests' stamp: 'HAW 3/13/2025 13:59:15'!
 test02ClassToRefactorStructureIsMaintained
 
 	| classToRefactor refactoring instanceVariables category classVariables poolDictionaries |
@@ -31145,7 +31154,7 @@ test02ClassToRefactorStructureIsMaintained
 	[ Smalltalk at: poolDictionaries asSymbol put: Dictionary new.
 	classToRefactor := self 
 		createClassNamed: #ClassToAddSuperclass
-		subclassOf: RefactoringClassTestData 
+		subclassOf: self defaultSuperclass 
 		instanceVariableNames: instanceVariables
 		classVariableNames: classVariables
 		poolDictionaries: poolDictionaries
@@ -32104,7 +32113,7 @@ test09CannotRemoveNotImplementedMethodFromAdditionalSubclasses
 	
 	! !
 
-!PushUpMethodTest methodsFor: 'tests' stamp: 'HAW 1/23/2024 15:35:02'!
+!PushUpMethodTest methodsFor: 'tests' stamp: 'HAW 3/13/2025 14:04:11'!
 test10CannotRemoveMethodFromNoSiblings
 
 	| classToRefactorSuperclass classToRefactor selector sourceCode classToRefactorSibling |
@@ -32115,7 +32124,7 @@ test10CannotRemoveMethodFromNoSiblings
 	classToRefactorSuperclass := self createClassNamed: #Superclass.
 	classToRefactor := self createClassNamed: self classToRefactorName subclassOf: classToRefactorSuperclass.
 	classToRefactor compile: sourceCode.
- 	classToRefactorSibling := self createClassNamed: (self classToRefactorName,'NoSibling') asSymbol subclassOf: Object.
+ 	classToRefactorSibling := self createClassNamed: (self classToRefactorName,'NoSibling') asSymbol subclassOf: self defaultSuperclass.
 	classToRefactorSibling compile: sourceCode.
     
 	self 
@@ -33725,13 +33734,13 @@ test19FailsWhenNewVariableIsHiddenInAnyMethodOfAnySubclass
 		failsWith: [ NewInstanceVariablePrecondition errorMessageForNewVariable: newVariable willBeHiddenAtAll: (Array with: (subclass>>selector)) ].
 	! !
 
-!RenameInstanceVariableTest methodsFor: 'tests' stamp: 'HAW 12/18/2019 20:55:59'!
+!RenameInstanceVariableTest methodsFor: 'tests' stamp: 'HAW 3/13/2025 18:06:18'!
 test20ClassChangeIsAddedWhenRenamingAnInstanceVariable
 
-	| rename classChanges refactorClassChangeSet refactorClassChangeSets |
+	| rename classChanges refactorClassChangeSet refactorClassChangeSets package |
 
 	"I have to do this because on this case I want to keep track of the changes - Hernan"
-	[ classToRefactor := self 
+	classToRefactor := self 
 		createClassNamed: self classToRefactorName 
 		subclassOf: Object 
 		instanceVariableNames: oldVariable 
@@ -33739,23 +33748,20 @@ test20ClassChangeIsAddedWhenRenamingAnInstanceVariable
 		poolDictionaries: ''
 		category: self classCategoryOfTestData.
 
-	refactorClassChangeSets := ChangeSet allChangeSetsWithClass: classToRefactor.
-	self assert: 1 = refactorClassChangeSets size description: 'Can not run the test because the class is in more than one changeset (or in none)'.
-	refactorClassChangeSet := refactorClassChangeSets anyOne.
-	refactorClassChangeSet removeClassChanges: classToRefactor.
-	
 	rename := RenameInstanceVariable from: oldVariable to: newVariable in: classToRefactor .
 	rename apply.
 	
+	refactorClassChangeSets := ChangeSet allChangeSetsWithClass: classToRefactor.
+	self assert: refactorClassChangeSets size equals: 1.
+	
+	refactorClassChangeSet := refactorClassChangeSets anyOne.	
 	classChanges := refactorClassChangeSet classChangeAt: classToRefactor name.
-	self assert: (classChanges includes: #change). ]
-		ensure: [ | package | 
-			classToRefactor class compile: 'wantsChangeSetLogging ^false'.
-			ChangeSet allChangeSets remove: refactorClassChangeSet.
-			package := CodePackage packageOfClass: classToRefactor ifNone: nil.
-			self assert: package notNil.
-			package hasUnsavedChanges: false ].
-	! !
+	self assert: (classChanges includes: #change).
+	
+	ChangeSet allChangeSets remove: refactorClassChangeSet.
+	package := CodePackage packageOfClass: classToRefactor ifNone: nil.
+	self assert: package notNil.
+	package hasUnsavedChanges: false ! !
 
 !RenameSelectorTest methodsFor: 'class factory' stamp: 'HAW 5/28/2017 23:26:45'!
 allClassCategoriesOfTestData
@@ -33780,10 +33786,13 @@ classToRefactorName
 
 	^#ClassToRenameSelector! !
 
-!RenameSelectorTest methodsFor: 'class factory' stamp: 'HAW 12/18/2019 20:32:41'!
+!RenameSelectorTest methodsFor: 'class factory' stamp: 'HAW 3/13/2025 18:07:17'!
 createClassToRefactor
 
-	classToRefactor := self createClassWithImplementorAndSenderNamed: self classToRefactorName subclassOf: RefactoringClassTestData categorizedAd: self classCategoryOfTestData.
+	classToRefactor := self 
+		createClassWithImplementorAndSenderNamed: self classToRefactorName 
+		subclassOf: self defaultSuperclass 
+		categorizedAd: self classCategoryOfTestData
 ! !
 
 !RenameSelectorTest methodsFor: 'class factory' stamp: 'HAW 5/25/2017 23:14:02'!
@@ -34029,12 +34038,12 @@ test14RenamesSymbolsEqualToOldSelector
 	self assert: (senderMethod sendsOrRefersTo: newSelector) 
 ! !
 
-!RenameSelectorTest methodsFor: 'tests' stamp: 'HAW 12/18/2019 20:34:01'!
+!RenameSelectorTest methodsFor: 'tests' stamp: 'HAW 3/13/2025 13:59:15'!
 test15ScopeToRenameCanBeClassOnly
 	
 	| rename anotherClassSendingMessage |
 	
-	classToRefactor := self createClassWithImplementorAndSenderInMetaTooNamed: self classToRefactorName subclassOf: RefactoringClassTestData categorizedAd: self classCategoryOfTestData.
+	classToRefactor := self createClassWithImplementorAndSenderInMetaTooNamed: self classToRefactorName subclassOf: self defaultSuperclass categorizedAd: self classCategoryOfTestData.
 	
 	anotherClassSendingMessage := self createClassNamed: #ClassToAvoidRenameSelector.
 	anotherClassSendingMessage compile: senderOfOldSelector asString , ' self ' , oldSelector asString.
@@ -34045,12 +34054,12 @@ test15ScopeToRenameCanBeClassOnly
 	self assertWasRenamedInClassAndMeta: classToRefactor.
 	self assertWasNotRenamedInClass: anotherClassSendingMessage ! !
 
-!RenameSelectorTest methodsFor: 'tests' stamp: 'HAW 12/18/2019 20:07:15'!
+!RenameSelectorTest methodsFor: 'tests' stamp: 'HAW 3/13/2025 13:59:15'!
 test16ScopeToRenameCanBeHierarchyOnly
 	
 	| rename anotherClassSendingMessage superclassToRefactor subclassToRefactor |
 	
-	superclassToRefactor := self createClassWithImplementorAndSenderInMetaTooNamed: #SuperclassToRenameSelector subclassOf: RefactoringClassTestData categorizedAd: self classCategoryOfTestData.
+	superclassToRefactor := self createClassWithImplementorAndSenderInMetaTooNamed: #SuperclassToRenameSelector subclassOf: self defaultSuperclass categorizedAd: self classCategoryOfTestData.
 	classToRefactor := self createClassWithImplementorAndSenderInMetaTooNamed: self classToRefactorName subclassOf: superclassToRefactor categorizedAd: self classCategoryOfTestData.
 	subclassToRefactor := self createClassWithImplementorAndSenderInMetaTooNamed: #SubclassToRenameSelector subclassOf: classToRefactor categorizedAd: self classCategoryOfTestData.
 
@@ -34065,13 +34074,13 @@ test16ScopeToRenameCanBeHierarchyOnly
 	self assertWasRenamedInClassAndMeta: subclassToRefactor.
 	self assertWasNotRenamedInClass: anotherClassSendingMessage ! !
 
-!RenameSelectorTest methodsFor: 'tests' stamp: 'HAW 12/18/2019 20:07:32'!
+!RenameSelectorTest methodsFor: 'tests' stamp: 'HAW 3/13/2025 13:59:15'!
 test17ScopeToRenameCanBeCategoryOnly
 	
 	| rename anotherClassSendingMessage  anotherClassToRefactor |
 	
-	classToRefactor := self createClassWithImplementorAndSenderInMetaTooNamed: self classToRefactorName subclassOf: RefactoringClassTestData categorizedAd: self classCategoryOfTestData.
-	anotherClassToRefactor := self createClassWithImplementorAndSenderInMetaTooNamed: #AnotherclassToRenameSelector subclassOf: RefactoringClassTestData categorizedAd: self classCategoryOfTestData.
+	classToRefactor := self createClassWithImplementorAndSenderInMetaTooNamed: self classToRefactorName subclassOf: self defaultSuperclass categorizedAd: self classCategoryOfTestData.
+	anotherClassToRefactor := self createClassWithImplementorAndSenderInMetaTooNamed: #AnotherclassToRenameSelector subclassOf: self defaultSuperclass categorizedAd: self classCategoryOfTestData.
 	
 	anotherClassSendingMessage := self createClassNamed: #ClassToAvoidRenameSelector category: self classCategoryOfTestDataToAvoid.
 	anotherClassSendingMessage compile: senderOfOldSelector asString , ' self ' , oldSelector asString.
@@ -34084,17 +34093,17 @@ test17ScopeToRenameCanBeCategoryOnly
 	self assertWasNotRenamedInClass: anotherClassSendingMessage
 		! !
 
-!RenameSelectorTest methodsFor: 'tests' stamp: 'HAW 12/18/2019 20:07:49'!
+!RenameSelectorTest methodsFor: 'tests' stamp: 'HAW 3/13/2025 13:59:15'!
 test18ScopeToRenameCanBeCategoriesAndHierarchyOnly
 	
 	| rename anotherClassSendingMessage superclassToRefactor subclassToRefactor anotherClassToRefactor classInOtherCategoryToRefactor |
 	
-	superclassToRefactor := self createClassWithImplementorAndSenderInMetaTooNamed: #SuperclassToRenameSelector subclassOf: RefactoringClassTestData categorizedAd: self anotherClassCategoryOfTestData.
+	superclassToRefactor := self createClassWithImplementorAndSenderInMetaTooNamed: #SuperclassToRenameSelector subclassOf: self defaultSuperclass categorizedAd: self anotherClassCategoryOfTestData.
 	classToRefactor := self createClassWithImplementorAndSenderInMetaTooNamed: self classToRefactorName subclassOf: superclassToRefactor categorizedAd: self classCategoryOfTestData.
 	subclassToRefactor := self createClassWithImplementorAndSenderInMetaTooNamed: #SubclassToRenameSelector subclassOf: classToRefactor categorizedAd: self classCategoryOfTestData.
-	anotherClassToRefactor := self createClassWithImplementorAndSenderInMetaTooNamed: #AnotheclassToRenameSelector subclassOf: RefactoringClassTestData categorizedAd: self classCategoryOfTestData.
+	anotherClassToRefactor := self createClassWithImplementorAndSenderInMetaTooNamed: #AnotheclassToRenameSelector subclassOf: self defaultSuperclass categorizedAd: self classCategoryOfTestData.
 	classInOtherCategoryToRefactor := self 
-		createClassWithImplementorAndSenderInMetaTooNamed: #OtherCatClassToRenameSelector subclassOf: RefactoringClassTestData categorizedAd: self anotherClassCategoryOfTestData.
+		createClassWithImplementorAndSenderInMetaTooNamed: #OtherCatClassToRenameSelector subclassOf: self defaultSuperclass categorizedAd: self anotherClassCategoryOfTestData.
 	
 	anotherClassSendingMessage := self createClassNamed: #ClassToAvoidRenameSelector category: self classCategoryOfTestDataToAvoid.
 	anotherClassSendingMessage compile: senderOfOldSelector asString , ' self ' , oldSelector asString.
@@ -34109,13 +34118,13 @@ test18ScopeToRenameCanBeCategoriesAndHierarchyOnly
 	self assertWasRenamedInClassAndMeta: classInOtherCategoryToRefactor.
 	self assertWasNotRenamedInClass: anotherClassSendingMessage ! !
 
-!RenameSelectorTest methodsFor: 'tests' stamp: 'HAW 12/18/2019 20:08:00'!
+!RenameSelectorTest methodsFor: 'tests' stamp: 'HAW 3/13/2025 13:59:15'!
 test19ScopeToRenameCanBeTheCompleteSystem
 	
 	| rename anotherClassToRefactor |
 	
-	classToRefactor := self createClassWithImplementorAndSenderInMetaTooNamed: self classToRefactorName subclassOf: RefactoringClassTestData categorizedAd: self classCategoryOfTestData.
-	anotherClassToRefactor := self createClassWithImplementorAndSenderInMetaTooNamed: #AnotherclassToRenameSelector subclassOf: RefactoringClassTestData categorizedAd: self classCategoryOfTestData.
+	classToRefactor := self createClassWithImplementorAndSenderInMetaTooNamed: self classToRefactorName subclassOf: self defaultSuperclass categorizedAd: self classCategoryOfTestData.
+	anotherClassToRefactor := self createClassWithImplementorAndSenderInMetaTooNamed: #AnotherclassToRenameSelector subclassOf: self defaultSuperclass categorizedAd: self classCategoryOfTestData.
 
 	rename := RenameSelector from: oldSelector to: newSelector inSystem: Smalltalk.
 	"This is just to be sure that no more than the expected methods will be renamed because I'm using Smalltalk as system.
@@ -34327,12 +34336,12 @@ test31CanNotRenameFromKeywordOfOneParameterToBinary
 		raise: Error
 		withMessageText: (RenameSelector errorMessageForNewSelector: newSelector isNotOfSameTypeAs: oldSelector)! !
 
-!RenameSelectorTest methodsFor: 'tests' stamp: 'HAW 12/18/2019 20:08:36'!
+!RenameSelectorTest methodsFor: 'tests' stamp: 'HAW 3/13/2025 13:59:15'!
 test32HierarchyScopeRenamesSelectorsFromSuperclassDefiningSelector
 	
 	| rename superclassToRefactor subclassToRefactor |
 	
-	superclassToRefactor := self createClassWithImplementorAndSenderInMetaTooNamed: #SuperclassToRenameSelector subclassOf: RefactoringClassTestData categorizedAd: self classCategoryOfTestData.
+	superclassToRefactor := self createClassWithImplementorAndSenderInMetaTooNamed: #SuperclassToRenameSelector subclassOf: self defaultSuperclass categorizedAd: self classCategoryOfTestData.
 	classToRefactor := self createClassWithImplementorAndSenderInMetaTooNamed: self classToRefactorName subclassOf: superclassToRefactor categorizedAd: self classCategoryOfTestData.
 	subclassToRefactor := self createClassWithImplementorAndSenderInMetaTooNamed: #SubclassToRenameSelector subclassOf: superclassToRefactor categorizedAd: self classCategoryOfTestData.
 
@@ -34344,7 +34353,7 @@ test32HierarchyScopeRenamesSelectorsFromSuperclassDefiningSelector
 	self assertWasRenamedInClassAndMeta: subclassToRefactor.
 	! !
 
-!RenameSelectorTest methodsFor: 'tests' stamp: 'HAW 3/7/2020 18:48:46'!
+!RenameSelectorTest methodsFor: 'tests' stamp: 'HAW 3/13/2025 13:59:15'!
 test33DoNotRenameSendersAndImplementorsWhoseCompilerClassIsDifferentToCompiler
 	
 	"Requested by Phil B. to avoid refactoring OMeta2 classes - Hernan"
@@ -34353,12 +34362,12 @@ test33DoNotRenameSendersAndImplementorsWhoseCompilerClassIsDifferentToCompiler
 	
 	classToRefactor := self 
 		createClassWithImplementorAndSenderInMetaTooNamed: self classToRefactorName 
-		subclassOf: RefactoringClassTestData 
+		subclassOf: self defaultSuperclass 
 		categorizedAd: self classCategoryOfTestData.
 	
 	anotherClassSendingMessage := self 
 		createClassWithImplementorAndSenderInMetaTooNamed: #ClassToAvoidRenameSelector 
-		subclassOf: RefactoringClassTestData 
+		subclassOf: self defaultSuperclass 
 		categorizedAd: self classCategoryOfTestData.
 	
 	anotherClassSendingMessage class compile: 'compilerClass ^nil'.
