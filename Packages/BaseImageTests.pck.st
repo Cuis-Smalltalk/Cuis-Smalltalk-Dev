@@ -1,6 +1,6 @@
-'From Cuis7.3 [latest update: #7070] on 14 March 2025 at 2:38:13 pm'!
+'From Cuis7.3 [latest update: #7071] on 16 March 2025 at 8:11:54 pm'!
 'Description Rename extentions tests'!
-!provides: 'BaseImageTests' 1 441!
+!provides: 'BaseImageTests' 1 442!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Compiler'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Objects'!
@@ -21503,11 +21503,11 @@ testPipe
 	
 	! !
 
-!FileManTest methodsFor: 'testing' stamp: 'jmv 5/31/2016 10:50'!
+!FileManTest methodsFor: 'testing' stamp: 'wbsl 3/14/2025 23:27:03'!
 testRecursiveDelete
 	"FileManTest debug: #testRecursiveDelete" 
 	| dir |
-	dir := ('./subDir' asDirectoryEntry / 'aaa\bbb' / 'ccc' / 'ddd\eee' / 'fff:ggg').
+	dir := ('./subDir' asDirectoryEntry / 'aaa\bbb' / 'ccc' / 'ddd\eee').
 	dir at: 'test1' put: 'RecursiveDelete!!'.
 	self should: [(dir at: 'test1') = 'RecursiveDelete!!'].
 
