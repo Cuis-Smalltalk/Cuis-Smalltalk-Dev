@@ -1,6 +1,6 @@
-'From Cuis7.3 [latest update: #7085] on 21 March 2025 at 8:14:53 am'!
+'From Cuis7.3 [latest update: #7086] on 21 March 2025 at 8:19:01 am'!
 'Description Rename extentions tests'!
-!provides: 'BaseImageTests' 1 444!
+!provides: 'BaseImageTests' 1 445!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Compiler'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Objects'!
@@ -35787,13 +35787,13 @@ test09ForMessageCategoryWihoutTestIsEmpty
 
 	self assert: suite tests isEmpty! !
 
-!TestSuiteTest methodsFor: 'tests - instance creation' stamp: 'HAW 3/20/2025 21:26:25'!
+!TestSuiteTest methodsFor: 'tests - instance creation' stamp: 'HAW 3/20/2025 21:40:58'!
 test10SuiteForClassCategoryTreeIncludesAllTestsInCategoryTree
 
 	| categoryTreeSuite suiteFromCategoryRoot |
 	
 	categoryTreeSuite := TestSuite forSystemCategoryTreeOf: self class category using: SystemOrganization.
-	suiteFromCategoryRoot := TestSuite forSystemCategoryNamed: (self class category findTokens: '-') first using: SystemOrganization.
+	suiteFromCategoryRoot := TestSuite forSystemCategoryNamed: (SystemOrganization rootCategoryOf: self class category) using: SystemOrganization.
 	
 	self 
 		assert: (categoryTreeSuite tests collect: [ :test | test methodForTest ]) 
