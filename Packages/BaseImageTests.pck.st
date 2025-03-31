@@ -1,6 +1,6 @@
-'From Cuis7.3 [latest update: #7086] on 21 March 2025 at 8:19:01 am'!
+'From Cuis7.3 [latest update: #7093] on 31 March 2025 at 10:58:43 am'!
 'Description Rename extentions tests'!
-!provides: 'BaseImageTests' 1 445!
+!provides: 'BaseImageTests' 1 446!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Compiler'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Objects'!
@@ -29228,6 +29228,23 @@ a := self m2.
 	methodToRefactor := classToRefactor >> #m1.
 	actualSourceCodeAfterRefactoring := (ExtractToTemporary named: 'a' at: intervalToExtract from: methodToRefactor) apply.
 	self assert: sourceCodeAfterRefactoring equals: actualSourceCodeAfterRefactoring! !
+
+!ExtractToTemporaryTest methodsFor: 'tests - successful' stamp: 'JEC 3/15/2025 21:05:20'!
+test29ExctractsCorrectlyWhenTempVariablesDeclarationDoesNotHaveSpaces
+
+	| sourceCode sourceCodeAfterRefactoring |
+	
+	sourceCode := 'm1
+|var|
+var := 10.
+^var + 50.'.
+	sourceCodeAfterRefactoring := 'm1
+|var anotherVar|
+var := 10.
+anotherVar := var + 50.
+	^anotherVar.'.
+
+	self assertExtracting: 'var + 50' from: sourceCode toVariableNamed: 'anotherVar' updatesTo: sourceCodeAfterRefactoring! !
 
 !ExtractToTemporaryTest methodsFor: 'tests - validations' stamp: 'RNG 2/25/2020 15:13:05'!
 test01NewVariableCanNotBeEmpty
