@@ -3,7 +3,7 @@
 
 ## Semantics
 
-A Smalltalk system is composed of a live object graph, which is the transitive closure of the objects reachable from the roots. The roots are effectively the Smalltalk dictionary and the current computation (the ```thisContext``` of ```Process activeProcess```). The job of the garbage collector is to reclaim objects that fall outside of the object graph.
+A Smalltalk system is composed of a live object graph, which is the transitive closure of the objects reachable from the roots. The roots are effectively the Smalltalk dictionary and the current computation (the ```thisContext``` of ```Process activeProcess```). Assignments to variables may cause previously connected objects to become inaccessible. The job of the garbage collector is to reclaim the objects that fall outside of the object graph.
 
 By reachability we mean that objects refer to each other through variables. A variable, be it an instance variable or a temporary variable, is a reference to some object. A system containing ephemerons and weak objects has four kinds of references:
 - normal, a.k.a. "strong", references through variables
