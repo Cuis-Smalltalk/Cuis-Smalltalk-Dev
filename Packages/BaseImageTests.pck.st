@@ -1,6 +1,6 @@
-'From Cuis7.3 [latest update: #7093] on 31 March 2025 at 10:58:43 am'!
+'From Cuis7.3 [latest update: #7102] on 23 April 2025 at 2:18:14 pm'!
 'Description Rename extentions tests'!
-!provides: 'BaseImageTests' 1 446!
+!provides: 'BaseImageTests' 1 447!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Compiler'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Objects'!
@@ -23705,7 +23705,7 @@ test053_AutocompletesEntriesFor_patternBinary_doestNotAutocompleteMethodOfSameCl
 
 	self assert: completer entries size equals: 0! !
 
-!SmalltalkCompleterTest methodsFor: 'test objects' stamp: 'HAW 1/27/2022 19:32:18'!
+!SmalltalkCompleterTest methodsFor: 'test objects' stamp: 'jmv 4/23/2025 14:17:34'!
 createCompleterForBrowsing: sourceCode 
 	
 	| browser model |
@@ -23714,7 +23714,7 @@ createCompleterForBrowsing: sourceCode
 	browser classListIndex: (browser classList indexOf: classToBrowse name).
 	
 	model := (PluggableTextModel on: browser) actualContents: sourceCode.
-	browser editSelection: #newMethod.
+	browser editSelection: #newMessage.
 
 	^ self createCompleterWith: model.! !
 
