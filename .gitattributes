@@ -1,2 +1,5 @@
 # Disable line ending conversions for all files
 * -text
+
+# Any .st file is indeed Smalltalk code here
+*.st -text linguist-language=Smalltalk
