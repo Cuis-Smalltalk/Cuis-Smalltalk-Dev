@@ -1,6 +1,6 @@
-'From Cuis7.3 [latest update: #7102] on 23 April 2025 at 2:18:14 pm'!
+'From Cuis7.3 [latest update: #7120] on 7 May 2025 at 9:34:10 am'!
 'Description Rename extentions tests'!
-!provides: 'BaseImageTests' 1 447!
+!provides: 'BaseImageTests' 1 448!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Compiler'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Objects'!
@@ -5774,20 +5774,22 @@ checkDecompileMethod: oldMethod
 			description: cls name asString, ' ', selector asString
 			resumable: true ]! !
 
-!DecompilerTests methodsFor: 'utilities' stamp: 'eem 1/17/2025 12:20:53'!
-decompileClassesSelect: aBlock
+!DecompilerTests methodsFor: 'utilities' stamp: 'HAW 5/6/2025 19:10:09'!
+decompileClassesInRootCategoryOf: aClass
 
-	(Smalltalk classNames select: aBlock) do:
-		[ :cn | | class |
-		(class := Smalltalk classNamed: cn) selectorsAndMethodsDo:
-			[ :selector :method |
-			(self exceptionClassForFailureFor: class selector: selector)
-				ifNil: [ self checkDecompileMethod: method ]
-				ifNotNil:
-					[ :exceptionClass |
-					self
-						should: [ self checkDecompileMethod: method ]
-						raise: exceptionClass ] ] ]! !
+	| rootCategory |
+	
+	rootCategory := SystemOrganization rootCategoryOf: aClass category.
+	(SystemOrganization allClassesAt: rootCategory) do: [ :class |
+		class selectorsAndMethodsDo: [ :selector :method |
+			(class organization categoryOfElement: selector) ifNotNil: [:category |
+				(category beginsWith: '*') ifFalse: [
+					(self exceptionClassForFailureFor: class selector: selector)
+						ifNil: [ self checkDecompileMethod: method ]
+						ifNotNil: [ :exceptionClass |
+							self
+								should: [ self checkDecompileMethod: method ]
+								raise: exceptionClass ] ] ] ] ]! !
 
 !DecompilerTests methodsFor: 'utilities' stamp: 'ul 5/6/2015 15:59'!
 exceptionClassForFailureFor: class selector: selector
@@ -5812,238 +5814,6 @@ withFixedTempNumbering: aString
 			k _ k + 1 ]].
 	^code! !
 
-!DecompilerTests methodsFor: 'tests' stamp: 'eem 9/23/2008 11:16'!
-testDecompilerInClassesAAtoAM
-	self decompileClassesSelect: [:cn| cn first = $A and: [cn second asUppercase <= $M]]! !
-
-!DecompilerTests methodsFor: 'tests' stamp: 'eem 9/23/2008 11:16'!
-testDecompilerInClassesANtoAZ
-	self decompileClassesSelect: [:cn| cn first = $A and: [cn second asUppercase > $M]]! !
-
-!DecompilerTests methodsFor: 'tests' stamp: 'jmv 9/24/2020 16:57:20'!
-testDecompilerInClassesBAtoBM
-
-	self decompileClassesSelect: [:cn| cn first = $B and: [cn second asUppercase <= $M]]! !
-
-!DecompilerTests methodsFor: 'tests' stamp: 'jmv 9/24/2020 16:57:44'!
-testDecompilerInClassesBNtoBZ
-
-	self decompileClassesSelect: [:cn| cn first = $B and: [cn second asUppercase > $M]]! !
-
-!DecompilerTests methodsFor: 'tests' stamp: 'jmv 9/24/2020 16:57:51'!
-testDecompilerInClassesCAtoCM
-
-	self decompileClassesSelect: [:cn| cn first = $C and: [cn second asUppercase <= $M]]! !
-
-!DecompilerTests methodsFor: 'tests' stamp: 'jmv 9/24/2020 16:57:58'!
-testDecompilerInClassesCNtoCZ
-
-	self decompileClassesSelect: [:cn| cn first = $C and: [cn second asUppercase > $M]]! !
-
-!DecompilerTests methodsFor: 'tests' stamp: 'jmv 9/24/2020 16:58:06'!
-testDecompilerInClassesDAtoDM
-
-	self decompileClassesSelect: [:cn| cn first = $D and: [cn second asUppercase <= $M]]! !
-
-!DecompilerTests methodsFor: 'tests' stamp: 'jmv 9/24/2020 16:58:13'!
-testDecompilerInClassesDNtoDZ
-
-	self decompileClassesSelect: [:cn| cn first = $D and: [cn second asUppercase > $M]]! !
-
-!DecompilerTests methodsFor: 'tests' stamp: 'eem 9/23/2008 11:16'!
-testDecompilerInClassesEAtoEM
-	self decompileClassesSelect: [:cn| cn first = $E and: [cn second asUppercase <= $M]]! !
-
-!DecompilerTests methodsFor: 'tests' stamp: 'eem 9/23/2008 11:16'!
-testDecompilerInClassesENtoEZ
-	self decompileClassesSelect: [:cn| cn first = $E and: [cn second asUppercase > $M]]! !
-
-!DecompilerTests methodsFor: 'tests' stamp: 'jmv 9/24/2020 16:58:22'!
-testDecompilerInClassesFAtoFM
-
-	self decompileClassesSelect: [:cn| cn first = $F and: [cn second asUppercase <= $M]]! !
-
-!DecompilerTests methodsFor: 'tests' stamp: 'eem 9/23/2008 11:16'!
-testDecompilerInClassesFNtoFZ
-	self decompileClassesSelect: [:cn| cn first = $F and: [cn second asUppercase > $M]]! !
-
-!DecompilerTests methodsFor: 'tests' stamp: 'eem 9/23/2008 11:16'!
-testDecompilerInClassesGAtoGM
-	self decompileClassesSelect: [:cn| cn first = $G and: [cn second asUppercase <= $M]]! !
-
-!DecompilerTests methodsFor: 'tests' stamp: 'eem 9/23/2008 11:16'!
-testDecompilerInClassesGNtoGZ
-	self decompileClassesSelect: [:cn| cn first = $G and: [cn second asUppercase > $M]]! !
-
-!DecompilerTests methodsFor: 'tests' stamp: 'eem 9/23/2008 11:16'!
-testDecompilerInClassesHAtoHM
-	self decompileClassesSelect: [:cn| cn first = $H and: [cn second asUppercase <= $M]]! !
-
-!DecompilerTests methodsFor: 'tests' stamp: 'eem 9/23/2008 11:16'!
-testDecompilerInClassesHNtoHZ
-	self decompileClassesSelect: [:cn| cn first = $H and: [cn second asUppercase > $M]]! !
-
-!DecompilerTests methodsFor: 'tests' stamp: 'eem 9/23/2008 11:16'!
-testDecompilerInClassesIAtoIM
-	self decompileClassesSelect: [:cn| cn first = $I and: [cn second asUppercase <= $M]]! !
-
-!DecompilerTests methodsFor: 'tests' stamp: 'jmv 9/24/2020 16:58:28'!
-testDecompilerInClassesINtoIZ
-
-	self decompileClassesSelect: [:cn| cn first = $I and: [cn second asUppercase > $M]]! !
-
-!DecompilerTests methodsFor: 'tests' stamp: 'eem 9/23/2008 11:16'!
-testDecompilerInClassesJAtoJM
-	self decompileClassesSelect: [:cn| cn first = $J and: [cn second asUppercase <= $M]]! !
-
-!DecompilerTests methodsFor: 'tests' stamp: 'eem 9/23/2008 11:16'!
-testDecompilerInClassesJNtoJZ
-	self decompileClassesSelect: [:cn| cn first = $J and: [cn second asUppercase > $M]]! !
-
-!DecompilerTests methodsFor: 'tests' stamp: 'eem 9/23/2008 11:16'!
-testDecompilerInClassesKAtoKM
-	self decompileClassesSelect: [:cn| cn first = $K and: [cn second asUppercase <= $M]]! !
-
-!DecompilerTests methodsFor: 'tests' stamp: 'eem 9/23/2008 11:16'!
-testDecompilerInClassesKNtoKZ
-	self decompileClassesSelect: [:cn| cn first = $K and: [cn second asUppercase > $M]]! !
-
-!DecompilerTests methodsFor: 'tests' stamp: 'jmv 9/24/2020 16:58:37'!
-testDecompilerInClassesLAtoLM
-
-	self decompileClassesSelect: [:cn| cn first = $L and: [cn second asUppercase <= $M]]! !
-
-!DecompilerTests methodsFor: 'tests' stamp: 'eem 9/23/2008 11:16'!
-testDecompilerInClassesLNtoLZ
-	self decompileClassesSelect: [:cn| cn first = $L and: [cn second asUppercase > $M]]! !
-
-!DecompilerTests methodsFor: 'tests' stamp: 'jmv 9/24/2020 16:58:51'!
-testDecompilerInClassesMAtoMM
-
-	self decompileClassesSelect: [:cn| cn first = $M and: [cn second asUppercase <= $M]]! !
-
-!DecompilerTests methodsFor: 'tests' stamp: 'eem 9/23/2008 11:16'!
-testDecompilerInClassesMNtoMZ
-	self decompileClassesSelect: [:cn| cn first = $M and: [cn second asUppercase > $M]]! !
-
-!DecompilerTests methodsFor: 'tests' stamp: 'eem 9/23/2008 11:16'!
-testDecompilerInClassesNAtoNM
-	self decompileClassesSelect: [:cn| cn first = $N and: [cn second asUppercase <= $M]]! !
-
-!DecompilerTests methodsFor: 'tests' stamp: 'eem 9/23/2008 11:16'!
-testDecompilerInClassesNNtoNZ
-	self decompileClassesSelect: [:cn| cn first = $N and: [cn second asUppercase > $M]]! !
-
-!DecompilerTests methodsFor: 'tests' stamp: 'jmv 9/24/2020 16:58:57'!
-testDecompilerInClassesOAtoOM
-
-	self decompileClassesSelect: [:cn| cn first = $O and: [cn second asUppercase <= $M]]! !
-
-!DecompilerTests methodsFor: 'tests' stamp: 'eem 9/23/2008 11:16'!
-testDecompilerInClassesONtoOZ
-	self decompileClassesSelect: [:cn| cn first = $O and: [cn second asUppercase > $M]]! !
-
-!DecompilerTests methodsFor: 'tests' stamp: 'eem 9/23/2008 11:16'!
-testDecompilerInClassesPAtoPM
-	self decompileClassesSelect: [:cn| cn first = $P and: [cn second asUppercase <= $M]]! !
-
-!DecompilerTests methodsFor: 'tests' stamp: 'eem 9/23/2008 11:16'!
-testDecompilerInClassesPNtoPZ
-	self decompileClassesSelect: [:cn| cn first = $P and: [cn second asUppercase > $M]]! !
-
-!DecompilerTests methodsFor: 'tests' stamp: 'eem 9/23/2008 11:16'!
-testDecompilerInClassesQAtoQM
-	self decompileClassesSelect: [:cn| cn first = $Q and: [cn second asUppercase <= $M]]! !
-
-!DecompilerTests methodsFor: 'tests' stamp: 'eem 9/23/2008 11:16'!
-testDecompilerInClassesQNtoQZ
-	self decompileClassesSelect: [:cn| cn first = $Q and: [cn second asUppercase > $M]]! !
-
-!DecompilerTests methodsFor: 'tests' stamp: 'jmv 9/24/2020 16:59:04'!
-testDecompilerInClassesRAtoRM
-
-	self decompileClassesSelect: [:cn| cn first = $R and: [cn second asUppercase <= $M]]! !
-
-!DecompilerTests methodsFor: 'tests' stamp: 'eem 9/23/2008 11:16'!
-testDecompilerInClassesRNtoRZ
-	self decompileClassesSelect: [:cn| cn first = $R and: [cn second asUppercase > $M]]! !
-
-!DecompilerTests methodsFor: 'tests' stamp: 'jmv 9/24/2020 16:59:11'!
-testDecompilerInClassesSAtoSM
-
-	self decompileClassesSelect: [:cn| cn first = $S and: [cn second asUppercase <= $M]]! !
-
-!DecompilerTests methodsFor: 'tests' stamp: 'jmv 9/24/2020 16:59:18'!
-testDecompilerInClassesSNtoSZ
-
-	self decompileClassesSelect: [:cn| cn first = $S and: [cn second asUppercase > $M]]! !
-
-!DecompilerTests methodsFor: 'tests' stamp: 'jmv 9/24/2020 16:59:24'!
-testDecompilerInClassesTAtoTM
-
-	self decompileClassesSelect: [:cn| cn first = $T and: [cn second asUppercase <= $M]]! !
-
-!DecompilerTests methodsFor: 'tests' stamp: 'eem 9/23/2008 11:16'!
-testDecompilerInClassesTNtoTZ
-	self decompileClassesSelect: [:cn| cn first = $T and: [cn second asUppercase > $M]]! !
-
-!DecompilerTests methodsFor: 'tests' stamp: 'eem 9/23/2008 11:16'!
-testDecompilerInClassesUAtoUM
-	self decompileClassesSelect: [:cn| cn first = $U and: [cn second asUppercase <= $M]]! !
-
-!DecompilerTests methodsFor: 'tests' stamp: 'eem 9/23/2008 11:16'!
-testDecompilerInClassesUNtoUZ
-	self decompileClassesSelect: [:cn| cn first = $U and: [cn second asUppercase > $M]]! !
-
-!DecompilerTests methodsFor: 'tests' stamp: 'jmv 9/24/2020 16:59:30'!
-testDecompilerInClassesVAtoVM
-
-	self decompileClassesSelect: [:cn| cn first = $V and: [cn second asUppercase <= $M]]! !
-
-!DecompilerTests methodsFor: 'tests' stamp: 'eem 9/23/2008 11:16'!
-testDecompilerInClassesVNtoVZ
-	self decompileClassesSelect: [:cn| cn first = $V and: [cn second asUppercase > $M]]! !
-
-!DecompilerTests methodsFor: 'tests' stamp: 'jmv 9/24/2020 16:59:36'!
-testDecompilerInClassesWAtoWM
-
-	self decompileClassesSelect: [:cn| cn first = $W and: [cn second asUppercase <= $M]]! !
-
-!DecompilerTests methodsFor: 'tests' stamp: 'eem 9/23/2008 11:16'!
-testDecompilerInClassesWNtoWZ
-	self decompileClassesSelect: [:cn| cn first = $W and: [cn second asUppercase > $M]]! !
-
-!DecompilerTests methodsFor: 'tests' stamp: 'eem 9/23/2008 11:16'!
-testDecompilerInClassesXAtoXM
-	self decompileClassesSelect: [:cn| cn first = $X and: [cn second asUppercase <= $M]]! !
-
-!DecompilerTests methodsFor: 'tests' stamp: 'eem 9/23/2008 11:16'!
-testDecompilerInClassesXNtoXZ
-	self decompileClassesSelect: [:cn| cn first = $X and: [cn second asUppercase > $M]]! !
-
-!DecompilerTests methodsFor: 'tests' stamp: 'eem 9/23/2008 11:16'!
-testDecompilerInClassesYAtoYM
-	self decompileClassesSelect: [:cn| cn first = $Y and: [cn second asUppercase <= $M]]! !
-
-!DecompilerTests methodsFor: 'tests' stamp: 'eem 9/23/2008 11:16'!
-testDecompilerInClassesYNtoYZ
-	self decompileClassesSelect: [:cn| cn first = $Y and: [cn second asUppercase > $M]]! !
-
-!DecompilerTests methodsFor: 'tests' stamp: 'eem 9/23/2008 11:16'!
-testDecompilerInClassesZAtoZM
-	self decompileClassesSelect: [:cn| cn first = $Z and: [cn second asUppercase <= $M]]! !
-
-!DecompilerTests methodsFor: 'tests' stamp: 'eem 9/23/2008 11:16'!
-testDecompilerInClassesZNtoZZ
-	self decompileClassesSelect: [:cn| cn first = $Z and: [cn second asUppercase > $M]]! !
-
-!DecompilerTests methodsFor: 'tests' stamp: 'jmv 12/28/2013 19:04'!
-testRemoteTemp
-	| aBlock |
-	aBlock := Compiler evaluate: '| x y |  [:a :b | x := a. y := b. x+y]'.
-	self shouldnt: [aBlock decompile] raise: Error
-	! !
-
 !DecompilerTests methodsFor: 'filtering errors' stamp: 'jmv 1/22/2025 14:47:23'!
 decompilerFailures
 	"Here is the list of failures: either a syntax error, a hard error or some failure to decompile correctly.
@@ -6061,6 +5831,53 @@ decompilerFailures
 		(Set scanFor: TestFailure)
 		(WeakIdentityKeyDictionary scanFor: TestFailure)
 		(WeakKeyDictionary scanFor: TestFailure))! !
+
+!DecompilerTests methodsFor: 'tests' stamp: 'HAW 5/6/2025 19:12:51'!
+testDecompilerBrowserClasses
+
+	self decompileClassesInRootCategoryOf: Browser ! !
+
+!DecompilerTests methodsFor: 'tests' stamp: 'HAW 5/6/2025 19:09:16'!
+testDecompilerCollectionClasses
+
+	self decompileClassesInRootCategoryOf: Collection! !
+
+!DecompilerTests methodsFor: 'tests' stamp: 'HAW 5/6/2025 19:11:28'!
+testDecompilerCompilerClasses
+
+	self decompileClassesInRootCategoryOf: Compiler ! !
+
+!DecompilerTests methodsFor: 'tests' stamp: 'HAW 5/6/2025 19:11:11'!
+testDecompilerExceptionsClasses
+
+	self decompileClassesInRootCategoryOf: Exception ! !
+
+!DecompilerTests methodsFor: 'tests' stamp: 'HAW 5/6/2025 19:12:17'!
+testDecompilerGraphicsClasses
+
+	self decompileClassesInRootCategoryOf: Form ! !
+
+!DecompilerTests methodsFor: 'tests' stamp: 'HAW 5/6/2025 19:09:22'!
+testDecompilerKernelClasses
+
+	self decompileClassesInRootCategoryOf: Object ! !
+
+!DecompilerTests methodsFor: 'tests' stamp: 'HAW 5/6/2025 19:12:32'!
+testDecompilerMorphicClasses
+
+	self decompileClassesInRootCategoryOf: Morph ! !
+
+!DecompilerTests methodsFor: 'tests' stamp: 'HAW 5/6/2025 19:12:01'!
+testDecompilerSystemClasses
+
+	self decompileClassesInRootCategoryOf: Editor ! !
+
+!DecompilerTests methodsFor: 'tests' stamp: 'jmv 12/28/2013 19:04'!
+testRemoteTemp
+	| aBlock |
+	aBlock := Compiler evaluate: '| x y |  [:a :b | x := a. y := b. x+y]'.
+	self shouldnt: [aBlock decompile] raise: Error
+	! !
 
 !DecompilerTestFailuresCollector methodsFor: 'accessing' stamp: 'ul 5/6/2015 16:36'!
 assert: aBoolean description: aString resumable: resumableBoolean
