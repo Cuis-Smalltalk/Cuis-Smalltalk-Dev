@@ -6,7 +6,7 @@ stepIntoBlock
 	 Used to step into a block in the method."
 
 	interruptedProcess isTerminated ifTrue: [^self inform: 'Debugging terminated'].
-
+	self selectedContext method isQuick ifTrue: [ ^self doStep ].
 	self 
 		handleLabelUpdatesIn: [interruptedProcess stepToHome: self selectedContext]
 		whenExecuting: self selectedContext.
