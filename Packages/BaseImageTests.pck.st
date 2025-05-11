@@ -1,6 +1,6 @@
-'From Cuis7.3 [latest update: #7120] on 7 May 2025 at 9:34:10 am'!
+'From Cuis7.3 [latest update: #7122] on 11 May 2025 at 7:29:02 pm'!
 'Description Rename extentions tests'!
-!provides: 'BaseImageTests' 1 448!
+!provides: 'BaseImageTests' 1 449!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Compiler'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Objects'!
@@ -19671,6 +19671,39 @@ testArticle
 		assert: 'Ukranian' withArticle equals: 'a Ukranian';
 		assert: 'Argentine' withArticle equals: 'an Argentine';
 		assert: 'user' withArticle equals: 'a user'! !
+
+!StringTest methodsFor: 'tests - padding' stamp: 'HAW 5/10/2025 17:56:43'!
+testPaddingCenterAddCharsToBothSides
+
+	self 
+		assert: ('hi' padded: #center to: 4 with: $.)
+		equals: '.hi.'.
+		
+	self 
+		assert: ('hi' padded: #center to: 5 with: $.)
+		equals: '.hi..'.! !
+
+!StringTest methodsFor: 'tests - padding' stamp: 'HAW 5/10/2025 17:55:43'!
+testPaddingLeftAddCharsToTheLeft
+
+	self 
+		assert: ('hi' padded: #left to: 4 with: $.)
+		equals: '..hi'.
+		
+	self 
+		assert: ('hi' padded: #left to: 1 with: $.)
+		equals: 'hi'.! !
+
+!StringTest methodsFor: 'tests - padding' stamp: 'HAW 5/10/2025 17:55:59'!
+testPaddingRightAddCharsToTheLeft
+
+	self 
+		assert: ('hi' padded: #right to: 4 with: $.)
+		equals: 'hi..'.
+		
+	self 
+		assert: ('hi' padded: #right to: 1 with: $.)
+		equals: 'hi'.! !
 
 !SymbolTest methodsFor: 'tests - selector validation' stamp: 'RNG 3/29/2020 19:59:47'!
 testIsNotValidBinarySelectorIfItContainsACharacterNotAllowed
