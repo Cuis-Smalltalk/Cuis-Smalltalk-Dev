@@ -1,6 +1,6 @@
-'From Cuis7.3 [latest update: #7122] on 11 May 2025 at 7:29:02 pm'!
+'From Cuis7.3 [latest update: #7146] on 12 May 2025 at 9:44:40 am'!
 'Description Rename extentions tests'!
-!provides: 'BaseImageTests' 1 449!
+!provides: 'BaseImageTests' 1 450!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Compiler'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Objects'!
@@ -78,6 +78,16 @@ Object subclass: #RefactoringClassTestData
 RefactoringClassTestData class
 	instanceVariableNames: ''!
 
+!classDefinition: #MyTestNotification category: #'BaseImageTests-Exceptions'!
+Notification subclass: #MyTestNotification
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-Exceptions'!
+!classDefinition: 'MyTestNotification class' category: #'BaseImageTests-Exceptions'!
+MyTestNotification class
+	instanceVariableNames: ''!
+
 !classDefinition: #MyResumableTestError category: #'BaseImageTests-Exceptions'!
 Error subclass: #MyResumableTestError
 	instanceVariableNames: ''
@@ -96,16 +106,6 @@ Error subclass: #MyTestError
 	category: 'BaseImageTests-Exceptions'!
 !classDefinition: 'MyTestError class' category: #'BaseImageTests-Exceptions'!
 MyTestError class
-	instanceVariableNames: ''!
-
-!classDefinition: #MyTestNotification category: #'BaseImageTests-Exceptions'!
-Notification subclass: #MyTestNotification
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'BaseImageTests-Exceptions'!
-!classDefinition: 'MyTestNotification class' category: #'BaseImageTests-Exceptions'!
-MyTestNotification class
 	instanceVariableNames: ''!
 
 !classDefinition: #BagTest category: #'BaseImageTests-Collections'!
@@ -6442,13 +6442,13 @@ returnNodeOf: methodNode
 	
 	self error: 'No return node found'! !
 
-!ScannerTest methodsFor: 'testing' stamp: 'jmv 1/8/2024 17:16:14'!
+!ScannerTest methodsFor: 'testing' stamp: 'jmv 5/12/2025 09:44:28'!
 testLiteralSymbols
 
-	self assert: ('*+-/\~=<>&@%,|' allSatisfy: [:char | Scanner isLiteralSymbol: (String with: char) asSymbol])
+	self assert: ('*+-/\~=<>&@%,|' allSatisfy: [:char | Symbol isLiteralSymbol: (String with: char) asSymbol])
 		description: 'single letter binary symbols can be printed without string quotes'.
 		
-	self assert: (#('x' 'x:' 'x:y:' 'from:to:by:' 'yourself') allSatisfy: [:str | Scanner isLiteralSymbol: str asSymbol])
+	self assert: (#('x' 'x:' 'x:y:' 'from:to:by:' 'yourself') allSatisfy: [:str | Symbol isLiteralSymbol: str asSymbol])
 		description: 'valid ascii selector symbols can be printed without string quotes'.
 		
 	((32 to: 94), (96 to: 126) collect: [:ascii | Character codePoint: ascii]) ,
