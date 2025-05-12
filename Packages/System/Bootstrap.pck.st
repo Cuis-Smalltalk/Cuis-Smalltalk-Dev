@@ -1,60 +1,10 @@
-'From Cuis6.3 [latest update: #6327] on 25 April 2024 at 11:46:38 am'!
+'From Cuis7.3 [latest update: #7146] on 12 May 2025 at 9:25:12 am'!
 'Description '!
-!provides: 'Bootstrap' 1 39!
+!provides: 'Bootstrap' 1 40!
 !requires: 'DynamicCuisLibraries' 1 22 nil!
 SystemOrganization addCategory: #'Bootstrap-Smalltalk Image Builders'!
 SystemOrganization addCategory: #'Bootstrap-Foreign Objects'!
 
-
-!classDefinition: #ImageBuilder category: #'Bootstrap-Smalltalk Image Builders'!
-Object subclass: #ImageBuilder
-	instanceVariableNames: 'isBigEndian classes methods baseAddressOfImage nextFreeAddressOfImage lastHash firstForeignObject lastForeignObject foreignObjectsMap specialObjectsArrayForeignObject globalVariables symbols processorBindingForeignObject smalltalkForeignObject displayForeignObject startUpMethod'
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Bootstrap-Smalltalk Image Builders'!
-!classDefinition: 'ImageBuilder class' category: #'Bootstrap-Smalltalk Image Builders'!
-ImageBuilder class
-	instanceVariableNames: ''!
-
-!classDefinition: #SpurImageBuilder category: #'Bootstrap-Smalltalk Image Builders'!
-ImageBuilder subclass: #SpurImageBuilder
-	instanceVariableNames: 'classTableRoots lastClassIndex'
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Bootstrap-Smalltalk Image Builders'!
-!classDefinition: 'SpurImageBuilder class' category: #'Bootstrap-Smalltalk Image Builders'!
-SpurImageBuilder class
-	instanceVariableNames: ''!
-
-!classDefinition: #Spur32ImageBuilder category: #'Bootstrap-Smalltalk Image Builders'!
-SpurImageBuilder subclass: #Spur32ImageBuilder
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Bootstrap-Smalltalk Image Builders'!
-!classDefinition: 'Spur32ImageBuilder class' category: #'Bootstrap-Smalltalk Image Builders'!
-Spur32ImageBuilder class
-	instanceVariableNames: ''!
-
-!classDefinition: #Spur64ImageBuilder category: #'Bootstrap-Smalltalk Image Builders'!
-SpurImageBuilder subclass: #Spur64ImageBuilder
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Bootstrap-Smalltalk Image Builders'!
-!classDefinition: 'Spur64ImageBuilder class' category: #'Bootstrap-Smalltalk Image Builders'!
-Spur64ImageBuilder class
-	instanceVariableNames: ''!
-
-!classDefinition: #V3ImageBuilder category: #'Bootstrap-Smalltalk Image Builders'!
-ImageBuilder subclass: #V3ImageBuilder
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Bootstrap-Smalltalk Image Builders'!
-!classDefinition: 'V3ImageBuilder class' category: #'Bootstrap-Smalltalk Image Builders'!
-V3ImageBuilder class
-	instanceVariableNames: ''!
 
 !classDefinition: #ForeignObject category: #'Bootstrap-Foreign Objects'!
 Object subclass: #ForeignObject
@@ -316,29 +266,56 @@ ImmediateForeignObject subclass: #SmallIntegerForeignObject
 SmallIntegerForeignObject class
 	instanceVariableNames: ''!
 
+!classDefinition: #ImageBuilder category: #'Bootstrap-Smalltalk Image Builders'!
+Object subclass: #ImageBuilder
+	instanceVariableNames: 'isBigEndian classes methods baseAddressOfImage nextFreeAddressOfImage lastHash firstForeignObject lastForeignObject foreignObjectsMap specialObjectsArrayForeignObject globalVariables symbols processorBindingForeignObject smalltalkForeignObject displayForeignObject startUpMethod'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Bootstrap-Smalltalk Image Builders'!
+!classDefinition: 'ImageBuilder class' category: #'Bootstrap-Smalltalk Image Builders'!
+ImageBuilder class
+	instanceVariableNames: ''!
 
-!ImageBuilder commentStamp: '<historical>' prior: 0!
-My sub instances can build new image files, from a set of Foreign Objects.
+!classDefinition: #SpurImageBuilder category: #'Bootstrap-Smalltalk Image Builders'!
+ImageBuilder subclass: #SpurImageBuilder
+	instanceVariableNames: 'classTableRoots lastClassIndex'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Bootstrap-Smalltalk Image Builders'!
+!classDefinition: 'SpurImageBuilder class' category: #'Bootstrap-Smalltalk Image Builders'!
+SpurImageBuilder class
+	instanceVariableNames: ''!
 
-Cuis image files are usually Little Endian Spur64, but could also be big endian. Images intended for 32 bit systems and VMs are in Spur32 format.
+!classDefinition: #Spur32ImageBuilder category: #'Bootstrap-Smalltalk Image Builders'!
+SpurImageBuilder subclass: #Spur32ImageBuilder
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Bootstrap-Smalltalk Image Builders'!
+!classDefinition: 'Spur32ImageBuilder class' category: #'Bootstrap-Smalltalk Image Builders'!
+Spur32ImageBuilder class
+	instanceVariableNames: ''!
 
-ImageBuilder could be extended to support other image formats, if a suitable VM exists for them, For instance, it is entirely possible to complete V3ImageBuilder and make it functional.
+!classDefinition: #Spur64ImageBuilder category: #'Bootstrap-Smalltalk Image Builders'!
+SpurImageBuilder subclass: #Spur64ImageBuilder
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Bootstrap-Smalltalk Image Builders'!
+!classDefinition: 'Spur64ImageBuilder class' category: #'Bootstrap-Smalltalk Image Builders'!
+Spur64ImageBuilder class
+	instanceVariableNames: ''!
 
-- foreignObjects: an IdentityDictionary that holds an appropriate ForeignObject for each object we want to include.
-- firstForeignObject: the start of the linked list of ForeignObjects (they have an ivar for next in list).
-- lastForeignObject: handy when adding new ones to the list.!
+!classDefinition: #V3ImageBuilder category: #'Bootstrap-Smalltalk Image Builders'!
+ImageBuilder subclass: #V3ImageBuilder
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Bootstrap-Smalltalk Image Builders'!
+!classDefinition: 'V3ImageBuilder class' category: #'Bootstrap-Smalltalk Image Builders'!
+V3ImageBuilder class
+	instanceVariableNames: ''!
 
-!SpurImageBuilder commentStamp: '<historical>' prior: 0!
-My sub instances can build new image files, in one of the Spur format variants, from a set of Foreign Objects.!
-
-!Spur32ImageBuilder commentStamp: '<historical>' prior: 0!
-My instances can save 32 bit Spur images.!
-
-!Spur64ImageBuilder commentStamp: '<historical>' prior: 0!
-My instances can save 64 bit Spur images.!
-
-!V3ImageBuilder commentStamp: '<historical>' prior: 0!
-My instances can build new image files, in the V3 (a.k.a. pre-Spur) image format, from a set of Foreign Objects.!
 
 !ForeignObject commentStamp: '<historical>' prior: 0!
 Foreign objects are representatives of actual objects we may want to include in a new Smalltalk image. Subclasses represent the different kind of classes that are possible.!
@@ -440,2777 +417,30 @@ The purpose of this class is to create correctly these objects in a new Spur ima
 !ImmediateForeignObject commentStamp: '<historical>' prior: 0!
 ImmediateForeignObjects represent objects that don't need to be created in the heap, as all the information required is encoded in the Oop.!
 
-!ImageBuilder methodsFor: 'initialization' stamp: 'jmv 7/14/2023 12:12:19'!
-initialize
-	isBigEndian := false. "default"
-	classes := OrderedDictionary new.
-	methods := IdentitySet new.
-	baseAddressOfImage := self imageHeaderSize. 										"Base address. Start of Object Memory."
-	nextFreeAddressOfImage := baseAddressOfImage.
-	foreignObjectsMap := IdentityDictionary new.
-	globalVariables  := OrderedCollection new.
-	symbols := OrderedCollection new.! !
+!ImageBuilder commentStamp: '<historical>' prior: 0!
+My sub instances can build new image files, from a set of Foreign Objects.
 
-!ImageBuilder methodsFor: 'image building' stamp: 'jmv 2/7/2024 17:51:23'!
-addBasicMethodsAndReferencedClasses
+Cuis image files are usually Little Endian Spur64, but could also be big endian. Images intended for 32 bit systems and VMs are in Spur32 format.
 
-	"Classes referenced from methods below, but of which no methods are included."
-	#(#ZeroDivide)
-	do: [ :className | | classSpec classForeignObject |
-		classSpec := ClassSpec for: (Smalltalk at: className) addClassesTo: classes.	
-		classForeignObject := self addClassAndMetaclassSpec: classSpec classIndexOrNil: nil.
-		self map: classSpec toForeignObject: classForeignObject ].
+ImageBuilder could be extended to support other image formats, if a suitable VM exists for them, For instance, it is entirely possible to complete V3ImageBuilder and make it functional.
 
-	"Basic methods. Will usually be needed by most images.
-	MethodClass and superclasses also automatically included."
-	{
-		ProtoObject>>#initialize.
-		ProtoObject>>#isNil.
-		ProtoObject>>#notNil.
-		ProtoObject>>#==.
-		ProtoObject>>#~~.
-		ProtoObject >> #identityHash.
-		ProtoObject>>#noclash01_become:.
+- foreignObjects: an IdentityDictionary that holds an appropriate ForeignObject for each object we want to include.
+- firstForeignObject: the start of the linked list of ForeignObjects (they have an ivar for next in list).
+- lastForeignObject: handy when adding new ones to the list.!
 
-		UndefinedObject>>#isNil.
-		UndefinedObject>>#notNil.
+!SpurImageBuilder commentStamp: '<historical>' prior: 0!
+My sub instances can build new image files, in one of the Spur format variants, from a set of Foreign Objects.!
 
-		Object>>#=.
-		Object>>#~=.
-		Object>>#hash.
-		Object>>#isString.
-		Object>>#noclash01_printOn:.
-		Object>>#noclash01_doesNotUnderstand:.
-		Object>>#noclash01_error:.
-		Object>>#noclash01_warning:.
-		Object>>#class.
-		Object>>#at:.
-		Object>>#at:put:.
-		Object>>#basicAt:.
-		Object>>#isMethodProperties.
-		Object>>#isNumber.
-		Object>>#isByteString.
-		Object>>#isUnicodeString.
-		Object>>#isSymbol.
-		Object>>#isCharacter.
-		Object>>#isBehavior.
-		Object>>#isInterval.
-		Object>>#value.
-		Object>>#is:.
-		Object>>#isInteger.
-		Object>>#perform:.
-		Object>>#basicSize.
+!Spur32ImageBuilder commentStamp: '<historical>' prior: 0!
+My instances can save 32 bit Spur images.!
 
-		Boolean>>#|.
-		Boolean>>#&.
-		Boolean>>#not.
-		True>>#|.
-		True>>#&.
-		True>>#not.
-		False>>#|.
-		False>>#&.
-		False>>#not.
+!Spur64ImageBuilder commentStamp: '<historical>' prior: 0!
+My instances can save 64 bit Spur images.!
 
-		Behavior>>#new.
-		Behavior>>#basicNew.
-		Behavior>>#new:.
-		Behavior>>#basicNew:.
-		Behavior>>#isMeta.
-		Behavior >> #identityHash.
-		ClassDescription>>#printNameOn:.
-		ClassDescription>>#theNonMetaClass.
-		Class>>#printNameOn:.
-		Metaclass>>#isMeta.
-		Metaclass>>#printNameOn:.
-		Metaclass>>#theNonMetaClass.
+!V3ImageBuilder commentStamp: '<historical>' prior: 0!
+My instances can build new image files, in the V3 (a.k.a. pre-Spur) image format, from a set of Foreign Objects.
 
-		Magnitude>>#=.
-		Magnitude>>#hash.
-		Magnitude>>#min:.
-		Magnitude>>#max:.
-		Magnitude>>#between:and:.
-		Number>>#=.
-		Number>>#//.
-		Number>>#isNumber.
-		Number>>#asInteger.
-		Number>>#negated.
-		Number>>#is:.
-		Number>>#printString.
-		Number>>#isZero.
-		Number>>#ceiling.
-		Number>>#raisedToInteger:.
-		Number>>#negative.
-		Number>>#floor.
-		Integer>>#=.
-		Integer>>#//.
-		Integer>>#is:.
-		Integer>>#asInteger.
-		Integer>>#isInteger.
-		Integer>>#highBit.
-		Integer>>#highBitOfMagnitude.
-		Integer>>#floor.
-		SmallInteger>>#=.
-		SmallInteger>>#<.
-		SmallInteger>>#<=.
-		SmallInteger>>#>.
-		SmallInteger>>#>=.
-		SmallInteger>>#~=.
-		SmallInteger>>#+.
-		SmallInteger>>#-.
-		SmallInteger>>#*.
-		SmallInteger>>#//.
-		SmallInteger>>#\\.
-		SmallInteger>>#identityHash.
-		SmallInteger>>#quo:.
-		SmallInteger>>#bitAnd:.
-		SmallInteger>>#bitOr:.
-		SmallInteger>>#bitShift:.
-		SmallInteger>>#printString.
-		SmallInteger>>#decimalDigitLength.
-		SmallInteger>>#even.
-		SmallInteger>>#lowBit.
-		SmallInteger>>#bitXor:.
-
-		CompiledMethod>>#methodClass.
-		CompiledMethod>>#numLiterals.
-		CompiledMethod>>#header.
-		CompiledMethod>>#objectAt:.
-		CompiledMethod>>#literalAt:.
-		CompiledMethod>>#selector.
-		CompiledMethod>>#withPropertiesDo:ifSelector:.
-		CompiledMethod>>#penultimateLiteral.
-		AdditionalMethodState>>#isMethodProperties.
-		AdditionalMethodState>>#selector.
-
-		ContextPart>>#printOn:.
-		ContextPart>>#methodClass.
-		ContextPart>>#sender.
-		ContextPart>>#selector.
-		ContextPart>>#basicSize.
-		MethodContext>>#printOn:.
-		MethodContext>>#outerContext.
-		MethodContext>>#method.
-		MethodContext>>#receiver.
-		MethodContext>>#tempAt:.
-		BlockClosure>>#printOn:.
-		BlockClosure>>#outerContext.
-		BlockClosure>>#value.
-		BlockClosure>>#value:.
-		BlockClosure>>#value:value:.
-		BlockClosure>>#value:value:value:.
-		BlockClosure>>#valueWithPossibleArgument:.
-
-		Message>>#selector.
-
-		Collection>>#species.
-		SequenceableCollection class>>#streamContents:.
-		SequenceableCollection class>>#streamContents:estimatedSize:.
-		SequenceableCollection class>>#streamContents:on:.
-		SequenceableCollection >> #do:.
-		SequenceableCollection>>#copyReplaceFrom:to:with:.
-		SequenceableCollection >> #,.
-		SequenceableCollection>>#asByteArray.
-		SequenceableCollection>>#replaceFrom:to:with:.
-		SequenceableCollection>>#writeStream.
-		SequenceableCollection>>#asStreamResult.
-		SequenceableCollection>>#thatCanBeModified.
-		SequenceableCollection>>#copyFrom:to:.
-		SequenceableCollection>>#copyBlank:.
-		ArrayedCollection class>>#new:.
-		ArrayedCollection class>>#withAll:.
-		ArrayedCollection>>#size.
-		Array>>#elementsExchangeIdentityWith:.
-		ByteArray>>#replaceFrom:to:with:startingAt:.
-		ByteArray>>#asString.
-		ByteArray class>>#findFirstInBytes:inSet:startingAt:.
-
-		CharacterSequence>>#printOn:.
-		CharacterSequence>>#storeOn:.
-		CharacterSequence>>#isString.
-		CharacterSequence>>#string.
-		String class>>#new:.
-		String class>>#with:.
-		String class>>#isAscii:.
-		String>>#asUtf8Bytes.
-		String>>#isAscii.
-		String>>#size.
-		String>>#at:put:.
-		String>>#replaceFrom:to:with:startingAt:.
-		String >> #,.
-		String>>#appendToString:.
-		String>>#copyReplaceFrom:to:with:.
-		Symbol>>#noclash01_storeOn:.
-
-		Character class>>#lf.
-		Character class>>#newLineCharacter.
-		Character class>>#space.
-		Character class>>#digitValue:.
-		Character class>>#codePoint:.
-		Character>>#identityHash.
-		Character>>#isCharacter.
-		Character>>#codePoint.
-
-		Stream>>#nextPutAll:.
-		PositionableStream class>>#on:.
-		PositionableStream>>#on:.
-		PositionableStream>>#nextInto:.
-		PositionableStream>>#originalContents.
-		PositionableStream>>#position.
-		PositionableStream>>#position:.
-		PositionableStream>>#reset.
-		PositionableStream>>#useBytes.
-		WriteStream>>#on:.
-		WriteStream>>#reset.
-		WriteStream>>#nextPut:.
-		WriteStream>>#nextPutAll:.
-		WriteStream>>#isCompatibleWithContents:.
-		WriteStream>>#contents.
-
-		Association>>#value.
-
-		SystemDictionary>>#quitPrimitive:.
-		SystemDictionary>>#specialObjectsArray.
-
-		StdIOWriteStream class>>#stdout.
-		StdIOWriteStream class>>#stdoutHandle.
-		StdIOWriteStream class>>#stdioHandles.
-		StdIOWriteStream>>#openOnHandle:name:.
-		StdIOWriteStream>>#nextPutAll:.
-		StdIOWriteStream>>#nextPut:.
-		StdIOWriteStream>>#newLine.
-		StdIOWriteStream>>#space.
-		StdIOWriteStream>>#flush.
-		StdIOWriteStream>>#noclash01_primWrite:from:startingAt:count:.
-		StdIOWriteStream>>#primFlush:.
-
-
-	} do: [ :compiledMethod |
-		self addExistingMethod: compiledMethod ].! !
-
-!ImageBuilder methodsFor: 'image building' stamp: 'jmv 4/18/2024 14:09:49'!
-addFundamentalClasses
-	"Some classes that are needed for any Cuis image:
-	- nil, false and true are always present and need their class
-	- all superclasses for VM known classes
-	- all classes and superclasses for SpecialObjectsArray.
-	Do not include those already added in #addVmKnownClasses.
-	Add ForeignObjects both for class and metaclass to the list.
-	But only add the one for the class to the foreignObjects dictionary, because they share the spec."
-	"This first implementation uses the fact that these classes already exist in the image we are running.
-	It would be better to build them from scratch, using alternative class protocol in ClassSpec,
-	most likely by compiling a source code file."
-
-	| fundamentalClassNames |
-	fundamentalClassNames := #(#UndefinedObject #False #True
-		#ProtoObject #Object #Boolean #Magnitude #Number #Integer #Float
-		#Collection #SequenceableCollection #CharacterSequence #Symbol #ArrayedCollection #LinkedList
-		#Set #Dictionary #IdentityDictionary #SystemDictionary
-		#LookupKey #Association
-		#InstructionStream #ContextPart
-		#ProcessorScheduler #Link #Process
-		#Behavior #ClassDescription #Class #Metaclass
-		#MethodDictionary
-		#CompiledMethod #AdditionalMethodState #Pragma
-		#SharedQueue).
-	self includeDisplayAndSensor ifTrue: [
-		fundamentalClassNames := fundamentalClassNames, #(#Form #DisplayScreen #InputSensor #EventSensor ) ].
-	fundamentalClassNames do: [ :className | | classSpec classForeignObject |
-		classSpec := ClassSpec for: (Smalltalk at: className) addClassesTo: classes.	
-		classForeignObject := self addClassAndMetaclassSpec: classSpec classIndexOrNil: nil.
-		self map: classSpec toForeignObject: classForeignObject ].! !
-
-!ImageBuilder methodsFor: 'image building' stamp: 'jmv 4/18/2024 14:10:20'!
-addFundamentalObjectsAndClasses
-	"
-	Objects and classes added here are absolutely required for building
-	a healthy image that includes what the VM expects.
-	"
-
-	self addSpecial: nil hash: 1 nameOfClassToInstantiate: #UndefinedObject.
-	self addSpecial: false hash: 2 nameOfClassToInstantiate: #False.
-	self addSpecial: true hash: 3 nameOfClassToInstantiate: #True.
-	
-	self addSpurHiddenObjectsIfRequired.
-
-	"SpecialObjects Array. Ivar specialObjectsArrayForeignObject holds its fo.
-	Apparently the Spur VM saves the image with the SOA at this position,
-	\after the ClassTable and its first two pages. Do the same here."
-	self addSpecialObjectsArray.
-
-	"Add classes known by the Spur VM"
-	self addVmKnownClasses.
-	"Add other classes absolutely required by the VM, and their superclasses."
-	self addFundamentalClasses.
-
-	"Create basic globals"
-	"Smalltalk globals inspect"
-	self addProcessor.
-	self includeDisplayAndSensor ifTrue: [
-		self addDisplay.
-		self addSensor ].
-	self addSmalltalk.
-	self addUndeclared.
-
-	"After adding classes, we can fill the contents of the SpecialObjects array"
-	self fillSpecialObjectsArray.! !
-
-!ImageBuilder methodsFor: 'image building' stamp: 'jmv 7/17/2023 12:52:26'!
-addMethodDictionariesAndStuff
-	"Fix Class hierarchies, build MethodDictionaries.
-	Build the Smalltalk SystemDictionary."
-
-	"Superclasses of method methodClass may not be mapped yet. Additionally, add all as subclasses of their superclass."
-	classes do: [ :classSpec | | classForeignObject |
-		classForeignObject := self findOrAddClassSpec: classSpec.
-		classSpec superclass ifNotNil: [ :superclassSpec |
-			(foreignObjectsMap at: superclassSpec) addSubclass: classForeignObject ]].
-
-	"Now turn the subclasses OrderedCollections into a foreign object for an Array"
-	classes do: [ :classSpec | | classForeignObject |
-		classForeignObject :=  foreignObjectsMap at: classSpec.
-		classForeignObject subclassesForeignObject:
-			(self createForeignObjectFor: classForeignObject subclassForeignObjects asArray) ].
-
-	"Build MethodDictionaries. No additional classes or methods will be allowed!!"
-	classes do: [ :classSpec | | classForeignObject metaClassForeignObject |
-		classForeignObject := foreignObjectsMap at: classSpec.
-		self addMethodDictionaryFor: classForeignObject.
-		metaClassForeignObject := classForeignObject metaclassForeignObject.
-		self addMethodDictionaryFor: metaClassForeignObject ].
-
-	"Now that we have all the required globals at ivar 'globalVariables', fill the contents of the Smalltalk object."
-	self fillSmalltalkDictionary.! !
-
-!ImageBuilder methodsFor: 'image building' stamp: 'jmv 7/17/2023 12:39:29'!
-addSpecialObjectsArray
-	"Create a SpecialObjectsArray for our new image. See #recreateSpecialObjectsArray.
-	Add a ForeignObject for it to our foreign object list and dicitonary.
-	See #fillSpecialObjectsArray."
-
-	| specialObjectsArray |
-	specialObjectsArray := Array new: 60.
-	specialObjectsArrayForeignObject := self createForeignObjectFor: specialObjectsArray.! !
-
-!ImageBuilder methodsFor: 'image building' stamp: 'jmv 7/17/2023 12:36:17'!
-addSpurHiddenObjectsIfRequired
-	"NOP here. Only for Spur."! !
-
-!ImageBuilder methodsFor: 'image building' stamp: 'jmv 4/18/2024 14:26:23'!
-addVmKnownClasses
-"
-Copied and adapted from the Spur implementation, that requires specific identityHash for these classe.
-This implementation hasn't yet been tested!!
-"
-	"Some classes are known by the VM.
-	- They have specific classIndex and identityHash
-	- They are stored in the first page of the class table
-	Add ForeignObjects both for class and metaclass to the list.
-	But only add the one for the class to the foreignObjects dictionary, because they share the spec."
-	"This first implementation uses the fact that these classes already exist in the image we are running.
-	It would be better to build them from scratch, using alternative class protocol in ClassSpec,
-	most likely by compiling a source code file."
-
-	| vmKnownClassNames |
-	vmKnownClassNames := #(
-		#SmallInteger
-		#Character
-		#LargeNegativeInteger
-		#LargePositiveInteger
-		#BoxedFloat64
-		#Message
-		#MethodContext
-		#BlockClosure
-		#Semaphore
-		#ByteArray
-		#Array
-		#String
-		#Point).
-	self includeDisplayAndSensor ifTrue: [
-		vmKnownClassNames := vmKnownClassNames, #(#Bitmap) ].
-	vmKnownClassNames do: [ :className | | classSpec classForeignObject |
-		classSpec := ClassSpec for: (Smalltalk at: className) addClassesTo: classes.	
-		classForeignObject := self addClassAndMetaclassSpec: classSpec classIndexOrNil: nil.
-		self map: classSpec toForeignObject: classForeignObject ].! !
-
-!ImageBuilder methodsFor: 'image building' stamp: 'jmv 9/19/2023 13:55:27'!
-createAndAddWarningMethodsForMissing
-	"Create special methods to warn about improper execution of inherited methods when proper method was not included."
-
-	| includedSelectorsByClass |
-	includedSelectorsByClass := Dictionary new.
-	methods do: [ :methodSpec |
-		(includedSelectorsByClass at: {methodSpec classSpec. methodSpec isClassSide}
-			ifAbsentPut: [ Set new ]) add: methodSpec selector ].
-
-	classes do: [ :classSpec |
-		{true. false} do: [ :classSideFlag |
-			| includedSelectors existingClass |
-			includedSelectors := includedSelectorsByClass at: {classSpec. classSideFlag} ifAbsent: [`Set new`].
-			existingClass := 		Smalltalk at: classSpec name.
-			classSideFlag ifTrue: [
-				existingClass := existingClass class ].
-			existingClass selectorsDo: [ :missingSelector |
-				(includedSelectors includes: missingSelector) ifFalse: [
-					(self includedDefinition: missingSelector in: classSpec isClassMethod: classSideFlag all: includedSelectorsByClass)
-						ifNotNil: [ :inheritedFromString |
-							self createWarningMethodFor: missingSelector in: classSpec isClassMethod: classSideFlag inheritedFrom: inheritedFromString ]
-				]]]].! !
-
-!ImageBuilder methodsFor: 'image building' stamp: 'jmv 9/19/2023 13:58:42'!
-createWarningMethodFor: missingSelector in: classSpec isClassMethod: classSideFlag inheritedFrom: desc
-	"Made by playing with a method with this source code:
-		hack3
-			self noclash01_warning: 'eso eso eso'.
-	And then going with the debugger through
-		MethodSpec for: self addClassesTo: IdentityDictionary new.	
-	Did the same with #hack3: and #hack3:b:
-	The only difference was in header. Took logic from
-		#computeMethodHeaderForNumArgs:numTemps:numLits:primitive:"
-
-	 | warningString fallbackMethodSpec |
-	warningString := String streamContents: [ :strm |
-		strm
-			nextPutAll: '======== ';
-			nextPutAll: classSpec name asString.
-		classSideFlag ifTrue: [ strm nextPutAll: ' class' ].
-		strm
-			nextPutAll: '>>#';
-			nextPutAll: missingSelector;
-			nextPutAll: ' was not included, but it is inherited from ';
-			nextPutAll: desc ].
-
-"warningString print."
-	fallbackMethodSpec := MethodSpec basicNew
-		classSpec: classSpec
-		isClassSide: classSideFlag
-		selector: missingSelector
-		header: 4 + (missingSelector numArgs bitShift: 24) + (missingSelector numArgs bitShift: 18)
-		literals: {#warning:. warningString}
-		pragmas: nil
-		bytecodes: #[112 33 224 135 120].
-	self addMethodSpec: fallbackMethodSpec.
-	methods add: fallbackMethodSpec.
-	! !
-
-!ImageBuilder methodsFor: 'image building' stamp: 'jmv 7/17/2023 12:49:27'!
-fillSpecialObjectsArray
-	"Please see implementation for Spur.
-	Also see #recreateSpecialObjectsArray.
-	See reference implementations (MicroSqueak.pck.st and SystemTracing.pck.st)"
-
-	"Maybe after implementing for all subclasses, move a refactored version up here."! !
-
-!ImageBuilder methodsFor: 'image building' stamp: 'jmv 9/19/2023 13:58:34'!
-includedDefinition: missingSelector in: classSpec isClassMethod: classSideFlag all: includedSelectorsByClass
-	"missingSelector is defined for classSpec but wasn't included.
-	Answer the inherited version that would be run instead, if any."
-
-	classSpec superclass ifNotNil: [ :superclassSpec |
-		(self includedDefinition: missingSelector start: superclassSpec isClassMethod: classSideFlag all: includedSelectorsByClass)
-			ifNotNil: [ :includedDefinition |
-				^classSideFlag
-					ifTrue: [ includedDefinition name asString, ' class' ]
-					ifFalse: [	 includedDefinition name asString ]]].
-
-	"Class side methods can also be inherited from the instance side of class Class."
-	classSideFlag ifTrue: [| classClassSpec |
-		classClassSpec := classes at: #Class.
-		(self includedDefinition: missingSelector start: classClassSpec isClassMethod: false all: includedSelectorsByClass)
-			ifNotNil: [ :includedDefinition |
-				^includedDefinition name asString ]].
-
-	^nil! !
-
-!ImageBuilder methodsFor: 'image building' stamp: 'jmv 9/19/2023 12:50:21'!
-includedDefinition: missingSelector start: classSpec isClassMethod: classSideFlag all: includedSelectorsByClass
-	"Find the closest included definition of missingSelector.
-	Start search at classSpec and go upwards in the hierarchy,"
-
-	classSpec withAllSuperclassesDo: [ :superclassSpec |
-		includedSelectorsByClass
-			at: { superclassSpec. classSideFlag }
-			ifPresent: [ :includedSelectors |
-				(includedSelectors includes: missingSelector) ifTrue: [
-					^superclassSpec ]]].
-	^nil! !
-
-!ImageBuilder methodsFor: 'image building testing' stamp: 'jmv 4/18/2024 14:08:07'!
-includeDisplayAndSensor
-	"Some imges may need them, but minimal headless images won't"
-	^false! !
-
-!ImageBuilder methodsFor: 'image building examples' stamp: 'jmv 9/19/2023 11:27:31'!
-addExample03FloatMethods
-
-	"Classes referenced from methods below, but of which no methods are included."
-	#(#DomainError)
-	do: [ :className | | classSpec classForeignObject |
-		classSpec := ClassSpec for: (Smalltalk at: className) addClassesTo: classes.	
-		classForeignObject := self addClassAndMetaclassSpec: classSpec classIndexOrNil: nil.
-		self map: classSpec toForeignObject: classForeignObject ].
-
-	{
-
-		SmallInteger>>#asFloat.
-
-		Float class>>#initialize.
-		Float class>>#initClassCachedState.
-		Float class>>#pi.
-		Float class>>#fmin.
-		Float class>>#denormalized.
-		Float class>>#fminDenormalized.
-		Float class>>#signPart:mantissaPart:exponentPart:.
-		Float>>#printOn:base:.
-		Float>>#isZero.
-		Float>>#isNaN.
-		Float>>#absPrintOn:base:.
-		Float>>#absPrintExactlyOn:base:.
-		Float>>#isInfinite.
-		Float>>#significandAsInteger.
-		Float>>#mantissaPart.
-		Float>>#exponentPart.
-		Float>>#signPart.
-		Float>>#partValues:.
-		Float>>#partValues:ifInfinite:ifNaN:.
-		Float>>#partBits:.
-		Float>>#basicAt:.
-		Float>>#negated.
-		Float>>#nextTowardsZero.
-		Float>>#reciprocalLogBase2.
-
-		SmallFloat64>>#=.
-		SmallFloat64>>#<.
-		SmallFloat64>>#<=.
-		SmallFloat64>>#>.
-		SmallFloat64>>#>=.
-		SmallFloat64>>#~=.
-		SmallFloat64>>#+.
-		SmallFloat64>>#-.
-		SmallFloat64>>#*.
-		SmallFloat64>>#/.
-		SmallFloat64>>#identityHash.
-		SmallFloat64>>#exponent.
-		SmallFloat64>>#ln.
-		SmallFloat64>>#timesTwoPower:.
-		SmallFloat64>>#truncated.
-
-	} do: [ :compiledMethod |
-		self addExistingMethod: compiledMethod ].! !
-
-!ImageBuilder methodsFor: 'image building examples' stamp: 'jmv 9/14/2023 17:16:53'!
-addExample04FileExperimentsMethods
-
-	"Classes referenced from methods below, but of which no methods are included."
-	#()
-	do: [ :className | | classSpec classForeignObject |
-		classSpec := ClassSpec for: (Smalltalk at: className) addClassesTo: classes.	
-		classForeignObject := self addClassAndMetaclassSpec: classSpec classIndexOrNil: nil.
-		self map: classSpec toForeignObject: classForeignObject ].
-
-	{
-		
-		SystemDictionary >> #primImageName.
-		SystemDictionary >> #primGetCurrentWorkingDirectoryUnix.
-		SystemDictionary >> #platformName.
-		SystemDictionary >> #getSystemAttribute:.
-		SystemDictionary >> #listBuiltinModule:.
-		SystemDictionary >> #listLoadedModule:.
-		SystemDictionary >> #primVmFileName.
-		SystemDictionary >> #primVmPath.
-
-		BasicFileServices class >> #binaryContentsOf:.
-		BasicFileServices class >> #primOpen:writable:.
-		BasicFileServices class >> #primSize:.
-		BasicFileServices class >> #primRead:into:startingAt:count:.
-		BasicFileServices class >> #primClose:.
-
-	} do: [ :compiledMethod |
-		self addExistingMethod: compiledMethod ].! !
-
-!ImageBuilder methodsFor: 'image building examples' stamp: 'jmv 9/19/2023 16:00:03'!
-addExample05SymbolExperimentsMethods
-
-	"Classes referenced from below, but of which no methods are included."
-	#()
-	do: [ :className | | classSpec classForeignObject |
-		classSpec := ClassSpec for: (Smalltalk at: className) addClassesTo: classes.	
-		classForeignObject := self addClassAndMetaclassSpec: classSpec classIndexOrNil: nil.
-		self map: classSpec toForeignObject: classForeignObject ].
-
-	"Classes included with ALL their methods."
-	#( WeakArray SymbolSet)
-	do: [ :className | | cls classSpec |
-		cls := Smalltalk at: className.
-		classSpec := ClassSpec for: cls addClassesTo: classes.	
-		self findOrAddClassSpec: classSpec.
-		cls class methodsDo: [ :compiledMethod |
-			self addExistingMethod: compiledMethod ].
-		cls methodsDo: [ :compiledMethod |
-			self addExistingMethod: compiledMethod ]].
-
-	{
-
-		Behavior >> #noclash01_allInstances.
-
-		Collection >> #inject:into:.
-		Collection >> #count:.
-		Collection >> #detect:ifNone:.
-		SequenceableCollection >> #hashQuick:.
-		ByteArray class >> #minSizeForHashQuick.
-		ByteArray class >> #hashBytes:startingWith:.
-
-		CharacterSequence>>#asSymbol.
-		String class>>#is:equalTo:.
-		String class>>#caseSensitiveOrder.
-		String class>>#compare:with:collated:.
-		String class>>#symbolClassToUse.
-		String>>#at:.
-		String>>#at:put:.
-		String>>#isByteString.
-		String >> #=.
-		String >> #hash.
-		Symbol class>>#intern:.
-		Symbol class>>#basicFromString:.
-		Symbol class >> #initialize.
-		Symbol class >> #rehash.
-		Symbol class >> #lookup:.
-		Symbol>>#at:put:.
-		Symbol>>#asSymbol.
-		Symbol>>#string:.
-		Symbol >> #isSymbol.
-		Symbol >> #=.
-
-	} do: [ :compiledMethod |
-		self addExistingMethod: compiledMethod ].! !
-
-!ImageBuilder methodsFor: 'image building examples' stamp: 'jmv 4/18/2024 15:03:43'!
-addExample06LoadDynamicLibraryMethods
-
-	"Classes referenced from below, but of which no methods are included."
-	#(ReadWriteStream IdentitySet Bitmap)
-	do: [ :className | | classSpec classForeignObject |
-		classSpec := ClassSpec for: (Smalltalk at: className) addClassesTo: classes.	
-		classForeignObject := self addClassAndMetaclassSpec: classSpec classIndexOrNil: nil.
-		self map: classSpec toForeignObject: classForeignObject ].
-
-"ojo, incluir todos los implementors de los metodos en todas las clases incluidas, o al menos en la herencia..."
-	"Classes included with ALL their methods."
-	#( WeakArray SymbolSet DynamicCuisLibrary ClassSpec MethodSpec LiteralVariableSpec)
-	do: [ :className | | cls classSpec |
-		cls := Smalltalk at: className.
-		classSpec := ClassSpec for: cls addClassesTo: classes.	
-		self findOrAddClassSpec: classSpec.
-		cls class methodsDo: [ :compiledMethod |
-			self addExistingMethod: compiledMethod ].
-		cls methodsDo: [ :compiledMethod |
-(compiledMethod selector = #buildClassesAndMethods:) ifFalse: [ "HACKY!!!!!!!!!!!!"
-			self addExistingMethod: compiledMethod
-]
-			]].
-
-	{
-		Object>>#as:.
-		Object>>#yourself.
-		Object>>#->.
-		Object>>#copy.
-		Object>>#shallowCopy.
-		Object>>#postCopy.
-		Object>>#readDataFrom:size:.
-		Object>>#	instVarAt:put:.
-		Object>>#comeFullyUpOnReload:.
-		Object>>#basicAt:put:.
-
-		Behavior >> #noclash01_allInstances.
-		Behavior>>#isBehavior.
-		Behavior>>#superclass.
-		Behavior>>#typeOfClass.
-		Behavior>>#isVariable.
-		Behavior>>#isBytes.
-		Behavior>>#isBits.
-		Behavior>>#isImmediateClass.
-		Behavior>>#instSpec.
-		Behavior>>#instSize.
-		Behavior>>#definesInstanceVariableNamed:.
-		Behavior>>#instVarNames.
-		Behavior>>#format.
-		Behavior>>#superclass:methodDictionary:format:.
-		Behavior>>#binding.
-		Behavior>>#addSelectorSilently:withMethod:.
-		Behavior>>#lookupSelector:.
-		Behavior>>#includesSelector:.
-		Behavior>>#methodDict.
-		Behavior>>#compiledMethodAt:.
-		Behavior>>#bindingOf:.
-		Behavior>>#classBindingOf:.
-		Behavior>>#someInstance.
-
-		ClassDescription>>#instVarNames.
-		ClassDescription>>#organization:.
-		ClassDescription>>#setInstVarNames:.
-		ClassDescription>>#superclass:methodDictionary:format:.
-
-		Class>>#superclass:methodDictionary:format:.
-		Class>>#addSubclass:.
-		Class>>#setName:.
-		Class>>#declareClassVariables:.
-		Class>>#name.
-		Class>>#classPool.
-		Class>>#sharedPools.
-		Class>>#binding.
-		Class>>#bindingOf:.
-		Class>>#localBindingOf:.
-		Class>>#classVarBindingOf:.
-		Class>>#setName:.
-
-		Metaclass>>#new.
-		Metaclass>>#bindingOf:.
-		Metaclass>>#localBindingOf:.
-		Metaclass>>#allClassInstVarNames.
-
-		CompiledMethod class>>#createMethod:trailer:header:.
-		CompiledMethod class>>#newMethod:header:.
-		CompiledMethod>>#literalAt:put:.
-		CompiledMethod>>#objectAt:put:.
-		CompiledMethod>>#penultimateLiteral:.
-		CompiledMethod>>#methodClass:.
-		CompiledMethod>>#endPC.
-		CompiledMethod>>#initialPC.
-		CompiledMethod>>#flushCache.
-		CompiledMethod>>#readDataFrom:size:.
-
-		MethodContext>>#	instVarAt:put:.
-
-		Collection class>>#newFrom:.
-		Collection>>#=.
-		Collection>>#is:.
-		Collection>>#reject:.
-		Collection>>#ifEmpty:.
-		Collection>>#isSequenceable.
-		Collection>>#asIdentitySet.
-		Collection>>#addAll:.
-		Collection>>#notEmpty.
-		Collection >> #inject:into:.
-		Collection >> #count:.
-		Collection >> #detect:ifNone:.
-		SequenceableCollection >> #hashQuick:.	
-		SequenceableCollection>>#=.
-		SequenceableCollection>>#thatCanBeModified.
-		SequenceableCollection >> #select:.
-		SequenceableCollection >>#collect:.
-		SequenceableCollection>>#readStream.
-		SequenceableCollection>>#includes:.
-		SequenceableCollection>>#indexOf:.
-		SequenceableCollection>>#indexOf:ifAbsent:.
-		SequenceableCollection>>#indexOf:startingAt:ifAbsent:.
-		SequenceableCollection>>#withIndexDo:.
-		SequenceableCollection>>#hasEqualElements:.
-		SequenceableCollection>>#isSequenceable.
-		SequenceableCollection>>#copyWith:.
-		ArrayedCollection>>#isEmpty.
-		Array>>#replaceFrom:to:with:startingAt:.
-		Array>>#asArray.
-		Array>>#is:.
-		ByteArray class >> #minSizeForHashQuick.
-		ByteArray class >> #hashBytes:startingWith:.
-		ByteArray>>#uint32At:bigEndian:.
-		ByteArray>>#int32At:bigEndian:.
-		ByteArray>>#uint16At:bigEndian:.
-		ByteArray>>#float64At:bigEndian:.
-
-		CharacterSequence >> #asSymbol.
-		String class >> #is:equalTo:.
-		String class >> #caseSensitiveOrder.
-		String class >> #compare:with:collated:.
-		String class >> #symbolClassToUse.
-		String >> #at:.
-		String >> #at:put:.
-		String >> #isByteString.
-		String >> #=.
-		String >> #hash.
-		String>>#is:.
-		Symbol class >> #intern:.
-		Symbol class >> #basicFromString:.
-		Symbol class >> #initialize.
-		Symbol class >> #rehash.
-		Symbol class >> #lookup:.
-		Symbol >> #at:put:.
-		Symbol >> #asSymbol.
-		Symbol >> #string:.
-		Symbol >> #isSymbol.
-		Symbol >> #=.
-		Symbol>>#flushCache.
-
-		Set class>>#new.
-		Set class>>#newWithRoomForMoreThan:.
-		Set class>>#sizeFor:.
-		Set>>#init:.
-		Set>>#atNewIndex:put:.
-		Set>>#fullCheck.
-		Set>>#grow.
-		Set>>#includes:.
-		Set>>#findElementOrNil:.
-		Set>>#scanFor:.
-		Set>>#growSize.
-		Set>>#noCheckAdd:.
-		Set>>#postCopy.
-		Set>>#size.
-		Set>>#do:.
-		Set>>#comeFullyUpOnReload:.
-		IdentitySet>>#scanFor:.
-		Dictionary>>#keysDo:.
-		Dictionary>>#associationsDo:.
-		Dictionary>>#postCopy.
-		Dictionary>>#noCheckAdd:.
-		Dictionary>>#at:ifPresent:.
-		Dictionary>>#includes:.
-		Dictionary>>#at:put:.
-		Dictionary>>#scanFor:.
-		Dictionary>>#includesKey:.
-		Dictionary>>#at:.
-		Dictionary>>#errorKeyNotFound:.
-		Dictionary>>#at:ifAbsent:.
-		Dictionary>>#scanFor:.
-		Dictionary>>#keys.
-		Dictionary>>#associationAt:ifAbsent:.
-		Dictionary>>#bindingOf:.
-		Dictionary>>#declare:from:.
-		IdentityDictionary>>#scanFor:.
-
-		MethodDictionary class>>#new.
-		MethodDictionary class>>#newWithRoomForMoreThan:.
-		MethodDictionary>>#at:ifAbsent:.
-		MethodDictionary>>#scanFor:.
-		MethodDictionary>>#postCopy.
-		MethodDictionary >>#keyAt:.
-		MethodDictionary>>#associationAt:ifAbsent:.
-		MethodDictionary>>#keysDo:.
-		MethodDictionary>>#at:put:.
-		MethodDictionary>>#grow. "become!!!!!!!!!!"
-		MethodDictionary>>#associationsDo:.
-
-		LookupKey class>>#key:.
-		LookupKey>>#key:.
-		LookupKey>>#key.
-		Association class>>#key:value:.
-		Association>>#value:.
-
-		BasicFileServices class >> #binaryContentsOf:.
-		BasicFileServices class >> #primOpen:writable:.
-		BasicFileServices class >> #primSize:.
-		BasicFileServices class >> #primRead:into:startingAt:count:.
-		BasicFileServices class >> #primClose:.
-
-		Stream>>#binary.
-		Stream>>#nextString.
-		Stream>>#nextUint32BigEndian:.
-		Stream>>#nextInt32BigEndian:.
-		Stream>>#nextUint16BigEndian:.
-		Stream>>#nextFloat64BigEndian:.
-		ReadStream>>#next.
-		ReadStream>>#next:.
-		ReadStream>>#next:into:startingAt:.
-		WriteStream>>#on:.
-		WriteStream>>#reset.
-		
-		DataStream class>>#on:.
-		DataStream class>>#referenceTypes.
-		DataStream class>>#noclash01_initCachedState.
-		DataStream class>>#typeMap.
-		DataStream >>#typeIDFor:.
-		DataStream>>#setStream:.
-		DataStream>>#next.
-		DataStream>>#beginReference:.
-		DataStream>>#maybeBeginReference:.
-		DataStream>>#setCurrentReference:.
-		DataStream>>#getCurrentReference.
-		DataStream>>#readArray.
-		DataStream>>#readNil.
-		DataStream>>#readTrue.
-		DataStream>>#readFalse.
-		DataStream>>#readInteger.
-		DataStream>>#readShortInst.
-		DataStream>>#readByteArray.
-		DataStream>>#readWordLike.
-		DataStream>>#readFloat.
-		DataStream>>#readReference.
-		DataStream>>#vacantRef.
-		DataStream>>#objectAt:.
-		DataStream>>#readShortRef.
-		DataStream>>#readInstance.
-		DataStream>>#readSymbol.
-		DataStream>>#readString.
-		DataStream>>#readCharacter.
-		ReferenceStream>>#setStream:.
-		ReferenceStream>>#next.
-		ReferenceStream>>#beginReference:.
-		ReferenceStream>>#maybeBeginReference:.
-		ReferenceStream>>#objectAt:.
-		ReferenceStream>>#setCurrentReference:.
-		ReferenceStream>>#getCurrentReference.
-		ReferenceStream>>#noteCurrentReference:.
-		ReferenceStream>>#isAReferenceType:.
-		
-		SystemDictionary>>#at:put:.
-		SystemDictionary>>#wordSize.
-		SystemDictionary >>#vmParameterAt:.
-		SystemDictionary>>#maxIdentityHash.
-		SystemDictionary>>#voidCogVMState.
-		SystemDictionary>>#flushClassNameCache.
-	
-		ClassBuilder>>#newSubclassOf:type:instanceVariables:from:.
-		ClassBuilder>>#computeFormat:instSize:forSuper:.
-		ClassBuilder>>#computeFormat:fullInstancesSize:.
-		ClassBuilder>>#format:variable:bitsUnitSize:pointers:weak:.
-		ClassBuilder>>#privateNewSubclassOf:from:.
-		ClassBuilder>>#privateNewSubclassOf:.
-		ClassBuilder>>#initialize.
-
-	} do: [ :compiledMethod |
-		self addExistingMethod: compiledMethod ].! !
-
-!ImageBuilder methodsFor: 'image building examples' stamp: 'jmv 4/18/2024 15:04:35'!
-addExample07LoadDynamicLibraryMethods
-
-	"Classes referenced from below, but of which no methods are included."
-	#(ReadWriteStream IdentitySet Bitmap)
-	do: [ :className | | classSpec classForeignObject |
-		classSpec := ClassSpec for: (Smalltalk at: className) addClassesTo: classes.	
-		classForeignObject := self addClassAndMetaclassSpec: classSpec classIndexOrNil: nil.
-		self map: classSpec toForeignObject: classForeignObject ].
-
-"ojo, incluir todos los implementors de los metodos en todas las clases incluidas, o al menos en la herencia..."
-	"Classes included with ALL their methods."
-	#( WeakArray SymbolSet DynamicCuisLibrary ClassSpec MethodSpec LiteralVariableSpec
-	)
-	do: [ :className | | cls classSpec |
-		cls := Smalltalk at: className.
-		classSpec := ClassSpec for: cls addClassesTo: classes.	
-		self findOrAddClassSpec: classSpec.
-		cls class methodsDo: [ :compiledMethod |
-			self addExistingMethod: compiledMethod ].
-		cls methodsDo: [ :compiledMethod |
-(compiledMethod selector = #buildClassesAndMethods:) ifFalse: [ "HACKY!!!!!!!!!!!!"
-			self addExistingMethod: compiledMethod
-]
-			]].
-
-	{
-		Object>>#as:.
-		Object>>#yourself.
-		Object>>#->.
-		Object>>#copy.
-		Object>>#shallowCopy.
-		Object>>#postCopy.
-		Object>>#readDataFrom:size:.
-		Object>>#	instVarAt:put:.
-		Object>>#comeFullyUpOnReload:.
-		Object>>#basicAt:put:.
-
-		Behavior >> #noclash01_allInstances.
-		Behavior>>#isBehavior.
-		Behavior>>#superclass.
-		Behavior>>#typeOfClass.
-		Behavior>>#isVariable.
-		Behavior>>#isBytes.
-		Behavior>>#isBits.
-		Behavior>>#isImmediateClass.
-		Behavior>>#instSpec.
-		Behavior>>#instSize.
-		Behavior>>#definesInstanceVariableNamed:.
-		Behavior>>#instVarNames.
-		Behavior>>#format.
-		Behavior>>#superclass:methodDictionary:format:.
-		Behavior>>#binding.
-		Behavior>>#addSelectorSilently:withMethod:.
-		Behavior>>#lookupSelector:.
-		Behavior>>#includesSelector:.
-		Behavior>>#methodDict.
-		Behavior>>#compiledMethodAt:.
-		Behavior>>#bindingOf:.
-		Behavior>>#classBindingOf:.
-		Behavior>>#someInstance.
-
-		ClassDescription>>#instVarNames.
-		ClassDescription>>#organization:.
-		ClassDescription>>#setInstVarNames:.
-		ClassDescription>>#superclass:methodDictionary:format:.
-
-		Class>>#superclass:methodDictionary:format:.
-		Class>>#addSubclass:.
-		Class>>#setName:.
-		Class>>#declareClassVariables:.
-		Class>>#name.
-		Class>>#classPool.
-		Class>>#sharedPools.
-		Class>>#binding.
-		Class>>#bindingOf:.
-		Class>>#localBindingOf:.
-		Class>>#classVarBindingOf:.
-		Class>>#setName:.
-
-		Metaclass>>#new.
-		Metaclass>>#bindingOf:.
-		Metaclass>>#localBindingOf:.
-		Metaclass>>#allClassInstVarNames.
-
-		CompiledMethod class>>#createMethod:trailer:header:.
-		CompiledMethod class>>#newMethod:header:.
-		CompiledMethod>>#literalAt:put:.
-		CompiledMethod>>#objectAt:put:.
-		CompiledMethod>>#penultimateLiteral:.
-		CompiledMethod>>#methodClass:.
-		CompiledMethod>>#endPC.
-		CompiledMethod>>#initialPC.
-		CompiledMethod>>#flushCache.
-		CompiledMethod>>#readDataFrom:size:.
-
-		MethodContext>>#	instVarAt:put:.
-
-		Collection class>>#newFrom:.
-		Collection>>#=.
-		Collection>>#is:.
-		Collection>>#reject:.
-		Collection>>#ifEmpty:.
-		Collection>>#isSequenceable.
-		Collection>>#asIdentitySet.
-		Collection>>#addAll:.
-		Collection>>#notEmpty.
-		Collection >> #inject:into:.
-		Collection >> #count:.
-		Collection >> #detect:ifNone:.
-		SequenceableCollection >> #hashQuick:.	
-		SequenceableCollection>>#=.
-		SequenceableCollection>>#thatCanBeModified.
-		SequenceableCollection >> #select:.
-		SequenceableCollection >>#collect:.
-		SequenceableCollection>>#readStream.
-		SequenceableCollection>>#includes:.
-		SequenceableCollection>>#indexOf:.
-		SequenceableCollection>>#indexOf:ifAbsent:.
-		SequenceableCollection>>#indexOf:startingAt:ifAbsent:.
-		SequenceableCollection>>#withIndexDo:.
-		SequenceableCollection>>#hasEqualElements:.
-		SequenceableCollection>>#isSequenceable.
-		SequenceableCollection>>#copyWith:.
-		ArrayedCollection>>#isEmpty.
-		Array>>#replaceFrom:to:with:startingAt:.
-		Array>>#asArray.
-		Array>>#is:.
-		ByteArray class >> #minSizeForHashQuick.
-		ByteArray class >> #hashBytes:startingWith:.
-		ByteArray>>#uint32At:bigEndian:.
-		ByteArray>>#int32At:bigEndian:.
-		ByteArray>>#uint16At:bigEndian:.
-		ByteArray>>#float64At:bigEndian:.
-
-		CharacterSequence >> #asSymbol.
-		String class >> #is:equalTo:.
-		String class >> #caseSensitiveOrder.
-		String class >> #compare:with:collated:.
-		String class >> #symbolClassToUse.
-		String >> #at:.
-		String >> #at:put:.
-		String >> #isByteString.
-		String >> #=.
-		String >> #hash.
-		String>>#is:.
-		Symbol class >> #intern:.
-		Symbol class >> #basicFromString:.
-		Symbol class >> #initialize.
-		Symbol class >> #rehash.
-		Symbol class >> #lookup:.
-		Symbol >> #at:put:.
-		Symbol >> #asSymbol.
-		Symbol >> #string:.
-		Symbol >> #isSymbol.
-		Symbol >> #=.
-		Symbol>>#flushCache.
-
-		Set class>>#new.
-		Set class>>#newWithRoomForMoreThan:.
-		Set class>>#sizeFor:.
-		Set>>#init:.
-		Set>>#atNewIndex:put:.
-		Set>>#fullCheck.
-		Set>>#grow.
-		Set>>#includes:.
-		Set>>#findElementOrNil:.
-		Set>>#scanFor:.
-		Set>>#growSize.
-		Set>>#noCheckAdd:.
-		Set>>#postCopy.
-		Set>>#size.
-		Set>>#do:.
-		Set>>#comeFullyUpOnReload:.
-		IdentitySet>>#scanFor:.
-		Dictionary>>#keysDo:.
-		Dictionary>>#associationsDo:.
-		Dictionary>>#postCopy.
-		Dictionary>>#noCheckAdd:.
-		Dictionary>>#at:ifPresent:.
-		Dictionary>>#includes:.
-		Dictionary>>#at:put:.
-		Dictionary>>#scanFor:.
-		Dictionary>>#includesKey:.
-		Dictionary>>#at:.
-		Dictionary>>#errorKeyNotFound:.
-		Dictionary>>#at:ifAbsent:.
-		Dictionary>>#scanFor:.
-		Dictionary>>#keys.
-		Dictionary>>#associationAt:ifAbsent:.
-		Dictionary>>#bindingOf:.	
-		Dictionary>>#declare:from:.
-		IdentityDictionary>>#scanFor:.
-
-		MethodDictionary class>>#new.
-		MethodDictionary class>>#newWithRoomForMoreThan:.
-		MethodDictionary>>#at:ifAbsent:.
-		MethodDictionary>>#scanFor:.
-		MethodDictionary>>#postCopy.
-		MethodDictionary >>#keyAt:.
-		MethodDictionary>>#associationAt:ifAbsent:.
-		MethodDictionary>>#keysDo:.
-		MethodDictionary>>#at:put:.
-		MethodDictionary>>#grow. "become!!!!!!!!!!"
-		MethodDictionary>>#associationsDo:.
-
-		LookupKey class>>#key:.
-		LookupKey>>#key:.
-		LookupKey>>#key.
-		Association class>>#key:value:.
-		Association>>#value:.
-
-		BasicFileServices class >> #binaryContentsOf:.
-		BasicFileServices class >> #primOpen:writable:.
-		BasicFileServices class >> #primSize:.
-		BasicFileServices class >> #primRead:into:startingAt:count:.
-		BasicFileServices class >> #primClose:.
-
-		Stream>>#binary.
-		Stream>>#nextString.
-		Stream>>#nextUint32BigEndian:.
-		Stream>>#nextInt32BigEndian:.
-		Stream>>#nextUint16BigEndian:.
-		Stream>>#nextFloat64BigEndian:.
-		ReadStream>>#next.
-		ReadStream>>#next:.
-		ReadStream>>#next:into:startingAt:.
-		WriteStream>>#on:.
-		WriteStream>>#reset.
-		
-		DataStream class>>#on:.
-		DataStream class>>#referenceTypes.
-		DataStream class>>#noclash01_initCachedState.
-		DataStream class>>#typeMap.
-		DataStream >>#typeIDFor:.
-		DataStream>>#setStream:.
-		DataStream>>#next.
-		DataStream>>#beginReference:.
-		DataStream>>#maybeBeginReference:.
-		DataStream>>#setCurrentReference:.
-		DataStream>>#getCurrentReference.
-		DataStream>>#readArray.
-		DataStream>>#readNil.
-		DataStream>>#readTrue.
-		DataStream>>#readFalse.
-		DataStream>>#readInteger.
-		DataStream>>#readShortInst.
-		DataStream>>#readByteArray.
-		DataStream>>#readWordLike.
-		DataStream>>#readFloat.
-		DataStream>>#readReference.
-		DataStream>>#vacantRef.
-		DataStream>>#objectAt:.
-		DataStream>>#readShortRef.
-		DataStream>>#readInstance.
-		DataStream>>#readSymbol.
-		DataStream>>#readString.
-		DataStream>>#readCharacter.
-		ReferenceStream>>#setStream:.
-		ReferenceStream>>#next.
-		ReferenceStream>>#beginReference:.
-		ReferenceStream>>#maybeBeginReference:.
-		ReferenceStream>>#objectAt:.
-		ReferenceStream>>#setCurrentReference:.
-		ReferenceStream>>#getCurrentReference.
-		ReferenceStream>>#noteCurrentReference:.
-		ReferenceStream>>#isAReferenceType:.
-		
-		SystemDictionary>>#at:put:.
-		SystemDictionary>>#wordSize.
-		SystemDictionary >>#vmParameterAt:.
-		SystemDictionary>>#maxIdentityHash.
-		SystemDictionary>>#voidCogVMState.
-		SystemDictionary>>#flushClassNameCache.
-	
-		ClassBuilder>>#newSubclassOf:type:instanceVariables:from:.
-		ClassBuilder>>#computeFormat:instSize:forSuper:.
-		ClassBuilder>>#computeFormat:fullInstancesSize:.
-		ClassBuilder>>#format:variable:bitsUnitSize:pointers:weak:.
-		ClassBuilder>>#privateNewSubclassOf:from:.
-		ClassBuilder>>#privateNewSubclassOf:.
-		ClassBuilder>>#initialize.
-
-		BlockClosure>>#timeToRun.
-		Time class>>#millisecondsToRun:.
-		Time class>>#localMillisecondClock.
-		Time class>>#primLocalMicrosecondClock.
-
-	} do: [ :compiledMethod |
-		self addExistingMethod: compiledMethod ].! !
-
-!ImageBuilder methodsFor: 'image building examples' stamp: 'jmv 9/19/2023 12:28:03'!
-buildExample01Stdout
-	"
-	Spur64ImageBuilder new
-		buildExample01Stdout;
-		saveImageTo: 'Example01Stdout.image' asFileEntry.
-	"
-	"
-	Spur32ImageBuilder new
-		buildExample01Stdout;
-		saveImageTo: 'Example01Stdout32.image' asFileEntry.
-	"
-
-	| startUpMethodForeignObject |
-
-	"Any image will include these. They are mandatory."
-	self addFundamentalObjectsAndClasses.
-
-	"Most images will need these."
-	self addBasicMethodsAndReferencedClasses.
-
-	"Set what this image will do when run."
-	startUpMethod := SystemDictionary>>#bootstrappedExample01Stdout.
-	startUpMethodForeignObject := self addExistingMethod: startUpMethod.
-	self map: startUpMethod toForeignObject: startUpMethodForeignObject.
-
-	"Create special methods to warn about improper execution of inherited methods when proper method was not included."
-	self createAndAddWarningMethodsForMissing.
-
-	"Add additionally stuff to the image. This is the same for any image."
-	self addMethodDictionariesAndStuff.
-
-	"Creating the start process requires CompiledMethods to be there"
-	self addStartProcess.! !
-
-!ImageBuilder methodsFor: 'image building examples' stamp: 'jmv 9/19/2023 12:28:17'!
-buildExample02DoesNotUnderstand
-	"
-	Spur64ImageBuilder new
-		buildExample02DoesNotUnderstand;
-		saveImageTo: 'Example02DoesNotUnderstand.image' asFileEntry.
-	"
-	"
-	Spur32ImageBuilder new
-		buildExample02DoesNotUnderstand;
-		saveImageTo: 'Example02DoesNotUnderstand32.image' asFileEntry.
-	"
-
-	| startUpMethodForeignObject |
-
-	"Any image will include these. They are mandatory."
-	self addFundamentalObjectsAndClasses.
-
-	"Most images will need these."
-	self addBasicMethodsAndReferencedClasses.
-
-	"Set what this image will do when run."
-	startUpMethod := SystemDictionary>>#bootstrappedExample02DoesNotUnderstand.
-	startUpMethodForeignObject := self addExistingMethod: startUpMethod.
-	self map: startUpMethod toForeignObject: startUpMethodForeignObject.
-
-	"Create special methods to warn about improper execution of inherited methods when proper method was not included."
-	self createAndAddWarningMethodsForMissing.
-
-	"Add additionally stuff to the image. This is the same for any image."
-	self addMethodDictionariesAndStuff.
-
-	"Creating the start process requires CompiledMethods to be there"
-	self addStartProcess.! !
-
-!ImageBuilder methodsFor: 'image building examples' stamp: 'jmv 9/19/2023 12:28:22'!
-buildExample03Float
-	"
-	Spur64ImageBuilder new
-		buildExample03Float;
-		saveImageTo: 'Example03Float.image' asFileEntry.
-	"
-	"
-	Spur32ImageBuilder new
-		buildExample03Float;
-		saveImageTo: 'Example03Float32.image' asFileEntry.
-	"
-
-	| startUpMethodForeignObject |
-
-	"Any image will include these. They are mandatory."
-	self addFundamentalObjectsAndClasses.
-
-	"Most images will need these."
-	self addBasicMethodsAndReferencedClasses.
-
-	"Set what this image will do when run."
-	self addExample03FloatMethods.
-	startUpMethod := SystemDictionary>>#bootstrappedExample03Float.
-	startUpMethodForeignObject := self addExistingMethod: startUpMethod.
-	self map: startUpMethod toForeignObject: startUpMethodForeignObject.
-
-	"Create special methods to warn about improper execution of inherited methods when proper method was not included."
-	self createAndAddWarningMethodsForMissing.
-
-	"Add additionally stuff to the image. This is the same for any image."
-	self addMethodDictionariesAndStuff.
-
-	"Creating the start process requires CompiledMethods to be there"
-	self addStartProcess.! !
-
-!ImageBuilder methodsFor: 'image building examples' stamp: 'jmv 9/19/2023 12:28:26'!
-buildExample04FileExperiments
-	"
-	Spur64ImageBuilder new
-		buildExample04FileExperiments;
-		saveImageTo: 'Example04FileExperiments.image' asFileEntry.
-	"
-	"
-	Spur32ImageBuilder new
-		buildExample04FileExperiments;
-		saveImageTo: 'Example04FileExperiments32.image' asFileEntry.
-	"
-
-	| startUpMethodForeignObject |
-
-	"Any image will include these. They are mandatory."
-	self addFundamentalObjectsAndClasses.
-
-	"Most images will need these."
-	self addBasicMethodsAndReferencedClasses.
-
-	"Set what this image will do when run."
-	self addExample04FileExperimentsMethods.
-	startUpMethod := SystemDictionary>>#bootstrappedExample04FileExperiments.
-	startUpMethodForeignObject := self addExistingMethod: startUpMethod.
-	self map: startUpMethod toForeignObject: startUpMethodForeignObject.
-
-	"Create special methods to warn about improper execution of inherited methods when proper method was not included."
-	self createAndAddWarningMethodsForMissing.
-
-	"Add additionally stuff to the image. This is the same for any image."
-	self addMethodDictionariesAndStuff.
-
-	"Creating the start process requires CompiledMethods to be there"
-	self addStartProcess.! !
-
-!ImageBuilder methodsFor: 'image building examples' stamp: 'jmv 9/19/2023 12:28:30'!
-buildExample05SymbolExperiments
-	"
-	Spur64ImageBuilder new
-		buildExample05SymbolExperiments;
-		saveImageTo: 'Example05SymbolExperiments.image' asFileEntry.
-	"
-	"
-	Spur32ImageBuilder new
-		buildExample05SymbolExperiments;
-		saveImageTo: 'Example05SymbolExperiments32.image' asFileEntry.
-	"
-
-	| startUpMethodForeignObject |
-
-	"Any image will include these. They are mandatory."
-	self addFundamentalObjectsAndClasses.
-
-	"Most images will need these."
-	self addBasicMethodsAndReferencedClasses.
-
-	"Set what this image will do when run."
-	self addExample05SymbolExperimentsMethods.
-	startUpMethod := SystemDictionary>>#bootstrappedExample05SymbolExperiments.
-	startUpMethodForeignObject := self addExistingMethod: startUpMethod.
-	self map: startUpMethod toForeignObject: startUpMethodForeignObject.
-
-	"Create special methods to warn about improper execution of inherited methods when proper method was not included."
-	self createAndAddWarningMethodsForMissing.
-
-	"Add additionally stuff to the image. This is the same for any image."
-	self addMethodDictionariesAndStuff.
-
-	"Creating the start process requires CompiledMethods to be there"
-	self addStartProcess.! !
-
-!ImageBuilder methodsFor: 'image building examples' stamp: 'jmv 11/2/2023 10:39:48'!
-buildExample06LoadDynamicLibrary
-	"
-	Spur64ImageBuilder new
-		buildExample06LoadDynamicLibrary;
-		saveImageTo: 'Example06LoadDynamicLibrary.image' asFileEntry.
-	"
-	"
-	Spur32ImageBuilder new
-		buildExample06LoadDynamicLibrary;
-		saveImageTo: 'Example06LoadDynamicLibrary32.image' asFileEntry.
-	"
-	"
-	Feature require: 'TestDynamicCuisLibraries'.
-	""
-	| sourceForLibrary lib |
-	sourceForLibrary := NoclashABC_DclExample03.
-	lib := DynamicCuisLibrary
-		withClasses: { sourceForLibrary }
-		classSelectors: { sourceForLibrary class selectors }
-		instanceSelectors: { sourceForLibrary selectors }.
-	lib writeOnFile: 'DclExample03.dcl' asFileEntry
-	"
-	| startUpMethodForeignObject |
-
-	"Any image will include these. They are mandatory."
-	self addFundamentalObjectsAndClasses.
-
-	"Most images will need these."
-	self addBasicMethodsAndReferencedClasses.
-
-	"Set what this image will do when run."
-	self addExample06LoadDynamicLibraryMethods.
-	startUpMethod := SystemDictionary>>#bootstrappedExample06LoadDynamicLibrary.
-	startUpMethodForeignObject := self addExistingMethod: startUpMethod.
-	self map: startUpMethod toForeignObject: startUpMethodForeignObject.
-
-	"Create special methods to warn about improper execution of inherited methods when proper method was not included."
-	self createAndAddWarningMethodsForMissing.
-
-	"Add additionally stuff to the image. This is the same for any image."
-	self addMethodDictionariesAndStuff.
-
-	"Creating the start process requires CompiledMethods to be there"
-	self addStartProcess.! !
-
-!ImageBuilder methodsFor: 'image building examples' stamp: 'jmv 9/20/2023 16:08:50'!
-buildExample07LoadDynamicLibrary
-	"
-	Spur64ImageBuilder new
-		buildExample07LoadDynamicLibrary;
-		saveImageTo: 'Example07LoadDynamicLibrary.image' asFileEntry.
-	"
-	"
-	Spur32ImageBuilder new
-		buildExample06LoadDynamicLibrary;
-		saveImageTo: 'Example07LoadDynamicLibrary32.image' asFileEntry.
-	"
-
-	| startUpMethodForeignObject |
-
-	"Any image will include these. They are mandatory."
-	self addFundamentalObjectsAndClasses.
-
-	"Most images will need these."
-	self addBasicMethodsAndReferencedClasses.
-
-	"Set what this image will do when run."
-	self addExample07LoadDynamicLibraryMethods.
-	startUpMethod := SystemDictionary>>#bootstrappedExample07LoadDynamicLibrary.
-	startUpMethodForeignObject := self addExistingMethod: startUpMethod.
-	self map: startUpMethod toForeignObject: startUpMethodForeignObject.
-
-	"Create special methods to warn about improper execution of inherited methods when proper method was not included."
-	self createAndAddWarningMethodsForMissing.
-
-	"Add additionally stuff to the image. This is the same for any image."
-	self addMethodDictionariesAndStuff.
-
-	"Creating the start process requires CompiledMethods to be there"
-	self addStartProcess.! !
-
-!ImageBuilder methodsFor: 'foreign objects' stamp: 'jmv 8/2/2023 10:44:05'!
-addExistingMethod: aCompiledMethod
-
-	| methodSpec methodForeignObject |
-	self deny: (methods includes: aCompiledMethod).
-	methodSpec := MethodSpec for: aCompiledMethod addClassesTo: classes.	
-	methodForeignObject := self addMethodSpec: methodSpec.
-	methods add: methodSpec.
-	^methodForeignObject! !
-
-!ImageBuilder methodsFor: 'foreign objects' stamp: 'jmv 6/29/2023 16:56:41'!
-addGlobalNamed: aSymbol value: anObject
-	"The key aSymbol is added to the foreignObjectsMap.
-	The value is not, as it should be referenced through the key, or through the association, as a global binding.
-	The association is also not mapped, as any reference to globals is handled via a LiteralVariableSpec,
-	that will query the new globals dictionary when needed.
-
-	Not mapping the global value and the association means there's some risk of someone else mapping them,
-	therefore adding them twice to the new image.
-	We may change this decision as we know better (jmv, May 24, 2023).
-
-	Answer a two element array holding the ForeignObject of the Association(binding)
-		and the ForeignObject of anObject."
-
-	| keyForeignObject valueForeignObject globalBindingAssociation globalBindingAssociationForeignObject |
-	"Add the global name to the list, to the map, and to the 'symbols' ivar."
-	keyForeignObject := self findOrAddLiteral: aSymbol.
-
-	"Don't add global value to the map. Usually, nobody should refer to it directly, only by name/binding."
-	valueForeignObject := self findOrAdd: anObject.
-
-	"Don't add the Association to the map. Access should usually be from CompiledMethods, and the
-	corresponding LiteralVariableSpec will hold the name, and should now khow to get to them,"	
-	globalBindingAssociation := Association key: keyForeignObject value: valueForeignObject.
-	globalBindingAssociationForeignObject := self createForeignObjectFor: globalBindingAssociation.
-	globalVariables add: globalBindingAssociationForeignObject.
-
-	^{ globalBindingAssociationForeignObject. valueForeignObject }! !
-
-!ImageBuilder methodsFor: 'foreign objects' stamp: 'jmv 8/2/2023 09:59:25'!
-addMethodSpec: aMethodSpec
-
-	| methodForeignObject classOrMetaclassForeignObject |
-	self findOrAddLiteral: aMethodSpec selector.
-	methodForeignObject := self createForeignObjectFor: aMethodSpec.
-	classOrMetaclassForeignObject := self findOrAddClassSpec: aMethodSpec classSpec.
-	aMethodSpec isClassSide ifTrue: [
-		classOrMetaclassForeignObject := classOrMetaclassForeignObject metaclassForeignObject ].
-	methodForeignObject methodClassForeignObject: classOrMetaclassForeignObject.
-	classOrMetaclassForeignObject addMethod: methodForeignObject.
-
-	"Aca es donde hay que agregar a la imagen cosas como literales, pragmas, ver qué más."
-	aMethodSpec literals do: [ :each | | lit |
-		lit := each.
-		(lit is: #LiteralVariableSpec)
-			ifTrue: [
-				"If we are to ever be able to resolve this name, the name itself must already
-				be there, as a key in some #classPool or the Smalltalk dictionary!!"
-				"self findOrAddLiteral: lit variableName"]
-			ifFalse: [
-				self findOrAddLiteral: lit]].
-
-	^methodForeignObject! !
-
-!ImageBuilder methodsFor: 'foreign objects' stamp: 'jmv 6/23/2023 17:59:36'!
-addSpecial: anObject hash: identityHash nameOfClassToInstantiate: nameOfClassToInstantiate
-	"For special objects nil true, false"
-
-	| foreignObject foClass |
-	foClass := self foreignObjectClassFor: anObject.
-	foreignObject := self createForeignObjectFor: anObject hash: identityHash class: foClass.
-	foreignObject nameOfClassToInstantiate: nameOfClassToInstantiate.
-	self map: anObject toForeignObject: foreignObject.
-	^foreignObject! !
-
-!ImageBuilder methodsFor: 'foreign objects' stamp: 'jmv 7/12/2023 11:34:06'!
-createForeignObjectFor: anObject
-	"anObject will be included in the new image
-	Create and answer an instance of aForeignObjectClass for it.
-	For objects that are allocated in memory:
-		- Allocate space in the new image for it
-		- Add it to the list of foreign objects we'll use to serialize.
-	For objects that won't be allocated in memory (they are immediate objects,
-	encoded in pointing OOPs, like SmallInteger, etc):
-		- Just create and answer a ForeignObject that can encode object in an OOP when needed."
-
-	| foreignObject foClass possiblyConvertedObject |
-	"We can't convert UnicodeString to String here. We need to have the original object as key in the foreignObjectsMap"
-	self deny: anObject class == UnicodeString.
-	possiblyConvertedObject := anObject.
-	possiblyConvertedObject class == UnicodeSymbol ifTrue: [
-		self assert: possiblyConvertedObject isAscii.
-		self halt.
-		possiblyConvertedObject := Symbol basicFromString: possiblyConvertedObject asString asByteString ].
-	foClass := self foreignObjectClassFor: possiblyConvertedObject.
-	foreignObject := foClass instancesAreForImmediateObjects
-		ifTrue: [ foClass newFor: possiblyConvertedObject ]
-		ifFalse: [ self createForeignObjectFor: possiblyConvertedObject hash: self newObjectHash class: foClass ].
-	^foreignObject! !
-
-!ImageBuilder methodsFor: 'foreign objects' stamp: 'jmv 6/23/2023 15:46:02'!
-createForeignObjectFor: anObject hash: identityHash class: aForeignObjectClass
-	"anObject will be included in the new image
-	Create and answer an instance of aForeignObjectClass for it.
-	For objects that are allocated in memory:
-		- Allocate space in the new image for it
-		- Add it to the list of foreign objects we'll use to serialize.
-	For objects that won't be allocated in memory (they are immediate objects,
-	encoded in pointing OOPs, like SmallInteger, etc):
-		- Just create and answer a ForeignObject that can encode object in an OOP when needed."
-
-	self subclassResponsibility! !
-
-!ImageBuilder methodsFor: 'foreign objects' stamp: 'jmv 6/23/2023 15:37:44'!
-findClassNamed: aSymbol
-	"Answer the foreign object that represents the class that will be named as the argument."
-
-	^foreignObjectsMap at: (classes at: aSymbol)! !
-
-!ImageBuilder methodsFor: 'foreign objects' stamp: 'jmv 6/26/2023 17:16:35'!
-findForeignObjectFor: anObjectToInclude
-	"anObjectToInclude must already be mapped,
-	except for immediates. We can create them on the fly."
-
-	| foClass |
-
-	foreignObjectsMap at: anObjectToInclude ifPresent: [ :found | ^found ].
-
-	foClass := self foreignObjectClassFor: anObjectToInclude.
-	foClass instancesAreForImmediateObjects
-		ifTrue: [ ^foClass newFor: anObjectToInclude ].
-
-	^self error: 'Object not allocated (No ForeignObject found for it)'.! !
-
-!ImageBuilder methodsFor: 'foreign objects' stamp: 'jmv 7/6/2023 09:45:10'!
-findGlobalBindingNamed: aSymbol
-	"Answer the foreign object for the Association that holds global named as the argument.
-	Answer nil if no such global"
-
-	^smalltalkForeignObject representedObject "a SystemDictionary for the new image"
-		array representedObject  								"its #array"
-			detect: [ :associationForeignObject |
-				associationForeignObject notNil and: [
-					associationForeignObject representedObject key representedObject
-						= aSymbol ] ]
-			ifNone: nil! !
-
-!ImageBuilder methodsFor: 'foreign objects' stamp: 'jmv 6/23/2023 15:50:24'!
-findOrAdd: anObjectToInclude
-	"anObjectToInclude will be included in the new image.
-	Create and add a ForeignObject if needed.
-	Add it to the foreignObjectsMap, so we use the same instance next time anObjectToInclude shows up."
-	| fo |
-"Para la serializacion. Ir validando lo que vaya apareciendo...
-Por ejemplo, las refs a globales deberian entrar por nombre. Si aca empezamos a meter lo que aparezca, podriamos, por ejemplo, duplicar Display, Sensor, Processor, Smalltalk."
-	^foreignObjectsMap at: anObjectToInclude ifAbsent: [
-		fo := self createForeignObjectFor: anObjectToInclude.
-		self map: anObjectToInclude toForeignObject: fo.
-		fo ]! !
-
-!ImageBuilder methodsFor: 'foreign objects' stamp: 'jmv 6/26/2023 15:39:49'!
-findOrAddClassSpec: classSpec
-	"Ensure argument is added, but don't add it twice"
-
-	| classForeignObject |
-	foreignObjectsMap at: classSpec ifPresent: [ :clsFO |
-		^clsFO ].
-	classForeignObject := self addClassAndMetaclassSpec: classSpec classIndexOrNil: nil.
-	self map: classSpec toForeignObject: classForeignObject.
-	^classForeignObject.! !
-
-!ImageBuilder methodsFor: 'foreign objects' stamp: 'jmv 6/29/2023 17:04:36'!
-findOrAddLiteral: aLiteral
-	"aLiteral can be a String or Symbol. Also an Array of them.
-	Additionally, aLiteral may be any object that answers true to #isLiteral
-	This restriction could be lifted. It is in place so we control and understand what we are adding!!
-	"
-	"We could consider searching foreignObjectsMap for any object equal to aLiteral.
-	That would avoid, for example, may instances of the empty String, or things like that."
-	"Ensure argument is added, but don't add it twice.
-	
-	Add argument to the list.
-	Also add it to map.
-	Also add it to the 'symbols' instance variable. Wel'll use this to create a Symbol Table in the new image.
-	(This should be quite similar to how we build the new Smalltalk SystemDictionary for the new image.)"
-
-
-	| newForeignObject |
-	self assert: aLiteral isLiteral.
-	
-	foreignObjectsMap at: aLiteral ifPresent: [ :foreignObject |
-		^foreignObject ].
-
-	newForeignObject := self createForeignObjectFor: aLiteral.
-	newForeignObject class instancesAreForImmediateObjects ifTrue: [
-		^ newForeignObject ].
-
-	self map: aLiteral toForeignObject: newForeignObject.
-
-	aLiteral isSymbol ifTrue: [
-		symbols add: newForeignObject ].
-	
-	newForeignObject referencedObjectsDo: [ :each |
-		self findOrAddLiteral: each ].
-
-	^newForeignObject! !
-
-!ImageBuilder methodsFor: 'foreign objects' stamp: 'jmv 6/23/2023 17:03:49'!
-foreignObjectClassFor: anObject
-	"Answer the correct ForeignObject subclass to represent anObject.
-	Redefined in subclasses for some specific cases."
-
-	^ForeignObject subclassFor: anObject.! !
-
-!ImageBuilder methodsFor: 'foreign objects' stamp: 'jmv 6/23/2023 15:50:18'!
-map: localObject toForeignObject: foreignObject
-	"Any reference to localObject will be converted to a reference to the object to be materialized by foreignObject."
-
-	(foreignObjectsMap includesKey: localObject) ifTrue: [
-		self error: 'Object to map to ForeignObjects added twice!!' ].
-	foreignObjectsMap at: localObject put: foreignObject! !
-
-!ImageBuilder methodsFor: 'globals' stamp: 'jmv 7/14/2023 10:53:26'!
-addDisplay
-	"This assumes the shape of DisplayScreen and included ivars will not change..."
-
-	| display foreignObjectsForBindingAndValue bitmap bitmapFO |
-	display := DisplayScreen basicNew.
-	display setExtent: 8@8 depth: 32.
-	foreignObjectsForBindingAndValue := self addGlobalNamed: #Display value: display.
-	displayForeignObject := foreignObjectsForBindingAndValue second.
-	
-	bitmap := display bits.
-	bitmapFO := self createForeignObjectFor: bitmap.
-	self map: bitmap toForeignObject: bitmapFO.! !
-
-!ImageBuilder methodsFor: 'globals' stamp: 'jmv 9/18/2023 15:38:49'!
-addProcessor
-	"This assumes the shape of ProcessorScheduler, Process, and included ivars will not change...
-	When bootstrapping from files, or from a separate hierarchy,
-		see MicroSqueak - MicroSqueakImageBuilder >> #buildScheduler"
-
-	| processor foreignObjectsForBindingAndValue |
-	processor := ProcessorScheduler basicNew.
-	foreignObjectsForBindingAndValue := self addGlobalNamed: #Processor value: processor.
-	processorBindingForeignObject := foreignObjectsForBindingAndValue first.! !
-
-!ImageBuilder methodsFor: 'globals' stamp: 'jmv 5/23/2023 14:47:59'!
-addSensor
-	"The actual instance will be created on startup.
-	See EventSensor class >> #install
-	Here we add the global, so the association is ready for that method to actually assign to the global."
-
-	self addGlobalNamed: #Sensor value: nil.! !
-
-!ImageBuilder methodsFor: 'globals' stamp: 'jmv 6/1/2023 15:03:14'!
-addSmalltalk
-	"This assumes the shape of SystemDictionary will not change..."
-
-	| smalltalkObject foreignObjectsForBindingAndValue |
-	smalltalkObject := SystemDictionary basicNew.
-	foreignObjectsForBindingAndValue := self addGlobalNamed: #Smalltalk value: smalltalkObject.
-	smalltalkForeignObject := foreignObjectsForBindingAndValue second.! !
-
-!ImageBuilder methodsFor: 'globals' stamp: 'jmv 9/15/2023 11:06:26'!
-addStartProcess
-	"This assumes the shape of ProcessorScheduler, Process, and included ivars will not change...
-	When bootstrapping from files, or from a separate hierarchy,
-		see MicroSqueak - MicroSqueakImageBuilder >> #buildScheduler"
-
-	| methodContext startProcess processor emptyArray |
-	emptyArray := #().
-	methodContext := MethodContext
-		sender: nil
-		receiver: smalltalkForeignObject
-		method: startUpMethod
-		arguments: emptyArray.
-
-	"Set program counter. Quire like doing:
-	methodContext pc: startUpMethod initialPC,
-	(as already done during MethodContext creation above)
-	but we need do it for the target image word size, not the running image word size!!"
-	methodContext pc: (startUpMethod numLiterals + 1) * self wordSize + 1.
-
-	startProcess := Process
-		forContext: (self createForeignObjectFor: methodContext)
-		priority: 40.
-	startProcess name: 'Startup'.
-	self map: emptyArray toForeignObject: (self createForeignObjectFor: emptyArray).
-	self findOrAdd: startProcess name.
-	
-	processor := processorBindingForeignObject representedObject value representedObject.
-	processor
-		instVarNamed: 'quiescentProcessLists'
-		put: (self createForeignObjectFor: ((1 to: 80) collect: [ :i | self createForeignObjectFor: LinkedList new ])).
-	processor
-		instVarNamed: 'activeProcess'
-		put: (self createForeignObjectFor: startProcess).! !
-
-!ImageBuilder methodsFor: 'globals' stamp: 'jmv 9/18/2023 15:44:08'!
-addUndeclared
-	"This assumes the shape of Dictionary will not change..."
-
-	| undeclaredDictionary dictArray dictArrayForeignObject |
-	undeclaredDictionary := Dictionary new.
-	"Now replace the array inside with a ForeignObject for it"
-	dictArray := undeclaredDictionary array.
-	dictArrayForeignObject := self createForeignObjectFor: dictArray.
-	undeclaredDictionary instVarNamed: 'array' put: dictArrayForeignObject.
-	self addGlobalNamed: #Undeclared value: undeclaredDictionary.! !
-
-!ImageBuilder methodsFor: 'smalltalk dictionary' stamp: 'jmv 6/26/2023 18:01:46'!
-fillSmalltalkDictionary
-	"Create thre contents of the Smalltalk SystemDictionary for the new image.
-	Do it here, by 'remote control'. Assumes the structure of SystemDictionary is same as in this image,
-	reflected in this code."
-
-	| smalltalkObject smalltalkSize smalltalkArray smalltalkArrayForeignObject keyForeignObject classForeignObject |
-
-	"Fetch the newly created, empty Smalltalk remote object."
-	smalltalkObject := smalltalkForeignObject representedObject.
-	self assert: smalltalkObject == (globalVariables detect: [ :assocFO |
-		assocFO representedObject key representedObject == #Smalltalk ])
-			representedObject value representedObject.
-
-	"Create large enough."
-	smalltalkSize := classes size + globalVariables size.
-	smalltalkArray := Array new: smalltalkSize * 2.
-
-	"Fill the 'array' ivar, using the identityHash from the foreignObjects of the keys, as they will be
-	assigned to them on image serialization. Do it both for classes and other globals."
-	classes do: [ :classSpec |
-		keyForeignObject := foreignObjectsMap at: classSpec name.
-		classForeignObject := foreignObjectsMap at: classSpec.
-		self systemDictionaryArray: smalltalkArray at: keyForeignObject put: classForeignObject  ].
-	globalVariables do: [ :assocForeignObject |
-		self systemDictionaryArray: smalltalkArray add: assocForeignObject  ].
-
-	"Done. Give them to it."
-	smalltalkObject instVarNamed: 'tally' put: smalltalkSize.
-	smalltalkArrayForeignObject := self createForeignObjectFor: smalltalkArray.
-	smalltalkObject instVarNamed: 'array' put: smalltalkArrayForeignObject.! !
-
-!ImageBuilder methodsFor: 'smalltalk dictionary' stamp: 'jmv 5/24/2023 09:44:06'!
-systemDictionaryArray: array add: anAssociationForeignObject
-	"Essentially copied from Dictionary >> #add:
-	Assumes SystemDictionary will be pretty much the same in the generated image.
-	Raise an error if same key added twice: this is specific for adding globals to a new image,
-	and we'd better know what we are doing."
-
-	| keyForeignObject index |
-	keyForeignObject := anAssociationForeignObject representedObject key.
-	index := self systemDictionaryArray: array scanFor: keyForeignObject.
-	(array at: index) ifNotNil: [ self error: 'Duplicated global!!' ].
-	array at: index put: anAssociationForeignObject.! !
-
-!ImageBuilder methodsFor: 'smalltalk dictionary' stamp: 'jmv 6/23/2023 15:15:45'!
-systemDictionaryArray: array at: keyForeignObject put: classForeignObject
-	"Essentially copied from Dictionary >> #at:put:
-	Assumes SystemDictionary will be pretty much the same in the generated image.
-	Raise an error if same key added twice: this is specific for adding globals to a new image,
-	and we'd better know what we are doing."
-
-	| index globalBindingAssociation globalBindingAssociationForeignObject |
-	index := self systemDictionaryArray: array scanFor: keyForeignObject.
-	(array at: index) ifNotNil: [ self error: 'Duplicated global!!' ].
-	globalBindingAssociation := Association key: keyForeignObject value: classForeignObject.
-	globalBindingAssociationForeignObject := self createForeignObjectFor: globalBindingAssociation.
-	array at: index put: globalBindingAssociationForeignObject.! !
-
-!ImageBuilder methodsFor: 'smalltalk dictionary' stamp: 'jmv 7/6/2023 13:10:36'!
-systemDictionaryArray: array scanFor: keyForeignObject
-	"Essentially copied from IdentityDictionary >> #scanFor:
-	Assumes SystemDictionary will be pretty much the same in the generated image."
-
-	| finish scale start element |
-	finish := array size.
-	scale := finish // (self maxIdentityHash + 1).
-	scale = 0 ifTrue: [scale := 1].
-	start := (keyForeignObject foreignIdentityHashFor: self) * scale \\ finish + 1.
-
-	"Search from (hash mod size) to the end."
-	start to: finish do: [ :index |
-		((element := array at: index) == nil or: [element representedObject key == keyForeignObject])
-			ifTrue: [^ index ]].
-
-	"Search from 1 to where we started."
-	1 to: start-1 do: [ :index |
-		((element := array at: index) == nil or: [element representedObject key == keyForeignObject])
-			ifTrue: [^ index ]].
-
-	self error: 'There is no free space in the newly created Smalltalk dictionary!!'.! !
-
-!ImageBuilder methodsFor: 'services' stamp: 'jmv 5/15/2023 12:10:14'!
-newObjectHash
-	^self subclassResponsibility! !
-
-!ImageBuilder methodsFor: 'services' stamp: 'jmv 8/17/2023 15:42:14'!
-on: aStream nexWordPut: aNumber
-	"Write #wordSize bytes. Use 'isBigEndian' endianess."
-	self subclassResponsibility! !
-
-!ImageBuilder methodsFor: 'services' stamp: 'jmv 8/17/2023 15:53:45'!
-on: aStream nextUint16Put: aNumber
-	"Write 2 bytes. Use 'isBigEndian' endianess."
-
-	aStream nextUint16Put: aNumber bigEndian: isBigEndian.! !
-
-!ImageBuilder methodsFor: 'services' stamp: 'jmv 8/17/2023 15:53:51'!
-on: aStream nextUint32Put: aNumber
-	"Write 4 bytes. Use 'isBigEndian' endianess."
-
-	aStream nextUint32Put: aNumber bigEndian: isBigEndian.! !
-
-!ImageBuilder methodsFor: 'services' stamp: 'jmv 8/17/2023 15:53:57'!
-on: aStream nextUint64Put: aNumber
-	"Write 8 bytes. Use 'isBigEndian' endianess."
-
-	aStream nextUint64Put: aNumber bigEndian: isBigEndian.! !
-
-!ImageBuilder methodsFor: 'format constants' stamp: 'jmv 5/10/2023 12:04:59'!
-imageFormat
-	"Answer the number that identifies this image format"
-	self subclassResponsibility ! !
-
-!ImageBuilder methodsFor: 'format constants' stamp: 'jmv 5/10/2023 12:24:06'!
-imageHeaderSize
-	"In Bytes"
-	self subclassResponsibility ! !
-
-!ImageBuilder methodsFor: 'format constants' stamp: 'jmv 5/23/2023 16:29:37'!
-maxIdentityHash
-	"Answer the maximum identityHash value supported by the VM."
-
-	self subclassResponsibility ! !
-
-!ImageBuilder methodsFor: 'format constants' stamp: 'jmv 5/10/2023 12:26:29'!
-wordSize
-	"Also size of an oop.
-	In Bytes"
-	self subclassResponsibility ! !
-
-!ImageBuilder methodsFor: 'image file saving' stamp: 'jmv 4/18/2024 14:45:42'!
-writeImageFileHeaderOn: aStream byteSize: imageByteSizeIncludingHeader
-	"Write an appropriate image file header.
-	Intended to be called after saving the heap to the file, and setting #position: to zero."
-
-	self subclassResponsibility! !
-
-!SpurImageBuilder methodsFor: 'initialization' stamp: 'jmv 5/15/2023 16:25:30'!
-initialize
-	super initialize.
-	lastHash := 1.
-	lastClassIndex := 1023. "First regular class will have index 1024, and will be stored in the second page of the class table."! !
-
-!SpurImageBuilder methodsFor: 'image building' stamp: 'jmv 7/17/2023 12:36:45'!
-addSpurHiddenObjectsIfRequired
-
-	"Create and add a SpurFreeListsForeignObject, to properly allocate the FreeLists object needed in Spur images."
-	self addFreeLists.
-
-	"Class Table and Hidden Roots. First page of the Class Table."
-	self addClassTable.! !
-
-!SpurImageBuilder methodsFor: 'image building' stamp: 'jmv 4/18/2024 14:26:12'!
-addVmKnownClasses
-	"Some classes are known by the VM.
-	- They have specific classIndex and identityHash
-	- They are stored in the first page of the class table
-	Add ForeignObjects both for class and metaclass to the list.
-	But only add the one for the class to the foreignObjects dictionary, because they share the spec."
-	"This first implementation uses the fact that these classes already exist in the image we are running.
-	It would be better to build them from scratch, using alternative class protocol in ClassSpec,
-	most likely by compiling a source code file."
-
-	"Note: SmallFloat64 will never be instantiated in Spur32!!"
-
-	| vmKnownClassNames |
-	vmKnownClassNames := #(
-		#(#SmallInteger 1)
-		#(#Character 2)
-		#(#SmallFloat64 4)
-		#(#LargeNegativeInteger 32)
-		#(#LargePositiveInteger 33)
-		#(#BoxedFloat64 34)
-		#(#Message 35)
-		#(#MethodContext 36)
-		#(#BlockClosure 37)
-		#(#Semaphore 48)
-		#(#ByteArray 50)
-		#(#Array 51)
-		#(#String 52)
-		#(#Point 54)
-	).
-	self includeDisplayAndSensor ifTrue: [
-		vmKnownClassNames := vmKnownClassNames, #(#(#Bitmap 53)) ].
-	vmKnownClassNames do: [ :pair | | className specialHash classSpec classForeignObject |
-		className := pair first.
-		specialHash := pair second.
-		classSpec := ClassSpec for: (Smalltalk at: className) addClassesTo: classes.
-		classForeignObject := self addClassAndMetaclassSpec: classSpec classIndexOrNil: specialHash.
-		self map: classSpec toForeignObject: classForeignObject ].! !
-
-!SpurImageBuilder methodsFor: 'image building' stamp: 'jmv 4/18/2024 14:57:25'!
-fillSpecialObjectsArray
-	"Create a SpecialObjectsArray for our new image. See #recreateSpecialObjectsArray.
-	Add a ForeignObject for it to our foreign object list and dicitonary.
-	Assume the required classes where already added, and their specs are available at ivar 'classes'
-	If we were to do a full bootstrap from sources, it is worh considering that the new image will most likely
-	have a #recreateSpecialObjectsArray or similar method.
-	It would be good to find a way to guarantee that the contents of this array in the bootstrapped image is consistent with it."
-"This is done right now for Spur. V3 needs tweaks, for instance:
-25: Character table
-29: compactClassesArray.
-32, 33, 34. Check in V3. Are the instance prototypes still needed in V3?
-36 ?
-56?"
-	"See MicroSqueak - MicroSqueakImageBuilder >> #buildSpecialObjectsArray
-	Many entries can be made nil if uninteresting, at least for older VMs."
-
-"Ya mismo. nil, false, true, clases, symbols, arrays de ellos"
-	| specialObjectsArray specialSelectors primitiveErrors |
-	specialObjectsArray := specialObjectsArrayForeignObject representedObject.
-	"Nil false and true get used throughout the interpreter"
-	specialObjectsArray at: 1 put: nil.
-	specialObjectsArray at: 2 put: false.
-	specialObjectsArray at: 3 put: true.
-	"This association holds the active process (a ProcessScheduler)"
-	"Foreign object for the Association in the new Globals dictionary holding Processor"
-	specialObjectsArray at: 4 put: processorBindingForeignObject.
-	self assert: processorBindingForeignObject == (globalVariables detect: [ :assocFO |
-		assocFO representedObject key representedObject == #Processor ]).
-	"Numerous classes below used for type checking and instantiation"
-	self includeDisplayAndSensor ifTrue: [
-		specialObjectsArray at: 5 put: (classes at: #Bitmap) ].
-	specialObjectsArray at: 6 put: (classes at: #SmallInteger).
-	specialObjectsArray at: 7 put: (classes at: #String).
-	specialObjectsArray at: 8 put: (classes at: #Array).
-	"ForeignObjct for the new Smalltalk global dictionary."
-	specialObjectsArray at: 9 put: smalltalkForeignObject.
-	self assert: smalltalkForeignObject == ((globalVariables detect: [ :assocFO |
-		assocFO representedObject key representedObject == #Smalltalk ]) representedObject value).
-	specialObjectsArray at: 10 put: (classes at: #BoxedFloat64).
-	specialObjectsArray at: 11 put: (classes at: #MethodContext).
-	specialObjectsArray at: 12 put: nil. "was BlockContext."
-	specialObjectsArray at: 13 put: (classes at: #Point).
-	specialObjectsArray at: 14 put: (classes at: #LargePositiveInteger).
-	"ForeignObjct for the new Display global Displaycreen."
-	displayForeignObject ifNotNil: [
-		specialObjectsArray at: 15 put: displayForeignObject.
-		self assert: displayForeignObject == ((globalVariables detect: [ :assocFO |
-			assocFO representedObject key representedObject == #Display ]) representedObject value) ].
-	specialObjectsArray at: 16 put: (classes at: #Message).
-	specialObjectsArray at: 17 put: (classes at: #CompiledMethod).
-	specialObjectsArray at: 18 put: (self createForeignObjectFor: Semaphore new). "low space Semaphore"
-	specialObjectsArray at: 19 put: (classes at: #Semaphore).
-	specialObjectsArray at: 20 put: (classes at: #Character).
-	specialObjectsArray at: 21 put: (self findOrAddLiteral: #doesNotUnderstand:).
-	specialObjectsArray at: 22 put: (self findOrAddLiteral: #cannotReturn:).
-	specialObjectsArray at: 23 put: nil. "This is the process signalling low space."
-	"An array of the 32 selectors that are compiled as special bytecodes,
-	 paired alternately with the number of arguments each takes."
-	specialSelectors := #(	#+ 1 #- 1 #< 1 #> 1 #<= 1 #>= 1 #= 1 #~= 1
-							#* 1 #/ 1 #\\ 1 #@ 1 #bitShift: 1 #// 1 #bitAnd: 1 #bitOr: 1
-							#at: 1 #at:put: 2 #size 0 #next 0 #nextPut: 1 #atEnd 0 #== 1 #class 0
-							#blockCopyNOWUNUSED: 1 #value 0 #value: 1 #do: 1 #new 0 #new: 1 #x 0 #y 0 ).
-	specialObjectsArray at: 24 put: (self findOrAddLiteral: specialSelectors).
-	specialObjectsArray at: 25 put: nil. "was Character table"
-	specialObjectsArray at: 26 put: (self findOrAddLiteral: #mustBeBoolean).
-	specialObjectsArray at: 27 put: (classes at: #ByteArray).
-	specialObjectsArray at: 28 put: (classes at: #Process).
-	"An array of up to 31 classes whose instances will have compact headers; an empty array in Spur"
-	specialObjectsArray at: 29 put: nil.  "was compactClassesArray."
-	specialObjectsArray at: 30 put: (self createForeignObjectFor: Semaphore new). "delay Semaphore"
-	specialObjectsArray at: 31 put: (self createForeignObjectFor: Semaphore new). "user interrupt Semaphore"
-	specialObjectsArray at: 32 put: nil. "was the prototype Float"
-	specialObjectsArray at: 33 put: nil. "was the prototype 4-byte LargePositiveInteger"
-	specialObjectsArray at: 34 put: nil. "was the prototype Point"
-	specialObjectsArray at: 35 put: (self findOrAddLiteral: #cannotInterpret:).
-	specialObjectsArray at: 36 put: nil. "was the prototype MethodContext"
-	specialObjectsArray at: 37 put: (classes at: #BlockClosure).
-	specialObjectsArray at: 38 put: nil. "was the prototype BlockContext"
-
-	"array of objects referred to by external code"
-	specialObjectsArray at: 39 put: (self createForeignObjectFor:(Array new: 20)).
-	specialObjectsArray at: 40 put: nil. "Reserved for Mutex in Cog VMs"
-	specialObjectsArray at: 41 put: (self createForeignObjectFor: LinkedList new). "Reserved for a LinkedList instance for overlapped calls in CogMT"
-	specialObjectsArray at: 42 put: (self createForeignObjectFor: Semaphore new). "finalization Semaphore"
-	specialObjectsArray at: 43 put: (classes at: #LargeNegativeInteger).
-	"External objects for callout."
-	specialObjectsArray at: 44 put: nil.
-	specialObjectsArray at: 45 put: nil.
-	specialObjectsArray at: 46 put: nil.
-	specialObjectsArray at: 47 put: nil.
-	specialObjectsArray at: 48 put: nil.
-	specialObjectsArray at: 49 put: (self findOrAddLiteral: #aboutToReturn:through:).
-	specialObjectsArray at: 50 put: (self findOrAddLiteral: #run:with:in:).
-	"51 reserved for immutability message"
-	specialObjectsArray at: 51 put: (self findOrAddLiteral: #attemptToAssign:withIndex:).
-	primitiveErrors := #(nil "nil => generic error" #'bad receiver'
-							#'bad argument' #'bad index'
-							#'bad number of arguments'
-							#'inappropriate operation'  #'unsupported operation'
-							#'no modification' #'insufficient object memory'
-							#'insufficient C memory' #'not found' #'bad method'
-							#'internal error in named primitive machinery'
-							#'object may move' #'resource limit exceeded'
-							#'object is pinned' #'primitive write beyond end of object').
-	specialObjectsArray at: 52 put: (self findOrAddLiteral: primitiveErrors).
-	"53 to 55 are for Alien"
-	specialObjectsArray at: 53 put: nil.
-	specialObjectsArray at: 54 put: (self findOrAddLiteral: #invokeCallbackContext:). "use invokeCallback:stack:registers:jmpbuf: for old Alien callbacks."
-	specialObjectsArray at: 55 put: nil.
-
-	"Weak reference finalization"
-	specialObjectsArray at: 56 put: nil.
-
-	"reserved for foreign callback process"
-	specialObjectsArray at: 57 put: nil.
-
-	specialObjectsArray at: 58 put: (self findOrAddLiteral: #unusedBytecode).
-	"59 reserved for Sista counter tripped message"
-	specialObjectsArray at: 59 put: (self findOrAddLiteral: #conditionalBranchCounterTrippedOn:).
-	"60 reserved for Sista class trap message"
-	specialObjectsArray at: 60 put: (self findOrAddLiteral: #classTrapFor:).! !
-
-!SpurImageBuilder methodsFor: 'foreign objects' stamp: 'jmv 8/14/2023 16:37:15'!
-addClassAndMetaclassSpec: aClassSpec classIndexOrNil: classIndexOrNil
-	"Add ForeignObjects both for class and metaclass to the list.
-	But only add the one for the class to the foreignObjects dictionary, because they share the spec.
-	classIndexOrNil if specified is used for the class."
-
-	| classForeignObject metaclassForeignObject |
-	classForeignObject := self addClassFor: aClassSpec classIndexOrNil: classIndexOrNil.
-	metaclassForeignObject := self addMetaclassFor: aClassSpec.
-	classForeignObject metaclassForeignObject: metaclassForeignObject.
-	metaclassForeignObject thisClassForeignObject: classForeignObject.
-"MethodDictionaries will only be added after adding all methods, as they need to be created large enough,
-meaning we don't yet know the size they will have, and the memory space they will use.
-Perhaps create the object but don't add it to the list yet... Or devise some way to hold the method specs and fo until we start serializing.
-WARNING: this means once we start serializing we can no longer add methods.
-The #addMethod: or whatever protocol must check that we haven't given oop and size to the method dict fo, or else..."
-	"
-	classForeignObject methodDictForeignObject: self addForeignObjectForMethodDictionary.
-	metaclassForeignObject methodDictForeignObject: self addForeignObjectForMethodDictionary.
-	"
-	^classForeignObject
-! !
-
-!SpurImageBuilder methodsFor: 'foreign objects' stamp: 'jmv 8/14/2023 16:37:20'!
-addClassFor: aClassSpec classIndexOrNil: classIndexOrNil
-
-	| classForeignObject classPool classPoolForeignObject classPoolArray classPoolArrayForeignObject |
-	classForeignObject := self addClassSpec: aClassSpec class: ClassForeignObject classIndexOrNil: classIndexOrNil.
-	classForeignObject nameForeignObject: (self findOrAddLiteral: aClassSpec name).
-	classForeignObject instanceVariablesForeignObject: (self findOrAddLiteral: aClassSpec instVarNames).
-
-	"This assumes quite a few things about Dictionary in the image we're about to create.
-	Including that the #hash answered by Symbols should equal that of the mother image.
-	We did better for IdentityDictionary, and in particular for the Smalltalk SystemDictionary.
-	See #foreignIdentityHash.
-	Consider doing something similar same for all Dictionaries...
-		but how can we now what #hash will do in the new image?
-	Other similar assumptions in #addSmalltalk #addMethodDictionaryFor: etc...
-	For instance CompiledMethodForeignObject implements #identityHash,
-	for the benefit of #addMethodDictionaryFor:"
-	classPool := Dictionary new.
-	aClassSpec classVarNames do: [ :cVarName |
-		self findOrAddLiteral: cVarName.
-		"Should we use ReadOnlyVariableBinding ? What's the point?"
-		classPool at: cVarName put: nil ].
-	"Create a ForeignObject for the class pool dictionary"
-	classPoolForeignObject := self createForeignObjectFor: classPool.
-	"Now replace the array inside with a ForeignObject for it"
-	classPoolArray := classPool array.
-	classPoolArrayForeignObject := self createForeignObjectFor: classPoolArray.
-	classPool instVarNamed: 'array' put: classPoolArrayForeignObject.
-	"Replace all associations with ForeignObjects too"
-	classPoolArray withIndexDo: [ :association :index |
-		association notNil ifTrue: [
-			classPoolArray at: index put: (self createForeignObjectFor: association) ]].
-	"Now give it to the class foreign object"
-	classForeignObject classPoolForeignObject: classPoolForeignObject.
-
-	"ClassSpec holds 'poolDictionaryNames', but it is currently unused. implement!!"
-	classForeignObject sharedPoolsForeignObject: (self findForeignObjectFor: nil).
-
-	^classForeignObject! !
-
-!SpurImageBuilder methodsFor: 'foreign objects' stamp: 'jmv 8/14/2023 16:37:10'!
-addClassSpec: aClassSpec class: aForeignObjectClass classIndexOrNil: classIndexOrNil
-	"Both for class and metaclass:
-		aForeignObjectClass may be ClassForeignObject or MetaclassForeignObject"
-
-	| hashAndClassIndex behaviorForeignObject rootsIdx pageIdx pageForeignObject page |
-	hashAndClassIndex := classIndexOrNil ifNil: [self newClassIndex].
-	rootsIdx := (hashAndClassIndex >> 10) + 1.
-	pageIdx := (hashAndClassIndex bitAnd: (1 << 10 - 1)) + 1.
-	pageForeignObject := classTableRoots at: rootsIdx.
-	pageForeignObject isNil ifTrue: [
-		pageForeignObject := self createForeignObjectFor: (Array new: 1024) hash: 0 class: SpurPseudoArrayForeignObject.
-		classTableRoots at: rootsIdx put: pageForeignObject ].
-	page := pageForeignObject representedObject.
-	self assert: (page at: pageIdx) == nil.
-	behaviorForeignObject := self createForeignObjectFor: aClassSpec hash: hashAndClassIndex class: aForeignObjectClass.
-	page at: pageIdx put: behaviorForeignObject.
-	^behaviorForeignObject! !
-
-!SpurImageBuilder methodsFor: 'foreign objects' stamp: 'jmv 6/23/2023 15:17:29'!
-addClassTable
-	"Add the ForeignObjects for:
-		ClassTable+HiddenRoots
-		FirstPateOfClassTable.
-	See class comment at VMMaker SpurMemoryManager wrt 'hiddenRootsObj'. Also see #classTableRootSlots + #hiddenRootSlots."
-	
-	"Spur uses a maximum of 2ˆ12=4096 pages of 2ˆ10=1024 classes each.
-	The classTablePages array and the first page array are always present.
-	The rest of the pages are created on demand.
-	Class index (that equals class identityHash) are usually small numbers, and few pages are actually needed."
-	
-	"These don't really need to be added to the foreignObjects dictionary,
-	but doing it doesn't hurt, and lets us use #addForeignObjectFor: instead of adding extra code."
-
-	| firstPageOfClassTable |
-	classTableRoots := Array new: (2 raisedTo: 12) + 8 "#classTableRootSlots + #hiddenRootSlots".
-	self createForeignObjectFor: classTableRoots hash: 0 class: SpurPseudoArrayForeignObject.
-	"Spur reserves the first class index page immediately after the hiddenRoots, for #addForeignObjectsForVmKnownClasses"
-	firstPageOfClassTable := Array new: 1024.
-	classTableRoots at: 1 put: (	self createForeignObjectFor: firstPageOfClassTable hash: 0 class: SpurPseudoArrayForeignObject).
-	"Add the second page too. Any other classes other than #addForeignObjectsForVmKnownClasses start here."
-	firstPageOfClassTable := Array new: 1024.
-	classTableRoots at: 2 put: (	self createForeignObjectFor: firstPageOfClassTable hash: 0 class: SpurPseudoArrayForeignObject).! !
-
-!SpurImageBuilder methodsFor: 'foreign objects' stamp: 'jmv 5/20/2023 10:23:43'!
-addFreeLists
-	self subclassResponsibility! !
-
-!SpurImageBuilder methodsFor: 'foreign objects' stamp: 'jmv 8/14/2023 16:45:49'!
-addMetaclassFor: aClassSpec
-
-	| metaclassForeignObject |
-	metaclassForeignObject := self addClassSpec: aClassSpec class: MetaclassForeignObject classIndexOrNil: nil.
-	metaclassForeignObject instanceVariablesForeignObject: (self findOrAddLiteral: aClassSpec classInstVarNames).
-	^metaclassForeignObject! !
-
-!SpurImageBuilder methodsFor: 'foreign objects' stamp: 'jmv 2/6/2024 10:14:02'!
-addMethodDictionaryFor: aClassOrMetaclassForeignObject
-	"Create a ForeignObject for a new MethodDictionary to be created.
-	Also create required ForeignObjects for its parts, i.e. the 'array' instance variable.
-	Don't add the objects created to the foreignObjects dictionary, as nobody else should reference them!!"
-
-	| methodForeignObjects methodDictionaryForeignObject methodDictionaryToAdd methodArrayForeignObject |
-	methodForeignObjects := aClassOrMetaclassForeignObject methodForeignObjects.
-
-	"This assumes that the representation of MethodDictionaries will be the same as in the image we are running in.
-	Also, ForeignObjects for selectors must answer the same #identityHash as the to-be-created Symbol.
-	So we can simply use a MethodDictionary.
-	These assumptions may change in the future, and a more sophisticated strategy to build MethodDictionaries may be needed.
-	This should actually take into account the source code from which the MethodDictionary class will be created..."
-	methodDictionaryToAdd := MethodDictionary newWithRoomForMoreThan: methodForeignObjects size.
-	methodForeignObjects do: [ :each |
-		methodDictionaryToAdd
-			at: (self findForeignObjectFor: each representedObject selector)
-			put: each ].
-
-	"Give it to the argument Class or Metaclass."
-	methodDictionaryForeignObject := self createForeignObjectFor: methodDictionaryToAdd.
-	aClassOrMetaclassForeignObject methodDictForeignObject: methodDictionaryForeignObject.
-
-	"The only additional ForeignObject is for the 'array' instance variable."	
-	methodArrayForeignObject := self createForeignObjectFor: methodDictionaryToAdd methodArray.
-	methodDictionaryToAdd instVarNamed: 'array' put: methodArrayForeignObject.
-
-	^methodDictionaryForeignObject.! !
-
-!SpurImageBuilder methodsFor: 'foreign objects' stamp: 'jmv 8/17/2023 16:56:47'!
-createForeignObjectFor: anObject hash: identityHash class: aForeignObjectClass
-	"anObject will be included in the new image
-	Create and answer an instance of aForeignObjectClass for it.
-	For objects that are allocated in memory:
-		- Allocate space in the new image for it
-		- Add it to the list of foreign objects we'll use to serialize.
-	For objects that won't be allocated in memory (they are immediate objects,
-	encoded in pointing OOPs, like SmallInteger, etc):
-		- Just create and answer a ForeignObject that can encode object in an OOP when needed."
-
-	| fo byteCount |
-	aForeignObjectClass instancesAreForImmediateObjects ifTrue: [
-		self halt.
-		].
-
-	fo := aForeignObjectClass
-		newFor: anObject
-		oop: nextFreeAddressOfImage
-		identityHash: identityHash.
-	"If size > 254, header needs an extra word, and oop is pushed to point past it, to the basic header word"
-	(self sizeFieldFor: fo) > 254 ifTrue: [
-		fo foreignOop: nextFreeAddressOfImage + 8 ].
-
-	"Size in memory. Some objects have specific slot width (like ByteArray).
-	Others use the word size, like objects with instance variables and Arrays."
-	byteCount := (self sizeInBytesOfHeader: fo) + (self sizeInBytesOfBody: fo).
-
-"{'ForeignObject list node'. fo class. byteCount. anObject basicSize. nextFreeAddressOfImage. fo foreignOopFor: self. anObject} print."
-
-	nextFreeAddressOfImage := nextFreeAddressOfImage + byteCount.
-
-	firstForeignObject isNil
-		ifTrue: [ firstForeignObject := fo ]
-		ifFalse: [ lastForeignObject nextInList: fo ].
-	lastForeignObject := fo.
-	^fo! !
-
-!SpurImageBuilder methodsFor: 'services' stamp: 'jmv 5/15/2023 16:26:26'!
-newClassIndex
-	"Answer the next class index to be used."
-
-	lastClassIndex := lastClassIndex + 1.
-	^lastClassIndex! !
-
-!SpurImageBuilder methodsFor: 'services' stamp: 'jmv 5/22/2023 17:33:16'!
-newObjectHash
-	"Use a slight variation on D.H. Lehmer's linear congruential generator from 1951.
-	 See e.g. http://en.wikipedia.org/wiki/Linear_congruential_generator.
-	Copied from VMMaker SpurMemoryManager>>#newObjectHash"
-
-	| hash |
-	[
-		"7 raisedTo: 5"
-		lastHash := lastHash * 16807 bitAnd: 16rFFFFFFFF.
-		 hash := lastHash + (lastHash >> 4). "adding the top bits gives much better spread."
-		 (hash bitAnd: 16r3FFFFF) = 0 ] whileTrue.
-	^hash bitAnd: 16r3FFFFF! !
-
-!SpurImageBuilder methodsFor: 'serialization' stamp: 'jmv 8/17/2023 16:30:54'!
-headerBytesFor: aForeignObject
-	"Answer the total size in memory and in the generated image.
-	Include header bytes, any padding, etc."
-
-	| wordCount sizeHeaderByte answer extraHeader header classIndex |
-
-	classIndex := aForeignObject spurClassIndexFor: self.
-
-	"If size > 254, header needs an extra word, and oop is pushed to point past it, to the basic header word"
-	wordCount := self sizeFieldFor: aForeignObject.
-	sizeHeaderByte := wordCount <= 254
-		ifTrue: [wordCount << 56]
-		ifFalse: [16rFF00000000000000].
-	header := sizeHeaderByte bitOr:
-		((aForeignObject foreignIdentityHashFor: self) << 32)
-		+ ((aForeignObject spurObjectFormatFor: self) << 24)
-		+ classIndex.
-	wordCount <= 254
-		ifTrue: [
-			answer := ByteArray new: 8.
-			answer uint64At: 1 put: header bigEndian: isBigEndian.
-			]
-		ifFalse: [
-			answer := ByteArray new: 16.
-			extraHeader := sizeHeaderByte bitOr: wordCount.
-			answer uint64At: 1 put: extraHeader bigEndian: isBigEndian.
-			answer uint64At: 9 put: header bigEndian: isBigEndian.
-			].
-	^answer.! !
-
-!SpurImageBuilder methodsFor: 'serialization' stamp: 'jmv 8/17/2023 16:49:47'!
-sizeFieldFor: aForeignObject
-	"Answer the size field for the object header.
-	This is, the number of oop sized slots."
-
-	| slotsPerWord |
-	"Objects with 64 bit slots on Spur64, or 32 bit slots on Spur32"
-	(aForeignObject slotWidth isNil or: [aForeignObject slotWidth = self wordSize]) ifTrue: [ ^ aForeignObject slotCountFor: self ].
-
-	"For instance, objects with numeric 64 bit slots on Spur32"
-	aForeignObject slotWidth > self wordSize ifTrue: [ ^ (aForeignObject slotCountFor: self) * (aForeignObject slotWidth // self wordSize) ].
-
-	"Objects with smaller slots than oop size"
-	slotsPerWord := self wordSize / aForeignObject slotWidth.
-	^ (aForeignObject slotCountFor: self) + slotsPerWord-1 // slotsPerWord! !
-
-!SpurImageBuilder methodsFor: 'serialization' stamp: 'jmv 8/17/2023 17:13:33'!
-sizeInBytesOfBody: aForeignObject
-	"Answer the byte size of argument, in memory and in the generated image.
-	Include any padding."
-
-	| byteCount |
-
-	"No object is smaller than 8 bytes.
-	This is to have enough room the VM to turn it into a #become forwarder if needed.
-	Include the filler (see below) for Spur32. Both in Spur32 and Spur64 write 8 bytes."
-	(aForeignObject slotCountFor: self) = 0 ifTrue: [
-		^8 ].
-
-	"Size in memory. Some objects have specific slot width (like ByteArray). Others use the word size, like objects with instance variables and Arrays."
-	byteCount := (aForeignObject slotCountFor: self) * (aForeignObject slotWidth ifNil: [ self wordSize ]).
-
-	"Filler. Round to next multiple of 8, both Spur32 and Spur64 allocate multiples of 64 bits"
-	byteCount := byteCount + 7 // 8 * 8.
-
-	^byteCount.! !
-
-!SpurImageBuilder methodsFor: 'serialization' stamp: 'jmv 8/17/2023 16:55:15'!
-sizeInBytesOfHeader: aForeignObject
-	"Answer the size of the header for argument, in memory and in the generated image."
-
-	"If size > 254, header needs an extra 64 bits word, and oop is pushed to point past it, to the basic header word"
-	(self sizeFieldFor: aForeignObject) > 254 ifTrue: [^16 ].
-
-	"Regular header is 8 bytes."
-	^8! !
-
-!SpurImageBuilder methodsFor: 'format constants' stamp: 'jmv 8/22/2023 13:34:39'!
-lastBridge
-	self subclassResponsibility! !
-
-!SpurImageBuilder methodsFor: 'format constants' stamp: 'jmv 5/23/2023 16:30:25'!
-maxIdentityHash
-	"Answer the maximum identityHash value supported by the VM.
-	22 bits in Spur"
-
-	^16r3FFFFF! !
-
-!SpurImageBuilder methodsFor: 'image file saving' stamp: 'jmv 8/22/2023 15:43:51'!
-saveImageTo: aFileEntry
-
-	| ba nextForeignObject p |
-	ba := ByteArray
-		streamContents: [ :byteStream |
-			byteStream nextPutAll: (ByteArray new: baseAddressOfImage).
-
-			"Iterate the linked list of foreign objects. Write each."
-			nextForeignObject := firstForeignObject.
-			[ nextForeignObject notNil ] whileTrue: [
-				"asegurarse que la clase esté o dar error."
-				(self sizeFieldFor: nextForeignObject) <= 254
-					ifTrue: [
-						"For objects with only basic header word, oop points to it."
-						self assert: byteStream position = (nextForeignObject foreignOopFor: self) ]
-					ifFalse: [
-						"For objects with an extra header before the basic header word, oop points to basic header word."
-						self assert: byteStream position = ((nextForeignObject foreignOopFor: self)-8) ].
-				self write: nextForeignObject on: byteStream.
-				nextForeignObject := nextForeignObject nextInList ].	
-
-			"Write last segment bridge"
-			byteStream nextUint64Put: self lastBridge bigEndian: isBigEndian.
-			byteStream nextUint64Put: 0 bigEndian: isBigEndian.
-
-			"Write image header"
-			p := byteStream position.
-			byteStream position: 0.
-			self writeImageFileHeaderOn: byteStream byteSize: p.
-			byteStream position: p.
-		]
-		estimatedSize: nextFreeAddressOfImage.
-	aFileEntry forceWriteStreamDo: [ :strm | strm binary; nextPutAll: ba ]! !
-
-!SpurImageBuilder methodsFor: 'image file saving' stamp: 'jmv 8/22/2023 12:19:28'!
-write: aForeignObject on: byteStream
-
-	| headerBytes |
-
-	"Object header"
-	headerBytes := self headerBytesFor: aForeignObject.
-	byteStream nextPutAll: headerBytes.
-
-	"No object is smaller than 8 bytes.
-	This is to have enough room the VM to turn it into a #become forwarder if needed.
-	Include the filler (see below) for Spur32. Both in Spur32 and Spur64 write 8 bytes."
-	(aForeignObject slotCountFor: self) = 0 ifTrue: [
-		byteStream nextPutAll: `ByteArray new: 8`.
-		^self ].
-
-	"Object body."
-	aForeignObject writeSlotsOn: byteStream forSpur: self.
-
-	"Appropriate filler. All objects use a multiple of 8 bytes.
-	Therefore, stream position must also be a multiple of 8.
-	Note: This matches #sizeInBytesOfBody:"
-	[(byteStream position \\ 8) = 0] whileFalse: [byteStream nextPut: 0].! !
-
-!SpurImageBuilder methodsFor: 'image file saving' stamp: 'jmv 4/25/2024 11:43:00'!
-writeImageFileHeaderOn: aStream byteSize: imageByteSizeIncludingHeader
-	"Write an appropriate image file header.
-	Intended to be called after saving the heap to the file, and setting #position: to zero.
-	Reviewed with Eliot Miranda on Apr 18, 2024. Thanks Eliot!!"
-"
-readImageFromFile:HeapSize:StartingAt:
-"
-	| specialObjectsOop savedWindowSize imageHeaderFlags shiftedBit extraVMMemory 
-	desiredNumStackPages cogCodeSizeKB desiredEdenBytes maxExtSemTabSize maxLiteralCountForCompile firstSegmentByteSize bytesLeftInOldSpace |
-
-	false ifTrue: [ lastHash := lastHash ].
-	specialObjectsOop := specialObjectsArrayForeignObject foreignOopFor: self.
-	savedWindowSize := 640<<16 + 480.
-
-	"imageHeaderFlags includes all the bits in vmParameter 48, but shifted to make room for two additional lsb bits: fullScreenFlag and floatsInPlatformOrder.
-	((Smalltalk vmParameterAt: 48) bitShift: 2) bitOr: 2
-	((((Smalltalk vmParameterAt: 48) bitShift: 2) bitOr: 2) printStringBase: 2 nDigits: 11) reversed
-	See comment at #vmParameterAt: , in particular for index 48
-	See also #setImageHeaderFlagsFrom: in VMMaker
-	"
-	imageHeaderFlags := 0.
-	shiftedBit := 1.
-	#(
-		0 		"0: Full screen off."
-		1 		"1: Floats are in plarform order."
-		0  		"0: Process doesn't have threadAffinity ivar. No threaded FFI support."
-		0  		"0: Don't flag interpreted methods by default."
-		1  		"1: Preemption does not yield."
-		0  		"0: noThreadingOfGUIThread. Currently unused in Cuis. Update this when Cuis supports threaded FFI."
-		0  		"0: Don't use the new finalization, intended to support Ephemerons."
-		1  		"1: Don't create fake keyboard events for wheel events."
-		1  		"1: Don't do mixed arithmetic in the VM. Let the image decide how to do it."
-		0  		"0: Don't use UTC seconds from epoch for files (FilePlugin / FileAttributesPlugin)."
-		0  		"0: Don't upscaleDisplayIfHighDPI."
-	) do: [ :bit |
-		imageHeaderFlags := imageHeaderFlags bitOr: (shiftedBit * bit).
-		shiftedBit := shiftedBit * 2 ].
-
-
-	extraVMMemory := 0. 								"Not used in Spur"
-
-	desiredNumStackPages := 0. 								"0 means default value as preferred by the VM. This is vmParameterAt: 43."
-	cogCodeSizeKB := 0.								"If zero, set by the VM, depending on the density of the instuction set of the target architecture. vmParameterAt: 47. unused if no cog jitter"
-	desiredEdenBytes := 0.								"0 for minimal images. Cuis image is saved with 16777216.
-									Typical app images could use something like 128, 256 or 512 MB. Profile your app with various values to find out.  vmParameterAt: 45."
-	maxExtSemTabSize := 256 * 0.								"0 means vm default, i.e. 256. This is vmParameterAt: 49"
-	maxLiteralCountForCompile := 0. 								"How much literals above which we'd not jit a method. 0 means vm default (60). Unused if no cog jitter"
-	firstSegmentByteSize := imageByteSizeIncludingHeader - self imageHeaderSize.
-	bytesLeftInOldSpace := 0. 								"0 for bootstrapped images, because there is no heap fragmentation."
-
-	self on: aStream nextUint32Put: self imageFormat.
-	self on: aStream nextUint32Put: self imageHeaderSize.
-	self on: aStream nexWordPut: imageByteSizeIncludingHeader - self imageHeaderSize. 																"length of heap in file"
-	self on: aStream nexWordPut: baseAddressOfImage.																"object memory base address of image"
-	self on: aStream nexWordPut: specialObjectsOop.
-	self on: aStream nexWordPut: lastHash.
-	self on: aStream nexWordPut: savedWindowSize.
-	self on: aStream nexWordPut: imageHeaderFlags.
-	self on: aStream nextUint32Put: extraVMMemory.
-
-	"Only for Cog"
-	aStream nextUint16Put: desiredNumStackPages bigEndian: isBigEndian.
-	aStream nextUint16Put: cogCodeSizeKB bigEndian: isBigEndian.
-
-	"40 o 64 bytes so far"
-
-	self on: aStream nextUint32Put: desiredEdenBytes.
-	aStream nextUint16Put: maxExtSemTabSize bigEndian: isBigEndian.
-	aStream nextUint16Put: maxLiteralCountForCompile bigEndian: isBigEndian.
-
-	"48 o 72 bytes so far"
-
-	self on: aStream nexWordPut: firstSegmentByteSize.
-	self on: aStream nexWordPut: bytesLeftInOldSpace.! !
-
-!Spur32ImageBuilder methodsFor: 'foreign objects' stamp: 'jmv 6/23/2023 15:17:33'!
-addFreeLists
-	"
-	x-x-x-x-x-x-
-	
-	Create a ForeignObject for it.
-	Add it to the list of foreign objects we'll use to serialize.
-	Don't add it to the foreignObjects dictionary!!"
-
-	self createForeignObjectFor: nil hash: 0 class: Spur32FreeListsForeignObject.! !
-
-!Spur32ImageBuilder methodsFor: 'foreign objects' stamp: 'jmv 8/15/2023 18:29:55'!
-foreignObjectClassFor: anObject
-	"Answer the correct ForeignObject subclass to represent anObject.
-	"
-	anObject isInteger ifTrue: [
-		^(anObject between: `(2 raisedTo: 30) negated` and: `(2 raisedTo: 30)-1`)
-			ifTrue: [ SmallIntegerForeignObject ]
-			ifFalse: [ LargeIntegerForeignObject ]].
-
-	anObject isFloat ifTrue: [
-		^BoxedFloat64ForeignObject ].
-
-	anObject class == Character ifTrue: [
-		^ImmediateCharacterForeignObject ].
-		
-	^super foreignObjectClassFor: anObject! !
-
-!Spur32ImageBuilder methodsFor: 'services' stamp: 'jmv 1/31/2024 09:30:37'!
-foreignOopOfImmediateCharacter: aCharacter
-
-	| numericValue |
-	self assert: aCharacter class == Character. 
-	numericValue := aCharacter codePoint.
-	^(numericValue << 2) + 2.! !
-
-!Spur32ImageBuilder methodsFor: 'services' stamp: 'jmv 6/29/2023 16:27:03'!
-foreignOopOfSmallInteger: aNumber
-
-	"Check that aNumber can actually be encoded as a SmallInteger for us."
-	self assert: aNumber <= `(2 raisedTo: 30)-1`.
-	self assert: aNumber >= `(2 raisedTo: 30) negated`.
-	^aNumber < 0
-		ifTrue: [((16r80000000 + aNumber) << 1) + 1]
-		ifFalse: [(aNumber << 1) + 1]! !
-
-!Spur32ImageBuilder methodsFor: 'services' stamp: 'jmv 8/17/2023 15:46:24'!
-on: aStream nexWordPut: aNumber
-	"Write #wordSize bytes. Use 'isBigEndian' endianess."
-
-	self on: aStream nextUint32Put: aNumber.! !
-
-!Spur32ImageBuilder methodsFor: 'format constants' stamp: 'jmv 5/10/2023 12:06:56'!
-imageFormat
-	"Answer the number that identifies this image format"
-	^6521! !
-
-!Spur32ImageBuilder methodsFor: 'format constants' stamp: 'jmv 5/10/2023 12:23:08'!
-imageHeaderSize
-	"In Bytes"
-	^64! !
-
-!Spur32ImageBuilder methodsFor: 'format constants' stamp: 'jmv 8/22/2023 13:36:20'!
-lastBridge	
-	"Memory segment last bridge (See VMMaker - SpurMemoryManager class comment)
-	See VMMaker - #initSegmentBridgeWithBytes:at:
-	See VMMaker - #initializeObjectMemory:
-	For 32 bit Spur:
-		MarkedBit: 1<<55
-		PinedBit: 1<< 30
-		Format: A (32 bit indexable)
-		ClassIndex: 3 (#segmentBridgePun)"
-
-	^16r8000004A000003! !
-
-!Spur32ImageBuilder methodsFor: 'format constants' stamp: 'jmv 5/10/2023 12:26:31'!
-wordSize
-	"Also size of an oop.
-	In Bytes"
-	^4! !
-
-!Spur64ImageBuilder methodsFor: 'foreign objects' stamp: 'jmv 6/23/2023 15:17:41'!
-addFreeLists
-	"
-	x-x-x-x-x-x-
-	
-	Create a ForeignObject for it.
-	Add it to the list of foreign objects we'll use to serialize.
-	Don't add it to the foreignObjects dictionary!!"
-
-	self createForeignObjectFor: nil hash: 0 class: Spur64FreeListsForeignObject.! !
-
-!Spur64ImageBuilder methodsFor: 'foreign objects' stamp: 'jmv 8/15/2023 18:29:59'!
-foreignObjectClassFor: anObject
-	"Answer the correct ForeignObject subclass to represent anObject.
-	"
-	anObject isInteger ifTrue: [
-		^(anObject between: `(2 raisedTo: 60) negated` and: `(2 raisedTo: 60)-1`)
-			ifTrue: [ SmallIntegerForeignObject ]
-			ifFalse: [ LargeIntegerForeignObject ]].
-
-	anObject isFloat ifTrue: [
-		anObject exponentBits = 0 ifTrue: [
-			^anObject isDenormalized
-				ifFalse: [ SmallFloat64ForeignObject ] "0.0"
-				ifTrue: [ BoxedFloat64ForeignObject ] "Denormals" ].
-		^(anObject exponentBits - 1023 between: -127 and: 128)
-			ifTrue: [ SmallFloat64ForeignObject ]
-			ifFalse: [ BoxedFloat64ForeignObject ]].
-
-	anObject class == Character ifTrue: [
-		^ImmediateCharacterForeignObject ].
-		
-	^super foreignObjectClassFor: anObject! !
-
-!Spur64ImageBuilder methodsFor: 'services' stamp: 'jmv 1/31/2024 09:30:42'!
-foreignOopOfImmediateCharacter: aCharacter
-
-	| numericValue |
-	self assert: aCharacter class == Character. 
-	numericValue := aCharacter codePoint.
-	^(numericValue << 3) + 2.! !
-
-!Spur64ImageBuilder methodsFor: 'services' stamp: 'jmv 7/19/2023 15:57:10'!
-foreignOopOfSmallFloat64: aFloat
-
-	"Check that aNumber can actually be encoded as a SmalFloat64 for us."
-	| answer |
-	self deny: aFloat isDenormalized.
-	self assert: (aFloat isZero or: [ aFloat exponentBits - 1023 between: -127 and: 128 ]).
-	aFloat partBits: [ :signBit :exponentBits :mantissaBits | | exponentBits8 |
-		exponentBits8 := exponentBits ~= 0
-			ifTrue: [exponentBits - 1023 + 127]
-			ifFalse: [0].
-		answer := (mantissaBits << 4)
-			+ (signBit << 3)
-			+ 4
-			+ ((exponentBits8 bitAnd: 16rFF) << 56) ].
-	^answer! !
-
-!Spur64ImageBuilder methodsFor: 'services' stamp: 'jmv 7/4/2023 20:01:31'!
-foreignOopOfSmallInteger: aNumber
-
-	"Check that aNumber can actually be encoded as a SmallInteger for us."
-	self assert: aNumber <= `(2 raisedTo: 60)-1`.
-	self assert: aNumber >= `(2 raisedTo: 60) negated`.
-	^aNumber < 0
-		ifTrue: [((16r2000000000000000 + aNumber) << 3) + 1]
-		ifFalse: [(aNumber << 3) + 1]! !
-
-!Spur64ImageBuilder methodsFor: 'services' stamp: 'jmv 8/17/2023 15:46:36'!
-on: aStream nexWordPut: aNumber
-	"Write #wordSize bytes. Use 'isBigEndian' endianess."
-
-	self on: aStream nextUint64Put: aNumber.! !
-
-!Spur64ImageBuilder methodsFor: 'format constants' stamp: 'jmv 5/10/2023 12:07:13'!
-imageFormat
-	"Answer the number that identifies this image format"
-	^68021! !
-
-!Spur64ImageBuilder methodsFor: 'format constants' stamp: 'jmv 5/10/2023 12:23:13'!
-imageHeaderSize
-	"In Bytes"
-	^128! !
-
-!Spur64ImageBuilder methodsFor: 'format constants' stamp: 'jmv 8/22/2023 13:34:28'!
-lastBridge	
-	"Memory segment last bridge (See VMMaker - SpurMemoryManager class comment)
-	See VMMaker - #initSegmentBridgeWithBytes:at:
-	See VMMaker - #initializeObjectMemory:
-	For 64 bit Spur:
-		MarkedBit: 1<<55
-		PinedBit: 1<< 30
-		Format: 9 (64 bit indexable)
-		ClassIndex: 3 (#segmentBridgePun)"
-
-	^16r80000049000003! !
-
-!Spur64ImageBuilder methodsFor: 'format constants' stamp: 'jmv 5/10/2023 12:26:34'!
-wordSize
-	"Also size of an oop.
-	In Bytes"
-	^8! !
-
-!V3ImageBuilder methodsFor: 'initialization' stamp: 'jmv 5/15/2023 11:53:32'!
-initialize
-	super initialize.
-	lastHash := 999.! !
-
-!V3ImageBuilder methodsFor: 'image building' stamp: 'jmv 7/17/2023 12:48:14'!
-fillSpecialObjectsArray
-	"Please see implementation for Spur.
-	Also see #recreateSpecialObjectsArray.
-	See reference implementations (MicroSqueak.pck.st and SystemTracing.pck.st)"
-
-	self error: 'Must implement'! !
-
-!V3ImageBuilder methodsFor: 'services' stamp: 'jmv 5/15/2023 12:03:55'!
-newObjectHash
-	"Answer a new 16-bit pseudo-random number for use as an identity hash.
-	Essentially copied from VMMaker ObjectMemory>>#newObjectHash, answer lower 12 bits"
-
-	lastHash := 13849 + (27181 * lastHash) bitAnd: 65535.
-	^ lastHash bitAnd: 16rFFF! !
-
-!V3ImageBuilder methodsFor: 'services' stamp: 'jmv 8/17/2023 15:46:44'!
-on: aStream nexWordPut: aNumber
-	"Write #wordSize bytes. Use 'isBigEndian' endianess."
-
-	self on: aStream nextUint32Put: aNumber.! !
-
-!V3ImageBuilder methodsFor: 'format constants' stamp: 'jmv 5/10/2023 14:15:21'!
-imageFormat
-	"Answer the number that identifies this image format"
-	^6505! !
-
-!V3ImageBuilder methodsFor: 'format constants' stamp: 'jmv 5/10/2023 14:15:25'!
-imageHeaderSize
-	"In Bytes"
-	^64! !
-
-!V3ImageBuilder methodsFor: 'format constants' stamp: 'jmv 5/23/2023 16:30:45'!
-maxIdentityHash
-	"Answer the maximum identityHash value supported by the VM.
-	12 bits in V3 images"
-
-	^16rFFF! !
-
-!V3ImageBuilder methodsFor: 'format constants' stamp: 'jmv 5/10/2023 14:15:29'!
-wordSize
-	"Also size of an oop.
-	In Bytes"
-	^4! !
+The V3 image format is no longer used for Cuis. This class is not currently being developed and could be removed in the future.!
 
 !ForeignObject methodsFor: 'accessing' stamp: 'jmv 6/26/2023 10:53:29'!
 foreignIdentityHashFor: anImageBuilder
@@ -4539,125 +1769,2444 @@ canRepresent: anObject
 
 	^super canRepresent: anObject! !
 
-!ProtoObject methodsFor: '*Bootstrap-newImageOverrides' stamp: 'jmv 9/20/2023 16:32:52'!
-noclash01_become: otherObject 
-	"Primitive. Swap the object pointers of the receiver and the argument.
-	All variables in the entire system that used to point to the 
-	receiver now point to the argument, and vice-versa.
-	Fails if either object is a SmallInteger"
+!ImageBuilder methodsFor: 'initialization' stamp: 'jmv 4/28/2025 10:04:36'!
+initialize
+	isBigEndian := false. "default"
+	classes := OrderedDictionary new.
+	methods := IdentitySet new.
+	baseAddressOfImage := self imageHeaderSize. 	"Base address. Start of Object Memory."
+	nextFreeAddressOfImage := baseAddressOfImage.
+	foreignObjectsMap := IdentityDictionary new.
+	globalVariables  := OrderedCollection new.
+	symbols := OrderedCollection new.! !
 
-	{ self } elementsExchangeIdentityWith: { otherObject }! !
+!ImageBuilder methodsFor: 'image building' stamp: 'jmv 4/18/2024 14:09:49'!
+addFundamentalClasses
+	"Some classes that are needed for any Cuis image:
+	- nil, false and true are always present and need their class
+	- all superclasses for VM known classes
+	- all classes and superclasses for SpecialObjectsArray.
+	Do not include those already added in #addVmKnownClasses.
+	Add ForeignObjects both for class and metaclass to the list.
+	But only add the one for the class to the foreignObjects dictionary, because they share the spec."
+	"This first implementation uses the fact that these classes already exist in the image we are running.
+	It would be better to build them from scratch, using alternative class protocol in ClassSpec,
+	most likely by compiling a source code file."
 
-!Object methodsFor: '*Bootstrap-newImageOverrides' stamp: 'jmv 9/4/2023 19:19:36'!
-noclash01_doesNotUnderstand: aMessage
-	| context count |
-	StdIOWriteStream stdout flush.
-	StdIOWriteStream stdout newLine;
-		nextPutAll: 'Message not understood.'; newLine;
-		nextPutAll: 'Receiver: '.
+	| fundamentalClassNames |
+	fundamentalClassNames := #(#UndefinedObject #False #True
+		#ProtoObject #Object #Boolean #Magnitude #Number #Integer #Float
+		#Collection #SequenceableCollection #CharacterSequence #Symbol #ArrayedCollection #LinkedList
+		#Set #Dictionary #IdentityDictionary #SystemDictionary
+		#LookupKey #Association
+		#InstructionStream #ContextPart
+		#ProcessorScheduler #Link #Process
+		#Behavior #ClassDescription #Class #Metaclass
+		#MethodDictionary
+		#CompiledMethod #AdditionalMethodState #Pragma
+		#SharedQueue).
+	self includeDisplayAndSensor ifTrue: [
+		fundamentalClassNames := fundamentalClassNames, #(#Form #DisplayScreen #InputSensor #EventSensor ) ].
+	fundamentalClassNames do: [ :className | | classSpec classForeignObject |
+		classSpec := ClassSpec for: (Smalltalk at: className) addClassesTo: classes.	
+		classForeignObject := self addClassAndMetaclassSpec: classSpec classIndexOrNil: nil.
+		self map: classSpec toForeignObject: classForeignObject ].! !
 
-	self class isMeta
-		ifFalse: [ StdIOWriteStream stdout nextPutAll: 'a ' ]
-		ifTrue: [ StdIOWriteStream stdout nextPutAll: 'class ' ].
-	self class theNonMetaClass printNameOn: StdIOWriteStream stdout.
-
-	StdIOWriteStream stdout
-		nextPutAll: ' selector: #';
-		nextPutAll: aMessage selector; newLine;
-		nextPutAll: '------ Call Stack: '; newLine;
-		flush.
-
-	context := thisContext sender.
-	count := 0.
-	[context notNil and: [ count < 10 ]] whileTrue: [
-		context printOn: StdIOWriteStream stdout.
-		StdIOWriteStream stdout newLine.
-		context := context sender.
-		count := count + 1 ].
-
-	StdIOWriteStream stdout newLine;
-		nextPutAll: 'Will exit Cuis now.';
-		newLine;
-		flush.
-
-	Smalltalk quitPrimitive: 127.! !
-
-!Object methodsFor: '*Bootstrap-newImageOverrides' stamp: 'jmv 9/5/2023 09:26:33'!
-noclash01_error: aString
-
-	| context count |
-	StdIOWriteStream stdout newLine;
-		nextPutAll: 'Error: ';
-		nextPutAll: aString; newLine;
-		nextPutAll: '------ Call Stack: '; newLine;
-		flush.
-
-	context := thisContext sender.
-	count := 0.
-	[context notNil and: [ count < 10 ]] whileTrue: [
-		context printOn: StdIOWriteStream stdout.
-		StdIOWriteStream stdout newLine.
-		context := context sender.
-		count := count + 1 ].
-
-	StdIOWriteStream stdout newLine;
-		nextPutAll: 'Will exit Cuis now.';
-		newLine;
-		flush.
-	Smalltalk quitPrimitive: 128.! !
-
-!Object methodsFor: '*Bootstrap-newImageOverrides' stamp: 'jmv 9/4/2023 18:56:59'!
-noclash01_printOn: aStream
-	"Append to the argument, aStream, a sequence of characters that  
-	identifies the receiver.
-	String streamContents: [ :strm | 	'amazing thing' noclash01_printOn: strm ]
+!ImageBuilder methodsFor: 'image building' stamp: 'jmv 4/18/2024 14:10:20'!
+addFundamentalObjectsAndClasses
+	"
+	Objects and classes added here are absolutely required for building
+	a healthy image that includes what the VM expects.
 	"
 
-	aStream nextPutAll: 'a '.
-	self class printNameOn: aStream.! !
+	self addSpecial: nil hash: 1 nameOfClassToInstantiate: #UndefinedObject.
+	self addSpecial: false hash: 2 nameOfClassToInstantiate: #False.
+	self addSpecial: true hash: 3 nameOfClassToInstantiate: #True.
+	
+	self addSpurHiddenObjectsIfRequired.
 
-!Object methodsFor: '*Bootstrap-newImageOverrides' stamp: 'jmv 8/31/2023 16:40:47'!
-noclash01_printString
-	"Answer a String whose characters are a description of the receiver. 
-	If you want to print without a character limit, use fullPrintString.
+	"SpecialObjects Array. Ivar specialObjectsArrayForeignObject holds its fo.
+	Apparently the Spur VM saves the image with the SOA at this position,
+	\after the ClassTable and its first two pages. Do the same here."
+	self addSpecialObjectsArray.
 
-	This description is to be meaningful for a Smalltalk programmer and usually includes
-	a hint on the class of the object.
+	"Add classes known by the Spur VM"
+	self addVmKnownClasses.
+	"Add other classes absolutely required by the VM, and their superclasses."
+	self addFundamentalClasses.
 
-	Usually you should not reimplement this method in subclasses, but #printOn:
+	"Create basic globals"
+	"Smalltalk globals inspect"
+	self addProcessor.
+	self includeDisplayAndSensor ifTrue: [
+		self addDisplay.
+		self addSensor ].
+	self addSmalltalk.
+	self addUndeclared.
 
-	See the comments at:
-		#printString
-		#displayStringOrText
-		#asString
-		#storeString"
+	"After adding classes, we can fill the contents of the SpecialObjects array"
+	self fillSpecialObjectsArray.! !
 
-	^String streamContents: [:s | self printOn: s]! !
+!ImageBuilder methodsFor: 'image building' stamp: 'jmv 7/17/2023 12:52:26'!
+addMethodDictionariesAndStuff
+	"Fix Class hierarchies, build MethodDictionaries.
+	Build the Smalltalk SystemDictionary."
 
-!Object methodsFor: '*Bootstrap-newImageOverrides' stamp: 'jmv 9/18/2023 13:03:57'!
-noclash01_warning: aString
+	"Superclasses of method methodClass may not be mapped yet. Additionally, add all as subclasses of their superclass."
+	classes do: [ :classSpec | | classForeignObject |
+		classForeignObject := self findOrAddClassSpec: classSpec.
+		classSpec superclass ifNotNil: [ :superclassSpec |
+			(foreignObjectsMap at: superclassSpec) addSubclass: classForeignObject ]].
+
+	"Now turn the subclasses OrderedCollections into a foreign object for an Array"
+	classes do: [ :classSpec | | classForeignObject |
+		classForeignObject :=  foreignObjectsMap at: classSpec.
+		classForeignObject subclassesForeignObject:
+			(self createForeignObjectFor: classForeignObject subclassForeignObjects asArray) ].
+
+	"Build MethodDictionaries. No additional classes or methods will be allowed!!"
+	classes do: [ :classSpec | | classForeignObject metaClassForeignObject |
+		classForeignObject := foreignObjectsMap at: classSpec.
+		self addMethodDictionaryFor: classForeignObject.
+		metaClassForeignObject := classForeignObject metaclassForeignObject.
+		self addMethodDictionaryFor: metaClassForeignObject ].
+
+	"Now that we have all the required globals at ivar 'globalVariables', fill the contents of the Smalltalk object."
+	self fillSmalltalkDictionary.! !
+
+!ImageBuilder methodsFor: 'image building' stamp: 'jmv 7/17/2023 12:39:29'!
+addSpecialObjectsArray
+	"Create a SpecialObjectsArray for our new image. See #recreateSpecialObjectsArray.
+	Add a ForeignObject for it to our foreign object list and dicitonary.
+	See #fillSpecialObjectsArray."
+
+	| specialObjectsArray |
+	specialObjectsArray := Array new: 60.
+	specialObjectsArrayForeignObject := self createForeignObjectFor: specialObjectsArray.! !
+
+!ImageBuilder methodsFor: 'image building' stamp: 'jmv 7/17/2023 12:36:17'!
+addSpurHiddenObjectsIfRequired
+	"NOP here. Only for Spur."! !
+
+!ImageBuilder methodsFor: 'image building' stamp: 'jmv 4/18/2024 14:26:23'!
+addVmKnownClasses
 "
-7 noclash01_warning: 'El totón!!'
+Copied and adapted from the Spur implementation, that requires specific identityHash for these classe.
+This implementation hasn't yet been tested!!
 "
+	"Some classes are known by the VM.
+	- They have specific classIndex and identityHash
+	- They are stored in the first page of the class table
+	Add ForeignObjects both for class and metaclass to the list.
+	But only add the one for the class to the foreignObjects dictionary, because they share the spec."
+	"This first implementation uses the fact that these classes already exist in the image we are running.
+	It would be better to build them from scratch, using alternative class protocol in ClassSpec,
+	most likely by compiling a source code file."
 
-	StdIOWriteStream stdout
-		nextPutAll: 'Warning: ';
-		nextPutAll: aString; newLine;
-		flush.! !
+	| vmKnownClassNames |
+	vmKnownClassNames := #(
+		#SmallInteger
+		#Character
+		#LargeNegativeInteger
+		#LargePositiveInteger
+		#BoxedFloat64
+		#Message
+		#MethodContext
+		#BlockClosure
+		#Semaphore
+		#ByteArray
+		#Array
+		#String
+		#Point).
+	self includeDisplayAndSensor ifTrue: [
+		vmKnownClassNames := vmKnownClassNames, #(#Bitmap) ].
+	vmKnownClassNames do: [ :className | | classSpec classForeignObject |
+		classSpec := ClassSpec for: (Smalltalk at: className) addClassesTo: classes.	
+		classForeignObject := self addClassAndMetaclassSpec: classSpec classIndexOrNil: nil.
+		self map: classSpec toForeignObject: classForeignObject ].! !
+
+!ImageBuilder methodsFor: 'image building' stamp: 'jmv 4/30/2025 11:17:00'!
+addWithAllMethods: classNames
+	"Note: Superclasses are included if not already, but their methods are not added.
+	If super implementation or inherited behavior is needed, this won't suffice."
+
+	"Classes included with ALL their methods."
+	classNames
+		do: [ :className | | cls classSpec |
+			cls := Smalltalk at: className.
+			classSpec := ClassSpec for: cls addClassesTo: classes.	
+			self findOrAddClassSpec: classSpec.
+			cls class methodsDo: [ :compiledMethod |
+				self addExistingMethod: compiledMethod ].
+			cls methodsDo: [ :compiledMethod |
+				self addExistingMethod: compiledMethod ]].! !
+
+!ImageBuilder methodsFor: 'image building' stamp: 'jmv 4/30/2025 14:59:21'!
+createAndAddWarningMethodsForMissing
+	"Create special methods to warn about improper execution of inherited methods when proper method was not included."
+
+	| includedSelectorsByClass excluded |
+	excluded := #(
+		 #(Object 	error: 					ProtoObject)
+		 #(Object 	doesNotUnderstand: 	ProtoObject)
+		 #(Object 	become: 				ProtoObject)
+		).
+	includedSelectorsByClass := Dictionary new.
+	methods do: [ :methodSpec |
+		(includedSelectorsByClass at: {methodSpec classSpec. methodSpec isClassSide}
+			ifAbsentPut: [ Set new ]) add: methodSpec selector ].
+
+	classes do: [ :classSpec |
+		{true. false} do: [ :classSideFlag |
+			| includedSelectors existingClass |
+			includedSelectors := includedSelectorsByClass at: {classSpec. classSideFlag} ifAbsent: [`Set new`].
+			existingClass := Smalltalk at: classSpec name.
+			classSideFlag ifTrue: [
+				existingClass := existingClass class ].
+			existingClass selectorsDo: [ :missingSelector |
+				(includedSelectors includes: missingSelector) ifFalse: [
+					(self includedDefinition: missingSelector in: classSpec isClassMethod: classSideFlag all: includedSelectorsByClass)
+						ifNotNil: [ :inheritedFromString |
+							(excluded anySatisfy: [ :spec | spec first = existingClass name and: [ spec second = missingSelector and: [ spec third = inheritedFromString ]]]) ifFalse: [
+								includedSelectors size > 0 ifTrue: [ "Don't report empty classes."
+									('Warning: ', existingClass name, ' >> #', missingSelector, ' not included, but inherited from ', inheritedFromString) print.
+									"{classSpec. existingClass. inheritedFromString. missingSelector} print." ].
+								self createWarningMethodFor: missingSelector in: classSpec isClassMethod: classSideFlag inheritedFrom: inheritedFromString ]]
+				]]]].! !
+
+!ImageBuilder methodsFor: 'image building' stamp: 'jmv 4/29/2025 16:49:54'!
+createWarningMethodFor: missingSelector in: classSpec isClassMethod: classSideFlag inheritedFrom: desc
+	"Made by playing with a method with this source code:
+		hack3
+			self warning: 'eso eso eso'.
+	And then going with the debugger through
+		MethodSpec for: self addClassesTo: IdentityDictionary new.	
+	Did the same with #hack3: and #hack3:b:
+	The only difference was in header. Took logic from
+		#computeMethodHeaderForNumArgs:numTemps:numLits:primitive:"
+
+	 | warningString fallbackMethodSpec |
+	warningString := String streamContents: [ :strm |
+		strm
+			nextPutAll: '======== ';
+			nextPutAll: classSpec name asString.
+		classSideFlag ifTrue: [ strm nextPutAll: ' class' ].
+		strm
+			nextPutAll: '>>#';
+			nextPutAll: missingSelector;
+			nextPutAll: ' was not included, but it is inherited from ';
+			nextPutAll: desc ].
+
+"warningString print."
+	fallbackMethodSpec := MethodSpec basicNew
+		classSpec: classSpec
+		isClassSide: classSideFlag
+		selector: missingSelector
+		header: 4 + (missingSelector numArgs bitShift: 24) + (missingSelector numArgs bitShift: 18)
+		literals: {#warning:. warningString}
+		pragmas: nil
+		bytecodes: #[112 33 224 135 120].
+	self addMethodSpec: fallbackMethodSpec.
+	methods add: fallbackMethodSpec.! !
+
+!ImageBuilder methodsFor: 'image building' stamp: 'jmv 7/17/2023 12:49:27'!
+fillSpecialObjectsArray
+	"Please see implementation for Spur.
+	Also see #recreateSpecialObjectsArray.
+	See reference implementations (MicroSqueak.pck.st and SystemTracing.pck.st)"
+
+	"Maybe after implementing for all subclasses, move a refactored version up here."! !
+
+!ImageBuilder methodsFor: 'image building' stamp: 'jmv 9/19/2023 13:58:34'!
+includedDefinition: missingSelector in: classSpec isClassMethod: classSideFlag all: includedSelectorsByClass
+	"missingSelector is defined for classSpec but wasn't included.
+	Answer the inherited version that would be run instead, if any."
+
+	classSpec superclass ifNotNil: [ :superclassSpec |
+		(self includedDefinition: missingSelector start: superclassSpec isClassMethod: classSideFlag all: includedSelectorsByClass)
+			ifNotNil: [ :includedDefinition |
+				^classSideFlag
+					ifTrue: [ includedDefinition name asString, ' class' ]
+					ifFalse: [	 includedDefinition name asString ]]].
+
+	"Class side methods can also be inherited from the instance side of class Class."
+	classSideFlag ifTrue: [| classClassSpec |
+		classClassSpec := classes at: #Class.
+		(self includedDefinition: missingSelector start: classClassSpec isClassMethod: false all: includedSelectorsByClass)
+			ifNotNil: [ :includedDefinition |
+				^includedDefinition name asString ]].
+
+	^nil! !
+
+!ImageBuilder methodsFor: 'image building' stamp: 'jmv 9/19/2023 12:50:21'!
+includedDefinition: missingSelector start: classSpec isClassMethod: classSideFlag all: includedSelectorsByClass
+	"Find the closest included definition of missingSelector.
+	Start search at classSpec and go upwards in the hierarchy,"
+
+	classSpec withAllSuperclassesDo: [ :superclassSpec |
+		includedSelectorsByClass
+			at: { superclassSpec. classSideFlag }
+			ifPresent: [ :includedSelectors |
+				(includedSelectors includes: missingSelector) ifTrue: [
+					^superclassSpec ]]].
+	^nil! !
+
+!ImageBuilder methodsFor: 'image building feature add' stamp: 'jmv 5/9/2025 17:06:50'!
+addBasicCollectionsSupport
+
+	"Add selected methods."
+	| prefix |
+	prefix := '[mkHashedCollections]'.
+	(SystemOrganization allClassesAt: 'MinimalKernel') do: [ :cls |
+		cls class organization categories do: [ :cat |
+			(cat beginsWith: prefix) ifTrue: [
+				(cls class organization listAtCategoryNamed: cat) do: [ :sel |
+					self addExistingMethod: (cls class compiledMethodAt: sel) ]]].
+		cls organization categories do: [ :cat |
+			(cat beginsWith: prefix) ifTrue: [
+				(cls organization listAtCategoryNamed: cat) do: [ :sel |
+					self addExistingMethod: (cls compiledMethodAt: sel) ]]]].! !
+
+!ImageBuilder methodsFor: 'image building feature add' stamp: 'jmv 4/30/2025 11:08:26'!
+addBasicFileServices
+
+	self addWithAllMethods: #(BasicFileServices).! !
+
+!ImageBuilder methodsFor: 'image building feature add' stamp: 'jmv 5/7/2025 16:28:48'!
+addBasicFloatSupport
+
+	"Add selected methods."
+	| prefix |
+	prefix := '[mkFloat]'.
+	(SystemOrganization allClassesAt: 'MinimalKernel') do: [ :cls |
+		cls class organization categories do: [ :cat |
+			(cat beginsWith: prefix) ifTrue: [
+				(cls class organization listAtCategoryNamed: cat) do: [ :sel |
+					self addExistingMethod: (cls class compiledMethodAt: sel) ]]].
+		cls organization categories do: [ :cat |
+			(cat beginsWith: prefix) ifTrue: [
+				(cls organization listAtCategoryNamed: cat) do: [ :sel |
+					self addExistingMethod: (cls compiledMethodAt: sel) ]]]].! !
+
+!ImageBuilder methodsFor: 'image building feature add' stamp: 'jmv 5/9/2025 16:32:19'!
+addBasicMethodsAndReferencedClasses
+	"Note: many of these classes have already been added by
+		#addVmKnownClasses
+		#addFundamentalClasses
+	but without any methods at all."
+	
+	| prefix |
+
+	"Add all classes (that haven't already been added)."
+	(SystemOrganization allClassesAt: 'MinimalKernel') do: [ :cls | | classSpec |
+		classSpec := ClassSpec for: cls addClassesTo: classes.	
+		self findOrAddClassSpec: classSpec ].
+
+	"Add selected methods."
+	prefix := '[mk]'.
+	(SystemOrganization allClassesAt: 'MinimalKernel') do: [ :cls |
+		cls class organization categories do: [ :cat |
+			(cat beginsWith: prefix) ifTrue: [
+				(cls class organization listAtCategoryNamed: cat) do: [ :sel |
+					self addExistingMethod: (cls class compiledMethodAt: sel) ]]].
+		cls organization categories do: [ :cat |
+			(cat beginsWith: prefix) ifTrue: [
+				(cls organization listAtCategoryNamed: cat) do: [ :sel |
+					self addExistingMethod: (cls compiledMethodAt: sel) ]]]].! !
+
+!ImageBuilder methodsFor: 'image building feature add' stamp: 'jmv 5/7/2025 16:29:32'!
+addBasicSymbolSupport
+
+	"Add selected methods."
+	| prefix |
+	prefix := '[mkSymbol]'.
+	(SystemOrganization allClassesAt: 'MinimalKernel') do: [ :cls |
+		cls class organization categories do: [ :cat |
+			(cat beginsWith: prefix) ifTrue: [
+				(cls class organization listAtCategoryNamed: cat) do: [ :sel |
+					self addExistingMethod: (cls class compiledMethodAt: sel) ]]].
+		cls organization categories do: [ :cat |
+			(cat beginsWith: prefix) ifTrue: [
+				(cls organization listAtCategoryNamed: cat) do: [ :sel |
+					self addExistingMethod: (cls compiledMethodAt: sel) ]]]].! !
+
+!ImageBuilder methodsFor: 'image building feature add' stamp: 'jmv 5/7/2025 16:30:12'!
+addBasicVMandImageSupport
+
+	"Add selected methods."
+	| prefix |
+	prefix := '[mkVMnImage]'.
+	(SystemOrganization allClassesAt: 'MinimalKernel') do: [ :cls |
+		cls class organization categories do: [ :cat |
+			(cat beginsWith: prefix) ifTrue: [
+				(cls class organization listAtCategoryNamed: cat) do: [ :sel |
+					self addExistingMethod: (cls class compiledMethodAt: sel) ]]].
+		cls organization categories do: [ :cat |
+			(cat beginsWith: prefix) ifTrue: [
+				(cls organization listAtCategoryNamed: cat) do: [ :sel |
+					self addExistingMethod: (cls compiledMethodAt: sel) ]]]].! !
+
+!ImageBuilder methodsFor: 'image building feature add' stamp: 'jmv 5/9/2025 17:07:20'!
+addObjectSerializationSupport
+
+	"Add selected methods."
+	| clss prefix |
+	clss := {DataStream. ReferenceStream}.
+	clss do: [ :cls | | classSpec |
+		classSpec := ClassSpec for: cls addClassesTo: classes.	
+		self findOrAddClassSpec: classSpec ].
+
+	prefix := '[mkObjectSerialization]'.
+	(SystemOrganization allClassesAt: 'MinimalKernel'), clss do: [ :cls |
+		cls class organization categories do: [ :cat |
+			(cat beginsWith: prefix) ifTrue: [
+				(cls class organization listAtCategoryNamed: cat) do: [ :sel |
+					self addExistingMethod: (cls class compiledMethodAt: sel) ]]].
+		cls organization categories do: [ :cat |
+			(cat beginsWith: prefix) ifTrue: [
+				(cls organization listAtCategoryNamed: cat) do: [ :sel |
+					self addExistingMethod: (cls compiledMethodAt: sel) ]]]].! !
+
+!ImageBuilder methodsFor: 'image building testing' stamp: 'jmv 4/28/2025 10:10:24'!
+includeDisplayAndSensor
+	"Some images may need them, but minimal headless images won't."
+	^false! !
+
+!ImageBuilder methodsFor: 'image building examples' stamp: 'jmv 5/9/2025 17:06:59'!
+addExample06LoadDynamicLibraryMethods
+
+	"Classes referenced from below, but of which no methods are included."
+	#(
+	"ReadWriteStream"
+	"IdentitySet"
+	
+	"abajo en metodos comentados Vienen por soporte de carga de librerias.
+	agregarlo a '[mkHashedCollections]' , [mkObjectSerialization], etc
+	"
+	ClassBuilder
+	)
+	do: [ :className | | classSpec classForeignObject |
+		classSpec := ClassSpec for: (Smalltalk at: className) addClassesTo: classes.	
+		classForeignObject := self addClassAndMetaclassSpec: classSpec classIndexOrNil: nil.
+		self map: classSpec toForeignObject: classForeignObject ].
+
+"ojo, incluir todos los implementors de los metodos en todas las clases incluidas, o al menos en la herencia..."
+	"Classes included with ALL their methods."
+	#( DynamicCuisLibrary ClassSpec MethodSpec LiteralVariableSpec)
+	do: [ :className | | cls classSpec |
+		cls := Smalltalk at: className.
+		classSpec := ClassSpec for: cls addClassesTo: classes.	
+		self findOrAddClassSpec: classSpec.
+		cls class methodsDo: [ :compiledMethod |
+			self addExistingMethod: compiledMethod ].
+		cls methodsDo: [ :compiledMethod |
+(compiledMethod selector = #buildClassesAndMethods:) ifFalse: [ "HACKY!!!!!!!!!!!!"
+			self addExistingMethod: compiledMethod
+]
+			]].
+
+	{
+"		Object>>#as:.
+		Object>>#yourself.
+		Object>>#->.
+		Object>>#copy.
+		Object>>#shallowCopy.
+		Object>>#postCopy.
+		Object>>#readDataFrom:size:.
+		Object>>#instVarAt:put:.
+		Object>>#comeFullyUpOnReload:.
+		Object>>#basicAt:put:.
+
+		Behavior >> #noclash01_allInstances.
+		Behavior>>#isBehavior.
+		Behavior>>#superclass.
+		Behavior>>#typeOfClass.
+		Behavior>>#isVariable.
+		Behavior>>#isBytes.
+		Behavior>>#isBits.
+		Behavior>>#isImmediateClass.
+		Behavior>>#instSpec.
+		Behavior>>#instSize.
+		Behavior>>#definesInstanceVariableNamed:.
+		Behavior>>#instVarNames.
+		Behavior>>#format.
+		Behavior>>#superclass:methodDictionary:format:.
+		Behavior>>#binding.
+		Behavior>>#addSelectorSilently:withMethod:.
+		Behavior>>#lookupSelector:.
+		Behavior>>#includesSelector:.
+		Behavior>>#methodDict.
+		Behavior>>#compiledMethodAt:.
+		Behavior>>#bindingOf:.
+		Behavior>>#classBindingOf:.
+
+		ClassDescription>>#instVarNames.
+		ClassDescription>>#organization:.
+		ClassDescription>>#setInstVarNames:.
+		ClassDescription>>#superclass:methodDictionary:format:.
+
+		Class>>#superclass:methodDictionary:format:.
+		Class>>#addSubclass:.
+		Class>>#setName:.
+		Class>>#declareClassVariables:.
+		Class>>#name.
+		Class>>#classPool.
+		Class>>#sharedPools.
+		Class>>#binding.
+		Class>>#bindingOf:.
+		Class>>#localBindingOf:.
+		Class>>#classVarBindingOf:.
+
+		Metaclass>>#new.
+		Metaclass>>#bindingOf:.
+		Metaclass>>#localBindingOf:.
+		Metaclass>>#allClassInstVarNames.
+
+		CompiledMethod class>>#createMethod:trailer:header:.
+		CompiledMethod class>>#newMethod:header:.
+		CompiledMethod>>#literalAt:put:.
+		CompiledMethod>>#objectAt:put:.
+		CompiledMethod>>#penultimateLiteral:.
+		CompiledMethod>>#methodClass:.
+		CompiledMethod>>#endPC.
+		CompiledMethod>>#initialPC.
+		CompiledMethod>>#flushCache.
+		CompiledMethod>>#readDataFrom:size:.
+
+		MethodContext>>#	instVarAt:put:.
+
+		Collection class>>#newFrom:.
+		Collection>>#=.
+		Collection>>#is:.
+		Collection>>#reject:.
+		Collection>>#ifEmpty:.
+		Collection>>#isSequenceable.
+		Collection>>#asIdentitySet.
+		Collection>>#addAll:.
+		Collection>>#notEmpty.
+		Collection >> #inject:into:.
+		Collection >> #detect:ifNone:.
+		SequenceableCollection>>#=.
+		SequenceableCollection >> #select:.
+		SequenceableCollection >>#collect:.
+		SequenceableCollection>>#readStream.
+		SequenceableCollection>>#indexOf:ifAbsent:.
+		SequenceableCollection>>#withIndexDo:.
+		SequenceableCollection>>#hasEqualElements:.
+		SequenceableCollection>>#isSequenceable.
+		SequenceableCollection>>#copyWith:.
+		ArrayedCollection>>#isEmpty.
+		Array>>#asArray.
+		Array>>#is:.
+		ByteArray>>#uint32At:bigEndian:.
+		ByteArray>>#int32At:bigEndian:.
+		ByteArray>>#uint16At:bigEndian:.
+		ByteArray>>#float64At:bigEndian:.
+
+		Set>>#atNewIndex:put:.
+		Set>>#fullCheck.
+		Set>>#grow.
+		Set>>#includes:.
+		Set>>#growSize.
+		Set>>#noCheckAdd:.
+		Set>>#postCopy.
+		Set>>#size.
+		Set>>#do:.
+		Set>>#comeFullyUpOnReload:.
+		IdentitySet>>#scanFor:.
+		Dictionary>>#keysDo:.
+		Dictionary>>#associationsDo:.
+		Dictionary>>#postCopy.
+		Dictionary>>#noCheckAdd:.
+		Dictionary>>#at:ifPresent:.
+		Dictionary>>#errorKeyNotFound:.
+		Dictionary>>#keys.
+		Dictionary>>#associationAt:ifAbsent:.
+		Dictionary>>#bindingOf:.
+		Dictionary>>#declare:from:.
+
+		MethodDictionary class>>#new.
+		MethodDictionary class>>#newWithRoomForMoreThan:.
+		MethodDictionary>>#at:ifAbsent:.
+		MethodDictionary>>#scanFor:.
+		MethodDictionary>>#postCopy.
+		MethodDictionary >>#keyAt:.
+		MethodDictionary>>#associationAt:ifAbsent:.
+		MethodDictionary>>#keysDo:.
+		MethodDictionary>>#at:put:.
+		MethodDictionary>>#grow. 'become!!!!!!!!!!'.
+		MethodDictionary>>#associationsDo:.
+
+		Stream>>#binary.
+		Stream>>#nextString.
+		Stream>>#nextUint32BigEndian:.
+		Stream>>#nextInt32BigEndian:.
+		Stream>>#nextUint16BigEndian:.
+		Stream>>#nextFloat64BigEndian:.
+		ReadStream>>#next:.
+		ReadStream>>#next:into:startingAt:.
+
+		DataStream class>>#typeMap.
+		DataStream >>#typeIDFor:.
+		DataStream>>#beginReference:.
+		DataStream>>#maybeBeginReference:.
+		DataStream>>#setCurrentReference:.
+		DataStream>>#getCurrentReference.
+		DataStream>>#readArray.
+		DataStream>>#readNil.
+		DataStream>>#readTrue.
+		DataStream>>#readFalse.
+		DataStream>>#readInteger.
+		DataStream>>#readShortInst.
+		DataStream>>#readByteArray.
+		DataStream>>#readWordLike.
+		DataStream>>#readFloat.
+		DataStream>>#readReference.
+		DataStream>>#vacantRef.
+		DataStream>>#objectAt:.
+		DataStream>>#readShortRef.
+		DataStream>>#readInstance.
+		DataStream>>#readSymbol.
+		DataStream>>#readString.
+		DataStream>>#readCharacter.
+		ReferenceStream>>#next.
+		ReferenceStream>>#beginReference:.
+		ReferenceStream>>#maybeBeginReference:.
+		ReferenceStream>>#objectAt:.
+		ReferenceStream>>#setCurrentReference:.
+		ReferenceStream>>#getCurrentReference.
+		ReferenceStream>>#noteCurrentReference:.
+		ReferenceStream>>#isAReferenceType:.
+		
+		SystemDictionary>>#wordSize.
+		SystemDictionary >>#vmParameterAt:.
+		SystemDictionary>>#voidCogVMState.
+		SystemDictionary>>#flushClassNameCache.
+	
+		ClassBuilder>>#newSubclassOf:type:instanceVariables:from:.
+		ClassBuilder>>#computeFormat:instSize:forSuper:.
+		ClassBuilder>>#computeFormat:fullInstancesSize:.
+		ClassBuilder>>#format:variable:bitsUnitSize:pointers:weak:.
+		ClassBuilder>>#privateNewSubclassOf:from:.
+		ClassBuilder>>#privateNewSubclassOf:.
+		ClassBuilder>>#initialize."
+
+	} do: [ :compiledMethod |
+		self addExistingMethod: compiledMethod ].! !
+
+!ImageBuilder methodsFor: 'image building examples' stamp: 'jmv 5/9/2025 14:15:46'!
+addExample07LoadDynamicLibraryMethods
+
+	"Classes referenced from below, but of which no methods are included."
+	#(ReadWriteStream IdentitySet)
+	do: [ :className | | classSpec classForeignObject |
+		classSpec := ClassSpec for: (Smalltalk at: className) addClassesTo: classes.	
+		classForeignObject := self addClassAndMetaclassSpec: classSpec classIndexOrNil: nil.
+		self map: classSpec toForeignObject: classForeignObject ].
+
+"ojo, incluir todos los implementors de los metodos en todas las clases incluidas, o al menos en la herencia..."
+	"Classes included with ALL their methods."
+	#( DynamicCuisLibrary ClassSpec MethodSpec LiteralVariableSpec
+	)
+	do: [ :className | | cls classSpec |
+		cls := Smalltalk at: className.
+		classSpec := ClassSpec for: cls addClassesTo: classes.	
+		self findOrAddClassSpec: classSpec.
+		cls class methodsDo: [ :compiledMethod |
+			self addExistingMethod: compiledMethod ].
+		cls methodsDo: [ :compiledMethod |
+(compiledMethod selector = #buildClassesAndMethods:) ifFalse: [ "HACKY!!!!!!!!!!!!"
+			self addExistingMethod: compiledMethod
+]
+			]].
+
+	{
+		Object>>#as:.
+		Object>>#yourself.
+		Object>>#->.
+		Object>>#copy.
+		Object>>#shallowCopy.
+		Object>>#postCopy.
+		Object>>#readDataFrom:size:.
+		Object>>#instVarAt:put:.
+		Object>>#comeFullyUpOnReload:.
+		Object>>#basicAt:put:.
+
+		Behavior >> #noclash01_allInstances.
+		Behavior>>#isBehavior.
+		Behavior>>#superclass.
+		Behavior>>#typeOfClass.
+		Behavior>>#isVariable.
+		Behavior>>#isBytes.
+		Behavior>>#isBits.
+		Behavior>>#isImmediateClass.
+		Behavior>>#instSpec.
+		Behavior>>#instSize.
+		Behavior>>#definesInstanceVariableNamed:.
+		Behavior>>#instVarNames.
+		Behavior>>#format.
+		Behavior>>#superclass:methodDictionary:format:.
+		Behavior>>#binding.
+		Behavior>>#addSelectorSilently:withMethod:.
+		Behavior>>#lookupSelector:.
+		Behavior>>#includesSelector:.
+		Behavior>>#methodDict.
+		Behavior>>#compiledMethodAt:.
+		Behavior>>#bindingOf:.
+		Behavior>>#classBindingOf:.
+
+		ClassDescription>>#instVarNames.
+		ClassDescription>>#organization:.
+		ClassDescription>>#setInstVarNames:.
+		ClassDescription>>#superclass:methodDictionary:format:.
+
+		Class>>#superclass:methodDictionary:format:.
+		Class>>#addSubclass:.
+		Class>>#setName:.
+		Class>>#declareClassVariables:.
+		Class>>#name.
+		Class>>#classPool.
+		Class>>#sharedPools.
+		Class>>#binding.
+		Class>>#bindingOf:.
+		Class>>#localBindingOf:.
+		Class>>#classVarBindingOf:.
+
+		Metaclass>>#new.
+		Metaclass>>#bindingOf:.
+		Metaclass>>#localBindingOf:.
+		Metaclass>>#allClassInstVarNames.
+
+		CompiledMethod class>>#createMethod:trailer:header:.
+		CompiledMethod class>>#newMethod:header:.
+		CompiledMethod>>#literalAt:put:.
+		CompiledMethod>>#objectAt:put:.
+		CompiledMethod>>#penultimateLiteral:.
+		CompiledMethod>>#methodClass:.
+		CompiledMethod>>#endPC.
+		CompiledMethod>>#initialPC.
+		CompiledMethod>>#flushCache.
+		CompiledMethod>>#readDataFrom:size:.
+
+		MethodContext>>#	instVarAt:put:.
+
+		Collection class>>#newFrom:.
+		Collection>>#=.
+		Collection>>#is:.
+		Collection>>#reject:.
+		Collection>>#ifEmpty:.
+		Collection>>#isSequenceable.
+		Collection>>#asIdentitySet.
+		Collection>>#addAll:.
+		Collection>>#notEmpty.
+		Collection >> #inject:into:.
+		Collection >> #detect:ifNone:.
+		SequenceableCollection>>#=.
+		SequenceableCollection >> #select:.
+		SequenceableCollection >>#collect:.
+		SequenceableCollection>>#readStream.
+		SequenceableCollection>>#indexOf:ifAbsent:.
+		SequenceableCollection>>#withIndexDo:.
+		SequenceableCollection>>#hasEqualElements:.
+		SequenceableCollection>>#isSequenceable.
+		SequenceableCollection>>#copyWith:.
+		ArrayedCollection>>#isEmpty.
+		Array>>#asArray.
+		Array>>#is:.
+		ByteArray>>#uint32At:bigEndian:.
+		ByteArray>>#int32At:bigEndian:.
+		ByteArray>>#uint16At:bigEndian:.
+		ByteArray>>#float64At:bigEndian:.
+
+		Set class>>#new.
+		Set class>>#newWithRoomForMoreThan:.
+		Set class>>#sizeFor:.
+		Set>>#init:.
+		Set>>#atNewIndex:put:.
+		Set>>#fullCheck.
+		Set>>#grow.
+		Set>>#includes:.
+		Set>>#findElementOrNil:.
+		Set>>#scanFor:.
+		Set>>#growSize.
+		Set>>#noCheckAdd:.
+		Set>>#postCopy.
+		Set>>#size.
+		Set>>#do:.
+		Set>>#comeFullyUpOnReload:.
+		IdentitySet>>#scanFor:.
+		Dictionary>>#keysDo:.
+		Dictionary>>#associationsDo:.
+		Dictionary>>#postCopy.
+		Dictionary>>#noCheckAdd:.
+		Dictionary>>#at:ifPresent:.
+		Dictionary>>#scanFor:.
+		Dictionary>>#includesKey:.
+		Dictionary>>#at:.
+		Dictionary>>#errorKeyNotFound:.
+		Dictionary>>#at:ifAbsent:.
+		Dictionary>>#keys.
+		Dictionary>>#associationAt:ifAbsent:.
+		Dictionary>>#bindingOf:.	
+		Dictionary>>#declare:from:.
+		IdentityDictionary>>#scanFor:.
+
+		MethodDictionary class>>#new.
+		MethodDictionary class>>#newWithRoomForMoreThan:.
+		MethodDictionary>>#at:ifAbsent:.
+		MethodDictionary>>#scanFor:.
+		MethodDictionary>>#postCopy.
+		MethodDictionary >>#keyAt:.
+		MethodDictionary>>#associationAt:ifAbsent:.
+		MethodDictionary>>#keysDo:.
+		MethodDictionary>>#at:put:.
+		MethodDictionary>>#grow. "become!!!!!!!!!!"
+		MethodDictionary>>#associationsDo:.
+
+		LookupKey class>>#key:.
+		LookupKey>>#key:.
+		LookupKey>>#key.
+		Association class>>#key:value:.
+		Association>>#value:.
+
+		Stream>>#binary.
+		Stream>>#nextString.
+		Stream>>#nextUint32BigEndian:.
+		Stream>>#nextInt32BigEndian:.
+		Stream>>#nextUint16BigEndian:.
+		Stream>>#nextFloat64BigEndian:.
+		ReadStream>>#next.
+		ReadStream>>#next:.
+		ReadStream>>#next:into:startingAt:.
+		
+		DataStream class>>#on:.
+		DataStream class>>#typeMap.
+		DataStream >>#typeIDFor:.
+		DataStream>>#setStream:.
+		DataStream>>#next.
+		DataStream>>#beginReference:.
+		DataStream>>#maybeBeginReference:.
+		DataStream>>#setCurrentReference:.
+		DataStream>>#getCurrentReference.
+		DataStream>>#readArray.
+		DataStream>>#readNil.
+		DataStream>>#readTrue.
+		DataStream>>#readFalse.
+		DataStream>>#readInteger.
+		DataStream>>#readShortInst.
+		DataStream>>#readByteArray.
+		DataStream>>#readWordLike.
+		DataStream>>#readFloat.
+		DataStream>>#readReference.
+		DataStream>>#vacantRef.
+		DataStream>>#objectAt:.
+		DataStream>>#readShortRef.
+		DataStream>>#readInstance.
+		DataStream>>#readSymbol.
+		DataStream>>#readString.
+		DataStream>>#readCharacter.
+		ReferenceStream>>#setStream:.
+		ReferenceStream>>#next.
+		ReferenceStream>>#beginReference:.
+		ReferenceStream>>#maybeBeginReference:.
+		ReferenceStream>>#objectAt:.
+		ReferenceStream>>#setCurrentReference:.
+		ReferenceStream>>#getCurrentReference.
+		ReferenceStream>>#noteCurrentReference:.
+		ReferenceStream>>#isAReferenceType:.
+		
+		SystemDictionary>>#at:put:.
+		SystemDictionary>>#wordSize.
+		SystemDictionary >>#vmParameterAt:.
+		SystemDictionary>>#voidCogVMState.
+		SystemDictionary>>#flushClassNameCache.
+	
+		ClassBuilder>>#newSubclassOf:type:instanceVariables:from:.
+		ClassBuilder>>#computeFormat:instSize:forSuper:.
+		ClassBuilder>>#computeFormat:fullInstancesSize:.
+		ClassBuilder>>#format:variable:bitsUnitSize:pointers:weak:.
+		ClassBuilder>>#privateNewSubclassOf:from:.
+		ClassBuilder>>#privateNewSubclassOf:.
+		ClassBuilder>>#initialize.
+
+		BlockClosure>>#timeToRun.
+		Time class>>#millisecondsToRun:.
+		Time class>>#localMillisecondClock.
+		Time class>>#primLocalMicrosecondClock.
+
+	} do: [ :compiledMethod |
+		self addExistingMethod: compiledMethod ].! !
+
+!ImageBuilder methodsFor: 'image building examples' stamp: 'jmv 9/19/2023 12:28:03'!
+buildExample01Stdout
+	"
+	Spur64ImageBuilder new
+		buildExample01Stdout;
+		saveImageTo: 'Example01Stdout.image' asFileEntry.
+	"
+	"
+	Spur32ImageBuilder new
+		buildExample01Stdout;
+		saveImageTo: 'Example01Stdout32.image' asFileEntry.
+	"
+
+	| startUpMethodForeignObject |
+
+	"Any image will include these. They are mandatory."
+	self addFundamentalObjectsAndClasses.
+
+	"Most images will need these."
+	self addBasicMethodsAndReferencedClasses.
+
+	"Set what this image will do when run."
+	startUpMethod := SystemDictionary>>#bootstrappedExample01Stdout.
+	startUpMethodForeignObject := self addExistingMethod: startUpMethod.
+	self map: startUpMethod toForeignObject: startUpMethodForeignObject.
+
+	"Create special methods to warn about improper execution of inherited methods when proper method was not included."
+	self createAndAddWarningMethodsForMissing.
+
+	"Add additionally stuff to the image. This is the same for any image."
+	self addMethodDictionariesAndStuff.
+
+	"Creating the start process requires CompiledMethods to be there"
+	self addStartProcess.! !
+
+!ImageBuilder methodsFor: 'image building examples' stamp: 'jmv 9/19/2023 12:28:17'!
+buildExample02DoesNotUnderstand
+	"
+	Spur64ImageBuilder new
+		buildExample02DoesNotUnderstand;
+		saveImageTo: 'Example02DoesNotUnderstand.image' asFileEntry.
+	"
+	"
+	Spur32ImageBuilder new
+		buildExample02DoesNotUnderstand;
+		saveImageTo: 'Example02DoesNotUnderstand32.image' asFileEntry.
+	"
+
+	| startUpMethodForeignObject |
+
+	"Any image will include these. They are mandatory."
+	self addFundamentalObjectsAndClasses.
+
+	"Most images will need these."
+	self addBasicMethodsAndReferencedClasses.
+
+	"Set what this image will do when run."
+	startUpMethod := SystemDictionary>>#bootstrappedExample02DoesNotUnderstand.
+	startUpMethodForeignObject := self addExistingMethod: startUpMethod.
+	self map: startUpMethod toForeignObject: startUpMethodForeignObject.
+
+	"Create special methods to warn about improper execution of inherited methods when proper method was not included."
+	self createAndAddWarningMethodsForMissing.
+
+	"Add additionally stuff to the image. This is the same for any image."
+	self addMethodDictionariesAndStuff.
+
+	"Creating the start process requires CompiledMethods to be there"
+	self addStartProcess.! !
+
+!ImageBuilder methodsFor: 'image building examples' stamp: 'jmv 4/30/2025 10:26:21'!
+buildExample03Float
+	"
+	Spur64ImageBuilder new
+		buildExample03Float;
+		saveImageTo: 'Example03Float.image' asFileEntry.
+	"
+	"
+	Spur32ImageBuilder new
+		buildExample03Float;
+		saveImageTo: 'Example03Float32.image' asFileEntry.
+	"
+
+	| startUpMethodForeignObject |
+
+	"Any image will include these. They are mandatory."
+	self addFundamentalObjectsAndClasses.
+
+	"Most images will need these."
+	self addBasicMethodsAndReferencedClasses.
+
+	"Set what this image will do when run."
+	self addBasicFloatSupport.
+	startUpMethod := SystemDictionary>>#bootstrappedExample03Float.
+	startUpMethodForeignObject := self addExistingMethod: startUpMethod.
+	self map: startUpMethod toForeignObject: startUpMethodForeignObject.
+
+	"Create special methods to warn about improper execution of inherited methods when proper method was not included."
+	self createAndAddWarningMethodsForMissing.
+
+	"Add additionally stuff to the image. This is the same for any image."
+	self addMethodDictionariesAndStuff.
+
+	"Creating the start process requires CompiledMethods to be there"
+	self addStartProcess.! !
+
+!ImageBuilder methodsFor: 'image building examples' stamp: 'jmv 4/30/2025 11:08:53'!
+buildExample04FileExperiments
+	"
+	Spur64ImageBuilder new
+		buildExample04FileExperiments;
+		saveImageTo: 'Example04FileExperiments.image' asFileEntry.
+	"
+	"
+	Spur32ImageBuilder new
+		buildExample04FileExperiments;
+		saveImageTo: 'Example04FileExperiments32.image' asFileEntry.
+	"
+
+	| startUpMethodForeignObject |
+
+	"Any image will include these. They are mandatory."
+	self addFundamentalObjectsAndClasses.
+
+	"Most images will need these."
+	self addBasicMethodsAndReferencedClasses.
+
+	"Set what this image will do when run."
+	self addBasicFileServices.
+	self addBasicVMandImageSupport.
+	startUpMethod := SystemDictionary>>#bootstrappedExample04FileExperiments.
+	startUpMethodForeignObject := self addExistingMethod: startUpMethod.
+	self map: startUpMethod toForeignObject: startUpMethodForeignObject.
+
+	"Create special methods to warn about improper execution of inherited methods when proper method was not included."
+	self createAndAddWarningMethodsForMissing.
+
+	"Add additionally stuff to the image. This is the same for any image."
+	self addMethodDictionariesAndStuff.
+
+	"Creating the start process requires CompiledMethods to be there"
+	self addStartProcess.! !
+
+!ImageBuilder methodsFor: 'image building examples' stamp: 'jmv 4/30/2025 15:25:59'!
+buildExample05SymbolExperiments
+	"
+	Spur64ImageBuilder new
+		buildExample05SymbolExperiments;
+		saveImageTo: 'Example05SymbolExperiments.image' asFileEntry.
+	"
+	"
+	Spur32ImageBuilder new
+		buildExample05SymbolExperiments;
+		saveImageTo: 'Example05SymbolExperiments32.image' asFileEntry.
+	"
+
+	| startUpMethodForeignObject |
+
+	"Any image will include these. They are mandatory."
+	self addFundamentalObjectsAndClasses.
+
+	"Most images will need these."
+	self addBasicMethodsAndReferencedClasses.
+
+	"Set what this image will do when run."
+	self addBasicSymbolSupport.
+	startUpMethod := SystemDictionary>>#bootstrappedExample05SymbolExperiments.
+	startUpMethodForeignObject := self addExistingMethod: startUpMethod.
+	self map: startUpMethod toForeignObject: startUpMethodForeignObject.
+
+	"Create special methods to warn about improper execution of inherited methods when proper method was not included."
+	self createAndAddWarningMethodsForMissing.
+
+	"Add additionally stuff to the image. This is the same for any image."
+	self addMethodDictionariesAndStuff.
+
+	"Creating the start process requires CompiledMethods to be there"
+	self addStartProcess.! !
+
+!ImageBuilder methodsFor: 'image building examples' stamp: 'jmv 5/9/2025 17:07:31'!
+buildExample06LoadDynamicLibrary
+	"
+	Spur64ImageBuilder new
+		buildExample06LoadDynamicLibrary;
+		saveImageTo: 'Example06LoadDynamicLibrary.image' asFileEntry.
+	"
+	"
+	Spur32ImageBuilder new
+		buildExample06LoadDynamicLibrary;
+		saveImageTo: 'Example06LoadDynamicLibrary32.image' asFileEntry.
+	"
+	"
+	Feature require: 'TestDynamicCuisLibraries'.
+	""
+	| sourceForLibrary lib |
+	sourceForLibrary := NoclashABC_DclExample03.
+	lib := DynamicCuisLibrary
+		withClasses: { sourceForLibrary }
+		classSelectors: { sourceForLibrary class selectors }
+		instanceSelectors: { sourceForLibrary selectors }.
+	lib writeOnFile: 'DclExample03.dcl' asFileEntry
+	"
+	| startUpMethodForeignObject |
+
+	"Any image will include these. They are mandatory."
+	self addFundamentalObjectsAndClasses.
+
+	"Most images will need these."
+	self addBasicMethodsAndReferencedClasses.
+
+	"Set what this image will do when run."
+	self addBasicSymbolSupport.
+	self addBasicFileServices.
+	self addBasicCollectionsSupport.
+	self addObjectSerializationSupport.
+	self addExample06LoadDynamicLibraryMethods.
+	startUpMethod := SystemDictionary>>#bootstrappedExample06LoadDynamicLibrary.
+	startUpMethodForeignObject := self addExistingMethod: startUpMethod.
+	self map: startUpMethod toForeignObject: startUpMethodForeignObject.
+
+	"Create special methods to warn about improper execution of inherited methods when proper method was not included."
+	self createAndAddWarningMethodsForMissing.
+
+	"Add additionally stuff to the image. This is the same for any image."
+	self addMethodDictionariesAndStuff.
+
+	"Creating the start process requires CompiledMethods to be there"
+	self addStartProcess.! !
+
+!ImageBuilder methodsFor: 'image building examples' stamp: 'jmv 5/7/2025 16:52:28'!
+buildExample07LoadDynamicLibrary
+	"
+	Spur64ImageBuilder new
+		buildExample07LoadDynamicLibrary;
+		saveImageTo: 'Example07LoadDynamicLibrary.image' asFileEntry.
+	"
+	"
+	Spur32ImageBuilder new
+		buildExample06LoadDynamicLibrary;
+		saveImageTo: 'Example07LoadDynamicLibrary32.image' asFileEntry.
+	"
+
+	| startUpMethodForeignObject |
+
+	"Any image will include these. They are mandatory."
+	self addFundamentalObjectsAndClasses.
+
+	"Most images will need these."
+	self addBasicMethodsAndReferencedClasses.
+
+	"Set what this image will do when run."
+	self addBasicSymbolSupport.
+	self addBasicFileServices.
+	self addExample07LoadDynamicLibraryMethods.
+	startUpMethod := SystemDictionary>>#bootstrappedExample07LoadDynamicLibrary.
+	startUpMethodForeignObject := self addExistingMethod: startUpMethod.
+	self map: startUpMethod toForeignObject: startUpMethodForeignObject.
+
+	"Create special methods to warn about improper execution of inherited methods when proper method was not included."
+	self createAndAddWarningMethodsForMissing.
+
+	"Add additionally stuff to the image. This is the same for any image."
+	self addMethodDictionariesAndStuff.
+
+	"Creating the start process requires CompiledMethods to be there"
+	self addStartProcess.! !
+
+!ImageBuilder methodsFor: 'foreign objects' stamp: 'jmv 5/8/2025 14:51:17'!
+addExistingMethod: aCompiledMethod
+
+	| methodSpec methodForeignObject |
+	self deny: (methods anySatisfy: [ :mthodSpec |
+		(mthodSpec classSpec name = aCompiledMethod methodClass theNonMetaClass name) &
+		(mthodSpec isClassSide = aCompiledMethod methodClass isMeta) &
+		(mthodSpec selector = aCompiledMethod selector) ]).
+	methodSpec := MethodSpec for: aCompiledMethod addClassesTo: classes.	
+	methodForeignObject := self addMethodSpec: methodSpec.
+	methods add: methodSpec.
+	^methodForeignObject! !
+
+!ImageBuilder methodsFor: 'foreign objects' stamp: 'jmv 6/29/2023 16:56:41'!
+addGlobalNamed: aSymbol value: anObject
+	"The key aSymbol is added to the foreignObjectsMap.
+	The value is not, as it should be referenced through the key, or through the association, as a global binding.
+	The association is also not mapped, as any reference to globals is handled via a LiteralVariableSpec,
+	that will query the new globals dictionary when needed.
+
+	Not mapping the global value and the association means there's some risk of someone else mapping them,
+	therefore adding them twice to the new image.
+	We may change this decision as we know better (jmv, May 24, 2023).
+
+	Answer a two element array holding the ForeignObject of the Association(binding)
+		and the ForeignObject of anObject."
+
+	| keyForeignObject valueForeignObject globalBindingAssociation globalBindingAssociationForeignObject |
+	"Add the global name to the list, to the map, and to the 'symbols' ivar."
+	keyForeignObject := self findOrAddLiteral: aSymbol.
+
+	"Don't add global value to the map. Usually, nobody should refer to it directly, only by name/binding."
+	valueForeignObject := self findOrAdd: anObject.
+
+	"Don't add the Association to the map. Access should usually be from CompiledMethods, and the
+	corresponding LiteralVariableSpec will hold the name, and should now khow to get to them,"	
+	globalBindingAssociation := Association key: keyForeignObject value: valueForeignObject.
+	globalBindingAssociationForeignObject := self createForeignObjectFor: globalBindingAssociation.
+	globalVariables add: globalBindingAssociationForeignObject.
+
+	^{ globalBindingAssociationForeignObject. valueForeignObject }! !
+
+!ImageBuilder methodsFor: 'foreign objects' stamp: 'jmv 8/2/2023 09:59:25'!
+addMethodSpec: aMethodSpec
+
+	| methodForeignObject classOrMetaclassForeignObject |
+	self findOrAddLiteral: aMethodSpec selector.
+	methodForeignObject := self createForeignObjectFor: aMethodSpec.
+	classOrMetaclassForeignObject := self findOrAddClassSpec: aMethodSpec classSpec.
+	aMethodSpec isClassSide ifTrue: [
+		classOrMetaclassForeignObject := classOrMetaclassForeignObject metaclassForeignObject ].
+	methodForeignObject methodClassForeignObject: classOrMetaclassForeignObject.
+	classOrMetaclassForeignObject addMethod: methodForeignObject.
+
+	"Aca es donde hay que agregar a la imagen cosas como literales, pragmas, ver qué más."
+	aMethodSpec literals do: [ :each | | lit |
+		lit := each.
+		(lit is: #LiteralVariableSpec)
+			ifTrue: [
+				"If we are to ever be able to resolve this name, the name itself must already
+				be there, as a key in some #classPool or the Smalltalk dictionary!!"
+				"self findOrAddLiteral: lit variableName"]
+			ifFalse: [
+				self findOrAddLiteral: lit]].
+
+	^methodForeignObject! !
+
+!ImageBuilder methodsFor: 'foreign objects' stamp: 'jmv 6/23/2023 17:59:36'!
+addSpecial: anObject hash: identityHash nameOfClassToInstantiate: nameOfClassToInstantiate
+	"For special objects nil true, false"
+
+	| foreignObject foClass |
+	foClass := self foreignObjectClassFor: anObject.
+	foreignObject := self createForeignObjectFor: anObject hash: identityHash class: foClass.
+	foreignObject nameOfClassToInstantiate: nameOfClassToInstantiate.
+	self map: anObject toForeignObject: foreignObject.
+	^foreignObject! !
+
+!ImageBuilder methodsFor: 'foreign objects' stamp: 'jmv 7/12/2023 11:34:06'!
+createForeignObjectFor: anObject
+	"anObject will be included in the new image
+	Create and answer an instance of aForeignObjectClass for it.
+	For objects that are allocated in memory:
+		- Allocate space in the new image for it
+		- Add it to the list of foreign objects we'll use to serialize.
+	For objects that won't be allocated in memory (they are immediate objects,
+	encoded in pointing OOPs, like SmallInteger, etc):
+		- Just create and answer a ForeignObject that can encode object in an OOP when needed."
+
+	| foreignObject foClass possiblyConvertedObject |
+	"We can't convert UnicodeString to String here. We need to have the original object as key in the foreignObjectsMap"
+	self deny: anObject class == UnicodeString.
+	possiblyConvertedObject := anObject.
+	possiblyConvertedObject class == UnicodeSymbol ifTrue: [
+		self assert: possiblyConvertedObject isAscii.
+		self halt.
+		possiblyConvertedObject := Symbol basicFromString: possiblyConvertedObject asString asByteString ].
+	foClass := self foreignObjectClassFor: possiblyConvertedObject.
+	foreignObject := foClass instancesAreForImmediateObjects
+		ifTrue: [ foClass newFor: possiblyConvertedObject ]
+		ifFalse: [ self createForeignObjectFor: possiblyConvertedObject hash: self newObjectHash class: foClass ].
+	^foreignObject! !
+
+!ImageBuilder methodsFor: 'foreign objects' stamp: 'jmv 6/23/2023 15:46:02'!
+createForeignObjectFor: anObject hash: identityHash class: aForeignObjectClass
+	"anObject will be included in the new image
+	Create and answer an instance of aForeignObjectClass for it.
+	For objects that are allocated in memory:
+		- Allocate space in the new image for it
+		- Add it to the list of foreign objects we'll use to serialize.
+	For objects that won't be allocated in memory (they are immediate objects,
+	encoded in pointing OOPs, like SmallInteger, etc):
+		- Just create and answer a ForeignObject that can encode object in an OOP when needed."
+
+	self subclassResponsibility! !
+
+!ImageBuilder methodsFor: 'foreign objects' stamp: 'jmv 6/23/2023 15:37:44'!
+findClassNamed: aSymbol
+	"Answer the foreign object that represents the class that will be named as the argument."
+
+	^foreignObjectsMap at: (classes at: aSymbol)! !
+
+!ImageBuilder methodsFor: 'foreign objects' stamp: 'jmv 6/26/2023 17:16:35'!
+findForeignObjectFor: anObjectToInclude
+	"anObjectToInclude must already be mapped,
+	except for immediates. We can create them on the fly."
+
+	| foClass |
+
+	foreignObjectsMap at: anObjectToInclude ifPresent: [ :found | ^found ].
+
+	foClass := self foreignObjectClassFor: anObjectToInclude.
+	foClass instancesAreForImmediateObjects
+		ifTrue: [ ^foClass newFor: anObjectToInclude ].
+
+	^self error: 'Object not allocated (No ForeignObject found for it)'.! !
+
+!ImageBuilder methodsFor: 'foreign objects' stamp: 'jmv 7/6/2023 09:45:10'!
+findGlobalBindingNamed: aSymbol
+	"Answer the foreign object for the Association that holds global named as the argument.
+	Answer nil if no such global"
+
+	^smalltalkForeignObject representedObject "a SystemDictionary for the new image"
+		array representedObject  								"its #array"
+			detect: [ :associationForeignObject |
+				associationForeignObject notNil and: [
+					associationForeignObject representedObject key representedObject
+						= aSymbol ] ]
+			ifNone: nil! !
+
+!ImageBuilder methodsFor: 'foreign objects' stamp: 'jmv 6/23/2023 15:50:24'!
+findOrAdd: anObjectToInclude
+	"anObjectToInclude will be included in the new image.
+	Create and add a ForeignObject if needed.
+	Add it to the foreignObjectsMap, so we use the same instance next time anObjectToInclude shows up."
+	| fo |
+"Para la serializacion. Ir validando lo que vaya apareciendo...
+Por ejemplo, las refs a globales deberian entrar por nombre. Si aca empezamos a meter lo que aparezca, podriamos, por ejemplo, duplicar Display, Sensor, Processor, Smalltalk."
+	^foreignObjectsMap at: anObjectToInclude ifAbsent: [
+		fo := self createForeignObjectFor: anObjectToInclude.
+		self map: anObjectToInclude toForeignObject: fo.
+		fo ]! !
+
+!ImageBuilder methodsFor: 'foreign objects' stamp: 'jmv 6/26/2023 15:39:49'!
+findOrAddClassSpec: classSpec
+	"Ensure argument is added, but don't add it twice"
+
+	| classForeignObject |
+	foreignObjectsMap at: classSpec ifPresent: [ :clsFO |
+		^clsFO ].
+	classForeignObject := self addClassAndMetaclassSpec: classSpec classIndexOrNil: nil.
+	self map: classSpec toForeignObject: classForeignObject.
+	^classForeignObject.! !
+
+!ImageBuilder methodsFor: 'foreign objects' stamp: 'jmv 6/29/2023 17:04:36'!
+findOrAddLiteral: aLiteral
+	"aLiteral can be a String or Symbol. Also an Array of them.
+	Additionally, aLiteral may be any object that answers true to #isLiteral
+	This restriction could be lifted. It is in place so we control and understand what we are adding!!
+	"
+	"We could consider searching foreignObjectsMap for any object equal to aLiteral.
+	That would avoid, for example, may instances of the empty String, or things like that."
+	"Ensure argument is added, but don't add it twice.
+	
+	Add argument to the list.
+	Also add it to map.
+	Also add it to the 'symbols' instance variable. Wel'll use this to create a Symbol Table in the new image.
+	(This should be quite similar to how we build the new Smalltalk SystemDictionary for the new image.)"
+
+
+	| newForeignObject |
+	self assert: aLiteral isLiteral.
+	
+	foreignObjectsMap at: aLiteral ifPresent: [ :foreignObject |
+		^foreignObject ].
+
+	newForeignObject := self createForeignObjectFor: aLiteral.
+	newForeignObject class instancesAreForImmediateObjects ifTrue: [
+		^ newForeignObject ].
+
+	self map: aLiteral toForeignObject: newForeignObject.
+
+	aLiteral isSymbol ifTrue: [
+		symbols add: newForeignObject ].
+	
+	newForeignObject referencedObjectsDo: [ :each |
+		self findOrAddLiteral: each ].
+
+	^newForeignObject! !
+
+!ImageBuilder methodsFor: 'foreign objects' stamp: 'jmv 6/23/2023 17:03:49'!
+foreignObjectClassFor: anObject
+	"Answer the correct ForeignObject subclass to represent anObject.
+	Redefined in subclasses for some specific cases."
+
+	^ForeignObject subclassFor: anObject.! !
+
+!ImageBuilder methodsFor: 'foreign objects' stamp: 'jmv 6/23/2023 15:50:18'!
+map: localObject toForeignObject: foreignObject
+	"Any reference to localObject will be converted to a reference to the object to be materialized by foreignObject."
+
+	(foreignObjectsMap includesKey: localObject) ifTrue: [
+		self error: 'Object to map to ForeignObjects added twice!!' ].
+	foreignObjectsMap at: localObject put: foreignObject! !
+
+!ImageBuilder methodsFor: 'globals' stamp: 'jmv 7/14/2023 10:53:26'!
+addDisplay
+	"This assumes the shape of DisplayScreen and included ivars will not change..."
+
+	| display foreignObjectsForBindingAndValue bitmap bitmapFO |
+	display := DisplayScreen basicNew.
+	display setExtent: 8@8 depth: 32.
+	foreignObjectsForBindingAndValue := self addGlobalNamed: #Display value: display.
+	displayForeignObject := foreignObjectsForBindingAndValue second.
+	
+	bitmap := display bits.
+	bitmapFO := self createForeignObjectFor: bitmap.
+	self map: bitmap toForeignObject: bitmapFO.! !
+
+!ImageBuilder methodsFor: 'globals' stamp: 'jmv 9/18/2023 15:38:49'!
+addProcessor
+	"This assumes the shape of ProcessorScheduler, Process, and included ivars will not change...
+	When bootstrapping from files, or from a separate hierarchy,
+		see MicroSqueak - MicroSqueakImageBuilder >> #buildScheduler"
+
+	| processor foreignObjectsForBindingAndValue |
+	processor := ProcessorScheduler basicNew.
+	foreignObjectsForBindingAndValue := self addGlobalNamed: #Processor value: processor.
+	processorBindingForeignObject := foreignObjectsForBindingAndValue first.! !
+
+!ImageBuilder methodsFor: 'globals' stamp: 'jmv 5/23/2023 14:47:59'!
+addSensor
+	"The actual instance will be created on startup.
+	See EventSensor class >> #install
+	Here we add the global, so the association is ready for that method to actually assign to the global."
+
+	self addGlobalNamed: #Sensor value: nil.! !
+
+!ImageBuilder methodsFor: 'globals' stamp: 'jmv 6/1/2023 15:03:14'!
+addSmalltalk
+	"This assumes the shape of SystemDictionary will not change..."
+
+	| smalltalkObject foreignObjectsForBindingAndValue |
+	smalltalkObject := SystemDictionary basicNew.
+	foreignObjectsForBindingAndValue := self addGlobalNamed: #Smalltalk value: smalltalkObject.
+	smalltalkForeignObject := foreignObjectsForBindingAndValue second.! !
+
+!ImageBuilder methodsFor: 'globals' stamp: 'jmv 9/15/2023 11:06:26'!
+addStartProcess
+	"This assumes the shape of ProcessorScheduler, Process, and included ivars will not change...
+	When bootstrapping from files, or from a separate hierarchy,
+		see MicroSqueak - MicroSqueakImageBuilder >> #buildScheduler"
+
+	| methodContext startProcess processor emptyArray |
+	emptyArray := #().
+	methodContext := MethodContext
+		sender: nil
+		receiver: smalltalkForeignObject
+		method: startUpMethod
+		arguments: emptyArray.
+
+	"Set program counter. Quire like doing:
+	methodContext pc: startUpMethod initialPC,
+	(as already done during MethodContext creation above)
+	but we need do it for the target image word size, not the running image word size!!"
+	methodContext pc: (startUpMethod numLiterals + 1) * self wordSize + 1.
+
+	startProcess := Process
+		forContext: (self createForeignObjectFor: methodContext)
+		priority: 40.
+	startProcess name: 'Startup'.
+	self map: emptyArray toForeignObject: (self createForeignObjectFor: emptyArray).
+	self findOrAdd: startProcess name.
+	
+	processor := processorBindingForeignObject representedObject value representedObject.
+	processor
+		instVarNamed: 'quiescentProcessLists'
+		put: (self createForeignObjectFor: ((1 to: 80) collect: [ :i | self createForeignObjectFor: LinkedList new ])).
+	processor
+		instVarNamed: 'activeProcess'
+		put: (self createForeignObjectFor: startProcess).! !
+
+!ImageBuilder methodsFor: 'globals' stamp: 'jmv 9/18/2023 15:44:08'!
+addUndeclared
+	"This assumes the shape of Dictionary will not change..."
+
+	| undeclaredDictionary dictArray dictArrayForeignObject |
+	undeclaredDictionary := Dictionary new.
+	"Now replace the array inside with a ForeignObject for it"
+	dictArray := undeclaredDictionary array.
+	dictArrayForeignObject := self createForeignObjectFor: dictArray.
+	undeclaredDictionary instVarNamed: 'array' put: dictArrayForeignObject.
+	self addGlobalNamed: #Undeclared value: undeclaredDictionary.! !
+
+!ImageBuilder methodsFor: 'smalltalk dictionary' stamp: 'jmv 6/26/2023 18:01:46'!
+fillSmalltalkDictionary
+	"Create thre contents of the Smalltalk SystemDictionary for the new image.
+	Do it here, by 'remote control'. Assumes the structure of SystemDictionary is same as in this image,
+	reflected in this code."
+
+	| smalltalkObject smalltalkSize smalltalkArray smalltalkArrayForeignObject keyForeignObject classForeignObject |
+
+	"Fetch the newly created, empty Smalltalk remote object."
+	smalltalkObject := smalltalkForeignObject representedObject.
+	self assert: smalltalkObject == (globalVariables detect: [ :assocFO |
+		assocFO representedObject key representedObject == #Smalltalk ])
+			representedObject value representedObject.
+
+	"Create large enough."
+	smalltalkSize := classes size + globalVariables size.
+	smalltalkArray := Array new: smalltalkSize * 2.
+
+	"Fill the 'array' ivar, using the identityHash from the foreignObjects of the keys, as they will be
+	assigned to them on image serialization. Do it both for classes and other globals."
+	classes do: [ :classSpec |
+		keyForeignObject := foreignObjectsMap at: classSpec name.
+		classForeignObject := foreignObjectsMap at: classSpec.
+		self systemDictionaryArray: smalltalkArray at: keyForeignObject put: classForeignObject  ].
+	globalVariables do: [ :assocForeignObject |
+		self systemDictionaryArray: smalltalkArray add: assocForeignObject  ].
+
+	"Done. Give them to it."
+	smalltalkObject instVarNamed: 'tally' put: smalltalkSize.
+	smalltalkArrayForeignObject := self createForeignObjectFor: smalltalkArray.
+	smalltalkObject instVarNamed: 'array' put: smalltalkArrayForeignObject.! !
+
+!ImageBuilder methodsFor: 'smalltalk dictionary' stamp: 'jmv 5/24/2023 09:44:06'!
+systemDictionaryArray: array add: anAssociationForeignObject
+	"Essentially copied from Dictionary >> #add:
+	Assumes SystemDictionary will be pretty much the same in the generated image.
+	Raise an error if same key added twice: this is specific for adding globals to a new image,
+	and we'd better know what we are doing."
+
+	| keyForeignObject index |
+	keyForeignObject := anAssociationForeignObject representedObject key.
+	index := self systemDictionaryArray: array scanFor: keyForeignObject.
+	(array at: index) ifNotNil: [ self error: 'Duplicated global!!' ].
+	array at: index put: anAssociationForeignObject.! !
+
+!ImageBuilder methodsFor: 'smalltalk dictionary' stamp: 'jmv 6/23/2023 15:15:45'!
+systemDictionaryArray: array at: keyForeignObject put: classForeignObject
+	"Essentially copied from Dictionary >> #at:put:
+	Assumes SystemDictionary will be pretty much the same in the generated image.
+	Raise an error if same key added twice: this is specific for adding globals to a new image,
+	and we'd better know what we are doing."
+
+	| index globalBindingAssociation globalBindingAssociationForeignObject |
+	index := self systemDictionaryArray: array scanFor: keyForeignObject.
+	(array at: index) ifNotNil: [ self error: 'Duplicated global!!' ].
+	globalBindingAssociation := Association key: keyForeignObject value: classForeignObject.
+	globalBindingAssociationForeignObject := self createForeignObjectFor: globalBindingAssociation.
+	array at: index put: globalBindingAssociationForeignObject.! !
+
+!ImageBuilder methodsFor: 'smalltalk dictionary' stamp: 'jmv 7/6/2023 13:10:36'!
+systemDictionaryArray: array scanFor: keyForeignObject
+	"Essentially copied from IdentityDictionary >> #scanFor:
+	Assumes SystemDictionary will be pretty much the same in the generated image."
+
+	| finish scale start element |
+	finish := array size.
+	scale := finish // (self maxIdentityHash + 1).
+	scale = 0 ifTrue: [scale := 1].
+	start := (keyForeignObject foreignIdentityHashFor: self) * scale \\ finish + 1.
+
+	"Search from (hash mod size) to the end."
+	start to: finish do: [ :index |
+		((element := array at: index) == nil or: [element representedObject key == keyForeignObject])
+			ifTrue: [^ index ]].
+
+	"Search from 1 to where we started."
+	1 to: start-1 do: [ :index |
+		((element := array at: index) == nil or: [element representedObject key == keyForeignObject])
+			ifTrue: [^ index ]].
+
+	self error: 'There is no free space in the newly created Smalltalk dictionary!!'.! !
+
+!ImageBuilder methodsFor: 'services' stamp: 'jmv 5/15/2023 12:10:14'!
+newObjectHash
+	^self subclassResponsibility! !
+
+!ImageBuilder methodsFor: 'services' stamp: 'jmv 8/17/2023 15:42:14'!
+on: aStream nexWordPut: aNumber
+	"Write #wordSize bytes. Use 'isBigEndian' endianess."
+	self subclassResponsibility! !
+
+!ImageBuilder methodsFor: 'services' stamp: 'jmv 8/17/2023 15:53:45'!
+on: aStream nextUint16Put: aNumber
+	"Write 2 bytes. Use 'isBigEndian' endianess."
+
+	aStream nextUint16Put: aNumber bigEndian: isBigEndian.! !
+
+!ImageBuilder methodsFor: 'services' stamp: 'jmv 8/17/2023 15:53:51'!
+on: aStream nextUint32Put: aNumber
+	"Write 4 bytes. Use 'isBigEndian' endianess."
+
+	aStream nextUint32Put: aNumber bigEndian: isBigEndian.! !
+
+!ImageBuilder methodsFor: 'services' stamp: 'jmv 8/17/2023 15:53:57'!
+on: aStream nextUint64Put: aNumber
+	"Write 8 bytes. Use 'isBigEndian' endianess."
+
+	aStream nextUint64Put: aNumber bigEndian: isBigEndian.! !
+
+!ImageBuilder methodsFor: 'format constants' stamp: 'jmv 5/10/2023 12:04:59'!
+imageFormat
+	"Answer the number that identifies this image format"
+	self subclassResponsibility ! !
+
+!ImageBuilder methodsFor: 'format constants' stamp: 'jmv 5/10/2023 12:24:06'!
+imageHeaderSize
+	"In Bytes"
+	self subclassResponsibility ! !
+
+!ImageBuilder methodsFor: 'format constants' stamp: 'jmv 5/23/2023 16:29:37'!
+maxIdentityHash
+	"Answer the maximum identityHash value supported by the VM."
+
+	self subclassResponsibility ! !
+
+!ImageBuilder methodsFor: 'format constants' stamp: 'jmv 5/10/2023 12:26:29'!
+wordSize
+	"Also size of an oop.
+	In Bytes"
+	self subclassResponsibility ! !
+
+!ImageBuilder methodsFor: 'image file saving' stamp: 'jmv 4/18/2024 14:45:42'!
+writeImageFileHeaderOn: aStream byteSize: imageByteSizeIncludingHeader
+	"Write an appropriate image file header.
+	Intended to be called after saving the heap to the file, and setting #position: to zero."
+
+	self subclassResponsibility! !
+
+!SpurImageBuilder methodsFor: 'initialization' stamp: 'jmv 5/15/2023 16:25:30'!
+initialize
+	super initialize.
+	lastHash := 1.
+	lastClassIndex := 1023. "First regular class will have index 1024, and will be stored in the second page of the class table."! !
+
+!SpurImageBuilder methodsFor: 'image building' stamp: 'jmv 7/17/2023 12:36:45'!
+addSpurHiddenObjectsIfRequired
+
+	"Create and add a SpurFreeListsForeignObject, to properly allocate the FreeLists object needed in Spur images."
+	self addFreeLists.
+
+	"Class Table and Hidden Roots. First page of the Class Table."
+	self addClassTable.! !
+
+!SpurImageBuilder methodsFor: 'image building' stamp: 'jmv 4/18/2024 14:26:12'!
+addVmKnownClasses
+	"Some classes are known by the VM.
+	- They have specific classIndex and identityHash
+	- They are stored in the first page of the class table
+	Add ForeignObjects both for class and metaclass to the list.
+	But only add the one for the class to the foreignObjects dictionary, because they share the spec."
+	"This first implementation uses the fact that these classes already exist in the image we are running.
+	It would be better to build them from scratch, using alternative class protocol in ClassSpec,
+	most likely by compiling a source code file."
+
+	"Note: SmallFloat64 will never be instantiated in Spur32!!"
+
+	| vmKnownClassNames |
+	vmKnownClassNames := #(
+		#(#SmallInteger 1)
+		#(#Character 2)
+		#(#SmallFloat64 4)
+		#(#LargeNegativeInteger 32)
+		#(#LargePositiveInteger 33)
+		#(#BoxedFloat64 34)
+		#(#Message 35)
+		#(#MethodContext 36)
+		#(#BlockClosure 37)
+		#(#Semaphore 48)
+		#(#ByteArray 50)
+		#(#Array 51)
+		#(#String 52)
+		#(#Point 54)
+	).
+	self includeDisplayAndSensor ifTrue: [
+		vmKnownClassNames := vmKnownClassNames, #(#(#Bitmap 53)) ].
+	vmKnownClassNames do: [ :pair | | className specialHash classSpec classForeignObject |
+		className := pair first.
+		specialHash := pair second.
+		classSpec := ClassSpec for: (Smalltalk at: className) addClassesTo: classes.
+		classForeignObject := self addClassAndMetaclassSpec: classSpec classIndexOrNil: specialHash.
+		self map: classSpec toForeignObject: classForeignObject ].! !
+
+!SpurImageBuilder methodsFor: 'image building' stamp: 'jmv 4/18/2024 14:57:25'!
+fillSpecialObjectsArray
+	"Create a SpecialObjectsArray for our new image. See #recreateSpecialObjectsArray.
+	Add a ForeignObject for it to our foreign object list and dicitonary.
+	Assume the required classes where already added, and their specs are available at ivar 'classes'
+	If we were to do a full bootstrap from sources, it is worh considering that the new image will most likely
+	have a #recreateSpecialObjectsArray or similar method.
+	It would be good to find a way to guarantee that the contents of this array in the bootstrapped image is consistent with it."
+"This is done right now for Spur. V3 needs tweaks, for instance:
+25: Character table
+29: compactClassesArray.
+32, 33, 34. Check in V3. Are the instance prototypes still needed in V3?
+36 ?
+56?"
+	"See MicroSqueak - MicroSqueakImageBuilder >> #buildSpecialObjectsArray
+	Many entries can be made nil if uninteresting, at least for older VMs."
+
+"Ya mismo. nil, false, true, clases, symbols, arrays de ellos"
+	| specialObjectsArray specialSelectors primitiveErrors |
+	specialObjectsArray := specialObjectsArrayForeignObject representedObject.
+	"Nil false and true get used throughout the interpreter"
+	specialObjectsArray at: 1 put: nil.
+	specialObjectsArray at: 2 put: false.
+	specialObjectsArray at: 3 put: true.
+	"This association holds the active process (a ProcessScheduler)"
+	"Foreign object for the Association in the new Globals dictionary holding Processor"
+	specialObjectsArray at: 4 put: processorBindingForeignObject.
+	self assert: processorBindingForeignObject == (globalVariables detect: [ :assocFO |
+		assocFO representedObject key representedObject == #Processor ]).
+	"Numerous classes below used for type checking and instantiation"
+	self includeDisplayAndSensor ifTrue: [
+		specialObjectsArray at: 5 put: (classes at: #Bitmap) ].
+	specialObjectsArray at: 6 put: (classes at: #SmallInteger).
+	specialObjectsArray at: 7 put: (classes at: #String).
+	specialObjectsArray at: 8 put: (classes at: #Array).
+	"ForeignObjct for the new Smalltalk global dictionary."
+	specialObjectsArray at: 9 put: smalltalkForeignObject.
+	self assert: smalltalkForeignObject == ((globalVariables detect: [ :assocFO |
+		assocFO representedObject key representedObject == #Smalltalk ]) representedObject value).
+	specialObjectsArray at: 10 put: (classes at: #BoxedFloat64).
+	specialObjectsArray at: 11 put: (classes at: #MethodContext).
+	specialObjectsArray at: 12 put: nil. "was BlockContext."
+	specialObjectsArray at: 13 put: (classes at: #Point).
+	specialObjectsArray at: 14 put: (classes at: #LargePositiveInteger).
+	"ForeignObjct for the new Display global Displaycreen."
+	displayForeignObject ifNotNil: [
+		specialObjectsArray at: 15 put: displayForeignObject.
+		self assert: displayForeignObject == ((globalVariables detect: [ :assocFO |
+			assocFO representedObject key representedObject == #Display ]) representedObject value) ].
+	specialObjectsArray at: 16 put: (classes at: #Message).
+	specialObjectsArray at: 17 put: (classes at: #CompiledMethod).
+	specialObjectsArray at: 18 put: (self createForeignObjectFor: Semaphore new). "low space Semaphore"
+	specialObjectsArray at: 19 put: (classes at: #Semaphore).
+	specialObjectsArray at: 20 put: (classes at: #Character).
+	specialObjectsArray at: 21 put: (self findOrAddLiteral: #doesNotUnderstand:).
+	specialObjectsArray at: 22 put: (self findOrAddLiteral: #cannotReturn:).
+	specialObjectsArray at: 23 put: nil. "This is the process signalling low space."
+	"An array of the 32 selectors that are compiled as special bytecodes,
+	 paired alternately with the number of arguments each takes."
+	specialSelectors := #(	#+ 1 #- 1 #< 1 #> 1 #<= 1 #>= 1 #= 1 #~= 1
+							#* 1 #/ 1 #\\ 1 #@ 1 #bitShift: 1 #// 1 #bitAnd: 1 #bitOr: 1
+							#at: 1 #at:put: 2 #size 0 #next 0 #nextPut: 1 #atEnd 0 #== 1 #class 0
+							#blockCopyNOWUNUSED: 1 #value 0 #value: 1 #do: 1 #new 0 #new: 1 #x 0 #y 0 ).
+	specialObjectsArray at: 24 put: (self findOrAddLiteral: specialSelectors).
+	specialObjectsArray at: 25 put: nil. "was Character table"
+	specialObjectsArray at: 26 put: (self findOrAddLiteral: #mustBeBoolean).
+	specialObjectsArray at: 27 put: (classes at: #ByteArray).
+	specialObjectsArray at: 28 put: (classes at: #Process).
+	"An array of up to 31 classes whose instances will have compact headers; an empty array in Spur"
+	specialObjectsArray at: 29 put: nil.  "was compactClassesArray."
+	specialObjectsArray at: 30 put: (self createForeignObjectFor: Semaphore new). "delay Semaphore"
+	specialObjectsArray at: 31 put: (self createForeignObjectFor: Semaphore new). "user interrupt Semaphore"
+	specialObjectsArray at: 32 put: nil. "was the prototype Float"
+	specialObjectsArray at: 33 put: nil. "was the prototype 4-byte LargePositiveInteger"
+	specialObjectsArray at: 34 put: nil. "was the prototype Point"
+	specialObjectsArray at: 35 put: (self findOrAddLiteral: #cannotInterpret:).
+	specialObjectsArray at: 36 put: nil. "was the prototype MethodContext"
+	specialObjectsArray at: 37 put: (classes at: #BlockClosure).
+	specialObjectsArray at: 38 put: nil. "was the prototype BlockContext"
+
+	"array of objects referred to by external code"
+	specialObjectsArray at: 39 put: (self createForeignObjectFor:(Array new: 20)).
+	specialObjectsArray at: 40 put: nil. "Reserved for Mutex in Cog VMs"
+	specialObjectsArray at: 41 put: (self createForeignObjectFor: LinkedList new). "Reserved for a LinkedList instance for overlapped calls in CogMT"
+	specialObjectsArray at: 42 put: (self createForeignObjectFor: Semaphore new). "finalization Semaphore"
+	specialObjectsArray at: 43 put: (classes at: #LargeNegativeInteger).
+	"External objects for callout."
+	specialObjectsArray at: 44 put: nil.
+	specialObjectsArray at: 45 put: nil.
+	specialObjectsArray at: 46 put: nil.
+	specialObjectsArray at: 47 put: nil.
+	specialObjectsArray at: 48 put: nil.
+	specialObjectsArray at: 49 put: (self findOrAddLiteral: #aboutToReturn:through:).
+	specialObjectsArray at: 50 put: (self findOrAddLiteral: #run:with:in:).
+	"51 reserved for immutability message"
+	specialObjectsArray at: 51 put: (self findOrAddLiteral: #attemptToAssign:withIndex:).
+	primitiveErrors := #(nil "nil => generic error" #'bad receiver'
+							#'bad argument' #'bad index'
+							#'bad number of arguments'
+							#'inappropriate operation'  #'unsupported operation'
+							#'no modification' #'insufficient object memory'
+							#'insufficient C memory' #'not found' #'bad method'
+							#'internal error in named primitive machinery'
+							#'object may move' #'resource limit exceeded'
+							#'object is pinned' #'primitive write beyond end of object').
+	specialObjectsArray at: 52 put: (self findOrAddLiteral: primitiveErrors).
+	"53 to 55 are for Alien"
+	specialObjectsArray at: 53 put: nil.
+	specialObjectsArray at: 54 put: (self findOrAddLiteral: #invokeCallbackContext:). "use invokeCallback:stack:registers:jmpbuf: for old Alien callbacks."
+	specialObjectsArray at: 55 put: nil.
+
+	"Weak reference finalization"
+	specialObjectsArray at: 56 put: nil.
+
+	"reserved for foreign callback process"
+	specialObjectsArray at: 57 put: nil.
+
+	specialObjectsArray at: 58 put: (self findOrAddLiteral: #unusedBytecode).
+	"59 reserved for Sista counter tripped message"
+	specialObjectsArray at: 59 put: (self findOrAddLiteral: #conditionalBranchCounterTrippedOn:).
+	"60 reserved for Sista class trap message"
+	specialObjectsArray at: 60 put: (self findOrAddLiteral: #classTrapFor:).! !
+
+!SpurImageBuilder methodsFor: 'foreign objects' stamp: 'jmv 8/14/2023 16:37:15'!
+addClassAndMetaclassSpec: aClassSpec classIndexOrNil: classIndexOrNil
+	"Add ForeignObjects both for class and metaclass to the list.
+	But only add the one for the class to the foreignObjects dictionary, because they share the spec.
+	classIndexOrNil if specified is used for the class."
+
+	| classForeignObject metaclassForeignObject |
+	classForeignObject := self addClassFor: aClassSpec classIndexOrNil: classIndexOrNil.
+	metaclassForeignObject := self addMetaclassFor: aClassSpec.
+	classForeignObject metaclassForeignObject: metaclassForeignObject.
+	metaclassForeignObject thisClassForeignObject: classForeignObject.
+"MethodDictionaries will only be added after adding all methods, as they need to be created large enough,
+meaning we don't yet know the size they will have, and the memory space they will use.
+Perhaps create the object but don't add it to the list yet... Or devise some way to hold the method specs and fo until we start serializing.
+WARNING: this means once we start serializing we can no longer add methods.
+The #addMethod: or whatever protocol must check that we haven't given oop and size to the method dict fo, or else..."
+	"
+	classForeignObject methodDictForeignObject: self addForeignObjectForMethodDictionary.
+	metaclassForeignObject methodDictForeignObject: self addForeignObjectForMethodDictionary.
+	"
+	^classForeignObject
+! !
+
+!SpurImageBuilder methodsFor: 'foreign objects' stamp: 'jmv 8/14/2023 16:37:20'!
+addClassFor: aClassSpec classIndexOrNil: classIndexOrNil
+
+	| classForeignObject classPool classPoolForeignObject classPoolArray classPoolArrayForeignObject |
+	classForeignObject := self addClassSpec: aClassSpec class: ClassForeignObject classIndexOrNil: classIndexOrNil.
+	classForeignObject nameForeignObject: (self findOrAddLiteral: aClassSpec name).
+	classForeignObject instanceVariablesForeignObject: (self findOrAddLiteral: aClassSpec instVarNames).
+
+	"This assumes quite a few things about Dictionary in the image we're about to create.
+	Including that the #hash answered by Symbols should equal that of the mother image.
+	We did better for IdentityDictionary, and in particular for the Smalltalk SystemDictionary.
+	See #foreignIdentityHash.
+	Consider doing something similar same for all Dictionaries...
+		but how can we now what #hash will do in the new image?
+	Other similar assumptions in #addSmalltalk #addMethodDictionaryFor: etc...
+	For instance CompiledMethodForeignObject implements #identityHash,
+	for the benefit of #addMethodDictionaryFor:"
+	classPool := Dictionary new.
+	aClassSpec classVarNames do: [ :cVarName |
+		self findOrAddLiteral: cVarName.
+		"Should we use ReadOnlyVariableBinding ? What's the point?"
+		classPool at: cVarName put: nil ].
+	"Create a ForeignObject for the class pool dictionary"
+	classPoolForeignObject := self createForeignObjectFor: classPool.
+	"Now replace the array inside with a ForeignObject for it"
+	classPoolArray := classPool array.
+	classPoolArrayForeignObject := self createForeignObjectFor: classPoolArray.
+	classPool instVarNamed: 'array' put: classPoolArrayForeignObject.
+	"Replace all associations with ForeignObjects too"
+	classPoolArray withIndexDo: [ :association :index |
+		association notNil ifTrue: [
+			classPoolArray at: index put: (self createForeignObjectFor: association) ]].
+	"Now give it to the class foreign object"
+	classForeignObject classPoolForeignObject: classPoolForeignObject.
+
+	"ClassSpec holds 'poolDictionaryNames', but it is currently unused. implement!!"
+	classForeignObject sharedPoolsForeignObject: (self findForeignObjectFor: nil).
+
+	^classForeignObject! !
+
+!SpurImageBuilder methodsFor: 'foreign objects' stamp: 'jmv 8/14/2023 16:37:10'!
+addClassSpec: aClassSpec class: aForeignObjectClass classIndexOrNil: classIndexOrNil
+	"Both for class and metaclass:
+		aForeignObjectClass may be ClassForeignObject or MetaclassForeignObject"
+
+	| hashAndClassIndex behaviorForeignObject rootsIdx pageIdx pageForeignObject page |
+	hashAndClassIndex := classIndexOrNil ifNil: [self newClassIndex].
+	rootsIdx := (hashAndClassIndex >> 10) + 1.
+	pageIdx := (hashAndClassIndex bitAnd: (1 << 10 - 1)) + 1.
+	pageForeignObject := classTableRoots at: rootsIdx.
+	pageForeignObject isNil ifTrue: [
+		pageForeignObject := self createForeignObjectFor: (Array new: 1024) hash: 0 class: SpurPseudoArrayForeignObject.
+		classTableRoots at: rootsIdx put: pageForeignObject ].
+	page := pageForeignObject representedObject.
+	self assert: (page at: pageIdx) == nil.
+	behaviorForeignObject := self createForeignObjectFor: aClassSpec hash: hashAndClassIndex class: aForeignObjectClass.
+	page at: pageIdx put: behaviorForeignObject.
+	^behaviorForeignObject! !
+
+!SpurImageBuilder methodsFor: 'foreign objects' stamp: 'jmv 4/28/2025 10:25:28'!
+addClassTable
+	"Add the ForeignObjects for:
+		ClassTable+HiddenRoots
+		FirstPateOfClassTable.
+	See class comment at VMMaker SpurMemoryManager wrt 'hiddenRootsObj'. Also see #classTableRootSlots + #hiddenRootSlots."
+	
+	"Spur uses a maximum of 2ˆ12=4096 pages of 2ˆ10=1024 classes each.
+	The classTablePages array and the first page array are always present.
+	The rest of the pages are created on demand.
+	Class index (that equals class identityHash) are usually small numbers, and few pages are actually needed."
+	
+	"These don't really need to be added to the foreignObjects dictionary,
+	but doing it doesn't hurt, and lets us use #addForeignObjectFor: instead of adding extra code."
+
+	| firstPageOfClassTable |
+	classTableRoots := Array new: (2 raisedTo: 12) + 8 "#classTableRootSlots + #hiddenRootSlots".
+	self createForeignObjectFor: classTableRoots hash: 0 class: SpurPseudoArrayForeignObject.
+	"Spur reserves the first class index page immediately after the hiddenRoots, for #addForeignObjectsForVmKnownClasses"
+	firstPageOfClassTable := Array new: 1024.
+	classTableRoots at: 1 put: (self createForeignObjectFor: firstPageOfClassTable hash: 0 class: SpurPseudoArrayForeignObject).
+	"Add the second page too. Any other classes other than #addForeignObjectsForVmKnownClasses start here."
+	firstPageOfClassTable := Array new: 1024.
+	classTableRoots at: 2 put: (self createForeignObjectFor: firstPageOfClassTable hash: 0 class: SpurPseudoArrayForeignObject).! !
+
+!SpurImageBuilder methodsFor: 'foreign objects' stamp: 'jmv 5/20/2023 10:23:43'!
+addFreeLists
+	self subclassResponsibility! !
+
+!SpurImageBuilder methodsFor: 'foreign objects' stamp: 'jmv 8/14/2023 16:45:49'!
+addMetaclassFor: aClassSpec
+
+	| metaclassForeignObject |
+	metaclassForeignObject := self addClassSpec: aClassSpec class: MetaclassForeignObject classIndexOrNil: nil.
+	metaclassForeignObject instanceVariablesForeignObject: (self findOrAddLiteral: aClassSpec classInstVarNames).
+	^metaclassForeignObject! !
+
+!SpurImageBuilder methodsFor: 'foreign objects' stamp: 'jmv 2/6/2024 10:14:02'!
+addMethodDictionaryFor: aClassOrMetaclassForeignObject
+	"Create a ForeignObject for a new MethodDictionary to be created.
+	Also create required ForeignObjects for its parts, i.e. the 'array' instance variable.
+	Don't add the objects created to the foreignObjects dictionary, as nobody else should reference them!!"
+
+	| methodForeignObjects methodDictionaryForeignObject methodDictionaryToAdd methodArrayForeignObject |
+	methodForeignObjects := aClassOrMetaclassForeignObject methodForeignObjects.
+
+	"This assumes that the representation of MethodDictionaries will be the same as in the image we are running in.
+	Also, ForeignObjects for selectors must answer the same #identityHash as the to-be-created Symbol.
+	So we can simply use a MethodDictionary.
+	These assumptions may change in the future, and a more sophisticated strategy to build MethodDictionaries may be needed.
+	This should actually take into account the source code from which the MethodDictionary class will be created..."
+	methodDictionaryToAdd := MethodDictionary newWithRoomForMoreThan: methodForeignObjects size.
+	methodForeignObjects do: [ :each |
+		methodDictionaryToAdd
+			at: (self findForeignObjectFor: each representedObject selector)
+			put: each ].
+
+	"Give it to the argument Class or Metaclass."
+	methodDictionaryForeignObject := self createForeignObjectFor: methodDictionaryToAdd.
+	aClassOrMetaclassForeignObject methodDictForeignObject: methodDictionaryForeignObject.
+
+	"The only additional ForeignObject is for the 'array' instance variable."	
+	methodArrayForeignObject := self createForeignObjectFor: methodDictionaryToAdd methodArray.
+	methodDictionaryToAdd instVarNamed: 'array' put: methodArrayForeignObject.
+
+	^methodDictionaryForeignObject.! !
+
+!SpurImageBuilder methodsFor: 'foreign objects' stamp: 'jmv 8/17/2023 16:56:47'!
+createForeignObjectFor: anObject hash: identityHash class: aForeignObjectClass
+	"anObject will be included in the new image
+	Create and answer an instance of aForeignObjectClass for it.
+	For objects that are allocated in memory:
+		- Allocate space in the new image for it
+		- Add it to the list of foreign objects we'll use to serialize.
+	For objects that won't be allocated in memory (they are immediate objects,
+	encoded in pointing OOPs, like SmallInteger, etc):
+		- Just create and answer a ForeignObject that can encode object in an OOP when needed."
+
+	| fo byteCount |
+	aForeignObjectClass instancesAreForImmediateObjects ifTrue: [
+		self halt.
+		].
+
+	fo := aForeignObjectClass
+		newFor: anObject
+		oop: nextFreeAddressOfImage
+		identityHash: identityHash.
+	"If size > 254, header needs an extra word, and oop is pushed to point past it, to the basic header word"
+	(self sizeFieldFor: fo) > 254 ifTrue: [
+		fo foreignOop: nextFreeAddressOfImage + 8 ].
+
+	"Size in memory. Some objects have specific slot width (like ByteArray).
+	Others use the word size, like objects with instance variables and Arrays."
+	byteCount := (self sizeInBytesOfHeader: fo) + (self sizeInBytesOfBody: fo).
+
+"{'ForeignObject list node'. fo class. byteCount. anObject basicSize. nextFreeAddressOfImage. fo foreignOopFor: self. anObject} print."
+
+	nextFreeAddressOfImage := nextFreeAddressOfImage + byteCount.
+
+	firstForeignObject isNil
+		ifTrue: [ firstForeignObject := fo ]
+		ifFalse: [ lastForeignObject nextInList: fo ].
+	lastForeignObject := fo.
+	^fo! !
+
+!SpurImageBuilder methodsFor: 'services' stamp: 'jmv 5/15/2023 16:26:26'!
+newClassIndex
+	"Answer the next class index to be used."
+
+	lastClassIndex := lastClassIndex + 1.
+	^lastClassIndex! !
+
+!SpurImageBuilder methodsFor: 'services' stamp: 'jmv 4/28/2025 10:24:45'!
+newObjectHash
+	"Use a Marsagalia/Brent xor & shift linear feedback shift register; see https://en.wikipedia.org/wiki/Xorshift.
+	 This cycles through all possible 22 bit states (except 0) in 2^22 - 1 iterations. It is a significant improvement
+	 over the original linear congruential generator by D.H. Lehmer in 1951, used in Spur versions before 2024/12/20."
+	
+	"Copied from VMMaker SpurMemoryManager>>#newObjectHash
+	Please see additional details there."
+
+	self deny: lastHash = 0.
+	lastHash := lastHash bitXor: (lastHash bitShift: -2).
+	lastHash := lastHash bitXor: ((lastHash bitShift: 7) bitAnd: 16r3FFFFF "self identityHashHalfWordMask").
+	lastHash := lastHash bitXor: (lastHash bitShift: -3).
+	^lastHash! !
+
+!SpurImageBuilder methodsFor: 'serialization' stamp: 'jmv 8/17/2023 16:30:54'!
+headerBytesFor: aForeignObject
+	"Answer the total size in memory and in the generated image.
+	Include header bytes, any padding, etc."
+
+	| wordCount sizeHeaderByte answer extraHeader header classIndex |
+
+	classIndex := aForeignObject spurClassIndexFor: self.
+
+	"If size > 254, header needs an extra word, and oop is pushed to point past it, to the basic header word"
+	wordCount := self sizeFieldFor: aForeignObject.
+	sizeHeaderByte := wordCount <= 254
+		ifTrue: [wordCount << 56]
+		ifFalse: [16rFF00000000000000].
+	header := sizeHeaderByte bitOr:
+		((aForeignObject foreignIdentityHashFor: self) << 32)
+		+ ((aForeignObject spurObjectFormatFor: self) << 24)
+		+ classIndex.
+	wordCount <= 254
+		ifTrue: [
+			answer := ByteArray new: 8.
+			answer uint64At: 1 put: header bigEndian: isBigEndian.
+			]
+		ifFalse: [
+			answer := ByteArray new: 16.
+			extraHeader := sizeHeaderByte bitOr: wordCount.
+			answer uint64At: 1 put: extraHeader bigEndian: isBigEndian.
+			answer uint64At: 9 put: header bigEndian: isBigEndian.
+			].
+	^answer.! !
+
+!SpurImageBuilder methodsFor: 'serialization' stamp: 'jmv 8/17/2023 16:49:47'!
+sizeFieldFor: aForeignObject
+	"Answer the size field for the object header.
+	This is, the number of oop sized slots."
+
+	| slotsPerWord |
+	"Objects with 64 bit slots on Spur64, or 32 bit slots on Spur32"
+	(aForeignObject slotWidth isNil or: [aForeignObject slotWidth = self wordSize]) ifTrue: [ ^ aForeignObject slotCountFor: self ].
+
+	"For instance, objects with numeric 64 bit slots on Spur32"
+	aForeignObject slotWidth > self wordSize ifTrue: [ ^ (aForeignObject slotCountFor: self) * (aForeignObject slotWidth // self wordSize) ].
+
+	"Objects with smaller slots than oop size"
+	slotsPerWord := self wordSize / aForeignObject slotWidth.
+	^ (aForeignObject slotCountFor: self) + slotsPerWord-1 // slotsPerWord! !
+
+!SpurImageBuilder methodsFor: 'serialization' stamp: 'jmv 8/17/2023 17:13:33'!
+sizeInBytesOfBody: aForeignObject
+	"Answer the byte size of argument, in memory and in the generated image.
+	Include any padding."
+
+	| byteCount |
+
+	"No object is smaller than 8 bytes.
+	This is to have enough room the VM to turn it into a #become forwarder if needed.
+	Include the filler (see below) for Spur32. Both in Spur32 and Spur64 write 8 bytes."
+	(aForeignObject slotCountFor: self) = 0 ifTrue: [
+		^8 ].
+
+	"Size in memory. Some objects have specific slot width (like ByteArray). Others use the word size, like objects with instance variables and Arrays."
+	byteCount := (aForeignObject slotCountFor: self) * (aForeignObject slotWidth ifNil: [ self wordSize ]).
+
+	"Filler. Round to next multiple of 8, both Spur32 and Spur64 allocate multiples of 64 bits"
+	byteCount := byteCount + 7 // 8 * 8.
+
+	^byteCount.! !
+
+!SpurImageBuilder methodsFor: 'serialization' stamp: 'jmv 8/17/2023 16:55:15'!
+sizeInBytesOfHeader: aForeignObject
+	"Answer the size of the header for argument, in memory and in the generated image."
+
+	"If size > 254, header needs an extra 64 bits word, and oop is pushed to point past it, to the basic header word"
+	(self sizeFieldFor: aForeignObject) > 254 ifTrue: [^16 ].
+
+	"Regular header is 8 bytes."
+	^8! !
+
+!SpurImageBuilder methodsFor: 'format constants' stamp: 'jmv 8/22/2023 13:34:39'!
+lastBridge
+	self subclassResponsibility! !
+
+!SpurImageBuilder methodsFor: 'format constants' stamp: 'jmv 5/23/2023 16:30:25'!
+maxIdentityHash
+	"Answer the maximum identityHash value supported by the VM.
+	22 bits in Spur"
+
+	^16r3FFFFF! !
+
+!SpurImageBuilder methodsFor: 'image file saving' stamp: 'jmv 8/22/2023 15:43:51'!
+saveImageTo: aFileEntry
+
+	| ba nextForeignObject p |
+	ba := ByteArray
+		streamContents: [ :byteStream |
+			byteStream nextPutAll: (ByteArray new: baseAddressOfImage).
+
+			"Iterate the linked list of foreign objects. Write each."
+			nextForeignObject := firstForeignObject.
+			[ nextForeignObject notNil ] whileTrue: [
+				"asegurarse que la clase esté o dar error."
+				(self sizeFieldFor: nextForeignObject) <= 254
+					ifTrue: [
+						"For objects with only basic header word, oop points to it."
+						self assert: byteStream position = (nextForeignObject foreignOopFor: self) ]
+					ifFalse: [
+						"For objects with an extra header before the basic header word, oop points to basic header word."
+						self assert: byteStream position = ((nextForeignObject foreignOopFor: self)-8) ].
+				self write: nextForeignObject on: byteStream.
+				nextForeignObject := nextForeignObject nextInList ].	
+
+			"Write last segment bridge"
+			byteStream nextUint64Put: self lastBridge bigEndian: isBigEndian.
+			byteStream nextUint64Put: 0 bigEndian: isBigEndian.
+
+			"Write image header"
+			p := byteStream position.
+			byteStream position: 0.
+			self writeImageFileHeaderOn: byteStream byteSize: p.
+			byteStream position: p.
+		]
+		estimatedSize: nextFreeAddressOfImage.
+	aFileEntry forceWriteStreamDo: [ :strm | strm binary; nextPutAll: ba ]! !
+
+!SpurImageBuilder methodsFor: 'image file saving' stamp: 'jmv 8/22/2023 12:19:28'!
+write: aForeignObject on: byteStream
+
+	| headerBytes |
+
+	"Object header"
+	headerBytes := self headerBytesFor: aForeignObject.
+	byteStream nextPutAll: headerBytes.
+
+	"No object is smaller than 8 bytes.
+	This is to have enough room the VM to turn it into a #become forwarder if needed.
+	Include the filler (see below) for Spur32. Both in Spur32 and Spur64 write 8 bytes."
+	(aForeignObject slotCountFor: self) = 0 ifTrue: [
+		byteStream nextPutAll: `ByteArray new: 8`.
+		^self ].
+
+	"Object body."
+	aForeignObject writeSlotsOn: byteStream forSpur: self.
+
+	"Appropriate filler. All objects use a multiple of 8 bytes.
+	Therefore, stream position must also be a multiple of 8.
+	Note: This matches #sizeInBytesOfBody:"
+	[(byteStream position \\ 8) = 0] whileFalse: [byteStream nextPut: 0].! !
+
+!SpurImageBuilder methodsFor: 'image file saving' stamp: 'jmv 4/28/2025 10:50:15'!
+writeImageFileHeaderOn: aStream byteSize: imageByteSizeIncludingHeader
+	"Write an appropriate image file header.
+	Intended to be called after saving the heap to the file, and setting #position: to zero.
+	Reviewed with Eliot Miranda on Apr 18, 2024. Thanks Eliot!!"
+"
+readImageFromFile:HeapSize:StartingAt:
+"
+	| specialObjectsOop savedWindowSize imageHeaderFlags shiftedBit extraVMMemory 
+	desiredNumStackPages cogCodeSizeKB desiredEdenBytes maxExtSemTabSize maxLiteralCountForCompile firstSegmentByteSize bytesLeftInOldSpace |
+
+	false ifTrue: [ lastHash := lastHash ].
+	specialObjectsOop := specialObjectsArrayForeignObject foreignOopFor: self.
+	savedWindowSize := 640<<16 + 480.
+
+	"imageHeaderFlags includes all the bits in vmParameter 48, but shifted to make room for two additional lsb bits: fullScreenFlag and floatsInPlatformOrder.
+	((Smalltalk vmParameterAt: 48) bitShift: 2) bitOr: 2
+	((((Smalltalk vmParameterAt: 48) bitShift: 2) bitOr: 2) printStringBase: 2 nDigits: 11) reversed
+	See comment at #vmParameterAt: , in particular for index 48
+	See also #setImageHeaderFlagsFrom: in VMMaker
+	"
+	imageHeaderFlags := 0.
+	shiftedBit := 1.
+	#(
+		0 		"0: Full screen off."
+		1 		"1: Floats are in plarform order."
+		0  		"0: Process doesn't have threadAffinity ivar. No threaded FFI support."
+		0  		"0: Don't flag interpreted methods by default."
+		1  		"1: Preemption does not yield."
+		0  		"0: noThreadingOfGUIThread. Currently unused in Cuis. Update this when Cuis supports threaded FFI."
+		0  		"0: Don't use the new finalization, intended to support Ephemerons."
+		1  		"1: Don't create fake keyboard events for wheel events."
+		1  		"1: Don't do mixed arithmetic in the VM. Let the image decide how to do it."
+		0  		"0: Don't use UTC seconds from epoch for files (FilePlugin / FileAttributesPlugin)."
+		0  		"0: Don't upscaleDisplayIfHighDPI."
+	) do: [ :bit |
+		imageHeaderFlags := imageHeaderFlags bitOr: (shiftedBit * bit).
+		shiftedBit := shiftedBit * 2 ].
+
+
+	extraVMMemory := 0. 			"Not used in Spur"
+
+	desiredNumStackPages := 0. 		"0 means default value as preferred by the VM. This is vmParameterAt: 43."
+	cogCodeSizeKB := 0.				"If zero, set by the VM, depending on the density of the instuction set of the target architecture. vmParameterAt: 47. unused if no cog jitter"
+	desiredEdenBytes := 0.			"0 for minimal images. Cuis image is saved with 16777216.
+										Typical app images could use something like 128, 256 or 512 MB. Profile your app with various values to find out.  vmParameterAt: 45."
+	maxExtSemTabSize := 256 * 0.	"0 means vm default, i.e. 256. This is vmParameterAt: 49"
+	maxLiteralCountForCompile := 0. 	"How much literals above which we'd not jit a method. 0 means vm default (60). Unused if no cog jitter"
+	firstSegmentByteSize := imageByteSizeIncludingHeader - self imageHeaderSize.
+	bytesLeftInOldSpace := 0. 		"0 for bootstrapped images, because there is no heap fragmentation."
+
+	self on: aStream nextUint32Put: self imageFormat.
+	self on: aStream nextUint32Put: self imageHeaderSize.
+	self on: aStream nexWordPut: imageByteSizeIncludingHeader - self imageHeaderSize. 			"length of heap in file"
+	self on: aStream nexWordPut: baseAddressOfImage.											"object memory base address of image"
+	self on: aStream nexWordPut: specialObjectsOop.
+	self on: aStream nexWordPut: lastHash.
+	self on: aStream nexWordPut: savedWindowSize.
+	self on: aStream nexWordPut: imageHeaderFlags.
+	self on: aStream nextUint32Put: extraVMMemory.
+
+	"Only for Cog"
+	aStream nextUint16Put: desiredNumStackPages bigEndian: isBigEndian.
+	aStream nextUint16Put: cogCodeSizeKB bigEndian: isBigEndian.
+
+	"40 o 64 bytes so far"
+
+	self on: aStream nextUint32Put: desiredEdenBytes.
+	aStream nextUint16Put: maxExtSemTabSize bigEndian: isBigEndian.
+	aStream nextUint16Put: maxLiteralCountForCompile bigEndian: isBigEndian.
+
+	"48 o 72 bytes so far"
+
+	self on: aStream nexWordPut: firstSegmentByteSize.
+	self on: aStream nexWordPut: bytesLeftInOldSpace.! !
+
+!Spur32ImageBuilder methodsFor: 'foreign objects' stamp: 'jmv 6/23/2023 15:17:33'!
+addFreeLists
+	"
+	x-x-x-x-x-x-
+	
+	Create a ForeignObject for it.
+	Add it to the list of foreign objects we'll use to serialize.
+	Don't add it to the foreignObjects dictionary!!"
+
+	self createForeignObjectFor: nil hash: 0 class: Spur32FreeListsForeignObject.! !
+
+!Spur32ImageBuilder methodsFor: 'foreign objects' stamp: 'jmv 8/15/2023 18:29:55'!
+foreignObjectClassFor: anObject
+	"Answer the correct ForeignObject subclass to represent anObject.
+	"
+	anObject isInteger ifTrue: [
+		^(anObject between: `(2 raisedTo: 30) negated` and: `(2 raisedTo: 30)-1`)
+			ifTrue: [ SmallIntegerForeignObject ]
+			ifFalse: [ LargeIntegerForeignObject ]].
+
+	anObject isFloat ifTrue: [
+		^BoxedFloat64ForeignObject ].
+
+	anObject class == Character ifTrue: [
+		^ImmediateCharacterForeignObject ].
+		
+	^super foreignObjectClassFor: anObject! !
+
+!Spur32ImageBuilder methodsFor: 'services' stamp: 'jmv 1/31/2024 09:30:37'!
+foreignOopOfImmediateCharacter: aCharacter
+
+	| numericValue |
+	self assert: aCharacter class == Character. 
+	numericValue := aCharacter codePoint.
+	^(numericValue << 2) + 2.! !
+
+!Spur32ImageBuilder methodsFor: 'services' stamp: 'jmv 6/29/2023 16:27:03'!
+foreignOopOfSmallInteger: aNumber
+
+	"Check that aNumber can actually be encoded as a SmallInteger for us."
+	self assert: aNumber <= `(2 raisedTo: 30)-1`.
+	self assert: aNumber >= `(2 raisedTo: 30) negated`.
+	^aNumber < 0
+		ifTrue: [((16r80000000 + aNumber) << 1) + 1]
+		ifFalse: [(aNumber << 1) + 1]! !
+
+!Spur32ImageBuilder methodsFor: 'services' stamp: 'jmv 8/17/2023 15:46:24'!
+on: aStream nexWordPut: aNumber
+	"Write #wordSize bytes. Use 'isBigEndian' endianess."
+
+	self on: aStream nextUint32Put: aNumber.! !
+
+!Spur32ImageBuilder methodsFor: 'format constants' stamp: 'jmv 5/10/2023 12:06:56'!
+imageFormat
+	"Answer the number that identifies this image format"
+	^6521! !
+
+!Spur32ImageBuilder methodsFor: 'format constants' stamp: 'jmv 5/10/2023 12:23:08'!
+imageHeaderSize
+	"In Bytes"
+	^64! !
+
+!Spur32ImageBuilder methodsFor: 'format constants' stamp: 'jmv 8/22/2023 13:36:20'!
+lastBridge	
+	"Memory segment last bridge (See VMMaker - SpurMemoryManager class comment)
+	See VMMaker - #initSegmentBridgeWithBytes:at:
+	See VMMaker - #initializeObjectMemory:
+	For 32 bit Spur:
+		MarkedBit: 1<<55
+		PinedBit: 1<< 30
+		Format: A (32 bit indexable)
+		ClassIndex: 3 (#segmentBridgePun)"
+
+	^16r8000004A000003! !
+
+!Spur32ImageBuilder methodsFor: 'format constants' stamp: 'jmv 5/10/2023 12:26:31'!
+wordSize
+	"Also size of an oop.
+	In Bytes"
+	^4! !
+
+!Spur64ImageBuilder methodsFor: 'foreign objects' stamp: 'jmv 6/23/2023 15:17:41'!
+addFreeLists
+	"
+	x-x-x-x-x-x-
+	
+	Create a ForeignObject for it.
+	Add it to the list of foreign objects we'll use to serialize.
+	Don't add it to the foreignObjects dictionary!!"
+
+	self createForeignObjectFor: nil hash: 0 class: Spur64FreeListsForeignObject.! !
+
+!Spur64ImageBuilder methodsFor: 'foreign objects' stamp: 'jmv 8/15/2023 18:29:59'!
+foreignObjectClassFor: anObject
+	"Answer the correct ForeignObject subclass to represent anObject.
+	"
+	anObject isInteger ifTrue: [
+		^(anObject between: `(2 raisedTo: 60) negated` and: `(2 raisedTo: 60)-1`)
+			ifTrue: [ SmallIntegerForeignObject ]
+			ifFalse: [ LargeIntegerForeignObject ]].
+
+	anObject isFloat ifTrue: [
+		anObject exponentBits = 0 ifTrue: [
+			^anObject isDenormalized
+				ifFalse: [ SmallFloat64ForeignObject ] "0.0"
+				ifTrue: [ BoxedFloat64ForeignObject ] "Denormals" ].
+		^(anObject exponentBits - 1023 between: -127 and: 128)
+			ifTrue: [ SmallFloat64ForeignObject ]
+			ifFalse: [ BoxedFloat64ForeignObject ]].
+
+	anObject class == Character ifTrue: [
+		^ImmediateCharacterForeignObject ].
+		
+	^super foreignObjectClassFor: anObject! !
+
+!Spur64ImageBuilder methodsFor: 'services' stamp: 'jmv 1/31/2024 09:30:42'!
+foreignOopOfImmediateCharacter: aCharacter
+
+	| numericValue |
+	self assert: aCharacter class == Character. 
+	numericValue := aCharacter codePoint.
+	^(numericValue << 3) + 2.! !
+
+!Spur64ImageBuilder methodsFor: 'services' stamp: 'jmv 7/19/2023 15:57:10'!
+foreignOopOfSmallFloat64: aFloat
+
+	"Check that aNumber can actually be encoded as a SmalFloat64 for us."
+	| answer |
+	self deny: aFloat isDenormalized.
+	self assert: (aFloat isZero or: [ aFloat exponentBits - 1023 between: -127 and: 128 ]).
+	aFloat partBits: [ :signBit :exponentBits :mantissaBits | | exponentBits8 |
+		exponentBits8 := exponentBits ~= 0
+			ifTrue: [exponentBits - 1023 + 127]
+			ifFalse: [0].
+		answer := (mantissaBits << 4)
+			+ (signBit << 3)
+			+ 4
+			+ ((exponentBits8 bitAnd: 16rFF) << 56) ].
+	^answer! !
+
+!Spur64ImageBuilder methodsFor: 'services' stamp: 'jmv 7/4/2023 20:01:31'!
+foreignOopOfSmallInteger: aNumber
+
+	"Check that aNumber can actually be encoded as a SmallInteger for us."
+	self assert: aNumber <= `(2 raisedTo: 60)-1`.
+	self assert: aNumber >= `(2 raisedTo: 60) negated`.
+	^aNumber < 0
+		ifTrue: [((16r2000000000000000 + aNumber) << 3) + 1]
+		ifFalse: [(aNumber << 3) + 1]! !
+
+!Spur64ImageBuilder methodsFor: 'services' stamp: 'jmv 8/17/2023 15:46:36'!
+on: aStream nexWordPut: aNumber
+	"Write #wordSize bytes. Use 'isBigEndian' endianess."
+
+	self on: aStream nextUint64Put: aNumber.! !
+
+!Spur64ImageBuilder methodsFor: 'format constants' stamp: 'jmv 5/10/2023 12:07:13'!
+imageFormat
+	"Answer the number that identifies this image format"
+	^68021! !
+
+!Spur64ImageBuilder methodsFor: 'format constants' stamp: 'jmv 5/10/2023 12:23:13'!
+imageHeaderSize
+	"In Bytes"
+	^128! !
+
+!Spur64ImageBuilder methodsFor: 'format constants' stamp: 'jmv 8/22/2023 13:34:28'!
+lastBridge	
+	"Memory segment last bridge (See VMMaker - SpurMemoryManager class comment)
+	See VMMaker - #initSegmentBridgeWithBytes:at:
+	See VMMaker - #initializeObjectMemory:
+	For 64 bit Spur:
+		MarkedBit: 1<<55
+		PinedBit: 1<< 30
+		Format: 9 (64 bit indexable)
+		ClassIndex: 3 (#segmentBridgePun)"
+
+	^16r80000049000003! !
+
+!Spur64ImageBuilder methodsFor: 'format constants' stamp: 'jmv 5/10/2023 12:26:34'!
+wordSize
+	"Also size of an oop.
+	In Bytes"
+	^8! !
+
+!V3ImageBuilder methodsFor: 'initialization' stamp: 'jmv 5/15/2023 11:53:32'!
+initialize
+	super initialize.
+	lastHash := 999.! !
+
+!V3ImageBuilder methodsFor: 'image building' stamp: 'jmv 7/17/2023 12:48:14'!
+fillSpecialObjectsArray
+	"Please see implementation for Spur.
+	Also see #recreateSpecialObjectsArray.
+	See reference implementations (MicroSqueak.pck.st and SystemTracing.pck.st)"
+
+	self error: 'Must implement'! !
+
+!V3ImageBuilder methodsFor: 'services' stamp: 'jmv 5/15/2023 12:03:55'!
+newObjectHash
+	"Answer a new 16-bit pseudo-random number for use as an identity hash.
+	Essentially copied from VMMaker ObjectMemory>>#newObjectHash, answer lower 12 bits"
+
+	lastHash := 13849 + (27181 * lastHash) bitAnd: 65535.
+	^ lastHash bitAnd: 16rFFF! !
+
+!V3ImageBuilder methodsFor: 'services' stamp: 'jmv 8/17/2023 15:46:44'!
+on: aStream nexWordPut: aNumber
+	"Write #wordSize bytes. Use 'isBigEndian' endianess."
+
+	self on: aStream nextUint32Put: aNumber.! !
+
+!V3ImageBuilder methodsFor: 'format constants' stamp: 'jmv 5/10/2023 14:15:21'!
+imageFormat
+	"Answer the number that identifies this image format"
+	^6505! !
+
+!V3ImageBuilder methodsFor: 'format constants' stamp: 'jmv 5/10/2023 14:15:25'!
+imageHeaderSize
+	"In Bytes"
+	^64! !
+
+!V3ImageBuilder methodsFor: 'format constants' stamp: 'jmv 5/23/2023 16:30:45'!
+maxIdentityHash
+	"Answer the maximum identityHash value supported by the VM.
+	12 bits in V3 images"
+
+	^16rFFF! !
+
+!V3ImageBuilder methodsFor: 'format constants' stamp: 'jmv 5/10/2023 14:15:29'!
+wordSize
+	"Also size of an oop.
+	In Bytes"
+	^4! !
 
 !Behavior methodsFor: '*Bootstrap-newImageOverrides' stamp: 'jmv 9/11/2023 11:13:25'!
 noclash01_allInstances
 	"Answer all instances of the receiver."
 	<primitive: 177>! !
 
-!Symbol methodsFor: '*Bootstrap-newImageOverrides' stamp: 'jmv 8/2/2023 10:32:58'!
-noclash01_storeOn: aStream 
-	"To be used when we don't have Scanner (Parser, Compiler, etc...)"
-
-	aStream nextPut: $#.
-	aStream nextPutAll: self.! !
-
-!SystemDictionary methodsFor: '*Bootstrap-examples' stamp: 'jmv 9/14/2023 10:38:28'!
+!SystemDictionary methodsFor: '*Bootstrap-examples' stamp: 'jmv 5/6/2025 13:13:03'!
 bootstrappedExample01Stdout
 	"A simple demo to be run in a bootstrapped Cuis image, with a minimal class library"
 
@@ -4684,13 +4233,14 @@ bootstrappedExample02DoesNotUnderstand
 
 	self quitPrimitive: 42.! !
 
-!SystemDictionary methodsFor: '*Bootstrap-examples' stamp: 'jmv 7/19/2023 16:06:12'!
+!SystemDictionary methodsFor: '*Bootstrap-examples' stamp: 'jmv 4/28/2025 10:58:05'!
 bootstrappedExample03Float
 	"A simple demo to be run in a bootstrapped Cuis image, with a minimal class library"
 	StdIOWriteStream stdout
 		nextPutAll: 'Hello, World!!'; newLine;
 		nextPutAll: 'This is Bootstrapped Cuis!!'; newLine;
 		nextPutAll: '3 + 4 is '; nextPutAll: (3 + 4) printString; newLine;
+		nextPutAll: '3 * 4 is '; nextPutAll: (3 * 4) printString; newLine;
 		flush.
 
 	Float initialize.
@@ -4753,7 +4303,7 @@ bootstrappedExample04FileExperiments
 
 	self quitPrimitive: 42.! !
 
-!SystemDictionary methodsFor: '*Bootstrap-examples' stamp: 'jmv 9/12/2023 12:02:03'!
+!SystemDictionary methodsFor: '*Bootstrap-examples' stamp: 'jmv 5/6/2025 15:19:57'!
 bootstrappedExample05SymbolExperiments
 	"A simple demo to be run in a bootstrapped Cuis image, with a minimal class library"
 
@@ -4765,6 +4315,13 @@ bootstrappedExample05SymbolExperiments
 	StdIOWriteStream stdout
 		nextPutAll: 'Hello, World!!'; newLine;
 		nextPutAll: 'This is Bootstrapped Cuis!!'; newLine;
+		flush.
+
+	StdIOWriteStream stdout
+		nextPutAll: 'Symbol allInstancesOrNil size: ';
+		nextPutAll: Symbol allInstancesOrNil size printString; newLine;
+		nextPutAll: 'Symbol estimatedCount: ';
+		nextPutAll: Symbol estimatedCount printString; newLine; newLine;
 		flush.
 
 	i := 0.
@@ -4790,18 +4347,25 @@ bootstrappedExample05SymbolExperiments
 		nextPutAll: 'Result of Symbol creation attempt was: *'.
 	sym printOn: StdIOWriteStream stdout.
 	StdIOWriteStream stdout
-		nextPutAll: '*'; newLine;
+		nextPutAll: '*'; newLine; newLine;
 		flush.
 
 	msg := (Symbol lookup: s) isNil
 		ifTrue: [ '* does not exist' ]
-		ifFalse: [ '* exists' ].
+		ifFalse: [ '* now exists' ].
 	StdIOWriteStream stdout
 		nextPutAll: 'Symbol Lookup'; newLine;
 		nextPutAll: 'The String: *';
 		nextPutAll: s;
 		nextPutAll: msg;
-		nextPutAll: ' as a Symbol'; newLine;
+		nextPutAll: ' as a Symbol'; newLine; newLine;
+		flush.
+
+	StdIOWriteStream stdout
+		nextPutAll: 'Symbol allInstancesOrNil size: ';
+		nextPutAll: Symbol allInstancesOrNil size printString; newLine;
+		nextPutAll: 'Symbol estimatedCount: ';
+		nextPutAll: Symbol estimatedCount printString; newLine; newLine;
 		nextPutAll: 'Thats all, Folks!!'; newLine;
 		flush.
 
@@ -4899,52 +4463,3 @@ bootstrappedExample07LoadDynamicLibrary
 		flush.
 
 	self quitPrimitive: 42.! !
-
-!DataStream class methodsFor: '*Bootstrap-newImageOverrides' stamp: 'jmv 2/6/2024 10:13:28'!
-noclash01_initCachedState
-	"TypeMap maps Smalltalk classes to type ID numbers which identify the data stream primitive formats.  nextPut: writes these IDs to the data stream.  NOTE: Changing these type ID numbers will invalidate all extant data stream files.  Adding new ones is OK.  
-	Classes named here have special formats in the file.  If such a class has a subclass, it will use type 9 and write correctly.  It will just be slow.  (Later write the class name in the special format, then subclasses can use the type also.)
-	 See nextPut:, next, typeIDFor:, & ReferenceStream>>isAReferenceType:"
-	"
-	DataStream noclash01_initCachedState
-	"
-
-	| t |
-	t := TypeMap := Dictionary newWithRoomForMoreThan: 80. "sparse for fast hashing"
-
-	t at: UndefinedObject put: 1.
-	t at: True put: 2.
-	t at: False put: 3.
-	t at: SmallInteger put: 4.
-	t at: String put: 5.
-	t at: Symbol put: 6.
-	t at: ByteArray put: 7.
-	t at: Array put: 8.
-	t at: Bitmap put: 11.
-	t at: Metaclass put: 12.
-	t at: Float put: 14.
-	t at: BoxedFloat64 put: 14.
-	t at: SmallFloat64 put: 14.
-	t at: String put: 17.
-	"t at: WordArray put: 18."
-	"t at: Float32Array put: 20."
-	"For all classes that are like WordArrays, store them the way ColorArray is stored.  As bits, and able to change endianness."
-"OJO"
-"
-	Smalltalk do: [:cls |
-		cls isInMemory ifTrue: [
-			cls isBehavior ifTrue: [
-				cls isPointers not & cls isVariable & cls isWords ifTrue: [
-					(t includesKey: cls) ifFalse: [t at: cls print put: 20]]]]].
-"
-	t at: CompiledMethod put: 21.
-	t at: Character put: 22.
-	"t at: UnicodeString put: 23.
-	t at: UnicodeSymbol put: 24."
-	ReferenceTypes :=#(0 0 0 0 1 1 1 1 1 0 1 0 1 1 1 1 1 1 1 1 1 0 1 1).! !
-
-!StdIOWriteStream methodsFor: '*Bootstrap-newImageOverrides' stamp: 'jmv 8/2/2023 10:33:02'!
-noclash01_primWrite: id from: stringOrByteArray startingAt: startIndex count: count
-	"Write count bytes onto this file from the given string or byte array starting at the given index. Answer the number of bytes written."
-
-	<primitive: 'primitiveFileWrite' module: 'FilePlugin'>! !

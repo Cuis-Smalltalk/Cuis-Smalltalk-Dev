@@ -1,10 +1,20 @@
-'From Cuis6.3 [latest update: #6202] on 31 January 2024 at 9:19:32 am'!
+'From Cuis7.3 [latest update: #7146] on 12 May 2025 at 9:25:09 am'!
 'Description '!
-!provides: 'DynamicCuisLibraries' 1 23!
+!provides: 'DynamicCuisLibraries' 1 24!
 SystemOrganization addCategory: #'DynamicCuisLibraries-Code Model'!
 SystemOrganization addCategory: #'DynamicCuisLibraries-Dynamic Libraries'!
 SystemOrganization addCategory: #DynamicCuisLibraries!
 
+
+!classDefinition: #BasicFileServices category: #DynamicCuisLibraries!
+Object subclass: #BasicFileServices
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'DynamicCuisLibraries'!
+!classDefinition: 'BasicFileServices class' category: #DynamicCuisLibraries!
+BasicFileServices class
+	instanceVariableNames: ''!
 
 !classDefinition: #CodeElementSpec category: #'DynamicCuisLibraries-Code Model'!
 Object subclass: #CodeElementSpec
@@ -56,34 +66,31 @@ Object subclass: #DynamicCuisLibrary
 DynamicCuisLibrary class
 	instanceVariableNames: ''!
 
-!classDefinition: #BasicFileServices category: #DynamicCuisLibraries!
-Object subclass: #BasicFileServices
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'DynamicCuisLibraries'!
-!classDefinition: 'BasicFileServices class' category: #DynamicCuisLibraries!
-BasicFileServices class
-	instanceVariableNames: ''!
 
+!BasicFileServices commentStamp: '<historical>' prior: 0!
+This class is only meant to be used by for loading DynamicCuisLibraries. Main reaso is that MinimalImages, don't have the full System-File System and System-Files categories.
+
+ This class can't replace any kind of Stream, and can only deal with the whole contents of files at once.!
 
 !CodeElementSpec commentStamp: '<historical>' prior: 0!
 CodeElementSpec is an abstract class that groups classes that represent Smalltalk code. See subclasses for details.!
 
 !ClassSpec commentStamp: '<historical>' prior: 0!
-A ClassSpec describes a class. It includes enough detail for a real class to be created from it. But it is not a class:
+A ClassSpec describes a class definition. It includes enough detail for a real class to be created from it. But it is not a class:
 - It can not create instances. You need a real class for that.
-- It is not a global. It is not in the Smalltalk dictionary. It can not clash.
-- There can be several ClassSpecs for different versions of a class in memory.
+- It is not a global. It is not in the Smalltalk dictionary. It can not name clash.
+- There may be several ClassSpecs for different versions of a class in memory.
 - It is a regular object. Doesn't include any detail specific to Cuis ObjectMemory or VM (Spur). Doesn't refer to globals.
-- It is easy to serialize and deserialize. Nothing special to take care of.!
+- It is easy to serialize and deserialize. Nothing special to take care of.
+
+Note: Does not include any MethodSpec.!
 
 !LiteralVariableSpec commentStamp: '<historical>' prior: 0!
 A LiteralVariableSpec represent a Class variable, SharedPool variable or Global variable.
 It is stored in MethodSpec literals, instead of the original Association or ReadOnlyVariableBinding, that could refer to any Global or other object we'd rather not refer to from ClassSpec / MethodSpec.!
 
-!MethodSpec commentStamp: 'jmv 4/17/2023 11:03:54' prior: 0!
-A MethodSpec describes a CompiledMethod. It includes enough detail for a real CompiledMethod to be created from it. But it is not a CompiledMethod
+!MethodSpec commentStamp: '<historical>' prior: 0!
+A MethodSpec describes a CompiledMethod. It includes enough detail for a real CompiledMethod to be created from it. But it is not a CompiledMethod:
 - It can't be run. Can't be added to a class.
 - There can be several MethodSpecs for different versions of a method in memory.
 - It is a regular object. Doesn't include any detail specific to Cuis ObjectMemory or VM (Spur). Doesn't refer to globals.
@@ -92,10 +99,46 @@ A MethodSpec describes a CompiledMethod. It includes enough detail for a real Co
 !DynamicCuisLibrary commentStamp: '<historical>' prior: 0!
 A DynamicCuisLibrary defines a set of classes and methods that can be loaded into a running Cuis image. Its parts, instances of ClassSpec and MethodSpec are not actual Classes and CompiledMethods, but regular objects. Actual Classes and CompiledMethods are created from them at load time.!
 
-!BasicFileServices commentStamp: '<historical>' prior: 0!
-This class is only meant to be used by for loading DynamicCuisLibraries. Main reaso is that MinimalImages, don't have the full System-File System and System-Files categories.
+!BasicFileServices class methodsFor: 'services' stamp: 'jmv 9/14/2023 10:47:07'!
+binaryContentsOf: fileName
+	"
+	Answer a ByteArray with the complete contents of a file.
+	Name must be ASCII. It is just a file name. No path.
+	BasicFileServices binaryContentsOf: 'comoVamos.txt'
+	"
+	| fileID size bytes count |
+	fileID := self primOpen: fileName writable: false.
+	size := self primSize: fileID.
+	bytes := ByteArray new: size.
+	count := self primRead: fileID into: bytes startingAt: 1 count: size.
+	count ifNil: [
+		"Alternatively, answer nil."
+		^ self error: 'Could not read file: ', fileName ].
+	count < size ifTrue: [ bytes := bytes copyFrom: 1 to: count ].
+	self primClose: fileID.
+	^bytes! !
 
- This class can't replace any kind of Stream, and can only deal with the whole contents of files at once.!
+!BasicFileServices class methodsFor: 'primitives' stamp: 'jmv 9/4/2023 08:29:31'!
+primClose: id
+	<primitive: 'primitiveFileClose' module: 'FilePlugin'>
+	^nil! !
+
+!BasicFileServices class methodsFor: 'primitives' stamp: 'jmv 9/4/2023 08:29:25'!
+primOpen: fileNameAsUtf8Bytes writable: writableFlag
+	<primitive: 'primitiveFileOpen' module: 'FilePlugin'>
+	^ nil
+! !
+
+!BasicFileServices class methodsFor: 'primitives' stamp: 'jmv 9/4/2023 08:29:19'!
+primRead: id into: byteArray startingAt: startIndex count: count
+	<primitive: 'primitiveFileRead' module: 'FilePlugin'>
+	^nil! !
+
+!BasicFileServices class methodsFor: 'primitives' stamp: 'jmv 9/4/2023 08:29:13'!
+primSize: id
+	<primitive: 'primitiveFileSize' module: 'FilePlugin'>
+	^0
+! !
 
 !CodeElementSpec methodsFor: 'testing' stamp: 'jmv 5/16/2023 14:51:44'!
 is: aSymbol
@@ -180,9 +223,9 @@ instVarCountAfterInstall
 
 	^instVarCountAfterInstall! !
 
-!ClassSpec methodsFor: 'materialization' stamp: 'jmv 9/6/2023 17:49:47'!
+!ClassSpec methodsFor: 'materialization' stamp: 'jmv 4/28/2025 09:34:41'!
 instVarCountBeforeInstall
-	"In the actual Class. Before installing us."
+	"In the existing actual Class. Before installing us."
 
 	^instVarCountBeforeInstall! !
 
@@ -297,7 +340,7 @@ mergeInto: existingClass
 	builder update: existingClass to: newClass.
 	^newClass! !
 
-!ClassSpec methodsFor: 'materialization' stamp: 'jmv 9/6/2023 17:49:00'!
+!ClassSpec methodsFor: 'materialization' stamp: 'jmv 5/9/2025 15:36:37'!
 preInstall
 	"Prepare classInstVarCountBeforeInstall, classInstVarCountAfterInstall, methodSpecsInstVarIndexMap
 	These will be needed for remapping instance variable accesses both from existing CompiledMethods
@@ -332,7 +375,7 @@ preInstall
 	No new instance variables in any superclass and
 	no changes in instance variables in us, means no remapping needed."
 	(specIvarsOffset = afterInstallIvarsOffset and: [
-		existingInstVarNames = instVarNames ]) ifTrue: [
+		existingInstVarNames hasEqualElements: instVarNames ]) ifTrue: [
 			^self ].
 
 	"Build ivar remapping dictionary. Update classInstVarCountAfterInstall."
@@ -349,7 +392,7 @@ preInstall
 		afterInstallIvarsIndex = specIvarIndex ifFalse: [
 			methodSpecsInstVarIndexMap add: specIvarIndex -> afterInstallIvarsIndex ]].! !
 
-!ClassSpec methodsFor: 'testing' stamp: 'jmv 10/25/2023 10:48:13'!
+!ClassSpec methodsFor: 'testing' stamp: 'jmv 5/9/2025 15:29:44'!
 canBeInstalled
 	"Answer false if we can't be installed in the running system.
 	Note: it is assumed that installation will happen in hierarchy order, starting from ProtoObject.
@@ -379,14 +422,14 @@ canBeInstalled
 		"We don't adjust existing class methods for differences in class ivars.
 		We don't migrate or become: classes.
 		So, class ivars must be the same as in existing class."
-		existing class allClassInstVarNames =		classInstVarNames ifFalse: [ ^false ]].
+		(existing class allClassInstVarNames hasEqualElements: classInstVarNames) ifFalse: [ ^false ]].
 
 	"If no new instance variables are added, shape will not change.
 	Also, we'd be not requiring migration of any instances."
 	addedInstanceVariables := existing
 		ifNil: [ instVarNames ]
 		ifNotNil: [ instVarNames reject: [ :v | existing definesInstanceVariableNamed: v ]].
-	addedInstanceVariables ifEmpty: [ ^true ].
+	addedInstanceVariables size = 0 ifTrue: [ ^true ].
 
 	"So we are adding instance variables, either to a new or existing class."
 	existing ifNotNil: [
@@ -411,7 +454,7 @@ canBeInstalled
 doesExist
 	^(Smalltalk at: name ifAbsent: nil) isBehavior! !
 
-!ClassSpec methodsFor: 'testing' stamp: 'jmv 8/10/2023 15:33:40'!
+!ClassSpec methodsFor: 'testing' stamp: 'jmv 5/9/2025 15:37:26'!
 equalsExisting
 	"
 	(ClassSpec for: Morph addClassesTo: OrderedDictionary new) equalsExisting
@@ -432,12 +475,12 @@ equalsExisting
 	existing isMeta ifTrue: [ ^false ].          "We only represent the instance side"
 	existing name = name ifFalse: [ ^false ].
 	existing typeOfClass = type ifFalse: [ ^false ].
-	existing instVarNames = instVarNames ifFalse: [ ^false ].
+	(existing instVarNames hasEqualElements: instVarNames) ifFalse: [ ^false ].
 	existingClassPool := existing classPool.
 	existingClassPool size = classVarNames size ifFalse: [ ^false ].
 	classVarNames do: [ :cVarName |
 		(existingClassPool includesKey: cVarName) ifFalse: [ ^false ]].
-	existing sharedPools = poolDictionaryNames ifFalse: [ ^false ].
+	(existing sharedPools hasEqualElements: poolDictionaryNames) ifFalse: [ ^false ].
 	^true! !
 
 !ClassSpec methodsFor: 'enumerating' stamp: 'jmv 8/3/2023 18:53:12'!
@@ -1004,44 +1047,3 @@ readFromFileNamed: fileName
 	| bytes |
 	bytes := BasicFileServices binaryContentsOf: fileName.
 	^(ReferenceStream on: bytes readStream) next! !
-
-!BasicFileServices class methodsFor: 'services' stamp: 'jmv 9/14/2023 10:47:07'!
-binaryContentsOf: fileName
-	"
-	Answer a ByteArray with the complete contents of a file.
-	Name must be ASCII. It is just a file name. No path.
-	BasicFileServices binaryContentsOf: 'comoVamos.txt'
-	"
-	| fileID size bytes count |
-	fileID := self primOpen: fileName writable: false.
-	size := self primSize: fileID.
-	bytes := ByteArray new: size.
-	count := self primRead: fileID into: bytes startingAt: 1 count: size.
-	count ifNil: [
-		"Alternatively, answer nil."
-		^ self error: 'Could not read file: ', fileName ].
-	count < size ifTrue: [ bytes := bytes copyFrom: 1 to: count ].
-	self primClose: fileID.
-	^bytes! !
-
-!BasicFileServices class methodsFor: 'primitives' stamp: 'jmv 9/4/2023 08:29:31'!
-primClose: id
-	<primitive: 'primitiveFileClose' module: 'FilePlugin'>
-	^nil! !
-
-!BasicFileServices class methodsFor: 'primitives' stamp: 'jmv 9/4/2023 08:29:25'!
-primOpen: fileNameAsUtf8Bytes writable: writableFlag
-	<primitive: 'primitiveFileOpen' module: 'FilePlugin'>
-	^ nil
-! !
-
-!BasicFileServices class methodsFor: 'primitives' stamp: 'jmv 9/4/2023 08:29:19'!
-primRead: id into: byteArray startingAt: startIndex count: count
-	<primitive: 'primitiveFileRead' module: 'FilePlugin'>
-	^nil! !
-
-!BasicFileServices class methodsFor: 'primitives' stamp: 'jmv 9/4/2023 08:29:13'!
-primSize: id
-	<primitive: 'primitiveFileSize' module: 'FilePlugin'>
-	^0
-! !
