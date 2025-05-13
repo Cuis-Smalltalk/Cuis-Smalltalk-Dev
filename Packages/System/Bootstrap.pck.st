@@ -1,6 +1,6 @@
-'From Cuis7.3 [latest update: #7146] on 12 May 2025 at 9:25:12 am'!
+'From Cuis7.3 [latest update: #7157] on 13 May 2025 at 4:06:08 pm'!
 'Description '!
-!provides: 'Bootstrap' 1 40!
+!provides: 'Bootstrap' 1 41!
 !requires: 'DynamicCuisLibraries' 1 22 nil!
 SystemOrganization addCategory: #'Bootstrap-Smalltalk Image Builders'!
 SystemOrganization addCategory: #'Bootstrap-Foreign Objects'!
@@ -2051,22 +2051,6 @@ includedDefinition: missingSelector start: classSpec isClassMethod: classSideFla
 					^superclassSpec ]]].
 	^nil! !
 
-!ImageBuilder methodsFor: 'image building feature add' stamp: 'jmv 5/9/2025 17:06:50'!
-addBasicCollectionsSupport
-
-	"Add selected methods."
-	| prefix |
-	prefix := '[mkHashedCollections]'.
-	(SystemOrganization allClassesAt: 'MinimalKernel') do: [ :cls |
-		cls class organization categories do: [ :cat |
-			(cat beginsWith: prefix) ifTrue: [
-				(cls class organization listAtCategoryNamed: cat) do: [ :sel |
-					self addExistingMethod: (cls class compiledMethodAt: sel) ]]].
-		cls organization categories do: [ :cat |
-			(cat beginsWith: prefix) ifTrue: [
-				(cls organization listAtCategoryNamed: cat) do: [ :sel |
-					self addExistingMethod: (cls compiledMethodAt: sel) ]]]].! !
-
 !ImageBuilder methodsFor: 'image building feature add' stamp: 'jmv 4/30/2025 11:08:26'!
 addBasicFileServices
 
@@ -2146,6 +2130,80 @@ addBasicVMandImageSupport
 				(cls organization listAtCategoryNamed: cat) do: [ :sel |
 					self addExistingMethod: (cls compiledMethodAt: sel) ]]]].! !
 
+!ImageBuilder methodsFor: 'image building feature add' stamp: 'jmv 5/12/2025 11:24:19'!
+addClassCreationSupport
+
+	"Add selected methods."
+	| clss prefix |
+	clss := {ClassBuilder}.
+	clss do: [ :cls | | classSpec |
+		classSpec := ClassSpec for: cls addClassesTo: classes.	
+		self findOrAddClassSpec: classSpec ].
+
+	prefix := '[mkClassAndMethodCreation]'.
+	(SystemOrganization allClassesAt: 'MinimalKernel'), clss do: [ :cls |
+		cls class organization categories do: [ :cat |
+			(cat beginsWith: prefix) ifTrue: [
+				(cls class organization listAtCategoryNamed: cat) do: [ :sel |
+					self addExistingMethod: (cls class compiledMethodAt: sel) ]]].
+		cls organization categories do: [ :cat |
+			(cat beginsWith: prefix) ifTrue: [
+				(cls organization listAtCategoryNamed: cat) do: [ :sel |
+					self addExistingMethod: (cls compiledMethodAt: sel) ]]]].! !
+
+!ImageBuilder methodsFor: 'image building feature add' stamp: 'jmv 5/13/2025 09:52:59'!
+addDynamicLibraryLoadSupport
+
+	"Add selected methods."
+	| clss prefix |
+	clss := {DynamicCuisLibrary. ClassSpec. MethodSpec. LiteralVariableSpec}.
+	clss do: [ :cls | | classSpec |
+		classSpec := ClassSpec for: cls addClassesTo: classes.	
+		self findOrAddClassSpec: classSpec ].
+
+	prefix := '[mkDynamicLibraryLoad]'.
+	(SystemOrganization allClassesAt: 'MinimalKernel'), clss do: [ :cls |
+		cls class organization categories do: [ :cat |
+			(cat beginsWith: prefix) ifTrue: [
+				(cls class organization listAtCategoryNamed: cat) do: [ :sel |
+					self addExistingMethod: (cls class compiledMethodAt: sel) ]]].
+		cls organization categories do: [ :cat |
+			(cat beginsWith: prefix) ifTrue: [
+				(cls organization listAtCategoryNamed: cat) do: [ :sel |
+					self addExistingMethod: (cls compiledMethodAt: sel) ]]]].! !
+
+!ImageBuilder methodsFor: 'image building feature add' stamp: 'jmv 5/13/2025 10:10:56'!
+addHashedCollectionsSupport
+
+	"Add selected methods."
+	| prefix |
+	prefix := '[mkHashedCollections]'.
+	(SystemOrganization allClassesAt: 'MinimalKernel') do: [ :cls |
+		cls class organization categories do: [ :cat |
+			(cat beginsWith: prefix) ifTrue: [
+				(cls class organization listAtCategoryNamed: cat) do: [ :sel |
+					self addExistingMethod: (cls class compiledMethodAt: sel) ]]].
+		cls organization categories do: [ :cat |
+			(cat beginsWith: prefix) ifTrue: [
+				(cls organization listAtCategoryNamed: cat) do: [ :sel |
+					self addExistingMethod: (cls compiledMethodAt: sel) ]]]].! !
+
+!ImageBuilder methodsFor: 'image building feature add' stamp: 'jmv 5/12/2025 11:20:15'!
+addObjectCopyingSupport
+
+	"Add selected methods."
+	| prefix |
+	prefix := '[mkObjectCopying]'.
+	(SystemOrganization allClassesAt: 'MinimalKernel') do: [ :cls |
+		cls class organization categories do: [ :cat |
+			(cat beginsWith: prefix) ifTrue: [
+				(cls class organization listAtCategoryNamed: cat) do: [ :sel |
+					self addExistingMethod: (cls class compiledMethodAt: sel) ]]].
+		cls organization categories do: [ :cat |
+			(cat beginsWith: prefix) ifTrue: [
+				(cls organization listAtCategoryNamed: cat) do: [ :sel |
+					self addExistingMethod: (cls compiledMethodAt: sel) ]]]].! !
+
 !ImageBuilder methodsFor: 'image building feature add' stamp: 'jmv 5/9/2025 17:07:20'!
 addObjectSerializationSupport
 
@@ -2172,462 +2230,10 @@ includeDisplayAndSensor
 	"Some images may need them, but minimal headless images won't."
 	^false! !
 
-!ImageBuilder methodsFor: 'image building examples' stamp: 'jmv 5/9/2025 17:06:59'!
-addExample06LoadDynamicLibraryMethods
-
-	"Classes referenced from below, but of which no methods are included."
-	#(
-	"ReadWriteStream"
-	"IdentitySet"
-	
-	"abajo en metodos comentados Vienen por soporte de carga de librerias.
-	agregarlo a '[mkHashedCollections]' , [mkObjectSerialization], etc
-	"
-	ClassBuilder
-	)
-	do: [ :className | | classSpec classForeignObject |
-		classSpec := ClassSpec for: (Smalltalk at: className) addClassesTo: classes.	
-		classForeignObject := self addClassAndMetaclassSpec: classSpec classIndexOrNil: nil.
-		self map: classSpec toForeignObject: classForeignObject ].
-
-"ojo, incluir todos los implementors de los metodos en todas las clases incluidas, o al menos en la herencia..."
-	"Classes included with ALL their methods."
-	#( DynamicCuisLibrary ClassSpec MethodSpec LiteralVariableSpec)
-	do: [ :className | | cls classSpec |
-		cls := Smalltalk at: className.
-		classSpec := ClassSpec for: cls addClassesTo: classes.	
-		self findOrAddClassSpec: classSpec.
-		cls class methodsDo: [ :compiledMethod |
-			self addExistingMethod: compiledMethod ].
-		cls methodsDo: [ :compiledMethod |
-(compiledMethod selector = #buildClassesAndMethods:) ifFalse: [ "HACKY!!!!!!!!!!!!"
-			self addExistingMethod: compiledMethod
-]
-			]].
-
-	{
-"		Object>>#as:.
-		Object>>#yourself.
-		Object>>#->.
-		Object>>#copy.
-		Object>>#shallowCopy.
-		Object>>#postCopy.
-		Object>>#readDataFrom:size:.
-		Object>>#instVarAt:put:.
-		Object>>#comeFullyUpOnReload:.
-		Object>>#basicAt:put:.
-
-		Behavior >> #noclash01_allInstances.
-		Behavior>>#isBehavior.
-		Behavior>>#superclass.
-		Behavior>>#typeOfClass.
-		Behavior>>#isVariable.
-		Behavior>>#isBytes.
-		Behavior>>#isBits.
-		Behavior>>#isImmediateClass.
-		Behavior>>#instSpec.
-		Behavior>>#instSize.
-		Behavior>>#definesInstanceVariableNamed:.
-		Behavior>>#instVarNames.
-		Behavior>>#format.
-		Behavior>>#superclass:methodDictionary:format:.
-		Behavior>>#binding.
-		Behavior>>#addSelectorSilently:withMethod:.
-		Behavior>>#lookupSelector:.
-		Behavior>>#includesSelector:.
-		Behavior>>#methodDict.
-		Behavior>>#compiledMethodAt:.
-		Behavior>>#bindingOf:.
-		Behavior>>#classBindingOf:.
-
-		ClassDescription>>#instVarNames.
-		ClassDescription>>#organization:.
-		ClassDescription>>#setInstVarNames:.
-		ClassDescription>>#superclass:methodDictionary:format:.
-
-		Class>>#superclass:methodDictionary:format:.
-		Class>>#addSubclass:.
-		Class>>#setName:.
-		Class>>#declareClassVariables:.
-		Class>>#name.
-		Class>>#classPool.
-		Class>>#sharedPools.
-		Class>>#binding.
-		Class>>#bindingOf:.
-		Class>>#localBindingOf:.
-		Class>>#classVarBindingOf:.
-
-		Metaclass>>#new.
-		Metaclass>>#bindingOf:.
-		Metaclass>>#localBindingOf:.
-		Metaclass>>#allClassInstVarNames.
-
-		CompiledMethod class>>#createMethod:trailer:header:.
-		CompiledMethod class>>#newMethod:header:.
-		CompiledMethod>>#literalAt:put:.
-		CompiledMethod>>#objectAt:put:.
-		CompiledMethod>>#penultimateLiteral:.
-		CompiledMethod>>#methodClass:.
-		CompiledMethod>>#endPC.
-		CompiledMethod>>#initialPC.
-		CompiledMethod>>#flushCache.
-		CompiledMethod>>#readDataFrom:size:.
-
-		MethodContext>>#	instVarAt:put:.
-
-		Collection class>>#newFrom:.
-		Collection>>#=.
-		Collection>>#is:.
-		Collection>>#reject:.
-		Collection>>#ifEmpty:.
-		Collection>>#isSequenceable.
-		Collection>>#asIdentitySet.
-		Collection>>#addAll:.
-		Collection>>#notEmpty.
-		Collection >> #inject:into:.
-		Collection >> #detect:ifNone:.
-		SequenceableCollection>>#=.
-		SequenceableCollection >> #select:.
-		SequenceableCollection >>#collect:.
-		SequenceableCollection>>#readStream.
-		SequenceableCollection>>#indexOf:ifAbsent:.
-		SequenceableCollection>>#withIndexDo:.
-		SequenceableCollection>>#hasEqualElements:.
-		SequenceableCollection>>#isSequenceable.
-		SequenceableCollection>>#copyWith:.
-		ArrayedCollection>>#isEmpty.
-		Array>>#asArray.
-		Array>>#is:.
-		ByteArray>>#uint32At:bigEndian:.
-		ByteArray>>#int32At:bigEndian:.
-		ByteArray>>#uint16At:bigEndian:.
-		ByteArray>>#float64At:bigEndian:.
-
-		Set>>#atNewIndex:put:.
-		Set>>#fullCheck.
-		Set>>#grow.
-		Set>>#includes:.
-		Set>>#growSize.
-		Set>>#noCheckAdd:.
-		Set>>#postCopy.
-		Set>>#size.
-		Set>>#do:.
-		Set>>#comeFullyUpOnReload:.
-		IdentitySet>>#scanFor:.
-		Dictionary>>#keysDo:.
-		Dictionary>>#associationsDo:.
-		Dictionary>>#postCopy.
-		Dictionary>>#noCheckAdd:.
-		Dictionary>>#at:ifPresent:.
-		Dictionary>>#errorKeyNotFound:.
-		Dictionary>>#keys.
-		Dictionary>>#associationAt:ifAbsent:.
-		Dictionary>>#bindingOf:.
-		Dictionary>>#declare:from:.
-
-		MethodDictionary class>>#new.
-		MethodDictionary class>>#newWithRoomForMoreThan:.
-		MethodDictionary>>#at:ifAbsent:.
-		MethodDictionary>>#scanFor:.
-		MethodDictionary>>#postCopy.
-		MethodDictionary >>#keyAt:.
-		MethodDictionary>>#associationAt:ifAbsent:.
-		MethodDictionary>>#keysDo:.
-		MethodDictionary>>#at:put:.
-		MethodDictionary>>#grow. 'become!!!!!!!!!!'.
-		MethodDictionary>>#associationsDo:.
-
-		Stream>>#binary.
-		Stream>>#nextString.
-		Stream>>#nextUint32BigEndian:.
-		Stream>>#nextInt32BigEndian:.
-		Stream>>#nextUint16BigEndian:.
-		Stream>>#nextFloat64BigEndian:.
-		ReadStream>>#next:.
-		ReadStream>>#next:into:startingAt:.
-
-		DataStream class>>#typeMap.
-		DataStream >>#typeIDFor:.
-		DataStream>>#beginReference:.
-		DataStream>>#maybeBeginReference:.
-		DataStream>>#setCurrentReference:.
-		DataStream>>#getCurrentReference.
-		DataStream>>#readArray.
-		DataStream>>#readNil.
-		DataStream>>#readTrue.
-		DataStream>>#readFalse.
-		DataStream>>#readInteger.
-		DataStream>>#readShortInst.
-		DataStream>>#readByteArray.
-		DataStream>>#readWordLike.
-		DataStream>>#readFloat.
-		DataStream>>#readReference.
-		DataStream>>#vacantRef.
-		DataStream>>#objectAt:.
-		DataStream>>#readShortRef.
-		DataStream>>#readInstance.
-		DataStream>>#readSymbol.
-		DataStream>>#readString.
-		DataStream>>#readCharacter.
-		ReferenceStream>>#next.
-		ReferenceStream>>#beginReference:.
-		ReferenceStream>>#maybeBeginReference:.
-		ReferenceStream>>#objectAt:.
-		ReferenceStream>>#setCurrentReference:.
-		ReferenceStream>>#getCurrentReference.
-		ReferenceStream>>#noteCurrentReference:.
-		ReferenceStream>>#isAReferenceType:.
-		
-		SystemDictionary>>#wordSize.
-		SystemDictionary >>#vmParameterAt:.
-		SystemDictionary>>#voidCogVMState.
-		SystemDictionary>>#flushClassNameCache.
-	
-		ClassBuilder>>#newSubclassOf:type:instanceVariables:from:.
-		ClassBuilder>>#computeFormat:instSize:forSuper:.
-		ClassBuilder>>#computeFormat:fullInstancesSize:.
-		ClassBuilder>>#format:variable:bitsUnitSize:pointers:weak:.
-		ClassBuilder>>#privateNewSubclassOf:from:.
-		ClassBuilder>>#privateNewSubclassOf:.
-		ClassBuilder>>#initialize."
-
-	} do: [ :compiledMethod |
-		self addExistingMethod: compiledMethod ].! !
-
-!ImageBuilder methodsFor: 'image building examples' stamp: 'jmv 5/9/2025 14:15:46'!
+!ImageBuilder methodsFor: 'image building examples' stamp: 'jmv 5/13/2025 10:13:41'!
 addExample07LoadDynamicLibraryMethods
 
-	"Classes referenced from below, but of which no methods are included."
-	#(ReadWriteStream IdentitySet)
-	do: [ :className | | classSpec classForeignObject |
-		classSpec := ClassSpec for: (Smalltalk at: className) addClassesTo: classes.	
-		classForeignObject := self addClassAndMetaclassSpec: classSpec classIndexOrNil: nil.
-		self map: classSpec toForeignObject: classForeignObject ].
-
-"ojo, incluir todos los implementors de los metodos en todas las clases incluidas, o al menos en la herencia..."
-	"Classes included with ALL their methods."
-	#( DynamicCuisLibrary ClassSpec MethodSpec LiteralVariableSpec
-	)
-	do: [ :className | | cls classSpec |
-		cls := Smalltalk at: className.
-		classSpec := ClassSpec for: cls addClassesTo: classes.	
-		self findOrAddClassSpec: classSpec.
-		cls class methodsDo: [ :compiledMethod |
-			self addExistingMethod: compiledMethod ].
-		cls methodsDo: [ :compiledMethod |
-(compiledMethod selector = #buildClassesAndMethods:) ifFalse: [ "HACKY!!!!!!!!!!!!"
-			self addExistingMethod: compiledMethod
-]
-			]].
-
 	{
-		Object>>#as:.
-		Object>>#yourself.
-		Object>>#->.
-		Object>>#copy.
-		Object>>#shallowCopy.
-		Object>>#postCopy.
-		Object>>#readDataFrom:size:.
-		Object>>#instVarAt:put:.
-		Object>>#comeFullyUpOnReload:.
-		Object>>#basicAt:put:.
-
-		Behavior >> #noclash01_allInstances.
-		Behavior>>#isBehavior.
-		Behavior>>#superclass.
-		Behavior>>#typeOfClass.
-		Behavior>>#isVariable.
-		Behavior>>#isBytes.
-		Behavior>>#isBits.
-		Behavior>>#isImmediateClass.
-		Behavior>>#instSpec.
-		Behavior>>#instSize.
-		Behavior>>#definesInstanceVariableNamed:.
-		Behavior>>#instVarNames.
-		Behavior>>#format.
-		Behavior>>#superclass:methodDictionary:format:.
-		Behavior>>#binding.
-		Behavior>>#addSelectorSilently:withMethod:.
-		Behavior>>#lookupSelector:.
-		Behavior>>#includesSelector:.
-		Behavior>>#methodDict.
-		Behavior>>#compiledMethodAt:.
-		Behavior>>#bindingOf:.
-		Behavior>>#classBindingOf:.
-
-		ClassDescription>>#instVarNames.
-		ClassDescription>>#organization:.
-		ClassDescription>>#setInstVarNames:.
-		ClassDescription>>#superclass:methodDictionary:format:.
-
-		Class>>#superclass:methodDictionary:format:.
-		Class>>#addSubclass:.
-		Class>>#setName:.
-		Class>>#declareClassVariables:.
-		Class>>#name.
-		Class>>#classPool.
-		Class>>#sharedPools.
-		Class>>#binding.
-		Class>>#bindingOf:.
-		Class>>#localBindingOf:.
-		Class>>#classVarBindingOf:.
-
-		Metaclass>>#new.
-		Metaclass>>#bindingOf:.
-		Metaclass>>#localBindingOf:.
-		Metaclass>>#allClassInstVarNames.
-
-		CompiledMethod class>>#createMethod:trailer:header:.
-		CompiledMethod class>>#newMethod:header:.
-		CompiledMethod>>#literalAt:put:.
-		CompiledMethod>>#objectAt:put:.
-		CompiledMethod>>#penultimateLiteral:.
-		CompiledMethod>>#methodClass:.
-		CompiledMethod>>#endPC.
-		CompiledMethod>>#initialPC.
-		CompiledMethod>>#flushCache.
-		CompiledMethod>>#readDataFrom:size:.
-
-		MethodContext>>#	instVarAt:put:.
-
-		Collection class>>#newFrom:.
-		Collection>>#=.
-		Collection>>#is:.
-		Collection>>#reject:.
-		Collection>>#ifEmpty:.
-		Collection>>#isSequenceable.
-		Collection>>#asIdentitySet.
-		Collection>>#addAll:.
-		Collection>>#notEmpty.
-		Collection >> #inject:into:.
-		Collection >> #detect:ifNone:.
-		SequenceableCollection>>#=.
-		SequenceableCollection >> #select:.
-		SequenceableCollection >>#collect:.
-		SequenceableCollection>>#readStream.
-		SequenceableCollection>>#indexOf:ifAbsent:.
-		SequenceableCollection>>#withIndexDo:.
-		SequenceableCollection>>#hasEqualElements:.
-		SequenceableCollection>>#isSequenceable.
-		SequenceableCollection>>#copyWith:.
-		ArrayedCollection>>#isEmpty.
-		Array>>#asArray.
-		Array>>#is:.
-		ByteArray>>#uint32At:bigEndian:.
-		ByteArray>>#int32At:bigEndian:.
-		ByteArray>>#uint16At:bigEndian:.
-		ByteArray>>#float64At:bigEndian:.
-
-		Set class>>#new.
-		Set class>>#newWithRoomForMoreThan:.
-		Set class>>#sizeFor:.
-		Set>>#init:.
-		Set>>#atNewIndex:put:.
-		Set>>#fullCheck.
-		Set>>#grow.
-		Set>>#includes:.
-		Set>>#findElementOrNil:.
-		Set>>#scanFor:.
-		Set>>#growSize.
-		Set>>#noCheckAdd:.
-		Set>>#postCopy.
-		Set>>#size.
-		Set>>#do:.
-		Set>>#comeFullyUpOnReload:.
-		IdentitySet>>#scanFor:.
-		Dictionary>>#keysDo:.
-		Dictionary>>#associationsDo:.
-		Dictionary>>#postCopy.
-		Dictionary>>#noCheckAdd:.
-		Dictionary>>#at:ifPresent:.
-		Dictionary>>#scanFor:.
-		Dictionary>>#includesKey:.
-		Dictionary>>#at:.
-		Dictionary>>#errorKeyNotFound:.
-		Dictionary>>#at:ifAbsent:.
-		Dictionary>>#keys.
-		Dictionary>>#associationAt:ifAbsent:.
-		Dictionary>>#bindingOf:.	
-		Dictionary>>#declare:from:.
-		IdentityDictionary>>#scanFor:.
-
-		MethodDictionary class>>#new.
-		MethodDictionary class>>#newWithRoomForMoreThan:.
-		MethodDictionary>>#at:ifAbsent:.
-		MethodDictionary>>#scanFor:.
-		MethodDictionary>>#postCopy.
-		MethodDictionary >>#keyAt:.
-		MethodDictionary>>#associationAt:ifAbsent:.
-		MethodDictionary>>#keysDo:.
-		MethodDictionary>>#at:put:.
-		MethodDictionary>>#grow. "become!!!!!!!!!!"
-		MethodDictionary>>#associationsDo:.
-
-		LookupKey class>>#key:.
-		LookupKey>>#key:.
-		LookupKey>>#key.
-		Association class>>#key:value:.
-		Association>>#value:.
-
-		Stream>>#binary.
-		Stream>>#nextString.
-		Stream>>#nextUint32BigEndian:.
-		Stream>>#nextInt32BigEndian:.
-		Stream>>#nextUint16BigEndian:.
-		Stream>>#nextFloat64BigEndian:.
-		ReadStream>>#next.
-		ReadStream>>#next:.
-		ReadStream>>#next:into:startingAt:.
-		
-		DataStream class>>#on:.
-		DataStream class>>#typeMap.
-		DataStream >>#typeIDFor:.
-		DataStream>>#setStream:.
-		DataStream>>#next.
-		DataStream>>#beginReference:.
-		DataStream>>#maybeBeginReference:.
-		DataStream>>#setCurrentReference:.
-		DataStream>>#getCurrentReference.
-		DataStream>>#readArray.
-		DataStream>>#readNil.
-		DataStream>>#readTrue.
-		DataStream>>#readFalse.
-		DataStream>>#readInteger.
-		DataStream>>#readShortInst.
-		DataStream>>#readByteArray.
-		DataStream>>#readWordLike.
-		DataStream>>#readFloat.
-		DataStream>>#readReference.
-		DataStream>>#vacantRef.
-		DataStream>>#objectAt:.
-		DataStream>>#readShortRef.
-		DataStream>>#readInstance.
-		DataStream>>#readSymbol.
-		DataStream>>#readString.
-		DataStream>>#readCharacter.
-		ReferenceStream>>#setStream:.
-		ReferenceStream>>#next.
-		ReferenceStream>>#beginReference:.
-		ReferenceStream>>#maybeBeginReference:.
-		ReferenceStream>>#objectAt:.
-		ReferenceStream>>#setCurrentReference:.
-		ReferenceStream>>#getCurrentReference.
-		ReferenceStream>>#noteCurrentReference:.
-		ReferenceStream>>#isAReferenceType:.
-		
-		SystemDictionary>>#at:put:.
-		SystemDictionary>>#wordSize.
-		SystemDictionary >>#vmParameterAt:.
-		SystemDictionary>>#voidCogVMState.
-		SystemDictionary>>#flushClassNameCache.
-	
-		ClassBuilder>>#newSubclassOf:type:instanceVariables:from:.
-		ClassBuilder>>#computeFormat:instSize:forSuper:.
-		ClassBuilder>>#computeFormat:fullInstancesSize:.
-		ClassBuilder>>#format:variable:bitsUnitSize:pointers:weak:.
-		ClassBuilder>>#privateNewSubclassOf:from:.
-		ClassBuilder>>#privateNewSubclassOf:.
-		ClassBuilder>>#initialize.
 
 		BlockClosure>>#timeToRun.
 		Time class>>#millisecondsToRun:.
@@ -2816,7 +2422,7 @@ buildExample05SymbolExperiments
 	"Creating the start process requires CompiledMethods to be there"
 	self addStartProcess.! !
 
-!ImageBuilder methodsFor: 'image building examples' stamp: 'jmv 5/9/2025 17:07:31'!
+!ImageBuilder methodsFor: 'image building examples' stamp: 'jmv 5/13/2025 10:11:04'!
 buildExample06LoadDynamicLibrary
 	"
 	Spur64ImageBuilder new
@@ -2850,9 +2456,11 @@ buildExample06LoadDynamicLibrary
 	"Set what this image will do when run."
 	self addBasicSymbolSupport.
 	self addBasicFileServices.
-	self addBasicCollectionsSupport.
+	self addHashedCollectionsSupport.
 	self addObjectSerializationSupport.
-	self addExample06LoadDynamicLibraryMethods.
+	self addObjectCopyingSupport.
+	self addClassCreationSupport.
+	self addDynamicLibraryLoadSupport.
 	startUpMethod := SystemDictionary>>#bootstrappedExample06LoadDynamicLibrary.
 	startUpMethodForeignObject := self addExistingMethod: startUpMethod.
 	self map: startUpMethod toForeignObject: startUpMethodForeignObject.
@@ -2866,7 +2474,7 @@ buildExample06LoadDynamicLibrary
 	"Creating the start process requires CompiledMethods to be there"
 	self addStartProcess.! !
 
-!ImageBuilder methodsFor: 'image building examples' stamp: 'jmv 5/7/2025 16:52:28'!
+!ImageBuilder methodsFor: 'image building examples' stamp: 'jmv 5/13/2025 10:13:52'!
 buildExample07LoadDynamicLibrary
 	"
 	Spur64ImageBuilder new
@@ -2890,6 +2498,11 @@ buildExample07LoadDynamicLibrary
 	"Set what this image will do when run."
 	self addBasicSymbolSupport.
 	self addBasicFileServices.
+	self addHashedCollectionsSupport.
+	self addObjectSerializationSupport.
+	self addObjectCopyingSupport.
+	self addClassCreationSupport.
+	self addDynamicLibraryLoadSupport.
 	self addExample07LoadDynamicLibraryMethods.
 	startUpMethod := SystemDictionary>>#bootstrappedExample07LoadDynamicLibrary.
 	startUpMethodForeignObject := self addExistingMethod: startUpMethod.

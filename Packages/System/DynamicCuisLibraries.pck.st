@@ -1,6 +1,6 @@
-'From Cuis7.3 [latest update: #7146] on 12 May 2025 at 9:25:09 am'!
+'From Cuis7.3 [latest update: #7157] on 13 May 2025 at 4:06:05 pm'!
 'Description '!
-!provides: 'DynamicCuisLibraries' 1 24!
+!provides: 'DynamicCuisLibraries' 1 25!
 SystemOrganization addCategory: #'DynamicCuisLibraries-Code Model'!
 SystemOrganization addCategory: #'DynamicCuisLibraries-Dynamic Libraries'!
 SystemOrganization addCategory: #DynamicCuisLibraries!
@@ -144,7 +144,98 @@ primSize: id
 is: aSymbol
 	^aSymbol == #CodeElementSpec or: [ super is: aSymbol]! !
 
-!ClassSpec methodsFor: 'accessing' stamp: 'jmv 9/6/2023 17:49:25'!
+!ClassSpec methodsFor: '[mkDynamicLibraryLoad] testing' stamp: 'jmv 5/9/2025 15:29:44'!
+canBeInstalled
+	"Answer false if we can't be installed in the running system.
+	Note: it is assumed that installation will happen in hierarchy order, starting from ProtoObject.
+
+	(ClassSpec for: Morph addClassesTo: OrderedDictionary new) doesExist.
+	(ClassSpec for: Morph addClassesTo: OrderedDictionary new) equalsExisting.
+	(ClassSpec for: Morph addClassesTo: OrderedDictionary new) canBeInstalled.
+	"
+
+	| existing existingSuperclass addedInstanceVariables |
+	existing := nil.
+	self doesExist ifTrue: [
+		"We already exist in the system. Our superclass must match existing superclass."
+		existing := Smalltalk at: name.
+		existingSuperclass := existing superclass.
+
+		"If either we are sublcass of nil or existing is (but not both), it means we can't be installed"
+		existingSuperclass isNil = superclass isNil ifFalse: [ ^false ].
+
+		"Not subclass of nil. Superclass must match by name."
+		existingSuperclass notNil ifTrue: [
+			existingSuperclass name = superclass name ifFalse: [ ^false ]].
+
+		"We don't allow turning a regular class (ivars) into an array, or any other such changes."
+		existing typeOfClass = type ifFalse: [ ^false ].
+
+		"We don't adjust existing class methods for differences in class ivars.
+		We don't migrate or become: classes.
+		So, class ivars must be the same as in existing class."
+		(existing class allClassInstVarNames hasEqualElements: classInstVarNames) ifFalse: [ ^false ]].
+
+	"If no new instance variables are added, shape will not change.
+	Also, we'd be not requiring migration of any instances."
+	addedInstanceVariables := existing
+		ifNil: [ instVarNames ]
+		ifNotNil: [ instVarNames reject: [ :v | existing definesInstanceVariableNamed: v ]].
+	addedInstanceVariables size = 0 ifTrue: [ ^true ].
+
+	"So we are adding instance variables, either to a new or existing class."
+	existing ifNotNil: [
+		"We're modifying the shape of the existing class, fail if there are (sub)instances"
+		existing withAllSubclassesDo: [ :cls |
+			cls someInstance ifNotNil: [ ^false ]].
+		"Also fail if some subclass already includes any variable we want to add."
+		addedInstanceVariables do: [ :v |
+			existing allSubclassesDo: [ :cls |
+				(cls definesInstanceVariableNamed: v) ifTrue: [ ^false ]]]].
+
+	"If we try to add an instance variable that is already defined in an existing superclass, we can't be installed."
+	self allSuperclassesDo: [ :clsSpec |
+		Smalltalk at: clsSpec name ifPresent: [ :cls |
+			addedInstanceVariables do: [ :v |
+				(cls definesInstanceVariableNamed: v) ifTrue: [ ^false ]]]].
+
+	"It looks like there are no problems then."
+	^true! !
+
+!ClassSpec methodsFor: '[mkDynamicLibraryLoad] testing' stamp: 'jmv 8/3/2023 13:48:20'!
+doesExist
+	^(Smalltalk at: name ifAbsent: nil) isBehavior! !
+
+!ClassSpec methodsFor: '[mkDynamicLibraryLoad] testing' stamp: 'jmv 5/9/2025 15:37:26'!
+equalsExisting
+	"
+	(ClassSpec for: Morph addClassesTo: OrderedDictionary new) equalsExisting
+	"
+	"
+	| allClasses |
+	allClasses := OrderedDictionary new.
+	Smalltalk allClassesDo: [ :each | 
+		self assert: (ClassSpec for: each addClassesTo: allClasses) equalsExisting ].
+	allClasses
+	" 
+	| existing existingClassPool |
+	superclass notNil ifTrue: [
+		superclass equalsExisting ifFalse: [ ^false ]].
+	self doesExist ifFalse: [ ^false ].
+	existing := 	Smalltalk at: name ifAbsent: [ ^false ].
+	existing isBehavior ifFalse: [ ^false ].  "Must be a class!!"
+	existing isMeta ifTrue: [ ^false ].          "We only represent the instance side"
+	existing name = name ifFalse: [ ^false ].
+	existing typeOfClass = type ifFalse: [ ^false ].
+	(existing instVarNames hasEqualElements: instVarNames) ifFalse: [ ^false ].
+	existingClassPool := existing classPool.
+	existingClassPool size = classVarNames size ifFalse: [ ^false ].
+	classVarNames do: [ :cVarName |
+		(existingClassPool includesKey: cVarName) ifFalse: [ ^false ]].
+	(existing sharedPools hasEqualElements: poolDictionaryNames) ifFalse: [ ^false ].
+	^true! !
+
+!ClassSpec methodsFor: '[mkDynamicLibraryLoad] accessing' stamp: 'jmv 9/6/2023 17:49:25'!
 allInstVarCountInSpec
 	"In this Spec object. Unrelated to actual Class.
 	Including inherited from superclasses"
@@ -154,50 +245,24 @@ allInstVarCountInSpec
 		ifNil: [ 0 ].
 	^instVarNames size + inherited! !
 
-!ClassSpec methodsFor: 'accessing' stamp: 'jmv 5/20/2023 13:53:54'!
-classInstVarNames
-	^classInstVarNames! !
-
-!ClassSpec methodsFor: 'accessing' stamp: 'jmv 6/30/2023 15:09:56'!
-classVarNames
-	^classVarNames! !
-
-!ClassSpec methodsFor: 'accessing' stamp: 'fz 5/24/2023 20:48:53'!
-instVarNames
-	^instVarNames! !
-
-!ClassSpec methodsFor: 'accessing' stamp: 'jmv 9/6/2023 17:49:30'!
+!ClassSpec methodsFor: '[mkDynamicLibraryLoad] accessing' stamp: 'jmv 9/6/2023 17:49:30'!
 methodSpecsInstVarIndexMap
 	"To be used during materialization and installing"
 	^methodSpecsInstVarIndexMap! !
 
-!ClassSpec methodsFor: 'accessing' stamp: 'jmv 4/17/2023 15:12:32'!
+!ClassSpec methodsFor: '[mkDynamicLibraryLoad] accessing' stamp: 'jmv 4/17/2023 15:12:32'!
 name
 	^name! !
 
-!ClassSpec methodsFor: 'accessing' stamp: 'jmv 4/17/2023 11:44:53'!
-name: aSymbol
+!ClassSpec methodsFor: '[mkDynamicLibraryLoad] enumerating' stamp: 'jmv 8/3/2023 18:53:12'!
+allSuperclassesDo: aBlock 
+	"Evaluate the argument, aBlock, for each of the receiver's superclasses."
 
-	name := aSymbol.! !
+	superclass ifNotNil: [
+		aBlock value: superclass.
+		superclass allSuperclassesDo: aBlock]! !
 
-!ClassSpec methodsFor: 'accessing' stamp: 'jmv 6/23/2023 11:04:06'!
-superclass
-	^superclass! !
-
-!ClassSpec methodsFor: 'accessing' stamp: 'jmv 9/6/2023 17:49:34'!
-totalClassInstVarCountInSpec
-	"Including inherited from superclasses"
-	| inherited |
-	inherited := superclass
-		ifNotNil: [ superclass totalClassInstVarCountInSpec ]
-		ifNil: [ 0 ].
-	^classInstVarNames size + inherited! !
-
-!ClassSpec methodsFor: 'accessing' stamp: 'jmv 8/1/2023 15:54:10'!
-typeOfClass
-	^type! !
-
-!ClassSpec methodsFor: 'materialization' stamp: 'jmv 9/6/2023 17:49:38'!
+!ClassSpec methodsFor: '[mkDynamicLibraryLoad] ematerialization' stamp: 'jmv 9/6/2023 17:49:38'!
 allInstVarCountAfterInstall
 	"In the actual Class. How it will look after installing us.
 	Including inherited from superclasses"
@@ -207,7 +272,7 @@ allInstVarCountAfterInstall
 		ifNil: [ 0 ].
 	^instVarCountAfterInstall + inherited! !
 
-!ClassSpec methodsFor: 'materialization' stamp: 'jmv 9/6/2023 17:49:41'!
+!ClassSpec methodsFor: '[mkDynamicLibraryLoad] ematerialization' stamp: 'jmv 9/6/2023 17:49:41'!
 allInstVarCountBeforeInstall
 	"In the actual Class. Before installing us.
 	Including inherited from superclasses"
@@ -217,26 +282,26 @@ allInstVarCountBeforeInstall
 		ifNil: [ 0 ].
 	^instVarCountBeforeInstall + inherited! !
 
-!ClassSpec methodsFor: 'materialization' stamp: 'jmv 9/6/2023 17:49:44'!
+!ClassSpec methodsFor: '[mkDynamicLibraryLoad] ematerialization' stamp: 'jmv 9/6/2023 17:49:44'!
 instVarCountAfterInstall
 	"In the actual Class. How it will look after installing us."
 
 	^instVarCountAfterInstall! !
 
-!ClassSpec methodsFor: 'materialization' stamp: 'jmv 4/28/2025 09:34:41'!
+!ClassSpec methodsFor: '[mkDynamicLibraryLoad] ematerialization' stamp: 'jmv 4/28/2025 09:34:41'!
 instVarCountBeforeInstall
 	"In the existing actual Class. Before installing us."
 
 	^instVarCountBeforeInstall! !
 
-!ClassSpec methodsFor: 'materialization' stamp: 'jmv 8/10/2023 16:14:14'!
+!ClassSpec methodsFor: '[mkDynamicLibraryLoad] ematerialization' stamp: 'jmv 8/10/2023 16:14:14'!
 materializeAndInstall
 	
 	^self doesExist
 		ifFalse: [ self materializeNewClass ]
 		ifTrue: [ self mergeInto: (Smalltalk at: name) ].! !
 
-!ClassSpec methodsFor: 'materialization' stamp: 'jmv 9/14/2023 10:15:17'!
+!ClassSpec methodsFor: '[mkDynamicLibraryLoad] ematerialization' stamp: 'jmv 5/12/2025 12:15:11'!
 materializeNewClass
 	"Only for new classes	"
 
@@ -256,7 +321,7 @@ materializeNewClass
 			pool := Smalltalk at: poolName asSymbol ifAbsentPut: [ Dictionary new ].
 			newClass addSharedPool: pool ]].
 
-	classInstVarNames notEmpty ifTrue: [
+	classInstVarNames size = 0 ifFalse: [
 		metaclass := newClass class.
 		newMeta := builder
 			newSubclassOf: metaclass superclass 
@@ -275,7 +340,7 @@ materializeNewClass
 	"
 	^newClass! !
 
-!ClassSpec methodsFor: 'materialization' stamp: 'jmv 9/14/2023 10:13:02'!
+!ClassSpec methodsFor: '[mkDynamicLibraryLoad] ematerialization' stamp: 'jmv 9/14/2023 10:13:02'!
 mergeInto: existingClass
 	"Ensure our instance variables, class variables, class instance variables and sharedPools are 
 	included in existingClass. Add them as needed."
@@ -340,7 +405,7 @@ mergeInto: existingClass
 	builder update: existingClass to: newClass.
 	^newClass! !
 
-!ClassSpec methodsFor: 'materialization' stamp: 'jmv 5/9/2025 15:36:37'!
+!ClassSpec methodsFor: '[mkDynamicLibraryLoad] ematerialization' stamp: 'jmv 5/9/2025 15:36:37'!
 preInstall
 	"Prepare classInstVarCountBeforeInstall, classInstVarCountAfterInstall, methodSpecsInstVarIndexMap
 	These will be needed for remapping instance variable accesses both from existing CompiledMethods
@@ -392,104 +457,39 @@ preInstall
 		afterInstallIvarsIndex = specIvarIndex ifFalse: [
 			methodSpecsInstVarIndexMap add: specIvarIndex -> afterInstallIvarsIndex ]].! !
 
-!ClassSpec methodsFor: 'testing' stamp: 'jmv 5/9/2025 15:29:44'!
-canBeInstalled
-	"Answer false if we can't be installed in the running system.
-	Note: it is assumed that installation will happen in hierarchy order, starting from ProtoObject.
+!ClassSpec methodsFor: 'accessing' stamp: 'jmv 5/20/2023 13:53:54'!
+classInstVarNames
+	^classInstVarNames! !
 
-	(ClassSpec for: Morph addClassesTo: OrderedDictionary new) doesExist.
-	(ClassSpec for: Morph addClassesTo: OrderedDictionary new) equalsExisting.
-	(ClassSpec for: Morph addClassesTo: OrderedDictionary new) canBeInstalled.
-	"
+!ClassSpec methodsFor: 'accessing' stamp: 'jmv 6/30/2023 15:09:56'!
+classVarNames
+	^classVarNames! !
 
-	| existing existingSuperclass addedInstanceVariables |
-	existing := nil.
-	self doesExist ifTrue: [
-		"We already exist in the system. Our superclass must match existing superclass."
-		existing := Smalltalk at: name.
-		existingSuperclass := existing superclass.
+!ClassSpec methodsFor: 'accessing' stamp: 'fz 5/24/2023 20:48:53'!
+instVarNames
+	^instVarNames! !
 
-		"If either we are sublcass of nil or existing is (but not both), it means we can't be installed"
-		existingSuperclass isNil = superclass isNil ifFalse: [ ^false ].
+!ClassSpec methodsFor: 'accessing' stamp: 'jmv 4/17/2023 11:44:53'!
+name: aSymbol
 
-		"Not subclass of nil. Superclass must match by name."
-		existingSuperclass notNil ifTrue: [
-			existingSuperclass name = superclass name ifFalse: [ ^false ]].
+	name := aSymbol.! !
 
-		"We don't allow turning a regular class (ivars) into an array, or any other such changes."
-		existing typeOfClass = type ifFalse: [ ^false ].
+!ClassSpec methodsFor: 'accessing' stamp: 'jmv 6/23/2023 11:04:06'!
+superclass
+	^superclass! !
 
-		"We don't adjust existing class methods for differences in class ivars.
-		We don't migrate or become: classes.
-		So, class ivars must be the same as in existing class."
-		(existing class allClassInstVarNames hasEqualElements: classInstVarNames) ifFalse: [ ^false ]].
+!ClassSpec methodsFor: 'accessing' stamp: 'jmv 9/6/2023 17:49:34'!
+totalClassInstVarCountInSpec
+	"Including inherited from superclasses"
+	| inherited |
+	inherited := superclass
+		ifNotNil: [ superclass totalClassInstVarCountInSpec ]
+		ifNil: [ 0 ].
+	^classInstVarNames size + inherited! !
 
-	"If no new instance variables are added, shape will not change.
-	Also, we'd be not requiring migration of any instances."
-	addedInstanceVariables := existing
-		ifNil: [ instVarNames ]
-		ifNotNil: [ instVarNames reject: [ :v | existing definesInstanceVariableNamed: v ]].
-	addedInstanceVariables size = 0 ifTrue: [ ^true ].
-
-	"So we are adding instance variables, either to a new or existing class."
-	existing ifNotNil: [
-		"We're modifying the shape of the existing class, fail if there are (sub)instances"
-		existing withAllSubclassesDo: [ :cls |
-			cls someInstance ifNotNil: [ ^false ]].
-		"Also fail if some subclass already includes any variable we want to add."
-		addedInstanceVariables do: [ :v |
-			existing allSubclassesDo: [ :cls |
-				(cls definesInstanceVariableNamed: v) ifTrue: [ ^false ]]]].
-
-	"If we try to add an instance variable that is already defined in an existing superclass, we can't be installed."
-	self allSuperclassesDo: [ :clsSpec |
-		Smalltalk at: clsSpec name ifPresent: [ :cls |
-			addedInstanceVariables do: [ :v |
-				(cls definesInstanceVariableNamed: v) ifTrue: [ ^false ]]]].
-
-	"It looks like there are no problems then."
-	^true! !
-
-!ClassSpec methodsFor: 'testing' stamp: 'jmv 8/3/2023 13:48:20'!
-doesExist
-	^(Smalltalk at: name ifAbsent: nil) isBehavior! !
-
-!ClassSpec methodsFor: 'testing' stamp: 'jmv 5/9/2025 15:37:26'!
-equalsExisting
-	"
-	(ClassSpec for: Morph addClassesTo: OrderedDictionary new) equalsExisting
-	"
-	"
-	| allClasses |
-	allClasses := OrderedDictionary new.
-	Smalltalk allClassesDo: [ :each | 
-		self assert: (ClassSpec for: each addClassesTo: allClasses) equalsExisting ].
-	allClasses
-	" 
-	| existing existingClassPool |
-	superclass notNil ifTrue: [
-		superclass equalsExisting ifFalse: [ ^false ]].
-	self doesExist ifFalse: [ ^false ].
-	existing := 	Smalltalk at: name ifAbsent: [ ^false ].
-	existing isBehavior ifFalse: [ ^false ].  "Must be a class!!"
-	existing isMeta ifTrue: [ ^false ].          "We only represent the instance side"
-	existing name = name ifFalse: [ ^false ].
-	existing typeOfClass = type ifFalse: [ ^false ].
-	(existing instVarNames hasEqualElements: instVarNames) ifFalse: [ ^false ].
-	existingClassPool := existing classPool.
-	existingClassPool size = classVarNames size ifFalse: [ ^false ].
-	classVarNames do: [ :cVarName |
-		(existingClassPool includesKey: cVarName) ifFalse: [ ^false ]].
-	(existing sharedPools hasEqualElements: poolDictionaryNames) ifFalse: [ ^false ].
-	^true! !
-
-!ClassSpec methodsFor: 'enumerating' stamp: 'jmv 8/3/2023 18:53:12'!
-allSuperclassesDo: aBlock 
-	"Evaluate the argument, aBlock, for each of the receiver's superclasses."
-
-	superclass ifNotNil: [
-		aBlock value: superclass.
-		superclass allSuperclassesDo: aBlock]! !
+!ClassSpec methodsFor: 'accessing' stamp: 'jmv 8/1/2023 15:54:10'!
+typeOfClass
+	^type! !
 
 !ClassSpec methodsFor: 'enumerating' stamp: 'jmv 9/19/2023 12:37:29'!
 withAllSuperclassesDo: aBlock 
@@ -549,11 +549,11 @@ for: aClass addClassesTo: anOrderedDictionaryOfClasses
 	anOrderedDictionaryOfClasses at: className put: answer.
 	^answer! !
 
-!LiteralVariableSpec methodsFor: 'accessing' stamp: 'jmv 4/20/2023 16:28:40'!
+!LiteralVariableSpec methodsFor: '[mkDynamicLibraryLoad] accessing' stamp: 'jmv 4/20/2023 16:28:40'!
 variableName
 	^variableName! !
 
-!LiteralVariableSpec methodsFor: 'testing' stamp: 'jmv 5/16/2023 14:51:47'!
+!LiteralVariableSpec methodsFor: '[mkDynamicLibraryLoad] testing' stamp: 'jmv 5/16/2023 14:51:47'!
 is: aSymbol
 	^aSymbol == #LiteralVariableSpec or: [ super is: aSymbol]! !
 
@@ -570,23 +570,11 @@ printOn: stream
 variableName: aSymbol
 	^self basicNew variableName: aSymbol! !
 
-!MethodSpec methodsFor: 'accessing' stamp: 'jmv 6/30/2023 17:41:22'!
-bytecodes
-	^bytecodes! !
-
-!MethodSpec methodsFor: 'accessing' stamp: 'fz 6/21/2023 19:57:43'!
+!MethodSpec methodsFor: '[mkDynamicLibraryLoad] accessing' stamp: 'fz 6/21/2023 19:57:43'!
 classSpec
 	^classSpec! !
 
-!MethodSpec methodsFor: 'accessing' stamp: 'jmv 6/30/2023 16:43:19'!
-header
-	^header! !
-
-!MethodSpec methodsFor: 'accessing' stamp: 'fz 6/23/2023 13:09:41'!
-isClassSide
-	^isClassSide! !
-
-!MethodSpec methodsFor: 'accessing' stamp: 'jmv 8/31/2023 15:15:25'!
+!MethodSpec methodsFor: '[mkDynamicLibraryLoad] accessing' stamp: 'jmv 8/31/2023 15:15:25'!
 literals
 	"Regular literals.
 	CompiledMethods have two special last literals, that are not included here.
@@ -595,26 +583,11 @@ literals
 
 	^literals ifNil: [ #() ]! !
 
-!MethodSpec methodsFor: 'accessing' stamp: 'jmv 8/31/2023 15:18:27'!
+!MethodSpec methodsFor: '[mkDynamicLibraryLoad] accessing' stamp: 'jmv 8/31/2023 15:18:27'!
 pragmaSpecs
 	^pragmas ifNil: [ #() ]! !
 
-!MethodSpec methodsFor: 'accessing' stamp: 'fz 6/21/2023 22:23:04'!
-selector
-	^selector! !
-
-!MethodSpec methodsFor: 'accessing' stamp: 'jmv 8/1/2023 16:32:08'!
-selector: aSymbol
-	selector := aSymbol.! !
-
-!MethodSpec methodsFor: 'accessing' stamp: 'jmv 6/2/2023 16:00:26'!
-spurNumLiterals
-	"Answer the number of literals used by the receiver.
-	See #numLiterals"
-
-	^ header bitAnd: 16r7FFF! !
-
-!MethodSpec methodsFor: 'materialization' stamp: 'jmv 8/10/2023 15:41:49'!
+!MethodSpec methodsFor: '[mkDynamicLibraryLoad] materialization' stamp: 'jmv 8/10/2023 15:41:49'!
 materializeAndInstall
 	| theClass method |
 	theClass := Smalltalk at: classSpec name.
@@ -623,7 +596,7 @@ materializeAndInstall
 	theClass addSelectorSilently: selector withMethod: method.
 	^method! !
 
-!MethodSpec methodsFor: 'materialization' stamp: 'jmv 9/6/2023 17:47:21'!
+!MethodSpec methodsFor: '[mkDynamicLibraryLoad] materialization' stamp: 'jmv 9/6/2023 17:47:21'!
 materializeIn: aClass
 "
 Currently:
@@ -658,6 +631,33 @@ header literals pragmas bytecodes
 		method at: i put: (bytecodes at: j).
 		j := j + 1 ].
 	^method! !
+
+!MethodSpec methodsFor: 'accessing' stamp: 'jmv 6/30/2023 17:41:22'!
+bytecodes
+	^bytecodes! !
+
+!MethodSpec methodsFor: 'accessing' stamp: 'jmv 6/30/2023 16:43:19'!
+header
+	^header! !
+
+!MethodSpec methodsFor: 'accessing' stamp: 'fz 6/23/2023 13:09:41'!
+isClassSide
+	^isClassSide! !
+
+!MethodSpec methodsFor: 'accessing' stamp: 'fz 6/21/2023 22:23:04'!
+selector
+	^selector! !
+
+!MethodSpec methodsFor: 'accessing' stamp: 'jmv 8/1/2023 16:32:08'!
+selector: aSymbol
+	selector := aSymbol.! !
+
+!MethodSpec methodsFor: 'accessing' stamp: 'jmv 6/2/2023 16:00:26'!
+spurNumLiterals
+	"Answer the number of literals used by the receiver.
+	See #numLiterals"
+
+	^ header bitAnd: 16r7FFF! !
 
 !MethodSpec methodsFor: 'private' stamp: 'fgz 9/5/2023 15:00:07'!
 at: index
@@ -893,6 +893,83 @@ classesAssumedToExist
 			LiteralVariableSpec
 		)! !
 
+!DynamicCuisLibrary methodsFor: '[mkDynamicLibraryLoad] installing' stamp: 'jmv 9/6/2023 17:49:04'!
+canBeInstalled
+	classSpecs do: [ :each | each canBeInstalled ifFalse: [ ^false ]].
+
+	"Prepare for possible later validation and conversion of MethodSpecs and existing CompiledMethods"
+	classSpecs do: [ :classSpec | classSpec preInstall ].
+
+	"Possible difference between class shapes when the library was built and the shape
+	they will have after library install. Check that methods in the library can be corrected for them."
+	(self remapMethodSpecInstVarAccesses: false)
+		ifFalse: [ ^false ].
+
+	"Possible difference between class shapes in the running image, before and after installing.
+	Check that existing methods in the image that would be affected can be corrected for this."
+	(self remapExistingMethodsInstVarAccesses: false)
+		ifFalse: [ ^false ].
+
+	^true! !
+
+!DynamicCuisLibrary methodsFor: '[mkDynamicLibraryLoad] installing' stamp: 'jmv 9/6/2023 17:50:56'!
+installLibrary
+	"Install classes. Merge into existing classes if appropriate."
+	classSpecs do: [ :classSpec |
+		classSpec equalsExisting ifFalse: [
+			classSpec materializeAndInstall ]].
+
+	"Convert existing methods to new class shapes if needed.
+	(ClassSpecs are allowed to add new instance variables to existing classes).
+	Failure during this phase is catastrophic."
+	self remapExistingMethodsInstVarAccesses: true.
+
+	"Convert method specs to the final shape classes will have.
+	(Maybe different because of instance variables in the actual classes that
+	are reordered or missing in ClassSpecs)"
+	self remapMethodSpecInstVarAccesses: true.
+
+	"Install methods"
+	methodSpecs do: [ :methodSpec |
+		methodSpec materializeAndInstall ].! !
+
+!DynamicCuisLibrary methodsFor: '[mkDynamicLibraryLoad] installing' stamp: 'jmv 9/6/2023 17:48:49'!
+remapExistingMethodsInstVarAccesses: doIt
+	"Convert existing methods to new class shapes if needed.
+	(ClassSpecs are allowed to add new instance variables to existing classes)
+	If doIt is false, then only validate if remapping is possible and answer the result.
+	If doIt is true, go ahead and update CompiledMethods. Raise an error if problem arises.
+	Warning: Failure during conversion (doIt = true) means an inconsistent system where
+		potentially many CompiledMethods access the wrong instance variables.
+		It is extremely dangerous to continue. Safest thing is to EXIT THE IMAGE."
+
+	classSpecs do: [ :classSpec | | previousIvarCount delta |
+		previousIvarCount := classSpec instVarCountBeforeInstall.
+		previousIvarCount notNil ifTrue: [
+			delta := classSpec instVarCountAfterInstall - previousIvarCount.
+			delta > 0 ifTrue: [
+				(Smalltalk at: classSpec name) allSubclassesDo: [ :modifiedShapeClass |
+					modifiedShapeClass methodsDo: [ :compiledMethod |
+						(CompiledMethod
+							displaceInstVarAccessesIn: compiledMethod 
+							starting: previousIvarCount+1 by: delta
+							doIt: doIt)
+								ifFalse: [ ^false ]]]]]].
+	doIt ifTrue: [Smalltalk voidCogVMState].
+	^true.! !
+
+!DynamicCuisLibrary methodsFor: '[mkDynamicLibraryLoad] installing' stamp: 'jmv 9/6/2023 17:48:56'!
+remapMethodSpecInstVarAccesses: doIt
+	"Remap all instance variable accesses in our methodSpecs to match the final shape of classes.
+	If doIt is false, then only validate if remapping is possible and answer the result.
+	If doIt is true, go ahead and update MethodSpecs. Raise an error if problem arises."
+
+	methodSpecs do: [ :methodSpec |
+		methodSpec classSpec methodSpecsInstVarIndexMap ifNotNil: [ :map |
+			(CompiledMethod remapInstVarAccessesIn: methodSpec asPer: map doIt: doIt)
+				ifFalse: [ ^false ]]].
+	^true! !
+
 !DynamicCuisLibrary methodsFor: 'creation' stamp: 'jmv 4/25/2023 10:50:23'!
 buildClassesAndMethods: aBlock
 
@@ -930,83 +1007,6 @@ classes: classesOrNames classSelectors: classSideSelectors instanceSelectors: in
 		].
 	]! !
 
-!DynamicCuisLibrary methodsFor: 'installing' stamp: 'jmv 9/6/2023 17:49:04'!
-canBeInstalled
-	classSpecs do: [ :each | each canBeInstalled ifFalse: [ ^false ]].
-
-	"Prepare for possible later validation and conversion of MethodSpecs and existing CompiledMethods"
-	classSpecs do: [ :classSpec | classSpec preInstall ].
-
-	"Possible difference between class shapes when the library was built and the shape
-	they will have after library install. Check that methods in the library can be corrected for them."
-	(self remapMethodSpecInstVarAccesses: false)
-		ifFalse: [ ^false ].
-
-	"Possible difference between class shapes in the running image, before and after installing.
-	Check that existing methods in the image that would be affected can be corrected for this."
-	(self remapExistingMethodsInstVarAccesses: false)
-		ifFalse: [ ^false ].
-
-	^true! !
-
-!DynamicCuisLibrary methodsFor: 'installing' stamp: 'jmv 9/6/2023 17:50:56'!
-installLibrary
-	"Install classes. Merge into existing classes if appropriate."
-	classSpecs do: [ :classSpec |
-		classSpec equalsExisting ifFalse: [
-			classSpec materializeAndInstall ]].
-
-	"Convert existing methods to new class shapes if needed.
-	(ClassSpecs are allowed to add new instance variables to existing classes).
-	Failure during this phase is catastrophic."
-	self remapExistingMethodsInstVarAccesses: true.
-
-	"Convert method specs to the final shape classes will have.
-	(Maybe different because of instance variables in the actual classes that
-	are reordered or missing in ClassSpecs)"
-	self remapMethodSpecInstVarAccesses: true.
-
-	"Install methods"
-	methodSpecs do: [ :methodSpec |
-		methodSpec materializeAndInstall ].! !
-
-!DynamicCuisLibrary methodsFor: 'installing' stamp: 'jmv 9/6/2023 17:48:49'!
-remapExistingMethodsInstVarAccesses: doIt
-	"Convert existing methods to new class shapes if needed.
-	(ClassSpecs are allowed to add new instance variables to existing classes)
-	If doIt is false, then only validate if remapping is possible and answer the result.
-	If doIt is true, go ahead and update CompiledMethods. Raise an error if problem arises.
-	Warning: Failure during conversion (doIt = true) means an inconsistent system where
-		potentially many CompiledMethods access the wrong instance variables.
-		It is extremely dangerous to continue. Safest thing is to EXIT THE IMAGE."
-
-	classSpecs do: [ :classSpec | | previousIvarCount delta |
-		previousIvarCount := classSpec instVarCountBeforeInstall.
-		previousIvarCount notNil ifTrue: [
-			delta := classSpec instVarCountAfterInstall - previousIvarCount.
-			delta > 0 ifTrue: [
-				(Smalltalk at: classSpec name) allSubclassesDo: [ :modifiedShapeClass |
-					modifiedShapeClass methodsDo: [ :compiledMethod |
-						(CompiledMethod
-							displaceInstVarAccessesIn: compiledMethod 
-							starting: previousIvarCount+1 by: delta
-							doIt: doIt)
-								ifFalse: [ ^false ]]]]]].
-	doIt ifTrue: [Smalltalk voidCogVMState].
-	^true.! !
-
-!DynamicCuisLibrary methodsFor: 'installing' stamp: 'jmv 9/6/2023 17:48:56'!
-remapMethodSpecInstVarAccesses: doIt
-	"Remap all instance variable accesses in our methodSpecs to match the final shape of classes.
-	If doIt is false, then only validate if remapping is possible and answer the result.
-	If doIt is true, go ahead and update MethodSpecs. Raise an error if problem arises."
-
-	methodSpecs do: [ :methodSpec |
-		methodSpec classSpec methodSpecsInstVarIndexMap ifNotNil: [ :map |
-			(CompiledMethod remapInstVarAccessesIn: methodSpec asPer: map doIt: doIt)
-				ifFalse: [ ^false ]]].
-	^true! !
-
 !DynamicCuisLibrary methodsFor: 'file io' stamp: 'jmv 11/2/2023 10:39:15'!
 writeOnFile: fileEntry
 	"
@@ -1024,6 +1024,17 @@ writeOnFile: fileEntry
 		fileStream binary.
 		(ReferenceStream on: fileStream) nextPut: self ].! !
 
+!DynamicCuisLibrary class methodsFor: '[mkDynamicLibraryLoad] file io' stamp: 'jmv 9/4/2023 12:15:41'!
+readFromFileNamed: fileName
+	"
+	(DynamicCuisLibrary readFromFileNamed: 'DclExample03.dcl')
+		canBeInstalled
+	"
+	"que pasa si el file no existe?"
+	| bytes |
+	bytes := BasicFileServices binaryContentsOf: fileName.
+	^(ReferenceStream on: bytes readStream) next! !
+
 !DynamicCuisLibrary class methodsFor: 'instance creation' stamp: 'jmv 4/24/2023 14:27:42'!
 withClasses: arrayOfClasses classSelectors: arrayOfClassSelectors instanceSelectors: arrayOfInstanceSelectors
 	"
@@ -1036,14 +1047,3 @@ withClasses: arrayOfClasses classSelectors: arrayOfClassSelectors instanceSelect
 		classes: arrayOfClasses
 		classSelectors: arrayOfClassSelectors
 		instanceSelectors: arrayOfInstanceSelectors! !
-
-!DynamicCuisLibrary class methodsFor: 'file io' stamp: 'jmv 9/4/2023 12:15:41'!
-readFromFileNamed: fileName
-	"
-	(DynamicCuisLibrary readFromFileNamed: 'DclExample03.dcl')
-		canBeInstalled
-	"
-	"que pasa si el file no existe?"
-	| bytes |
-	bytes := BasicFileServices binaryContentsOf: fileName.
-	^(ReferenceStream on: bytes readStream) next! !
