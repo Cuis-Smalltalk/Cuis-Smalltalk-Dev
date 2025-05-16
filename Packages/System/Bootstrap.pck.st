@@ -1,6 +1,6 @@
-'From Cuis7.3 [latest update: #7157] on 13 May 2025 at 4:06:08 pm'!
+'From Cuis7.3 [latest update: #7166] on 16 May 2025 at 3:54:18 pm'!
 'Description '!
-!provides: 'Bootstrap' 1 41!
+!provides: 'Bootstrap' 1 42!
 !requires: 'DynamicCuisLibraries' 1 22 nil!
 SystemOrganization addCategory: #'Bootstrap-Smalltalk Image Builders'!
 SystemOrganization addCategory: #'Bootstrap-Foreign Objects'!
@@ -1941,15 +1941,35 @@ addWithAllMethods: classNames
 			cls methodsDo: [ :compiledMethod |
 				self addExistingMethod: compiledMethod ]].! !
 
-!ImageBuilder methodsFor: 'image building' stamp: 'jmv 4/30/2025 14:59:21'!
+!ImageBuilder methodsFor: 'image building' stamp: 'jmv 5/16/2025 15:52:49'!
 createAndAddWarningMethodsForMissing
 	"Create special methods to warn about improper execution of inherited methods when proper method was not included."
 
 	| includedSelectorsByClass excluded |
 	excluded := #(
-		 #(Object 	error: 					ProtoObject)
-		 #(Object 	doesNotUnderstand: 	ProtoObject)
-		 #(Object 	become: 				ProtoObject)
+		#(nil 							printOn: 				ProtoObject)
+		#(Object 						error: 					ProtoObject)
+		#(Object 						doesNotUnderstand: 	ProtoObject)
+		#(Object 						become: 				ProtoObject)
+		#('Symbol class' 					initialize 				ProtoObject) 	"Included in [mkSymbol]"
+		#(SystemDictionary 			at:put: 					Object) 			"Included in [mkHashedCollections]"
+		#(Behavior 						postCopy 				Object)  		"Included in pmkClassAndMethodCreation]"
+		#(Class 						copy 					Object)  		"Included in pmkClassAndMethodCreation]"
+		#(Metaclass 					postCopy 				Object)  		"Included in pmkClassAndMethodCreation]"
+		#(Metaclass 					new 					Behavior)  		"Included in pmkClassAndMethodCreation]"
+		#(Message 						= 						Object)
+		#(Message 						hash 					Object)
+		#(Point 						= 						Object)
+		#(Point 						hash 					Object)
+		#(AdditionalMethodState 		at: 						Object)
+		#(AdditionalMethodState 		at:put: 					Object)
+		#(MethodSpec 					at: 						Object)
+		#(MethodSpec 					at:put: 					Object)
+		#(CompiledMethod 			= 						ByteArray)
+		#(CompiledMethod 			hash 					ByteArray)
+		#(MethodContext 				instVarAt:put: 			Object)
+		#('CompiledMethod class' 		initialize 				ProtoObject)
+		#('Character class' 				initialize 				ProtoObject)
 		).
 	includedSelectorsByClass := Dictionary new.
 	methods do: [ :methodSpec |
@@ -1963,16 +1983,18 @@ createAndAddWarningMethodsForMissing
 			existingClass := Smalltalk at: classSpec name.
 			classSideFlag ifTrue: [
 				existingClass := existingClass class ].
-			existingClass selectorsDo: [ :missingSelector |
-				(includedSelectors includes: missingSelector) ifFalse: [
-					(self includedDefinition: missingSelector in: classSpec isClassMethod: classSideFlag all: includedSelectorsByClass)
-						ifNotNil: [ :inheritedFromString |
-							(excluded anySatisfy: [ :spec | spec first = existingClass name and: [ spec second = missingSelector and: [ spec third = inheritedFromString ]]]) ifFalse: [
-								includedSelectors size > 0 ifTrue: [ "Don't report empty classes."
-									('Warning: ', existingClass name, ' >> #', missingSelector, ' not included, but inherited from ', inheritedFromString) print.
-									"{classSpec. existingClass. inheritedFromString. missingSelector} print." ].
-								self createWarningMethodFor: missingSelector in: classSpec isClassMethod: classSideFlag inheritedFrom: inheritedFromString ]]
-				]]]].! !
+			"Assume it doesn't make much sense for classes without any method at all."
+			includedSelectors notEmpty ifTrue: [
+				existingClass selectorsDo: [ :missingSelector |
+					(includedSelectors includes: missingSelector) ifFalse: [
+						(self includedDefinition: missingSelector in: classSpec isClassMethod: classSideFlag all: includedSelectorsByClass)
+							ifNotNil: [ :inheritedFromString |
+								(excluded anySatisfy: [ :spec | (spec first isNil or: [ spec first = existingClass name ]) and: [ spec second = missingSelector and: [ spec third = inheritedFromString ]]]) ifFalse: [
+									includedSelectors size > 0 ifTrue: [ "Don't report empty classes."
+										('Warning: ', existingClass name, ' >> #', missingSelector, ' not included, but inherited from ', inheritedFromString) print.
+										"{classSpec. existingClass. inheritedFromString. missingSelector} print." ].
+									self createWarningMethodFor: missingSelector in: classSpec isClassMethod: classSideFlag inheritedFrom: inheritedFromString ]]
+					]]]]].! !
 
 !ImageBuilder methodsFor: 'image building' stamp: 'jmv 4/29/2025 16:49:54'!
 createWarningMethodFor: missingSelector in: classSpec isClassMethod: classSideFlag inheritedFrom: desc
@@ -2178,22 +2200,6 @@ addHashedCollectionsSupport
 	"Add selected methods."
 	| prefix |
 	prefix := '[mkHashedCollections]'.
-	(SystemOrganization allClassesAt: 'MinimalKernel') do: [ :cls |
-		cls class organization categories do: [ :cat |
-			(cat beginsWith: prefix) ifTrue: [
-				(cls class organization listAtCategoryNamed: cat) do: [ :sel |
-					self addExistingMethod: (cls class compiledMethodAt: sel) ]]].
-		cls organization categories do: [ :cat |
-			(cat beginsWith: prefix) ifTrue: [
-				(cls organization listAtCategoryNamed: cat) do: [ :sel |
-					self addExistingMethod: (cls compiledMethodAt: sel) ]]]].! !
-
-!ImageBuilder methodsFor: 'image building feature add' stamp: 'jmv 5/12/2025 11:20:15'!
-addObjectCopyingSupport
-
-	"Add selected methods."
-	| prefix |
-	prefix := '[mkObjectCopying]'.
 	(SystemOrganization allClassesAt: 'MinimalKernel') do: [ :cls |
 		cls class organization categories do: [ :cat |
 			(cat beginsWith: prefix) ifTrue: [
@@ -2422,7 +2428,7 @@ buildExample05SymbolExperiments
 	"Creating the start process requires CompiledMethods to be there"
 	self addStartProcess.! !
 
-!ImageBuilder methodsFor: 'image building examples' stamp: 'jmv 5/13/2025 10:11:04'!
+!ImageBuilder methodsFor: 'image building examples' stamp: 'jmv 5/15/2025 09:54:00'!
 buildExample06LoadDynamicLibrary
 	"
 	Spur64ImageBuilder new
@@ -2458,7 +2464,6 @@ buildExample06LoadDynamicLibrary
 	self addBasicFileServices.
 	self addHashedCollectionsSupport.
 	self addObjectSerializationSupport.
-	self addObjectCopyingSupport.
 	self addClassCreationSupport.
 	self addDynamicLibraryLoadSupport.
 	startUpMethod := SystemDictionary>>#bootstrappedExample06LoadDynamicLibrary.
@@ -2474,7 +2479,7 @@ buildExample06LoadDynamicLibrary
 	"Creating the start process requires CompiledMethods to be there"
 	self addStartProcess.! !
 
-!ImageBuilder methodsFor: 'image building examples' stamp: 'jmv 5/13/2025 10:13:52'!
+!ImageBuilder methodsFor: 'image building examples' stamp: 'jmv 5/15/2025 09:54:03'!
 buildExample07LoadDynamicLibrary
 	"
 	Spur64ImageBuilder new
@@ -2500,7 +2505,6 @@ buildExample07LoadDynamicLibrary
 	self addBasicFileServices.
 	self addHashedCollectionsSupport.
 	self addObjectSerializationSupport.
-	self addObjectCopyingSupport.
 	self addClassCreationSupport.
 	self addDynamicLibraryLoadSupport.
 	self addExample07LoadDynamicLibraryMethods.
@@ -3863,7 +3867,7 @@ bootstrappedExample03Float
 
 	self quitPrimitive: 42.! !
 
-!SystemDictionary methodsFor: '*Bootstrap-examples' stamp: 'jmv 9/14/2023 10:46:54'!
+!SystemDictionary methodsFor: '*Bootstrap-examples' stamp: 'jmv 5/15/2025 14:25:17'!
 bootstrappedExample04FileExperiments
 	"A simple demo to be run in a bootstrapped Cuis image, with a minimal class library"
 
@@ -3908,6 +3912,7 @@ bootstrappedExample04FileExperiments
 			StdIOWriteStream stdout
 				nextPutAll: fileContents size printString; newLine.
 			fileContents printOn: StdIOWriteStream stdout.
+			StdIOWriteStream stdout newLine.
 			1 to: fileContents size do: [ :ii |
 				StdIOWriteStream stdout nextPutAll: ' '; nextPutAll: (fileContents at: ii) printString ].
 			StdIOWriteStream stdout
