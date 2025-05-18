@@ -1,6 +1,6 @@
-'From Cuis7.3 [latest update: #7146] on 12 May 2025 at 9:44:40 am'!
+'From Cuis7.3 [latest update: #7171] on 18 May 2025 at 11:31:03 am'!
 'Description Rename extentions tests'!
-!provides: 'BaseImageTests' 1 450!
+!provides: 'BaseImageTests' 1 451!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Compiler'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Objects'!
@@ -6585,6 +6585,17 @@ test10AnIntervalEnclosedMultipleBackticksAndParenthesesCanBeExpanded
 	| sourceCode expandedInterval originalInterval |
 	sourceCode := '`((3 + 4 factorial))`'.
 	originalInterval := (4 to: sourceCode size - 3) asSourceCodeInterval.
+	expandedInterval := originalInterval expandToMatchExpressionOn: sourceCode.
+
+	self assert: expandedInterval equals: (1 to: sourceCode size).! !
+
+!SourceCodeIntervalTest methodsFor: 'tests - expanding' stamp: 'HAW 5/18/2025 11:17:29'!
+test25CanExpandMultipleParentesisWithSeparatorsInTheMiddle
+
+	| sourceCode expandedInterval originalInterval |
+	
+	sourceCode := '` ( ( 3 + 4 factorial)     )     `'.
+	originalInterval := (7 to: 21) asSourceCodeInterval.
 	expandedInterval := originalInterval expandToMatchExpressionOn: sourceCode.
 
 	self assert: expandedInterval equals: (1 to: sourceCode size).! !
