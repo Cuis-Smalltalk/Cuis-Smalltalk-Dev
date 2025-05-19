@@ -28,7 +28,7 @@ VM plugins follow the idea that the VM defines the boundary between the Smalltal
 - Smalltalk image is platform independent
 - VM + Plugins are platform dependent
 
-As examples of their use, you might browse all methods containing string `module: 'FloatArrayPlugin'>` or module: 'JPEGReadWriter2Plugin'>
+As examples of their use, you might browse all methods containing string `module: 'FloatArrayPlugin'>` or `module: 'JPEGReadWriter2Plugin'>`
 
 
 ## Use cases
@@ -82,6 +82,7 @@ FFI is good for:
 - Stuff that is in development, APIs that are not yet stable, experimental code
 
 Plugins are good for:
+- Cross platform functionality, without bothering the user with platform specific details
 - Own code written for performance
 - Third party code (static libraries) that is meant to be linked statically
 - Picking a specific version of third party libraries and sticking to it for stability
