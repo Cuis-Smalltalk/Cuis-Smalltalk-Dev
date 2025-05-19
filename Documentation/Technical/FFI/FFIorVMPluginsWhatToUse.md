@@ -89,3 +89,7 @@ Plugins are good for:
 - Kernel Smalltalk functionality
 - Functions that take very short time to run, and call overhead becomes dominant time
 - Stable functionality that will be used by many people over a long time
+
+## Conclusion
+
+Please choose judiciously and understand the consequences of your choice.
