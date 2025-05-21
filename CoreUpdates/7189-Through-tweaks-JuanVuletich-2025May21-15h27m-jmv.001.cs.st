@@ -14,7 +14,8 @@ stepIntoBlock
 	self selectedContext method isQuick ifTrue: [ ^self doStep ].
 
 	(self selectedContext = interruptedProcess suspendedContext and: [
-			interruptedProcess suspendedContext atEnd and: [interruptedProcess suspendedContext closure isNil]])
+			interruptedProcess suspendedContext willReturn and: [
+				interruptedProcess suspendedContext closure isNil]])
 		ifTrue: [
 			^self doStep ].
 
