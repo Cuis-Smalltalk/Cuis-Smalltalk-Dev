@@ -10,17 +10,19 @@ addSelector: thisSelector method: aCompiledMethod methodTimeStamp: aTimeStampStr
 			ifNotNil: [ (dateAndTime - (DateAndTime fromString: '01/01/1996 00:00')) totalMinutes max: 0 ]].
 	sentMessages := aCompiledMethod messages.
 	self protected: [
-		thisMethodSortingValue > (Selectors at: thisSelector ifAbsent: [0]) ifTrue:
+		thisMethodSortingValue > (Selectors at: thisSelector ifAbsent: [-1]) ifTrue:
 			[
-				Selectors at: thisSelector put: thisMethodSortingValue.
-				aBoolean ifTrue:
-					[
-						sentMessages do: [ :sentMsg |
-							existingSortingValue := Selectors at: sentMsg ifAbsent: [0].
-							(existingSortingValue > 0 or:
-								[ Smalltalk isThereAnImplementorOf: sentMsg ]) ifTrue:
-									[ thisMethodSortingValue > (Selectors at: sentMsg ifAbsent: [0]) ifTrue:
-										[ Selectors at: sentMsg put: thisMethodSortingValue ]]]]]].! !
+			Selectors at: thisSelector put: thisMethodSortingValue.
+			aBoolean ifTrue:
+				[
+				sentMessages do:
+					[ :sentMsg |
+					existingSortingValue := Selectors at: sentMsg ifAbsent: [-1].
+					"If found at Selectors, no need to do the more expensive search in all classes"
+					(existingSortingValue > -1 or: [ Smalltalk isThereAnImplementorOf: sentMsg ]) ifTrue: 
+						"This means add it with value 0 if it is not already there"
+						[ thisMethodSortingValue > existingSortingValue ifTrue:
+							[ Selectors at: sentMsg put: thisMethodSortingValue ]]]]]].! !
 
 
 !SmalltalkCompleter class methodsFor: 'class initialization' stamp: 'jmv 5/26/2025 11:05:51'!
