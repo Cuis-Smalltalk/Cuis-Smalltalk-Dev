@@ -1,13 +1,17 @@
 #!/usr/bin/env bash
 # File:        			RunCuisOnLinux.sh, based on: squeak.sh
-# Author:      			Fabio Niephaus, K K Subramaniam, Marcel Taeumel, Juan Vuletich
+# Author:      			Fabio Niephaus, K K Subramaniam, Marcel Taeumel, Juan Vuletich, Eliot Miranda
 # Description: 			Script to launch Cuis from a bundle, intended for Linux systems
 # usage:
-#    RunCuisOnLinux [<vmargs>] [ *.image [ <stargs> ... ]]
+#    RunCuisOnLinux [-vm vmscript] [<vmargs>] [ *.image [ <stargs> ... ]]
 
 # extract top directory and app name from command
 ROOT=$(cd -P $(dirname "$0"); pwd)
 APP="squeak"
+
+if [ "$1" = "-vm" ]; then
+	VM="$2"; shift; shift
+fi
 
 CONF_FILEPATH="/etc/security/limits.d/${APP}.conf"
 OS=$(uname -s)
@@ -41,10 +45,12 @@ else # all-in-one bundle
 
     BINDIR="${ROOT}/CuisVM.app/Contents/Linux-${CPU}/"
     IMAGEDIR="${ROOT}/CuisImage/"
-    IMAGE="${IMAGEDIR}Cuis7.3-7245.image"
+    IMAGE="`echo ${IMAGEDIR}/Cuis?.?-????.image`"
 fi
 
-VM="${BINDIR}${APP}"
+if [ -z "$VM" ]; then
+	VM="${BINDIR}${APP}"
+fi
 VMOPTIONS="-encoding UTF-8"
 STARGS=()
 
