@@ -131,25 +131,25 @@ First release of Cuis following a new Release Process: Cuis 6.2 Stable Release. 
 https://lists.cuis.st/mailman/archives/cuis-dev/2023-December/008269.html
 
 ## 2024-05-13 - Cuis 7.0 Stable Release, Cuis 7.1 Rolling Release
-Single immediate Character class
-Abandoned the v3 image format
-Usability improvements
-Enhancements in Numerics
+- Single immediate Character class
+- Abandoned the v3 image format
+- Usability improvements
+- Enhancements in Numerics
 
 ## 2024-12-06 - Cuis 7.2 Stable Release, Cuis 7.3 Rolling Release
-New Menu Specs. Simpler. More flexible.
-Updated Morph hierarchy.
-Modal Dialogs.
-Enhancements to Layouts.
-Process specific state.
-Usability improvements. Find with Scope.
-Improved Robustnes.
+- New Menu Specs. Simpler. More flexible.
+- Updated Morph hierarchy.
+- Modal Dialogs.
+- Enhancements to Layouts.
+- Process specific state.
+- Usability improvements. Find with Scope.
+- Improved Robustnes.
 
 ## 2024-05-30 - Cuis 7.4 Stable Release, Cuis 7.5 Rolling Release
-Updates to Vector Graphics: multi-level clipping, dashed strokes, utf32 and ascii text (in addition to utf8). Performance.
-Ephemerons.
-Sista Bytecode support.
-WeakSet. New Symbol table.
-Debugger enhancements.
-Updated Random Number Generator.
-Usability. Performance. Robustness.
+- Updates to Vector Graphics: multi-level clipping, dashed strokes, utf32 and ascii text (in addition to utf8). Performance.
+- Ephemerons.
+- Sista Bytecode support.
+- WeakSet. New Symbol table.
+- Debugger enhancements.
+- Updated Random Number Generator.
+- Usability. Performance. Robustness.
