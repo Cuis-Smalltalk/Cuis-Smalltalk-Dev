@@ -145,7 +145,7 @@ https://lists.cuis.st/mailman/archives/cuis-dev/2023-December/008269.html
 - Usability improvements. Find with Scope.
 - Improved Robustnes.
 
-## 2024-05-30 - Cuis 7.4 Stable Release, Cuis 7.5 Rolling Release
+## 2025-05-30 - Cuis 7.4 Stable Release, Cuis 7.5 Rolling Release
 - Updates to Vector Graphics: multi-level clipping, dashed strokes, utf32 and ascii text (in addition to utf8). Performance.
 - Ephemerons.
 - Sista Bytecode support.
