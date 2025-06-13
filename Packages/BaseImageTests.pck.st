@@ -1,6 +1,6 @@
-'From Cuis7.3 [latest update: #7171] on 18 May 2025 at 11:31:03 am'!
+'From Cuis7.5 [latest update: #7264] on 13 June 2025 at 11:50:00 am'!
 'Description Rename extentions tests'!
-!provides: 'BaseImageTests' 1 451!
+!provides: 'BaseImageTests' 1 452!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Compiler'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Objects'!
@@ -25890,8 +25890,8 @@ test25NotWorkingCase
 	]
 ! !
 
-!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 11/4/2024 00:06:23'!
-test27FindsInsideParentesis
+!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 6/13/2025 10:09:29'!
+test26FindsInsideParentesis
 
 	| sourceMethodName finder sourceMethod intervalToExtract newMessage methodsToExtractFrom replacement |
 
@@ -25911,8 +25911,8 @@ test27FindsInsideParentesis
 	self assert: (replacement isOf: sourceMethod).
 ! !
 
-!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 11/4/2024 00:07:13'!
-test28FindsWithMoreThanOneStatementAndFirstWithParentesis
+!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 6/13/2025 10:09:41'!
+test27FindsWithMoreThanOneStatementAndFirstWithParentesis
 
 	| sourceMethodName finder sourceMethod intervalToExtract newMessage methodsToExtractFrom replacement |
 
@@ -25929,6 +25929,31 @@ test28FindsWithMoreThanOneStatementAndFirstWithParentesis
 	self assert: 1 equals: methodsToExtractFrom size.
 	replacement := methodsToExtractFrom first.
 	self assert: (4 to: 21) equals: replacement intervalToExtract.
+	self assert: (replacement isOf: sourceMethod).
+! !
+
+!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 6/13/2025 10:09:48'!
+test28FindsRepeatedBlocks
+
+	| sourceMethodName finder sourceMethod intervalToExtract newMessage methodsToExtractFrom replacement |
+
+	sourceMethodName := classToRefactor compile: 'm1 [self m1]. [self m1]'.
+	
+	sourceMethod := (classToRefactor >> sourceMethodName) asMethodReference.
+	intervalToExtract := (4 to: 12) asSourceCodeInterval.
+	newMessage := Message selector: #m2.
+	finder := ExtractMethodReplacementsFinder ofCodeIn: intervalToExtract at: sourceMethod to: newMessage. 
+	finder value.
+	
+	methodsToExtractFrom := finder replacements.
+		
+	self assert: 2 equals: methodsToExtractFrom size.
+	replacement := methodsToExtractFrom first.
+	self assert: (4 to: 12) equals: replacement intervalToExtract.
+	self assert: (replacement isOf: sourceMethod).
+
+	replacement := methodsToExtractFrom second.
+	self assert: (15 to: 23) equals: replacement intervalToExtract.
 	self assert: (replacement isOf: sourceMethod).
 ! !
 
