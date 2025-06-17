@@ -142,12 +142,16 @@ https://lists.cuis.st/mailman/archives/cuis-dev/2023-December/008269.html
 - Modal Dialogs.
 - Enhancements to Layouts.
 - Process specific state.
-- Usability improvements. Find with Scope.
+- Usability improvements. Find with Scope Tool for convenient searchingof text in source code.
 - Improved Robustnes.
 
 ## 2025-05-30 - Cuis 7.4 Stable Release, Cuis 7.5 Rolling Release
-- Updates to Vector Graphics: multi-level clipping, dashed strokes, utf32 and ascii text (in addition to utf8). Performance.
-- Ephemerons.
+- Updates to Vector Graphics
+    - Clipping to arbitrary convex shape of multiple nested containers
+    - Dashed strokes with a convenient, easy to use API
+    - Support for UTF-32 and ASCII text output (in addition to UTF-8)
+    - Big performance improvements
+- Ephemerons. New Ephemeron based FinalizationRegistry. New Ephemeron ActionMaps and property tables.
 - Sista Bytecode support.
 - WeakSet. New Symbol table.
 - Debugger enhancements.
