@@ -1,6 +1,6 @@
-'From Cuis7.5 [latest update: #7264] on 13 June 2025 at 11:50:00 am'!
+'From Cuis7.5 [latest update: #7340] on 8 July 2025 at 11:50:52 am'!
 'Description Rename extentions tests'!
-!provides: 'BaseImageTests' 1 452!
+!provides: 'BaseImageTests' 1 453!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Compiler'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Objects'!
@@ -8904,51 +8904,51 @@ test07withPropertiesDoEvaluatesBlockOnlyWhenMethodHasProperties
 	"I don't assert inside the block because if no block is evaluated the test passes - Hernan"	
 	self assert: (methodProperties at: propertyName)! !
 
-!CompiledMethodTest methodsFor: 'tests - properties' stamp: 'HAW 1/3/2019 07:07:47'!
-test08hasLiteralThoroughReturnTrueWhenMethodHasPropertiesAndHasLiteral
+!CompiledMethodTest methodsFor: 'tests - properties' stamp: 'jmv 7/7/2025 17:22:31'!
+test08hasLiteralReturnTrueWhenMethodHasPropertiesAndHasLiteral
 
 	| thisMethod |
 	
 	thisMethod := self class>>thisContext selector.
 	thisMethod propertyValueAt: #testProperty put: true.
 	
-	self assert: (thisMethod hasLiteralThorough: #class).
+	self assert: (thisMethod hasLiteral: #class).
 	
 	! !
 
-!CompiledMethodTest methodsFor: 'tests - properties' stamp: 'HAW 1/3/2019 07:08:08'!
-test09hasLiteralThoroughReturnFalseWhenMethodHasPropertiesAndHasNoLiteral
+!CompiledMethodTest methodsFor: 'tests - properties' stamp: 'jmv 7/7/2025 17:22:44'!
+test09hasLiteralReturnFalseWhenMethodHasPropertiesAndHasNoLiteral
 
 	| thisMethod |
 	
 	thisMethod := self class>>thisContext selector.
 	thisMethod propertyValueAt: #testProperty put: true.
 	
-	self deny: (thisMethod hasLiteralThorough: 'abc' asSymbol).
+	self deny: (thisMethod hasLiteral: 'abc' asSymbol).
 	
 	! !
 
-!CompiledMethodTest methodsFor: 'tests - properties' stamp: 'HAW 1/3/2019 07:08:21'!
-test10hasLiteralThoroughReturnTrueWhenMethodHasNoPropertiesAndHasLiteral
+!CompiledMethodTest methodsFor: 'tests - properties' stamp: 'jmv 7/7/2025 17:22:51'!
+test10hasLiteralReturnTrueWhenMethodHasNoPropertiesAndHasLiteral
 
 	| thisMethod |
 	
 	thisMethod := self class>>thisContext selector.
 	thisMethod removeProperties.
 	
-	self assert: (thisMethod hasLiteralThorough: #class).
+	self assert: (thisMethod hasLiteral: #class).
 	
 	! !
 
-!CompiledMethodTest methodsFor: 'tests - properties' stamp: 'HAW 1/3/2019 07:08:34'!
-test11hasLiteralThoroughReturnFalseWhenMethodHasNoPropertiesAndHasNoLiteral
+!CompiledMethodTest methodsFor: 'tests - properties' stamp: 'jmv 7/7/2025 17:22:58'!
+test11hasLiteralReturnFalseWhenMethodHasNoPropertiesAndHasNoLiteral
 
 	| thisMethod |
 	
 	thisMethod := self class>>thisContext selector.
 	thisMethod removeProperties.
 	
-	self deny: (thisMethod hasLiteralThorough: 'abc' asSymbol).
+	self deny: (thisMethod hasLiteral: 'abc' asSymbol).
 	
 	! !
 
@@ -32875,7 +32875,7 @@ test06OldClassIsRenamedToNewClass
 	self assert: (Smalltalk classNamed: oldClassName) isNil.
 	self deny: (Smalltalk classNamed: newClassName) isNil.! !
 
-!RenameClassTest methodsFor: 'tests' stamp: 'HAW 6/4/2017 18:18:12'!
+!RenameClassTest methodsFor: 'tests' stamp: 'jmv 7/7/2025 17:21:18'!
 test07OldClassDirectReferencesAreRenamed
 
 	| oldClassName newClassName classToRefactor selector rename referencingMethod |
@@ -32890,10 +32890,10 @@ test07OldClassDirectReferencesAreRenamed
 	rename apply.
 	
 	referencingMethod := (Smalltalk classNamed: newClassName) compiledMethodAt: selector.
-	self assert: (referencingMethod hasLiteralThorough: newClassName).
-	self deny: (referencingMethod hasLiteralThorough: oldClassName)! !
+	self assert: (referencingMethod hasLiteral: newClassName).
+	self deny: (referencingMethod hasLiteral: oldClassName)! !
 
-!RenameClassTest methodsFor: 'tests' stamp: 'HAW 6/4/2017 18:19:04'!
+!RenameClassTest methodsFor: 'tests' stamp: 'jmv 7/7/2025 17:21:23'!
 test08OldClassLiteralReferencesAreRenamed
 
 	| oldClassName newClassName classToRefactor selector rename referencingMethod |
@@ -32908,10 +32908,10 @@ test08OldClassLiteralReferencesAreRenamed
 	rename apply.
 	
 	referencingMethod := (Smalltalk classNamed: newClassName) compiledMethodAt: selector.
-	self assert: (referencingMethod hasLiteralThorough: newClassName).
-	self deny: (referencingMethod hasLiteralThorough: oldClassName)! !
+	self assert: (referencingMethod hasLiteral: newClassName).
+	self deny: (referencingMethod hasLiteral: oldClassName)! !
 
-!RenameClassTest methodsFor: 'tests' stamp: 'HAW 6/4/2017 18:36:22'!
+!RenameClassTest methodsFor: 'tests' stamp: 'jmv 7/7/2025 17:21:28'!
 test09OtherClassDirectReferencesAreNotRenamed
 
 	| oldClassName newClassName classToRefactor selector rename referencingMethod |
@@ -32926,12 +32926,12 @@ test09OtherClassDirectReferencesAreNotRenamed
 	rename apply.
 	
 	referencingMethod := (Smalltalk classNamed: newClassName) compiledMethodAt: selector.
-	self assert: (referencingMethod hasLiteralThorough: newClassName).
-	self deny: (referencingMethod hasLiteralThorough: oldClassName).
-	self assert: (referencingMethod hasLiteralThorough: #Object).
+	self assert: (referencingMethod hasLiteral: newClassName).
+	self deny: (referencingMethod hasLiteral: oldClassName).
+	self assert: (referencingMethod hasLiteral: #Object).
 ! !
 
-!RenameClassTest methodsFor: 'tests' stamp: 'HAW 6/4/2017 19:07:19'!
+!RenameClassTest methodsFor: 'tests' stamp: 'jmv 7/7/2025 17:21:33'!
 test10OtherLiteralReferencesAreNotRenamed
 
 	| oldClassName newClassName classToRefactor selector rename referencingMethod |
@@ -32946,9 +32946,9 @@ test10OtherLiteralReferencesAreNotRenamed
 	rename apply.
 	
 	referencingMethod := (Smalltalk classNamed: newClassName) compiledMethodAt: selector.
-	self assert: (referencingMethod hasLiteralThorough: newClassName).
-	self deny: (referencingMethod hasLiteralThorough: oldClassName).
-	self assert: (referencingMethod hasLiteralThorough: #Object).
+	self assert: (referencingMethod hasLiteral: newClassName).
+	self deny: (referencingMethod hasLiteral: oldClassName).
+	self assert: (referencingMethod hasLiteral: #Object).
 ! !
 
 !RenameClassTest methodsFor: 'tests' stamp: 'HAW 8/9/2018 16:30:56'!
@@ -33066,7 +33066,7 @@ test17ItDoesNotRenameReferencesToClassVariableWithSameNameAsNewClassDefinedInAny
 	
 	! !
 
-!RenameClassTest methodsFor: 'tests' stamp: 'HAW 8/9/2018 16:21:35'!
+!RenameClassTest methodsFor: 'tests' stamp: 'jmv 7/7/2025 17:21:46'!
 test18WorksCorrectlyWhenSourceCodeEndsWithClassToRename
 
 	| oldClassName newClassName classToRefactor selector rename referencingMethod |
@@ -33081,10 +33081,10 @@ test18WorksCorrectlyWhenSourceCodeEndsWithClassToRename
 	rename apply.
 	
 	referencingMethod := (Smalltalk classNamed: newClassName) compiledMethodAt: selector.
-	self assert: (referencingMethod hasLiteralThorough: newClassName).
-	self deny: (referencingMethod hasLiteralThorough: oldClassName)! !
+	self assert: (referencingMethod hasLiteral: newClassName).
+	self deny: (referencingMethod hasLiteral: oldClassName)! !
 
-!RenameClassTest methodsFor: 'tests' stamp: 'HAW 8/9/2018 16:24:09'!
+!RenameClassTest methodsFor: 'tests' stamp: 'jmv 7/7/2025 17:21:39'!
 test19RenamesClassWhenMethodReferencesClassAndDoesNothing
 
 	| oldClassName newClassName classToRefactor selector rename referencingMethod |
@@ -33103,8 +33103,8 @@ test19RenamesClassWhenMethodReferencesClassAndDoesNothing
 		rename apply.
 	
 		referencingMethod := (Smalltalk classNamed: newClassName) compiledMethodAt: selector.
-		self assert: (referencingMethod hasLiteralThorough: newClassName).
-		self deny: (referencingMethod hasLiteralThorough: oldClassName)] ! !
+		self assert: (referencingMethod hasLiteral: newClassName).
+		self deny: (referencingMethod hasLiteral: oldClassName)] ! !
 
 !RenameClassTest methodsFor: 'tests' stamp: 'HAW 12/30/2021 16:31:36'!
 test20ItDoesNotRenameReferencesToClassVariableWithSameNameAndReferencedInClassMethod
@@ -33210,7 +33210,7 @@ test06OldNameIsRenamedToNewName
 		self assert: (Smalltalk at: oldName ifAbsent: [nil]) isNil.
 		self assert: (Smalltalk at: newName) equals: globalValue ].! !
 
-!RenameGlobalTest methodsFor: 'tests' stamp: 'HAW 3/26/2019 19:27:58'!
+!RenameGlobalTest methodsFor: 'tests' stamp: 'jmv 7/7/2025 17:21:50'!
 test07OldDirectReferencesAreRenamed
 
 	| rename classToRefactor referencingMethod selector |
@@ -33224,15 +33224,15 @@ test07OldDirectReferencesAreRenamed
 		rename apply.
 
 		referencingMethod := classToRefactor compiledMethodAt: selector.
-		self assert: (referencingMethod hasLiteralThorough: newName).
-		self deny: (referencingMethod hasLiteralThorough: oldName).
+		self assert: (referencingMethod hasLiteral: newName).
+		self deny: (referencingMethod hasLiteral: oldName).
 		self assert: (classToRefactor new perform: selector) equals: globalValue ].
 		
 			
 	
 ! !
 
-!RenameGlobalTest methodsFor: 'tests' stamp: 'HAW 3/26/2019 19:28:09'!
+!RenameGlobalTest methodsFor: 'tests' stamp: 'jmv 7/7/2025 17:21:57'!
 test08OldNameLiteralReferencesAreRenamed
 
 	| rename classToRefactor referencingMethod selector |
@@ -33246,8 +33246,8 @@ test08OldNameLiteralReferencesAreRenamed
 		rename apply.
 
 		referencingMethod := classToRefactor compiledMethodAt: selector.
-		self assert: (referencingMethod hasLiteralThorough: newName).
-		self deny: (referencingMethod hasLiteralThorough: oldName).
+		self assert: (referencingMethod hasLiteral: newName).
+		self deny: (referencingMethod hasLiteral: oldName).
 		self assert: (classToRefactor new perform: selector) equals: newName ].
 		
 			! !
