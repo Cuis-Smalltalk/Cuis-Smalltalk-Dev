@@ -1,6 +1,6 @@
-'From Cuis7.3 [latest update: #6973] on 14 January 2025 at 12:50:48 pm'!
+'From Cuis7.5 [latest update: #7345] on 10 July 2025 at 2:18:58 pm'!
 'Description '!
-!provides: 'ObjectProperties' 1 4!
+!provides: 'ObjectProperties' 1 5!
 SystemOrganization addCategory: #ObjectProperties!
 
 
@@ -33,12 +33,12 @@ releasePropertyMap
 postCopy
 	propertyMap := nil! !
 
-!ObjectWithProperties class methodsFor: 'accessing' stamp: 'jmv 11/16/2023 10:43:01'!
+!ObjectWithProperties class methodsFor: 'accessing' stamp: 'jmv 7/10/2025 10:29:11'!
 propertyMapFor: anObject
 
 	^self propertyMaps
 		at: anObject
-		ifAbsentPut: [ IdentityDictionary new ]! !
+		ifAbsentOrNilPut: [ IdentityDictionary new ]! !
 
 !ObjectWithProperties class methodsFor: 'accessing' stamp: 'jmv 11/16/2023 10:43:04'!
 propertyMapOrNilFor: anObject
@@ -55,12 +55,12 @@ propertyMaps
 		].
 	^PropertyMaps! !
 
-!ObjectWithProperties class methodsFor: 'releasing' stamp: 'jmv 11/16/2023 10:43:14'!
+!ObjectWithProperties class methodsFor: 'releasing' stamp: 'jmv 7/10/2025 10:29:41'!
 releasePropertyMapFor: anObject
 
 	self propertyMaps
-		removeKey: anObject
-		ifAbsent: nil! !
+		at: anObject
+		put: nil! !
 
 !Object methodsFor: '*ObjectProperties-querying / testing' stamp: 'jmv 11/16/2023 11:02:59'!
 hasProperty: aSymbol

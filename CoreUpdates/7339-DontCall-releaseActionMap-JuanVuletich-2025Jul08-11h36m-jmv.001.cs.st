@@ -8,7 +8,7 @@ removeActionsForEvent: anEventSelector
 	map ifNotNil: [
 		map removeKey: anEventSelector asSymbol ifAbsent: nil.
 		"No need. ActionMaps is an EphemeronIdentityDictionary. Keys are automatically removed when collectable.
-		Besides, this is dangerous for instance, if colled from an iteration of ActionMaps."
+		Besides, this is dangerous for instance, if called from an iteration of ActionMaps."
 		"map isEmpty
 			ifTrue: [ self releaseActionMap ]"
 		]! !
