@@ -1,6 +1,6 @@
-'From Cuis7.5 [latest update: #7341] on 8 July 2025 at 3:01:54 pm'!
+'From Cuis7.5 [latest update: #7357] on 15 July 2025 at 10:34:55 am'!
 'Description Rename extentions tests'!
-!provides: 'BaseImageTests' 1 454!
+!provides: 'BaseImageTests' 1 455!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Compiler'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Objects'!
@@ -5535,43 +5535,64 @@ testCopyNonLocalReturn
 		shouldnt: [self methodWithNonLocalReturn]
 		raise: Error! !
 
-!ClosureTests methodsFor: 'testing' stamp: 'jmv 7/3/2019 09:38:17'!
-testIsTrivialClosure
+!ClosureTests methodsFor: 'testing' stamp: 'jmv 7/14/2025 16:47:28'!
+testIsCleanClosure
 	"
-	ClosureTests new testIsTrivialClosure
+	ClosureTests new testIsCleanClosure
 	"
 	| tempVar |
-	tempVar _ 1.
+	tempVar := 1.
 	self assert: [ 3 + 4 ] isCleanClosure.
 	self assert: [ :a | a * 2 ] isCleanClosure.
 	self assert: [ Smalltalk size ] isCleanClosure.
 	self assert: [ ClosureTests selectors size ] isCleanClosure.
 	self assert: [ :blockArg | blockArg printString ] isCleanClosure.
 	self assert: [ | blockTemp | blockTemp printString ] isCleanClosure.
-	self assert: [ | blockTemp | blockTemp _ 7 ] isCleanClosure.
-	self assert: [ | c | c _ [ :a :b | a+b ]. c value: 3 value: 4 ] isCleanClosure.
+	self assert: [ | blockTemp | blockTemp := 7 ] isCleanClosure.
+	self assert: [ | c | c := [ :a :b | a+b ]. c value: 3 value: 4 ] isCleanClosure.
+
+	self assert: [[ 3 + 4 ] value] isCleanClosure.
+	self assert: [[ :a | a * 2 ] value] isCleanClosure.
+	self assert: [[ Smalltalk size ] value] isCleanClosure.
+	self assert: [[ ClosureTests selectors size ] value] isCleanClosure.
+	self assert: [[ :blockArg | blockArg printString ] value] isCleanClosure.
+	self assert: [[ | blockTemp | blockTemp printString ] value] isCleanClosure.
+	self assert: [[ | blockTemp | blockTemp := 7 ] value] isCleanClosure.
+	self assert: [[ | c | c := [ :a :b | a+b ]. c value: 3 value: 4 ] value] isCleanClosure.
 
 	self assert: [ | outerBlockTemp | [ outerBlockTemp printString ] ] isCleanClosure.
-	self assert: [ | outerBlockTemp | [ outerBlockTemp _ 7 ] ] isCleanClosure.
+	self assert: [ | outerBlockTemp | [ outerBlockTemp := 7 ] ] isCleanClosure.
 	self assert: [ | outerBlockTemp | [[ outerBlockTemp printString ]] ] isCleanClosure.
-	self assert: [ | outerBlockTemp | [[ outerBlockTemp _ 7 ]] ] isCleanClosure.
+	self assert: [ | outerBlockTemp | [[ outerBlockTemp := 7 ]] ] isCleanClosure.
 	self assert: [ [| outerBlockTemp | [ outerBlockTemp printString ]] ] isCleanClosure.
-	self assert: [ [| outerBlockTemp | [ outerBlockTemp _ 7 ]] ] isCleanClosure.
+	self assert: [ [| outerBlockTemp | [ outerBlockTemp := 7 ]] ] isCleanClosure.
 
 	self deny: [ | outerBlockTemp | [ outerBlockTemp printString ] isCleanClosure ] value.
-	self deny: [ | outerBlockTemp | [ outerBlockTemp _ 7 ] isCleanClosure ] value.
+	self deny: [ | outerBlockTemp | [ outerBlockTemp := 7 ] isCleanClosure ] value.
 	self deny: [ | outerBlockTemp | [[ outerBlockTemp printString ]] isCleanClosure ] value.
-	self deny: [ | outerBlockTemp | [[ outerBlockTemp _ 7 ]] isCleanClosure ] value.
+	self deny: [ | outerBlockTemp | [[ outerBlockTemp := 7 ]] isCleanClosure ] value.
 
 	self deny: [ tempVar + 1 ] isCleanClosure.
-	self deny: [ tempVar _ 1 ] isCleanClosure.
+	self deny: [ tempVar := 1 ] isCleanClosure.
 	self deny: [ ivar + 1 ] isCleanClosure.
-	self deny: [ ivar _ 1 ] isCleanClosure.
+	self deny: [ ivar := 1 ] isCleanClosure.
 	self deny: [ ^ true ] isCleanClosure.
 	self deny: [ self printString ] isCleanClosure.
 	self deny: [ ^ self ] isCleanClosure.
+	self deny: [ super printString ] isCleanClosure.
 	self deny: [ ClassVar + 1 ] isCleanClosure.
-	self deny: [ ClassVar _ 1 ] isCleanClosure! !
+	self deny: [ ClassVar := 1 ] isCleanClosure.
+
+	self deny: [[ 3 + 4 ]. [ tempVar + 1 ] value ] isCleanClosure.
+	self deny: [[ 3 + 4 ]. [ tempVar := 1 ] value ] isCleanClosure.
+	self deny: [[ 3 + 4 ]. [ ivar + 1 ] value ] isCleanClosure.
+	self deny: [[ 3 + 4 ]. [ ivar := 1 ] value ] isCleanClosure.
+	self deny: [[ 3 + 4 ]. [ ^ true ] value ] isCleanClosure.
+	self deny: [[ 3 + 4 ].[ self printString ] value ] isCleanClosure.
+	self deny: [[ 3 + 4 ].[ ^ self ] value ] isCleanClosure.
+	self deny: [[ 3 + 4 ].[ super printString ] value ] isCleanClosure.
+	self deny: [[ 3 + 4 ].[ ClassVar + 1 ] value ] isCleanClosure.
+	self deny: [[ 3 + 4 ].[ ClassVar := 1 ] value ] isCleanClosure.! !
 
 !ClosureTests methodsFor: 'testing' stamp: 'lr 3/11/2009 17:36'!
 testMethodArgument
