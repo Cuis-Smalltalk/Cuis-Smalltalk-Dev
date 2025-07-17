@@ -1,6 +1,6 @@
 'From Cuis 6.0 [latest update: #6055] on 25 October 2023 at 10:50:00 am'!
 'Description '!
-!provides: 'TestDynamicCuisLibraries' 1 15!
+!provides: 'TestDynamicCuisLibraries' 1 16!
 !requires: 'DynamicCuisLibraries' 1 22 nil!
 SystemOrganization addCategory: #TestDynamicCuisLibraries!
 SystemOrganization addCategory: #'TestDynamicCuisLibraries-Tests'!
@@ -1931,31 +1931,6 @@ maxVal
 !NoclashABC_DclExample06 methodsFor: 'other' stamp: 'jmv 8/11/2023 10:51:17'!
 someLiteral
 	^#(1 31 #aSymbol #otherSymbol)! !
-
-!InstructionStream class methodsFor: '*TestDynamicCuisLibraries-monitorCompilerUsage' stamp: 'jmv 8/8/2023 10:59:25'!
-new
-	LogCompilerUse == true ifTrue: [
-		LogCompilerUse := false.
-		CompilerWasUsed := true.
-		{'---'. self} print.
-		thisContext printStack: 10 ].
-	^super new.! !
-
-!ContextPart class methodsFor: '*TestDynamicCuisLibraries-monitorCompilerUsage' stamp: 'jmv 8/8/2023 10:59:32'!
-newForMethod: aMethod
-	"This is the only method for creating new contexts, other than primitive cloning.
-	Any other attempts, such as inherited methods like shallowCopy, should be
-	avoided or must at least be rewritten to determine the proper size from the
-	method being activated.  This is because asking a context its size (even basicSize!!)
-	will not return the real object size but only the number of fields currently
-	accessible, as determined by stackp."
-
-	LogCompilerUse == true ifTrue: [
-		LogCompilerUse := false.
-		CompilerWasUsed := true.
-		{'---'. self} print.
-		thisContext printStack: 10 ].
-	^ super basicNew: aMethod frameSize! !
 
 !UnhandledError methodsFor: '*TestDynamicCuisLibraries-monitorCompilerUsage' stamp: 'jmv 8/8/2023 10:55:48'!
 devDefaultAction

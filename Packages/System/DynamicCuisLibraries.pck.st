@@ -1,6 +1,6 @@
-'From Cuis7.3 [latest update: #7157] on 13 May 2025 at 4:06:05 pm'!
+'From Cuis7.5 [latest update: #7361] on 17 July 2025 at 9:57:45 am'!
 'Description '!
-!provides: 'DynamicCuisLibraries' 1 25!
+!provides: 'DynamicCuisLibraries' 1 26!
 SystemOrganization addCategory: #'DynamicCuisLibraries-Code Model'!
 SystemOrganization addCategory: #'DynamicCuisLibraries-Dynamic Libraries'!
 SystemOrganization addCategory: #DynamicCuisLibraries!
@@ -48,7 +48,7 @@ LiteralVariableSpec class
 
 !classDefinition: #MethodSpec category: #'DynamicCuisLibraries-Code Model'!
 CodeElementSpec subclass: #MethodSpec
-	instanceVariableNames: 'classSpec isClassSide selector header literals pragmas bytecodes'
+	instanceVariableNames: 'classSpec isClassSide selector header literals pragmas bytecodes encoderClassName'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'DynamicCuisLibraries-Code Model'!
@@ -574,6 +574,12 @@ variableName: aSymbol
 classSpec
 	^classSpec! !
 
+!MethodSpec methodsFor: '[mkDynamicLibraryLoad] accessing' stamp: 'jmv 7/16/2025 12:16:31'!
+encoderClass
+	"Answer the encoder class that encoded the bytecodes in this method."
+
+	^Smalltalk at: encoderClassName! !
+
 !MethodSpec methodsFor: '[mkDynamicLibraryLoad] accessing' stamp: 'jmv 8/31/2023 15:15:25'!
 literals
 	"Regular literals.
@@ -596,7 +602,7 @@ materializeAndInstall
 	theClass addSelectorSilently: selector withMethod: method.
 	^method! !
 
-!MethodSpec methodsFor: '[mkDynamicLibraryLoad] materialization' stamp: 'jmv 9/6/2023 17:47:21'!
+!MethodSpec methodsFor: '[mkDynamicLibraryLoad] materialization' stamp: 'jmv 7/16/2025 12:10:54'!
 materializeIn: aClass
 "
 Currently:
@@ -608,7 +614,7 @@ header literals pragmas bytecodes
 	| bytesCount method j |
 	bytesCount := bytecodes size.
 	method := CompiledMethod
-		createMethod: bytesCount trailer: #(0 0 0 0) header: header.
+		createMethod: bytesCount trailer: #(0 0 0 0) header: self header.
 	1 to: self literals size do: [ :i | | lit varName |
 		lit := literals at: i.
 		(lit is: #LiteralVariableSpec) ifTrue: [
@@ -636,9 +642,13 @@ header literals pragmas bytecodes
 bytecodes
 	^bytecodes! !
 
-!MethodSpec methodsFor: 'accessing' stamp: 'jmv 6/30/2023 16:43:19'!
+!MethodSpec methodsFor: 'accessing' stamp: 'jmv 7/16/2025 12:16:43'!
 header
-	^header! !
+	"The ByteCodeEncoder class used for us is stored by name. Compute the flag for our header.
+	This is because the primary and secondary BytecodeSetEncoder classes may differ between
+	instance creation and later materialization."
+
+	^header + (CompiledMethod headerFlagForEncoderClass: self encoderClass).! !
 
 !MethodSpec methodsFor: 'accessing' stamp: 'fz 6/23/2023 13:09:41'!
 isClassSide
@@ -652,12 +662,12 @@ selector
 selector: aSymbol
 	selector := aSymbol.! !
 
-!MethodSpec methodsFor: 'accessing' stamp: 'jmv 6/2/2023 16:00:26'!
+!MethodSpec methodsFor: 'accessing' stamp: 'jmv 7/16/2025 12:11:00'!
 spurNumLiterals
 	"Answer the number of literals used by the receiver.
 	See #numLiterals"
 
-	^ header bitAnd: 16r7FFF! !
+	^ self header bitAnd: 16r7FFF! !
 
 !MethodSpec methodsFor: 'private' stamp: 'fgz 9/5/2023 15:00:07'!
 at: index
@@ -669,8 +679,8 @@ at: index put: value
 	"Compatibility with CompiledMethod"
 	^bytecodes at: index put: value! !
 
-!MethodSpec methodsFor: 'private' stamp: 'jmv 4/12/2023 15:31:52'!
-classSpec: aClassSpec isClassSide: aBoolean selector: aSymbol header: aNumber literals: arrayOfLiterals pragmas: arrayOfPragmas bytecodes: aByteArray
+!MethodSpec methodsFor: 'private' stamp: 'jmv 7/16/2025 12:13:00'!
+classSpec: aClassSpec isClassSide: aBoolean selector: aSymbol header: aNumber literals: arrayOfLiterals pragmas: arrayOfPragmas bytecodes: aByteArray encoderClassName: otherSymbol
 
 	classSpec := aClassSpec.
 	isClassSide := aBoolean.
@@ -678,7 +688,12 @@ classSpec: aClassSpec isClassSide: aBoolean selector: aSymbol header: aNumber li
 	header := aNumber.
 	literals := arrayOfLiterals.
 	pragmas := arrayOfPragmas.
-	bytecodes := aByteArray.! !
+	bytecodes := aByteArray.
+	encoderClassName := otherSymbol.
+	"The ByteCodeEncoder class used for us is stored by name. Clear the flag in header.
+	This is because the primary and secondary BytecodeSetEncoder classes may differ between
+	instance creation and later materialization."
+	header < 0 ifTrue: [ header := header - SmallInteger minVal ].! !
 
 !MethodSpec methodsFor: 'printing' stamp: 'jmv 7/17/2023 13:53:02'!
 printOn: aStream
@@ -728,7 +743,7 @@ returnField
 		ifTrue: [self error: 'only meaningful for quick-return']
 		ifFalse: [^ prim - 264]! !
 
-!MethodSpec class methodsFor: 'instance creation' stamp: 'jmv 8/2/2023 10:28:44'!
+!MethodSpec class methodsFor: 'instance creation' stamp: 'jmv 7/16/2025 11:56:35'!
 for: aCompiledMethod addClassesTo: anOrderedDictionaryOfClasses
 	"aCompiledMethod is a regular method that exists in the system
 	"
@@ -758,7 +773,8 @@ for: aCompiledMethod addClassesTo: anOrderedDictionaryOfClasses
 		header: aCompiledMethod header
 		literals: (self literalSpecsFor: aCompiledMethod)
 		pragmas: (self pragmaSpecsFor: aCompiledMethod)
-		bytecodes: aCompiledMethod bytecodes.! !
+		bytecodes: aCompiledMethod bytecodes
+		encoderClassName: aCompiledMethod encoderClass name.! !
 
 !MethodSpec class methodsFor: 'instance creation' stamp: 'jmv 1/31/2024 09:17:10'!
 literalSpecsFor: aCompiledMethod
@@ -933,7 +949,7 @@ installLibrary
 	methodSpecs do: [ :methodSpec |
 		methodSpec materializeAndInstall ].! !
 
-!DynamicCuisLibrary methodsFor: '[mkDynamicLibraryLoad] installing' stamp: 'jmv 9/6/2023 17:48:49'!
+!DynamicCuisLibrary methodsFor: '[mkDynamicLibraryLoad] installing' stamp: 'jmv 7/16/2025 15:09:37'!
 remapExistingMethodsInstVarAccesses: doIt
 	"Convert existing methods to new class shapes if needed.
 	(ClassSpecs are allowed to add new instance variables to existing classes)
@@ -949,8 +965,11 @@ remapExistingMethodsInstVarAccesses: doIt
 			delta := classSpec instVarCountAfterInstall - previousIvarCount.
 			delta > 0 ifTrue: [
 				(Smalltalk at: classSpec name) allSubclassesDo: [ :modifiedShapeClass |
+					modifiedShapeClass instSize + delta > 255 ifTrue: [
+						doIt ifTrue: [self error: 'Can not handle classes with more than 255 instance variables'].
+						^false ].
 					modifiedShapeClass methodsDo: [ :compiledMethod |
-						(CompiledMethod
+						(compiledMethod encoderClass
 							displaceInstVarAccessesIn: compiledMethod 
 							starting: previousIvarCount+1 by: delta
 							doIt: doIt)
@@ -958,7 +977,7 @@ remapExistingMethodsInstVarAccesses: doIt
 	doIt ifTrue: [Smalltalk voidCogVMState].
 	^true.! !
 
-!DynamicCuisLibrary methodsFor: '[mkDynamicLibraryLoad] installing' stamp: 'jmv 9/6/2023 17:48:56'!
+!DynamicCuisLibrary methodsFor: '[mkDynamicLibraryLoad] installing' stamp: 'jmv 7/16/2025 15:12:25'!
 remapMethodSpecInstVarAccesses: doIt
 	"Remap all instance variable accesses in our methodSpecs to match the final shape of classes.
 	If doIt is false, then only validate if remapping is possible and answer the result.
@@ -966,7 +985,11 @@ remapMethodSpecInstVarAccesses: doIt
 
 	methodSpecs do: [ :methodSpec |
 		methodSpec classSpec methodSpecsInstVarIndexMap ifNotNil: [ :map |
-			(CompiledMethod remapInstVarAccessesIn: methodSpec asPer: map doIt: doIt)
+			map keysAndValuesDo: [ :oldIndex :newIndex |
+				(oldIndex max: newIndex) > 255 ifTrue: [
+					doIt ifTrue: [self error: 'Can not handle classes with more than 255 instance variables'].
+					^false ]].
+			(methodSpec encoderClass remapInstVarAccessesIn: methodSpec asPer: map doIt: doIt)
 				ifFalse: [ ^false ]]].
 	^true! !
 
