@@ -30,24 +30,24 @@ formGlyphForUtf8Byte1: aByte1 byte2: aByte2OrNil byte3: aByte3OrNil byte4: aByte
 	boundsBottom := contourDataForUtf8 at: i. i := i + 1.
 	boundsTop := contourDataForUtf8 at: i. i := i + 1.
 
-	horizontalStrokesAtPixelCenter := 0.5.
+	horizontalStrokesAtPixelCenter := 0.5 * 0.
 	toPixelsScale := 0.0 + pixelSize / self letterMTopSideBearing.
 
 	"If positive, pixels we save at the left. if negative, xtra pix needed"
-		xtraRoom := 0.0 "+1".
+		xtraRoom := 0.4 "+1".
 	leftPixelOffset := (boundsLeft * toPixelsScale - xtraRoom) "floor".
-		xtraRoom := 1.0 "+2".
+		xtraRoom := 1.8 "+2".
 	formWidth := ((boundsRight - boundsLeft) * toPixelsScale + xtraRoom) ceiling.
 
 	"Usually positive. Needed pixels above the baseline"
-		xtraRoom := 0.2 "+1".
+		xtraRoom := 0.0 "+1".
 	topPixelOffset := (boundsTop * toPixelsScale + xtraRoom) ceiling.
-		xtraRoom := 1.0 "+2".
+		xtraRoom := 1.7 "+2".
 	formHeight := ((boundsTop - boundsBottom) * toPixelsScale + xtraRoom) ceiling.
 	
 	form := Form extent: formWidth@formHeight depth: 32.
 	form fillColor: Color white.
-		"form fillColor: (Color gray: 0.9)."
+"form fillColor: (Color gray: 0.95)."
 	canvas := VectorCanvas onFormWithSubPixelAntiAliasing: form.
 	canvas 
 		engine
@@ -59,6 +59,16 @@ formGlyphForUtf8Byte1: aByte1 byte2: aByte2OrNil byte3: aByte3OrNil byte4: aByte
 			color: Color black
 			scale: 1.0 * pixelSize
 			preventMirroring: true.
+"
+f2 := form copy.
+f2 fill: (form boundingBox insetBy: 1) fillColor: (f2 colorAt: 0@0).
+(f2 tallyPixelValues count: [ :v | v > 0 ]) > 1 ifTrue: [
+	Tota ifNil: [ Tota := OrderedCollection new ].
+	Tota add: form.
+	Tota2 ifNil: [ Tota2 := OrderedCollection new ].
+	Tota2 add: utf8ByteArray.
+].
+"
 
 	"TrueType doesn't speciy how to position diacritics wrt base character glyph.
 	Horizontally center diacriticals wrt base glyph.
@@ -84,8 +94,7 @@ formGlyphForUtf8Byte1: aByte1 byte2: aByte2OrNil byte3: aByte3OrNil byte4: aByte
 		leftOffset: leftPixelOffset
 		topOffset: topPixelOffset
 		advanceWidth: (advanceWidth * toPixelsScale))
-			deltaXToCenter: deltaXToCenter.
-! !
+			deltaXToCenter: deltaXToCenter.! !
 
 "Postscript:
 Leave the line above, and replace the rest of this comment by a useful one.
