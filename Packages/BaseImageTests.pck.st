@@ -1,6 +1,6 @@
-'From Cuis7.5 [latest update: #7357] on 15 July 2025 at 10:34:55 am'!
+'From Cuis7.5 [latest update: #7363] on 19 July 2025 at 12:00:45 pm'!
 'Description Rename extentions tests'!
-!provides: 'BaseImageTests' 1 455!
+!provides: 'BaseImageTests' 1 456!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Compiler'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Objects'!
@@ -7283,7 +7283,7 @@ self new sampleProgress: {0}
 
 ! !
 
-!TestValueWithinFix methodsFor: 'tests' stamp: 'jmv 4/17/2013 12:11'!
+!TestValueWithinFix methodsFor: 'tests' stamp: 'jmv 7/19/2025 12:00:32'!
 testValueWithinNonLocalReturnFixReal
 	"self run: #testValueWithinNonLocalReturnFixReal"
 	"The real test for the fix is just as obscure as the original problem"
@@ -7295,7 +7295,7 @@ testValueWithinNonLocalReturnFixReal
 		the previous invokation will signal timeout after 20 msecs already
 		which will in turn cut this invokation short."
 		deltaTime := Time localMillisecondClock - startTime.
-		self deny: deltaTime < 90.
+		self deny: deltaTime < 90 description: 'deltaTime was: ', deltaTime printString.
 	].
 ! !
 
