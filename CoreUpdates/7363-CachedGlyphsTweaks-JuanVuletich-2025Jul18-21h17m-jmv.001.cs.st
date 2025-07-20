@@ -65,7 +65,7 @@ formGlyphForUtf8Byte1: aByte1 byte2: aByte2OrNil byte3: aByte3OrNil byte4: aByte
 			preventMirroring: true.
 
 	"Now only take the pixels that are actually needed."
-	usedRect := canvas engine morphBoundsAfterDraw.
+	usedRect := form boundingBox intersect: canvas engine morphBoundsAfterDraw.
 	"usedRect := usedRect outsetBy: 1." "Debug aid"
 	form := form copy: usedRect.
 	leftPixelOffset := leftPixelOffset + usedRect left.
