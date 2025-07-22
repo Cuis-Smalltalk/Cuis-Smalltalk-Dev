@@ -1,6 +1,6 @@
-'From Cuis7.5 [latest update: #7363] on 19 July 2025 at 12:00:45 pm'!
+'From Cuis7.5 [latest update: #7365] on 22 July 2025 at 9:02:39 am'!
 'Description Rename extentions tests'!
-!provides: 'BaseImageTests' 1 456!
+!provides: 'BaseImageTests' 1 457!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Compiler'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Objects'!
@@ -25821,6 +25821,38 @@ test21FindsTemporaryWhenSelectingDefinition
 	self assert: 1 equals: methodsToExtractFrom size.
 	replacement := methodsToExtractFrom first.
 	self assert: (4 to: 12) equals: replacement intervalToExtract.
+	self assert: (replacement isOf: sourceMethod).
+	! !
+
+!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 7/21/2025 18:31:34'!
+test22_1_FindsTemporaryWhenSelectingDefinitionInInnerClosure
+
+	| sourceMethodName finder methodsToExtractFrom sourceMethod replacement |
+	
+	sourceMethodName := classToRefactor compile: 'boundsUsing: aBlock 
+	
+	^self isSingleSelection 
+		ifTrue: [ aBlock value: #selected first ]
+		ifFalse: [ | points |
+	
+	points := #selected 
+		inject: OrderedCollection new
+		into: [ :allPoints :aSelectedWidget | | bounds |
+			bounds := aBlock value: aSelectedWidget.
+			allPoints add: bounds origin; add: bounds corner.
+			allPoints ].
+	
+	Rectangle encompassing: points ]'.
+	
+	sourceMethod := (classToRefactor >> sourceMethodName) asMethodReference.
+	finder := ExtractMethodReplacementsFinder ofCodeIn: (107 to: 370) asSourceCodeInterval at: sourceMethod to: (Message selector: #m2:). 
+	finder value.
+	
+	methodsToExtractFrom := finder replacements.
+	
+	self assert: 1 equals: methodsToExtractFrom size.
+	replacement := methodsToExtractFrom first.
+	self assert: (107 to: 370) equals: replacement intervalToExtract.
 	self assert: (replacement isOf: sourceMethod).
 	! !
 
