@@ -1,6 +1,6 @@
-'From Cuis7.5 [latest update: #7361] on 17 July 2025 at 9:57:45 am'!
+'From Cuis7.5 [latest update: #7393] on 31 July 2025 at 3:00:44 pm'!
 'Description '!
-!provides: 'DynamicCuisLibraries' 1 26!
+!provides: 'DynamicCuisLibraries' 1 27!
 SystemOrganization addCategory: #'DynamicCuisLibraries-Code Model'!
 SystemOrganization addCategory: #'DynamicCuisLibraries-Dynamic Libraries'!
 SystemOrganization addCategory: #DynamicCuisLibraries!
@@ -642,6 +642,10 @@ header literals pragmas bytecodes
 bytecodes
 	^bytecodes! !
 
+!MethodSpec methodsFor: 'accessing' stamp: 'jmv 7/29/2025 16:28:16'!
+bytecodes: aByteArray
+	bytecodes := aByteArray! !
+
 !MethodSpec methodsFor: 'accessing' stamp: 'jmv 7/16/2025 12:16:43'!
 header
 	"The ByteCodeEncoder class used for us is stored by name. Compute the flag for our header.
@@ -649,6 +653,15 @@ header
 	instance creation and later materialization."
 
 	^header + (CompiledMethod headerFlagForEncoderClass: self encoderClass).! !
+
+!MethodSpec methodsFor: 'accessing' stamp: 'jmv 7/30/2025 16:24:01'!
+header: aNumber
+
+	header  := aNumber.
+	"The ByteCodeEncoder class used for us is stored by name. Clear the flag in header.
+	This is because the primary and secondary BytecodeSetEncoder classes may differ between
+	instance creation and later materialization."
+	header < 0 ifTrue: [ header := header - SmallInteger minVal ].! !
 
 !MethodSpec methodsFor: 'accessing' stamp: 'fz 6/23/2023 13:09:41'!
 isClassSide
@@ -668,6 +681,21 @@ spurNumLiterals
 	See #numLiterals"
 
 	^ self header bitAnd: 16r7FFF! !
+
+!MethodSpec methodsFor: 'copying' stamp: 'jmv 7/31/2025 09:18:33'!
+copyWithBytecodes: newBytecodes
+	"Assume that newBytecodes are regular bytecodes,
+	meaning the answer will not include a primitive call."
+	| newHeader copy |
+	
+	newHeader := header.
+	"Take down the primitive flag if present."
+	(newHeader anyMask: 65536) ifTrue: [
+		newHeader := newHeader - 65536 ].
+	copy := self copy.
+	copy header: newHeader.
+	copy bytecodes: newBytecodes.
+	^copy! !
 
 !MethodSpec methodsFor: 'private' stamp: 'fgz 9/5/2023 15:00:07'!
 at: index
@@ -928,9 +956,12 @@ canBeInstalled
 
 	^true! !
 
-!DynamicCuisLibrary methodsFor: '[mkDynamicLibraryLoad] installing' stamp: 'jmv 9/6/2023 17:50:56'!
+!DynamicCuisLibrary methodsFor: '[mkDynamicLibraryLoad] installing' stamp: 'jmv 7/31/2025 09:48:36'!
 installLibrary
-	"Install classes. Merge into existing classes if appropriate."
+	"Install classes. Merge into existing classes if appropriate.
+	Note: It is absolutely crucial to have called #canBeInstalled before,
+	and have received a positive answer."
+	
 	classSpecs do: [ :classSpec |
 		classSpec equalsExisting ifFalse: [
 			classSpec materializeAndInstall ]].
@@ -949,15 +980,30 @@ installLibrary
 	methodSpecs do: [ :methodSpec |
 		methodSpec materializeAndInstall ].! !
 
-!DynamicCuisLibrary methodsFor: '[mkDynamicLibraryLoad] installing' stamp: 'jmv 7/16/2025 15:09:37'!
+!DynamicCuisLibrary methodsFor: '[mkDynamicLibraryLoad] installing' stamp: 'jmv 7/31/2025 10:06:32'!
 remapExistingMethodsInstVarAccesses: doIt
 	"Convert existing methods to new class shapes if needed.
 	(ClassSpecs are allowed to add new instance variables to existing classes)
-	If doIt is false, then only validate if remapping is possible and answer the result.
-	If doIt is true, go ahead and update CompiledMethods. Raise an error if problem arises.
-	Warning: Failure during conversion (doIt = true) means an inconsistent system where
-		potentially many CompiledMethods access the wrong instance variables.
-		It is extremely dangerous to continue. Safest thing is to EXIT THE IMAGE."
+	For this, displace instance variable accesses in our methodSpecs to match the final shape of classes.
+	
+	If doIt is false:
+		- Validate if remapping is possible and answer a boolean.
+		- If some CompiledMethod can not be remapped without first expanding it to use
+		    long instance variable bytecodes, then DO the conversion now and install and keep only
+		    the converted CompiledMethod. (The new CompiledMethod has identical behavior, though.)
+		- Don't raise any errors.
+		- Don't modify system behavior in any way
+		
+	If doIt is true:
+		- Assume a previous call with doIt=false has validated that the remap is possible.
+		- Assume that previous call has already replaced CompiledMethods with long instance
+		    variable bytecodes if needed.
+		- Go ahead and update CompiledMethods with the remapping and raise an error if problem arises.
+	
+	Warning: Failure during actual conversion (doIt = true) results an inconsistent system where
+		potentially many CompiledMethods will access the wrong instance variables.
+		It is extremely dangerous to continue.
+	The only safe thing to do is to EXIT THE IMAGE. It is advisable to log some debugging info before."
 
 	classSpecs do: [ :classSpec | | previousIvarCount delta |
 		previousIvarCount := classSpec instVarCountBeforeInstall.
@@ -965,32 +1011,48 @@ remapExistingMethodsInstVarAccesses: doIt
 			delta := classSpec instVarCountAfterInstall - previousIvarCount.
 			delta > 0 ifTrue: [
 				(Smalltalk at: classSpec name) allSubclassesDo: [ :modifiedShapeClass |
-					modifiedShapeClass instSize + delta > 255 ifTrue: [
-						doIt ifTrue: [self error: 'Can not handle classes with more than 255 instance variables'].
-						^false ].
-					modifiedShapeClass methodsDo: [ :compiledMethod |
-						(compiledMethod encoderClass
-							displaceInstVarAccessesIn: compiledMethod 
-							starting: previousIvarCount+1 by: delta
-							doIt: doIt)
-								ifFalse: [ ^false ]]]]]].
-	doIt ifTrue: [Smalltalk voidCogVMState].
+					modifiedShapeClass selectors do: [ :selector | | compiledMethod result |
+						compiledMethod := modifiedShapeClass compiledMethodAt: selector.
+						result := compiledMethod encoderClass displaceInstVarAccessesIn: compiledMethod  starting: previousIvarCount+1 by: delta doIt: doIt.
+						result ifFalse: [
+							doIt ifFalse: [
+								compiledMethod := compiledMethod encoderClass withLongInstVarAccessBytecodes: compiledMethod.
+								compiledMethod isNil ifTrue: [ ^false ].
+								modifiedShapeClass addSelectorSilently: selector withMethod: compiledMethod.
+								result := compiledMethod encoderClass displaceInstVarAccessesIn: compiledMethod  starting: previousIvarCount+1 by: delta doIt: doIt ]].
+						result ifFalse: [ ^false ]]]]]].
+	doIt ifTrue: [ Smalltalk voidCogVMState ].
 	^true.! !
 
-!DynamicCuisLibrary methodsFor: '[mkDynamicLibraryLoad] installing' stamp: 'jmv 7/16/2025 15:12:25'!
+!DynamicCuisLibrary methodsFor: '[mkDynamicLibraryLoad] installing' stamp: 'jmv 7/31/2025 09:44:41'!
 remapMethodSpecInstVarAccesses: doIt
 	"Remap all instance variable accesses in our methodSpecs to match the final shape of classes.
-	If doIt is false, then only validate if remapping is possible and answer the result.
-	If doIt is true, go ahead and update MethodSpecs. Raise an error if problem arises."
+	
+	If doIt is false:
+		- Validate if remapping is possible and answer a boolean.
+		- If some methodSpec can not be remapped without first expanding it to use
+		    long instance variable bytecodes, then DO the conversion now and keep only
+		    the converted methodSpec.
+		- Don't raise any errors.
+		
+	If doIt is true:
+		- Assume a previous call with doIt=false has validated that the remap is possible.
+		- Assume that previous call has already replaced MethodSpecs with long instance
+		    variable bytecodes if needed.
+		- Go ahead and update MethodSpecs with the remapping and raise an error if problem arises."
 
-	methodSpecs do: [ :methodSpec |
+	1 to: methodSpecs size do: [ :i | | methodSpec result |
+		methodSpec := methodSpecs at: i.
 		methodSpec classSpec methodSpecsInstVarIndexMap ifNotNil: [ :map |
-			map keysAndValuesDo: [ :oldIndex :newIndex |
-				(oldIndex max: newIndex) > 255 ifTrue: [
-					doIt ifTrue: [self error: 'Can not handle classes with more than 255 instance variables'].
-					^false ]].
-			(methodSpec encoderClass remapInstVarAccessesIn: methodSpec asPer: map doIt: doIt)
-				ifFalse: [ ^false ]]].
+			
+			result := methodSpec encoderClass remapInstVarAccessesIn: methodSpec asPer: map doIt: doIt.
+			result ifFalse: [
+				doIt ifFalse: [
+					methodSpec := methodSpec encoderClass withLongInstVarAccessBytecodes: methodSpec.
+					methodSpec isNil ifTrue: [ ^false ].
+					methodSpecs at: i put: methodSpec.
+					result := methodSpec encoderClass remapInstVarAccessesIn: methodSpec asPer: map doIt: doIt ]].
+			result ifFalse: [ ^false ]]].
 	^true! !
 
 !DynamicCuisLibrary methodsFor: 'creation' stamp: 'jmv 4/25/2023 10:50:23'!
