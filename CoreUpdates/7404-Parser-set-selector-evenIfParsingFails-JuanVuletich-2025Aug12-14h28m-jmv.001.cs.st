@@ -64,11 +64,18 @@ keywordPattern
 	
 	self addArgumentNames: argNames argRanges: argRanges toArguments: arguments isDoIt: selector contents = self class doItInSelector.
 		
-	^ {selectorsymbol. arguments. 3. keywordRanges}
-		! !
+	^ {selectorsymbol. arguments. 3. keywordRanges}! !
+
+!Parser methodsFor: 'expression types' stamp: 'jmv 8/12/2025 13:08:19'!
+unaryPattern
+
+	^ self advanceWithRangeDo: [ :sel :range | | selectorsymbol |
+		selectorsymbol := sel asSymbol.
+		self selector: selectorsymbol.
+		{selectorsymbol. {}. 1. {range}} ]! !
 
 !Parser methodsFor: 'expression types' stamp: 'jmv 8/12/2025 13:09:39'!
-method: noPattern context: ctxt 
+method: noPattern context: ctxt
 	" pattern [ | temporaries ] block => MethodNode."
 
 	| sap block primitives tempsDeclarationNode messageComment methodNode |
@@ -106,14 +113,6 @@ method: noPattern context: ctxt
 	self interactive ifTrue: [ self performInteractiveChecks: methodNode ].
 	
 	^methodNode! !
-
-!Parser methodsFor: 'expression types' stamp: 'jmv 8/12/2025 13:08:19'!
-unaryPattern
-
-	^ self advanceWithRangeDo: [ :sel :range | | selectorsymbol |
-		selectorsymbol := sel asSymbol.
-		self selector: selectorsymbol.
-		{selectorsymbol. {}. 1. {range}} ]! !
 
 
 !Encoder methodsFor: 'private' stamp: 'jmv 8/12/2025 13:12:59'!
