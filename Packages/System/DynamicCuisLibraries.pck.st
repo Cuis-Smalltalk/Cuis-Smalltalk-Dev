@@ -1,6 +1,6 @@
-'From Cuis7.5 [latest update: #7393] on 31 July 2025 at 3:00:44 pm'!
+'From Cuis7.5 [latest update: #7411] on 13 August 2025 at 11:24:57 am'!
 'Description '!
-!provides: 'DynamicCuisLibraries' 1 27!
+!provides: 'DynamicCuisLibraries' 1 28!
 SystemOrganization addCategory: #'DynamicCuisLibraries-Code Model'!
 SystemOrganization addCategory: #'DynamicCuisLibraries-Dynamic Libraries'!
 SystemOrganization addCategory: #DynamicCuisLibraries!
@@ -48,7 +48,7 @@ LiteralVariableSpec class
 
 !classDefinition: #MethodSpec category: #'DynamicCuisLibraries-Code Model'!
 CodeElementSpec subclass: #MethodSpec
-	instanceVariableNames: 'classSpec isClassSide selector header literals pragmas bytecodes encoderClassName'
+	instanceVariableNames: 'classSpec isClassSide selector header literals pragmas bytecodes'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'DynamicCuisLibraries-Code Model'!
@@ -574,11 +574,20 @@ variableName: aSymbol
 classSpec
 	^classSpec! !
 
-!MethodSpec methodsFor: '[mkDynamicLibraryLoad] accessing' stamp: 'jmv 7/16/2025 12:16:31'!
+!MethodSpec methodsFor: '[mkDynamicLibraryLoad] accessing' stamp: 'jmv 8/5/2025 18:27:34'!
 encoderClass
-	"Answer the encoder class that encoded the bytecodes in this method."
-
-	^Smalltalk at: encoderClassName! !
+	"Answer the encoder class that encoded the bytecodes in this method.
+	 The sign flag bit is used by the VM to select a bytecode set.  This formulation
+	 may seem odd but this has to be fast, so no property probe unless needed.
+	The fact that a positive header means byecodes are in the V3PlusClosures set,
+	and negative header means bytecodes in the SistaV1 set is hardcoded in the
+	OpenSmalltalk VMs as of August 2025."
+	
+	^ header >= 0
+		ifTrue: 
+			[EncoderForV3PlusClosures]
+		ifFalse:
+			[EncoderForSistaV1]! !
 
 !MethodSpec methodsFor: '[mkDynamicLibraryLoad] accessing' stamp: 'jmv 8/31/2023 15:15:25'!
 literals
@@ -602,7 +611,7 @@ materializeAndInstall
 	theClass addSelectorSilently: selector withMethod: method.
 	^method! !
 
-!MethodSpec methodsFor: '[mkDynamicLibraryLoad] materialization' stamp: 'jmv 7/16/2025 12:10:54'!
+!MethodSpec methodsFor: '[mkDynamicLibraryLoad] materialization' stamp: 'jmv 9/6/2023 17:47:21'!
 materializeIn: aClass
 "
 Currently:
@@ -614,7 +623,7 @@ header literals pragmas bytecodes
 	| bytesCount method j |
 	bytesCount := bytecodes size.
 	method := CompiledMethod
-		createMethod: bytesCount trailer: #(0 0 0 0) header: self header.
+		createMethod: bytesCount trailer: #(0 0 0 0) header: header.
 	1 to: self literals size do: [ :i | | lit varName |
 		lit := literals at: i.
 		(lit is: #LiteralVariableSpec) ifTrue: [
@@ -646,22 +655,9 @@ bytecodes
 bytecodes: aByteArray
 	bytecodes := aByteArray! !
 
-!MethodSpec methodsFor: 'accessing' stamp: 'jmv 7/16/2025 12:16:43'!
+!MethodSpec methodsFor: 'accessing' stamp: 'jmv 6/30/2023 16:43:19'!
 header
-	"The ByteCodeEncoder class used for us is stored by name. Compute the flag for our header.
-	This is because the primary and secondary BytecodeSetEncoder classes may differ between
-	instance creation and later materialization."
-
-	^header + (CompiledMethod headerFlagForEncoderClass: self encoderClass).! !
-
-!MethodSpec methodsFor: 'accessing' stamp: 'jmv 7/30/2025 16:24:01'!
-header: aNumber
-
-	header  := aNumber.
-	"The ByteCodeEncoder class used for us is stored by name. Clear the flag in header.
-	This is because the primary and secondary BytecodeSetEncoder classes may differ between
-	instance creation and later materialization."
-	header < 0 ifTrue: [ header := header - SmallInteger minVal ].! !
+	^header! !
 
 !MethodSpec methodsFor: 'accessing' stamp: 'fz 6/23/2023 13:09:41'!
 isClassSide
@@ -675,27 +671,21 @@ selector
 selector: aSymbol
 	selector := aSymbol.! !
 
-!MethodSpec methodsFor: 'accessing' stamp: 'jmv 7/16/2025 12:11:00'!
+!MethodSpec methodsFor: 'accessing' stamp: 'jmv 6/2/2023 16:00:26'!
 spurNumLiterals
 	"Answer the number of literals used by the receiver.
 	See #numLiterals"
 
-	^ self header bitAnd: 16r7FFF! !
+	^ header bitAnd: 16r7FFF! !
 
-!MethodSpec methodsFor: 'copying' stamp: 'jmv 7/31/2025 09:18:33'!
+!MethodSpec methodsFor: 'copying' stamp: 'jmv 8/5/2025 16:34:57'!
 copyWithBytecodes: newBytecodes
 	"Assume that newBytecodes are regular bytecodes,
-	meaning the answer will not include a primitive call."
-	| newHeader copy |
+	meaning the answer will not include a primitive call.
+	The new bytecodes are in the same bytecode set as the current ones.
+	This means the header word remains the same."
 	
-	newHeader := header.
-	"Take down the primitive flag if present."
-	(newHeader anyMask: 65536) ifTrue: [
-		newHeader := newHeader - 65536 ].
-	copy := self copy.
-	copy header: newHeader.
-	copy bytecodes: newBytecodes.
-	^copy! !
+	^self copy bytecodes: newBytecodes.! !
 
 !MethodSpec methodsFor: 'private' stamp: 'fgz 9/5/2023 15:00:07'!
 at: index
@@ -707,8 +697,8 @@ at: index put: value
 	"Compatibility with CompiledMethod"
 	^bytecodes at: index put: value! !
 
-!MethodSpec methodsFor: 'private' stamp: 'jmv 7/16/2025 12:13:00'!
-classSpec: aClassSpec isClassSide: aBoolean selector: aSymbol header: aNumber literals: arrayOfLiterals pragmas: arrayOfPragmas bytecodes: aByteArray encoderClassName: otherSymbol
+!MethodSpec methodsFor: 'private' stamp: 'jmv 4/12/2023 15:31:52'!
+classSpec: aClassSpec isClassSide: aBoolean selector: aSymbol header: aNumber literals: arrayOfLiterals pragmas: arrayOfPragmas bytecodes: aByteArray
 
 	classSpec := aClassSpec.
 	isClassSide := aBoolean.
@@ -716,12 +706,7 @@ classSpec: aClassSpec isClassSide: aBoolean selector: aSymbol header: aNumber li
 	header := aNumber.
 	literals := arrayOfLiterals.
 	pragmas := arrayOfPragmas.
-	bytecodes := aByteArray.
-	encoderClassName := otherSymbol.
-	"The ByteCodeEncoder class used for us is stored by name. Clear the flag in header.
-	This is because the primary and secondary BytecodeSetEncoder classes may differ between
-	instance creation and later materialization."
-	header < 0 ifTrue: [ header := header - SmallInteger minVal ].! !
+	bytecodes := aByteArray.! !
 
 !MethodSpec methodsFor: 'printing' stamp: 'jmv 7/17/2023 13:53:02'!
 printOn: aStream
@@ -752,12 +737,12 @@ isReturnField
 	"Answer whether the receiver is a quick return of an instance variable."
 	^ self primitive between: 264 and: 519! !
 
-!MethodSpec methodsFor: 'compatibility with CompiledMethod' stamp: 'jmv 1/31/2024 09:16:14'!
+!MethodSpec methodsFor: 'compatibility with CompiledMethod' stamp: 'jmv 8/5/2025 17:06:38'!
 primitive
 	"Answer the primitive index associated with the receiver.
 	Zero indicates that this is not a primitive method."
 
-	^(self header anyMask: 65536) "Is the hasPrimitive? flag set?"
+	^(header anyMask: 65536) "Is the hasPrimitive? flag set?"
 		ifTrue: [(self at: 2) + ((self at: 3) bitShift: 8)]
 		ifFalse: [0].! !
 
@@ -771,7 +756,7 @@ returnField
 		ifTrue: [self error: 'only meaningful for quick-return']
 		ifFalse: [^ prim - 264]! !
 
-!MethodSpec class methodsFor: 'instance creation' stamp: 'jmv 7/16/2025 11:56:35'!
+!MethodSpec class methodsFor: 'instance creation' stamp: 'jmv 8/2/2023 10:28:44'!
 for: aCompiledMethod addClassesTo: anOrderedDictionaryOfClasses
 	"aCompiledMethod is a regular method that exists in the system
 	"
@@ -801,8 +786,7 @@ for: aCompiledMethod addClassesTo: anOrderedDictionaryOfClasses
 		header: aCompiledMethod header
 		literals: (self literalSpecsFor: aCompiledMethod)
 		pragmas: (self pragmaSpecsFor: aCompiledMethod)
-		bytecodes: aCompiledMethod bytecodes
-		encoderClassName: aCompiledMethod encoderClass name.! !
+		bytecodes: aCompiledMethod bytecodes.! !
 
 !MethodSpec class methodsFor: 'instance creation' stamp: 'jmv 1/31/2024 09:17:10'!
 literalSpecsFor: aCompiledMethod

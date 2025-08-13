@@ -1,6 +1,6 @@
-'From Cuis7.3 [latest update: #7166] on 16 May 2025 at 3:54:18 pm'!
+'From Cuis7.5 [latest update: #7411] on 13 August 2025 at 11:25:00 am'!
 'Description '!
-!provides: 'Bootstrap' 1 42!
+!provides: 'Bootstrap' 1 43!
 !requires: 'DynamicCuisLibraries' 1 22 nil!
 SystemOrganization addCategory: #'Bootstrap-Smalltalk Image Builders'!
 SystemOrganization addCategory: #'Bootstrap-Foreign Objects'!
@@ -1996,7 +1996,7 @@ createAndAddWarningMethodsForMissing
 									self createWarningMethodFor: missingSelector in: classSpec isClassMethod: classSideFlag inheritedFrom: inheritedFromString ]]
 					]]]]].! !
 
-!ImageBuilder methodsFor: 'image building' stamp: 'jmv 4/29/2025 16:49:54'!
+!ImageBuilder methodsFor: 'image building' stamp: 'jmv 8/13/2025 11:16:50'!
 createWarningMethodFor: missingSelector in: classSpec isClassMethod: classSideFlag inheritedFrom: desc
 	"Made by playing with a method with this source code:
 		hack3
@@ -2007,7 +2007,7 @@ createWarningMethodFor: missingSelector in: classSpec isClassMethod: classSideFl
 	The only difference was in header. Took logic from
 		#computeMethodHeaderForNumArgs:numTemps:numLits:primitive:"
 
-	 | warningString fallbackMethodSpec |
+	 | warningString fallbackMethodSpec bytecodes header |
 	warningString := String streamContents: [ :strm |
 		strm
 			nextPutAll: '======== ';
@@ -2020,14 +2020,20 @@ createWarningMethodFor: missingSelector in: classSpec isClassMethod: classSideFl
 			nextPutAll: desc ].
 
 "warningString print."
+	"v3 bytecodes"
+	"header := 4 + (missingSelector numArgs bitShift: 24) + (missingSelector numArgs bitShift: 18).
+	bytecodes := #[112 33 224 135 120]."
+	"Sista bytecodes"
+	header := 4 + (missingSelector numArgs bitShift: 24) + (missingSelector numArgs bitShift: 18) + SmallInteger minVal.
+	bytecodes := #[76 33 144 216 88 ].
 	fallbackMethodSpec := MethodSpec basicNew
 		classSpec: classSpec
 		isClassSide: classSideFlag
 		selector: missingSelector
-		header: 4 + (missingSelector numArgs bitShift: 24) + (missingSelector numArgs bitShift: 18)
+		header: header
 		literals: {#warning:. warningString}
 		pragmas: nil
-		bytecodes: #[112 33 224 135 120].
+		bytecodes: bytecodes.
 	self addMethodSpec: fallbackMethodSpec.
 	methods add: fallbackMethodSpec.! !
 
@@ -2173,12 +2179,13 @@ addClassCreationSupport
 				(cls organization listAtCategoryNamed: cat) do: [ :sel |
 					self addExistingMethod: (cls compiledMethodAt: sel) ]]]].! !
 
-!ImageBuilder methodsFor: 'image building feature add' stamp: 'jmv 5/13/2025 09:52:59'!
+!ImageBuilder methodsFor: 'image building feature add' stamp: 'jmv 8/13/2025 11:06:42'!
 addDynamicLibraryLoadSupport
 
 	"Add selected methods."
 	| clss prefix |
-	clss := {DynamicCuisLibrary. ClassSpec. MethodSpec. LiteralVariableSpec}.
+	clss := {DynamicCuisLibrary. ClassSpec. MethodSpec. LiteralVariableSpec.
+		EncoderForSistaV1. EncoderForV3PlusClosures}.
 	clss do: [ :cls | | classSpec |
 		classSpec := ClassSpec for: cls addClassesTo: classes.	
 		self findOrAddClassSpec: classSpec ].
