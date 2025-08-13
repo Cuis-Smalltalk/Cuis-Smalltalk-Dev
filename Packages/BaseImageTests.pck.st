@@ -1,6 +1,6 @@
-'From Cuis7.5 [latest update: #7365] on 22 July 2025 at 9:02:39 am'!
+'From Cuis7.5 [latest update: #7408] on 13 August 2025 at 10:29:05 am'!
 'Description Rename extentions tests'!
-!provides: 'BaseImageTests' 1 457!
+!provides: 'BaseImageTests' 1 458!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Compiler'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Objects'!
@@ -9357,8 +9357,7 @@ testFindLiteralsInBytecode
 						separatedBy: [s nextPut: $.; space].
 					s space; nextPut: $}; nextPut: $.; cr; tab.
 					s nextPutAll: 'true ifTrue: [^nil] ifFalse: [^false]'; nextPutAll: pFixes last].
-		{ CompiledMethod primaryBytecodeSetEncoderClass.
-		   CompiledMethod secondaryBytecodeSetEncoderClass } do:
+		BytecodeEncoder subclasses do:
 			[:encoderClass| | method |
 			method := (Parser new
 								encoderClass: encoderClass;
@@ -9388,8 +9387,7 @@ testThoroughFindLiteralsInBytecode
 	| literals problem |
 	literals := #(-1 0 1 $0 $1 1.0 #[1 2 3 4] 'one' #one nil true false NaN).
 	problem := Float bindingOf: #NaN.
-	{ CompiledMethod primaryBytecodeSetEncoderClass.
-	   CompiledMethod secondaryBytecodeSetEncoderClass } do:
+	BytecodeEncoder subclasses do:
 		[:encoderClass| | method |
 		#(('' '') ('^[' ']')) do: "And the locators should work whether in a block or not"
 			[:pFixes|
