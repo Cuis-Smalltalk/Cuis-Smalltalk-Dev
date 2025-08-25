@@ -1,6 +1,6 @@
 'From Cuis7.5 [latest update: #7437] on 25 August 2025 at 10:33:46 am'!
 'Description Rename extentions tests'!
-!provides: 'BaseImageTests' 1 459!
+!provides: 'BaseImageTests' 1 460!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Compiler'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Objects'!
@@ -25129,7 +25129,7 @@ testDataClassName
 
 	^ #LogChangesTestClass__! !
 
-!ChangesTest methodsFor: 'scan tests' stamp: 'jmvjuan 8/25/2025 10:33:22'!
+!ChangesTest methodsFor: 'scan tests' stamp: 'jmv 8/25/2025 10:33:22'!
 test01ScanNewClassChange
 
 	| newClass newClassChange |
