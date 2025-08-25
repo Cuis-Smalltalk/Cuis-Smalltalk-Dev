@@ -1,19 +1,9 @@
-'From Cuis6.3 [latest update: #6189] on 9 January 2024 at 5:52:15 pm'!
+'From Cuis7.5 [latest update: #7437] on 25 August 2025 at 4:15:55 pm'!
 'Description '!
-!provides: 'Tests-JSON' 1 5!
+!provides: 'Tests-JSON' 1 6!
 !requires: 'JSON' 1 24 nil!
 SystemOrganization addCategory: #'Tests-JSON'!
 
-
-!classDefinition: #JsonTests category: #'Tests-JSON'!
-TestCase subclass: #JsonTests
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Tests-JSON'!
-!classDefinition: 'JsonTests class' category: #'Tests-JSON'!
-JsonTests class
-	instanceVariableNames: ''!
 
 !classDefinition: #JsonDummyTestObject category: #'Tests-JSON'!
 Object subclass: #JsonDummyTestObject
@@ -25,9 +15,71 @@ Object subclass: #JsonDummyTestObject
 JsonDummyTestObject class
 	instanceVariableNames: ''!
 
+!classDefinition: #JsonTests category: #'Tests-JSON'!
+TestCase subclass: #JsonTests
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Tests-JSON'!
+!classDefinition: 'JsonTests class' category: #'Tests-JSON'!
+JsonTests class
+	instanceVariableNames: ''!
+
 
 !JsonTests commentStamp: '<historical>' prior: 0!
 I provide a number of test cases for class Json.!
+
+!JsonDummyTestObject methodsFor: 'as yet unclassified' stamp: 'tonyg 11/29/2005 17:56'!
+= other
+	^ other class == self class and: [
+		a = other a and: [
+		b = other b and: [
+		c = other c]]]! !
+
+!JsonDummyTestObject methodsFor: 'as yet unclassified' stamp: 'tonyg 11/30/2005 16:42'!
+jsonWriteOn: s
+	Json renderInstanceVariables: {#a. #b. #c} of: self on: s
+! !
+
+!JsonDummyTestObject methodsFor: 'accessing' stamp: 'tonyg 11/29/2005 17:48'!
+a
+	"Answer the value of a"
+
+	^ a! !
+
+!JsonDummyTestObject methodsFor: 'accessing' stamp: 'dkb 12/25/2009 02:56'!
+a: anObject
+	"Set the value of a"
+
+	a := anObject! !
+
+!JsonDummyTestObject methodsFor: 'accessing' stamp: 'tonyg 11/29/2005 17:48'!
+b
+	"Answer the value of b"
+
+	^ b! !
+
+!JsonDummyTestObject methodsFor: 'accessing' stamp: 'dkb 12/25/2009 02:56'!
+b: anObject
+	"Set the value of b"
+
+	b := anObject! !
+
+!JsonDummyTestObject methodsFor: 'accessing' stamp: 'tonyg 11/29/2005 17:48'!
+c
+	"Answer the value of c"
+
+	^ c! !
+
+!JsonDummyTestObject methodsFor: 'accessing' stamp: 'dkb 12/25/2009 02:56'!
+c: anObject
+	"Set the value of c"
+
+	c := anObject! !
+
+!JsonDummyTestObject class methodsFor: 'as yet unclassified' stamp: 'tonyg 11/29/2005 17:49'!
+constructFromJson: j
+	^ self new a: (j at: 'a'); b: (j at: 'b'); c: (j at: 'c'); yourself! !
 
 !JsonTests methodsFor: 'as yet unclassified' stamp: 'tonyg 11/29/2005 18:03'!
 json: aString equals: aValue
@@ -113,8 +165,14 @@ testCtor
 	self json: '@JsonDummyTestObject {"a": 1, "b": 2, "c": 3}' equals: self simpleDummyObject.
 	self json: (Json render: self simpleDummyObject) equals: self simpleDummyObject.! !
 
-!JsonTests methodsFor: 'as yet unclassified' stamp: 'Igor.Stasenko 12/27/2009 08:19'!
+!JsonTests methodsFor: 'as yet unclassified' stamp: 'jmv 8/25/2025 14:59:54'!
 testDictionary
+	
+	self json: '{}' equals: (OrderedDictionary new).
+	self json: '{"a": "a"}' equals: (OrderedDictionary new at: 'a' put: 'a'; yourself).
+	self json: '{"a": [[]]}' equals: (OrderedDictionary new at: 'a' put: #(#()); yourself).
+	self json: '{"a":"b", "b":"a"}' equals: (OrderedDictionary new add: 'a'->'b'; add: 'b'->'a';yourself).
+	
 	self json: '{}' equals: (JsonObject new).
 	self json: '{"a": "a"}' equals: (JsonObject new at: 'a' put: 'a'; yourself).
 	self json: '{"a": [[]]}' equals: (JsonObject new at: 'a' put: #(#()); yourself).
@@ -162,55 +220,3 @@ testWriteString
 	self render: ({$a. Character codePoint: 4. $b} as: String) equals: '"a\u0004b"'.
 	self render: 'agüita' equals: '"agüita"'.
 	self render: 'ñandú' equals: '"ñandú"'.! !
-
-!JsonDummyTestObject methodsFor: 'as yet unclassified' stamp: 'tonyg 11/29/2005 17:56'!
-= other
-	^ other class == self class and: [
-		a = other a and: [
-		b = other b and: [
-		c = other c]]]! !
-
-!JsonDummyTestObject methodsFor: 'as yet unclassified' stamp: 'tonyg 11/30/2005 16:42'!
-jsonWriteOn: s
-	Json renderInstanceVariables: {#a. #b. #c} of: self on: s
-! !
-
-!JsonDummyTestObject methodsFor: 'accessing' stamp: 'tonyg 11/29/2005 17:48'!
-a
-	"Answer the value of a"
-
-	^ a! !
-
-!JsonDummyTestObject methodsFor: 'accessing' stamp: 'dkb 12/25/2009 02:56'!
-a: anObject
-	"Set the value of a"
-
-	a := anObject! !
-
-!JsonDummyTestObject methodsFor: 'accessing' stamp: 'tonyg 11/29/2005 17:48'!
-b
-	"Answer the value of b"
-
-	^ b! !
-
-!JsonDummyTestObject methodsFor: 'accessing' stamp: 'dkb 12/25/2009 02:56'!
-b: anObject
-	"Set the value of b"
-
-	b := anObject! !
-
-!JsonDummyTestObject methodsFor: 'accessing' stamp: 'tonyg 11/29/2005 17:48'!
-c
-	"Answer the value of c"
-
-	^ c! !
-
-!JsonDummyTestObject methodsFor: 'accessing' stamp: 'dkb 12/25/2009 02:56'!
-c: anObject
-	"Set the value of c"
-
-	c := anObject! !
-
-!JsonDummyTestObject class methodsFor: 'as yet unclassified' stamp: 'tonyg 11/29/2005 17:49'!
-constructFromJson: j
-	^ self new a: (j at: 'a'); b: (j at: 'b'); c: (j at: 'c'); yourself! !

@@ -1,9 +1,19 @@
-'From Cuis7.1 [latest update: #6861] on 27 November 2024 at 3:37:42 pm'!
+'From Cuis7.5 [latest update: #7437] on 25 August 2025 at 4:15:53 pm'!
 'Description '!
-!provides: 'JSON' 1 27!
+!provides: 'JSON' 1 28!
 !requires: 'Cuis-Base' 60 5557 nil!
 SystemOrganization addCategory: #JSON!
 
+
+!classDefinition: #Json category: #JSON!
+Object subclass: #Json
+	instanceVariableNames: 'stream ctorMap'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'JSON'!
+!classDefinition: 'Json class' category: #JSON!
+Json class
+	instanceVariableNames: 'escapeArray'!
 
 !classDefinition: #JsonObject category: #JSON!
 OrderedDictionary subclass: #JsonObject
@@ -25,60 +35,12 @@ Error subclass: #JsonSyntaxError
 JsonSyntaxError class
 	instanceVariableNames: ''!
 
-!classDefinition: #Json category: #JSON!
-Object subclass: #Json
-	instanceVariableNames: 'stream ctorMap'
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'JSON'!
-!classDefinition: 'Json class' category: #JSON!
-Json class
-	instanceVariableNames: 'escapeArray'!
-
-
-!JsonSyntaxError commentStamp: '<historical>' prior: 0!
-Class Json signals instances of me when an input stream contains invalid JSON input.!
 
 !Json commentStamp: '<historical>' prior: 0!
 This class reads and writes JSON format data - strings, numbers, boolean, nil, arrays and dictionaries. See http://www.json.org . It has been extended with syntax for invoking a prearranged list of constructors on read objects.!
 
-!JsonObject methodsFor: 'accessing' stamp: 'rh 2/19/2010 21:34'!
-at: aKey
-
-	"make it work more like javascript objects"
-	^ self at: aKey ifAbsent: [nil]! !
-
-!JsonObject methodsFor: 'accessing' stamp: 'rh 2/27/2010 00:03'!
-name
-"override 'cause Object defines this"
-	^self at: 'name'! !
-
-!JsonObject methodsFor: 'accessing' stamp: 'rh 2/27/2010 00:04'!
-value
-"override 'cause Object defines this"
-	^self at: 'value'! !
-
-!JsonObject methodsFor: 'as yet unclassified' stamp: 'rh 2/19/2010 21:33'!
-doesNotUnderstand: aMessage
-	| key |
-	key := aMessage selector.
-	key isUnary ifTrue: [^ self at: key ifAbsent: [nil]].
-	^ (key isKeyword and: [(key occurrencesOf: $:) = 1])
-		ifTrue: [key := key allButLast asSymbol.
-				self at: key put: aMessage arguments first]
-		ifFalse: [super doesNotUnderstand: aMessage]
-				
-	! !
-
-!JsonObject class methodsFor: 'as yet unclassified' stamp: 'Igor.Stasenko 1/9/2010 16:51'!
-fromAssociations: collectionOfAssociations
-
-	| result |
-	result := self new.
-	
-	collectionOfAssociations do: [:each |
-		result at: each key put: each value ].
-	^ result! !
+!JsonSyntaxError commentStamp: '<historical>' prior: 0!
+Class Json signals instances of me when an input stream contains invalid JSON input.!
 
 !Json methodsFor: 'private' stamp: 'KenD 11/23/2022 15:10:58'!
 consume: aString returning: anObject
@@ -143,10 +105,13 @@ readConstructor
 	] repeat.
 ! !
 
-!Json methodsFor: 'private' stamp: 'Igor.Stasenko 4/7/2010 01:43'!
+!Json methodsFor: 'private' stamp: 'jmv 8/25/2025 14:59:13'!
 readDictionary
 	| m k v needComma |
-	m := JsonObject new.
+	"Don't use JsonObject by default. A Dictionary suffices most uses.
+	Automatic handling of field names as messages should be considered 'experts only'."
+	"m := JsonObject new."
+	m := OrderedDictionary new.
 	needComma := false.
 	[
 		self skipWhitespace.
@@ -249,11 +214,10 @@ stream
 
 	^ stream! !
 
-!Json methodsFor: 'accessing' stamp: 'jmv 11/17/2016 11:09:38'!
+!Json methodsFor: 'accessing' stamp: 'jmv 8/25/2025 15:36:34'!
 stream: aStream
 	"Set the value of stream"
-	"aStream must be on a String.
-	This means that it should contain only Characters (i.e. ISO 8859-15)"
+	"aStream must be on a String or UnicodeString."
 
 	stream := aStream.
 	
@@ -283,12 +247,12 @@ readAny
 	c = $I ifTrue: [^ self consume: 'Infinity' returning: Float infinity].
 	JsonSyntaxError signal: 'Unknown Json input'! !
 
-!Json methodsFor: 'parsing' stamp: 'jmv 1/18/2017 16:52:22'!
+!Json methodsFor: 'parsing' stamp: 'jmv 8/25/2025 15:36:21'!
 readFrom: aStream
-	"aStream must be on a String.
-	This means that it should contain only Characters (i.e. ISO 8859-15).
-	To handle a ByteArray with utf-8, please do 'String fromUtf8: aByteArray' or similar"
-	aStream atEnd ifTrue: [ ^ JsonObject new ].
+	"aStream must be on a String or UnicodeString."
+	"Don't use JsonObject by default. A Dictionary suffices most uses.
+	Automatic handling of field names as messages should be considered 'experts only'."
+	aStream atEnd ifTrue: [ ^ "JsonObject new" OrderedDictionary new ].
 	self stream: aStream.
 	^ self readAny! !
 
@@ -359,11 +323,63 @@ renderInstanceVariables: aCollection of: anObject on: aStream
 	aCollection do: [:ivarName | map at: ivarName put: (anObject instVarNamed: ivarName)].
 	self render: map withConstructor: anObject class name asString on: aStream! !
 
+!JsonObject methodsFor: 'accessing' stamp: 'rh 2/19/2010 21:34'!
+at: aKey
+
+	"make it work more like javascript objects"
+	^ self at: aKey ifAbsent: [nil]! !
+
+!JsonObject methodsFor: 'accessing' stamp: 'rh 2/27/2010 00:03'!
+name
+"override 'cause Object defines this"
+	^self at: 'name'! !
+
+!JsonObject methodsFor: 'accessing' stamp: 'rh 2/27/2010 00:04'!
+value
+"override 'cause Object defines this"
+	^self at: 'value'! !
+
+!JsonObject methodsFor: 'as yet unclassified' stamp: 'rh 2/19/2010 21:33'!
+doesNotUnderstand: aMessage
+	| key |
+	key := aMessage selector.
+	key isUnary ifTrue: [^ self at: key ifAbsent: [nil]].
+	^ (key isKeyword and: [(key occurrencesOf: $:) = 1])
+		ifTrue: [key := key allButLast asSymbol.
+				self at: key put: aMessage arguments first]
+		ifFalse: [super doesNotUnderstand: aMessage]
+				
+	! !
+
+!JsonObject class methodsFor: 'as yet unclassified' stamp: 'Igor.Stasenko 1/9/2010 16:51'!
+fromAssociations: collectionOfAssociations
+
+	| result |
+	result := self new.
+	
+	collectionOfAssociations do: [:each |
+		result at: each key put: each value ].
+	^ result! !
+
 !Object methodsFor: '*JSON' stamp: 'Igor.Stasenko 1/9/2010 16:18'!
 asJsonString
 
 	^ String streamContents: [:str |
 		self jsonWriteOn: str ]! !
+
+!Array2D methodsFor: '*JSON' stamp: 'jmv 7/11/2018 17:33:20'!
+jsonWriteOn: aStream
+	"By default, use array braces "
+	aStream nextPut: $[.
+	1 to: height
+		do: [ :i |
+			aStream nextPut: $[.
+				1 to: width
+					do: [ :j | elements jsonWriteElement: (self i: i j: j) on: aStream ]
+					separatedBy: [aStream nextPut: $, ; space].
+			aStream nextPut: $] ]
+		separatedBy: [aStream nextPut: $, ; newLine ].
+	aStream nextPut: $]! !
 
 !Collection methodsFor: '*JSON' stamp: 'jmv 5/17/2016 13:11'!
 jsonObjectWriteOn: aStream
@@ -436,20 +452,6 @@ jsonWriteOn: aStream
 
 	self jsonObjectWriteOn: aStream! !
 
-!Array2D methodsFor: '*JSON' stamp: 'jmv 7/11/2018 17:33:20'!
-jsonWriteOn: aStream
-	"By default, use array braces "
-	aStream nextPut: $[.
-	1 to: height
-		do: [ :i |
-			aStream nextPut: $[.
-				1 to: width
-					do: [ :j | elements jsonWriteElement: (self i: i j: j) on: aStream ]
-					separatedBy: [aStream nextPut: $, ; space].
-			aStream nextPut: $] ]
-		separatedBy: [aStream nextPut: $, ; newLine ].
-	aStream nextPut: $]! !
-
 !WriteStream methodsFor: '*JSON-printing' stamp: 'cwp 10/25/2006 12:27'!
 jsonPrint: anObject
 	anObject jsonWriteOn: self! !
@@ -462,12 +464,6 @@ jsonWriteOn: aStream
 jsonWriteOn: aStream
 	aStream nextPutAll: 'true'! !
 
-!Association methodsFor: '*JSON-writing' stamp: 'jmv 6/2/2016 09:35'!
-jsonWriteOn: aStream
-	self key asString jsonWriteOn: aStream.
-	aStream nextPut: $:; space.
-	self value jsonWriteOn: aStream.! !
-
 !Number methodsFor: '*JSON-writing' stamp: 'ul 11/4/2008 04:46'!
 jsonWriteOn: aWriteStream 
 
@@ -477,6 +473,12 @@ jsonWriteOn: aWriteStream
 jsonWriteOn: aWriteStream
 	^ self printOn: aWriteStream base: 10
 ! !
+
+!Association methodsFor: '*JSON-writing' stamp: 'jmv 6/2/2016 09:35'!
+jsonWriteOn: aStream
+	self key asString jsonWriteOn: aStream.
+	aStream nextPut: $:; space.
+	self value jsonWriteOn: aStream.! !
 
 !UndefinedObject methodsFor: '*JSON-writing' stamp: 'tonyg 8/17/2005 00:45'!
 jsonWriteOn: aWriteStream 
