@@ -1,6 +1,6 @@
-'From Cuis7.5 [latest update: #7411] on 13 August 2025 at 11:25:00 am'!
+'From Cuis7.5 [latest update: #7470] on 29 August 2025 at 1:20:37 pm'!
 'Description '!
-!provides: 'Bootstrap' 1 43!
+!provides: 'Bootstrap' 1 44!
 !requires: 'DynamicCuisLibraries' 1 22 nil!
 SystemOrganization addCategory: #'Bootstrap-Smalltalk Image Builders'!
 SystemOrganization addCategory: #'Bootstrap-Foreign Objects'!
@@ -1874,6 +1874,18 @@ addMethodDictionariesAndStuff
 	"Now that we have all the required globals at ivar 'globalVariables', fill the contents of the Smalltalk object."
 	self fillSmalltalkDictionary.! !
 
+!ImageBuilder methodsFor: 'image building' stamp: 'jmv 8/29/2025 11:11:14'!
+addMethodsIn: libraryName
+
+	"Add required methods."
+	Smalltalk allClassesDo: [ :cls |
+		cls class methodsDo: [ :cm |
+			(cm propertyValueAt: #libraryName) == libraryName ifTrue: [
+				self addExistingMethod: cm ]].
+		cls methodsDo: [ :cm |
+			(cm propertyValueAt: #libraryName) == libraryName ifTrue: [
+				self addExistingMethod: cm ]]].! !
+
 !ImageBuilder methodsFor: 'image building' stamp: 'jmv 7/17/2023 12:39:29'!
 addSpecialObjectsArray
 	"Create a SpecialObjectsArray for our new image. See #recreateSpecialObjectsArray.
@@ -2045,6 +2057,11 @@ fillSpecialObjectsArray
 
 	"Maybe after implementing for all subclasses, move a refactored version up here."! !
 
+!ImageBuilder methodsFor: 'image building' stamp: 'jmv 4/28/2025 10:10:24'!
+includeDisplayAndSensor
+	"Some images may need them, but minimal headless images won't."
+	^false! !
+
 !ImageBuilder methodsFor: 'image building' stamp: 'jmv 9/19/2023 13:58:34'!
 includedDefinition: missingSelector in: classSpec isClassMethod: classSideFlag all: includedSelectorsByClass
 	"missingSelector is defined for classSpec but wasn't included.
@@ -2079,170 +2096,6 @@ includedDefinition: missingSelector start: classSpec isClassMethod: classSideFla
 					^superclassSpec ]]].
 	^nil! !
 
-!ImageBuilder methodsFor: 'image building feature add' stamp: 'jmv 4/30/2025 11:08:26'!
-addBasicFileServices
-
-	self addWithAllMethods: #(BasicFileServices).! !
-
-!ImageBuilder methodsFor: 'image building feature add' stamp: 'jmv 5/7/2025 16:28:48'!
-addBasicFloatSupport
-
-	"Add selected methods."
-	| prefix |
-	prefix := '[mkFloat]'.
-	(SystemOrganization allClassesAt: 'MinimalKernel') do: [ :cls |
-		cls class organization categories do: [ :cat |
-			(cat beginsWith: prefix) ifTrue: [
-				(cls class organization listAtCategoryNamed: cat) do: [ :sel |
-					self addExistingMethod: (cls class compiledMethodAt: sel) ]]].
-		cls organization categories do: [ :cat |
-			(cat beginsWith: prefix) ifTrue: [
-				(cls organization listAtCategoryNamed: cat) do: [ :sel |
-					self addExistingMethod: (cls compiledMethodAt: sel) ]]]].! !
-
-!ImageBuilder methodsFor: 'image building feature add' stamp: 'jmv 5/9/2025 16:32:19'!
-addBasicMethodsAndReferencedClasses
-	"Note: many of these classes have already been added by
-		#addVmKnownClasses
-		#addFundamentalClasses
-	but without any methods at all."
-	
-	| prefix |
-
-	"Add all classes (that haven't already been added)."
-	(SystemOrganization allClassesAt: 'MinimalKernel') do: [ :cls | | classSpec |
-		classSpec := ClassSpec for: cls addClassesTo: classes.	
-		self findOrAddClassSpec: classSpec ].
-
-	"Add selected methods."
-	prefix := '[mk]'.
-	(SystemOrganization allClassesAt: 'MinimalKernel') do: [ :cls |
-		cls class organization categories do: [ :cat |
-			(cat beginsWith: prefix) ifTrue: [
-				(cls class organization listAtCategoryNamed: cat) do: [ :sel |
-					self addExistingMethod: (cls class compiledMethodAt: sel) ]]].
-		cls organization categories do: [ :cat |
-			(cat beginsWith: prefix) ifTrue: [
-				(cls organization listAtCategoryNamed: cat) do: [ :sel |
-					self addExistingMethod: (cls compiledMethodAt: sel) ]]]].! !
-
-!ImageBuilder methodsFor: 'image building feature add' stamp: 'jmv 5/7/2025 16:29:32'!
-addBasicSymbolSupport
-
-	"Add selected methods."
-	| prefix |
-	prefix := '[mkSymbol]'.
-	(SystemOrganization allClassesAt: 'MinimalKernel') do: [ :cls |
-		cls class organization categories do: [ :cat |
-			(cat beginsWith: prefix) ifTrue: [
-				(cls class organization listAtCategoryNamed: cat) do: [ :sel |
-					self addExistingMethod: (cls class compiledMethodAt: sel) ]]].
-		cls organization categories do: [ :cat |
-			(cat beginsWith: prefix) ifTrue: [
-				(cls organization listAtCategoryNamed: cat) do: [ :sel |
-					self addExistingMethod: (cls compiledMethodAt: sel) ]]]].! !
-
-!ImageBuilder methodsFor: 'image building feature add' stamp: 'jmv 5/7/2025 16:30:12'!
-addBasicVMandImageSupport
-
-	"Add selected methods."
-	| prefix |
-	prefix := '[mkVMnImage]'.
-	(SystemOrganization allClassesAt: 'MinimalKernel') do: [ :cls |
-		cls class organization categories do: [ :cat |
-			(cat beginsWith: prefix) ifTrue: [
-				(cls class organization listAtCategoryNamed: cat) do: [ :sel |
-					self addExistingMethod: (cls class compiledMethodAt: sel) ]]].
-		cls organization categories do: [ :cat |
-			(cat beginsWith: prefix) ifTrue: [
-				(cls organization listAtCategoryNamed: cat) do: [ :sel |
-					self addExistingMethod: (cls compiledMethodAt: sel) ]]]].! !
-
-!ImageBuilder methodsFor: 'image building feature add' stamp: 'jmv 5/12/2025 11:24:19'!
-addClassCreationSupport
-
-	"Add selected methods."
-	| clss prefix |
-	clss := {ClassBuilder}.
-	clss do: [ :cls | | classSpec |
-		classSpec := ClassSpec for: cls addClassesTo: classes.	
-		self findOrAddClassSpec: classSpec ].
-
-	prefix := '[mkClassAndMethodCreation]'.
-	(SystemOrganization allClassesAt: 'MinimalKernel'), clss do: [ :cls |
-		cls class organization categories do: [ :cat |
-			(cat beginsWith: prefix) ifTrue: [
-				(cls class organization listAtCategoryNamed: cat) do: [ :sel |
-					self addExistingMethod: (cls class compiledMethodAt: sel) ]]].
-		cls organization categories do: [ :cat |
-			(cat beginsWith: prefix) ifTrue: [
-				(cls organization listAtCategoryNamed: cat) do: [ :sel |
-					self addExistingMethod: (cls compiledMethodAt: sel) ]]]].! !
-
-!ImageBuilder methodsFor: 'image building feature add' stamp: 'jmv 8/13/2025 11:06:42'!
-addDynamicLibraryLoadSupport
-
-	"Add selected methods."
-	| clss prefix |
-	clss := {DynamicCuisLibrary. ClassSpec. MethodSpec. LiteralVariableSpec.
-		EncoderForSistaV1. EncoderForV3PlusClosures}.
-	clss do: [ :cls | | classSpec |
-		classSpec := ClassSpec for: cls addClassesTo: classes.	
-		self findOrAddClassSpec: classSpec ].
-
-	prefix := '[mkDynamicLibraryLoad]'.
-	(SystemOrganization allClassesAt: 'MinimalKernel'), clss do: [ :cls |
-		cls class organization categories do: [ :cat |
-			(cat beginsWith: prefix) ifTrue: [
-				(cls class organization listAtCategoryNamed: cat) do: [ :sel |
-					self addExistingMethod: (cls class compiledMethodAt: sel) ]]].
-		cls organization categories do: [ :cat |
-			(cat beginsWith: prefix) ifTrue: [
-				(cls organization listAtCategoryNamed: cat) do: [ :sel |
-					self addExistingMethod: (cls compiledMethodAt: sel) ]]]].! !
-
-!ImageBuilder methodsFor: 'image building feature add' stamp: 'jmv 5/13/2025 10:10:56'!
-addHashedCollectionsSupport
-
-	"Add selected methods."
-	| prefix |
-	prefix := '[mkHashedCollections]'.
-	(SystemOrganization allClassesAt: 'MinimalKernel') do: [ :cls |
-		cls class organization categories do: [ :cat |
-			(cat beginsWith: prefix) ifTrue: [
-				(cls class organization listAtCategoryNamed: cat) do: [ :sel |
-					self addExistingMethod: (cls class compiledMethodAt: sel) ]]].
-		cls organization categories do: [ :cat |
-			(cat beginsWith: prefix) ifTrue: [
-				(cls organization listAtCategoryNamed: cat) do: [ :sel |
-					self addExistingMethod: (cls compiledMethodAt: sel) ]]]].! !
-
-!ImageBuilder methodsFor: 'image building feature add' stamp: 'jmv 5/9/2025 17:07:20'!
-addObjectSerializationSupport
-
-	"Add selected methods."
-	| clss prefix |
-	clss := {DataStream. ReferenceStream}.
-	clss do: [ :cls | | classSpec |
-		classSpec := ClassSpec for: cls addClassesTo: classes.	
-		self findOrAddClassSpec: classSpec ].
-
-	prefix := '[mkObjectSerialization]'.
-	(SystemOrganization allClassesAt: 'MinimalKernel'), clss do: [ :cls |
-		cls class organization categories do: [ :cat |
-			(cat beginsWith: prefix) ifTrue: [
-				(cls class organization listAtCategoryNamed: cat) do: [ :sel |
-					self addExistingMethod: (cls class compiledMethodAt: sel) ]]].
-		cls organization categories do: [ :cat |
-			(cat beginsWith: prefix) ifTrue: [
-				(cls organization listAtCategoryNamed: cat) do: [ :sel |
-					self addExistingMethod: (cls compiledMethodAt: sel) ]]]].! !
-
-!ImageBuilder methodsFor: 'image building testing' stamp: 'jmv 4/28/2025 10:10:24'!
-includeDisplayAndSensor
-	"Some images may need them, but minimal headless images won't."
-	^false! !
-
 !ImageBuilder methodsFor: 'image building examples' stamp: 'jmv 5/13/2025 10:13:41'!
 addExample07LoadDynamicLibraryMethods
 
@@ -2256,7 +2109,7 @@ addExample07LoadDynamicLibraryMethods
 	} do: [ :compiledMethod |
 		self addExistingMethod: compiledMethod ].! !
 
-!ImageBuilder methodsFor: 'image building examples' stamp: 'jmv 9/19/2023 12:28:03'!
+!ImageBuilder methodsFor: 'image building examples' stamp: 'jmv 8/29/2025 11:12:40'!
 buildExample01Stdout
 	"
 	Spur64ImageBuilder new
@@ -2275,7 +2128,7 @@ buildExample01Stdout
 	self addFundamentalObjectsAndClasses.
 
 	"Most images will need these."
-	self addBasicMethodsAndReferencedClasses.
+	self addMethodsIn: #MinimalKernel01.
 
 	"Set what this image will do when run."
 	startUpMethod := SystemDictionary>>#bootstrappedExample01Stdout.
@@ -2291,7 +2144,7 @@ buildExample01Stdout
 	"Creating the start process requires CompiledMethods to be there"
 	self addStartProcess.! !
 
-!ImageBuilder methodsFor: 'image building examples' stamp: 'jmv 9/19/2023 12:28:17'!
+!ImageBuilder methodsFor: 'image building examples' stamp: 'jmv 8/29/2025 11:12:46'!
 buildExample02DoesNotUnderstand
 	"
 	Spur64ImageBuilder new
@@ -2310,7 +2163,7 @@ buildExample02DoesNotUnderstand
 	self addFundamentalObjectsAndClasses.
 
 	"Most images will need these."
-	self addBasicMethodsAndReferencedClasses.
+	self addMethodsIn: #MinimalKernel01.
 
 	"Set what this image will do when run."
 	startUpMethod := SystemDictionary>>#bootstrappedExample02DoesNotUnderstand.
@@ -2326,7 +2179,7 @@ buildExample02DoesNotUnderstand
 	"Creating the start process requires CompiledMethods to be there"
 	self addStartProcess.! !
 
-!ImageBuilder methodsFor: 'image building examples' stamp: 'jmv 4/30/2025 10:26:21'!
+!ImageBuilder methodsFor: 'image building examples' stamp: 'jmv 8/29/2025 11:12:51'!
 buildExample03Float
 	"
 	Spur64ImageBuilder new
@@ -2345,10 +2198,10 @@ buildExample03Float
 	self addFundamentalObjectsAndClasses.
 
 	"Most images will need these."
-	self addBasicMethodsAndReferencedClasses.
+	self addMethodsIn: #MinimalKernel01.
 
 	"Set what this image will do when run."
-	self addBasicFloatSupport.
+	self addMethodsIn: #MinimalKernel03Float.
 	startUpMethod := SystemDictionary>>#bootstrappedExample03Float.
 	startUpMethodForeignObject := self addExistingMethod: startUpMethod.
 	self map: startUpMethod toForeignObject: startUpMethodForeignObject.
@@ -2362,17 +2215,17 @@ buildExample03Float
 	"Creating the start process requires CompiledMethods to be there"
 	self addStartProcess.! !
 
-!ImageBuilder methodsFor: 'image building examples' stamp: 'jmv 4/30/2025 11:08:53'!
-buildExample04FileExperiments
+!ImageBuilder methodsFor: 'image building examples' stamp: 'jmv 8/29/2025 11:21:53'!
+buildExample04SymbolExperiments
 	"
 	Spur64ImageBuilder new
-		buildExample04FileExperiments;
-		saveImageTo: 'Example04FileExperiments.image' asFileEntry.
+		buildExample04SymbolExperiments;
+		saveImageTo: 'Example04SymbolExperiments.image' asFileEntry.
 	"
 	"
 	Spur32ImageBuilder new
-		buildExample04FileExperiments;
-		saveImageTo: 'Example04FileExperiments32.image' asFileEntry.
+		buildExample04SymbolExperiments;
+		saveImageTo: 'Example054ymbolExperiments32.image' asFileEntry.
 	"
 
 	| startUpMethodForeignObject |
@@ -2381,12 +2234,11 @@ buildExample04FileExperiments
 	self addFundamentalObjectsAndClasses.
 
 	"Most images will need these."
-	self addBasicMethodsAndReferencedClasses.
+	self addMethodsIn: #MinimalKernel01.
 
 	"Set what this image will do when run."
-	self addBasicFileServices.
-	self addBasicVMandImageSupport.
-	startUpMethod := SystemDictionary>>#bootstrappedExample04FileExperiments.
+	self addMethodsIn: #MinimalKernel02Symbol.
+	startUpMethod := SystemDictionary>>#bootstrappedExample04SymbolExperiments.
 	startUpMethodForeignObject := self addExistingMethod: startUpMethod.
 	self map: startUpMethod toForeignObject: startUpMethodForeignObject.
 
@@ -2399,17 +2251,17 @@ buildExample04FileExperiments
 	"Creating the start process requires CompiledMethods to be there"
 	self addStartProcess.! !
 
-!ImageBuilder methodsFor: 'image building examples' stamp: 'jmv 4/30/2025 15:25:59'!
-buildExample05SymbolExperiments
+!ImageBuilder methodsFor: 'image building examples' stamp: 'jmv 8/29/2025 11:22:44'!
+buildExample05FileExperiments
 	"
 	Spur64ImageBuilder new
-		buildExample05SymbolExperiments;
-		saveImageTo: 'Example05SymbolExperiments.image' asFileEntry.
+		buildExample05FileExperiments;
+		saveImageTo: 'Example05FileExperiments.image' asFileEntry.
 	"
 	"
 	Spur32ImageBuilder new
-		buildExample05SymbolExperiments;
-		saveImageTo: 'Example05SymbolExperiments32.image' asFileEntry.
+		buildExample05FileExperiments;
+		saveImageTo: 'Example05FileExperiments32.image' asFileEntry.
 	"
 
 	| startUpMethodForeignObject |
@@ -2418,11 +2270,12 @@ buildExample05SymbolExperiments
 	self addFundamentalObjectsAndClasses.
 
 	"Most images will need these."
-	self addBasicMethodsAndReferencedClasses.
+	self addMethodsIn: #MinimalKernel01.
 
 	"Set what this image will do when run."
-	self addBasicSymbolSupport.
-	startUpMethod := SystemDictionary>>#bootstrappedExample05SymbolExperiments.
+	self addMethodsIn: #MinimalKernel07VMnImage.
+	self addMethodsIn: #MinimalKernel08BasicFileServices.
+	startUpMethod := SystemDictionary>>#bootstrappedExample05FileExperiments.
 	startUpMethodForeignObject := self addExistingMethod: startUpMethod.
 	self map: startUpMethod toForeignObject: startUpMethodForeignObject.
 
@@ -2435,7 +2288,7 @@ buildExample05SymbolExperiments
 	"Creating the start process requires CompiledMethods to be there"
 	self addStartProcess.! !
 
-!ImageBuilder methodsFor: 'image building examples' stamp: 'jmv 5/15/2025 09:54:00'!
+!ImageBuilder methodsFor: 'image building examples' stamp: 'jmv 8/29/2025 11:16:18'!
 buildExample06LoadDynamicLibrary
 	"
 	Spur64ImageBuilder new
@@ -2464,15 +2317,15 @@ buildExample06LoadDynamicLibrary
 	self addFundamentalObjectsAndClasses.
 
 	"Most images will need these."
-	self addBasicMethodsAndReferencedClasses.
+	self addMethodsIn: #MinimalKernel01.
 
 	"Set what this image will do when run."
-	self addBasicSymbolSupport.
-	self addBasicFileServices.
-	self addHashedCollectionsSupport.
-	self addObjectSerializationSupport.
-	self addClassCreationSupport.
-	self addDynamicLibraryLoadSupport.
+	self addMethodsIn: #MinimalKernel02Symbol.
+	self addMethodsIn: #MinimalKernel04HashedCollections.
+	self addMethodsIn: #MinimalKernel05ClassAndMethodCreation.
+	self addMethodsIn: #MinimalKernel06ObjectSerialization.
+	self addMethodsIn: #MinimalKernel08BasicFileServices.
+	self addMethodsIn: #MinimalKernel09CodeLibraryLoad.
 	startUpMethod := SystemDictionary>>#bootstrappedExample06LoadDynamicLibrary.
 	startUpMethodForeignObject := self addExistingMethod: startUpMethod.
 	self map: startUpMethod toForeignObject: startUpMethodForeignObject.
@@ -2486,7 +2339,7 @@ buildExample06LoadDynamicLibrary
 	"Creating the start process requires CompiledMethods to be there"
 	self addStartProcess.! !
 
-!ImageBuilder methodsFor: 'image building examples' stamp: 'jmv 5/15/2025 09:54:03'!
+!ImageBuilder methodsFor: 'image building examples' stamp: 'jmv 8/29/2025 11:16:28'!
 buildExample07LoadDynamicLibrary
 	"
 	Spur64ImageBuilder new
@@ -2505,15 +2358,15 @@ buildExample07LoadDynamicLibrary
 	self addFundamentalObjectsAndClasses.
 
 	"Most images will need these."
-	self addBasicMethodsAndReferencedClasses.
+	self addMethodsIn: #MinimalKernel01.
 
 	"Set what this image will do when run."
-	self addBasicSymbolSupport.
-	self addBasicFileServices.
-	self addHashedCollectionsSupport.
-	self addObjectSerializationSupport.
-	self addClassCreationSupport.
-	self addDynamicLibraryLoadSupport.
+	self addMethodsIn: #MinimalKernel02Symbol.
+	self addMethodsIn: #MinimalKernel04HashedCollections.
+	self addMethodsIn: #MinimalKernel05ClassAndMethodCreation.
+	self addMethodsIn: #MinimalKernel06ObjectSerialization.
+	self addMethodsIn: #MinimalKernel08BasicFileServices.
+	self addMethodsIn: #MinimalKernel09CodeLibraryLoad.
 	self addExample07LoadDynamicLibraryMethods.
 	startUpMethod := SystemDictionary>>#bootstrappedExample07LoadDynamicLibrary.
 	startUpMethodForeignObject := self addExistingMethod: startUpMethod.
@@ -3874,62 +3727,8 @@ bootstrappedExample03Float
 
 	self quitPrimitive: 42.! !
 
-!SystemDictionary methodsFor: '*Bootstrap-examples' stamp: 'jmv 5/15/2025 14:25:17'!
-bootstrappedExample04FileExperiments
-	"A simple demo to be run in a bootstrapped Cuis image, with a minimal class library"
-
-	| i s fileContents |
-	StdIOWriteStream stdout
-		nextPutAll: 'Hello, World!!'; newLine;
-		nextPutAll: 'This is Bootstrapped Cuis!!'; newLine;
-		nextPutAll: '3 + 4 is '; nextPutAll: (3 + 4) printString; newLine;
-		nextPutAll: 'primImageName: '; nextPutAll: (Smalltalk primImageName); newLine;
-		nextPutAll: 'primGetCurrentWorkingDirectoryUnix: '; nextPutAll: (Smalltalk 			primGetCurrentWorkingDirectoryUnix); newLine;
-		nextPutAll: 'platformName: '; nextPutAll: (Smalltalk platformName); newLine;
-		flush.
-	i := 0.
-	s := '---Built in Modules---'.
-	[
-		StdIOWriteStream stdout nextPutAll: s; newLine; flush.
-		i := i + 1.
-		s := Smalltalk listBuiltinModule: i.
-		s == nil] whileFalse.
-	StdIOWriteStream stdout nextPutAll: 'They were: '; nextPutAll: (i-1) printString; newLine; flush.
-
-	i := 0.
-	s := '---Loaded Modules---'.
-	[
-		StdIOWriteStream stdout nextPutAll: s; newLine; flush.
-		i := i + 1.
-		s := Smalltalk listLoadedModule: i.
-		s == nil] whileFalse.
-	StdIOWriteStream stdout nextPutAll: 'They were: '; nextPutAll: (i-1) printString; newLine; flush.
-	StdIOWriteStream stdout
-		nextPutAll: 'primVmFileName: '; nextPutAll: (Smalltalk primVmFileName); newLine;
-		nextPutAll: 'primVmPath: '; nextPutAll: (Smalltalk primVmPath); newLine;
-		flush.
-
-	fileContents := BasicFileServices binaryContentsOf: 'comoVamos.txt'		.
-	fileContents isNil
-		ifTrue: [
-			StdIOWriteStream stdout
-				nextPutAll: 'File could not be read'; newLine;
-				flush ]
-		ifFalse: [
-			StdIOWriteStream stdout
-				nextPutAll: fileContents size printString; newLine.
-			fileContents printOn: StdIOWriteStream stdout.
-			StdIOWriteStream stdout newLine.
-			1 to: fileContents size do: [ :ii |
-				StdIOWriteStream stdout nextPutAll: ' '; nextPutAll: (fileContents at: ii) printString ].
-			StdIOWriteStream stdout
-				newLine;
-				flush ].
-
-	self quitPrimitive: 42.! !
-
-!SystemDictionary methodsFor: '*Bootstrap-examples' stamp: 'jmv 5/6/2025 15:19:57'!
-bootstrappedExample05SymbolExperiments
+!SystemDictionary methodsFor: '*Bootstrap-examples' stamp: 'jmv 8/29/2025 11:22:01'!
+bootstrappedExample04SymbolExperiments
 	"A simple demo to be run in a bootstrapped Cuis image, with a minimal class library"
 
 	| i s msg sym |
@@ -3993,6 +3792,60 @@ bootstrappedExample05SymbolExperiments
 		nextPutAll: Symbol estimatedCount printString; newLine; newLine;
 		nextPutAll: 'Thats all, Folks!!'; newLine;
 		flush.
+
+	self quitPrimitive: 42.! !
+
+!SystemDictionary methodsFor: '*Bootstrap-examples' stamp: 'jmv 8/29/2025 11:22:52'!
+bootstrappedExample05FileExperiments
+	"A simple demo to be run in a bootstrapped Cuis image, with a minimal class library"
+
+	| i s fileContents |
+	StdIOWriteStream stdout
+		nextPutAll: 'Hello, World!!'; newLine;
+		nextPutAll: 'This is Bootstrapped Cuis!!'; newLine;
+		nextPutAll: '3 + 4 is '; nextPutAll: (3 + 4) printString; newLine;
+		nextPutAll: 'primImageName: '; nextPutAll: (Smalltalk primImageName); newLine;
+		nextPutAll: 'primGetCurrentWorkingDirectoryUnix: '; nextPutAll: (Smalltalk 			primGetCurrentWorkingDirectoryUnix); newLine;
+		nextPutAll: 'platformName: '; nextPutAll: (Smalltalk platformName); newLine;
+		flush.
+	i := 0.
+	s := '---Built in Modules---'.
+	[
+		StdIOWriteStream stdout nextPutAll: s; newLine; flush.
+		i := i + 1.
+		s := Smalltalk listBuiltinModule: i.
+		s == nil] whileFalse.
+	StdIOWriteStream stdout nextPutAll: 'They were: '; nextPutAll: (i-1) printString; newLine; flush.
+
+	i := 0.
+	s := '---Loaded Modules---'.
+	[
+		StdIOWriteStream stdout nextPutAll: s; newLine; flush.
+		i := i + 1.
+		s := Smalltalk listLoadedModule: i.
+		s == nil] whileFalse.
+	StdIOWriteStream stdout nextPutAll: 'They were: '; nextPutAll: (i-1) printString; newLine; flush.
+	StdIOWriteStream stdout
+		nextPutAll: 'primVmFileName: '; nextPutAll: (Smalltalk primVmFileName); newLine;
+		nextPutAll: 'primVmPath: '; nextPutAll: (Smalltalk primVmPath); newLine;
+		flush.
+
+	fileContents := BasicFileServices binaryContentsOf: 'comoVamos.txt'		.
+	fileContents isNil
+		ifTrue: [
+			StdIOWriteStream stdout
+				nextPutAll: 'File could not be read'; newLine;
+				flush ]
+		ifFalse: [
+			StdIOWriteStream stdout
+				nextPutAll: fileContents size printString; newLine.
+			fileContents printOn: StdIOWriteStream stdout.
+			StdIOWriteStream stdout newLine.
+			1 to: fileContents size do: [ :ii |
+				StdIOWriteStream stdout nextPutAll: ' '; nextPutAll: (fileContents at: ii) printString ].
+			StdIOWriteStream stdout
+				newLine;
+				flush ].
 
 	self quitPrimitive: 42.! !
 
