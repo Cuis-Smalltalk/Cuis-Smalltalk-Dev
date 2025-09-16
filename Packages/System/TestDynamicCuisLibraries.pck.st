@@ -1,6 +1,6 @@
-'From Cuis7.5 [latest update: #7394] on 1 August 2025 at 10:57:32 am'!
+'From Cuis7.5 [latest update: #7578] on 16 September 2025 at 1:05:10 pm'!
 'Description '!
-!provides: 'TestDynamicCuisLibraries' 1 18!
+!provides: 'TestDynamicCuisLibraries' 1 19!
 !requires: 'DynamicCuisLibraries' 1 22 nil!
 SystemOrganization addCategory: #TestDynamicCuisLibraries!
 SystemOrganization addCategory: #'TestDynamicCuisLibraries-Tests'!
@@ -887,13 +887,14 @@ x: anX y: anY
 
 	^self new initializePvtX: anX y: anY! !
 
-!CodeModelTest1 methodsFor: 'testing' stamp: 'jmv 8/2/2023 17:21:42'!
+!CodeModelTest1 methodsFor: 'testing' stamp: 'jmv 9/16/2025 13:04:19'!
 testAllInstanceSideMethods
 	| classSpecs cmSpecs methods newMethods |
 	classSpecs := OrderedDictionary new.
 	Object withAllSubclassesDo: [ :cls |
 		cls isMeta ifFalse: [
-			methods := cls methodDict asArray.
+			"Methods in libraries will answer false just for that."
+			methods := (cls methodDict select: [ :cm | (cm propertyValueAt: #libraryName) isNil ]) asArray.
 			cmSpecs := OrderedCollection new.
 			methods do: [ :cm |
 				cmSpecs add: (MethodSpec for: cm addClassesTo: classSpecs) ].
