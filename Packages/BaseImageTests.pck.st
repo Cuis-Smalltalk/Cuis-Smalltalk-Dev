@@ -1,6 +1,6 @@
-'From Cuis7.5 [latest update: #7437] on 25 August 2025 at 10:33:46 am'!
+'From Cuis7.5 [latest update: #7580] on 17 September 2025 at 8:38:30 am'!
 'Description Rename extentions tests'!
-!provides: 'BaseImageTests' 1 460!
+!provides: 'BaseImageTests' 1 461!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Compiler'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Objects'!
@@ -22161,6 +22161,16 @@ testDiskProxy
 	1 to: oldInstance size do: [ :i |
 		self assert: (newInstance at: i) == (oldInstance at: i) ]! !
 
+!ReferenceStreamTest methodsFor: 'testing' stamp: 'jmv 9/17/2025 08:36:46'!
+testSmallIntegers
+	"
+	ReferenceStreamTest new testSmallIntegers
+	"
+	| newInstance oldInstance |
+	oldInstance := {-1. 0 . 1. 123456. -123456. 1234567890. -1234567890. 123456789012345678. -123456789012345678. (2 raisedTo: 60)-1. (2 raisedTo: 60) negated }.
+	newInstance := ReferenceStream unStream: (ReferenceStream streamedRepresentationOf: oldInstance).
+	self assert: newInstance = oldInstance.! !
+
 !ReferenceStreamTest methodsFor: 'testing' stamp: 'jmv 12/6/2011 08:19'!
 testSortedCollection
 	"
@@ -24131,7 +24141,7 @@ testCharacters
 		assert: (lcs lcsAt: 3 at: 5) anyOne size = 2
 ! !
 
-!DifferenceFinderTest methodsFor: 'all'!
+!DifferenceFinderTest methodsFor: 'all' stamp: ''!
 testCharacters2
 	| finder x y |
 	finder := DifferenceFinder charactersOf: 'GAC' and: 'AGCAT'.
@@ -24150,7 +24160,7 @@ testCharacters2
 		self assert: y = 'AGCAT']
 ! !
 
-!DifferenceFinderTest methodsFor: 'all'!
+!DifferenceFinderTest methodsFor: 'all' stamp: ''!
 testCode
 	| old new finder |
 	old := 'differencesText
@@ -24201,7 +24211,7 @@ testCode
 	finder compute
 ! !
 
-!DifferenceFinderTest methodsFor: 'all'!
+!DifferenceFinderTest methodsFor: 'all' stamp: ''!
 testLines
 	| finder alan ian x y |
 	alan := 'The best way to
@@ -24231,7 +24241,7 @@ testLines
 		self assert: y = ian]
 ! !
 
-!DifferenceFinderTest methodsFor: 'all'!
+!DifferenceFinderTest methodsFor: 'all' stamp: ''!
 testWords
 	| finder alan ian x y |
 	alan := 'The best way to
