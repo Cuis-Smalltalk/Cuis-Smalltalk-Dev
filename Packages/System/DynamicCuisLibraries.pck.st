@@ -1,6 +1,6 @@
-'From Cuis7.5 [latest update: #7470] on 29 August 2025 at 1:20:33 pm'!
+'From Cuis7.5 [latest update: #7583] on 17 September 2025 at 9:57:36 am'!
 'Description '!
-!provides: 'DynamicCuisLibraries' 1 29!
+!provides: 'DynamicCuisLibraries' 1 30!
 SystemOrganization addCategory: #'DynamicCuisLibraries-Code Model'!
 SystemOrganization addCategory: #'DynamicCuisLibraries-Dynamic Libraries'!
 SystemOrganization addCategory: #DynamicCuisLibraries!
@@ -48,7 +48,7 @@ LiteralVariableSpec class
 
 !classDefinition: #MethodSpec category: #'DynamicCuisLibraries-Code Model'!
 CodeElementSpec subclass: #MethodSpec
-	instanceVariableNames: 'classSpec isClassSide selector header literals pragmas bytecodes'
+	instanceVariableNames: 'classSpec isClassSide selector headerSignFlag header literals pragmas bytecodes'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'DynamicCuisLibraries-Code Model'!
@@ -582,7 +582,7 @@ bytecodes: aByteArray
 classSpec
 	^classSpec! !
 
-!MethodSpec methodsFor: 'accessing' library: #MinimalKernel09CodeLibraryLoad stamp: 'jmv 8/5/2025 18:27:34'!
+!MethodSpec methodsFor: 'accessing' library: #MinimalKernel09CodeLibraryLoad stamp: 'jmv 9/17/2025 09:30:42'!
 encoderClass
 	"Answer the encoder class that encoded the bytecodes in this method.
 	 The sign flag bit is used by the VM to select a bytecode set.  This formulation
@@ -591,15 +591,19 @@ encoderClass
 	and negative header means bytecodes in the SistaV1 set is hardcoded in the
 	OpenSmalltalk VMs as of August 2025."
 	
-	^ header >= 0
-		ifTrue: 
+	^ headerSignFlag
+		ifFalse: 
 			[EncoderForV3PlusClosures]
-		ifFalse:
+		ifTrue:
 			[EncoderForSistaV1]! !
 
-!MethodSpec methodsFor: 'accessing' stamp: 'jmv 6/30/2023 16:43:19'!
+!MethodSpec methodsFor: 'accessing' library: #MinimalKernel09CodeLibraryLoad stamp: 'jmv 9/17/2025 09:48:04'!
 header
-	^header! !
+	| answer |
+	answer := header.
+	headerSignFlag ifTrue: [
+		answer := answer + SmallInteger minVal ].
+	^answer! !
 
 !MethodSpec methodsFor: 'accessing' stamp: 'fz 6/23/2023 13:09:41'!
 isClassSide
@@ -652,12 +656,13 @@ at: index put: value
 	"Compatibility with CompiledMethod"
 	^bytecodes at: index put: value! !
 
-!MethodSpec methodsFor: 'private' stamp: 'jmv 4/12/2023 15:31:52'!
-classSpec: aClassSpec isClassSide: aBoolean selector: aSymbol header: aNumber literals: arrayOfLiterals pragmas: arrayOfPragmas bytecodes: aByteArray
+!MethodSpec methodsFor: 'private' stamp: 'jmv 9/17/2025 09:26:54'!
+classSpec: aClassSpec isClassSide: aBoolean selector: aSymbol headerSignFlag: anotherBoolean header: aNumber literals: arrayOfLiterals pragmas: arrayOfPragmas bytecodes: aByteArray
 
 	classSpec := aClassSpec.
 	isClassSide := aBoolean.
 	selector := aSymbol.
+	headerSignFlag := anotherBoolean.
 	header := aNumber.
 	literals := arrayOfLiterals.
 	pragmas := arrayOfPragmas.
@@ -720,7 +725,7 @@ materializeAndInstall
 	theClass addSelectorSilently: selector withMethod: method.
 	^method! !
 
-!MethodSpec methodsFor: 'materialization' library: #MinimalKernel09CodeLibraryLoad stamp: 'jmv 9/6/2023 17:47:21'!
+!MethodSpec methodsFor: 'materialization' library: #MinimalKernel09CodeLibraryLoad stamp: 'jmv 9/17/2025 09:30:58'!
 materializeIn: aClass
 "
 Currently:
@@ -732,7 +737,7 @@ header literals pragmas bytecodes
 	| bytesCount method j |
 	bytesCount := bytecodes size.
 	method := CompiledMethod
-		createMethod: bytesCount trailer: #(0 0 0 0) header: header.
+		createMethod: bytesCount trailer: #(0 0 0 0) header: self header.
 	1 to: self literals size do: [ :i | | lit varName |
 		lit := literals at: i.
 		(lit is: #LiteralVariableSpec) ifTrue: [
@@ -756,7 +761,7 @@ header literals pragmas bytecodes
 		j := j + 1 ].
 	^method! !
 
-!MethodSpec class methodsFor: 'instance creation' stamp: 'jmv 8/28/2025 16:25:14'!
+!MethodSpec class methodsFor: 'instance creation' stamp: 'jmv 9/17/2025 09:29:37'!
 for: aCompiledMethod addClassesTo: anOrderedDictionaryOfClasses
 	"aCompiledMethod is a regular method that exists in the system
 	"
@@ -783,7 +788,8 @@ for: aCompiledMethod addClassesTo: anOrderedDictionaryOfClasses
 		classSpec: (ClassSpec for: itsClass theNonMetaClass addClassesTo: anOrderedDictionaryOfClasses)
 		isClassSide: itsClass isMeta
 		selector: selector
-		header: aCompiledMethod header
+		headerSignFlag: aCompiledMethod signFlag
+		header: aCompiledMethod headerWithoutSignFlag
 		literals: (self literalSpecsFor: aCompiledMethod)
 		pragmas: (self pragmaSpecsFor: aCompiledMethod)
 		bytecodes: aCompiledMethod bytecodes.! !

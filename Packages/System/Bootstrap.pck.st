@@ -1,6 +1,6 @@
-'From Cuis7.5 [latest update: #7470] on 29 August 2025 at 1:20:37 pm'!
+'From Cuis7.5 [latest update: #7583] on 17 September 2025 at 9:57:38 am'!
 'Description '!
-!provides: 'Bootstrap' 1 44!
+!provides: 'Bootstrap' 1 45!
 !requires: 'DynamicCuisLibraries' 1 22 nil!
 SystemOrganization addCategory: #'Bootstrap-Smalltalk Image Builders'!
 SystemOrganization addCategory: #'Bootstrap-Foreign Objects'!
@@ -2008,7 +2008,7 @@ createAndAddWarningMethodsForMissing
 									self createWarningMethodFor: missingSelector in: classSpec isClassMethod: classSideFlag inheritedFrom: inheritedFromString ]]
 					]]]]].! !
 
-!ImageBuilder methodsFor: 'image building' stamp: 'jmv 8/13/2025 11:16:50'!
+!ImageBuilder methodsFor: 'image building' stamp: 'jmv 9/17/2025 09:28:47'!
 createWarningMethodFor: missingSelector in: classSpec isClassMethod: classSideFlag inheritedFrom: desc
 	"Made by playing with a method with this source code:
 		hack3
@@ -2019,7 +2019,7 @@ createWarningMethodFor: missingSelector in: classSpec isClassMethod: classSideFl
 	The only difference was in header. Took logic from
 		#computeMethodHeaderForNumArgs:numTemps:numLits:primitive:"
 
-	 | warningString fallbackMethodSpec bytecodes header |
+	 | warningString fallbackMethodSpec bytecodes sistaBytecodes header |
 	warningString := String streamContents: [ :strm |
 		strm
 			nextPutAll: '======== ';
@@ -2033,15 +2033,17 @@ createWarningMethodFor: missingSelector in: classSpec isClassMethod: classSideFl
 
 "warningString print."
 	"v3 bytecodes"
-	"header := 4 + (missingSelector numArgs bitShift: 24) + (missingSelector numArgs bitShift: 18).
-	bytecodes := #[112 33 224 135 120]."
+	"bytecodes := #[112 33 224 135 120].
+	sistaBytecodes := false."
 	"Sista bytecodes"
-	header := 4 + (missingSelector numArgs bitShift: 24) + (missingSelector numArgs bitShift: 18) + SmallInteger minVal.
 	bytecodes := #[76 33 144 216 88 ].
+	sistaBytecodes := true.
+	header := 4 + (missingSelector numArgs bitShift: 24) + (missingSelector numArgs bitShift: 18).
 	fallbackMethodSpec := MethodSpec basicNew
 		classSpec: classSpec
 		isClassSide: classSideFlag
 		selector: missingSelector
+		headerSignFlag: sistaBytecodes
 		header: header
 		literals: {#warning:. warningString}
 		pragmas: nil
