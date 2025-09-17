@@ -131,29 +131,41 @@ First release of Cuis following a new Release Process: Cuis 6.2 Stable Release. 
 https://lists.cuis.st/mailman/archives/cuis-dev/2023-December/008269.html
 
 ## 2024-05-13 - Cuis 7.0 Stable Release, Cuis 7.1 Rolling Release
-- Single immediate Character class
-- Abandoned the v3 image format
-- Usability improvements
-- Enhancements in Numerics
+- Single immediate Character class.
+- Abandoned the old v3 image format.
+- Usability improvements.
+- Enhancements in Numerics.
 
 ## 2024-12-06 - Cuis 7.2 Stable Release, Cuis 7.3 Rolling Release
-- New Menu Specs. Simpler. More flexible.
+- New Menu and Keyboard Shortcuts Specs. Simpler. More flexible.
 - Updated Morph hierarchy.
 - Modal Dialogs.
 - Enhancements to Layouts.
 - Process specific state.
-- Usability improvements. Find with Scope Tool for convenient searchingof text in source code.
-- Improved Robustnes.
+- Usability improvements. Find with Scope Tool for convenient searching of text in source code.
+- Improved Robustness.
 
 ## 2025-05-30 - Cuis 7.4 Stable Release, Cuis 7.5 Rolling Release
-- Updates to Vector Graphics
-    - Clipping to arbitrary convex shape of multiple nested containers
-    - Dashed strokes with a convenient, easy to use API
-    - Support for UTF-32 and ASCII text output (in addition to UTF-8)
-    - Big performance improvements
-- Ephemerons. New Ephemeron based FinalizationRegistry. New Ephemeron ActionMaps and property tables.
-- Sista Bytecode support.
-- WeakSet. New Symbol table.
+- Updates to Vector Graphics:
+    - Clipping to the arbitrary convex shape of multiple nested containers. Correct clipping in SVG Morphs.
+    - Dashed strokes with a convenient, easy to use API.
+    - Support for UTF-32 and ASCII text output (in addition to the UTF-8 text that Cuis uses).
+    - Big performance improvements.
+- Ephemerons. New Ephemeron based FinalizationRegistry. New Ephemeron ActionMaps and Property Tables.
+- New WeakSet. New Symbol table.
 - Debugger enhancements.
 - Updated Random Number Generator.
 - Usability. Performance. Robustness.
+
+## Ongoing since 2025-05-30 - Cuis 7.5 Rolling Release
+- Completed support for the Sista Bytecode set.
+- Debugger robustness against non-reentrant code. #effectiveProcess.
+- Allow adding instance variables to ClassDescription.
+- FormLayout and LayoutSizeSpec.
+- New better implementation of User Events dispatching to Morphs.
+- Improved handling of Keyboard Focus and ClickToFocus.
+- Bubbling up on unhandled Keyboard Sortcuts.
+- Ongoing work on Bootstrap and Compiled Libraries:
+    - Support for the Sista Bytecode Set.
+    - Unrestricted class reshaping and merge of class definitions
+    - Remap of instance variable access in CompiledMethods.
