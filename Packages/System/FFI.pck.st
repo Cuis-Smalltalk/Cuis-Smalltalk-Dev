@@ -1,6 +1,7 @@
-'From Cuis7.3 [latest update: #6897] on 8 December 2024 at 10:34:10 am'!
+'From Cuis7.5 [latest update: #7593] on 19 September 2025 at 4:54:28 pm'!
 'Description FFI (Foreign Function Interface) provides access to foreign functions in external libraries, provided they use the platform''s Application Binary Interface (ABI), which is essentially the C calling convention for the platform. FFI supports callbacks, allowing one to pass callbacks that invoke Smalltalk blocks when called from foreign code. FFI provides support for defining classes that correspond to C struct types, with named fields, etc. See Tests-FFI for examples.'!
-!provides: 'FFI' 1 56!
+!provides: 'FFI' 1 57!
+!requires: 'WeakDictionaries' 1 1 nil!
 !requires: 'Alien-Core' 1 0 nil!
 SystemOrganization addCategory: #'FFI-Pools'!
 SystemOrganization addCategory: #'FFI-Kernel'!
@@ -15,16 +16,6 @@ SharedPool subclass: #FFIConstants
 !classDefinition: 'FFIConstants class' category: #'FFI-Pools'!
 FFIConstants class
 	instanceVariableNames: ''!
-
-!classDefinition: #ExternalAddress category: #'FFI-Kernel'!
-ByteArray variableByteSubclass: #ExternalAddress
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'FFI-Kernel'!
-!classDefinition: 'ExternalAddress class' category: #'FFI-Kernel'!
-ExternalAddress class
-	instanceVariableNames: 'wordSize'!
 
 !classDefinition: #ExternalObject category: #'FFI-Kernel'!
 Object subclass: #ExternalObject
@@ -126,9 +117,16 @@ Form subclass: #ExternalForm
 ExternalForm class
 	instanceVariableNames: ''!
 
+!classDefinition: #ExternalAddress category: #'FFI-Kernel'!
+ByteArray variableByteSubclass: #ExternalAddress
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'FFI-Kernel'!
+!classDefinition: 'ExternalAddress class' category: #'FFI-Kernel'!
+ExternalAddress class
+	instanceVariableNames: 'wordSize'!
 
-!ExternalAddress commentStamp: '<historical>' prior: 0!
-An ExternalAddress is an opaque handle to objects outside Smalltalk memory (e.g., a pointer).!
 
 !ExternalObject commentStamp: '<historical>' prior: 0!
 External objects represent entities that are not part of the Smalltalk universe. They are accessed using a unique handle which is interpreted depending on the actual entity that is represented. 
@@ -332,6 +330,9 @@ form displayAt: 100@500.
 form destroySurface.
 !
 
+!ExternalAddress commentStamp: '<historical>' prior: 0!
+An ExternalAddress is an opaque handle to objects outside Smalltalk memory (e.g., a pointer).!
+
 !FFIConstants class methodsFor: 'pool initialization' stamp: 'ar 5/18/2003 18:54'!
 initialize
 	"FFIConstants initialize"
@@ -436,172 +437,6 @@ initializeTypeConstants
 
 	"argument qualifier flags"
 	FFIFlagVariadic := 16r80000000 "if set, argument is variadic (follows a '...' punctuator)"! !
-
-!ExternalAddress methodsFor: 'printing' stamp: 'jmv 1/9/2014 21:37'!
-printOn: aStream
-	"print this as a hex address ('@ 16rFFFFFFFF') to distinguish it from ByteArrays"
-
-	aStream nextPutAll: '@ '; nextPutAll: self asInteger hex8! !
-
-!ExternalAddress methodsFor: 'arithmetic' stamp: 'eem 6/4/2024 15:30:57'!
-+ offset
-	"Answer an address that is offset by the given number of bytes."
-
-	^ExternalAddress fromInteger: self asInteger + offset! !
-
-!ExternalAddress methodsFor: 'private' stamp: 'jmv 12/8/2023 10:11:33'!
-asByteArrayPointer
-	"Only kept for compatibility.
-	Prefer #asByteArrayWithPointer"
-
-	^self asByteArrayWithPointer! !
-
-!ExternalAddress methodsFor: 'private' stamp: 'jmv 12/8/2023 10:11:06'!
-asByteArrayWithPointer
-	"Answer a ByteArray containing a copy of the pointer in the receiver.
-	Useful when we specifically need an instance of ByteArray and not an instance of ExternalAddress.
-	For example, to use data access primitive in SqueakFFIPrims, such as:
-		primitiveFFIIntegerAt
-		primitiveFFIIntegerAtPut,
-	but have them operate on pointer data, and not on actual data pointed by it.
-	See #asExternalAddress"
-
-	| sz |
-	^(ByteArray basicNew: (sz := self size))
-		replaceFrom: 1 to: sz with: self startingAt: 1.! !
-
-!ExternalAddress methodsFor: 'private' stamp: 'jmv 12/8/2023 10:12:23'!
-asExternalAddress
-	"Answer an instance of ExternalAddress, with my contents, assuming they form a pointer.
-	See inheritance.
-	See #asByteArrayWithPointer"
-
-	^self! !
-
-!ExternalAddress methodsFor: 'converting' stamp: 'eem 6/7/2024 14:19:34'!
-asInteger
-	"Convert address to integer.
-	 Convert to a ByteArray in order to access the pointer bytes instead of the bytes pointed to!!
-	Primitive integerAt:size:signed: will use the appropriate endianess for this platform.
-	See also ExternalAddress class >> #fromInteger:"
-	<primitive: #primitiveExternalAddressAsInteger module: #SqueakFFIPrims>
-	| clone |
-	clone := self shallowCopy.
-	ByteArray adoptInstance: clone.
-	^clone integerAt: 1 size: self size signed: false! !
-
-!ExternalAddress methodsFor: 'initialize-release' stamp: 'ar 11/22/1999 04:25'!
-beNull
-	"Make the receiver a NULL pointer"
-	self atAllPut: 0.! !
-
-!ExternalAddress methodsFor: 'initialize-release' stamp: 'EstebanLorenzano 3/10/2016 16:39'!
-finalize
-	"I am an executor (a copy) of an ExternalAddress that was just garbage collected.
-	I must finalize. my mission is to free memory"
-	self isNull ifTrue: [^self].
-	self free! !
-
-!ExternalAddress methodsFor: 'initialize-release' stamp: 'jmv 9/10/2024 17:53:33'!
-free
-	self isNull ifFalse: [
-		self primFree.
-		self isNull ifTrue: [
-			"A possible error is explicitly freeing something that was allocated via #gcallocate:.
-			To avoid the double free hazzard, ensure I'm not finalized."
-			self class finalizationRegistry remove: self ifAbsent: nil ]].! !
-
-!ExternalAddress methodsFor: 'initialize-release' stamp: 'jmv 9/10/2024 17:07:38'!
-primFree
-	"Primitive. Free the object pointed to on the external heap.
-	Dangerous - may break your system if the receiver hasn't been
-	allocated by ExternalAddress class>>allocate:. No checks are done."
-	<primitive: #primitiveFFIFree module: #SqueakFFIPrims>
-	^self primitiveFailed! !
-
-!ExternalAddress methodsFor: 'testing' stamp: 'jfr 10/16/2024 10:10:04'!
-is: aSymbol
-	^#ExternalAddress = aSymbol or: [ super is: aSymbol ]! !
-
-!ExternalAddress methodsFor: 'testing' stamp: 'ar 11/16/2006 15:35'!
-isNull
-	"Answer true if I am a null pointer"
-	1 to: self size do:[:i| (self at: i) = 0 ifFalse:[^false]].
-	^true! !
-
-!ExternalAddress class methodsFor: 'class initialization' stamp: 'eem 2/20/2016 17:29'!
-initialize
-	wordSize := Smalltalk wordSize! !
-
-!ExternalAddress class methodsFor: 'class initialization' stamp: 'eem 2/22/2016 15:30'!
-startUp: resuming
-	"If starting the image afresh all external addresses should be zero.
-	 In addition, if the word size has changed then external addresses shoiuld be resized.
-	 The two steps are combined for efficiency."
-	resuming ifTrue:
-		[| instances |
-		 instances := self allInstances.
-		 wordSize ~= Smalltalk wordSize
-			ifTrue: "Implement nulling by becomming all existing instances to new (and hence null) pointers of the right size."
-				[wordSize := Smalltalk wordSize.
-				 instances elementsForwardIdentityTo: (instances collect: [:ea| self basicNew: wordSize])]
-			ifFalse:
-				[instances do: [:addr| addr beNull]]]! !
-
-!ExternalAddress class methodsFor: 'instance creation' stamp: 'eem 6/2/2024 17:39:05'!
-allocate: byteSize
-	"Primitive. Allocate an object on the external heap."
-	<primitive: #primitiveFFIAllocate module: #SqueakFFIPrims error: ec>
-	^self primitiveFailed! !
-
-!ExternalAddress class methodsFor: 'instance creation' stamp: 'eem 6/7/2024 13:48:31'!
-fromInteger: address
-	"Create an instance. address must be a non-negative integer.
-	 Use a ByteArray to be able to send #integerAt:put:size:signed: and have it operate
-	 on the pointer bytes and not on the (as yet undefined!!) pointed to memory.
-	Primitive integerAt:put:size:signed: will use the appropriate endianess for this platform.
-	See also ExternalAddress >> #asInteger"
-	"
-	(ExternalAddress fromInteger: 12345678) asInteger
-	"
-	<primitive: #primitiveExternalAddressFromInteger module: #SqueakFFIPrims>
-	| pointerBytes |
-	pointerBytes := ByteArray new: wordSize.
-	pointerBytes integerAt: 1 put: address size: wordSize signed: false.
-	ExternalAddress adoptInstance: pointerBytes.
-	^pointerBytes! !
-
-!ExternalAddress class methodsFor: 'instance creation' stamp: 'nice 5/19/2006 03:24'!
-gcallocate: byteSize
-	"Primitive. Allocate an object on the external heap.
-	The external memory will be freed when i am garbage collected.
-	BEWARE: there should be no copy of self, nor any pointer to a sub part..."
-	
-	| externalAddress |
-	externalAddress := self allocate: byteSize.
-	self finalizationRegistry add: externalAddress.
-	^externalAddress! !
-
-!ExternalAddress class methodsFor: 'instance creation' stamp: 'eem 6/2/2024 17:38:48'!
-loadSymbol: moduleSymbol module: module 
-	<primitive: #primitiveLoadSymbolFromModule module: #SqueakFFIPrims error: ec>
-	^ self primitiveFailed! !
-
-!ExternalAddress class methodsFor: 'instance creation' stamp: 'eem 2/22/2016 15:42'!
-new: n
-	"Only create ExternalAddresses of the right size."
-	^n = wordSize
-		ifTrue: [super new: n]
-		ifFalse: [self shouldNotImplement]! !
-
-!ExternalAddress class methodsFor: 'instance creation' stamp: 'jmv 9/29/2019 12:54:29'!
-numElements
-	"External addresses are either four or eight bytes long."
-	^ wordSize! !
-
-!ExternalAddress class methodsFor: 'accessing' stamp: 'eem 2/16/2016 12:34'!
-wordSize
-	^wordSize! !
 
 !ExternalObject methodsFor: 'private' stamp: 'ar 11/16/1999 20:25'!
 getHandle
@@ -2329,6 +2164,172 @@ primManualSurface: surfaceID setPointer: aPointer
 	self primitiveFailed
 ! !
 
+!ExternalAddress methodsFor: 'printing' stamp: 'jmv 1/9/2014 21:37'!
+printOn: aStream
+	"print this as a hex address ('@ 16rFFFFFFFF') to distinguish it from ByteArrays"
+
+	aStream nextPutAll: '@ '; nextPutAll: self asInteger hex8! !
+
+!ExternalAddress methodsFor: 'arithmetic' stamp: 'eem 6/4/2024 15:30:57'!
++ offset
+	"Answer an address that is offset by the given number of bytes."
+
+	^ExternalAddress fromInteger: self asInteger + offset! !
+
+!ExternalAddress methodsFor: 'private' stamp: 'jmv 12/8/2023 10:11:33'!
+asByteArrayPointer
+	"Only kept for compatibility.
+	Prefer #asByteArrayWithPointer"
+
+	^self asByteArrayWithPointer! !
+
+!ExternalAddress methodsFor: 'private' stamp: 'jmv 12/8/2023 10:11:06'!
+asByteArrayWithPointer
+	"Answer a ByteArray containing a copy of the pointer in the receiver.
+	Useful when we specifically need an instance of ByteArray and not an instance of ExternalAddress.
+	For example, to use data access primitive in SqueakFFIPrims, such as:
+		primitiveFFIIntegerAt
+		primitiveFFIIntegerAtPut,
+	but have them operate on pointer data, and not on actual data pointed by it.
+	See #asExternalAddress"
+
+	| sz |
+	^(ByteArray basicNew: (sz := self size))
+		replaceFrom: 1 to: sz with: self startingAt: 1.! !
+
+!ExternalAddress methodsFor: 'private' stamp: 'jmv 12/8/2023 10:12:23'!
+asExternalAddress
+	"Answer an instance of ExternalAddress, with my contents, assuming they form a pointer.
+	See inheritance.
+	See #asByteArrayWithPointer"
+
+	^self! !
+
+!ExternalAddress methodsFor: 'converting' stamp: 'eem 6/7/2024 14:19:34'!
+asInteger
+	"Convert address to integer.
+	 Convert to a ByteArray in order to access the pointer bytes instead of the bytes pointed to!!
+	Primitive integerAt:size:signed: will use the appropriate endianess for this platform.
+	See also ExternalAddress class >> #fromInteger:"
+	<primitive: #primitiveExternalAddressAsInteger module: #SqueakFFIPrims>
+	| clone |
+	clone := self shallowCopy.
+	ByteArray adoptInstance: clone.
+	^clone integerAt: 1 size: self size signed: false! !
+
+!ExternalAddress methodsFor: 'initialize-release' stamp: 'ar 11/22/1999 04:25'!
+beNull
+	"Make the receiver a NULL pointer"
+	self atAllPut: 0.! !
+
+!ExternalAddress methodsFor: 'initialize-release' stamp: 'EstebanLorenzano 3/10/2016 16:39'!
+finalize
+	"I am an executor (a copy) of an ExternalAddress that was just garbage collected.
+	I must finalize. my mission is to free memory"
+	self isNull ifTrue: [^self].
+	self free! !
+
+!ExternalAddress methodsFor: 'initialize-release' stamp: 'jmv 9/10/2024 17:53:33'!
+free
+	self isNull ifFalse: [
+		self primFree.
+		self isNull ifTrue: [
+			"A possible error is explicitly freeing something that was allocated via #gcallocate:.
+			To avoid the double free hazzard, ensure I'm not finalized."
+			self class finalizationRegistry remove: self ifAbsent: nil ]].! !
+
+!ExternalAddress methodsFor: 'initialize-release' stamp: 'jmv 9/10/2024 17:07:38'!
+primFree
+	"Primitive. Free the object pointed to on the external heap.
+	Dangerous - may break your system if the receiver hasn't been
+	allocated by ExternalAddress class>>allocate:. No checks are done."
+	<primitive: #primitiveFFIFree module: #SqueakFFIPrims>
+	^self primitiveFailed! !
+
+!ExternalAddress methodsFor: 'testing' stamp: 'jfr 10/16/2024 10:10:04'!
+is: aSymbol
+	^#ExternalAddress = aSymbol or: [ super is: aSymbol ]! !
+
+!ExternalAddress methodsFor: 'testing' stamp: 'ar 11/16/2006 15:35'!
+isNull
+	"Answer true if I am a null pointer"
+	1 to: self size do:[:i| (self at: i) = 0 ifFalse:[^false]].
+	^true! !
+
+!ExternalAddress class methodsFor: 'class initialization' stamp: 'eem 2/20/2016 17:29'!
+initialize
+	wordSize := Smalltalk wordSize! !
+
+!ExternalAddress class methodsFor: 'class initialization' stamp: 'eem 2/22/2016 15:30'!
+startUp: resuming
+	"If starting the image afresh all external addresses should be zero.
+	 In addition, if the word size has changed then external addresses shoiuld be resized.
+	 The two steps are combined for efficiency."
+	resuming ifTrue:
+		[| instances |
+		 instances := self allInstances.
+		 wordSize ~= Smalltalk wordSize
+			ifTrue: "Implement nulling by becomming all existing instances to new (and hence null) pointers of the right size."
+				[wordSize := Smalltalk wordSize.
+				 instances elementsForwardIdentityTo: (instances collect: [:ea| self basicNew: wordSize])]
+			ifFalse:
+				[instances do: [:addr| addr beNull]]]! !
+
+!ExternalAddress class methodsFor: 'instance creation' stamp: 'eem 6/2/2024 17:39:05'!
+allocate: byteSize
+	"Primitive. Allocate an object on the external heap."
+	<primitive: #primitiveFFIAllocate module: #SqueakFFIPrims error: ec>
+	^self primitiveFailed! !
+
+!ExternalAddress class methodsFor: 'instance creation' stamp: 'eem 6/7/2024 13:48:31'!
+fromInteger: address
+	"Create an instance. address must be a non-negative integer.
+	 Use a ByteArray to be able to send #integerAt:put:size:signed: and have it operate
+	 on the pointer bytes and not on the (as yet undefined!!) pointed to memory.
+	Primitive integerAt:put:size:signed: will use the appropriate endianess for this platform.
+	See also ExternalAddress >> #asInteger"
+	"
+	(ExternalAddress fromInteger: 12345678) asInteger
+	"
+	<primitive: #primitiveExternalAddressFromInteger module: #SqueakFFIPrims>
+	| pointerBytes |
+	pointerBytes := ByteArray new: wordSize.
+	pointerBytes integerAt: 1 put: address size: wordSize signed: false.
+	ExternalAddress adoptInstance: pointerBytes.
+	^pointerBytes! !
+
+!ExternalAddress class methodsFor: 'instance creation' stamp: 'nice 5/19/2006 03:24'!
+gcallocate: byteSize
+	"Primitive. Allocate an object on the external heap.
+	The external memory will be freed when i am garbage collected.
+	BEWARE: there should be no copy of self, nor any pointer to a sub part..."
+	
+	| externalAddress |
+	externalAddress := self allocate: byteSize.
+	self finalizationRegistry add: externalAddress.
+	^externalAddress! !
+
+!ExternalAddress class methodsFor: 'instance creation' stamp: 'eem 6/2/2024 17:38:48'!
+loadSymbol: moduleSymbol module: module 
+	<primitive: #primitiveLoadSymbolFromModule module: #SqueakFFIPrims error: ec>
+	^ self primitiveFailed! !
+
+!ExternalAddress class methodsFor: 'instance creation' stamp: 'eem 2/22/2016 15:42'!
+new: n
+	"Only create ExternalAddresses of the right size."
+	^n = wordSize
+		ifTrue: [super new: n]
+		ifFalse: [self shouldNotImplement]! !
+
+!ExternalAddress class methodsFor: 'instance creation' stamp: 'jmv 9/29/2019 12:54:29'!
+numElements
+	"External addresses are either four or eight bytes long."
+	^ wordSize! !
+
+!ExternalAddress class methodsFor: 'accessing' stamp: 'eem 2/16/2016 12:34'!
+wordSize
+	^wordSize! !
+
 !Object methodsFor: '*FFI-Kernel' stamp: 'ar 8/14/2006 23:02'!
 externalCallFailed
 	"Raise an error after a failed call to an external function"
@@ -3025,9 +3026,9 @@ isNullTerminated
 	
 	^(self size > 0) and:[self last = Character null] ! !
 FFIConstants initialize!
-ExternalAddress initialize!
 ExternalObject initialize!
 ExternalFunction initialize!
 ExternalStructure initialize!
 ExternalData initialize!
 ExternalType initialize!
+ExternalAddress initialize!
