@@ -1,6 +1,6 @@
-'From Cuis7.3 [latest update: #6990] on 17 January 2025 at 9:58:02 am'!
+'From Cuis7.5 [latest update: #7597] on 21 September 2025 at 12:50:31 pm'!
 'Description '!
-!provides: 'Network-Kernel' 1 11!
+!provides: 'Network-Kernel' 1 12!
 SystemOrganization addCategory: #'Network-Kernel'!
 
 
@@ -4430,8 +4430,8 @@ receiveDataIfAvailable
 	self deprecated: 'Use #receiveAvailableData instead'.
 	^ self receiveAvailableData! !
 
-!SocketStream methodsFor: 'private-socket' stamp: 'ar 7/24/2010 15:07'!
-receiveDataInto: buffer startingAt: index.
+!SocketStream methodsFor: 'private-socket' stamp: 'HAW 9/20/2025 18:11:44'!
+receiveDataInto: buffer startingAt: index
 	"Read data from the underlying socket. This method may be overridden by subclasses wanting to control incoming traffic for other purposes like encryption or statistics."
 
 	^socket  receiveAvailableDataInto: buffer startingAt: index.! !

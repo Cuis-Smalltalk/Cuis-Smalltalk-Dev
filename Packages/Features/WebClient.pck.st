@@ -1,9 +1,9 @@
-'From Cuis7.1 [latest update: #6765] on 10 October 2024 at 11:49:03 am'!
+'From Cuis7.5 [latest update: #7597] on 21 September 2025 at 12:50:34 pm'!
 'Description Description - This package is a port and refactoring of WebClient from http://ss3.gemstone.com/ss/WebClient.html with moderate changes by David Graham, Nicola Mingotti, Juan Vuletich and Hernan Wilkinson.
 	- WebClient-Core-ul.100
 	- WebClient-Help-ar.10
 	- WebClient-Tests-topa.48'!
-!provides: 'WebClient' 1 37!
+!provides: 'WebClient' 1 38!
 !requires: 'Network-Kernel' 1 2 nil!
 !requires: 'Identities-UUID' 1 7 nil!
 !requires: 'Cryptography-DigitalSignatures' 1 7 nil!
@@ -5963,7 +5963,7 @@ hmacSha1: message key: signKey
 		(key with: opad collect:[:b1 :b2| b1 bitXor: b2]), 
 		(self sha1Hash: (key with: ipad collect:[:b1 :b2| b1 bitXor: b2]), message)! !
 
-!WebUtils class methodsFor: 'oauth' stamp: 'jmv 4/13/2023 15:14:25'!
+!WebUtils class methodsFor: 'oauth' stamp: 'HAW 9/20/2025 18:07:55'!
 oAuthSign: webRequest url: requestUrl extra: postFields using: params
 	"Sign the given webRequest using the set of oauth parameters provided"
 
@@ -5971,7 +5971,7 @@ oAuthSign: webRequest url: requestUrl extra: postFields using: params
 
 	"Allow providing an oauth_timestamp; HOWEVER this is only useful for
 	tests etc. For actual API calls the timestamp *must* match real-time closely
-	or else the request will be rejected".
+	or else the request will be rejected"
 
 	timestamp := params at: 'oauth_timestamp' ifAbsent:[
 		"Timestamp is relative to Jan. 1st 1970 GMT"
