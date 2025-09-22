@@ -1,6 +1,6 @@
-'From Cuis7.5 [latest update: #7597] on 22 September 2025 at 9:40:03 am'!
+'From Cuis7.5 [latest update: #7600] on 22 September 2025 at 10:48:14 am'!
 'Description Rename extentions tests'!
-!provides: 'BaseImageTests' 1 462!
+!provides: 'BaseImageTests' 1 463!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Compiler'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Objects'!
@@ -26032,6 +26032,22 @@ test28FindsRepeatedBlocks
 	self assert: (15 to: 23) equals: replacement intervalToExtract.
 	self assert: (replacement isOf: sourceMethod).
 ! !
+
+!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 9/21/2025 16:33:34'!
+test29DoesNotFailWithUnnecesaryDot
+
+	| sourceMethodName finder sourceMethod intervalToExtract newMessage |
+
+	sourceMethodName := classToRefactor compile: 'm1. self m2'.
+	
+	sourceMethod := (classToRefactor >> sourceMethodName) asMethodReference.
+	intervalToExtract := (5 to: 11) asSourceCodeInterval.
+	newMessage := Message selector: #m2.
+	finder := ExtractMethodReplacementsFinder ofCodeIn: intervalToExtract at: sourceMethod to: newMessage. 
+	
+	self 
+		shouldnt: [ finder value ] 
+		raise: Error! !
 
 !ExtractMethodFinderTest methodsFor: 'setup/teardown' stamp: 'HAW 9/2/2021 18:02:12'!
 setUp
