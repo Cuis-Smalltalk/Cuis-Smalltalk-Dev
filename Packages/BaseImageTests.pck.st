@@ -1,6 +1,6 @@
-'From Cuis7.5 [latest update: #7580] on 17 September 2025 at 8:38:30 am'!
+'From Cuis7.5 [latest update: #7597] on 22 September 2025 at 9:40:03 am'!
 'Description Rename extentions tests'!
-!provides: 'BaseImageTests' 1 461!
+!provides: 'BaseImageTests' 1 462!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Compiler'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Objects'!
@@ -6219,6 +6219,22 @@ testMulticharBinarySelectors
 		of: #atMinusDigitMeaning
 		do: [ result _ [Compiler evaluate: expression] on: MessageNotUnderstood do: [#dnu]].
 	self assert: result = #dnu.! !
+
+!ParserTest methodsFor: 'test' stamp: 'HAW 9/20/2025 18:00:18'!
+testOptimizedNodesWithNilDoNotFailsWhenAskForEquivalentTo
+
+	| methodNode |
+	
+	methodNode := self class methodNodeFor: 
+	'example
+	
+	2 to: 4 do: [:i | self at: i].
+	^ self'.
+	
+	self 
+		shouldnt: [ methodNode equivalentTo: methodNode ] 
+		raise: Error
+	! !
 
 !ParserTest methodsFor: 'test' stamp: 'jmv 7/31/2023 12:17:49'!
 testRangesAreOkWhenReturningAVariableWithoutSpaceAfterThat
