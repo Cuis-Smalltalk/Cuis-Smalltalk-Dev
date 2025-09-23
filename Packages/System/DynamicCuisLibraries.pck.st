@@ -1,6 +1,6 @@
-'From Cuis7.5 [latest update: #7583] on 17 September 2025 at 9:57:36 am'!
+'From Cuis7.5 [latest update: #7608] on 23 September 2025 at 6:04:43 pm'!
 'Description '!
-!provides: 'DynamicCuisLibraries' 1 30!
+!provides: 'DynamicCuisLibraries' 1 31!
 SystemOrganization addCategory: #'DynamicCuisLibraries-Code Model'!
 SystemOrganization addCategory: #'DynamicCuisLibraries-Dynamic Libraries'!
 SystemOrganization addCategory: #DynamicCuisLibraries!
@@ -293,7 +293,7 @@ canBeInstalled
 doesExist
 	^(Smalltalk at: name ifAbsent: nil) isBehavior! !
 
-!ClassSpec methodsFor: 'testing' library: #MinimalKernel09CodeLibraryLoad stamp: 'jmv 5/9/2025 15:37:26'!
+!ClassSpec methodsFor: 'testing' library: #MinimalKernel09CodeLibraryLoad stamp: 'jmv 9/23/2025 12:50:24'!
 equalsExisting
 	"
 	(ClassSpec for: Morph addClassesTo: OrderedDictionary new) equalsExisting
@@ -309,7 +309,7 @@ equalsExisting
 	superclass notNil ifTrue: [
 		superclass equalsExisting ifFalse: [ ^false ]].
 	self doesExist ifFalse: [ ^false ].
-	existing := 	Smalltalk at: name ifAbsent: [ ^false ].
+	existing := Smalltalk at: name ifAbsent: [ ^false ].
 	existing isBehavior ifFalse: [ ^false ].  "Must be a class!!"
 	existing isMeta ifTrue: [ ^false ].          "We only represent the instance side"
 	existing name = name ifFalse: [ ^false ].
@@ -618,6 +618,12 @@ literals
 
 	^literals ifNil: [ #() ]! !
 
+!MethodSpec methodsFor: 'accessing' stamp: 'jmv 9/22/2025 18:34:45'!
+noPrimitive
+	"Take down the primitive flag if present."
+	
+	header := header bitAt: 17 put: 0.! !
+
 !MethodSpec methodsFor: 'accessing' library: #MinimalKernel09CodeLibraryLoad stamp: 'jmv 8/31/2023 15:18:27'!
 pragmaSpecs
 	^pragmas ifNil: [ #() ]! !
@@ -637,14 +643,18 @@ spurNumLiterals
 
 	^ header bitAnd: 16r7FFF! !
 
-!MethodSpec methodsFor: 'copying' stamp: 'jmv 8/5/2025 16:34:57'!
+!MethodSpec methodsFor: 'copying' stamp: 'jmv 9/22/2025 18:36:21'!
 copyWithBytecodes: newBytecodes
 	"Assume that newBytecodes are regular bytecodes,
 	meaning the answer will not include a primitive call.
 	The new bytecodes are in the same bytecode set as the current ones.
-	This means the header word remains the same."
+	Remove the primitive bit from the header if present. Answer will not be a primitive call."
 	
-	^self copy bytecodes: newBytecodes.! !
+	| answer |
+	answer := self copy.
+	answer noPrimitive.
+	answer bytecodes: newBytecodes.
+	^answer! !
 
 !MethodSpec methodsFor: 'private' stamp: 'fgz 9/5/2023 15:00:07'!
 at: index
@@ -981,13 +991,17 @@ writeOnFile: fileEntry
 		fileStream binary.
 		(ReferenceStream on: fileStream) nextPut: self ].! !
 
-!DynamicCuisLibrary methodsFor: 'installing' library: #MinimalKernel09CodeLibraryLoad stamp: 'jmv 9/6/2023 17:49:04'!
+!DynamicCuisLibrary methodsFor: 'installing' library: #MinimalKernel09CodeLibraryLoad stamp: 'jmv 9/23/2025 17:58:19'!
 canBeInstalled
 	classSpecs do: [ :each | each canBeInstalled ifFalse: [ ^false ]].
 
 	"Prepare for possible later validation and conversion of MethodSpecs and existing CompiledMethods"
 	classSpecs do: [ :classSpec | classSpec preInstall ].
 
+	"Check that all affected classes can be updated"
+	(self updateAffectedClassesFormat: false)
+		ifFalse: [ ^false ].
+	
 	"Possible difference between class shapes when the library was built and the shape
 	they will have after library install. Check that methods in the library can be corrected for them."
 	(self remapMethodSpecInstVarAccesses: false)
@@ -1000,7 +1014,7 @@ canBeInstalled
 
 	^true! !
 
-!DynamicCuisLibrary methodsFor: 'installing' library: #MinimalKernel09CodeLibraryLoad stamp: 'jmv 7/31/2025 09:48:36'!
+!DynamicCuisLibrary methodsFor: 'installing' library: #MinimalKernel09CodeLibraryLoad stamp: 'jmv 9/23/2025 17:57:24'!
 installLibrary
 	"Install classes. Merge into existing classes if appropriate.
 	Note: It is absolutely crucial to have called #canBeInstalled before,
@@ -1009,6 +1023,8 @@ installLibrary
 	classSpecs do: [ :classSpec |
 		classSpec equalsExisting ifFalse: [
 			classSpec materializeAndInstall ]].
+	
+	self updateAffectedClassesFormat: true.
 
 	"Convert existing methods to new class shapes if needed.
 	(ClassSpecs are allowed to add new instance variables to existing classes).
@@ -1098,6 +1114,31 @@ remapMethodSpecInstVarAccesses: doIt
 					result := methodSpec encoderClass remapInstVarAccessesIn: methodSpec asPer: map doIt: doIt ]].
 			result ifFalse: [ ^false ]]].
 	^true! !
+
+!DynamicCuisLibrary methodsFor: 'installing' stamp: 'jmv 9/23/2025 18:00:00'!
+updateAffectedClassesFormat: doIt
+	"Update the format field of affected classes.
+	These are any existing class whose shape is modified (new instance variables are added by the corresponding ClassSpec)
+	AND all their subclasses."
+	
+	"Warning: Failure during conversion results an inconsistent system where the format field of many classes is invalid.
+		It is very dangerous to continue.
+	The only safe thing to do is to EXIT THE IMAGE. It is advisable to log some debugging info before."
+
+	| format oldInstVarCount newInstVarCount |
+	classSpecs do: [ :classSpec | | previousIvarCount delta |
+		previousIvarCount := classSpec instVarCountBeforeInstall.
+		previousIvarCount notNil ifTrue: [
+			delta := classSpec instVarCountAfterInstall - previousIvarCount.
+			delta > 0 ifTrue: [
+				(Smalltalk at: classSpec name) withAllSubclassesDo: [ :modifiedShapeClass |
+					oldInstVarCount := modifiedShapeClass instSize.
+					newInstVarCount := oldInstVarCount + delta.
+					newInstVarCount > 16rFFFF ifTrue: [ ^false ].
+					doIt ifTrue: [
+						format := (modifiedShapeClass format bitAnd: 16r1F0000) + newInstVarCount.
+						modifiedShapeClass setFormat: format ]]]]].
+	^true.! !
 
 !DynamicCuisLibrary class methodsFor: 'instance creation' stamp: 'jmv 4/24/2023 14:27:42'!
 withClasses: arrayOfClasses classSelectors: arrayOfClassSelectors instanceSelectors: arrayOfInstanceSelectors
