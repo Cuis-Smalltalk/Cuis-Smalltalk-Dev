@@ -18,8 +18,8 @@ git clone https://github.com/Cuis-Smalltalk/OSProcess.git
 git clone https://github.com/Cuis-Smalltalk/AMQP.git
 git clone https://github.com/Cuis-Smalltalk/firmata.git
 git clone https://github.com/Cuis-Smalltalk/Machine-Learning.git
-git clone https://github.com/Cuis-Smalltalk/Morphic.git
-git clone https://github.com/Cuis-Smalltalk/EnhancedText.git
+#git clone https://github.com/Cuis-Smalltalk/Morphic.git
+#git clone https://github.com/Cuis-Smalltalk/EnhancedText.git
 # Frameworks and Apps
 git clone https://github.com/Cuis-Smalltalk/Games.git
 git clone https://github.com/Cuis-Smalltalk/Erudite.git
