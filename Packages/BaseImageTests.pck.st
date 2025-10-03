@@ -1,6 +1,6 @@
-'From Cuis7.5 [latest update: #7600] on 22 September 2025 at 10:48:14 am'!
+'From Cuis7.5 [latest update: #7635] on 3 October 2025 at 5:52:22 pm'!
 'Description Rename extentions tests'!
-!provides: 'BaseImageTests' 1 463!
+!provides: 'BaseImageTests' 1 464!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Compiler'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Objects'!
@@ -1066,6 +1066,16 @@ TestCase subclass: #UnicodeTest
 	category: 'BaseImageTests-Kernel-Text'!
 !classDefinition: 'UnicodeTest class' category: #'BaseImageTests-Kernel-Text'!
 UnicodeTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #AddMorphTest category: #'BaseImageTests-Morphic-Kernel'!
+TestCase subclass: #AddMorphTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-Morphic-Kernel'!
+!classDefinition: 'AddMorphTest class' category: #'BaseImageTests-Morphic-Kernel'!
+AddMorphTest class
 	instanceVariableNames: ''!
 
 !classDefinition: #AffineTransformationTest category: #'BaseImageTests-Morphic-Kernel'!
@@ -20747,6 +20757,283 @@ fileName
 !UnicodeTest class methodsFor: 'as yet unclassified' stamp: 'hjh 2/12/2013 21:35'!
 fileName2
 	^'UTF8abc-test2.txt'! !
+
+!AddMorphTest methodsFor: 'tests - addMorph:' stamp: 'JEC 10/3/2025 14:09:52'!
+test001_CanAddAMorph
+
+	| owner newSubmorph |
+	owner := Morph new.
+	newSubmorph := Morph new.
+	
+	owner addMorph: newSubmorph.
+	
+	self assert: owner submorphs equals: { newSubmorph }! !
+
+!AddMorphTest methodsFor: 'tests - addMorph:' stamp: 'JEC 10/3/2025 14:09:57'!
+test002_AddingANewSubmorphInFrontOfTheRest
+
+	| owner existingSubmorph newSubmorph |
+	owner := Morph new.
+	existingSubmorph := Morph new.
+	newSubmorph := Morph new.
+	owner addMorph: existingSubmorph.
+
+	owner addMorph: newSubmorph.
+
+	self assert: owner submorphs equals: { newSubmorph . existingSubmorph }. ! !
+
+!AddMorphTest methodsFor: 'tests - addMorph:' stamp: 'JEC 10/3/2025 11:15:21'!
+test003_MorphCannotBeItsOwnSubmorph
+
+	| owner |
+	owner := Morph new.
+	
+	self
+		should: [ owner addMorph: owner ] 
+		raise: Error
+		withMessageText: 'can not be own submorph'.
+	
+	self assert: owner submorphs isEmpty! !
+
+!AddMorphTest methodsFor: 'tests - addMorph:' stamp: 'JEC 10/3/2025 14:10:14'!
+test004_AddingAnExistingSubmorph_RemainsASubmorph
+
+	| owner existingSubmorph |
+	owner := Morph new.
+	existingSubmorph := Morph new.
+	owner addMorph: existingSubmorph.
+
+	owner addMorph: existingSubmorph.
+	
+	self assert: owner submorphs equals: { existingSubmorph }.! !
+
+!AddMorphTest methodsFor: 'tests - addMorph:' stamp: 'JEC 10/3/2025 14:10:19'!
+test005_AddingAnExistingSubmorphMoreThanOnce_PlacesItInFront
+
+	| owner submorph1 submorph2 |
+	owner := Morph new.
+	submorph1 := Morph new.
+	submorph2 := Morph new.
+	owner addMorph: submorph1.
+	owner addMorph: submorph2.
+	
+	owner addMorph: submorph1.
+
+	self assert: owner submorphs equals: { submorph1 . submorph2 }. ! !
+
+!AddMorphTest methodsFor: 'tests - addMorphBack:' stamp: 'JEC 10/3/2025 14:10:33'!
+test006_CanAddAMorphBack_WhenNotHavingSubmorphs
+
+	| owner newSubmorph |
+	owner := Morph new.
+	newSubmorph := Morph new.
+	
+	owner addMorphBack: newSubmorph.
+	
+	self assert: owner submorphs equals: { newSubmorph }! !
+
+!AddMorphTest methodsFor: 'tests - addMorphBack:' stamp: 'JEC 10/3/2025 14:10:40'!
+test007_AddingANewSubmorphBack_PlaceItAtTheEndOfSubmorphs
+
+	| owner existingSubmorph newSubmorph |
+	owner := Morph new.
+	existingSubmorph := Morph new.
+	newSubmorph := Morph new.
+	owner addMorphBack: existingSubmorph.
+	
+	owner addMorphBack: newSubmorph.
+
+	self assert: owner submorphs equals: { existingSubmorph . newSubmorph }! !
+
+!AddMorphTest methodsFor: 'tests - addMorphBack:' stamp: 'JEC 10/3/2025 14:10:47'!
+test008_AddAnExistingSubmorphToTheBack_PlaceTheSubmorphAtEndOfSubmorphs
+
+	| owner submorphToMove submorph |
+	owner := Morph new.
+	submorphToMove := Morph new.
+	submorph := Morph new.
+	owner addMorphBack: submorphToMove.
+	owner addMorphBack: submorph.
+	
+	owner addMorphBack: submorphToMove.
+
+	self assert: owner submorphs equals: { submorph . submorphToMove }! !
+
+!AddMorphTest methodsFor: 'tests - addMorphFront:' stamp: 'JEC 10/3/2025 14:11:06'!
+test009_CanAddAMorphFront_WhenNotHavingSubmorphs
+
+	| owner newSubmorph |
+	owner := Morph new.
+	newSubmorph := Morph new.
+	
+	owner addMorphFront: newSubmorph.
+	
+	self assert: owner submorphs equals: { newSubmorph }! !
+
+!AddMorphTest methodsFor: 'tests - addMorphFront:' stamp: 'JEC 10/3/2025 14:11:11'!
+test010_AddingANewSubmorphFront_PlaceItAtTheStartOfSubmorphs
+
+	| owner existingSubmorph newSubmorph |
+	owner := Morph new.
+	existingSubmorph := Morph new.
+	newSubmorph := Morph new.
+	owner addMorphFront: existingSubmorph.
+	
+	owner addMorphFront: newSubmorph.
+
+	self assert: owner submorphs equals: { newSubmorph . existingSubmorph }! !
+
+!AddMorphTest methodsFor: 'tests - addMorphFront:' stamp: 'JEC 10/3/2025 14:11:24'!
+test011_AddSubmorphFront_PlaceSubmorphsAtBeginningOfSubmorphs
+
+	| owner submorphToMove anotherSubmorph |
+	owner := Morph new.
+	submorphToMove := Morph new.
+	anotherSubmorph := Morph new.
+	owner addMorphFront: submorphToMove.
+	owner addMorphFront: anotherSubmorph.
+	
+	owner addMorphFront: submorphToMove.
+
+	self assert: owner submorphs equals: { submorphToMove . anotherSubmorph }. ! !
+
+!AddMorphTest methodsFor: 'tests - addMorph:behind:' stamp: 'JEC 10/3/2025 14:11:41'!
+test012_CanAddANewSubmorphBehindAnExistingSubmorph
+
+	| owner existingSubmorph newSubmorph |
+	owner := Morph new.
+	existingSubmorph := Morph new.
+	newSubmorph := Morph new.
+	owner addMorph: existingSubmorph.
+	
+	owner addMorph: newSubmorph behind: existingSubmorph.
+	
+	self assert: owner submorphs equals: { existingSubmorph . newSubmorph }! !
+
+!AddMorphTest methodsFor: 'tests - addMorph:behind:' stamp: 'JEC 10/3/2025 14:12:09'!
+test013_WhenASubmorphIsBehindAnother_AddingItAgainKeepThemInSamePlaces
+
+	| owner submorph1 submorph2 |
+	owner := Morph new.
+	submorph1 := Morph new.
+	submorph2 := Morph new.
+	owner addMorph: submorph1.
+	owner addMorph: submorph2 behind: submorph1.
+	
+	owner addMorph: submorph2 behind: submorph1.
+
+	self assert: owner submorphs equals: { submorph1 . submorph2 }.! !
+
+!AddMorphTest methodsFor: 'tests - addMorph:behind:' stamp: 'JEC 10/3/2025 14:12:17'!
+test014_CanAddANewSubmorphBetweenExistingsSubmorphs
+
+	| owner submorph1 submorph2 newSubmorph |
+	owner := Morph new.
+	submorph1 := Morph new.
+	submorph2 := Morph new.
+	newSubmorph := Morph new.
+	owner addMorph: submorph2.
+	owner addMorph: submorph1.
+
+	owner addMorph: newSubmorph behind: submorph1.
+
+	self assert: owner submorphs equals: { submorph1 . newSubmorph . submorph2 }.! !
+
+!AddMorphTest methodsFor: 'tests - addMorph:behind:' stamp: 'JEC 10/3/2025 12:56:17'!
+test015_CannotAddMorphBehindNonSubmorph
+
+	| owner anotherMorph |
+	owner := Morph new.
+	anotherMorph := Morph new.
+
+	self
+		should: [ owner addMorph: anotherMorph behind: Morph new ]
+		raise: Error.
+		
+	self assert: owner submorphs isEmpty! !
+
+!AddMorphTest methodsFor: 'tests - addMorph:behind:' stamp: 'JEC 10/3/2025 14:12:23'!
+test016_CanMoveASubmorphBehindAnother
+
+	| owner submorph submorphToMove |
+	owner := Morph new.
+	submorph := Morph new.
+	submorphToMove := Morph new.
+	owner addMorph: submorph.
+	owner addMorph: submorphToMove.
+
+	owner addMorph: submorphToMove behind: submorph.
+
+	self assert: owner submorphs equals: { submorph . submorphToMove }.! !
+
+!AddMorphTest methodsFor: 'tests - addMorph:inFrontOf:' stamp: 'JEC 10/3/2025 14:12:29'!
+test017_CanAddANewSubmorphInFrontOfAnExistingSubmorph
+
+	| owner existingSubmorph newSubmorph |
+	owner := Morph new.
+	existingSubmorph := Morph new.
+	newSubmorph := Morph new.
+	owner addMorph: existingSubmorph.
+	
+	owner addMorph: newSubmorph inFrontOf: existingSubmorph.
+	
+	self assert: owner submorphs equals: { newSubmorph . existingSubmorph }.! !
+
+!AddMorphTest methodsFor: 'tests - addMorph:inFrontOf:' stamp: 'JEC 10/3/2025 14:13:09'!
+test018_WhenASubmorphIsAfterAnother_AddingItAgainKeepThemInSamePlaces
+
+	| owner submorph1 submorph2 |
+	owner := Morph new.
+	submorph1 := Morph new.
+	submorph2 := Morph new.
+	owner addMorph: submorph1.
+	owner addMorph: submorph2 inFrontOf: submorph1.
+	
+	owner addMorph: submorph2 inFrontOf: submorph1.
+	
+	self assert: owner submorphs equals: { submorph2 . submorph1 }! !
+
+!AddMorphTest methodsFor: 'tests - addMorph:inFrontOf:' stamp: 'JEC 10/3/2025 14:13:13'!
+test019_CanAddANewSubmorphBetweenExistingsSubmorphs
+
+	| owner submorph1 submorph2 newSubmorph |
+	owner := Morph new.
+	submorph1 := Morph new.
+	submorph2 := Morph new.
+	newSubmorph := Morph new.
+	owner addMorph: submorph1.
+	owner addMorph: submorph2.
+
+	owner addMorph: newSubmorph inFrontOf: submorph1.
+
+	self assert: owner submorphs equals: { submorph2 . newSubmorph . submorph1 }! !
+
+!AddMorphTest methodsFor: 'tests - addMorph:inFrontOf:' stamp: 'JEC 10/3/2025 13:00:33'!
+test020_CannotAddMorphInFrontOfNonSubmorph
+
+	| owner newSubmorph |
+	owner := Morph new.
+	newSubmorph := Morph new.
+
+	self
+		should: [ owner addMorph: newSubmorph inFrontOf: Morph new ]
+		raise: Error.
+	
+	self assert: owner submorphs isEmpty.! !
+
+!AddMorphTest methodsFor: 'tests - addMorph:inFrontOf:' stamp: 'JEC 10/3/2025 14:13:19'!
+test021_CanMoveASubmorphInFrontOfAnother
+
+	| owner submorphToMove submorph |
+	owner := Morph new.
+	submorphToMove := Morph new.
+	submorph := Morph new.
+	owner addMorph: submorphToMove.
+	owner addMorph: submorph.
+
+	owner addMorph: submorphToMove inFrontOf: submorph.
+
+	self assert: owner submorphs equals: { submorphToMove  . submorph }! !
 
 !AffineTransformationTest methodsFor: 'testing' stamp: 'jmv 1/14/2015 15:11'!
 testComposition
