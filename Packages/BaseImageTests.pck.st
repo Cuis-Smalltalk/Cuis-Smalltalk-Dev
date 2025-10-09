@@ -1,6 +1,6 @@
-'From Cuis7.5 [latest update: #7635] on 3 October 2025 at 5:52:22 pm'!
+'From Cuis7.5 [latest update: #7641] on 9 October 2025 at 12:37:03 pm'!
 'Description Rename extentions tests'!
-!provides: 'BaseImageTests' 1 464!
+!provides: 'BaseImageTests' 1 465!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Compiler'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Objects'!
@@ -8217,9 +8217,44 @@ testAlphaCompositing2
 		self assert: result alpha = mixColor alpha.
 	].! !
 
+!RectangleTest methodsFor: 'testing' stamp: 'jmv 10/9/2025 12:23:36'!
+testHasPositiveExtent
+	self assert: (10@10 corner: 20@20) hasPositiveExtent.
+	self deny: (10@10 corner: 2@2) hasPositiveExtent.! !
+
 !RectangleTest methodsFor: 'testing' stamp: 'jpb 8/2/2019 23:52:04'!
 testIsRectangle
 	self assert: (Rectangle new is: #Rectangle)! !
+
+!RectangleTest methodsFor: 'testing' stamp: 'jmv 10/9/2025 12:36:09'!
+testMerge
+	self assert: ((10@10 corner: 20@20) merge: (10@10 corner: 2@2)) equals: (10@10 corner: 20@20).
+	self assert: ((10@10 corner: 20@20) merge: (10@10 corner: 20@2)) equals: (10@10 corner: 20@20).
+	self assert: ((10@10 corner: 20@20) merge: (10@10 corner: 2@20)) equals: (10@10 corner: 20@20).
+	self assert: ((10@10 corner: 2@2) merge: (10@10 corner: 20@20)) equals: (10@10 corner: 20@20).
+	self assert: ((10@10 corner: 20@2) merge: (10@10 corner: 20@20)) equals: (10@10 corner: 20@20).
+	self assert: ((10@10 corner: 2@20) merge: (10@10 corner: 20@20)) equals: (10@10 corner: 20@20).
+	self assert: ((10@10 corner: 20@20) merge: (50@50 corner: 60@60)) equals: (10@10 corner: 60@60).
+	self assert: ((10@10 corner: 20@20) merge: (1000@10 corner: 200@2)) equals: (10@10 corner: 20@20).! !
+
+!RectangleTest methodsFor: 'testing' stamp: 'jmv 10/9/2025 12:36:21'!
+testQuickMerge
+	self assert: ((10@10 corner: 20@20) quickMerge: (10@10 corner: 2@2)) equals: (10@10 corner: 20@20).
+	self assert: ((10@10 corner: 20@20) quickMerge: (10@10 corner: 20@2)) equals: (10@10 corner: 20@20).
+	self assert: ((10@10 corner: 20@20) quickMerge: (10@10 corner: 2@20)) equals: (10@10 corner: 20@20).
+	self assert: ((10@10 corner: 2@2) quickMerge: (10@10 corner: 20@20)) equals: (10@10 corner: 20@20).
+	self assert: ((10@10 corner: 20@2) quickMerge: (10@10 corner: 20@20)) equals: (10@10 corner: 20@20).
+	self assert: ((10@10 corner: 2@20) quickMerge: (10@10 corner: 20@20)) equals: (10@10 corner: 20@20).
+	self assert: ((10@10 corner: 20@20) quickMerge: (50@50 corner: 60@60)) equals: (10@10 corner: 60@60).
+	self assert: ((10@10 corner: 20@20) quickMerge: (1000@10 corner: 200@2)) equals: (10@10 corner: 20@20).! !
+
+!RectangleTest methodsFor: 'testing' stamp: 'jmv 10/9/2025 12:36:47'!
+testQuickMergeIntersectionWith
+	self assert: ((10@10 corner: 20@20) quickMerge: (50@50 corner: 60@60) intersectionWith: (0@0 corner: 100@100)) equals: (10@10 corner: 60@60).
+	self assert: ((10@10 corner: 20@20) quickMerge: (50@50 corner: 60@60) intersectionWith: (0@0 corner: 55@55)) equals: (10@10 corner: 55@55).
+	self assert: ((10@10 corner: 20@20) quickMerge: (50@50 corner: 60@60) intersectionWith: (0@0 corner: 35@35)) equals: (10@10 corner: 20@20).
+	self assert: ((10@10 corner: 20@20) quickMerge: (50@50 corner: 60@60) intersectionWith: (30@30 corner: 35@35)) equals: (10@10 corner: 20@20).
+	self assert: ((10@10 corner: 20@20) quickMerge: (500@50 corner: 60@60) intersectionWith: (30@30 corner: 35@35)) equals: (10@10 corner: 20@20).! !
 
 !DateAndTimeTest methodsFor: 'tests' stamp: 'jmv 6/5/2014 14:29'!
 testCreation
