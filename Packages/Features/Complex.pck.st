@@ -1,16 +1,16 @@
-'From Cuis 6.0 [latest update: #5668] on 28 February 2023 at 11:46:27 am'!
+'From Cuis7.5 [latest update: #7657] on 14 October 2025 at 9:34:37 am'!
 'Description '!
-!provides: 'Complex' 1 8!
-SystemOrganization addCategory: 'Complex'!
+!provides: 'Complex' 1 9!
+SystemOrganization addCategory: #Complex!
 
 
-!classDefinition: #Complex category: 'Complex'!
+!classDefinition: #Complex category: #Complex!
 Object subclass: #Complex
 	instanceVariableNames: 'real imaginary'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Complex'!
-!classDefinition: 'Complex class' category: 'Complex'!
+!classDefinition: 'Complex class' category: #Complex!
 Complex class
 	instanceVariableNames: ''!
 
@@ -133,59 +133,67 @@ phase
 real
 	^ real! !
 
-!Complex methodsFor: 'arithmetic' stamp: 'jmv 8/2/2019 12:13:14'!
+!Complex methodsFor: 'arithmetic' stamp: 'jmv 10/14/2025 09:31:28'!
 * aNumber
 	"Answer the result of multiplying the receiver by aNumber."
 	| c d newReal newImaginary |
+	aNumber isNumber
+		ifFalse: [^aNumber adaptToNumber: self andSend: #*].
 	aNumber isComplex
 		ifTrue: [
-			c _ aNumber real.
-			d _ aNumber imaginary.
+			c := aNumber real.
+			d := aNumber imaginary.
 			imaginary = 0 "For example, 1 * 2i, or more importantly 1 * Float infinity i"
 				ifTrue: [
-					newReal _ real * c.
-					newImaginary _ real * d ]
+					newReal := real * c.
+					newImaginary := real * d ]
 				ifFalse: [
-					newReal _ (real * c) - (imaginary * d).
-					newImaginary _ (real * d) + (imaginary * c) ]]
+					newReal := (real * c) - (imaginary * d).
+					newImaginary := (real * d) + (imaginary * c) ]]
 		ifFalse: [
-			newReal _ real * aNumber.
-			newImaginary _ imaginary * aNumber ].
+			newReal := real * aNumber.
+			newImaginary := imaginary * aNumber ].
 	^ Complex real: newReal imaginary: newImaginary! !
 
-!Complex methodsFor: 'arithmetic' stamp: 'jmv 4/5/2019 09:48:36'!
+!Complex methodsFor: 'arithmetic' stamp: 'jmv 10/14/2025 09:32:30'!
 + aNumber
 	"Answer the sum of the receiver and aNumber."
+	aNumber isNumber
+		ifFalse: [^aNumber adaptToNumber: self andSend: #+].
 	^ Complex
 		real: real + aNumber real
 		imaginary: imaginary + aNumber imaginary.! !
 
-!Complex methodsFor: 'arithmetic' stamp: 'jmv 4/5/2019 09:48:52'!
+!Complex methodsFor: 'arithmetic' stamp: 'jmv 10/14/2025 09:32:38'!
 - aNumber
 	"Answer the difference between the receiver and aNumber."
+	aNumber isNumber
+		ifFalse: [^aNumber adaptToNumber: self andSend: #-].
 	^ Complex
 		real: real - aNumber real
 		imaginary: imaginary - aNumber imaginary.! !
 
-!Complex methodsFor: 'arithmetic' stamp: 'jmv 7/2/2019 09:17:45'!
+!Complex methodsFor: 'arithmetic' stamp: 'jmv 10/14/2025 09:32:46'!
 / aNumber
 	"Answer the result of dividing receiver by aNumber"
 	| c d newReal newImaginary s e f |
+	aNumber isNumber
+		ifFalse: [^aNumber adaptToNumber: self andSend: #/].
 	aNumber isZero ifTrue: [^ ZeroDivide new signalReceiver: self selector: #/ argument: aNumber].
 	aNumber isComplex
 		ifTrue: [
-			c _ aNumber real.
-			d _ aNumber imaginary.
-			e _ (real * c) + (imaginary * d).
+			c := aNumber real.
+			d := aNumber imaginary.
+			e := (real * c) + (imaginary * d).
 			e isFinite ifFalse: [ ^ self safeDivideBy: aNumber ].
-			f _ (imaginary * c) - (real * d).
-			s _ (c * c) + (d * d).
+			f := (imaginary * c) - (real * d).
+			s := (c * c) + (d * d).
 			(e isFloat and: [ s  = 0.0 ]) ifTrue: [ ^ self safeDivideBy: aNumber ].
-			newReal _ e / s.
-			newImaginary _ f / s ]
+			newReal := e / s.
+			newImaginary := f / s ]
 		ifFalse: [
-			newReal _ real / aNumber.
-			newImaginary _ imaginary / aNumber ].
+			newReal := real / aNumber.
+			newImaginary := imaginary / aNumber ].
 	^ Complex real: newReal imaginary: newImaginary! !
 
 !Complex methodsFor: 'arithmetic' stamp: 'jmv 4/5/2019 19:56:25'!
@@ -704,6 +712,11 @@ infinity
 nan
 	^ (1 + 1 i) * Float nan! !
 
+!NegativePowerError methodsFor: '*Complex' stamp: 'jmv 6/25/2019 18:53:10'!
+defaultAction
+
+	^(Complex basicReal: receiver imaginary: 0) perform: selector withArguments: arguments! !
+
 !Number methodsFor: '*Complex' stamp: 'jmv 2/28/2023 11:44:03'!
 arg
 	"Answer the argument of the receiver (see Complex | arg).
@@ -777,8 +790,3 @@ argument
 	"Compatibility with Complex numbers."
 	self isNaN ifTrue: [^self].
 	^super argument! !
-
-!NegativePowerError methodsFor: '*Complex' stamp: 'jmv 6/25/2019 18:53:10'!
-defaultAction
-
-	^(Complex basicReal: receiver imaginary: 0) perform: selector withArguments: arguments! !
