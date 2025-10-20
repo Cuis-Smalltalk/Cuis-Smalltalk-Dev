@@ -1,6 +1,6 @@
-'From Cuis7.5 [latest update: #7641] on 9 October 2025 at 12:37:03 pm'!
+'From Cuis7.5 [latest update: #7663] on 20 October 2025 at 5:31:56 pm'!
 'Description Rename extentions tests'!
-!provides: 'BaseImageTests' 1 465!
+!provides: 'BaseImageTests' 1 466!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Compiler'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Objects'!
@@ -20264,10 +20264,10 @@ test12
 	self assert: ('ñandúes'asUnicodeString  is: 'úe' asUnicodeString substringAt: 5).
 	self deny: ('ñandúes' asUnicodeString is: 'úe' asUnicodeString substringAt: 6).! !
 
-!UnicodeStringsTest methodsFor: 'testing' stamp: 'jmv 8/8/2024 17:23:12'!
+!UnicodeStringsTest methodsFor: 'testing' stamp: 'jmv 10/20/2025 16:40:37'!
 testAsUtf8
 	"
-	 UnicodeStringTest new testAsUtf8
+	 UnicodeStringsTest new testAsUtf8
 	"
 	| subject |
 	subject := 'A¢€'.
@@ -20338,6 +20338,33 @@ testEmpty
 	self assert: us2 hash = us1 hash.
 	self assert: us2 = us1.
 	self assert: us1 = us2.! !
+
+!UnicodeStringsTest methodsFor: 'testing' stamp: 'jmv 10/20/2025 17:02:21'!
+testUtf8InvalidSequences
+	"
+	 UnicodeStringsTest new testUtf8InvalidSequences
+	"
+	
+	self deny: (Character isValidUtf8: #[16rE2 16r28 16rA1]).
+	self deny: (Character isValidUtf8: #[16rF8]).
+	self deny: (Character isValidUtf8: #[16r92]).
+	self deny: (Character isValidUtf8: #[16rF5]).
+	self deny: (Character isValidUtf8: #[16rF0 16r90 16r8D]).
+
+	"Cuis correctly allows overlong sequences...
+	(UnicodeString fromUtf8Bytes: #[16rC0  16r80]) first asString asUnicodeString bytes"
+	"self deny: (Character isValidUtf8: #[16rC0  16r80])."! !
+
+!UnicodeStringsTest methodsFor: 'testing' stamp: 'jmv 10/20/2025 16:53:39'!
+testUtf8ValidSequences
+	"
+	 UnicodeStringsTest new testUtf8ValidSequences
+	"
+	self assert: (Character isValidUtf8: 'Hello world' asUnicodeString bytes).
+	self assert: (Character isValidUtf8: '€' bytes).
+	self assert: (Character isValidUtf8: '🐱' bytes).
+	self assert: (Character isValidUtf8: '🐱🐱🐱€🐱 ¡Tomá agüita gato!!' bytes).
+! !
 
 !UnicodeStringsTest methodsFor: 'testing' stamp: 'jmv 4/14/2023 10:21:49'!
 testfromBytesStream
