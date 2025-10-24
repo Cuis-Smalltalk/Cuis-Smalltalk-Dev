@@ -1,7 +1,7 @@
 #!/bin/sh
 # Run the VM, setting SQUEAK_PLUGINS if unset to the VM's containing directory
 # if unset, and ensuring LD_LIBRARY_PATH includes the VM's containing directory.
-BIN=`/usr/bin/dirname "$0"`/lib/squeak/5.0-202508010003-64bit
+BIN=`/usr/bin/dirname "$0"`/lib/squeak/7.0rc2-202510231808-64bit
 GDB=
 if [ "${SQUEAK_PLUGINS-unset}" = unset ]; then
 	export SQUEAK_PLUGINS="$BIN"
