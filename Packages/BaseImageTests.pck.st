@@ -1,6 +1,6 @@
-'From Cuis7.5 [latest update: #7663] on 20 October 2025 at 5:31:56 pm'!
+'From Cuis7.5 [latest update: #7671] on 27 October 2025 at 1:12:23 pm'!
 'Description Rename extentions tests'!
-!provides: 'BaseImageTests' 1 466!
+!provides: 'BaseImageTests' 1 467!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Compiler'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Objects'!
@@ -21957,6 +21957,29 @@ testSourcesFileAddressRange
 		self assert: (a between: 16r1000000 and: 16r2FFFFFF)]
 
 ! !
+
+!FileStreamTest methodsFor: 'tests' stamp: 'jmv 10/27/2025 11:01:22'!
+testAtEnd
+	| path fs fragment1 fragment2 |
+	path := 'test-{1}.txt' format: {(Float pi * 10e10) floor atRandom. }.
+	
+	fragment1 := 'Some stuff.'.
+	path asFileEntry fileContents: fragment1.
+	fs := path asFileEntry readStream.
+	self deny: fs atEnd.
+	self assert: fs upToEnd =  'Some stuff.'.
+	self assert: fs atEnd.
+	self assert: fs size = fragment1 size.
+
+	fragment2 := 'Some stuff'.
+	path asFileEntry appendContents: fragment2.
+	self assert: fs size = (fragment1 size + fragment2 size).
+	self deny: fs atEnd.
+	self assert: fs upToEnd =  fragment2.
+	self assert: fs atEnd.
+	
+	fs close .
+	path asFileEntry delete.! !
 
 !FileStreamTest methodsFor: 'tests' stamp: 'jmv 5/19/2024 20:09:27'!
 testUpTo1ShortRecords
