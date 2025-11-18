@@ -1,6 +1,6 @@
-'From Cuis7.5 [latest update: #7671] on 27 October 2025 at 1:12:23 pm'!
+'From Cuis7.5 [latest update: #7692] on 18 November 2025 at 9:21:30 am'!
 'Description Rename extentions tests'!
-!provides: 'BaseImageTests' 1 467!
+!provides: 'BaseImageTests' 1 468!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Compiler'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Objects'!
@@ -11655,12 +11655,12 @@ testPrimArcTan
 	self verify: Float negativeInfinity primTestArcTan isTrigonometricallyEqualTo: Float pi / -2.
 	self assert: Float nan primTestArcTan isNaN! !
 
-!FloatTest methodsFor: 'tests - primitives' stamp: 'jmv 10/11/2019 20:08:22'!
+!FloatTest methodsFor: 'tests - primitives' stamp: 'jmv 11/18/2025 09:20:48'!
 testPrimDivideBy
 
 	self assert: (1.5 primTestDivideBy: 2.0) = 0.75.
 
-	Smalltalk doMixedArithmetic
+	Smalltalk numericPrimsMixArithmetic
 		ifTrue: [ self assert: (2.0 primTestDivideBy: 1) = 2.0 ]
 		ifFalse: [ self assert: (2.0 primTestDivideBy: 1) = #fail ].
 
