@@ -1,6 +1,6 @@
-'From Cuis7.5 [latest update: #7692] on 18 November 2025 at 9:21:30 am'!
+'From Cuis7.5 [latest update: #7699] on 19 November 2025 at 9:08:17 am'!
 'Description Rename extentions tests'!
-!provides: 'BaseImageTests' 1 468!
+!provides: 'BaseImageTests' 1 469!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Compiler'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Objects'!
@@ -18854,17 +18854,20 @@ testTerminateWithDelayInUnwind
 	p terminate.
 	self assert: p isTerminated! !
 
-!ProcessTest methodsFor: 'tests' stamp: 'jar 2/6/2023 00:19:12'!
-testTerminateWithNiledUnwindBlock
-	"Test termination of a process containing an unwind block equal to nil.
+!ProcessTest methodsFor: 'tests' stamp: 'jmv 11/19/2025 09:06:37'!
+testTerminateWithEmptyUnwindBlock
+	"Test termination of a process containing an unwind block that is empty.
+	Note: A previous test with nil as the unwind block was removed, as this is no longer supported
+	See email from Jaromir to the Cuis list on 19-Nov-2025.
 	
 	Workspace example:
-	p := [[Processor activeProcess suspend] ensure: nil] fork.
+	p := [[Processor activeProcess suspend] ensure: []] newProcess.
+	p resume.
 	[p terminate] fork
 	"
 	
 	| p |
-	p _ [[Semaphore new wait] ensure: nil] newProcess.
+	p := [[Semaphore new wait] ensure: []] newProcess.
 	p priority: Processor activePriority + 1.
 	p resume.
 	self assert: p isBlocked.
