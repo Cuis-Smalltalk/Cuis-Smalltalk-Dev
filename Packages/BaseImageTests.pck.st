@@ -1,6 +1,6 @@
-'From Cuis7.5 [latest update: #7699] on 19 November 2025 at 9:08:17 am'!
+'From Cuis7.5 [latest update: #7703] on 19 November 2025 at 6:07:14 pm'!
 'Description Rename extentions tests'!
-!provides: 'BaseImageTests' 1 469!
+!provides: 'BaseImageTests' 1 470!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Compiler'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Objects'!
@@ -11391,7 +11391,7 @@ testNaNPropagationBinary
 					c := [ op1 perform: sel with: op2 ] on: UnhandledError do: [ #error ].
 					self assert: (c isNumber not or: [c isNaN]) ]]]].! !
 
-!FloatTest methodsFor: 'tests - NaN behavior' stamp: 'sqr 6/18/2024 23:11:41'!
+!FloatTest methodsFor: 'tests - NaN behavior' stamp: 'jmv 11/19/2025 18:05:30'!
 testNaNPropagationUnary
 	"Any operation should propagate NaN"
 	| s a c |
@@ -11401,7 +11401,7 @@ testNaNPropagationUnary
 	s addAll: BoxedFloat64 selectors.
 	s addAll: SmallFloat64 selectors.
 	s := s select: [ :sel | sel numArgs = 0 ].
-	s removeAll: #(#asIEEE32BitWord #byteSize #hash #identityHash #mantissaBits #signBit #exponentBits #exponent primTestExponent #fractionPart).
+	s removeAll: #(#asIEEE32BitWord #asIEEE64BitWord #byteSize #hash #identityHash #mantissaBits #signBit #exponentBits #exponent primTestExponent #fractionPart).
 	a := s asArray sort.
 	a do: [ :sel |
 		c := [ Float nan perform: sel ] on: UnhandledError do: [ #error ].
