@@ -1,6 +1,6 @@
-'From Cuis7.1 [latest update: #6713] on 12 September 2024 at 12:08:48 pm'!
+'From Cuis7.5 [latest update: #7701] on 19 November 2025 at 10:46:56 am'!
 'Description Theme customizer'!
-!provides: 'Theme-Themes' 1 18!
+!provides: 'Theme-Themes' 1 19!
 SystemOrganization addCategory: #'Theme-Themes'!
 
 
@@ -1173,7 +1173,7 @@ buildTextRow
 	
 	^self buildRow: 'Text' thatExecutesAction: #changeText: forPalette: textPalette.! !
 
-!ThemeCustomizerWindow methodsFor: 'build rows' stamp: 'lucy 7/20/2023 15:21:33'!
+!ThemeCustomizerWindow methodsFor: 'build rows' stamp: 'LP 11/11/2025 23:30:53'!
 buildTitleRow
 
 	| titleRow titleLabel |
@@ -1184,10 +1184,9 @@ buildTitleRow
 		separation: 10;
 		axisEdgeWeight: 1;
 		color: self initMessageBackgroundColor;
-		addMorph: titleLabel.
-		
-	titleRow layoutSpec proportionalHeight: 0.
-	
+		addMorph: titleLabel;
+		layoutSpec: (LayoutSpec proportionalHeight: 0).
+
 	^ titleRow.! !
 
 !ThemeCustomizerWindow class methodsFor: 'opening' stamp: 'HAW 7/24/2023 11:01:05'!
