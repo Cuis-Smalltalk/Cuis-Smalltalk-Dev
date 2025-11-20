@@ -1,6 +1,6 @@
-'From Cuis7.5 [latest update: #7703] on 19 November 2025 at 6:07:14 pm'!
+'From Cuis7.5 [latest update: #7706] on 20 November 2025 at 9:26:45 am'!
 'Description Rename extentions tests'!
-!provides: 'BaseImageTests' 1 470!
+!provides: 'BaseImageTests' 1 471!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Compiler'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Objects'!
@@ -18634,6 +18634,30 @@ testTerminateEnsureOnTopOfEnsure
 	self assert: p isTerminated
 
 ! !
+
+!ProcessTest methodsFor: 'tests' stamp: 'jar 11/20/2025 09:18:03'!
+testTerminateEverywhere
+
+	| block steps |
+	block := [([[Notification signal]
+		ensure: []]
+			on: Notification do: [:ex | ex resume: 6])
+				* 7].
+	
+	steps := 0.
+	[steps] whileNotNil:
+		[| process |
+		process := Process forContext: block asContext priority: Processor activePriority.
+		steps timesRepeat:
+			[(process suspendedContext stackPtr > 0 and: [process suspendedContext top = 42])
+				ifTrue: [steps := nil]
+				ifFalse: [process step]].
+		steps ifNotNil: [steps := steps + 1].
+		"we need to skip quick returns to prevent VM crash; they are not suspension points."
+		process suspendedContext method isQuick ifTrue: [process step. steps := steps + 1].
+		
+		process terminate.
+		self assert: process isTerminated].! !
 
 !ProcessTest methodsFor: 'tests' stamp: 'jar 1/19/2023 18:05:42'!
 testTerminateHandlingUnwindError
