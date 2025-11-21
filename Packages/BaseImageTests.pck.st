@@ -1,6 +1,6 @@
-'From Cuis7.5 [latest update: #7706] on 20 November 2025 at 9:26:45 am'!
+'From Cuis7.5 [latest update: #7708] on 21 November 2025 at 9:02:33 am'!
 'Description Rename extentions tests'!
-!provides: 'BaseImageTests' 1 471!
+!provides: 'BaseImageTests' 1 472!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Compiler'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Objects'!
@@ -3080,6 +3080,26 @@ testWriteStreamOnOrderedCollectionGrowsAsExpected
 		1 to: 101 do: [ :aNumber | stream nextPut: aNumber ]].
 	
 	1 to: 101 do: [ :aNumber | self assert: (contents at: aNumber) equals: aNumber ].! !
+
+!OrderedDictionaryTest methodsFor: 'tests' stamp: 'mir 11/21/2025 17:39:07'!
+testCopy
+	| data dict dictCopy dataToRemove  |
+
+	"Test that #do:, #select: and #collect: iterate in the correct order"
+	dict := OrderedDictionary new.
+	data := self sampleData.
+	dataToRemove := self sampleData2.
+
+	data do: [ :pair |
+		dict at: pair first put: pair second ].
+
+	dictCopy := dict copy.
+
+	dataToRemove do: [ :pair |
+		dict removeKey: pair first ].
+	dataToRemove do: [ :pair |
+		dictCopy removeKey: pair first ].
+	self assert: dict keys = dictCopy keys.! !
 
 !OrderedDictionaryTest methodsFor: 'tests' stamp: 'jmv 5/25/2018 10:36:59'!
 testOrder
