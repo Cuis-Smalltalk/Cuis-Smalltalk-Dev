@@ -1,6 +1,6 @@
-'From Cuis7.5 [latest update: #7709] on 24 November 2025 at 3:03:45 pm'!
+'From Cuis7.5 [latest update: #7710] on 24 November 2025 at 5:08:13 pm'!
 'Description '!
-!provides: 'MultiBrowserWindow' 1 5!
+!provides: 'MultiBrowserWindow' 1 6!
 SystemOrganization addCategory: #MultiBrowserWindow!
 
 
@@ -140,10 +140,10 @@ createMultiBrowserCloseButton
 		setBalloonText: 'close this browser tab';
 		morphExtent: Theme current titleBarButtonsExtent! !
 
-!MultiBrowserWindow methodsFor: 'initialization' stamp: 'jmv 12/6/2024 16:36:29'!
+!MultiBrowserWindow methodsFor: 'initialization' stamp: 'jmv 11/24/2025 16:57:28'!
 createMultiBrowserMenuButton
 	^ (PluggableButtonMorph model: self action: #offerMultiBrowserMenu)
-		iconDrawSelector: #drawSquareExpandIcon;
+		iconDrawSelector: #drawSquareMenuIcon;
 		setBalloonText: 'multi browser menu';
 		morphExtent: Theme current titleBarButtonsExtent! !
 
@@ -251,6 +251,10 @@ openOnClasses: aCollection selectors: another
 	w showTab: 1.
 ! !
 
+!MultiBrowserWindow class methodsFor: 'class initialization' stamp: 'jmv 11/24/2025 16:53:01'!
+initialize
+	self beDefaultBrowserWindowClass! !
+
 !BrowserWindowState methodsFor: 'accessing' stamp: 'jmv 12/3/2024 10:58:46'!
 browserModel
 	^model! !
@@ -272,3 +276,4 @@ model: aModel mainLayout: aLayout codePane: aCodePane
 !BrowserWindowState class methodsFor: 'instance creation' stamp: 'jmv 12/3/2024 10:39:48'!
 model: aModel mainLayout: aLayout codePane: aCodePane
 	^self new model: aModel mainLayout: aLayout codePane: aCodePane! !
+MultiBrowserWindow initialize!
