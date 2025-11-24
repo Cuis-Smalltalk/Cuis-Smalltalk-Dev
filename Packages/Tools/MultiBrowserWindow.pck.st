@@ -1,6 +1,6 @@
-'From Cuis7.3 [latest update: #7040] on 30 January 2025 at 4:34:57 pm'!
+'From Cuis7.5 [latest update: #7709] on 24 November 2025 at 3:03:45 pm'!
 'Description '!
-!provides: 'MultiBrowserWindow' 1 4!
+!provides: 'MultiBrowserWindow' 1 5!
 SystemOrganization addCategory: #MultiBrowserWindow!
 
 
@@ -161,10 +161,10 @@ createMultiBrowserPrevButton
 		setBalloonText: 'prev browser';
 		morphExtent: Theme current titleBarButtonsExtent! !
 
-!MultiBrowserWindow methodsFor: 'initialization' stamp: 'jmv 12/3/2024 10:58:02'!
+!MultiBrowserWindow methodsFor: 'initialization' stamp: 'jmv 11/24/2025 15:01:02'!
 initialize
-	super initialize.
 	browserWindowsState := OrderedCollection new.
+	super initialize.
 ! !
 
 !MultiBrowserWindow methodsFor: 'initialization' stamp: 'jmv 12/6/2024 16:02:51'!
