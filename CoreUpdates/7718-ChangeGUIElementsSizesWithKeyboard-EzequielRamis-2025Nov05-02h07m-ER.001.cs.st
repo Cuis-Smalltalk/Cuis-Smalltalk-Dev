@@ -13,7 +13,7 @@ setDefaultFontSize: pointSize
 	Preferences saveToDisk: #defaultFontSize! !
 
 !Theme class methodsFor: 'user interface' stamp: 'ER 11/5/2025 02:57:04'!
-largerDefaultFomt
+largerDefaultFont
 	self setDefaultFontSize: (Preferences at: #defaultFontSize) + 1! !
 
 !Theme class methodsFor: 'user interface' stamp: 'ER 11/5/2025 02:57:09'!
@@ -67,8 +67,8 @@ worldMenuSpec
 		#(991 	nil 	$b 	smalltalk 	browse)
 		#(992 	nil 	$f 	smalltalk 	findAndBrowseClass)
 		#(993 	nil 	$F 	smalltalk 	findInSourceCode)
-		#(994 	nil 	$+ 	theme   	largerDefaultFomt)
-		#(995 	nil 	$= 	theme   	largerDefaultFomt) "See comment at #isCmdAltGreaterThan. This hack is needed for the shortcut to work on Mac."
+		#(994 	nil 	$+ 	theme   	largerDefaultFont)
+		#(995 	nil 	$= 	theme   	largerDefaultFont) "See comment at #isCmdAltGreaterThan. This hack is needed for the shortcut to work on Mac."
 		#(996 	nil 	$- 	theme   	smallerDefaultFont)
 	)! !
 
