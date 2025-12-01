@@ -17,5 +17,5 @@ authorAndStamp: aStamp partsDo: aBlock
 	dateAndTimePart := aStamp copyFrom: aux+1 to: aStamp size.
 	^aBlock
 		value: stamp
-		value: (DateAndTime fromString: dateAndTimePart)! !
+		value: (dateAndTimePart size > 0 ifTrue: [DateAndTime fromString: dateAndTimePart])! !
 
