@@ -1,6 +1,6 @@
-'From Cuis7.5 [latest update: #7708] on 21 November 2025 at 9:02:33 am'!
+'From Cuis7.5 [latest update: #7736] on 2 December 2025 at 9:43:54 am'!
 'Description Rename extentions tests'!
-!provides: 'BaseImageTests' 1 472!
+!provides: 'BaseImageTests' 1 473!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Compiler'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Objects'!
@@ -1809,70 +1809,70 @@ Made at Cuis Sprint #1
 !TaskbarTest commentStamp: '<historical>' prior: 0!
 Tests for the Taskbar.!
 
-!ExceptionTester methodsFor: 'accessing' stamp: 'dtl 6/1/2004 21:53'!
+!ExceptionTester methodsFor: 'accessing' stamp: 'dtl 1/Jun/2004 21:53:00'!
 basicANSISignaledExceptionTestSelectors
 
 	^#( simpleIsNestedTest simpleOuterTest doubleOuterTest doubleOuterPassTest doublePassOuterTest simplePassTest simpleResignalAsTest simpleResumeTest simpleRetryTest simpleRetryUsingTest simpleReturnTest)! !
 
-!ExceptionTester methodsFor: 'accessing' stamp: 'brp 10/21/2004 17:54'!
+!ExceptionTester methodsFor: 'accessing' stamp: 'brp 21/Oct/2004 17:54:00'!
 basicTestSelectors
 	^ #(#simpleEnsureTest #simpleEnsureTestWithNotification #simpleEnsureTestWithUparrow #simpleEnsureTestWithError #signalFromHandlerActionTest #resumableFallOffTheEndHandler #nonResumableFallOffTheEndHandler #doubleResumeTest #simpleTimeoutWithZeroDurationTest #simpleTimeoutTest simpleNoTimeoutTest)! !
 
-!ExceptionTester methodsFor: 'accessing' stamp: 'tfei 6/8/1999 09:14'!
+!ExceptionTester methodsFor: 'accessing' stamp: 'tfei 8/Jun/1999 09:14:00'!
 doSomethingElseString
 
 	^'Do something else.'! !
 
-!ExceptionTester methodsFor: 'accessing' stamp: 'tfei 6/8/1999 09:14'!
+!ExceptionTester methodsFor: 'accessing' stamp: 'tfei 8/Jun/1999 09:14:00'!
 doSomethingExceptionalString
 
 	^'Do something exceptional.'! !
 
-!ExceptionTester methodsFor: 'accessing' stamp: 'tfei 6/8/1999 09:13'!
+!ExceptionTester methodsFor: 'accessing' stamp: 'tfei 8/Jun/1999 09:13:00'!
 doSomethingString
 
 	^'Do something.'! !
 
-!ExceptionTester methodsFor: 'accessing' stamp: 'tfei 6/8/1999 09:15'!
+!ExceptionTester methodsFor: 'accessing' stamp: 'tfei 8/Jun/1999 09:15:00'!
 doYetAnotherThingString
 
 	^'Do yet another thing.'! !
 
-!ExceptionTester methodsFor: 'accessing' stamp: 'brp 10/21/2004 17:15'!
+!ExceptionTester methodsFor: 'accessing' stamp: 'brp 21/Oct/2004 17:15:00'!
 iterationsBeforeTimeout
 
 	^ iterationsBeforeTimeout! !
 
-!ExceptionTester methodsFor: 'accessing' stamp: 'brp 10/21/2004 17:16'!
+!ExceptionTester methodsFor: 'accessing' stamp: 'brp 21/Oct/2004 17:16:00'!
 iterationsBeforeTimeout: anInteger
 
 	iterationsBeforeTimeout := anInteger! !
 
-!ExceptionTester methodsFor: 'accessing' stamp: 'tfei 6/7/1999 15:03'!
+!ExceptionTester methodsFor: 'accessing' stamp: 'tfei 7/Jun/1999 15:03:00'!
 log
 
 	log == nil
 		ifTrue: [log := OrderedCollection new].
 	^log! !
 
-!ExceptionTester methodsFor: 'accessing' stamp: 'tfei 6/8/1999 09:30'!
+!ExceptionTester methodsFor: 'accessing' stamp: 'tfei 8/Jun/1999 09:30:00'!
 suiteLog
 
 	suiteLog == nil
 		ifTrue: [suiteLog := OrderedCollection new].
 	^suiteLog! !
 
-!ExceptionTester methodsFor: 'accessing' stamp: 'tfei 6/8/1999 09:15'!
+!ExceptionTester methodsFor: 'accessing' stamp: 'tfei 8/Jun/1999 09:15:00'!
 testString
 
 	^'This is only a test.'! !
 
-!ExceptionTester methodsFor: 'logging' stamp: 'tfei 6/8/1999 09:17'!
+!ExceptionTester methodsFor: 'logging' stamp: 'tfei 8/Jun/1999 09:17:00'!
 clearLog
 
 	log := nil! !
 
-!ExceptionTester methodsFor: 'logging' stamp: 'jmv 3/13/2012 12:33'!
+!ExceptionTester methodsFor: 'logging' stamp: 'jmv 13/Mar/2012 12:33:00'!
 contents
 
 	^( self log
@@ -1883,17 +1883,17 @@ contents
 				nextPutAll: item;
 				yourself] ) contents! !
 
-!ExceptionTester methodsFor: 'logging' stamp: 'tfei 6/7/1999 15:03'!
+!ExceptionTester methodsFor: 'logging' stamp: 'tfei 7/Jun/1999 15:03:00'!
 log: aString
 
 	self log add: aString! !
 
-!ExceptionTester methodsFor: 'logging' stamp: 'tfei 6/12/1999 23:07'!
+!ExceptionTester methodsFor: 'logging' stamp: 'tfei 12/Jun/1999 23:07:00'!
 logTest: aSelector
 
 	self suiteLog add: aSelector! !
 
-!ExceptionTester methodsFor: 'logging' stamp: 'tfei 6/8/1999 09:38'!
+!ExceptionTester methodsFor: 'logging' stamp: 'tfei 8/Jun/1999 09:38:00'!
 logTestResult: aString
 
 	| index |
@@ -1902,37 +1902,37 @@ logTestResult: aString
 		at: index
 		put: ((self suiteLog at: index), ' ', aString)! !
 
-!ExceptionTester methodsFor: 'pseudo actions' stamp: 'tfei 6/8/1999 09:13'!
+!ExceptionTester methodsFor: 'pseudo actions' stamp: 'tfei 8/Jun/1999 09:13:00'!
 doSomething
 
 	self log: self doSomethingString! !
 
-!ExceptionTester methodsFor: 'pseudo actions' stamp: 'tfei 6/8/1999 09:14'!
+!ExceptionTester methodsFor: 'pseudo actions' stamp: 'tfei 8/Jun/1999 09:14:00'!
 doSomethingElse
 
 	self log: self doSomethingElseString! !
 
-!ExceptionTester methodsFor: 'pseudo actions' stamp: 'tfei 6/8/1999 09:14'!
+!ExceptionTester methodsFor: 'pseudo actions' stamp: 'tfei 8/Jun/1999 09:14:00'!
 doSomethingExceptional
 
 	self log: self doSomethingExceptionalString! !
 
-!ExceptionTester methodsFor: 'pseudo actions' stamp: 'tfei 6/8/1999 09:15'!
+!ExceptionTester methodsFor: 'pseudo actions' stamp: 'tfei 8/Jun/1999 09:15:00'!
 doYetAnotherThing
 
 	self log: self doYetAnotherThingString! !
 
-!ExceptionTester methodsFor: 'pseudo actions' stamp: 'tfei 6/8/1999 09:16'!
+!ExceptionTester methodsFor: 'pseudo actions' stamp: 'tfei 8/Jun/1999 09:16:00'!
 methodWithError
 
 	MyTestError signal: self testString! !
 
-!ExceptionTester methodsFor: 'pseudo actions' stamp: 'tfei 6/8/1999 09:16'!
+!ExceptionTester methodsFor: 'pseudo actions' stamp: 'tfei 8/Jun/1999 09:16:00'!
 methodWithNotification
 
 	MyTestNotification signal: self testString! !
 
-!ExceptionTester methodsFor: 'signaledException tests' stamp: 'dtl 6/1/2004 21:51'!
+!ExceptionTester methodsFor: 'signaledException tests' stamp: 'dtl 1/Jun/2004 21:51:00'!
 doubleOuterPassTest
 	"uses #resume"
 
@@ -1948,7 +1948,7 @@ doubleOuterPassTest
 				on: MyTestNotification
 				do: [:ex | self doYetAnotherThing. ex resume]! !
 
-!ExceptionTester methodsFor: 'signaledException tests' stamp: 'dtl 6/1/2004 21:49'!
+!ExceptionTester methodsFor: 'signaledException tests' stamp: 'dtl 1/Jun/2004 21:49:00'!
 doubleOuterTest
 	"uses #resume"
 
@@ -1964,7 +1964,7 @@ doubleOuterTest
 				on: MyTestNotification
 				do: [:ex | self doYetAnotherThing. ex resume]! !
 
-!ExceptionTester methodsFor: 'signaledException tests' stamp: 'dtl 6/1/2004 21:52'!
+!ExceptionTester methodsFor: 'signaledException tests' stamp: 'dtl 1/Jun/2004 21:52:00'!
 doublePassOuterTest
 	"uses #resume"
 
@@ -1980,7 +1980,7 @@ doublePassOuterTest
 				on: MyTestNotification
 				do: [:ex | self doYetAnotherThing. ex resume]! !
 
-!ExceptionTester methodsFor: 'signaledException tests' stamp: 'tfei 6/13/1999 01:27'!
+!ExceptionTester methodsFor: 'signaledException tests' stamp: 'tfei 13/Jun/1999 01:27:00'!
 simpleIsNestedTest
 	"uses resignalAs:"
 
@@ -1995,7 +1995,7 @@ simpleIsNestedTest
 					[self doYetAnotherThing.
 					ex resignalAs: MyTestNotification new]]! !
 
-!ExceptionTester methodsFor: 'signaledException tests' stamp: 'tpr 5/27/2004 21:50'!
+!ExceptionTester methodsFor: 'signaledException tests' stamp: 'tpr 27/May/2004 21:50:00'!
 simpleOuterTest
 	"uses #resume"
 
@@ -2008,7 +2008,7 @@ simpleOuterTest
 				on: MyTestNotification
 				do: [:ex | self doYetAnotherThing. ex resume]! !
 
-!ExceptionTester methodsFor: 'signaledException tests' stamp: 'tfei 6/13/1999 00:37'!
+!ExceptionTester methodsFor: 'signaledException tests' stamp: 'tfei 13/Jun/1999 00:37:00'!
 simplePassTest
 
 	[self doSomething.
@@ -2020,7 +2020,7 @@ simplePassTest
 			self doYetAnotherThing.
 			ex pass "expecting handler in #runTest:"]! !
 
-!ExceptionTester methodsFor: 'signaledException tests' stamp: 'tfei 6/13/1999 02:12'!
+!ExceptionTester methodsFor: 'signaledException tests' stamp: 'tfei 13/Jun/1999 02:12:00'!
 simpleResignalAsTest
 	"ExceptionTester new simpleResignalAsTest"
 
@@ -2031,7 +2031,7 @@ simpleResignalAsTest
 		do:
 			[:ex | ex resignalAs: MyTestError new]! !
 
-!ExceptionTester methodsFor: 'signaledException tests' stamp: 'nice 12/27/2009 21:06'!
+!ExceptionTester methodsFor: 'signaledException tests' stamp: 'nice 27/Dec/2009 21:06:00'!
 simpleResumeTest
 	"see if we can resume twice"
 	
@@ -2048,7 +2048,7 @@ simpleResumeTest
 			self doYetAnotherThing.
 			ex resume: 3]! !
 
-!ExceptionTester methodsFor: 'signaledException tests' stamp: 'tfei 6/13/1999 01:02'!
+!ExceptionTester methodsFor: 'signaledException tests' stamp: 'tfei 13/Jun/1999 01:02:00'!
 simpleRetryTest
 
 	| theMeaningOfLife |
@@ -2064,7 +2064,7 @@ simpleRetryTest
 				self doYetAnotherThing.
 				ex retry]! !
 
-!ExceptionTester methodsFor: 'signaledException tests' stamp: 'tfei 6/13/1999 01:03'!
+!ExceptionTester methodsFor: 'signaledException tests' stamp: 'tfei 13/Jun/1999 01:03:00'!
 simpleRetryUsingTest
 
 	[self doSomething.
@@ -2074,7 +2074,7 @@ simpleRetryUsingTest
 		do:
 			[:ex | ex retryUsing: [self doYetAnotherThing]]! !
 
-!ExceptionTester methodsFor: 'signaledException tests' stamp: 'tfei 6/13/1999 00:59'!
+!ExceptionTester methodsFor: 'signaledException tests' stamp: 'tfei 13/Jun/1999 00:59:00'!
 simpleReturnTest
 
 	| it |
@@ -2086,7 +2086,7 @@ simpleReturnTest
 			do: [:ex | ex return: 3].
 	it = 3 ifTrue: [self doYetAnotherThing]! !
 
-!ExceptionTester methodsFor: 'signaledException results' stamp: 'dtl 6/1/2004 21:56'!
+!ExceptionTester methodsFor: 'signaledException results' stamp: 'dtl 1/Jun/2004 21:56:00'!
 doubleOuterPassTestResults
 
 	^OrderedCollection new
@@ -2095,7 +2095,7 @@ doubleOuterPassTestResults
 		add: self doSomethingElseString;
 		yourself! !
 
-!ExceptionTester methodsFor: 'signaledException results' stamp: 'dtl 6/1/2004 21:56'!
+!ExceptionTester methodsFor: 'signaledException results' stamp: 'dtl 1/Jun/2004 21:56:00'!
 doublePassOuterTestResults
 
 	^OrderedCollection new
@@ -2104,7 +2104,7 @@ doublePassOuterTestResults
 		add: self doSomethingElseString;
 		yourself! !
 
-!ExceptionTester methodsFor: 'signaledException results' stamp: 'tfei 6/13/1999 01:09'!
+!ExceptionTester methodsFor: 'signaledException results' stamp: 'tfei 13/Jun/1999 01:09:00'!
 simpleIsNestedTestResults
 
 	^OrderedCollection new
@@ -2113,7 +2113,7 @@ simpleIsNestedTestResults
 		add: self doSomethingElseString;
 		yourself! !
 
-!ExceptionTester methodsFor: 'signaledException results' stamp: 'tfei 6/13/1999 01:10'!
+!ExceptionTester methodsFor: 'signaledException results' stamp: 'tfei 13/Jun/1999 01:10:00'!
 simpleOuterTestResults
 
 	^OrderedCollection new
@@ -2122,7 +2122,7 @@ simpleOuterTestResults
 		add: self doSomethingElseString;
 		yourself! !
 
-!ExceptionTester methodsFor: 'signaledException results' stamp: 'tfei 6/13/1999 01:10'!
+!ExceptionTester methodsFor: 'signaledException results' stamp: 'tfei 13/Jun/1999 01:10:00'!
 simplePassTestResults
 
 	^OrderedCollection new
@@ -2131,7 +2131,7 @@ simplePassTestResults
 		add: 'Unhandled Exception';
 		yourself! !
 
-!ExceptionTester methodsFor: 'signaledException results' stamp: 'tfei 6/13/1999 01:11'!
+!ExceptionTester methodsFor: 'signaledException results' stamp: 'tfei 13/Jun/1999 01:11:00'!
 simpleResignalAsTestResults
 
 	^OrderedCollection new
@@ -2139,7 +2139,7 @@ simpleResignalAsTestResults
 		add: 'Unhandled Exception';
 		yourself! !
 
-!ExceptionTester methodsFor: 'signaledException results' stamp: 'RAA 12/8/2000 12:59'!
+!ExceptionTester methodsFor: 'signaledException results' stamp: 'RAA 8/Dec/2000 12:59:00'!
 simpleResumeTestResults
 
 	"see if we can resume twice"
@@ -2152,7 +2152,7 @@ simpleResumeTestResults
 			add: self doSomethingElseString;
 			yourself! !
 
-!ExceptionTester methodsFor: 'signaledException results' stamp: 'tfei 6/13/1999 01:23'!
+!ExceptionTester methodsFor: 'signaledException results' stamp: 'tfei 13/Jun/1999 01:23:00'!
 simpleRetryTestResults
 
 	^OrderedCollection new
@@ -2162,7 +2162,7 @@ simpleRetryTestResults
 			add: self doSomethingElseString;
 			yourself! !
 
-!ExceptionTester methodsFor: 'signaledException results' stamp: 'tfei 6/13/1999 01:23'!
+!ExceptionTester methodsFor: 'signaledException results' stamp: 'tfei 13/Jun/1999 01:23:00'!
 simpleRetryUsingTestResults
 
 	^OrderedCollection new
@@ -2170,7 +2170,7 @@ simpleRetryUsingTestResults
 			add: self doYetAnotherThingString;
 			yourself! !
 
-!ExceptionTester methodsFor: 'signaledException results' stamp: 'tfei 6/13/1999 02:22'!
+!ExceptionTester methodsFor: 'signaledException results' stamp: 'tfei 13/Jun/1999 02:22:00'!
 simpleReturnTestResults
 
 	^OrderedCollection new
@@ -2178,7 +2178,7 @@ simpleReturnTestResults
 		add: self doYetAnotherThingString;
 		yourself! !
 
-!ExceptionTester methodsFor: 'tests' stamp: 'tfei 11/14/1999 17:26'!
+!ExceptionTester methodsFor: 'tests' stamp: 'tfei 14/Nov/1999 17:26:00'!
 doubleResumeTest
 
        [self doSomething.
@@ -2189,7 +2189,7 @@ doubleResumeTest
                on: MyResumableTestError
                do: [:ex | ex resume].! !
 
-!ExceptionTester methodsFor: 'tests' stamp: 'tfei 6/7/1999 13:43'!
+!ExceptionTester methodsFor: 'tests' stamp: 'tfei 7/Jun/1999 13:43:00'!
 nonResumableFallOffTheEndHandler
 	
 	[self doSomething.
@@ -2199,7 +2199,7 @@ nonResumableFallOffTheEndHandler
 		do: [:ex | self doSomethingExceptional].
 	self doYetAnotherThing! !
 
-!ExceptionTester methodsFor: 'tests' stamp: 'tfei 6/9/1999 16:07'!
+!ExceptionTester methodsFor: 'tests' stamp: 'tfei 9/Jun/1999 16:07:00'!
 resumableFallOffTheEndHandler
 
 	[self doSomething.
@@ -2209,7 +2209,7 @@ resumableFallOffTheEndHandler
 		do: [:ex | self doSomethingExceptional].
 	self doYetAnotherThing! !
 
-!ExceptionTester methodsFor: 'tests' stamp: 'tfei 8/19/1999 01:39'!
+!ExceptionTester methodsFor: 'tests' stamp: 'tfei 19/Aug/1999 01:39:00'!
 signalFromHandlerActionTest
 
 	[self doSomething.
@@ -2220,7 +2220,7 @@ signalFromHandlerActionTest
 			[self doYetAnotherThing.
 			MyTestError signal]! !
 
-!ExceptionTester methodsFor: 'tests' stamp: 'tfei 6/8/1999 09:44'!
+!ExceptionTester methodsFor: 'tests' stamp: 'tfei 8/Jun/1999 09:44:00'!
 simpleEnsureTest
 
 	[self doSomething.
@@ -2229,7 +2229,7 @@ simpleEnsureTest
 			[self doYetAnotherThing].
 	! !
 
-!ExceptionTester methodsFor: 'tests' stamp: 'tfei 6/8/1999 12:50'!
+!ExceptionTester methodsFor: 'tests' stamp: 'tfei 8/Jun/1999 12:50:00'!
 simpleEnsureTestWithError
 
 	[self doSomething.
@@ -2239,7 +2239,7 @@ simpleEnsureTestWithError
 			[self doYetAnotherThing].
 	! !
 
-!ExceptionTester methodsFor: 'tests' stamp: 'tfei 6/8/1999 10:15'!
+!ExceptionTester methodsFor: 'tests' stamp: 'tfei 8/Jun/1999 10:15:00'!
 simpleEnsureTestWithNotification
 
 	[self doSomething.
@@ -2249,7 +2249,7 @@ simpleEnsureTestWithNotification
 			[self doYetAnotherThing].
 	! !
 
-!ExceptionTester methodsFor: 'tests' stamp: 'tfei 6/9/1999 16:04'!
+!ExceptionTester methodsFor: 'tests' stamp: 'tfei 9/Jun/1999 16:04:00'!
 simpleEnsureTestWithUparrow
 
 	[self doSomething.
@@ -2259,14 +2259,14 @@ simpleEnsureTestWithUparrow
 			[self doYetAnotherThing].
 	! !
 
-!ExceptionTester methodsFor: 'tests' stamp: 'jmv 5/7/2012 21:38'!
+!ExceptionTester methodsFor: 'tests' stamp: 'jmv 7/May/2012 21:38:00'!
 simpleNoTimeoutTest
 
 	[ self doSomething ]
 		valueWithin: 1 days onTimeout:
 			[ self doSomethingElse ]! !
 
-!ExceptionTester methodsFor: 'tests' stamp: 'brp 10/22/2004 12:00'!
+!ExceptionTester methodsFor: 'tests' stamp: 'brp 22/Oct/2004 12:00:00'!
 simpleTimeoutTest
 
 	| n |
@@ -2275,7 +2275,7 @@ simpleTimeoutTest
 			[ self iterationsBeforeTimeout: n.
 			self doSomethingElse ]! !
 
-!ExceptionTester methodsFor: 'tests' stamp: 'brp 10/22/2004 12:00'!
+!ExceptionTester methodsFor: 'tests' stamp: 'brp 22/Oct/2004 12:00:00'!
 simpleTimeoutWithZeroDurationTest
 
 	[ self doSomething ]
@@ -2283,14 +2283,14 @@ simpleTimeoutWithZeroDurationTest
 			[ self doSomethingElse ].
 	! !
 
-!ExceptionTester methodsFor: 'tests' stamp: 'tfei 6/7/1999 14:28'!
+!ExceptionTester methodsFor: 'tests' stamp: 'tfei 7/Jun/1999 14:28:00'!
 warningTest
 
 	self log: 'About to signal warning.'.
 	Warning signal: 'Ouch'.
 	self log: 'Warning signal handled and resumed.'! !
 
-!ExceptionTester methodsFor: 'results' stamp: 'tfei 11/14/1999 17:29'!
+!ExceptionTester methodsFor: 'results' stamp: 'tfei 14/Nov/1999 17:29:00'!
 doubleResumeTestResults
 
        ^OrderedCollection new
@@ -2299,7 +2299,7 @@ doubleResumeTestResults
                add: self doYetAnotherThingString;
                yourself! !
 
-!ExceptionTester methodsFor: 'results' stamp: 'tfei 6/8/1999 09:21'!
+!ExceptionTester methodsFor: 'results' stamp: 'tfei 8/Jun/1999 09:21:00'!
 nonResumableFallOffTheEndHandlerResults
 
 	^OrderedCollection new
@@ -2308,7 +2308,7 @@ nonResumableFallOffTheEndHandlerResults
 		add: self doYetAnotherThingString;
 		yourself! !
 
-!ExceptionTester methodsFor: 'results' stamp: 'tfei 8/19/1999 02:39'!
+!ExceptionTester methodsFor: 'results' stamp: 'tfei 19/Aug/1999 02:39:00'!
 resumableFallOffTheEndHandlerResults
 
 	^OrderedCollection new
@@ -2317,7 +2317,7 @@ resumableFallOffTheEndHandlerResults
 		add: self doYetAnotherThingString;
 		yourself! !
 
-!ExceptionTester methodsFor: 'results' stamp: 'tfei 8/19/1999 01:51'!
+!ExceptionTester methodsFor: 'results' stamp: 'tfei 19/Aug/1999 01:51:00'!
 signalFromHandlerActionTestResults
 
 	^OrderedCollection new
@@ -2326,7 +2326,7 @@ signalFromHandlerActionTestResults
 		add: 'Unhandled Exception';
 		yourself! !
 
-!ExceptionTester methodsFor: 'results' stamp: 'tfei 6/8/1999 09:47'!
+!ExceptionTester methodsFor: 'results' stamp: 'tfei 8/Jun/1999 09:47:00'!
 simpleEnsureTestResults
 
 	^OrderedCollection new
@@ -2335,7 +2335,7 @@ simpleEnsureTestResults
 		add: self doYetAnotherThingString;
 		yourself! !
 
-!ExceptionTester methodsFor: 'results' stamp: 'tfei 6/9/1999 17:44'!
+!ExceptionTester methodsFor: 'results' stamp: 'tfei 9/Jun/1999 17:44:00'!
 simpleEnsureTestWithErrorResults
 
 	^OrderedCollection new
@@ -2344,7 +2344,7 @@ simpleEnsureTestWithErrorResults
 		add: self doYetAnotherThingString;
 		yourself! !
 
-!ExceptionTester methodsFor: 'results' stamp: 'tfei 6/8/1999 10:13'!
+!ExceptionTester methodsFor: 'results' stamp: 'tfei 8/Jun/1999 10:13:00'!
 simpleEnsureTestWithNotificationResults
 
 	^OrderedCollection new
@@ -2353,7 +2353,7 @@ simpleEnsureTestWithNotificationResults
 		add: self doYetAnotherThingString;
 		yourself! !
 
-!ExceptionTester methodsFor: 'results' stamp: 'tfei 6/8/1999 18:55'!
+!ExceptionTester methodsFor: 'results' stamp: 'tfei 8/Jun/1999 18:55:00'!
 simpleEnsureTestWithUparrowResults
 
 	^OrderedCollection new
@@ -2362,14 +2362,14 @@ simpleEnsureTestWithUparrowResults
 		add: self doYetAnotherThingString;
 		yourself! !
 
-!ExceptionTester methodsFor: 'results' stamp: 'brp 10/21/2004 16:54'!
+!ExceptionTester methodsFor: 'results' stamp: 'brp 21/Oct/2004 16:54:00'!
 simpleNoTimeoutTestResults
 
 	^OrderedCollection new
 		add: self doSomethingString;
 		yourself! !
 
-!ExceptionTester methodsFor: 'results' stamp: 'jmv 2/6/2024 10:18:21'!
+!ExceptionTester methodsFor: 'results' stamp: 'jmv 6/Feb/2024 10:18:21'!
 simpleTimeoutTestResults
 
 	| things |
@@ -2380,14 +2380,14 @@ simpleTimeoutTestResults
 
 	^ things! !
 
-!ExceptionTester methodsFor: 'results' stamp: 'brp 10/21/2004 16:52'!
+!ExceptionTester methodsFor: 'results' stamp: 'brp 21/Oct/2004 16:52:00'!
 simpleTimeoutWithZeroDurationTestResults
 
 	^OrderedCollection new
 		add: self doSomethingElseString;
 		yourself! !
 
-!ExceptionTester methodsFor: 'suites' stamp: 'tfei 6/13/1999 01:25'!
+!ExceptionTester methodsFor: 'suites' stamp: 'tfei 13/Jun/1999 01:25:00'!
 runAllTests
 	"ExceptionTester new runAllTests"
 
@@ -2395,7 +2395,7 @@ runAllTests
 		runBasicTests;
 		runBasicANSISignaledExceptionTests! !
 
-!ExceptionTester methodsFor: 'suites' stamp: 'tfei 6/12/1999 23:54'!
+!ExceptionTester methodsFor: 'suites' stamp: 'tfei 12/Jun/1999 23:54:00'!
 runBasicANSISignaledExceptionTests
 
 	self basicANSISignaledExceptionTestSelectors
@@ -2403,7 +2403,7 @@ runBasicANSISignaledExceptionTests
 			[:eachTestSelector |
 			self runTest: eachTestSelector]! !
 
-!ExceptionTester methodsFor: 'suites' stamp: 'tfei 6/9/1999 16:06'!
+!ExceptionTester methodsFor: 'suites' stamp: 'tfei 9/Jun/1999 16:06:00'!
 runBasicTests
 
 	self basicTestSelectors
@@ -2411,7 +2411,7 @@ runBasicTests
 			[:eachTestSelector |
 			self runTest: eachTestSelector]! !
 
-!ExceptionTester methodsFor: 'testing' stamp: 'brp 10/21/2004 17:40'!
+!ExceptionTester methodsFor: 'testing' stamp: 'brp 21/Oct/2004 17:40:00'!
 runTest: aSelector
 
 	| actualResult expectedResult |
@@ -2431,12 +2431,12 @@ runTest: aSelector
 		ifFalse: [self logTestResult: 'failed' ].
 ! !
 
-!BecomeTestExperiment methodsFor: 'as yet unclassified' stamp: 'jmv 1/11/2019 12:21:36'!
+!BecomeTestExperiment methodsFor: 'as yet unclassified' stamp: 'jmv 11/Jan/2019 12:21:36'!
 initialize
 	a _ 1.
 	b _ 2.! !
 
-!BecomeTestExperiment methodsFor: 'as yet unclassified' stamp: 'jmv 1/29/2019 10:59:12'!
+!BecomeTestExperiment methodsFor: 'as yet unclassified' stamp: 'jmv 29/Jan/2019 10:59:12'!
 messStuffUp
 "In a Workspace
 
@@ -2453,7 +2453,7 @@ Processor invalidMethodInStackDueToClass: BecomeTestExperiment
 	BecomeTestExperiment threeVars. "New ivar c is added before a and be"
 	^a + b! !
 
-!BecomeTestExperiment methodsFor: 'as yet unclassified' stamp: 'jmv 1/29/2019 10:59:16'!
+!BecomeTestExperiment methodsFor: 'as yet unclassified' stamp: 'jmv 29/Jan/2019 10:59:16'!
 messStuffUpWBecome
 "In a Workspace
 
@@ -2470,7 +2470,7 @@ Processor invalidMethodInStackDueToClass: BecomeTestExperiment
 	self becomeForward: {22}.
 	^a + b! !
 
-!BecomeTestExperiment class methodsFor: 'as yet unclassified' stamp: 'jmv 3/8/2019 11:37:17'!
+!BecomeTestExperiment class methodsFor: 'as yet unclassified' stamp: 'jmv 8/Mar/2019 11:37:17'!
 threeVars
 
 	Object subclass: #BecomeTestExperiment
@@ -2479,7 +2479,7 @@ threeVars
 		poolDictionaries: ''
 		category: 'BaseImageTests-Kernel'! !
 
-!BecomeTestExperiment class methodsFor: 'as yet unclassified' stamp: 'jmv 3/8/2019 11:37:22'!
+!BecomeTestExperiment class methodsFor: 'as yet unclassified' stamp: 'jmv 8/Mar/2019 11:37:22'!
 twoVars
 
 	Object subclass: #BecomeTestExperiment
@@ -2488,25 +2488,25 @@ twoVars
 		poolDictionaries: ''
 		category: 'BaseImageTests-Kernel'! !
 
-!FinalizationTestObject methodsFor: 'accessing' stamp: 'jmv 12/17/2024 09:20:13'!
+!FinalizationTestObject methodsFor: 'accessing' stamp: 'jmv 17/Dec/2024 09:20:13'!
 finalizeAction: aBlock
 	finalizeAction := aBlock! !
 
-!FinalizationTestObject methodsFor: 'finalization' stamp: 'jmv 12/17/2024 09:20:29'!
+!FinalizationTestObject methodsFor: 'finalization' stamp: 'jmv 17/Dec/2024 09:20:29'!
 finalize
 	finalizeAction value! !
 
-!RefactoringClassTestData class methodsFor: 'compiling' stamp: 'HAW 12/18/2019 19:55:32'!
+!RefactoringClassTestData class methodsFor: 'compiling' stamp: 'HAW 18/Dec/2019 19:55:32'!
 wantsChangeSetLogging 
 
 	^false! !
 
-!MyResumableTestError methodsFor: 'exceptionDescription' stamp: 'tfei 6/13/1999 00:46'!
+!MyResumableTestError methodsFor: 'exceptionDescription' stamp: 'tfei 13/Jun/1999 00:46:00'!
 isResumable
 
 	^true! !
 
-!BagTest methodsFor: 'tests' stamp: 'jmv 11/2/2022 15:11:59'!
+!BagTest methodsFor: 'tests' stamp: 'jmv 2/Nov/2022 15:11:59'!
 testProduct
 
 	| bag |	
@@ -2515,12 +2515,12 @@ testProduct
 	self assert: (bag product: [ :v | v ]) = 240.
 	self assert: (bag product: [ :v | v-1 ]) = 72.! !
 
-!BagTest methodsFor: 'tests' stamp: 'jmv 7/31/2023 12:00:47'!
+!BagTest methodsFor: 'tests' stamp: 'jmv 31/Jul/2023 12:00:47'!
 testSumIfEmptyEvalsIfEmptyBlockWhenEmpty
 
 	self assert: (Bag new sum: [:each | 1 ] ifEmpty: [ 'empty' ]) equals: 'empty'.! !
 
-!BagTest methodsFor: 'tests' stamp: 'jmv 7/31/2023 12:00:58'!
+!BagTest methodsFor: 'tests' stamp: 'jmv 31/Jul/2023 12:00:58'!
 testSumIfEmptyEvalsSumBlockForEachElementSumingTheResult
 
 	| bag |
@@ -2531,7 +2531,7 @@ testSumIfEmptyEvalsSumBlockForEachElementSumingTheResult
 	
 	self assert: (bag sum: [ :aString | aString = 'hello' ifTrue: [ 2 ] ifFalse: [ -1 ]] ifEmpty: [ self fail ]) equals: 3.! !
 
-!BinarySearchTest methodsFor: 'testing' stamp: 'sqr 5/25/2016 14:36'!
+!BinarySearchTest methodsFor: 'testing' stamp: 'sqr 25/May/2016 14:36:00'!
 testquickFindFirst
 
 	| collection |
@@ -2543,7 +2543,7 @@ testquickFindFirst
 		].
 	self assert: (collection quickFindFirst: [:one | one > 2101]) = 0! !
 
-!BinarySearchTest methodsFor: 'testing' stamp: 'sqr 5/25/2016 14:36'!
+!BinarySearchTest methodsFor: 'testing' stamp: 'sqr 25/May/2016 14:36:00'!
 testquickFindLast
 
 	| collection |
@@ -2555,7 +2555,7 @@ testquickFindLast
 		].
 	self assert: (collection quickFindLast: [:one | one < 0]) = 0! !
 
-!BinarySearchTest methodsFor: 'testing' stamp: 'sqr 5/25/2016 14:46'!
+!BinarySearchTest methodsFor: 'testing' stamp: 'sqr 25/May/2016 14:46:00'!
 testquickIndexOf
 
 	| collection |
@@ -2567,7 +2567,7 @@ testquickIndexOf
 	self assert: (collection quickIndexOf: 999) = 0.
 	self assert: (collection quickIndexOf: 2101) = 0! !
 
-!BinarySearchTest methodsFor: 'testing' stamp: 'sqr 5/25/2016 15:01'!
+!BinarySearchTest methodsFor: 'testing' stamp: 'sqr 25/May/2016 15:01:00'!
 testquickIndexOfWithSemistableOrder
 
 	| collection |
@@ -2577,7 +2577,7 @@ testquickIndexOfWithSemistableOrder
 	1 to: 50 do: [:each | collection add: 42 -> each].
 	self assert: (collection quickIndexOf: 42 -> 6) = 48! !
 
-!CollectTest methodsFor: 'testing' stamp: 'jmv 11/30/2014 11:34'!
+!CollectTest methodsFor: 'testing' stamp: 'jmv 30/Nov/2014 11:34:00'!
 testIdentitySet
 	"
 	CollectTest  new testIdentitySet
@@ -2589,7 +2589,7 @@ testIdentitySet
 	self assert: result = #(1 2 3 1.0 2.0 3.0) asIdentitySet.
 	self assert: result = col! !
 
-!CollectTest methodsFor: 'testing' stamp: 'jmv 11/30/2014 10:51'!
+!CollectTest methodsFor: 'testing' stamp: 'jmv 30/Nov/2014 10:51:00'!
 testOrderedCollection
 	"
 	CollectTest  new testOrderedCollection
@@ -2600,7 +2600,7 @@ testOrderedCollection
 	self assert: result class = OrderedCollection.
 	self assert: result = #(2 4 6 8 10) asOrderedCollection! !
 
-!CollectTest methodsFor: 'testing' stamp: 'jmv 11/30/2014 11:34'!
+!CollectTest methodsFor: 'testing' stamp: 'jmv 30/Nov/2014 11:34:00'!
 testSet
 	"
 	CollectTest  new testSet
@@ -2612,7 +2612,7 @@ testSet
 	self assert: result = #(1 2 3) asSet.
 	self assert: result = col! !
 
-!CollectTest methodsFor: 'testing' stamp: 'jmv 11/30/2014 11:01'!
+!CollectTest methodsFor: 'testing' stamp: 'jmv 30/Nov/2014 11:01:00'!
 testSortedCollection
 	"
 	CollectTest  new testSortedCollection
@@ -2623,7 +2623,7 @@ testSortedCollection
 	self assert: result class = OrderedCollection.
 	self assert: result = #(10 8 6 4 2) asOrderedCollection! !
 
-!CollectionTest methodsFor: 'groupBy tests' stamp: 'jmv 7/31/2023 12:01:40'!
+!CollectionTest methodsFor: 'groupBy tests' stamp: 'jmv 31/Jul/2023 12:01:40'!
 testGroupByHavingSelectsTheResultOfGroupBy
 
 	| collectionToGroupBy groupedByEven |
@@ -2634,7 +2634,7 @@ testGroupByHavingSelectsTheResultOfGroupBy
 	self assert: (groupedByEven size) equals: 1.	
 	self assert: (collectionToGroupBy select: [ :anInteger | anInteger odd ]) equals: (groupedByEven at: false).! !
 
-!CollectionTest methodsFor: 'groupBy tests' stamp: 'jmv 7/31/2023 12:01:59'!
+!CollectionTest methodsFor: 'groupBy tests' stamp: 'jmv 31/Jul/2023 12:01:59'!
 testGroupByReturnsADictionaryThatGroupsACollectionByThePluggableKey
 
 	| collectionToGroupBy groupedByEven |
@@ -2646,7 +2646,7 @@ testGroupByReturnsADictionaryThatGroupsACollectionByThePluggableKey
 	self assert: (collectionToGroupBy select: [ :anInteger | anInteger even ]) equals: (groupedByEven at: true).
 	self assert:(collectionToGroupBy select: [ :anInteger | anInteger odd ]) equals: (groupedByEven at: false).! !
 
-!CollectionTest methodsFor: 'average tests' stamp: 'HAW 11/17/2018 11:45:15'!
+!CollectionTest methodsFor: 'average tests' stamp: 'HAW 17/Nov/2018 11:45:15'!
 testAverageFailsWhenTheCollectionIsEmpty
 
 	self 
@@ -2654,7 +2654,7 @@ testAverageFailsWhenTheCollectionIsEmpty
 		raise: Error 
 		description: Collection emptyCollectionDescription! !
 
-!CollectionTest methodsFor: 'average tests' stamp: 'HAW 11/17/2018 11:45:19'!
+!CollectionTest methodsFor: 'average tests' stamp: 'HAW 17/Nov/2018 11:45:19'!
 testAverageIfEmptyCalculatesItAsUsualWhenTheCollectionIsNotEmpty
 
 	| someNumbers |
@@ -2665,7 +2665,7 @@ testAverageIfEmptyCalculatesItAsUsualWhenTheCollectionIsNotEmpty
 		assert: (someNumbers average: [ :each | each ] ifEmpty: [ self fail ])
 		equals: someNumbers average! !
 
-!CollectionTest methodsFor: 'average tests' stamp: 'HAW 11/17/2018 11:45:22'!
+!CollectionTest methodsFor: 'average tests' stamp: 'HAW 17/Nov/2018 11:45:22'!
 testAverageIfEmptyEvaluatesEmptyBlockWhenTheCollectionIsEmpty
 
 	| emptyBlock |
@@ -2676,19 +2676,19 @@ testAverageIfEmptyEvaluatesEmptyBlockWhenTheCollectionIsEmpty
 		assert: (#() average: [ :each | each asInteger ] ifEmpty: emptyBlock)
 		equals: emptyBlock value! !
 
-!CollectionTest methodsFor: 'average tests' stamp: 'jmv 1/6/2021 11:57:27'!
+!CollectionTest methodsFor: 'average tests' stamp: 'jmv 6/Jan/2021 11:57:27'!
 testsAverageWorksWithABlock
 
 	self assert: ({ '1' . '2' . '3' } average: [ :each | each asNumber ]) equals: 2! !
 
-!CollectionTest methodsFor: 'as comma separated tests' stamp: 'HAW 3/6/2019 15:11:08'!
+!CollectionTest methodsFor: 'as comma separated tests' stamp: 'HAW 6/Mar/2019 15:11:08'!
 assertAsCommaSeparated: aCollection equals: expectedString 
 	
 	self 
 		assert: (String streamContents: [ :stream | aCollection asCommaSeparated: [ :elem | stream print: elem + 1] on: stream ])
 		equals: expectedString! !
 
-!CollectionTest methodsFor: 'as comma separated tests' stamp: 'HAW 3/6/2019 15:12:31'!
+!CollectionTest methodsFor: 'as comma separated tests' stamp: 'HAW 6/Mar/2019 15:12:31'!
 testAsCommaSeparatedOnWorksAsCommaStringAnd
 
 	self assertAsCommaSeparated: #() equals: ''. 
@@ -2696,66 +2696,66 @@ testAsCommaSeparatedOnWorksAsCommaStringAnd
 	self assertAsCommaSeparated: #(1 2) equals: '2 and 3'. 
 	self assertAsCommaSeparated: #(1 2 3) equals: '2, 3 and 4'.! !
 
-!CollectionTest methodsFor: 'as comma separated tests' stamp: 'HAW 3/6/2019 15:11:51'!
+!CollectionTest methodsFor: 'as comma separated tests' stamp: 'HAW 6/Mar/2019 15:11:51'!
 testAsCommaStringAndDoesNotAddAnythingWhenEmpty
 
 	self assert: #() asCommaStringAnd isEmpty ! !
 
-!CollectionTest methodsFor: 'as comma separated tests' stamp: 'HAW 3/6/2019 15:11:59'!
+!CollectionTest methodsFor: 'as comma separated tests' stamp: 'HAW 6/Mar/2019 15:11:59'!
 testAsCommaStringAndDoesNotAddAnythingWhenHasOneElement
 
 	self assert: #(1) asCommaStringAnd equals: '1' ! !
 
-!CollectionTest methodsFor: 'as comma separated tests' stamp: 'HAW 3/6/2019 15:12:06'!
+!CollectionTest methodsFor: 'as comma separated tests' stamp: 'HAW 6/Mar/2019 15:12:06'!
 testAsCommaStringAndSeparatesWithAndWhenTwoOneElements
 
 	self assert: #(1 2) asCommaStringAnd equals: '1 and 2' ! !
 
-!CollectionTest methodsFor: 'as comma separated tests' stamp: 'HAW 3/6/2019 15:12:21'!
+!CollectionTest methodsFor: 'as comma separated tests' stamp: 'HAW 6/Mar/2019 15:12:21'!
 testAsCommaStringAndSeparatesWithCommaButLastOneWithAndWhenMoreThanTwoElements
 
 	self assert: #(1 2 3) asCommaStringAnd equals: '1, 2 and 3' ! !
 
-!CollectionTest methodsFor: 'flatten tests' stamp: 'jmv 7/31/2023 12:02:25'!
+!CollectionTest methodsFor: 'flatten tests' stamp: 'jmv 31/Jul/2023 12:02:25'!
 testItMaintainsTheSameCollectionSpecies
 
 	self assert: (OrderedCollection with: 1 with: #(2)) flatten equals: (OrderedCollection with: 1 with: 2).! !
 
-!CollectionTest methodsFor: 'flatten tests' stamp: 'jmv 7/31/2023 12:02:53'!
+!CollectionTest methodsFor: 'flatten tests' stamp: 'jmv 31/Jul/2023 12:02:53'!
 testWhenCollectionContainsASingleLevelOfElementsItReturnsTheSameCollection
 
 	self assert: #(1 2 3) flatten equals: #(1 2 3).! !
 
-!CollectionTest methodsFor: 'flatten tests' stamp: 'jmv 7/31/2023 12:03:14'!
+!CollectionTest methodsFor: 'flatten tests' stamp: 'jmv 31/Jul/2023 12:03:14'!
 testWhenCollectionContainsMoreThanTwoLevelsltReturnsTheElementsOfAllNestedCollections
 
 	self assert: #(1 #(2 3) #(4 #(5))) flatten equals: #(1 2 3 4 5).! !
 
-!CollectionTest methodsFor: 'flatten tests' stamp: 'jmv 7/31/2023 12:03:38'!
+!CollectionTest methodsFor: 'flatten tests' stamp: 'jmv 31/Jul/2023 12:03:38'!
 testWhenCollectionContainsStringCollectionsItDoesNotFlattenTheStrings
 
 	self assert: #('string1' #('string2' 'string3')) flatten equals: #('string1' 'string2' 'string3').! !
 
-!CollectionTest methodsFor: 'flatten tests' stamp: 'jmv 7/31/2023 12:03:59'!
+!CollectionTest methodsFor: 'flatten tests' stamp: 'jmv 31/Jul/2023 12:03:59'!
 testWhenCollectionContainsStringsItReturnsTheSameCollection
 
 	self assert: #('string1' 'string2' 'string3') flatten equals: #('string1' 'string2' 'string3').! !
 
-!CollectionTest methodsFor: 'flatten tests' stamp: 'jmv 7/31/2023 12:04:18'!
+!CollectionTest methodsFor: 'flatten tests' stamp: 'jmv 31/Jul/2023 12:04:18'!
 testWhenCollectionContainsTwoLevelsOfElementsItReturnsTheElementsOfAllNestedCollections
 	
 	self assert: #(#(1) #(2 3)) flatten equals: #(1 2 3).! !
 
-!CollectionTest methodsFor: 'flatten tests' stamp: 'jmv 7/31/2023 12:04:27'!
+!CollectionTest methodsFor: 'flatten tests' stamp: 'jmv 31/Jul/2023 12:04:27'!
 testWhenCollectionIsEmptyItReturnsTheSameCollection
 
 	self assert: #() flatten equals: #().! !
 
-!CollectionTest methodsFor: 'misc tests' stamp: 'jpb 8/2/2019 23:18:50'!
+!CollectionTest methodsFor: 'misc tests' stamp: 'jpb 2/Aug/2019 23:18:50'!
 testIsCollection
 	self assert: (Bag new is: #Collection).! !
 
-!CollectionTest methodsFor: 'misc tests' stamp: 'jmv 6/12/2019 18:22:57'!
+!CollectionTest methodsFor: 'misc tests' stamp: 'jmv 12/Jun/2019 18:22:57'!
 testSetEquality
 	self assert: Set new = IdentitySet new.
 	self assert: Set new hash = IdentitySet new hash.
@@ -2768,11 +2768,11 @@ testSetEquality
 
 	self deny: Set new = Dictionary new! !
 
-!DictionaryTest methodsFor: 'tests' stamp: 'jpb 8/2/2019 23:17:49'!
+!DictionaryTest methodsFor: 'tests' stamp: 'jpb 2/Aug/2019 23:17:49'!
 testIsCollection
 	self assert: (Dictionary new is: #Collection)! !
 
-!DictionaryTest methodsFor: 'tests' stamp: 'jmv 9/20/2023 15:43:32'!
+!DictionaryTest methodsFor: 'tests' stamp: 'jmv 20/Sep/2023 15:43:32'!
 testKeyNotFoundSignalTheRightMessage
 
 	self 
@@ -2780,7 +2780,7 @@ testKeyNotFoundSignalTheRightMessage
 		raise: Error
 		withMessageText: 'key: ''theKey'' not found'! !
 
-!IntervalTest methodsFor: 'testing' stamp: 'jmv 12/18/2018 10:56:31'!
+!IntervalTest methodsFor: 'testing' stamp: 'jmv 18/Dec/2018 10:56:31'!
 testAt
 	"
 	IntervalTest new testAt
@@ -2799,7 +2799,7 @@ testAt
 	self assert: ((0 to: 2.4 by: 0.1) at: 25) = 2.4.
 	self assert: (0 to: 2.4 by: 0.1) last = 2.4.! !
 
-!IntervalTest methodsFor: 'testing' stamp: 'jmv 12/18/2018 10:56:59'!
+!IntervalTest methodsFor: 'testing' stamp: 'jmv 18/Dec/2018 10:56:59'!
 testFloatInterval
 	"
 	IntervalTest new testFloatInterval
@@ -2818,7 +2818,7 @@ testFloatInterval
 		self assert: (1.0 to: 0.0 count: n) first = 1.0.
 		self assert: ((1.0 to: 0.0 count: n) last isWithin: 1 floatsFrom: 0.0)].! !
 
-!IntervalTest methodsFor: 'testing' stamp: 'HAW 3/17/2019 07:20:11'!
+!IntervalTest methodsFor: 'testing' stamp: 'HAW 17/Mar/2019 07:20:11'!
 testFloatToByDo
 	"
 	IntervalTest new testFloatToByDo
@@ -2835,7 +2835,7 @@ testFloatToByDo
 		1 to: toByDo size do: [ :i |
 			self assert: (toByDo at: i) = (interval at: i) ]]! !
 
-!IntervalTest methodsFor: 'testing' stamp: 'jmv 3/27/2016 17:18'!
+!IntervalTest methodsFor: 'testing' stamp: 'jmv 27/Mar/2016 17:18:00'!
 testIntegerInterval
 	"
 	IntervalTest new testIntegerInterval
@@ -2847,7 +2847,7 @@ testIntegerInterval
 	(2 to: 5 by: 2) do: [ :i | z _ i ].
 	self assert: z = 4! !
 
-!IntervalTest methodsFor: 'testing' stamp: 'jmv 4/27/2016 14:29'!
+!IntervalTest methodsFor: 'testing' stamp: 'jmv 27/Apr/2016 14:29:00'!
 testIntegerToByDo
 	"
 	IntervalTest new testIntegerToByDo
@@ -2861,7 +2861,7 @@ testIntegerToByDo
 	1 to: toByDo size do: [ :i |
 		self assert: (toByDo at: i) = (interval at: i) ]! !
 
-!IntervalTest methodsFor: 'test - includes' stamp: 'HAW 5/2/2020 11:43:33'!
+!IntervalTest methodsFor: 'test - includes' stamp: 'HAW 2/May/2020 11:43:33'!
 testDoesNotIncludeNumbersOutsideTheInInterval
 
 	| from1To10 |
@@ -2871,12 +2871,12 @@ testDoesNotIncludeNumbersOutsideTheInInterval
 	self deny: (from1To10 includes: 0).
 	self deny: (from1To10 includes: 11)! !
 
-!IntervalTest methodsFor: 'test - includes' stamp: 'HAW 5/2/2020 11:35:03'!
+!IntervalTest methodsFor: 'test - includes' stamp: 'HAW 2/May/2020 11:35:03'!
 testDoesNotIncludeObjectsThatAreNotNumbers
 
 	self deny: ((1 to: 10) includes: $a)! !
 
-!IntervalTest methodsFor: 'test - includes' stamp: 'HAW 5/2/2020 11:53:40'!
+!IntervalTest methodsFor: 'test - includes' stamp: 'HAW 2/May/2020 11:53:40'!
 testDoesNotIncludedNumbersThatAreInRangeButNotReachedByTheStep
 
 	| from1To10By2 |
@@ -2888,7 +2888,7 @@ testDoesNotIncludedNumbersThatAreInRangeButNotReachedByTheStep
 	self deny: (from1To10By2 includes: 6).
 	self deny: (from1To10By2 includes: 10).! !
 
-!IntervalTest methodsFor: 'test - includes' stamp: 'HAW 5/2/2020 11:54:48'!
+!IntervalTest methodsFor: 'test - includes' stamp: 'HAW 2/May/2020 11:54:48'!
 testDoesNotIncludedNumbersThatAreInRangeButNotReachedByTheStepWithReversedIntervals
 
 	| from10To1ByMinus2 |
@@ -2900,7 +2900,7 @@ testDoesNotIncludedNumbersThatAreInRangeButNotReachedByTheStepWithReversedInterv
 	self deny: (from10To1ByMinus2 includes: 5).
 	self deny: (from10To1ByMinus2 includes: 9).! !
 
-!IntervalTest methodsFor: 'test - includes' stamp: 'HAW 5/2/2020 11:43:03'!
+!IntervalTest methodsFor: 'test - includes' stamp: 'HAW 2/May/2020 11:43:03'!
 testIncludedNumbersRespectAStepDifferentToOne
 
 	| from1To10By2 |
@@ -2911,7 +2911,7 @@ testIncludedNumbersRespectAStepDifferentToOne
 	self assert: (from1To10By2 includes: 5).
 	self assert: (from1To10By2 includes: 9).! !
 
-!IntervalTest methodsFor: 'test - includes' stamp: 'HAW 5/2/2020 11:55:55'!
+!IntervalTest methodsFor: 'test - includes' stamp: 'HAW 2/May/2020 11:55:55'!
 testIncludedNumbersRespectNegativeSteps
 
 	| from10To1ByMinus2 |
@@ -2922,7 +2922,7 @@ testIncludedNumbersRespectNegativeSteps
 	self assert: (from10To1ByMinus2 includes: 6).
 	self assert: (from10To1ByMinus2 includes: 2).! !
 
-!IntervalTest methodsFor: 'test - includes' stamp: 'HAW 5/2/2020 11:43:26'!
+!IntervalTest methodsFor: 'test - includes' stamp: 'HAW 2/May/2020 11:43:26'!
 testIncludesNumbersInsideTheInterval
 
 	| from1To10 |
@@ -2933,7 +2933,7 @@ testIncludesNumbersInsideTheInterval
 	self assert: (from1To10 includes: 5).
 	self assert: (from1To10 includes: 10).! !
 
-!IntervalTest methodsFor: 'test - includes' stamp: 'HAW 5/2/2020 11:43:21'!
+!IntervalTest methodsFor: 'test - includes' stamp: 'HAW 2/May/2020 11:43:21'!
 testIncludesNumbersInsideTheIntervalEvenForReversedIntervals
 
 	| from10To1 |
@@ -2944,7 +2944,7 @@ testIncludesNumbersInsideTheIntervalEvenForReversedIntervals
 	self assert: (from10To1 includes: 5).
 	self assert: (from10To1 includes: 10).! !
 
-!IntervalTest methodsFor: 'test - includes' stamp: 'HAW 5/2/2020 12:01:44'!
+!IntervalTest methodsFor: 'test - includes' stamp: 'HAW 2/May/2020 12:01:44'!
 testIntervalWithOneNumberAndNegativeStepBiggerThanOneIncludeOnlyThatNumber
 
 	| from1To1ByMinus2 |
@@ -2955,7 +2955,7 @@ testIntervalWithOneNumberAndNegativeStepBiggerThanOneIncludeOnlyThatNumber
 	self deny: (from1To1ByMinus2 includes: -1).
 	self deny: (from1To1ByMinus2 includes: 3).! !
 
-!IntervalTest methodsFor: 'test - includes' stamp: 'HAW 5/2/2020 12:01:54'!
+!IntervalTest methodsFor: 'test - includes' stamp: 'HAW 2/May/2020 12:01:54'!
 testIntervalWithOneNumberAndNegativeStepIncludeOnlyThatNumber
 
 	| from1To1ByMinus1 |
@@ -2966,7 +2966,7 @@ testIntervalWithOneNumberAndNegativeStepIncludeOnlyThatNumber
 	self deny: (from1To1ByMinus1 includes: 0).
 	self deny: (from1To1ByMinus1 includes: 2).! !
 
-!IntervalTest methodsFor: 'test - includes' stamp: 'HAW 5/2/2020 12:00:46'!
+!IntervalTest methodsFor: 'test - includes' stamp: 'HAW 2/May/2020 12:00:46'!
 testIntervalWithOneNumberAndStepBiggerThanOneIncludesOnlyTheNumber
 
 	| from1To1By2 |
@@ -2977,7 +2977,7 @@ testIntervalWithOneNumberAndStepBiggerThanOneIncludesOnlyTheNumber
 	self deny: (from1To1By2 includes: -1).
 	self deny: (from1To1By2 includes: 3).! !
 
-!IntervalTest methodsFor: 'test - includes' stamp: 'HAW 5/2/2020 11:59:06'!
+!IntervalTest methodsFor: 'test - includes' stamp: 'HAW 2/May/2020 11:59:06'!
 testIntervalWithOneNumberIncludesOnlyTheNumber
 
 	| from1To1 |
@@ -2988,81 +2988,81 @@ testIntervalWithOneNumberIncludesOnlyTheNumber
 	self deny: (from1To1 includes: 0).
 	self deny: (from1To1 includes: 2).! !
 
-!IntervalTest methodsFor: 'tests - includesAll' stamp: 'HAW 6/11/2022 20:08:15'!
+!IntervalTest methodsFor: 'tests - includesAll' stamp: 'HAW 11/Jun/2022 20:08:15'!
 testIncludesAllOfFailsWhenFirstNotIncluded
 
 	self deny: ((3 to: 9 by: 2) includesAllOf: (1 to: 9 by: 2))! !
 
-!IntervalTest methodsFor: 'tests - includesAll' stamp: 'HAW 6/11/2022 20:08:18'!
+!IntervalTest methodsFor: 'tests - includesAll' stamp: 'HAW 11/Jun/2022 20:08:18'!
 testIncludesAllOfFailsWhenLastNotIncluded
 
 	self deny: ((1 to: 7 by: 2) includesAllOf: (1 to: 9 by: 2))! !
 
-!IntervalTest methodsFor: 'tests - includesAll' stamp: 'HAW 6/11/2022 20:08:21'!
+!IntervalTest methodsFor: 'tests - includesAll' stamp: 'HAW 11/Jun/2022 20:08:21'!
 testIncludesAllOfFailsWithOtherTypeOfCollectionWhenElementNotIncluded
 
 	self deny: ((1 to: 9 by: 2) includesAllOf: {1. 3. 5. 6. 7. 9})! !
 
-!IntervalTest methodsFor: 'tests - includesAll' stamp: 'HAW 6/11/2022 20:08:24'!
+!IntervalTest methodsFor: 'tests - includesAll' stamp: 'HAW 11/Jun/2022 20:08:24'!
 testIncludesAllOfIntervalWithIncludedFirstLastAndDifferentIncrement
 
 	self assert: ((1 to: 9 by: 2) includesAllOf: (3 to: 7 by: 4))! !
 
-!IntervalTest methodsFor: 'tests - includesAll' stamp: 'HAW 6/11/2022 20:08:27'!
+!IntervalTest methodsFor: 'tests - includesAll' stamp: 'HAW 11/Jun/2022 20:08:27'!
 testIncludesAllOfIntervalWithIncludedFirstSameLastAndIncrement
 
 	self assert: ((1 to: 10 by: 2) includesAllOf: (3 to: 10 by: 2))! !
 
-!IntervalTest methodsFor: 'tests - includesAll' stamp: 'HAW 6/11/2022 20:08:29'!
+!IntervalTest methodsFor: 'tests - includesAll' stamp: 'HAW 11/Jun/2022 20:08:29'!
 testIncludesAllOfIntervalWithSameFirstIncrementAndIncludedLast
 
 	self assert: ((1 to: 10 by: 2) includesAllOf: (1 to: 7 by: 2))! !
 
-!IntervalTest methodsFor: 'tests - includesAll' stamp: 'HAW 6/11/2022 20:08:32'!
+!IntervalTest methodsFor: 'tests - includesAll' stamp: 'HAW 11/Jun/2022 20:08:32'!
 testIncludesAllOfIntervalWithSameFirstLastAndIncrement
 
 	self assert: ((1 to: 10 by: 2) includesAllOf: (1 to: 10 by: 2))! !
 
-!IntervalTest methodsFor: 'tests - includesAll' stamp: 'HAW 6/11/2022 20:08:35'!
+!IntervalTest methodsFor: 'tests - includesAll' stamp: 'HAW 11/Jun/2022 20:08:35'!
 testIncludesAllOfOtherTypeOfCollection
 
 	self assert: ((1 to: 9 by: 2) includesAllOf: {1. 3. 5. 7. 9})! !
 
-!IntervalTest methodsFor: 'test - intersectsRange' stamp: 'HAW 11/2/2024 10:51:17'!
+!IntervalTest methodsFor: 'test - intersectsRange' stamp: 'HAW 2/Nov/2024 10:51:17'!
 testDoesNotIntersectRangeWhen_FirstAfter_LastAfter
 
 	self deny: ((5 to: 10) intersectsRange: (11 to: 12))! !
 
-!IntervalTest methodsFor: 'test - intersectsRange' stamp: 'HAW 11/2/2024 10:51:25'!
+!IntervalTest methodsFor: 'test - intersectsRange' stamp: 'HAW 2/Nov/2024 10:51:25'!
 testDoesNotIntersectRangeWhen_FirstBefore_LastBefore
 
 	self deny: ((5 to: 10) intersectsRange: (1 to: 4))! !
 
-!IntervalTest methodsFor: 'test - intersectsRange' stamp: 'HAW 11/2/2024 10:51:55'!
+!IntervalTest methodsFor: 'test - intersectsRange' stamp: 'HAW 2/Nov/2024 10:51:55'!
 testIntersectsRangeWhen_FirstBefore_LastAfter
 
 	self assert: ((5 to: 10) intersectsRange: (4 to: 11))! !
 
-!IntervalTest methodsFor: 'test - intersectsRange' stamp: 'HAW 11/2/2024 10:51:40'!
+!IntervalTest methodsFor: 'test - intersectsRange' stamp: 'HAW 2/Nov/2024 10:51:40'!
 testIntersectsRangeWhen_FirstBefore_LastIncluded
 
 	self assert: ((5 to: 10) intersectsRange: (1 to: 5))! !
 
-!IntervalTest methodsFor: 'test - intersectsRange' stamp: 'HAW 11/2/2024 10:51:47'!
+!IntervalTest methodsFor: 'test - intersectsRange' stamp: 'HAW 2/Nov/2024 10:51:47'!
 testIntersectsRangeWhen_FirstIncluded_LastAfter
 
 	self assert: ((5 to: 10) intersectsRange: (5 to: 11))! !
 
-!IntervalTest methodsFor: 'test - intersectsRange' stamp: 'HAW 11/2/2024 10:52:03'!
+!IntervalTest methodsFor: 'test - intersectsRange' stamp: 'HAW 2/Nov/2024 10:52:03'!
 testIntersectsRangeWhen_FirstIncluded_LastIncluded
 
 	self assert: ((5 to: 10) intersectsRange: (5 to: 10))! !
 
-!OrderedCollectionTest methodsFor: 'tests' stamp: 'jpb 8/2/2019 23:18:24'!
+!OrderedCollectionTest methodsFor: 'tests' stamp: 'jpb 2/Aug/2019 23:18:24'!
 testIsCollection
 	self assert: (OrderedCollection new is: #Collection).! !
 
-!OrderedCollectionTest methodsFor: 'tests' stamp: 'jmv 7/31/2023 12:04:53'!
+!OrderedCollectionTest methodsFor: 'tests' stamp: 'jmv 31/Jul/2023 12:04:53'!
 testStreamContentsWorksAsExpected
 
 	| contents |
@@ -3071,7 +3071,7 @@ testStreamContentsWorksAsExpected
 	
 	self assert: contents equals: (OrderedCollection with: 1).! !
 
-!OrderedCollectionTest methodsFor: 'tests' stamp: 'jmv 7/31/2023 12:05:11'!
+!OrderedCollectionTest methodsFor: 'tests' stamp: 'jmv 31/Jul/2023 12:05:11'!
 testWriteStreamOnOrderedCollectionGrowsAsExpected
 
 	| contents |
@@ -3081,7 +3081,7 @@ testWriteStreamOnOrderedCollectionGrowsAsExpected
 	
 	1 to: 101 do: [ :aNumber | self assert: (contents at: aNumber) equals: aNumber ].! !
 
-!OrderedDictionaryTest methodsFor: 'tests' stamp: 'mir 11/21/2025 17:39:07'!
+!OrderedDictionaryTest methodsFor: 'tests' stamp: 'mir 21/Nov/2025 17:39:07'!
 testCopy
 	| data dict dictCopy dataToRemove  |
 
@@ -3101,7 +3101,7 @@ testCopy
 		dictCopy removeKey: pair first ].
 	self assert: dict keys = dictCopy keys.! !
 
-!OrderedDictionaryTest methodsFor: 'tests' stamp: 'jmv 5/25/2018 10:36:59'!
+!OrderedDictionaryTest methodsFor: 'tests' stamp: 'jmv 25/May/2018 10:36:59'!
 testOrder
 	| data dict orderingByCollect orderingByDo orderingBySelect aux desiredOrder |
 
@@ -3143,7 +3143,7 @@ testOrder
 	self assert: orderingByCollect = desiredOrder.
 ! !
 
-!OrderedDictionaryTest methodsFor: 'tests' stamp: 'jmv 5/25/2018 10:41:04'!
+!OrderedDictionaryTest methodsFor: 'tests' stamp: 'jmv 25/May/2018 10:41:04'!
 testRemove
 	| data dict dataToRemove desiredOrder orderingByDo |
 
@@ -3165,15 +3165,15 @@ testRemove
 	
 	self assert: orderingByDo = desiredOrder asArray.! !
 
-!OrderedDictionaryTest methodsFor: 'aux' stamp: 'jmv 5/25/2018 10:16:25'!
+!OrderedDictionaryTest methodsFor: 'aux' stamp: 'jmv 25/May/2018 10:16:25'!
 sampleData
 	^ { {1. 'uno'}. {6. 'seis'}. {8. 'ocho'}. {7. 'siete'}. {2. 'dos'}. {3. 'tres'}. {4. 'cuatro'}. {5. 'cinco'}}! !
 
-!OrderedDictionaryTest methodsFor: 'aux' stamp: 'jmv 5/25/2018 10:16:35'!
+!OrderedDictionaryTest methodsFor: 'aux' stamp: 'jmv 25/May/2018 10:16:35'!
 sampleData2
 	^ { {1. 'uno'}. {8. 'ocho'}. {3. 'tres'}}! !
 
-!SequenceableCollectionTest methodsFor: 'tests' stamp: 'HAW 5/25/2019 09:49:41'!
+!SequenceableCollectionTest methodsFor: 'tests' stamp: 'HAW 25/May/2019 09:49:41'!
 testCombinationsAtATimeDoShouldEvaluateBlockWithEmptyCollection
 	
 	| combinationWasEmpty |
@@ -3183,7 +3183,7 @@ testCombinationsAtATimeDoShouldEvaluateBlockWithEmptyCollection
 	
 	self assert: combinationWasEmpty! !
 
-!SequenceableCollectionTest methodsFor: 'tests' stamp: 'jmv 7/31/2023 12:05:29'!
+!SequenceableCollectionTest methodsFor: 'tests' stamp: 'jmv 31/Jul/2023 12:05:29'!
 testCombinationsAtATimeDoWorksAsExpected
 	
 	| combinations |
@@ -3196,7 +3196,7 @@ testCombinationsAtATimeDoWorksAsExpected
 	self assert: (combinations includes: #($a $c)).
 	self assert: (combinations includes: #($b $c)).! !
 
-!SequenceableCollectionTest methodsFor: 'tests' stamp: 'jmv 7/31/2023 12:05:44'!
+!SequenceableCollectionTest methodsFor: 'tests' stamp: 'jmv 31/Jul/2023 12:05:44'!
 testDoSeparatedByDoesNotValueSeparatedBlockForCollectionsOfOneElement
 
 	| collectionToTraverse traversedElements |
@@ -3207,7 +3207,7 @@ testDoSeparatedByDoesNotValueSeparatedBlockForCollectionsOfOneElement
 
 	self assert: traversedElements equals: collectionToTraverse.! !
 
-!SequenceableCollectionTest methodsFor: 'tests' stamp: 'jmv 7/31/2023 12:06:00'!
+!SequenceableCollectionTest methodsFor: 'tests' stamp: 'jmv 31/Jul/2023 12:06:00'!
 testDoSeparatedByDoesNotValueSeparatedBlockOnLastElement
 
 	| collectionToTraverse traversedElements |
@@ -3219,62 +3219,62 @@ testDoSeparatedByDoesNotValueSeparatedBlockOnLastElement
 
 	self assert: traversedElements equals: (OrderedCollection with: 1 with: $- with: 2).! !
 
-!SequenceableCollectionTest methodsFor: 'tests' stamp: 'HAW 3/17/2019 06:29:27'!
+!SequenceableCollectionTest methodsFor: 'tests' stamp: 'HAW 17/Mar/2019 06:29:27'!
 testDoSeparatedByDoesNothingForEmptyCollection
 
 	self shouldntFail: [ #() do: [ :anElement | self fail ] separatedBy: [ self fail ] ]! !
 
-!SequenceableCollectionTest methodsFor: 'tests' stamp: 'jmv 7/31/2023 12:06:15'!
+!SequenceableCollectionTest methodsFor: 'tests' stamp: 'jmv 31/Jul/2023 12:06:15'!
 testFirstAvailableReturnsAllObjectsWhenRequestedMoreThanTheSize
 
 	self assert: (#(10 20 30) firstAvailable: 4) equals:  #(10 20 30).! !
 
-!SequenceableCollectionTest methodsFor: 'tests' stamp: 'jmv 7/31/2023 12:06:30'!
+!SequenceableCollectionTest methodsFor: 'tests' stamp: 'jmv 31/Jul/2023 12:06:30'!
 testFirstAvailableReturnsAllObjectsWhenRequestedTheReceiversSize
 
 	self assert: (#(10 20 30) firstAvailable: 3) equals: #(10 20 30).! !
 
-!SequenceableCollectionTest methodsFor: 'tests' stamp: 'jmv 7/31/2023 12:06:45'!
+!SequenceableCollectionTest methodsFor: 'tests' stamp: 'jmv 31/Jul/2023 12:06:45'!
 testFirstAvailableReturnsTheFirstRequestedObjectsWhenTheyAreAvailable
 
 	self assert: (#(10 20 30) firstAvailable: 2) equals: #(10 20).! !
 
-!SequenceableCollectionTest methodsFor: 'tests' stamp: 'jmv 7/31/2023 12:06:59'!
+!SequenceableCollectionTest methodsFor: 'tests' stamp: 'jmv 31/Jul/2023 12:06:59'!
 testLastAvailableReturnsAllObjectsWhenRequestedMoreThanTheSize
 
 	self assert: (#(10 20 30) lastAvailable: 4) equals: #(10 20 30).! !
 
-!SequenceableCollectionTest methodsFor: 'tests' stamp: 'jmv 7/31/2023 12:07:16'!
+!SequenceableCollectionTest methodsFor: 'tests' stamp: 'jmv 31/Jul/2023 12:07:16'!
 testLastAvailableReturnsAllObjectsWhenRequestedTheReceiversSize
 
 	self assert: (#(10 20 30) lastAvailable: 3) equals: #(10 20 30).! !
 
-!SequenceableCollectionTest methodsFor: 'tests' stamp: 'jmv 7/31/2023 12:07:34'!
+!SequenceableCollectionTest methodsFor: 'tests' stamp: 'jmv 31/Jul/2023 12:07:34'!
 testLastAvailableReturnsTheLastRequestedObjectsWhenTheyAreAvailable
 
 	self assert: (#(10 20 30) lastAvailable: 2) equals: #(20 30).! !
 
-!SequenceableCollectionTest methodsFor: 'tests' stamp: 'HAW 10/29/2024 16:33:04'!
+!SequenceableCollectionTest methodsFor: 'tests' stamp: 'HAW 29/Oct/2024 16:33:04'!
 testWithAllSatisfyReturnsFalseWhenOneIsNotTrue
 
 	self deny: (#(1 2 3) with: #(1 2 4) allSatisfy: [ :leftNumber :rightNumber | leftNumber = rightNumber ])! !
 
-!SequenceableCollectionTest methodsFor: 'tests' stamp: 'HAW 10/29/2024 16:31:27'!
+!SequenceableCollectionTest methodsFor: 'tests' stamp: 'HAW 29/Oct/2024 16:31:27'!
 testWithAllSatisfyReturnsTrueWhenAllReturnTrue
 
 	self assert: (#(1 2 3) with: #(1 2 3) allSatisfy: [ :leftNumber :rightNumber | leftNumber = rightNumber ])! !
 
-!SequenceableCollectionTest methodsFor: 'tests' stamp: 'HAW 10/30/2024 08:10:33'!
+!SequenceableCollectionTest methodsFor: 'tests' stamp: 'HAW 30/Oct/2024 08:10:33'!
 testWithAnySatisfyReturnsFalseIfNoneSatisfies
 
 	self deny: (#(1 2 3) with: #(4 5 6) anySatisfy: [ :leftNumber :rightNumber | leftNumber = rightNumber ])! !
 
-!SequenceableCollectionTest methodsFor: 'tests' stamp: 'HAW 10/30/2024 08:10:43'!
+!SequenceableCollectionTest methodsFor: 'tests' stamp: 'HAW 30/Oct/2024 08:10:43'!
 testWithAnySatisfyReturnsTrueIfOneSatisfies
 
 	self assert: (#(1 2 3) with: #(4 5 3) anySatisfy: [ :leftNumber :rightNumber | leftNumber = rightNumber ])! !
 
-!SequenceableCollectionTest methodsFor: 'tests' stamp: 'jmv 7/31/2023 12:07:58'!
+!SequenceableCollectionTest methodsFor: 'tests' stamp: 'jmv 31/Jul/2023 12:07:58'!
 testWithIndexDoSeparatedByDoesNotValueSeparatedBlockForCollectionsOfOneElement
 
 	| collectionToTraverse traversedElements |
@@ -3287,7 +3287,7 @@ testWithIndexDoSeparatedByDoesNotValueSeparatedBlockForCollectionsOfOneElement
 	self assert: traversedElements size equals: 1.
 	self assert: traversedElements first equals: $a->1.! !
 
-!SequenceableCollectionTest methodsFor: 'tests' stamp: 'jmv 7/31/2023 12:08:54'!
+!SequenceableCollectionTest methodsFor: 'tests' stamp: 'jmv 31/Jul/2023 12:08:54'!
 testWithIndexDoSeparatedByDoesNotValueSeparatedBlockOnLastElement
 
 	| collectionToTraverse traversedElements |
@@ -3304,16 +3304,16 @@ testWithIndexDoSeparatedByDoesNotValueSeparatedBlockOnLastElement
 	self assert: traversedElements second equals: $-.
 	self assert: traversedElements third equals: $b->2.! !
 
-!SequenceableCollectionTest methodsFor: 'tests' stamp: 'HAW 3/17/2019 06:30:18'!
+!SequenceableCollectionTest methodsFor: 'tests' stamp: 'HAW 17/Mar/2019 06:30:18'!
 testWithIndexDoSeparatedByDoesNothingForEmptyCollection
 
 	self shouldntFail: [ #() withIndexDo: [ :anElement :index | self fail ] separatedBy: [ self fail ] ]! !
 
-!TextTest methodsFor: 'testing' stamp: 'jpb 8/2/2019 23:40:53'!
+!TextTest methodsFor: 'testing' stamp: 'jpb 2/Aug/2019 23:40:53'!
 testIsText
 	self assert: (Text new is: #Text).! !
 
-!WeakIdentitySetTest methodsFor: 'testing' stamp: 'jmv 1/15/2025 09:54:47'!
+!WeakIdentitySetTest methodsFor: 'testing' stamp: 'jmv 15/Jan/2025 09:54:47'!
 test
 	"
 	(also tests WeakSet a bit)
@@ -3372,7 +3372,7 @@ test
 	self deny: (wi includes: ary2 first).
 	self assert: (wi includes: ary2 second).! !
 
-!ArrayTest methodsFor: 'test - insert:ShiftingRight:' stamp: 'HAW 12/20/2018 14:41:00'!
+!ArrayTest methodsFor: 'test - insert:ShiftingRight:' stamp: 'HAW 20/Dec/2018 14:41:00'!
 testCanNotInsertShiftingRightWhenInsertionPointIsBiggerThanSize
 
 	| arrayToInsertTo invalidIndex |
@@ -3387,7 +3387,7 @@ testCanNotInsertShiftingRightWhenInsertionPointIsBiggerThanSize
 			self assert: anError messageText equals: (Object errorDescriptionForSubcriptBounds: invalidIndex).
 			self assert: arrayToInsertTo equals: #(1 2 3) ].! !
 
-!ArrayTest methodsFor: 'test - insert:ShiftingRight:' stamp: 'HAW 12/20/2018 14:39:47'!
+!ArrayTest methodsFor: 'test - insert:ShiftingRight:' stamp: 'HAW 20/Dec/2018 14:39:47'!
 testCanNotInsertShiftingRightWhenInsertionPointIsLessThanOne
 
 	| arrayToInsertTo invalidIndex |
@@ -3402,47 +3402,47 @@ testCanNotInsertShiftingRightWhenInsertionPointIsLessThanOne
 			self assert: anError messageText equals: (Object errorDescriptionForSubcriptBounds: invalidIndex).
 			self assert: arrayToInsertTo equals: #(1 2 3) ].! !
 
-!ArrayTest methodsFor: 'test - insert:ShiftingRight:' stamp: 'HAW 12/20/2018 14:27:08'!
+!ArrayTest methodsFor: 'test - insert:ShiftingRight:' stamp: 'HAW 20/Dec/2018 14:27:08'!
 testInsertShiftingRightLoosesLastElementAndKeepsPreviousOnes
 
 	self assert: (#(1 3 4 5) copy insert: 2 shiftingRightAt: 2) equals: #(1 2 3 4)! !
 
-!ArrayTest methodsFor: 'test - insert:ShiftingRight:' stamp: 'HAW 12/20/2018 14:27:21'!
+!ArrayTest methodsFor: 'test - insert:ShiftingRight:' stamp: 'HAW 20/Dec/2018 14:27:21'!
 testInsertShiftingRightReplacesElementWhenSizeIsOne
 
 	self assert: (#(1) copy insert: 2 shiftingRightAt: 1) equals: #(2)! !
 
-!ArrayTest methodsFor: 'test - insert:ShiftingRight:' stamp: 'HAW 12/20/2018 14:28:20'!
+!ArrayTest methodsFor: 'test - insert:ShiftingRight:' stamp: 'HAW 20/Dec/2018 14:28:20'!
 testInsertShiftingRightReplacesLastElementWhenInsertingAtLastIndex
 
 	self assert: (#(1 3 4 5) copy insert: 2 shiftingRightAt: 4) equals: #(1 3 4 2)! !
 
-!ArrayTest methodsFor: 'test - testing' stamp: 'jpb 8/2/2019 22:59:46'!
+!ArrayTest methodsFor: 'test - testing' stamp: 'jpb 2/Aug/2019 22:59:46'!
 testIsArray
 	self assert: (#(1 2 3) is: #Array).
 	self assert: (#() is: #Array).! !
 
-!ArrayTest methodsFor: 'test - testing' stamp: 'jpb 8/2/2019 23:09:00'!
+!ArrayTest methodsFor: 'test - testing' stamp: 'jpb 2/Aug/2019 23:09:00'!
 testIsCollection
 	self assert: (#(1 2 3) is: #Collection).
 	self assert: (#() is: #Collection).! !
 
-!ArrayTest methodsFor: 'test - accessing' stamp: 'jmv 7/31/2023 12:09:15'!
+!ArrayTest methodsFor: 'test - accessing' stamp: 'jmv 31/Jul/2023 12:09:15'!
 testAntepenultimateIfAbsentReturnsAntepenultimateIfExists
 
 	self assert: (#(1 2 3) antepenultimateIfAbsent: [ self fail ]) equals: 1.! !
 
-!ArrayTest methodsFor: 'test - accessing' stamp: 'jmv 7/31/2023 12:09:26'!
+!ArrayTest methodsFor: 'test - accessing' stamp: 'jmv 31/Jul/2023 12:09:26'!
 testAntepenultimateIfAbsentValuesIfAbsentBlockWhenNoAntepenultimate
 
 	self assert: (#(1 2) antepenultimateIfAbsent: [ 0 ]) equals: 0.! !
 
-!ArrayTest methodsFor: 'test - accessing' stamp: 'jmv 7/31/2023 12:09:35'!
+!ArrayTest methodsFor: 'test - accessing' stamp: 'jmv 31/Jul/2023 12:09:35'!
 testAntepenultimateReturnsAntepenultimateIfExists
 
 	self assert: #(1 2 3) antepenultimate equals: 1.! !
 
-!ArrayTest methodsFor: 'test - accessing' stamp: 'HAW 5/3/2020 00:49:10'!
+!ArrayTest methodsFor: 'test - accessing' stamp: 'HAW 3/May/2020 00:49:10'!
 testAntepenultimateSignalsErrorWhenCollectionIsNotBigEnough
 
 	self
@@ -3450,17 +3450,17 @@ testAntepenultimateSignalsErrorWhenCollectionIsNotBigEnough
 		raise: Error
 		withMessageText: Collection collectionTooSmallDescription! !
 
-!ArrayTest methodsFor: 'test - accessing' stamp: 'jmv 7/31/2023 12:10:37'!
+!ArrayTest methodsFor: 'test - accessing' stamp: 'jmv 31/Jul/2023 12:10:37'!
 testLastIfEmptyReturnsLastWhenExist
 
 	self assert: (#(1) lastIfEmpty: [ self fail ]) equals: 1.! !
 
-!ArrayTest methodsFor: 'test - accessing' stamp: 'jmv 7/31/2023 12:10:53'!
+!ArrayTest methodsFor: 'test - accessing' stamp: 'jmv 31/Jul/2023 12:10:53'!
 testLastIfEmptyValuesEmptyBlockWhenEmpty
 
 	self assert: (#() lastIfEmpty: [ 1 ]) equals: 1.! !
 
-!ArrayTest methodsFor: 'test - accessing' stamp: 'HAW 5/4/2020 00:43:47'!
+!ArrayTest methodsFor: 'test - accessing' stamp: 'HAW 4/May/2020 00:43:47'!
 testLastSignalsErrorWhenEmpty
 
 	self
@@ -3468,22 +3468,22 @@ testLastSignalsErrorWhenEmpty
 		raise: Error
 		withMessageText: Collection emptyCollectionDescription! !
 
-!ArrayTest methodsFor: 'test - accessing' stamp: 'jmv 7/31/2023 12:11:01'!
+!ArrayTest methodsFor: 'test - accessing' stamp: 'jmv 31/Jul/2023 12:11:01'!
 testPenultimateIfAbsentReturnsPenultimateIfExists
 
 	self assert: (#(2 3) penultimateIfAbsent: [ self fail ]) equals: 2.! !
 
-!ArrayTest methodsFor: 'test - accessing' stamp: 'jmv 7/31/2023 12:11:17'!
+!ArrayTest methodsFor: 'test - accessing' stamp: 'jmv 31/Jul/2023 12:11:17'!
 testPenultimateIfAbsentValuesIfAbsentBlockWhenNoPenultimate
 
 	self assert: (#(1) penultimateIfAbsent: [ 2 ]) equals: 2.! !
 
-!ArrayTest methodsFor: 'test - accessing' stamp: 'jmv 7/31/2023 12:11:24'!
+!ArrayTest methodsFor: 'test - accessing' stamp: 'jmv 31/Jul/2023 12:11:24'!
 testPenultimateReturnsPenultimateIfExists
 
 	self assert: #(2 3) penultimate equals: 2.! !
 
-!ArrayTest methodsFor: 'test - accessing' stamp: 'HAW 5/3/2020 00:43:44'!
+!ArrayTest methodsFor: 'test - accessing' stamp: 'HAW 3/May/2020 00:43:44'!
 testPenultimateSignalsErrorWhenCollectionIsNotBigEnough
 
 	self
@@ -3491,7 +3491,7 @@ testPenultimateSignalsErrorWhenCollectionIsNotBigEnough
 		raise: Error
 		withMessageText: Collection collectionTooSmallDescription! !
 
-!DoubleByteArrayTest methodsFor: 'testing' stamp: 'jmv 7/5/2024 14:53:22'!
+!DoubleByteArrayTest methodsFor: 'testing' stamp: 'jmv 5/Jul/2024 14:53:22'!
 testSigned
 	"
 	
@@ -3513,7 +3513,7 @@ testSigned
         self should: [u16 signedAt: 1 put:  -32769] raise: Error. "to big"
         self should: [u16 signedAt: 1 put:  (16r7FFF + 1)] raise: Error. "too big"! !
 
-!DoubleByteArrayTest methodsFor: 'testing' stamp: 'jmv 7/5/2024 14:53:31'!
+!DoubleByteArrayTest methodsFor: 'testing' stamp: 'jmv 5/Jul/2024 14:53:31'!
 testUnsigned
 	"
 	DoubleByteArray holds 16 bit unsigned or signed numbers.
@@ -3534,17 +3534,17 @@ testUnsigned
         self should: [u16 at: 1 put:  -1] raise: Error. "wrong sign"
         self should: [u16 at: 1 put:  (16rFFFF + 1)] raise: Error. "too big"! !
 
-!Float32ArrayTest methodsFor: 'Tests' stamp: 'jmv 9/3/2020 18:39:55'!
+!Float32ArrayTest methodsFor: 'Tests' stamp: 'jmv 3/Sep/2020 18:39:55'!
 testIsType
 	self assert: (#[1.2 2.4 3.6 ] is: #Collection).
 	self assert: (#[1.2 2.4 3.6] asFloat32Array is: #Float32Array).! !
 
-!Float32ArrayTest methodsFor: 'Tests' stamp: 'jmv 9/3/2020 18:39:53'!
+!Float32ArrayTest methodsFor: 'Tests' stamp: 'jmv 3/Sep/2020 18:39:53'!
 testZeroArrayDividend
 
 	self assert: #[1.2 2.4 0.0 ] asFloat32Array / #[1.2 1.2 1.2 ] asFloat32Array = #[1.0 2.0 0.0 ] asFloat32Array ! !
 
-!Float32ArrayTest methodsFor: 'Tests' stamp: 'jmv 9/3/2020 18:40:16'!
+!Float32ArrayTest methodsFor: 'Tests' stamp: 'jmv 3/Sep/2020 18:40:16'!
 testZeroArrayDivisor
 
 	"Test implicit exception"
@@ -3573,12 +3573,12 @@ testZeroArrayDivisor
 	self assert: self divideByArrayZero = #divisionByZero.
 	self assert: self divideByArrayIndeterminate = #indeterminateResult.! !
 
-!Float32ArrayTest methodsFor: 'Tests' stamp: 'jmv 9/3/2020 18:39:33'!
+!Float32ArrayTest methodsFor: 'Tests' stamp: 'jmv 3/Sep/2020 18:39:33'!
 testZeroDividend
 
 	self assert: #[1.2 2.4 3.6 0.0 ] asFloat32Array / 1.2 = #[1.0 2.0 3.0 0.0 ] asFloat32Array ! !
 
-!Float32ArrayTest methodsFor: 'Tests' stamp: 'jmv 9/3/2020 18:39:30'!
+!Float32ArrayTest methodsFor: 'Tests' stamp: 'jmv 3/Sep/2020 18:39:30'!
 testZeroDivisor
 
 	"Test implicit exception"
@@ -3607,7 +3607,7 @@ testZeroDivisor
 	self assert: self divideByScalarZero = #divisionByZero.
 	self assert: self divideByScalarIndeterminate = #indeterminateResult.! !
 
-!Float32ArrayTest methodsFor: 'Aux' stamp: 'jmv 9/3/2020 18:40:09'!
+!Float32ArrayTest methodsFor: 'Aux' stamp: 'jmv 3/Sep/2020 18:40:09'!
 divideByArrayIndeterminate
 	"An example for testing. Uses a method to test behavior of non-local return."
 	^#[0.0 2.0 3.141592] asFloat32Array
@@ -3615,7 +3615,7 @@ divideByArrayIndeterminate
 		ifDivisorZero: [^ #divisionByZero]
 		ifBothZero: [^ #indeterminateResult]! !
 
-!Float32ArrayTest methodsFor: 'Aux' stamp: 'jmv 9/3/2020 18:40:13'!
+!Float32ArrayTest methodsFor: 'Aux' stamp: 'jmv 3/Sep/2020 18:40:13'!
 divideByArrayOne
 	"An example for testing. Uses a method to test behavior of non-local return."
 	^#[0.0 2.0 3.141592] asFloat32Array
@@ -3623,7 +3623,7 @@ divideByArrayOne
 		ifDivisorZero: [^ #divisionByZero]
 		ifBothZero: [^ #indeterminateResult]! !
 
-!Float32ArrayTest methodsFor: 'Aux' stamp: 'jmv 9/3/2020 18:40:03'!
+!Float32ArrayTest methodsFor: 'Aux' stamp: 'jmv 3/Sep/2020 18:40:03'!
 divideByArrayZero
 	"An example for testing. Uses a method to test behavior of non-local return."
 	^#[1.0 2.0 3.141592] asFloat32Array
@@ -3631,7 +3631,7 @@ divideByArrayZero
 		ifDivisorZero: [^ #divisionByZero]
 		ifBothZero: [^ #indeterminateResult]! !
 
-!Float32ArrayTest methodsFor: 'Aux' stamp: 'jmv 9/3/2020 18:40:00'!
+!Float32ArrayTest methodsFor: 'Aux' stamp: 'jmv 3/Sep/2020 18:40:00'!
 divideByScalarIndeterminate
 	"An example for testing. Uses a method to test behavior of non-local return."
 	^#[0.0 2.0 3.141592] asFloat32Array
@@ -3639,7 +3639,7 @@ divideByScalarIndeterminate
 		ifDivisorZero: [^ #divisionByZero]
 		ifBothZero: [^ #indeterminateResult]! !
 
-!Float32ArrayTest methodsFor: 'Aux' stamp: 'jmv 9/3/2020 18:39:00'!
+!Float32ArrayTest methodsFor: 'Aux' stamp: 'jmv 3/Sep/2020 18:39:00'!
 divideByScalarOne
 	"An example for testing. Uses a method to test behavior of non-local return."
 	^#[0.0 2.0 3.141592] asFloat32Array
@@ -3647,7 +3647,7 @@ divideByScalarOne
 		ifDivisorZero: [^ #divisionByZero]
 		ifBothZero: [^ #indeterminateResult]! !
 
-!Float32ArrayTest methodsFor: 'Aux' stamp: 'jmv 9/3/2020 18:39:02'!
+!Float32ArrayTest methodsFor: 'Aux' stamp: 'jmv 3/Sep/2020 18:39:02'!
 divideByScalarZero
 	"An example for testing. Uses a method to test behavior of non-local return."
 	^#[1.0 2.0 3.141592] asFloat32Array
@@ -3655,17 +3655,17 @@ divideByScalarZero
 		ifDivisorZero: [^ #divisionByZero]
 		ifBothZero: [^ #indeterminateResult]! !
 
-!Float64ArrayTest methodsFor: 'Tests' stamp: 'jpb 8/2/2019 23:07:59'!
+!Float64ArrayTest methodsFor: 'Tests' stamp: 'jpb 2/Aug/2019 23:07:59'!
 testIsCollection
 	self assert: (#[1.0 2.0 3.141592 0.0] is: #Collection).
 	self assert: (#[-100.0 -100.0 -100.0 -200.0 ] is: #Collection).! !
 
-!Float64ArrayTest methodsFor: 'Tests' stamp: 'jmv 7/9/2018 09:38:50'!
+!Float64ArrayTest methodsFor: 'Tests' stamp: 'jmv 9/Jul/2018 09:38:50'!
 testZeroArrayDividend
 
 	self assert: #[1.2 2.4 0.0 ] / #[1.2 1.2 1.2 ] = #[1.0 2.0 0.0 ] ! !
 
-!Float64ArrayTest methodsFor: 'Tests' stamp: 'jmv 7/9/2018 09:51:49'!
+!Float64ArrayTest methodsFor: 'Tests' stamp: 'jmv 9/Jul/2018 09:51:49'!
 testZeroArrayDivisor
 
 	"Test implicit exception"
@@ -3694,12 +3694,12 @@ testZeroArrayDivisor
 	self assert: self divideByArrayZero = #divisionByZero.
 	self assert: self divideByArrayIndeterminate = #indeterminateResult.! !
 
-!Float64ArrayTest methodsFor: 'Tests' stamp: 'jmv 7/9/2018 09:39:14'!
+!Float64ArrayTest methodsFor: 'Tests' stamp: 'jmv 9/Jul/2018 09:39:14'!
 testZeroDividend
 
 	self assert: #[1.2 2.4 3.6 0.0 ] / 1.2 = #[1.0 2.0 3.0 0.0 ] ! !
 
-!Float64ArrayTest methodsFor: 'Tests' stamp: 'jmv 7/9/2018 09:53:42'!
+!Float64ArrayTest methodsFor: 'Tests' stamp: 'jmv 9/Jul/2018 09:53:42'!
 testZeroDivisor
 
 	"Test implicit exception"
@@ -3729,7 +3729,7 @@ testZeroDivisor
 	self assert: self divideByScalarZero = #divisionByZero.
 	self assert: self divideByScalarIndeterminate = #indeterminateResult.! !
 
-!Float64ArrayTest methodsFor: 'Aux' stamp: 'jmv 7/9/2018 09:52:51'!
+!Float64ArrayTest methodsFor: 'Aux' stamp: 'jmv 9/Jul/2018 09:52:51'!
 divideByArrayIndeterminate
 	"An example for testing. Uses a method to test behavior of non-local return."
 	^#[0.0 2.0 3.141592] copy
@@ -3737,7 +3737,7 @@ divideByArrayIndeterminate
 		ifDivisorZero: [^ #divisionByZero]
 		ifBothZero: [^ #indeterminateResult]! !
 
-!Float64ArrayTest methodsFor: 'Aux' stamp: 'jmv 7/9/2018 09:52:56'!
+!Float64ArrayTest methodsFor: 'Aux' stamp: 'jmv 9/Jul/2018 09:52:56'!
 divideByArrayOne
 	"An example for testing. Uses a method to test behavior of non-local return."
 	^#[0.0 2.0 3.141592] copy
@@ -3745,7 +3745,7 @@ divideByArrayOne
 		ifDivisorZero: [^ #divisionByZero]
 		ifBothZero: [^ #indeterminateResult]! !
 
-!Float64ArrayTest methodsFor: 'Aux' stamp: 'jmv 7/9/2018 09:53:05'!
+!Float64ArrayTest methodsFor: 'Aux' stamp: 'jmv 9/Jul/2018 09:53:05'!
 divideByArrayZero
 	"An example for testing. Uses a method to test behavior of non-local return."
 	^#[1.0 2.0 3.141592] copy
@@ -3753,7 +3753,7 @@ divideByArrayZero
 		ifDivisorZero: [^ #divisionByZero]
 		ifBothZero: [^ #indeterminateResult]! !
 
-!Float64ArrayTest methodsFor: 'Aux' stamp: 'jmv 7/9/2018 09:38:35'!
+!Float64ArrayTest methodsFor: 'Aux' stamp: 'jmv 9/Jul/2018 09:38:35'!
 divideByScalarIndeterminate
 	"An example for testing. Uses a method to test behavior of non-local return."
 	^#[0.0 2.0 3.141592]
@@ -3761,7 +3761,7 @@ divideByScalarIndeterminate
 		ifDivisorZero: [^ #divisionByZero]
 		ifBothZero: [^ #indeterminateResult]! !
 
-!Float64ArrayTest methodsFor: 'Aux' stamp: 'jmv 7/9/2018 09:38:39'!
+!Float64ArrayTest methodsFor: 'Aux' stamp: 'jmv 9/Jul/2018 09:38:39'!
 divideByScalarOne
 	"An example for testing. Uses a method to test behavior of non-local return."
 	^#[0.0 2.0 3.141592]
@@ -3769,7 +3769,7 @@ divideByScalarOne
 		ifDivisorZero: [^ #divisionByZero]
 		ifBothZero: [^ #indeterminateResult]! !
 
-!Float64ArrayTest methodsFor: 'Aux' stamp: 'jmv 7/9/2018 09:38:43'!
+!Float64ArrayTest methodsFor: 'Aux' stamp: 'jmv 9/Jul/2018 09:38:43'!
 divideByScalarZero
 	"An example for testing. Uses a method to test behavior of non-local return."
 	^#[1.0 2.0 3.141592]
@@ -3777,14 +3777,14 @@ divideByScalarZero
 		ifDivisorZero: [^ #divisionByZero]
 		ifBothZero: [^ #indeterminateResult]! !
 
-!Float64ArrayTest methodsFor: 'as yet unclassified' stamp: 'jmv 7/30/2020 21:58:18'!
+!Float64ArrayTest methodsFor: 'as yet unclassified' stamp: 'jmv 30/Jul/2020 21:58:18'!
 testSum
 	| a |
 	self assert: ({0.0. 1.0. Float pi. Float e} asFloat64Array + 1) = ({0.0+1. 1.0+1. Float pi+1. Float e+1} asFloat64Array).
 	a _ {0.0. 1.0. Float pi. Float e} asFloat64Array.
 	self assert: (a + a) = (a * 2 )! !
 
-!ReadStreamTest methodsFor: 'tests' stamp: 'jmv 10/28/2024 20:25:49'!
+!ReadStreamTest methodsFor: 'tests' stamp: 'jmv 28/Oct/2024 20:25:49'!
 testMatchStart
 	| string matchStart |
 	string := UnicodeString fromUtf8Bytes: #[57 194 160 226 130 172 64 226 130 172 226 130 172].
@@ -3794,7 +3794,7 @@ testMatchStart
 			matchStart := string readStream matchStart: (string copyFrom: i to: j).
 			self assert: (string at: matchStart) = (string at: i)]].! !
 
-!ReadStreamTest methodsFor: 'tests' stamp: 'NM 10/25/2021 10:21:47'!
+!ReadStreamTest methodsFor: 'tests' stamp: 'NM 25/Oct/2021 10:21:47'!
 testUpTo1ShortRecords
 	". this test ensures the upTo: delim method behaves as specified by the ANSI standard:
 	Delimiter is considered a separator (and therefore not required for the last chunk)."
@@ -3807,7 +3807,7 @@ testUpTo1ShortRecords
 	". the stream has been all consumed" 
 	self assert:  (stream position = 35). ! !
 
-!ReadStreamTest methodsFor: 'tests' stamp: 'NM 10/25/2021 10:55:33'!
+!ReadStreamTest methodsFor: 'tests' stamp: 'NM 25/Oct/2021 10:55:33'!
 testUpTo3LongUnterminatedRecord
 	"Long input, no delimiter found, expected to return all the data chunk up to the end of file. "
 	| longString stream read |
@@ -3819,7 +3819,7 @@ testUpTo3LongUnterminatedRecord
 	read _ stream upTo: $X.
 	self assert: read = longString.! !
 
-!ReadStreamTest methodsFor: 'tests' stamp: 'NM 10/25/2021 10:54:11'!
+!ReadStreamTest methodsFor: 'tests' stamp: 'NM 25/Oct/2021 10:54:11'!
 testUpTo4LongUnterminatedRecord
 	"Big chunk, not delimiter found, expected return all the chunk  "
 	| stuff stream read |
@@ -3833,7 +3833,7 @@ testUpTo4LongUnterminatedRecord
 	read _ stream upTo: $X.
 	self assert: read size = 5000.! !
 
-!ReadStreamTest methodsFor: 'tests' stamp: 'NM 10/25/2021 10:58:48'!
+!ReadStreamTest methodsFor: 'tests' stamp: 'NM 25/Oct/2021 10:58:48'!
 testUpTo5TerminatedAndUnterminatedLongRecords
 	"Two big chunks, one delimiter in the middle, expected to return 
       the first time a big chunk, the second time the second block up to EOF.  "
@@ -3855,7 +3855,7 @@ testUpTo5TerminatedAndUnterminatedLongRecords
 	self assert: read size = 3000.
 	self assert: (read at: 1) = $b.! !
 
-!ReadStreamTest methodsFor: 'tests' stamp: 'NM 10/25/2021 10:59:51'!
+!ReadStreamTest methodsFor: 'tests' stamp: 'NM 25/Oct/2021 10:59:51'!
 testUpTo6TerminatedLongRecords
 	"Two big chunks, one delimiter in the middle, one at the end. expected to return 
       two big chunks in two read, delimiters excluded.  "
@@ -3880,7 +3880,7 @@ testUpTo6TerminatedLongRecords
 	self assert: read size = 2999.
 	self assert: (read at: 1) = $b.! !
 
-!ReadStreamTest methodsFor: 'tests' stamp: 'jmv 10/29/2024 07:23:45'!
+!ReadStreamTest methodsFor: 'tests' stamp: 'jmv 29/Oct/2024 07:23:45'!
 testUpToAll
 	| string prefix |
 
@@ -3894,7 +3894,7 @@ testUpToAll
 			prefix := string readStream upToAll: (string copyFrom: i to: j).
 			self assert: (string at: prefix size + 1) = (string at: i)]].! !
 
-!ReadStreamTest methodsFor: 'tests' stamp: 'NM 10/25/2021 11:00:52'!
+!ReadStreamTest methodsFor: 'tests' stamp: 'NM 25/Oct/2021 11:00:52'!
 testUpToTerminator1ShortRecords
 	"
 	. Read a file stream up to 'delim' in a strict way. 
@@ -3914,7 +3914,7 @@ testUpToTerminator1ShortRecords
 	"
 	self assert:  (stream position = 18).! !
 
-!ReadStreamTest methodsFor: 'tests' stamp: 'NM 10/25/2021 11:01:38'!
+!ReadStreamTest methodsFor: 'tests' stamp: 'NM 25/Oct/2021 11:01:38'!
 testUpToTerminator3LongUnterminatedRecord
 	"Long input, no delimiter found, expected to return nil. "
 	| longString stream read |
@@ -3928,7 +3928,7 @@ testUpToTerminator3LongUnterminatedRecord
 		delimiterIsTerminator: true.
 	self assert: read = nil.! !
 
-!ReadStreamTest methodsFor: 'tests' stamp: 'NM 10/25/2021 11:02:04'!
+!ReadStreamTest methodsFor: 'tests' stamp: 'NM 25/Oct/2021 11:02:04'!
 testUpToTerminator4LongUnterminatedRecord
 	"Big chunk, not delimiter found, expected return nil  "
 	| stuff stream read |
@@ -3944,7 +3944,7 @@ testUpToTerminator4LongUnterminatedRecord
 		delimiterIsTerminator: true.
 	self assert: read = nil.! !
 
-!ReadStreamTest methodsFor: 'tests' stamp: 'NM 10/25/2021 11:02:36'!
+!ReadStreamTest methodsFor: 'tests' stamp: 'NM 25/Oct/2021 11:02:36'!
 testUpToTerminator5TerminatedAndUnterminatedLongRecords
 	"Two big chunks, one delimiter in the middle, expected to return 
       the first time a big chunk, the second time nil.  "
@@ -3969,7 +3969,7 @@ testUpToTerminator5TerminatedAndUnterminatedLongRecords
 		delimiterIsTerminator: true.
 	self assert: read = nil.! !
 
-!ReadStreamTest methodsFor: 'tests' stamp: 'NM 10/25/2021 11:03:06'!
+!ReadStreamTest methodsFor: 'tests' stamp: 'NM 25/Oct/2021 11:03:06'!
 testUpToTerminator6TerminatedLongRecords
 	"Two big chunks, one delimiter in the middle, one at the end expected to return 
       two big chunks in two read, delimiters included.  "
@@ -3998,7 +3998,7 @@ testUpToTerminator6TerminatedLongRecords
 	self assert: read size = 3000.
 	self assert: (read at: 1) = $b.! !
 
-!ReadWriteStreamTest methodsFor: 'tests' stamp: 'NM 10/25/2021 11:06:39'!
+!ReadWriteStreamTest methodsFor: 'tests' stamp: 'NM 25/Oct/2021 11:06:39'!
 testUpTo1ShortRecords
 	". this test ensures the upTo: delim method behaves as specified by the ANSI standard:
 	Delimiter is considered a separator (and therefore not required for the last chunk)."
@@ -4013,7 +4013,7 @@ testUpTo1ShortRecords
 	". the stream has been all consumed" 
 	self assert:  (stream position = 35). ! !
 
-!ReadWriteStreamTest methodsFor: 'tests' stamp: 'NM 10/25/2021 11:07:32'!
+!ReadWriteStreamTest methodsFor: 'tests' stamp: 'NM 25/Oct/2021 11:07:32'!
 testUpTo3LongUnterminatedRecord
 	"Long input, no delimiter found, expected to return all the data chunk up to the end of file. "
 	| longString stream read |
@@ -4027,7 +4027,7 @@ testUpTo3LongUnterminatedRecord
 	read _ stream upTo: $X.
 	self assert: read = longString.! !
 
-!ReadWriteStreamTest methodsFor: 'tests' stamp: 'NM 10/25/2021 11:08:12'!
+!ReadWriteStreamTest methodsFor: 'tests' stamp: 'NM 25/Oct/2021 11:08:12'!
 testUpTo4LongUnterminatedRecord
 	"Big chunk, not delimiter found, expected return all the chunk  "
 	| stuff stream read |
@@ -4043,7 +4043,7 @@ testUpTo4LongUnterminatedRecord
 	read _ stream upTo: $X.
 	self assert: read size = 5000.! !
 
-!ReadWriteStreamTest methodsFor: 'tests' stamp: 'NM 10/25/2021 11:08:41'!
+!ReadWriteStreamTest methodsFor: 'tests' stamp: 'NM 25/Oct/2021 11:08:41'!
 testUpTo5TerminatedAndUnterminatedLongRecords
 	"Two big chunks, one delimiter in the middle, expected to return 
       the first time a big chunk, the second time the second block up to EOF.  "
@@ -4067,7 +4067,7 @@ testUpTo5TerminatedAndUnterminatedLongRecords
 	self assert: read size = 3000.
 	self assert: (read at: 1) = $b.! !
 
-!ReadWriteStreamTest methodsFor: 'tests' stamp: 'NM 10/25/2021 11:08:54'!
+!ReadWriteStreamTest methodsFor: 'tests' stamp: 'NM 25/Oct/2021 11:08:54'!
 testUpTo6TerminatedLongRecords
 	"Two big chunks, one delimiter in the middle, one at the end. expected to return 
       two big chunks in two read, delimiters excluded.  "
@@ -4094,7 +4094,7 @@ testUpTo6TerminatedLongRecords
 	self assert: read size = 2999.
 	self assert: (read at: 1) = $b.! !
 
-!ReadWriteStreamTest methodsFor: 'tests' stamp: 'NM 10/25/2021 11:12:06'!
+!ReadWriteStreamTest methodsFor: 'tests' stamp: 'NM 25/Oct/2021 11:12:06'!
 testUpToTerminator1ShortRecords
 	"
 	. Read a file stream up to 'delim' in a strict way. 
@@ -4116,7 +4116,7 @@ testUpToTerminator1ShortRecords
 	"
 	self assert:  (stream position = 18).! !
 
-!ReadWriteStreamTest methodsFor: 'tests' stamp: 'NM 10/25/2021 11:12:49'!
+!ReadWriteStreamTest methodsFor: 'tests' stamp: 'NM 25/Oct/2021 11:12:49'!
 testUpToTerminator3LongUnterminatedRecord
 	"Long input, no delimiter found, expected to return nil. "
 	| longString stream read |
@@ -4132,7 +4132,7 @@ testUpToTerminator3LongUnterminatedRecord
 		delimiterIsTerminator: true.
 	self assert: read = nil.! !
 
-!ReadWriteStreamTest methodsFor: 'tests' stamp: 'NM 10/25/2021 11:13:03'!
+!ReadWriteStreamTest methodsFor: 'tests' stamp: 'NM 25/Oct/2021 11:13:03'!
 testUpToTerminator4LongUnterminatedRecord
 	"Big chunk, not delimiter found, expected return nil  "
 	| stuff stream read |
@@ -4150,7 +4150,7 @@ testUpToTerminator4LongUnterminatedRecord
 		delimiterIsTerminator: true.
 	self assert: read = nil.! !
 
-!ReadWriteStreamTest methodsFor: 'tests' stamp: 'NM 10/25/2021 11:13:18'!
+!ReadWriteStreamTest methodsFor: 'tests' stamp: 'NM 25/Oct/2021 11:13:18'!
 testUpToTerminator5TerminatedAndUnterminatedLongRecords
 	"Two big chunks, one delimiter in the middle, expected to return 
       the first time a big chunk, the second time nil.  "
@@ -4177,7 +4177,7 @@ testUpToTerminator5TerminatedAndUnterminatedLongRecords
 		delimiterIsTerminator: true.
 	self assert: read = nil.! !
 
-!ReadWriteStreamTest methodsFor: 'tests' stamp: 'NM 10/25/2021 11:13:33'!
+!ReadWriteStreamTest methodsFor: 'tests' stamp: 'NM 25/Oct/2021 11:13:33'!
 testUpToTerminator6TerminatedLongRecords
 	"Two big chunks, one delimiter in the middle, one at the end expected to return 
       two big chunks in two read, delimiters included.  "
@@ -4208,11 +4208,11 @@ testUpToTerminator6TerminatedLongRecords
 	self assert: read size = 3000.
 	self assert: (read at: 1) = $b.! !
 
-!WriteStreamTest methodsFor: 'tests' stamp: 'jmv 7/5/2022 21:09:16'!
+!WriteStreamTest methodsFor: 'tests' stamp: 'jmv 5/Jul/2022 21:09:16'!
 testIsStream
 	self assert: (String writeStream is: #Stream).! !
 
-!WriteStreamTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:27:06'!
+!WriteStreamTest methodsFor: 'tests' stamp: 'HAW 20/Mar/2019 07:27:06'!
 testNewLineTabWhenConditionIsFalseDoesNotPutANewLineTabInStream
 
 	| stream |
@@ -4223,7 +4223,7 @@ testNewLineTabWhenConditionIsFalseDoesNotPutANewLineTabInStream
 	self assert: stream contents isEmpty
 	! !
 
-!WriteStreamTest methodsFor: 'tests' stamp: 'jmv 7/31/2023 12:12:31'!
+!WriteStreamTest methodsFor: 'tests' stamp: 'jmv 31/Jul/2023 12:12:31'!
 testNewLineTabWhenConditionIsTruePutsANewLineTabInStream
 
 	| stream |
@@ -4233,7 +4233,7 @@ testNewLineTabWhenConditionIsTruePutsANewLineTabInStream
 	
 	self assert: stream contents equals: (String streamContents: [ :s | s newLineTab: 2 ]).! !
 
-!WriteStreamTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:20:47'!
+!WriteStreamTest methodsFor: 'tests' stamp: 'HAW 20/Mar/2019 07:20:47'!
 testNewLineWhenConditionIsFalseDoesNotPutANewLineInStream
 
 	| stream |
@@ -4244,7 +4244,7 @@ testNewLineWhenConditionIsFalseDoesNotPutANewLineInStream
 	self assert: stream contents isEmpty
 	! !
 
-!WriteStreamTest methodsFor: 'tests' stamp: 'jmv 7/31/2023 12:13:18'!
+!WriteStreamTest methodsFor: 'tests' stamp: 'jmv 31/Jul/2023 12:13:18'!
 testNewLineWhenConditionIsTruePutsANewLineInStream
 
 	| stream |
@@ -4254,7 +4254,7 @@ testNewLineWhenConditionIsTruePutsANewLineInStream
 	
 	self assert: stream contents equals: Character newLineCharacter asString.! !
 
-!WriteStreamTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:06:13'!
+!WriteStreamTest methodsFor: 'tests' stamp: 'HAW 20/Mar/2019 07:06:13'!
 testNextPutAllWhenConditionIsFalseDoesNotPutCollectionInStream
 
 	| stream |
@@ -4265,7 +4265,7 @@ testNextPutAllWhenConditionIsFalseDoesNotPutCollectionInStream
 	self assert: stream contents isEmpty
 	! !
 
-!WriteStreamTest methodsFor: 'tests' stamp: 'jmv 7/31/2023 12:13:41'!
+!WriteStreamTest methodsFor: 'tests' stamp: 'jmv 31/Jul/2023 12:13:41'!
 testNextPutAllWhenConditionIsTruePutsCollectionInStream
 
 	| stream |
@@ -4275,7 +4275,7 @@ testNextPutAllWhenConditionIsTruePutsCollectionInStream
 	
 	self assert: stream contents equals: 'other'.! !
 
-!WriteStreamTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:06:24'!
+!WriteStreamTest methodsFor: 'tests' stamp: 'HAW 20/Mar/2019 07:06:24'!
 testNextPutWhenConditionIsFalseDoesNotPutObjectInStream
 
 	| stream |
@@ -4287,7 +4287,7 @@ testNextPutWhenConditionIsFalseDoesNotPutObjectInStream
 	
 	! !
 
-!WriteStreamTest methodsFor: 'tests' stamp: 'jmv 7/31/2023 12:14:03'!
+!WriteStreamTest methodsFor: 'tests' stamp: 'jmv 31/Jul/2023 12:14:03'!
 testNextPutWhenConditionIsTruePutsObjectInStream
 
 	| stream |
@@ -4297,7 +4297,7 @@ testNextPutWhenConditionIsTruePutsObjectInStream
 	
 	self assert: stream contents equals: 't'.! !
 
-!WriteStreamTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:13:06'!
+!WriteStreamTest methodsFor: 'tests' stamp: 'HAW 20/Mar/2019 07:13:06'!
 testPrintWhenConditionIsFalseDoesNotPrintObjectInStream
 
 	| stream |
@@ -4309,7 +4309,7 @@ testPrintWhenConditionIsFalseDoesNotPrintObjectInStream
 	
 	! !
 
-!WriteStreamTest methodsFor: 'tests' stamp: 'jmv 7/31/2023 12:14:20'!
+!WriteStreamTest methodsFor: 'tests' stamp: 'jmv 31/Jul/2023 12:14:20'!
 testPrintWhenConditionIsTruePrintsObjectInStream
 
 	| stream |
@@ -4319,7 +4319,7 @@ testPrintWhenConditionIsTruePrintsObjectInStream
 	
 	self assert: stream contents equals: Object printString.! !
 
-!WriteStreamTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:42:20'!
+!WriteStreamTest methodsFor: 'tests' stamp: 'HAW 20/Mar/2019 07:42:20'!
 testSpaceManyTimesWhenConditionIsFalseDoesNotPutASpaceInStream
 
 	| stream |
@@ -4330,7 +4330,7 @@ testSpaceManyTimesWhenConditionIsFalseDoesNotPutASpaceInStream
 	self assert: stream contents isEmpty
 	! !
 
-!WriteStreamTest methodsFor: 'tests' stamp: 'jmv 7/31/2023 12:14:32'!
+!WriteStreamTest methodsFor: 'tests' stamp: 'jmv 31/Jul/2023 12:14:32'!
 testSpaceManyTimesWhenConditionIsTruePutSpacesInStream
 
 	| stream |
@@ -4340,7 +4340,7 @@ testSpaceManyTimesWhenConditionIsTruePutSpacesInStream
 	
 	self assert: stream contents equals: '  '.! !
 
-!WriteStreamTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:19:06'!
+!WriteStreamTest methodsFor: 'tests' stamp: 'HAW 20/Mar/2019 07:19:06'!
 testSpaceWhenConditionIsFalseDoesNotPutASpaceInStream
 
 	| stream |
@@ -4351,7 +4351,7 @@ testSpaceWhenConditionIsFalseDoesNotPutASpaceInStream
 	self assert: stream contents isEmpty
 	! !
 
-!WriteStreamTest methodsFor: 'tests' stamp: 'jmv 7/31/2023 12:14:45'!
+!WriteStreamTest methodsFor: 'tests' stamp: 'jmv 31/Jul/2023 12:14:45'!
 testSpaceWhenConditionIsTruePutsASpaceInStream
 
 	| stream |
@@ -4361,7 +4361,7 @@ testSpaceWhenConditionIsTruePutsASpaceInStream
 	
 	self assert: stream contents equals: ' '.! !
 
-!WriteStreamTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:24:34'!
+!WriteStreamTest methodsFor: 'tests' stamp: 'HAW 20/Mar/2019 07:24:34'!
 testTabManyTimesWhenConditionIsFalseDoesNotPutATabInStream
 
 	| stream |
@@ -4372,7 +4372,7 @@ testTabManyTimesWhenConditionIsFalseDoesNotPutATabInStream
 	self assert: stream contents isEmpty
 	! !
 
-!WriteStreamTest methodsFor: 'tests' stamp: 'jmv 7/31/2023 12:15:00'!
+!WriteStreamTest methodsFor: 'tests' stamp: 'jmv 31/Jul/2023 12:15:00'!
 testTabManyTimesWhenConditionIsTruePutsTabsInStream
 
 	| stream |
@@ -4382,7 +4382,7 @@ testTabManyTimesWhenConditionIsTruePutsTabsInStream
 	
 	self assert: stream contents equals: (String streamContents: [ :s | s tab: 2 ]).! !
 
-!WriteStreamTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:22:50'!
+!WriteStreamTest methodsFor: 'tests' stamp: 'HAW 20/Mar/2019 07:22:50'!
 testTabWhenConditionIsFalseDoesNotPutATabInStream
 
 	| stream |
@@ -4393,7 +4393,7 @@ testTabWhenConditionIsFalseDoesNotPutATabInStream
 	self assert: stream contents isEmpty
 	! !
 
-!WriteStreamTest methodsFor: 'tests' stamp: 'jmv 7/31/2023 12:15:13'!
+!WriteStreamTest methodsFor: 'tests' stamp: 'jmv 31/Jul/2023 12:15:13'!
 testTabWhenConditionIsTruePutsATabInStream
 
 	| stream |
@@ -4403,21 +4403,21 @@ testTabWhenConditionIsTruePutsATabInStream
 	
 	self assert: stream contents equals: Character tab asString.! !
 
-!ArrayLiteralTest methodsFor: 'tests' stamp: 'jpb 8/2/2019 23:05:08'!
+!ArrayLiteralTest methodsFor: 'tests' stamp: 'jpb 2/Aug/2019 23:05:08'!
 testIsArray
 	self assert: ({1. 2. 'hello'. #Number} is: #Array).! !
 
-!ArrayLiteralTest methodsFor: 'tests' stamp: 'HAW 10/26/2019 18:24:11'!
+!ArrayLiteralTest methodsFor: 'tests' stamp: 'HAW 26/Oct/2019 18:24:11'!
 testReservedIdentifiers
 	
 	self assert: #(nil true false) equals: {nil. true. false}.! !
 
-!ArrayLiteralTest methodsFor: 'tests' stamp: 'HAW 10/26/2019 18:24:52'!
+!ArrayLiteralTest methodsFor: 'tests' stamp: 'HAW 26/Oct/2019 18:24:52'!
 testSymbols
 
 	self assert: #(#nil #true #false #'nil' #'true' #'false') equals: {#nil. #true. #false. #nil. #true. #false}.! !
 
-!ClassDefinitionNodeAnalyzerTest methodsFor: 'testing' stamp: 'HAW 4/17/2019 21:07:13'!
+!ClassDefinitionNodeAnalyzerTest methodsFor: 'testing' stamp: 'HAW 17/Apr/2019 21:07:13'!
 test01isAtSuperclassWhenIndexIsInSuperclass
 
 	| classDefinitionNode analyzer |
@@ -4429,7 +4429,7 @@ test01isAtSuperclassWhenIndexIsInSuperclass
 	self assert: (analyzer isAtSuperclass: 1).
 	self assert: (analyzer isAtSuperclass: self class superclass name size)! !
 
-!ClassDefinitionNodeAnalyzerTest methodsFor: 'testing' stamp: 'HAW 4/17/2019 21:07:19'!
+!ClassDefinitionNodeAnalyzerTest methodsFor: 'testing' stamp: 'HAW 17/Apr/2019 21:07:19'!
 test02isNotAtSuperclassWhenIndexIsOutsideSuperclass
 
 	| classDefinitionNode analyzer |
@@ -4442,7 +4442,7 @@ test02isNotAtSuperclassWhenIndexIsOutsideSuperclass
 	self deny: (analyzer isAtSuperclass: self class superclass name size + 1).
 	! !
 
-!ClassDefinitionNodeAnalyzerTest methodsFor: 'testing' stamp: 'HAW 4/17/2019 21:07:25'!
+!ClassDefinitionNodeAnalyzerTest methodsFor: 'testing' stamp: 'HAW 17/Apr/2019 21:07:25'!
 test03isAtClassNameWhenIndexIsInClassName
 
 	| classDefinitionNode analyzer |
@@ -4455,7 +4455,7 @@ test03isAtClassNameWhenIndexIsInClassName
 	self assert: (analyzer isAtClassName: (self class definition findString: self class name) +  self class name size - 1).
 ! !
 
-!ClassDefinitionNodeAnalyzerTest methodsFor: 'testing' stamp: 'HAW 4/17/2019 21:07:29'!
+!ClassDefinitionNodeAnalyzerTest methodsFor: 'testing' stamp: 'HAW 17/Apr/2019 21:07:29'!
 test04isNotAtClassNameWhenIndexIsOutsideClassName
 
 	| classDefinitionNode analyzer |
@@ -4468,7 +4468,7 @@ test04isNotAtClassNameWhenIndexIsOutsideClassName
 	self deny: (analyzer isAtClassName: (self class definition findString: self class name) +  self class name size).
 ! !
 
-!ClassDefinitionNodeAnalyzerTest methodsFor: 'testing' stamp: 'HAW 4/17/2019 21:07:35'!
+!ClassDefinitionNodeAnalyzerTest methodsFor: 'testing' stamp: 'HAW 17/Apr/2019 21:07:35'!
 test05isAtInstanceVariablesWhenIndexIsInInstanceVariablesString
 
 	| classDefinitionNode analyzer |
@@ -4481,7 +4481,7 @@ test05isAtInstanceVariablesWhenIndexIsInInstanceVariablesString
 	self assert: (analyzer isAtInstanceVariables: (self class definition findString: 'iv1') + 2).
 ! !
 
-!ClassDefinitionNodeAnalyzerTest methodsFor: 'testing' stamp: 'HAW 4/17/2019 21:07:40'!
+!ClassDefinitionNodeAnalyzerTest methodsFor: 'testing' stamp: 'HAW 17/Apr/2019 21:07:40'!
 test06isNotAtInstanceVariablesWhenIndexIsOutsideInstanceVariablesString
 
 	| classDefinitionNode analyzer |
@@ -4495,7 +4495,7 @@ test06isNotAtInstanceVariablesWhenIndexIsOutsideInstanceVariablesString
 	
 	! !
 
-!ClassDefinitionNodeAnalyzerTest methodsFor: 'testing' stamp: 'jmv 7/31/2023 12:16:14'!
+!ClassDefinitionNodeAnalyzerTest methodsFor: 'testing' stamp: 'jmv 31/Jul/2023 12:16:14'!
 test07CanAccessSuperclass
 
 	| classDefinitionNode analyzer |
@@ -4506,7 +4506,7 @@ test07CanAccessSuperclass
 	
 	self assert: analyzer superclass equals: self class superclass.! !
 
-!ClassDefinitionNodeAnalyzerTest methodsFor: 'testing' stamp: 'HAW 4/17/2019 21:07:50'!
+!ClassDefinitionNodeAnalyzerTest methodsFor: 'testing' stamp: 'HAW 17/Apr/2019 21:07:50'!
 test08isAtCategoryWhenIndexIsInCategoryString
 
 	| classDefinitionNode analyzer |
@@ -4520,7 +4520,7 @@ test08isAtCategoryWhenIndexIsInCategoryString
 	
 	! !
 
-!ClassDefinitionNodeAnalyzerTest methodsFor: 'testing' stamp: 'HAW 4/17/2019 21:07:55'!
+!ClassDefinitionNodeAnalyzerTest methodsFor: 'testing' stamp: 'HAW 17/Apr/2019 21:07:55'!
 test09isNotAtCategoryWhenIndexIsOutsideCategoryString
 
 	| classDefinitionNode analyzer |
@@ -4534,7 +4534,7 @@ test09isNotAtCategoryWhenIndexIsOutsideCategoryString
 	
 	! !
 
-!ClassDefinitionNodeAnalyzerTest methodsFor: 'testing' stamp: 'HAW 10/11/2019 16:51:32'!
+!ClassDefinitionNodeAnalyzerTest methodsFor: 'testing' stamp: 'HAW 11/Oct/2019 16:51:32'!
 test10InstanceVariablesIsTheSecondParameter
 
 	| subclassCreationSelectors |
@@ -4547,7 +4547,7 @@ test10InstanceVariablesIsTheSecondParameter
 			assert: (aSubclassCreationSelector keywords at: ClassDefinitionNodeAnalyzer instanceVariableNamesPositionForClassDefinition ) 
 			equals: 'instanceVariableNames:' ]! !
 
-!ClassDefinitionNodeAnalyzerTest methodsFor: 'testing' stamp: 'HAW 4/17/2019 21:06:49'!
+!ClassDefinitionNodeAnalyzerTest methodsFor: 'testing' stamp: 'HAW 17/Apr/2019 21:06:49'!
 test11CategoryIsTheFifthParameter
 
 	| subclassCreationSelectors |
@@ -4560,12 +4560,12 @@ test11CategoryIsTheFifthParameter
 			assert: (aSubclassCreationSelector keywords at: ClassDefinitionNodeAnalyzer categoryPosition) 
 			equals: 'category:' ]! !
 
-!ClassDefinitionNodeAnalyzerTest methodsFor: 'testing' stamp: 'HAW 4/17/2019 18:16:08'!
+!ClassDefinitionNodeAnalyzerTest methodsFor: 'testing' stamp: 'HAW 17/Apr/2019 18:16:08'!
 thisClassDefinitionNode
 	
 	 ^self class methodNodeFor: self class definition noPattern: true ! !
 
-!ClosureCompilerTest methodsFor: 'source' stamp: 'jmv 1/9/2024 16:00:21'!
+!ClosureCompilerTest methodsFor: 'source' stamp: 'jmv 9/Jan/2024 16:00:21'!
 closureCases
 	^#(
 '| n |
@@ -4796,7 +4796,7 @@ mn generate: #(0 0 0 0).
 
 	outFileStream close' )! !
 
-!ClosureCompilerTest methodsFor: 'tests' stamp: 'eem 6/24/2008 12:28'!
+!ClosureCompilerTest methodsFor: 'tests' stamp: 'eem 24/Jun/2008 12:28:00'!
 doTestDebuggerTempAccessWith: one with: two
 	"Test debugger access for temps"
 	| outerContext local1 remote1 |
@@ -4828,7 +4828,7 @@ doTestDebuggerTempAccessWith: one with: two
 	self assert: local1 = 25.
 	self assert: remote1 = (6/7)! !
 
-!ClosureCompilerTest methodsFor: 'tests' stamp: 'jmv 3/14/2024 12:23:53'!
+!ClosureCompilerTest methodsFor: 'tests' stamp: 'jmv 14/Mar/2024 12:23:53'!
 supportTestSourceRangeAccessForDecompiledInjectInto: method source: source
 	"Test debugger source range selection for inject:into:"
 	^self
@@ -4844,7 +4844,7 @@ supportTestSourceRangeAccessForDecompiledInjectInto: method source: source
 								'temp3 := arg2 value: temp3 value: argm1_5'
 								'^temp3')! !
 
-!ClosureCompilerTest methodsFor: 'tests' stamp: 'eem 6/4/2008 19:44'!
+!ClosureCompilerTest methodsFor: 'tests' stamp: 'eem 4/Jun/2008 19:44:00'!
 supportTestSourceRangeAccessForDecompiledNoBytecodeInjectInto: method source: source
 	"Test debugger source range selection for inject:into:"
 	^self
@@ -4860,7 +4860,7 @@ supportTestSourceRangeAccessForDecompiledNoBytecodeInjectInto: method source: so
 								']'
 								'^t3 at: 1')! !
 
-!ClosureCompilerTest methodsFor: 'tests' stamp: 'jmv 12/29/2023 17:15:16'!
+!ClosureCompilerTest methodsFor: 'tests' stamp: 'jmv 29/Dec/2023 17:15:16'!
 supportTestSourceRangeAccessForInjectInto: method source: source
 	"Test debugger source range selection for inject:into:"
 	^self
@@ -4876,7 +4876,7 @@ supportTestSourceRangeAccessForInjectInto: method source: source
 								'nextValue := binaryBlock value: nextValue value: each'
 								'^nextValue')! !
 
-!ClosureCompilerTest methodsFor: 'tests' stamp: 'eem 7/29/2008 17:16'!
+!ClosureCompilerTest methodsFor: 'tests' stamp: 'eem 29/Jul/2008 17:16:00'!
 supportTestSourceRangeAccessForInjectInto: method source: source selectionSequence: selections
 	"Test debugger source range selection for inject:into:"
 	| evaluationCount sourceMap debugTokenSequence debugCount |
@@ -4914,7 +4914,7 @@ supportTestSourceRangeAccessForInjectInto: method source: source selectionSequen
 				 self assert: (Scanner new scanTokens: (source copyFrom: range first to: range last)) = debugTokens]].
 	self assert: evaluationCount = 2! !
 
-!ClosureCompilerTest methodsFor: 'tests' stamp: 'jmv 3/14/2024 12:18:54'!
+!ClosureCompilerTest methodsFor: 'tests' stamp: 'jmv 14/Mar/2024 12:18:54'!
 testBlockDoitDecompilation
 	"Tests that decompile of a doit block with remote vars executes correcly"
 	"Tests that decompilation of a Block, when 'method' of block is equivalent to that compiled by a DoIt, preserves the temp names "
@@ -4934,7 +4934,7 @@ testBlockDoitDecompilation
 	temp3 := argm0_5.
 	temp1 + temp3. ]}'.! !
 
-!ClosureCompilerTest methodsFor: 'tests' stamp: 'jmv 1/17/2011 00:13'!
+!ClosureCompilerTest methodsFor: 'tests' stamp: 'jmv 17/Jan/2011 00:13:00'!
 testBlockNumbering
 	"Test that the compiler and CompiledMethod agree on the block numbering of a substantial doit."
 	"self new testBlockNumbering"
@@ -4978,7 +4978,7 @@ testBlockNumbering
 	tempRefs _ methodNode encoder blockExtentsToTempsMap.
 	self assert: tempRefs keys asSet = method startpcsToBlockExtents values asSet! !
 
-!ClosureCompilerTest methodsFor: 'tests' stamp: 'jmv 1/17/2011 00:13'!
+!ClosureCompilerTest methodsFor: 'tests' stamp: 'jmv 17/Jan/2011 00:13:00'!
 testBlockNumberingForInjectInto
 	"Test that the compiler and CompiledMethod agree on the block numbering of Collection>>inject:into:
 	 and that temp names for inject:into: are recorded."
@@ -4996,13 +4996,13 @@ testBlockNumberingForInjectInto
 	self assert: ((tempRefs includesKey: (2 to: 4))
 				and: [(tempRefs at: (2 to: 4)) hasEqualElements: #(('each' 1) ('binaryBlock' 2) ('nextValue' (3 1)))])! !
 
-!ClosureCompilerTest methodsFor: 'tests' stamp: 'HAW 3/17/2019 07:20:04'!
+!ClosureCompilerTest methodsFor: 'tests' stamp: 'HAW 17/Mar/2019 07:20:04'!
 testDebuggerTempAccess
 
 	"This test also fails in Squeak. Check if it is ever fixed."
 	self shouldFail: [ self doTestDebuggerTempAccessWith: 1 with: 2 ]! !
 
-!ClosureCompilerTest methodsFor: 'tests' stamp: 'jmv 3/14/2024 12:21:25'!
+!ClosureCompilerTest methodsFor: 'tests' stamp: 'jmv 14/Mar/2024 12:21:25'!
 testInjectIntoDecompilationsEncoderForV3PlusClosures
 	"Test various compilations decompile to the same code for a method sufficiently
 	 simple that this is possible and sufficiently complex that the code generated
@@ -5024,7 +5024,7 @@ testInjectIntoDecompilationsEncoderForV3PlusClosures
 							self do: [ ':argm1_5' | temp3 := arg2 value: temp3 value: argm1_5 ] .
 							^ temp3 . )]! !
 
-!ClosureCompilerTest methodsFor: 'tests' stamp: 'jmv 3/14/2024 12:21:01'!
+!ClosureCompilerTest methodsFor: 'tests' stamp: 'jmv 14/Mar/2024 12:21:01'!
 testInjectIntoDecompiledDebugs
 	"Test various debugs of the decompiled form debug correctly."
 	"self new testInjectIntoDecompiledDebugs"
@@ -5039,7 +5039,7 @@ testInjectIntoDecompiledDebugs
 						generate: #(0 0 0 0).
 		self supportTestSourceRangeAccessForDecompiledInjectInto: method source: method decompileString]! !
 
-!ClosureCompilerTest methodsFor: 'tests' stamp: 'eem 7/24/2009 11:51'!
+!ClosureCompilerTest methodsFor: 'tests' stamp: 'eem 24/Jul/2009 11:51:00'!
 testInlineBlockCollectionEM1
 	| a1 b1 i1 a2 b2 i2 we wb |
 	b1 := OrderedCollection new.
@@ -5057,7 +5057,7 @@ testInlineBlockCollectionEM1
 	b2 := b2 asArray collect: [:b | b value].
 	self assert: b1 = b2! !
 
-!ClosureCompilerTest methodsFor: 'tests' stamp: 'eem 3/7/2009 11:25'!
+!ClosureCompilerTest methodsFor: 'tests' stamp: 'eem 7/Mar/2009 11:25:00'!
 testInlineBlockCollectionLR1
 	"Test case from Lukas Renggli"
 	| col |
@@ -5065,7 +5065,7 @@ testInlineBlockCollectionLR1
 	1 to: 11 do: [ :each | col add: [ each ] ].
 	self assert: (col collect: [ :each | each value ]) asArray = (1 to: 11) asArray! !
 
-!ClosureCompilerTest methodsFor: 'tests' stamp: 'eem 3/7/2009 11:39'!
+!ClosureCompilerTest methodsFor: 'tests' stamp: 'eem 7/Mar/2009 11:39:00'!
 testInlineBlockCollectionLR2
 	"Test case from Lukas Renggli"
 	| col |
@@ -5073,14 +5073,14 @@ testInlineBlockCollectionLR2
 	1 to: 11 do: [ :each | #(1) do: [:ignored| col add: [ each ]] ].
 	self assert: (col collect: [ :each | each value ]) asArray = (1 to: 11) asArray! !
 
-!ClosureCompilerTest methodsFor: 'tests' stamp: 'eem 3/9/2009 11:00'!
+!ClosureCompilerTest methodsFor: 'tests' stamp: 'eem 9/Mar/2009 11:00:00'!
 testInlineBlockCollectionLR3
 	| col |
 	col := OrderedCollection new.
 	1 to: 11 do: [ :each | | i | i := each. col add: [ i ]. i := i + 1 ].
 	self assert: (col collect: [ :each | each value ]) asArray = (2 to: 12) asArray! !
 
-!ClosureCompilerTest methodsFor: 'tests' stamp: 'eem 7/22/2009 16:55'!
+!ClosureCompilerTest methodsFor: 'tests' stamp: 'eem 22/Jul/2009 16:55:00'!
 testInlineBlockCollectionSD1
 	| a1 b1 a2 b2 |
 	b1 := OrderedCollection new.
@@ -5097,7 +5097,7 @@ testInlineBlockCollectionSD1
 	b2 := b2 asArray collect: [:b | b value].
 	self assert: b1 = b2! !
 
-!ClosureCompilerTest methodsFor: 'tests' stamp: 'jmv 3/14/2024 12:21:37'!
+!ClosureCompilerTest methodsFor: 'tests' stamp: 'jmv 14/Mar/2024 12:21:37'!
 testSourceRangeAccessForClosureBytecodeInjectInto
 	"Test debugger source range selection for inject:into: for a version compiled with closures"
 	"self new testSourceRangeAccessForClosureBytecodeInjectInto"
@@ -5110,14 +5110,14 @@ testSourceRangeAccessForClosureBytecodeInjectInto
 					generate: (Collection compiledMethodAt: #inject:into:) trailer.
 	self supportTestSourceRangeAccessForInjectInto: method source: source! !
 
-!ClosureCompilerTest methodsFor: 'tests' stamp: 'jmv 3/14/2024 12:21:44'!
+!ClosureCompilerTest methodsFor: 'tests' stamp: 'jmv 14/Mar/2024 12:21:44'!
 testSourceRangeAccessForInjectInto
 	"Test debugger source range selection for inject:into: for the current version of the method"
 	"self new testSourceRangeAccessForInjectInto"
 	self supportTestSourceRangeAccessForInjectInto: (Collection compiledMethodAt: #inject:into:)
 		source: (Collection sourceCodeAt: #inject:into:)! !
 
-!ClosureCompilerTest methodsFor: 'tests' stamp: 'eem 6/15/2008 11:26'!
+!ClosureCompilerTest methodsFor: 'tests' stamp: 'eem 15/Jun/2008 11:26:00'!
 testTempNameAccessForInjectInto
 	"self new testTempNameAccessForInjectInto"
 	| methodNode method evaluationCount block debuggerMap |
@@ -5142,7 +5142,7 @@ testTempNameAccessForInjectInto
 	(1 to: 10) withArgs: { 0. block } executeMethod: method.
 	self assert: evaluationCount = 10! !
 
-!ClosureCompilerTest class methodsFor: 'code examples' stamp: 'eem 5/20/2008 09:40'!
+!ClosureCompilerTest class methodsFor: 'code examples' stamp: 'eem 20/May/2008 09:40:00'!
 methodWithCopiedAndAssignedTemps
 	| blk "0w" a "0w" b "0w" c "0w" t "0w" r1 "0w" r2 "0w" |
 	a := 1. "1w"
@@ -5169,7 +5169,7 @@ methodWithCopiedAndAssignedTemps
 		parse: (self class sourceCodeAt: #methodWithCopiedAndAssignedTemps)
 		class: self class) generateUsingClosures: #(0 0 0 0)"! !
 
-!ClosureCompilerTest class methodsFor: 'code examples' stamp: 'eem 5/19/2008 20:45'!
+!ClosureCompilerTest class methodsFor: 'code examples' stamp: 'eem 19/May/2008 20:45:00'!
 methodWithCopiedAndPostClosedOverAssignedTemps
 	| blk a b c r1 r2 |
 	a := 1.
@@ -5186,7 +5186,7 @@ methodWithCopiedAndPostClosedOverAssignedTemps
 		parse: (self class sourceCodeAt: #methodWithCopiedAndPostClosedOverAssignedTemps)
 		class: self class) generateUsingClosures: #(0 0 0 0)"! !
 
-!ClosureCompilerTest class methodsFor: 'code examples' stamp: 'eem 5/19/2008 20:10'!
+!ClosureCompilerTest class methodsFor: 'code examples' stamp: 'eem 19/May/2008 20:10:00'!
 methodWithCopiedTemps
 	| a b c r |
 	a := 1.
@@ -5205,7 +5205,7 @@ methodWithCopiedTemps
 		parse: (self class sourceCodeAt: #methodWithCopiedTemps)
 		class: self class) generateUsingClosures: #(0 0 0 0)"! !
 
-!ClosureCompilerTest class methodsFor: 'code examples' stamp: 'eem 5/19/2008 14:24'!
+!ClosureCompilerTest class methodsFor: 'code examples' stamp: 'eem 19/May/2008 14:24:00'!
 methodWithOptimizedBlocks
 	| s c |
 	s := self isNil
@@ -5220,7 +5220,7 @@ methodWithOptimizedBlocks
 		parse: (self class sourceCodeAt: #methodWithOptimizedBlocks)
 		class: self class"! !
 
-!ClosureCompilerTest class methodsFor: 'code examples' stamp: 'eem 5/19/2008 14:24'!
+!ClosureCompilerTest class methodsFor: 'code examples' stamp: 'eem 19/May/2008 14:24:00'!
 methodWithOptimizedBlocksA
 	| s c |
 	s := self isNil
@@ -5235,7 +5235,7 @@ methodWithOptimizedBlocksA
 		parse: (self class sourceCodeAt: #methodWithOptimizedBlocksA)
 		class: self class"! !
 
-!ClosureCompilerTest class methodsFor: 'code examples' stamp: 'eem 5/19/2008 14:12'!
+!ClosureCompilerTest class methodsFor: 'code examples' stamp: 'eem 19/May/2008 14:12:00'!
 methodWithVariousTemps
 	| classes total totalLength |
 	classes := self withAllSuperclasses.
@@ -5250,21 +5250,21 @@ methodWithVariousTemps
 		parse: (self class sourceCodeAt: #methodWithVariousTemps)
 		class: self class"! !
 
-!ClosureSerializationTest methodsFor: 'testing' stamp: 'jmv 9/26/2019 23:19:41'!
+!ClosureSerializationTest methodsFor: 'testing' stamp: 'jmv 26/Sep/2019 23:19:41'!
 testSample01
 	| blockClosure materialized |
 	blockClosure _ self bc01.
 	materialized _ blockClosure veryDeepCopy.
 	self assert: blockClosure value = materialized value.! !
 
-!ClosureSerializationTest methodsFor: 'testing' stamp: 'jmv 9/26/2019 23:19:41'!
+!ClosureSerializationTest methodsFor: 'testing' stamp: 'jmv 26/Sep/2019 23:19:41'!
 testSample02
 	| blockClosure materialized |
 	blockClosure _ self bc02.
 	materialized _ blockClosure veryDeepCopy.
 	self assert: blockClosure value = materialized value.! !
 
-!ClosureSerializationTest methodsFor: 'testing' stamp: 'jmv 9/26/2019 23:19:41'!
+!ClosureSerializationTest methodsFor: 'testing' stamp: 'jmv 26/Sep/2019 23:19:41'!
 testSample03
 	| blockClosure materialized |
 	blockClosure _ self bc03.
@@ -5273,14 +5273,14 @@ testSample03
 	self assert: blockClosure value = materialized value.
 	self assert: blockClosure value = materialized value.! !
 
-!ClosureSerializationTest methodsFor: 'testing' stamp: 'jmv 9/26/2019 23:19:41'!
+!ClosureSerializationTest methodsFor: 'testing' stamp: 'jmv 26/Sep/2019 23:19:41'!
 testSample04
 	| blockClosure materialized |
 	blockClosure _ self bc04.
 	materialized _ blockClosure veryDeepCopy.
 	self assert: blockClosure value = materialized value.! !
 
-!ClosureSerializationTest methodsFor: 'testing' stamp: 'jmv 9/26/2019 23:19:41'!
+!ClosureSerializationTest methodsFor: 'testing' stamp: 'jmv 26/Sep/2019 23:19:41'!
 testSample05
 	| blockClosure materialized |
 	blockClosure _ self bc05.
@@ -5289,7 +5289,7 @@ testSample05
 	self assert: blockClosure value = materialized value.
 	self assert: blockClosure value = materialized value.! !
 
-!ClosureSerializationTest methodsFor: 'testing' stamp: 'jmv 9/26/2019 23:19:41'!
+!ClosureSerializationTest methodsFor: 'testing' stamp: 'jmv 26/Sep/2019 23:19:41'!
 testSample06
 	| blockClosures materialized firstRun |
 
@@ -5314,7 +5314,7 @@ testSample06
 	self deny: firstRun = materialized second value.
 	self assert: blockClosures second value = materialized second value.! !
 
-!ClosureSerializationTest methodsFor: 'testing' stamp: 'jmv 9/26/2019 23:19:41'!
+!ClosureSerializationTest methodsFor: 'testing' stamp: 'jmv 26/Sep/2019 23:19:41'!
 testSample07
 	| blockClosures materialized |
 
@@ -5340,7 +5340,7 @@ testSample07
 	self assert: blockClosures third value = materialized third value.
 	self assert: blockClosures first value = materialized first value.! !
 
-!ClosureSerializationTest methodsFor: 'testing' stamp: 'jmv 9/26/2019 23:19:41'!
+!ClosureSerializationTest methodsFor: 'testing' stamp: 'jmv 26/Sep/2019 23:19:41'!
 testSample08
 	| blockClosures materialized |
 
@@ -5362,7 +5362,7 @@ testSample08
 	self assert: (blockClosures second value: 7) = (materialized second value: 7).
 	self assert: (blockClosures fourth value: 2 value: 3) = (materialized fourth value: 2 value: 3).! !
 
-!ClosureSerializationTest methodsFor: 'testing' stamp: 'jmv 9/26/2019 23:19:41'!
+!ClosureSerializationTest methodsFor: 'testing' stamp: 'jmv 26/Sep/2019 23:19:41'!
 testSample09
 	| blockClosures materialized |
 
@@ -5373,7 +5373,7 @@ testSample09
 	self assert: (blockClosures second value: $d value: #e) = (materialized second value: $d value: #e).
 	self assert: (blockClosures third value: $d value: $e) = (materialized third value: $d value: $e).! !
 
-!ClosureSerializationTest methodsFor: 'testing' stamp: 'jmv 9/26/2019 23:19:41'!
+!ClosureSerializationTest methodsFor: 'testing' stamp: 'jmv 26/Sep/2019 23:19:41'!
 testSample10
 	| blockClosure1 blockClosure2 blockClosure3 value materialized1 materialized2a materialized2b materialized3a materialized3b materialized3c |
 
@@ -5398,7 +5398,7 @@ testSample10
 	self assert: materialized3c value = value.
 ! !
 
-!ClosureSerializationTest methodsFor: 'testing' stamp: 'jmv 9/26/2019 23:19:41'!
+!ClosureSerializationTest methodsFor: 'testing' stamp: 'jmv 26/Sep/2019 23:19:41'!
 testSample11
 	| blockClosures materialized |
 
@@ -5420,42 +5420,42 @@ testSample11
 	self assert: blockClosures second value = materialized second value.
 	self assert: blockClosures first value = materialized first value.! !
 
-!ClosureSerializationTest methodsFor: 'aux' stamp: 'jmv 9/26/2019 23:19:41'!
+!ClosureSerializationTest methodsFor: 'aux' stamp: 'jmv 26/Sep/2019 23:19:41'!
 gimme5
 	^1+4! !
 
-!ClosureSerializationTest methodsFor: 'sample closures' stamp: 'jmv 9/26/2019 23:19:41'!
+!ClosureSerializationTest methodsFor: 'sample closures' stamp: 'jmv 26/Sep/2019 23:19:41'!
 bc01
 	^[ self gimme5 ]! !
 
-!ClosureSerializationTest methodsFor: 'sample closures' stamp: 'jmv 9/26/2019 23:19:41'!
+!ClosureSerializationTest methodsFor: 'sample closures' stamp: 'jmv 26/Sep/2019 23:19:41'!
 bc02
 	^[ ivar + 4 ]! !
 
-!ClosureSerializationTest methodsFor: 'sample closures' stamp: 'jmv 9/26/2019 23:19:41'!
+!ClosureSerializationTest methodsFor: 'sample closures' stamp: 'jmv 26/Sep/2019 23:19:41'!
 bc03
 	^[ ivar _ ivar + 3 ]! !
 
-!ClosureSerializationTest methodsFor: 'sample closures' stamp: 'jmv 9/26/2019 23:19:41'!
+!ClosureSerializationTest methodsFor: 'sample closures' stamp: 'jmv 26/Sep/2019 23:19:41'!
 bc04
 	| t |
 	t _ self gimme5.
 	^[ t * 2 ]! !
 
-!ClosureSerializationTest methodsFor: 'sample closures' stamp: 'jmv 9/26/2019 23:19:41'!
+!ClosureSerializationTest methodsFor: 'sample closures' stamp: 'jmv 26/Sep/2019 23:19:41'!
 bc05
 	| t |
 	t _ self gimme5.
 	^[ t _ t * 2 ]! !
 
-!ClosureSerializationTest methodsFor: 'sample closures' stamp: 'jmv 9/26/2019 23:19:41'!
+!ClosureSerializationTest methodsFor: 'sample closures' stamp: 'jmv 26/Sep/2019 23:19:41'!
 bc06
 	| u t |
 	u _ self gimme5 + 2.
 	t _ self gimme5.
 	^{[ u * 2 ]. [ t * 2 ].[t _ t*3]}.! !
 
-!ClosureSerializationTest methodsFor: 'sample closures' stamp: 'jmv 9/26/2019 23:19:41'!
+!ClosureSerializationTest methodsFor: 'sample closures' stamp: 'jmv 26/Sep/2019 23:19:41'!
 bc07
 	| a b c d e f g |
 	a _ self gimme5 + 1.
@@ -5467,7 +5467,7 @@ bc07
 	g _ self gimme5 + 7.
 	^{[ a * 10 + b * 10 + c * 10 + d * 10 + e + f + g ]. [ a _ 7. a * 2 ].[ c _ 9. d _ d*10. a * 10 + b * 10 + c + d]}.! !
 
-!ClosureSerializationTest methodsFor: 'sample closures' stamp: 'jmv 9/26/2019 23:19:41'!
+!ClosureSerializationTest methodsFor: 'sample closures' stamp: 'jmv 26/Sep/2019 23:19:41'!
 bc08
 
 	| u t |
@@ -5480,7 +5480,7 @@ bc08
 		[:a :b | a * b * t ]
 	}.! !
 
-!ClosureSerializationTest methodsFor: 'sample closures' stamp: 'jmv 9/26/2019 23:19:41'!
+!ClosureSerializationTest methodsFor: 'sample closures' stamp: 'jmv 26/Sep/2019 23:19:41'!
 bc09
 
 	| clo1 clo2 closure |
@@ -5494,12 +5494,12 @@ bc09
 		) value: 'b'.
 	^{ clo1. clo2. closure }! !
 
-!ClosureSerializationTest methodsFor: 'sample closures' stamp: 'jmv 9/26/2019 23:19:41'!
+!ClosureSerializationTest methodsFor: 'sample closures' stamp: 'jmv 26/Sep/2019 23:19:41'!
 bc10
 
 	^ [ :a :b | a + b ]! !
 
-!ClosureSerializationTest methodsFor: 'sample closures' stamp: 'jmv 3/1/2025 17:39:45'!
+!ClosureSerializationTest methodsFor: 'sample closures' stamp: 'jmv 1/Mar/2025 17:39:45'!
 bc11
 	| a b c d e f g |
 	a := self gimme5 + 1.
@@ -5512,13 +5512,13 @@ bc11
 	{ b. d. e. f }"print".
 	^{[ g + a * 10 + a + a + g + c ]. [ b := 7. c := c * 2 ]}.! !
 
-!ClosureSerializationTest methodsFor: 'setUp/tearDown' stamp: 'jmv 3/20/2024 15:45:08'!
+!ClosureSerializationTest methodsFor: 'setUp/tearDown' stamp: 'jmv 20/Mar/2024 15:45:08'!
 setUp
 	super setUp.
 	ivar := 7.
 	^ivar! !
 
-!ClosureTests methodsFor: 'utilities' stamp: 'lr 3/9/2009 16:48'!
+!ClosureTests methodsFor: 'utilities' stamp: 'lr 9/Mar/2009 16:48:00'!
 assertValues: anArray
 	| values |
 	values := collection collect: [ :each | each value ].
@@ -5527,21 +5527,21 @@ assertValues: anArray
 		description: 'Expected: ' , anArray asArray printString , 
 			', but got ' , values asArray printString! !
 
-!ClosureTests methodsFor: 'utilities' stamp: 'cwp 11/16/2009 08:12'!
+!ClosureTests methodsFor: 'utilities' stamp: 'cwp 16/Nov/2009 08:12:00'!
 evaluateCopyOf: aBlock
 	aBlock copy value! !
 
-!ClosureTests methodsFor: 'utilities' stamp: 'cwp 11/16/2009 08:12'!
+!ClosureTests methodsFor: 'utilities' stamp: 'cwp 16/Nov/2009 08:12:00'!
 methodWithNonLocalReturn
 	self evaluateCopyOf: [^ self].
 	self signalFailure: 'Should never reach here'! !
 
-!ClosureTests methodsFor: 'testing' stamp: 'lr 3/11/2009 17:35'!
+!ClosureTests methodsFor: 'testing' stamp: 'lr 11/Mar/2009 17:35:00'!
 methodArgument: anObject
 	^ [ anObject ]
 	! !
 
-!ClosureTests methodsFor: 'testing' stamp: 'lr 3/11/2009 17:33'!
+!ClosureTests methodsFor: 'testing' stamp: 'lr 11/Mar/2009 17:33:00'!
 testBlockArgument
 	| block block1 block2 |
 	block := [ :arg | | temp | temp := arg. [ temp ] ].
@@ -5550,7 +5550,7 @@ testBlockArgument
 	self assert: block1 value = 1.
 	self assert: block2 value = 2! !
 
-!ClosureTests methodsFor: 'testing' stamp: 'lr 3/11/2009 17:33'!
+!ClosureTests methodsFor: 'testing' stamp: 'lr 11/Mar/2009 17:33:00'!
 testBlockTemp
 	| block block1 block2 |
 	block := [ :arg | [ arg ] ].
@@ -5559,13 +5559,13 @@ testBlockTemp
 	self assert: block1 value = 1.
 	self assert: block2 value = 2! !
 
-!ClosureTests methodsFor: 'testing' stamp: 'cwp 11/16/2009 08:11'!
+!ClosureTests methodsFor: 'testing' stamp: 'cwp 16/Nov/2009 08:11:00'!
 testCopyNonLocalReturn
 	self
 		shouldnt: [self methodWithNonLocalReturn]
 		raise: Error! !
 
-!ClosureTests methodsFor: 'testing' stamp: 'jmv 7/14/2025 16:47:28'!
+!ClosureTests methodsFor: 'testing' stamp: 'jmv 14/Jul/2025 16:47:28'!
 testIsCleanClosure
 	"
 	ClosureTests new testIsCleanClosure
@@ -5624,7 +5624,7 @@ testIsCleanClosure
 	self deny: [[ 3 + 4 ].[ ClassVar + 1 ] value ] isCleanClosure.
 	self deny: [[ 3 + 4 ].[ ClassVar := 1 ] value ] isCleanClosure.! !
 
-!ClosureTests methodsFor: 'testing' stamp: 'lr 3/11/2009 17:36'!
+!ClosureTests methodsFor: 'testing' stamp: 'lr 11/Mar/2009 17:36:00'!
 testMethodArgument
 	| temp block |
 	temp := 0.
@@ -5634,7 +5634,7 @@ testMethodArgument
 	temp := 2.
 	self assert: block value = 2! !
 
-!ClosureTests methodsFor: 'testing' stamp: 'lr 3/11/2009 17:36'!
+!ClosureTests methodsFor: 'testing' stamp: 'lr 11/Mar/2009 17:36:00'!
 testMethodTemp
 	| block1 block2 |
 	block1 := self methodArgument: 1.
@@ -5642,18 +5642,18 @@ testMethodTemp
 	self assert: block1 value = 1.
 	self assert: block2 value = 2! !
 
-!ClosureTests methodsFor: 'running' stamp: 'lr 3/9/2009 16:48'!
+!ClosureTests methodsFor: 'running' stamp: 'lr 9/Mar/2009 16:48:00'!
 setUp
 	super setUp.
 	collection := OrderedCollection new! !
 
-!ClosureTests methodsFor: 'testing-todo' stamp: 'lr 3/10/2009 14:51'!
+!ClosureTests methodsFor: 'testing-todo' stamp: 'lr 10/Mar/2009 14:51:00'!
 testToDoArgument
 	1 to: 5 do: [ :index |
 		collection add: [ index ] ].
 	self assertValues: #(1 2 3 4 5)! !
 
-!ClosureTests methodsFor: 'testing-todo' stamp: 'lr 3/10/2009 14:51'!
+!ClosureTests methodsFor: 'testing-todo' stamp: 'lr 10/Mar/2009 14:51:00'!
 testToDoArgumentNotInlined
 	| block |
 	block := [ :index |
@@ -5661,7 +5661,7 @@ testToDoArgumentNotInlined
 	1 to: 5 do: block.
 	self assertValues: #(1 2 3 4 5)! !
 
-!ClosureTests methodsFor: 'testing-todo' stamp: 'lr 3/10/2009 14:51'!
+!ClosureTests methodsFor: 'testing-todo' stamp: 'lr 10/Mar/2009 14:51:00'!
 testToDoInsideTemp
 	1 to: 5 do: [ :index | 
 		| temp | 
@@ -5669,7 +5669,7 @@ testToDoInsideTemp
 		collection add: [ temp ] ].
 	self assertValues: #(1 2 3 4 5)! !
 
-!ClosureTests methodsFor: 'testing-todo' stamp: 'lr 3/10/2009 14:51'!
+!ClosureTests methodsFor: 'testing-todo' stamp: 'lr 10/Mar/2009 14:51:00'!
 testToDoInsideTempNotInlined
 	| block |
 	block := [ :index | 
@@ -5679,7 +5679,7 @@ testToDoInsideTempNotInlined
 	1 to: 5 do: block.
 	self assertValues: #(1 2 3 4 5)! !
 
-!ClosureTests methodsFor: 'testing-todo' stamp: 'lr 3/10/2009 14:51'!
+!ClosureTests methodsFor: 'testing-todo' stamp: 'lr 10/Mar/2009 14:51:00'!
 testToDoOutsideTemp
 	| temp |
 	1 to: 5 do: [ :index | 
@@ -5687,7 +5687,7 @@ testToDoOutsideTemp
 		collection add: [ temp ] ].
 	self assertValues: #(5 5 5 5 5)! !
 
-!ClosureTests methodsFor: 'testing-todo' stamp: 'lr 3/10/2009 14:51'!
+!ClosureTests methodsFor: 'testing-todo' stamp: 'lr 10/Mar/2009 14:51:00'!
 testToDoOutsideTempNotInlined
 	| block temp |
 	block := [ :index | 
@@ -5696,7 +5696,7 @@ testToDoOutsideTempNotInlined
 	1 to: 5 do: block.
 	self assertValues: #(5 5 5 5 5)! !
 
-!ClosureTests methodsFor: 'testing-while' stamp: 'lr 3/10/2009 14:29'!
+!ClosureTests methodsFor: 'testing-while' stamp: 'lr 10/Mar/2009 14:29:00'!
 testWhileModificationAfter
 	| index |
 	index := 0.
@@ -5705,7 +5705,7 @@ testWhileModificationAfter
 		index := index + 1 ].
 	self assertValues: #(5 5 5 5 5)! !
 
-!ClosureTests methodsFor: 'testing-while' stamp: 'lr 3/10/2009 14:29'!
+!ClosureTests methodsFor: 'testing-while' stamp: 'lr 10/Mar/2009 14:29:00'!
 testWhileModificationAfterNotInlined
 	| index block |
 	index := 0.
@@ -5715,7 +5715,7 @@ testWhileModificationAfterNotInlined
 	[ index < 5 ] whileTrue: block.
 	self assertValues: #(5 5 5 5 5)! !
 
-!ClosureTests methodsFor: 'testing-while' stamp: 'lr 3/10/2009 14:29'!
+!ClosureTests methodsFor: 'testing-while' stamp: 'lr 10/Mar/2009 14:29:00'!
 testWhileModificationBefore
 	| index |
 	index := 0.
@@ -5724,7 +5724,7 @@ testWhileModificationBefore
 		collection add: [ index ] ].
 	self assertValues: #(5 5 5 5 5)! !
 
-!ClosureTests methodsFor: 'testing-while' stamp: 'lr 3/10/2009 14:29'!
+!ClosureTests methodsFor: 'testing-while' stamp: 'lr 10/Mar/2009 14:29:00'!
 testWhileModificationBeforeNotInlined
 	| index block |
 	index := 0.
@@ -5734,7 +5734,7 @@ testWhileModificationBeforeNotInlined
 	[ index < 5 ] whileTrue: block.
 	self assertValues: #(5 5 5 5 5)! !
 
-!ClosureTests methodsFor: 'testing-while' stamp: 'lr 3/10/2009 14:52'!
+!ClosureTests methodsFor: 'testing-while' stamp: 'lr 10/Mar/2009 14:52:00'!
 testWhileWithTemp
 	| index |
 	index := 0.
@@ -5744,7 +5744,7 @@ testWhileWithTemp
 		collection add: [ temp ] ].
 	self assertValues: #(1 2 3 4 5)! !
 
-!ClosureTests methodsFor: 'testing-while' stamp: 'lr 3/10/2009 14:53'!
+!ClosureTests methodsFor: 'testing-while' stamp: 'lr 10/Mar/2009 14:53:00'!
 testWhileWithTempNotInlined
 	| index block |
 	index := 0.
@@ -5755,7 +5755,7 @@ testWhileWithTempNotInlined
 	[ index < 5 ] whileTrue: block.
 	self assertValues: #(1 2 3 4 5)! !
 
-!ContextCompilationTest methodsFor: 'tests' stamp: 'eem 6/19/2008 10:11'!
+!ContextCompilationTest methodsFor: 'tests' stamp: 'eem 19/Jun/2008 10:11:00'!
 testVariablesAndOffsetsDo
 
 	"ContextCompilationTest new testVariablesAndOffsetsDo"
@@ -5777,13 +5777,13 @@ testVariablesAndOffsetsDo
 					[self assert: offset > 0.
 					 self assert: (class instVarNameForIndex: offset) == var]]]]! !
 
-!DecompilerTests methodsFor: 'utilities' stamp: 'sd 9/25/2004 15:30'!
+!DecompilerTests methodsFor: 'utilities' stamp: 'sd 25/Sep/2004 15:30:00'!
 blockingClasses
 
 
 	^ #(CompiledMethod)! !
 
-!DecompilerTests methodsFor: 'utilities' stamp: 'jmv 12/11/2022 19:36:11'!
+!DecompilerTests methodsFor: 'utilities' stamp: 'jmv 11/Dec/2022 19:36:11'!
 checkDecompileMethod: oldMethod
 	
 	| cls selector oldMethodNode methodNode newMethod oldCodeString newCodeString |
@@ -5825,7 +5825,7 @@ checkDecompileMethod: oldMethod
 			description: cls name asString, ' ', selector asString
 			resumable: true ]! !
 
-!DecompilerTests methodsFor: 'utilities' stamp: 'HAW 5/6/2025 19:10:09'!
+!DecompilerTests methodsFor: 'utilities' stamp: 'HAW 6/May/2025 19:10:09'!
 decompileClassesInRootCategoryOf: aClass
 
 	| rootCategory |
@@ -5842,7 +5842,7 @@ decompileClassesInRootCategoryOf: aClass
 								should: [ self checkDecompileMethod: method ]
 								raise: exceptionClass ] ] ] ] ]! !
 
-!DecompilerTests methodsFor: 'utilities' stamp: 'ul 5/6/2015 15:59'!
+!DecompilerTests methodsFor: 'utilities' stamp: 'ul 6/May/2015 15:59:00'!
 exceptionClassForFailureFor: class selector: selector
 	
 	^self decompilerFailures
@@ -5850,7 +5850,7 @@ exceptionClassForFailureFor: class selector: selector
 		ifFound: [ :each | each third ifNotNil: [ Smalltalk classNamed: each third ] ]
 		ifNone: [ nil ]! !
 
-!DecompilerTests methodsFor: 'utilities' stamp: 'jmv 6/1/2021 14:00:00'!
+!DecompilerTests methodsFor: 'utilities' stamp: 'jmv 1/Jun/2021 14:00:00'!
 withFixedTempNumbering: aString
 	| k code newCode tempStart startAt |
 	code _ aString.
@@ -5865,7 +5865,7 @@ withFixedTempNumbering: aString
 			k _ k + 1 ]].
 	^code! !
 
-!DecompilerTests methodsFor: 'filtering errors' stamp: 'jmv 1/22/2025 14:47:23'!
+!DecompilerTests methodsFor: 'filtering errors' stamp: 'jmv 22/Jan/2025 14:47:23'!
 decompilerFailures
 	"Here is the list of failures: either a syntax error, a hard error or some failure to decompile correctly.
 	 Collected initially via 
@@ -5883,54 +5883,54 @@ decompilerFailures
 		(WeakIdentityKeyDictionary scanFor: TestFailure)
 		(WeakKeyDictionary scanFor: TestFailure))! !
 
-!DecompilerTests methodsFor: 'tests' stamp: 'HAW 5/6/2025 19:12:51'!
+!DecompilerTests methodsFor: 'tests' stamp: 'HAW 6/May/2025 19:12:51'!
 testDecompilerBrowserClasses
 
 	self decompileClassesInRootCategoryOf: Browser ! !
 
-!DecompilerTests methodsFor: 'tests' stamp: 'HAW 5/6/2025 19:09:16'!
+!DecompilerTests methodsFor: 'tests' stamp: 'HAW 6/May/2025 19:09:16'!
 testDecompilerCollectionClasses
 
 	self decompileClassesInRootCategoryOf: Collection! !
 
-!DecompilerTests methodsFor: 'tests' stamp: 'HAW 5/6/2025 19:11:28'!
+!DecompilerTests methodsFor: 'tests' stamp: 'HAW 6/May/2025 19:11:28'!
 testDecompilerCompilerClasses
 
 	self decompileClassesInRootCategoryOf: Compiler ! !
 
-!DecompilerTests methodsFor: 'tests' stamp: 'HAW 5/6/2025 19:11:11'!
+!DecompilerTests methodsFor: 'tests' stamp: 'HAW 6/May/2025 19:11:11'!
 testDecompilerExceptionsClasses
 
 	self decompileClassesInRootCategoryOf: Exception ! !
 
-!DecompilerTests methodsFor: 'tests' stamp: 'HAW 5/6/2025 19:12:17'!
+!DecompilerTests methodsFor: 'tests' stamp: 'HAW 6/May/2025 19:12:17'!
 testDecompilerGraphicsClasses
 
 	self decompileClassesInRootCategoryOf: Form ! !
 
-!DecompilerTests methodsFor: 'tests' stamp: 'HAW 5/6/2025 19:09:22'!
+!DecompilerTests methodsFor: 'tests' stamp: 'HAW 6/May/2025 19:09:22'!
 testDecompilerKernelClasses
 
 	self decompileClassesInRootCategoryOf: Object ! !
 
-!DecompilerTests methodsFor: 'tests' stamp: 'HAW 5/6/2025 19:12:32'!
+!DecompilerTests methodsFor: 'tests' stamp: 'HAW 6/May/2025 19:12:32'!
 testDecompilerMorphicClasses
 
 	self decompileClassesInRootCategoryOf: Morph ! !
 
-!DecompilerTests methodsFor: 'tests' stamp: 'HAW 5/6/2025 19:12:01'!
+!DecompilerTests methodsFor: 'tests' stamp: 'HAW 6/May/2025 19:12:01'!
 testDecompilerSystemClasses
 
 	self decompileClassesInRootCategoryOf: Editor ! !
 
-!DecompilerTests methodsFor: 'tests' stamp: 'jmv 12/28/2013 19:04'!
+!DecompilerTests methodsFor: 'tests' stamp: 'jmv 28/Dec/2013 19:04:00'!
 testRemoteTemp
 	| aBlock |
 	aBlock := Compiler evaluate: '| x y |  [:a :b | x := a. y := b. x+y]'.
 	self shouldnt: [aBlock decompile] raise: Error
 	! !
 
-!DecompilerTestFailuresCollector methodsFor: 'accessing' stamp: 'ul 5/6/2015 16:36'!
+!DecompilerTestFailuresCollector methodsFor: 'accessing' stamp: 'ul 6/May/2015 16:36:00'!
 assert: aBoolean description: aString resumable: resumableBoolean
 
 	| method |
@@ -5938,7 +5938,7 @@ assert: aBoolean description: aString resumable: resumableBoolean
 	method := thisContext sender home tempAt: 1.
 	self noteFailure: TestFailure for: method! !
 
-!DecompilerTestFailuresCollector methodsFor: 'accessing' stamp: 'eem 1/16/2025 18:45:07'!
+!DecompilerTestFailuresCollector methodsFor: 'accessing' stamp: 'eem 16/Jan/2025 18:45:07'!
 computeFailures
 	
 	| tests |
@@ -5950,7 +5950,7 @@ computeFailures
 		displayingProgress: 'Computing failures...'.
 	^self decompilerFailures! !
 
-!DecompilerTestFailuresCollector methodsFor: 'accessing' stamp: 'ul 5/6/2015 16:53'!
+!DecompilerTestFailuresCollector methodsFor: 'accessing' stamp: 'ul 6/May/2015 16:53:00'!
 decompilerFailures
 
 	failures ifNil: [ ^#() ].
@@ -5960,23 +5960,23 @@ decompilerFailures
 		r = 1 or: [ r = 2 and: [
 			(a second compare: b second caseSensitive: false) <= 2 ] ] ]! !
 
-!DecompilerTestFailuresCollector methodsFor: 'accessing' stamp: 'eem 11/10/2008 15:47'!
+!DecompilerTestFailuresCollector methodsFor: 'accessing' stamp: 'eem 10/Nov/2008 15:47:00'!
 failures
 	^failures! !
 
-!DecompilerTestFailuresCollector methodsFor: 'utilities' stamp: 'ul 5/6/2015 16:38'!
+!DecompilerTestFailuresCollector methodsFor: 'utilities' stamp: 'ul 6/May/2015 16:38:00'!
 checkDecompileMethod: oldMethod
 	
 	[ super checkDecompileMethod: oldMethod ]
 		on: Error
 		do: [ :error | self noteFailure: error class for: oldMethod ]! !
 
-!DecompilerTestFailuresCollector methodsFor: 'utilities' stamp: 'ul 5/6/2015 16:24'!
+!DecompilerTestFailuresCollector methodsFor: 'utilities' stamp: 'ul 6/May/2015 16:24:00'!
 exceptionClassForFailureFor: class  selector: selector
 	
 	^nil! !
 
-!DecompilerTestFailuresCollector methodsFor: 'utilities' stamp: 'ul 5/6/2015 16:40'!
+!DecompilerTestFailuresCollector methodsFor: 'utilities' stamp: 'ul 6/May/2015 16:40:00'!
 noteFailure: exceptionClass for: method
 
 	(failures ifNil: [ failures := OrderedCollection new ]) add: {
@@ -5984,12 +5984,12 @@ noteFailure: exceptionClass for: method
 		method selector.
 		exceptionClass name }! !
 
-!DecompilerTestFailuresCollector class methodsFor: 'as yet unclassified' stamp: 'mt 9/3/2019 09:08'!
+!DecompilerTestFailuresCollector class methodsFor: 'as yet unclassified' stamp: 'mt 3/Sep/2019 09:08:00'!
 isAbstract
 
 	^ true! !
 
-!MirrorPrimitiveTests methodsFor: 'tests' stamp: 'jmv 12/28/2013 19:06'!
+!MirrorPrimitiveTests methodsFor: 'tests' stamp: 'jmv 28/Dec/2013 19:06:00'!
 testMirrorAt
 	| stackpBefore stackpAfter array byteArray |
 
@@ -6011,7 +6011,7 @@ testMirrorAt
 	self should: [thisContext object: byteArray basicAt: 0] raise: Error.
 	self should: [thisContext object: byteArray basicAt: 1 put: -1] raise: Error! !
 
-!MirrorPrimitiveTests methodsFor: 'tests' stamp: 'eem 4/8/2009 19:44'!
+!MirrorPrimitiveTests methodsFor: 'tests' stamp: 'eem 8/Apr/2009 19:44:00'!
 testMirrorClass
 	| stackpBefore stackpAfter |
 	stackpBefore := thisContext stackPtr.
@@ -6021,7 +6021,7 @@ testMirrorClass
 	stackpAfter := thisContext stackPtr.
 	self assert: stackpBefore = stackpAfter "Make sure primitives pop all their arguments"! !
 
-!MirrorPrimitiveTests methodsFor: 'tests' stamp: 'jmv 12/28/2013 19:06'!
+!MirrorPrimitiveTests methodsFor: 'tests' stamp: 'jmv 28/Dec/2013 19:06:00'!
 testMirrorEqEq
 	| stackpBefore stackpAfter |
 
@@ -6034,7 +6034,7 @@ testMirrorEqEq
 	stackpAfter := thisContext stackPtr.
 	self assert: stackpBefore = stackpAfter "Make sure primitives pop all their arguments"! !
 
-!MirrorPrimitiveTests methodsFor: 'tests' stamp: 'jmv 12/28/2013 19:06'!
+!MirrorPrimitiveTests methodsFor: 'tests' stamp: 'jmv 28/Dec/2013 19:06:00'!
 testMirrorInstVarAt
 	| stackpBefore stackpAfter array point |
 
@@ -6055,7 +6055,7 @@ testMirrorInstVarAt
 	self should: [thisContext object: array instVarAt: 4] raise: Error.
 	self should: [thisContext object: point instVarAt: 3] raise: Error! !
 
-!MirrorPrimitiveTests methodsFor: 'tests' stamp: 'jmv 12/28/2013 19:06'!
+!MirrorPrimitiveTests methodsFor: 'tests' stamp: 'jmv 28/Dec/2013 19:06:00'!
 testMirrorPerform
 	| stackpBefore stackpAfter anInterval |
 
@@ -6073,7 +6073,7 @@ testMirrorPerform
 	stackpAfter := thisContext stackPtr.
 	self assert: stackpBefore = stackpAfter "Make sure primitives pop all their arguments"! !
 
-!MirrorPrimitiveTests methodsFor: 'tests' stamp: 'jmv 7/5/2022 16:01:51'!
+!MirrorPrimitiveTests methodsFor: 'tests' stamp: 'jmv 5/Jul/2022 16:01:51'!
 testMirrorSize
 	| stackpBefore stackpAfter |
 
@@ -6088,7 +6088,7 @@ testMirrorSize
 	stackpAfter := thisContext stackPtr.
 	self assert: stackpBefore = stackpAfter. "Make sure primitives pop all their arguments"! !
 
-!ParseNodeEnumeratorTest methodsFor: 'tests about enumeration' stamp: 'RNG 9/27/2020 22:25:05'!
+!ParseNodeEnumeratorTest methodsFor: 'tests about enumeration' stamp: 'RNG 27/Sep/2020 22:25:05'!
 testItEnumeratesAllTheParseNodesPresentInAMethodNode
 
 	| blockNode enumeratedNodes methodNode enumerator tempVarsDeclarationNode tempVarDeclarationNode literalNode messageNode nodesToBeEnumerated returnNode variableNode |
@@ -6113,7 +6113,7 @@ testItEnumeratesAllTheParseNodesPresentInAMethodNode
 
 	self assert: (enumeratedNodes includesAllOf: nodesToBeEnumerated)! !
 
-!ParseNodeTest methodsFor: 'parse nodes helpers' stamp: 'RNG 1/19/2018 21:09:10'!
+!ParseNodeTest methodsFor: 'parse nodes helpers' stamp: 'RNG 19/Jan/2018 21:09:10'!
 message: aSelector to: aVariableName
 
 	| variableNode selectorNode |
@@ -6125,7 +6125,7 @@ message: aSelector to: aVariableName
 		arguments: #()
 		precedence: 1! !
 
-!BlockNodeTest methodsFor: 'detecting self recursion' stamp: 'RNG 1/19/2018 21:05:22'!
+!BlockNodeTest methodsFor: 'detecting self recursion' stamp: 'RNG 19/Jan/2018 21:05:22'!
 testItDoesNotSendsAGivenMessageToSelfWhenTheBlockIsEmpty
 
 	| anEmptyBlock |
@@ -6133,7 +6133,7 @@ testItDoesNotSendsAGivenMessageToSelfWhenTheBlockIsEmpty
 
 	self deny: (anEmptyBlock sendsMessageToSelf: #myMethod)! !
 
-!BlockNodeTest methodsFor: 'detecting self recursion' stamp: 'RNG 1/19/2018 21:08:08'!
+!BlockNodeTest methodsFor: 'detecting self recursion' stamp: 'RNG 19/Jan/2018 21:08:08'!
 testItSendsAGivenMessageToSelfWhenItContainsAnStatementWithAMessageSendToSelf
 
 	| anEmptyBlock |
@@ -6141,17 +6141,17 @@ testItSendsAGivenMessageToSelfWhenItContainsAnStatementWithAMessageSendToSelf
 
 	self assert: (anEmptyBlock sendsMessageToSelf: #myMethod)! !
 
-!MessageNodeTest methodsFor: 'tests' stamp: 'HAW 12/10/2023 11:06:00'!
+!MessageNodeTest methodsFor: 'tests' stamp: 'HAW 10/Dec/2023 11:06:00'!
 cascadeMessageSend
 
 	1 printString; yourself! !
 
-!MessageNodeTest methodsFor: 'tests' stamp: 'HAW 12/10/2023 11:05:52'!
+!MessageNodeTest methodsFor: 'tests' stamp: 'HAW 10/Dec/2023 11:05:52'!
 messageSend
 
 	1 printString! !
 
-!MessageNodeTest methodsFor: 'tests' stamp: 'HAW 12/10/2023 11:06:08'!
+!MessageNodeTest methodsFor: 'tests' stamp: 'HAW 10/Dec/2023 11:06:08'!
 test01hasEquivalentReceiverWithWorksForAnyCombinationOfMessageSend
 
 	| cascadeMessageSend messageSend |
@@ -6167,7 +6167,7 @@ test01hasEquivalentReceiverWithWorksForAnyCombinationOfMessageSend
 	self assert: (messageSend hasEquivalentReceiverWith: messageSend).
 	! !
 
-!MessageNodeTest methodsFor: 'detecting self recursion' stamp: 'RNG 1/19/2018 21:02:30'!
+!MessageNodeTest methodsFor: 'detecting self recursion' stamp: 'RNG 19/Jan/2018 21:02:30'!
 testItDoesNotSendTheMessageToSelfWhenTheReceiverIsNotSelf
 
 	| messageNode |
@@ -6175,7 +6175,7 @@ testItDoesNotSendTheMessageToSelfWhenTheReceiverIsNotSelf
 
 	self deny: (messageNode sendsMessageToSelf: #myMethod)! !
 
-!MessageNodeTest methodsFor: 'detecting self recursion' stamp: 'RNG 1/19/2018 21:02:19'!
+!MessageNodeTest methodsFor: 'detecting self recursion' stamp: 'RNG 19/Jan/2018 21:02:19'!
 testItDoesNotSendTheMessageToSelfWhenTheReceiverIsSelfButTheSelectorIsDifferent
 
 	| messageNode |
@@ -6183,7 +6183,7 @@ testItDoesNotSendTheMessageToSelfWhenTheReceiverIsSelfButTheSelectorIsDifferent
 
 	self deny: (messageNode sendsMessageToSelf: #otherMethod)! !
 
-!MessageNodeTest methodsFor: 'detecting self recursion' stamp: 'RNG 1/19/2018 21:01:10'!
+!MessageNodeTest methodsFor: 'detecting self recursion' stamp: 'RNG 19/Jan/2018 21:01:10'!
 testItSendsTheMessageToSelfWhenTheReceiverIsSelf
 
 	| messageNode |
@@ -6191,7 +6191,7 @@ testItSendsTheMessageToSelfWhenTheReceiverIsSelf
 
 	self assert: (messageNode sendsMessageToSelf: #myMethod)! !
 
-!VariableNodeTest methodsFor: 'references to self' stamp: 'RNG 1/19/2018 20:51:09'!
+!VariableNodeTest methodsFor: 'references to self' stamp: 'RNG 19/Jan/2018 20:51:09'!
 testItDoesNotReferencesSelfWhenTheVariableNameIsNotSelf
 
 	| variableNode |
@@ -6199,7 +6199,7 @@ testItDoesNotReferencesSelfWhenTheVariableNameIsNotSelf
 
 	self deny: variableNode referencesSelf! !
 
-!VariableNodeTest methodsFor: 'references to self' stamp: 'RNG 1/19/2018 20:50:13'!
+!VariableNodeTest methodsFor: 'references to self' stamp: 'RNG 19/Jan/2018 20:50:13'!
 testItReferencesSelfWhenTheVariableNameIsSelf
 
 	| variableNode |
@@ -6207,7 +6207,7 @@ testItReferencesSelfWhenTheVariableNameIsSelf
 
 	self assert: variableNode referencesSelf! !
 
-!ParserTest methodsFor: 'test' stamp: 'jmv 7/4/2022 10:21:47'!
+!ParserTest methodsFor: 'test' stamp: 'jmv 4/Jul/2022 10:21:47'!
 testMulticharBinarySelectors
 	| result expression |
 	self assert: (Compiler evaluate: '3+4') = 7.
@@ -6250,7 +6250,7 @@ testMulticharBinarySelectors
 		do: [ result _ [Compiler evaluate: expression] on: MessageNotUnderstood do: [#dnu]].
 	self assert: result = #dnu.! !
 
-!ParserTest methodsFor: 'test' stamp: 'HAW 9/20/2025 18:00:18'!
+!ParserTest methodsFor: 'test' stamp: 'HAW 20/Sep/2025 18:00:18'!
 testOptimizedNodesWithNilDoNotFailsWhenAskForEquivalentTo
 
 	| methodNode |
@@ -6266,7 +6266,7 @@ testOptimizedNodesWithNilDoNotFailsWhenAskForEquivalentTo
 		raise: Error
 	! !
 
-!ParserTest methodsFor: 'test' stamp: 'jmv 7/31/2023 12:17:49'!
+!ParserTest methodsFor: 'test' stamp: 'jmv 31/Jul/2023 12:17:49'!
 testRangesAreOkWhenReturningAVariableWithoutSpaceAfterThat
 
 	| methodNode ranges |
@@ -6285,7 +6285,7 @@ testRangesAreOkWhenReturningAVariableWithoutSpaceAfterThat
 	
 	! !
 
-!ParserTest methodsFor: 'temporary variables tests' stamp: 'RNG 3/13/2020 00:39:16'!
+!ParserTest methodsFor: 'temporary variables tests' stamp: 'RNG 13/Mar/2020 00:39:16'!
 testItGeneratesATempDeclarationNodeForEachTempInABlock
 
 	| methodNode blockNode tempsDeclarationNode allTempDeclarationNodes |
@@ -6300,7 +6300,7 @@ testItGeneratesATempDeclarationNodeForEachTempInABlock
 		assert: allTempDeclarationNodes second variableName equals: 'b';
 		assert: allTempDeclarationNodes third variableName equals: 'c'.! !
 
-!ParserTest methodsFor: 'temporary variables tests' stamp: 'RNG 3/13/2020 00:38:08'!
+!ParserTest methodsFor: 'temporary variables tests' stamp: 'RNG 13/Mar/2020 00:38:08'!
 testItGeneratesATempDeclarationNodeForEachTempInAMethod
 
 	| methodNode tempsDeclarationNode allTempDeclarationNodes |
@@ -6314,7 +6314,7 @@ testItGeneratesATempDeclarationNodeForEachTempInAMethod
 		assert: allTempDeclarationNodes second variableName equals: 'b';
 		assert: allTempDeclarationNodes third variableName equals: 'c'.! !
 
-!ParserTest methodsFor: 'temporary variables tests' stamp: 'RNG 3/13/2020 00:34:19'!
+!ParserTest methodsFor: 'temporary variables tests' stamp: 'RNG 13/Mar/2020 00:34:19'!
 testItGeneratesAnEmptyTempsDeclarationNodeForAMethodWithoutTemps
 
 	| methodNode tempsDeclarationNode |
@@ -6323,7 +6323,7 @@ testItGeneratesAnEmptyTempsDeclarationNodeForAMethodWithoutTemps
 	
 	self assert: tempsDeclarationNode allDeclaredVariableNodes isEmpty.! !
 
-!PrettyPrintingTest methodsFor: 'testing' stamp: 'jmv 7/31/2023 11:31:38'!
+!PrettyPrintingTest methodsFor: 'testing' stamp: 'jmv 31/Jul/2023 11:31:38'!
 test1
 	"
 	self new test1
@@ -6340,7 +6340,7 @@ test1
 
 	self assert: prettyPrinted equals: source! !
 
-!PrettyPrintingTest methodsFor: 'testing' stamp: 'jmv 7/31/2023 11:31:45'!
+!PrettyPrintingTest methodsFor: 'testing' stamp: 'jmv 31/Jul/2023 11:31:45'!
 test2
 	"
 	self new test2
@@ -6363,7 +6363,7 @@ test2
 
 	self assert: prettyPrinted equals: source! !
 
-!PrettyPrintingTest methodsFor: 'testing' stamp: 'jmv 7/31/2023 11:31:52'!
+!PrettyPrintingTest methodsFor: 'testing' stamp: 'jmv 31/Jul/2023 11:31:52'!
 test3
 	"
 	self new test3
@@ -6386,7 +6386,7 @@ test3
 
 	self assert: prettyPrinted equals: source! !
 
-!PrettyPrintingTest methodsFor: 'testing' stamp: 'jmv 7/31/2023 11:32:07'!
+!PrettyPrintingTest methodsFor: 'testing' stamp: 'jmv 31/Jul/2023 11:32:07'!
 test4
 	"
 	self new test4
@@ -6409,7 +6409,7 @@ test4
 
 	self assert: prettyPrinted equals: source! !
 
-!PrettyPrintingTest methodsFor: 'testing' stamp: 'jmv 7/31/2023 11:32:13'!
+!PrettyPrintingTest methodsFor: 'testing' stamp: 'jmv 31/Jul/2023 11:32:13'!
 test5
 	"
 	self new test5
@@ -6434,7 +6434,7 @@ test5
 
 	self assert: prettyPrinted equals: source! !
 
-!PrettyPrintingTest methodsFor: 'testing' stamp: 'jmv 7/31/2023 11:32:18'!
+!PrettyPrintingTest methodsFor: 'testing' stamp: 'jmv 31/Jul/2023 11:32:18'!
 test6
 	"
 	self new test6
@@ -6455,7 +6455,7 @@ test6
 
 	self assert: prettyPrinted equals: source! !
 
-!ReturnNodeTest methodsFor: 'tests' stamp: 'HAW 10/19/2020 16:07:48'!
+!ReturnNodeTest methodsFor: 'tests' stamp: 'HAW 19/Oct/2020 16:07:48'!
 test01isImplicitSelfReturnInReturnsTrueWithMethodWithOutAnySourceCode
 
 	| methodNode returnNode |
@@ -6465,7 +6465,7 @@ test01isImplicitSelfReturnInReturnsTrueWithMethodWithOutAnySourceCode
 	
 	self assert: (returnNode isImplicitSelfReturnIn: methodNode)! !
 
-!ReturnNodeTest methodsFor: 'tests' stamp: 'HAW 10/19/2020 16:08:15'!
+!ReturnNodeTest methodsFor: 'tests' stamp: 'HAW 19/Oct/2020 16:08:15'!
 test02isImplicitSelfReturnInReturnsTrueWithMethodReferencingSelf
 
 	| methodNode returnNode |
@@ -6475,7 +6475,7 @@ test02isImplicitSelfReturnInReturnsTrueWithMethodReferencingSelf
 	
 	self assert: (returnNode isImplicitSelfReturnIn: methodNode)! !
 
-!ReturnNodeTest methodsFor: 'tests' stamp: 'HAW 10/19/2020 16:09:20'!
+!ReturnNodeTest methodsFor: 'tests' stamp: 'HAW 19/Oct/2020 16:09:20'!
 test03isImplicitSelfReturnInReturnsFalseWithMethodReturningSelf
 
 	| methodNode returnNode |
@@ -6485,31 +6485,31 @@ test03isImplicitSelfReturnInReturnsFalseWithMethodReturningSelf
 	
 	self deny: (returnNode isImplicitSelfReturnIn: methodNode)! !
 
-!ReturnNodeTest methodsFor: 'test data' stamp: 'HAW 10/19/2020 16:06:04'!
+!ReturnNodeTest methodsFor: 'test data' stamp: 'HAW 19/Oct/2020 16:06:04'!
 methodReferencingSelfWithImplicitReturn
 
 	self yourself 
 	
 	! !
 
-!ReturnNodeTest methodsFor: 'test data' stamp: 'HAW 10/19/2020 16:00:38'!
+!ReturnNodeTest methodsFor: 'test data' stamp: 'HAW 19/Oct/2020 16:00:38'!
 methodWithImplicitReturn
 	
 	! !
 
-!ReturnNodeTest methodsFor: 'test data' stamp: 'HAW 10/19/2020 16:08:38'!
+!ReturnNodeTest methodsFor: 'test data' stamp: 'HAW 19/Oct/2020 16:08:38'!
 methodWithoutImplicitReturn
 	
 	^self! !
 
-!ReturnNodeTest methodsFor: 'test support' stamp: 'HAW 10/19/2020 16:03:45'!
+!ReturnNodeTest methodsFor: 'test support' stamp: 'HAW 19/Oct/2020 16:03:45'!
 returnNodeOf: methodNode
 	
 	methodNode nodesDo: [:node | node isReturn ifTrue: [^node]].
 	
 	self error: 'No return node found'! !
 
-!ScannerTest methodsFor: 'testing' stamp: 'jmv 5/12/2025 09:44:28'!
+!ScannerTest methodsFor: 'testing' stamp: 'jmv 12/May/2025 09:44:28'!
 testLiteralSymbols
 
 	self assert: ('*+-/\~=<>&@%,|' allSatisfy: [:char | Symbol isLiteralSymbol: (String with: char) asSymbol])
@@ -6524,7 +6524,7 @@ testLiteralSymbols
 			self assert: (Compiler evaluate: str asSymbol printString) = str asSymbol
 				description: 'in all case, a Symbol must be printed in an interpretable fashion']! !
 
-!SourceCodeIntervalTest methodsFor: 'tests - trimming' stamp: 'jmv 7/31/2023 12:18:50'!
+!SourceCodeIntervalTest methodsFor: 'tests - trimming' stamp: 'jmv 31/Jul/2023 12:18:50'!
 test01TryingToTrimAnAlreadyTrimmedIntervalThatRepresentsASmalltalkExpressionDoesNotChangeTheOriginalInterval
 	
 	| originalInterval trimmedInterval sourceCode |
@@ -6534,7 +6534,7 @@ test01TryingToTrimAnAlreadyTrimmedIntervalThatRepresentsASmalltalkExpressionDoes
 
 	self assert: trimmedInterval equals: originalInterval.! !
 
-!SourceCodeIntervalTest methodsFor: 'tests - trimming' stamp: 'jmv 7/31/2023 12:19:19'!
+!SourceCodeIntervalTest methodsFor: 'tests - trimming' stamp: 'jmv 31/Jul/2023 12:19:19'!
 test02StartingAndEndingSeparatorsAreTrimmed
 	
 	| originalInterval trimmedInterval sourceCode |
@@ -6544,7 +6544,7 @@ test02StartingAndEndingSeparatorsAreTrimmed
 
 	self assert: trimmedInterval equals: (2 to: 4) asSourceCodeInterval.! !
 
-!SourceCodeIntervalTest methodsFor: 'tests - trimming' stamp: 'jmv 7/31/2023 12:19:27'!
+!SourceCodeIntervalTest methodsFor: 'tests - trimming' stamp: 'jmv 31/Jul/2023 12:19:27'!
 test03StartingAndEndingDotsAreTrimmed
 	
 	| originalInterval trimmedInterval sourceCode |
@@ -6554,7 +6554,7 @@ test03StartingAndEndingDotsAreTrimmed
 
 	self assert: trimmedInterval equals: (4 to: 6) asSourceCodeInterval.! !
 
-!SourceCodeIntervalTest methodsFor: 'tests - trimming' stamp: 'jmv 7/31/2023 12:19:38'!
+!SourceCodeIntervalTest methodsFor: 'tests - trimming' stamp: 'jmv 31/Jul/2023 12:19:38'!
 test04GroupsOfParenthesesAreTrimmed
 	
 	| originalInterval trimmedInterval sourceCode |
@@ -6564,7 +6564,7 @@ test04GroupsOfParenthesesAreTrimmed
 
 	self assert: trimmedInterval equals: (3 to: 5) asSourceCodeInterval.! !
 
-!SourceCodeIntervalTest methodsFor: 'tests - trimming' stamp: 'jmv 7/31/2023 12:19:58'!
+!SourceCodeIntervalTest methodsFor: 'tests - trimming' stamp: 'jmv 31/Jul/2023 12:19:58'!
 test05GroupsOfParenthesesIncludingSeparatorsAreTrimmed
 	
 	| originalInterval trimmedInterval sourceCode |
@@ -6575,7 +6575,7 @@ test05GroupsOfParenthesesIncludingSeparatorsAreTrimmed
 
 	self assert: trimmedInterval equals: (5 to: 7) asSourceCodeInterval.! !
 
-!SourceCodeIntervalTest methodsFor: 'tests - trimming' stamp: 'jmv 7/31/2023 12:23:09'!
+!SourceCodeIntervalTest methodsFor: 'tests - trimming' stamp: 'jmv 31/Jul/2023 12:23:09'!
 test23TrimmsExternalParentesisWhenMoreParentesisAtDifferentCollaborations
 	
 	| originalInterval trimmedInterval sourceCode |
@@ -6586,7 +6586,7 @@ test23TrimmsExternalParentesisWhenMoreParentesisAtDifferentCollaborations
 
 	self assert: trimmedInterval equals: (2 to: 22) asSourceCodeInterval.! !
 
-!SourceCodeIntervalTest methodsFor: 'tests - trimming' stamp: 'jmv 7/31/2023 12:23:24'!
+!SourceCodeIntervalTest methodsFor: 'tests - trimming' stamp: 'jmv 31/Jul/2023 12:23:24'!
 test24TrimmsExternalParentesisWhenMoreParentesisAtDifferentCollaborationsWithOtherSeparators
 	
 	| originalInterval trimmedInterval sourceCode |
@@ -6598,7 +6598,7 @@ test24TrimmsExternalParentesisWhenMoreParentesisAtDifferentCollaborationsWithOth
 
 	self assert: trimmedInterval equals: (2 to: 22) asSourceCodeInterval.! !
 
-!SourceCodeIntervalTest methodsFor: 'tests - equality' stamp: 'RNG 5/27/2020 23:59:37'!
+!SourceCodeIntervalTest methodsFor: 'tests - equality' stamp: 'RNG 27/May/2020 23:59:37'!
 test11AsSourceCodeIntervalMessageDoesNotCreateANewSourceCodeIntervalInstance
 
 	| interval |
@@ -6606,7 +6606,7 @@ test11AsSourceCodeIntervalMessageDoesNotCreateANewSourceCodeIntervalInstance
 	
 	self assert: interval == interval asSourceCodeInterval! !
 
-!SourceCodeIntervalTest methodsFor: 'tests - expanding' stamp: 'jmv 7/31/2023 12:20:31'!
+!SourceCodeIntervalTest methodsFor: 'tests - expanding' stamp: 'jmv 31/Jul/2023 12:20:31'!
 test06AnIntervalThatDoesNotHaveCharactersToExpandRemainsTheSame
 
 	| sourceCode expandedInterval originalInterval |
@@ -6616,7 +6616,7 @@ test06AnIntervalThatDoesNotHaveCharactersToExpandRemainsTheSame
 
 	self assert: expandedInterval equals: originalInterval.! !
 
-!SourceCodeIntervalTest methodsFor: 'tests - expanding' stamp: 'jmv 7/31/2023 12:20:48'!
+!SourceCodeIntervalTest methodsFor: 'tests - expanding' stamp: 'jmv 31/Jul/2023 12:20:48'!
 test07AnIntervalEnclosedByParenthesesCanBeExpanded
 
 	| sourceCode expandedInterval originalInterval |
@@ -6626,7 +6626,7 @@ test07AnIntervalEnclosedByParenthesesCanBeExpanded
 
 	self assert: expandedInterval equals: (1 to: sourceCode size).! !
 
-!SourceCodeIntervalTest methodsFor: 'tests - expanding' stamp: 'jmv 7/31/2023 12:20:58'!
+!SourceCodeIntervalTest methodsFor: 'tests - expanding' stamp: 'jmv 31/Jul/2023 12:20:58'!
 test08AnIntervalWithParenthesesOnJustOneSideCannotBeExpanded
 
 	| sourceCode expandedInterval originalInterval |
@@ -6636,7 +6636,7 @@ test08AnIntervalWithParenthesesOnJustOneSideCannotBeExpanded
 
 	self assert: expandedInterval equals: originalInterval.! !
 
-!SourceCodeIntervalTest methodsFor: 'tests - expanding' stamp: 'jmv 7/31/2023 12:21:07'!
+!SourceCodeIntervalTest methodsFor: 'tests - expanding' stamp: 'jmv 31/Jul/2023 12:21:07'!
 test09AnIntervalEnclosedByBackticksCanBeExpanded
 
 	| sourceCode expandedInterval originalInterval |
@@ -6646,7 +6646,7 @@ test09AnIntervalEnclosedByBackticksCanBeExpanded
 
 	self assert: expandedInterval equals: (1 to: sourceCode size).! !
 
-!SourceCodeIntervalTest methodsFor: 'tests - expanding' stamp: 'jmv 7/31/2023 12:21:16'!
+!SourceCodeIntervalTest methodsFor: 'tests - expanding' stamp: 'jmv 31/Jul/2023 12:21:16'!
 test10AnIntervalEnclosedMultipleBackticksAndParenthesesCanBeExpanded
 
 	| sourceCode expandedInterval originalInterval |
@@ -6656,7 +6656,7 @@ test10AnIntervalEnclosedMultipleBackticksAndParenthesesCanBeExpanded
 
 	self assert: expandedInterval equals: (1 to: sourceCode size).! !
 
-!SourceCodeIntervalTest methodsFor: 'tests - expanding' stamp: 'HAW 5/18/2025 11:17:29'!
+!SourceCodeIntervalTest methodsFor: 'tests - expanding' stamp: 'HAW 18/May/2025 11:17:29'!
 test25CanExpandMultipleParentesisWithSeparatorsInTheMiddle
 
 	| sourceCode expandedInterval originalInterval |
@@ -6667,7 +6667,7 @@ test25CanExpandMultipleParentesisWithSeparatorsInTheMiddle
 
 	self assert: expandedInterval equals: (1 to: sourceCode size).! !
 
-!SourceCodeIntervalTest methodsFor: 'tests - testing' stamp: 'jmv 7/31/2023 12:21:27'!
+!SourceCodeIntervalTest methodsFor: 'tests - testing' stamp: 'jmv 31/Jul/2023 12:21:27'!
 test12AnIntervalEndingOnDotExpandsUntilStartOfNextStatementOnSameLine
 
 	| interval sourceCode expectedExpandedInterval expandedInterval |
@@ -6678,7 +6678,7 @@ test12AnIntervalEndingOnDotExpandsUntilStartOfNextStatementOnSameLine
 	expectedExpandedInterval := (1 to: 7) asSourceCodeInterval.
 	self assert: expandedInterval equals: expectedExpandedInterval.! !
 
-!SourceCodeIntervalTest methodsFor: 'tests - testing' stamp: 'jmv 7/31/2023 12:21:42'!
+!SourceCodeIntervalTest methodsFor: 'tests - testing' stamp: 'jmv 31/Jul/2023 12:21:42'!
 test13AnIntervalEndingBeforeDotExpandsUntilStartOfNextStatementOnSameLine
 
 	| interval sourceCode expectedExpandedInterval expandedInterval |
@@ -6689,7 +6689,7 @@ test13AnIntervalEndingBeforeDotExpandsUntilStartOfNextStatementOnSameLine
 	expectedExpandedInterval := (1 to: 7) asSourceCodeInterval.
 	self assert: expandedInterval equals: expectedExpandedInterval.! !
 
-!SourceCodeIntervalTest methodsFor: 'tests - testing' stamp: 'jmv 7/31/2023 12:21:50'!
+!SourceCodeIntervalTest methodsFor: 'tests - testing' stamp: 'jmv 31/Jul/2023 12:21:50'!
 test14AnIntervalEndingOnEndOfTemporariesDeclarationExpandsUntilStartOfNextStatement
 
 	| interval sourceCode expectedExpandedInterval expandedInterval |
@@ -6701,7 +6701,7 @@ test14AnIntervalEndingOnEndOfTemporariesDeclarationExpandsUntilStartOfNextStatem
 	expectedExpandedInterval := (1 to:12) asSourceCodeInterval.
 	self assert: expandedInterval equals: expectedExpandedInterval.! !
 
-!SourceCodeIntervalTest methodsFor: 'tests - testing' stamp: 'jmv 7/31/2023 12:22:00'!
+!SourceCodeIntervalTest methodsFor: 'tests - testing' stamp: 'jmv 31/Jul/2023 12:22:00'!
 test15AnIntervalEndingOnLastStatemenWithoutDottIsNotExpanded
 
 	| interval sourceCode expandedInterval |
@@ -6713,7 +6713,7 @@ test15AnIntervalEndingOnLastStatemenWithoutDottIsNotExpanded
 	
 	self assert: expandedInterval equals: interval.! !
 
-!SourceCodeIntervalTest methodsFor: 'tests - testing' stamp: 'jmv 7/31/2023 12:22:11'!
+!SourceCodeIntervalTest methodsFor: 'tests - testing' stamp: 'jmv 31/Jul/2023 12:22:11'!
 test16AnIntervalEndingOnLastStatemenWithDotIsNotExpanded
 
 	| interval sourceCode expandedInterval |
@@ -6725,7 +6725,7 @@ test16AnIntervalEndingOnLastStatemenWithDotIsNotExpanded
 	
 	self assert: expandedInterval equals: interval.! !
 
-!SourceCodeIntervalTest methodsFor: 'tests - testing' stamp: 'HAW 6/11/2022 20:09:35'!
+!SourceCodeIntervalTest methodsFor: 'tests - testing' stamp: 'HAW 11/Jun/2022 20:09:35'!
 test17AnIntervalEndingBeforeStatementEndCannotBeExpanded
 
 	| interval sourceCode |
@@ -6736,7 +6736,7 @@ test17AnIntervalEndingBeforeStatementEndCannotBeExpanded
 		raise: Error 
 		withMessageText: [SourceCodeInterval canNotExpandIncompleteStatementError].! !
 
-!SourceCodeIntervalTest methodsFor: 'tests - testing' stamp: 'HAW 6/11/2022 20:09:38'!
+!SourceCodeIntervalTest methodsFor: 'tests - testing' stamp: 'HAW 11/Jun/2022 20:09:38'!
 test18AnIntervalEndingAfterLastStatementCannotBeExpanded
 
 	| interval sourceCode |
@@ -6748,7 +6748,7 @@ test18AnIntervalEndingAfterLastStatementCannotBeExpanded
 		raise: Error 
 		withMessageText: [SourceCodeInterval canNotExpandIncompleteStatementError].! !
 
-!SourceCodeIntervalTest methodsFor: 'tests - testing' stamp: 'jmv 7/31/2023 12:22:22'!
+!SourceCodeIntervalTest methodsFor: 'tests - testing' stamp: 'jmv 31/Jul/2023 12:22:22'!
 test19AnIntervalEndingAfterSourceCodeEndIsNotExpanded
 
 	| interval sourceCode expandedInterval |
@@ -6759,7 +6759,7 @@ test19AnIntervalEndingAfterSourceCodeEndIsNotExpanded
 	
 	self assert: expandedInterval equals: interval.! !
 
-!SourceCodeIntervalTest methodsFor: 'tests - testing' stamp: 'jmv 7/31/2023 12:22:30'!
+!SourceCodeIntervalTest methodsFor: 'tests - testing' stamp: 'jmv 31/Jul/2023 12:22:30'!
 test20AnIntervalEndingExpandsUntilStartOfNextStatementOnNextLine
 
 	| interval sourceCode expandedInterval expectedInterval |
@@ -6772,7 +6772,7 @@ test20AnIntervalEndingExpandsUntilStartOfNextStatementOnNextLine
 	
 	self assert: expandedInterval equals: expectedInterval.! !
 
-!SourceCodeIntervalTest methodsFor: 'tests - testing' stamp: 'jmv 7/31/2023 12:22:40'!
+!SourceCodeIntervalTest methodsFor: 'tests - testing' stamp: 'jmv 31/Jul/2023 12:22:40'!
 test21ExpandIntervalToEndOfStatement
 
 	| interval sourceCode expandedInterval expectedInterval |
@@ -6784,7 +6784,7 @@ test21ExpandIntervalToEndOfStatement
 	
 	self assert: expandedInterval equals: expectedInterval.! !
 
-!SourceCodeIntervalTest methodsFor: 'tests - testing' stamp: 'jmv 7/31/2023 12:22:54'!
+!SourceCodeIntervalTest methodsFor: 'tests - testing' stamp: 'jmv 31/Jul/2023 12:22:54'!
 test22ExpandIntervalToEndOfStatementWhenNoDotIsPresent
 
 	| interval sourceCode expandedInterval expectedInterval |
@@ -6796,7 +6796,7 @@ test22ExpandIntervalToEndOfStatementWhenNoDotIsPresent
 	
 	self assert: expandedInterval equals: expectedInterval.! !
 
-!ExceptionHandlingConditionTest methodsFor: 'exception handling tests' stamp: 'HAW 3/29/2017 13:50:30'!
+!ExceptionHandlingConditionTest methodsFor: 'exception handling tests' stamp: 'HAW 29/Mar/2017 13:50:30'!
 testBlockClosuresCanBeUsedAsHandlingCondition
 
 	self 
@@ -6805,7 +6805,7 @@ testBlockClosuresCanBeUsedAsHandlingCondition
 		
 	! !
 
-!ExceptionHandlingConditionTest methodsFor: 'exception handling tests' stamp: 'HAW 3/29/2017 13:48:37'!
+!ExceptionHandlingConditionTest methodsFor: 'exception handling tests' stamp: 'HAW 29/Mar/2017 13:48:37'!
 testFilterConditionWorksAsExcpetedWhenHandlingException
 
 	self
@@ -6818,7 +6818,7 @@ testFilterConditionWorksAsExcpetedWhenHandlingException
 
 ! !
 
-!ExceptionHandlingConditionTest methodsFor: 'exception handling tests' stamp: 'HAW 3/29/2017 13:49:45'!
+!ExceptionHandlingConditionTest methodsFor: 'exception handling tests' stamp: 'HAW 29/Mar/2017 13:49:45'!
 testOrConditionWorksAsExcpetedWhenHandlingException
 
 	self 
@@ -6831,7 +6831,7 @@ testOrConditionWorksAsExcpetedWhenHandlingException
 
 	! !
 
-!ExceptionHandlingConditionTest methodsFor: 'filter condition tests' stamp: 'HAW 3/29/2017 15:24:06'!
+!ExceptionHandlingConditionTest methodsFor: 'filter condition tests' stamp: 'HAW 29/Mar/2017 15:24:06'!
 testCanCreateFilterConditionWithExceptionTypeAndExceptionType
 
 	| condition |
@@ -6842,7 +6842,7 @@ testCanCreateFilterConditionWithExceptionTypeAndExceptionType
 	self deny: (condition handles: ZeroDivide new).
 	! !
 
-!ExceptionHandlingConditionTest methodsFor: 'filter condition tests' stamp: 'HAW 3/29/2017 15:24:15'!
+!ExceptionHandlingConditionTest methodsFor: 'filter condition tests' stamp: 'HAW 29/Mar/2017 15:24:15'!
 testCanCreateFilterConditionWithExceptionTypeAndFilterCondition
 
 	| condition |
@@ -6854,7 +6854,7 @@ testCanCreateFilterConditionWithExceptionTypeAndFilterCondition
 	self assert: (condition handles: Halt new).
 	! !
 
-!ExceptionHandlingConditionTest methodsFor: 'filter condition tests' stamp: 'HAW 3/29/2017 15:24:10'!
+!ExceptionHandlingConditionTest methodsFor: 'filter condition tests' stamp: 'HAW 29/Mar/2017 15:24:10'!
 testCanCreateFilterConditionWithExceptionTypeAndOrCondition
 
 	| condition |
@@ -6866,7 +6866,7 @@ testCanCreateFilterConditionWithExceptionTypeAndOrCondition
 	self deny: (condition handles: Halt new).
 	! !
 
-!ExceptionHandlingConditionTest methodsFor: 'filter condition tests' stamp: 'HAW 3/29/2017 15:24:35'!
+!ExceptionHandlingConditionTest methodsFor: 'filter condition tests' stamp: 'HAW 29/Mar/2017 15:24:35'!
 testCanCreateFilterConditionWithFilterConditionAndExceptionType
 
 	| condition |
@@ -6878,7 +6878,7 @@ testCanCreateFilterConditionWithFilterConditionAndExceptionType
 	self deny: (condition handles: ZeroDivide new).
 ! !
 
-!ExceptionHandlingConditionTest methodsFor: 'filter condition tests' stamp: 'HAW 3/29/2017 15:24:43'!
+!ExceptionHandlingConditionTest methodsFor: 'filter condition tests' stamp: 'HAW 29/Mar/2017 15:24:43'!
 testCanCreateFilterConditionWithFilterConditionAndFilterCondition
 
 	| condition |
@@ -6891,7 +6891,7 @@ testCanCreateFilterConditionWithFilterConditionAndFilterCondition
 	self assert: (condition handles: Notification new).
 ! !
 
-!ExceptionHandlingConditionTest methodsFor: 'filter condition tests' stamp: 'HAW 3/29/2017 15:24:39'!
+!ExceptionHandlingConditionTest methodsFor: 'filter condition tests' stamp: 'HAW 29/Mar/2017 15:24:39'!
 testCanCreateFilterConditionWithFilterConditionAndOrCondition
 
 	| condition |
@@ -6904,7 +6904,7 @@ testCanCreateFilterConditionWithFilterConditionAndOrCondition
 	self deny: (condition handles: ZeroDivide new).
 ! !
 
-!ExceptionHandlingConditionTest methodsFor: 'filter condition tests' stamp: 'HAW 3/29/2017 15:24:20'!
+!ExceptionHandlingConditionTest methodsFor: 'filter condition tests' stamp: 'HAW 29/Mar/2017 15:24:20'!
 testCanCreateFilterConditionWithOrConditionAndExceptionType
 
 	| condition |
@@ -6916,7 +6916,7 @@ testCanCreateFilterConditionWithOrConditionAndExceptionType
 	self deny: (condition handles: ZeroDivide new).
 	! !
 
-!ExceptionHandlingConditionTest methodsFor: 'filter condition tests' stamp: 'HAW 3/29/2017 15:24:29'!
+!ExceptionHandlingConditionTest methodsFor: 'filter condition tests' stamp: 'HAW 29/Mar/2017 15:24:29'!
 testCanCreateFilterConditionWithOrConditionAndFilterCondition
 
 	| condition |
@@ -6929,7 +6929,7 @@ testCanCreateFilterConditionWithOrConditionAndFilterCondition
 	self assert: (condition handles: ArithmeticError new).
 	! !
 
-!ExceptionHandlingConditionTest methodsFor: 'filter condition tests' stamp: 'HAW 3/29/2017 15:24:25'!
+!ExceptionHandlingConditionTest methodsFor: 'filter condition tests' stamp: 'HAW 29/Mar/2017 15:24:25'!
 testCanCreateFilterConditionWithOrConditionAndOrCondition
 
 	| condition |
@@ -6942,7 +6942,7 @@ testCanCreateFilterConditionWithOrConditionAndOrCondition
 	self deny: (condition handles: ZeroDivide new).
 	! !
 
-!ExceptionHandlingConditionTest methodsFor: 'or condition tests' stamp: 'HAW 3/29/2017 15:21:29'!
+!ExceptionHandlingConditionTest methodsFor: 'or condition tests' stamp: 'HAW 29/Mar/2017 15:21:29'!
 testCanCreateOrConditionWithExceptionTypeAndExceptionType
 
 	| handlingCondition |
@@ -6953,7 +6953,7 @@ testCanCreateOrConditionWithExceptionTypeAndExceptionType
 	self assert: (handlingCondition handles: Notification new).
 	! !
 
-!ExceptionHandlingConditionTest methodsFor: 'or condition tests' stamp: 'HAW 3/29/2017 17:59:39'!
+!ExceptionHandlingConditionTest methodsFor: 'or condition tests' stamp: 'HAW 29/Mar/2017 17:59:39'!
 testCanCreateOrConditionWithExceptionTypeAndFilterCondition
 	
 	| handlingCondition |
@@ -6966,7 +6966,7 @@ testCanCreateOrConditionWithExceptionTypeAndFilterCondition
 	
 	! !
 
-!ExceptionHandlingConditionTest methodsFor: 'or condition tests' stamp: 'HAW 3/29/2017 15:21:37'!
+!ExceptionHandlingConditionTest methodsFor: 'or condition tests' stamp: 'HAW 29/Mar/2017 15:21:37'!
 testCanCreateOrConditionWithExceptionTypeAndOrCondition
 
 	| handlingCondition |
@@ -6978,7 +6978,7 @@ testCanCreateOrConditionWithExceptionTypeAndOrCondition
 	self assert: (handlingCondition handles: UnhandledError new).
 	! !
 
-!ExceptionHandlingConditionTest methodsFor: 'or condition tests' stamp: 'HAW 3/29/2017 17:56:49'!
+!ExceptionHandlingConditionTest methodsFor: 'or condition tests' stamp: 'HAW 29/Mar/2017 17:56:49'!
 testCanCreateOrConditionWithFilterConditionAndExceptionType
 
 	| condition |
@@ -6990,7 +6990,7 @@ testCanCreateOrConditionWithFilterConditionAndExceptionType
 	self assert: (condition handles: ArithmeticError new).
 	! !
 
-!ExceptionHandlingConditionTest methodsFor: 'or condition tests' stamp: 'HAW 3/29/2017 17:56:57'!
+!ExceptionHandlingConditionTest methodsFor: 'or condition tests' stamp: 'HAW 29/Mar/2017 17:56:57'!
 testCanCreateOrConditionWithFilterConditionAndFilterCondition
 
 	| condition |
@@ -7004,7 +7004,7 @@ testCanCreateOrConditionWithFilterConditionAndFilterCondition
 
 	! !
 
-!ExceptionHandlingConditionTest methodsFor: 'or condition tests' stamp: 'HAW 3/29/2017 17:57:02'!
+!ExceptionHandlingConditionTest methodsFor: 'or condition tests' stamp: 'HAW 29/Mar/2017 17:57:02'!
 testCanCreateOrConditionWithFilterConditionAndOrCondition
 
 	| condition |
@@ -7018,7 +7018,7 @@ testCanCreateOrConditionWithFilterConditionAndOrCondition
 
 	! !
 
-!ExceptionHandlingConditionTest methodsFor: 'or condition tests' stamp: 'HAW 3/29/2017 15:22:01'!
+!ExceptionHandlingConditionTest methodsFor: 'or condition tests' stamp: 'HAW 29/Mar/2017 15:22:01'!
 testCanCreateOrConditionWithOrConditionAndExceptionType
 	
 	| handlingCondition |
@@ -7031,7 +7031,7 @@ testCanCreateOrConditionWithOrConditionAndExceptionType
 	
 	! !
 
-!ExceptionHandlingConditionTest methodsFor: 'or condition tests' stamp: 'HAW 3/29/2017 17:57:09'!
+!ExceptionHandlingConditionTest methodsFor: 'or condition tests' stamp: 'HAW 29/Mar/2017 17:57:09'!
 testCanCreateOrConditionWithOrConditionAndFilterCondition
 
 	| exceptionSet |
@@ -7045,7 +7045,7 @@ testCanCreateOrConditionWithOrConditionAndFilterCondition
 
 	! !
 
-!ExceptionHandlingConditionTest methodsFor: 'or condition tests' stamp: 'HAW 3/29/2017 15:22:06'!
+!ExceptionHandlingConditionTest methodsFor: 'or condition tests' stamp: 'HAW 29/Mar/2017 15:22:06'!
 testCanCreateOrConditionWithOrConditionAndOrCondition
 
 	| handlingCondition |
@@ -7058,7 +7058,7 @@ testCanCreateOrConditionWithOrConditionAndOrCondition
 	self assert: (handlingCondition handles: UnhandledError new).
 	! !
 
-!ExceptionHandlingConditionTest methodsFor: 'environment preconditions' stamp: 'sqr 6/26/2019 11:50:31'!
+!ExceptionHandlingConditionTest methodsFor: 'environment preconditions' stamp: 'sqr 26/Jun/2019 11:50:31'!
 testExceptionsFollowTheExpectedHierarchy
 
 	"This test exits because all the others use existing exceptions and assume a subclass relationship
@@ -7074,27 +7074,27 @@ testExceptionsFollowTheExpectedHierarchy
 	self assert: (NegativePowerError inheritsFrom: ArithmeticMessageError).
 	self assert: (ZeroDivide inheritsFrom: ArithmeticMessageError)! !
 
-!ExceptionTests methodsFor: 'private' stamp: 'md 3/25/2003 23:40'!
+!ExceptionTests methodsFor: 'private' stamp: 'md 25/Mar/2003 23:40:00'!
 assertSuccess: anExceptionTester
 	self should: [ ( anExceptionTester suiteLog first) endsWith:  'succeeded'].! !
 
-!ExceptionTests methodsFor: 'testing-ExceptionTester' stamp: 'dtl 6/1/2004 21:54'!
+!ExceptionTests methodsFor: 'testing-ExceptionTester' stamp: 'dtl 1/Jun/2004 21:54:00'!
 testDoubleOuterPass
 	self assertSuccess: (ExceptionTester new runTest: #doubleOuterPassTest ) ! !
 
-!ExceptionTests methodsFor: 'testing-ExceptionTester' stamp: 'dtl 6/1/2004 21:54'!
+!ExceptionTests methodsFor: 'testing-ExceptionTester' stamp: 'dtl 1/Jun/2004 21:54:00'!
 testDoublePassOuter
 	self assertSuccess: (ExceptionTester new runTest: #doublePassOuterTest ) ! !
 
-!ExceptionTests methodsFor: 'testing-ExceptionTester' stamp: 'md 3/25/2003 23:43'!
+!ExceptionTests methodsFor: 'testing-ExceptionTester' stamp: 'md 25/Mar/2003 23:43:00'!
 testDoubleResume
 	self assertSuccess: (ExceptionTester new runTest: #doubleResumeTest ) ! !
 
-!ExceptionTests methodsFor: 'testing-ExceptionTester' stamp: 'md 3/25/2003 23:44'!
+!ExceptionTests methodsFor: 'testing-ExceptionTester' stamp: 'md 25/Mar/2003 23:44:00'!
 testNonResumableFallOffTheEndHandler
 	self assertSuccess: (ExceptionTester new runTest: #nonResumableFallOffTheEndHandler ) ! !
 
-!ExceptionTests methodsFor: 'testing-ExceptionTester' stamp: 'SqR 10/10/2015 16:22'!
+!ExceptionTests methodsFor: 'testing-ExceptionTester' stamp: 'SqR 10/Oct/2015 16:22:00'!
 testResignalAs
 
 	| answer |
@@ -7105,7 +7105,7 @@ testResignalAs
 	] on: Error do: [:ex | ex resignalAs: ZeroDivide].
 	self assert: answer == 5! !
 
-!ExceptionTests methodsFor: 'testing-ExceptionTester' stamp: 'SqR 11/15/2015 11:42'!
+!ExceptionTests methodsFor: 'testing-ExceptionTester' stamp: 'SqR 15/Nov/2015 11:42:00'!
 testResignalAsUnwinds
 
 	| unwound answer |
@@ -7116,63 +7116,63 @@ testResignalAsUnwinds
 	] on: Error do: [:ex | [ex resignalAs: ZeroDivide] ifCurtailed: [unwound := true]].
 	self assert: answer == 5! !
 
-!ExceptionTests methodsFor: 'testing-ExceptionTester' stamp: 'md 3/25/2003 23:44'!
+!ExceptionTests methodsFor: 'testing-ExceptionTester' stamp: 'md 25/Mar/2003 23:44:00'!
 testResumableFallOffTheEndHandler
 	self assertSuccess: (ExceptionTester new runTest: #resumableFallOffTheEndHandler ) ! !
 
-!ExceptionTests methodsFor: 'testing-ExceptionTester' stamp: 'md 3/25/2003 23:44'!
+!ExceptionTests methodsFor: 'testing-ExceptionTester' stamp: 'md 25/Mar/2003 23:44:00'!
 testSignalFromHandlerActionTest
 	self assertSuccess: (ExceptionTester new runTest: #signalFromHandlerActionTest ) ! !
 
-!ExceptionTests methodsFor: 'testing-ExceptionTester' stamp: 'md 3/25/2003 23:48'!
+!ExceptionTests methodsFor: 'testing-ExceptionTester' stamp: 'md 25/Mar/2003 23:48:00'!
 testSimpleEnsure
 	self assertSuccess: (ExceptionTester new runTest: #simpleEnsureTest ) ! !
 
-!ExceptionTests methodsFor: 'testing-ExceptionTester' stamp: 'md 3/25/2003 23:45'!
+!ExceptionTests methodsFor: 'testing-ExceptionTester' stamp: 'md 25/Mar/2003 23:45:00'!
 testSimpleEnsureTestWithError
 	self assertSuccess: (ExceptionTester new runTest: #simpleEnsureTestWithError ) ! !
 
-!ExceptionTests methodsFor: 'testing-ExceptionTester' stamp: 'md 3/25/2003 23:46'!
+!ExceptionTests methodsFor: 'testing-ExceptionTester' stamp: 'md 25/Mar/2003 23:46:00'!
 testSimpleEnsureTestWithNotification
 	self assertSuccess: (ExceptionTester new runTest: #simpleEnsureTestWithNotification ) ! !
 
-!ExceptionTests methodsFor: 'testing-ExceptionTester' stamp: 'md 3/25/2003 23:45'!
+!ExceptionTests methodsFor: 'testing-ExceptionTester' stamp: 'md 25/Mar/2003 23:45:00'!
 testSimpleEnsureTestWithUparrow
 	self assertSuccess: (ExceptionTester new runTest: #simpleEnsureTestWithUparrow ) ! !
 
-!ExceptionTests methodsFor: 'testing-ExceptionTester' stamp: 'md 3/25/2003 23:46'!
+!ExceptionTests methodsFor: 'testing-ExceptionTester' stamp: 'md 25/Mar/2003 23:46:00'!
 testSimpleIsNested
 	self assertSuccess: (ExceptionTester new runTest: #simpleIsNestedTest ) ! !
 
-!ExceptionTests methodsFor: 'testing-ExceptionTester' stamp: 'md 3/25/2003 23:41'!
+!ExceptionTests methodsFor: 'testing-ExceptionTester' stamp: 'md 25/Mar/2003 23:41:00'!
 testSimpleOuter
 	self assertSuccess: (ExceptionTester new runTest: #simpleOuterTest ) ! !
 
-!ExceptionTests methodsFor: 'testing-ExceptionTester' stamp: 'md 3/25/2003 23:42'!
+!ExceptionTests methodsFor: 'testing-ExceptionTester' stamp: 'md 25/Mar/2003 23:42:00'!
 testSimplePass
 	self assertSuccess: (ExceptionTester new runTest: #simplePassTest ) ! !
 
-!ExceptionTests methodsFor: 'testing-ExceptionTester' stamp: 'md 3/25/2003 23:43'!
+!ExceptionTests methodsFor: 'testing-ExceptionTester' stamp: 'md 25/Mar/2003 23:43:00'!
 testSimpleResignalAs
 	self assertSuccess: (ExceptionTester new runTest: #simpleResignalAsTest ) ! !
 
-!ExceptionTests methodsFor: 'testing-ExceptionTester' stamp: 'md 3/25/2003 23:48'!
+!ExceptionTests methodsFor: 'testing-ExceptionTester' stamp: 'md 25/Mar/2003 23:48:00'!
 testSimpleResume
 	self assertSuccess: (ExceptionTester new runTest: #simpleResumeTest ) ! !
 
-!ExceptionTests methodsFor: 'testing-ExceptionTester' stamp: 'md 3/25/2003 23:48'!
+!ExceptionTests methodsFor: 'testing-ExceptionTester' stamp: 'md 25/Mar/2003 23:48:00'!
 testSimpleRetry
 	self assertSuccess: (ExceptionTester new runTest: #simpleRetryTest ) ! !
 
-!ExceptionTests methodsFor: 'testing-ExceptionTester' stamp: 'md 3/25/2003 23:47'!
+!ExceptionTests methodsFor: 'testing-ExceptionTester' stamp: 'md 25/Mar/2003 23:47:00'!
 testSimpleRetryUsing
 	self assertSuccess: (ExceptionTester new runTest: #simpleRetryUsingTest ) ! !
 
-!ExceptionTests methodsFor: 'testing-ExceptionTester' stamp: 'md 3/25/2003 23:48'!
+!ExceptionTests methodsFor: 'testing-ExceptionTester' stamp: 'md 25/Mar/2003 23:48:00'!
 testSimpleReturn
 	self assertSuccess: (ExceptionTester new runTest: #simpleReturnTest ) ! !
 
-!ExceptionTests methodsFor: 'testing-outer' stamp: 'SqR 8/28/2014 22:45'!
+!ExceptionTests methodsFor: 'testing-outer' stamp: 'SqR 28/Aug/2014 22:45:00'!
 testHandlerFromAction
 	"A test ensuring that nested exceptions work as expected."
 
@@ -7184,7 +7184,7 @@ testHandlerFromAction
 	] on: ZeroDivide do: [ :ex | 'outer' ].
 	self assert: result = 'outer'! !
 
-!ExceptionTests methodsFor: 'testing-outer' stamp: 'dtl 6/1/2004 21:59'!
+!ExceptionTests methodsFor: 'testing-outer' stamp: 'dtl 1/Jun/2004 21:59:00'!
 testNonResumableOuter
 
 	self should: [
@@ -7194,7 +7194,7 @@ testNonResumableOuter
 		] raise: Error
 ! !
 
-!ExceptionTests methodsFor: 'testing-outer' stamp: 'dtl 6/1/2004 22:00'!
+!ExceptionTests methodsFor: 'testing-outer' stamp: 'dtl 1/Jun/2004 22:00:00'!
 testNonResumablePass
 
 	self should: [
@@ -7204,7 +7204,7 @@ testNonResumablePass
 		] raise: Error
 ! !
 
-!ExceptionTests methodsFor: 'testing-outer' stamp: 'ul 11/15/2010 11:39'!
+!ExceptionTests methodsFor: 'testing-outer' stamp: 'ul 15/Nov/2010 11:39:00'!
 testResumableOuter
 
 	| result |
@@ -7214,7 +7214,7 @@ testResumableOuter
 	self assert: result = 5
 ! !
 
-!ExceptionTests methodsFor: 'testing-outer' stamp: 'ul 11/15/2010 11:39'!
+!ExceptionTests methodsFor: 'testing-outer' stamp: 'ul 15/Nov/2010 11:39:00'!
 testResumablePass
 
 	| result |
@@ -7224,15 +7224,15 @@ testResumablePass
 	self assert: result = 4
 ! !
 
-!ExceptionTests methodsFor: 'testing' stamp: 'brp 10/21/2004 16:42'!
+!ExceptionTests methodsFor: 'testing' stamp: 'brp 21/Oct/2004 16:42:00'!
 testNoTimeout
 	self assertSuccess: (ExceptionTester new runTest: #simpleNoTimeoutTest ) ! !
 
-!ExceptionTests methodsFor: 'testing' stamp: 'brp 10/21/2004 16:41'!
+!ExceptionTests methodsFor: 'testing' stamp: 'brp 21/Oct/2004 16:41:00'!
 testTimeoutWithZeroDuration
 	self assertSuccess: (ExceptionTester new runTest: #simpleTimeoutWithZeroDurationTest ) ! !
 
-!ProgressInitiationExceptionTest methodsFor: 'testing' stamp: 'jmv 3/1/2025 17:35:42'!
+!ProgressInitiationExceptionTest methodsFor: 'testing' stamp: 'jmv 1/Mar/2025 17:35:42'!
 test01
 	| countStorage |
 	countStorage := {0}.
@@ -7242,7 +7242,7 @@ test01
 	self assert: countStorage first = 3.
 	! !
 
-!ProgressInitiationExceptionTest methodsFor: 'testing' stamp: 'jmv 3/1/2025 17:36:37'!
+!ProgressInitiationExceptionTest methodsFor: 'testing' stamp: 'jmv 1/Mar/2025 17:36:37'!
 test02
 	| countStorage |
 	countStorage := {0}.
@@ -7256,7 +7256,7 @@ test02
 	self assert: countStorage first = 4.
 	! !
 
-!ProgressInitiationExceptionTest methodsFor: 'testing' stamp: 'jmv 3/1/2025 17:36:43'!
+!ProgressInitiationExceptionTest methodsFor: 'testing' stamp: 'jmv 1/Mar/2025 17:36:43'!
 test03
 	| countStorage |
 	countStorage := {0}.
@@ -7270,7 +7270,7 @@ test03
 	self assert: countStorage first = 3.
 	! !
 
-!ProgressInitiationExceptionTest methodsFor: 'testing' stamp: 'jmv 3/1/2025 17:36:48'!
+!ProgressInitiationExceptionTest methodsFor: 'testing' stamp: 'jmv 1/Mar/2025 17:36:48'!
 test04
 	| countStorage |
 	countStorage := {0}.
@@ -7288,7 +7288,7 @@ test04
 	self assert: countStorage first = 4.
 	! !
 
-!ProgressInitiationExceptionTest methodsFor: 'testing' stamp: 'jmv 3/1/2025 17:31:04'!
+!ProgressInitiationExceptionTest methodsFor: 'testing' stamp: 'jmv 1/Mar/2025 17:31:04'!
 test05
 	| countStorage |
 	countStorage := {0}.
@@ -7306,7 +7306,7 @@ test05
 	self assert: countStorage first = 4.
 	! !
 
-!ProgressInitiationExceptionTest methodsFor: 'aux' stamp: 'jmv 3/1/2025 17:35:15'!
+!ProgressInitiationExceptionTest methodsFor: 'aux' stamp: 'jmv 1/Mar/2025 17:35:15'!
 sampleProgress: countStorage
 "
 self new sampleProgress: {0}
@@ -7329,7 +7329,7 @@ self new sampleProgress: {0}
 
 ! !
 
-!TestValueWithinFix methodsFor: 'tests' stamp: 'jmv 7/19/2025 12:00:32'!
+!TestValueWithinFix methodsFor: 'tests' stamp: 'jmv 19/Jul/2025 12:00:32'!
 testValueWithinNonLocalReturnFixReal
 	"self run: #testValueWithinNonLocalReturnFixReal"
 	"The real test for the fix is just as obscure as the original problem"
@@ -7345,14 +7345,14 @@ testValueWithinNonLocalReturnFixReal
 	].
 ! !
 
-!TestValueWithinFix methodsFor: 'tests' stamp: 'ar 8/17/2007 13:38'!
+!TestValueWithinFix methodsFor: 'tests' stamp: 'ar 17/Aug/2007 13:38:00'!
 testValueWithinNonLocalReturnFixSimply
 	"self run: #testValueWithinNonLocalReturnFixSimply"
 	"The simple version to test the fix"
 	self valueWithinNonLocalReturn.
 	self shouldnt:[(Delay forMilliseconds: 50) wait] raise: TimedOut.! !
 
-!TestValueWithinFix methodsFor: 'tests' stamp: 'KenD 6/24/2022 21:29:49'!
+!TestValueWithinFix methodsFor: 'tests' stamp: 'KenD 24/Jun/2022 21:29:49'!
 testValueWithinTimingBasic
 	"Test timing of valueWithin:onTimeout:"
 	| time |
@@ -7363,7 +7363,7 @@ testValueWithinTimingBasic
 	self assert: time < 200 milliSeconds.
 	] forkAt: Processor userInterruptPriority.! !
 
-!TestValueWithinFix methodsFor: 'tests' stamp: 'KenD 6/24/2022 21:29:29'!
+!TestValueWithinFix methodsFor: 'tests' stamp: 'KenD 24/Jun/2022 21:29:29'!
 testValueWithinTimingNestedInner
 	"Test nested timing of valueWithin:onTimeout:"
 	| time |
@@ -7376,7 +7376,7 @@ testValueWithinTimingNestedInner
 	self assert: time < 200 milliSeconds.
 	] forkAt: Processor userInterruptPriority.! !
 
-!TestValueWithinFix methodsFor: 'tests' stamp: 'KenD 6/24/2022 21:30:07'!
+!TestValueWithinFix methodsFor: 'tests' stamp: 'KenD 24/Jun/2022 21:30:07'!
 testValueWithinTimingNestedOuter
 	"Test nested timing of valueWithin:onTimeout:"
 	| time |
@@ -7392,7 +7392,7 @@ testValueWithinTimingNestedOuter
 	] forkAt: Processor userInterruptPriority.
 	! !
 
-!TestValueWithinFix methodsFor: 'tests' stamp: 'KenD 6/24/2022 21:30:22'!
+!TestValueWithinFix methodsFor: 'tests' stamp: 'KenD 24/Jun/2022 21:30:22'!
 testValueWithinTimingRepeat
 	"Test timing of valueWithin:onTimeout:"
 	| time |
@@ -7405,21 +7405,21 @@ testValueWithinTimingRepeat
 	] forkAt: Processor userInterruptPriority.
 ! !
 
-!TestValueWithinFix methodsFor: 'tests' stamp: 'ar 8/17/2007 13:37'!
+!TestValueWithinFix methodsFor: 'tests' stamp: 'ar 17/Aug/2007 13:37:00'!
 valueWithinNonLocalReturn
 	"Do a non-local return from a valueWithin: block"
 	[^self] valueWithin: 20 milliSeconds onTimeout:[].
 ! !
 
-!ColorFormTest methodsFor: 'testing' stamp: 'jpb 8/2/2019 23:30:35'!
+!ColorFormTest methodsFor: 'testing' stamp: 'jpb 2/Aug/2019 23:30:35'!
 testIsColorForm
 	self assert: (ColorForm new is: #ColorForm).! !
 
-!GrayFormTest methodsFor: 'as yet unclassified' stamp: 'jpb 8/2/2019 23:36:06'!
+!GrayFormTest methodsFor: 'as yet unclassified' stamp: 'jpb 2/Aug/2019 23:36:06'!
 testIsGrayForm
 	self assert: (GrayForm new is: #GrayForm)! !
 
-!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:59:20'!
+!JpegTest methodsFor: 'testing' stamp: 'jmv 21/Feb/2019 16:59:20'!
 test16bpp
 	| form n read |
 	form _ JpegTest lenaColor64 asFormOfDepth: 16.
@@ -7431,7 +7431,7 @@ test16bpp
 	n _ form boundingBox width * form boundingBox height * 3.
 	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
 
-!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:59:16'!
+!JpegTest methodsFor: 'testing' stamp: 'jmv 21/Feb/2019 16:59:16'!
 test16bpp61
 	| form n read |
 	form _ (JpegTest lenaColor64 asFormOfDepth: 16) copy: (0@0 extent: 61@61).
@@ -7444,7 +7444,7 @@ test16bpp61
 	n _ form boundingBox width * form boundingBox height * 3.
 	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
 
-!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:59:13'!
+!JpegTest methodsFor: 'testing' stamp: 'jmv 21/Feb/2019 16:59:13'!
 test16bpp62
 	| form n read |
 	form _ (JpegTest lenaColor64 asFormOfDepth: 16) copy: (0@0 extent: 62@62).
@@ -7457,7 +7457,7 @@ test16bpp62
 	n _ form boundingBox width * form boundingBox height * 3.
 	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
 
-!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:59:10'!
+!JpegTest methodsFor: 'testing' stamp: 'jmv 21/Feb/2019 16:59:10'!
 test16bpp63
 	| form n read |
 	form _ (JpegTest lenaColor64 asFormOfDepth: 16) copy: (0@0 extent: 63@63).
@@ -7470,7 +7470,7 @@ test16bpp63
 	n _ form boundingBox width * form boundingBox height * 3.
 	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
 
-!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:59:07'!
+!JpegTest methodsFor: 'testing' stamp: 'jmv 21/Feb/2019 16:59:07'!
 test16bppLE
 	| form n read |
 	form _ JpegTest lenaColor64 asFormOfDepth: -16.
@@ -7482,7 +7482,7 @@ test16bppLE
 	n _ form boundingBox width * form boundingBox height * 3.
 	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
 
-!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:59:04'!
+!JpegTest methodsFor: 'testing' stamp: 'jmv 21/Feb/2019 16:59:04'!
 test16bppLE61
 	| form n read |
 	form _ (JpegTest lenaColor64 asFormOfDepth: -16) copy: (0@0 extent: 61@61).
@@ -7495,7 +7495,7 @@ test16bppLE61
 	n _ form boundingBox width * form boundingBox height * 3.
 	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
 
-!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:59:00'!
+!JpegTest methodsFor: 'testing' stamp: 'jmv 21/Feb/2019 16:59:00'!
 test16bppLE62
 	| form n read |
 	form _ (JpegTest lenaColor64 asFormOfDepth: -16) copy: (0@0 extent: 62@62).
@@ -7508,7 +7508,7 @@ test16bppLE62
 	n _ form boundingBox width * form boundingBox height * 3.
 	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
 
-!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:58:57'!
+!JpegTest methodsFor: 'testing' stamp: 'jmv 21/Feb/2019 16:58:57'!
 test16bppLE63
 	| form n read |
 	form _ (JpegTest lenaColor64 asFormOfDepth: -16) copy: (0@0 extent: 63@63).
@@ -7521,7 +7521,7 @@ test16bppLE63
 	n _ form boundingBox width * form boundingBox height * 3.
 	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
 
-!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:58:53'!
+!JpegTest methodsFor: 'testing' stamp: 'jmv 21/Feb/2019 16:58:53'!
 test32bpp
 	| form n read |
 	form _ JpegTest lenaColor64.
@@ -7533,7 +7533,7 @@ test32bpp
 	n _ form boundingBox width * form boundingBox height * 3.
 	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
 
-!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:58:50'!
+!JpegTest methodsFor: 'testing' stamp: 'jmv 21/Feb/2019 16:58:50'!
 test32bpp63
 	| form n read |
 	form _ JpegTest lenaColor64 copy: (0@0 extent: 63@63).
@@ -7546,7 +7546,7 @@ test32bpp63
 	n _ form boundingBox width * form boundingBox height * 3.
 	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
 
-!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:58:47'!
+!JpegTest methodsFor: 'testing' stamp: 'jmv 21/Feb/2019 16:58:47'!
 test32bppLE63
 	| form n read |
 	form _ JpegTest lenaColor64 copy: (0@0 extent: 63@63).
@@ -7559,7 +7559,7 @@ test32bppLE63
 	n _ form boundingBox width * form boundingBox height * 3.
 	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
 
-!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:58:44'!
+!JpegTest methodsFor: 'testing' stamp: 'jmv 21/Feb/2019 16:58:44'!
 testBA16bpp
 	| form n read bytes |
 	form _ JpegTest lenaColor64 asFormOfDepth: 16.
@@ -7571,7 +7571,7 @@ testBA16bpp
 	n _ form boundingBox width * form boundingBox height * 3.
 	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
 
-!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:58:41'!
+!JpegTest methodsFor: 'testing' stamp: 'jmv 21/Feb/2019 16:58:41'!
 testBA16bpp61
 	| form n read bytes |
 	form _ (JpegTest lenaColor64 asFormOfDepth: 16) copy: (0@0 extent: 61@61).
@@ -7583,7 +7583,7 @@ testBA16bpp61
 	n _ form boundingBox width * form boundingBox height * 3.
 	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
 
-!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:58:37'!
+!JpegTest methodsFor: 'testing' stamp: 'jmv 21/Feb/2019 16:58:37'!
 testBA16bpp62
 	| form n read bytes |
 	form _ (JpegTest lenaColor64 asFormOfDepth: 16) copy: (0@0 extent: 62@62).
@@ -7595,7 +7595,7 @@ testBA16bpp62
 	n _ form boundingBox width * form boundingBox height * 3.
 	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
 
-!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:58:34'!
+!JpegTest methodsFor: 'testing' stamp: 'jmv 21/Feb/2019 16:58:34'!
 testBA16bpp63
 	| form n read bytes |
 	form _ (JpegTest lenaColor64 asFormOfDepth: 16) copy: (0@0 extent: 63@63).
@@ -7607,7 +7607,7 @@ testBA16bpp63
 	n _ form boundingBox width * form boundingBox height * 3.
 	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
 
-!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:58:31'!
+!JpegTest methodsFor: 'testing' stamp: 'jmv 21/Feb/2019 16:58:31'!
 testBA16bppLE
 	| form n read bytes |
 	form _ JpegTest lenaColor64 asFormOfDepth: -16.
@@ -7619,7 +7619,7 @@ testBA16bppLE
 	n _ form boundingBox width * form boundingBox height * 3.
 	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
 
-!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:58:28'!
+!JpegTest methodsFor: 'testing' stamp: 'jmv 21/Feb/2019 16:58:28'!
 testBA16bppLE61
 	| form n read bytes |
 	form _ (JpegTest lenaColor64 asFormOfDepth: -16) copy: (0@0 extent: 61@61).
@@ -7631,7 +7631,7 @@ testBA16bppLE61
 	n _ form boundingBox width * form boundingBox height * 3.
 	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
 
-!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:58:25'!
+!JpegTest methodsFor: 'testing' stamp: 'jmv 21/Feb/2019 16:58:25'!
 testBA16bppLE62
 	| form n read bytes |
 	form _ (JpegTest lenaColor64 asFormOfDepth: -16) copy: (0@0 extent: 62@62).
@@ -7643,7 +7643,7 @@ testBA16bppLE62
 	n _ form boundingBox width * form boundingBox height * 3.
 	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
 
-!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:58:20'!
+!JpegTest methodsFor: 'testing' stamp: 'jmv 21/Feb/2019 16:58:20'!
 testBA16bppLE63
 	| form n read bytes |
 	form _ (JpegTest lenaColor64 asFormOfDepth: -16) copy: (0@0 extent: 63@63).
@@ -7655,7 +7655,7 @@ testBA16bppLE63
 	n _ form boundingBox width * form boundingBox height * 3.
 	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
 
-!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:58:16'!
+!JpegTest methodsFor: 'testing' stamp: 'jmv 21/Feb/2019 16:58:16'!
 testBA32bpp
 	| form n read bytes |
 	form _ JpegTest lenaColor64.
@@ -7667,7 +7667,7 @@ testBA32bpp
 	n _ form boundingBox width * form boundingBox height * 3.
 	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
 
-!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:58:07'!
+!JpegTest methodsFor: 'testing' stamp: 'jmv 21/Feb/2019 16:58:07'!
 testBA32bpp63
 	| form n read bytes |
 	form _ JpegTest lenaColor64 copy: (0@0 extent: 63@63).
@@ -7680,7 +7680,7 @@ testBA32bpp63
 	n _ form boundingBox width * form boundingBox height * 3.
 	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
 
-!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:58:03'!
+!JpegTest methodsFor: 'testing' stamp: 'jmv 21/Feb/2019 16:58:03'!
 testGray
 	| form n read |
 	form _ JpegTest lenaColor64 asGrayForm.
@@ -7692,7 +7692,7 @@ testGray
 	n _ form boundingBox width * form boundingBox height.
 	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
 
-!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:58:01'!
+!JpegTest methodsFor: 'testing' stamp: 'jmv 21/Feb/2019 16:58:01'!
 testGray61
 	| form n read |
 	form _ JpegTest lenaColor64 asGrayForm copy: (0@0 extent: 61@61).
@@ -7705,7 +7705,7 @@ testGray61
 	n _ form boundingBox width * form boundingBox height.
 	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
 
-!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:57:57'!
+!JpegTest methodsFor: 'testing' stamp: 'jmv 21/Feb/2019 16:57:57'!
 testGray62
 	| form n read |
 	form _ JpegTest lenaColor64 asGrayForm copy: (0@0 extent: 62@62).
@@ -7718,7 +7718,7 @@ testGray62
 	n _ form boundingBox width * form boundingBox height.
 	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
 
-!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:57:54'!
+!JpegTest methodsFor: 'testing' stamp: 'jmv 21/Feb/2019 16:57:54'!
 testGray63
 	| form n read |
 	form _ JpegTest lenaColor64 asGrayForm copy: (0@0 extent: 63@63).
@@ -7731,7 +7731,7 @@ testGray63
 	n _ form boundingBox width * form boundingBox height.
 	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
 
-!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:57:48'!
+!JpegTest methodsFor: 'testing' stamp: 'jmv 21/Feb/2019 16:57:48'!
 testGrayBA
 	| form n read bytes |
 	form _ JpegTest lenaColor64 asGrayForm.
@@ -7743,7 +7743,7 @@ testGrayBA
 	n _ form boundingBox width * form boundingBox height.
 	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
 
-!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:57:44'!
+!JpegTest methodsFor: 'testing' stamp: 'jmv 21/Feb/2019 16:57:44'!
 testGrayBA61
 	| form n read bytes |
 	form _ JpegTest lenaColor64 asGrayForm copy: (0@0 extent: 61@61).
@@ -7756,7 +7756,7 @@ testGrayBA61
 	n _ form boundingBox width * form boundingBox height.
 	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
 
-!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:57:40'!
+!JpegTest methodsFor: 'testing' stamp: 'jmv 21/Feb/2019 16:57:40'!
 testGrayBA62
 	| form n read bytes |
 	form _ JpegTest lenaColor64 asGrayForm copy: (0@0 extent: 62@62).
@@ -7769,7 +7769,7 @@ testGrayBA62
 	n _ form boundingBox width * form boundingBox height.
 	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
 
-!JpegTest methodsFor: 'testing' stamp: 'jmv 2/21/2019 16:57:35'!
+!JpegTest methodsFor: 'testing' stamp: 'jmv 21/Feb/2019 16:57:35'!
 testGrayBA63
 	| form n read bytes |
 	form _ JpegTest lenaColor64 asGrayForm copy: (0@0 extent: 63@63).
@@ -7782,7 +7782,7 @@ testGrayBA63
 	n _ form boundingBox width * form boundingBox height.
 	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
 
-!JpegTest class methodsFor: 'test examples' stamp: 'jmv 2/21/2019 16:55:22'!
+!JpegTest class methodsFor: 'test examples' stamp: 'jmv 21/Feb/2019 16:55:22'!
 lenaColor64
 	"
 	('LenaColor64.bmp' asFileEntry readStreamDo: [ :strm | strm binary. Base64MimeConverter mimeEncode: strm ]) upToEnd
@@ -8020,7 +8020,7 @@ OVGaOFCZOE+UNEmMNkWDLjx6P1eiR2i5THC/SGzASW7DR2vAR2m9QmW5SGe3RmSyRWSzS3LA
 dqvwgrf4RWqpLkB2N0eANkmFOUyGOk6GN0yHOE+S'
 			base64Decoded asByteArray readStream! !
 
-!BitBltTest methodsFor: 'bugs' stamp: 'jmv 11/24/2023 11:48:21'!
+!BitBltTest methodsFor: 'bugs' stamp: 'jmv 24/Nov/2023 11:48:21'!
 testAllAlphasRgbAdd
 	"self run: #testAllAlphasRgbAdd"
 	| sourceForm destForm blt correctAlphas computedValue theoreticalValue |
@@ -8048,7 +8048,7 @@ testAllAlphasRgbAdd
 		assert: correctAlphas = 65536
 		description: 'Some incorrect alpha values computed for BitBlt rule rgbAdd'.! !
 
-!BitBltTest methodsFor: 'bugs' stamp: 'jmv 11/24/2023 11:50:23'!
+!BitBltTest methodsFor: 'bugs' stamp: 'jmv 24/Nov/2023 11:50:23'!
 testAllAlphasRgbMax
 	"self run: #testAllAlphasRgbMax"
 	| sourceForm destForm blt correctAlphas computedValue theoreticalValue |
@@ -8076,7 +8076,7 @@ testAllAlphasRgbMax
 		assert: correctAlphas = 65536
 		description: 'Some incorrect alpha values computed for BitBlt rule rgbMax'.! !
 
-!BitBltTest methodsFor: 'bugs' stamp: 'jmv 11/24/2023 11:51:16'!
+!BitBltTest methodsFor: 'bugs' stamp: 'jmv 24/Nov/2023 11:51:16'!
 testAllAlphasRgbMin
 	"self run: #testAllAlphasRgbMin"
 	| sourceForm destForm blt correctAlphas computedValue theoreticalValue |
@@ -8104,7 +8104,7 @@ testAllAlphasRgbMin
 		assert: correctAlphas = 65536
 		description: 'Some incorrect alpha values computed for BitBlt rule rgbMin'.! !
 
-!BitBltTest methodsFor: 'bugs' stamp: 'jmv 11/24/2023 11:51:46'!
+!BitBltTest methodsFor: 'bugs' stamp: 'jmv 24/Nov/2023 11:51:46'!
 testAllAlphasRgbMinInvert
 	"self run: #testAllAlphasRgbMinInvert"
 	| sourceForm destForm blt correctAlphas computedValue theoreticalValue |
@@ -8132,7 +8132,7 @@ testAllAlphasRgbMinInvert
 		assert: correctAlphas = 65536
 		description: 'Some incorrect alpha values computed for BitBlt rule rgbMinInvert'.! !
 
-!BitBltTest methodsFor: 'bugs' stamp: 'jmv 11/24/2023 12:04:03'!
+!BitBltTest methodsFor: 'bugs' stamp: 'jmv 24/Nov/2023 12:04:03'!
 testAllAlphasRgbMul
 	"self run: #testAllAlphasRgbMul"
 	| sourceForm destForm blt correctAlphas computedValue theoreticalValue |
@@ -8160,7 +8160,7 @@ testAllAlphasRgbMul
 		assert: correctAlphas = 65536
 		description: 'Some incorrect alpha values computed for BitBlt rule rgbMul'.! !
 
-!BitBltTest methodsFor: 'bugs' stamp: 'jmv 11/24/2023 11:52:17'!
+!BitBltTest methodsFor: 'bugs' stamp: 'jmv 24/Nov/2023 11:52:17'!
 testAllAlphasRgbSub
 	"self run: #testAllAlphasRgbSub"
 	| sourceForm destForm blt correctAlphas computedValue theoreticalValue |
@@ -8188,7 +8188,7 @@ testAllAlphasRgbSub
 		assert: correctAlphas = 65536
 		description: 'Some incorrect alpha values computed for BitBlt rule rgbSub'.! !
 
-!BitBltTest methodsFor: 'bugs' stamp: 'jmv 11/24/2023 11:52:57'!
+!BitBltTest methodsFor: 'bugs' stamp: 'jmv 24/Nov/2023 11:52:57'!
 testAlphaCompositing
 	"
 	BitBltTest new testAlphaCompositing
@@ -8213,7 +8213,7 @@ testAlphaCompositing
 		self assert: result alpha = 1.0.
 	].! !
 
-!BitBltTest methodsFor: 'bugs' stamp: 'jmv 11/24/2023 11:53:54'!
+!BitBltTest methodsFor: 'bugs' stamp: 'jmv 24/Nov/2023 11:53:54'!
 testAlphaCompositing2
 	"
 	BitBltTest new testAlphaCompositing2
@@ -8237,16 +8237,16 @@ testAlphaCompositing2
 		self assert: result alpha = mixColor alpha.
 	].! !
 
-!RectangleTest methodsFor: 'testing' stamp: 'jmv 10/9/2025 12:23:36'!
+!RectangleTest methodsFor: 'testing' stamp: 'jmv 9/Oct/2025 12:23:36'!
 testHasPositiveExtent
 	self assert: (10@10 corner: 20@20) hasPositiveExtent.
 	self deny: (10@10 corner: 2@2) hasPositiveExtent.! !
 
-!RectangleTest methodsFor: 'testing' stamp: 'jpb 8/2/2019 23:52:04'!
+!RectangleTest methodsFor: 'testing' stamp: 'jpb 2/Aug/2019 23:52:04'!
 testIsRectangle
 	self assert: (Rectangle new is: #Rectangle)! !
 
-!RectangleTest methodsFor: 'testing' stamp: 'jmv 10/9/2025 12:36:09'!
+!RectangleTest methodsFor: 'testing' stamp: 'jmv 9/Oct/2025 12:36:09'!
 testMerge
 	self assert: ((10@10 corner: 20@20) merge: (10@10 corner: 2@2)) equals: (10@10 corner: 20@20).
 	self assert: ((10@10 corner: 20@20) merge: (10@10 corner: 20@2)) equals: (10@10 corner: 20@20).
@@ -8257,7 +8257,7 @@ testMerge
 	self assert: ((10@10 corner: 20@20) merge: (50@50 corner: 60@60)) equals: (10@10 corner: 60@60).
 	self assert: ((10@10 corner: 20@20) merge: (1000@10 corner: 200@2)) equals: (10@10 corner: 20@20).! !
 
-!RectangleTest methodsFor: 'testing' stamp: 'jmv 10/9/2025 12:36:21'!
+!RectangleTest methodsFor: 'testing' stamp: 'jmv 9/Oct/2025 12:36:21'!
 testQuickMerge
 	self assert: ((10@10 corner: 20@20) quickMerge: (10@10 corner: 2@2)) equals: (10@10 corner: 20@20).
 	self assert: ((10@10 corner: 20@20) quickMerge: (10@10 corner: 20@2)) equals: (10@10 corner: 20@20).
@@ -8268,7 +8268,7 @@ testQuickMerge
 	self assert: ((10@10 corner: 20@20) quickMerge: (50@50 corner: 60@60)) equals: (10@10 corner: 60@60).
 	self assert: ((10@10 corner: 20@20) quickMerge: (1000@10 corner: 200@2)) equals: (10@10 corner: 20@20).! !
 
-!RectangleTest methodsFor: 'testing' stamp: 'jmv 10/9/2025 12:36:47'!
+!RectangleTest methodsFor: 'testing' stamp: 'jmv 9/Oct/2025 12:36:47'!
 testQuickMergeIntersectionWith
 	self assert: ((10@10 corner: 20@20) quickMerge: (50@50 corner: 60@60) intersectionWith: (0@0 corner: 100@100)) equals: (10@10 corner: 60@60).
 	self assert: ((10@10 corner: 20@20) quickMerge: (50@50 corner: 60@60) intersectionWith: (0@0 corner: 55@55)) equals: (10@10 corner: 55@55).
@@ -8276,7 +8276,7 @@ testQuickMergeIntersectionWith
 	self assert: ((10@10 corner: 20@20) quickMerge: (50@50 corner: 60@60) intersectionWith: (30@30 corner: 35@35)) equals: (10@10 corner: 20@20).
 	self assert: ((10@10 corner: 20@20) quickMerge: (500@50 corner: 60@60) intersectionWith: (30@30 corner: 35@35)) equals: (10@10 corner: 20@20).! !
 
-!DateAndTimeTest methodsFor: 'tests' stamp: 'jmv 6/5/2014 14:29'!
+!DateAndTimeTest methodsFor: 'tests' stamp: 'jmv 5/Jun/2014 14:29:00'!
 testCreation
 	"
 	self new testCreation
@@ -8301,30 +8301,30 @@ testCreation
 	self assert: d second = 4.
 	self assert: d nanoSecond = 0! !
 
-!DateAndTimeTest methodsFor: 'tests' stamp: 'jmv 5/13/2017 14:53:59'!
+!DateAndTimeTest methodsFor: 'tests' stamp: 'jmv 13/May/2017 14:53:59'!
 testDayOfWeek
 
 	self assert: '13 May 2017 ' asDate dayOfWeek = 6.
 	self assert: '13 May 2017 ' asDate dayOfWeekName = #Saturday! !
 
-!DateAndTimeTest methodsFor: 'tests' stamp: 'jmv 5/13/2017 19:22:53'!
+!DateAndTimeTest methodsFor: 'tests' stamp: 'jmv 13/May/2017 19:22:53'!
 testInvalidOperations
 
 	self should: [ DateAndTime tomorrow - Week current ] raise: Error.
 	self should: [ DateAndTime tomorrow - Date today ] raise: Error! !
 
-!DateAndTimeTest methodsFor: 'tests' stamp: 'jpb 8/2/2019 23:33:37'!
+!DateAndTimeTest methodsFor: 'tests' stamp: 'jpb 2/Aug/2019 23:33:37'!
 testIsDateAndTime
 	self assert: (DateAndTime now is: #DateAndTime).! !
 
-!DateAndTimeTest methodsFor: 'tests' stamp: 'jmv 5/13/2017 19:19:21'!
+!DateAndTimeTest methodsFor: 'tests' stamp: 'jmv 13/May/2017 19:19:21'!
 testLessDateAndTime
 
 	self assert: DateAndTime today - DateAndTime yesterday = 1 days.
 	self assert: DateAndTime today - DateAndTime tomorrow = -1 days.
 	self assert: DateAndTime tomorrow - DateAndTime yesterday = 2 days.! !
 
-!DateAndTimeTest methodsFor: 'tests' stamp: 'jmv 6/5/2014 14:22'!
+!DateAndTimeTest methodsFor: 'tests' stamp: 'jmv 5/Jun/2014 14:22:00'!
 testOperations
 	"
 	self new testOperations
@@ -8362,7 +8362,7 @@ testOperations
 	self assert: dt + d < dt.
 	self assert: dt + d - d = dt.! !
 
-!DateAndTimeTest methodsFor: 'tests' stamp: 'jmv 4/27/2016 15:04'!
+!DateAndTimeTest methodsFor: 'tests' stamp: 'jmv 27/Apr/2016 15:04:00'!
 testToByDo
 	"
 	DateAndTimeTest new testToByDo
@@ -8374,7 +8374,7 @@ testToByDo
 	start to: end by: step do: [ :time | last _ time ].
 	self assert: last = end! !
 
-!DateTest methodsFor: 'tests' stamp: 'jmv 5/13/2017 15:03:35'!
+!DateTest methodsFor: 'tests' stamp: 'jmv 13/May/2017 15:03:35'!
 testCreation
 
 	| date |
@@ -8409,30 +8409,30 @@ testCreation
 	self assert: date monthIndex = 4.
 	self assert: date dayOfMonth = 15.! !
 
-!DateTest methodsFor: 'test operations' stamp: 'jmv 5/13/2017 19:23:12'!
+!DateTest methodsFor: 'test operations' stamp: 'jmv 13/May/2017 19:23:12'!
 testInvalidOperations
 
 	self should: [ Date today - DateAndTime tomorrow ] raise: Error.
 	self should: [ Date today - Week current ] raise: Error.! !
 
-!DateTest methodsFor: 'test operations' stamp: 'jmv 5/13/2017 19:16:42'!
+!DateTest methodsFor: 'test operations' stamp: 'jmv 13/May/2017 19:16:42'!
 testLessDate
 
 	self assert: Date today - Date yesterday = 1 days.
 	self assert: Date today - Date tomorrow = -1 days.
 	self assert: Date tomorrow start - Date yesterday start = 2 days.! !
 
-!DateTest methodsFor: 'test operations' stamp: 'jmv 5/13/2017 14:25:42'!
+!DateTest methodsFor: 'test operations' stamp: 'jmv 13/May/2017 14:25:42'!
 testLessDuration
 
 	self assert: '13 May 2017' asDate - 3 days = '10 May 2017' asDate! !
 
-!DurationTest methodsFor: 'tests' stamp: 'jmv 5/13/2017 14:56:00'!
+!DurationTest methodsFor: 'tests' stamp: 'jmv 13/May/2017 14:56:00'!
 testPrintString
 
 	self assert: (Duration days: 2 hours: 3 minutes: 16 seconds: 43) printString =  '2:03:16:43' ! !
 
-!MonthTest methodsFor: 'tests' stamp: 'jmv 5/13/2017 14:33:22'!
+!MonthTest methodsFor: 'tests' stamp: 'jmv 13/May/2017 14:33:22'!
 testCreation
 
 	self assert: 'July 1998' asMonth yearNumber = 1998.
@@ -8443,14 +8443,14 @@ testCreation
 	self assert: '1998/7' asMonth monthIndex = 7.
 	self assert: '1998/7' asMonth monthName = #July.! !
 
-!MonthTest methodsFor: 'tests' stamp: 'jmv 5/13/2017 14:55:20'!
+!MonthTest methodsFor: 'tests' stamp: 'jmv 13/May/2017 14:55:20'!
 testPrintString
 
 	self assert: 'July 1998' asMonth printString = 'July 1998'.
 	self assert: '1998/7' asMonth printString = 'July 1998'.
 ! !
 
-!TimeTest methodsFor: 'tests' stamp: 'jmv 6/5/2014 14:32'!
+!TimeTest methodsFor: 'tests' stamp: 'jmv 5/Jun/2014 14:32:00'!
 testCreation
 	"
 	self new testCreation
@@ -8468,7 +8468,7 @@ testCreation
 	self assert: t second = 2.
 	self assert: t nanoSecond = 414712000! !
 
-!TimeTest methodsFor: 'tests' stamp: 'jmv 6/5/2014 14:34'!
+!TimeTest methodsFor: 'tests' stamp: 'jmv 5/Jun/2014 14:34:00'!
 testEqual
 	"
 	self new testEqual
@@ -8483,13 +8483,13 @@ testEqual
 	t2 _ Time seconds: 52263 nanoSeconds: 0.
 	self deny: t1 = t2.! !
 
-!TimeTest methodsFor: 'tests' stamp: 'jmv 11/11/2014 09:26'!
+!TimeTest methodsFor: 'tests' stamp: 'jmv 11/Nov/2014 09:26:00'!
 testTimePartsArePositive
 	self assert: (Time afterMidnight: -10 minutes) minute > 0.
 	self assert: (Time afterMidnight: -10 minutes) hour = 23.
 	self assert: (Time afterMidnight: -10 minutes) minute = 50.! !
 
-!TimeTest methodsFor: 'Tests' stamp: 'jmv 5/27/2014 22:46'!
+!TimeTest methodsFor: 'Tests' stamp: 'jmv 27/May/2014 22:46:00'!
 testSqueakInquiries
 	| timewords |
 
@@ -8499,11 +8499,11 @@ testSqueakInquiries
 		timewords = #('a second ago' '30 seconds ago' 'a minute ago' '2 minutes ago' 
 			'an hour ago' '2 hours ago' '16 hours ago' 'yesterday').! !
 
-!TimespanTest methodsFor: 'testing' stamp: 'jpb 8/2/2019 23:42:40'!
+!TimespanTest methodsFor: 'testing' stamp: 'jpb 2/Aug/2019 23:42:40'!
 testIsTimespan
 	self assert: (Timespan current is: #Timespan).! !
 
-!WeekTest methodsFor: 'tests' stamp: 'jmv 5/13/2017 15:29:29'!
+!WeekTest methodsFor: 'tests' stamp: 'jmv 13/May/2017 15:29:29'!
 testCreation
 
 	| week |
@@ -8545,7 +8545,7 @@ testCreation
 	self assert: week weekNumber = 2.
 	self assert: week start = '2010-1-11' asDate start.! !
 
-!WeekTest methodsFor: 'tests' stamp: 'jmv 5/13/2017 15:28:58'!
+!WeekTest methodsFor: 'tests' stamp: 'jmv 13/May/2017 15:28:58'!
 testIncluding
 
 	| week |
@@ -8567,13 +8567,13 @@ testIncluding
 
 	self should: [ Week including: (Year including: Date today) ] raise: Error! !
 
-!WeekTest methodsFor: 'tests' stamp: 'jmv 5/13/2017 19:22:16'!
+!WeekTest methodsFor: 'tests' stamp: 'jmv 13/May/2017 19:22:16'!
 testInvalidOperations
 
 	self should: [ Week current - Date tomorrow ] raise: Error.
 	self should: [ Week current - DateAndTime tomorrow ] raise: Error.! !
 
-!WeekTest methodsFor: 'tests' stamp: 'jmv 5/13/2017 14:55:27'!
+!WeekTest methodsFor: 'tests' stamp: 'jmv 13/May/2017 14:55:27'!
 testPrintString
 
 	{
@@ -8587,26 +8587,26 @@ testPrintString
 	} do: [ :string |
 		self assert: string asWeek printString = string ]! !
 
-!WeekTest methodsFor: 'test class methods' stamp: 'jmv 5/13/2017 14:58:57'!
+!WeekTest methodsFor: 'test class methods' stamp: 'jmv 13/May/2017 14:58:57'!
 testWeekDayNames
 
 	self assert: (Week indexOfDay: #Sunday) = 7.
 	self assert: (Week nameOfDay: 7) = #Sunday! !
 
-!YearTest methodsFor: 'tests' stamp: 'jmv 5/13/2017 15:19:06'!
+!YearTest methodsFor: 'tests' stamp: 'jmv 13/May/2017 15:19:06'!
 testCreation
 
 	self assert: (Year yearNumber: 1998) yearNumber = 1998.
 	self assert: '2008' asYear yearNumber = 2008.
 	self assert: '2008' asYear start = '2008/01/01' asDate start! !
 
-!YearTest methodsFor: 'tests' stamp: 'jmv 5/13/2017 15:17:42'!
+!YearTest methodsFor: 'tests' stamp: 'jmv 13/May/2017 15:17:42'!
 testIncluding
 
 	self assert: (Year including: '12 May 2017 ' asDate start) yearNumber = 2017.
 	self assert: (Year including: (Week including: '12 May 2017 ' asDate start)) yearNumber = 2017! !
 
-!BehaviorTest methodsFor: 'class hierarchy tests' stamp: 'jmv 7/31/2023 11:56:10'!
+!BehaviorTest methodsFor: 'class hierarchy tests' stamp: 'jmv 31/Jul/2023 11:56:10'!
 testAllSuperclassesUpToFailsWhenWantsToStopOnInvalidSuperclass
 
 	| invalidSuperclass |
@@ -8618,7 +8618,7 @@ testAllSuperclassesUpToFailsWhenWantsToStopOnInvalidSuperclass
 		withExceptionDo: [:anError | 
 			self assert: (nil superclassNotValidErrorDescriptionFor: invalidSuperclass) equals: anError messageText ].! !
 
-!BehaviorTest methodsFor: 'class hierarchy tests' stamp: 'jmv 7/31/2023 11:53:44'!
+!BehaviorTest methodsFor: 'class hierarchy tests' stamp: 'jmv 31/Jul/2023 11:53:44'!
 testAllSuperclassesUpToPutsFirstSuperclassesFirst
 
 	| superclasses |
@@ -8629,7 +8629,7 @@ testAllSuperclassesUpToPutsFirstSuperclassesFirst
 	self assert: superclasses first equals: Integer.
 	self assert: superclasses second equals: Number.! !
 
-!BehaviorTest methodsFor: 'class hierarchy tests' stamp: 'jmv 7/31/2023 11:56:01'!
+!BehaviorTest methodsFor: 'class hierarchy tests' stamp: 'jmv 31/Jul/2023 11:56:01'!
 testAllSuperclassesUpToStopsOnRightClass
 
 	| superclasses |
@@ -8639,7 +8639,7 @@ testAllSuperclassesUpToStopsOnRightClass
 	self assert: superclasses size equals: 1.
 	self assert: (superclasses includes: Integer).! !
 
-!BehaviorTest methodsFor: 'class hierarchy tests' stamp: 'jmv 7/31/2023 11:55:49'!
+!BehaviorTest methodsFor: 'class hierarchy tests' stamp: 'jmv 31/Jul/2023 11:55:49'!
 testHighestClassImplementingReturnsReceiverWhenNoOtherSuperclassImplementsSelector
 
 	| higestClass |
@@ -8648,7 +8648,7 @@ testHighestClassImplementingReturnsReceiverWhenNoOtherSuperclassImplementsSelect
 	
 	self assert: higestClass equals: OrderedCollection.! !
 
-!BehaviorTest methodsFor: 'class hierarchy tests' stamp: 'jmv 7/31/2023 11:55:45'!
+!BehaviorTest methodsFor: 'class hierarchy tests' stamp: 'jmv 31/Jul/2023 11:55:45'!
 testHighestClassImplementingReturnsTheTopSuperclassImplementingSelector
 
 	| higestClass |
@@ -8657,14 +8657,14 @@ testHighestClassImplementingReturnsTheTopSuperclassImplementingSelector
 	
 	self assert: higestClass equals: Collection.! !
 
-!BehaviorTest methodsFor: 'class hierarchy tests' stamp: 'HAW 8/3/2019 09:29:55'!
+!BehaviorTest methodsFor: 'class hierarchy tests' stamp: 'HAW 3/Aug/2019 09:29:55'!
 testHighestClassImplementingValuesIfNoneBlockWhenSelectorIsNotImplemented
 
 	OrderedCollection highestClassImplementing: #x ifNone: [ ^self  ].
 	
 	self fail! !
 
-!BehaviorTest methodsFor: 'class hierarchy tests' stamp: 'jmv 7/31/2023 11:55:32'!
+!BehaviorTest methodsFor: 'class hierarchy tests' stamp: 'jmv 31/Jul/2023 11:55:32'!
 testWithAllSuperclassesUpToIncludesReceiverClass
 
 	| superclasses |
@@ -8676,7 +8676,7 @@ testWithAllSuperclassesUpToIncludesReceiverClass
 	self assert: superclasses second equals: Integer.
 	self assert: superclasses third equals: Number.! !
 
-!BehaviorTest methodsFor: 'instance variables tests' stamp: 'HAW 6/28/2020 11:57:28'!
+!BehaviorTest methodsFor: 'instance variables tests' stamp: 'HAW 28/Jun/2020 11:57:28'!
 testAllAccessToInstVarReturnsAccessReceiversBranch
 
 	| references |
@@ -8692,12 +8692,12 @@ testAllAccessToInstVarReturnsAccessReceiversBranch
 
 	self assert: (references noneSatisfy: [ :aReference | aReference methodClass = IdentityDictionary ])! !
 
-!BehaviorTest methodsFor: 'instance variables tests' stamp: 'HAW 4/9/2020 16:17:49'!
+!BehaviorTest methodsFor: 'instance variables tests' stamp: 'HAW 9/Apr/2020 16:17:49'!
 testAllAccessToIsEmptyForVariableNotDefinedInClass
 
 	self assert: (Object allAccessesTo: 'iv1') isEmpty! !
 
-!BehaviorTest methodsFor: 'instance variables tests' stamp: 'HAW 6/28/2020 11:53:39'!
+!BehaviorTest methodsFor: 'instance variables tests' stamp: 'HAW 28/Jun/2020 11:53:39'!
 testAllBroadAccessToReturnsAccessInAllHierarchy
 
 	| references |
@@ -8712,7 +8712,7 @@ testAllBroadAccessToReturnsAccessInAllHierarchy
 
 	self assert: (references anySatisfy: [ :aReference | aReference methodClass = Dictionary ])! !
 
-!BehaviorTest methodsFor: 'instance variables tests' stamp: 'jmv 7/31/2023 11:55:53'!
+!BehaviorTest methodsFor: 'instance variables tests' stamp: 'jmv 31/Jul/2023 11:55:53'!
 testAllUnreferencedInstanceVariablesReturnsOnlyUnreferencedVariables
 
 	| unreferencedVariables |
@@ -8722,28 +8722,28 @@ testAllUnreferencedInstanceVariablesReturnsOnlyUnreferencedVariables
 	self assert: unreferencedVariables size equals: 1.
 	self assert: (unreferencedVariables includes: 'unreferenced').! !
 
-!BehaviorTest methodsFor: 'instance variables tests' stamp: 'HAW 8/2/2018 16:54:45'!
+!BehaviorTest methodsFor: 'instance variables tests' stamp: 'HAW 2/Aug/2018 16:54:45'!
 testHasReferencesToInstanceVariableNamedLooksInClassOnly
 
 	self deny: (self class hasReferencesToInstanceVariableNamed: 'referenced').
 	self assert: (BehaviorTestSubclass hasReferencesToInstanceVariableNamed: 'referenced').
 	! !
 
-!BehaviorTest methodsFor: 'instance variables tests' stamp: 'HAW 8/2/2018 16:54:48'!
+!BehaviorTest methodsFor: 'instance variables tests' stamp: 'HAW 2/Aug/2018 16:54:48'!
 testIsInstanceVariableNamedReferencedInHierarchyLooksReferencesInHierarchy
 
 	self assert: (self class isInstanceVariableNamedReferencedInHierarchy: 'referenced').
 	self deny: (self class isInstanceVariableNamedReferencedInHierarchy: 'unreferenced').
 	! !
 
-!BehaviorTest methodsFor: 'instance variables tests' stamp: 'HAW 6/28/2020 11:48:19'!
+!BehaviorTest methodsFor: 'instance variables tests' stamp: 'HAW 28/Jun/2020 11:48:19'!
 testProtoObjectAllRegularInstVarNamesDoesNotFail
 
 	self
 		shouldnt: [ ProtoObject allRegularInstVarNames ]
 		raise: Error! !
 
-!BehaviorTest methodsFor: 'instance variables tests' stamp: 'jmv 7/31/2023 11:55:40'!
+!BehaviorTest methodsFor: 'instance variables tests' stamp: 'jmv 31/Jul/2023 11:55:40'!
 testUnreferencedInstanceVariablesReturnsOnlyUnreferencedVariables
 
 	| unreferencedVariables |
@@ -8753,17 +8753,17 @@ testUnreferencedInstanceVariablesReturnsOnlyUnreferencedVariables
 	self assert: unreferencedVariables size equals: 1.
 	self assert: (unreferencedVariables includes: 'unreferenced').! !
 
-!BehaviorTestSubclass methodsFor: 'test data' stamp: 'HAW 8/2/2018 16:54:29'!
+!BehaviorTestSubclass methodsFor: 'test data' stamp: 'HAW 2/Aug/2018 16:54:29'!
 methodReferencingReferencedVariable
 
 	^referenced  ! !
 
-!BehaviorTestSubclass class methodsFor: 'as yet unclassified' stamp: 'HAW 2/28/2019 19:18:42'!
+!BehaviorTestSubclass class methodsFor: 'as yet unclassified' stamp: 'HAW 28/Feb/2019 19:18:42'!
 isAbstract
 
 	^true! !
 
-!CategorizerTest methodsFor: 'assertions' stamp: 'HAW 9/24/2020 19:46:47'!
+!CategorizerTest methodsFor: 'assertions' stamp: 'HAW 24/Sep/2020 19:46:47'!
 assertAddsWithoutBlanks: aCategoryWithBlanks
 
 	| categorizer |
@@ -8778,7 +8778,7 @@ assertAddsWithoutBlanks: aCategoryWithBlanks
 	
 	! !
 
-!CategorizerTest methodsFor: 'assertions' stamp: 'HAW 9/24/2020 19:46:54'!
+!CategorizerTest methodsFor: 'assertions' stamp: 'HAW 24/Sep/2020 19:46:54'!
 assertClassifiesWithoutBlanks: aCategoryWithBlanks
 
 	| categorizer |
@@ -8790,7 +8790,7 @@ assertClassifiesWithoutBlanks: aCategoryWithBlanks
 	self assert: (categorizer categoryOfElement: 1) equals: aCategoryWithBlanks withBlanksTrimmed 
 	! !
 
-!CategorizerTest methodsFor: 'assertions' stamp: 'jmv 7/31/2023 11:57:12'!
+!CategorizerTest methodsFor: 'assertions' stamp: 'jmv 31/Jul/2023 11:57:12'!
 assertRenamesToWithoutBlanks: aCategoryWithBlanks
 
 	| categorizer categoryToRename |
@@ -8806,61 +8806,61 @@ assertRenamesToWithoutBlanks: aCategoryWithBlanks
 	self deny: (categorizer categories includes: categoryToRename).
 	self assert: (categorizer categoryOfElement: 1) equals: aCategoryWithBlanks withBlanksTrimmed.! !
 
-!CategorizerTest methodsFor: 'tests' stamp: 'HAW 9/24/2020 19:57:50'!
+!CategorizerTest methodsFor: 'tests' stamp: 'HAW 24/Sep/2020 19:57:50'!
 testClassifiesWithoutLeadingBlanks
 
 	self assertClassifiesWithoutBlanks: self categoryWithLeadingBlanks ! !
 
-!CategorizerTest methodsFor: 'tests' stamp: 'HAW 9/24/2020 19:57:33'!
+!CategorizerTest methodsFor: 'tests' stamp: 'HAW 24/Sep/2020 19:57:33'!
 testClassifiesWithoutTrailingBlanks
 
 	self assertClassifiesWithoutBlanks: self categoryWithTrailingBlanks ! !
 
-!CategorizerTest methodsFor: 'tests' stamp: 'HAW 9/24/2020 19:56:18'!
+!CategorizerTest methodsFor: 'tests' stamp: 'HAW 24/Sep/2020 19:56:18'!
 testRemovesLeadingBlanksWhenAddingCategory
 
 	self assertAddsWithoutBlanks: self categoryWithLeadingBlanks.
 	
 	! !
 
-!CategorizerTest methodsFor: 'tests' stamp: 'HAW 9/24/2020 19:55:58'!
+!CategorizerTest methodsFor: 'tests' stamp: 'HAW 24/Sep/2020 19:55:58'!
 testRemovesTrailingBlanksWhenAddingCategory
 
 	self assertAddsWithoutBlanks: self categoryWithTrailingBlanks.
 	
 	! !
 
-!CategorizerTest methodsFor: 'tests' stamp: 'HAW 9/24/2020 19:58:11'!
+!CategorizerTest methodsFor: 'tests' stamp: 'HAW 24/Sep/2020 19:58:11'!
 testRenamesWithoutLeadingBlanks
 
 	self assertRenamesToWithoutBlanks: self categoryWithLeadingBlanks ! !
 
-!CategorizerTest methodsFor: 'tests' stamp: 'HAW 9/24/2020 19:58:01'!
+!CategorizerTest methodsFor: 'tests' stamp: 'HAW 24/Sep/2020 19:58:01'!
 testRenamesWithoutTrailingBlanks
 
 	self assertRenamesToWithoutBlanks: self categoryWithTrailingBlanks ! !
 
-!CategorizerTest methodsFor: 'support' stamp: 'HAW 9/24/2020 16:41:35'!
+!CategorizerTest methodsFor: 'support' stamp: 'HAW 24/Sep/2020 16:41:35'!
 categoryWithLeadingBlanks
 
 	^ ' withLeadingBlanks'! !
 
-!CategorizerTest methodsFor: 'support' stamp: 'HAW 9/24/2020 16:41:23'!
+!CategorizerTest methodsFor: 'support' stamp: 'HAW 24/Sep/2020 16:41:23'!
 categoryWithTrailingBlanks
 
 	^ 'withTrailingBlanks '! !
 
-!CategorizerTest methodsFor: 'support' stamp: 'jmv 1/28/2025 13:59:53'!
+!CategorizerTest methodsFor: 'support' stamp: 'jmv 28/Jan/2025 13:59:53'!
 createCategorizer
 
 	^ Categorizer empty! !
 
-!ClassOrganizerTest methodsFor: 'support' stamp: 'jmv 1/28/2025 13:59:59'!
+!ClassOrganizerTest methodsFor: 'support' stamp: 'jmv 28/Jan/2025 13:59:59'!
 createCategorizer
 
 	^ ClassOrganizer empty! !
 
-!ClassTest methodsFor: 'definition tests' stamp: 'HAW 10/24/2019 09:34:44'!
+!ClassTest methodsFor: 'definition tests' stamp: 'HAW 24/Oct/2019 09:34:44'!
 testDefinitionReplacingCategoryWithReplacesTheCategoryWithTheGivenOne
 
 	| classDefinition newCategory newCategoryDefinition |
@@ -8875,7 +8875,7 @@ testDefinitionReplacingCategoryWithReplacesTheCategoryWithTheGivenOne
 
 ! !
 
-!ClassTest methodsFor: 'definition tests' stamp: 'HAW 10/24/2019 09:42:54'!
+!ClassTest methodsFor: 'definition tests' stamp: 'HAW 24/Oct/2019 09:42:54'!
 testDefinitionReplacingCategoryWithWorksWhenCategoryIsNil
 
 	| classDefinition newCategory newCategoryDefinition currentCategory |
@@ -8895,13 +8895,13 @@ testDefinitionReplacingCategoryWithWorksWhenCategoryIsNil
 
 ! !
 
-!MetaclassTest methodsFor: 'tests' stamp: 'HAW 7/17/2023 12:32:33'!
+!MetaclassTest methodsFor: 'tests' stamp: 'HAW 17/Jul/2023 12:32:33'!
 testHasSubclassesReturnsThisClassHasSubclasses
 
 	self assert: Object hasSubclasses equals: Object class hasSubclasses.
 	self assert: self class hasSubclasses equals: self class class hasSubclasses ! !
 
-!CompiledMethodTest methodsFor: 'tests - properties' stamp: 'HAW 1/3/2019 07:03:52'!
+!CompiledMethodTest methodsFor: 'tests - properties' stamp: 'HAW 3/Jan/2019 07:03:52'!
 test01withPropertiesDoIfSelectorEvaluatesFirstBlockWhenMethodHasProperties
 
 	| thisMethod propertyName methodProperties |
@@ -8917,7 +8917,7 @@ test01withPropertiesDoIfSelectorEvaluatesFirstBlockWhenMethodHasProperties
 	"I don't assert inside the block because if no block is evaluated the test passes - Hernan"	
 	self assert: (methodProperties at: propertyName)! !
 
-!CompiledMethodTest methodsFor: 'tests - properties' stamp: 'HAW 1/3/2019 07:04:31'!
+!CompiledMethodTest methodsFor: 'tests - properties' stamp: 'HAW 3/Jan/2019 07:04:31'!
 test02removePropertiesRestoresPenultimalLiteralToSelector
 
 	| thisMethod propertyName |
@@ -8930,7 +8930,7 @@ test02removePropertiesRestoresPenultimalLiteralToSelector
 	self assert: thisMethod penultimateLiteral equals: thisContext selector.
 	! !
 
-!CompiledMethodTest methodsFor: 'tests - properties' stamp: 'HAW 1/3/2019 07:04:52'!
+!CompiledMethodTest methodsFor: 'tests - properties' stamp: 'HAW 3/Jan/2019 07:04:52'!
 test03removePropertiesKeepsSelectorIfMethodDoesNotHaveProperties
 
 	| thisMethod |
@@ -8943,7 +8943,7 @@ test03removePropertiesKeepsSelectorIfMethodDoesNotHaveProperties
 	self assert: thisMethod penultimateLiteral equals: thisContext selector.
 	! !
 
-!CompiledMethodTest methodsFor: 'tests - properties' stamp: 'HAW 1/3/2019 07:05:22'!
+!CompiledMethodTest methodsFor: 'tests - properties' stamp: 'HAW 3/Jan/2019 07:05:22'!
 test04withPropertiesDoIfSelectorEvaluatesSecondBlockWhenMethodHasNoProperties
 
 	| thisMethod methodSelector |
@@ -8958,7 +8958,7 @@ test04withPropertiesDoIfSelectorEvaluatesSecondBlockWhenMethodHasNoProperties
 	"I don't assert inside the block because if no block is evaluated the test passes - Hernan"	
 	self assert: methodSelector equals: thisContext selector! !
 
-!CompiledMethodTest methodsFor: 'tests - properties' stamp: 'HAW 1/3/2019 07:05:40'!
+!CompiledMethodTest methodsFor: 'tests - properties' stamp: 'HAW 3/Jan/2019 07:05:40'!
 test05hasLiteralSuchThatTravelsListeralsWhenMethodHasProperties
 
 	| thisMethod |
@@ -8970,7 +8970,7 @@ test05hasLiteralSuchThatTravelsListeralsWhenMethodHasProperties
 	
 	! !
 
-!CompiledMethodTest methodsFor: 'tests - properties' stamp: 'HAW 1/3/2019 07:05:54'!
+!CompiledMethodTest methodsFor: 'tests - properties' stamp: 'HAW 3/Jan/2019 07:05:54'!
 test06hasLiteralSuchThatTravelsListeralsWhenMethodHasNoProperties
 
 	| thisMethod |
@@ -8982,7 +8982,7 @@ test06hasLiteralSuchThatTravelsListeralsWhenMethodHasNoProperties
 	
 	! !
 
-!CompiledMethodTest methodsFor: 'tests - properties' stamp: 'HAW 1/3/2019 07:06:51'!
+!CompiledMethodTest methodsFor: 'tests - properties' stamp: 'HAW 3/Jan/2019 07:06:51'!
 test0701withPropertiesDoReturnsNilIfMethodHasNoProperties
 
 	| thisMethod |
@@ -8992,7 +8992,7 @@ test0701withPropertiesDoReturnsNilIfMethodHasNoProperties
 
 	self assert: (thisMethod withPropertiesDo: [ :properties | self fail ]) isNil! !
 
-!CompiledMethodTest methodsFor: 'tests - properties' stamp: 'HAW 1/3/2019 07:07:21'!
+!CompiledMethodTest methodsFor: 'tests - properties' stamp: 'HAW 3/Jan/2019 07:07:21'!
 test07withPropertiesDoEvaluatesBlockOnlyWhenMethodHasProperties
 
 	| thisMethod propertyName methodProperties |
@@ -9006,7 +9006,7 @@ test07withPropertiesDoEvaluatesBlockOnlyWhenMethodHasProperties
 	"I don't assert inside the block because if no block is evaluated the test passes - Hernan"	
 	self assert: (methodProperties at: propertyName)! !
 
-!CompiledMethodTest methodsFor: 'tests - properties' stamp: 'jmv 7/7/2025 17:22:31'!
+!CompiledMethodTest methodsFor: 'tests - properties' stamp: 'jmv 7/Jul/2025 17:22:31'!
 test08hasLiteralReturnTrueWhenMethodHasPropertiesAndHasLiteral
 
 	| thisMethod |
@@ -9018,7 +9018,7 @@ test08hasLiteralReturnTrueWhenMethodHasPropertiesAndHasLiteral
 	
 	! !
 
-!CompiledMethodTest methodsFor: 'tests - properties' stamp: 'jmv 7/7/2025 17:22:44'!
+!CompiledMethodTest methodsFor: 'tests - properties' stamp: 'jmv 7/Jul/2025 17:22:44'!
 test09hasLiteralReturnFalseWhenMethodHasPropertiesAndHasNoLiteral
 
 	| thisMethod |
@@ -9030,7 +9030,7 @@ test09hasLiteralReturnFalseWhenMethodHasPropertiesAndHasNoLiteral
 	
 	! !
 
-!CompiledMethodTest methodsFor: 'tests - properties' stamp: 'jmv 7/7/2025 17:22:51'!
+!CompiledMethodTest methodsFor: 'tests - properties' stamp: 'jmv 7/Jul/2025 17:22:51'!
 test10hasLiteralReturnTrueWhenMethodHasNoPropertiesAndHasLiteral
 
 	| thisMethod |
@@ -9042,7 +9042,7 @@ test10hasLiteralReturnTrueWhenMethodHasNoPropertiesAndHasLiteral
 	
 	! !
 
-!CompiledMethodTest methodsFor: 'tests - properties' stamp: 'jmv 7/7/2025 17:22:58'!
+!CompiledMethodTest methodsFor: 'tests - properties' stamp: 'jmv 7/Jul/2025 17:22:58'!
 test11hasLiteralReturnFalseWhenMethodHasNoPropertiesAndHasNoLiteral
 
 	| thisMethod |
@@ -9054,7 +9054,7 @@ test11hasLiteralReturnFalseWhenMethodHasNoPropertiesAndHasNoLiteral
 	
 	! !
 
-!CompiledMethodTest methodsFor: 'tests - properties' stamp: 'HAW 1/3/2019 07:08:51'!
+!CompiledMethodTest methodsFor: 'tests - properties' stamp: 'HAW 3/Jan/2019 07:08:51'!
 test12pragmaAtReturnsPragmaIfExist
 
 	<test>
@@ -9065,7 +9065,7 @@ test12pragmaAtReturnsPragmaIfExist
 	
 	self assert: (thisMethod pragmaAt: #test) key equals: #test! !
 
-!CompiledMethodTest methodsFor: 'tests - properties' stamp: 'HAW 1/3/2019 07:09:07'!
+!CompiledMethodTest methodsFor: 'tests - properties' stamp: 'HAW 3/Jan/2019 07:09:07'!
 test13pragmaAtReturnsNilIfPragmaDoesNotExist
 
 	| thisMethod |
@@ -9074,7 +9074,7 @@ test13pragmaAtReturnsNilIfPragmaDoesNotExist
 	
 	self assert: (thisMethod pragmaAt: #test) isNil! !
 
-!CompiledMethodTest methodsFor: 'tests - properties' stamp: 'HAW 1/3/2019 07:09:26'!
+!CompiledMethodTest methodsFor: 'tests - properties' stamp: 'HAW 3/Jan/2019 07:09:26'!
 test14pragmasReturnsCollectionOfMethodPragmas
 
 	<test>
@@ -9087,7 +9087,7 @@ test14pragmasReturnsCollectionOfMethodPragmas
 	self assert: pragmas size equals: 1.
 	self assert: pragmas first key equals: #test! !
 
-!CompiledMethodTest methodsFor: 'tests - properties' stamp: 'HAW 1/3/2019 07:09:49'!
+!CompiledMethodTest methodsFor: 'tests - properties' stamp: 'HAW 3/Jan/2019 07:09:49'!
 test15pragmasReturnsEmptyCollectionWhenMethodHasNoProperties
 
 	| thisMethod pragmas |
@@ -9098,7 +9098,7 @@ test15pragmasReturnsEmptyCollectionWhenMethodHasNoProperties
 	
 	self assert: pragmas isEmpty ! !
 
-!CompiledMethodTest methodsFor: 'tests - properties' stamp: 'HAW 1/3/2019 07:14:18'!
+!CompiledMethodTest methodsFor: 'tests - properties' stamp: 'HAW 3/Jan/2019 07:14:18'!
 test16propertiesReturnsAnNewAdditionalMethodStateWhenNoPropertiesHasBeenSet
 
 	| thisMethod properties |
@@ -9112,7 +9112,7 @@ test16propertiesReturnsAnNewAdditionalMethodStateWhenNoPropertiesHasBeenSet
 	self assert: properties selector equals: thisContext selector.
 	self deny: properties == thisMethod properties ! !
 
-!CompiledMethodTest methodsFor: 'tests - properties' stamp: 'HAW 1/3/2019 07:14:35'!
+!CompiledMethodTest methodsFor: 'tests - properties' stamp: 'HAW 3/Jan/2019 07:14:35'!
 test17propertiesReturnsTheAlreadySetAdditionalMethodStateWhenHasProperties
 
 	| propertyName thisMethod properties |
@@ -9126,7 +9126,7 @@ test17propertiesReturnsTheAlreadySetAdditionalMethodStateWhenHasProperties
 	self assert: properties selector equals: thisContext selector.
 	! !
 
-!CompiledMethodTest methodsFor: 'tests - properties' stamp: 'HAW 1/3/2019 07:17:28'!
+!CompiledMethodTest methodsFor: 'tests - properties' stamp: 'HAW 3/Jan/2019 07:17:28'!
 test18propertyKeysAndValuesDoIteratesOverProperties
 
 	| propertyName thisMethod properties |
@@ -9141,7 +9141,7 @@ test18propertyKeysAndValuesDoIteratesOverProperties
 	self assert: properties size equals: 1.
 	self assert: properties first equals: propertyName -> true! !
 
-!CompiledMethodTest methodsFor: 'tests - properties' stamp: 'HAW 1/3/2019 07:20:11'!
+!CompiledMethodTest methodsFor: 'tests - properties' stamp: 'HAW 3/Jan/2019 07:20:11'!
 test19propertyKeysAndValuesDoDoesNotEvaluateBlockWhenMethodHasNoProperties
 
 	| thisMethod |
@@ -9151,7 +9151,7 @@ test19propertyKeysAndValuesDoDoesNotEvaluateBlockWhenMethodHasNoProperties
 	
 	thisMethod propertyKeysAndValuesDo: [ :key :value | self fail ]! !
 
-!CompiledMethodTest methodsFor: 'tests - properties' stamp: 'HAW 1/3/2019 16:58:44'!
+!CompiledMethodTest methodsFor: 'tests - properties' stamp: 'HAW 3/Jan/2019 16:58:44'!
 test20propertyValueAtReturnsPropertyValueWhenSetted
 
 	| propertyName propertyValue thisMethod |
@@ -9163,7 +9163,7 @@ test20propertyValueAtReturnsPropertyValueWhenSetted
 	
 	self assert: (thisMethod propertyValueAt: propertyName) equals: propertyValue ! !
 
-!CompiledMethodTest methodsFor: 'tests - properties' stamp: 'HAW 1/3/2019 16:56:20'!
+!CompiledMethodTest methodsFor: 'tests - properties' stamp: 'HAW 3/Jan/2019 16:56:20'!
 test21propertyValueAtReturnsNilWhenPropertyIsNotFound
 
 	| thisMethod |
@@ -9173,7 +9173,7 @@ test21propertyValueAtReturnsNilWhenPropertyIsNotFound
 	
 	self assert: (thisMethod propertyValueAt: #abc) isNil! !
 
-!CompiledMethodTest methodsFor: 'tests - properties' stamp: 'HAW 1/3/2019 16:55:00'!
+!CompiledMethodTest methodsFor: 'tests - properties' stamp: 'HAW 3/Jan/2019 16:55:00'!
 test22propertyValueAtReturnsNilWhenMethodHasNoProperties
 
 	| thisMethod |
@@ -9183,7 +9183,7 @@ test22propertyValueAtReturnsNilWhenMethodHasNoProperties
 	
 	self assert: (thisMethod propertyValueAt: #testProperty) isNil! !
 
-!CompiledMethodTest methodsFor: 'tests - properties' stamp: 'HAW 1/3/2019 16:58:18'!
+!CompiledMethodTest methodsFor: 'tests - properties' stamp: 'HAW 3/Jan/2019 16:58:18'!
 test23propertyValueAtIfAbsetReturnsPropertyValueWhenFound
 
 	| propertyName propertyValue thisMethod |
@@ -9195,7 +9195,7 @@ test23propertyValueAtIfAbsetReturnsPropertyValueWhenFound
 	
 	self assert: (thisMethod propertyValueAt: propertyName ifAbsent: [ self fail ]) equals: propertyValue ! !
 
-!CompiledMethodTest methodsFor: 'tests - properties' stamp: 'HAW 1/3/2019 16:59:33'!
+!CompiledMethodTest methodsFor: 'tests - properties' stamp: 'HAW 3/Jan/2019 16:59:33'!
 test24propertyValueAtIfAbsetEvaluatesIfAbsentBlockWhenNotFound
 
 	| propertyName propertyValue thisMethod |
@@ -9207,7 +9207,7 @@ test24propertyValueAtIfAbsetEvaluatesIfAbsentBlockWhenNotFound
 	
 	self assert: (thisMethod propertyValueAt: #abc ifAbsent: [ propertyValue + 1]) equals: propertyValue + 1 ! !
 
-!CompiledMethodTest methodsFor: 'tests - properties' stamp: 'HAW 1/7/2019 15:39:17'!
+!CompiledMethodTest methodsFor: 'tests - properties' stamp: 'HAW 7/Jan/2019 15:39:17'!
 test25propertyValueAtIfAbsetEvaluatesIfAbsentBlockWhenMethodHasNoProperties
 
 	| thisMethod |
@@ -9217,7 +9217,7 @@ test25propertyValueAtIfAbsetEvaluatesIfAbsentBlockWhenMethodHasNoProperties
 	
 	self assert: (thisMethod propertyValueAt: #testProperty ifAbsent: [ 1 ]) equals: 1! !
 
-!CompiledMethodTest methodsFor: 'tests - properties' stamp: 'HAW 1/7/2019 15:44:05'!
+!CompiledMethodTest methodsFor: 'tests - properties' stamp: 'HAW 7/Jan/2019 15:44:05'!
 test26propertyValueAtPutCreatesPropertiesWithNewOne
 
 	| thisMethod testProperty propertyValue |
@@ -9231,7 +9231,7 @@ test26propertyValueAtPutCreatesPropertiesWithNewOne
 	self assert: propertyValue equals: 1.
 	self assert: (thisMethod propertyValueAt: testProperty) equals: 1! !
 
-!CompiledMethodTest methodsFor: 'tests - properties' stamp: 'HAW 1/7/2019 15:44:40'!
+!CompiledMethodTest methodsFor: 'tests - properties' stamp: 'HAW 7/Jan/2019 15:44:40'!
 test27propertyValueAtPutReplacesPropertyIfAlreadyExisted
 
 	| thisMethod testProperty propertyValue |
@@ -9244,7 +9244,7 @@ test27propertyValueAtPutReplacesPropertyIfAlreadyExisted
 	self assert: propertyValue equals: 2.
 	self assert: (thisMethod propertyValueAt: testProperty) equals: 2! !
 
-!CompiledMethodTest methodsFor: 'tests - properties' stamp: 'HAW 1/7/2019 15:45:06'!
+!CompiledMethodTest methodsFor: 'tests - properties' stamp: 'HAW 7/Jan/2019 15:45:06'!
 test28propertyValueAtPutAddsNewPropertyIfPropertiesExisted
 
 	| thisMethod testProperty1 testProperty2 propertyValue |
@@ -9259,7 +9259,7 @@ test28propertyValueAtPutAddsNewPropertyIfPropertiesExisted
 	self assert: (thisMethod propertyValueAt: testProperty1) equals: 1.
 	self assert: (thisMethod propertyValueAt: testProperty2) equals: 2! !
 
-!CompiledMethodTest methodsFor: 'tests - properties' stamp: 'HAW 1/7/2019 15:47:40'!
+!CompiledMethodTest methodsFor: 'tests - properties' stamp: 'HAW 7/Jan/2019 15:47:40'!
 test29selectorReturnsMethodSelectorWhenNoProperties
 
 	| thisMethod |
@@ -9269,7 +9269,7 @@ test29selectorReturnsMethodSelectorWhenNoProperties
 	
 	self assert: thisMethod selector equals: thisContext selector! !
 
-!CompiledMethodTest methodsFor: 'tests - properties' stamp: 'HAW 1/7/2019 15:48:40'!
+!CompiledMethodTest methodsFor: 'tests - properties' stamp: 'HAW 7/Jan/2019 15:48:40'!
 test30selectorReturnsMethodSelectorWhenHasProperties
 
 	| thisMethod |
@@ -9279,7 +9279,7 @@ test30selectorReturnsMethodSelectorWhenHasProperties
 	
 	self assert: thisMethod selector equals: thisContext selector! !
 
-!CompiledMethodTest methodsFor: 'tests - properties' stamp: 'HAW 1/7/2019 15:54:03'!
+!CompiledMethodTest methodsFor: 'tests - properties' stamp: 'HAW 7/Jan/2019 15:54:03'!
 test31SettingSelectorWhenHasNoProperties
 
 	| currentSelector thisMethod |
@@ -9291,7 +9291,7 @@ test31SettingSelectorWhenHasNoProperties
 	[ thisMethod selector: #test.
 	self assert: thisMethod selector equals: #test ] ensure: [ thisMethod selector: currentSelector ]! !
 
-!CompiledMethodTest methodsFor: 'tests - properties' stamp: 'HAW 1/7/2019 15:54:47'!
+!CompiledMethodTest methodsFor: 'tests - properties' stamp: 'HAW 7/Jan/2019 15:54:47'!
 test32SettingSelectorWhenHasProperties
 
 	| currentSelector thisMethod |
@@ -9303,107 +9303,107 @@ test32SettingSelectorWhenHasProperties
 	[ thisMethod selector: #test.
 	self assert: thisMethod selector equals: #test ] ensure: [ thisMethod selector: currentSelector ]! !
 
-!CompiledMethodTest methodsFor: 'tests - accessors' stamp: 'HAW 4/9/2020 15:41:19'!
+!CompiledMethodTest methodsFor: 'tests - accessors' stamp: 'HAW 9/Apr/2020 15:41:19'!
 indexOfIv1
 	
 	^self class indexOfInstanceVariable: 'iv1'! !
 
-!CompiledMethodTest methodsFor: 'tests - accessors' stamp: 'HAW 4/9/2020 15:44:50'!
+!CompiledMethodTest methodsFor: 'tests - accessors' stamp: 'HAW 9/Apr/2020 15:44:50'!
 indexOfIv2
 	
 	^self class indexOfInstanceVariable: 'iv2'! !
 
-!CompiledMethodTest methodsFor: 'tests - accessors' stamp: 'HAW 4/9/2020 15:40:38'!
+!CompiledMethodTest methodsFor: 'tests - accessors' stamp: 'HAW 9/Apr/2020 15:40:38'!
 iv1
 
 	^iv1! !
 
-!CompiledMethodTest methodsFor: 'tests - accessors' stamp: 'HAW 4/9/2020 15:46:19'!
+!CompiledMethodTest methodsFor: 'tests - accessors' stamp: 'HAW 9/Apr/2020 15:46:19'!
 iv1: anObject
 
 	iv1 := anObject ! !
 
-!CompiledMethodTest methodsFor: 'tests - accessors' stamp: 'HAW 4/9/2020 15:41:59'!
+!CompiledMethodTest methodsFor: 'tests - accessors' stamp: 'HAW 9/Apr/2020 15:41:59'!
 iv1_notGetter
 
 	^iv1! !
 
-!CompiledMethodTest methodsFor: 'tests - accessors' stamp: 'HAW 4/9/2020 15:46:58'!
+!CompiledMethodTest methodsFor: 'tests - accessors' stamp: 'HAW 9/Apr/2020 15:46:58'!
 iv1_notSetter: anObject
 
 	iv1 := anObject ! !
 
-!CompiledMethodTest methodsFor: 'tests - accessors' stamp: 'HAW 4/9/2020 16:00:45'!
+!CompiledMethodTest methodsFor: 'tests - accessors' stamp: 'HAW 9/Apr/2020 16:00:45'!
 iv1ReadWrite
 
 	iv1 := iv1 yourself! !
 
-!CompiledMethodTest methodsFor: 'tests - accessors' stamp: 'HAW 4/9/2020 15:45:13'!
+!CompiledMethodTest methodsFor: 'tests - accessors' stamp: 'HAW 9/Apr/2020 15:45:13'!
 iv2
 
 	^iv2 yourself! !
 
-!CompiledMethodTest methodsFor: 'tests - accessors' stamp: 'HAW 4/9/2020 15:48:08'!
+!CompiledMethodTest methodsFor: 'tests - accessors' stamp: 'HAW 9/Apr/2020 15:48:08'!
 iv2: anObject
 
 	iv2 := 1! !
 
-!CompiledMethodTest methodsFor: 'tests - accessors' stamp: 'HAW 4/9/2020 15:40:33'!
+!CompiledMethodTest methodsFor: 'tests - accessors' stamp: 'HAW 9/Apr/2020 15:40:33'!
 test01isGetterWhenSameSelectorAsInstanceVariableAndOnlyReturnsThatVariable
 
 	self assert: (self class>>#iv1 isGetterOf: 'iv1' at: self indexOfIv1)! !
 
-!CompiledMethodTest methodsFor: 'tests - accessors' stamp: 'HAW 4/9/2020 15:42:29'!
+!CompiledMethodTest methodsFor: 'tests - accessors' stamp: 'HAW 9/Apr/2020 15:42:29'!
 test02isNotGetterWhenDifferentSelectorAsInstanceVariable
 
 	self deny: (self class>>#iv1_notGetter isGetterOf: 'iv1' at: self indexOfIv1)! !
 
-!CompiledMethodTest methodsFor: 'tests - accessors' stamp: 'HAW 4/9/2020 15:44:13'!
+!CompiledMethodTest methodsFor: 'tests - accessors' stamp: 'HAW 9/Apr/2020 15:44:13'!
 test03isNotGetterWhenSameSelectorAsInstanceVariableButDoesOtherThingBesidesReturningVariable
 
 	self deny: (self class>>#iv2 isGetterOf: 'iv2' at: self indexOfIv2)! !
 
-!CompiledMethodTest methodsFor: 'tests - accessors' stamp: 'HAW 4/9/2020 15:46:04'!
+!CompiledMethodTest methodsFor: 'tests - accessors' stamp: 'HAW 9/Apr/2020 15:46:04'!
 test04isSetterWhenSameKeywordSelectorAsInstanceVariableAndOnlySetsTheVariable
 
 	self assert: (self class>>#iv1: isSetterOf: 'iv1' at: self indexOfIv1)! !
 
-!CompiledMethodTest methodsFor: 'tests - accessors' stamp: 'HAW 4/9/2020 15:46:52'!
+!CompiledMethodTest methodsFor: 'tests - accessors' stamp: 'HAW 9/Apr/2020 15:46:52'!
 test05isNotSetterWhenDifferentKeywordSelectorAsInstanceVariable
 
 	self deny: (self class>>#iv1_notSetter: isSetterOf: 'iv1' at: self indexOfIv1)! !
 
-!CompiledMethodTest methodsFor: 'tests - accessors' stamp: 'HAW 4/9/2020 15:47:57'!
+!CompiledMethodTest methodsFor: 'tests - accessors' stamp: 'HAW 9/Apr/2020 15:47:57'!
 test06isNotSetterWhenSameKeywordSelectorAsInstanceVariableButDoesNotAssignParameter
 
 	self deny: (self class>>#iv2: isSetterOf: 'iv2' at: self indexOfIv2)! !
 
-!CompiledMethodTest methodsFor: 'tests - accessors' stamp: 'HAW 4/9/2020 15:58:54'!
+!CompiledMethodTest methodsFor: 'tests - accessors' stamp: 'HAW 9/Apr/2020 15:58:54'!
 test07AccessorDescriptionIsGetterForAGetter
 
 	self assert: 'getter' equals: (self class>>#iv1 accessorDescriptionOf: 'iv1' at: self indexOfIv1)! !
 
-!CompiledMethodTest methodsFor: 'tests - accessors' stamp: 'HAW 4/9/2020 15:59:05'!
+!CompiledMethodTest methodsFor: 'tests - accessors' stamp: 'HAW 9/Apr/2020 15:59:05'!
 test08AccessorDescriptionIsSetterForASetter
 
 	self assert: 'setter' equals: (self class>>#iv1: accessorDescriptionOf: 'iv1' at: self indexOfIv1)! !
 
-!CompiledMethodTest methodsFor: 'tests - accessors' stamp: 'HAW 4/9/2020 15:59:34'!
+!CompiledMethodTest methodsFor: 'tests - accessors' stamp: 'HAW 9/Apr/2020 15:59:34'!
 test09AccessorDescriptionIsReadForMethodThatReadsInstanceVariable
 
 	self assert: 'read' equals: (self class>>#iv1_notGetter accessorDescriptionOf: 'iv1' at: self indexOfIv1)! !
 
-!CompiledMethodTest methodsFor: 'tests - accessors' stamp: 'HAW 4/9/2020 16:00:19'!
+!CompiledMethodTest methodsFor: 'tests - accessors' stamp: 'HAW 9/Apr/2020 16:00:19'!
 test10AccessorDescriptionIsWriteForMethodThatWritesInstanceVariable
 
 	self assert: 'write' equals: (self class>>#iv1_notSetter: accessorDescriptionOf: 'iv1' at: self indexOfIv1)! !
 
-!CompiledMethodTest methodsFor: 'tests - accessors' stamp: 'HAW 4/9/2020 16:01:06'!
+!CompiledMethodTest methodsFor: 'tests - accessors' stamp: 'HAW 9/Apr/2020 16:01:06'!
 test11AccessorDescriptionIsWriteReadForMethodThatWritesAndReadInstanceVariable
 
 	self assert: 'write/read' equals: (self class>>#iv1ReadWrite accessorDescriptionOf: 'iv1' at: self indexOfIv1)! !
 
-!LiteralRefLocatorTest methodsFor: 'tests' stamp: 'eem 1/24/2025 12:31:46'!
+!LiteralRefLocatorTest methodsFor: 'tests' stamp: 'eem 24/Jan/2025 12:31:46'!
 testFindLiteralsInBytecode
 	"Create a method referencing integers, characters, special selectors and nil, true & false.
 	 Compile it and check that the objects are found."
@@ -9461,7 +9461,7 @@ testFindLiteralsInBytecode
 						ifTrue: [self assert: (simpleMethod hasLiteral: anyLiteral)]
 						ifFalse: [self deny: (simpleMethod hasLiteral: anyLiteral)]]]]]! !
 
-!LiteralRefLocatorTest methodsFor: 'tests' stamp: 'eem 1/24/2025 12:32:47'!
+!LiteralRefLocatorTest methodsFor: 'tests' stamp: 'eem 24/Jan/2025 12:32:47'!
 testThoroughFindLiteralsInBytecode
 	"Create a method referencing integers, characters, special selectors and nil, true & false.
 	 Compile it and check that the objects are found."
@@ -9499,7 +9499,7 @@ testThoroughFindLiteralsInBytecode
 		literals, {problem key} do:
 			[:literal | self assert: (method hasLiteral: literal)]]! !
 
-!MessageTest methodsFor: 'tests' stamp: 'HAW 7/19/2023 10:33:59'!
+!MessageTest methodsFor: 'tests' stamp: 'HAW 19/Jul/2023 10:33:59'!
 test01FullName
 
 	self assertFullNameOf: #printString arguments: { } is: 'printString'. 
@@ -9507,7 +9507,7 @@ test01FullName
 	self assertFullNameOf: #selector: arguments: { 'a' } is: 'selector: a'. 
 	self assertFullNameOf: #selector:argument: arguments: { 'a'. 'b'} is: 'selector: a argument: b'. ! !
 
-!MessageTest methodsFor: 'tests' stamp: 'HAW 7/19/2023 12:25:39'!
+!MessageTest methodsFor: 'tests' stamp: 'HAW 19/Jul/2023 12:25:39'!
 test02Keywords
 
 	self assertKeywordsOf: #printString arguments: {} is: #(printString).
@@ -9516,77 +9516,77 @@ test02Keywords
 	self assertKeywordsOf: #selector:arguments: arguments: {#printString:. 'b'} is: #(selector: arguments:).
 	! !
 
-!MessageTest methodsFor: 'tests' stamp: 'HAW 7/19/2023 12:13:32'!
+!MessageTest methodsFor: 'tests' stamp: 'HAW 19/Jul/2023 12:13:32'!
 test03HasNoRightNumberOfArgumentsForUnaryMessageAndNotEmptyArguments
 
 	self deny: (Message selector: #printString argument: 'a') hasRightNumberOfArguments! !
 
-!MessageTest methodsFor: 'tests' stamp: 'HAW 7/19/2023 12:14:06'!
+!MessageTest methodsFor: 'tests' stamp: 'HAW 19/Jul/2023 12:14:06'!
 test04HasRightNumberOfArgumentsForUnaryMessageAndEmptyArguments
 
 	self assert: (Message selector: #printString) hasRightNumberOfArguments! !
 
-!MessageTest methodsFor: 'tests' stamp: 'HAW 7/19/2023 12:17:15'!
+!MessageTest methodsFor: 'tests' stamp: 'HAW 19/Jul/2023 12:17:15'!
 test05HasNoRightNumberOfArgumentsForBinaryMessageAndEmptyArguments
 
 	self deny: (Message selector: #+) hasRightNumberOfArguments! !
 
-!MessageTest methodsFor: 'tests' stamp: 'HAW 7/19/2023 12:17:42'!
+!MessageTest methodsFor: 'tests' stamp: 'HAW 19/Jul/2023 12:17:42'!
 test06HasNoRightNumberOfArgumentsForBinaryMessageAndMoreThanOneArgument
 
 	self deny: (Message selector: #+ arguments: { 'a'. 'b' }) hasRightNumberOfArguments! !
 
-!MessageTest methodsFor: 'tests' stamp: 'HAW 7/19/2023 12:18:34'!
+!MessageTest methodsFor: 'tests' stamp: 'HAW 19/Jul/2023 12:18:34'!
 test07HasRightNumberOfArgumentsForBinaryMessageAndOneArgument
 
 	self assert: (Message selector: #+ argument: 'a') hasRightNumberOfArguments! !
 
-!MessageTest methodsFor: 'tests' stamp: 'HAW 7/19/2023 12:19:17'!
+!MessageTest methodsFor: 'tests' stamp: 'HAW 19/Jul/2023 12:19:17'!
 test08HasNoRightNumberOfArgumentsForKeywordMessageAndLessArguments
 
 	self deny: (Message selector: #selector:) hasRightNumberOfArguments! !
 
-!MessageTest methodsFor: 'tests' stamp: 'HAW 7/19/2023 12:24:12'!
+!MessageTest methodsFor: 'tests' stamp: 'HAW 19/Jul/2023 12:24:12'!
 test09HasNoRightNumberOfArgumentsForKeywordMessageAndMoreArguments
 
 	self deny: (Message selector: #selector: arguments: { #printString. 'b' }) hasRightNumberOfArguments! !
 
-!MessageTest methodsFor: 'tests' stamp: 'HAW 7/19/2023 12:24:25'!
+!MessageTest methodsFor: 'tests' stamp: 'HAW 19/Jul/2023 12:24:25'!
 test10HasRightNumberOfArgumentsForKeywordMessageWhenSameNumberOfKeywordsAndArguments
 
 	self assert: (Message selector: #selector:argument: arguments: { #printString:. 'b' }) hasRightNumberOfArguments! !
 
-!MessageTest methodsFor: 'assertions' stamp: 'HAW 7/19/2023 10:32:37'!
+!MessageTest methodsFor: 'assertions' stamp: 'HAW 19/Jul/2023 10:32:37'!
 assertFullNameOf: aSelector arguments: arguments is: expectedFullName  
 
 	^ self assert: expectedFullName equals: (Message selector: aSelector arguments: arguments ) fullName! !
 
-!MessageTest methodsFor: 'assertions' stamp: 'HAW 7/19/2023 12:04:17'!
+!MessageTest methodsFor: 'assertions' stamp: 'HAW 19/Jul/2023 12:04:17'!
 assertKeywordsOf: aSelector arguments: arguments is: expectedKeyword
 
 	^ self assert: expectedKeyword equals: (Message selector: aSelector arguments: arguments ) keywords! !
 
-!AbstractNumberTest methodsFor: 'helpers' stamp: 'sqr 12/18/2018 16:27:22'!
+!AbstractNumberTest methodsFor: 'helpers' stamp: 'sqr 18/Dec/2018 16:27:22'!
 effectiveZeroExponentForTrigonometry
 
 	^-50! !
 
-!AbstractNumberTest methodsFor: 'helpers' stamp: 'sqr 12/15/2018 01:19:37'!
+!AbstractNumberTest methodsFor: 'helpers' stamp: 'sqr 15/Dec/2018 01:19:37'!
 hyperbolicPrecision
 
 	^16! !
 
-!AbstractNumberTest methodsFor: 'helpers' stamp: 'sqr 12/15/2018 01:12:19'!
+!AbstractNumberTest methodsFor: 'helpers' stamp: 'sqr 15/Dec/2018 01:12:19'!
 trigonometricDegreePrecision
 
 	^4! !
 
-!AbstractNumberTest methodsFor: 'helpers' stamp: 'sqr 12/15/2018 00:25:51'!
+!AbstractNumberTest methodsFor: 'helpers' stamp: 'sqr 15/Dec/2018 00:25:51'!
 trigonometricPrecision
 
 	^3! !
 
-!AbstractNumberTest methodsFor: 'helpers' stamp: 'sqr 12/15/2018 00:22:44'!
+!AbstractNumberTest methodsFor: 'helpers' stamp: 'sqr 15/Dec/2018 00:22:44'!
 verify: aFloat is: anInteger floatsAwayFrom: anotherFloat
 
 	self assert: (aFloat floatsAwayFrom: anotherFloat) = anInteger.
@@ -9594,7 +9594,7 @@ verify: aFloat is: anInteger floatsAwayFrom: anotherFloat
 	self assert: (aFloat negated floatsAwayFrom: anotherFloat negated) = anInteger negated.
 	self assert: (anotherFloat negated floatsAwayFrom: aFloat negated) = anInteger! !
 
-!AbstractNumberTest methodsFor: 'helpers' stamp: 'sqr 12/18/2018 16:27:33'!
+!AbstractNumberTest methodsFor: 'helpers' stamp: 'sqr 18/Dec/2018 16:27:33'!
 verify: aFloat isDegreeTrigonometricallyEqualTo: anotherFloat
 
 	aFloat = 0.0 ifTrue: [
@@ -9603,7 +9603,7 @@ verify: aFloat isDegreeTrigonometricallyEqualTo: anotherFloat
 	anotherFloat = 0.0 ifTrue: [^self assert: aFloat asFloat exponent <= self effectiveZeroExponentForTrigonometry].
 	self verify: aFloat asFloat isWithin: self trigonometricDegreePrecision floatsAwayFrom: anotherFloat asFloat! !
 
-!AbstractNumberTest methodsFor: 'helpers' stamp: 'sqr 12/18/2018 16:27:38'!
+!AbstractNumberTest methodsFor: 'helpers' stamp: 'sqr 18/Dec/2018 16:27:38'!
 verify: aFloat isHyperbolicallyEqualTo: anotherFloat
 
 	aFloat = 0.0 ifTrue: [
@@ -9612,7 +9612,7 @@ verify: aFloat isHyperbolicallyEqualTo: anotherFloat
 	anotherFloat = 0.0 ifTrue: [^aFloat asFloat exponent <= self effectiveZeroExponentForTrigonometry].
 	self verify: aFloat asFloat isWithin: self hyperbolicPrecision floatsAwayFrom: anotherFloat asFloat! !
 
-!AbstractNumberTest methodsFor: 'helpers' stamp: 'sqr 12/18/2018 16:27:41'!
+!AbstractNumberTest methodsFor: 'helpers' stamp: 'sqr 18/Dec/2018 16:27:41'!
 verify: aFloat isTrigonometricallyEqualTo: anotherFloat
 
 	aFloat = 0.0 ifTrue: [
@@ -9621,7 +9621,7 @@ verify: aFloat isTrigonometricallyEqualTo: anotherFloat
 	anotherFloat = 0.0 ifTrue: [^self assert: aFloat asFloat exponent <= self effectiveZeroExponentForTrigonometry].
 	self verify: aFloat asFloat isWithin: self trigonometricPrecision floatsAwayFrom: anotherFloat asFloat! !
 
-!AbstractNumberTest methodsFor: 'helpers' stamp: 'sqr 12/15/2018 00:22:57'!
+!AbstractNumberTest methodsFor: 'helpers' stamp: 'sqr 15/Dec/2018 00:22:57'!
 verify: aFloat isWithin: anInteger floatsAwayFrom: anotherFloat
 
 	self assert: (aFloat floatsAwayFrom: anotherFloat) abs <= anInteger.
@@ -9629,17 +9629,17 @@ verify: aFloat isWithin: anInteger floatsAwayFrom: anotherFloat
 	self assert: (aFloat negated floatsAwayFrom: anotherFloat negated) abs <= anInteger.
 	self assert: (anotherFloat negated floatsAwayFrom: aFloat negated) abs <= anInteger! !
 
-!AbstractNumberTest methodsFor: 'helpers' stamp: 'jmv 12/18/2018 10:40:29'!
+!AbstractNumberTest methodsFor: 'helpers' stamp: 'jmv 18/Dec/2018 10:40:29'!
 verify: aFloat isWithinOneFloatAwayFrom: anotherFloat
 
 	self verify: aFloat isWithin: 1 floatsAwayFrom: anotherFloat! !
 
-!AbstractNumberTest class methodsFor: 'testing' stamp: 'jmv 6/27/2022 12:17:34'!
+!AbstractNumberTest class methodsFor: 'testing' stamp: 'jmv 27/Jun/2022 12:17:34'!
 isAbstract
 
 	^self subclasses notEmpty! !
 
-!FloatTest methodsFor: 'tests - arithmetic' stamp: 'jmv 2/21/2019 17:38:32'!
+!FloatTest methodsFor: 'tests - arithmetic' stamp: 'jmv 21/Feb/2019 17:38:32'!
 testAdd
 
 	self assert: 1.0 + 1.0 = 2.0.
@@ -9656,7 +9656,7 @@ testAdd
 	self assert: (1.0 + Float nan) isNaN.
 	self assert: (Float nan + 1.0) isNaN.! !
 
-!FloatTest methodsFor: 'tests - arithmetic' stamp: 'jmv 7/2/2019 11:56:44'!
+!FloatTest methodsFor: 'tests - arithmetic' stamp: 'jmv 2/Jul/2019 11:56:44'!
 testDivide
 
 	self assert: 1.5 / 2.0 = 0.75.
@@ -9684,7 +9684,7 @@ testDivide
 	self assert: (1.0 / Float nan) isNaN.
 	self assert: (Float nan / 1.0) isNaN.! !
 
-!FloatTest methodsFor: 'tests - arithmetic' stamp: 'jmv 2/21/2019 17:53:58'!
+!FloatTest methodsFor: 'tests - arithmetic' stamp: 'jmv 21/Feb/2019 17:53:58'!
 testMultiply
 
 	self assert: 2.0 * 2.0 = 4.0.
@@ -9701,14 +9701,14 @@ testMultiply
 	self assert: (1.0 * Float nan) isNaN.
 	self assert: (Float nan * 1.0) isNaN.! !
 
-!FloatTest methodsFor: 'tests - arithmetic' stamp: 'dtl 1/15/2024 13:15'!
+!FloatTest methodsFor: 'tests - arithmetic' stamp: 'dtl 15/Jan/2024 13:15:00'!
 testSmallIntegerDivide
 	"Mixed integer and float operation should not introduce loss of precision"
 
 	self should: [Compiler evaluate: '(3 / 5.0) = (3.0 / 5.0)']
 	! !
 
-!FloatTest methodsFor: 'tests - arithmetic' stamp: 'jmv 2/21/2019 17:41:52'!
+!FloatTest methodsFor: 'tests - arithmetic' stamp: 'jmv 21/Feb/2019 17:41:52'!
 testSubtract
 
 	self assert: 3.0 - 1.0 = 2.0.
@@ -9725,7 +9725,7 @@ testSubtract
 	self assert: (1.0 - Float nan) isNaN.
 	self assert: (Float nan - 1.0) isNaN.! !
 
-!FloatTest methodsFor: 'tests - arithmetic' stamp: 'jmv 10/15/2019 16:32:51'!
+!FloatTest methodsFor: 'tests - arithmetic' stamp: 'jmv 15/Oct/2019 16:32:51'!
 testTimesTwoPowerGradualUnderflow
 	"Here is a vicious case where timesTwoPower is inexact because it underflows.
 	And two consecutive inexact operations lead to a different result than a single one.
@@ -9757,7 +9757,7 @@ testTimesTwoPowerGradualUnderflow
 https://github.com/OpenSmalltalk/opensmalltalk-vm/issues/383
 "! !
 
-!FloatTest methodsFor: 'tests - arithmetic' stamp: 'jmv 3/26/2019 10:59:17'!
+!FloatTest methodsFor: 'tests - arithmetic' stamp: 'jmv 26/Mar/2019 10:59:17'!
 testTimesTwoPowerOverflow
 	self assert: (Float fminNormalized timesTwoPower: Float emax - Float emin) equals: (2.0 raisedTo: Float emax).
 	self assert: (Float zero timesTwoPower: SmallInteger maxVal) equals: Float zero.
@@ -9767,7 +9767,7 @@ testTimesTwoPowerOverflow
 	self assert: (-1.0  timesTwoPower: SmallInteger maxVal) equals: Float negativeInfinity.
 	self assert: (-1.0  timesTwoPower: SmallInteger maxVal squared) equals: Float negativeInfinity.! !
 
-!FloatTest methodsFor: 'tests - arithmetic' stamp: 'jmv 3/26/2019 10:58:50'!
+!FloatTest methodsFor: 'tests - arithmetic' stamp: 'jmv 26/Mar/2019 10:58:50'!
 testTimesTwoPowerUnderflow
 	self assert: ((2.0 raisedTo: Float emax) timesTwoPower: Float emin - Float emax) equals: Float fminNormalized.
 	self assert: (Float infinity timesTwoPower: SmallInteger minVal * SmallInteger maxVal) equals: Float infinity.
@@ -9777,7 +9777,7 @@ testTimesTwoPowerUnderflow
 	self assertIsNegativeZero: (-1.0  timesTwoPower: SmallInteger maxVal squared negated).
 ! !
 
-!FloatTest methodsFor: 'tests - arithmetic' stamp: 'jmv 7/2/2019 12:03:05'!
+!FloatTest methodsFor: 'tests - arithmetic' stamp: 'jmv 2/Jul/2019 12:03:05'!
 testZeroDividedByZero
 
 	self assert: (0.0 / 0.0) isNaN.
@@ -9785,13 +9785,13 @@ testZeroDividedByZero
 	self assert: (-0.0 / 0.0) isNaN.
 	self assert: (-0.0 / -0.0) isNaN.! !
 
-!FloatTest methodsFor: 'tests - mathematical functions' stamp: 'sqr 12/15/2018 00:56:51'!
+!FloatTest methodsFor: 'tests - mathematical functions' stamp: 'sqr 15/Dec/2018 00:56:51'!
 testArCosh
 	self assert: 1.0 arCosh = 0.0.
 	self deny: Float infinity arCosh isFinite.
 	self verify: 2.5 arCosh cosh isHyperbolicallyEqualTo: 2.5! !
 
-!FloatTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 3/26/2019 11:23:12'!
+!FloatTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 26/Mar/2019 11:23:12'!
 testArSinh
 	self assertIsPositiveZero: 0.0 arSinh.
 	self assertIsNegativeZero: Float negativeZero arSinh.
@@ -9800,7 +9800,7 @@ testArSinh
 	self verify: 0.5 arSinh sinh isHyperbolicallyEqualTo: 0.5.
 	self verify: -2.5 arSinh sinh isHyperbolicallyEqualTo: -2.5! !
 
-!FloatTest methodsFor: 'tests - mathematical functions' stamp: 'sqr 12/15/2018 00:57:47'!
+!FloatTest methodsFor: 'tests - mathematical functions' stamp: 'sqr 15/Dec/2018 00:57:47'!
 testArTanh
 	self assertIsPositiveZero: 0.0 arTanh.
 	self assertIsNegativeZero: Float negativeZero arTanh.
@@ -9809,7 +9809,7 @@ testArTanh
 	self verify: 0.5 arTanh tanh isHyperbolicallyEqualTo: 0.5.
 	self verify: -0.5 arTanh tanh isHyperbolicallyEqualTo: -0.5! !
 
-!FloatTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 12/18/2018 10:52:08'!
+!FloatTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 18/Dec/2018 10:52:08'!
 testArcTan
 
 	self verify: (100 arcTan: 100) isTrigonometricallyEqualTo: Float pi / 4.
@@ -9829,7 +9829,7 @@ testArcTan
 	self verify: (0 arcTan: Float negativeZero) isTrigonometricallyEqualTo: Float pi.
 	self verify: (Float negativeZero arcTan: Float negativeZero) isTrigonometricallyEqualTo: Float pi negated.! !
 
-!FloatTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 12/9/2024 11:29:19'!
+!FloatTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 9/Dec/2024 11:29:19'!
 testArcTanNonPrimitive
 
 	#[0.0 0.01 0.1 0.3 0.5 0.7 0.8 1.0 3.0 5.0 20.0] do: [ :x | 
@@ -9838,7 +9838,7 @@ testArcTanNonPrimitive
 		self assert: (x successor arcTanNonPrimitive - x successor arcTan) abs < 1.0e-15.
 		]! !
 
-!FloatTest methodsFor: 'tests - mathematical functions' stamp: 'sqr 12/15/2018 00:48:21'!
+!FloatTest methodsFor: 'tests - mathematical functions' stamp: 'sqr 15/Dec/2018 00:48:21'!
 testCos
 
 	self verify: 0.0 cos isTrigonometricallyEqualTo: 1.0.
@@ -9847,14 +9847,14 @@ testCos
 	self verify: (Float pi / 6) cos isTrigonometricallyEqualTo: 3.0 sqrt / 2.0.
 	self verify: (Float pi / 2) cos isTrigonometricallyEqualTo: 0.0! !
 
-!FloatTest methodsFor: 'tests - mathematical functions' stamp: 'sqr 12/15/2018 00:58:14'!
+!FloatTest methodsFor: 'tests - mathematical functions' stamp: 'sqr 15/Dec/2018 00:58:14'!
 testCosh
 	self verify: 0.0 cosh isHyperbolicallyEqualTo: 1.0.
 	self verify: 2.0 cosh squared - 2.0 sinh squared isHyperbolicallyEqualTo: 1.0.
 	self verify: 2.0 cosh isHyperbolicallyEqualTo: 2.0 negated cosh.
 	self deny: Float infinity cosh isFinite	! !
 
-!FloatTest methodsFor: 'tests - mathematical functions' stamp: 'sqr 12/18/2018 16:27:57'!
+!FloatTest methodsFor: 'tests - mathematical functions' stamp: 'sqr 18/Dec/2018 16:27:57'!
 testDegreeCos	
 	"Following tests use approximate equality, because cosine are generally evaluated using inexact Floating point arithmetic"
 	self verify: 45 degreeCos squared isDegreeTrigonometricallyEqualTo: 0.5.
@@ -9881,13 +9881,13 @@ testDegreeCos
 		self assert: (k*360 + 180) degreeCos + 1 = 0.
 		self assert: (k*360) degreeCos - 1 = 0.].! !
 
-!FloatTest methodsFor: 'tests - mathematical functions' stamp: 'nice 5/3/2014 22:30:50.872'!
+!FloatTest methodsFor: 'tests - mathematical functions' stamp: 'nice 3/May/2014 22:30:50'!
 testDegreeCosForExceptionalValues
 	self assert: Float nan degreeCos isNaN.
 	self assert: Float infinity degreeCos isNaN.
 	self assert: Float negativeInfinity degreeCos isNaN.! !
 
-!FloatTest methodsFor: 'tests - mathematical functions' stamp: 'sqr 12/18/2018 16:28:02'!
+!FloatTest methodsFor: 'tests - mathematical functions' stamp: 'sqr 18/Dec/2018 16:28:02'!
 testDegreeSin	
 	"Following tests use approximate equality, because sine are generally evaluated using inexact Floating point arithmetic"
 	self verify: 45 degreeSin squared isDegreeTrigonometricallyEqualTo: 0.5.
@@ -9914,19 +9914,19 @@ testDegreeSin
 		self assert: (k*360 + 180) degreeSin = 0.
 		self assert: (k*360) degreeSin = 0.].! !
 
-!FloatTest methodsFor: 'tests - mathematical functions' stamp: 'nice 5/3/2014 22:30:55.613'!
+!FloatTest methodsFor: 'tests - mathematical functions' stamp: 'nice 3/May/2014 22:30:55'!
 testDegreeSinForExceptionalValues
 	self assert: Float nan degreeSin isNaN.
 	self assert: Float infinity degreeSin isNaN.
 	self assert: Float negativeInfinity degreeSin isNaN.! !
 
-!FloatTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 11/27/2018 13:15:27'!
+!FloatTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 27/Nov/2018 13:15:27'!
 testExp
 	self assert: 0.0 exp = 1.0.
 	self assert: 1.0 exp = Float e.
 	self assert: 2.0 exp sqrt = Float e! !
 
-!FloatTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 11/27/2018 13:28:53'!
+!FloatTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 27/Nov/2018 13:28:53'!
 testExpNonPrimitive
 
 	#[0.0 0.01 0.1 0.3 0.5 0.7 0.8 1.0 2.0 5.0 ] do: [ :x | | computed expected |
@@ -9935,7 +9935,7 @@ testExpNonPrimitive
 		self assert: (computed - expected) abs <= (expected ulp*2)
 		]! !
 
-!FloatTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 7/31/2023 11:14:00'!
+!FloatTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 31/Jul/2023 11:14:00'!
 testFloorLog2
 	"Float internal representation of Float being in base 2, we expect (aFloat floorLog: 2) to be exact."
 	
@@ -9949,20 +9949,20 @@ testFloorLog2
 		self assert: (exactPowerOfTwo * aBitMore floorLog: 2) equals: exp.
 		self assert: (exactPowerOfTwo * aBitLess floorLog: 2) equals: exp-1 ].! !
 
-!FloatTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 11/27/2018 13:33:48'!
+!FloatTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 27/Nov/2018 13:33:48'!
 testLn
 	self assert: 0.0 exp ln = 0.0.
 	self assert: 1.0 exp ln = 1.0.
 	self assert: 2.0 exp ln = 2.0.! !
 
-!FloatTest methodsFor: 'tests - mathematical functions' stamp: 'sqr 12/14/2018 23:53:24'!
+!FloatTest methodsFor: 'tests - mathematical functions' stamp: 'sqr 14/Dec/2018 23:53:24'!
 testLnForExceptionalValues
 
 	self assert: -1.0 ln isNaN.
 	self assert: Float infinity ln = Float infinity.
 	self assert: Float negativeInfinity ln isNaN! !
 
-!FloatTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 12/11/2018 13:39:49'!
+!FloatTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 11/Dec/2018 13:39:49'!
 testLnNonPrimitive
 
 	#[0.0 0.01 0.1 0.3 0.5 0.7 0.8 1.01 2.01 5.0 ] do: [ :x | | computed expected |
@@ -9971,7 +9971,7 @@ testLnNonPrimitive
 		self assert: (computed - expected) abs <= (expected ulp*2)
 		]! !
 
-!FloatTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 7/2/2019 11:55:02'!
+!FloatTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 2/Jul/2019 11:55:02'!
 testReciprocal
 
 	self 
@@ -9983,7 +9983,7 @@ testReciprocal
 	self should: [ 0.0 reciprocal ] raise: ZeroDivide.
 	self assert:  0.0 reciprocal isExactly: Float infinity! !
 
-!FloatTest methodsFor: 'tests - mathematical functions' stamp: 'sqr 12/15/2018 00:47:34'!
+!FloatTest methodsFor: 'tests - mathematical functions' stamp: 'sqr 15/Dec/2018 00:47:34'!
 testSin
 
 	self verify: 0.0 sin isTrigonometricallyEqualTo: 0.0.
@@ -9992,13 +9992,13 @@ testSin
 	self verify: (Float pi / 3) sin isTrigonometricallyEqualTo: 3.0 sqrt / 2.0.
 	self verify: (Float pi / 2) sin isTrigonometricallyEqualTo: 1.0! !
 
-!FloatTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 12/11/2018 13:41:55'!
+!FloatTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 11/Dec/2018 13:41:55'!
 testSinNonPrimitive
 	self assert: 0.0 sinNonPrimitive = 0.0.
 	self assert: (45 degreesToRadians sinNonPrimitive - 0.5 sqrt) abs <= (0.5 ulp * 2).
 	self assert: (90 degreesToRadians sinNonPrimitive - 1.0) abs <= (1.0 ulp * 2).! !
 
-!FloatTest methodsFor: 'tests - mathematical functions' stamp: 'sqr 12/15/2018 00:58:36'!
+!FloatTest methodsFor: 'tests - mathematical functions' stamp: 'sqr 15/Dec/2018 00:58:36'!
 testSinh
 	self assertIsPositiveZero: 0.0 sinh.
 	self assertIsNegativeZero: Float negativeZero sinh.
@@ -10006,7 +10006,7 @@ testSinh
 	self verify: 2.0 cosh squared - 2.0 sinh squared isHyperbolicallyEqualTo: 1.0.
 	self verify: 2.0 sinh negated isHyperbolicallyEqualTo: 2.0 negated sinh! !
 
-!FloatTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 3/26/2019 16:00:43'!
+!FloatTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 26/Mar/2019 16:00:43'!
 testSqrt
 	self assert: Float nan sqrt isNaN.
 	self assert: Float infinity sqrt = Float infinity.
@@ -10015,7 +10015,7 @@ testSqrt
 	self assert: Float fminNormalized sqrt squared = Float fminNormalized .
 	self assert: Float fminDenormalized sqrt squared = Float fminDenormalized .! !
 
-!FloatTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 11/27/2018 11:03:49'!
+!FloatTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 27/Nov/2018 11:03:49'!
 testSqrtNonPrimitive
 	self assert: Float nan sqrtNonPrimitive isNaN.
 	self assert: Float infinity sqrtNonPrimitive = Float infinity.
@@ -10028,7 +10028,7 @@ testSqrtNonPrimitive
 	self assert: 8.0 sqrt = 8.0 sqrtNonPrimitive.
 	self assert: 9.0 sqrt = 9.0 sqrtNonPrimitive.! !
 
-!FloatTest methodsFor: 'tests - mathematical functions' stamp: 'sqr 12/15/2018 00:58:54'!
+!FloatTest methodsFor: 'tests - mathematical functions' stamp: 'sqr 15/Dec/2018 00:58:54'!
 testTanh
 	self assertIsPositiveZero: 0.0 tanh.
 	self assertIsNegativeZero: Float negativeZero tanh.
@@ -10036,7 +10036,7 @@ testTanh
 	self verify: 2.0 cosh squared - 2.0 sinh squared isHyperbolicallyEqualTo: 1.0.
 	self verify: 2.0 tanh negated isHyperbolicallyEqualTo: 2.0 negated tanh! !
 
-!FloatTest methodsFor: 'tests - comparing' stamp: 'nice 7/10/2009 22:27'!
+!FloatTest methodsFor: 'tests - comparing' stamp: 'nice 10/Jul/2009 22:27:00'!
 testComparisonWhenPrimitiveFails
 	"This is related to http://bugs.squeak.org/view.php?id=7361"
 
@@ -10064,14 +10064,14 @@ testComparisonWhenPrimitiveFails
 	self deny: 0.5 ~= (1/2).
 	self assert: 0.5 ~= (3/4).! !
 
-!FloatTest methodsFor: 'tests - comparing' stamp: 'jmv 10/8/2018 16:20:48'!
+!FloatTest methodsFor: 'tests - comparing' stamp: 'jmv 8/Oct/2018 16:20:48'!
 testComparisonWithFraction
 	self assert: 0.5 = (1/2).
 	self assert: (1/2) = 0.5.
 	self assert: 0.1 = (1/10).
 	self assert: (1/10) = 0.1! !
 
-!FloatTest methodsFor: 'tests - comparing' stamp: 'jmv 2/6/2024 09:56:06'!
+!FloatTest methodsFor: 'tests - comparing' stamp: 'jmv 6/Feb/2024 09:56:06'!
 testEqualityComparison
 	"In Cuis, it was decided to coerce operands to Float for comparison (if any of them was float),
 	in the classic ST-80 way"
@@ -10126,7 +10126,7 @@ testEqualityComparison
 	self assert: 9007199254740996.0 = 9007199254740995.
 	self deny: 9007199254740994.0 = 9007199254740995.! !
 
-!FloatTest methodsFor: 'tests - comparing' stamp: 'jmv 12/4/2018 12:05:21'!
+!FloatTest methodsFor: 'tests - comparing' stamp: 'jmv 4/Dec/2018 12:05:21'!
 testEquals
 	self assert: 1.0 = 1.0.
 	self deny: 1.0 = 2.0.
@@ -10145,7 +10145,7 @@ testEquals
 	self deny: Float fminDenormalized = Float fminNormalized.
 	self deny: Float fminNormalized = Float fminDenormalized.! !
 
-!FloatTest methodsFor: 'tests - comparing' stamp: 'sqr 12/14/2018 23:02:34'!
+!FloatTest methodsFor: 'tests - comparing' stamp: 'sqr 14/Dec/2018 23:02:34'!
 testFloatsAwayFrom
 
 	self verify: 1.0 is: 0 floatsAwayFrom: 1.0.
@@ -10160,7 +10160,7 @@ testFloatsAwayFrom
 	self verify: Float negativeZero is: -1 floatsAwayFrom: Float fminDenormalized.
 	self verify: Float fmax is: (1 bitShift: Float precision - 1) - 1 floatsAwayFrom: (1.0 timesTwoPower: Float emax)! !
 
-!FloatTest methodsFor: 'tests - comparing' stamp: 'sqr 12/14/2018 23:02:43'!
+!FloatTest methodsFor: 'tests - comparing' stamp: 'sqr 14/Dec/2018 23:02:43'!
 testFloatsAwayFromWithPowersOfTwo
 
 	| previous current soMany |
@@ -10175,7 +10175,7 @@ testFloatsAwayFromWithPowersOfTwo
 			current := current * 2.0
 		]! !
 
-!FloatTest methodsFor: 'tests - comparing' stamp: 'jmv 10/8/2018 16:18:13'!
+!FloatTest methodsFor: 'tests - comparing' stamp: 'jmv 8/Oct/2018 16:18:13'!
 testHugeValues
 
 	self assert: 1e400 = Float infinity.
@@ -10193,14 +10193,14 @@ testHugeValues
 	self assert: -1e400 = -1.0e309.
 	self assert: -1e400 < -1.0e308.! !
 
-!FloatTest methodsFor: 'tests - comparing' stamp: 'nice 10/27/2014 21:50'!
+!FloatTest methodsFor: 'tests - comparing' stamp: 'nice 27/Oct/2014 21:50:00'!
 testLiteralEqualityOfNan
 	| nan |
 	nan := Float nan.
 	self assert: (nan literalEqual: nan)
 		description: 'Float nan is not equal to itself, though it is literally equal'.! !
 
-!FloatTest methodsFor: 'tests - comparing' stamp: 'jmv 10/3/2018 16:29:31'!
+!FloatTest methodsFor: 'tests - comparing' stamp: 'jmv 3/Oct/2018 16:29:31'!
 testLiteralEqualityOfZeroAndNegativeZero
 	self assert: Float zero = Float negativeZero.
 	self deny: (Float zero literalEqual: Float negativeZero).
@@ -10208,7 +10208,7 @@ testLiteralEqualityOfZeroAndNegativeZero
 		assert: (Compiler evaluate: '1>2 ifTrue: [0.0] ifFalse: [-0.0]') hex = Float negativeZero hex
 		description: 'Float zero and negativeZero are not literally substituable'.! !
 
-!FloatTest methodsFor: 'tests - conversion and rounding' stamp: 'jmv 3/27/2019 15:10:58'!
+!FloatTest methodsFor: 'tests - conversion and rounding' stamp: 'jmv 27/Mar/2019 15:10:58'!
 testAsTrueFraction
 	"
 	self new testAsTrueFraction
@@ -10235,7 +10235,7 @@ testAsTrueFraction
 	x _ 1.0234e308.
 	self assert: x asTrueFraction asFloat = x.! !
 
-!FloatTest methodsFor: 'tests - conversion and rounding' stamp: 'jmv 12/4/2018 12:06:58'!
+!FloatTest methodsFor: 'tests - conversion and rounding' stamp: 'jmv 4/Dec/2018 12:06:58'!
 testCeiling
 	self assert: 1.0 ceiling = 1.
 	self assert: 1.0 successor ceiling = 2.
@@ -10244,7 +10244,7 @@ testCeiling
 	self assert: -2.0 ceiling = -2.
 	self assert: -2.1 ceiling = -2.! !
 
-!FloatTest methodsFor: 'tests - conversion and rounding' stamp: 'nice 7/24/2008 02:04'!
+!FloatTest methodsFor: 'tests - conversion and rounding' stamp: 'nice 24/Jul/2008 02:04:00'!
 testFloatRounded
 	"5000000000000001 asFloat has an exact representation (no round off error).
 	It should round to nearest integer without loosing bits.
@@ -10272,7 +10272,7 @@ testFloatRounded
 		self assert: x rounded = x asTrueFraction rounded.
 		self assert: x negated rounded = x negated asTrueFraction rounded]! !
 
-!FloatTest methodsFor: 'tests - conversion and rounding' stamp: 'nice 4/26/2006 05:21'!
+!FloatTest methodsFor: 'tests - conversion and rounding' stamp: 'nice 26/Apr/2006 05:21:00'!
 testFloatTruncated
 	"(10 raisedTo: 16) asFloat has an exact representation (no round off error).
 	It should convert back to integer without loosing bits.
@@ -10295,7 +10295,7 @@ testFloatTruncated
 		x := r next * 1.9999e16 + 1.0e12 .
 		self assert: x truncated = x asTrueFraction truncated]! !
 
-!FloatTest methodsFor: 'tests - conversion and rounding' stamp: 'jmv 12/4/2018 12:07:13'!
+!FloatTest methodsFor: 'tests - conversion and rounding' stamp: 'jmv 4/Dec/2018 12:07:13'!
 testFloor
 	self assert: 1.0 floor = 1.
 	self assert: 1.0 successor floor = 1.
@@ -10304,7 +10304,7 @@ testFloor
 	self assert: -2.0 floor = -2.
 	self assert: -2.1 floor = -3.! !
 
-!FloatTest methodsFor: 'tests - conversion and rounding' stamp: 'jmv 3/28/2016 09:48'!
+!FloatTest methodsFor: 'tests - conversion and rounding' stamp: 'jmv 28/Mar/2016 09:48:00'!
 testFractionAsFloat
 	"use a random test"
 	
@@ -10323,7 +10323,7 @@ testFractionAsFloat
 			err := (frac - frac asFloat asTrueFraction) * frac reciprocal * (1 bitShift: 52).
 			self assert: err <= (1/2)]].! !
 
-!FloatTest methodsFor: 'tests - conversion and rounding' stamp: 'nice 1/10/2007 02:29'!
+!FloatTest methodsFor: 'tests - conversion and rounding' stamp: 'nice 10/Jan/2007 02:29:00'!
 testFractionAsFloat2
 	"test rounding to nearest even"
 		
@@ -10334,7 +10334,7 @@ testFractionAsFloat2
 	self assert: ((1<<52)+1+(1/2)) asFloat asTrueFraction = ((1<<52)+2).
 	self assert: ((1<<52)+1+(3/4)) asFloat asTrueFraction = ((1<<52)+2).! !
 
-!FloatTest methodsFor: 'tests - conversion and rounding' stamp: 'jmv 10/10/2018 16:47:20'!
+!FloatTest methodsFor: 'tests - conversion and rounding' stamp: 'jmv 10/Oct/2018 16:47:20'!
 testFractionAsFloatRoundsHalfToEven
 	"See https://en.wikipedia.org/wiki/Rounding#Round_half_to_even
 	Test that rounding Fraction to Float picks even mantissa if tie."
@@ -10367,7 +10367,7 @@ testFractionAsFloatRoundsHalfToEven
 
 	self assert: ((floatWithOddMantissa asTrueFraction *2) + (floatWithEvenMantissa2 asTrueFraction *2)/4) = floatWithEvenMantissa2 description: 'Must round to closest even mantissa'.! !
 
-!FloatTest methodsFor: 'tests - conversion and rounding' stamp: 'jmv 10/3/2018 16:22:06'!
+!FloatTest methodsFor: 'tests - conversion and rounding' stamp: 'jmv 3/Oct/2018 16:22:06'!
 testFractionAsFloatWithUnderflow
 	"test rounding to nearest even"
 
@@ -10376,7 +10376,7 @@ testFractionAsFloatWithUnderflow
 	self assertIsPositiveZero: (2 raisedTo: underflowPower) asFloat.	
 	self assertIsNegativeZero: (2 raisedTo: underflowPower) negated asFloat! !
 
-!FloatTest methodsFor: 'tests - conversion and rounding' stamp: 'nice 5/6/2006 22:13'!
+!FloatTest methodsFor: 'tests - conversion and rounding' stamp: 'nice 6/May/2006 22:13:00'!
 testIntegerAsFloat
 	"assert IEEE 754 round to nearest even mode is honoured"
 	
@@ -10386,7 +10386,7 @@ testIntegerAsFloat
 	self assert: 16r1FFFFFFFFFFFF0800 asFloat = 16r1FFFFFFFFFFFF0000 asFloat. "nearest even is lower"
 ! !
 
-!FloatTest methodsFor: 'tests - conversion and rounding' stamp: 'jmv 4/24/2019 11:56:51'!
+!FloatTest methodsFor: 'tests - conversion and rounding' stamp: 'jmv 24/Apr/2019 11:56:51'!
 testMixedTypeArithmetic
 
 	| samples doubleOne |
@@ -10408,7 +10408,7 @@ testMixedTypeArithmetic
 		self assert: (doubleOne // sample) = (doubleOne // sample asFloat).
 		].! !
 
-!FloatTest methodsFor: 'tests - conversion and rounding' stamp: 'jmv 4/24/2019 12:01:05'!
+!FloatTest methodsFor: 'tests - conversion and rounding' stamp: 'jmv 24/Apr/2019 12:01:05'!
 testMixedTypeComparison
 
 	| samples doubleOne |
@@ -10430,7 +10430,7 @@ testMixedTypeComparison
 		self assert: (doubleOne >= sample) = (doubleOne >= sample asFloat).
 		].! !
 
-!FloatTest methodsFor: 'tests - conversion and rounding' stamp: 'jmv 10/29/2021 11:12:28'!
+!FloatTest methodsFor: 'tests - conversion and rounding' stamp: 'jmv 29/Oct/2021 11:12:28'!
 testRoundHalfAwayFromZero
 	"See https://en.wikipedia.org/wiki/Rounding#Round_half_away_from_zero"
 	self assert: 0.5 roundedHAFZ = 1.
@@ -10440,7 +10440,7 @@ testRoundHalfAwayFromZero
 	self assert: (((0.0 to: 5.0 by: 0.25) collect: [ :f | f roundedHAFZ ]) = #(0 0 1 1 1 1 2 2 2 2 3 3 3 3 4 4 4 4 5 5 5) ).
 	self assert: (((-0.0 to: -5.0 by: -0.25) collect: [ :f | f roundedHAFZ ]) = #(0 0 -1 -1 -1 -1 -2 -2 -2 -2 -3 -3 -3 -3 -4 -4 -4 -4 -5 -5 -5) )! !
 
-!FloatTest methodsFor: 'tests - conversion and rounding' stamp: 'jmv 10/9/2018 16:12:35'!
+!FloatTest methodsFor: 'tests - conversion and rounding' stamp: 'jmv 9/Oct/2018 16:12:35'!
 testRoundHalfToEven
 	"See https://en.wikipedia.org/wiki/Rounding#Round_half_to_even"
 	self assert: 0.5 rounded = 0.
@@ -10450,7 +10450,7 @@ testRoundHalfToEven
 	self assert: (((0.0 to: 5.0 by: 0.25) collect: [ :f | f rounded ]) = #(0 0 0 1 1 1 2 2 2 2 2 3 3 3 4 4 4 4 4 5 5) ).
 	self assert: (((-0.0 to: -5.0 by: -0.25) collect: [ :f | f rounded ]) = #(0 0 0 -1 -1 -1 -2 -2 -2 -2 -2 -3 -3 -3 -4 -4 -4 -4 -4 -5 -5) )! !
 
-!FloatTest methodsFor: 'tests - conversion and rounding' stamp: 'nice 6/3/2011 21:37'!
+!FloatTest methodsFor: 'tests - conversion and rounding' stamp: 'nice 3/Jun/2011 21:37:00'!
 testRounded
 	self assert: 0.9 rounded = 1.
 	self assert: 1.0 rounded = 1.
@@ -10463,7 +10463,7 @@ testRounded
 	self assert: 1.5 rounded = 2.
 	self assert: -1.5 rounded = -2.! !
 
-!FloatTest methodsFor: 'tests - conversion and rounding' stamp: 'jmv 10/10/2018 16:53:57'!
+!FloatTest methodsFor: 'tests - conversion and rounding' stamp: 'jmv 10/Oct/2018 16:53:57'!
 testStringAsFloatRoundsHalfToEven
 	"See https://en.wikipedia.org/wiki/Rounding#Round_half_to_even
 	Test that rounding Fraction to Float picks even mantissa if tie."
@@ -10488,7 +10488,7 @@ testStringAsFloatRoundsHalfToEven
 	self assert: halfway2 printString = '11078855083331423' description: 'precondition'.
 	self assert: '11078855083331423.0' asNumber = floatWithEvenMantissa2 description: 'when converting string to Float, if tie, round to closest even mantissa'.! !
 
-!FloatTest methodsFor: 'tests - conversion and rounding' stamp: 'jmv 10/10/2018 17:17:33'!
+!FloatTest methodsFor: 'tests - conversion and rounding' stamp: 'jmv 10/Oct/2018 17:17:33'!
 testStringAsFloatRoundsHalfToEven2
 	"See https://en.wikipedia.org/wiki/Rounding#Round_half_to_even
 	Test that rounding Fraction to Float picks even mantissa if tie."
@@ -10515,7 +10515,7 @@ testStringAsFloatRoundsHalfToEven2
 	self assert: '1.00000000000000033306690738754696212708950042724609375001' asNumber = evenMantissa2 description: 'precondition'.
 	self assert: '1.00000000000000033306690738754696212708950042724609375' asNumber = evenMantissa2 description: 'when converting string to Float, if tie, round to closest even mantissa'.! !
 
-!FloatTest methodsFor: 'tests - conversion and rounding' stamp: 'jmv 12/4/2018 12:06:36'!
+!FloatTest methodsFor: 'tests - conversion and rounding' stamp: 'jmv 4/Dec/2018 12:06:36'!
 testTruncated
 	self assert: 1.0 truncated = 1.
 	self assert: 1.0 successor truncated = 1.
@@ -10524,7 +10524,7 @@ testTruncated
 	self assert: -2.0 truncated = -2.
 	self assert: -2.1 truncated = -2.! !
 
-!FloatTest methodsFor: 'tests - conversion from to String' stamp: 'jmv 12/21/2018 11:36:52'!
+!FloatTest methodsFor: 'tests - conversion from to String' stamp: 'jmv 21/Dec/2018 11:36:52'!
 testExactAsString
 	"Ensures round-trip string conversion when using #asString.
 	Use some relevant examples."
@@ -10557,7 +10557,7 @@ testExactAsString
 	"NaN are special, in that they are not even equal to themselves"
 	self assert: Float nan asString asNumber isNaN! !
 
-!FloatTest methodsFor: 'tests - conversion from to String' stamp: 'jmv 12/21/2018 14:56:27'!
+!FloatTest methodsFor: 'tests - conversion from to String' stamp: 'jmv 21/Dec/2018 14:56:27'!
 testExactAsString2
 	"Ensures round-trip string conversion when using #asString.
 	Use some relevant examples.
@@ -10573,7 +10573,7 @@ testExactAsString2
 	self assert: Float negativeInfinity asString asNumber = Float negativeInfinity.
 	self assert: Float nan asString asNumber isNaN.! !
 
-!FloatTest methodsFor: 'tests - conversion from to String' stamp: 'jmv 9/24/2018 10:51:07'!
+!FloatTest methodsFor: 'tests - conversion from to String' stamp: 'jmv 24/Sep/2018 10:51:07'!
 testExactStoreString
 	"Tests that conversion to / from Strings is exact (same Float is re-created) when using #storeString
 	(whose output is meant to be compilable smalltalk code).
@@ -10606,7 +10606,7 @@ testExactStoreString
 	"NaN are special, in that they are not even equal to themselves"
 	self assert: (Compiler evaluate: Float nan storeString) isNaN! !
 
-!FloatTest methodsFor: 'tests - conversion from to String' stamp: 'jmv 12/4/2018 12:09:53'!
+!FloatTest methodsFor: 'tests - conversion from to String' stamp: 'jmv 4/Dec/2018 12:09:53'!
 testExactStoreString2
 	"If storeOn: prints exactly and the parser avoids cumulating rounding errors,
 	then the Float should be read back exactly.
@@ -10618,12 +10618,12 @@ testExactStoreString2
 	self assert: (Compiler evaluate: Float negativeInfinity storeString) = Float negativeInfinity.
 	self assert: (Compiler evaluate: Float nan storeString) isNaN.! !
 
-!FloatTest methodsFor: 'tests - conversion from to String' stamp: 'jmv 12/21/2018 11:40:15'!
+!FloatTest methodsFor: 'tests - conversion from to String' stamp: 'jmv 21/Dec/2018 11:40:15'!
 testFromStringDoesNotUnderflow
 	self assert: '12345678901234567890.0e-330' asNumber isZero not.
 	self assert: (Compiler evaluate: '12345678901234567890.0e-330')isZero not.! !
 
-!FloatTest methodsFor: 'tests - conversion from to String' stamp: 'jmv 12/21/2018 11:44:33'!
+!FloatTest methodsFor: 'tests - conversion from to String' stamp: 'jmv 21/Dec/2018 11:44:33'!
 testMinimalAsString
 	"Tests that the conversion from String / to String ends in a minimal String representation.
 	This means that there are no extra unneded digits at the end.
@@ -10646,7 +10646,7 @@ testMinimalAsString
 	) do: [ :string |
 		self assert: string asNumber printString = string ].! !
 
-!FloatTest methodsFor: 'tests - conversion from to String' stamp: 'jmv 12/21/2018 12:15:04'!
+!FloatTest methodsFor: 'tests - conversion from to String' stamp: 'jmv 21/Dec/2018 12:15:04'!
 testPrintShowingDecimalPlaces4
 	| requiredDigits |
 	requiredDigits _ Float pi printString size - 2.
@@ -10654,7 +10654,7 @@ testPrintShowingDecimalPlaces4
 	0 to: 100 do: [ :extra |
 		self assert: (Float pi printStringFractionDigits: requiredDigits + extra) asNumber = Float pi ]! !
 
-!FloatTest methodsFor: 'tests - conversion from to String' stamp: 'jmv 3/1/2025 17:22:39'!
+!FloatTest methodsFor: 'tests - conversion from to String' stamp: 'jmv 1/Mar/2025 17:22:39'!
 testPrintStringStress
 	| eWidth mWidth ePrimeScale mPrimeScale |
 	eWidth := Float emax - Float emin.
@@ -10681,7 +10681,7 @@ testPrintStringStress
 					self assert: fp printString asNumber = fp.
 					self assert: fp negated printString asNumber = fp negated ]]! !
 
-!FloatTest methodsFor: 'tests - conversion from to String' stamp: 'nice 3/14/2008 23:59'!
+!FloatTest methodsFor: 'tests - conversion from to String' stamp: 'nice 14/Mar/2008 23:59:00'!
 testReadFromManyDigits
 	"A naive algorithm may interpret these representations as Infinity or NaN.
 	This is http://bugs.squeak.org/view.php?id=6982"
@@ -10692,7 +10692,7 @@ testReadFromManyDigits
 	self assert: (Number readFrom: s1) = 1.
 	self assert: (Number readFrom: s2) = 1.! !
 
-!FloatTest methodsFor: 'tests - conversion from to String' stamp: 'jmv 10/19/2018 16:33:22'!
+!FloatTest methodsFor: 'tests - conversion from to String' stamp: 'jmv 19/Oct/2018 16:33:22'!
 testSomeNines
 	| twelveNines |
 	twelveNines _ Compiler evaluate: '999999 + 0.999999'.
@@ -10701,7 +10701,7 @@ testSomeNines
 	self assert: twelveNines printString asNumber - twelveNines = 0.0.
 	self assert: twelveNines + 1e-6 = 1e6! !
 
-!FloatTest methodsFor: 'tests - conversion from to String' stamp: 'nice 10/11/2008 21:45'!
+!FloatTest methodsFor: 'tests - conversion from to String' stamp: 'nice 11/Oct/2008 21:45:00'!
 testStoreBase16
 	"This bug was reported in mantis http://bugs.squeak.org/view.php?id=6695"
 
@@ -10709,7 +10709,7 @@ testStoreBase16
 		assert: (20.0 storeStringBase: 16) = '16r14.0'
 		description: 'the radix prefix should not be omitted, except in base 10'! !
 
-!FloatTest methodsFor: 'tests - conversion from to String' stamp: 'jmv 12/4/2018 12:09:57'!
+!FloatTest methodsFor: 'tests - conversion from to String' stamp: 'jmv 4/Dec/2018 12:09:57'!
 testStoreOn
 	"If storeOn: prints exactly and the parser avoids cumulating rounding errors,
 	then the Float should be read back exactly.
@@ -10721,7 +10721,7 @@ testStoreOn
 	self assert: (Compiler evaluate: Float negativeInfinity storeString) = Float negativeInfinity.
 	self assert: (Compiler evaluate: Float nan storeString) isNaN.! !
 
-!FloatTest methodsFor: 'tests - conversion from to String' stamp: 'dtl 9/18/2004 12:40'!
+!FloatTest methodsFor: 'tests - conversion from to String' stamp: 'dtl 18/Sep/2004 12:40:00'!
 testStringAsNumber
 	"This covers parsing in Number>>readFrom:"
 
@@ -10740,7 +10740,7 @@ testStringAsNumber
 	self assert: 1234.56 = aFloat.
 ! !
 
-!FloatTest methodsFor: 'tests - conversion from to String' stamp: 'jmv 12/12/2018 14:44:07'!
+!FloatTest methodsFor: 'tests - conversion from to String' stamp: 'jmv 12/Dec/2018 14:44:07'!
 testStringAsNumber2
 	"Check that small but normal Floats can be created from Strings"
 
@@ -10751,7 +10751,7 @@ testStringAsNumber2
 	self assert: aFloat - 1.2345678901234568e-307 = 0.
 	self assert: aFloat = 1.2345678901234568e-307.! !
 
-!FloatTest methodsFor: 'tests - hash' stamp: 'jmv 10/9/2018 14:02:56'!
+!FloatTest methodsFor: 'tests - hash' stamp: 'jmv 9/Oct/2018 14:02:56'!
 testHashWithBigNegativeSmallInteger
 	"Not in the Float range"
 	| a float smallInteger |
@@ -10764,7 +10764,7 @@ testHashWithBigNegativeSmallInteger
 	a add: smallInteger; add: float.
 	self assert: a size = 1! !
 
-!FloatTest methodsFor: 'tests - hash' stamp: 'jmv 10/9/2018 14:01:27'!
+!FloatTest methodsFor: 'tests - hash' stamp: 'jmv 9/Oct/2018 14:01:27'!
 testHashWithBigSmallInteger
 	"Not in the Float range"
 	| a float smallInteger |
@@ -10777,7 +10777,7 @@ testHashWithBigSmallInteger
 	a add: smallInteger; add: float.
 	self assert: a size = 1! !
 
-!FloatTest methodsFor: 'tests - hash' stamp: 'jmv 10/9/2018 10:43:35'!
+!FloatTest methodsFor: 'tests - hash' stamp: 'jmv 9/Oct/2018 10:43:35'!
 testHashWithFraction
 
 	| a float fraction |
@@ -10789,7 +10789,7 @@ testHashWithFraction
 	a add: fraction; add: float.
 	self assert: a size = 1! !
 
-!FloatTest methodsFor: 'tests - hash' stamp: 'jmv 10/9/2018 10:51:32'!
+!FloatTest methodsFor: 'tests - hash' stamp: 'jmv 9/Oct/2018 10:51:32'!
 testHashWithLargeNegativeInteger
 	"Not in the Float range"
 	| a float largeInteger |
@@ -10802,7 +10802,7 @@ testHashWithLargeNegativeInteger
 	a add: largeInteger; add: float.
 	self assert: a size = 1! !
 
-!FloatTest methodsFor: 'tests - hash' stamp: 'jmv 10/9/2018 10:51:37'!
+!FloatTest methodsFor: 'tests - hash' stamp: 'jmv 9/Oct/2018 10:51:37'!
 testHashWithLargePositiveInteger
 	"Not in the Float range"
 	| a float largeInteger |
@@ -10815,7 +10815,7 @@ testHashWithLargePositiveInteger
 	a add: largeInteger; add: float.
 	self assert: a size = 1! !
 
-!FloatTest methodsFor: 'tests - hash' stamp: 'jmv 10/9/2018 10:51:40'!
+!FloatTest methodsFor: 'tests - hash' stamp: 'jmv 9/Oct/2018 10:51:40'!
 testHashWithSmallishLargeNegativeInteger
 	"In the Float range"
 	| a float largeInteger |
@@ -10828,7 +10828,7 @@ testHashWithSmallishLargeNegativeInteger
 	a add: largeInteger; add: float.
 	self assert: a size = 1! !
 
-!FloatTest methodsFor: 'tests - hash' stamp: 'jmv 10/10/2018 15:40:00'!
+!FloatTest methodsFor: 'tests - hash' stamp: 'jmv 10/Oct/2018 15:40:00'!
 testHashWithSmallishLargeNegativeInteger2
 	"In the Float range"
 	| a float integer |
@@ -10840,7 +10840,7 @@ testHashWithSmallishLargeNegativeInteger2
 	a add: integer; add: float.
 	self assert: a size = 1! !
 
-!FloatTest methodsFor: 'tests - hash' stamp: 'jmv 10/9/2018 10:51:44'!
+!FloatTest methodsFor: 'tests - hash' stamp: 'jmv 9/Oct/2018 10:51:44'!
 testHashWithSmallishLargePositiveInteger
 	"In the Float range"
 	| a float largeInteger |
@@ -10853,7 +10853,7 @@ testHashWithSmallishLargePositiveInteger
 	a add: largeInteger; add: float.
 	self assert: a size = 1! !
 
-!FloatTest methodsFor: 'tests - hash' stamp: 'jmv 10/10/2018 15:40:11'!
+!FloatTest methodsFor: 'tests - hash' stamp: 'jmv 10/Oct/2018 15:40:11'!
 testHashWithSmallishLargePositiveInteger2
 	"In the Float range"
 	| a float integer |
@@ -10865,14 +10865,14 @@ testHashWithSmallishLargePositiveInteger2
 	a add: integer; add: float.
 	self assert: a size = 1! !
 
-!FloatTest methodsFor: 'tests - hash' stamp: 'jmv 10/10/2018 15:57:54'!
+!FloatTest methodsFor: 'tests - hash' stamp: 'jmv 10/Oct/2018 15:57:54'!
 testNoIntegerHash
 
 	self deny: Float pi hash = 3 hash.
 	self deny: Float pi hash = (Float pi *1.00000000000001) hash.
 	self deny: Float pi hash = (Float pi /1.00000000000001) hash.! !
 
-!FloatTest methodsFor: 'tests - hash' stamp: 'jmv 2/6/2024 09:56:29'!
+!FloatTest methodsFor: 'tests - hash' stamp: 'jmv 6/Feb/2024 09:56:29'!
 testSetOfFloat
 	"Classical disagreement between hash and = did lead to a bug.
 	This is a non regression test from http://bugs.squeak.org/view.php?id=3360"
@@ -10882,7 +10882,7 @@ testSetOfFloat
 	size4 := (Set newWithRoomForMoreThan: 4) add: 3; add: 3.0; size.
 	self assert: size3 = size4 description: 'The size of a Set should not depend on its capacity.'! !
 
-!FloatTest methodsFor: 'tests - constants' stamp: 'jmv 12/27/2018 18:37:19'!
+!FloatTest methodsFor: 'tests - constants' stamp: 'jmv 27/Dec/2018 18:37:19'!
 testE
 	"Just in case..."
 
@@ -10891,7 +10891,7 @@ testE
 	self assert: Float e = 1.0 exp.
 	self assert: Float e hex = '4005BF0A8B145769'.! !
 
-!FloatTest methodsFor: 'tests - constants' stamp: 'jmv 10/11/2011 08:55'!
+!FloatTest methodsFor: 'tests - constants' stamp: 'jmv 11/Oct/2011 08:55:00'!
 testMaxExactInteger
 	"
 	FloatTest new testMaxExactInteger
@@ -10903,7 +10903,7 @@ testMaxExactInteger
 	self deny: (Float maxExactInteger+1) asFloat truncated = (Float maxExactInteger+1)
 	! !
 
-!FloatTest methodsFor: 'tests - constants' stamp: 'jmv 12/27/2018 18:39:24'!
+!FloatTest methodsFor: 'tests - constants' stamp: 'jmv 27/Dec/2018 18:39:24'!
 testPi
 	"Just in case..."
 
@@ -10911,7 +10911,7 @@ testPi
 	self assert: Float pi = (1.0 arcTan * 4).
 	self assert: Float pi hex = '400921FB54442D18' ! !
 
-!FloatTest methodsFor: 'tests - precision and extreme values' stamp: 'jmv 4/5/2019 16:23:22'!
+!FloatTest methodsFor: 'tests - precision and extreme values' stamp: 'jmv 5/Apr/2019 16:23:22'!
 testCharacterization
 
 	"Test the largest finite representable floating point value"
@@ -10964,7 +10964,7 @@ testCharacterization
 	self assert: Float infinity hex = '7FF0000000000000'.
 	self assert: Float negativeInfinity hex = 'FFF0000000000000'.! !
 
-!FloatTest methodsFor: 'tests - precision and extreme values' stamp: 'jmv 12/4/2018 15:20:59'!
+!FloatTest methodsFor: 'tests - precision and extreme values' stamp: 'jmv 4/Dec/2018 15:20:59'!
 testNextAwayFromZero
 
 	self assert: Float pi nextAwayFromZero = Float pi successor.
@@ -10979,7 +10979,7 @@ testNextAwayFromZero
 	self assert: 0.0 nextAwayFromZero = Float fminDenormalized.
 	self assert: -0.0 nextAwayFromZero = Float fminDenormalized negated.! !
 
-!FloatTest methodsFor: 'tests - precision and extreme values' stamp: 'jmv 12/4/2018 15:16:45'!
+!FloatTest methodsFor: 'tests - precision and extreme values' stamp: 'jmv 4/Dec/2018 15:16:45'!
 testNextTowardsZero
 
 	self assert: Float pi nextTowardsZero = Float pi predecessor.
@@ -10994,7 +10994,7 @@ testNextTowardsZero
 	self should: [-0.0 nextTowardsZero] raise: Error.
 	self assert: -0.0 predecessor nextTowardsZero = -0.0! !
 
-!FloatTest methodsFor: 'tests - precision and extreme values' stamp: 'jmv 4/5/2019 16:26:34'!
+!FloatTest methodsFor: 'tests - precision and extreme values' stamp: 'jmv 5/Apr/2019 16:26:34'!
 testPredecessorSuccessor
 	self assert: 0.0 successor = Float fminDenormalized.
 	self assertIsNegativeZero: 0.0 predecessor.
@@ -11009,7 +11009,7 @@ testPredecessorSuccessor
 	self assert: -1.0 predecessor < -1.0.
 	self assert: -1.0 predecessor successor = -1.0.! !
 
-!FloatTest methodsFor: 'tests - precision and extreme values' stamp: 'jmv 12/4/2018 17:10:45'!
+!FloatTest methodsFor: 'tests - precision and extreme values' stamp: 'jmv 4/Dec/2018 17:10:45'!
 testPredecessorSuccessor2
 	| mustBeOneOfThem |
 	mustBeOneOfThem _ Float fminNormalized + Float fminNormalized successor / 2.
@@ -11022,7 +11022,7 @@ testPredecessorSuccessor2
 	self assert: (mustBeOneOfThem = 1.0 or: [
 		mustBeOneOfThem = 1.0 successor ]).! !
 
-!FloatTest methodsFor: 'tests - precision and extreme values' stamp: 'jmv 12/12/2018 14:27:52'!
+!FloatTest methodsFor: 'tests - precision and extreme values' stamp: 'jmv 12/Dec/2018 14:27:52'!
 testUlp
 
 	{1.0 predecessor. 1.0 successor. Float pi predecessor. Float pi. Float pi successor} do:
@@ -11046,7 +11046,7 @@ testUlp
 
 	self assert: ((0 to: Float precision - 1) allSatisfy: [:each | (Float fmin timesTwoPower: each) ulp = Float fmin]).	! !
 
-!FloatTest methodsFor: 'tests - accessing parts' stamp: 'jmv 4/5/2019 16:25:12'!
+!FloatTest methodsFor: 'tests - accessing parts' stamp: 'jmv 5/Apr/2019 16:25:12'!
 testCopy
 	"Elementary tests"
 	self assert: 2.0 copy = 2.0.
@@ -11061,7 +11061,7 @@ testCopy
 	self assertIsPositiveZero: 0.0 copy.
 	self assertIsNegativeZero: Float negativeZero copy.! !
 
-!FloatTest methodsFor: 'tests - accessing parts' stamp: 'jmv 4/5/2019 19:51:34'!
+!FloatTest methodsFor: 'tests - accessing parts' stamp: 'jmv 5/Apr/2019 19:51:34'!
 testIsDenormalized
 	self deny: Float pi isDenormalized.
 	self deny: 0.0 isDenormalized.
@@ -11076,7 +11076,7 @@ testIsDenormalized
 	self assert: Float fminNormalized negated successor isDenormalized.
 	self deny: Float fminNormalized negated isDenormalized.! !
 
-!FloatTest methodsFor: 'tests - accessing parts' stamp: 'jmv 12/4/2018 14:10:06'!
+!FloatTest methodsFor: 'tests - accessing parts' stamp: 'jmv 4/Dec/2018 14:10:06'!
 testPartBits
 	| denormals exceptionals normals |
 	
@@ -11092,7 +11092,7 @@ testPartBits
 				exponentBits: aFloat exponentBits) hex
 			= aFloat hex ]! !
 
-!FloatTest methodsFor: 'tests - accessing parts' stamp: 'nice 5/3/2014 22:31:57.837'!
+!FloatTest methodsFor: 'tests - accessing parts' stamp: 'nice 3/May/2014 22:31:57'!
 testSignificandAndExponent
 	| denormals exceptionals normals |
 	
@@ -11116,7 +11116,7 @@ testSignificandAndExponent
 				assert: aFloat significand abs >= 1.0;
 				assert: aFloat significand abs < 2.0]]! !
 
-!FloatTest methodsFor: 'tests - accessing parts' stamp: 'jmv 10/3/2018 17:41:49'!
+!FloatTest methodsFor: 'tests - accessing parts' stamp: 'jmv 3/Oct/2018 17:41:49'!
 testSignificandAsInteger
 	| mantissaBits denormalPowersOfTwo denormals exceptionals normalPowersOfTwo normals |
 	"There are 52 bits used for representing the mantissa (plus an eventual leading 1, see below)"
@@ -11176,24 +11176,24 @@ false ifTrue: [
 	self assert: Float nan significandAsInteger > 0
 ].! !
 
-!FloatTest methodsFor: 'tests - zero behavior' stamp: 'nice 1/27/2017 22:01'!
+!FloatTest methodsFor: 'tests - zero behavior' stamp: 'nice 27/Jan/2017 22:01:00'!
 testCopySign
 	self assert: (0.0 copySignTo: 1) = 1.
 	self assert: (Float negativeZero copySignTo: 1) = -1.
 	self assertIsNegativeZero: (-1 copySignTo: 0.0).
 	self assertIsPositiveZero: (1 copySignTo: Float negativeZero).! !
 
-!FloatTest methodsFor: 'tests - zero behavior' stamp: 'jmv 4/4/2019 14:27:15'!
+!FloatTest methodsFor: 'tests - zero behavior' stamp: 'jmv 4/Apr/2019 14:27:15'!
 testIsZero
 	self assert: 0.0 isZero.
 	self assert: -0.0 isZero.
 	self deny:  0.1 isZero.! !
 
-!FloatTest methodsFor: 'tests - zero behavior' stamp: 'nice 1/26/2017 23:45'!
+!FloatTest methodsFor: 'tests - zero behavior' stamp: 'nice 26/Jan/2017 23:45:00'!
 testNegativeZeroAbs
 	self assert: Float negativeZero abs signBit = 0 description: 'the absolute value of a negative zero is zero'! !
 
-!FloatTest methodsFor: 'tests - zero behavior' stamp: 'jmv 4/5/2019 08:27:21'!
+!FloatTest methodsFor: 'tests - zero behavior' stamp: 'jmv 5/Apr/2019 08:27:21'!
 testPositiveAndNegativeZero
 	self assert: Float negativeZero = Float zero description: 'Positive and negative zero are defined to be equal'.
 	self deny: -0.0 < 0.0 description: 'Positive and negative zero are defined to be equal'.
@@ -11210,7 +11210,7 @@ testPositiveAndNegativeZero
 	self assertIsNegativeZero: Float fmin negated / 4.0.
 	self assertIsPositiveZero: Float fmin negated / -4.0.! !
 
-!FloatTest methodsFor: 'tests - zero behavior' stamp: 'sd 6/5/2005 08:33'!
+!FloatTest methodsFor: 'tests - zero behavior' stamp: 'sd 5/Jun/2005 08:33:00'!
 testZero1
 	"FloatTest new testZero1"
 
@@ -11220,12 +11220,12 @@ testZero1
 	"The negative zero has a bit representation that is different from the bit representation of the positive zero. Nevertheless, both values are defined to be equal."
 ! !
 
-!FloatTest methodsFor: 'tests - zero behavior' stamp: 'jmv 4/4/2019 14:32:48'!
+!FloatTest methodsFor: 'tests - zero behavior' stamp: 'jmv 4/Apr/2019 14:32:48'!
 testZeroAbs
 	self assertIsPositiveZero: Float zero abs. 'the absolute value of a positive zero is zero'.
 	self assertIsPositiveZero: Float negativeZero abs. 'the absolute value of a negative zero is zero'.! !
 
-!FloatTest methodsFor: 'tests - zero behavior' stamp: 'jmv 7/2/2019 11:52:32'!
+!FloatTest methodsFor: 'tests - zero behavior' stamp: 'jmv 2/Jul/2019 11:52:32'!
 testZeroRaisedToNegativePower
 	"this is a test related to http://bugs.squeak.org/view.php?id=6781"
 
@@ -11243,19 +11243,19 @@ testZeroRaisedToNegativePower
 	self should: [-0.0 raisedTo: -1.0] raise: ZeroDivide.
 	self assert: (-0.0 raisedTo: -1.0) isExactly: Float negativeInfinity.! !
 
-!FloatTest methodsFor: 'tests - zero behavior' stamp: 'jmv 4/4/2019 14:28:40'!
+!FloatTest methodsFor: 'tests - zero behavior' stamp: 'jmv 4/Apr/2019 14:28:40'!
 testZeroSign
 	self assert: Float zero sign = 0.
 	self assert: Float negativeZero sign = -1 description: 'negative zero is a zero with non zero sign!!'! !
 
-!FloatTest methodsFor: 'tests - zero behavior' stamp: 'jmv 4/4/2019 14:33:40'!
+!FloatTest methodsFor: 'tests - zero behavior' stamp: 'jmv 4/Apr/2019 14:33:40'!
 testZeroSignificandAsInteger
 	"This is about http://bugs.squeak.org/view.php?id=6990"
 
 	self assert: 0.0 significandAsInteger = 0.
 	self assert: -0.0 significandAsInteger = 0! !
 
-!FloatTest methodsFor: 'tests - infinity behavior' stamp: 'sd 6/5/2005 08:30'!
+!FloatTest methodsFor: 'tests - infinity behavior' stamp: 'sd 5/Jun/2005 08:30:00'!
 testInfinity1
    "FloatTest new testInfinity1"
 
@@ -11267,7 +11267,7 @@ testInfinity1
 	"All infinities are equal. (This is a very substantial difference to NaN's, which are never equal."
 ! !
 
-!FloatTest methodsFor: 'tests - infinity behavior' stamp: 'sd 6/5/2005 08:30'!
+!FloatTest methodsFor: 'tests - infinity behavior' stamp: 'sd 5/Jun/2005 08:30:00'!
 testInfinity2
    "FloatTest new testInfinity2"
 
@@ -11281,12 +11281,12 @@ testInfinity2
   	"All infinities are signed. Negative infinity is not equal to Infinity"
 ! !
 
-!FloatTest methodsFor: 'tests - infinity behavior' stamp: 'jmv 5/21/2020 22:51:06'!
+!FloatTest methodsFor: 'tests - infinity behavior' stamp: 'jmv 21/May/2020 22:51:06'!
 testInfinityTruncated
 	self assert: Float infinity truncated isInfinite.
 	self assert: Float negativeInfinity truncated isInfinite.! !
 
-!FloatTest methodsFor: 'tests - NaN behavior' stamp: 'sd 6/5/2005 08:31'!
+!FloatTest methodsFor: 'tests - NaN behavior' stamp: 'sd 5/Jun/2005 08:31:00'!
 testNaN1
    	"FloatTest new testNaN1"
 
@@ -11295,7 +11295,7 @@ testNaN1
 	"a NaN is not equal to itself."
 ! !
 
-!FloatTest methodsFor: 'tests - NaN behavior' stamp: 'jmv 4/4/2019 14:20:45'!
+!FloatTest methodsFor: 'tests - NaN behavior' stamp: 'jmv 4/Apr/2019 14:20:45'!
 testNaN2
 	"Two NaN values are always considered to be different.
 	On an little-endian machine (32 bit Intel), Float nan is 16rFFF80000 16r00000000.
@@ -11330,7 +11330,7 @@ testNaN2
 	self deny: nan1 = nan1.
 	self assert: nan1 == nan1! !
 
-!FloatTest methodsFor: 'tests - NaN behavior' stamp: 'jmv 4/4/2019 14:21:07'!
+!FloatTest methodsFor: 'tests - NaN behavior' stamp: 'jmv 4/Apr/2019 14:21:07'!
 testNaN3
 	"FloatTest new testNaN3"
 
@@ -11342,7 +11342,7 @@ testNaN3
 	identitySet add: (item _ Float nan).
 	self assert: (identitySet includes: item).! !
 
-!FloatTest methodsFor: 'tests - NaN behavior' stamp: 'jmv 4/23/2019 18:20:18'!
+!FloatTest methodsFor: 'tests - NaN behavior' stamp: 'jmv 23/Apr/2019 18:20:18'!
 testNaN4
 	"FloatTest new testNaN4"
 
@@ -11353,7 +11353,7 @@ testNaN4
 		put: #NaN.
 	self deny: (dict includesKey: Float nan).! !
 
-!FloatTest methodsFor: 'tests - NaN behavior' stamp: 'jmv 3/13/2012 12:34'!
+!FloatTest methodsFor: 'tests - NaN behavior' stamp: 'jmv 13/Mar/2012 12:34:00'!
 testNaNCompare
 	"IEEE 754 states that NaN cannot be ordered.
 	As a consequence, every arithmetic comparison involving a NaN SHOULD return false.
@@ -11392,7 +11392,7 @@ testNaNCompare
 		self assert: (theNaN ~= comp2) description: warningMessage.
 		self assert: (comp2 ~= theNaN) description: warningMessage].! !
 
-!FloatTest methodsFor: 'tests - NaN behavior' stamp: 'sqr 6/18/2024 23:11:33'!
+!FloatTest methodsFor: 'tests - NaN behavior' stamp: 'sqr 18/Jun/2024 23:11:33'!
 testNaNPropagationBinary
 	"Any operation should propagate NaN"
 	| s a c |
@@ -11411,7 +11411,7 @@ testNaNPropagationBinary
 					c := [ op1 perform: sel with: op2 ] on: UnhandledError do: [ #error ].
 					self assert: (c isNumber not or: [c isNaN]) ]]]].! !
 
-!FloatTest methodsFor: 'tests - NaN behavior' stamp: 'jmv 11/19/2025 18:05:30'!
+!FloatTest methodsFor: 'tests - NaN behavior' stamp: 'jmv 19/Nov/2025 18:05:30'!
 testNaNPropagationUnary
 	"Any operation should propagate NaN"
 	| s a c |
@@ -11427,15 +11427,15 @@ testNaNPropagationUnary
 		c := [ Float nan perform: sel ] on: UnhandledError do: [ #error ].
 		self assert: (c isNumber not or: [c isNaN]) ].! !
 
-!FloatTest methodsFor: 'tests - NaN behavior' stamp: 'jmv 5/21/2020 22:51:38'!
+!FloatTest methodsFor: 'tests - NaN behavior' stamp: 'jmv 21/May/2020 22:51:38'!
 testNaNTruncated
 	self assert: Float nan truncated isNaN.! !
 
-!FloatTest methodsFor: 'tests - NaN behavior' stamp: 'nice 3/14/2008 23:42'!
+!FloatTest methodsFor: 'tests - NaN behavior' stamp: 'nice 14/Mar/2008 23:42:00'!
 testNaNisLiteral
 	self deny: Float nan isLiteral description: 'there is no literal representation of NaN'! !
 
-!FloatTest methodsFor: 'tests - 32 bit Single Precision' stamp: 'jmv 4/4/2019 14:02:34'!
+!FloatTest methodsFor: 'tests - 32 bit Single Precision' stamp: 'jmv 4/Apr/2019 14:02:34'!
 test32bitConversion
 	"Except for NaN, we can convert a 32bits float to a 64bits float exactly.
 	Thus we can convert the 64bits float to the original 32bits float pattern."
@@ -11458,7 +11458,7 @@ test32bitConversion
 	)
 		do: [ :originalWord | self assert: (Float fromIEEE32Bit: originalWord) asIEEE32BitWord = originalWord ]! !
 
-!FloatTest methodsFor: 'tests - 32 bit Single Precision' stamp: 'jmv 9/3/2020 17:12:44'!
+!FloatTest methodsFor: 'tests - 32 bit Single Precision' stamp: 'jmv 3/Sep/2020 17:12:44'!
 test32bitConversion2
 	"This tests the rounding done when going from 64bit Float to 32bit Float
 	self new test32bitConversion2
@@ -11499,7 +11499,7 @@ test32bitConversion2
 	aux _ Float32Array new: 1. aux at: 1 put: roundingBorderSuc. roundedByConversion _ aux at: 1.
 	self assert: roundedByConversion mantissaPart hex = pi32 mantissaPart hex! !
 
-!FloatTest methodsFor: 'tests - 32 bit Single Precision' stamp: 'nice 5/30/2006 02:34'!
+!FloatTest methodsFor: 'tests - 32 bit Single Precision' stamp: 'nice 30/May/2006 02:34:00'!
 test32bitGradualUnderflow
 	"method asIEEE32BitWord did not respect IEEE gradual underflow"
 	
@@ -11540,7 +11540,7 @@ test32bitGradualUnderflow
 	self assert: expected = conv.
 	! !
 
-!FloatTest methodsFor: 'tests - 32 bit Single Precision' stamp: 'jmv 4/4/2019 14:15:16'!
+!FloatTest methodsFor: 'tests - 32 bit Single Precision' stamp: 'jmv 4/Apr/2019 14:15:16'!
 test32bitInfinities
 	| infinityBits negativeInfinityBits |
 	infinityBits _ '01111111100000000000000000000000'.
@@ -11550,7 +11550,7 @@ test32bitInfinities
 	self assert: (Float negativeInfinity asIEEE32BitWord printStringBase: 2 length: 32 padded: true) = negativeInfinityBits.
 	self assert: (Float fromIEEE32Bit: (Integer readFrom: negativeInfinityBits readStream base: 2)) hex = Float negativeInfinity hex.! !
 
-!FloatTest methodsFor: 'tests - 32 bit Single Precision' stamp: 'jmv 4/4/2019 14:16:16'!
+!FloatTest methodsFor: 'tests - 32 bit Single Precision' stamp: 'jmv 4/Apr/2019 14:16:16'!
 test32bitNaN
 	| nanstr |
 	
@@ -11566,7 +11566,7 @@ test32bitNaN
 	self assert: (Float fromIEEE32Bit:
 		(Integer readFrom: '01111111110000000000000000000000' readStream base: 2)) isNaN! !
 
-!FloatTest methodsFor: 'tests - 32 bit Single Precision' stamp: 'nice 5/30/2006 00:07'!
+!FloatTest methodsFor: 'tests - 32 bit Single Precision' stamp: 'nice 30/May/2006 00:07:00'!
 test32bitRoundingMode
 	"method asIEEE32BitWord did not respect IEEE default rounding mode"
 	
@@ -11603,7 +11603,7 @@ test32bitRoundingMode
 	self assert: expected = conv.
 ! !
 
-!FloatTest methodsFor: 'tests - 32 bit Single Precision' stamp: 'jmv 4/5/2019 16:24:45'!
+!FloatTest methodsFor: 'tests - 32 bit Single Precision' stamp: 'jmv 5/Apr/2019 16:24:45'!
 test32bitZeros
 	| negativeZeroBits zeroBits |
 	zeroBits _ '00000000000000000000000000000000'.
@@ -11613,7 +11613,7 @@ test32bitZeros
 	self assert: (Float negativeZero asIEEE32BitWord printStringBase: 2 length: 32 padded: true) = negativeZeroBits.
 	self assertIsNegativeZero: (Float fromIEEE32Bit: (Integer readFrom: negativeZeroBits readStream base: 2)).! !
 
-!FloatTest methodsFor: 'helpers' stamp: 'jmv 4/24/2019 11:48:04'!
+!FloatTest methodsFor: 'helpers' stamp: 'jmv 24/Apr/2019 11:48:04'!
 assert: aFloatingPointNumber isExactly: otherFloatingPointNumber 
 
     "Both aFloatingPointNumber and otherFloatingPointNumber must be instances
@@ -11625,29 +11625,29 @@ assert: aFloatingPointNumber isExactly: otherFloatingPointNumber
     self assert: otherFloatingPointNumber = aFloatingPointNumber.
     self assert: aFloatingPointNumber hex = otherFloatingPointNumber hex! !
 
-!FloatTest methodsFor: 'helpers' stamp: 'jmv 2/28/2019 16:13:30'!
+!FloatTest methodsFor: 'helpers' stamp: 'jmv 28/Feb/2019 16:13:30'!
 assertIsNaNorFail: aFloatOrSymbol
 	"Assert that aFloat is NaN or #fail.
 	For some BoxedFloat64, primitive 55 (sqrt) faile, unless jitter, where it answers NaN. We consider both values valid."
 	self assert: (aFloatOrSymbol = #fail or: [ aFloatOrSymbol isNaN ])! !
 
-!FloatTest methodsFor: 'helpers' stamp: 'jmv 10/3/2018 15:43:27'!
+!FloatTest methodsFor: 'helpers' stamp: 'jmv 3/Oct/2018 15:43:27'!
 assertIsNegativeZero: aFloat
 	"Assert that aFloat is Float negativeZero"
 	self assert: aFloat hex = Float negativeZero hex! !
 
-!FloatTest methodsFor: 'helpers' stamp: 'jmv 10/3/2018 15:43:47'!
+!FloatTest methodsFor: 'helpers' stamp: 'jmv 3/Oct/2018 15:43:47'!
 assertIsPositiveZero: aFloat
 	"Assert that aFloat is Float zero (the positive one)"
 	self assert: aFloat hex = 0.0 hex! !
 
-!FloatTest methodsFor: 'helpers' stamp: 'jmv 11/27/2024 18:49:57'!
+!FloatTest methodsFor: 'helpers' stamp: 'jmv 27/Nov/2024 18:49:57'!
 expectedFailures
 	Smalltalk platformName = 'Mac OS' ifTrue: [
 		^#(testE testExp testPrimExpAndLn) ].
 	^#().! !
 
-!FloatTest methodsFor: 'tests - primitives' stamp: 'jmv 2/27/2019 15:25:35'!
+!FloatTest methodsFor: 'tests - primitives' stamp: 'jmv 27/Feb/2019 15:25:35'!
 testPrimAdd
 
 	self assert: (1.0 primTestAdd: 1.0) = 2.0.
@@ -11665,7 +11665,7 @@ testPrimAdd
 	self assert: (Float nan primTestAdd: 1.0) isNaN.
 	self assert: (Float nan primTestAdd: Float nan) isNaN.! !
 
-!FloatTest methodsFor: 'tests - primitives' stamp: 'jmv 3/14/2019 14:09:00'!
+!FloatTest methodsFor: 'tests - primitives' stamp: 'jmv 14/Mar/2019 14:09:00'!
 testPrimArcTan
 
 	self verify: 1.0 primTestArcTan isTrigonometricallyEqualTo: Float pi / 4.
@@ -11675,7 +11675,7 @@ testPrimArcTan
 	self verify: Float negativeInfinity primTestArcTan isTrigonometricallyEqualTo: Float pi / -2.
 	self assert: Float nan primTestArcTan isNaN! !
 
-!FloatTest methodsFor: 'tests - primitives' stamp: 'jmv 11/18/2025 09:20:48'!
+!FloatTest methodsFor: 'tests - primitives' stamp: 'jmv 18/Nov/2025 09:20:48'!
 testPrimDivideBy
 
 	self assert: (1.5 primTestDivideBy: 2.0) = 0.75.
@@ -11718,7 +11718,7 @@ testPrimDivideBy
 	self assert: (Float nan primTestDivideBy: 1.0) isNaN.
 	self assert: (Float nan primTestDivideBy: Float nan) isNaN.! !
 
-!FloatTest methodsFor: 'tests - primitives' stamp: 'jmv 2/25/2019 18:00:27'!
+!FloatTest methodsFor: 'tests - primitives' stamp: 'jmv 25/Feb/2019 18:00:27'!
 testPrimEqual
 
 	| samples |
@@ -11744,7 +11744,7 @@ testPrimEqual
 		self deny: (Float negativeZero primTestEqual: (samples at: i)).
 		self deny: (Float nan primTestEqual: (samples at: i)) ].! !
 
-!FloatTest methodsFor: 'tests - primitives' stamp: 'jmv 3/14/2019 13:51:33'!
+!FloatTest methodsFor: 'tests - primitives' stamp: 'jmv 14/Mar/2019 13:51:33'!
 testPrimExpAndLn
 	| e |
 	e := Float e.
@@ -11763,7 +11763,7 @@ testPrimExpAndLn
 	self assert: Float nan primTestLn isNaN.
 	self assert: Float nan primTestExp isNaN! !
 
-!FloatTest methodsFor: 'tests - primitives' stamp: 'jmv 3/14/2019 13:44:44'!
+!FloatTest methodsFor: 'tests - primitives' stamp: 'jmv 14/Mar/2019 13:44:44'!
 testPrimExponent
 	self assert: 1.0 primTestExponent = 0.
 	self assert: 2.0 predecessor primTestExponent = 0.
@@ -11773,7 +11773,7 @@ testPrimExponent
 	self assert: Float fminNormalized primTestExponent = -1022.
 	self assert: Float fminDenormalized primTestExponent = (-1022-52).! !
 
-!FloatTest methodsFor: 'tests - primitives' stamp: 'jmv 2/25/2019 17:50:52'!
+!FloatTest methodsFor: 'tests - primitives' stamp: 'jmv 25/Feb/2019 17:50:52'!
 testPrimGreater
 	self deny: (1.0 primTestGreater: 1.0 successor).
 	self deny: (1.0 primTestGreater: 1.0).
@@ -11800,7 +11800,7 @@ testPrimGreater
 	self deny: (Float nan primTestGreater: Float infinity).
 	self deny: (Float nan primTestGreater: Float nan).! !
 
-!FloatTest methodsFor: 'tests - primitives' stamp: 'jmv 2/25/2019 17:53:17'!
+!FloatTest methodsFor: 'tests - primitives' stamp: 'jmv 25/Feb/2019 17:53:17'!
 testPrimGreaterEqual
 	self deny: (1.0 primTestGreaterEqual: 1.0 successor).
 	self assert: (1.0 primTestGreaterEqual: 1.0).
@@ -11827,7 +11827,7 @@ testPrimGreaterEqual
 	self deny: (Float nan primTestGreaterEqual: Float infinity).
 	self deny: (Float nan primTestGreaterEqual: Float nan).! !
 
-!FloatTest methodsFor: 'tests - primitives' stamp: 'jmv 2/25/2019 17:46:13'!
+!FloatTest methodsFor: 'tests - primitives' stamp: 'jmv 25/Feb/2019 17:46:13'!
 testPrimLess
 	self assert: (1.0 primTestLess: 1.0 successor).
 	self deny: (1.0 primTestLess: 1.0).
@@ -11854,7 +11854,7 @@ testPrimLess
 	self deny: (Float nan primTestLess: Float infinity).
 	self deny: (Float nan primTestLess: Float nan).! !
 
-!FloatTest methodsFor: 'tests - primitives' stamp: 'jmv 2/25/2019 17:47:25'!
+!FloatTest methodsFor: 'tests - primitives' stamp: 'jmv 25/Feb/2019 17:47:25'!
 testPrimLessEqual
 	self assert: (1.0 primTestLessEqual: 1.0 successor).
 	self assert: (1.0 primTestLessEqual: 1.0).
@@ -11881,7 +11881,7 @@ testPrimLessEqual
 	self deny: (Float nan primTestLessEqual: Float infinity).
 	self deny: (Float nan primTestLessEqual: Float nan).! !
 
-!FloatTest methodsFor: 'tests - primitives' stamp: 'jmv 2/27/2019 15:26:33'!
+!FloatTest methodsFor: 'tests - primitives' stamp: 'jmv 27/Feb/2019 15:26:33'!
 testPrimMultiplyBy
 
 	self assert: (2.0 primTestMultiplyBy: 2.0) = 4.0.
@@ -11899,7 +11899,7 @@ testPrimMultiplyBy
 	self assert: (Float nan primTestMultiplyBy: 1.0) isNaN.
 	self assert: (Float nan primTestMultiplyBy: Float nan) isNaN.! !
 
-!FloatTest methodsFor: 'tests - primitives' stamp: 'jmv 2/25/2019 18:02:13'!
+!FloatTest methodsFor: 'tests - primitives' stamp: 'jmv 25/Feb/2019 18:02:13'!
 testPrimNotEqual
 
 	| samples |
@@ -11925,7 +11925,7 @@ testPrimNotEqual
 		self assert: (Float negativeZero primTestNotEqual: (samples at: i)).
 		self assert: (Float nan primTestNotEqual: (samples at: i)) ].! !
 
-!FloatTest methodsFor: 'tests - primitives' stamp: 'jmv 3/14/2019 13:57:07'!
+!FloatTest methodsFor: 'tests - primitives' stamp: 'jmv 14/Mar/2019 13:57:07'!
 testPrimSin
 
 	self verify: 0.0 primTestSin isTrigonometricallyEqualTo: 0.0.
@@ -11934,7 +11934,7 @@ testPrimSin
 	self verify: (Float pi / 3) primTestSin isTrigonometricallyEqualTo: 3.0 sqrt / 2.0.
 	self verify: (Float pi / 2) primTestSin isTrigonometricallyEqualTo: 1.0! !
 
-!FloatTest methodsFor: 'tests - primitives' stamp: 'jmv 3/12/2019 14:31:19'!
+!FloatTest methodsFor: 'tests - primitives' stamp: 'jmv 12/Mar/2019 14:31:19'!
 testPrimSmallIntegerAsFloat
 	self assert: 7 asFloat = 7.0.
 	self assert: 0 asFloat = 0.0.
@@ -11945,7 +11945,7 @@ testPrimSmallIntegerAsFloat
 	self assert: SmallInteger maxVal asFloat = (SmallInteger maxVal printString, '.0') asNumber.
 	self assert: SmallInteger minVal asFloat = (SmallInteger minVal printString, '.0') asNumber.! !
 
-!FloatTest methodsFor: 'tests - primitives' stamp: 'jmv 3/12/2019 14:27:58'!
+!FloatTest methodsFor: 'tests - primitives' stamp: 'jmv 12/Mar/2019 14:27:58'!
 testPrimSqrt
 
 	self assert: 4.0 primTestSqrt = 2.0.
@@ -11963,7 +11963,7 @@ testPrimSqrt
 	self assertIsNaNorFail: Float negativeInfinity primTestSqrt.
 	self assertIsNaNorFail: Float nan primTestSqrt.! !
 
-!FloatTest methodsFor: 'tests - primitives' stamp: 'jmv 2/27/2019 15:25:52'!
+!FloatTest methodsFor: 'tests - primitives' stamp: 'jmv 27/Feb/2019 15:25:52'!
 testPrimSubtract
 
 	self assert: (3.0 primTestSubtract: 1.0) = 2.0.
@@ -11981,7 +11981,7 @@ testPrimSubtract
 	self assert: (Float nan primTestSubtract: 1.0) isNaN.
 	self assert: (Float nan primTestSubtract: Float nan) isNaN.! !
 
-!FloatTest methodsFor: 'tests - primitives' stamp: 'jmv 3/14/2019 13:53:28'!
+!FloatTest methodsFor: 'tests - primitives' stamp: 'jmv 14/Mar/2019 13:53:28'!
 testPrimTimesTwoPower
 
 	self assert: (Float fminNormalized timesTwoPower: -52) = Float fminDenormalized.
@@ -12002,7 +12002,7 @@ testPrimTimesTwoPower
 	self assert: (Float negativeInfinity timesTwoPower: -1024) = Float negativeInfinity.
 	self assert: (Float nan timesTwoPower: 2) isNaN.! !
 
-!FloatTest methodsFor: 'tests - primitives' stamp: 'jmv 1/4/2024 16:00:48'!
+!FloatTest methodsFor: 'tests - primitives' stamp: 'jmv 4/Jan/2024 16:00:48'!
 testPrimTruncated
 
 	self assert: 1.0 primTestTruncated == 1.
@@ -12055,7 +12055,7 @@ testPrimTruncated
 		ifFalse: [ self assert: SmallInteger minVal asFloat primTestTruncated = #fail ].
 ! !
 
-!FloatTest methodsFor: 'tests - characterization' stamp: 'nice 3/4/2021 22:34'!
+!FloatTest methodsFor: 'tests - characterization' stamp: 'nice 4/Mar/2021 22:34:00'!
 testIsFinite
 	self assert: Float fminDenormalized isFinite.
 	self assert: 0.0 isFinite.
@@ -12066,26 +12066,26 @@ testIsFinite
 	self deny: Float negativeInfinity isFinite.
 	self deny: Float nan isFinite.! !
 
-!FractionTest methodsFor: 'private' stamp: 'jmv 10/11/2011 22:12'!
+!FractionTest methodsFor: 'private' stamp: 'jmv 11/Oct/2011 22:12:00'!
 assert: a classAndValueEquals: b
 	self assert: a class = b class.
 	self assert: a = b! !
 
-!FractionTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 10/3/2018 15:19:28'!
+!FractionTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 3/Oct/2018 15:19:28'!
 testDegreeCos2
 	"self run: #testDegreeCos"
 	
 	self shouldnt: [ (4/3) degreeCos] raise: Error.
 	self assert: (1/3) degreeCos printString =  '0.9999830768577442'! !
 
-!FractionTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 10/3/2018 15:19:31'!
+!FractionTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 3/Oct/2018 15:19:31'!
 testDegreeSin2
 	"self run: #testDegreeSin"
 	
 	self shouldnt: [ (4/3) degreeSin] raise: Error.
 	self assert: (1/3) degreeSin printString =  '0.005817731354993834'.! !
 
-!FractionTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 10/11/2011 22:27'!
+!FractionTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 11/Oct/2011 22:27:00'!
 testExactRaisedTo
 	"
 	FractionTest new testExactRaisedTo
@@ -12157,7 +12157,7 @@ testExactRaisedTo
 		self assert: ((f raisedTo: 3) +1 raisedTo: 5/3) isFloat.
 		self assert: ((f negated raisedTo: 3) -1 raisedTo: 5/3) isFloat ].! !
 
-!FractionTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 10/11/2011 22:12'!
+!FractionTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 11/Oct/2011 22:12:00'!
 testExactSqrt
 	"
 	FractionTest new testExactSqrt
@@ -12170,7 +12170,7 @@ testExactSqrt
 		f _ j / i.
 		self assert: f squared sqrt classAndValueEquals: f ]! !
 
-!FractionTest methodsFor: 'tests - mathematical functions' stamp: 'nice 12/11/2012 19:56'!
+!FractionTest methodsFor: 'tests - mathematical functions' stamp: 'nice 11/Dec/2012 19:56:00'!
 testFloorLog
 	self assert: (1/100 floorLog: 10) = -2.
 	self assert: (((2 raisedTo: Float emax + 11)/3) floorLog: 10)
@@ -12178,7 +12178,7 @@ testFloorLog
 	self assert: ((3/(2 raisedTo: Float precision - Float emin)) floorLog: 10)
 		= ((Float emin - Float precision)*2 log + 3 log) floor description: 'Fraction>>log should not underflow'! !
 
-!FractionTest methodsFor: 'tests - mathematical functions' stamp: 'nice 12/11/2012 22:27'!
+!FractionTest methodsFor: 'tests - mathematical functions' stamp: 'nice 11/Dec/2012 22:27:00'!
 testFloorLogExactness
 
 	1 + (Float fminDenormalized floorLog: 10) to: -1 do: [:n |
@@ -12192,7 +12192,7 @@ testFloorLogExactness
 		((10 raisedTo: n) asFloat floorLog: 10) ~= n]."
 	! !
 
-!FractionTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 10/13/2011 21:38'!
+!FractionTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 13/Oct/2011 21:38:00'!
 testInexactRaisedTo
 	"
 	FractionTest new testInexactRaisedTo
@@ -12200,31 +12200,31 @@ testInexactRaisedTo
 	self assert: (((1 << 1024 + 1) / (1 << 1024 + 3)) raisedTo: 1/3) = 1.0.
 	self assert: (((1 << 1024 + 1) / (1 << 1024 + 3)) negated raisedTo: 1/3) = -1.0! !
 
-!FractionTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 10/13/2011 21:27'!
+!FractionTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 13/Oct/2011 21:27:00'!
 testInexactSqrt
 	"
 	FractionTest new testInexactSqrt
 	"
 	self assert: ((1 << 1024 + 1) / (1 << 1024 + 3)) sqrt = 1.0! !
 
-!FractionTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 12/18/2018 10:42:49'!
+!FractionTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 18/Dec/2018 10:42:49'!
 testLn
 	self verify: (1/100) ln isWithinOneFloatAwayFrom: -2 * 10 ln.
 	self verify: ((2 raisedTo: Float emax + 11) / 3) ln isWithinOneFloatAwayFrom: (Float emax + 11) * 2 ln - 3 ln.
 	self verify: (3 / (2 raisedTo: Float precision - Float emin)) ln isWithinOneFloatAwayFrom: (Float emin - Float precision) * 2 ln + 3 ln! !
 
-!FractionTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 12/18/2018 10:45:24'!
+!FractionTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 18/Dec/2018 10:45:24'!
 testLog
 	self assert: (1/100) log = -2.
 	self verify: ((2 raisedTo: Float emax + 11) / 3) log isWithinOneFloatAwayFrom: (Float emax + 11) * 2 log - 3 log.
 	self verify: (3 / (2 raisedTo: Float precision - Float emin)) log isWithinOneFloatAwayFrom: (Float emin - Float precision) * 2 log + 3 log.! !
 
-!FractionTest methodsFor: 'tests - mathematical functions' stamp: 'nice 10/19/2011 20:48'!
+!FractionTest methodsFor: 'tests - mathematical functions' stamp: 'nice 19/Oct/2011 20:48:00'!
 testNthRoot
 	self assert: ((-2 raisedTo: 35) / (3 raisedTo: 20) raisedTo: 1/5) equals: (-2 raisedTo: 7) / (3 raisedTo: 4).
 	self assert: (1 / (1 << 2000) raisedTo: 1/100) equals: 1 / (1 << 20)! !
 
-!FractionTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 5/24/2024 15:16:15'!
+!FractionTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 24/May/2024 15:16:15'!
 testSinCosForHugeValues1
 	| bigNum equivalentFloatInTwoPiRange |
 
@@ -12242,7 +12242,7 @@ testSinCosForHugeValues1
 		self assert: (bigNum cos -equivalentFloatInTwoPiRange cos) abs < 1e-4 ].
 ! !
 
-!FractionTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 5/24/2024 15:17:54'!
+!FractionTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 24/May/2024 15:17:54'!
 testSinCosForHugeValues2
 	| bigNum equivalentFloatInTwoPiRange |
 
@@ -12260,7 +12260,7 @@ testSinCosForHugeValues2
 		self assert: (bigNum cos -equivalentFloatInTwoPiRange cos) abs < 1e-4 ].
 ! !
 
-!FractionTest methodsFor: 'tests - printing' stamp: 'nice 7/24/2010 18:43'!
+!FractionTest methodsFor: 'tests - printing' stamp: 'nice 24/Jul/2010 18:43:00'!
 testFractionPrinting
 
 	self assert: (353/359) printString = '(353/359)'.
@@ -12341,7 +12341,7 @@ testFractionPrinting
 	self assert: ((5 / -7) storeStringBase: 3) = '(-3r12/3r21)'.
 ! !
 
-!FractionTest methodsFor: 'tests - arithmetic' stamp: 'nice 1/22/2012 18:56'!
+!FractionTest methodsFor: 'tests - arithmetic' stamp: 'nice 22/Jan/2012 18:56:00'!
 testIntegerWholeDivision
 	
 	self assert: 4 / (2/3) classAndValueEquals: 6.
@@ -12352,7 +12352,7 @@ testIntegerWholeDivision
 	
 	self assert: -4 / (2/3) classAndValueEquals: -6.! !
 
-!FractionTest methodsFor: 'tests - arithmetic' stamp: 'nice 1/22/2012 18:56'!
+!FractionTest methodsFor: 'tests - arithmetic' stamp: 'nice 22/Jan/2012 18:56:00'!
 testIntegerWholeMultiplication
 	
 	self assert: 4 * (3/2) classAndValueEquals: 6.
@@ -12363,7 +12363,7 @@ testIntegerWholeMultiplication
 	
 	self assert: -4 * (3/2) classAndValueEquals: -6.! !
 
-!FractionTest methodsFor: 'tests - arithmetic' stamp: 'nice 1/22/2012 18:56'!
+!FractionTest methodsFor: 'tests - arithmetic' stamp: 'nice 22/Jan/2012 18:56:00'!
 testReciprocal
 
 	self 
@@ -12372,12 +12372,12 @@ testReciprocal
 		assert: (-1/3) reciprocal classAndValueEquals: -3;
 		assert: (-3/5) reciprocal equals: (-5/3)! !
 
-!FractionTest methodsFor: 'tests - arithmetic' stamp: 'nice 1/22/2012 18:56'!
+!FractionTest methodsFor: 'tests - arithmetic' stamp: 'nice 22/Jan/2012 18:56:00'!
 testWholeDifference
 	
 	self assert: (2/3) - (5/3) classAndValueEquals: -1.! !
 
-!FractionTest methodsFor: 'tests - arithmetic' stamp: 'nice 1/22/2012 18:56'!
+!FractionTest methodsFor: 'tests - arithmetic' stamp: 'nice 22/Jan/2012 18:56:00'!
 testWholeDivision
 	
 	self assert: (3/2) / (3/4) classAndValueEquals: 2.
@@ -12388,7 +12388,7 @@ testWholeDivision
 	
 	self assert: (-3/2) / (3/4) classAndValueEquals: -2.! !
 
-!FractionTest methodsFor: 'tests - arithmetic' stamp: 'nice 1/22/2012 18:57'!
+!FractionTest methodsFor: 'tests - arithmetic' stamp: 'nice 22/Jan/2012 18:57:00'!
 testWholeMultiplication
 	
 	self assert: (3/2) * (4/3) classAndValueEquals: 2.
@@ -12399,22 +12399,22 @@ testWholeMultiplication
 	
 	self assert: (-3/2) * (4/3) classAndValueEquals: -2.! !
 
-!FractionTest methodsFor: 'tests - arithmetic' stamp: 'nice 1/22/2012 18:57'!
+!FractionTest methodsFor: 'tests - arithmetic' stamp: 'nice 22/Jan/2012 18:57:00'!
 testWholeSum
 	
 	self assert: (5/3) + (1/3) classAndValueEquals: 2.! !
 
-!FractionTest methodsFor: 'tests - conversions' stamp: 'nice 6/3/2011 21:32'!
+!FractionTest methodsFor: 'tests - conversions' stamp: 'nice 3/Jun/2011 21:32:00'!
 testCeiling
 	self assert: (3 / 2) ceiling = 2.
 	self assert: (-3 / 2) ceiling = -1.! !
 
-!FractionTest methodsFor: 'tests - conversions' stamp: 'nice 6/3/2011 21:32'!
+!FractionTest methodsFor: 'tests - conversions' stamp: 'nice 3/Jun/2011 21:32:00'!
 testFloor
 	self assert: (3 / 2) floor = 1.
 	self assert: (-3 / 2) floor = -2.! !
 
-!FractionTest methodsFor: 'tests - conversions' stamp: 'nice 6/3/2011 21:39'!
+!FractionTest methodsFor: 'tests - conversions' stamp: 'nice 3/Jun/2011 21:39:00'!
 testRounded
 	self assert: (4 / 5) rounded = 1.
 	self assert: (6 / 5) rounded = 1.
@@ -12425,12 +12425,12 @@ testRounded
 	self assert: (3 / 2) rounded = 2.
 	self assert: (-3 / 2) rounded = -2.! !
 
-!FractionTest methodsFor: 'tests - conversions' stamp: 'nice 6/3/2011 21:35'!
+!FractionTest methodsFor: 'tests - conversions' stamp: 'nice 3/Jun/2011 21:35:00'!
 testTruncated
 	self assert: (3 / 2) truncated = 1.
 	self assert: (-3 / 2) truncated = -1.! !
 
-!FractionTest methodsFor: 'tests - invariants' stamp: 'nice 1/22/2012 19:07'!
+!FractionTest methodsFor: 'tests - invariants' stamp: 'nice 22/Jan/2012 19:07:00'!
 testThatFractionDenominatorIsPositive
 	self assert: (-3 / 2) numerator negative description: 'a Fraction sign is allways carried by its numerator'.
 	self assert: (-3 / 2) denominator positive description: 'a Fraction denominator is allways positive'.
@@ -12441,7 +12441,7 @@ testThatFractionDenominatorIsPositive
 	self assert: (-3 / -2) numerator positive description: 'two negative signs are simplified'.
 	self assert: (-3 / -2) denominator positive description: 'a Fraction denominator is allways positive'.! !
 
-!FractionTest methodsFor: 'tests - invariants' stamp: 'nice 1/22/2012 19:12'!
+!FractionTest methodsFor: 'tests - invariants' stamp: 'nice 22/Jan/2012 19:12:00'!
 testThatFractionIsReduced
 	self assert: (4 / 6) numerator equals: 2.
 	self assert: (4 / 6) denominator equals: 3.
@@ -12455,7 +12455,7 @@ testThatFractionIsReduced
 	self assert: (Fraction numerator: 4 denominator: 6) reduced numerator equals: 2.
 	self assert: (Fraction numerator: 4 denominator: 6) reduced denominator equals: 3.! !
 
-!FractionTest methodsFor: 'testing' stamp: 'jmv 10/9/2018 09:37:12'!
+!FractionTest methodsFor: 'testing' stamp: 'jmv 9/Oct/2018 09:37:12'!
 testHash
 
 	| a fraction1 fraction2 |
@@ -12467,12 +12467,12 @@ testHash
 	a add: fraction1; add: fraction2.
 	self assert: a size = 2! !
 
-!FractionTest methodsFor: 'testing' stamp: 'jpb 8/2/2019 23:20:34'!
+!FractionTest methodsFor: 'testing' stamp: 'jpb 2/Aug/2019 23:20:34'!
 testIsType
 	self assert: ((1 / 2100) is: #Fraction).
 	self assert: ((1 / 2100) is: #Number).! !
 
-!FractionTest methodsFor: 'tests - rounding' stamp: 'jmv 10/29/2021 11:13:20'!
+!FractionTest methodsFor: 'tests - rounding' stamp: 'jmv 29/Oct/2021 11:13:20'!
 testRoundHalfAwayFromZero
 	"See https://en.wikipedia.org/wiki/Rounding#Round_half_away_from_zero"
 	self assert: (1/2) roundedHAFZ = 1.
@@ -12482,7 +12482,7 @@ testRoundHalfAwayFromZero
 	self assert: (((0 to: 5 by: 1/4) collect: [ :f | f roundedHAFZ ]) = #(0 0 1 1 1 1 2 2 2 2 3 3 3 3 4 4 4 4 5 5 5) ).
 	self assert: (((0 to: -5 by: -1/4) collect: [ :f | f roundedHAFZ ]) = #(0 0 -1 -1 -1 -1 -2 -2 -2 -2 -3 -3 -3 -3 -4 -4 -4 -4 -5 -5 -5) ).! !
 
-!FractionTest methodsFor: 'tests - rounding' stamp: 'jmv 10/9/2018 16:12:18'!
+!FractionTest methodsFor: 'tests - rounding' stamp: 'jmv 9/Oct/2018 16:12:18'!
 testRoundHalfToEven
 	"See https://en.wikipedia.org/wiki/Rounding#Round_half_to_even"
 	self assert: (1/2) rounded = 0.
@@ -12492,12 +12492,12 @@ testRoundHalfToEven
 	self assert: (((0 to: 5 by: 1/4) collect: [ :f | f rounded ]) = #(0 0 0 1 1 1 2 2 2 2 2 3 3 3 4 4 4 4 4 5 5) ).
 	self assert: (((0 to: -5 by: -1/4) collect: [ :f | f rounded ]) = #(0 0 0 -1 -1 -1 -2 -2 -2 -2 -2 -3 -3 -3 -4 -4 -4 -4 -4 -5 -5) ).! !
 
-!IntegerDigitLogicTest methodsFor: 'tests' stamp: 'hmm 1/7/2002 21:12'!
+!IntegerDigitLogicTest methodsFor: 'tests' stamp: 'hmm 7/Jan/2002 21:12:00'!
 testAndSingleBitWithMinusOne
 	"And a single bit with -1 and test for same value"
 	1 to: 100 do: [:i | self assert: ((1 bitShift: i) bitAnd: -1) = (1 bitShift: i)].! !
 
-!IntegerDigitLogicTest methodsFor: 'tests' stamp: 'nice 1/10/2010 17:46'!
+!IntegerDigitLogicTest methodsFor: 'tests' stamp: 'nice 10/Jan/2010 17:46:00'!
 testLargeShift
 	"A sanity check for LargeInteger bitShifts"
 	
@@ -12522,43 +12522,43 @@ testLargeShift
 			self assert: rs = (bits copyFrom: 1 to: bits size - shift).
 			]].! !
 
-!IntegerDigitLogicTest methodsFor: 'tests' stamp: 'hmm 1/7/2002 21:13'!
+!IntegerDigitLogicTest methodsFor: 'tests' stamp: 'hmm 7/Jan/2002 21:13:00'!
 testMixedSignDigitLogic
 	"Verify that mixed sign logic with large integers works."
 	self assert: (-2 bitAnd: 16rFFFFFFFF) = 16rFFFFFFFE! !
 
-!IntegerDigitLogicTest methodsFor: 'tests' stamp: 'hmm 1/7/2002 21:12'!
+!IntegerDigitLogicTest methodsFor: 'tests' stamp: 'hmm 7/Jan/2002 21:12:00'!
 testNBitAndNNegatedEqualsN
 	"Verify that (n bitAnd: n negated) = n for single bits"
 	| n |
 	1 to: 100 do: [:i | n := 1 bitShift: i.
 				self assert: (n bitAnd: n negated) = n]! !
 
-!IntegerDigitLogicTest methodsFor: 'tests' stamp: 'hmm 1/7/2002 21:12'!
+!IntegerDigitLogicTest methodsFor: 'tests' stamp: 'hmm 7/Jan/2002 21:12:00'!
 testNNegatedEqualsNComplementedPlusOne
 	"Verify that n negated = (n complemented + 1) for single bits"
 	| n |
 	1 to: 100 do: [:i | n := 1 bitShift: i.
 				self assert: n negated = ((n bitXor: -1) + 1)]! !
 
-!IntegerDigitLogicTest methodsFor: 'tests' stamp: 'hmm 1/7/2002 21:13'!
+!IntegerDigitLogicTest methodsFor: 'tests' stamp: 'hmm 7/Jan/2002 21:13:00'!
 testShiftMinusOne1LeftThenRight
 	"Shift -1 left then right and test for 1"
 	1 to: 100 do: [:i | self assert: ((-1 bitShift: i) bitShift: i negated) = -1].
 ! !
 
-!IntegerDigitLogicTest methodsFor: 'tests' stamp: 'hmm 1/7/2002 21:12'!
+!IntegerDigitLogicTest methodsFor: 'tests' stamp: 'hmm 7/Jan/2002 21:12:00'!
 testShiftOneLeftThenRight
 	"Shift 1 bit left then right and test for 1"
 	1 to: 100 do: [:i | self assert: ((1 bitShift: i) bitShift: i negated) = 1].
 ! !
 
-!IntegerTest methodsFor: 'private' stamp: 'jmv 10/11/2011 08:14'!
+!IntegerTest methodsFor: 'private' stamp: 'jmv 11/Oct/2011 08:14:00'!
 assert: a classAndValueEquals: b
 	self assert: a class = b class.
 	self assert: a = b! !
 
-!IntegerTest methodsFor: 'tests - division - \\' stamp: 'sqr 1/25/2014 14:01'!
+!IntegerTest methodsFor: 'tests - division - \\' stamp: 'sqr 25/Jan/2014 14:01:00'!
 testBackslashBackslashLnLn
 
 	self assert: -42391158275216203514294433200 \\ -14130386091738734504764811067 = -14130386091738734504764811066.
@@ -12568,7 +12568,7 @@ testBackslashBackslashLnLn
 	self assert: -8727963568087712425891397479476727340041449 \\ -79766443076872509863361 = 0.
 	self assert: -8727963568087712425891397479476727340041450 \\ -79766443076872509863361 = -1! !
 
-!IntegerTest methodsFor: 'tests - division - \\' stamp: 'sqr 1/25/2014 14:00'!
+!IntegerTest methodsFor: 'tests - division - \\' stamp: 'sqr 25/Jan/2014 14:00:00'!
 testBackslashBackslashLnLp
 
 	self assert: -42391158275216203514294433200 \\ 14130386091738734504764811067 = 1.
@@ -12578,7 +12578,7 @@ testBackslashBackslashLnLp
 	self assert: -8727963568087712425891397479476727340041449 \\ 79766443076872509863361 = 0.
 	self assert: -8727963568087712425891397479476727340041450 \\ 79766443076872509863361 = 79766443076872509863360! !
 
-!IntegerTest methodsFor: 'tests - division - \\' stamp: 'sqr 1/25/2014 14:01'!
+!IntegerTest methodsFor: 'tests - division - \\' stamp: 'sqr 25/Jan/2014 14:01:00'!
 testBackslashBackslashLnSn
 
 	self assert: -42391158275216203514294433201 \\ -3 = 0.
@@ -12586,7 +12586,7 @@ testBackslashBackslashLnSn
 	self assert: -42391158275216203514294433203 \\ -3 = -2.
 	self assert: -42391158275216203514294433204 \\ -3 = 0! !
 
-!IntegerTest methodsFor: 'tests - division - \\' stamp: 'sqr 1/25/2014 14:02'!
+!IntegerTest methodsFor: 'tests - division - \\' stamp: 'sqr 25/Jan/2014 14:02:00'!
 testBackslashBackslashLnSp
 
 	self assert: -42391158275216203514294433201 \\ 3 = 0.
@@ -12594,7 +12594,7 @@ testBackslashBackslashLnSp
 	self assert: -42391158275216203514294433203 \\ 3 = 1.
 	self assert: -42391158275216203514294433204 \\ 3 = 0! !
 
-!IntegerTest methodsFor: 'tests - division - \\' stamp: 'sqr 1/25/2014 14:04'!
+!IntegerTest methodsFor: 'tests - division - \\' stamp: 'sqr 25/Jan/2014 14:04:00'!
 testBackslashBackslashLpLn
 
 	self assert: 42391158275216203514294433200 \\ -14130386091738734504764811067 = -1.
@@ -12604,7 +12604,7 @@ testBackslashBackslashLpLn
 	self assert: 8727963568087712425891397479476727340041449 \\ -79766443076872509863361 = 0.
 	self assert: 8727963568087712425891397479476727340041450 \\ -79766443076872509863361 = -79766443076872509863360! !
 
-!IntegerTest methodsFor: 'tests - division - \\' stamp: 'sqr 1/25/2014 14:05'!
+!IntegerTest methodsFor: 'tests - division - \\' stamp: 'sqr 25/Jan/2014 14:05:00'!
 testBackslashBackslashLpLp
 
 	self assert: 42391158275216203514294433200 \\ 14130386091738734504764811067 = 14130386091738734504764811066.
@@ -12614,7 +12614,7 @@ testBackslashBackslashLpLp
 	self assert: 8727963568087712425891397479476727340041449 \\ 79766443076872509863361 = 0.
 	self assert: 8727963568087712425891397479476727340041450 \\ 79766443076872509863361 = 1! !
 
-!IntegerTest methodsFor: 'tests - division - \\' stamp: 'sqr 1/25/2014 14:06'!
+!IntegerTest methodsFor: 'tests - division - \\' stamp: 'sqr 25/Jan/2014 14:06:00'!
 testBackslashBackslashLpSn
 
 	self assert: 42391158275216203514294433201 \\ -3 = 0.
@@ -12622,7 +12622,7 @@ testBackslashBackslashLpSn
 	self assert: 42391158275216203514294433203 \\ -3 = -1.
 	self assert: 42391158275216203514294433204 \\ -3 = 0! !
 
-!IntegerTest methodsFor: 'tests - division - \\' stamp: 'sqr 1/25/2014 14:07'!
+!IntegerTest methodsFor: 'tests - division - \\' stamp: 'sqr 25/Jan/2014 14:07:00'!
 testBackslashBackslashLpSp
 
 	self assert: 42391158275216203514294433201 \\ 3 = 0.
@@ -12630,21 +12630,21 @@ testBackslashBackslashLpSp
 	self assert: 42391158275216203514294433203 \\ 3 = 2.
 	self assert: 42391158275216203514294433204 \\ 3 = 0! !
 
-!IntegerTest methodsFor: 'tests - division - \\' stamp: 'sqr 1/25/2014 14:08'!
+!IntegerTest methodsFor: 'tests - division - \\' stamp: 'sqr 25/Jan/2014 14:08:00'!
 testBackslashBackslashSnLn
 
 	self assert: 0 \\ -42391158275216203514294433201 = 0.
 	self assert: -1 \\ -42391158275216203514294433201 = -1.
 	self assert: -14348907 \\ -42391158275216203514294433201 = -14348907! !
 
-!IntegerTest methodsFor: 'tests - division - \\' stamp: 'sqr 1/25/2014 14:09'!
+!IntegerTest methodsFor: 'tests - division - \\' stamp: 'sqr 25/Jan/2014 14:09:00'!
 testBackslashBackslashSnLp
 
 	self assert: 0 \\ 42391158275216203514294433201 = 0.
 	self assert: -1 \\ 42391158275216203514294433201 =  42391158275216203514294433200.
 	self assert: -14348907 \\ 42391158275216203514294433201 = 42391158275216203514280084294! !
 
-!IntegerTest methodsFor: 'tests - division - \\' stamp: 'sqr 1/25/2014 14:09'!
+!IntegerTest methodsFor: 'tests - division - \\' stamp: 'sqr 25/Jan/2014 14:09:00'!
 testBackslashBackslashSnSn
 
 	self assert: 0 \\ -3 = 0.
@@ -12655,7 +12655,7 @@ testBackslashBackslashSnSn
 	self assert: -12 \\ -3 = 0.
 	self assert: -13 \\ -3 = -1! !
 
-!IntegerTest methodsFor: 'tests - division - \\' stamp: 'sqr 1/25/2014 14:10'!
+!IntegerTest methodsFor: 'tests - division - \\' stamp: 'sqr 25/Jan/2014 14:10:00'!
 testBackslashBackslashSnSp
 
 	self assert: 0 \\ 3 = 0.
@@ -12666,21 +12666,21 @@ testBackslashBackslashSnSp
 	self assert: -12 \\ 3 = 0.
 	self assert: -13 \\ 3 = 2! !
 
-!IntegerTest methodsFor: 'tests - division - \\' stamp: 'sqr 1/25/2014 14:11'!
+!IntegerTest methodsFor: 'tests - division - \\' stamp: 'sqr 25/Jan/2014 14:11:00'!
 testBackslashBackslashSpLn
 
 	self assert: 0 \\ -42391158275216203514294433201 = 0.
 	self assert: 1 \\ -42391158275216203514294433201 = -42391158275216203514294433200.
 	self assert: 14348907 \\ -42391158275216203514294433201 = -42391158275216203514280084294! !
 
-!IntegerTest methodsFor: 'tests - division - \\' stamp: 'sqr 1/25/2014 14:12'!
+!IntegerTest methodsFor: 'tests - division - \\' stamp: 'sqr 25/Jan/2014 14:12:00'!
 testBackslashBackslashSpLp
 
 	self assert: 0 \\ 42391158275216203514294433201 = 0.
 	self assert: 1 \\ 42391158275216203514294433201 = 1.
 	self assert: 14348907 \\ 42391158275216203514294433201 = 14348907! !
 
-!IntegerTest methodsFor: 'tests - division - \\' stamp: 'sqr 1/25/2014 14:13'!
+!IntegerTest methodsFor: 'tests - division - \\' stamp: 'sqr 25/Jan/2014 14:13:00'!
 testBackslashBackslashSpSn
 
 	self assert: 0 \\ -3 = 0.
@@ -12691,7 +12691,7 @@ testBackslashBackslashSpSn
 	self assert: 12 \\ -3 = 0.
 	self assert: 13 \\ -3 = -2! !
 
-!IntegerTest methodsFor: 'tests - division - \\' stamp: 'sqr 1/25/2014 14:13'!
+!IntegerTest methodsFor: 'tests - division - \\' stamp: 'sqr 25/Jan/2014 14:13:00'!
 testBackslashBackslashSpSp
 
 	self assert: 0 \\ 3 = 0.
@@ -12702,7 +12702,7 @@ testBackslashBackslashSpSp
 	self assert: 12 \\ 3 = 0.
 	self assert: 13 \\ 3 = 1! !
 
-!IntegerTest methodsFor: 'tests - division - \\' stamp: 'jmv 5/24/2024 14:55:26'!
+!IntegerTest methodsFor: 'tests - division - \\' stamp: 'jmv 24/May/2024 14:55:26'!
 testModuloTwoPiAsFloat
 
 	| k |
@@ -12721,7 +12721,7 @@ testModuloTwoPiAsFloat
 	(k-1) moduloTwoPiAsFloat + (k negated+1) moduloTwoPiAsFloat = Float twoPi.
 ! !
 
-!IntegerTest methodsFor: 'tests - benchmarks' stamp: 'sd 6/5/2005 08:37'!
+!IntegerTest methodsFor: 'tests - benchmarks' stamp: 'sd 5/Jun/2005 08:37:00'!
 testBenchFib
 
 	self assert: (0 benchFib = 1).
@@ -12729,7 +12729,7 @@ testBenchFib
 	self assert: (2 benchFib = 3).
 	! !
 
-!IntegerTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 8/21/2016 20:02:52'!
+!IntegerTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 21/Aug/2016 20:02:52'!
 testBigReceiverInexactNthRoot
 	"
 	IntegerTest new testBigReceiverInexactNthRoot
@@ -12746,7 +12746,7 @@ testBigReceiverInexactNthRoot
 	self assert: result = 100 factorial asFloat.		"No other float is closer. See following line"
 	self assert: 100 factorial asFloat = (100 factorial+1) asFloat! !
 
-!IntegerTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 8/21/2016 20:03:04'!
+!IntegerTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 21/Aug/2016 20:03:04'!
 testBigReceiverInexactSqrt
 	"
 	IntegerTest new testBigReceiverInexactSqrt
@@ -12764,7 +12764,7 @@ testBigReceiverInexactSqrt
 	self assert: (result successor asFraction squared - bigNum) abs >= (result asFraction squared - bigNum) abs.
 	self assert: (result predecessor asFraction squared - bigNum) abs >= (result asFraction squared - bigNum) abs.! !
 
-!IntegerTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 10/13/2011 21:46'!
+!IntegerTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 13/Oct/2011 21:46:00'!
 testExactRaisedTo
 	"
 	IntegerTest new testExactRaisedTo
@@ -12814,7 +12814,7 @@ testExactRaisedTo
 		self assert: ((i raisedTo: 3) +1 raisedTo: 5/3) isFloat.
 		self assert: ((i negated raisedTo: 3) -1 raisedTo: 5/3) isFloat ].! !
 
-!IntegerTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 10/11/2011 22:09'!
+!IntegerTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 11/Oct/2011 22:09:00'!
 testExactSqrt
 	"
 	IntegerTest new testExactSqrt
@@ -12826,12 +12826,12 @@ testExactSqrt
 	#( 1 5 29 135 1234 567890 123123123 456456456456 98765432109876543210987654321 987123987123987123987123987123987123987123987123) do: [ :i |
 		self assert: i squared sqrt classAndValueEquals: i ]! !
 
-!IntegerTest methodsFor: 'tests - mathematical functions' stamp: 'nice 12/11/2012 19:53'!
+!IntegerTest methodsFor: 'tests - mathematical functions' stamp: 'nice 11/Dec/2012 19:53:00'!
 testFloorLog
 	self assert: (100 floorLog: 10) = 2.
 	self assert: (((2 raisedTo: Float emax + 3) floorLog: 10) = (2 log*(Float emax + 3)) floor) description: 'Integer>>floorLog: should not overflow'! !
 
-!IntegerTest methodsFor: 'tests - mathematical functions' stamp: 'nice 12/11/2012 22:30'!
+!IntegerTest methodsFor: 'tests - mathematical functions' stamp: 'nice 11/Dec/2012 22:30:00'!
 testFloorLogExactness
 
 	1 to: (Float fmax floorLog: 10) do: [:n |
@@ -12844,17 +12844,17 @@ testFloorLogExactness
 	(1 to: (Float fmax floorLog: 10)) count: [:n |
 		((10 raisedTo: n) asFloat floorLog: 10) ~= n]."! !
 
-!IntegerTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 12/18/2018 10:47:37'!
+!IntegerTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 18/Dec/2018 10:47:37'!
 testLn
 	self verify: 100 ln isWithinOneFloatAwayFrom: 10 ln*2.
 	self verify: (2 raisedTo: Float emax + 3) ln isWithinOneFloatAwayFrom: 2 ln * (Float emax + 3)! !
 
-!IntegerTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 12/18/2018 10:48:49'!
+!IntegerTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 18/Dec/2018 10:48:49'!
 testLog
 	self assert: 100 log = 2.
 	self verify: (2 raisedTo: Float emax + 3) log isWithinOneFloatAwayFrom: 2 log * (Float emax + 3)! !
 
-!IntegerTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 10/19/2011 22:48'!
+!IntegerTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 19/Oct/2011 22:48:00'!
 testNthRoot
 	"
 	IntegerTest new testNthRoot
@@ -12867,7 +12867,7 @@ testNthRoot
 	self shouldnt: [ (1 << 2000 nthRoot: 100) ] raise: ArithmeticError.
 	self assert: (1 << 2000 nthRoot: 100) equals: 1 << 20! !
 
-!IntegerTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 10/13/2011 09:09'!
+!IntegerTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 13/Oct/2011 09:09:00'!
 testNthRootErrorConditions
 	"
 	IntegerTest new testExactRaisedToErrorConditions
@@ -12876,14 +12876,14 @@ testNthRootErrorConditions
 	self should: [ -2 nthRoot: 1/4 ] raise: ArithmeticError.
 	self should: [ -2 nthRoot: 1.24 ] raise: ArithmeticError.! !
 
-!IntegerTest methodsFor: 'tests - mathematical functions' stamp: 'nice 3/15/2014 14:50'!
+!IntegerTest methodsFor: 'tests - mathematical functions' stamp: 'nice 15/Mar/2014 14:50:00'!
 testNthRootExactness
 	| inexactRoots largeRaisedTo6 |
 	largeRaisedTo6 := (2 to: 100) collect: [:k | (k raisedTo: 11) raisedTo: 6].
 	inexactRoots := largeRaisedTo6 reject: [:e | (e nthRoot: 6) isInteger].
 	self assert: inexactRoots isEmpty description: 'Failed to find the exact 6th root of these numbers'! !
 
-!IntegerTest methodsFor: 'tests - mathematical functions' stamp: 'nice 5/4/2019 00:30'!
+!IntegerTest methodsFor: 'tests - mathematical functions' stamp: 'nice 4/May/2019 00:30:00'!
 testNthRootRounded
 	<timeout:  5 "seconds">
 	| d x |
@@ -12894,7 +12894,7 @@ testNthRootRounded
 	self assert: (d nthRootRounded: 1000) equals: 1.
 	self assert: (x nthRootRounded: 1000) equals: 2.! !
 
-!IntegerTest methodsFor: 'tests - mathematical functions' stamp: 'nice 10/19/2011 21:03'!
+!IntegerTest methodsFor: 'tests - mathematical functions' stamp: 'nice 19/Oct/2011 21:03:00'!
 testNthRootTruncated
 	<timeout:  5 "seconds">
 	| tooBigToBeAFloat large |
@@ -12915,7 +12915,7 @@ testNthRootTruncated
 			self assert: (theTruncatedRoot raisedTo: thePower) <= n.
 			self assert: (theTruncatedRoot + 1 raisedTo: thePower) > n]]! !
 
-!IntegerTest methodsFor: 'tests - mathematical functions' stamp: 'dtl 5/12/2024 09:35'!
+!IntegerTest methodsFor: 'tests - mathematical functions' stamp: 'dtl 12/May/2024 09:35:00'!
 testSinCosConsistency
 	"sin and cos are tricky on very large numbers. Check for correct behavior."
 
@@ -12939,7 +12939,7 @@ testSinCosConsistency
 		self assert: diff < 0.00001.
 		angle asFloat predecessor asInteger].! !
 
-!IntegerTest methodsFor: 'tests - mathematical functions' stamp: 'ul 11/25/2009 03:01'!
+!IntegerTest methodsFor: 'tests - mathematical functions' stamp: 'ul 25/Nov/2009 03:01:00'!
 testSqrtFloor
 
 	#(-1234567890123 -10 -5 -1) do: [ :each |
@@ -12950,7 +12950,7 @@ testSqrtFloor
 			self assert: each asFloat sqrt floor = each sqrtFloor ]
 		! !
 
-!IntegerTest methodsFor: 'tests - bitLogic' stamp: 'nice 12/27/2009 03:11'!
+!IntegerTest methodsFor: 'tests - bitLogic' stamp: 'nice 27/Dec/2009 03:11:00'!
 testBitAt
 	| trials bitSequence2 |
 
@@ -12989,7 +12989,7 @@ testBitAt
 		bitSequence2 := (bitSequence size - 2 to: 1 by: -1) inject: '2r' into: [:string :i | string copyWith: (Character digitValue: 1 - (bitInvert bitAt: i))].
 		self assert: bitSequence2 = bitSequence description: '-1-x is similar to a bitInvert operation in two complement']! !
 
-!IntegerTest methodsFor: 'tests - bitLogic' stamp: 'sd 6/5/2005 08:43'!
+!IntegerTest methodsFor: 'tests - bitLogic' stamp: 'sd 5/Jun/2005 08:43:00'!
 testBitLogic  
 	"This little suite of tests is designed to verify correct operation of most
 	of Squeak's bit manipulation code, including two's complement
@@ -13027,7 +13027,7 @@ testBitLogic
 
 	self assert: (-2 bitAnd: 16rFFFFFFFF) = 16rFFFFFFFE.! !
 
-!IntegerTest methodsFor: 'tests - bitLogic' stamp: 'jmv 10/3/2018 18:03:31'!
+!IntegerTest methodsFor: 'tests - bitLogic' stamp: 'jmv 3/Oct/2018 18:03:31'!
 testBitReversal
 	{ 0. 1. SmallInteger maxVal-1. SmallInteger maxVal. SmallInteger maxVal+1. (2 raisedTo: 64)-1091. (2 raisedTo: 64)-1090. (2 raisedTo: 64)-1 } do: 
 		[ : fixture |
@@ -13036,7 +13036,7 @@ testBitReversal
 		reversedThenPrinted := (fixture bitReverse: 64) printStringBase: 2 length: 64 padded: true.
 		self assert: printedThenReversed = reversedThenPrinted ]! !
 
-!IntegerTest methodsFor: 'tests - bitLogic' stamp: 'jmv 6/24/2020 11:23:19'!
+!IntegerTest methodsFor: 'tests - bitLogic' stamp: 'jmv 24/Jun/2020 11:23:19'!
 testBitReversalCorrectClass
 	"This test was added due to a bug!!
 	The problem only happened in 64 bit systems running with jitted Cog VM."
@@ -13047,7 +13047,7 @@ testBitReversalCorrectClass
 		b _ (a bitReverse: 64) bitReverse: 64.
 		self assert: a class = b class ]! !
 
-!IntegerTest methodsFor: 'tests - bitLogic' stamp: 'nice 7/8/2008 02:47'!
+!IntegerTest methodsFor: 'tests - bitLogic' stamp: 'nice 8/Jul/2008 02:47:00'!
 testHighBit
 	| suite |
 
@@ -13061,7 +13061,7 @@ testHighBit
 		[shifted > anInteger] whileFalse: [highBit := highBit+1. shifted := shifted bitShift: 1].
 		self assert: anInteger highBit = highBit].! !
 
-!IntegerTest methodsFor: 'tests - bitLogic' stamp: 'nice 7/8/2008 02:44'!
+!IntegerTest methodsFor: 'tests - bitLogic' stamp: 'nice 8/Jul/2008 02:44:00'!
 testHighBitOfMagnitude
 	| suite |
 
@@ -13076,7 +13076,7 @@ testHighBitOfMagnitude
 		self assert: anInteger highBitOfMagnitude = highBit.
 		self assert: anInteger negated highBitOfMagnitude = highBit].! !
 
-!IntegerTest methodsFor: 'tests - bitLogic' stamp: 'jmv 12/10/2018 18:36:38'!
+!IntegerTest methodsFor: 'tests - bitLogic' stamp: 'jmv 10/Dec/2018 18:36:38'!
 testLowBit
 	| suite |
 
@@ -13093,7 +13093,7 @@ testLowBit
     self assert: (LargePositiveInteger new: 0) lowBit = 0.
     self assert: (LargePositiveInteger new: 2) lowBit = 0! !
 
-!IntegerTest methodsFor: 'tests - bitLogic' stamp: 'nice 1/26/2008 02:22'!
+!IntegerTest methodsFor: 'tests - bitLogic' stamp: 'nice 26/Jan/2008 02:22:00'!
 testTwoComplementBitLogicWithCarry
 	"This is non regression test for http://bugs.squeak.org/view.php?id=6874"
 	
@@ -13106,7 +13106,7 @@ testTwoComplementBitLogicWithCarry
 	
 	self assert: ((2 to: 80) allSatisfy: [:n | ((2 raisedTo: n) negated bitAnd: (2 raisedTo: n) negated - 1) = (2 raisedTo: n + 1) negated]).! !
 
-!IntegerTest methodsFor: 'tests - bitLogic' stamp: 'sd 6/5/2005 08:44'!
+!IntegerTest methodsFor: 'tests - bitLogic' stamp: 'sd 5/Jun/2005 08:44:00'!
 testTwoComplementRightShift
 	"self run: #testTwoComplementRightShift"
 
@@ -13119,7 +13119,7 @@ testTwoComplementRightShift
      self assert: ((small bitShift: -1) ~= (small + 1 bitShift: -1)
 		== ((large bitShift: -1) ~= (large + 1 bitShift: -1))).! !
 
-!IntegerTest methodsFor: 'testing - arithmetic' stamp: 'mga 5/11/2006 15:41'!
+!IntegerTest methodsFor: 'testing - arithmetic' stamp: 'mga 11/May/2006 15:41:00'!
 testCrossSumBase
 	"self run: #testCrossSumBase"
 
@@ -13131,7 +13131,7 @@ testCrossSumBase
 		#(2 3 2 2 1 4 3 3 2 3 2 2 1 3 2 2 1 2 1 1 0 1 1 2 1 2 2 3 1 2 2 3 2 3 3 4 1 2 2 3 2)).
 	self should: [10 crossSumBase: 1] raise: AssertionFailure! !
 
-!IntegerTest methodsFor: 'testing - arithmetic' stamp: 'nice 1/9/2013 02:11'!
+!IntegerTest methodsFor: 'testing - arithmetic' stamp: 'nice 9/Jan/2013 02:11:00'!
 testIntegerDivision
 	| suite |
 	suite := #( 1 2 5 1000 123456798  111222333444555 987654321098765432109876 ).
@@ -13145,7 +13145,7 @@ testIntegerDivision
 			self assert: r abs < b abs.
 			self assert: (r isZero or: [b negative = r negative])]].! !
 
-!IntegerTest methodsFor: 'testing - arithmetic' stamp: 'nice 1/16/2013 18:38'!
+!IntegerTest methodsFor: 'testing - arithmetic' stamp: 'nice 16/Jan/2013 18:38:00'!
 testMontgomeryMultiplication
 	| a m mInv |
 	m := 15485863.
@@ -13162,7 +13162,7 @@ testMontgomeryMultiplication
 			s2 := ssa montgomeryTimes: 1 modulo: m mInvModB: mInv.
 			self assert: s2 = (s * s \\ m)]].! !
 
-!IntegerTest methodsFor: 'testing - arithmetic' stamp: 'nice 1/9/2013 02:11'!
+!IntegerTest methodsFor: 'testing - arithmetic' stamp: 'nice 9/Jan/2013 02:11:00'!
 testQuoRem
 	| suite |
 	suite := #( 1 2 5 1000 123456798 111222333444555 987654321098765432109876 ).
@@ -13176,7 +13176,7 @@ testQuoRem
 			self assert: r abs < b abs.
 			self assert: (r isZero or: [a negative = r negative])]].! !
 
-!IntegerTest methodsFor: 'testing - arithmetic' stamp: 'nice 6/4/2011 20:46'!
+!IntegerTest methodsFor: 'testing - arithmetic' stamp: 'nice 4/Jun/2011 20:46:00'!
 testRaisedToModulo
 	#(301 2047) do: [:m |
 		1 to: m - 1 by: (m // 30) do: [:x |
@@ -13184,14 +13184,14 @@ testRaisedToModulo
 				self assert: (x raisedTo: y) \\ m = (x raisedTo: y modulo: m)]]].
 	self assert: (8951195 raisedTo: 7742931 modulo: 15485863) = 15485862.! !
 
-!IntegerTest methodsFor: 'tests - basic' stamp: 'md 4/21/2003 16:17'!
+!IntegerTest methodsFor: 'tests - basic' stamp: 'md 21/Apr/2003 16:17:00'!
 testEven
 	
 	self deny: (1073741825 even).
 	self assert: (1073741824  even).
 	! !
 
-!IntegerTest methodsFor: 'tests - basic' stamp: 'jpb 8/2/2019 23:55:59'!
+!IntegerTest methodsFor: 'tests - basic' stamp: 'jpb 2/Aug/2019 23:55:59'!
 testIsInteger
   self assert: 0 isInteger.
   self assert: (0 is: #Integer).
@@ -13201,7 +13201,7 @@ testIsInteger
 	self assert: (10000 is: #Integer).
 	self assert: (10000 is: #Number).! !
 
-!IntegerTest methodsFor: 'tests - basic' stamp: 'jmv 5/24/2024 14:25:05'!
+!IntegerTest methodsFor: 'tests - basic' stamp: 'jmv 24/May/2024 14:25:05'!
 testIsPowerOfTwo
 
 	self deny: (0 isPowerOfTwo).
@@ -13211,14 +13211,14 @@ testIsPowerOfTwo
 	self assert: (4 isPowerOfTwo).
 	! !
 
-!IntegerTest methodsFor: 'tests - basic' stamp: 'nice 1/25/2008 22:51'!
+!IntegerTest methodsFor: 'tests - basic' stamp: 'nice 25/Jan/2008 22:51:00'!
 testIsPowerOfTwoM6873
 	"This is a non regression test for http://bugs.squeak.org/view.php?id=6873"
 
 	self deny: ((1 to: 80) anySatisfy: [:n | (2 raisedTo: n) negated isPowerOfTwo])
 		description: 'A negative integer cannot be a power of two'.! !
 
-!IntegerTest methodsFor: 'tests - basic' stamp: 'ul 11/25/2009 02:51'!
+!IntegerTest methodsFor: 'tests - basic' stamp: 'ul 25/Nov/2009 02:51:00'!
 testIsPrime
 
 	"Not primes:"
@@ -13233,7 +13233,7 @@ testIsPrime
 	#(561 2821 6601 10585 15841 256 29996224275831) do: [ :each |
 		self deny: each isPrime ].! !
 
-!IntegerTest methodsFor: 'tests - basic' stamp: 'ul 11/25/2009 02:49'!
+!IntegerTest methodsFor: 'tests - basic' stamp: 'ul 25/Nov/2009 02:49:00'!
 testIsProbablyPrime
 
 	"Not primes:"
@@ -13248,7 +13248,7 @@ testIsProbablyPrime
 	#(561 2821 6601 10585 15841 256 29996224275831) do: [ :each |
 		self deny: each isProbablyPrime ].! !
 
-!IntegerTest methodsFor: 'tests - basic' stamp: 'md 2/12/2006 14:36'!
+!IntegerTest methodsFor: 'tests - basic' stamp: 'md 12/Feb/2006 14:36:00'!
 testLargePrimesUpTo
 
 	| nn | 
@@ -13259,7 +13259,7 @@ testLargePrimesUpTo
 	
 ! !
 
-!IntegerTest methodsFor: 'tests - basic' stamp: 'md 2/12/2006 14:36'!
+!IntegerTest methodsFor: 'tests - basic' stamp: 'md 12/Feb/2006 14:36:00'!
 testPrimesUpTo
 
 	| primes nn|
@@ -13275,14 +13275,14 @@ testPrimesUpTo
 	self deny: (Integer primesUpTo: nn) last = nn.
 	self assert: (Integer primesUpTo: nn + 1) last  = nn.! !
 
-!IntegerTest methodsFor: 'tests - basic' stamp: 'eem 7/16/2014 15:29'!
+!IntegerTest methodsFor: 'tests - basic' stamp: 'eem 16/Jul/2014 15:29:00'!
 testRange
 	self assert: SmallInteger maxVal class equals: SmallInteger.
 	self assert: (SmallInteger maxVal + 1) class equals: LargePositiveInteger.
 	self assert: SmallInteger minVal class equals: SmallInteger.
 	self assert: (SmallInteger minVal - 1) class equals: LargeNegativeInteger! !
 
-!IntegerTest methodsFor: 'tests - instance creation' stamp: 'sd 6/5/2005 08:46'!
+!IntegerTest methodsFor: 'tests - instance creation' stamp: 'sd 5/Jun/2005 08:46:00'!
 testDifferentBases
 	"self run: #testDifferentBases"
 	"| value |
@@ -13372,7 +13372,7 @@ testDifferentBases
 	self assert: -35rYXWVUTSRQPONMLKJIHGFEDCBA9876543210 = -1101553773143634726491620528194292510495517905608180485.
 	self assert: -36rZYXWVUTSRQPONMLKJIHGFEDCBA9876543210 = -106300512100105327644605138221229898724869759421181854980.! !
 
-!IntegerTest methodsFor: 'tests - instance creation' stamp: 'jmv 9/1/2010 13:56'!
+!IntegerTest methodsFor: 'tests - instance creation' stamp: 'jmv 1/Sep/2010 13:56:00'!
 testIntegerReadFrom
 	self assert: (Integer readFrom: '123' readStream base: 10) = 123.
 	self assert: (Integer readFrom: '-123' readStream base: 10) = -123.
@@ -13381,11 +13381,11 @@ testIntegerReadFrom
 	self assert: (Integer readFrom: '1two3' readStream base: 10) = 1.
 ! !
 
-!IntegerTest methodsFor: 'tests - instance creation' stamp: 'jmv 8/8/2024 12:28:09'!
+!IntegerTest methodsFor: 'tests - instance creation' stamp: 'jmv 8/Aug/2024 12:28:09'!
 testNew
 	self should: [Integer new] raise: TestResult exError. ! !
 
-!IntegerTest methodsFor: 'tests - instance creation' stamp: 'jmv 9/1/2010 13:26'!
+!IntegerTest methodsFor: 'tests - instance creation' stamp: 'jmv 1/Sep/2010 13:26:00'!
 testReadFrom
 	"Ensure remaining characters in a stream are not lost when parsing an integer."
 
@@ -13406,7 +13406,7 @@ testReadFrom
 	self assert: '.s could be confused with a ScaledDecimal' = s
 ! !
 
-!IntegerTest methodsFor: 'tests - instance creation' stamp: 'jmv 9/1/2010 13:45'!
+!IntegerTest methodsFor: 'tests - instance creation' stamp: 'jmv 1/Sep/2010 13:45:00'!
 testStringAsNumber
 	"This covers parsing in Number>>readFrom:
 	Trailing decimal points should be ignored."
@@ -13427,7 +13427,7 @@ testStringAsNumber
 	self assert: ('123e could be confused with a Float' asNumber = 123).
 ! !
 
-!IntegerTest methodsFor: 'tests - division - div:' stamp: 'sqr 1/25/2014 14:53'!
+!IntegerTest methodsFor: 'tests - division - div:' stamp: 'sqr 25/Jan/2014 14:53:00'!
 testDivLnLn
 
 	self assert: (-42391158275216203514294433200 div: -14130386091738734504764811067) = 3.
@@ -13437,7 +13437,7 @@ testDivLnLn
 	self assert: (-8727963568087712425891397479476727340041449 div: -79766443076872509863361) = 109418989131512359209.
 	self assert: (-8727963568087712425891397479476727340041450 div: -79766443076872509863361) = 109418989131512359210! !
 
-!IntegerTest methodsFor: 'tests - division - div:' stamp: 'sqr 1/25/2014 14:53'!
+!IntegerTest methodsFor: 'tests - division - div:' stamp: 'sqr 25/Jan/2014 14:53:00'!
 testDivLnLp
 
 	self assert: (-42391158275216203514294433200 div: 14130386091738734504764811067) = -3.
@@ -13447,7 +13447,7 @@ testDivLnLp
 	self assert: (-8727963568087712425891397479476727340041449 div: 79766443076872509863361) = -109418989131512359209.
 	self assert: (-8727963568087712425891397479476727340041450 div: 79766443076872509863361) = -109418989131512359210! !
 
-!IntegerTest methodsFor: 'tests - division - div:' stamp: 'sqr 1/25/2014 14:54'!
+!IntegerTest methodsFor: 'tests - division - div:' stamp: 'sqr 25/Jan/2014 14:54:00'!
 testDivLnSn
 
 	self assert: (-42391158275216203514294433201 div: -3) = 14130386091738734504764811067.
@@ -13455,7 +13455,7 @@ testDivLnSn
 	self assert: (-42391158275216203514294433203 div: -3) = 14130386091738734504764811068.
 	self assert: (-42391158275216203514294433204 div: -3) = 14130386091738734504764811068! !
 
-!IntegerTest methodsFor: 'tests - division - div:' stamp: 'sqr 1/25/2014 14:36'!
+!IntegerTest methodsFor: 'tests - division - div:' stamp: 'sqr 25/Jan/2014 14:36:00'!
 testDivLnSp
 
 	self assert: (-42391158275216203514294433201 div: 3) = -14130386091738734504764811067.
@@ -13463,7 +13463,7 @@ testDivLnSp
 	self assert: (-42391158275216203514294433203 div: 3) = -14130386091738734504764811068.
 	self assert: (-42391158275216203514294433204 div: 3) = -14130386091738734504764811068! !
 
-!IntegerTest methodsFor: 'tests - division - div:' stamp: 'sqr 1/25/2014 14:54'!
+!IntegerTest methodsFor: 'tests - division - div:' stamp: 'sqr 25/Jan/2014 14:54:00'!
 testDivLpLn
 
 	self assert: (42391158275216203514294433200 div: -14130386091738734504764811067) = -2.
@@ -13473,7 +13473,7 @@ testDivLpLn
 	self assert: (8727963568087712425891397479476727340041449 div: -79766443076872509863361) = -109418989131512359209.
 	self assert: (8727963568087712425891397479476727340041450 div: -79766443076872509863361) = -109418989131512359209! !
 
-!IntegerTest methodsFor: 'tests - division - div:' stamp: 'sqr 1/25/2014 14:36'!
+!IntegerTest methodsFor: 'tests - division - div:' stamp: 'sqr 25/Jan/2014 14:36:00'!
 testDivLpLp
 
 	self assert: (42391158275216203514294433200 div: 14130386091738734504764811067) = 2.
@@ -13483,7 +13483,7 @@ testDivLpLp
 	self assert: (8727963568087712425891397479476727340041449 div: 79766443076872509863361) = 109418989131512359209.
 	self assert: (8727963568087712425891397479476727340041450 div: 79766443076872509863361) = 109418989131512359209! !
 
-!IntegerTest methodsFor: 'tests - division - div:' stamp: 'sqr 1/25/2014 14:55'!
+!IntegerTest methodsFor: 'tests - division - div:' stamp: 'sqr 25/Jan/2014 14:55:00'!
 testDivLpSn
 
 	self assert: (42391158275216203514294433201 div: -3) = -14130386091738734504764811067.
@@ -13491,7 +13491,7 @@ testDivLpSn
 	self assert: (42391158275216203514294433203 div: -3) = -14130386091738734504764811067.
 	self assert: (42391158275216203514294433204 div: -3) = -14130386091738734504764811068! !
 
-!IntegerTest methodsFor: 'tests - division - div:' stamp: 'sqr 1/25/2014 14:36'!
+!IntegerTest methodsFor: 'tests - division - div:' stamp: 'sqr 25/Jan/2014 14:36:00'!
 testDivLpSp
 
 	self assert: (42391158275216203514294433201 div: 3) = 14130386091738734504764811067.
@@ -13499,21 +13499,21 @@ testDivLpSp
 	self assert: (42391158275216203514294433203 div: 3) = 14130386091738734504764811067.
 	self assert: (42391158275216203514294433204 div: 3) = 14130386091738734504764811068! !
 
-!IntegerTest methodsFor: 'tests - division - div:' stamp: 'sqr 1/25/2014 14:55'!
+!IntegerTest methodsFor: 'tests - division - div:' stamp: 'sqr 25/Jan/2014 14:55:00'!
 testDivSnLn
 
 	self assert: (0 div: -42391158275216203514294433201) = 0.
 	self assert: (-1 div: -42391158275216203514294433201) = 1.
 	self assert: (-14348907 div: -42391158275216203514294433201) = 1! !
 
-!IntegerTest methodsFor: 'tests - division - div:' stamp: 'sqr 1/25/2014 14:36'!
+!IntegerTest methodsFor: 'tests - division - div:' stamp: 'sqr 25/Jan/2014 14:36:00'!
 testDivSnLp
 
 	self assert: (0 div: 42391158275216203514294433201) = 0.
 	self assert: (-1 div: 42391158275216203514294433201) = -1.
 	self assert: (-14348907 div: 42391158275216203514294433201) = -1! !
 
-!IntegerTest methodsFor: 'tests - division - div:' stamp: 'sqr 1/25/2014 14:56'!
+!IntegerTest methodsFor: 'tests - division - div:' stamp: 'sqr 25/Jan/2014 14:56:00'!
 testDivSnSn
 
 	self assert: (0 div: -3) = 0.
@@ -13524,7 +13524,7 @@ testDivSnSn
 	self assert: (-12 div: -3) = 4.
 	self assert: (-13 div: -3) = 5! !
 
-!IntegerTest methodsFor: 'tests - division - div:' stamp: 'sqr 1/25/2014 14:36'!
+!IntegerTest methodsFor: 'tests - division - div:' stamp: 'sqr 25/Jan/2014 14:36:00'!
 testDivSnSp
 
 	self assert: (0 div: 3) = 0.
@@ -13535,21 +13535,21 @@ testDivSnSp
 	self assert: (-12 div: 3) = -4.
 	self assert: (-13 div: 3) = -5! !
 
-!IntegerTest methodsFor: 'tests - division - div:' stamp: 'sqr 1/25/2014 14:55'!
+!IntegerTest methodsFor: 'tests - division - div:' stamp: 'sqr 25/Jan/2014 14:55:00'!
 testDivSpLn
 
 	self assert: (0 div: -42391158275216203514294433201) = 0.
 	self assert: (1 div: -42391158275216203514294433201) = 0.
 	self assert: (14348907 div: -42391158275216203514294433201) = 0! !
 
-!IntegerTest methodsFor: 'tests - division - div:' stamp: 'sqr 1/25/2014 14:36'!
+!IntegerTest methodsFor: 'tests - division - div:' stamp: 'sqr 25/Jan/2014 14:36:00'!
 testDivSpLp
 
 	self assert: (0 div: 42391158275216203514294433201) = 0.
 	self assert: (1 div: 42391158275216203514294433201) = 0.
 	self assert: (14348907 div: 42391158275216203514294433201) = 0! !
 
-!IntegerTest methodsFor: 'tests - division - div:' stamp: 'sqr 1/25/2014 14:54'!
+!IntegerTest methodsFor: 'tests - division - div:' stamp: 'sqr 25/Jan/2014 14:54:00'!
 testDivSpSn
 
 	self assert: (0 div: -3) = 0.
@@ -13560,7 +13560,7 @@ testDivSpSn
 	self assert: (12 div: -3) = -4.
 	self assert: (13 div: -3) = -4! !
 
-!IntegerTest methodsFor: 'tests - division - div:' stamp: 'sqr 1/25/2014 14:36'!
+!IntegerTest methodsFor: 'tests - division - div:' stamp: 'sqr 25/Jan/2014 14:36:00'!
 testDivSpSp
 
 	self assert: (0 div: 3) = 0.
@@ -13571,7 +13571,7 @@ testDivSpSp
 	self assert: (12 div: 3) = 4.
 	self assert: (13 div: 3) = 4! !
 
-!IntegerTest methodsFor: 'tests - printing' stamp: 'jmv 1/9/2014 23:39'!
+!IntegerTest methodsFor: 'tests - printing' stamp: 'jmv 9/Jan/2014 23:39:00'!
 testIntegerPadding
 	"self run: #testIntegerPadding"
 
@@ -13611,7 +13611,7 @@ testIntegerPadding
 	self assert: (-2047 printStringBase: 16 length: 4 padded: true) = '-7FF'.
 	self assert: (-2047 printStringBase: 16 length: 19 padded: true) =  '-0000000000000007FF'! !
 
-!IntegerTest methodsFor: 'tests - printing' stamp: 'jmv 1/9/2014 22:54'!
+!IntegerTest methodsFor: 'tests - printing' stamp: 'jmv 9/Jan/2014 22:54:00'!
 testNegativeIntegerPrinting
 	"self run: #testnegativeIntegerPrinting"
 
@@ -13756,7 +13756,7 @@ testNegativeIntegerPrinting
 	self assert: (-106300512100105327644605138221229898724869759421181854980 storeStringBase: 36) = '-36rZYXWVUTSRQPONMLKJIHGFEDCBA9876543210'.
 	self assert: -106300512100105327644605138221229898724869759421181854980 storeStringHex = '-16r455D441E55A37239AB4C303189576071AF5578FFCA80504'.! !
 
-!IntegerTest methodsFor: 'tests - printing' stamp: 'nice 2/15/2008 22:23'!
+!IntegerTest methodsFor: 'tests - printing' stamp: 'nice 15/Feb/2008 22:23:00'!
 testNumberOfDigits
 	
 	2 to: 32 do: [:b |
@@ -13772,7 +13772,7 @@ testNumberOfDigits
 			self assert: (bRaisedToN negated - 1 numberOfDigitsInBase: b) = (n+1).]].
 ! !
 
-!IntegerTest methodsFor: 'tests - printing' stamp: 'jmv 1/9/2014 23:00'!
+!IntegerTest methodsFor: 'tests - printing' stamp: 'jmv 9/Jan/2014 23:00:00'!
 testPositiveIntegerPrinting
 	"self run: #testPositiveIntegerPrinting"
 
@@ -13920,13 +13920,13 @@ testPositiveIntegerPrinting
 	self assert: (106300512100105327644605138221229898724869759421181854980 storeStringBase: 36) = '36rZYXWVUTSRQPONMLKJIHGFEDCBA9876543210'.
 	self assert: 106300512100105327644605138221229898724869759421181854980 storeStringHex = '16r455D441E55A37239AB4C303189576071AF5578FFCA80504'.! !
 
-!IntegerTest methodsFor: 'tests - printing' stamp: 'jmv 10/3/2018 18:05:41'!
+!IntegerTest methodsFor: 'tests - printing' stamp: 'jmv 3/Oct/2018 18:05:41'!
 testPrintOnBaseShowRadix
 
 	self assert: (123 printStringRadix: 10) = '10r123'.
 	self assert: (123 printStringRadix: 8) = '8r173'.! !
 
-!IntegerTest methodsFor: 'tests - printing' stamp: 'nice 2/15/2008 22:31'!
+!IntegerTest methodsFor: 'tests - printing' stamp: 'nice 15/Feb/2008 22:31:00'!
 testPrintStringBase
 	
 	2 to: 32 do: [:b |
@@ -13940,7 +13940,7 @@ testPrintStringBase
 			self assert: (bRaisedToN negated printStringBase: b) = ('-1' , (String new: n withAll: $0))]].
 ! !
 
-!IntegerTest methodsFor: 'tests - printing' stamp: 'laza 3/30/2004 09:23'!
+!IntegerTest methodsFor: 'tests - printing' stamp: 'laza 30/Mar/2004 09:23:00'!
 testRomanPrinting
 	self assert: 0 printStringRoman = ''. "No symbol for zero"
 	self assert: 1 printStringRoman = 'I'.
@@ -14033,7 +14033,7 @@ testRomanPrinting
 	self assert: -10 printStringRoman = '-X'.
 ! !
 
-!IntegerTest methodsFor: 'tests - division - mod:' stamp: 'sqr 1/25/2014 14:57'!
+!IntegerTest methodsFor: 'tests - division - mod:' stamp: 'sqr 25/Jan/2014 14:57:00'!
 testModLnLn
 
 	self assert: (-42391158275216203514294433200 mod: -14130386091738734504764811067) = 1.
@@ -14043,7 +14043,7 @@ testModLnLn
 	self assert: (-8727963568087712425891397479476727340041449 mod: -79766443076872509863361) = 0.
 	self assert: (-8727963568087712425891397479476727340041450 mod: -79766443076872509863361) = 79766443076872509863360! !
 
-!IntegerTest methodsFor: 'tests - division - mod:' stamp: 'sqr 1/25/2014 14:35'!
+!IntegerTest methodsFor: 'tests - division - mod:' stamp: 'sqr 25/Jan/2014 14:35:00'!
 testModLnLp
 
 	self assert: (-42391158275216203514294433200 mod: 14130386091738734504764811067) = 1.
@@ -14053,7 +14053,7 @@ testModLnLp
 	self assert: (-8727963568087712425891397479476727340041449 mod: 79766443076872509863361) = 0.
 	self assert: (-8727963568087712425891397479476727340041450 mod: 79766443076872509863361) = 79766443076872509863360! !
 
-!IntegerTest methodsFor: 'tests - division - mod:' stamp: 'sqr 1/25/2014 15:05'!
+!IntegerTest methodsFor: 'tests - division - mod:' stamp: 'sqr 25/Jan/2014 15:05:00'!
 testModLnSn
 
 	self assert: (-42391158275216203514294433201 mod: -3) = 0.
@@ -14061,7 +14061,7 @@ testModLnSn
 	self assert: (-42391158275216203514294433203 mod: -3) = 1.
 	self assert: (-42391158275216203514294433204 mod: -3) = 0! !
 
-!IntegerTest methodsFor: 'tests - division - mod:' stamp: 'sqr 1/25/2014 14:35'!
+!IntegerTest methodsFor: 'tests - division - mod:' stamp: 'sqr 25/Jan/2014 14:35:00'!
 testModLnSp
 
 	self assert: (-42391158275216203514294433201 mod: 3) = 0.
@@ -14069,7 +14069,7 @@ testModLnSp
 	self assert: (-42391158275216203514294433203 mod: 3) = 1.
 	self assert: (-42391158275216203514294433204 mod: 3) = 0! !
 
-!IntegerTest methodsFor: 'tests - division - mod:' stamp: 'sqr 1/25/2014 15:05'!
+!IntegerTest methodsFor: 'tests - division - mod:' stamp: 'sqr 25/Jan/2014 15:05:00'!
 testModLpLn
 
 	self assert: (42391158275216203514294433200 mod: -14130386091738734504764811067) = 14130386091738734504764811066.
@@ -14079,7 +14079,7 @@ testModLpLn
 	self assert: (8727963568087712425891397479476727340041449 mod: -79766443076872509863361) = 0.
 	self assert: (8727963568087712425891397479476727340041450 mod: -79766443076872509863361) = 1! !
 
-!IntegerTest methodsFor: 'tests - division - mod:' stamp: 'sqr 1/25/2014 14:35'!
+!IntegerTest methodsFor: 'tests - division - mod:' stamp: 'sqr 25/Jan/2014 14:35:00'!
 testModLpLp
 
 	self assert: (42391158275216203514294433200 mod: 14130386091738734504764811067) = 14130386091738734504764811066.
@@ -14089,7 +14089,7 @@ testModLpLp
 	self assert: (8727963568087712425891397479476727340041449 mod: 79766443076872509863361) = 0.
 	self assert: (8727963568087712425891397479476727340041450 mod: 79766443076872509863361) = 1! !
 
-!IntegerTest methodsFor: 'tests - division - mod:' stamp: 'sqr 1/25/2014 15:04'!
+!IntegerTest methodsFor: 'tests - division - mod:' stamp: 'sqr 25/Jan/2014 15:04:00'!
 testModLpSn
 
 	self assert: (42391158275216203514294433201 mod: -3) = 0.
@@ -14097,7 +14097,7 @@ testModLpSn
 	self assert: (42391158275216203514294433203 mod: -3) = 2.
 	self assert: (42391158275216203514294433204 mod: -3) = 0! !
 
-!IntegerTest methodsFor: 'tests - division - mod:' stamp: 'sqr 1/25/2014 14:35'!
+!IntegerTest methodsFor: 'tests - division - mod:' stamp: 'sqr 25/Jan/2014 14:35:00'!
 testModLpSp
 
 	self assert: (42391158275216203514294433201 mod: 3) = 0.
@@ -14105,21 +14105,21 @@ testModLpSp
 	self assert: (42391158275216203514294433203 mod: 3) = 2.
 	self assert: (42391158275216203514294433204 mod: 3) = 0! !
 
-!IntegerTest methodsFor: 'tests - division - mod:' stamp: 'sqr 1/25/2014 15:04'!
+!IntegerTest methodsFor: 'tests - division - mod:' stamp: 'sqr 25/Jan/2014 15:04:00'!
 testModSnLn
 
 	self assert: (0 mod: -42391158275216203514294433201) = 0.
 	self assert: (-1 mod: -42391158275216203514294433201) = 42391158275216203514294433200.
 	self assert: (-14348907 mod: -42391158275216203514294433201) = 42391158275216203514280084294! !
 
-!IntegerTest methodsFor: 'tests - division - mod:' stamp: 'sqr 1/25/2014 14:35'!
+!IntegerTest methodsFor: 'tests - division - mod:' stamp: 'sqr 25/Jan/2014 14:35:00'!
 testModSnLp
 
 	self assert: (0 mod: 42391158275216203514294433201) = 0.
 	self assert: (-1 mod: 42391158275216203514294433201) =  42391158275216203514294433200.
 	self assert: (-14348907 mod: 42391158275216203514294433201) = 42391158275216203514280084294! !
 
-!IntegerTest methodsFor: 'tests - division - mod:' stamp: 'sqr 1/25/2014 15:00'!
+!IntegerTest methodsFor: 'tests - division - mod:' stamp: 'sqr 25/Jan/2014 15:00:00'!
 testModSnSn
 
 	self assert: (0 mod: -3) = 0.
@@ -14130,7 +14130,7 @@ testModSnSn
 	self assert: (-12 mod: -3) = 0.
 	self assert: (-13 mod: -3) = 2! !
 
-!IntegerTest methodsFor: 'tests - division - mod:' stamp: 'sqr 1/25/2014 14:59'!
+!IntegerTest methodsFor: 'tests - division - mod:' stamp: 'sqr 25/Jan/2014 14:59:00'!
 testModSnSp
 
 	self assert: (0 mod: 3) = 0.
@@ -14141,21 +14141,21 @@ testModSnSp
 	self assert: (-12 mod: 3) = 0.
 	self assert: (-13 mod: 3) = 2! !
 
-!IntegerTest methodsFor: 'tests - division - mod:' stamp: 'sqr 1/25/2014 15:05'!
+!IntegerTest methodsFor: 'tests - division - mod:' stamp: 'sqr 25/Jan/2014 15:05:00'!
 testModSpLn
 
 	self assert: (0 mod: -42391158275216203514294433201) = 0.
 	self assert: (1 mod: -42391158275216203514294433201) = 1.
 	self assert: (14348907 mod: -42391158275216203514294433201) = 14348907! !
 
-!IntegerTest methodsFor: 'tests - division - mod:' stamp: 'sqr 1/25/2014 14:35'!
+!IntegerTest methodsFor: 'tests - division - mod:' stamp: 'sqr 25/Jan/2014 14:35:00'!
 testModSpLp
 
 	self assert: (0 mod: 42391158275216203514294433201) = 0.
 	self assert: (1 mod: 42391158275216203514294433201) = 1.
 	self assert: (14348907 mod: 42391158275216203514294433201) = 14348907! !
 
-!IntegerTest methodsFor: 'tests - division - mod:' stamp: 'sqr 1/25/2014 14:58'!
+!IntegerTest methodsFor: 'tests - division - mod:' stamp: 'sqr 25/Jan/2014 14:58:00'!
 testModSpSn
 
 	self assert: (0 mod: -3) = 0.
@@ -14166,7 +14166,7 @@ testModSpSn
 	self assert: (12 mod: -3) = 0.
 	self assert: (13 mod: -3) = 1! !
 
-!IntegerTest methodsFor: 'tests - division - mod:' stamp: 'sqr 1/25/2014 14:35'!
+!IntegerTest methodsFor: 'tests - division - mod:' stamp: 'sqr 25/Jan/2014 14:35:00'!
 testModSpSp
 
 	self assert: (0 mod: 3) = 0.
@@ -14177,7 +14177,7 @@ testModSpSp
 	self assert: (12 mod: 3) = 0.
 	self assert: (13 mod: 3) = 1! !
 
-!IntegerTest methodsFor: 'mathematical functions' stamp: 'jmv 10/15/2016 10:58:02'!
+!IntegerTest methodsFor: 'mathematical functions' stamp: 'jmv 15/Oct/2016 10:58:02'!
 testNthRootExactnessForHugeValue
 	"
 	self new testNthRootExactnessForHugeValue
@@ -14187,7 +14187,7 @@ testNthRootExactnessForHugeValue
         self assert: ((10 raisedTo: 600) + 1 nthRoot: 300) = 100.0.
         self assert: (((10 raisedTo: 600) + 1 nthRoot: 300) isKindOf: Float)! !
 
-!IntegerTest methodsFor: 'mathematical functions' stamp: 'jmv 10/15/2016 10:57:28'!
+!IntegerTest methodsFor: 'mathematical functions' stamp: 'jmv 15/Oct/2016 10:57:28'!
 testNthRootImmuneToDoubleRounding
 "
 self new testNthRootImmuneToDoubleRounding
@@ -14210,7 +14210,7 @@ self new testNthRootImmuneToDoubleRounding
          highPrecisionRoot := (crafted << (exponent squared * Float precision * 4) nthRootRounded: exponent) / (1 << (exponent * Float precision * 4)).
          self assert: (root asFraction - highPrecisionRoot) abs < (root successor asFraction - highPrecisionRoot) abs.! !
 
-!IntegerTest methodsFor: 'mathematical functions' stamp: 'jmv 5/24/2024 15:14:56'!
+!IntegerTest methodsFor: 'mathematical functions' stamp: 'jmv 24/May/2024 15:14:56'!
 testSinCosForHugeValues1
 	| bigNum equivalentFloatInTwoPiRange |
 
@@ -14228,7 +14228,7 @@ testSinCosForHugeValues1
 		self assert: (bigNum cos -equivalentFloatInTwoPiRange cos) abs < 1e-4 ].
 ! !
 
-!IntegerTest methodsFor: 'mathematical functions' stamp: 'jmv 5/24/2024 15:14:48'!
+!IntegerTest methodsFor: 'mathematical functions' stamp: 'jmv 24/May/2024 15:14:48'!
 testSinCosForHugeValues2
 	| bigNum equivalentFloatInTwoPiRange |
 
@@ -14246,7 +14246,7 @@ testSinCosForHugeValues2
 		self assert: (bigNum cos -equivalentFloatInTwoPiRange cos) abs < 1e-4 ].
 ! !
 
-!IntegerTest methodsFor: 'tests - division - quo:' stamp: 'sqr 1/25/2014 14:36'!
+!IntegerTest methodsFor: 'tests - division - quo:' stamp: 'sqr 25/Jan/2014 14:36:00'!
 testQuoLnLn
 
 	self assert: (-42391158275216203514294433200 quo: -14130386091738734504764811067) = 2.
@@ -14256,7 +14256,7 @@ testQuoLnLn
 	self assert: (-8727963568087712425891397479476727340041449 quo: -79766443076872509863361) = 109418989131512359209.
 	self assert: (-8727963568087712425891397479476727340041450 quo: -79766443076872509863361) = 109418989131512359209! !
 
-!IntegerTest methodsFor: 'tests - division - quo:' stamp: 'sqr 1/25/2014 14:51'!
+!IntegerTest methodsFor: 'tests - division - quo:' stamp: 'sqr 25/Jan/2014 14:51:00'!
 testQuoLnLp
 
 	self assert: (-42391158275216203514294433200 quo: 14130386091738734504764811067) = -2.
@@ -14266,7 +14266,7 @@ testQuoLnLp
 	self assert: (-8727963568087712425891397479476727340041449 quo: 79766443076872509863361) = -109418989131512359209.
 	self assert: (-8727963568087712425891397479476727340041450 quo: 79766443076872509863361) = -109418989131512359209! !
 
-!IntegerTest methodsFor: 'tests - division - quo:' stamp: 'sqr 1/25/2014 14:33'!
+!IntegerTest methodsFor: 'tests - division - quo:' stamp: 'sqr 25/Jan/2014 14:33:00'!
 testQuoLnSn
 
 	self assert: (-42391158275216203514294433201 quo: -3) = 14130386091738734504764811067.
@@ -14274,7 +14274,7 @@ testQuoLnSn
 	self assert: (-42391158275216203514294433203 quo: -3) = 14130386091738734504764811067.
 	self assert: (-42391158275216203514294433204 quo: -3) = 14130386091738734504764811068! !
 
-!IntegerTest methodsFor: 'tests - division - quo:' stamp: 'sqr 1/25/2014 14:51'!
+!IntegerTest methodsFor: 'tests - division - quo:' stamp: 'sqr 25/Jan/2014 14:51:00'!
 testQuoLnSp
 
 	self assert: (-42391158275216203514294433201 quo: 3) = -14130386091738734504764811067.
@@ -14282,7 +14282,7 @@ testQuoLnSp
 	self assert: (-42391158275216203514294433203 quo: 3) = -14130386091738734504764811067.
 	self assert: (-42391158275216203514294433204 quo: 3) = -14130386091738734504764811068! !
 
-!IntegerTest methodsFor: 'tests - division - quo:' stamp: 'sqr 1/25/2014 14:52'!
+!IntegerTest methodsFor: 'tests - division - quo:' stamp: 'sqr 25/Jan/2014 14:52:00'!
 testQuoLpLn
 
 	self assert: (42391158275216203514294433200 quo: -14130386091738734504764811067) = -2.
@@ -14292,7 +14292,7 @@ testQuoLpLn
 	self assert: (8727963568087712425891397479476727340041449 quo: -79766443076872509863361) = -109418989131512359209.
 	self assert: (8727963568087712425891397479476727340041450 quo: -79766443076872509863361) = -109418989131512359209! !
 
-!IntegerTest methodsFor: 'tests - division - quo:' stamp: 'sqr 1/25/2014 14:33'!
+!IntegerTest methodsFor: 'tests - division - quo:' stamp: 'sqr 25/Jan/2014 14:33:00'!
 testQuoLpLp
 
 	self assert: (42391158275216203514294433200 quo: 14130386091738734504764811067) = 2.
@@ -14302,7 +14302,7 @@ testQuoLpLp
 	self assert: (8727963568087712425891397479476727340041449 quo: 79766443076872509863361) = 109418989131512359209.
 	self assert: (8727963568087712425891397479476727340041450 quo: 79766443076872509863361) = 109418989131512359209! !
 
-!IntegerTest methodsFor: 'tests - division - quo:' stamp: 'sqr 1/25/2014 14:50'!
+!IntegerTest methodsFor: 'tests - division - quo:' stamp: 'sqr 25/Jan/2014 14:50:00'!
 testQuoLpSn
 
 	self assert: (42391158275216203514294433201 quo: -3) = -14130386091738734504764811067.
@@ -14310,7 +14310,7 @@ testQuoLpSn
 	self assert: (42391158275216203514294433203 quo: -3) = -14130386091738734504764811067.
 	self assert: (42391158275216203514294433204 quo: -3) = -14130386091738734504764811068! !
 
-!IntegerTest methodsFor: 'tests - division - quo:' stamp: 'sqr 1/25/2014 14:33'!
+!IntegerTest methodsFor: 'tests - division - quo:' stamp: 'sqr 25/Jan/2014 14:33:00'!
 testQuoLpSp
 
 	self assert: (42391158275216203514294433201 quo: 3) = 14130386091738734504764811067.
@@ -14318,21 +14318,21 @@ testQuoLpSp
 	self assert: (42391158275216203514294433203 quo: 3) = 14130386091738734504764811067.
 	self assert: (42391158275216203514294433204 quo: 3) = 14130386091738734504764811068! !
 
-!IntegerTest methodsFor: 'tests - division - quo:' stamp: 'sqr 1/25/2014 14:33'!
+!IntegerTest methodsFor: 'tests - division - quo:' stamp: 'sqr 25/Jan/2014 14:33:00'!
 testQuoSnLn
 
 	self assert: (0 quo: -42391158275216203514294433201) = 0.
 	self assert: (-1 quo: -42391158275216203514294433201) = 0.
 	self assert: (-14348907 quo: -42391158275216203514294433201) = 0! !
 
-!IntegerTest methodsFor: 'tests - division - quo:' stamp: 'sqr 1/25/2014 14:50'!
+!IntegerTest methodsFor: 'tests - division - quo:' stamp: 'sqr 25/Jan/2014 14:50:00'!
 testQuoSnLp
 
 	self assert: (0 quo: 42391158275216203514294433201) = 0.
 	self assert: (-1 quo: 42391158275216203514294433201) = 0.
 	self assert: (-14348907 quo: 42391158275216203514294433201) = 0! !
 
-!IntegerTest methodsFor: 'tests - division - quo:' stamp: 'sqr 1/25/2014 14:33'!
+!IntegerTest methodsFor: 'tests - division - quo:' stamp: 'sqr 25/Jan/2014 14:33:00'!
 testQuoSnSn
 
 	self assert: (0 quo: -3) = 0.
@@ -14343,7 +14343,7 @@ testQuoSnSn
 	self assert: (-12 quo: -3) = 4.
 	self assert: (-13 quo: -3) = 4! !
 
-!IntegerTest methodsFor: 'tests - division - quo:' stamp: 'sqr 1/25/2014 14:51'!
+!IntegerTest methodsFor: 'tests - division - quo:' stamp: 'sqr 25/Jan/2014 14:51:00'!
 testQuoSnSp
 
 	self assert: (0 quo: 3) = 0.
@@ -14354,21 +14354,21 @@ testQuoSnSp
 	self assert: (-12 quo: 3) = -4.
 	self assert: (-13 quo: 3) = -4! !
 
-!IntegerTest methodsFor: 'tests - division - quo:' stamp: 'sqr 1/25/2014 14:52'!
+!IntegerTest methodsFor: 'tests - division - quo:' stamp: 'sqr 25/Jan/2014 14:52:00'!
 testQuoSpLn
 
 	self assert: (0 quo: -42391158275216203514294433201) = 0.
 	self assert: (1 quo: -42391158275216203514294433201) = 0.
 	self assert: (14348907 quo: -42391158275216203514294433201) = 0! !
 
-!IntegerTest methodsFor: 'tests - division - quo:' stamp: 'sqr 1/25/2014 14:33'!
+!IntegerTest methodsFor: 'tests - division - quo:' stamp: 'sqr 25/Jan/2014 14:33:00'!
 testQuoSpLp
 
 	self assert: (0 quo: 42391158275216203514294433201) = 0.
 	self assert: (1 quo: 42391158275216203514294433201) = 0.
 	self assert: (14348907 quo: 42391158275216203514294433201) = 0! !
 
-!IntegerTest methodsFor: 'tests - division - quo:' stamp: 'sqr 1/25/2014 14:50'!
+!IntegerTest methodsFor: 'tests - division - quo:' stamp: 'sqr 25/Jan/2014 14:50:00'!
 testQuoSpSn
 
 	self assert: (0 quo: -3) = 0.
@@ -14379,7 +14379,7 @@ testQuoSpSn
 	self assert: (12 quo: -3) = -4.
 	self assert: (13 quo: -3) = -4! !
 
-!IntegerTest methodsFor: 'tests - division - quo:' stamp: 'sqr 1/25/2014 14:33'!
+!IntegerTest methodsFor: 'tests - division - quo:' stamp: 'sqr 25/Jan/2014 14:33:00'!
 testQuoSpSp
 
 	self assert: (0 quo: 3) = 0.
@@ -14390,7 +14390,7 @@ testQuoSpSp
 	self assert: (12 quo: 3) = 4.
 	self assert: (13 quo: 3) = 4! !
 
-!IntegerTest methodsFor: 'tests - division - rem:' stamp: 'sqr 1/25/2014 14:35'!
+!IntegerTest methodsFor: 'tests - division - rem:' stamp: 'sqr 25/Jan/2014 14:35:00'!
 testRemLnLn
 
 	self assert: (-42391158275216203514294433200 rem: -14130386091738734504764811067) = -14130386091738734504764811066.
@@ -14400,7 +14400,7 @@ testRemLnLn
 	self assert: (-8727963568087712425891397479476727340041449 rem: -79766443076872509863361) = 0.
 	self assert: (-8727963568087712425891397479476727340041450 rem: -79766443076872509863361) = -1! !
 
-!IntegerTest methodsFor: 'tests - division - rem:' stamp: 'sqr 1/25/2014 14:47'!
+!IntegerTest methodsFor: 'tests - division - rem:' stamp: 'sqr 25/Jan/2014 14:47:00'!
 testRemLnLp
 
 	self assert: (-42391158275216203514294433200 rem: 14130386091738734504764811067) = -14130386091738734504764811066.
@@ -14410,7 +14410,7 @@ testRemLnLp
 	self assert: (-8727963568087712425891397479476727340041449 rem: 79766443076872509863361) = 0.
 	self assert: (-8727963568087712425891397479476727340041450 rem: 79766443076872509863361) = -1! !
 
-!IntegerTest methodsFor: 'tests - division - rem:' stamp: 'sqr 1/25/2014 14:35'!
+!IntegerTest methodsFor: 'tests - division - rem:' stamp: 'sqr 25/Jan/2014 14:35:00'!
 testRemLnSn
 
 	self assert: (-42391158275216203514294433201 rem: -3) = 0.
@@ -14418,7 +14418,7 @@ testRemLnSn
 	self assert: (-42391158275216203514294433203 rem: -3) = -2.
 	self assert: (-42391158275216203514294433204 rem: -3) = 0! !
 
-!IntegerTest methodsFor: 'tests - division - rem:' stamp: 'sqr 1/25/2014 14:49'!
+!IntegerTest methodsFor: 'tests - division - rem:' stamp: 'sqr 25/Jan/2014 14:49:00'!
 testRemLnSp
 
 	self assert: (-42391158275216203514294433201 rem: 3) = 0.
@@ -14426,7 +14426,7 @@ testRemLnSp
 	self assert: (-42391158275216203514294433203 rem: 3) = -2.
 	self assert: (-42391158275216203514294433204 rem: 3) = 0! !
 
-!IntegerTest methodsFor: 'tests - division - rem:' stamp: 'sqr 1/25/2014 14:48'!
+!IntegerTest methodsFor: 'tests - division - rem:' stamp: 'sqr 25/Jan/2014 14:48:00'!
 testRemLpLn
 
 	self assert: (42391158275216203514294433200 rem: -14130386091738734504764811067) = 14130386091738734504764811066.
@@ -14436,7 +14436,7 @@ testRemLpLn
 	self assert: (8727963568087712425891397479476727340041449 rem: -79766443076872509863361) = 0.
 	self assert: (8727963568087712425891397479476727340041450 rem: -79766443076872509863361) = 1! !
 
-!IntegerTest methodsFor: 'tests - division - rem:' stamp: 'sqr 1/25/2014 14:35'!
+!IntegerTest methodsFor: 'tests - division - rem:' stamp: 'sqr 25/Jan/2014 14:35:00'!
 testRemLpLp
 
 	self assert: (42391158275216203514294433200 rem: 14130386091738734504764811067) = 14130386091738734504764811066.
@@ -14446,7 +14446,7 @@ testRemLpLp
 	self assert: (8727963568087712425891397479476727340041449 rem: 79766443076872509863361) = 0.
 	self assert: (8727963568087712425891397479476727340041450 rem: 79766443076872509863361) = 1! !
 
-!IntegerTest methodsFor: 'tests - division - rem:' stamp: 'sqr 1/25/2014 14:49'!
+!IntegerTest methodsFor: 'tests - division - rem:' stamp: 'sqr 25/Jan/2014 14:49:00'!
 testRemLpSn
 
 	self assert: (42391158275216203514294433201 rem: -3) = 0.
@@ -14454,7 +14454,7 @@ testRemLpSn
 	self assert: (42391158275216203514294433203 rem: -3) = 2.
 	self assert: (42391158275216203514294433204 rem: -3) = 0! !
 
-!IntegerTest methodsFor: 'tests - division - rem:' stamp: 'sqr 1/25/2014 14:35'!
+!IntegerTest methodsFor: 'tests - division - rem:' stamp: 'sqr 25/Jan/2014 14:35:00'!
 testRemLpSp
 
 	self assert: (42391158275216203514294433201 rem: 3) = 0.
@@ -14462,21 +14462,21 @@ testRemLpSp
 	self assert: (42391158275216203514294433203 rem: 3) = 2.
 	self assert: (42391158275216203514294433204 rem: 3) = 0! !
 
-!IntegerTest methodsFor: 'tests - division - rem:' stamp: 'sqr 1/25/2014 14:35'!
+!IntegerTest methodsFor: 'tests - division - rem:' stamp: 'sqr 25/Jan/2014 14:35:00'!
 testRemSnLn
 
 	self assert: (0 rem: -42391158275216203514294433201) = 0.
 	self assert: (-1 rem: -42391158275216203514294433201) = -1.
 	self assert: (-14348907 rem: -42391158275216203514294433201) = -14348907! !
 
-!IntegerTest methodsFor: 'tests - division - rem:' stamp: 'sqr 1/25/2014 14:47'!
+!IntegerTest methodsFor: 'tests - division - rem:' stamp: 'sqr 25/Jan/2014 14:47:00'!
 testRemSnLp
 
 	self assert: (0 rem: 42391158275216203514294433201) = 0.
 	self assert: (-1 rem: 42391158275216203514294433201) = -1.
 	self assert: (-14348907 rem: 42391158275216203514294433201) = -14348907! !
 
-!IntegerTest methodsFor: 'tests - division - rem:' stamp: 'sqr 1/25/2014 14:35'!
+!IntegerTest methodsFor: 'tests - division - rem:' stamp: 'sqr 25/Jan/2014 14:35:00'!
 testRemSnSn
 
 	self assert: (0 rem: -3) = 0.
@@ -14487,7 +14487,7 @@ testRemSnSn
 	self assert: (-12 rem: -3) = 0.
 	self assert: (-13 rem: -3) = -1! !
 
-!IntegerTest methodsFor: 'tests - division - rem:' stamp: 'sqr 1/25/2014 14:37'!
+!IntegerTest methodsFor: 'tests - division - rem:' stamp: 'sqr 25/Jan/2014 14:37:00'!
 testRemSnSp
 
 	self assert: (0 rem: 3) = 0.
@@ -14498,21 +14498,21 @@ testRemSnSp
 	self assert: (-12 rem: 3) = 0.
 	self assert: (-13 rem: 3) = -1! !
 
-!IntegerTest methodsFor: 'tests - division - rem:' stamp: 'sqr 1/25/2014 14:38'!
+!IntegerTest methodsFor: 'tests - division - rem:' stamp: 'sqr 25/Jan/2014 14:38:00'!
 testRemSpLn
 
 	self assert: (0 rem: -42391158275216203514294433201) = 0.
 	self assert: (1 rem: -42391158275216203514294433201) = 1.
 	self assert: (14348907 rem: -42391158275216203514294433201) = 14348907! !
 
-!IntegerTest methodsFor: 'tests - division - rem:' stamp: 'sqr 1/25/2014 14:35'!
+!IntegerTest methodsFor: 'tests - division - rem:' stamp: 'sqr 25/Jan/2014 14:35:00'!
 testRemSpLp
 
 	self assert: (0 rem: 42391158275216203514294433201) = 0.
 	self assert: (1 rem: 42391158275216203514294433201) = 1.
 	self assert: (14348907 rem: 42391158275216203514294433201) = 14348907! !
 
-!IntegerTest methodsFor: 'tests - division - rem:' stamp: 'sqr 1/25/2014 14:48'!
+!IntegerTest methodsFor: 'tests - division - rem:' stamp: 'sqr 25/Jan/2014 14:48:00'!
 testRemSpSn
 
 	self assert: (0 rem: -3) = 0.
@@ -14523,7 +14523,7 @@ testRemSpSn
 	self assert: (12 rem: -3) = 0.
 	self assert: (13 rem: -3) = 1! !
 
-!IntegerTest methodsFor: 'tests - division - rem:' stamp: 'sqr 1/25/2014 14:35'!
+!IntegerTest methodsFor: 'tests - division - rem:' stamp: 'sqr 25/Jan/2014 14:35:00'!
 testRemSpSp
 
 	self assert: (0 rem: 3) = 0.
@@ -14534,7 +14534,7 @@ testRemSpSp
 	self assert: (12 rem: 3) = 0.
 	self assert: (13 rem: 3) = 1! !
 
-!IntegerTest methodsFor: 'tests - division - //' stamp: 'sqr 1/25/2014 13:56'!
+!IntegerTest methodsFor: 'tests - division - //' stamp: 'sqr 25/Jan/2014 13:56:00'!
 testSlashSlashLnLn
 
 	self assert: -42391158275216203514294433200 // -14130386091738734504764811067 = 2.
@@ -14544,7 +14544,7 @@ testSlashSlashLnLn
 	self assert: -8727963568087712425891397479476727340041449 // -79766443076872509863361 = 109418989131512359209.
 	self assert: -8727963568087712425891397479476727340041450 // -79766443076872509863361 = 109418989131512359209! !
 
-!IntegerTest methodsFor: 'tests - division - //' stamp: 'sqr 1/25/2014 13:47'!
+!IntegerTest methodsFor: 'tests - division - //' stamp: 'sqr 25/Jan/2014 13:47:00'!
 testSlashSlashLnLp
 
 	self assert: -42391158275216203514294433200 // 14130386091738734504764811067 = -3.
@@ -14554,7 +14554,7 @@ testSlashSlashLnLp
 	self assert: -8727963568087712425891397479476727340041449 // 79766443076872509863361 = -109418989131512359209.
 	self assert: -8727963568087712425891397479476727340041450 // 79766443076872509863361 = -109418989131512359210! !
 
-!IntegerTest methodsFor: 'tests - division - //' stamp: 'sqr 1/25/2014 13:54'!
+!IntegerTest methodsFor: 'tests - division - //' stamp: 'sqr 25/Jan/2014 13:54:00'!
 testSlashSlashLnSn
 
 	self assert: -42391158275216203514294433201 // -3 = 14130386091738734504764811067.
@@ -14562,7 +14562,7 @@ testSlashSlashLnSn
 	self assert: -42391158275216203514294433203 // -3 = 14130386091738734504764811067.
 	self assert: -42391158275216203514294433204 // -3 = 14130386091738734504764811068! !
 
-!IntegerTest methodsFor: 'tests - division - //' stamp: 'sqr 1/25/2014 13:45'!
+!IntegerTest methodsFor: 'tests - division - //' stamp: 'sqr 25/Jan/2014 13:45:00'!
 testSlashSlashLnSp
 
 	self assert: -42391158275216203514294433201 // 3 = -14130386091738734504764811067.
@@ -14570,7 +14570,7 @@ testSlashSlashLnSp
 	self assert: -42391158275216203514294433203 // 3 = -14130386091738734504764811068.
 	self assert: -42391158275216203514294433204 // 3 = -14130386091738734504764811068! !
 
-!IntegerTest methodsFor: 'tests - division - //' stamp: 'sqr 1/25/2014 13:54'!
+!IntegerTest methodsFor: 'tests - division - //' stamp: 'sqr 25/Jan/2014 13:54:00'!
 testSlashSlashLpLn
 
 	self assert: 42391158275216203514294433200 // -14130386091738734504764811067 = -3.
@@ -14580,7 +14580,7 @@ testSlashSlashLpLn
 	self assert: 8727963568087712425891397479476727340041449 // -79766443076872509863361 = -109418989131512359209.
 	self assert: 8727963568087712425891397479476727340041450 // -79766443076872509863361 = -109418989131512359210! !
 
-!IntegerTest methodsFor: 'tests - division - //' stamp: 'sqr 1/25/2014 13:52'!
+!IntegerTest methodsFor: 'tests - division - //' stamp: 'sqr 25/Jan/2014 13:52:00'!
 testSlashSlashLpSn
 
 	self assert: 42391158275216203514294433201 // -3 = -14130386091738734504764811067.
@@ -14588,21 +14588,21 @@ testSlashSlashLpSn
 	self assert: 42391158275216203514294433203 // -3 = -14130386091738734504764811068.
 	self assert: 42391158275216203514294433204 // -3 = -14130386091738734504764811068! !
 
-!IntegerTest methodsFor: 'tests - division - //' stamp: 'sqr 1/25/2014 13:52'!
+!IntegerTest methodsFor: 'tests - division - //' stamp: 'sqr 25/Jan/2014 13:52:00'!
 testSlashSlashSnLn
 
 	self assert: 0 // -42391158275216203514294433201 = 0.
 	self assert: -1 // -42391158275216203514294433201 = 0.
 	self assert: -14348907 // -42391158275216203514294433201 = 0! !
 
-!IntegerTest methodsFor: 'tests - division - //' stamp: 'sqr 1/25/2014 13:44'!
+!IntegerTest methodsFor: 'tests - division - //' stamp: 'sqr 25/Jan/2014 13:44:00'!
 testSlashSlashSnLp
 
 	self assert: 0 // 42391158275216203514294433201 = 0.
 	self assert: -1 // 42391158275216203514294433201 = -1.
 	self assert: -14348907 // 42391158275216203514294433201 = -1! !
 
-!IntegerTest methodsFor: 'tests - division - //' stamp: 'sqr 1/25/2014 13:51'!
+!IntegerTest methodsFor: 'tests - division - //' stamp: 'sqr 25/Jan/2014 13:51:00'!
 testSlashSlashSnSn
 
 	self assert: 0 // -3 = 0.
@@ -14613,7 +14613,7 @@ testSlashSlashSnSn
 	self assert: -12 // -3 = 4.
 	self assert: -13 // -3 = 4! !
 
-!IntegerTest methodsFor: 'tests - division - //' stamp: 'sqr 1/25/2014 13:42'!
+!IntegerTest methodsFor: 'tests - division - //' stamp: 'sqr 25/Jan/2014 13:42:00'!
 testSlashSlashSnSp
 
 	self assert: 0 // 3 = 0.
@@ -14624,21 +14624,21 @@ testSlashSlashSnSp
 	self assert: -12 // 3 = -4.
 	self assert: -13 // 3 = -5! !
 
-!IntegerTest methodsFor: 'tests - division - //' stamp: 'sqr 1/25/2014 13:51'!
+!IntegerTest methodsFor: 'tests - division - //' stamp: 'sqr 25/Jan/2014 13:51:00'!
 testSlashSlashSpLn
 
 	self assert: 0 // -42391158275216203514294433201 = 0.
 	self assert: 1 // -42391158275216203514294433201 = -1.
 	self assert: 14348907 // -42391158275216203514294433201 = -1! !
 
-!IntegerTest methodsFor: 'tests - division - //' stamp: 'sqr 1/25/2014 13:44'!
+!IntegerTest methodsFor: 'tests - division - //' stamp: 'sqr 25/Jan/2014 13:44:00'!
 testSlashSlashSpLp
 
 	self assert: 0 // 42391158275216203514294433201 = 0.
 	self assert: 1 // 42391158275216203514294433201 = 0.
 	self assert: 14348907 // 42391158275216203514294433201 = 0! !
 
-!IntegerTest methodsFor: 'tests - division - //' stamp: 'sqr 1/25/2014 13:50'!
+!IntegerTest methodsFor: 'tests - division - //' stamp: 'sqr 25/Jan/2014 13:50:00'!
 testSlashSlashSpSn
 
 	self assert: 0 // -3 = 0.
@@ -14649,7 +14649,7 @@ testSlashSlashSpSn
 	self assert: 12 // -3 = -4.
 	self assert: 13 // -3 = -5! !
 
-!IntegerTest methodsFor: 'tests - division - //' stamp: 'sqr 1/25/2014 13:42'!
+!IntegerTest methodsFor: 'tests - division - //' stamp: 'sqr 25/Jan/2014 13:42:00'!
 testSlashSlashSpSp
 
 	self assert: 0 // 3 = 0.
@@ -14660,7 +14660,7 @@ testSlashSlashSpSp
 	self assert: 12 // 3 = 4.
 	self assert: 13 // 3 = 4! !
 
-!IntegerTest methodsFor: 'tests - division' stamp: 'sqr 1/25/2014 13:38'!
+!IntegerTest methodsFor: 'tests - division' stamp: 'sqr 25/Jan/2014 13:38:00'!
 testSlashSlashLpLp
 
 	self assert: 42391158275216203514294433200 // 14130386091738734504764811067 = 2.
@@ -14670,7 +14670,7 @@ testSlashSlashLpLp
 	self assert: 8727963568087712425891397479476727340041449 // 79766443076872509863361 = 109418989131512359209.
 	self assert: 8727963568087712425891397479476727340041450 // 79766443076872509863361 = 109418989131512359209! !
 
-!IntegerTest methodsFor: 'tests - division' stamp: 'sqr 1/25/2014 13:33'!
+!IntegerTest methodsFor: 'tests - division' stamp: 'sqr 25/Jan/2014 13:33:00'!
 testSlashSlashLpSp
 
 	self assert: 42391158275216203514294433201 // 3 = 14130386091738734504764811067.
@@ -14678,7 +14678,7 @@ testSlashSlashLpSp
 	self assert: 42391158275216203514294433203 // 3 = 14130386091738734504764811067.
 	self assert: 42391158275216203514294433204 // 3 = 14130386091738734504764811068! !
 
-!IntegerTest methodsFor: 'as yet unclassified' stamp: 'jmv 9/10/2018 10:28:17'!
+!IntegerTest methodsFor: 'as yet unclassified' stamp: 'jmv 10/Sep/2018 10:28:17'!
 test01readFromWithEmptyStringRaisesAnError
 	|input|
 	
@@ -14686,7 +14686,7 @@ test01readFromWithEmptyStringRaisesAnError
 
 	self should: [ Integer readFrom: input ] raise: Error description: 'At least one digit expected here'! !
 
-!IntegerTest methodsFor: 'as yet unclassified' stamp: 'jmv 9/10/2018 10:28:20'!
+!IntegerTest methodsFor: 'as yet unclassified' stamp: 'jmv 10/Sep/2018 10:28:20'!
 test02readFromWithInvalidStringRaisesAnError
 	| input |
 	
@@ -14694,7 +14694,7 @@ test02readFromWithInvalidStringRaisesAnError
 
 	self should: [ Integer readFrom: input ] raise: Error description: 'At least one digit expected here'! !
 
-!IntegerTest methodsFor: 'gcd and lcm' stamp: 'len 6/27/2019 10:23:39'!
+!IntegerTest methodsFor: 'gcd and lcm' stamp: 'len 27/Jun/2019 10:23:39'!
 testGCDAndLCM
 	| a b c |
 	a _ (-20 to: 20) atRandom.
@@ -14704,11 +14704,11 @@ testGCDAndLCM
 	self assert: (a gcd: (b lcm: c)) = ((a gcd: b) lcm: (a gcd: c)).
 	self assert: (a lcm: (b gcd: c)) = ((a lcm: b) gcd: (a lcm: c))! !
 
-!IntegerTest methodsFor: 'gcd and lcm' stamp: 'len 6/27/2019 10:25:17'!
+!IntegerTest methodsFor: 'gcd and lcm' stamp: 'len 27/Jun/2019 10:25:17'!
 testGCDExample
 	self assert: (120 gcd: 70) = 10! !
 
-!IntegerTest methodsFor: 'gcd and lcm' stamp: 'jmv 1/27/2025 10:04:37'!
+!IntegerTest methodsFor: 'gcd and lcm' stamp: 'jmv 27/Jan/2025 10:04:37'!
 testGCDProperties
 	| a b c |
 	[
@@ -14726,11 +14726,11 @@ testGCDProperties
 	self assert: (a + (b*c) gcd: b) = (a gcd: b).
 	self assert: (a*c gcd: b*c) = ((a gcd: b) * c abs)! !
 
-!IntegerTest methodsFor: 'gcd and lcm' stamp: 'len 6/27/2019 10:50:25'!
+!IntegerTest methodsFor: 'gcd and lcm' stamp: 'len 27/Jun/2019 10:50:25'!
 testLCMExample
 	self assert: (120 lcm: 70) = 840! !
 
-!IntegerTest methodsFor: 'gcd and lcm' stamp: 'len 6/27/2019 10:48:22'!
+!IntegerTest methodsFor: 'gcd and lcm' stamp: 'len 27/Jun/2019 10:48:22'!
 testLCMProperties
 	| a b c |
 	a _ (-10 to: 10) atRandom.
@@ -14747,7 +14747,7 @@ testLCMProperties
 	self assert: (0 lcm: a) = 0.
 	self assert: (0 lcm: 0) = 0! !
 
-!IntegerTest methodsFor: 'tests - arithmetic' stamp: 'jmv 5/24/2024 12:35:17'!
+!IntegerTest methodsFor: 'tests - arithmetic' stamp: 'jmv 24/May/2024 12:35:17'!
 testReciprocalModulo
 	1 to: 512 do: [:a |
 		a + 1 to: 512 do: [:b |
@@ -14758,7 +14758,7 @@ testReciprocalModulo
 					self assert: (a * c) \\ b = 1]
 				ifFalse: [self assert: ( a reciprocalModulo: b ) isNil]]].! !
 
-!LargeNegativeIntegerTest methodsFor: 'tests' stamp: 'ul 11/15/2010 11:51'!
+!LargeNegativeIntegerTest methodsFor: 'tests' stamp: 'ul 15/Nov/2010 11:51:00'!
 testDenormalizedPrintString
 	"Check that an un-normalized instance behaves reasonably."
 
@@ -14776,7 +14776,7 @@ testDenormalizedPrintString
 	self assert: i0 normalize = 0.
 	self assert: (i0 normalize isMemberOf: SmallInteger)! !
 
-!LargeNegativeIntegerTest methodsFor: 'tests' stamp: 'jmv 7/31/2023 11:18:36'!
+!LargeNegativeIntegerTest methodsFor: 'tests' stamp: 'jmv 31/Jul/2023 11:18:36'!
 testDigitAt
 
 	| lni |
@@ -14786,7 +14786,7 @@ testDigitAt
 		self assert: digit equals: i]
 ! !
 
-!LargeNegativeIntegerTest methodsFor: 'tests' stamp: 'jmv 7/31/2023 11:19:22'!
+!LargeNegativeIntegerTest methodsFor: 'tests' stamp: 'jmv 31/Jul/2023 11:19:22'!
 testDigitAtPut
 
 	| lni |
@@ -14795,14 +14795,14 @@ testDigitAtPut
 	self assert: lni equals: -114605103402541699037609980192546360895434064385
 ! !
 
-!LargeNegativeIntegerTest methodsFor: 'tests' stamp: 'jmv 7/31/2023 11:19:42'!
+!LargeNegativeIntegerTest methodsFor: 'tests' stamp: 'jmv 31/Jul/2023 11:19:42'!
 testDigitLength
 
 	| lni |
 	lni := -114605103402541699037609980192546360895434064385.
 	self assert: lni digitLength equals: 20! !
 
-!LargeNegativeIntegerTest methodsFor: 'tests' stamp: 'ul 11/15/2010 11:52'!
+!LargeNegativeIntegerTest methodsFor: 'tests' stamp: 'ul 15/Nov/2010 11:52:00'!
 testEmptyTemplate
 	"Check that an uninitialized instance behaves reasonably."
 
@@ -14813,7 +14813,7 @@ testEmptyTemplate
 	self assert: i normalize = 0.
 	self assert: (i normalize isMemberOf: SmallInteger)! !
 
-!LargeNegativeIntegerTest methodsFor: 'tests' stamp: 'nice 8/31/2012 23:00'!
+!LargeNegativeIntegerTest methodsFor: 'tests' stamp: 'nice 31/Aug/2012 23:00:00'!
 testMinimumNegativeIntegerArithmetic
 	"We are speaking of minimum integer in underlying hardware here.
 	In 2-complement, abs(INT_MIN) = (INT-MAX+1) and thus overflows hardware register.
@@ -14836,7 +14836,7 @@ testMinimumNegativeIntegerArithmetic
 		self assert: (largeNegativeInt * -1) equals: largePositiveInt.
 		self assert: (largeNegativeInt / -1) equals: largePositiveInt]! !
 
-!LargeNegativeIntegerTest methodsFor: 'tests' stamp: 'jmv 7/31/2023 11:21:05'!
+!LargeNegativeIntegerTest methodsFor: 'tests' stamp: 'jmv 31/Jul/2023 11:21:05'!
 testReplaceFromToWithStartingAt
 
 	| lni20 lni7 |
@@ -14856,7 +14856,7 @@ testReplaceFromToWithStartingAt
 		self assert: digit equals: replacementDigit]
 ! !
 
-!LargePositiveIntegerTest methodsFor: 'tests' stamp: 'jmv 6/6/2023 11:34:02'!
+!LargePositiveIntegerTest methodsFor: 'tests' stamp: 'jmv 6/Jun/2023 11:34:02'!
 test_raisedTo_modulo
 	"The bug was caused because of calling unnormalized #\\\.
 	The fix is to use #\\ instead."
@@ -14864,14 +14864,14 @@ test_raisedTo_modulo
 	self assert: (5445648384 raisedTo: 3 modulo: 1 << 34) = 0.
 	self assert: (5445648384 raisedTo: 4 modulo: 1 << 34) = 0.! !
 
-!LargePositiveIntegerTest methodsFor: 'tests' stamp: 'jmv 9/1/2010 13:47'!
+!LargePositiveIntegerTest methodsFor: 'tests' stamp: 'jmv 1/Sep/2010 13:47:00'!
 testBitShift
 
 	"Check bitShift from and back to SmallInts"
 	
 	1 to: 257 do: [:i | self should: [((i bitShift: i) bitShift: 0-i) = i]].! !
 
-!LargePositiveIntegerTest methodsFor: 'tests' stamp: 'ul 11/15/2010 11:52'!
+!LargePositiveIntegerTest methodsFor: 'tests' stamp: 'ul 15/Nov/2010 11:52:00'!
 testDenormalizedPrintString
 	"Check that an un-normalized instance behaves reasonably."
 
@@ -14889,7 +14889,7 @@ testDenormalizedPrintString
 	self assert: i0 normalize = 0.
 	self assert: (i0 normalize isMemberOf: SmallInteger)! !
 
-!LargePositiveIntegerTest methodsFor: 'tests' stamp: 'jmv 7/31/2023 11:21:17'!
+!LargePositiveIntegerTest methodsFor: 'tests' stamp: 'jmv 31/Jul/2023 11:21:17'!
 testDigitAt
 
 	| lpi |
@@ -14899,7 +14899,7 @@ testDigitAt
 		self assert: digit equals: i]
 ! !
 
-!LargePositiveIntegerTest methodsFor: 'tests' stamp: 'jmv 7/31/2023 11:21:34'!
+!LargePositiveIntegerTest methodsFor: 'tests' stamp: 'jmv 31/Jul/2023 11:21:34'!
 testDigitAtPut
 
 	| lpi |
@@ -14908,7 +14908,7 @@ testDigitAtPut
 	self assert: lpi equals: 114605103402541699037609980192546360895434064385
 ! !
 
-!LargePositiveIntegerTest methodsFor: 'tests' stamp: 'jmv 7/31/2023 11:21:48'!
+!LargePositiveIntegerTest methodsFor: 'tests' stamp: 'jmv 31/Jul/2023 11:21:48'!
 testDigitLength
 
 	| lpi |
@@ -14916,7 +14916,7 @@ testDigitLength
 	self assert: lpi digitLength equals: 20
 ! !
 
-!LargePositiveIntegerTest methodsFor: 'tests' stamp: 'ul 11/15/2010 11:52'!
+!LargePositiveIntegerTest methodsFor: 'tests' stamp: 'ul 15/Nov/2010 11:52:00'!
 testEmptyTemplate
 
 	"Check that an uninitialized instance behaves reasonably."
@@ -14928,7 +14928,7 @@ testEmptyTemplate
 	self assert: i normalize = 0.
 	self assert: (i normalize isMemberOf: SmallInteger)! !
 
-!LargePositiveIntegerTest methodsFor: 'tests' stamp: 'nice 3/21/2014 18:38'!
+!LargePositiveIntegerTest methodsFor: 'tests' stamp: 'nice 21/Mar/2014 18:38:00'!
 testLargeSqrtFloor
 	"This test fails if a careless implementation naivly factors out the power of two (remove the trailing zeroes up to lowBit).
 	This was the case in a previous Squeak 4.x implementation."
@@ -14939,7 +14939,7 @@ testLargeSqrtFloor
 	self assert: root squared <= large.
 	self assert: (root+1) squared > large.! !
 
-!LargePositiveIntegerTest methodsFor: 'tests' stamp: 'sd 6/5/2005 08:52'!
+!LargePositiveIntegerTest methodsFor: 'tests' stamp: 'sd 5/Jun/2005 08:52:00'!
 testMultDicAddSub
 	"self run: #testMultDicAddSub"
 
@@ -14954,7 +14954,7 @@ testMultDicAddSub
 	self assert: (f1 // f = (n+1)). 
 	self assert: (f1 negated = (Number readFrom: '-' , f1 printString)).! !
 
-!LargePositiveIntegerTest methodsFor: 'tests' stamp: 'jmv 9/1/2010 13:48'!
+!LargePositiveIntegerTest methodsFor: 'tests' stamp: 'jmv 1/Sep/2010 13:48:00'!
 testNormalize
 	"self run: #testNormalize"
 	"Check normalization and conversion to/from SmallInts"
@@ -14964,7 +14964,7 @@ testNormalize
 	self should: ((SmallInteger minVal - 1 + 1) = SmallInteger minVal).
 	self assert: (SmallInteger minVal - 3 + 6) = (SmallInteger minVal+3).! !
 
-!LargePositiveIntegerTest methodsFor: 'tests' stamp: 'jmv 7/31/2023 11:22:06'!
+!LargePositiveIntegerTest methodsFor: 'tests' stamp: 'jmv 31/Jul/2023 11:22:06'!
 testReplaceFromToWithStartingAt
 
 	| lpi20 lpi7 |
@@ -14984,16 +14984,16 @@ testReplaceFromToWithStartingAt
 		self assert: digit equals: replacementDigit]
 ! !
 
-!LargePositiveIntegerTest methodsFor: 'tests - mathematical functions' stamp: 'nice 5/13/2019 13:56'!
+!LargePositiveIntegerTest methodsFor: 'tests - mathematical functions' stamp: 'nice 13/May/2019 13:56:00'!
 testSqrt
 	self assert: (SmallInteger maxVal + 1) sqrt equals: (SmallInteger maxVal + 1) asFloat sqrt.! !
 
-!NumberTest methodsFor: 'tests' stamp: 'nice 3/4/2021 21:14'!
+!NumberTest methodsFor: 'tests' stamp: 'nice 4/Mar/2021 21:14:00'!
 testExactLog2
 	-10 to: 10 do: [:i | self assert: i equals: (2 raisedToInteger: i) log2].
 	Float emin - Float precision + 1 to: Float emax do: [:i | self assert: i equals: (1.0 timesTwoPower: i) log2].! !
 
-!NumberTest methodsFor: 'tests' stamp: 'GabrielOmarCotelli 5/26/2009 21:57'!
+!NumberTest methodsFor: 'tests' stamp: 'GabrielOmarCotelli 26/May/2009 21:57:00'!
 testFractionPart
 
 	self 
@@ -15005,7 +15005,7 @@ testFractionPart
 		assert: 2.5 fractionPart = 0.5
 ! !
 
-!NumberTest methodsFor: 'tests' stamp: 'jmv 11/21/2018 17:38:59'!
+!NumberTest methodsFor: 'tests' stamp: 'jmv 21/Nov/2018 17:38:59'!
 testHash1
 	"Hash should be the same for equivalent instances of various Number classes"
 
@@ -15027,7 +15027,7 @@ testHash1
 	self assert: float hash = hash.
 	self assert: boxedFloat hash = hash! !
 
-!NumberTest methodsFor: 'tests' stamp: 'jmv 11/21/2018 17:39:36'!
+!NumberTest methodsFor: 'tests' stamp: 'jmv 21/Nov/2018 17:39:36'!
 testHash2
 	"Hash should be the same for equivalent instances of various Number classes"
 
@@ -15049,7 +15049,7 @@ testHash2
 	self assert: float hash = hash.
 	self assert: boxedFloat hash = hash! !
 
-!NumberTest methodsFor: 'tests' stamp: 'jmv 11/21/2018 17:39:51'!
+!NumberTest methodsFor: 'tests' stamp: 'jmv 21/Nov/2018 17:39:51'!
 testHash3
 	"Hash should be the same for equivalent instances of various Number classes"
 
@@ -15071,7 +15071,7 @@ testHash3
 	self assert: float hash = hash.
 	self assert: boxedFloat hash = hash! !
 
-!NumberTest methodsFor: 'tests' stamp: 'GabrielOmarCotelli 5/26/2009 21:55'!
+!NumberTest methodsFor: 'tests' stamp: 'GabrielOmarCotelli 26/May/2009 21:55:00'!
 testIntegerPart
 
 	self 
@@ -15083,18 +15083,18 @@ testIntegerPart
 		assert: 2.5 integerPart = 2.0
 ! !
 
-!NumberTest methodsFor: 'tests' stamp: 'nice 3/4/2021 21:13'!
+!NumberTest methodsFor: 'tests' stamp: 'nice 4/Mar/2021 21:13:00'!
 testLog2doesNotOverflow
 	"Note: though this is not a strict identity, we can use strict Float equality here"
 	self assert: 3000.0 equals: ((1 bitShift: 3000) - 1) log2.
 	self assert: 1500.0 equals: (((1 bitShift: 3000) - 1) / (1 bitShift: 1500)) log2.! !
 
-!NumberTest methodsFor: 'tests' stamp: 'nice 3/4/2021 21:13'!
+!NumberTest methodsFor: 'tests' stamp: 'nice 4/Mar/2021 21:13:00'!
 testLog2doesNotUnderflow
 	"Note: though this is not a strict identity, we can use strict Float equality here"
 	self assert: -2000.0 equals: ((1 bitShift: 2000) - 1) reciprocal log2! !
 
-!NumberTest methodsFor: 'tests' stamp: 'GabrielOmarCotelli 5/23/2009 20:49'!
+!NumberTest methodsFor: 'tests' stamp: 'GabrielOmarCotelli 23/May/2009 20:49:00'!
 testOne
 
 	self 
@@ -15102,7 +15102,7 @@ testOne
 		assert: Float one = 1.0;
 		assert: Fraction one = 1! !
 
-!NumberTest methodsFor: 'tests' stamp: 'jmv 1/9/2014 21:23'!
+!NumberTest methodsFor: 'tests' stamp: 'jmv 9/Jan/2014 21:23:00'!
 testPrintShowingDecimalPlaces
 
 	self assert: (String streamContents: [ :s | 111.2 printOn: s fractionDigits: 2]) = '111.20'.
@@ -15115,7 +15115,7 @@ testPrintShowingDecimalPlaces
 	self assert: (String streamContents: [ :s | 2.567 printOn: s fractionDigits: 2]) = '2.57'.
 	self assert: (String streamContents: [ :s | -2.567 printOn: s fractionDigits: 2]) = '-2.57'! !
 
-!NumberTest methodsFor: 'tests' stamp: 'jmv 12/21/2018 12:00:50'!
+!NumberTest methodsFor: 'tests' stamp: 'jmv 21/Dec/2018 12:00:50'!
 testPrintShowingDecimalPlaces2
 	"This tests problems related to Float>>rounded and Float>>roundTo::
 	- Float>>#rounded is inexact
@@ -15140,7 +15140,7 @@ testPrintShowingDecimalPlaces2
 	"This number is close to fmax"
 	self shouldnt: [String streamContents: [ :s | 1.0e306 printOn: s fractionDigits: 3]] raise: Error.! !
 
-!NumberTest methodsFor: 'tests' stamp: 'jmv 1/9/2014 21:22'!
+!NumberTest methodsFor: 'tests' stamp: 'jmv 9/Jan/2014 21:22:00'!
 testPrintShowingDecimalPlaces3
 	"This problem were reported at http://bugs.squeak.org/view.php?id=7028
 	unfortunate inversion of left / right padding"
@@ -15148,14 +15148,14 @@ testPrintShowingDecimalPlaces3
 	self assert: (String streamContents: [ :s | 35.900 printOn: s fractionDigits: 3]) = '35.900'.
 	self assert: (String streamContents: [ :s | -0.097 printOn: s fractionDigits: 3]) = '-0.097'.! !
 
-!NumberTest methodsFor: 'tests' stamp: 'nice 12/6/2007 21:24'!
+!NumberTest methodsFor: 'tests' stamp: 'nice 6/Dec/2007 21:24:00'!
 testRaisedTo
 	"this is a test related to http://bugs.squeak.org/view.php?id=6781"
 	
 	self should: [0 raisedTo: -1] raise: ZeroDivide.
 	self should: [0 raisedTo: -1.0] raise: ZeroDivide.! !
 
-!NumberTest methodsFor: 'tests' stamp: 'GabrielOmarCotelli 5/25/2009 16:41'!
+!NumberTest methodsFor: 'tests' stamp: 'GabrielOmarCotelli 25/May/2009 16:41:00'!
 testRaisedToInteger
 
 	self 
@@ -15177,7 +15177,7 @@ testRaisedToInteger
 	
 	self should: [ 0 raisedTo: -1 ] raise: ZeroDivide! !
 
-!NumberTest methodsFor: 'tests' stamp: 'jmv 4/5/2019 17:38:36'!
+!NumberTest methodsFor: 'tests' stamp: 'jmv 5/Apr/2019 17:38:36'!
 testRaisedToIntegerWithFloats
 
 	self 
@@ -15204,13 +15204,13 @@ testRaisedToIntegerWithFloats
 	
 	self should: [ 0.0 raisedToInteger: -1 ] raise: ZeroDivide! !
 
-!NumberTest methodsFor: 'tests' stamp: 'sd 6/5/2005 08:56'!
+!NumberTest methodsFor: 'tests' stamp: 'sd 5/Jun/2005 08:56:00'!
 testReadFrom
 	
 	self assert: 1.0e-14	= (Number readFrom: '1.0e-14').
 	self assert: 2r1e26	= (Number readFrom: '2r1e26').! !
 
-!NumberTest methodsFor: 'tests' stamp: 'GabrielOmarCotelli 5/23/2009 19:26'!
+!NumberTest methodsFor: 'tests' stamp: 'GabrielOmarCotelli 23/May/2009 19:26:00'!
 testReciprocal
 
 	self 
@@ -15221,7 +15221,7 @@ testReciprocal
 		
 	self should: [ 0 reciprocal ] raise: ZeroDivide! !
 
-!NumberTest methodsFor: 'tests' stamp: 'sqr 6/26/2019 09:46:32'!
+!NumberTest methodsFor: 'tests' stamp: 'sqr 26/Jun/2019 09:46:32'!
 testZeroDivideHandler
 	"Test for user-defined ZeroDivide behavior"
 
@@ -15238,7 +15238,7 @@ testZeroDivideHandler
 		do: [:ex | ex resume: ex receiver sign * Float infinity ]
 ! !
 
-!NumberTest methodsFor: 'test' stamp: 'GC 9/8/2018 14:51:43'!
+!NumberTest methodsFor: 'test' stamp: 'GC 8/Sep/2018 14:51:43'!
 test01readFromWhenTheInitilValueIsNaNTheResultIsNaN
 
 	|initialValue nan result |
@@ -15249,27 +15249,27 @@ test01readFromWhenTheInitilValueIsNaNTheResultIsNaN
 	
 	self assert: result is: nan! !
 
-!NumberTest methodsFor: 'test' stamp: 'GC 9/8/2018 15:07:25'!
+!NumberTest methodsFor: 'test' stamp: 'GC 8/Sep/2018 15:07:25'!
 test02readFromWhenTheInitilValueIsInfinityTheResultIsInfinity
 	
 	self assertThat: 'Infinity' isEqualTo: Float infinity! !
 
-!NumberTest methodsFor: 'test' stamp: 'GC 9/8/2018 15:07:50'!
+!NumberTest methodsFor: 'test' stamp: 'GC 8/Sep/2018 15:07:50'!
 test03readFromWhenTheInitilValueIsMinusInfinityTheResultIsNegativeInfinity
 
 	self assertThat: '-Infinity' isEqualTo: Float negativeInfinity! !
 
-!NumberTest methodsFor: 'test' stamp: 'GC 9/8/2018 15:08:34'!
+!NumberTest methodsFor: 'test' stamp: 'GC 8/Sep/2018 15:08:34'!
 test04readFromWhenTheInitilValueIsANegativeNumberTheResultIsThatNumberNegated
 	
 	self assertThat: '-3' isEqualTo: -3! !
 
-!NumberTest methodsFor: 'test' stamp: 'GC 9/8/2018 15:09:00'!
+!NumberTest methodsFor: 'test' stamp: 'GC 8/Sep/2018 15:09:00'!
 test05readFromWhenTheInitilValueIsJustANumberTheResultIsThatNumber
 	
 	self assertThat: '3' isEqualTo: 3! !
 
-!NumberTest methodsFor: 'test' stamp: 'GC 9/9/2018 16:32:38'!
+!NumberTest methodsFor: 'test' stamp: 'GC 9/Sep/2018 16:32:38'!
 test06readFromWhenTheInitialValueIncludesRadixItIsConvertedWithTheIndicatedRadixBase
 	|radixBase number initualNumber |
 	
@@ -15280,7 +15280,7 @@ test06readFromWhenTheInitialValueIncludesRadixItIsConvertedWithTheIndicatedRadix
 	
 	self assert: initualNumber asNumber equals: 30! !
 
-!NumberTest methodsFor: 'test' stamp: 'jmv 9/10/2018 10:28:22'!
+!NumberTest methodsFor: 'test' stamp: 'jmv 10/Sep/2018 10:28:22'!
 test07readFromWhenTheInitialValueIncludesAnInvalidRadixItRaisesAnError
 	|radixBase number initualNumber |
 	
@@ -15292,7 +15292,7 @@ test07readFromWhenTheInitialValueIncludesAnInvalidRadixItRaisesAnError
 	
 	self should: [ initualNumber asNumber ] raise: Error description: 'Invalid radix'! !
 
-!NumberTest methodsFor: 'test' stamp: 'GC 9/9/2018 16:32:50'!
+!NumberTest methodsFor: 'test' stamp: 'GC 9/Sep/2018 16:32:50'!
 test08readFromWhenTheInitialValueIncludesANegativeRadixItConvertsTheNumberWithTheIndicatedRadixBase
 	|radixBase number initualNumber |
 	
@@ -15303,18 +15303,18 @@ test08readFromWhenTheInitialValueIncludesANegativeRadixItConvertsTheNumberWithTh
 	
 	self assert: initualNumber asNumber equals: -30! !
 
-!NumberTest methodsFor: 'test' stamp: 'jmv 9/10/2018 10:28:25'!
+!NumberTest methodsFor: 'test' stamp: 'jmv 10/Sep/2018 10:28:25'!
 test09readFromWhenTheInitialValueIsEmptyItRaisesAnError
 	
 	self should: [ Number readFrom: '' ] raise: Error description: 'At least one digit expected here'! !
 
-!NumberTest methodsFor: 'support' stamp: 'GC 9/8/2018 14:45:07'!
+!NumberTest methodsFor: 'support' stamp: 'GC 8/Sep/2018 14:45:07'!
 assert: expected is: actual
 	^ self
 		assert: (expected == actual)
 		description: (self comparingStringBetween: expected and: actual)! !
 
-!NumberTest methodsFor: 'support' stamp: 'jmv 7/31/2023 11:22:43'!
+!NumberTest methodsFor: 'support' stamp: 'jmv 31/Jul/2023 11:22:43'!
 assertThat: aNumber isEqualTo: anExpectedNumber
 
 	| result |
@@ -15322,7 +15322,7 @@ assertThat: aNumber isEqualTo: anExpectedNumber
 	
 	self assert: anExpectedNumber equals: result! !
 
-!NumberTest methodsFor: 'support' stamp: 'GC 9/8/2018 14:48:11'!
+!NumberTest methodsFor: 'support' stamp: 'GC 8/Sep/2018 14:48:11'!
 subject: aString
 
 	| aStream |
@@ -15330,12 +15330,12 @@ subject: aString
 
 	^ Number readFrom: aStream! !
 
-!SmallIntegerTest methodsFor: 'testing - Class Methods' stamp: 'jmv 8/8/2024 12:28:13'!
+!SmallIntegerTest methodsFor: 'testing - Class Methods' stamp: 'jmv 8/Aug/2024 12:28:13'!
 testBasicNew
 
 	self should: [SmallInteger basicNew] raise: TestResult exError. ! !
 
-!SmallIntegerTest methodsFor: 'testing - Class Methods' stamp: 'jmv 1/4/2017 08:16:27'!
+!SmallIntegerTest methodsFor: 'testing - Class Methods' stamp: 'jmv 4/Jan/2017 08:16:27'!
 testMaxVal
 
 	Smalltalk wordSize = 4
@@ -15344,7 +15344,7 @@ testMaxVal
 		ifFalse: [
 			self assert: (SmallInteger maxVal = 16rFFFFFFFFFFFFFFF) ]! !
 
-!SmallIntegerTest methodsFor: 'testing - Class Methods' stamp: 'jmv 1/4/2017 08:17:27'!
+!SmallIntegerTest methodsFor: 'testing - Class Methods' stamp: 'jmv 4/Jan/2017 08:17:27'!
 testMinVal
 
 	Smalltalk wordSize = 4
@@ -15353,12 +15353,12 @@ testMinVal
 		ifFalse: [
 			self assert: (SmallInteger minVal = -16r1000000000000000) ]! !
 
-!SmallIntegerTest methodsFor: 'testing - Class Methods' stamp: 'jmv 8/8/2024 12:28:16'!
+!SmallIntegerTest methodsFor: 'testing - Class Methods' stamp: 'jmv 8/Aug/2024 12:28:16'!
 testNew
 
 	self should: [SmallInteger new] raise: TestResult exError. ! !
 
-!SmallIntegerTest methodsFor: 'testing - arithmetic' stamp: 'sd 6/5/2005 08:59'!
+!SmallIntegerTest methodsFor: 'testing - arithmetic' stamp: 'sd 5/Jun/2005 08:59:00'!
 testDivide
 
 	self assert: 2 / 1 = 2.
@@ -15366,7 +15366,7 @@ testDivide
 	self assert: 4 / 2 = 2.
 	self should: [ 1 / 0 ] raise: ZeroDivide.! !
 
-!SmallIntegerTest methodsFor: 'testing - basic' stamp: 'jmv 5/7/2012 21:35'!
+!SmallIntegerTest methodsFor: 'testing - basic' stamp: 'jmv 7/May/2012 21:35:00'!
 testEven
 	
 	self assert: (SmallInteger minVal even).
@@ -15383,7 +15383,7 @@ testEven
 	
 	self assert: (0 even)! !
 
-!SmallIntegerTest methodsFor: 'testing - basic' stamp: 'jmv 5/7/2012 21:35'!
+!SmallIntegerTest methodsFor: 'testing - basic' stamp: 'jmv 7/May/2012 21:35:00'!
 testOdd
 	
 	self deny: (SmallInteger minVal odd).
@@ -15400,7 +15400,7 @@ testOdd
 	
 	self deny: (0 odd)! !
 
-!SmallIntegerTest methodsFor: 'testing - printing' stamp: 'jmv 1/9/2014 23:41'!
+!SmallIntegerTest methodsFor: 'testing - printing' stamp: 'jmv 9/Jan/2014 23:41:00'!
 testPrintPaddedWith
 
 	self assert: (123 printStringBase: 2 length: 10 padded: true) = '0001111011'.
@@ -15408,7 +15408,7 @@ testPrintPaddedWith
 	self assert: (123 printStringBase: 10 length: 10 padded: true) = '0000000123'.
 	self assert: (123 printStringBase: 16 length: 10 padded: true) = '000000007B'! !
 
-!SmallIntegerTest methodsFor: 'testing - printing' stamp: 'jmv 1/4/2017 08:22:13'!
+!SmallIntegerTest methodsFor: 'testing - printing' stamp: 'jmv 4/Jan/2017 08:22:13'!
 testPrintString
 	self assert: 1 printString  = '1'.
 	self assert: -1 printString  = '-1'.
@@ -15439,7 +15439,7 @@ testPrintString
 		ifFalse: [
 			self assert: SmallInteger maxVal decimalDigitLength = 19 ]! !
 
-!SmallIntegerTest methodsFor: 'tests - zero behavior' stamp: 'jmv 7/2/2019 11:50:44'!
+!SmallIntegerTest methodsFor: 'tests - zero behavior' stamp: 'jmv 2/Jul/2019 11:50:44'!
 testZeroRaisedToNegativePower
 	"this is a test related to http://bugs.squeak.org/view.php?id=6781"
 
@@ -15451,7 +15451,7 @@ testZeroRaisedToNegativePower
 	self should: [-0 raisedTo: -1] raise: ZeroDivide.
 	self should: [-0 raisedTo: -1.0] raise: ZeroDivide.! !
 
-!SmallIntegerTest methodsFor: 'tests - printing' stamp: 'jmv 5/24/2024 11:13:21'!
+!SmallIntegerTest methodsFor: 'tests - printing' stamp: 'jmv 24/May/2024 11:13:21'!
 testDecimalDigitLength
 
 	| x length random |
@@ -15487,7 +15487,7 @@ testDecimalDigitLength
 		x := SmallInteger maxVal atRandom: random.
 		self assert: x asString size equals: x decimalDigitLength ]! !
 
-!SmallIntegerTest methodsFor: 'tests - arithmetic' stamp: 'nice 8/21/2019 02:55'!
+!SmallIntegerTest methodsFor: 'tests - arithmetic' stamp: 'nice 21/Aug/2019 02:55:00'!
 testDivideMayOverflow
 	"Dividing a SmallInteger by another Integer may answer a Large Integer.
 	These cases have caused several VM bugs in the past, it's better to keep some assrtion around."
@@ -15501,7 +15501,7 @@ testDivideMayOverflow
 	self assert: (SmallInteger minVal // -1) isLarge.
 	self assert: (SmallInteger minVal // -1) = (SmallInteger maxVal + 1).! !
 
-!RandomTest methodsFor: 'setup' stamp: 'sqr 3/5/2016 18:33'!
+!RandomTest methodsFor: 'setup' stamp: 'sqr 5/Mar/2016 18:33:00'!
 byteBitCounts
 
 	| tablePower answer |
@@ -15523,22 +15523,22 @@ byteBitCounts
 		].
 	^answer! !
 
-!RandomTest methodsFor: 'setup' stamp: 'sqr 3/5/2016 18:16'!
+!RandomTest methodsFor: 'setup' stamp: 'sqr 5/Mar/2016 18:16:00'!
 nSamplesByDefault
 
 	^1000! !
 
-!RandomTest methodsFor: 'setup' stamp: 'sqr 3/5/2016 17:59'!
+!RandomTest methodsFor: 'setup' stamp: 'sqr 5/Mar/2016 17:59:00'!
 rng
 
 	^self rngClass new! !
 
-!RandomTest methodsFor: 'setup' stamp: 'sqr 3/5/2016 18:01'!
+!RandomTest methodsFor: 'setup' stamp: 'sqr 5/Mar/2016 18:01:00'!
 rngClass
 
 	self subclassResponsibility! !
 
-!RandomTest methodsFor: 'tests' stamp: 'ul 2/27/2015 13:53'!
+!RandomTest methodsFor: 'tests' stamp: 'ul 27/Feb/2015 13:53:00'!
 testNext
 	"Generate some float values, and see if they are in the [0,1) interval. Also check that the smallest and the largest values are small/large enough."
 
@@ -15556,7 +15556,7 @@ testNext
 	self assert: max > 0.9999 description: 'The largest generated value should be greater than 0.9999.'.
 	self assert: min < 0.0001 description: 'The smallest generated value should be less than 0.0001.'! !
 
-!RandomTest methodsFor: 'tests' stamp: 'len 6/7/2019 02:32:34'!
+!RandomTest methodsFor: 'tests' stamp: 'len 7/Jun/2019 02:32:34'!
 testNextBits
 	"Test randomBits: returns integers in the correct range."
 	| random |
@@ -15564,7 +15564,7 @@ testNextBits
 	0 to: 10 do: [:n| 100 timesRepeat: [self assert: ((random nextBits: n) between: 0 and: 2^n - 1)]].
 	0 to: 100 do: [:n| self assert: ((random nextBits: n) between: 0 and: 2^n - 1)]! !
 
-!RandomTest methodsFor: 'tests' stamp: 'len 6/7/2019 02:27:56'!
+!RandomTest methodsFor: 'tests' stamp: 'len 7/Jun/2019 02:27:56'!
 testNextBitsInvalid
 	"Requesting a negative amount of random bits should raise an error."
 	| random |
@@ -15572,7 +15572,7 @@ testNextBitsInvalid
 	self should: [random nextBits: -1] raise: Error.
 	self should: [random nextBits: -100] raise: Error! !
 
-!RandomTest methodsFor: 'tests' stamp: 'len 6/7/2019 02:38:58'!
+!RandomTest methodsFor: 'tests' stamp: 'len 7/Jun/2019 02:38:58'!
 testNextInteger
 	"Test nextInteger: returns integers in the correct range."
 	| random n |
@@ -15581,7 +15581,7 @@ testNextInteger
 	n _ 1<<1000.
 	self assert: ((random nextInteger: n) between: 1 and: n)! !
 
-!RandomTest methodsFor: 'tests' stamp: 'len 6/7/2019 02:36:52'!
+!RandomTest methodsFor: 'tests' stamp: 'len 7/Jun/2019 02:36:52'!
 testNextIntegerInvalid
 	| random |
 	random _ self rng.
@@ -15589,7 +15589,7 @@ testNextIntegerInvalid
 	self should: [random nextInteger: -100] raise: Error.
 	self should: [random nextInteger: 0] raise: Error! !
 
-!RandomTest methodsFor: 'tests' stamp: 'sqr 3/5/2016 18:38'!
+!RandomTest methodsFor: 'tests' stamp: 'sqr 5/Mar/2016 18:38:00'!
 testRandomLargeInteger1
 
 	| random nSamples highBound odds |
@@ -15600,7 +15600,7 @@ testRandomLargeInteger1
 	nSamples timesRepeat: [odds _ highBound atRandom: random :: bitAnd: 1 :: + odds].
 	self assert: (odds * 2 - nSamples * 5) abs < nSamples  "10% max deviation"! !
 
-!RandomTest methodsFor: 'tests' stamp: 'sqr 3/5/2016 18:47'!
+!RandomTest methodsFor: 'tests' stamp: 'sqr 5/Mar/2016 18:47:00'!
 testRandomLargeInteger2
 
 	| random nSamples bitCounts bitsPerRandom highBound ones |
@@ -15619,7 +15619,7 @@ testRandomLargeInteger2
 		].
 	self assert: ones - (nSamples * bitsPerRandom / 2) abs / 10 < nSamples "1% max deviation"! !
 
-!RandomTest methodsFor: 'tests' stamp: 'len 6/7/2019 03:13:26'!
+!RandomTest methodsFor: 'tests' stamp: 'len 7/Jun/2019 03:13:26'!
 testSeedAndRepeatability
 	| random seed a b c |
 	random := self rng.
@@ -15633,7 +15633,7 @@ testSeedAndRepeatability
 	self assert: random next = b.
 	self assert: (random nextBits: 100) = c! !
 
-!RandomTest methodsFor: 'tests' stamp: 'sqr 3/5/2016 18:17'!
+!RandomTest methodsFor: 'tests' stamp: 'sqr 5/Mar/2016 18:17:00'!
 testSetAtRandom
 
 	| random set nSamples sum |
@@ -15644,7 +15644,7 @@ testSetAtRandom
 	nSamples timesRepeat: [sum _ set atRandom: random :: + sum].
 	self assert: (sum / nSamples - 0.5) abs < 0.1! !
 
-!RandomTest methodsFor: 'tests' stamp: 'sqr 3/5/2016 20:51'!
+!RandomTest methodsFor: 'tests' stamp: 'sqr 5/Mar/2016 20:51:00'!
 testSimpleBuckets
 	"This is a poor test, see Knuth's TAOCP"
 
@@ -15665,27 +15665,27 @@ testSimpleBuckets
 			self assert: (each - nSamples * 6) abs < nSamples
 		]! !
 
-!RandomTest class methodsFor: 'testing' stamp: 'sqr 3/5/2016 17:54'!
+!RandomTest class methodsFor: 'testing' stamp: 'sqr 5/Mar/2016 17:54:00'!
 isAbstract
 
 	^self subclasses notEmpty! !
 
-!LaggedFibonacciRandomTest methodsFor: 'setup' stamp: 'sqr 3/5/2016 18:50'!
+!LaggedFibonacciRandomTest methodsFor: 'setup' stamp: 'sqr 5/Mar/2016 18:50:00'!
 nSamplesByDefault
 
 	^self rng majorLag * 100! !
 
-!LaggedFibonacciRandomTest methodsFor: 'setup' stamp: 'sqr 3/5/2016 18:00'!
+!LaggedFibonacciRandomTest methodsFor: 'setup' stamp: 'sqr 5/Mar/2016 18:00:00'!
 rngClass
 
 	^LaggedFibonacciRandom! !
 
-!ParkMiller88RandomTest methodsFor: 'setup' stamp: 'sqr 3/5/2016 19:58'!
+!ParkMiller88RandomTest methodsFor: 'setup' stamp: 'sqr 5/Mar/2016 19:58:00'!
 rngClass
 
 	^ParkMiller88Random! !
 
-!ParkMiller88RandomTest methodsFor: 'tests' stamp: 'sqr 3/5/2016 20:06'!
+!ParkMiller88RandomTest methodsFor: 'tests' stamp: 'sqr 5/Mar/2016 20:06:00'!
 testParkMillerCorrectness
 	"The correctness test suggested by the authors"
 
@@ -15694,7 +15694,7 @@ testParkMillerCorrectness
 	10000 timesRepeat: [next _ random next].
 	self assert: next * 16r7FFFFFFF = 1043618065.0! !
 
-!ParkMiller88RandomTest methodsFor: 'tests' stamp: 'sqr 3/5/2016 18:48'!
+!ParkMiller88RandomTest methodsFor: 'tests' stamp: 'sqr 5/Mar/2016 18:48:00'!
 testParkMillerInitialValues
 
 	| nSamples random samples |
@@ -15704,7 +15704,7 @@ testParkMillerInitialValues
 	self assert: (samples average - 0.5) abs < 0.1.
 	self assert: samples size * 10 > nSamples! !
 
-!ParkMiller88RandomTest methodsFor: 'tests' stamp: 'len 6/7/2019 03:25:04'!
+!ParkMiller88RandomTest methodsFor: 'tests' stamp: 'len 7/Jun/2019 03:25:04'!
 testParkMillerSeedCornerCases
 	"Test the insernal state of the Park-Miller generator is correctly set, including corner cases."
 	| random m |
@@ -15714,7 +15714,7 @@ testParkMillerSeedCornerCases
 			random _ self rng seed: each.
 			self assert: (random instVarNamed: #seed) = each]! !
 
-!ParkMiller88RandomTest methodsFor: 'tests' stamp: 'len 6/7/2019 03:25:14'!
+!ParkMiller88RandomTest methodsFor: 'tests' stamp: 'len 7/Jun/2019 03:25:14'!
 testParkMillerSeedRange
 	"Test the insernal state of the Park-Miller generator is correctly set, even for arbitrary user-provided seeds."
 	| random m |
@@ -15724,26 +15724,26 @@ testParkMillerSeedRange
 			random _ self rng seed: each.
 			self assert: ((random instVarNamed: #seed) between: 1 and: m - 1)]! !
 
-!ParkMiller93RandomTest methodsFor: 'setup' stamp: 'sqr 3/5/2016 19:58'!
+!ParkMiller93RandomTest methodsFor: 'setup' stamp: 'sqr 5/Mar/2016 19:58:00'!
 rngClass
 
 	^ParkMiller93Random! !
 
-!BecomeTest methodsFor: 'testing' stamp: 'jmv 1/29/2019 12:03:40'!
+!BecomeTest methodsFor: 'testing' stamp: 'jmv 29/Jan/2019 12:03:40'!
 testBecome
 	| e |
 	BecomeTestExperiment twoVars.
 	e _ BecomeTestExperiment new.
 	self should: [ e messStuffUpWBecome ] raise: MethodInCallStackToBecomeInvalid! !
 
-!BecomeTest methodsFor: 'testing' stamp: 'jmv 1/29/2019 12:03:42'!
+!BecomeTest methodsFor: 'testing' stamp: 'jmv 29/Jan/2019 12:03:42'!
 testShapeMutation
 	| e |
 	BecomeTestExperiment twoVars.
 	e _ BecomeTestExperiment new.
 	self should: [ e messStuffUp ] raise: MethodInCallStackToBecomeInvalid! !
 
-!BooleanTest methodsFor: 'and tests' stamp: 'HAW 7/8/2018 20:03:35'!
+!BooleanTest methodsFor: 'and tests' stamp: 'HAW 8/Jul/2018 20:03:35'!
 testAndAndAndAndTrueTable
 
 	self 
@@ -15757,7 +15757,7 @@ testAndAndAndAndTrueTable
 	
 	! !
 
-!BooleanTest methodsFor: 'and tests' stamp: 'HAW 7/8/2018 20:03:46'!
+!BooleanTest methodsFor: 'and tests' stamp: 'HAW 8/Jul/2018 20:03:46'!
 testAndAndAndTrueTable
 
 	self 
@@ -15771,7 +15771,7 @@ testAndAndAndTrueTable
 	
 	! !
 
-!BooleanTest methodsFor: 'and tests' stamp: 'HAW 7/8/2018 20:04:00'!
+!BooleanTest methodsFor: 'and tests' stamp: 'HAW 8/Jul/2018 20:04:00'!
 testAndAndTrueTable
 
 	self 
@@ -15785,7 +15785,7 @@ testAndAndTrueTable
 	
 	! !
 
-!BooleanTest methodsFor: 'or tests' stamp: 'HAW 7/8/2018 20:04:10'!
+!BooleanTest methodsFor: 'or tests' stamp: 'HAW 8/Jul/2018 20:04:10'!
 testOrOrOrOrTrueTable
 
 	self 
@@ -15799,7 +15799,7 @@ testOrOrOrOrTrueTable
 	
 	! !
 
-!BooleanTest methodsFor: 'or tests' stamp: 'HAW 7/8/2018 20:04:18'!
+!BooleanTest methodsFor: 'or tests' stamp: 'HAW 8/Jul/2018 20:04:18'!
 testOrOrOrTrueTable
 
 	self 
@@ -15813,7 +15813,7 @@ testOrOrOrTrueTable
 	
 	! !
 
-!BooleanTest methodsFor: 'or tests' stamp: 'HAW 7/8/2018 20:04:25'!
+!BooleanTest methodsFor: 'or tests' stamp: 'HAW 8/Jul/2018 20:04:25'!
 testOrOrTrueTable
 
 	self 
@@ -15827,7 +15827,7 @@ testOrOrTrueTable
 	
 	! !
 
-!BooleanTest methodsFor: 'combination generation' stamp: 'HAW 7/8/2018 19:51:52'!
+!BooleanTest methodsFor: 'combination generation' stamp: 'HAW 8/Jul/2018 19:51:52'!
 evaluate: aBlock collectingValuesInto: values at: aPosition 
 	
 	aPosition = 0 
@@ -15837,24 +15837,24 @@ evaluate: aBlock collectingValuesInto: values at: aPosition
 				values at: aPosition put: value. 
 				self evaluate: aBlock collectingValuesInto: values at: aPosition - 1 ]]! !
 
-!BooleanTest methodsFor: 'combination generation' stamp: 'HAW 7/8/2018 19:50:53'!
+!BooleanTest methodsFor: 'combination generation' stamp: 'HAW 8/Jul/2018 19:50:53'!
 evaluate: aBlock forCombinationOf: aNumberOfValues
 
 	self evaluate: aBlock collectingValuesInto: (Array new: aNumberOfValues) at: aNumberOfValues 
 	! !
 
-!BooleanTest methodsFor: 'testing' stamp: 'jpb 8/2/2019 23:13:00'!
+!BooleanTest methodsFor: 'testing' stamp: 'jpb 2/Aug/2019 23:13:00'!
 testIsBoolean
 	self assert: (true is: #Boolean).
 	self assert: (false is: #Boolean).! !
 
-!IfNotNilTests methodsFor: 'tests' stamp: 'jmv 11/16/2010 08:46'!
+!IfNotNilTests methodsFor: 'tests' stamp: 'jmv 16/Nov/2010 08:46:00'!
 testIfNilIfNotNil0Arg
 
 	self assert: (5@4 ifNil: [#foo] ifNotNil: [#bar]) = #bar.
 	self assert: (nil ifNil: [#foo] ifNotNil: [#bar]) = #foo! !
 
-!IfNotNilTests methodsFor: 'tests' stamp: 'jmv 11/16/2010 08:46'!
+!IfNotNilTests methodsFor: 'tests' stamp: 'jmv 16/Nov/2010 08:46:00'!
 testIfNilIfNotNil0ArgAsVar
 
 	| block1 block2 |
@@ -15863,13 +15863,13 @@ testIfNilIfNotNil0ArgAsVar
 	self assert: (5@4 ifNil: block1 ifNotNil: block2) = #bar.
 	self assert: (nil ifNil: block1 ifNotNil: block2) = #foo! !
 
-!IfNotNilTests methodsFor: 'tests' stamp: 'jmv 11/16/2010 08:46'!
+!IfNotNilTests methodsFor: 'tests' stamp: 'jmv 16/Nov/2010 08:46:00'!
 testIfNilIfNotNil1Arg
 
 	self assert: (5@4 ifNil: [#foo] ifNotNil: [:a | a printString]) = '5@4'.
 	self assert: (nil ifNil: [#foo] ifNotNil: [:a | a printString]) = #foo! !
 
-!IfNotNilTests methodsFor: 'tests' stamp: 'jmv 11/16/2010 08:46'!
+!IfNotNilTests methodsFor: 'tests' stamp: 'jmv 16/Nov/2010 08:46:00'!
 testIfNilIfNotNil1ArgAsVar
 
 	| block1 block2 |
@@ -15878,13 +15878,13 @@ testIfNilIfNotNil1ArgAsVar
 	self assert: (5@4 ifNil: block1 ifNotNil: block2) = '5@4'.
 	self assert: (nil ifNil: block1 ifNotNil: block2) = #foo! !
 
-!IfNotNilTests methodsFor: 'tests' stamp: 'jmv 11/16/2010 08:46'!
+!IfNotNilTests methodsFor: 'tests' stamp: 'jmv 16/Nov/2010 08:46:00'!
 testIfNotNil0Arg
 
 	self assert: (5@4 ifNotNil: [#foo]) = #foo.
 	self assert: (nil ifNotNil: [#foo]) = nil! !
 
-!IfNotNilTests methodsFor: 'tests' stamp: 'jmv 11/16/2010 08:46'!
+!IfNotNilTests methodsFor: 'tests' stamp: 'jmv 16/Nov/2010 08:46:00'!
 testIfNotNil0ArgAsVar
 
 	| block |
@@ -15892,13 +15892,13 @@ testIfNotNil0ArgAsVar
 	self assert: (5@4 ifNotNil: block) = #foo.
 	self assert: (nil ifNotNil: block) = nil! !
 
-!IfNotNilTests methodsFor: 'tests' stamp: 'jmv 11/16/2010 08:46'!
+!IfNotNilTests methodsFor: 'tests' stamp: 'jmv 16/Nov/2010 08:46:00'!
 testIfNotNil1Arg
 
 	self assert: (5@4 ifNotNil: [:a | a printString]) = '5@4'.
 	self assert: (nil ifNotNil: [:a | a printString]) = nil! !
 
-!IfNotNilTests methodsFor: 'tests' stamp: 'jmv 11/16/2010 08:46'!
+!IfNotNilTests methodsFor: 'tests' stamp: 'jmv 16/Nov/2010 08:46:00'!
 testIfNotNil1ArgAsVar
 
 	| block |
@@ -15906,13 +15906,13 @@ testIfNotNil1ArgAsVar
 	self assert: (5@4 ifNotNil: block) = '5@4'.
 	self assert: (nil ifNotNil: block) = nil! !
 
-!IfNotNilTests methodsFor: 'tests' stamp: 'jmv 11/16/2010 08:46'!
+!IfNotNilTests methodsFor: 'tests' stamp: 'jmv 16/Nov/2010 08:46:00'!
 testIfNotNilIfNil0Arg
 
 	self assert: (5@4 ifNotNil: [#foo] ifNil: [#bar]) = #foo.
 	self assert: (nil ifNotNil: [#foo] ifNil: [#bar]) = #bar! !
 
-!IfNotNilTests methodsFor: 'tests' stamp: 'jmv 11/16/2010 08:46'!
+!IfNotNilTests methodsFor: 'tests' stamp: 'jmv 16/Nov/2010 08:46:00'!
 testIfNotNilIfNil0ArgAsVar
 
 	| block1 block2 |
@@ -15921,13 +15921,13 @@ testIfNotNilIfNil0ArgAsVar
 	self assert: (5@4 ifNotNil: block2 ifNil: block1) = #bar.
 	self assert: (nil ifNotNil: block2 ifNil: block1) = #foo! !
 
-!IfNotNilTests methodsFor: 'tests' stamp: 'jmv 11/16/2010 08:46'!
+!IfNotNilTests methodsFor: 'tests' stamp: 'jmv 16/Nov/2010 08:46:00'!
 testIfNotNilIfNil1Arg
 
 	self assert: (5@4 ifNotNil: [:a | a printString] ifNil: [#foo]) = '5@4'.
 	self assert: (nil ifNotNil: [:a | a printString] ifNil: [#foo]) = #foo! !
 
-!IfNotNilTests methodsFor: 'tests' stamp: 'jmv 11/16/2010 08:47'!
+!IfNotNilTests methodsFor: 'tests' stamp: 'jmv 16/Nov/2010 08:47:00'!
 testIfNotNilIfNil1ArgAsVar
 
 	| block1 block2 |
@@ -15936,7 +15936,7 @@ testIfNotNilIfNil1ArgAsVar
 	self assert: (5@4 ifNotNil: block2 ifNil: block1) = '5@4'.
 	self assert: (nil ifNotNil: block2 ifNil: block1) = #foo! !
 
-!ObjectTest methodsFor: 'error tests' stamp: 'HAW 10/23/2019 09:23:56'!
+!ObjectTest methodsFor: 'error tests' stamp: 'HAW 23/Oct/2019 09:23:56'!
 testErrorSignalsTheRightException
 
 	| reason |
@@ -15947,7 +15947,7 @@ testErrorSignalsTheRightException
 		raise: Error
 		withMessageText: reason ! !
 
-!ObjectTest methodsFor: 'error tests' stamp: 'HAW 10/23/2019 09:24:03'!
+!ObjectTest methodsFor: 'error tests' stamp: 'HAW 23/Oct/2019 09:24:03'!
 testShouldNotHappenBecauseSignalsTheRightError
 
 	| reason |
@@ -15958,7 +15958,7 @@ testShouldNotHappenBecauseSignalsTheRightError
 		raise: Error
 		withMessageText: self shouldNotHappenBecauseErrorMessage, reason ! !
 
-!ObjectTest methodsFor: 'error tests' stamp: 'HAW 10/23/2019 09:24:11'!
+!ObjectTest methodsFor: 'error tests' stamp: 'HAW 23/Oct/2019 09:24:11'!
 testShouldNotHappenSignalsTheRightError
 
 	self 
@@ -15966,15 +15966,15 @@ testShouldNotHappenSignalsTheRightError
 		raise: Error
 		withMessageText: self shouldNotHappenErrorMessage ! !
 
-!SpecialSelectorsTest methodsFor: 'testing' stamp: 'jmv 6/5/2017 12:17:20'!
+!SpecialSelectorsTest methodsFor: 'testing' stamp: 'jmv 5/Jun/2017 12:17:20'!
 testCollectionAtSymbol
 	self assert: (#(1 2 3) @ #(10 20 30)) class == Array! !
 
-!SpecialSelectorsTest methodsFor: 'testing' stamp: 'jmv 6/5/2017 12:16:49'!
+!SpecialSelectorsTest methodsFor: 'testing' stamp: 'jmv 5/Jun/2017 12:16:49'!
 testNumberAtSymbol
 	self assert: (1@2) class == Point! !
 
-!WeakMessageSendTest methodsFor: 'testing' stamp: 'HAW 10/30/2024 08:24:11'!
+!WeakMessageSendTest methodsFor: 'testing' stamp: 'HAW 30/Oct/2024 08:24:11'!
 testHasArgumentGarbageWhenOneArgumentIsNil
 
 	| message |
@@ -15984,7 +15984,7 @@ testHasArgumentGarbageWhenOneArgumentIsNil
 	
 	self assert: message isAnyArgumentGarbage! !
 
-!WeakMessageSendTest methodsFor: 'testing' stamp: 'HAW 10/30/2024 08:24:43'!
+!WeakMessageSendTest methodsFor: 'testing' stamp: 'HAW 30/Oct/2024 08:24:43'!
 testHasNoArgumentGarbageWhenNoArguments
 
 	| message |
@@ -15993,7 +15993,7 @@ testHasNoArgumentGarbageWhenNoArguments
 	
 	self deny: message isAnyArgumentGarbage! !
 
-!WeakMessageSendTest methodsFor: 'testing' stamp: 'HAW 10/30/2024 08:24:48'!
+!WeakMessageSendTest methodsFor: 'testing' stamp: 'HAW 30/Oct/2024 08:24:48'!
 testHasNoArgumentGarbageWhenNoNilArgument
 
 	| message |
@@ -16002,11 +16002,11 @@ testHasNoArgumentGarbageWhenNoNilArgument
 	
 	self deny: message isAnyArgumentGarbage! !
 
-!WeakMessageSendTest methodsFor: 'testing' stamp: 'jpb 8/2/2019 23:44:58'!
+!WeakMessageSendTest methodsFor: 'testing' stamp: 'jpb 2/Aug/2019 23:44:58'!
 testIsMessageSend
 	self assert: (WeakMessageSend new is: #MessageSend).! !
 
-!DelayTest methodsFor: 'testing-limits' stamp: 'laza 9/5/2009 08:49'!
+!DelayTest methodsFor: 'testing-limits' stamp: 'laza 5/Sep/2009 08:49:00'!
 testBounds
 	"self run: #testBounds"
 	
@@ -16015,7 +16015,7 @@ testBounds
 	self shouldnt: [(Delay forMilliseconds: Float pi) wait] raise: Error. "Wait 3ms"
 ! !
 
-!DelayTest methodsFor: 'testing-limits' stamp: 'jmv 10/8/2012 22:17'!
+!DelayTest methodsFor: 'testing-limits' stamp: 'jmv 8/Oct/2012 22:17:00'!
 testMultiProcessWaitOnSameDelay
 	"Ensure that waiting on the same delay from multiple processes raises an error"
 	"
@@ -16041,7 +16041,7 @@ testMultiProcessWaitOnSameDelay
 
 ! !
 
-!DelayTest methodsFor: 'testing-limits' stamp: 'ar 9/21/2009 22:12'!
+!DelayTest methodsFor: 'testing-limits' stamp: 'ar 21/Sep/2009 22:12:00'!
 testMultiSchedule
 	"Ensure that scheduling the same delay twice raises an error"
 	| delay |
@@ -16050,7 +16050,7 @@ testMultiSchedule
 	self should:[delay schedule] raise: Error.
 ! !
 
-!MonitorTest methodsFor: 'examples' stamp: 'md 3/19/2006 21:15'!
+!MonitorTest methodsFor: 'examples' stamp: 'md 19/Mar/2006 21:15:00'!
 testExample1
 
 	| producer1 producer2  monitor goal work counter goalReached finished |
@@ -16091,7 +16091,7 @@ testExample1
 	finished wait; wait.
 	self assert: goal = work! !
 
-!MonitorTest methodsFor: 'examples' stamp: 'md 3/19/2006 21:19'!
+!MonitorTest methodsFor: 'examples' stamp: 'md 19/Mar/2006 21:19:00'!
 testExample2
 	"Here is a second version that does not use a semaphore to inform the 
 	forking process about termination of both forked processes"
@@ -16147,7 +16147,7 @@ testExample2
 	self assert: goal = work
 ! !
 
-!MonitorTest methodsFor: 'examples' stamp: 'ul 9/10/2011 16:55'!
+!MonitorTest methodsFor: 'examples' stamp: 'ul 10/Sep/2011 16:55:00'!
 testMonitorNotGainingUnwantedSignalsDuringUnwinding
 
 	| monitor process |
@@ -16158,7 +16158,7 @@ testMonitorNotGainingUnwantedSignalsDuringUnwinding
 	process terminate.
 	self assert: 1 equals: ((monitor instVarNamed: #mutex) instVarNamed: #excessSignals)! !
 
-!ProcessTerminateBug methodsFor: 'tests' stamp: 'jmv 10/8/2012 22:15'!
+!ProcessTerminateBug methodsFor: 'tests' stamp: 'jmv 8/Oct/2012 22:15:00'!
 testSchedulerTermination
 	| process sema gotHere sema2 |
 	gotHere _ false.
@@ -16180,7 +16180,7 @@ testSchedulerTermination
 	"will give process a chance to continue and horribly screw up"
 	self assert: gotHere not.! !
 
-!ProcessTerminateBug methodsFor: 'tests' stamp: 'jmv 4/28/2021 16:12:51'!
+!ProcessTerminateBug methodsFor: 'tests' stamp: 'jmv 28/Apr/2021 16:12:51'!
 testTerminationDuringNestedUnwind1
 	"Terminate suspended process.
 	Test all nested unwind blocks are correctly unwound; 
@@ -16210,7 +16210,7 @@ testTerminationDuringNestedUnwind1
 	self assert: x1 & x2 & x3.
 	self deny: x4.! !
 
-!ProcessTerminateBug methodsFor: 'tests' stamp: 'jmv 4/28/2021 16:12:59'!
+!ProcessTerminateBug methodsFor: 'tests' stamp: 'jmv 28/Apr/2021 16:12:59'!
 testTerminationDuringNestedUnwind2
 	"Terminate suspended process.
 	Test all nested unwind blocks are correctly unwound; 
@@ -16241,7 +16241,7 @@ testTerminationDuringNestedUnwind2
 	self assert: x1 & x2 & x3.
 	self deny: x4.! !
 
-!ProcessTerminateBug methodsFor: 'tests' stamp: 'jmv 4/28/2021 16:33:24'!
+!ProcessTerminateBug methodsFor: 'tests' stamp: 'jmv 28/Apr/2021 16:33:24'!
 testTerminationDuringNestedUnwind3
 	"Terminate runnable process.
 	Test all nested unwind blocks are correctly unwound; 
@@ -16271,7 +16271,7 @@ testTerminationDuringNestedUnwind3
 	self assert: x1 & x2 & x3.
 	self deny: x4.! !
 
-!ProcessTerminateBug methodsFor: 'tests' stamp: 'jmv 4/28/2021 16:33:38'!
+!ProcessTerminateBug methodsFor: 'tests' stamp: 'jmv 28/Apr/2021 16:33:38'!
 testTerminationDuringNestedUnwind4
 	"Terminate runnable process.
 	Test all nested unwind blocks are correctly unwound; 
@@ -16302,7 +16302,7 @@ testTerminationDuringNestedUnwind4
 	self assert: x1 & x2 & x3.
 	self deny: x4.! !
 
-!ProcessTerminateBug methodsFor: 'tests' stamp: 'jar 1/17/2022 18:29:13'!
+!ProcessTerminateBug methodsFor: 'tests' stamp: 'jar 17/Jan/2022 18:29:13'!
 testTerminationDuringNestedUnwind5
 	"Terminate active process.
 	Test all nested unwind blocks are correctly unwound; 
@@ -16328,7 +16328,7 @@ testTerminationDuringNestedUnwind5
 	self assert: x1 & x2 & x3.
 	self deny: x4.! !
 
-!ProcessTerminateBug methodsFor: 'tests' stamp: 'jar 1/17/2022 18:29:20'!
+!ProcessTerminateBug methodsFor: 'tests' stamp: 'jar 17/Jan/2022 18:29:20'!
 testTerminationDuringNestedUnwind6
 	"Terminate active process.
 	Test all nested unwind blocks are correctly unwound; 
@@ -16355,7 +16355,7 @@ testTerminationDuringNestedUnwind6
 	self assert: x1 & x2 & x3.
 	self deny: x4.! !
 
-!ProcessTerminateBug methodsFor: 'tests' stamp: 'jmv 4/28/2021 16:33:52'!
+!ProcessTerminateBug methodsFor: 'tests' stamp: 'jmv 28/Apr/2021 16:33:52'!
 testTerminationDuringNestedUnwind7
 	"Terminate blocked process.
 	Test all nested unwind blocks are correctly unwound; 
@@ -16386,7 +16386,7 @@ testTerminationDuringNestedUnwind7
 	self assert: x1 & x2 & x3.
 	self deny: x4.! !
 
-!ProcessTerminateBug methodsFor: 'tests' stamp: 'jmv 4/28/2021 16:33:56'!
+!ProcessTerminateBug methodsFor: 'tests' stamp: 'jmv 28/Apr/2021 16:33:56'!
 testTerminationDuringNestedUnwind8
 	"Terminate blocked process.
 	Test all nested unwind blocks are correctly unwound; 
@@ -16418,7 +16418,7 @@ testTerminationDuringNestedUnwind8
 	self assert: x1 & x2 & x3.
 	self deny: x4.! !
 
-!ProcessTerminateBug methodsFor: 'tests' stamp: 'jmv 5/6/2021 12:17:31'!
+!ProcessTerminateBug methodsFor: 'tests' stamp: 'jmv 6/May/2021 12:17:31'!
 testTerminationDuringUnwind
 	"An illustration of the issue of process termination during unwind.
 	This uses a well-behaved unwind block that we should allow to complete
@@ -16441,7 +16441,7 @@ testTerminationDuringUnwind
 	p terminate.
 	self assert: unwindFinished description: 'Expected unwind block to have successfully finished by now, but it hasn''t!!'.! !
 
-!ProcessTerminateBug methodsFor: 'tests' stamp: 'jmv 10/8/2012 22:15'!
+!ProcessTerminateBug methodsFor: 'tests' stamp: 'jmv 8/Oct/2012 22:15:00'!
 testUnwindFromActiveProcess
 	| sema process |
 	sema := Semaphore forMutualExclusion.
@@ -16457,7 +16457,7 @@ testUnwindFromActiveProcess
 	process resume.
 	self assert: sema isSignaled! !
 
-!ProcessTerminateBug methodsFor: 'tests' stamp: 'jmv 10/8/2012 22:14'!
+!ProcessTerminateBug methodsFor: 'tests' stamp: 'jmv 8/Oct/2012 22:14:00'!
 testUnwindFromForeignProcess
 	| sema process |
 	sema := Semaphore forMutualExclusion.
@@ -16477,7 +16477,7 @@ testUnwindFromForeignProcess
 	self shouldnt: [process terminate] raise: BlockCannotReturn.
 	self assert: sema isSignaled! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/7/2023 10:36:45'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 7/Apr/2023 10:36:45'!
 test1AResume
 	"Resume suspended process.
 	Test all nested unwind blocks are correctly unwound; 
@@ -16504,7 +16504,7 @@ test1AResume
 	self assert: a first & a third & a fourth description: 'assert #4 failed'.
 	self deny: a second description: 'assert #5 failed'.! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/7/2023 10:37:00'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 7/Apr/2023 10:37:00'!
 test1ATerminate
 	"Terminate suspended process.
 	Test all nested unwind blocks are correctly unwound; 
@@ -16530,7 +16530,7 @@ test1ATerminate
 	self assert: a first & a third description: 'assert #4 failed'.
 	self deny: a second | a fourth description: 'assert #5 failed'.! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/7/2023 10:37:10'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 7/Apr/2023 10:37:10'!
 test1BResume
 	"Resume suspended process.
 	Test all nested unwind blocks are correctly unwound; 
@@ -16556,7 +16556,7 @@ test1BResume
 	self assert: p isTerminated description: 'assert #3 failed'.
 	self assert: a first & a second & a third & a fourth description: 'assert #4 failed'.! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/7/2023 10:37:16'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 7/Apr/2023 10:37:16'!
 test1BTerminate
 	"Terminate suspended process.
 	Test all nested unwind blocks are correctly unwound; 
@@ -16582,7 +16582,7 @@ test1BTerminate
 	self assert: a first & a second & a third description: 'assert #4 failed'.
 	self deny: a fourth description: 'assert #5 failed'.! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/7/2023 10:37:22'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 7/Apr/2023 10:37:22'!
 test1CResume
 	"Resume suspended process.
 	Test all nested unwind blocks are correctly unwound; 
@@ -16609,7 +16609,7 @@ test1CResume
 	self assert: a first & a second & a third description: 'assert #4 failed'.
 	self deny: a fourth description: 'assert #5 failed'.! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/7/2023 10:37:29'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 7/Apr/2023 10:37:29'!
 test1CTerminate
 	"Terminate suspended process.
 	Test all nested unwind blocks are correctly unwound; 
@@ -16635,7 +16635,7 @@ test1CTerminate
 	self assert: a first & a second & a third description: 'assert #4 failed'.
 	self deny: a fourth description: 'assert #5 failed'.! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/7/2023 10:37:34'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 7/Apr/2023 10:37:34'!
 test1DResume
 	"Resume suspended process.
 	Test all nested unwind blocks are correctly unwound; 
@@ -16661,7 +16661,7 @@ test1DResume
 	self assert: p isTerminated description: 'assert #3 failed'.
 	self assert: a first & a second & a third & a fourth description: 'assert #4 failed'.! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/7/2023 10:37:39'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 7/Apr/2023 10:37:39'!
 test1DTerminate
 	"Terminate suspended process.
 	Test all nested unwind blocks are correctly unwound; 
@@ -16687,7 +16687,7 @@ test1DTerminate
 	self assert: a first & a second & a third description: 'assert #4 failed'.
 	self deny: a fourth description: 'assert #5 failed'.! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/7/2023 10:37:45'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 7/Apr/2023 10:37:45'!
 test2AResume
 	"Resume suspended process.
 	Test all nested unwind blocks are correctly unwound; 
@@ -16714,7 +16714,7 @@ test2AResume
 	self assert: a first & a third & a fourth description: 'assert #4 failed'.
 	self deny: a second description: 'assert #5 failed'.! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/7/2023 10:37:51'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 7/Apr/2023 10:37:51'!
 test2ATerminate
 	"Terminate suspended process.
 	Test all nested unwind blocks are correctly unwound; 
@@ -16740,7 +16740,7 @@ test2ATerminate
 	self assert: a first & a third description: 'assert #4 failed'.
 	self deny: a second | a fourth description: 'assert #5 failed'.! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/7/2023 10:37:55'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 7/Apr/2023 10:37:55'!
 test2BResume
 	"Resume suspended process.
 	Test all nested unwind blocks are correctly unwound; 
@@ -16766,7 +16766,7 @@ test2BResume
 	self assert: p isTerminated description: 'assert #3 failed'.
 	self assert: a first & a second & a third & a fourth description: 'assert #4 failed'.! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/7/2023 10:38:00'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 7/Apr/2023 10:38:00'!
 test2BTerminate
 	"Terminate suspended process.
 	Test all nested unwind blocks are correctly unwound; 
@@ -16792,7 +16792,7 @@ test2BTerminate
 	self assert: a first & a second & a third description: 'assert #4 failed'.
 	self deny: a fourth description: 'assert #5 failed'.! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/7/2023 10:38:05'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 7/Apr/2023 10:38:05'!
 test2CResume
 	"Resume suspended process.
 	Test all nested unwind blocks are correctly unwound; 
@@ -16819,7 +16819,7 @@ test2CResume
 	self assert: a first & a second & a third description: 'assert #4 failed'.
 	self deny: a fourth description: 'assert #5 failed'.! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/7/2023 10:38:10'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 7/Apr/2023 10:38:10'!
 test2CTerminate
 	"Terminate suspended process.
 	Test all nested unwind blocks are correctly unwound; 
@@ -16845,7 +16845,7 @@ test2CTerminate
 	self assert: a first & a second & a third description: 'assert #4 failed'.
 	self deny: a fourth description: 'assert #5 failed'.! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/7/2023 10:38:15'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 7/Apr/2023 10:38:15'!
 test2DResume
 	"Resume suspended process.
 	Test all nested unwind blocks are correctly unwound; 
@@ -16871,7 +16871,7 @@ test2DResume
 	self assert: p isTerminated description: 'assert #3 failed'.
 	self assert: a first & a second & a third & a fourth description: 'assert #4 failed'.! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/7/2023 10:38:18'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 7/Apr/2023 10:38:18'!
 test2DTerminate
 	"Terminate suspended process.
 	Test all nested unwind blocks are correctly unwound; 
@@ -16897,7 +16897,7 @@ test2DTerminate
 	self assert: a first & a second & a third description: 'assert #4 failed'.
 	self deny: a fourth description: 'assert #5 failed'.! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/7/2023 10:38:22'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 7/Apr/2023 10:38:22'!
 test3AResume
 	"Resume runnable process.
 	Test all nested unwind blocks are correctly unwound; 
@@ -16923,7 +16923,7 @@ test3AResume
 	self assert: a first & a third & a fourth description: 'assert #4 failed'.
 	self deny: a second description: 'assert #5 failed'.! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/7/2023 10:38:27'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 7/Apr/2023 10:38:27'!
 test3ATerminate
 	"Terminate runnable process.
 	Test all nested unwind blocks are correctly unwound; 
@@ -16949,7 +16949,7 @@ test3ATerminate
 	self assert: a first & a third description: 'assert #3 failed'.
 	self deny: a second | a fourth description: 'assert #4 failed'.! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/7/2023 10:38:31'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 7/Apr/2023 10:38:31'!
 test3BResume
 	"Resume runnable process.
 	Test all nested unwind blocks are correctly unwound; 
@@ -16974,7 +16974,7 @@ test3BResume
 	self assert: p isTerminated description: 'assert #3 failed'.
 	self assert: a first & a second & a third & a fourth description: 'assert #4 failed'.! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/7/2023 10:38:35'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 7/Apr/2023 10:38:35'!
 test3BTerminate
 	"Terminate runnable process.
 	Test all nested unwind blocks are correctly unwound; 
@@ -17000,7 +17000,7 @@ test3BTerminate
 	self assert: a first & a second & a third description: 'assert #4 failed'.
 	self deny: a fourth description: 'assert #5 failed'.! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/7/2023 10:38:39'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 7/Apr/2023 10:38:39'!
 test3CResume
 	"Resume runnable process.
 	Test all nested unwind blocks are correctly unwound; 
@@ -17026,7 +17026,7 @@ test3CResume
 	self assert: a first & a second & a third description: 'assert #4 failed'.
 	self deny: a fourth description: 'assert #5 failed'.! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/7/2023 10:38:44'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 7/Apr/2023 10:38:44'!
 test3CTerminate
 	"Terminate runnable process.
 	Test all nested unwind blocks are correctly unwound; 
@@ -17052,7 +17052,7 @@ test3CTerminate
 	self assert: a first & a second & a third description: 'assert #4 failed'.
 	self deny: a fourth description: 'assert #5 failed'.! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/7/2023 10:38:52'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 7/Apr/2023 10:38:52'!
 test3DResume
 	"Resume runnable process.
 	Test all nested unwind blocks are correctly unwound; 
@@ -17077,7 +17077,7 @@ test3DResume
 	self assert: p isTerminated description: 'assert #3 failed'.
 	self assert: a first & a second & a third & a fourth description: 'assert #4 failed'.! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/7/2023 10:38:58'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 7/Apr/2023 10:38:58'!
 test3DTerminate
 	"Terminate runnable process.
 	Test all nested unwind blocks are correctly unwound; 
@@ -17103,7 +17103,7 @@ test3DTerminate
 	self assert: a first & a second & a third description: 'assert #4 failed'.
 	self deny: a fourth description: 'assert #5 failed'.! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 9/20/2023 15:49:13'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 20/Sep/2023 15:49:13'!
 test4AResume
 	"Resume runnable process.
 	Test all nested unwind blocks are correctly unwound; 
@@ -17132,7 +17132,7 @@ test4AResume
 	self assert: a first & a third & a fourth description: 'assert #4 failed'.
 	self deny: a second description: 'assert #5 failed'.! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/7/2023 10:39:08'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 7/Apr/2023 10:39:08'!
 test4ATerminate
 	"Terminate runnable process.
 	Test all nested unwind blocks are correctly unwound; 
@@ -17158,7 +17158,7 @@ test4ATerminate
 	self assert: a first & a third description: 'assert #4 failed'.
 	self deny: a second | a fourth description: 'assert #5 failed'.! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/7/2023 10:39:12'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 7/Apr/2023 10:39:12'!
 test4BResume
 	"Resume runnable process.
 	Test all nested unwind blocks are correctly unwound; 
@@ -17183,7 +17183,7 @@ test4BResume
 	self assert: p isTerminated description: 'assert #3 failed'.
 	self assert: a first & a second & a third & a fourth description: 'assert #4 failed'.! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/7/2023 10:39:17'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 7/Apr/2023 10:39:17'!
 test4BTerminate
 	"Terminate runnable process.
 	Test all nested unwind blocks are correctly unwound; 
@@ -17209,7 +17209,7 @@ test4BTerminate
 	self assert: a first & a second & a third description: 'assert #4 failed'.
 	self deny: a fourth description: 'assert #5 failed'.! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/7/2023 10:39:22'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 7/Apr/2023 10:39:22'!
 test4CResume
 	"Resume runnable process.
 	Test all nested unwind blocks are correctly unwound; 
@@ -17235,7 +17235,7 @@ test4CResume
 	self assert: a first & a second & a third description: 'Array with wrong contents: ', a printString.
 	self deny: a fourth description: 'Last element should have not been updated'.! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/7/2023 10:39:27'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 7/Apr/2023 10:39:27'!
 test4CTerminate
 	"Terminate runnable process.
 	Test all nested unwind blocks are correctly unwound; 
@@ -17261,7 +17261,7 @@ test4CTerminate
 	self assert: a first & a second & a third description: 'assert #4 failed'.
 	self deny: a fourth description: 'assert #5 failed'.! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 10/8/2023 17:09:57'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 8/Oct/2023 17:09:57'!
 test4DResume
 	"Resume runnable process.
 	Test all nested unwind blocks are correctly unwound; 
@@ -17287,7 +17287,7 @@ test4DResume
 	self assert: p isTerminated description: 'assert #3 failed'.
 	self assert: a first & a second & a third & a fourth description: 'assert #4 failed'.! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 10/8/2023 17:03:54'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 8/Oct/2023 17:03:54'!
 test4DTerminate
 	"Terminate runnable process.
 	Test all nested unwind blocks are correctly unwound; 
@@ -17314,7 +17314,7 @@ test4DTerminate
 	self assert: a first & a second & a third description: 'assert #4 failed'.
 	self deny: a fourth description: 'assert #5 failed'.! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/4/2023 16:35:30'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/Apr/2023 16:35:30'!
 test5ATerminate
 	"Terminate active process.
 	Test all nested unwind blocks are correctly unwound; 
@@ -17332,7 +17332,7 @@ test5ATerminate
 	self assert: a first & a third.
 	self deny: a second | a fourth.! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jar 1/17/2022 18:26:22'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jar 17/Jan/2022 18:26:22'!
 test5BTerminate
 	"Terminate active process.
 	Test all nested unwind blocks are correctly unwound; 
@@ -17350,7 +17350,7 @@ test5BTerminate
 	self assert: a first & a second & a third.
 	self deny: a fourth.! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jar 1/17/2022 18:26:36'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jar 17/Jan/2022 18:26:36'!
 test5CTerminate
 	"Terminate active process.
 	Test all nested unwind blocks are correctly unwound; 
@@ -17368,7 +17368,7 @@ test5CTerminate
 	self assert: a first & a second & a third.
 	self deny: a fourth.! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jar 1/17/2022 18:26:43'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jar 17/Jan/2022 18:26:43'!
 test5DTerminate
 	"Terminate active process.
 	Test all nested unwind blocks are correctly unwound; 
@@ -17386,7 +17386,7 @@ test5DTerminate
 	self assert: a first & a second & a third.
 	self deny: a fourth.! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jar 1/17/2022 18:26:52'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jar 17/Jan/2022 18:26:52'!
 test6ATerminate
 	"Terminate active process.
 	Test all nested unwind blocks are correctly unwound; 
@@ -17404,7 +17404,7 @@ test6ATerminate
 	self assert: a first & a third.
 	self deny: a second | a fourth.! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jar 1/17/2022 18:27:00'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jar 17/Jan/2022 18:27:00'!
 test6BTerminate
 	"Terminate active process.
 	Test all nested unwind blocks are correctly unwound; 
@@ -17422,7 +17422,7 @@ test6BTerminate
 	self assert: a first & a second & a third.
 	self deny: a fourth.! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jar 1/17/2022 18:27:06'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jar 17/Jan/2022 18:27:06'!
 test6CTerminate
 	"Terminate active process.
 	Test all nested unwind blocks are correctly unwound; 
@@ -17440,7 +17440,7 @@ test6CTerminate
 	self assert: a first & a second & a third.
 	self deny: a fourth.! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jar 1/17/2022 18:27:12'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jar 17/Jan/2022 18:27:12'!
 test6DTerminate
 	"Terminate active process.
 	Test all nested unwind blocks are correctly unwound; 
@@ -17458,7 +17458,7 @@ test6DTerminate
 	self assert: a first & a second & a third.
 	self deny: a fourth.! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/7/2023 10:45:13'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 7/Apr/2023 10:45:13'!
 test7AResume
 	"Terminate blocked process.
 	Test all nested unwind blocks are correctly unwound; 
@@ -17486,7 +17486,7 @@ test7AResume
 	self assert: a first & a third & a fourth description: 'assert #4 failed'.
 	self deny: a second description: 'assert #5 failed'.! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/7/2023 10:45:17'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 7/Apr/2023 10:45:17'!
 test7ATerminate
 	"Terminate blocked process.
 	Test all nested unwind blocks are correctly unwound; 
@@ -17513,7 +17513,7 @@ test7ATerminate
 	self assert: a first & a third description: 'assert #4 failed'.
 	self deny: a second | a fourth description: 'assert #5 failed'.! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/7/2023 10:45:21'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 7/Apr/2023 10:45:21'!
 test7BResume
 	"Terminate blocked process.
 	Test all nested unwind blocks are correctly unwound; 
@@ -17540,7 +17540,7 @@ test7BResume
 	self assert: p isTerminated description: 'assert #3 failed'.
 	self assert: a first & a second & a third & a fourth description: 'assert #4 failed'.! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/7/2023 10:45:25'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 7/Apr/2023 10:45:25'!
 test7BTerminate
 	"Terminate blocked process.
 	Test all nested unwind blocks are correctly unwound; 
@@ -17567,7 +17567,7 @@ test7BTerminate
 	self assert: a first & a second & a third description: 'assert #4 failed'.
 	self deny: a fourth description: 'assert #5 failed'.! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/7/2023 10:45:31'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 7/Apr/2023 10:45:31'!
 test7CResume
 	"Terminate blocked process.
 	Test all nested unwind blocks are correctly unwound; 
@@ -17595,7 +17595,7 @@ test7CResume
 	self assert: a first & a second & a third description: 'assert #4 failed'.
 	self deny: a fourth description: 'assert #5 failed'.! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/7/2023 10:45:35'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 7/Apr/2023 10:45:35'!
 test7CTerminate
 	"Terminate blocked process.
 	Test all nested unwind blocks are correctly unwound; 
@@ -17622,7 +17622,7 @@ test7CTerminate
 	self assert: a first & a second & a third description: 'assert #4 failed'.
 	self deny: a fourth description: 'assert #5 failed'.! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/7/2023 10:45:39'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 7/Apr/2023 10:45:39'!
 test7DResume
 	"Terminate blocked process.
 	Test all nested unwind blocks are correctly unwound; 
@@ -17649,7 +17649,7 @@ test7DResume
 	self assert: p isTerminated description: 'assert #3 failed'.
 	self assert: a first & a second & a third & a fourth description: 'assert #4 failed'.! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/7/2023 10:45:44'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 7/Apr/2023 10:45:44'!
 test7DTerminate
 	"Terminate blocked process.
 	Test all nested unwind blocks are correctly unwound; 
@@ -17676,7 +17676,7 @@ test7DTerminate
 	self assert: a first & a second & a third description: 'assert #4 failed'.
 	self deny: a fourth description: 'assert #5 failed'.! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/7/2023 10:45:48'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 7/Apr/2023 10:45:48'!
 test8AResume
 	"Terminate blocked process.
 	Test all nested unwind blocks are correctly unwound; 
@@ -17704,7 +17704,7 @@ test8AResume
 	self assert: a first & a third & a fourth description: 'assert #4 failed'.
 	self deny: a second description: 'assert #5 failed'.! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/7/2023 10:45:53'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 7/Apr/2023 10:45:53'!
 test8ATerminate
 	"Terminate blocked process.
 	Test all nested unwind blocks are correctly unwound; 
@@ -17731,7 +17731,7 @@ test8ATerminate
 	self assert: a first & a third description: 'assert #4 failed'.
 	self deny: a second | a fourth description: 'assert #5 failed'.! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/7/2023 10:45:57'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 7/Apr/2023 10:45:57'!
 test8BResume
 	"Terminate blocked process.
 	Test all nested unwind blocks are correctly unwound; 
@@ -17758,7 +17758,7 @@ test8BResume
 	self assert: p isTerminated description: 'assert #3 failed'.
 	self assert: a first & a second & a third & a fourth description: 'assert #4 failed'.! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/7/2023 10:46:01'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 7/Apr/2023 10:46:01'!
 test8BTerminate
 	"Terminate blocked process.
 	Test all nested unwind blocks are correctly unwound; 
@@ -17785,7 +17785,7 @@ test8BTerminate
 	self assert: a first & a second & a third description: 'assert #4 failed'.
 	self deny: a fourth description: 'assert #5 failed'.! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/7/2023 10:46:05'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 7/Apr/2023 10:46:05'!
 test8CResume
 	"Terminate blocked process.
 	Test all nested unwind blocks are correctly unwound; 
@@ -17813,7 +17813,7 @@ test8CResume
 	self assert: a first & a second & a third description: 'assert #4 failed'.
 	self deny: a fourth description: 'assert #5 failed'.! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/7/2023 10:46:09'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 7/Apr/2023 10:46:09'!
 test8CTerminate
 	"Terminate blocked process.
 	Test all nested unwind blocks are correctly unwound; 
@@ -17840,7 +17840,7 @@ test8CTerminate
 	self assert: a first & a second & a third description: 'assert #4 failed'.
 	self deny: a fourth description: 'assert #5 failed'.! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/7/2023 10:46:13'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 7/Apr/2023 10:46:13'!
 test8DResume
 	"Terminate blocked process.
 	Test all nested unwind blocks are correctly unwound; 
@@ -17867,7 +17867,7 @@ test8DResume
 	self assert: p isTerminated description: 'assert #3 failed'.
 	self assert: a first & a second & a third & a fourth description: 'assert #4 failed'.! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/7/2023 10:46:17'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 7/Apr/2023 10:46:17'!
 test8DTerminate
 	"Terminate blocked process.
 	Test all nested unwind blocks are correctly unwound; 
@@ -17894,7 +17894,7 @@ test8DTerminate
 	self assert: a first & a second & a third description: 'assert #4 failed'.
 	self deny: a fourth description: 'assert #5 failed'.! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 4/4/2023 16:13:02'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 4/Apr/2023 16:13:02'!
 aux1A: anArray sentinel: sentinel
 
 	sentinel at: 1 put: true.
@@ -17904,7 +17904,7 @@ aux1A: anArray sentinel: sentinel
 		anArray at: 3 put: true].
 	anArray at: 4 put: true! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 4/29/2021 12:51:53'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 29/Apr/2021 12:51:53'!
 aux1Ainner: anArray
 
 
@@ -17914,7 +17914,7 @@ aux1Ainner: anArray
 			anArray at: 2 put: true]
 ! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 4/4/2023 16:13:08'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 4/Apr/2023 16:13:08'!
 aux1B: anArray sentinel: sentinel
 
 	sentinel at: 1 put: true.
@@ -17924,7 +17924,7 @@ aux1B: anArray sentinel: sentinel
 		anArray at: 3 put: true].
 	anArray at: 4 put: true! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 4/29/2021 12:53:00'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 29/Apr/2021 12:53:00'!
 aux1Binner: anArray
 
 	[ ] ensure: [
@@ -17932,7 +17932,7 @@ aux1Binner: anArray
 			anArray at: 1 put: true].
 		^anArray at: 2 put: true]! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 4/4/2023 16:13:14'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 4/Apr/2023 16:13:14'!
 aux1C: anArray sentinel: sentinel
 
 	sentinel at: 1 put: true.
@@ -17945,7 +17945,7 @@ aux1C: anArray sentinel: sentinel
 		^anArray at: 3 put: true].
 	anArray at: 4 put: true! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 4/4/2023 16:13:18'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 4/Apr/2023 16:13:18'!
 aux1D: anArray sentinel: sentinel
 
 	sentinel at: 1 put: true.
@@ -17958,7 +17958,7 @@ aux1D: anArray sentinel: sentinel
 		anArray at: 3 put: true].
 	^anArray at: 4 put: true! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 4/4/2023 16:13:23'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 4/Apr/2023 16:13:23'!
 aux2A: anArray sentinel: sentinel
 
 	sentinel at: 1 put: true.
@@ -17968,7 +17968,7 @@ aux2A: anArray sentinel: sentinel
 		anArray at: 3 put: true].
 	anArray at: 4 put: true! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 4/29/2021 12:55:52'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 29/Apr/2021 12:55:52'!
 aux2Ainner: anArray
 
 	[ ] ensure: [
@@ -17977,7 +17977,7 @@ aux2Ainner: anArray
 			^anArray at: 1 put: true].
 		anArray at: 2 put: true]! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 4/4/2023 16:13:27'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 4/Apr/2023 16:13:27'!
 aux2B: anArray sentinel: sentinel
 
 	sentinel at: 1 put: true.
@@ -17987,7 +17987,7 @@ aux2B: anArray sentinel: sentinel
 		anArray at: 3 put: true].
 	anArray at: 4 put: true! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 4/29/2021 12:56:22'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 29/Apr/2021 12:56:22'!
 aux2Binner: anArray
 
 	[ ] ensure: [
@@ -17996,7 +17996,7 @@ aux2Binner: anArray
 			anArray at: 1 put: true].
 		^anArray at: 2 put: true]! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 4/4/2023 16:13:31'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 4/Apr/2023 16:13:31'!
 aux2C: anArray sentinel: sentinel
 
 	sentinel at: 1 put: true.
@@ -18010,7 +18010,7 @@ aux2C: anArray sentinel: sentinel
 		^anArray at: 3 put: true].
 	anArray at: 4 put: true! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 4/4/2023 16:13:36'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 4/Apr/2023 16:13:36'!
 aux2D: anArray sentinel: sentinel
 
 	sentinel at: 1 put: true.
@@ -18024,7 +18024,7 @@ aux2D: anArray sentinel: sentinel
 		anArray at: 3 put: true].
 	^anArray at: 4 put: true! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 4/4/2023 16:13:40'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 4/Apr/2023 16:13:40'!
 aux3A: anArray sentinel: sentinel
 
 	sentinel at: 1 put: true.
@@ -18034,7 +18034,7 @@ aux3A: anArray sentinel: sentinel
 		anArray at: 3 put: true].
 	anArray at: 4 put: true! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 4/29/2021 12:59:43'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 29/Apr/2021 12:59:43'!
 aux3Ainner: anArray
 
 	[ ] ensure: [
@@ -18042,7 +18042,7 @@ aux3Ainner: anArray
 			^anArray at: 1 put: true].
 		anArray at: 2 put: true]! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 4/4/2023 16:13:45'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 4/Apr/2023 16:13:45'!
 aux3B: anArray sentinel: sentinel
 
 	sentinel at: 1 put: true.
@@ -18052,7 +18052,7 @@ aux3B: anArray sentinel: sentinel
 		anArray at: 3 put: true].
 	anArray at: 4 put: true! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 4/29/2021 13:00:05'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 29/Apr/2021 13:00:05'!
 aux3Binner: anArray
 
 	[ ] ensure: [
@@ -18060,7 +18060,7 @@ aux3Binner: anArray
 			anArray at: 1 put: true].
 		^anArray at: 2 put: true]! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 4/4/2023 16:13:49'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 4/Apr/2023 16:13:49'!
 aux3C: anArray sentinel: sentinel
 
 	sentinel at: 1 put: true.
@@ -18073,7 +18073,7 @@ aux3C: anArray sentinel: sentinel
 		^anArray at: 3 put: true].
 	anArray at: 4 put: true! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 4/4/2023 16:13:53'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 4/Apr/2023 16:13:53'!
 aux3D: anArray sentinel: sentinel
 
 	sentinel at: 1 put: true.
@@ -18086,7 +18086,7 @@ aux3D: anArray sentinel: sentinel
 		anArray at: 3 put: true].
 	^anArray at: 4 put: true! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 4/4/2023 16:13:57'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 4/Apr/2023 16:13:57'!
 aux4A: anArray sentinel: sentinel
 
 	sentinel at: 1 put: true.
@@ -18096,7 +18096,7 @@ aux4A: anArray sentinel: sentinel
 		anArray at: 3 put: true].
 	anArray at: 4 put: true! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 4/29/2021 13:33:23'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 29/Apr/2021 13:33:23'!
 aux4Ainner: anArray
 
 	[ ] ensure: [
@@ -18105,7 +18105,7 @@ aux4Ainner: anArray
 			^anArray at: 1 put: true].
 		anArray at: 2 put: true]! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 4/4/2023 16:14:02'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 4/Apr/2023 16:14:02'!
 aux4B: anArray sentinel: sentinel
 
 	sentinel at: 1 put: true.
@@ -18115,7 +18115,7 @@ aux4B: anArray sentinel: sentinel
 		anArray at: 3 put: true].
 	anArray at: 4 put: true! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 4/29/2021 13:33:51'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 29/Apr/2021 13:33:51'!
 aux4Binner: anArray
 
 	[ ] ensure: [
@@ -18124,7 +18124,7 @@ aux4Binner: anArray
 			anArray at: 1 put: true].
 		^anArray at: 2 put: true]! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 4/4/2023 16:14:06'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 4/Apr/2023 16:14:06'!
 aux4C: anArray sentinel: sentinel
 
 	sentinel at: 1 put: true.
@@ -18138,7 +18138,7 @@ aux4C: anArray sentinel: sentinel
 		^anArray at: 3 put: true].
 	anArray at: 4 put: true! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 10/8/2023 17:04:58'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 8/Oct/2023 17:04:58'!
 aux4D: anArray sentinel: sentinel
 
 	sentinel at: 1 put: true.
@@ -18153,7 +18153,7 @@ aux4D: anArray sentinel: sentinel
 		anArray at: 3 put: true].
 	^anArray at: 4 put: true! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 4/29/2021 13:34:41'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 29/Apr/2021 13:34:41'!
 aux5A: anArray
 
 	[
@@ -18162,7 +18162,7 @@ aux5A: anArray
 		anArray at: 3 put: true].
 	anArray at: 4 put: true! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 4/29/2021 13:34:35'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 29/Apr/2021 13:34:35'!
 aux5Ainner: anArray
 
 	[ ] ensure: [
@@ -18170,7 +18170,7 @@ aux5Ainner: anArray
 			^anArray at: 1 put: true].
 		anArray at: 2 put: true]! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 4/29/2021 13:35:04'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 29/Apr/2021 13:35:04'!
 aux5B: anArray
 
 	[
@@ -18179,7 +18179,7 @@ aux5B: anArray
 		anArray at: 3 put: true].
 	anArray at: 4 put: true! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 4/29/2021 13:34:57'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 29/Apr/2021 13:34:57'!
 aux5Binner: anArray
 
 	[ ] ensure: [
@@ -18187,7 +18187,7 @@ aux5Binner: anArray
 			anArray at: 1 put: true].
 		^anArray at: 2 put: true]! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 4/29/2021 10:16:05'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 29/Apr/2021 10:16:05'!
 aux5C: anArray
 
 	[
@@ -18199,7 +18199,7 @@ aux5C: anArray
 		^anArray at: 3 put: true].
 	anArray at: 4 put: true! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 4/29/2021 10:16:13'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 29/Apr/2021 10:16:13'!
 aux5D: anArray
 
 	[
@@ -18211,7 +18211,7 @@ aux5D: anArray
 		anArray at: 3 put: true].
 	^anArray at: 4 put: true! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 4/29/2021 13:35:35'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 29/Apr/2021 13:35:35'!
 aux6A: anArray
 
 	[
@@ -18220,7 +18220,7 @@ aux6A: anArray
 		anArray at: 3 put: true].
 	anArray at: 4 put: true! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 4/29/2021 13:35:29'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 29/Apr/2021 13:35:29'!
 aux6Ainner: anArray
 
 	[ ] ensure: [
@@ -18229,7 +18229,7 @@ aux6Ainner: anArray
 			^anArray at: 1 put: true].
 		anArray at: 2 put: true]! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 4/29/2021 13:35:58'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 29/Apr/2021 13:35:58'!
 aux6B: anArray
 
 	[
@@ -18238,7 +18238,7 @@ aux6B: anArray
 		anArray at: 3 put: true].
 	anArray at: 4 put: true! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 4/29/2021 13:35:52'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 29/Apr/2021 13:35:52'!
 aux6Binner: anArray
 
 	[ ] ensure: [
@@ -18247,7 +18247,7 @@ aux6Binner: anArray
 			anArray at: 1 put: true].
 		^anArray at: 2 put: true]! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 4/29/2021 10:16:48'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 29/Apr/2021 10:16:48'!
 aux6C: anArray
 
 	[
@@ -18260,7 +18260,7 @@ aux6C: anArray
 		^anArray at: 3 put: true].
 	anArray at: 4 put: true! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 4/29/2021 10:16:56'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 29/Apr/2021 10:16:56'!
 aux6D: anArray
 
 	[
@@ -18273,7 +18273,7 @@ aux6D: anArray
 		anArray at: 3 put: true].
 	^anArray at: 4 put: true! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 4/4/2023 16:14:53'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 4/Apr/2023 16:14:53'!
 aux7A: anArray semaphore: semaphore sentinel: sentinel
 
 	sentinel at: 1 put: true.
@@ -18283,7 +18283,7 @@ aux7A: anArray semaphore: semaphore sentinel: sentinel
 		anArray at: 3 put: true].
 	anArray at: 4 put: true! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 4/29/2021 13:37:07'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 29/Apr/2021 13:37:07'!
 aux7Ainner: anArray semaphore: semaphore
 
 	[ ] ensure: [
@@ -18291,7 +18291,7 @@ aux7Ainner: anArray semaphore: semaphore
 			^anArray at: 1 put: true].
 		anArray at: 2 put: true]! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 4/4/2023 16:15:00'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 4/Apr/2023 16:15:00'!
 aux7B: anArray semaphore: semaphore sentinel: sentinel
 
 	sentinel at: 1 put: true.
@@ -18301,7 +18301,7 @@ aux7B: anArray semaphore: semaphore sentinel: sentinel
 		anArray at: 3 put: true].
 	anArray at: 4 put: true! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 4/29/2021 14:23:09'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 29/Apr/2021 14:23:09'!
 aux7Binner: anArray semaphore: semaphore
 
 	[ ] ensure: [
@@ -18309,7 +18309,7 @@ aux7Binner: anArray semaphore: semaphore
 			anArray at: 1 put: true].
 		^anArray at: 2 put: true]! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 4/4/2023 16:15:03'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 4/Apr/2023 16:15:03'!
 aux7C: anArray semaphore: semaphore sentinel: sentinel
 
 	sentinel at: 1 put: true.
@@ -18322,7 +18322,7 @@ aux7C: anArray semaphore: semaphore sentinel: sentinel
 		^anArray at: 3 put: true].
 	anArray at: 4 put: true! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 4/4/2023 16:15:07'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 4/Apr/2023 16:15:07'!
 aux7D: anArray semaphore: semaphore sentinel: sentinel
 
 	sentinel at: 1 put: true.
@@ -18335,7 +18335,7 @@ aux7D: anArray semaphore: semaphore sentinel: sentinel
 		anArray at: 3 put: true].
 	^anArray at: 4 put: true! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 4/4/2023 16:15:12'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 4/Apr/2023 16:15:12'!
 aux8A: anArray semaphore: semaphore sentinel: sentinel
 
 	sentinel at: 1 put: true.
@@ -18345,7 +18345,7 @@ aux8A: anArray semaphore: semaphore sentinel: sentinel
 		anArray at: 3 put: true].
 	anArray at: 4 put: true! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 4/29/2021 14:24:06'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 29/Apr/2021 14:24:06'!
 aux8Ainner: anArray semaphore: semaphore
 
 	[ ] ensure: [
@@ -18354,7 +18354,7 @@ aux8Ainner: anArray semaphore: semaphore
 			^anArray at: 1 put: true].
 		anArray at: 2 put: true]! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 4/4/2023 16:15:16'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 4/Apr/2023 16:15:16'!
 aux8B: anArray semaphore: semaphore sentinel: sentinel
 
 	sentinel at: 1 put: true.
@@ -18364,7 +18364,7 @@ aux8B: anArray semaphore: semaphore sentinel: sentinel
 		anArray at: 3 put: true].
 	anArray at: 4 put: true! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 4/29/2021 14:24:28'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 29/Apr/2021 14:24:28'!
 aux8Binner: anArray semaphore: semaphore
 
 	[ ] ensure: [
@@ -18373,7 +18373,7 @@ aux8Binner: anArray semaphore: semaphore
 			anArray at: 1 put: true].
 		^anArray at: 2 put: true]! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 4/4/2023 16:15:21'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 4/Apr/2023 16:15:21'!
 aux8C: anArray semaphore: semaphore sentinel: sentinel
 
 	sentinel at: 1 put: true.
@@ -18387,7 +18387,7 @@ aux8C: anArray semaphore: semaphore sentinel: sentinel
 		^anArray at: 3 put: true].
 	anArray at: 4 put: true! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 4/4/2023 16:15:25'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 4/Apr/2023 16:15:25'!
 aux8D: anArray semaphore: semaphore sentinel: sentinel
 
 	sentinel at: 1 put: true.
@@ -18401,7 +18401,7 @@ aux8D: anArray semaphore: semaphore sentinel: sentinel
 		anArray at: 3 put: true].
 	^anArray at: 4 put: true! !
 
-!ProcessTest methodsFor: 'tests' stamp: 'jmv 8/17/2022 13:21:12'!
+!ProcessTest methodsFor: 'tests' stamp: 'jmv 17/Aug/2022 13:21:12'!
 testAtomicSuspend
 	"Test atomic suspend of foreign processes"
 
@@ -18415,7 +18415,7 @@ testAtomicSuspend
 	self assert: list == nil.
 ! !
 
-!ProcessTest methodsFor: 'tests' stamp: 'jar 1/21/2023 16:35:35'!
+!ProcessTest methodsFor: 'tests' stamp: 'jar 21/Jan/2023 16:35:35'!
 testIsTerminated
 	"Test semantics of isTerminated.
 	 A process is considered terminated if the suspendedContext has no unexecuted code left,
@@ -18484,7 +18484,7 @@ testIsTerminated
 	"... and the active process is never considered terminated"
 	self deny: Processor activeProcess isTerminated! !
 
-!ProcessTest methodsFor: 'tests' stamp: 'jar 2/1/2022 20:33:44'!
+!ProcessTest methodsFor: 'tests' stamp: 'jar 1/Feb/2022 20:33:44'!
 testProcessFaithfulTermination
 	"When terminating a process, unwind blocks should be evaluated as if they were executed by the process being terminated."
 
@@ -18498,7 +18498,7 @@ testProcessFaithfulTermination
 	process terminate.
 	self assert: process isTerminated! !
 
-!ProcessTest methodsFor: 'tests' stamp: 'jar 1/30/2023 13:58:49'!
+!ProcessTest methodsFor: 'tests' stamp: 'jar 30/Jan/2023 13:58:49'!
 testResumeTerminatingProcess
 	"An attempt to resume a terminating process in the middle of preparing its suspended context should raise an error;
 	one possible solution is to nil the suspended context of the terminating process while executing the vulnerable code"
@@ -18531,7 +18531,7 @@ testResumeTerminatingProcess
 	self assert: unwound.
 	self assert: terminator isTerminated! !
 
-!ProcessTest methodsFor: 'tests' stamp: 'sqr 6/18/2024 23:12:01'!
+!ProcessTest methodsFor: 'tests' stamp: 'sqr 18/Jun/2024 23:12:01'!
 testResumeWithEnsureAfterBCR
 	"This test verifies #cannotReturn: context sender's pc has been nilled
 	 before returning to make sure its code won't continue executing,
@@ -18566,7 +18566,7 @@ testResumeWithEnsureAfterBCR
 	self assert: unwound.
 	self assert: error! !
 
-!ProcessTest methodsFor: 'tests' stamp: 'jar 1/19/2023 19:04:07'!
+!ProcessTest methodsFor: 'tests' stamp: 'jar 19/Jan/2023 19:04:07'!
 testRevisedSuspendExpectations
 	"Test revised suspend expectations vs. pre-2022 VM's suspend"
 
@@ -18591,7 +18591,7 @@ testRevisedSuspendExpectations
 			"note the list confirms that process p was waitng on a semaphore"
 			]! !
 
-!ProcessTest methodsFor: 'tests' stamp: 'jar 1/19/2023 17:56:59'!
+!ProcessTest methodsFor: 'tests' stamp: 'jar 19/Jan/2023 17:56:59'!
 testTerminateByHighestPriorityProcess
 	"Test temination by a highest priority process."
 
@@ -18606,7 +18606,7 @@ testTerminateByHighestPriorityProcess
 	self assert: p isTerminated.
 	self assert: q isTerminated! !
 
-!ProcessTest methodsFor: 'tests' stamp: 'jar 1/19/2023 17:45:30'!
+!ProcessTest methodsFor: 'tests' stamp: 'jar 19/Jan/2023 17:45:30'!
 testTerminateEnsureAsStackTop
 	"Test #ensure unwind block is executed even when #ensure context is on stack's top."
 
@@ -18635,7 +18635,7 @@ testTerminateEnsureAsStackTop
 	self assert: p1 isTerminated & p2 isTerminated & p3 isTerminated.
 	self assert: x1 & x2 & x3! !
 
-!ProcessTest methodsFor: 'tests' stamp: 'jar 1/19/2023 18:01:37'!
+!ProcessTest methodsFor: 'tests' stamp: 'jar 19/Jan/2023 18:01:37'!
 testTerminateEnsureOnTopOfEnsure
 	"Test two ensure contexts on top of each other unwind correctly, i.e. that
 	both their unwind blocks get executed."
@@ -18655,7 +18655,7 @@ testTerminateEnsureOnTopOfEnsure
 
 ! !
 
-!ProcessTest methodsFor: 'tests' stamp: 'jar 11/20/2025 09:18:03'!
+!ProcessTest methodsFor: 'tests' stamp: 'jar 20/Nov/2025 09:18:03'!
 testTerminateEverywhere
 
 	| block steps |
@@ -18679,7 +18679,7 @@ testTerminateEverywhere
 		process terminate.
 		self assert: process isTerminated].! !
 
-!ProcessTest methodsFor: 'tests' stamp: 'jar 1/19/2023 18:05:42'!
+!ProcessTest methodsFor: 'tests' stamp: 'jar 19/Jan/2023 18:05:42'!
 testTerminateHandlingUnwindError
 	"Test an error inside an unwind block is handled correctly."
 	
@@ -18709,7 +18709,7 @@ testTerminateHandlingUnwindError
 	self deny: error.
 	self assert: p isTerminated! !
 
-!ProcessTest methodsFor: 'tests' stamp: 'jar 1/19/2023 18:07:54'!
+!ProcessTest methodsFor: 'tests' stamp: 'jar 19/Jan/2023 18:07:54'!
 testTerminateHighestPriorityProcess
 	"Test termination of a highest priority process."
 	
@@ -18721,7 +18721,7 @@ testTerminateHighestPriorityProcess
 	p terminate.
 	self assert: p isTerminated! !
 
-!ProcessTest methodsFor: 'tests' stamp: 'jmv 7/31/2023 10:59:59'!
+!ProcessTest methodsFor: 'tests' stamp: 'jmv 31/Jul/2023 10:59:59'!
 testTerminateInEnsure
 	"As shown in
 	Martin McClure's 'Threads, Critical Sections, and Termination' (Smalltalks 2019 conference)
@@ -18750,7 +18750,7 @@ testTerminateInEnsure
 			assert: process isTerminated;
 			assert: count equals: 11 ]! !
 
-!ProcessTest methodsFor: 'tests' stamp: 'jar 1/19/2023 17:34:01'!
+!ProcessTest methodsFor: 'tests' stamp: 'jar 19/Jan/2023 17:34:01'!
 testTerminateInTerminate
 	"Terminating a terminator process should unwind both the terminator and its terminatee process"
 	
@@ -18770,7 +18770,7 @@ testTerminateInTerminate
 	self assert: terminator isTerminated. 
 	self assert: unwound! !
 
-!ProcessTest methodsFor: 'tests' stamp: 'jar 1/19/2023 18:14:14'!
+!ProcessTest methodsFor: 'tests' stamp: 'jar 19/Jan/2023 18:14:14'!
 testTerminateNiledSuspendedContextProcess
 	"Test a process with niled suspendedContext terminates correctly."
 	
@@ -18781,7 +18781,7 @@ testTerminateNiledSuspendedContextProcess
 	p terminate.
 	self assert: p isTerminated! !
 
-!ProcessTest methodsFor: 'tests' stamp: 'jar 1/22/2023 19:59:08'!
+!ProcessTest methodsFor: 'tests' stamp: 'jar 22/Jan/2023 19:59:08'!
 testTerminateProcessTerminatedViaNiledPc
 	"Terminating a terminated process may still run unexecuted unwinds.
 	See https://lists.cuis.st/mailman/archives/cuis-dev/2023-January/006825.html"
@@ -18799,7 +18799,7 @@ testTerminateProcessTerminatedViaNiledPc
 	self assert: terminatee isTerminated. 
 	self assert: unwound! !
 
-!ProcessTest methodsFor: 'tests' stamp: 'jar 1/19/2023 18:14:03'!
+!ProcessTest methodsFor: 'tests' stamp: 'jar 19/Jan/2023 18:14:03'!
 testTerminateSingleEnsure
 	"Test a stack consisting of a single ensure context unwinds correctly."
 	
@@ -18813,7 +18813,7 @@ testTerminateSingleEnsure
 	self assert: beenHere.
 	self assert: p isTerminated! !
 
-!ProcessTest methodsFor: 'tests' stamp: 'jar 1/30/2023 14:03:24'!
+!ProcessTest methodsFor: 'tests' stamp: 'jar 30/Jan/2023 14:03:24'!
 testTerminateTerminatingProcess
 	"An attempt to terminate a terminating process in the middle of preparing its suspended context should do nothing;
 	one possible solution is to nil the suspended context of the terminating process while executing the vulnerable code"
@@ -18846,7 +18846,7 @@ testTerminateTerminatingProcess
 	self assert: unwound.
 	self assert: terminator isTerminated! !
 
-!ProcessTest methodsFor: 'tests' stamp: 'jar 1/19/2023 18:30:25'!
+!ProcessTest methodsFor: 'tests' stamp: 'jar 19/Jan/2023 18:30:25'!
 testTerminateTerminatingProcessAfterUnwindStarted
 	"Terminating a terminatee process after the terminator process restarted the terminatee
 	 process should unwind the terminatee process and let the terminator process terminate."
@@ -18882,7 +18882,7 @@ testTerminateTerminatingProcessAfterUnwindStarted
 	self assert: unwound.
 	self assert: terminator isTerminated! !
 
-!ProcessTest methodsFor: 'tests' stamp: 'jar 8/15/2022 17:51:47'!
+!ProcessTest methodsFor: 'tests' stamp: 'jar 15/Aug/2022 17:51:47'!
 testTerminateWithDelayInUnwind
 	"Test the process that invoked the termination of another process waits
 	for the other process to finish unwinding."
@@ -18898,7 +18898,7 @@ testTerminateWithDelayInUnwind
 	p terminate.
 	self assert: p isTerminated! !
 
-!ProcessTest methodsFor: 'tests' stamp: 'jmv 11/19/2025 09:06:37'!
+!ProcessTest methodsFor: 'tests' stamp: 'jmv 19/Nov/2025 09:06:37'!
 testTerminateWithEmptyUnwindBlock
 	"Test termination of a process containing an unwind block that is empty.
 	Note: A previous test with nil as the unwind block was removed, as this is no longer supported
@@ -18918,7 +18918,7 @@ testTerminateWithEmptyUnwindBlock
 	[p terminate] forkAt: Processor activePriority + 1.
 	self assert: p isTerminated! !
 
-!ProcessTest methodsFor: 'tests' stamp: 'jmv 7/31/2023 11:00:04'!
+!ProcessTest methodsFor: 'tests' stamp: 'jmv 31/Jul/2023 11:00:04'!
 testValueEnsured
 	"Based on #testTerminateInEnsure
 	Tweaked to raise likelihood of failure, besides testing #valueEnsured
@@ -18945,7 +18945,7 @@ testValueEnsured
 			assert: process isTerminated;
 			assert: count equals: 11 ]! !
 
-!ProcessorTest methodsFor: 'as yet unclassified' stamp: 'jmv 8/22/2022 14:38:31'!
+!ProcessorTest methodsFor: 'as yet unclassified' stamp: 'jmv 22/Aug/2022 14:38:31'!
 testGrabProcessor
 	"
 	ProcessorTest new testGrabProcessor
@@ -18992,7 +18992,7 @@ testGrabProcessor
 		assert: (1.0 * totalWait / observations) < 40	"Mean value should be around 25"
 		description: 'The low priority process was not preempted at the end of #grabProcessor'! !
 
-!ProcessorTest methodsFor: 'as yet unclassified' stamp: 'jmv 8/22/2022 14:36:30'!
+!ProcessorTest methodsFor: 'as yet unclassified' stamp: 'jmv 22/Aug/2022 14:36:30'!
 testGrabProcessorOnlyForNoTimeout
 	"
 	ProcessorTest new testGrabProcessorOnlyForNoTimeout
@@ -19050,7 +19050,7 @@ testGrabProcessorOnlyForNoTimeout
 		assert: inconsistentCount = 0
 		description: 'Should have never timeout-ed'! !
 
-!ProcessorTest methodsFor: 'as yet unclassified' stamp: 'jmv 8/22/2022 14:37:17'!
+!ProcessorTest methodsFor: 'as yet unclassified' stamp: 'jmv 22/Aug/2022 14:37:17'!
 testGrabProcessorOnlyForTimeout
 	"
 	1 to: 40 do: [ :i | i print. ProcessorTest new testGrabProcessorOnlyForTimeout ]
@@ -19109,7 +19109,7 @@ testGrabProcessorOnlyForTimeout
 		assert: inconsistentCount > 10   									"Expected value is around 25"
 		description: 'It seems the low priority process was not preempted at the timeout'! !
 
-!ProcessorTest methodsFor: 'as yet unclassified' stamp: 'jmv 8/22/2022 14:38:58'!
+!ProcessorTest methodsFor: 'as yet unclassified' stamp: 'jmv 22/Aug/2022 14:38:58'!
 testValueUnpreemptively
 	"
 	ProcessorTest new testValueUnpreemptively
@@ -19156,32 +19156,32 @@ testValueUnpreemptively
 		assert: (1.0 * totalWait / observations) < 40	"Mean value should be around 25"
 		description: 'The low priority process was not preempted at the end of #grabProcessor'! !
 
-!ProcessorTest methodsFor: 'private' stamp: 'jmv 8/22/2022 14:20:49'!
+!ProcessorTest methodsFor: 'private' stamp: 'jmv 22/Aug/2022 14:20:49'!
 wasteTime: milliseconds
 	| t0 |
 	t0 _ Time localMillisecondClock.
 	[ t0 + milliseconds > Time localMillisecondClock ] whileTrue: [
 		1.23 asString asNumber ]! !
 
-!SemaphoreTest methodsFor: 'private' stamp: 'tlk 5/5/2006 13:26'!
+!SemaphoreTest methodsFor: 'private' stamp: 'tlk 5/May/2006 13:26:00'!
 criticalError
 	Processor activeProcess terminate! !
 
-!SemaphoreTest methodsFor: 'testing' stamp: 'tlk 5/5/2006 13:27'!
+!SemaphoreTest methodsFor: 'testing' stamp: 'tlk 5/May/2006 13:27:00'!
 testCritical
 	| lock |
 	lock := Semaphore forMutualExclusion.
 	[lock critical: [self criticalError]] forkAt: Processor userInterruptPriority.
 	self assert: lock isSignaled! !
 
-!SemaphoreTest methodsFor: 'testing' stamp: 'tlk 5/5/2006 13:28'!
+!SemaphoreTest methodsFor: 'testing' stamp: 'tlk 5/May/2006 13:28:00'!
 testCriticalIfError
 	| lock |
 	lock := Semaphore forMutualExclusion.
 	[lock critical: [self criticalError ifError:[]]] forkAt: Processor userInterruptPriority.
 	self assert: lock isSignaled! !
 
-!SemaphoreTest methodsFor: 'testing' stamp: 'jmv 7/31/2023 11:58:07'!
+!SemaphoreTest methodsFor: 'testing' stamp: 'jmv 31/Jul/2023 11:58:07'!
 testSemaAfterCriticalWait
 	"This tests whether a semaphore that has just left the wait in Semaphore>>critical:
 	leaves it with signaling the associated semaphore."
@@ -19199,7 +19199,7 @@ testSemaAfterCriticalWait
 	p terminate.
 	self assert: (s instVarNamed: #excessSignals) equals: 1.! !
 
-!SemaphoreTest methodsFor: 'testing' stamp: 'jmv 7/31/2023 11:58:19'!
+!SemaphoreTest methodsFor: 'testing' stamp: 'jmv 31/Jul/2023 11:58:19'!
 testSemaAfterCriticalWait2
 	"This tests whether a semaphore that has just left the wait in Semaphore>>critical:
 	leaves it with signaling the associated semaphore."
@@ -19218,7 +19218,7 @@ testSemaAfterCriticalWait2
 	self assert: (s instVarNamed: #excessSignals) equals: 1.
 	self deny: beenHere.! !
 
-!SemaphoreTest methodsFor: 'testing' stamp: 'jmv 7/31/2023 11:58:28'!
+!SemaphoreTest methodsFor: 'testing' stamp: 'jmv 31/Jul/2023 11:58:28'!
 testSemaAfterCriticalWaitInEnsure
 	"This tests whether a semaphore that has just left the wait in Semaphore>>critical:
 	leaves it with signaling the associated semaphore."
@@ -19236,7 +19236,7 @@ testSemaAfterCriticalWaitInEnsure
 	p terminate.
 	self assert: (s instVarNamed: #excessSignals) equals: 1.! !
 
-!SemaphoreTest methodsFor: 'testing' stamp: 'jmv 7/31/2023 11:58:41'!
+!SemaphoreTest methodsFor: 'testing' stamp: 'jmv 31/Jul/2023 11:58:41'!
 testSemaAfterCriticalWaitInEnsure2
 	"This tests whether a semaphore that has just left the wait in Semaphore>>critical:
 	leaves it with signaling the associated semaphore."
@@ -19255,7 +19255,7 @@ testSemaAfterCriticalWaitInEnsure2
 	self assert: (s instVarNamed: #excessSignals) equals: 1.
 	self assert: beenHere.! !
 
-!SemaphoreTest methodsFor: 'testing' stamp: 'jmv 7/31/2023 11:58:51'!
+!SemaphoreTest methodsFor: 'testing' stamp: 'jmv 31/Jul/2023 11:58:51'!
 testSemaAfterCriticalWaitSuspended
 	"Test whether a semaphore that has just left the wait in Semaphore>>critical: but 	has
 	 been suspended before termination, leaves it with signaling the associated semaphore."
@@ -19276,7 +19276,7 @@ testSemaAfterCriticalWaitSuspended
 	p terminate.
 	self assert: (s instVarNamed: #excessSignals) equals: 1.! !
 
-!SemaphoreTest methodsFor: 'testing' stamp: 'jmv 7/31/2023 11:59:00'!
+!SemaphoreTest methodsFor: 'testing' stamp: 'jmv 31/Jul/2023 11:59:00'!
 testSemaInCriticalEnsureArgument	
 	"Test whether a process that is in an ensure argument block but has yet to evaluate the signal
 	leaves it with signaling the associated semaphore."
@@ -19291,7 +19291,7 @@ testSemaInCriticalEnsureArgument
 	self assert: terminatee isTerminated. 
 	self assert: (sema instVarNamed: #excessSignals) equals: 1.! !
 
-!SemaphoreTest methodsFor: 'testing' stamp: 'jmv 7/31/2023 11:59:16'!
+!SemaphoreTest methodsFor: 'testing' stamp: 'jmv 31/Jul/2023 11:59:16'!
 testSemaInCriticalWait
 	"This tests whether a semaphore that has entered the wait in Semaphore>>critical:
 	leaves it without signaling the associated semaphore."
@@ -19311,7 +19311,7 @@ testSemaInCriticalWait
 	p terminate.
 	self assert: (s instVarNamed: #excessSignals) equals: 0! !
 
-!SemaphoreTest methodsFor: 'testing' stamp: 'jmv 7/31/2023 11:59:38'!
+!SemaphoreTest methodsFor: 'testing' stamp: 'jmv 31/Jul/2023 11:59:38'!
 testSemaInCriticalWait2
 	"This tests whether a semaphore that has entered the wait in Semaphore>>critical:
 	leaves it without signaling the associated semaphore."
@@ -19332,7 +19332,7 @@ testSemaInCriticalWait2
 	self assert: (s instVarNamed: #excessSignals) equals: 0.
 	self deny: beenHere.! !
 
-!SemaphoreTest methodsFor: 'testing' stamp: 'jmv 7/31/2023 11:59:52'!
+!SemaphoreTest methodsFor: 'testing' stamp: 'jmv 31/Jul/2023 11:59:52'!
 testSemaInCriticalWaitInEnsure
 	"This tests whether a semaphore that has entered the wait in Semaphore>>critical:
 	leaves it without signaling the associated semaphore."
@@ -19352,7 +19352,7 @@ testSemaInCriticalWaitInEnsure
 	p terminate.
 	self assert: (s instVarNamed: #excessSignals) equals: 0.! !
 
-!SemaphoreTest methodsFor: 'testing' stamp: 'jmv 7/31/2023 12:00:12'!
+!SemaphoreTest methodsFor: 'testing' stamp: 'jmv 31/Jul/2023 12:00:12'!
 testSemaInCriticalWaitInEnsure2
 	"This tests whether a semaphore that has entered the wait in Semaphore>>critical:
 	leaves it without signaling the associated semaphore."
@@ -19373,7 +19373,7 @@ testSemaInCriticalWaitInEnsure2
 	self assert: (s instVarNamed: #excessSignals) equals: 0.
 	self deny: beenHere.! !
 
-!SemaphoreTest methodsFor: 'testing' stamp: 'jar 1/21/2023 20:55:46'!
+!SemaphoreTest methodsFor: 'testing' stamp: 'jar 21/Jan/2023 20:55:46'!
 testSuspendAndResume
 	"Test the semantics of suspending and resuming a process blocked on a semaphore;
 	Note the difference between #suspend and #suspendAndUnblock.
@@ -19403,7 +19403,7 @@ testSuspendAndResume
 	Processor yield.
 	self assert: p isTerminated! !
 
-!SemaphoreTest methodsFor: 'testing' stamp: 'jmv 11/4/2011 22:12'!
+!SemaphoreTest methodsFor: 'testing' stamp: 'jmv 4/Nov/2011 22:12:00'!
 testWaitAndWaitTimeoutTogether
 	| semaphore value waitProcess waitTimeoutProcess |
 	semaphore := Semaphore new.
@@ -19426,7 +19426,7 @@ testWaitAndWaitTimeoutTogether
 	self assert: value = #wait.
 	! !
 
-!SemaphoreTest methodsFor: 'testing' stamp: 'ar 3/23/2009 17:01'!
+!SemaphoreTest methodsFor: 'testing' stamp: 'ar 23/Mar/2009 17:01:00'!
 testWaitTimeoutMSecs
 	"Ensure that waitTimeoutMSecs behaves properly"
 
@@ -19437,7 +19437,7 @@ testWaitTimeoutMSecs
 	self assert: (Semaphore new signal waitTimeoutMSecs: 50) == false.
 ! !
 
-!CharacterTest methodsFor: 'testing' stamp: 'jmv 10/6/2010 22:08'!
+!CharacterTest methodsFor: 'testing' stamp: 'jmv 6/Oct/2010 22:08:00'!
 testCaseConversion
 	"
 	self new testCaseConversion
@@ -19445,7 +19445,7 @@ testCaseConversion
 	self assert: ('año Comé tomá Camión' collect: [ :c | c asLowercase ]) = 'año comé tomá camión'.
 	self assert:('año Comé tomá Camión' collect: [ :c | c asUppercase ]) = 'AÑO COMÉ TOMÁ CAMIÓN'! !
 
-!CharacterTest methodsFor: 'testing' stamp: 'jmv 1/9/2024 12:43:41'!
+!CharacterTest methodsFor: 'testing' stamp: 'jmv 9/Jan/2024 12:43:41'!
 testCompareIsTransitive
 	| c1 c2 c3 |
 	1 to: 512 by: 8 do: [ :n1 |
@@ -19456,13 +19456,13 @@ testCompareIsTransitive
 				c3 := Character codePoint: n3.
 				(c1 < c2) & (c2 < c3) ifTrue: [ self assert: (c1 < c3) ]]]]! !
 
-!CharacterTest methodsFor: 'testing' stamp: 'jmv 7/5/2022 15:56:54'!
+!CharacterTest methodsFor: 'testing' stamp: 'jmv 5/Jul/2022 15:56:54'!
 testIsCharacter
 	self assert: $a isCharacter.
 	self assert: $X isCharacter.
 	self assert: Character cr isCharacter.! !
 
-!CharacterTest methodsFor: 'testing' stamp: 'jmv 1/9/2024 12:55:01'!
+!CharacterTest methodsFor: 'testing' stamp: 'jmv 9/Jan/2024 12:55:01'!
 testSorting
 	"
 	self new testSorting
@@ -19476,7 +19476,7 @@ testSorting
 	self assert: $Á < $b.
 	self assert: $Á < $B.! !
 
-!CharacterTest methodsFor: 'testing' stamp: 'jmv 10/6/2010 22:10'!
+!CharacterTest methodsFor: 'testing' stamp: 'jmv 6/Oct/2010 22:10:00'!
 testTestingMethods
 	"
 	self new testTestingMethods
@@ -19494,7 +19494,7 @@ testTestingMethods
 		('AaÀàÁáÂâÃãÄäÅåEeÈèÉéÊêËëIiÌìÍíÎîÏïOoÒòÓóÔôÕõÖöUuÙùÚúÛûÜü' allSatisfy: [ :c |
 			c isVowel ]).! !
 
-!CharacterTest methodsFor: 'UTF-8 conversion' stamp: 'jmv 5/26/2022 12:31:12'!
+!CharacterTest methodsFor: 'UTF-8 conversion' stamp: 'jmv 26/May/2022 12:31:12'!
 testFromUtf8
 	"
 	CharacterTest new testFromUtf8
@@ -19504,7 +19504,7 @@ testFromUtf8
 	Character utf8BytesAndCodePointAt: 1 in: (ByteArray readHexFrom: 'E282AC') into: nil into: [ :codePoint | self assert: codePoint hex = '16r20AC' ].
 	Character utf8BytesAndCodePointAt: 1 in: (ByteArray readHexFrom: 'F0A4ADA2') into: nil into: [ :codePoint | self assert: codePoint hex = '16r24B62' ].! !
 
-!CharacterTest methodsFor: 'UTF-8 conversion' stamp: 'jmv 7/5/2022 16:43:46'!
+!CharacterTest methodsFor: 'UTF-8 conversion' stamp: 'jmv 5/Jul/2022 16:43:46'!
 testSomeLatinCharsFromUtf8
 	"
 	CharacterTest new testSomeLatinCharsFromUtf8
@@ -19523,7 +19523,7 @@ testSomeLatinCharsFromUtf8
 		]].
 	self assert: string = 'áAåAæAñAÆA¥Aü'! !
 
-!CharacterTest methodsFor: 'UTF-8 conversion' stamp: 'jmv 1/9/2024 12:54:18'!
+!CharacterTest methodsFor: 'UTF-8 conversion' stamp: 'jmv 9/Jan/2024 12:54:18'!
 testSomeLatinCharsToUtf8
 	"
 	CharacterTest new testSomeLatinCharsToUtf8
@@ -19537,7 +19537,7 @@ testSomeLatinCharsToUtf8
 				withUtf8BytesOf: characters next codePoint ]].
 	self assert: bytes hex = 'C3A141C3A541C3A641C3B141C38641C2A541C3BC'! !
 
-!CharacterTest methodsFor: 'UTF-8 conversion' stamp: 'jmv 1/9/2024 12:55:20'!
+!CharacterTest methodsFor: 'UTF-8 conversion' stamp: 'jmv 9/Jan/2024 12:55:20'!
 testToUtf8
 	"
 	CharacterTest new testToUtf8
@@ -19547,7 +19547,7 @@ testToUtf8
 	self assert: (Character utf8BytesOf: 16r20AC) hex = 'E282AC'.
 	self assert: (Character utf8BytesOf: 16r024B62) hex = 'F0A4ADA2'! !
 
-!StringTest methodsFor: 'UTF-8 conversion' stamp: 'jmv 8/8/2024 17:23:12'!
+!StringTest methodsFor: 'UTF-8 conversion' stamp: 'jmv 8/Aug/2024 17:23:12'!
 testAsUtf8
 	"
 	 StringTest new testAsUtf8
@@ -19557,7 +19557,7 @@ testAsUtf8
 	self assert: subject asUtf8Bytes hex = 'C2BFC391616E64C3BA2C206167C3BC6974613F'.
 	self assert: subject utf8BytesSize = subject asUtf8Bytes size.! !
 
-!StringTest methodsFor: 'tests - converting' stamp: 'jmv 7/5/2022 21:05:36'!
+!StringTest methodsFor: 'tests - converting' stamp: 'jmv 5/Jul/2022 21:05:36'!
 testBase64
 
 	| bytes |
@@ -19569,7 +19569,7 @@ testBase64
 'eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4
 eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eA=='! !
 
-!StringTest methodsFor: 'testing' stamp: 'jmv 12/7/2022 11:38:26'!
+!StringTest methodsFor: 'testing' stamp: 'jmv 7/Dec/2022 11:38:26'!
 testBeginsWith
 
 	self assert: ('Elvis' asByteString beginsWith: 'El' asByteString).
@@ -19581,7 +19581,7 @@ testBeginsWith
 	self assert: ('Elvis' asUnicodeString beginsWith: 'El' asUnicodeString).
 	self deny: ('Elvis' asUnicodeString beginsWith: 'Paul' asUnicodeString).! !
 
-!StringTest methodsFor: 'testing' stamp: 'jmv 10/6/2010 22:08'!
+!StringTest methodsFor: 'testing' stamp: 'jmv 6/Oct/2010 22:08:00'!
 testCaseConversion
 	"
 	self new testCaseConversion
@@ -19589,14 +19589,14 @@ testCaseConversion
 	self assert: ('año Comé tomá Camión' asLowercase) = 'año comé tomá camión'.
 	self assert: ('año Comé tomá Camión' asUppercase) = 'AÑO COMÉ TOMÁ CAMIÓN'! !
 
-!StringTest methodsFor: 'testing' stamp: 'jmv 9/1/2009 14:12'!
+!StringTest methodsFor: 'testing' stamp: 'jmv 1/Sep/2009 14:12:00'!
 testEncompassParagraph1
 
 	self assert: ('a' encompassParagraph: (1 to: 0)) = (1 to: 1).
 	self assert: ('a' encompassParagraph: (1 to: 1)) = (1 to: 1).
 	self assert: ('a' encompassParagraph: (2 to: 1)) = (1 to: 1).! !
 
-!StringTest methodsFor: 'testing' stamp: 'jmv 9/1/2009 14:13'!
+!StringTest methodsFor: 'testing' stamp: 'jmv 1/Sep/2009 14:13:00'!
 testEncompassParagraph2
 
 	self assert: ('ab' encompassParagraph: (1 to: 0)) = (1 to: 2).
@@ -19606,7 +19606,7 @@ testEncompassParagraph2
 	self assert: ('ab' encompassParagraph: (2 to: 2)) = (1 to: 2).
 	self assert: ('ab' encompassParagraph: (3 to: 2)) = (1 to: 2).! !
 
-!StringTest methodsFor: 'testing' stamp: 'jmv 9/1/2009 14:14'!
+!StringTest methodsFor: 'testing' stamp: 'jmv 1/Sep/2009 14:14:00'!
 testEncompassParagraph3
 
 self assert: ('a
@@ -19635,7 +19635,7 @@ zxcv' encompassParagraph: (2 to: 2)) = (1 to: 2).
 self assert: ('a
 zxcv' encompassParagraph: (3 to: 2)) = (3 to: 6).! !
 
-!StringTest methodsFor: 'testing' stamp: 'jmv 9/1/2009 14:17'!
+!StringTest methodsFor: 'testing' stamp: 'jmv 1/Sep/2009 14:17:00'!
 testEncompassParagraph4
 
 self assert: ('
@@ -19651,7 +19651,7 @@ b' encompassParagraph: (2 to: 2)) = (2 to: 2).
 self assert: ('
 b' encompassParagraph: (3 to: 2)) = (2 to: 2).! !
 
-!StringTest methodsFor: 'testing' stamp: 'jmv 9/1/2009 14:22'!
+!StringTest methodsFor: 'testing' stamp: 'jmv 1/Sep/2009 14:22:00'!
 testEncompassParagraph5
 
 self assert: ('a
@@ -19675,7 +19675,7 @@ b' encompassParagraph: (3 to: 3)) = (3 to: 3).
 self assert: ('a
 b' encompassParagraph: (4 to: 3)) = (3 to: 3).! !
 
-!StringTest methodsFor: 'testing' stamp: 'jmv 7/31/2023 11:24:44'!
+!StringTest methodsFor: 'testing' stamp: 'jmv 31/Jul/2023 11:24:44'!
 testFindSelector 
 
 	self assert: '"self printOn:' findSelector equals: #printOn:.
@@ -19684,19 +19684,19 @@ testFindSelector
 	self assert: 'self printOn:' findSelector equals: #printOn:.
 ! !
 
-!StringTest methodsFor: 'testing' stamp: 'jmv 7/31/2023 11:25:19'!
+!StringTest methodsFor: 'testing' stamp: 'jmv 31/Jul/2023 11:25:19'!
 testFirstNonSeparator
 
 	self assert: 'abc' firstNonSeparator equals: 1.
 	self assert: ' abc' firstNonSeparator equals: 2.
 	self assert: '' firstNonSeparator equals: 0.! !
 
-!StringTest methodsFor: 'testing' stamp: 'jmv 7/5/2022 16:02:31'!
+!StringTest methodsFor: 'testing' stamp: 'jmv 5/Jul/2022 16:02:31'!
 testIsString
 	self assert: ('Hello World' isString).
 	self assert: ('' isString).! !
 
-!StringTest methodsFor: 'testing' stamp: 'jmv 7/31/2023 11:26:24'!
+!StringTest methodsFor: 'testing' stamp: 'jmv 31/Jul/2023 11:26:24'!
 testLastNonSeparator
 
 	self assert: 'abc' lastNonSeparator equals: 3.
@@ -19704,7 +19704,7 @@ testLastNonSeparator
 	self assert: ' abc ' lastNonSeparator equals: 4.
 	self assert: '' lastNonSeparator equals: 0! !
 
-!StringTest methodsFor: 'testing' stamp: 'jmv 12/17/2012 10:51'!
+!StringTest methodsFor: 'testing' stamp: 'jmv 17/Dec/2012 10:51:00'!
 testLineSeparators
 	"
 	Test that #newLineCharacter is considered a line separator and not a line terminator.
@@ -19729,7 +19729,7 @@ testLineSeparators
 	self assert: linesBounds second second = (linesBounds second first-1) description: 'Second line is empty'.
 	self assert: linesBounds second third = (linesBounds second second+0) description: 'Second line is not terminated by ab Lf'.! !
 
-!StringTest methodsFor: 'testing' stamp: 'jmv 7/5/2022 16:42:37'!
+!StringTest methodsFor: 'testing' stamp: 'jmv 5/Jul/2022 16:42:37'!
 testSorting
 "
 self new testSorting
@@ -19753,7 +19753,7 @@ self new testSorting
 	self assert: ('Á' asByteString caseInsensitiveLessOrEqual: 'b' asByteString).
 	self assert: ('Á' asByteString caseInsensitiveLessOrEqual: 'B' asByteString).! !
 
-!StringTest methodsFor: 'testing' stamp: 'jmv 7/31/2023 11:28:24'!
+!StringTest methodsFor: 'testing' stamp: 'jmv 31/Jul/2023 11:28:24'!
 testWithBlanksTrimmed
 
 	self assert: ' abc' withBlanksTrimmed equals: 'abc'.
@@ -19763,7 +19763,7 @@ testWithBlanksTrimmed
 	self assert: '' equals: '' withBlanksTrimmed.
 	! !
 
-!StringTest methodsFor: 'testing' stamp: 'jmv 7/31/2023 11:28:59'!
+!StringTest methodsFor: 'testing' stamp: 'jmv 31/Jul/2023 11:28:59'!
 testWithoutLeadingBlanks
 
 	self assert: ' abc' withoutLeadingBlanks equals: 'abc'.
@@ -19771,7 +19771,7 @@ testWithoutLeadingBlanks
 	self assert: '' withoutLeadingBlanks isEmpty
 ! !
 
-!StringTest methodsFor: 'testing' stamp: 'jmv 12/7/2022 11:38:50'!
+!StringTest methodsFor: 'testing' stamp: 'jmv 7/Dec/2022 11:38:50'!
 testWithoutPrefix
 
 	self assert: ('Elvis' asByteString withoutPrefix: 'El' asByteString) = 'vis'.
@@ -19783,13 +19783,13 @@ testWithoutPrefix
 	self assert: ('Elvis' asUnicodeString withoutPrefix: 'El' asUnicodeString) = 'vis'.
 	self assert: ('Elvis' asUnicodeString withoutPrefix: 'Paul' asUnicodeString) isNil.! !
 
-!StringTest methodsFor: 'testing' stamp: 'jmv 7/31/2023 11:29:37'!
+!StringTest methodsFor: 'testing' stamp: 'jmv 31/Jul/2023 11:29:37'!
 testWithoutSeparators
 
 	self assert: 'abc' withoutSeparators equals: 'abc'.
 	self assert: ' a b c ' withoutSeparators equals: 'abc'! !
 
-!StringTest methodsFor: 'testing' stamp: 'jmv 7/31/2023 11:30:04'!
+!StringTest methodsFor: 'testing' stamp: 'jmv 31/Jul/2023 11:30:04'!
 testWithoutTrailingBlanks
 
 	self assert: 'abc ' withoutTrailingBlanks equals: 'abc'.
@@ -19797,7 +19797,7 @@ testWithoutTrailingBlanks
 	self assert: '' withoutTrailingBlanks isEmpty
 ! !
 
-!StringTest methodsFor: 'tests - grammar' stamp: 'LC 7/5/2020 16:47:10'!
+!StringTest methodsFor: 'tests - grammar' stamp: 'LC 5/Jul/2020 16:47:10'!
 testArticle
 	self
 		assert: 'euphemism' withArticle equals: 'a euphemism';
@@ -19810,7 +19810,7 @@ testArticle
 		assert: 'Argentine' withArticle equals: 'an Argentine';
 		assert: 'user' withArticle equals: 'a user'! !
 
-!StringTest methodsFor: 'tests - padding' stamp: 'HAW 5/10/2025 17:56:43'!
+!StringTest methodsFor: 'tests - padding' stamp: 'HAW 10/May/2025 17:56:43'!
 testPaddingCenterAddCharsToBothSides
 
 	self 
@@ -19821,7 +19821,7 @@ testPaddingCenterAddCharsToBothSides
 		assert: ('hi' padded: #center to: 5 with: $.)
 		equals: '.hi..'.! !
 
-!StringTest methodsFor: 'tests - padding' stamp: 'HAW 5/10/2025 17:55:43'!
+!StringTest methodsFor: 'tests - padding' stamp: 'HAW 10/May/2025 17:55:43'!
 testPaddingLeftAddCharsToTheLeft
 
 	self 
@@ -19832,7 +19832,7 @@ testPaddingLeftAddCharsToTheLeft
 		assert: ('hi' padded: #left to: 1 with: $.)
 		equals: 'hi'.! !
 
-!StringTest methodsFor: 'tests - padding' stamp: 'HAW 5/10/2025 17:55:59'!
+!StringTest methodsFor: 'tests - padding' stamp: 'HAW 10/May/2025 17:55:59'!
 testPaddingRightAddCharsToTheLeft
 
 	self 
@@ -19843,46 +19843,46 @@ testPaddingRightAddCharsToTheLeft
 		assert: ('hi' padded: #right to: 1 with: $.)
 		equals: 'hi'.! !
 
-!SymbolTest methodsFor: 'tests - selector validation' stamp: 'RNG 3/29/2020 19:59:47'!
+!SymbolTest methodsFor: 'tests - selector validation' stamp: 'RNG 29/Mar/2020 19:59:47'!
 testIsNotValidBinarySelectorIfItContainsACharacterNotAllowed
 
 	self deny: #'(' isValidSelector! !
 
-!SymbolTest methodsFor: 'tests - selector validation' stamp: 'RNG 3/29/2020 20:01:07'!
+!SymbolTest methodsFor: 'tests - selector validation' stamp: 'RNG 29/Mar/2020 20:01:07'!
 testIsNotValidKeywordSelectorIfItContainsSeparators
 
 	self deny: #'between: and:' isValidSelector! !
 
-!SymbolTest methodsFor: 'tests - selector validation' stamp: 'RNG 3/29/2020 19:52:35'!
+!SymbolTest methodsFor: 'tests - selector validation' stamp: 'RNG 29/Mar/2020 19:52:35'!
 testIsNotValidUnarySelectorIfItContainsCharactersUsedInBinarySelectors
 
 	self deny: #'a+b' isValidSelector! !
 
-!SymbolTest methodsFor: 'tests - selector validation' stamp: 'RNG 3/29/2020 19:51:29'!
+!SymbolTest methodsFor: 'tests - selector validation' stamp: 'RNG 29/Mar/2020 19:51:29'!
 testIsNotValidUnarySelectorIfItStartsWithALetterAndContainsSeparators
 
 	self deny: #'with spaces' isValidSelector! !
 
-!SymbolTest methodsFor: 'tests - selector validation' stamp: 'RNG 3/29/2020 19:53:43'!
+!SymbolTest methodsFor: 'tests - selector validation' stamp: 'RNG 29/Mar/2020 19:53:43'!
 testIsValidBinarySelectorIfItContainsAnAllowedCharacterOrSequenceOfCharacters
 
 	self
 		assert: #+ isValidSelector;
 		assert: #+-+ isValidSelector! !
 
-!SymbolTest methodsFor: 'tests - selector validation' stamp: 'RNG 3/29/2020 20:00:35'!
+!SymbolTest methodsFor: 'tests - selector validation' stamp: 'RNG 29/Mar/2020 20:00:35'!
 testIsValidKeywordSelectorIfItContainsKeywordsWithColons
 
 	self
 		assert: #includes: isValidSelector;
 		assert: #between:and: isValidSelector! !
 
-!SymbolTest methodsFor: 'tests - selector validation' stamp: 'RNG 3/29/2020 19:50:31'!
+!SymbolTest methodsFor: 'tests - selector validation' stamp: 'RNG 29/Mar/2020 19:50:31'!
 testIsValidUnarySelectorIfItStartsWithALetterAndDoesNotContainSeparators
 
 	self assert: #t234 isValidSelector! !
 
-!SymbolTest methodsFor: 'tests - symbol consistency' stamp: 'sqr 12/30/2021 09:01:46'!
+!SymbolTest methodsFor: 'tests - symbol consistency' stamp: 'sqr 30/Dec/2021 09:01:46'!
 testNoDuplicateSymbols
 
 	| symbols |
@@ -19892,7 +19892,7 @@ testNoDuplicateSymbols
 			self deny: ((symbols at: k) hasEqualElements: (symbols at: k + 1))
 		]! !
 
-!UnicodeNormalizationTest methodsFor: 'tests' stamp: 'jmv 12/11/2022 19:35:18'!
+!UnicodeNormalizationTest methodsFor: 'tests' stamp: 'jmv 11/Dec/2022 19:35:18'!
 testCanonicalComposites
 	"Examples from
 	https://unicode.org/reports/tr15/#Norm_Forms
@@ -19904,7 +19904,7 @@ testCanonicalComposites
 	self assert: (UnicodeString fromCodePoints: #(16r00F4)) canonicalDecomposition asCodePoints asArray = #(16r006F 16r0302).
 	self assert: (UnicodeString fromCodePoints: #(16r00F4)) canonicalComposition asCodePoints asArray = #(16r00F4).! !
 
-!UnicodeNormalizationTest methodsFor: 'tests' stamp: 'jmv 12/11/2022 19:35:28'!
+!UnicodeNormalizationTest methodsFor: 'tests' stamp: 'jmv 11/Dec/2022 19:35:28'!
 testMultipleCombiningMarks
 	"Examples from
 	https://unicode.org/reports/tr15/#Norm_Forms
@@ -19919,7 +19919,7 @@ testMultipleCombiningMarks
 	self assert: (UnicodeString fromCodePoints: #(16r0071 16r0307 16r0323)) canonicalDecomposition asCodePoints asArray = #(16r0071 16r0323 16r0307).
 	self assert: (UnicodeString fromCodePoints: #(16r0071 16r0307 16r0323)) canonicalComposition asCodePoints asArray = #(16r0071 16r0323 16r0307).! !
 
-!UnicodeNormalizationTest methodsFor: 'tests' stamp: 'jmv 12/11/2022 19:35:36'!
+!UnicodeNormalizationTest methodsFor: 'tests' stamp: 'jmv 11/Dec/2022 19:35:36'!
 testSingletons
 	"Examples from
 	https://unicode.org/reports/tr15/#Norm_Forms
@@ -19931,7 +19931,7 @@ testSingletons
 	self assert: (UnicodeString fromCodePoints: #(16r2126)) canonicalDecomposition asCodePoints asArray = #(16r03A9).
 	self assert: (UnicodeString fromCodePoints: #(16r2126)) canonicalComposition asCodePoints asArray = #(16r03A9).! !
 
-!UnicodeStringsTest methodsFor: 'testing' stamp: 'jmv 12/7/2022 11:39:26'!
+!UnicodeStringsTest methodsFor: 'testing' stamp: 'jmv 7/Dec/2022 11:39:26'!
 test01
 
 	| asciiString asciiUtf8String latinString latinUtf8String |
@@ -19948,7 +19948,7 @@ test01
 	self assert: latinString = latinUtf8String.
 	self assert: latinUtf8String = latinString.! !
 
-!UnicodeStringsTest methodsFor: 'testing' stamp: 'jmv 12/7/2022 11:40:08'!
+!UnicodeStringsTest methodsFor: 'testing' stamp: 'jmv 7/Dec/2022 11:40:08'!
 test02
 
 	| asciiString asciiUtf8String latinString latinUtf8String |
@@ -19963,7 +19963,7 @@ test02
 	self assert: (latinString sameAs: latinUtf8String).
 	self assert: (latinUtf8String sameAs: latinString).! !
 
-!UnicodeStringsTest methodsFor: 'testing' stamp: 'jmv 12/7/2022 11:40:12'!
+!UnicodeStringsTest methodsFor: 'testing' stamp: 'jmv 7/Dec/2022 11:40:12'!
 test03
 
 	| asciiString asciiUtf8String latinString latinUtf8String |
@@ -19978,7 +19978,7 @@ test03
 	self assert: (latinString sameAs: latinUtf8String).
 	self assert: (latinUtf8String sameAs: latinString).! !
 
-!UnicodeStringsTest methodsFor: 'testing' stamp: 'jmv 12/7/2022 11:40:20'!
+!UnicodeStringsTest methodsFor: 'testing' stamp: 'jmv 7/Dec/2022 11:40:20'!
 test04
 
 	| asciiString asciiUtf8String latinString latinUtf8String |
@@ -19995,7 +19995,7 @@ test04
 	self assert: (latinString sameAs: latinUtf8String).
 	self assert: (latinUtf8String sameAs: latinString).! !
 
-!UnicodeStringsTest methodsFor: 'testing' stamp: 'jmv 12/7/2022 11:16:22'!
+!UnicodeStringsTest methodsFor: 'testing' stamp: 'jmv 7/Dec/2022 11:16:22'!
 test05Utf8
 
 	self deny: (UnicodeString fromUtf8Bytes: #[64 65 66]) isLastSeparator.
@@ -20016,7 +20016,7 @@ test05Utf8
 	self assert: (UnicodeString fromUtf8Bytes: #[64 65 66 226 128 168 ]) isLastLineSeparator.
 	self assert: (UnicodeString fromUtf8Bytes: #[64 65 66 226 128 169 ]) isLastLineSeparator.! !
 
-!UnicodeStringsTest methodsFor: 'testing' stamp: 'jmv 12/7/2022 11:41:21'!
+!UnicodeStringsTest methodsFor: 'testing' stamp: 'jmv 7/Dec/2022 11:41:21'!
 test06isAscii
 
 	| asciiString asciiUtf8String latinString latinUtf8String |
@@ -20035,7 +20035,7 @@ test06isAscii
 	self deny: latinString asLowercase isAscii.
 	self deny: latinUtf8String asLowercase isAscii.! !
 
-!UnicodeStringsTest methodsFor: 'testing' stamp: 'jmv 12/7/2022 11:42:37'!
+!UnicodeStringsTest methodsFor: 'testing' stamp: 'jmv 7/Dec/2022 11:42:37'!
 test07
 	| s |
 
@@ -20057,7 +20057,7 @@ test07
 	self assert: (s copyReplaceFrom: s size to: s size with: 'xxx') =  '¿El Ñandú toma agüitaxxx'.
 	self assert: (s copyReplaceFrom: s size to: 2 with: 'xxx') =  '¿El Ñandú toma agüitaxxxl Ñandú toma agüita?'.! !
 
-!UnicodeStringsTest methodsFor: 'testing' stamp: 'jmv 6/10/2022 16:06:56'!
+!UnicodeStringsTest methodsFor: 'testing' stamp: 'jmv 10/Jun/2022 16:06:56'!
 test08a
 "Need a similar test for non-ascii stuff. But we also need to implement the correct behavior!!"
 
@@ -20106,7 +20106,7 @@ test08a
 	self assert: asciiString2 >= asciiString1.
 	self assert: asciiString2 >= asciiString2.! !
 
-!UnicodeStringsTest methodsFor: 'testing' stamp: 'jmv 12/7/2022 11:42:49'!
+!UnicodeStringsTest methodsFor: 'testing' stamp: 'jmv 7/Dec/2022 11:42:49'!
 test08b
 "Need a similar test for non-ascii stuff. But we also need to implement the correct behavior!!"
 
@@ -20158,7 +20158,7 @@ test08b
 	self assert: asciiString2 >= asciiUtf8String1.
 	self assert: asciiString2 >= asciiUtf8String2.! !
 
-!UnicodeStringsTest methodsFor: 'testing' stamp: 'jmv 12/7/2022 11:43:01'!
+!UnicodeStringsTest methodsFor: 'testing' stamp: 'jmv 7/Dec/2022 11:43:01'!
 test08c
 "Need a similar test for non-ascii stuff. But we also need to implement the correct behavior!!"
 
@@ -20210,7 +20210,7 @@ test08c
 	self assert: asciiUtf8String2 >= asciiString1.
 	self assert: asciiUtf8String2 >= asciiString2.! !
 
-!UnicodeStringsTest methodsFor: 'testing' stamp: 'jmv 12/7/2022 11:43:10'!
+!UnicodeStringsTest methodsFor: 'testing' stamp: 'jmv 7/Dec/2022 11:43:10'!
 test08d
 "Need a similar test for non-ascii stuff. But we also need to implement the correct behavior!!"
 
@@ -20262,7 +20262,7 @@ test08d
 	self assert: asciiUtf8String2 >= asciiUtf8String1.
 	self assert: asciiUtf8String2 >= asciiUtf8String2.! !
 
-!UnicodeStringsTest methodsFor: 'testing' stamp: 'jmv 12/7/2022 11:43:26'!
+!UnicodeStringsTest methodsFor: 'testing' stamp: 'jmv 7/Dec/2022 11:43:26'!
 test09
 
 	self assert: 'Hello ñandú' asByteString = 'Hello ñandú' asByteString.
@@ -20276,7 +20276,7 @@ test09
 	self assert: 'Hello ñandú' asUnicodeString bytes = 'Hello ñandú' asUnicodeString bytes.
 	self deny: 'Hello ñandú' asUnicodeString bytes = 'hello ñandú' asUnicodeString bytes.! !
 
-!UnicodeStringsTest methodsFor: 'testing' stamp: 'jmv 12/7/2022 11:43:50'!
+!UnicodeStringsTest methodsFor: 'testing' stamp: 'jmv 7/Dec/2022 11:43:50'!
 test10
 
 	self assert: ('ñandúX' asByteString findString: 'X' asByteString startingAt: 1) = 6.
@@ -20289,14 +20289,14 @@ test10
 	self assert: ('ñandúX' asByteString findString: 'x' startingAt: 1 caseSensitive: true) = 0.
 	self assert: ('ñandúX' asUnicodeString findString: 'x' startingAt: 1 caseSensitive: true) = 0.! !
 
-!UnicodeStringsTest methodsFor: 'testing' stamp: 'jmv 12/7/2022 11:43:59'!
+!UnicodeStringsTest methodsFor: 'testing' stamp: 'jmv 7/Dec/2022 11:43:59'!
 test11
 	self assert: ('ñandúes' asByteString indexOfSubCollection: 'úe' startingAt: 1 ifAbsent: []) = 5.
 	self assert: ('ñandúes' asUnicodeString indexOfSubCollection: 'úe' startingAt: 1 ifAbsent: []) = 5.
 	self assert: ('ñandúes' asByteString indexOfSubCollection: 'úe' startingAt: 6 ifAbsent: []) = nil.
 	self assert: ('ñandúes' asUnicodeString indexOfSubCollection: 'úe' startingAt: 6 ifAbsent: []) = nil.! !
 
-!UnicodeStringsTest methodsFor: 'testing' stamp: 'jmv 12/7/2022 11:44:14'!
+!UnicodeStringsTest methodsFor: 'testing' stamp: 'jmv 7/Dec/2022 11:44:14'!
 test12
 	self deny: ('ñandúes' asByteString is: 'úe' substringAt: 4).
 	self assert: ('ñandúes' asByteString is: 'úe' substringAt: 5).
@@ -20311,7 +20311,7 @@ test12
 	self assert: ('ñandúes'asUnicodeString  is: 'úe' asUnicodeString substringAt: 5).
 	self deny: ('ñandúes' asUnicodeString is: 'úe' asUnicodeString substringAt: 6).! !
 
-!UnicodeStringsTest methodsFor: 'testing' stamp: 'jmv 10/20/2025 16:40:37'!
+!UnicodeStringsTest methodsFor: 'testing' stamp: 'jmv 20/Oct/2025 16:40:37'!
 testAsUtf8
 	"
 	 UnicodeStringsTest new testAsUtf8
@@ -20326,7 +20326,7 @@ testAsUtf8
 	self assert: subject asByteString asUtf8Bytes = subject asUtf8Bytes.
 	self assert: subject asByteString utf8BytesSize = subject asUtf8Bytes size.! !
 
-!UnicodeStringsTest methodsFor: 'testing' stamp: 'jmv 2/23/2023 14:00:34'!
+!UnicodeStringsTest methodsFor: 'testing' stamp: 'jmv 23/Feb/2023 14:00:34'!
 testAtPut
 	| a b c |
 	a _ 'Agüita'.
@@ -20370,7 +20370,7 @@ testAtPut
 	self assert: b last = $π.
 	self assert: b = 'Agüitπ'.! !
 
-!UnicodeStringsTest methodsFor: 'testing' stamp: 'jmv 9/23/2024 10:58:45'!
+!UnicodeStringsTest methodsFor: 'testing' stamp: 'jmv 23/Sep/2024 10:58:45'!
 testEmpty
 
 	| s1 us1 us2 |
@@ -20386,7 +20386,7 @@ testEmpty
 	self assert: us2 = us1.
 	self assert: us1 = us2.! !
 
-!UnicodeStringsTest methodsFor: 'testing' stamp: 'jmv 10/20/2025 17:02:21'!
+!UnicodeStringsTest methodsFor: 'testing' stamp: 'jmv 20/Oct/2025 17:02:21'!
 testUtf8InvalidSequences
 	"
 	 UnicodeStringsTest new testUtf8InvalidSequences
@@ -20402,7 +20402,7 @@ testUtf8InvalidSequences
 	(UnicodeString fromUtf8Bytes: #[16rC0  16r80]) first asString asUnicodeString bytes"
 	"self deny: (Character isValidUtf8: #[16rC0  16r80])."! !
 
-!UnicodeStringsTest methodsFor: 'testing' stamp: 'jmv 10/20/2025 16:53:39'!
+!UnicodeStringsTest methodsFor: 'testing' stamp: 'jmv 20/Oct/2025 16:53:39'!
 testUtf8ValidSequences
 	"
 	 UnicodeStringsTest new testUtf8ValidSequences
@@ -20413,7 +20413,7 @@ testUtf8ValidSequences
 	self assert: (Character isValidUtf8: '🐱🐱🐱€🐱 ¡Tomá agüita gato!!' bytes).
 ! !
 
-!UnicodeStringsTest methodsFor: 'testing' stamp: 'jmv 4/14/2023 10:21:49'!
+!UnicodeStringsTest methodsFor: 'testing' stamp: 'jmv 14/Apr/2023 10:21:49'!
 testfromBytesStream
 
 	| s large |
@@ -20423,7 +20423,7 @@ testfromBytesStream
 		1000 timesRepeat: [ strm nextPutAll: s ]].
 	self assert: large = (UnicodeString fromBytesStream: large asUtf8Bytes readStream).! !
 
-!UnicodeSymbolsTest methodsFor: 'testing' stamp: 'jmv 12/7/2022 11:44:28'!
+!UnicodeSymbolsTest methodsFor: 'testing' stamp: 'jmv 7/Dec/2022 11:44:28'!
 test01AsciiSymbolFirst
 	"Try a few things with pure ASCII.
 	Do #asSymbol before doing #asUtf8Symbol. The symbol created will be instance of Symbol."
@@ -20461,7 +20461,7 @@ test01AsciiSymbolFirst
 	self assert: utf8Symbol == symbol.
 	self assert: symbol == utf8Symbol.! !
 
-!UnicodeSymbolsTest methodsFor: 'testing' stamp: 'jmv 12/7/2022 11:41:56'!
+!UnicodeSymbolsTest methodsFor: 'testing' stamp: 'jmv 7/Dec/2022 11:41:56'!
 test02LatinSymbolFirst
 	"Try a few things with pure ASCII.
 	Do #asSymbol before doing #asUtf8Symbol. The symbol created will be instance of Symbol."
@@ -20499,7 +20499,7 @@ test02LatinSymbolFirst
 	self assert: utf8Symbol == symbol.
 	self assert: symbol == utf8Symbol.! !
 
-!UnicodeSymbolsTest methodsFor: 'testing' stamp: 'jmv 12/7/2022 11:45:19'!
+!UnicodeSymbolsTest methodsFor: 'testing' stamp: 'jmv 7/Dec/2022 11:45:19'!
 test03AsciiUtf8SymbolFirst
 	"Try a few things with pure ASCII.
 	Do #asSymbol before doing #asUtf8Symbol. The symbol created will be instance of Symbol."
@@ -20537,7 +20537,7 @@ test03AsciiUtf8SymbolFirst
 	self assert: utf8Symbol == symbol.
 	self assert: symbol == utf8Symbol.! !
 
-!UnicodeSymbolsTest methodsFor: 'testing' stamp: 'jmv 12/7/2022 11:42:06'!
+!UnicodeSymbolsTest methodsFor: 'testing' stamp: 'jmv 7/Dec/2022 11:42:06'!
 test04LatinUtf8SymbolFirst
 	"Try a few things with pure ASCII.
 	Do #asSymbol before doing #asUtf8Symbol. The symbol created will be instance of Symbol."
@@ -20575,11 +20575,11 @@ test04LatinUtf8SymbolFirst
 	self assert: utf8Symbol == symbol.
 	self assert: symbol == utf8Symbol.! !
 
-!UnicodeSymbolsTest methodsFor: 'testing' stamp: 'jmv 12/7/2022 11:33:11'!
+!UnicodeSymbolsTest methodsFor: 'testing' stamp: 'jmv 7/Dec/2022 11:33:11'!
 testSerialization
 	self assert: (Object unStream: (ReferenceStream streamedRepresentationOf: 'hello' asUnicodeString asSymbol)) = 'hello' asUnicodeString asSymbol! !
 
-!UnicodeTest methodsFor: 'set up' stamp: 'jmv 3/20/2024 15:44:56'!
+!UnicodeTest methodsFor: 'set up' stamp: 'jmv 20/Mar/2024 15:44:56'!
 setUp
 	"
 	self new setUp
@@ -20595,7 +20595,7 @@ setUp
 		stream binary.
 		stream nextPutAll: bytesOfExample1 ]! !
 
-!UnicodeTest methodsFor: 'testing' stamp: 'jmv 10/3/2015 20:03'!
+!UnicodeTest methodsFor: 'testing' stamp: 'jmv 3/Oct/2015 20:03:00'!
 test1ReadBinary
 	
 	"see UnicodeNotes.md"
@@ -20606,7 +20606,7 @@ test1ReadBinary
 	content := self class fileName asFileEntry binaryContents.
 	self assert: content = bytesOfExample1! !
 
-!UnicodeTest methodsFor: 'testing' stamp: 'jmv 10/3/2015 20:04'!
+!UnicodeTest methodsFor: 'testing' stamp: 'jmv 3/Oct/2015 20:04:00'!
 test2ReadWithOutBinary
 	
 	"see UnicodeNotes.md"
@@ -20617,7 +20617,7 @@ test2ReadWithOutBinary
 	content := self class fileName asFileEntry textContents.
 	self deny: content = bytesOfExample1! !
 
-!UnicodeTest methodsFor: 'testing' stamp: 'jmv 1/9/2024 12:51:36'!
+!UnicodeTest methodsFor: 'testing' stamp: 'jmv 9/Jan/2024 12:51:36'!
 test3ReadUtf8
 	
 	"see UnicodeNotes.md"
@@ -20629,7 +20629,7 @@ test3ReadUtf8
 	content := UnicodeString fromUtf8Bytes: byteArray.
 	self assert: content = 'abc àè€ αβγ'.! !
 
-!UnicodeTest methodsFor: 'testing' stamp: 'jmv 1/9/2024 12:51:52'!
+!UnicodeTest methodsFor: 'testing' stamp: 'jmv 9/Jan/2024 12:51:52'!
 test4BackConversion
 	"see UnicodeNotes.md"
 	"
@@ -20640,7 +20640,7 @@ test4BackConversion
 	contentByteArray := self class fileName asFileEntry binaryContents.
 	self assert: contentByteArray = contentInternalString asUtf8Bytes.! !
 
-!UnicodeTest methodsFor: 'testing' stamp: 'jmv 1/9/2024 12:52:04'!
+!UnicodeTest methodsFor: 'testing' stamp: 'jmv 9/Jan/2024 12:52:04'!
 test5ReadWriteUtf8
 	"see UnicodeNotes.md"
 	"
@@ -20657,7 +20657,7 @@ test5ReadWriteUtf8
 	byteArray2 := self class fileName2 asFileEntry binaryContents.
 	self assert: byteArray = byteArray2.! !
 
-!UnicodeTest methodsFor: 'testing' stamp: 'jmv 7/31/2023 10:59:54'!
+!UnicodeTest methodsFor: 'testing' stamp: 'jmv 31/Jul/2023 10:59:54'!
 testTextConcatenation
 	"
 	UnicodeTest new testTextConcatenation
@@ -20685,7 +20685,7 @@ testTextConcatenation
 	self assert: u1, s2 bold equals: s1, s2 bold.
 	self assert: u1, u2 bold equals: s1, s2 bold.! !
 
-!UnicodeTest methodsFor: 'testing utf16' stamp: 'jmv 11/15/2023 14:13:09'!
+!UnicodeTest methodsFor: 'testing utf16' stamp: 'jmv 15/Nov/2023 14:13:09'!
 testUtf16BytesFromUtf8
 	"Four code point sample from https://en.wikipedia.org/wiki/UTF-16
 	CodePoint: 0x24
@@ -20727,7 +20727,7 @@ testUtf16BytesFromUtf8
 	utf16Bytes := UnicodeString utf16BytesFromUtf8: utf8 bigEndian: true includeBOM: true.
 	self assert: utf16Bytes = #[16rFE 16rFF 16r0 16r24 16r20 16rAC 16rD8 16r1 16rDC 16r37 16rD8 16r52 16rDF 16r62].! !
 
-!UnicodeTest methodsFor: 'testing utf16' stamp: 'jmv 7/5/2024 16:12:49'!
+!UnicodeTest methodsFor: 'testing utf16' stamp: 'jmv 5/Jul/2024 16:12:49'!
 testUtf16WordsFromUtf8
 	"Four code point sample from https://en.wikipedia.org/wiki/UTF-16
 	CodePoint: 0x24
@@ -20763,7 +20763,7 @@ testUtf16WordsFromUtf8
 	utf16Words := UnicodeString utf16WordsFromUtf8: utf8 includeBOM: false.
 	self assert: utf16Words asArray = {16r24. 16r20AC. 16rD801. 16rDC37. 16rD852. 16rDF62}.! !
 
-!UnicodeTest methodsFor: 'testing utf16' stamp: 'jmv 9/23/2024 10:46:13'!
+!UnicodeTest methodsFor: 'testing utf16' stamp: 'jmv 23/Sep/2024 10:46:13'!
 testUtf8FromUtf16Bytes
 	"Four code point sample from https://en.wikipedia.org/wiki/UTF-16
 	CodePoint: 0x24
@@ -20817,7 +20817,7 @@ testUtf8FromUtf16Bytes
 		assert: (UnicodeString utf8FromUtf16Bytes: #[])
 		equals: #[].! !
 
-!UnicodeTest methodsFor: 'testing utf16' stamp: 'jmv 9/23/2024 10:46:30'!
+!UnicodeTest methodsFor: 'testing utf16' stamp: 'jmv 23/Sep/2024 10:46:30'!
 testUtf8FromUtf16Words
 	"Four code point sample from https://en.wikipedia.org/wiki/UTF-16
 	CodePoint: 0x24
@@ -20859,15 +20859,15 @@ testUtf8FromUtf16Words
 		assert: (UnicodeString utf8FromUtf16Words: {})
 		equals: #[].! !
 
-!UnicodeTest class methodsFor: 'as yet unclassified' stamp: 'hjh 2/12/2013 19:25'!
+!UnicodeTest class methodsFor: 'as yet unclassified' stamp: 'hjh 12/Feb/2013 19:25:00'!
 fileName
 	^'UTF8abc-test.txt'! !
 
-!UnicodeTest class methodsFor: 'as yet unclassified' stamp: 'hjh 2/12/2013 21:35'!
+!UnicodeTest class methodsFor: 'as yet unclassified' stamp: 'hjh 12/Feb/2013 21:35:00'!
 fileName2
 	^'UTF8abc-test2.txt'! !
 
-!AddMorphTest methodsFor: 'tests - addMorph:' stamp: 'JEC 10/3/2025 14:09:52'!
+!AddMorphTest methodsFor: 'tests - addMorph:' stamp: 'JEC 3/Oct/2025 14:09:52'!
 test001_CanAddAMorph
 
 	| owner newSubmorph |
@@ -20878,7 +20878,7 @@ test001_CanAddAMorph
 	
 	self assert: owner submorphs equals: { newSubmorph }! !
 
-!AddMorphTest methodsFor: 'tests - addMorph:' stamp: 'JEC 10/3/2025 14:09:57'!
+!AddMorphTest methodsFor: 'tests - addMorph:' stamp: 'JEC 3/Oct/2025 14:09:57'!
 test002_AddingANewSubmorphInFrontOfTheRest
 
 	| owner existingSubmorph newSubmorph |
@@ -20891,7 +20891,7 @@ test002_AddingANewSubmorphInFrontOfTheRest
 
 	self assert: owner submorphs equals: { newSubmorph . existingSubmorph }. ! !
 
-!AddMorphTest methodsFor: 'tests - addMorph:' stamp: 'JEC 10/3/2025 11:15:21'!
+!AddMorphTest methodsFor: 'tests - addMorph:' stamp: 'JEC 3/Oct/2025 11:15:21'!
 test003_MorphCannotBeItsOwnSubmorph
 
 	| owner |
@@ -20904,7 +20904,7 @@ test003_MorphCannotBeItsOwnSubmorph
 	
 	self assert: owner submorphs isEmpty! !
 
-!AddMorphTest methodsFor: 'tests - addMorph:' stamp: 'JEC 10/3/2025 14:10:14'!
+!AddMorphTest methodsFor: 'tests - addMorph:' stamp: 'JEC 3/Oct/2025 14:10:14'!
 test004_AddingAnExistingSubmorph_RemainsASubmorph
 
 	| owner existingSubmorph |
@@ -20916,7 +20916,7 @@ test004_AddingAnExistingSubmorph_RemainsASubmorph
 	
 	self assert: owner submorphs equals: { existingSubmorph }.! !
 
-!AddMorphTest methodsFor: 'tests - addMorph:' stamp: 'JEC 10/3/2025 14:10:19'!
+!AddMorphTest methodsFor: 'tests - addMorph:' stamp: 'JEC 3/Oct/2025 14:10:19'!
 test005_AddingAnExistingSubmorphMoreThanOnce_PlacesItInFront
 
 	| owner submorph1 submorph2 |
@@ -20930,7 +20930,7 @@ test005_AddingAnExistingSubmorphMoreThanOnce_PlacesItInFront
 
 	self assert: owner submorphs equals: { submorph1 . submorph2 }. ! !
 
-!AddMorphTest methodsFor: 'tests - addMorphBack:' stamp: 'JEC 10/3/2025 14:10:33'!
+!AddMorphTest methodsFor: 'tests - addMorphBack:' stamp: 'JEC 3/Oct/2025 14:10:33'!
 test006_CanAddAMorphBack_WhenNotHavingSubmorphs
 
 	| owner newSubmorph |
@@ -20941,7 +20941,7 @@ test006_CanAddAMorphBack_WhenNotHavingSubmorphs
 	
 	self assert: owner submorphs equals: { newSubmorph }! !
 
-!AddMorphTest methodsFor: 'tests - addMorphBack:' stamp: 'JEC 10/3/2025 14:10:40'!
+!AddMorphTest methodsFor: 'tests - addMorphBack:' stamp: 'JEC 3/Oct/2025 14:10:40'!
 test007_AddingANewSubmorphBack_PlaceItAtTheEndOfSubmorphs
 
 	| owner existingSubmorph newSubmorph |
@@ -20954,7 +20954,7 @@ test007_AddingANewSubmorphBack_PlaceItAtTheEndOfSubmorphs
 
 	self assert: owner submorphs equals: { existingSubmorph . newSubmorph }! !
 
-!AddMorphTest methodsFor: 'tests - addMorphBack:' stamp: 'JEC 10/3/2025 14:10:47'!
+!AddMorphTest methodsFor: 'tests - addMorphBack:' stamp: 'JEC 3/Oct/2025 14:10:47'!
 test008_AddAnExistingSubmorphToTheBack_PlaceTheSubmorphAtEndOfSubmorphs
 
 	| owner submorphToMove submorph |
@@ -20968,7 +20968,7 @@ test008_AddAnExistingSubmorphToTheBack_PlaceTheSubmorphAtEndOfSubmorphs
 
 	self assert: owner submorphs equals: { submorph . submorphToMove }! !
 
-!AddMorphTest methodsFor: 'tests - addMorphFront:' stamp: 'JEC 10/3/2025 14:11:06'!
+!AddMorphTest methodsFor: 'tests - addMorphFront:' stamp: 'JEC 3/Oct/2025 14:11:06'!
 test009_CanAddAMorphFront_WhenNotHavingSubmorphs
 
 	| owner newSubmorph |
@@ -20979,7 +20979,7 @@ test009_CanAddAMorphFront_WhenNotHavingSubmorphs
 	
 	self assert: owner submorphs equals: { newSubmorph }! !
 
-!AddMorphTest methodsFor: 'tests - addMorphFront:' stamp: 'JEC 10/3/2025 14:11:11'!
+!AddMorphTest methodsFor: 'tests - addMorphFront:' stamp: 'JEC 3/Oct/2025 14:11:11'!
 test010_AddingANewSubmorphFront_PlaceItAtTheStartOfSubmorphs
 
 	| owner existingSubmorph newSubmorph |
@@ -20992,7 +20992,7 @@ test010_AddingANewSubmorphFront_PlaceItAtTheStartOfSubmorphs
 
 	self assert: owner submorphs equals: { newSubmorph . existingSubmorph }! !
 
-!AddMorphTest methodsFor: 'tests - addMorphFront:' stamp: 'JEC 10/3/2025 14:11:24'!
+!AddMorphTest methodsFor: 'tests - addMorphFront:' stamp: 'JEC 3/Oct/2025 14:11:24'!
 test011_AddSubmorphFront_PlaceSubmorphsAtBeginningOfSubmorphs
 
 	| owner submorphToMove anotherSubmorph |
@@ -21006,7 +21006,7 @@ test011_AddSubmorphFront_PlaceSubmorphsAtBeginningOfSubmorphs
 
 	self assert: owner submorphs equals: { submorphToMove . anotherSubmorph }. ! !
 
-!AddMorphTest methodsFor: 'tests - addMorph:behind:' stamp: 'JEC 10/3/2025 14:11:41'!
+!AddMorphTest methodsFor: 'tests - addMorph:behind:' stamp: 'JEC 3/Oct/2025 14:11:41'!
 test012_CanAddANewSubmorphBehindAnExistingSubmorph
 
 	| owner existingSubmorph newSubmorph |
@@ -21019,7 +21019,7 @@ test012_CanAddANewSubmorphBehindAnExistingSubmorph
 	
 	self assert: owner submorphs equals: { existingSubmorph . newSubmorph }! !
 
-!AddMorphTest methodsFor: 'tests - addMorph:behind:' stamp: 'JEC 10/3/2025 14:12:09'!
+!AddMorphTest methodsFor: 'tests - addMorph:behind:' stamp: 'JEC 3/Oct/2025 14:12:09'!
 test013_WhenASubmorphIsBehindAnother_AddingItAgainKeepThemInSamePlaces
 
 	| owner submorph1 submorph2 |
@@ -21033,7 +21033,7 @@ test013_WhenASubmorphIsBehindAnother_AddingItAgainKeepThemInSamePlaces
 
 	self assert: owner submorphs equals: { submorph1 . submorph2 }.! !
 
-!AddMorphTest methodsFor: 'tests - addMorph:behind:' stamp: 'JEC 10/3/2025 14:12:17'!
+!AddMorphTest methodsFor: 'tests - addMorph:behind:' stamp: 'JEC 3/Oct/2025 14:12:17'!
 test014_CanAddANewSubmorphBetweenExistingsSubmorphs
 
 	| owner submorph1 submorph2 newSubmorph |
@@ -21048,7 +21048,7 @@ test014_CanAddANewSubmorphBetweenExistingsSubmorphs
 
 	self assert: owner submorphs equals: { submorph1 . newSubmorph . submorph2 }.! !
 
-!AddMorphTest methodsFor: 'tests - addMorph:behind:' stamp: 'JEC 10/3/2025 12:56:17'!
+!AddMorphTest methodsFor: 'tests - addMorph:behind:' stamp: 'JEC 3/Oct/2025 12:56:17'!
 test015_CannotAddMorphBehindNonSubmorph
 
 	| owner anotherMorph |
@@ -21061,7 +21061,7 @@ test015_CannotAddMorphBehindNonSubmorph
 		
 	self assert: owner submorphs isEmpty! !
 
-!AddMorphTest methodsFor: 'tests - addMorph:behind:' stamp: 'JEC 10/3/2025 14:12:23'!
+!AddMorphTest methodsFor: 'tests - addMorph:behind:' stamp: 'JEC 3/Oct/2025 14:12:23'!
 test016_CanMoveASubmorphBehindAnother
 
 	| owner submorph submorphToMove |
@@ -21075,7 +21075,7 @@ test016_CanMoveASubmorphBehindAnother
 
 	self assert: owner submorphs equals: { submorph . submorphToMove }.! !
 
-!AddMorphTest methodsFor: 'tests - addMorph:inFrontOf:' stamp: 'JEC 10/3/2025 14:12:29'!
+!AddMorphTest methodsFor: 'tests - addMorph:inFrontOf:' stamp: 'JEC 3/Oct/2025 14:12:29'!
 test017_CanAddANewSubmorphInFrontOfAnExistingSubmorph
 
 	| owner existingSubmorph newSubmorph |
@@ -21088,7 +21088,7 @@ test017_CanAddANewSubmorphInFrontOfAnExistingSubmorph
 	
 	self assert: owner submorphs equals: { newSubmorph . existingSubmorph }.! !
 
-!AddMorphTest methodsFor: 'tests - addMorph:inFrontOf:' stamp: 'JEC 10/3/2025 14:13:09'!
+!AddMorphTest methodsFor: 'tests - addMorph:inFrontOf:' stamp: 'JEC 3/Oct/2025 14:13:09'!
 test018_WhenASubmorphIsAfterAnother_AddingItAgainKeepThemInSamePlaces
 
 	| owner submorph1 submorph2 |
@@ -21102,7 +21102,7 @@ test018_WhenASubmorphIsAfterAnother_AddingItAgainKeepThemInSamePlaces
 	
 	self assert: owner submorphs equals: { submorph2 . submorph1 }! !
 
-!AddMorphTest methodsFor: 'tests - addMorph:inFrontOf:' stamp: 'JEC 10/3/2025 14:13:13'!
+!AddMorphTest methodsFor: 'tests - addMorph:inFrontOf:' stamp: 'JEC 3/Oct/2025 14:13:13'!
 test019_CanAddANewSubmorphBetweenExistingsSubmorphs
 
 	| owner submorph1 submorph2 newSubmorph |
@@ -21117,7 +21117,7 @@ test019_CanAddANewSubmorphBetweenExistingsSubmorphs
 
 	self assert: owner submorphs equals: { submorph2 . newSubmorph . submorph1 }! !
 
-!AddMorphTest methodsFor: 'tests - addMorph:inFrontOf:' stamp: 'JEC 10/3/2025 13:00:33'!
+!AddMorphTest methodsFor: 'tests - addMorph:inFrontOf:' stamp: 'JEC 3/Oct/2025 13:00:33'!
 test020_CannotAddMorphInFrontOfNonSubmorph
 
 	| owner newSubmorph |
@@ -21130,7 +21130,7 @@ test020_CannotAddMorphInFrontOfNonSubmorph
 	
 	self assert: owner submorphs isEmpty.! !
 
-!AddMorphTest methodsFor: 'tests - addMorph:inFrontOf:' stamp: 'JEC 10/3/2025 14:13:19'!
+!AddMorphTest methodsFor: 'tests - addMorph:inFrontOf:' stamp: 'JEC 3/Oct/2025 14:13:19'!
 test021_CanMoveASubmorphInFrontOfAnother
 
 	| owner submorphToMove submorph |
@@ -21144,7 +21144,7 @@ test021_CanMoveASubmorphInFrontOfAnother
 
 	self assert: owner submorphs equals: { submorphToMove  . submorph }! !
 
-!AffineTransformationTest methodsFor: 'testing' stamp: 'jmv 1/14/2015 15:11'!
+!AffineTransformationTest methodsFor: 'testing' stamp: 'jmv 14/Jan/2015 15:11:00'!
 testComposition
 	"
 	AffineTransformationTest new testComposition
@@ -21174,7 +21174,7 @@ testComposition
 	self assert: (inner internalizeDelta: (outer internalizeDelta: 3@4)) = (composition internalizeDelta: 3@4).
 	self assert: (inner internalizeScalar: (outer internalizeScalar: 7)) = (composition internalizeScalar: 7).! !
 
-!AffineTransformationTest methodsFor: 'testing' stamp: 'len 5/9/2022 17:57:24'!
+!AffineTransformationTest methodsFor: 'testing' stamp: 'len 9/May/2022 17:57:24'!
 testDisplayBounds
 	"
 	AffineTransformationTest new testDisplayBounds
@@ -21200,7 +21200,7 @@ testDisplayBounds
 	self assert: ((AffineTransformation withTranslation: 4) externalBoundingRectOf: (-2@ 2  extent: 10@10))
 		encompassingIntegerRectangle = (2@6 corner: 12@16).! !
 
-!AffineTransformationTest methodsFor: 'testing' stamp: 'len 5/9/2022 17:56:56'!
+!AffineTransformationTest methodsFor: 'testing' stamp: 'len 9/May/2022 17:56:56'!
 testFloatInverseTransform
 	"
 	AffineTransformationTest new testFloatInverseTransform
@@ -21211,7 +21211,7 @@ testFloatInverseTransform
 	self assert: ((AffineTransformation withTranslation: -2) inverseTransform: (4@ 2)) = (6@4).
 	self assert: ((AffineTransformation withTranslation: -4) inverseTransform: (2@ 2)) = (6@6)! !
 
-!AffineTransformationTest methodsFor: 'testing' stamp: 'len 5/9/2022 17:57:03'!
+!AffineTransformationTest methodsFor: 'testing' stamp: 'len 9/May/2022 17:57:03'!
 testFloatTransform
 	"
 	AffineTransformationTest new testFloatTransform
@@ -21222,7 +21222,7 @@ testFloatTransform
 	self assert: ((AffineTransformation withTranslation: -2) transform: (4@ 2)) = (2@0).
 	self assert: ((AffineTransformation withTranslation: -4) transform: (2@ 2)) = (-2@ -2)! !
 
-!AffineTransformationTest methodsFor: 'testing' stamp: 'jmv 1/14/2015 15:12'!
+!AffineTransformationTest methodsFor: 'testing' stamp: 'jmv 14/Jan/2015 15:12:00'!
 testInverseTransformation
 	"
 	AffineTransformationTest new testInverseTransformation
@@ -21252,7 +21252,7 @@ testInverseTransformation
 	self assert: ((inverse internalizeDelta: 3@4) - (forward externalizeDelta: 3@4)) r < 0.0001.
 	self assert: ((inverse internalizeScalar: 7) - (forward externalizeScalar: 7)) abs < 0.0001.! !
 
-!LayoutMorphTest methodsFor: 'tests' stamp: 'jmv 9/12/2024 12:19:23'!
+!LayoutMorphTest methodsFor: 'tests' stamp: 'jmv 12/Sep/2024 12:19:23'!
 testLayout1
 	"
 	self new testLayout1
@@ -21332,7 +21332,7 @@ testLayout1
 
 	pane delete! !
 
-!LayoutMorphTest methodsFor: 'tests' stamp: 'jmv 9/12/2024 12:19:34'!
+!LayoutMorphTest methodsFor: 'tests' stamp: 'jmv 12/Sep/2024 12:19:34'!
 testLayout2
 	"
 	self new testLayout2
@@ -21374,7 +21374,7 @@ testLayout2
 
 	pane delete! !
 
-!LayoutMorphTest methodsFor: 'tests' stamp: 'jmv 9/12/2024 12:19:43'!
+!LayoutMorphTest methodsFor: 'tests' stamp: 'jmv 12/Sep/2024 12:19:43'!
 testLayout3
 	"
 	self new testLayout3
@@ -21440,7 +21440,7 @@ testLayout3
 
 	pane delete! !
 
-!MorphicLocationTest methodsFor: 'testing' stamp: 'jmv 1/14/2015 14:32'!
+!MorphicLocationTest methodsFor: 'testing' stamp: 'jmv 14/Jan/2015 14:32:00'!
 testComposition
 	"
 	MorphicLocationTest new testComposition
@@ -21470,7 +21470,7 @@ testComposition
 	self assert: (inner internalizeDelta: (outer internalizeDelta: 3@4)) = (composition internalizeDelta: 3@4).
 	self assert: (inner internalizeScalar: (outer internalizeScalar: 7)) = (composition internalizeScalar: 7).! !
 
-!MorphicTranslationTest methodsFor: 'testing' stamp: 'jmv 1/12/2015 15:46'!
+!MorphicTranslationTest methodsFor: 'testing' stamp: 'jmv 12/Jan/2015 15:46:00'!
 testComposition
 	"
 	MorphicTranslationTest new testComposition
@@ -21500,7 +21500,7 @@ testComposition
 	self assert: (inner internalizeDelta: (outer internalizeDelta: 3@4)) = (composition internalizeDelta: 3@4).
 	self assert: (inner internalizeScalar: (outer internalizeScalar: 7)) = (composition internalizeScalar: 7).! !
 
-!MorphicTranslationTest methodsFor: 'testing' stamp: 'len 5/9/2022 17:57:28'!
+!MorphicTranslationTest methodsFor: 'testing' stamp: 'len 9/May/2022 17:57:28'!
 testDisplayBounds
 	"
 	MorphicTranslationTest new testDisplayBounds
@@ -21525,7 +21525,7 @@ testDisplayBounds
 	self assert: ((MorphicTranslation withTranslation: 4)  externalBoundingRectOf: (-2@ 2  extent: 10@10))
 		encompassingIntegerRectangle = (2@6 corner: 12@16).! !
 
-!MorphicTranslationTest methodsFor: 'testing' stamp: 'len 5/9/2022 17:57:12'!
+!MorphicTranslationTest methodsFor: 'testing' stamp: 'len 9/May/2022 17:57:12'!
 testInverseTransform
 	"
 	MorphicTranslationTest new testInverseTransform
@@ -21536,7 +21536,7 @@ testInverseTransform
 	self assert: ((MorphicTranslation withTranslation: -2)  inverseTransform: (4@ 2)) = (6@4).
 	self assert: ((MorphicTranslation withTranslation: -4)  inverseTransform: (2@ 2)) = (6@6)! !
 
-!MorphicTranslationTest methodsFor: 'testing' stamp: 'jmv 1/12/2015 15:46'!
+!MorphicTranslationTest methodsFor: 'testing' stamp: 'jmv 12/Jan/2015 15:46:00'!
 testInverseTransformation
 	"
 	MorphicTranslationTest new testInverseTransformation
@@ -21554,7 +21554,7 @@ testInverseTransformation
 	self assert: (inverse internalizeDelta: 3@4) = (forward externalizeDelta: 3@4).
 	self assert: (inverse internalizeScalar: 7) = (forward externalizeScalar: 7)! !
 
-!MorphicTranslationTest methodsFor: 'testing' stamp: 'len 5/9/2022 17:57:17'!
+!MorphicTranslationTest methodsFor: 'testing' stamp: 'len 9/May/2022 17:57:17'!
 testTransform
 	"
 	MorphicTranslationTest new testTransform
@@ -21565,7 +21565,7 @@ testTransform
 	self assert: ((MorphicTranslation withTranslation: -2) transform: (4@ 2)) = (2@0).
 	self assert: ((MorphicTranslation withTranslation: -4) transform: (2@ 2)) = (-2@ -2)! !
 
-!WorldTest methodsFor: 'tests' stamp: 'jmv 10/11/2023 13:08:57'!
+!WorldTest methodsFor: 'tests' stamp: 'jmv 11/Oct/2023 13:08:57'!
 testDoOneCycleWorksWithDeferredQueue
         "Ensure that nested doOneCycles don't break deferred UI messages"
         | finished |
@@ -21579,7 +21579,7 @@ testDoOneCycleWorksWithDeferredQueue
 	        self assert: finished
 	] forkAt: Processor userInterruptPriority.! !
 
-!FileIOAccessorTest methodsFor: 'testing' stamp: 'jmv 3/15/2024 16:53:35'!
+!FileIOAccessorTest methodsFor: 'testing' stamp: 'jmv 15/Mar/2024 16:53:35'!
 testDirectoryExists
 	"FileIOAccessorTest debug: #testDirectoryExists"
 	| subDirString dirString |
@@ -21594,15 +21594,15 @@ testDirectoryExists
 
 	self shouldnt: [ dirString asDirectoryEntry exists ].! !
 
-!FileManTest methodsFor: 'private' stamp: 'jmv 5/31/2016 10:28'!
+!FileManTest methodsFor: 'private' stamp: 'jmv 31/May/2016 10:28:00'!
 directoryEntryForTest
 	^'./fmTestDir' asDirectoryEntry! !
 
-!FileManTest methodsFor: 'private' stamp: 'jmv 5/31/2016 10:28'!
+!FileManTest methodsFor: 'private' stamp: 'jmv 31/May/2016 10:28:00'!
 randomFileName
 	^100000 atRandom asString, '.fmtst'! !
 
-!FileManTest methodsFor: 'testing' stamp: 'jmv 3/4/2024 15:35:39'!
+!FileManTest methodsFor: 'testing' stamp: 'jmv 4/Mar/2024 15:35:39'!
 testAbsolutePath
 	"FileManTest debug: #testAbsolutePath"
 	| dirEntry dirEntry1 dirEntry2 dirEntry3 |
@@ -21618,7 +21618,7 @@ testAbsolutePath
 	dirEntry3 := 'C:/temp/b' asDirectoryEntry.
 	self should: [dirEntry3 = 'C:\temp\b' asDirectoryEntry].! !
 
-!FileManTest methodsFor: 'testing' stamp: 'jmv 5/31/2016 10:49'!
+!FileManTest methodsFor: 'testing' stamp: 'jmv 31/May/2016 10:49:00'!
 testAtPut
 	"FileManTest debug: #testAtPut" 
 	| dir bytes |
@@ -21639,7 +21639,7 @@ testAtPut
 	dir recursiveDelete.
 	self should: [dir exists not]! !
 
-!FileManTest methodsFor: 'testing' stamp: 'jmv 3/4/2024 15:35:54'!
+!FileManTest methodsFor: 'testing' stamp: 'jmv 4/Mar/2024 15:35:54'!
 testConcatenation
 	"
 	FileManTest debug: #testConcatenation
@@ -21660,7 +21660,7 @@ testConcatenation
 	self shouldnt: [dir exists].
 	self shouldnt: ['./subDir' asDirectoryEntry exists].! !
 
-!FileManTest methodsFor: 'testing' stamp: 'jmv 5/31/2016 10:49'!
+!FileManTest methodsFor: 'testing' stamp: 'jmv 31/May/2016 10:49:00'!
 testCopy
 	"FileManTest debug: #testCopy" 
 	| file1 file2 |
@@ -21684,7 +21684,7 @@ testCopy
 	
 	! !
 
-!FileManTest methodsFor: 'testing' stamp: 'jmv 3/15/2024 16:53:40'!
+!FileManTest methodsFor: 'testing' stamp: 'jmv 15/Mar/2024 16:53:40'!
 testDefaultDirectory
 	"
 	FileManTest debug: #testDefaultDirectory
@@ -21696,7 +21696,7 @@ testDefaultDirectory
 	pathComponents := '' asDirectoryEntry pathComponents.
 	self assert: pathComponents = DirectoryEntry userBaseDirectory pathComponents! !
 
-!FileManTest methodsFor: 'testing' stamp: 'jmv 5/31/2016 10:49'!
+!FileManTest methodsFor: 'testing' stamp: 'jmv 31/May/2016 10:49:00'!
 testFileContents
 	"FileManTest debug: #testFileContents" 
 	| file1 file2 bytes |
@@ -21714,7 +21714,7 @@ testFileContents
 	file2 delete.
 	self should: [file2 exists not]! !
 
-!FileManTest methodsFor: 'testing' stamp: 'jmv 6/15/2022 17:16:57'!
+!FileManTest methodsFor: 'testing' stamp: 'jmv 15/Jun/2022 17:16:57'!
 testIsAbsolutePathName
 	"
 	FileManTest debug: #testIsAbsolutePathName
@@ -21729,7 +21729,7 @@ testIsAbsolutePathName
 	self deny: '../' isAbsolutePathName.
 	self deny: 'afile' isAbsolutePathName.! !
 
-!FileManTest methodsFor: 'testing' stamp: 'jmv 5/31/2016 10:50'!
+!FileManTest methodsFor: 'testing' stamp: 'jmv 31/May/2016 10:50:00'!
 testIsRelativePathName
 	"
 	FileManTest debug: #testIsRelativePathName
@@ -21743,7 +21743,7 @@ testIsRelativePathName
 	self deny: 'C:/temp/b' isRelativePathName.
 	self deny: 'Macintosh HD/tmp' isRelativePathName.! !
 
-!FileManTest methodsFor: 'testing' stamp: 'jmv 3/4/2024 15:36:12'!
+!FileManTest methodsFor: 'testing' stamp: 'jmv 4/Mar/2024 15:36:12'!
 testPathComponents
 	"
 	FileManTest debug: #testPathComponents
@@ -21762,7 +21762,7 @@ testPathComponents
 	pathComponents := pathComponents last: 4.
 	self assert: pathComponents asArray = #('aaa' 'bbb' 'ccc' 'ddd')! !
 
-!FileManTest methodsFor: 'testing' stamp: 'jmv 5/31/2016 10:50'!
+!FileManTest methodsFor: 'testing' stamp: 'jmv 31/May/2016 10:50:00'!
 testPipe
 	"FileManTest debug: #testPipe" 
 	| reverseFilter file1 file2 file3 |
@@ -21795,7 +21795,7 @@ testPipe
 	
 	! !
 
-!FileManTest methodsFor: 'testing' stamp: 'wbsl 3/14/2025 23:27:03'!
+!FileManTest methodsFor: 'testing' stamp: 'wbsl 14/Mar/2025 23:27:03'!
 testRecursiveDelete
 	"FileManTest debug: #testRecursiveDelete" 
 	| dir |
@@ -21813,7 +21813,7 @@ testRecursiveDelete
 
 	! !
 
-!FileManTest methodsFor: 'testing' stamp: 'jmv 5/31/2016 10:50'!
+!FileManTest methodsFor: 'testing' stamp: 'jmv 31/May/2016 10:50:00'!
 testRefresh
 	"FileManTest debug: #testRefresh" 
 	| file1 |
@@ -21830,7 +21830,7 @@ testRefresh
 	self should: [file1 exists not].
 	! !
 
-!FileManTest methodsFor: 'testing' stamp: 'jmv 5/31/2016 10:50'!
+!FileManTest methodsFor: 'testing' stamp: 'jmv 31/May/2016 10:50:00'!
 testRename
 	"FileManTest debug: #testRename" 
 	| file1 |
@@ -21850,7 +21850,7 @@ testRename
 	self should: [file1 exists not].
 	! !
 
-!FileManTest methodsFor: 'testing' stamp: 'jmv 3/4/2024 15:36:21'!
+!FileManTest methodsFor: 'testing' stamp: 'jmv 4/Mar/2024 15:36:21'!
 testRoot
 	"FileManTest debug: #testRoot"
 	| root |
@@ -21860,7 +21860,7 @@ testRoot
 		self should: [root = '\' asDirectoryEntry]. 
 		self should: [root = '/' asDirectoryEntry]]! !
 
-!FileManTest methodsFor: 'testing' stamp: 'jmv 5/31/2016 11:19'!
+!FileManTest methodsFor: 'testing' stamp: 'jmv 31/May/2016 11:19:00'!
 testStream
 	"FileManTest debug: #testStream" 
 	| file1 contents formerContents allContents |
@@ -21881,7 +21881,7 @@ testStream
 	self should: [file1 exists not].
 	! !
 
-!CuisSourceFileArrayTest methodsFor: 'testing' stamp: 'jmv 5/22/2011 23:57'!
+!CuisSourceFileArrayTest methodsFor: 'testing' stamp: 'jmv 22/May/2011 23:57:00'!
 testAddressRange
 	"Test source pointer to file position address translation across the full address range"
 	
@@ -21894,7 +21894,7 @@ testAddressRange
 		self assert: a = e]
 ! !
 
-!CuisSourceFileArrayTest methodsFor: 'testing' stamp: 'jmv 5/23/2011 00:08'!
+!CuisSourceFileArrayTest methodsFor: 'testing' stamp: 'jmv 23/May/2011 00:08:00'!
 testChangesFileAddressRange
 	"Test file position to source pointer address translation for the changes file"
 	
@@ -21921,7 +21921,7 @@ testChangesFileAddressRange
 
 ! !
 
-!CuisSourceFileArrayTest methodsFor: 'testing' stamp: 'jmv 5/23/2011 00:06'!
+!CuisSourceFileArrayTest methodsFor: 'testing' stamp: 'jmv 23/May/2011 00:06:00'!
 testFileIndexFromSourcePointer
 	"Test derivation of file index for sources or changes file from source pointers"
 
@@ -21949,7 +21949,7 @@ testFileIndexFromSourcePointer
 
 ! !
 
-!CuisSourceFileArrayTest methodsFor: 'testing' stamp: 'jmv 5/23/2011 00:09'!
+!CuisSourceFileArrayTest methodsFor: 'testing' stamp: 'jmv 23/May/2011 00:09:00'!
 testFilePositionFromSourcePointer
 	"Test derivation of file position for sources or changes file from source pointers"
 
@@ -21960,7 +21960,7 @@ testFilePositionFromSourcePointer
 	"changes file"
 	self assert: 0 = (sf filePositionFromSourcePointer: 16r3000000).! !
 
-!CuisSourceFileArrayTest methodsFor: 'testing' stamp: 'jmv 5/23/2011 00:10'!
+!CuisSourceFileArrayTest methodsFor: 'testing' stamp: 'jmv 23/May/2011 00:10:00'!
 testSourcePointerFromFileIndexAndPosition
 	"Test valid input ranges"
 
@@ -21979,7 +21979,7 @@ testSourcePointerFromFileIndexAndPosition
 	self assert: 16r1000000 = (sf sourcePointerFromFileIndex: 1 andPosition: 0).
 	self assert: 16r3000000 = (sf sourcePointerFromFileIndex: 2 andPosition: 0).! !
 
-!CuisSourceFileArrayTest methodsFor: 'testing' stamp: 'jmv 5/23/2011 00:11'!
+!CuisSourceFileArrayTest methodsFor: 'testing' stamp: 'jmv 23/May/2011 00:11:00'!
 testSourcesFileAddressRange
 	"Test file position to source pointer address translation for the sources file"
 	
@@ -22005,7 +22005,7 @@ testSourcesFileAddressRange
 
 ! !
 
-!FileStreamTest methodsFor: 'tests' stamp: 'jmv 10/27/2025 11:01:22'!
+!FileStreamTest methodsFor: 'tests' stamp: 'jmv 27/Oct/2025 11:01:22'!
 testAtEnd
 	| path fs fragment1 fragment2 |
 	path := 'test-{1}.txt' format: {(Float pi * 10e10) floor atRandom. }.
@@ -22028,7 +22028,7 @@ testAtEnd
 	fs close .
 	path asFileEntry delete.! !
 
-!FileStreamTest methodsFor: 'tests' stamp: 'jmv 5/19/2024 20:09:27'!
+!FileStreamTest methodsFor: 'tests' stamp: 'jmv 19/May/2024 20:09:27'!
 testUpTo1ShortRecords
 	". this test ensures the upTo: delim method behaves as specified by the ANSI standard:
 	Delimiter is considered a separator (and therefore not required for the last chunk)."
@@ -22047,7 +22047,7 @@ testUpTo1ShortRecords
 
 	! !
 
-!FileStreamTest methodsFor: 'tests' stamp: 'jmv 5/19/2024 20:08:32'!
+!FileStreamTest methodsFor: 'tests' stamp: 'jmv 19/May/2024 20:08:32'!
 testUpTo2IncompleteRecords
 	"
 	. This test stresses the motivation for introducing upTo:delimiterIsTerminator:
@@ -22075,7 +22075,7 @@ testUpTo2IncompleteRecords
 
 	! !
 
-!FileStreamTest methodsFor: 'tests' stamp: 'jmv 5/19/2024 20:09:35'!
+!FileStreamTest methodsFor: 'tests' stamp: 'jmv 19/May/2024 20:09:35'!
 testUpTo3LongUnterminatedRecord
 	"Long input, no delimiter found, expected to return all the data chunk up to the end of file. "
 	| path longString fs read |
@@ -22091,7 +22091,7 @@ testUpTo3LongUnterminatedRecord
 	fs close.
 	path asFileEntry delete.! !
 
-!FileStreamTest methodsFor: 'tests' stamp: 'jmv 5/19/2024 20:10:50'!
+!FileStreamTest methodsFor: 'tests' stamp: 'jmv 19/May/2024 20:10:50'!
 testUpTo4LongUnterminatedRecord
 	"Big chunk, not delimiter found, expected return all the chunk  "
 	| path fs read |
@@ -22110,7 +22110,7 @@ testUpTo4LongUnterminatedRecord
 	fs close.
 	path asFileEntry delete.! !
 
-!FileStreamTest methodsFor: 'tests' stamp: 'jmv 5/19/2024 20:11:05'!
+!FileStreamTest methodsFor: 'tests' stamp: 'jmv 19/May/2024 20:11:05'!
 testUpTo5TerminatedAndUnterminatedLongRecords
 	"Two big chunks, one delimiter in the middle, expected to return 
       the first time a big chunk, the second time the second block up to EOF.  "
@@ -22137,7 +22137,7 @@ testUpTo5TerminatedAndUnterminatedLongRecords
 	fs close.
 	path asFileEntry delete.! !
 
-!FileStreamTest methodsFor: 'tests' stamp: 'jmv 5/19/2024 20:11:11'!
+!FileStreamTest methodsFor: 'tests' stamp: 'jmv 19/May/2024 20:11:11'!
 testUpTo6TerminatedLongRecords
 	"Two big chunks, one delimiter in the middle, one at the end. expected to return 
       two big chunks in two read, delimiters excluded.  "
@@ -22167,7 +22167,7 @@ testUpTo6TerminatedLongRecords
 	fs close.
 	path asFileEntry delete.! !
 
-!FileStreamTest methodsFor: 'tests' stamp: 'jmv 5/19/2024 20:14:02'!
+!FileStreamTest methodsFor: 'tests' stamp: 'jmv 19/May/2024 20:14:02'!
 testUpToAll
 	| string path fromFile fromString |
 	path := 'test-{1}.txt' format: {(Float pi * 10e10) floor atRandom. } .
@@ -22179,7 +22179,7 @@ testUpToAll
 	self assert: fromFile = fromString.
 	path asFileEntry delete.! !
 
-!FileStreamTest methodsFor: 'tests' stamp: 'jmv 5/19/2024 20:10:00'!
+!FileStreamTest methodsFor: 'tests' stamp: 'jmv 19/May/2024 20:10:00'!
 testUpToTerminator1ShortRecords
 	"
 	. Read a file stream up to 'delim' in a strict way. 
@@ -22204,7 +22204,7 @@ testUpToTerminator1ShortRecords
 	path asFileEntry delete .
 	! !
 
-!FileStreamTest methodsFor: 'tests' stamp: 'jmv 5/19/2024 20:10:04'!
+!FileStreamTest methodsFor: 'tests' stamp: 'jmv 19/May/2024 20:10:04'!
 testUpToTerminator2IncompleteRecords
 	"
 	. This test stresses the motivation for introducing upTo:delimiterIsTerminator: 
@@ -22230,7 +22230,7 @@ testUpToTerminator2IncompleteRecords
 
 	! !
 
-!FileStreamTest methodsFor: 'tests' stamp: 'jmv 5/19/2024 20:11:29'!
+!FileStreamTest methodsFor: 'tests' stamp: 'jmv 19/May/2024 20:11:29'!
 testUpToTerminator3LongUnterminatedRecord
 	"Long input, no delimiter found, expected to return nil. "
 	| path fs read |
@@ -22249,7 +22249,7 @@ testUpToTerminator3LongUnterminatedRecord
 	fs close.
 	path asFileEntry delete.! !
 
-!FileStreamTest methodsFor: 'tests' stamp: 'jmv 5/19/2024 20:11:35'!
+!FileStreamTest methodsFor: 'tests' stamp: 'jmv 19/May/2024 20:11:35'!
 testUpToTerminator4LongUnterminatedRecord
 	"Big chunk, not delimiter found, expected return nil  "
 	| path fs read |
@@ -22270,7 +22270,7 @@ testUpToTerminator4LongUnterminatedRecord
 	fs close.
 	path asFileEntry delete.! !
 
-!FileStreamTest methodsFor: 'tests' stamp: 'jmv 5/19/2024 20:11:43'!
+!FileStreamTest methodsFor: 'tests' stamp: 'jmv 19/May/2024 20:11:43'!
 testUpToTerminator5TerminatedAndUnterminatedLongRecords
 	"Two big chunks, one delimiter in the middle, expected to return 
       the first time a big chunk, the second time nil.  "
@@ -22300,7 +22300,7 @@ testUpToTerminator5TerminatedAndUnterminatedLongRecords
 	fs close.
 	path asFileEntry delete.! !
 
-!FileStreamTest methodsFor: 'tests' stamp: 'jmv 5/19/2024 20:11:49'!
+!FileStreamTest methodsFor: 'tests' stamp: 'jmv 19/May/2024 20:11:49'!
 testUpToTerminator6TerminatedLongRecords
 	"Two big chunks, one delimiter in the middle, one at the end expected to return 
       two big chunks in two read, delimiters included.  "
@@ -22334,7 +22334,7 @@ testUpToTerminator6TerminatedLongRecords
 	fs close.
 	path asFileEntry delete.! !
 
-!EphemeronIdentityDictionaryTest methodsFor: 'running' stamp: 'JMM 12/6/2024 10:38:47'!
+!EphemeronIdentityDictionaryTest methodsFor: 'running' stamp: 'JMM 6/Dec/2024 10:38:47'!
 setUp
 	super setUp.
 	keys := (1 to: 1000) collect:[:n| 'key', n asString].
@@ -22342,7 +22342,7 @@ setUp
 	keys do:[:n| dict at: n put: n,n].
 	super setUp! !
 
-!EphemeronIdentityDictionaryTest methodsFor: 'running' stamp: 'JMM 12/3/2024 16:07:10'!
+!EphemeronIdentityDictionaryTest methodsFor: 'running' stamp: 'JMM 3/Dec/2024 16:07:10'!
 triggerFinalization
 
 	| x | 
@@ -22353,12 +22353,12 @@ triggerFinalization
 	Smalltalk garbageCollectMost.
 	Smalltalk garbageCollect.! !
 
-!EphemeronIdentityDictionaryTest methodsFor: 'coverage' stamp: '9/24/2024 06:45'!
+!EphemeronIdentityDictionaryTest methodsFor: 'coverage' stamp: '9/24/2024 24/Sep/2024 06:45:00'!
 classToBeTested
 
 	^ EphemeronIdentityDictionary! !
 
-!EphemeronIdentityDictionaryTest methodsFor: 'tests' stamp: 'jmv 12/24/2024 13:38:07'!
+!EphemeronIdentityDictionaryTest methodsFor: 'tests' stamp: 'jmv 24/Dec/2024 13:38:07'!
 testFinalizeValuesWhenLastChainContinuesAtFront
 	| objectWithHashModulo dictionary capacity a b c |
 	objectWithHashModulo :=
@@ -22394,7 +22394,7 @@ testFinalizeValuesWhenLastChainContinuesAtFront
 	self assert: (dictionary includesKey: c).
 	self assert: dictionary size equals: 2! !
 
-!EphemeronIdentityDictionaryTest methodsFor: 'tests' stamp: 'JMM 12/3/2024 15:09:56'!
+!EphemeronIdentityDictionaryTest methodsFor: 'tests' stamp: 'JMM 3/Dec/2024 15:09:56'!
 testGrow
 	keys := nil.
 	dict at: self put: nil.
@@ -22403,7 +22403,7 @@ testGrow
 	"Keys are gone but not yet finalized."
 	dict grow! !
 
-!EphemeronIdentityDictionaryTest methodsFor: 'tests' stamp: 'JMM 12/4/2024 10:03:22'!
+!EphemeronIdentityDictionaryTest methodsFor: 'tests' stamp: 'JMM 4/Dec/2024 10:03:22'!
 testNoNils
 	| d |
 	d := EphemeronIdentityDictionary new
@@ -22412,7 +22412,7 @@ testNoNils
 		self triggerFinalization.
 	self deny: (d keys includes: nil)! !
 
-!FinalizationRegistryTest methodsFor: 'tests' stamp: 'JMM 11/28/2024 11:20:54'!
+!FinalizationRegistryTest methodsFor: 'tests' stamp: 'JMM 28/Nov/2024 11:20:54'!
 testAddGC
 	| x |
 
@@ -22426,7 +22426,7 @@ testAddGC
 	self assert: (finalizationRegistry size = 0).
 	self assert: (finalizationRegistry isEmpty).! !
 
-!FinalizationRegistryTest methodsFor: 'tests' stamp: 'JMM 11/29/2024 08:28:48'!
+!FinalizationRegistryTest methodsFor: 'tests' stamp: 'JMM 29/Nov/2024 08:28:48'!
 testDo
 	| x |
 
@@ -22436,7 +22436,7 @@ testDo
 	self assert: finalizationRegistry size = 1.
 	finalizationRegistry keysDo: [:v | self assert: v = x]! !
 
-!FinalizationRegistryTest methodsFor: 'tests' stamp: 'JMM 12/6/2024 10:39:00'!
+!FinalizationRegistryTest methodsFor: 'tests' stamp: 'JMM 6/Dec/2024 10:39:00'!
 testEKeyDictionary
 	
 	| d x |
@@ -22448,7 +22448,7 @@ testEKeyDictionary
 	self assert: d isEmpty
 ! !
 
-!FinalizationRegistryTest methodsFor: 'tests' stamp: 'jmv 12/18/2024 20:54:29'!
+!FinalizationRegistryTest methodsFor: 'tests' stamp: 'jmv 18/Dec/2024 20:54:29'!
 testFinalizationWithError
 	| reference |
 
@@ -22474,7 +22474,7 @@ testFinalizationWithError
 		[DebuggerWindow closeAllDebuggersSuchThat:
 			[:dbgWindow| '*Ephemeron Mourning*' match: dbgWindow label]]! !
 
-!FinalizationRegistryTest methodsFor: 'tests' stamp: 'JMM 11/29/2024 08:34:57'!
+!FinalizationRegistryTest methodsFor: 'tests' stamp: 'JMM 29/Nov/2024 08:34:57'!
 testLegacy 
 	| x |
 
@@ -22484,7 +22484,7 @@ testLegacy
 	x := nil.
 	finalizationRegistry finalizeValues! !
 
-!FinalizationRegistryTest methodsFor: 'tests' stamp: 'JMM 12/6/2024 14:47:26'!
+!FinalizationRegistryTest methodsFor: 'tests' stamp: 'JMM 6/Dec/2024 14:47:26'!
 testRemove
 	| x |
 
@@ -22497,7 +22497,7 @@ testRemove
 	self assert: false.
 ! !
 
-!FinalizationRegistryTest methodsFor: 'tests' stamp: 'JMM 11/29/2024 08:52:39'!
+!FinalizationRegistryTest methodsFor: 'tests' stamp: 'JMM 29/Nov/2024 08:52:39'!
 testRemoveAll
 	| x y |
 
@@ -22511,7 +22511,7 @@ testRemoveAll
 	self assert: finalizationRegistry size = 0.
 ! !
 
-!FinalizationRegistryTest methodsFor: 'tests' stamp: 'JMM 11/29/2024 08:49:29'!
+!FinalizationRegistryTest methodsFor: 'tests' stamp: 'JMM 29/Nov/2024 08:49:29'!
 testkey
 	| x |
 
@@ -22523,7 +22523,7 @@ testkey
 	finalizationRegistry keys do: [:k | self assert: k = x].
 	! !
 
-!FinalizationRegistryTest methodsFor: 'running' stamp: 'eem 12/18/2024 20:44:35'!
+!FinalizationRegistryTest methodsFor: 'running' stamp: 'eem 18/Dec/2024 20:44:35'!
 setUp
 
 	super setUp.
@@ -22537,7 +22537,7 @@ setUp
 	finalizerThatRaisesError := ObjectFinalizer new receiver: [ 
 		Error signal ] selector: #value.! !
 
-!FinalizationRegistryTest methodsFor: 'helpers' stamp: 'JMM 11/29/2024 15:00:32'!
+!FinalizationRegistryTest methodsFor: 'helpers' stamp: 'JMM 29/Nov/2024 15:00:32'!
 triggerFinalization
 
 	| x | 
@@ -22548,7 +22548,7 @@ triggerFinalization
 	Smalltalk garbageCollectMost.
 	Smalltalk garbageCollect.! !
 
-!FinalizationTest methodsFor: 'tests' stamp: 'jmv 12/17/2024 09:15:39'!
+!FinalizationTest methodsFor: 'tests' stamp: 'jmv 17/Dec/2024 09:15:39'!
 testFinalization
 	| object finalizationWasRun finalizationAction |
 	object := Object new.
@@ -22560,7 +22560,7 @@ testFinalization
 	self triggerFinalization.
 	self assert: finalizationWasRun.! !
 
-!FinalizationTest methodsFor: 'tests' stamp: 'jmv 12/17/2024 09:22:59'!
+!FinalizationTest methodsFor: 'tests' stamp: 'jmv 17/Dec/2024 09:22:59'!
 testFinalization2
 	| object finalizationWasRun finalizationAction |
 	object := FinalizationTestObject new.
@@ -22573,7 +22573,7 @@ testFinalization2
 	self triggerFinalization.
 	self assert: finalizationWasRun.! !
 
-!FinalizationTest methodsFor: 'helpers' stamp: 'jmv 12/17/2024 09:15:15'!
+!FinalizationTest methodsFor: 'helpers' stamp: 'jmv 17/Dec/2024 09:15:15'!
 triggerFinalization
 
 	| x | 
@@ -22584,7 +22584,7 @@ triggerFinalization
 	Smalltalk garbageCollectMost.
 	Smalltalk garbageCollect.! !
 
-!ReferenceStreamTest methodsFor: 'testing' stamp: 'jmv 9/25/2012 22:42'!
+!ReferenceStreamTest methodsFor: 'testing' stamp: 'jmv 25/Sep/2012 22:42:00'!
 testDiskProxy
 	"
 	ReferenceStreamTest new testDiskProxy
@@ -22596,7 +22596,7 @@ testDiskProxy
 	1 to: oldInstance size do: [ :i |
 		self assert: (newInstance at: i) == (oldInstance at: i) ]! !
 
-!ReferenceStreamTest methodsFor: 'testing' stamp: 'jmv 9/17/2025 08:36:46'!
+!ReferenceStreamTest methodsFor: 'testing' stamp: 'jmv 17/Sep/2025 08:36:46'!
 testSmallIntegers
 	"
 	ReferenceStreamTest new testSmallIntegers
@@ -22606,7 +22606,7 @@ testSmallIntegers
 	newInstance := ReferenceStream unStream: (ReferenceStream streamedRepresentationOf: oldInstance).
 	self assert: newInstance = oldInstance.! !
 
-!ReferenceStreamTest methodsFor: 'testing' stamp: 'jmv 12/6/2011 08:19'!
+!ReferenceStreamTest methodsFor: 'testing' stamp: 'jmv 6/Dec/2011 08:19:00'!
 testSortedCollection
 	"
 	ReferenceStreamTest new testSortedCollection
@@ -22617,7 +22617,7 @@ testSortedCollection
 	newInstance _ ReferenceStream unStream: (ReferenceStream streamedRepresentationOf: oldInstance).
 	self assert: newInstance asArray = oldInstance asArray! !
 
-!ReferenceStreamTest methodsFor: 'testing' stamp: 'jmv 7/1/2022 20:23:32'!
+!ReferenceStreamTest methodsFor: 'testing' stamp: 'jmv 1/Jul/2022 20:23:32'!
 testWeakDumps
 	"Test that if we serialize a model with weak references to views, only the model is serialized and not the views.
 	
@@ -22636,7 +22636,7 @@ testWeakDumps
 	self deny: (refStream references keys anySatisfy: [ :dumpedObject | dumpedObject isKindOf: Morph ]).
 	UISupervisor whenUIinSafeState: [window delete].! !
 
-!SmartRefStreamTest methodsFor: 'testing' stamp: 'jmv 9/25/2012 22:42'!
+!SmartRefStreamTest methodsFor: 'testing' stamp: 'jmv 25/Sep/2012 22:42:00'!
 testDiskProxy
 	"
 	SmartRefStreamTest new testDiskProxy
@@ -22648,7 +22648,7 @@ testDiskProxy
 	1 to: oldInstance size do: [ :i |
 		self assert: (newInstance at: i) == (oldInstance at: i) ]! !
 
-!SmartRefStreamTest methodsFor: 'testing' stamp: 'jmv 12/6/2011 08:34'!
+!SmartRefStreamTest methodsFor: 'testing' stamp: 'jmv 6/Dec/2011 08:34:00'!
 testSortedCollection
 	"
 	SmartRefStreamTest new testSortedCollection
@@ -22659,7 +22659,7 @@ testSortedCollection
 	newInstance _ SmartRefStream unStream: (SmartRefStream streamedRepresentationOf: oldInstance).
 	self assert: newInstance asArray = oldInstance asArray! !
 
-!SmartRefStreamTest methodsFor: 'testing' stamp: 'jmv 7/1/2022 20:23:37'!
+!SmartRefStreamTest methodsFor: 'testing' stamp: 'jmv 1/Jul/2022 20:23:37'!
 testWeakDumps
 	"Test that if we serialize a model with weak references to views, only the model is serialized and not the views.
 	
@@ -22678,7 +22678,7 @@ testWeakDumps
 	self deny: (refStream references keys anySatisfy: [ :dumpedObject | dumpedObject isKindOf: Morph ]).
 	UISupervisor whenUIinSafeState: [window delete].! !
 
-!IniFileTest methodsFor: 'tests' stamp: 'jmv 7/10/2024 10:43:19'!
+!IniFileTest methodsFor: 'tests' stamp: 'jmv 10/Jul/2024 10:43:19'!
 testBasic
 	| ini section |
 	ini := IniFile new.
@@ -22695,7 +22695,7 @@ testBasic
 	self assert: (ini atSection: 'foo2' entry: 'bar') equals: 'baz2'.
 	self assert: ((ini sectionNamed: 'foo2') at: 'bar') equals: 'baz2'.! !
 
-!IniFileTest methodsFor: 'tests' stamp: 'jmv 7/10/2024 10:46:00'!
+!IniFileTest methodsFor: 'tests' stamp: 'jmv 10/Jul/2024 10:46:00'!
 testBasicGlobal
 	| ini |
 	ini := IniFile new.
@@ -22705,7 +22705,7 @@ testBasicGlobal
 	self assert: (ini atGlobalEntry: 'bar') equals: 'baz1'.
 ! !
 
-!IniFileTest methodsFor: 'tests' stamp: 'jmv 7/10/2024 10:35:30'!
+!IniFileTest methodsFor: 'tests' stamp: 'jmv 10/Jul/2024 10:35:30'!
 testMissingEntry
 	| ini section |
 	ini := IniFile new.
@@ -22718,7 +22718,7 @@ testMissingEntry
 	self assert: (ini atSection: 'foo3' entry: 'bar') isNil.
 	self assert: (ini atSection: 'foo3' entry: 'bar' orDefault: 'whoknows3?') equals: 'whoknows3?'.! !
 
-!IniFileTest methodsFor: 'tests' stamp: 'jmv 7/10/2024 10:25:23'!
+!IniFileTest methodsFor: 'tests' stamp: 'jmv 10/Jul/2024 10:25:23'!
 testMissingEntryStoringDefault
 	| ini section |
 	ini := IniFile new.
@@ -22730,7 +22730,7 @@ testMissingEntryStoringDefault
 	self assert: (section at: 'bar1' orDefault: 'whoknows?') equals: 'newDefault'.
 	self assert: (ini atSection: 'foo1' entry: 'bar2' orDefault: 'whoknows?') equals: 'newDefault2'.! !
 
-!IniFileTest methodsFor: 'tests' stamp: 'jmv 7/10/2024 10:38:30'!
+!IniFileTest methodsFor: 'tests' stamp: 'jmv 10/Jul/2024 10:38:30'!
 testMissingGlobalEntry
 	| ini |
 	ini := IniFile new.
@@ -22744,7 +22744,7 @@ testMissingGlobalEntry
 	self assert: (ini atGlobalEntry: 'bar') isNil.
 	self assert: (ini atGlobalEntry: 'bar' orDefault: 'whoknows3?') equals: 'whoknows3?'.! !
 
-!IniFileTest methodsFor: 'tests' stamp: 'jmv 7/10/2024 10:40:53'!
+!IniFileTest methodsFor: 'tests' stamp: 'jmv 10/Jul/2024 10:40:53'!
 testMissingGlobalEntryStoringDefault1
 	| ini section |
 	ini := IniFile new.
@@ -22756,7 +22756,7 @@ testMissingGlobalEntryStoringDefault1
 	self assert: (section at: 'bar1' orDefault: 'whoknows?') equals: 'newDefault'.
 	self assert: (ini atSection: 'foo1' entry: 'bar2' orDefault: 'whoknows?') equals: 'newDefault2'.! !
 
-!IniFileTest methodsFor: 'tests' stamp: 'jmv 7/10/2024 10:41:53'!
+!IniFileTest methodsFor: 'tests' stamp: 'jmv 10/Jul/2024 10:41:53'!
 testMissingGlobalEntryStoringDefault2
 	| ini |
 	ini := IniFile new.
@@ -22766,7 +22766,7 @@ testMissingGlobalEntryStoringDefault2
 	self assert: (ini atGlobalEntry: 'bar1' orDefault: 'whoknows?') equals: 'newDefault'.
 	self assert: (ini atGlobalEntry: 'bar2' orDefault: 'whoknows?') equals: 'newDefault2'.! !
 
-!IniFileTest methodsFor: 'tests' stamp: 'jmv 7/10/2024 10:42:56'!
+!IniFileTest methodsFor: 'tests' stamp: 'jmv 10/Jul/2024 10:42:56'!
 testMissingGlobalSection
 	| ini |
 	ini := IniFile new.
@@ -22775,7 +22775,7 @@ testMissingGlobalSection
 	ini ensureGlobalSection.
 	self deny: ini globalSection isNil.! !
 
-!IniFileTest methodsFor: 'tests' stamp: 'jmv 7/10/2024 10:26:31'!
+!IniFileTest methodsFor: 'tests' stamp: 'jmv 10/Jul/2024 10:26:31'!
 testMissingSection
 	| ini |
 	ini := IniFile new.
@@ -22784,7 +22784,7 @@ testMissingSection
 	ini ensureSectionNamed: 'foo1'.
 	self deny: (ini sectionNamed: 'foo1') isNil.! !
 
-!IniFileTest methodsFor: 'tests' stamp: 'jmv 7/10/2024 11:02:50'!
+!IniFileTest methodsFor: 'tests' stamp: 'jmv 10/Jul/2024 11:02:50'!
 testReadEmptyValue
 	| content ini |
 	content := '[foo]
@@ -22793,7 +22793,7 @@ key1 =      '.
 	ini := IniFile readFrom: content readStream.
 	self assert: ((ini sectionNamed: 'foo') at: 'key1') isNil! !
 
-!IniFileTest methodsFor: 'tests' stamp: 'jmv 7/10/2024 11:04:51'!
+!IniFileTest methodsFor: 'tests' stamp: 'jmv 10/Jul/2024 11:04:51'!
 testReadGlobalAndTwoNamedSections
 	| content ini |
 	content := '
@@ -22825,7 +22825,7 @@ key2= val with a space in it
 	self assert: (ini atSection: 'bar' entry: 'key2') = 'val2'.
 ! !
 
-!IniFileTest methodsFor: 'tests' stamp: 'jmv 7/10/2024 11:03:48'!
+!IniFileTest methodsFor: 'tests' stamp: 'jmv 10/Jul/2024 11:03:48'!
 testReadTwoSections
 	| content ini |
 	content := '
@@ -22853,7 +22853,7 @@ key2= val with a space in it
 	self assert: (ini atSection: 'bar' entry: 'key2') = 'val2'.
 ! !
 
-!IniFileTest methodsFor: 'tests' stamp: 'jmv 7/10/2024 11:35:38'!
+!IniFileTest methodsFor: 'tests' stamp: 'jmv 10/Jul/2024 11:35:38'!
 testWriteGlobalSection
 	| out written globalSection |
 	out := IniFile new.
@@ -22865,7 +22865,7 @@ testWriteGlobalSection
 	self assert: (globalSection at: 'key1') = 'val1'.
 	self assert: (globalSection at: 'key2') = 'val2'.! !
 
-!IniFileTest methodsFor: 'tests' stamp: 'jmv 7/10/2024 11:36:00'!
+!IniFileTest methodsFor: 'tests' stamp: 'jmv 10/Jul/2024 11:36:00'!
 testWriteMultipleSections
 	| out written in |
 	out := IniFile new.
@@ -22881,7 +22881,7 @@ testWriteMultipleSections
 	self assert: ((in sectionNamed: 'bar') at: 'key1') = 'val1x'.
 	self assert: ((in sectionNamed: 'bar') at: 'key2') = 'val2y'.! !
 
-!IniFileTest methodsFor: 'tests' stamp: 'jmv 7/10/2024 11:37:12'!
+!IniFileTest methodsFor: 'tests' stamp: 'jmv 10/Jul/2024 11:37:12'!
 testWriteMultipleSections2
 	| out written in |
 	out := IniFile new.
@@ -22901,7 +22901,7 @@ testWriteMultipleSections2
 	self assert: ((in sectionNamed: 'bar') at: 'key1') = 'val1x'.
 	self assert: ((in sectionNamed: 'bar') at: 'key2') = 'val2y'.! !
 
-!IniFileTest methodsFor: 'tests' stamp: 'jmv 10/18/2024 15:44:51'!
+!IniFileTest methodsFor: 'tests' stamp: 'jmv 18/Oct/2024 15:44:51'!
 testWriteNilGlobalValue
 	| ini written expected |
 	ini := IniFile new.
@@ -22911,7 +22911,7 @@ testWriteNilGlobalValue
 '.
 	self assert: written equals: expected.! !
 
-!IniFileTest methodsFor: 'tests' stamp: 'jmv 10/18/2024 15:44:45'!
+!IniFileTest methodsFor: 'tests' stamp: 'jmv 18/Oct/2024 15:44:45'!
 testWriteNilValue
 	| ini written expected |
 	ini := IniFile new.
@@ -22923,7 +22923,7 @@ key1=
 '.
 	self assert: written equals: expected.! !
 
-!IniFileTest methodsFor: 'tests' stamp: 'jmv 7/10/2024 11:28:51'!
+!IniFileTest methodsFor: 'tests' stamp: 'jmv 10/Jul/2024 11:28:51'!
 testWriteSingleSection
 	| out written foo |
 	out := IniFile new.
@@ -22935,85 +22935,85 @@ testWriteSingleSection
 	self assert: (foo at: 'key1') = 'val1'.
 	self assert: (foo at: 'key2') = 'val2'.! !
 
-!SystemConsistencyTest methodsFor: 'testing' stamp: 'jmv 5/7/2012 09:35'!
+!SystemConsistencyTest methodsFor: 'testing' stamp: 'jmv 7/May/2012 09:35:00'!
 testMethodsWithUnboundGlobals
 	"
 	SystemConsistencyTest new testMethodsWithUnboundGlobals
 	"
 	self assert: Smalltalk methodsWithUnboundGlobals isEmpty! !
 
-!TranscriptTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:29:18'!
+!TranscriptTest methodsFor: 'tests' stamp: 'HAW 20/Mar/2019 07:29:18'!
 testNewLineWhenConditionIsFalseDoesNotPutANewLineInStream
 
 	self assertTranscriptContentsDoesNotChangeAfter: [ Transcript newLineWhen: false ]
 	! !
 
-!TranscriptTest methodsFor: 'tests' stamp: 'jmv 1/12/2023 12:56:56'!
+!TranscriptTest methodsFor: 'tests' stamp: 'jmv 12/Jan/2023 12:56:56'!
 testNewLineWhenConditionIsTruePutsANewLineInStream
 
 	self assertTranscriptContentsAdded: String newLineString, '.' after: [ Transcript newLineWhen: true; nextPut: $. ]! !
 
-!TranscriptTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:09:29'!
+!TranscriptTest methodsFor: 'tests' stamp: 'HAW 20/Mar/2019 07:09:29'!
 testNextPutAllWhenConditionIsFalseDoesNotPutCollectionInStream
 
 	self assertTranscriptContentsDoesNotChangeAfter: [ Transcript nextPutAll: 'other' when: false ]
 	! !
 
-!TranscriptTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:13:47'!
+!TranscriptTest methodsFor: 'tests' stamp: 'HAW 20/Mar/2019 07:13:47'!
 testNextPutAllWhenConditionIsTruePutsCollectionInStream
 
 	self assertTranscriptContentsAdded: 'other' after: [ Transcript nextPutAll: 'other' when: true ]
 	
 	! !
 
-!TranscriptTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:11:58'!
+!TranscriptTest methodsFor: 'tests' stamp: 'HAW 20/Mar/2019 07:11:58'!
 testNextPutWhenConditionIsFalseDoesNotPutObjectInStream
 
 	self assertTranscriptContentsDoesNotChangeAfter: [ Transcript nextPut: $t when: false ]
 ! !
 
-!TranscriptTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:15:05'!
+!TranscriptTest methodsFor: 'tests' stamp: 'HAW 20/Mar/2019 07:15:05'!
 testNextPutWhenConditionIsTruePutsObjectInStream
 
 	self assertTranscriptContentsAdded: 't' after: [ Transcript nextPut: $t when: true ]
 	
 	! !
 
-!TranscriptTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:12:44'!
+!TranscriptTest methodsFor: 'tests' stamp: 'HAW 20/Mar/2019 07:12:44'!
 testPrintWhenConditionIsFalseDoesNotPrintObjectInStream
 
 	self assertTranscriptContentsDoesNotChangeAfter: [ Transcript print: Object when: false ]
 ! !
 
-!TranscriptTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:15:34'!
+!TranscriptTest methodsFor: 'tests' stamp: 'HAW 20/Mar/2019 07:15:34'!
 testPrintWhenConditionIsTruePrintsObjectInStream
 
 	self assertTranscriptContentsAdded: Object printString after: [ Transcript print: Object when: true ]
 	! !
 
-!TranscriptTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:39:29'!
+!TranscriptTest methodsFor: 'tests' stamp: 'HAW 20/Mar/2019 07:39:29'!
 testSpaceWhenConditionIsFalseDoesNotPutASpaceInStream
 
 	self assertTranscriptContentsDoesNotChangeAfter: [ Transcript spaceWhen: false ]
 	! !
 
-!TranscriptTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:40:09'!
+!TranscriptTest methodsFor: 'tests' stamp: 'HAW 20/Mar/2019 07:40:09'!
 testSpaceWhenConditionIsTruePutsASpaceInStream
 
 	self assertTranscriptContentsAdded: ' ' after: [ Transcript spaceWhen: true ]
 	! !
 
-!TranscriptTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:40:49'!
+!TranscriptTest methodsFor: 'tests' stamp: 'HAW 20/Mar/2019 07:40:49'!
 testTabWhenConditionIsFalseDoesNotPutATabInStream
 
 	self assertTranscriptContentsDoesNotChangeAfter: [ Transcript tabWhen: false ]! !
 
-!TranscriptTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:41:35'!
+!TranscriptTest methodsFor: 'tests' stamp: 'HAW 20/Mar/2019 07:41:35'!
 testTabWhenConditionIsTruePutsATabInStream
 
 	self assertTranscriptContentsAdded: Character tab asString after: [ Transcript tabWhen: true ]! !
 
-!TranscriptTest methodsFor: 'assertions' stamp: 'jmv 3/1/2025 17:19:12'!
+!TranscriptTest methodsFor: 'assertions' stamp: 'jmv 1/Mar/2025 17:19:12'!
 assertTranscriptContentsAdded: expectedAddedString after: aBlock
 	
 	| transcriptContentsBeforeBlockEvaluation |
@@ -23022,7 +23022,7 @@ assertTranscriptContentsAdded: expectedAddedString after: aBlock
 	aBlock value.
 	self assert: Transcript contents equals: transcriptContentsBeforeBlockEvaluation, expectedAddedString.! !
 
-!TranscriptTest methodsFor: 'assertions' stamp: 'jmv 3/1/2025 17:19:06'!
+!TranscriptTest methodsFor: 'assertions' stamp: 'jmv 1/Mar/2025 17:19:06'!
 assertTranscriptContentsAdded2: expectedAddedString after: aBlock
 	
 	| transcriptContentsBeforeBlockEvaluation |
@@ -23032,12 +23032,12 @@ assertTranscriptContentsAdded2: expectedAddedString after: aBlock
 	{transcriptContentsBeforeBlockEvaluation. expectedAddedString.Transcript contents} inspect.
 	self assert: Transcript contents equals: transcriptContentsBeforeBlockEvaluation, expectedAddedString.! !
 
-!TranscriptTest methodsFor: 'assertions' stamp: 'HAW 3/20/2019 07:15:48'!
+!TranscriptTest methodsFor: 'assertions' stamp: 'HAW 20/Mar/2019 07:15:48'!
 assertTranscriptContentsDoesNotChangeAfter: aBlock
 	
 	self assertTranscriptContentsAdded: '' after: aBlock! !
 
-!TrieTest methodsFor: 'aux' stamp: 'jmv 6/21/2011 22:05'!
+!TrieTest methodsFor: 'aux' stamp: 'jmv 21/Jun/2011 22:05:00'!
 assert: subject isEquivalentToDictionary: controlGroup
 	"Test #size, #do:, "
 	| count subjectAsDictionary someRandomString |
@@ -23063,7 +23063,7 @@ assert: subject isEquivalentToDictionary: controlGroup
 	self assert: count = controlGroup size.
 	self assert: subjectAsDictionary = controlGroup.! !
 
-!TrieTest methodsFor: 'aux' stamp: 'jmv 6/15/2011 09:58'!
+!TrieTest methodsFor: 'aux' stamp: 'jmv 15/Jun/2011 09:58:00'!
 assert: subject isEquivalentToSet: controlGroup
 	"Test #size, #do:, "
 	| count subjectAsSet someRandomString |
@@ -23083,7 +23083,7 @@ assert: subject isEquivalentToSet: controlGroup
 	self assert: count = controlGroup size.
 	self assert: subjectAsSet = controlGroup.! !
 
-!TrieTest methodsFor: 'aux' stamp: 'jmv 6/22/2011 12:51'!
+!TrieTest methodsFor: 'aux' stamp: 'jmv 22/Jun/2011 12:51:00'!
 assert: subject prefixSelection: aString isEquivalentToSet: controlGroup
 	| selection1 selection2 |
 	selection1 _ OrderedCollection new.
@@ -23095,7 +23095,7 @@ assert: subject prefixSelection: aString isEquivalentToSet: controlGroup
 				sort: [ :a :b | a asLowercase asUnaccented < b asLowercase asUnaccented ].
 	self assert: selection1 = selection2.! !
 
-!TrieTest methodsFor: 'testing' stamp: 'jmv 6/21/2011 22:14'!
+!TrieTest methodsFor: 'testing' stamp: 'jmv 21/Jun/2011 22:14:00'!
 testAllMesssagesLikeDicionary
 	"
 	TrieTest new testAllMesssagesLikeDicionary
@@ -23126,7 +23126,7 @@ testAllMesssagesLikeDicionary
 	self assert: copy isEquivalentToDictionary: controlGroup.
 	self assert: set1 = set2! !
 
-!TrieTest methodsFor: 'testing' stamp: 'jmv 6/21/2011 22:01'!
+!TrieTest methodsFor: 'testing' stamp: 'jmv 21/Jun/2011 22:01:00'!
 testAllMesssagesLikeSet
 	"
 	TrieTest new testAllMesssagesLikeSet
@@ -23148,25 +23148,25 @@ testAllMesssagesLikeSet
 	self assert: subject isEquivalentToSet: copy.
 	self assert: copy isEquivalentToSet: controlGroup.! !
 
-!TrieTest methodsFor: 'testing' stamp: 'HAW 6/12/2019 17:38:28'!
+!TrieTest methodsFor: 'testing' stamp: 'HAW 12/Jun/2019 17:38:28'!
 testIncludesReturnsFalseForObjectsThatAreNotString
 	
 	self deny: ((Trie with: 'hello') includes: 1)
 	! !
 
-!TrieTest methodsFor: 'testing' stamp: 'HAW 6/12/2019 17:38:51'!
+!TrieTest methodsFor: 'testing' stamp: 'HAW 12/Jun/2019 17:38:51'!
 testIncludesReturnsFalseForStringsNotIncluded
 	
 	self deny: ((Trie with: 'hello') includes: 'bye')
 	! !
 
-!TrieTest methodsFor: 'testing' stamp: 'HAW 6/12/2019 17:39:09'!
+!TrieTest methodsFor: 'testing' stamp: 'HAW 12/Jun/2019 17:39:09'!
 testIncludesReturnsTrueForIncludedStrings
 	
 	self assert: ((Trie with: 'hello') includes: 'hello')
 	! !
 
-!TrieTest methodsFor: 'testing' stamp: 'jmv 9/20/2023 15:43:54'!
+!TrieTest methodsFor: 'testing' stamp: 'jmv 20/Sep/2023 15:43:54'!
 testKeyNotFoundSignalTheRightMessage
 
 	self 
@@ -23174,7 +23174,7 @@ testKeyNotFoundSignalTheRightMessage
 		raise: Error
 		withMessageText: 'key: ''theKey'' not found'! !
 
-!TrieTest methodsFor: 'testing' stamp: 'jmv 6/22/2011 12:30'!
+!TrieTest methodsFor: 'testing' stamp: 'jmv 22/Jun/2011 12:30:00'!
 testPrefixIteration
 	"
 	TrieTest new testPrefixIteration
@@ -23223,7 +23223,7 @@ testPrefixIteration
 	self assert: subject prefixSelection: 'Ñ' isEquivalentToSet: controlGroup.
 	self assert: subject prefixSelection: 'ÑANDÚ' isEquivalentToSet: controlGroup.! !
 
-!TrieTest methodsFor: 'testing' stamp: 'jmv 6/22/2011 12:50'!
+!TrieTest methodsFor: 'testing' stamp: 'jmv 22/Jun/2011 12:50:00'!
 testPrefixIteration2
 	"
 	TrieTest new testPrefixIteration2
@@ -23249,7 +23249,7 @@ testPrefixIteration2
 	self assert: subject prefixSelection: 'at:put:' isEquivalentToSet: controlGroup.
 	self assert: subject prefixSelection: 'at:put:nonExistant:' isEquivalentToSet: controlGroup.! !
 
-!TrieTest methodsFor: 'testing' stamp: 'jmv 6/23/2011 11:02'!
+!TrieTest methodsFor: 'testing' stamp: 'jmv 23/Jun/2011 11:02:00'!
 testRemoveLikeDicionary
 	"
 	TrieTest new testRemoveLikeDicionary
@@ -23307,7 +23307,7 @@ testRemoveLikeDicionary
 	self assert: subject isEmpty.
 	self assert: controlGroup isEmpty.! !
 
-!TrieTest methodsFor: 'testing' stamp: 'jmv 6/22/2011 15:54'!
+!TrieTest methodsFor: 'testing' stamp: 'jmv 22/Jun/2011 15:54:00'!
 testRemoveLikeSet
 	"
 	TrieTest new testRemoveLikeSet
@@ -23355,7 +23355,7 @@ testRemoveLikeSet
 	self assert: subject isEmpty.
 	self assert: controlGroup isEmpty.! !
 
-!TrieTest methodsFor: 'testing' stamp: 'jmv 6/22/2011 15:42'!
+!TrieTest methodsFor: 'testing' stamp: 'jmv 22/Jun/2011 15:42:00'!
 testSetProtocol
 	"
 	TrieTest new testSetProtocol
@@ -23393,7 +23393,7 @@ testSetProtocol
 	controlGroup add: 'ÑANDÚ'.
 	self assert: subject isEquivalentToSet: controlGroup.! !
 
-!TrieUnicodeTest methodsFor: 'testing' stamp: 'jmv 7/6/2022 08:11:26'!
+!TrieUnicodeTest methodsFor: 'testing' stamp: 'jmv 6/Jul/2022 08:11:26'!
 test01
 	| t all |
 	t _ Trie new.
@@ -23417,7 +23417,7 @@ test01
 	self assert: (all includes: {'car'. String. Float pi. SmallFloat64}).
 	self assert: (all includes: {'cat'. String. Date today. Date}).! !
 
-!TrieUnicodeTest methodsFor: 'testing' stamp: 'jmv 12/7/2022 11:46:05'!
+!TrieUnicodeTest methodsFor: 'testing' stamp: 'jmv 7/Dec/2022 11:46:05'!
 test02
 	| t all |
 	t _ Trie new.
@@ -23451,7 +23451,7 @@ test02
 	self assert: (all includes: {'car'. UnicodeString. Float pi. SmallFloat64}).
 	self assert: (all includes: {'cat'. String. Date today. Date}).! !
 
-!TrieUnicodeTest methodsFor: 'testing' stamp: 'jmv 1/20/2023 19:51:57'!
+!TrieUnicodeTest methodsFor: 'testing' stamp: 'jmv 20/Jan/2023 19:51:57'!
 test03
 	| t all s1 s2 |
 	t _ Trie new.
@@ -23477,7 +23477,7 @@ test03
 	self assert: (all includes: {'car'. String. Float pi. SmallFloat64}).
 	self assert: (all includes: {'cat'. UnicodeString. Date today. Date}).! !
 
-!SmalltalkCompleterTest methodsFor: 'testing' stamp: 'jmv 3/14/2025 10:24:30'!
+!SmalltalkCompleterTest methodsFor: 'testing' stamp: 'jmv 14/Mar/2025 10:24:30'!
 testMessages
 	"
 	SmalltalkCompleterTest new testMessages
@@ -23492,7 +23492,7 @@ testMessages
 	"self assert: fromSmalltalk = fromUCompleter asSet."
 	self assert: (fromUCompleter includesAllOf: fromSmalltalk).! !
 
-!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'HAW 5/2/2020 20:56:42'!
+!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'HAW 2/May/2020 20:56:42'!
 test000_AutocompletesMessagesFor_GlobalVariables_WithSelectorsFromTheirClasses
 	
 	self
@@ -23504,7 +23504,7 @@ test000_AutocompletesMessagesFor_GlobalVariables_WithSelectorsFromTheirClasses
 		areUnaryAndBinarySelectorsOf: SmalltalkCompleterTest class.
 	! !
 
-!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'HAW 5/2/2020 21:01:49'!
+!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'HAW 2/May/2020 21:01:49'!
 test001_AutocompletesMessagesFor_Self_WithSelectorsFromTheBrowsedClass
 	
 	self
@@ -23515,7 +23515,7 @@ test001_AutocompletesMessagesFor_Self_WithSelectorsFromTheBrowsedClass
 		assertEntriesWhenBrowsing: 'm1 1 < self '
 		areUnaryAndBinarySelectorsOf: SmalltalkCompleterTest.! !
 
-!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'HAW 5/2/2020 21:02:19'!
+!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'HAW 2/May/2020 21:02:19'!
 test002_AutocompletesMessagesFor_Super_WithSelectorsFromTheBrowsedClass
 	
 	self
@@ -23526,7 +23526,7 @@ test002_AutocompletesMessagesFor_Super_WithSelectorsFromTheBrowsedClass
 		assertEntriesWhenBrowsing: 'm1 1 < super '
 		areUnaryAndBinarySelectorsOf: TestCase.! !
 
-!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'HAW 5/2/2020 21:02:43'!
+!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'HAW 2/May/2020 21:02:43'!
 test003_AutocompletesMessagesFor_Super_WithSelectorsForUnknownClassesWhenTheBrowsedClassDoesNotHaveASuperclass
 	
 	self browseClass: ProtoObject.
@@ -23534,7 +23534,7 @@ test003_AutocompletesMessagesFor_Super_WithSelectorsForUnknownClassesWhenTheBrow
 	self assertEntriesAreSelectorsOfUnknownClassesWhenBrowsing: 'm1 super '.
 	self assertEntriesAreSelectorsOfUnknownClassesWhenBrowsing: 'm1 1 < super '.! !
 
-!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'HAW 5/2/2020 21:11:29'!
+!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'HAW 2/May/2020 21:11:29'!
 test004_AutocompletesMessagesFor_True_WithSelectorsFromTrue
 	
 	self
@@ -23545,7 +23545,7 @@ test004_AutocompletesMessagesFor_True_WithSelectorsFromTrue
 		assertEntriesWhenBrowsing: 'm1 1 < true '
 		areUnaryAndBinarySelectorsOf: True.	! !
 
-!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'HAW 5/2/2020 21:12:17'!
+!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'HAW 2/May/2020 21:12:17'!
 test005_AutocompletesMessagesFor_False_WithSelectorsFromFalse
 	
 	self
@@ -23556,7 +23556,7 @@ test005_AutocompletesMessagesFor_False_WithSelectorsFromFalse
 		assertEntriesWhenBrowsing: 'm1 1 < false '
 		areUnaryAndBinarySelectorsOf: False.	! !
 
-!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'HAW 5/2/2020 21:12:12'!
+!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'HAW 2/May/2020 21:12:12'!
 test006_AutocompletesMessagesFor_Nil_WithSelectorsFromUndefinedObject
 	
 	self
@@ -23567,7 +23567,7 @@ test006_AutocompletesMessagesFor_Nil_WithSelectorsFromUndefinedObject
 		assertEntriesWhenBrowsing: 'm1 1 < nil '
 		areUnaryAndBinarySelectorsOf: UndefinedObject.	! !
 
-!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'jmv 7/5/2022 16:26:48'!
+!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'jmv 5/Jul/2022 16:26:48'!
 test007_AutocompletesMessagesFor_Characters_WithSelectorsFromCharacter
 	
 	self
@@ -23578,7 +23578,7 @@ test007_AutocompletesMessagesFor_Characters_WithSelectorsFromCharacter
 		assertEntriesWhenBrowsing: 'm1 1 < $a '
 		areUnaryAndBinarySelectorsOf: $m class.	! !
 
-!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'HAW 5/2/2020 21:15:01'!
+!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'HAW 2/May/2020 21:15:01'!
 test008_AutocompletesMessagesFor_Numbers_WithSelectorsFromTheirClass
 	
 	self
@@ -23589,7 +23589,7 @@ test008_AutocompletesMessagesFor_Numbers_WithSelectorsFromTheirClass
 		assertEntriesWhenBrowsing: 'm1 1 < 1 '
 		areUnaryAndBinarySelectorsOf: SmallInteger.	! !
 
-!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'jmv 7/5/2022 16:27:59'!
+!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'jmv 5/Jul/2022 16:27:59'!
 test009_AutocompletesMessagesFor_Strings_WithSelectorsFromString
 	
 	self
@@ -23600,7 +23600,7 @@ test009_AutocompletesMessagesFor_Strings_WithSelectorsFromString
 		assertEntriesWhenBrowsing: 'm1 1 < ''a'' '
 		areUnaryAndBinarySelectorsOf: 'm' class	! !
 
-!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'HAW 5/2/2020 23:37:45'!
+!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'HAW 2/May/2020 23:37:45'!
 test010_AutocompletesMessagesFor_Symbols_WithSelectorsFromSymbol
 	
 	self
@@ -23611,7 +23611,7 @@ test010_AutocompletesMessagesFor_Symbols_WithSelectorsFromSymbol
 		assertEntriesWhenBrowsing: 'm1 1 < #a '
 		areUnaryAndBinarySelectorsOf: Symbol.	! !
 
-!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'HAW 5/2/2020 23:38:21'!
+!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'HAW 2/May/2020 23:38:21'!
 test011_AutocompletesMessagesFor_StringSymbol_WithSelectorsFromSymbol
 	
 	self
@@ -23622,13 +23622,13 @@ test011_AutocompletesMessagesFor_StringSymbol_WithSelectorsFromSymbol
 		assertEntriesWhenBrowsing: 'm1 1 < #''a'' '
 		areUnaryAndBinarySelectorsOf: Symbol.	! !
 
-!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'HAW 5/6/2020 23:42:33'!
+!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'HAW 6/May/2020 23:42:33'!
 test012_AutocompletesMessagesFor_InstanceVariables
 	
 	self assertEntriesAreSelectorsOfUnknownClassesWhenBrowsing: 'm1 instanceVariable1 '.
 	self assertEntriesAreSelectorsOfUnknownClassesWhenBrowsing: 'm1 1 + instanceVariable1 '.! !
 
-!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'HAW 5/2/2020 16:42:09'!
+!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'HAW 2/May/2020 16:42:09'!
 test013_AutocompletesMessagesFor_MethodArguments_WithSelectorsForUnknownClasses
 	
 	"I reference to SmalltalkCompleterTest directly and not thru 'self class' because this test has subclasses
@@ -23636,26 +23636,26 @@ test013_AutocompletesMessagesFor_MethodArguments_WithSelectorsForUnknownClasses
 	self assertEntriesAreSelectorsOfUnknownClassesWhenBrowsingMethodWith: SmalltalkCompleterTest >> #m1:.
 	self assertEntriesAreSelectorsOfUnknownClassesWhenBrowsingMethodWith: SmalltalkCompleterTest >> #m2: ! !
 
-!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'HAW 5/2/2020 21:22:39'!
+!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'HAW 2/May/2020 21:22:39'!
 test014_AutocompletesMessagesFor_TemporaryVariables_WithSelectorsForUnknownClasses
 	
 	self assertEntriesAreSelectorsOfUnknownClassesWhenBrowsing: 'm1 |a| a '.
 	self assertEntriesAreSelectorsOfUnknownClassesWhenBrowsing: 'm1 |a| 1 + a '.	! !
 
-!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'HAW 5/2/2020 21:25:42'!
+!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'HAW 2/May/2020 21:25:42'!
 test015_AutocompletesMessagesFor_BlockArguments_WithSelectorsForUnknownClasses
 	
 	self assertEntriesAreSelectorsOfUnknownClassesWhenBrowsing: 'm1 [ :a | a '.
 	self assertEntriesAreSelectorsOfUnknownClassesWhenBrowsing: 'm1 [ :a | 1 + a '.	! !
 
-!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'HAW 5/2/2020 22:04:54'!
+!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'HAW 2/May/2020 22:04:54'!
 test016_AutocompletesMessagesFor_BlockTemporaryVariables_WithSelectorsForUnknownClasses
 	
 	self assertEntriesAreSelectorsOfUnknownClassesWhenBrowsing: 'm1 [ | a | a '.
 	
 	self assertEntriesAreSelectorsOfUnknownClassesWhenBrowsing: 'm1 [ | a | 1 + a '.	! !
 
-!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'NPM 3/18/2020 18:34:08'!
+!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'NPM 18/Mar/2020 18:34:08'!
 test017_AutocompletesMessagesFor_NilWorkspaceVariables_WithSelectorsForUnknownClasses
 	
 	self
@@ -23668,7 +23668,7 @@ test017_AutocompletesMessagesFor_NilWorkspaceVariables_WithSelectorsForUnknownCl
 		binding: 'x'
 		to: nil.! !
 
-!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'HAW 5/2/2020 22:05:36'!
+!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'HAW 2/May/2020 22:05:36'!
 test017_AutocompletesMessagesFor_NonNilWorkspaceVariables_WithSelectorsFromTheirClasses
 	
 	self
@@ -23683,7 +23683,7 @@ test017_AutocompletesMessagesFor_NonNilWorkspaceVariables_WithSelectorsFromTheir
 		to: 1
 		areUnaryAndBinarySelectorsOf: SmallInteger.! !
 
-!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'HAW 5/2/2020 23:27:14'!
+!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'HAW 2/May/2020 23:27:14'!
 test018_AutocompletesMessagesFor_ThisContext_WithSelectorsFromMethodContext
 	
 	self
@@ -23694,7 +23694,7 @@ test018_AutocompletesMessagesFor_ThisContext_WithSelectorsFromMethodContext
 		assertEntriesWhenBrowsing: 'm1 1 < thisContext '
 		areUnaryAndBinarySelectorsOf: MethodContext.	! !
 
-!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'HAW 5/2/2020 23:27:39'!
+!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'HAW 2/May/2020 23:27:39'!
 test019_AutocompletesMessagesFor_ClassVariables_WithSelectorsFromTheirClasses
 	
 	ClassVariableForTesting _ 1.
@@ -23707,7 +23707,7 @@ test019_AutocompletesMessagesFor_ClassVariables_WithSelectorsFromTheirClasses
 		assertEntriesWhenBrowsing: 'm1 1 < ClassVariableForTesting '
 		areUnaryAndBinarySelectorsOf: SmallInteger.	! !
 
-!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'HAW 5/2/2020 23:28:01'!
+!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'HAW 2/May/2020 23:28:01'!
 test020_AutocompletesMessagesFor_PoolConstants_WithSelectorsFromTheirClasses
 	
 	poolDictionaryForTesting at: #X put: 1.
@@ -23720,7 +23720,7 @@ test020_AutocompletesMessagesFor_PoolConstants_WithSelectorsFromTheirClasses
 		assertEntriesWhenBrowsing: 'm1 1 < X '
 		areUnaryAndBinarySelectorsOf: SmallInteger.! !
 
-!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'HAW 5/2/2020 23:39:25'!
+!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'HAW 2/May/2020 23:39:25'!
 test021_AutocompletesMessagesFor_BlockEndings_WithSelectorsFromBlockClosure
 	
 	self
@@ -23731,7 +23731,7 @@ test021_AutocompletesMessagesFor_BlockEndings_WithSelectorsFromBlockClosure
 		assertEntriesWhenBrowsing: 'm1 1 < [] '
 		areUnaryAndBinarySelectorsOf: BlockClosure.	! !
 
-!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'HAW 5/2/2020 23:39:55'!
+!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'HAW 2/May/2020 23:39:55'!
 test022_AutocompletesMessagesFor_ArrayEnds_WithSelectorsFromArray
 	
 	self
@@ -23742,7 +23742,7 @@ test022_AutocompletesMessagesFor_ArrayEnds_WithSelectorsFromArray
 		assertEntriesWhenBrowsing: 'm1 1 < #() '
 		areUnaryAndBinarySelectorsOf: Array.	! !
 
-!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'HAW 5/3/2020 01:04:04'!
+!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'HAW 3/May/2020 01:04:04'!
 test023_AutocompletesMessagesFor_RightBraces_WithSelectorsFromArray
 	
 	self
@@ -23753,33 +23753,33 @@ test023_AutocompletesMessagesFor_RightBraces_WithSelectorsFromArray
 		assertEntriesWhenBrowsing: 'm1 1 < {} '
 		areUnaryAndBinarySelectorsOf: Array.	! !
 
-!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'HAW 5/6/2020 23:43:31'!
+!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'HAW 6/May/2020 23:43:31'!
 test023_AutocompletingMessagesFor_UnaryMessages
 	
 	self denyComputingEntriesIsSupportedWhenBrowsing: 'm1 self class '.
 		
 	self denyComputingEntriesIsSupportedWhenBrowsing: 'm1 1 < self class '.	! !
 
-!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'HAW 5/6/2020 23:44:50'!
+!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'HAW 6/May/2020 23:44:50'!
 test024_AutocompletingMessagesFor_RightParenthesis
 	
 	self denyComputingEntriesIsSupportedWhenBrowsing: 'm1 (1) '.
 		
 	self denyComputingEntriesIsSupportedWhenBrowsing: 'm1 1 < (1) '.! !
 
-!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'HAW 5/3/2020 02:08:24'!
+!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'HAW 3/May/2020 02:08:24'!
 test025_AutocompletesMessagesFor_UnknownIdentifiers_WithSelectorsForUnknownClasses
 	
 	self assertEntriesAreSelectorsOfUnknownClassesWhenBrowsing: 'm1 Foo1234 '.
 	self assertEntriesAreSelectorsOfUnknownClassesWhenBrowsing: 'm1 foo1234 '.! !
 
-!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'HAW 5/6/2020 23:45:10'!
+!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'HAW 6/May/2020 23:45:10'!
 test026_AutocompletingMessagesFor_Cascade
 	
 	self denyComputingEntriesIsSupportedWhenBrowsing: 'm1 self class; '.
 	! !
 
-!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'HAW 5/3/2020 01:13:19'!
+!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'HAW 3/May/2020 01:13:19'!
 test027_AutocompletesEntriesFor_GlobalVariables_WithIdentifiersBegginingWithThem
 	
 	self
@@ -23787,7 +23787,7 @@ test027_AutocompletesEntriesFor_GlobalVariables_WithIdentifiersBegginingWithThem
 		areIdentifiersBeginningWith: 'SmalltalkCompleterTest'.
 	! !
 
-!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'HAW 5/3/2020 01:14:50'!
+!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'HAW 3/May/2020 01:14:50'!
 test028_AutocompletesEntriesFor_PoolConstants_WithIdentifiersBegginingWithThem
 	
 	poolDictionaryForTesting at: #X put: 1.
@@ -23796,7 +23796,7 @@ test028_AutocompletesEntriesFor_PoolConstants_WithIdentifiersBegginingWithThem
 		assertEntriesWhenBrowsing: 'm1 X'
 		areIdentifiersBeginningWith: 'X'.! !
 
-!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'NPM 3/18/2020 19:56:46'!
+!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'NPM 18/Mar/2020 19:56:46'!
 test029_AutocompletesEntriesFor_WorkspaceVariables_WithIdentifiersBegginingWithThem
 	
 	| completer |
@@ -23809,7 +23809,7 @@ test029_AutocompletesEntriesFor_WorkspaceVariables_WithIdentifiersBegginingWithT
 		assertEntriesOf: completer
 		areIdentifiersBeginningWith: 'x'.! !
 
-!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'HAW 5/3/2020 01:15:11'!
+!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'HAW 3/May/2020 01:15:11'!
 test030_AutocompletesEntriesFor_ClassVariables_WithIdentifiersBegginingWithThem
 	
 	ClassVariableForTesting _ 1.
@@ -23818,14 +23818,14 @@ test030_AutocompletesEntriesFor_ClassVariables_WithIdentifiersBegginingWithThem
 		assertEntriesWhenBrowsing: 'm1 ClassVariableForTestin'
 		areIdentifiersBeginningWith: 'ClassVariableForTesting'.! !
 
-!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'HAW 5/3/2020 01:15:28'!
+!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'HAW 3/May/2020 01:15:28'!
 test031_AutocompletesEntriesFor_InstanceVariables_WithIdentifiersBegginingWithThem
 	
 	self
 		assertEntriesWhenBrowsing: 'm1 instanceVariable'
 		areIdentifiersBeginningWith: 'instanceVariable1'.! !
 
-!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'HAW 5/2/2020 21:36:46'!
+!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'HAW 2/May/2020 21:36:46'!
 test032_AutocompletesEntriesFor_MethodArguments_WithIdentifiersBegginingWithThem
 	
 	| completer |
@@ -23839,35 +23839,35 @@ test032_AutocompletesEntriesFor_MethodArguments_WithIdentifiersBegginingWithThem
 		detectedPossibleInvalidSelector: #()
 		suggested: (completer computeIdentifierEntriesBeginningWith: 'arg1').! !
 
-!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'HAW 5/3/2020 01:15:54'!
+!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'HAW 3/May/2020 01:15:54'!
 test033_AutocompletesEntriesFor_TemporaryVariables_WithIdentifiersBegginingWithThem
 	
 	self
 		assertEntriesWhenBrowsing: 'm1 |xx| x'
 		areIdentifiersBeginningWith: 'xx'.! !
 
-!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'HAW 5/3/2020 01:16:11'!
+!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'HAW 3/May/2020 01:16:11'!
 test034_AutocompletesEntriesFor_BlockArguments_WithIdentifiersBegginingWithThem
 	
 	self
 		assertEntriesWhenBrowsing: 'm1 [ :xx | x'
 		areIdentifiersBeginningWith: 'xx'.! !
 
-!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'HAW 5/3/2020 01:16:27'!
+!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'HAW 3/May/2020 01:16:27'!
 test035_AutocompletesEntriesFor_BlockTemporaryVariables_WithIdentifiersBegginingWithThem
 	
 	self
 		assertEntriesWhenBrowsing: 'm1 [ | xx | x'
 		areIdentifiersBeginningWith: 'xx'.! !
 
-!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'HAW 5/3/2020 01:16:43'!
+!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'HAW 3/May/2020 01:16:43'!
 test036_AutocompletesEntriesFor_IncompleteIdentifiers_WithIdentifiersBegginingWithThem
 
 	self
 		assertEntriesWhenBrowsing: 'm1 Obj'
 		areIdentifiersBeginningWith: 'Obj'.! !
 
-!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'HAW 5/3/2020 01:17:34'!
+!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'HAW 3/May/2020 01:17:34'!
 test037_AutocompletesEntriesFor_ReservedNames_WithIdentifiersBegginingWithThem
 
 	self assertEntriesWhenBrowsing: 'm1 self' areIdentifiersBeginningWith: 'self'.
@@ -23877,7 +23877,7 @@ test037_AutocompletesEntriesFor_ReservedNames_WithIdentifiersBegginingWithThem
 	self assertEntriesWhenBrowsing: 'm1 ni' areIdentifiersBeginningWith: 'nil'.
 	self assertEntriesWhenBrowsing: 'm1 thisContex' areIdentifiersBeginningWith: 'thisContext'.! !
 
-!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'MH-NMS 10/14/2023 03:53:39'!
+!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'MH-NMS 14/Oct/2023 03:53:39'!
 test038_DoesNotAutocompleteEntriesFor_UndefinedIdentifiers
 
 	| completer |
@@ -23887,7 +23887,7 @@ test038_DoesNotAutocompleteEntriesFor_UndefinedIdentifiers
 	
 	self denyHasEntries: completer ! !
 
-!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'HAW 5/3/2020 01:18:55'!
+!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'HAW 3/May/2020 01:18:55'!
 test039_AutocompletesEntriesFor_BinaryMessages_WithIdentifiersBegginingWithThem
 
 	self
@@ -23895,7 +23895,7 @@ test039_AutocompletesEntriesFor_BinaryMessages_WithIdentifiersBegginingWithThem
 		areSelectorsOf: SmallInteger
 		beginningWith: '~='! !
 
-!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'HAW 5/3/2020 01:19:17'!
+!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'HAW 3/May/2020 01:19:17'!
 test040_AutocompletesEntriesFor_IncompleteBinaryMessages_WithIdentifiersBegginingWithThem
 
 	self
@@ -23903,7 +23903,7 @@ test040_AutocompletesEntriesFor_IncompleteBinaryMessages_WithIdentifiersBegginin
 		areSelectorsOf: SmallInteger
 		beginningWith: '~'! !
 
-!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'HAW 5/3/2020 01:19:42'!
+!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'HAW 3/May/2020 01:19:42'!
 test041_AutocompletesEntriesFor_UnaryMessages_WithIdentifiersBegginingWithThem
 
 	self
@@ -23911,7 +23911,7 @@ test041_AutocompletesEntriesFor_UnaryMessages_WithIdentifiersBegginingWithThem
 		areSelectorsOf: SmallInteger
 		beginningWith: 'not'! !
 
-!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'HAW 5/3/2020 01:19:53'!
+!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'HAW 3/May/2020 01:19:53'!
 test042_AutocompletesEntriesFor_IncompleteUnaryMessages_WithIdentifiersBegginingWithThem
 
 	self
@@ -23919,7 +23919,7 @@ test042_AutocompletesEntriesFor_IncompleteUnaryMessages_WithIdentifiersBeggining
 		areSelectorsOf: SmallInteger
 		beginningWith: 'no'! !
 
-!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'HAW 5/3/2020 01:20:03'!
+!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'HAW 3/May/2020 01:20:03'!
 test043_AutocompletesEntriesFor_KeywordMessages_WithIdentifiersBegginingWithThem
 
 	self
@@ -23927,7 +23927,7 @@ test043_AutocompletesEntriesFor_KeywordMessages_WithIdentifiersBegginingWithThem
 		areSelectorsOf: SmallInteger
 		beginningWith: 'at:'! !
 
-!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'HAW 5/3/2020 01:18:26'!
+!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'HAW 3/May/2020 01:18:26'!
 test044_AutocompletesEntriesFor_IncompleteKeywordMessages_WithIdentifiersBegginingWithThem
 
 	self
@@ -23935,7 +23935,7 @@ test044_AutocompletesEntriesFor_IncompleteKeywordMessages_WithIdentifiersBeggini
 		areSelectorsOf: SmalltalkCompleterTest
 		beginningWith: 'firstKeyword:'.! !
 
-!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'MH-NMS 10/16/2023 11:57:00'!
+!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'MH-NMS 16/Oct/2023 11:57:00'!
 test045_AutocompletesEntriesFor_patternUnary_containsExactlyTwoMethods
 
 	| completer |
@@ -23947,7 +23947,7 @@ test045_AutocompletesEntriesFor_patternUnary_containsExactlyTwoMethods
 	self assert: completer entries includes: 'flag: aSymbol'.
 	self assert: completer entries includes: 'flash'.! !
 
-!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'MH-NMS 10/16/2023 13:35:15'!
+!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'MH-NMS 16/Oct/2023 13:35:15'!
 test046_AutocompletesEntriesFor_patternUnary_notContainsAnyMethod
 
 	| completer |
@@ -23957,7 +23957,7 @@ test046_AutocompletesEntriesFor_patternUnary_notContainsAnyMethod
 
 	self assert: completer entries size equals: 0! !
 
-!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'MH-NMS 10/16/2023 13:35:25'!
+!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'MH-NMS 16/Oct/2023 13:35:25'!
 test047_AutocompletesEntriesFor_patternUnary_doesNotAutocompleteMethodOfSameClass
 
 	| completer |
@@ -23967,7 +23967,7 @@ test047_AutocompletesEntriesFor_patternUnary_doesNotAutocompleteMethodOfSameClas
 
 	self assert: completer entries size equals: 0! !
 
-!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'MH-NMS 10/16/2023 13:35:37'!
+!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'MH-NMS 16/Oct/2023 13:35:37'!
 test048_AutocompletesEntriesFor_patternKeyword_containsExactlyOneMethod
 
 	| completer |
@@ -23979,7 +23979,7 @@ test048_AutocompletesEntriesFor_patternKeyword_containsExactlyOneMethod
 	self assert: completer entries includes: 'flag: aSymbol'
 ! !
 
-!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'MH-NMS 10/14/2023 06:13:52'!
+!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'MH-NMS 14/Oct/2023 06:13:52'!
 test049_AutocompletesEntriesFor_patternKeyword_notContainsAnyMethod
 
 	| completer |
@@ -23989,7 +23989,7 @@ test049_AutocompletesEntriesFor_patternKeyword_notContainsAnyMethod
 
 	self assert: completer entries size equals: 0! !
 
-!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'MH-NMS 10/16/2023 12:00:36'!
+!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'MH-NMS 16/Oct/2023 12:00:36'!
 test050_AutocompletesEntriesFor_patternKeyword_doesNotAutocompleteMethodOfSameClass
 
 	| completer |
@@ -23999,7 +23999,7 @@ test050_AutocompletesEntriesFor_patternKeyword_doesNotAutocompleteMethodOfSameCl
 
 	self assert: completer entries size equals: 0! !
 
-!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'MH-NMS 10/16/2023 13:35:57'!
+!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'MH-NMS 16/Oct/2023 13:35:57'!
 test051_AutocompletesEntriesFor_patternBinary_containsExactlyOneMethod
 
 	| completer |
@@ -24010,7 +24010,7 @@ test051_AutocompletesEntriesFor_patternBinary_containsExactlyOneMethod
 	self assert: completer entries size equals: 1.
 	self assert: completer entries includes: '-> anObject'! !
 
-!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'MH-NMS 10/16/2023 13:36:07'!
+!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'MH-NMS 16/Oct/2023 13:36:07'!
 test052_AutocompletesEntriesFor_patternBinary_notContainsAnyMethod
 
 	| completer |
@@ -24020,7 +24020,7 @@ test052_AutocompletesEntriesFor_patternBinary_notContainsAnyMethod
 
 	self assert: completer entries size equals: 0! !
 
-!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'MH-NMS 10/16/2023 13:36:03'!
+!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'MH-NMS 16/Oct/2023 13:36:03'!
 test053_AutocompletesEntriesFor_patternBinary_doestNotAutocompleteMethodOfSameClass
 
 	| completer |
@@ -24030,7 +24030,7 @@ test053_AutocompletesEntriesFor_patternBinary_doestNotAutocompleteMethodOfSameCl
 
 	self assert: completer entries size equals: 0! !
 
-!SmalltalkCompleterTest methodsFor: 'test objects' stamp: 'jmv 4/23/2025 14:17:34'!
+!SmalltalkCompleterTest methodsFor: 'test objects' stamp: 'jmv 23/Apr/2025 14:17:34'!
 createCompleterForBrowsing: sourceCode 
 	
 	| browser model |
@@ -24043,7 +24043,7 @@ createCompleterForBrowsing: sourceCode
 
 	^ self createCompleterWith: model.! !
 
-!SmalltalkCompleterTest methodsFor: 'test objects' stamp: 'NPM 3/18/2020 19:17:59'!
+!SmalltalkCompleterTest methodsFor: 'test objects' stamp: 'NPM 18/Mar/2020 19:17:59'!
 createCompleterForWorkspaceWith: sourceCode binding: aVariableName to: aValue
 	
 	| model |
@@ -24052,26 +24052,26 @@ createCompleterForWorkspaceWith: sourceCode binding: aVariableName to: aValue
 	
 	^ self createCompleterWith: model! !
 
-!SmalltalkCompleterTest methodsFor: 'test objects' stamp: 'HAW 5/2/2020 13:14:11'!
+!SmalltalkCompleterTest methodsFor: 'test objects' stamp: 'HAW 2/May/2020 13:14:11'!
 createCompleterWith: aModel
 	
 	^ (SmalltalkCompleter withModel: aModel)
 		changePositionTo: aModel actualContents size;
 		yourself! !
 
-!SmalltalkCompleterTest methodsFor: 'test objects' stamp: 'HAW 5/2/2020 16:37:44'!
+!SmalltalkCompleterTest methodsFor: 'test objects' stamp: 'HAW 2/May/2020 16:37:44'!
 firstKeyword: a secondKeyword: b! !
 
-!SmalltalkCompleterTest methodsFor: 'test objects' stamp: 'HAW 5/2/2020 16:55:18'!
+!SmalltalkCompleterTest methodsFor: 'test objects' stamp: 'HAW 2/May/2020 16:55:18'!
 m1: arg1 arg1 ! !
 
-!SmalltalkCompleterTest methodsFor: 'test objects' stamp: 'HAW 5/2/2020 16:37:29'!
+!SmalltalkCompleterTest methodsFor: 'test objects' stamp: 'HAW 2/May/2020 16:37:29'!
 m2: arg1 1 + arg1 ! !
 
-!SmalltalkCompleterTest methodsFor: 'test objects' stamp: 'HAW 5/2/2020 16:56:16'!
+!SmalltalkCompleterTest methodsFor: 'test objects' stamp: 'HAW 2/May/2020 16:56:16'!
 m3: arg1 arg1! !
 
-!SmalltalkCompleterTest methodsFor: 'test support' stamp: 'NPM 3/18/2020 19:13:43'!
+!SmalltalkCompleterTest methodsFor: 'test support' stamp: 'NPM 18/Mar/2020 19:13:43'!
 autocompleteEntriesBrowsing: sourceCode
 	
 	| completer |
@@ -24081,7 +24081,7 @@ autocompleteEntriesBrowsing: sourceCode
 	
 	^ completer! !
 
-!SmalltalkCompleterTest methodsFor: 'test support' stamp: 'HAW 5/2/2020 21:51:30'!
+!SmalltalkCompleterTest methodsFor: 'test support' stamp: 'HAW 2/May/2020 21:51:30'!
 autocompleteEntriesBrowsingMethod: aCompiledMethod 
 	
 	| completer selector |
@@ -24096,7 +24096,7 @@ autocompleteEntriesBrowsingMethod: aCompiledMethod
 	
 	^ completer! !
 
-!SmalltalkCompleterTest methodsFor: 'test support' stamp: 'NPM 3/18/2020 19:07:19'!
+!SmalltalkCompleterTest methodsFor: 'test support' stamp: 'NPM 18/Mar/2020 19:07:19'!
 autocompleteEntriesForWorkspaceWith: sourceCode binding: aVariableName to: aValue 
 	
 	| completer |
@@ -24109,12 +24109,12 @@ autocompleteEntriesForWorkspaceWith: sourceCode binding: aVariableName to: aValu
 	
 	^ completer! !
 
-!SmalltalkCompleterTest methodsFor: 'test support' stamp: 'NPM 3/18/2020 18:32:34'!
+!SmalltalkCompleterTest methodsFor: 'test support' stamp: 'NPM 18/Mar/2020 18:32:34'!
 browseClass: aClass 
 	
 	classToBrowse _ aClass.! !
 
-!SmalltalkCompleterTest methodsFor: 'assertions' stamp: 'HAW 5/2/2020 20:21:58'!
+!SmalltalkCompleterTest methodsFor: 'assertions' stamp: 'HAW 2/May/2020 20:21:58'!
 assert: aCompleter analizedSelectorsFrom: classes canShowDocumentation: aBoolean detectedPossibleInvalidSelector: selectors suggested: entries 
 	
 	classes 
@@ -24128,7 +24128,7 @@ assert: aCompleter analizedSelectorsFrom: classes canShowDocumentation: aBoolean
 		
 		! !
 
-!SmalltalkCompleterTest methodsFor: 'assertions' stamp: 'NPM 3/18/2020 20:25:15'!
+!SmalltalkCompleterTest methodsFor: 'assertions' stamp: 'NPM 18/Mar/2020 20:25:15'!
 assertEntriesAreSelectorsForUnknownClasses: aCompleter 
 	
 	| expectedEntries expectedPossibleInvalidSelectors |
@@ -24142,7 +24142,7 @@ assertEntriesAreSelectorsForUnknownClasses: aCompleter
 		detectedPossibleInvalidSelector: expectedPossibleInvalidSelectors
 		suggested: expectedEntries! !
 
-!SmalltalkCompleterTest methodsFor: 'assertions' stamp: 'NPM 3/18/2020 19:06:02'!
+!SmalltalkCompleterTest methodsFor: 'assertions' stamp: 'NPM 18/Mar/2020 19:06:02'!
 assertEntriesAreSelectorsForUnknownClassesForWorkspaceWith: sourceCode binding: aVariableName to: aValue
 	
 	| completer |
@@ -24153,7 +24153,7 @@ assertEntriesAreSelectorsForUnknownClassesForWorkspaceWith: sourceCode binding: 
 	
 	self assertEntriesAreSelectorsForUnknownClasses: completer.! !
 
-!SmalltalkCompleterTest methodsFor: 'assertions' stamp: 'NPM 3/18/2020 19:07:53'!
+!SmalltalkCompleterTest methodsFor: 'assertions' stamp: 'NPM 18/Mar/2020 19:07:53'!
 assertEntriesAreSelectorsOfUnknownClassesWhenBrowsing: sourceCode 
 	
 	| completer |
@@ -24161,7 +24161,7 @@ assertEntriesAreSelectorsOfUnknownClassesWhenBrowsing: sourceCode
 	
 	self assertEntriesAreSelectorsForUnknownClasses: completer.! !
 
-!SmalltalkCompleterTest methodsFor: 'assertions' stamp: 'HAW 5/2/2020 21:36:46'!
+!SmalltalkCompleterTest methodsFor: 'assertions' stamp: 'HAW 2/May/2020 21:36:46'!
 assertEntriesAreSelectorsOfUnknownClassesWhenBrowsingMethodWith: aCompiledMethod 
 	
 	| completer |
@@ -24172,7 +24172,7 @@ assertEntriesAreSelectorsOfUnknownClassesWhenBrowsingMethodWith: aCompiledMethod
 	
 	! !
 
-!SmalltalkCompleterTest methodsFor: 'assertions' stamp: 'NPM 3/18/2020 19:08:09'!
+!SmalltalkCompleterTest methodsFor: 'assertions' stamp: 'NPM 18/Mar/2020 19:08:09'!
 assertEntriesForWorkspaceWith: sourceCode binding: aVariableName to: aValue areSelectorsOf: aClass
 	
 	| completer |
@@ -24185,7 +24185,7 @@ assertEntriesForWorkspaceWith: sourceCode binding: aVariableName to: aValue areS
 		assertEntriesOf: completer
 		areAllSelectorsOf: aClass.! !
 
-!SmalltalkCompleterTest methodsFor: 'assertions' stamp: 'NPM 3/18/2020 19:19:49'!
+!SmalltalkCompleterTest methodsFor: 'assertions' stamp: 'NPM 18/Mar/2020 19:19:49'!
 assertEntriesForWorkspaceWith: sourceCode binding: aVariableName to: aValue areUnaryAndBinarySelectorsOf: aClass 
 	
 	| completer |
@@ -24198,7 +24198,7 @@ assertEntriesForWorkspaceWith: sourceCode binding: aVariableName to: aValue areU
 		assertEntriesOf: completer
 		areUnaryAndBinarySelectorsOf: aClass.! !
 
-!SmalltalkCompleterTest methodsFor: 'assertions' stamp: 'NPM 3/17/2020 18:27:01'!
+!SmalltalkCompleterTest methodsFor: 'assertions' stamp: 'NPM 17/Mar/2020 18:27:01'!
 assertEntriesOf: aCompleter areAllSelectorsOf: aClass
 
 	self
@@ -24206,13 +24206,13 @@ assertEntriesOf: aCompleter areAllSelectorsOf: aClass
 		areAllSelectorsOf: aClass
 		beginningWith: ''! !
 
-!SmalltalkCompleterTest methodsFor: 'assertions' stamp: 'HAW 5/2/2020 17:38:48'!
+!SmalltalkCompleterTest methodsFor: 'assertions' stamp: 'HAW 2/May/2020 17:38:48'!
 assertEntriesOf: aCompleter areAllSelectorsOf: aClass beginningWith: aPrefix
 
 	self assertEntriesOf: aCompleter areAllSelectorsOfAll: { aClass } beginningWith: aPrefix
 ! !
 
-!SmalltalkCompleterTest methodsFor: 'assertions' stamp: 'HAW 5/2/2020 18:42:55'!
+!SmalltalkCompleterTest methodsFor: 'assertions' stamp: 'HAW 2/May/2020 18:42:55'!
 assertEntriesOf: aCompleter areAllSelectorsOfAll: classes beginningWith: aPrefix
 
 	| suggested |
@@ -24229,7 +24229,7 @@ assertEntriesOf: aCompleter areAllSelectorsOfAll: classes beginningWith: aPrefix
 		detectedPossibleInvalidSelector: #()
 		suggested: suggested.! !
 
-!SmalltalkCompleterTest methodsFor: 'assertions' stamp: 'NPM 3/18/2020 20:25:15'!
+!SmalltalkCompleterTest methodsFor: 'assertions' stamp: 'NPM 18/Mar/2020 20:25:15'!
 assertEntriesOf: aCompleter areIdentifiersBeginningWith: aPrefix
 
 	self
@@ -24239,7 +24239,7 @@ assertEntriesOf: aCompleter areIdentifiersBeginningWith: aPrefix
 		detectedPossibleInvalidSelector: #()
 		suggested: (aCompleter computeIdentifierEntriesBeginningWith: aPrefix)! !
 
-!SmalltalkCompleterTest methodsFor: 'assertions' stamp: 'HAW 5/2/2020 20:10:35'!
+!SmalltalkCompleterTest methodsFor: 'assertions' stamp: 'HAW 2/May/2020 20:10:35'!
 assertEntriesOf: aCompleter areUnaryAndBinarySelectorsOf: aClass
 
 	self
@@ -24250,7 +24250,7 @@ assertEntriesOf: aCompleter areUnaryAndBinarySelectorsOf: aClass
 		suggested: (self using: aCompleter addUnaryAndBinarySelectorsOf: aClass).
 	! !
 
-!SmalltalkCompleterTest methodsFor: 'assertions' stamp: 'NPM 3/18/2020 19:58:16'!
+!SmalltalkCompleterTest methodsFor: 'assertions' stamp: 'NPM 18/Mar/2020 19:58:16'!
 assertEntriesWhenBrowsing: sourceCode areIdentifiersBeginningWith: aPrefix
 	
 	| completer |
@@ -24260,7 +24260,7 @@ assertEntriesWhenBrowsing: sourceCode areIdentifiersBeginningWith: aPrefix
 		assertEntriesOf: completer
 		areIdentifiersBeginningWith: aPrefix.! !
 
-!SmalltalkCompleterTest methodsFor: 'assertions' stamp: 'NPM 3/18/2020 18:55:09'!
+!SmalltalkCompleterTest methodsFor: 'assertions' stamp: 'NPM 18/Mar/2020 18:55:09'!
 assertEntriesWhenBrowsing: sourceCode areSelectorsOf: aClass
 	
 	self
@@ -24268,7 +24268,7 @@ assertEntriesWhenBrowsing: sourceCode areSelectorsOf: aClass
 		areSelectorsOf: aClass
 		beginningWith: ''! !
 
-!SmalltalkCompleterTest methodsFor: 'assertions' stamp: 'NPM 3/18/2020 18:58:41'!
+!SmalltalkCompleterTest methodsFor: 'assertions' stamp: 'NPM 18/Mar/2020 18:58:41'!
 assertEntriesWhenBrowsing: sourceCode areSelectorsOf: aClass beginningWith: aPrefix
 	
 	self
@@ -24277,7 +24277,7 @@ assertEntriesWhenBrowsing: sourceCode areSelectorsOf: aClass beginningWith: aPre
 		beginningWith: aPrefix 
 	! !
 
-!SmalltalkCompleterTest methodsFor: 'assertions' stamp: 'HAW 5/2/2020 17:40:10'!
+!SmalltalkCompleterTest methodsFor: 'assertions' stamp: 'HAW 2/May/2020 17:40:10'!
 assertEntriesWhenBrowsing: sourceCode areSelectorsOfAll: classes
 	
 	self
@@ -24285,7 +24285,7 @@ assertEntriesWhenBrowsing: sourceCode areSelectorsOfAll: classes
 		areSelectorsOfAll: classes
 		beginningWith: ''! !
 
-!SmalltalkCompleterTest methodsFor: 'assertions' stamp: 'HAW 5/2/2020 17:41:09'!
+!SmalltalkCompleterTest methodsFor: 'assertions' stamp: 'HAW 2/May/2020 17:41:09'!
 assertEntriesWhenBrowsing: sourceCode areSelectorsOfAll: classes beginningWith: aPrefix
 	
 	self
@@ -24294,7 +24294,7 @@ assertEntriesWhenBrowsing: sourceCode areSelectorsOfAll: classes beginningWith: 
 		beginningWith: aPrefix 
 	! !
 
-!SmalltalkCompleterTest methodsFor: 'assertions' stamp: 'NPM 3/18/2020 18:59:22'!
+!SmalltalkCompleterTest methodsFor: 'assertions' stamp: 'NPM 18/Mar/2020 18:59:22'!
 assertEntriesWhenBrowsing: sourceCode areUnaryAndBinarySelectorsOf: aClass
 	
 	self
@@ -24303,7 +24303,7 @@ assertEntriesWhenBrowsing: sourceCode areUnaryAndBinarySelectorsOf: aClass
 	
 	! !
 
-!SmalltalkCompleterTest methodsFor: 'assertions' stamp: 'HAW 5/2/2020 21:33:48'!
+!SmalltalkCompleterTest methodsFor: 'assertions' stamp: 'HAW 2/May/2020 21:33:48'!
 assertEntriesWhenBrowsingMethod: aMethod areSelectorsOf: aClass
 	
 	self
@@ -24311,7 +24311,7 @@ assertEntriesWhenBrowsingMethod: aMethod areSelectorsOf: aClass
 		areSelectorsOf: aClass
 		beginningWith: ''! !
 
-!SmalltalkCompleterTest methodsFor: 'assertions' stamp: 'HAW 5/2/2020 21:36:46'!
+!SmalltalkCompleterTest methodsFor: 'assertions' stamp: 'HAW 2/May/2020 21:36:46'!
 assertEntriesWhenBrowsingMethod: aMethod areSelectorsOf: aClass beginningWith: aPrefix
 	
 	self
@@ -24320,7 +24320,7 @@ assertEntriesWhenBrowsingMethod: aMethod areSelectorsOf: aClass beginningWith: a
 		beginningWith: aPrefix 
 	! !
 
-!SmalltalkCompleterTest methodsFor: 'assertions' stamp: 'HAW 5/2/2020 21:36:46'!
+!SmalltalkCompleterTest methodsFor: 'assertions' stamp: 'HAW 2/May/2020 21:36:46'!
 assertEntriesWhenBrowsingMethod: aMethod areUnaryAndBinarySelectorsOf: aClass
 	
 	self
@@ -24329,7 +24329,7 @@ assertEntriesWhenBrowsingMethod: aMethod areUnaryAndBinarySelectorsOf: aClass
 	
 	! !
 
-!SmalltalkCompleterTest methodsFor: 'assertions' stamp: 'NPM 3/18/2020 20:25:15'!
+!SmalltalkCompleterTest methodsFor: 'assertions' stamp: 'NPM 18/Mar/2020 20:25:15'!
 denyComputingEntriesIsSupportedWhenBrowsing: sourceCode 
 	
 	| completer |
@@ -24345,7 +24345,7 @@ denyComputingEntriesIsSupportedWhenBrowsing: sourceCode
 		detectedPossibleInvalidSelector: #()
 		suggested: nil.! !
 
-!SmalltalkCompleterTest methodsFor: 'assertions' stamp: 'NPM 3/18/2020 20:25:15'!
+!SmalltalkCompleterTest methodsFor: 'assertions' stamp: 'NPM 18/Mar/2020 20:25:15'!
 denyHasEntries: aCompleter  
 
 	self
@@ -24355,18 +24355,18 @@ denyHasEntries: aCompleter
 		detectedPossibleInvalidSelector: #()
 		suggested: #()! !
 
-!SmalltalkCompleterTest methodsFor: 'assertions' stamp: 'HAW 5/2/2020 20:24:54'!
+!SmalltalkCompleterTest methodsFor: 'assertions' stamp: 'HAW 2/May/2020 20:24:54'!
 entriesToCompareFrom: aCollectionOfEntries
 
 	^(aCollectionOfEntries reject: [ :anEntry | 
 		anEntry beginsWith: AutoCompleterSelectorsCollector categoryEntryHeader ]) asSet! !
 
-!SmalltalkCompleterTest methodsFor: 'assertions' stamp: 'HAW 5/2/2020 20:10:35'!
+!SmalltalkCompleterTest methodsFor: 'assertions' stamp: 'HAW 2/May/2020 20:10:35'!
 using: aCompleter addUnaryAndBinarySelectorsOf: aClass
 
 	^ aCompleter unaryAndBinarySelectorsOf: aClass beginningWith: ''! !
 
-!SmalltalkCompleterTest methodsFor: 'setUp/tearDown' stamp: 'NPM 3/18/2020 18:32:49'!
+!SmalltalkCompleterTest methodsFor: 'setUp/tearDown' stamp: 'NPM 18/Mar/2020 18:32:49'!
 setUp
 
 	super setUp.
@@ -24375,40 +24375,40 @@ setUp
 	
 ! !
 
-!SmalltalkCompleterTest methodsFor: 'running' stamp: 'HAW 5/2/2020 20:49:50'!
+!SmalltalkCompleterTest methodsFor: 'running' stamp: 'HAW 2/May/2020 20:49:50'!
 performTest
 
 	^SmalltalkCompleter changeEntriesLimitTo: SmallInteger maxVal during: [ super performTest ]! !
 
-!SmalltalkCompleterTest class methodsFor: 'testing' stamp: 'HAW 5/2/2020 13:21:14'!
+!SmalltalkCompleterTest class methodsFor: 'testing' stamp: 'HAW 2/May/2020 13:21:14'!
 isAbstract
 
 	^true! !
 
-!DynamicTypingSmalltalkCompleterTest methodsFor: 'tests' stamp: 'HAW 5/6/2020 23:43:31'!
+!DynamicTypingSmalltalkCompleterTest methodsFor: 'tests' stamp: 'HAW 6/May/2020 23:43:31'!
 test023_AutocompletingMessagesFor_UnaryMessages
 	
 	self assertEntriesAreSelectorsOfUnknownClassesWhenBrowsing: 'm1 self class '.
 	self assertEntriesAreSelectorsOfUnknownClassesWhenBrowsing: 'm1 1 + self class '.	! !
 
-!DynamicTypingSmalltalkCompleterTest methodsFor: 'tests' stamp: 'HAW 5/6/2020 23:44:50'!
+!DynamicTypingSmalltalkCompleterTest methodsFor: 'tests' stamp: 'HAW 6/May/2020 23:44:50'!
 test024_AutocompletingMessagesFor_RightParenthesis
 	
 	self assertEntriesAreSelectorsOfUnknownClassesWhenBrowsing: 'm1 (1) '.
 	self assertEntriesAreSelectorsOfUnknownClassesWhenBrowsing: 'm1 1 < (1) '.! !
 
-!DynamicTypingSmalltalkCompleterTest methodsFor: 'tests' stamp: 'HAW 5/6/2020 23:45:10'!
+!DynamicTypingSmalltalkCompleterTest methodsFor: 'tests' stamp: 'HAW 6/May/2020 23:45:10'!
 test026_AutocompletingMessagesFor_Cascade
 	
 	self assertEntriesAreSelectorsOfUnknownClassesWhenBrowsing: 'm1 self class; '.
 	! !
 
-!DynamicTypingSmalltalkCompleterTest class methodsFor: 'testing' stamp: 'HAW 5/2/2020 16:27:37'!
+!DynamicTypingSmalltalkCompleterTest class methodsFor: 'testing' stamp: 'HAW 2/May/2020 16:27:37'!
 isAbstract
 
 	^DynamicTypingSmalltalkCompleter isForCurrentTypeSystem not! !
 
-!MethodReferenceTest methodsFor: 'test actual class' stamp: 'jmv 7/31/2023 12:25:57'!
+!MethodReferenceTest methodsFor: 'test actual class' stamp: 'jmv 31/Jul/2023 12:25:57'!
 testActualClassIfAbsentEvaluatesBlockIfClassDoesNotExist
 
 	self 
@@ -24418,7 +24418,7 @@ testActualClassIfAbsentEvaluatesBlockIfClassDoesNotExist
 			methodSymbol: #xx) actualClassIfAbsent: [ 1])
 		equals: 1.! !
 
-!MethodReferenceTest methodsFor: 'test actual class' stamp: 'jmv 7/31/2023 12:26:27'!
+!MethodReferenceTest methodsFor: 'test actual class' stamp: 'jmv 31/Jul/2023 12:26:27'!
 testActualClassIfAbsentReturnsClassIfClassExists
 
 	self 
@@ -24427,12 +24427,12 @@ testActualClassIfAbsentReturnsClassIfClassExists
 			selector: thisContext selector) actualClassIfAbsent: [ self fail])
 		equals: self class.! !
 
-!MethodReferenceTest methodsFor: 'test actual class' stamp: 'HAW 10/23/2019 21:05:22'!
+!MethodReferenceTest methodsFor: 'test actual class' stamp: 'HAW 23/Oct/2019 21:05:22'!
 testActualClassReturnNilWhenClassDoesNotExist
 
 	self assert: (MethodReference classSymbol: #X_Y_Z classIsMeta: false methodSymbol: #xx) actualClass isNil! !
 
-!MethodReferenceTest methodsFor: 'test actual class' stamp: 'jmv 7/31/2023 12:26:49'!
+!MethodReferenceTest methodsFor: 'test actual class' stamp: 'jmv 31/Jul/2023 12:26:49'!
 testActualClassReturnsClassIfExists
 
 	self 
@@ -24441,28 +24441,28 @@ testActualClassReturnsClassIfExists
 			selector: thisContext selector) actualClass 
 		equals: self class.! !
 
-!MethodReferenceTest methodsFor: 'test source code' stamp: 'jmv 7/31/2023 12:28:00'!
+!MethodReferenceTest methodsFor: 'test source code' stamp: 'jmv 31/Jul/2023 12:28:00'!
 testSourceCodeIfAbsentEvaluatesBlockIfClassDoesNotExist
 
 	self 
 		assert: ((MethodReference classSymbol: #X_Y_Z classIsMeta: false methodSymbol:#xx) sourceCodeIfAbsent: [ 1 ])
 		equals: 1.! !
 
-!MethodReferenceTest methodsFor: 'test source code' stamp: 'jmv 7/31/2023 12:28:12'!
+!MethodReferenceTest methodsFor: 'test source code' stamp: 'jmv 31/Jul/2023 12:28:12'!
 testSourceCodeIfAbsentEvaluatesBlockIfMethodDoesNotExist
 
 	self 
 		assert: ((MethodReference class: self class selector:#xx) sourceCodeIfAbsent: [ 1 ])
 		equals: 1.! !
 
-!MethodReferenceTest methodsFor: 'test source code' stamp: 'jmv 7/31/2023 12:28:34'!
+!MethodReferenceTest methodsFor: 'test source code' stamp: 'jmv 31/Jul/2023 12:28:34'!
 testSourceCodeIfAbsentReturnsSourceCodeIfExists
 
 	self 
 		assert: ((MethodReference class: self class selector: thisContext selector) sourceCodeIfAbsent: [ self fail ])
 		equals: (self class>>thisContext selector) sourceCode.! !
 
-!MethodReferenceTest methodsFor: 'test source code' stamp: 'jmv 7/31/2023 12:28:54'!
+!MethodReferenceTest methodsFor: 'test source code' stamp: 'jmv 31/Jul/2023 12:28:54'!
 testSourceCodeReturnsSourceCodeIfMethodExist
 
 	self 
@@ -24471,7 +24471,7 @@ testSourceCodeReturnsSourceCodeIfMethodExist
 			selector: thisContext selector) sourceCode
 		equals: (self class compiledMethodAt: thisContext selector) sourceCode.! !
 
-!MethodReferenceTest methodsFor: 'test source code' stamp: 'HAW 10/23/2019 21:39:16'!
+!MethodReferenceTest methodsFor: 'test source code' stamp: 'HAW 23/Oct/2019 21:39:16'!
 testSourceCodeSignalExceptionIfClassDoesNotExist
 
 	self 
@@ -24479,7 +24479,7 @@ testSourceCodeSignalExceptionIfClassDoesNotExist
 		raise: Error
 		withMessageText: MethodReference classDoesNotExistErrorMessage ! !
 
-!MethodReferenceTest methodsFor: 'test source code' stamp: 'jmv 9/20/2023 15:44:26'!
+!MethodReferenceTest methodsFor: 'test source code' stamp: 'jmv 20/Sep/2023 15:44:26'!
 testSourceCodeSignalExceptionIfMethodDoesNotExist
 
 	self 
@@ -24487,7 +24487,7 @@ testSourceCodeSignalExceptionIfMethodDoesNotExist
 		raise: Error
 		withMessageText: 'key: #xx not found'! !
 
-!MethodReferenceTest methodsFor: 'test compiled method' stamp: 'jmv 7/31/2023 12:27:03'!
+!MethodReferenceTest methodsFor: 'test compiled method' stamp: 'jmv 31/Jul/2023 12:27:03'!
 testCompiledMethodIfAbsentEvaluatesAbsentBlockWhenActualClassIsNil
 
 	self 
@@ -24497,7 +24497,7 @@ testCompiledMethodIfAbsentEvaluatesAbsentBlockWhenActualClassIsNil
 			methodSymbol: #xx) compiledMethodIfAbsent: [ 1])
 		equals: 1.! !
 
-!MethodReferenceTest methodsFor: 'test compiled method' stamp: 'jmv 7/31/2023 12:27:19'!
+!MethodReferenceTest methodsFor: 'test compiled method' stamp: 'jmv 31/Jul/2023 12:27:19'!
 testCompiledMethodIfAbsentEvaluatesAbsentBlockWhenSelectorIsNotImplemented
 
 	self 
@@ -24507,7 +24507,7 @@ testCompiledMethodIfAbsentEvaluatesAbsentBlockWhenSelectorIsNotImplemented
 			methodSymbol: #xx) compiledMethodIfAbsent: [ 1])
 		equals: 1.! !
 
-!MethodReferenceTest methodsFor: 'test compiled method' stamp: 'jmv 7/31/2023 12:27:34'!
+!MethodReferenceTest methodsFor: 'test compiled method' stamp: 'jmv 31/Jul/2023 12:27:34'!
 testCompiledMethodIfAbsentReturnsImplementedMethodWhenItExists
 
 	self 
@@ -24517,7 +24517,7 @@ testCompiledMethodIfAbsentReturnsImplementedMethodWhenItExists
 			methodSymbol: thisContext selector) compiledMethodIfAbsent: [ self fail ])
 		equals: thisContext method .! !
 
-!MethodReferenceTest methodsFor: 'test string version' stamp: 'jmv 7/31/2023 12:25:16'!
+!MethodReferenceTest methodsFor: 'test string version' stamp: 'jmv 31/Jul/2023 12:25:16'!
 test01DefaultStringVersionIsClassAndSelector
 
 	| stringVersion |
@@ -24526,7 +24526,7 @@ test01DefaultStringVersionIsClassAndSelector
 	
 	self assert: stringVersion equals: self class name, ' ', thisContext selector.! !
 
-!MethodReferenceTest methodsFor: 'test string version' stamp: 'jmv 7/31/2023 12:25:41'!
+!MethodReferenceTest methodsFor: 'test string version' stamp: 'jmv 31/Jul/2023 12:25:41'!
 test02CanPrefixStringVersion
 
 	| methodReference prefix |
@@ -24537,7 +24537,7 @@ test02CanPrefixStringVersion
 	
 	self assert: methodReference stringVersion equals: '[',prefix,'] - ',self class name, ' ', thisContext selector.! !
 
-!MethodReferenceTest methodsFor: 'test testing' stamp: 'HAW 1/2/2020 06:49:00'!
+!MethodReferenceTest methodsFor: 'test testing' stamp: 'HAW 2/Jan/2020 06:49:00'!
 testReferencesParameterAtReturnsFalseWhenInvalid
 
 	self deny: ((MethodReference 
@@ -24545,7 +24545,7 @@ testReferencesParameterAtReturnsFalseWhenInvalid
 		classIsMeta: false 
 		methodSymbol: #xx) referencesParameterAt: 1)! !
 
-!MethodReferenceTest methodsFor: 'test testing' stamp: 'HAW 1/2/2020 06:49:03'!
+!MethodReferenceTest methodsFor: 'test testing' stamp: 'HAW 2/Jan/2020 06:49:03'!
 testReferencesParameterAtReturnsTrueWhenTheParameterIsReferenced
 
 	self assert: ((MethodReference 
@@ -24553,7 +24553,7 @@ testReferencesParameterAtReturnsTrueWhenTheParameterIsReferenced
 		classIsMeta: false 
 		methodSymbol: #referencesParameterAt:) referencesParameterAt: 1)! !
 
-!DifferenceFinderTest methodsFor: 'all' stamp: 'LC 1/24/2010 11:29'!
+!DifferenceFinderTest methodsFor: 'all' stamp: 'LC 24/Jan/2010 11:29:00'!
 testCharacters
 	| lcs |
 	lcs := DifferenceFinder charactersOf: 'GAC' and: 'AGCAT'.
@@ -24705,7 +24705,7 @@ testWords
 		self assert: y = ian]
 ! !
 
-!DebuggerTest methodsFor: 'tests - method categories' stamp: 'jmv 7/31/2023 11:35:00'!
+!DebuggerTest methodsFor: 'tests - method categories' stamp: 'jmv 31/Jul/2023 11:35:00'!
 testCategoriesAreAddedSortedByAndSeparatedByClass
 
 	| objectCategories protoObjectCategories categoriesPrompter |
@@ -24727,7 +24727,7 @@ testCategoriesAreAddedSortedByAndSeparatedByClass
 	self assert: (categoriesPrompter categories copyFrom: categoriesPrompter lines second + 1 to: categoriesPrompter categories size) asArray equals: protoObjectCategories asArray.
 	! !
 
-!DebuggerTest methodsFor: 'tests - method categories' stamp: 'jmv 7/31/2023 11:33:33'!
+!DebuggerTest methodsFor: 'tests - method categories' stamp: 'jmv 31/Jul/2023 11:33:33'!
 testMetaclassCategoriesIncludesInstanceCreation
 
 	| categoriesPrompter |
@@ -24736,7 +24736,7 @@ testMetaclassCategoriesIncludesInstanceCreation
 	
 	self assert: categoriesPrompter categories second equals: Categorizer instanceCreation! !
 
-!QuickReturnDebuggingTest methodsFor: 'private' stamp: 'FJG 11/13/2023 14:01:10'!
+!QuickReturnDebuggingTest methodsFor: 'private' stamp: 'FJG 13/Nov/2023 14:01:10'!
 debuggerOn: aBlock
 	| debugger |
 	
@@ -24749,7 +24749,7 @@ debuggerOn: aBlock
 		
 	^ debugger! !
 
-!QuickReturnDebuggingTest methodsFor: 'private' stamp: 'FJG 11/8/2023 19:12:58'!
+!QuickReturnDebuggingTest methodsFor: 'private' stamp: 'FJG 8/Nov/2023 19:12:58'!
 quickReturn
 	" Example:
 		QuickReturnDebuggingTest new halt quickReturn
@@ -24757,7 +24757,7 @@ quickReturn
 	
 	^ 2! !
 
-!QuickReturnDebuggingTest methodsFor: 'tests' stamp: 'FJG 11/8/2023 19:12:03'!
+!QuickReturnDebuggingTest methodsFor: 'tests' stamp: 'FJG 8/Nov/2023 19:12:03'!
 test01_debuggerCanStepIntoQuickReturnMethods
 	| aDebugger |
 	aDebugger := self debuggerOn: [		self quickReturn 	].
@@ -24766,7 +24766,7 @@ test01_debuggerCanStepIntoQuickReturnMethods
 	
 	self assert: aDebugger interruptedContext method equals: self class >> #quickReturn.! !
 
-!QuickReturnDebuggingTest methodsFor: 'tests' stamp: 'FJG 11/8/2023 19:12:20'!
+!QuickReturnDebuggingTest methodsFor: 'tests' stamp: 'FJG 8/Nov/2023 19:12:20'!
 test02_debuggerCanProceedFromAQuickReturnMethod
 	| aDebugger result |
 	aDebugger := self debuggerOn: [		
@@ -24778,7 +24778,7 @@ test02_debuggerCanProceedFromAQuickReturnMethod
 	
 	self assert: result equals: self quickReturn.! !
 
-!QuickReturnDebuggingTest methodsFor: 'tests' stamp: 'FJG 11/9/2023 23:20:47'!
+!QuickReturnDebuggingTest methodsFor: 'tests' stamp: 'FJG 9/Nov/2023 23:20:47'!
 test03_debuggerCanStepThroughFromAQuickReturnMethod
 	| aDebugger result |
 	aDebugger := self debuggerOn: [		
@@ -24792,7 +24792,7 @@ test03_debuggerCanStepThroughFromAQuickReturnMethod
 	aDebugger proceed.
 	self assert: result equals: self quickReturn.! !
 
-!QuickReturnDebuggingTest methodsFor: 'tests' stamp: 'FJG 11/9/2023 23:21:12'!
+!QuickReturnDebuggingTest methodsFor: 'tests' stamp: 'FJG 9/Nov/2023 23:21:12'!
 test04_debuggerCanStepFromAQuickReturnMethod
 	| aDebugger result |
 	aDebugger := self debuggerOn: [		
@@ -24806,7 +24806,7 @@ test04_debuggerCanStepFromAQuickReturnMethod
 	aDebugger proceed.
 	self assert: result equals: self quickReturn.! !
 
-!QuickReturnDebuggingTest methodsFor: 'tests' stamp: 'FJG 11/9/2023 23:21:20'!
+!QuickReturnDebuggingTest methodsFor: 'tests' stamp: 'FJG 9/Nov/2023 23:21:20'!
 test05_debuggerCanSendFromAQuickReturnMethod
 	| aDebugger result |
 	aDebugger := self debuggerOn: [		
@@ -24820,7 +24820,7 @@ test05_debuggerCanSendFromAQuickReturnMethod
 	aDebugger proceed.
 	self assert: result equals: self quickReturn.! !
 
-!QuickReturnDebuggingTest methodsFor: 'tests' stamp: 'FJG 11/9/2023 23:23:04'!
+!QuickReturnDebuggingTest methodsFor: 'tests' stamp: 'FJG 9/Nov/2023 23:23:04'!
 test06_debuggerCanRestartFromAQuickReturnMethod
 	| aDebugger result |
 	aDebugger := self debuggerOn: [		
@@ -24834,19 +24834,19 @@ test06_debuggerCanRestartFromAQuickReturnMethod
 	aDebugger proceed.
 	self assert: result equals: self quickReturn.! !
 
-!DynamicallyCodeCreationTest methodsFor: 'class factory' stamp: 'HAW 12/17/2019 10:31:27'!
+!DynamicallyCodeCreationTest methodsFor: 'class factory' stamp: 'HAW 17/Dec/2019 10:31:27'!
 allClassCategoriesOfTestData
 
 	^Array with: self classCategoryOfTestData ! !
 
-!DynamicallyCodeCreationTest methodsFor: 'class factory' stamp: 'HAW 12/17/2019 10:31:31'!
+!DynamicallyCodeCreationTest methodsFor: 'class factory' stamp: 'HAW 17/Dec/2019 10:31:31'!
 classCategoryOfTestData
 	
 	"I can not call it testDataClassCategory because it will be taken as test!! - Hernan"
 	
 	^self class classCategoryOfTestData! !
 
-!DynamicallyCodeCreationTest methodsFor: 'class factory' stamp: 'HAW 3/13/2025 13:59:15'!
+!DynamicallyCodeCreationTest methodsFor: 'class factory' stamp: 'HAW 13/Mar/2025 13:59:15'!
 createClassNamed: aName 
 
 	^self 
@@ -24858,7 +24858,7 @@ createClassNamed: aName
 		category: self classCategoryOfTestData.
 ! !
 
-!DynamicallyCodeCreationTest methodsFor: 'class factory' stamp: 'HAW 3/13/2025 13:59:15'!
+!DynamicallyCodeCreationTest methodsFor: 'class factory' stamp: 'HAW 13/Mar/2025 13:59:15'!
 createClassNamed: aName category: aCategory
 
 	^self 
@@ -24870,7 +24870,7 @@ createClassNamed: aName category: aCategory
 		category: aCategory 
 ! !
 
-!DynamicallyCodeCreationTest methodsFor: 'class factory' stamp: 'HAW 3/13/2025 13:59:15'!
+!DynamicallyCodeCreationTest methodsFor: 'class factory' stamp: 'HAW 13/Mar/2025 13:59:15'!
 createClassNamed: aName instanceVariableNames: instanceVariables
 
 	^self 
@@ -24883,7 +24883,7 @@ createClassNamed: aName instanceVariableNames: instanceVariables
 
 ! !
 
-!DynamicallyCodeCreationTest methodsFor: 'class factory' stamp: 'HAW 12/17/2019 10:31:49'!
+!DynamicallyCodeCreationTest methodsFor: 'class factory' stamp: 'HAW 17/Dec/2019 10:31:49'!
 createClassNamed: aName subclassOf: superclass 
 
 	^self 
@@ -24895,7 +24895,7 @@ createClassNamed: aName subclassOf: superclass
 		category: self classCategoryOfTestData.
 ! !
 
-!DynamicallyCodeCreationTest methodsFor: 'class factory' stamp: 'HAW 12/17/2019 10:31:53'!
+!DynamicallyCodeCreationTest methodsFor: 'class factory' stamp: 'HAW 17/Dec/2019 10:31:53'!
 createClassNamed: aName subclassOf: superclass category: aCategory
 
 	^self 
@@ -24907,7 +24907,7 @@ createClassNamed: aName subclassOf: superclass category: aCategory
 		category: aCategory 
 ! !
 
-!DynamicallyCodeCreationTest methodsFor: 'class factory' stamp: 'HAW 12/17/2019 10:31:58'!
+!DynamicallyCodeCreationTest methodsFor: 'class factory' stamp: 'HAW 17/Dec/2019 10:31:58'!
 createClassNamed: aName subclassOf: superclass instanceVariableNames: instanceVariables
 
 	^self 
@@ -24919,7 +24919,7 @@ createClassNamed: aName subclassOf: superclass instanceVariableNames: instanceVa
 		category: self classCategoryOfTestData.
 ! !
 
-!DynamicallyCodeCreationTest methodsFor: 'class factory' stamp: 'HAW 7/8/2024 09:34:28'!
+!DynamicallyCodeCreationTest methodsFor: 'class factory' stamp: 'HAW 8/Jul/2024 09:34:28'!
 createClassNamed: aName subclassOf: superclass instanceVariableNames: instanceVariables classVariableNames: classVariables
 
 	^self createClassNamed: aName 
@@ -24930,7 +24930,7 @@ createClassNamed: aName subclassOf: superclass instanceVariableNames: instanceVa
 		category: self classCategoryOfTestData 
 ! !
 
-!DynamicallyCodeCreationTest methodsFor: 'class factory' stamp: 'HAW 3/11/2025 18:49:47'!
+!DynamicallyCodeCreationTest methodsFor: 'class factory' stamp: 'HAW 11/Mar/2025 18:49:47'!
 createClassNamed: aName subclassOf: superclass instanceVariableNames: instanceVariables classVariableNames: classVariables poolDictionaries: poolDictionaries category: category
 
 	self assert: (Smalltalk classNamed: aName) isNil description: 'Class ', aName, ' already exists'.
@@ -24945,12 +24945,12 @@ createClassNamed: aName subclassOf: superclass instanceVariableNames: instanceVa
 			poolDictionaries: poolDictionaries 
 			category: category ]! !
 
-!DynamicallyCodeCreationTest methodsFor: 'class factory' stamp: 'HAW 3/13/2025 13:59:15'!
+!DynamicallyCodeCreationTest methodsFor: 'class factory' stamp: 'HAW 13/Mar/2025 13:59:15'!
 defaultSuperclass
 
 	^ RefactoringClassTestData! !
 
-!DynamicallyCodeCreationTest methodsFor: 'assertions' stamp: 'HAW 12/17/2019 10:32:57'!
+!DynamicallyCodeCreationTest methodsFor: 'assertions' stamp: 'HAW 17/Dec/2019 10:32:57'!
 assertAllClassCategoriesAreExpectedToBeRemoved
 
 	"I'm using a halt instead of assert or error because I want the programmer to see what class category 
@@ -24958,26 +24958,26 @@ assertAllClassCategoriesAreExpectedToBeRemoved
 	(classCategories difference: self allClassCategoriesOfTestData) notEmpty ifTrue: [ self halt: #allClassCategoriesOfTestData asString, ' is not implemented correctly' ]
 	! !
 
-!DynamicallyCodeCreationTest methodsFor: 'assertions' stamp: 'HAW 12/17/2019 10:33:05'!
+!DynamicallyCodeCreationTest methodsFor: 'assertions' stamp: 'HAW 17/Dec/2019 10:33:05'!
 assertCanRunTest
 	
 	self assertNoTestDataClassCategoryExist.
 	! !
 
-!DynamicallyCodeCreationTest methodsFor: 'assertions' stamp: 'HAW 3/11/2025 18:33:45'!
+!DynamicallyCodeCreationTest methodsFor: 'assertions' stamp: 'HAW 11/Mar/2025 18:33:45'!
 assertClassCategoryIsEmpty: aClassCategory
 		
 	self 
 		assert: (SystemOrganization listAtCategoryNamed: aClassCategory) isEmpty 
 		description: 'Can not run test because class category ', aClassCategory, ' is not empty'! !
 
-!DynamicallyCodeCreationTest methodsFor: 'assertions' stamp: 'HAW 3/11/2025 18:30:05'!
+!DynamicallyCodeCreationTest methodsFor: 'assertions' stamp: 'HAW 11/Mar/2025 18:30:05'!
 assertNoTestDataClassCategoryExist
 
 	self allClassCategoriesOfTestData do: [ :aClassCategory | self assertClassCategoryIsEmpty: aClassCategory ]
 		! !
 
-!DynamicallyCodeCreationTest methodsFor: 'setup/teardown' stamp: 'jmv 3/20/2024 15:45:28'!
+!DynamicallyCodeCreationTest methodsFor: 'setup/teardown' stamp: 'jmv 20/Mar/2024 15:45:28'!
 setUp
 
 	super setUp.
@@ -24991,7 +24991,7 @@ setUp
 	
 	classCategories := Set new.! !
 
-!DynamicallyCodeCreationTest methodsFor: 'setup/teardown' stamp: 'HAW 3/11/2025 18:50:14'!
+!DynamicallyCodeCreationTest methodsFor: 'setup/teardown' stamp: 'HAW 11/Mar/2025 18:50:14'!
 tearDown
 
 	setUpAssertionsPassed ifTrue: [
@@ -25003,17 +25003,17 @@ tearDown
 			classCategories do: [ :aCategory | 
 				(SystemOrganization classesAt: aCategory) do: [ :aClass | aClass removeFromSystem ]]]]! !
 
-!DynamicallyCodeCreationTest class methodsFor: 'class factory' stamp: 'HAW 12/17/2019 10:34:07'!
+!DynamicallyCodeCreationTest class methodsFor: 'class factory' stamp: 'HAW 17/Dec/2019 10:34:07'!
 classCategoryOfTestData
 	
 	^ '__Refactoring-TestData__'! !
 
-!DynamicallyCodeCreationTest class methodsFor: 'testing' stamp: 'jmv 6/27/2022 12:18:52'!
+!DynamicallyCodeCreationTest class methodsFor: 'testing' stamp: 'jmv 27/Jun/2022 12:18:52'!
 isAbstract
 
 	^self subclasses notEmpty! !
 
-!CompilerTest methodsFor: 'emulating' stamp: 'HAW 12/17/2019 11:00:59'!
+!CompilerTest methodsFor: 'emulating' stamp: 'HAW 17/Dec/2019 11:00:59'!
 correctFrom: start to: end with: aReplacement
  
 	| newSourceCode |
@@ -25024,24 +25024,24 @@ correctFrom: start to: end with: aReplacement
 	
 	sourceCode := newSourceCode ! !
 
-!CompilerTest methodsFor: 'emulating' stamp: 'cwp 8/25/2009 20:23'!
+!CompilerTest methodsFor: 'emulating' stamp: 'cwp 25/Aug/2009 20:23:00'!
 selectFrom: start to: end 
 	! !
 
-!CompilerTest methodsFor: 'emulating' stamp: 'HAW 6/18/2020 15:27:24'!
+!CompilerTest methodsFor: 'emulating' stamp: 'HAW 18/Jun/2020 15:27:24'!
 selectInvisiblyFrom: start to: stop 
 ! !
 
-!CompilerTest methodsFor: 'emulating' stamp: 'cwp 8/25/2009 20:22'!
+!CompilerTest methodsFor: 'emulating' stamp: 'cwp 25/Aug/2009 20:22:00'!
 selectionInterval
 	^ 1 to: 0! !
 
-!CompilerTest methodsFor: 'emulating' stamp: 'HAW 12/17/2019 10:53:27'!
+!CompilerTest methodsFor: 'emulating' stamp: 'HAW 17/Dec/2019 10:53:27'!
 text
 
 	^ sourceCode ! !
 
-!CompilerTest methodsFor: 'test - backtick' stamp: 'HAW 6/23/2020 15:44:13'!
+!CompilerTest methodsFor: 'test - backtick' stamp: 'HAW 23/Jun/2020 15:44:13'!
 testCanNotDefineVarsInsideBackTick
 
 	self 
@@ -25050,7 +25050,7 @@ testCanNotDefineVarsInsideBackTick
 		withExceptionDo: [ :anError |
 			self assert: (anError messageText includesSubString: 'expression expected') ]! !
 
-!CompilerTest methodsFor: 'test - backtick' stamp: 'HAW 6/23/2020 16:08:17'!
+!CompilerTest methodsFor: 'test - backtick' stamp: 'HAW 23/Jun/2020 16:08:17'!
 testCanNotHaveMoreThanOneExpressionInsideBackTick
 
 	self 
@@ -25059,7 +25059,7 @@ testCanNotHaveMoreThanOneExpressionInsideBackTick
 		withExceptionDo: [ :anError |
 			self assert: (anError messageText includesSubString: 'backtick expected') ]! !
 
-!CompilerTest methodsFor: 'test - backtick' stamp: 'HAW 6/23/2020 16:09:28'!
+!CompilerTest methodsFor: 'test - backtick' stamp: 'HAW 23/Jun/2020 16:09:28'!
 testCanNotHaveReturnInsideBackTick
 
 	self 
@@ -25068,7 +25068,7 @@ testCanNotHaveReturnInsideBackTick
 		withExceptionDo: [ :anError |
 			self assert: (anError messageText includesSubString: 'expression expected') ]! !
 
-!CompilerTest methodsFor: 'test - backtick' stamp: 'HAW 6/23/2020 15:41:08'!
+!CompilerTest methodsFor: 'test - backtick' stamp: 'HAW 23/Jun/2020 15:41:08'!
 testCanNotReferenceSelfInsideBackTick
 
 	self 
@@ -25078,7 +25078,7 @@ testCanNotReferenceSelfInsideBackTick
 			self assert: (anError messageText includesSubString: 
 				(BacktickNode canNotReferencePseudoVarInsideBacktickErrorDescriptionFor: 'self')) ]! !
 
-!CompilerTest methodsFor: 'test - backtick' stamp: 'HAW 6/23/2020 15:41:13'!
+!CompilerTest methodsFor: 'test - backtick' stamp: 'HAW 23/Jun/2020 15:41:13'!
 testCanNotReferenceSuperInsideBackTick
 
 	self 
@@ -25088,7 +25088,7 @@ testCanNotReferenceSuperInsideBackTick
 			self assert: (anError messageText includesSubString: 
 				(BacktickNode canNotReferencePseudoVarInsideBacktickErrorDescriptionFor: 'super')) ]! !
 
-!CompilerTest methodsFor: 'test - backtick' stamp: 'HAW 6/23/2020 15:45:04'!
+!CompilerTest methodsFor: 'test - backtick' stamp: 'HAW 23/Jun/2020 15:45:04'!
 testCanNotReferenceTempVarsInsideBackTick
 
 	self 
@@ -25097,7 +25097,7 @@ testCanNotReferenceTempVarsInsideBackTick
 		withExceptionDo: [ :anError |
 			self assert: (anError messageText includesSubString: 'Can not evaluate code') ]! !
 
-!CompilerTest methodsFor: 'test - backtick' stamp: 'HAW 6/23/2020 15:41:18'!
+!CompilerTest methodsFor: 'test - backtick' stamp: 'HAW 23/Jun/2020 15:41:18'!
 testCanNotReferenceThisContextInsideBackTick
 
 	self 
@@ -25107,7 +25107,7 @@ testCanNotReferenceThisContextInsideBackTick
 			self assert: (anError messageText includesSubString: 
 				(BacktickNode canNotReferencePseudoVarInsideBacktickErrorDescriptionFor: 'thisContext')) ]! !
 
-!CompilerTest methodsFor: 'tests - exceptions' stamp: 'jmv 7/31/2023 12:31:13'!
+!CompilerTest methodsFor: 'tests - exceptions' stamp: 'jmv 31/Jul/2023 12:31:13'!
 testAddsMoreThanOneUndeclaredVariableCorrectlyInBlock
 	
 	| testClass |
@@ -25122,7 +25122,7 @@ testAddsMoreThanOneUndeclaredVariableCorrectlyInBlock
 		
 	self assert: sourceCode equals: 'griffle [ | goo var1 | var1 := 1. goo := 1. ^goo + var1 ]'.! !
 
-!CompilerTest methodsFor: 'tests - exceptions' stamp: 'jmv 7/31/2023 12:31:30'!
+!CompilerTest methodsFor: 'tests - exceptions' stamp: 'jmv 31/Jul/2023 12:31:30'!
 testAddsUndeclaredVariableCorrectlyInBlockWhenNoSpaceBetweenLastOneAndPipe
 
 	| testClass |
@@ -25137,7 +25137,7 @@ testAddsUndeclaredVariableCorrectlyInBlockWhenNoSpaceBetweenLastOneAndPipe
 		
 	self assert: sourceCode equals: 'griffle [|var1 goo | var1 := 1.goo := 1.^ goo + var1]'.! !
 
-!CompilerTest methodsFor: 'tests - exceptions' stamp: 'jmv 7/31/2023 12:31:41'!
+!CompilerTest methodsFor: 'tests - exceptions' stamp: 'jmv 31/Jul/2023 12:31:41'!
 testAddsUndeclaredVariableCorrectlyInBlockWhenTheresAnArgumentAlready
 
 	| testClass |
@@ -25152,7 +25152,7 @@ testAddsUndeclaredVariableCorrectlyInBlockWhenTheresAnArgumentAlready
 		
 	self assert: sourceCode equals: 'griffle [ :var1 | | goo | goo := 1.^ goo + var1]'.! !
 
-!CompilerTest methodsFor: 'tests - exceptions' stamp: 'jmv 7/31/2023 12:31:50'!
+!CompilerTest methodsFor: 'tests - exceptions' stamp: 'jmv 31/Jul/2023 12:31:50'!
 testAddsUndeclaredVariableCorrectlyInBlockWhenTheresArgumentsAndTempDeclarationPipesWithNoTemps
 
 	| testClass |
@@ -25167,7 +25167,7 @@ testAddsUndeclaredVariableCorrectlyInBlockWhenTheresArgumentsAndTempDeclarationP
 		
 	self assert: sourceCode equals: 'griffle [ :var1 | | goo | goo := 1.^ goo + var1]'.! !
 
-!CompilerTest methodsFor: 'tests - exceptions' stamp: 'jmv 7/31/2023 12:31:59'!
+!CompilerTest methodsFor: 'tests - exceptions' stamp: 'jmv 31/Jul/2023 12:31:59'!
 testAddsUndeclaredVariableCorrectlyInMethodAndInBlock
 
 	| testClass |
@@ -25182,7 +25182,7 @@ testAddsUndeclaredVariableCorrectlyInMethodAndInBlock
 		
 	self assert: sourceCode equals: 'griffle | var1 |', String newLineString, 'var1 := 1. [ | goo | goo := 1. ^goo + var1 ]'.! !
 
-!CompilerTest methodsFor: 'tests - exceptions' stamp: 'jmv 7/31/2023 12:32:08'!
+!CompilerTest methodsFor: 'tests - exceptions' stamp: 'jmv 31/Jul/2023 12:32:08'!
 testAddsUndeclaredVariableCorrectlyInMethodWhenNoSpaceBetweenLastOneAndPipe
 
 	| testClass |
@@ -25197,7 +25197,7 @@ testAddsUndeclaredVariableCorrectlyInMethodWhenNoSpaceBetweenLastOneAndPipe
 		
 	self assert: sourceCode equals: 'griffle |var1 goo | var1 := 1.goo := 1.^ goo + var1'.! !
 
-!CompilerTest methodsFor: 'tests - exceptions' stamp: 'jmv 7/31/2023 12:32:20'!
+!CompilerTest methodsFor: 'tests - exceptions' stamp: 'jmv 31/Jul/2023 12:32:20'!
 testAddsUndeclaredVariableInRightBlock
 	| testClass |
 	
@@ -25211,7 +25211,7 @@ testAddsUndeclaredVariableInRightBlock
 		
 	self assert: sourceCode equals: 'griffle [|goo| goo := 1. ^goo ]. [ | goo1 |goo1:=1.^ goo1]'.! !
 
-!CompilerTest methodsFor: 'tests - exceptions' stamp: 'jmv 7/31/2023 12:32:29'!
+!CompilerTest methodsFor: 'tests - exceptions' stamp: 'jmv 31/Jul/2023 12:32:29'!
 testAddsUndeclaredVariableWithAnArgumentAndTempAlreadyInBlock
 
 	| testClass |
@@ -25226,7 +25226,7 @@ testAddsUndeclaredVariableWithAnArgumentAndTempAlreadyInBlock
 		
 	self assert: sourceCode equals: 'griffle [ :var1 | | foo goo | foo := 2. goo := 1.^ goo + var1 + foo ]'.! !
 
-!CompilerTest methodsFor: 'tests - exceptions' stamp: 'jmv 7/31/2023 12:32:42'!
+!CompilerTest methodsFor: 'tests - exceptions' stamp: 'jmv 31/Jul/2023 12:32:42'!
 testDoesNotConfusesVariablesWithSameNameOfDifferentBlocksWhenRemoving
 
 	| testClass counter |
@@ -25243,7 +25243,7 @@ testDoesNotConfusesVariablesWithSameNameOfDifferentBlocksWhenRemoving
 		
 	self assert: sourceCode equals: 'griffle [  ]. [ | goo | ]'.! !
 
-!CompilerTest methodsFor: 'tests - exceptions' stamp: 'jmv 7/31/2023 12:32:51'!
+!CompilerTest methodsFor: 'tests - exceptions' stamp: 'jmv 31/Jul/2023 12:32:51'!
 testDoesNotRemoveUnusedVariableIfSaidSo
 
 	| testClass |
@@ -25259,7 +25259,7 @@ testDoesNotRemoveUnusedVariableIfSaidSo
 		
 	self assert: sourceCode equals: 'griffle | goo |'.! !
 
-!CompilerTest methodsFor: 'tests - exceptions' stamp: 'jmv 7/31/2023 12:33:03'!
+!CompilerTest methodsFor: 'tests - exceptions' stamp: 'jmv 31/Jul/2023 12:33:03'!
 testKeepsVariableDefinitionWhenThereAreUsedTemporaries
 
 	| testClass |
@@ -25275,7 +25275,7 @@ testKeepsVariableDefinitionWhenThereAreUsedTemporaries
 		
 	self assert: sourceCode equals: 'griffle | a | a := 1. ^a'.! !
 
-!CompilerTest methodsFor: 'tests - exceptions' stamp: 'jmv 7/31/2023 12:33:11'!
+!CompilerTest methodsFor: 'tests - exceptions' stamp: 'jmv 31/Jul/2023 12:33:11'!
 testRemovesUnusedVariablesFromBlocks
 
 	| testClass |
@@ -25291,7 +25291,7 @@ testRemovesUnusedVariablesFromBlocks
 		
 	self assert: sourceCode equals: 'griffle [  ]'.! !
 
-!CompilerTest methodsFor: 'tests - exceptions' stamp: 'jmv 7/31/2023 12:33:20'!
+!CompilerTest methodsFor: 'tests - exceptions' stamp: 'jmv 31/Jul/2023 12:33:20'!
 testRemovesVariableDefinitionWhenNoMoreUnusedTemporaries
 
 	| testClass |
@@ -25307,7 +25307,7 @@ testRemovesVariableDefinitionWhenNoMoreUnusedTemporaries
 		
 	self assert: sourceCode equals: 'griffle '.! !
 
-!CompilerTest methodsFor: 'tests - exceptions' stamp: 'jmv 7/31/2023 12:33:31'!
+!CompilerTest methodsFor: 'tests - exceptions' stamp: 'jmv 31/Jul/2023 12:33:31'!
 testReusesBlockTempDeclarationWhenEmptyForUndeclaredVariable
 
 	| testClass |
@@ -25322,7 +25322,7 @@ testReusesBlockTempDeclarationWhenEmptyForUndeclaredVariable
 		
 	self assert: sourceCode equals: 'griffle [ | goo | goo := 1.^ goo ]'.! !
 
-!CompilerTest methodsFor: 'tests - exceptions' stamp: 'jmv 7/31/2023 12:33:42'!
+!CompilerTest methodsFor: 'tests - exceptions' stamp: 'jmv 31/Jul/2023 12:33:42'!
 testReusesMethodTempDeclarationWhenEmptyForUndeclaredVariable
 
 	| testClass |
@@ -25337,7 +25337,7 @@ testReusesMethodTempDeclarationWhenEmptyForUndeclaredVariable
 		
 	self assert: sourceCode equals: 'griffle | goo | goo := 1.^ goo'.! !
 
-!CompilerTest methodsFor: 'tests - exceptions' stamp: 'jmv 7/31/2023 12:34:10'!
+!CompilerTest methodsFor: 'tests - exceptions' stamp: 'jmv 31/Jul/2023 12:34:10'!
 testUndeclaredVariableIsSignaledForUndeclaredVariables
 
 	| testClass |
@@ -25350,7 +25350,7 @@ testUndeclaredVariableIsSignaledForUndeclaredVariables
 		withExceptionDo: [ :anUndeclaredVariable |
 			self assert: anUndeclaredVariable name equals: 'goo' ].! !
 
-!CompilerTest methodsFor: 'tests - exceptions' stamp: 'jmv 7/31/2023 12:34:37'!
+!CompilerTest methodsFor: 'tests - exceptions' stamp: 'jmv 31/Jul/2023 12:34:37'!
 testUndefinedVariableIsSignaledForVariablesDefinedButNotInitialized
 
 	| testClass |
@@ -25363,7 +25363,7 @@ testUndefinedVariableIsSignaledForVariablesDefinedButNotInitialized
 		withExceptionDo: [ :anUndefinedVariable |
 			self assert: anUndefinedVariable name equals: 'goo' ].! !
 
-!CompilerTest methodsFor: 'tests - exceptions' stamp: 'jmv 7/31/2023 12:34:56'!
+!CompilerTest methodsFor: 'tests - exceptions' stamp: 'jmv 31/Jul/2023 12:34:56'!
 testUnknownSelectorIsSignalForMessagesSendNotImplemented
 
 	| testClass unknowSelector |
@@ -25379,7 +25379,7 @@ testUnknownSelectorIsSignalForMessagesSendNotImplemented
 		withExceptionDo: [ :anUnknowSelector |
 			self assert: anUnknowSelector name equals: unknowSelector ].! !
 
-!CompilerTest methodsFor: 'tests - exceptions' stamp: 'jmv 7/31/2023 12:35:16'!
+!CompilerTest methodsFor: 'tests - exceptions' stamp: 'jmv 31/Jul/2023 12:35:16'!
 testUnusedVariableIsSignaledForUnusedVariables
 
 	| testClass |
@@ -25393,18 +25393,18 @@ testUnusedVariableIsSignaledForUnusedVariables
 		withExceptionDo: [ :unusedVariable |
 			self assert: unusedVariable name equals: 'goo' ].! !
 
-!CompilerTest methodsFor: 'private' stamp: 'HAW 12/17/2019 10:38:10'!
+!CompilerTest methodsFor: 'private' stamp: 'HAW 17/Dec/2019 10:38:10'!
 createTestClass
 	
 	^self createClassNamed: #CompilerTestDataClass__! !
 
-!CompilerTest methodsFor: 'private' stamp: 'cwp 8/25/2009 20:28'!
+!CompilerTest methodsFor: 'private' stamp: 'cwp 25/Aug/2009 20:28:00'!
 unusedVariableSource
 	^ 'griffle 
 		| goo |
 		^ nil'! !
 
-!CompilerTest methodsFor: 'tests - limits' stamp: 'eem 12/28/2024 13:58:04'!
+!CompilerTest methodsFor: 'tests - limits' stamp: 'eem 28/Dec/2024 13:58:04'!
 testMaxLiterals
 	"Document the maximum number of literals in a compiled method"
 
@@ -25432,7 +25432,7 @@ testMaxLiterals
 	self should: [Compiler evaluate: stringWithOneTooManyLiterals for: nil logged: false] raise: SyntaxErrorNotification.
 ! !
 
-!CompilerTest methodsFor: 'tests - limits' stamp: 'eem 12/28/2024 13:57:19'!
+!CompilerTest methodsFor: 'tests - limits' stamp: 'eem 28/Dec/2024 13:57:19'!
 testMaxLiteralsWithClassReferenceInClosure
 	"Document the maximum number of literals in a compiled method. A class
 	reference in a closure reduces the maximum literals."
@@ -25459,7 +25459,7 @@ testMaxLiteralsWithClassReferenceInClosure
 	self should: [Compiler evaluate: stringWithOneTooManyLiterals for: nil logged: false] raise: SyntaxErrorNotification.
 ! !
 
-!SystemOrganizerTest methodsFor: 'testing' stamp: 'HAW 5/16/2024 10:00:12'!
+!SystemOrganizerTest methodsFor: 'testing' stamp: 'HAW 16/May/2024 10:00:12'!
 testRenameSystemCategoryAlsoRenameClassExtensions
 	
 	| oldCategoryName oldExtensionName newCategoryName newExtensionName classWithCategoryToRename classOrganizer metaclassOrganizer |
@@ -25484,7 +25484,7 @@ testRenameSystemCategoryAlsoRenameClassExtensions
 		SystemOrganization removeSystemCategory: oldCategoryName ].
 ! !
 
-!ChangesTest methodsFor: 'assertions' stamp: 'jmv 7/31/2023 12:35:38'!
+!ChangesTest methodsFor: 'assertions' stamp: 'jmv 31/Jul/2023 12:35:38'!
 assertIsLogged: aString times: stringCount and: aBlock
 
 	| logContent startPosition indexOfSubstring |
@@ -25507,22 +25507,22 @@ assertIsLogged: aString times: stringCount and: aBlock
 
 	! !
 
-!ChangesTest methodsFor: 'assertions' stamp: 'HAW 11/1/2019 17:03:04'!
+!ChangesTest methodsFor: 'assertions' stamp: 'HAW 1/Nov/2019 17:03:04'!
 assertIsLoggedOnce: aString
 
 	self assertIsLoggedOnce: aString and: [:logContents :nextPosition | ] ! !
 
-!ChangesTest methodsFor: 'assertions' stamp: 'HAW 11/1/2019 17:02:33'!
+!ChangesTest methodsFor: 'assertions' stamp: 'HAW 1/Nov/2019 17:02:33'!
 assertIsLoggedOnce: aString and: aBlock
 
 	self assertIsLogged: aString times: 1 and: aBlock! !
 
-!ChangesTest methodsFor: 'assertions' stamp: 'HAW 11/1/2019 17:03:30'!
+!ChangesTest methodsFor: 'assertions' stamp: 'HAW 1/Nov/2019 17:03:30'!
 assertIsLoggedTwice: aString
 
 	self assertIsLogged: aString times: 2 and: [:logContents :nextPosition | ] ! !
 
-!ChangesTest methodsFor: 'user changes' stamp: 'jmv 5/16/2022 09:26:36'!
+!ChangesTest methodsFor: 'user changes' stamp: 'jmv 16/May/2022 09:26:36'!
 changeUserChangesFileWhile: aBlock
 
 	^ Preferences
@@ -25530,7 +25530,7 @@ changeUserChangesFileWhile: aBlock
 		of: #userChangesFileNameExtension
 		do: aBlock.! !
 
-!ChangesTest methodsFor: 'user changes' stamp: 'jmv 12/15/2023 17:46:22'!
+!ChangesTest methodsFor: 'user changes' stamp: 'jmv 15/Dec/2023 17:46:22'!
 scanChangesFromFile
 
 	| fileStream changeList |
@@ -25541,40 +25541,40 @@ scanChangesFromFile
 	^ changeList changeList.
 ! !
 
-!ChangesTest methodsFor: 'user changes' stamp: 'jmv 12/15/2023 17:52:55'!
+!ChangesTest methodsFor: 'user changes' stamp: 'jmv 15/Dec/2023 17:52:55'!
 userChangesForTestsFile
 
 	^DirectoryEntry userChangesDirectory // 
 	((FileIOAccessor default baseNameFor: Smalltalk imageName pathAndLocalName second), self userChangesForTestsFileExtension).! !
 
-!ChangesTest methodsFor: 'user changes' stamp: 'HAW 11/1/2019 17:08:04'!
+!ChangesTest methodsFor: 'user changes' stamp: 'HAW 1/Nov/2019 17:08:04'!
 userChangesForTestsFileExtension
 
 	^'.test.changes' ! !
 
-!ChangesTest methodsFor: 'user changes' stamp: 'HAW 11/1/2019 17:08:07'!
+!ChangesTest methodsFor: 'user changes' stamp: 'HAW 1/Nov/2019 17:08:07'!
 userChangesForTestsFileName
 
 	^(FileIOAccessor default baseNameFor: Smalltalk imageName), self userChangesForTestsFileExtension! !
 
-!ChangesTest methodsFor: 'setUp/tearDown' stamp: 'HAW 12/17/2019 10:36:27'!
+!ChangesTest methodsFor: 'setUp/tearDown' stamp: 'HAW 17/Dec/2019 10:36:27'!
 tearDown
 
 	self userChangesForTestsFile delete.
 	super tearDown ! !
 
-!ChangesTest methodsFor: 'test data' stamp: 'HAW 12/17/2019 10:37:01'!
+!ChangesTest methodsFor: 'test data' stamp: 'HAW 17/Dec/2019 10:37:01'!
 createTestDataClass
 
 	^ self createClassNamed: self testDataClassName 
 		! !
 
-!ChangesTest methodsFor: 'test data' stamp: 'HAW 11/1/2019 17:08:21'!
+!ChangesTest methodsFor: 'test data' stamp: 'HAW 1/Nov/2019 17:08:21'!
 testDataClassName
 
 	^ #LogChangesTestClass__! !
 
-!ChangesTest methodsFor: 'scan tests' stamp: 'jmv 8/25/2025 10:33:22'!
+!ChangesTest methodsFor: 'scan tests' stamp: 'jmv 25/Aug/2025 10:33:22'!
 test01ScanNewClassChange
 
 	| newClass newClassChange |
@@ -25588,7 +25588,7 @@ test01ScanNewClassChange
 		self deny: newClassChange stamp isNil.
 	] ! !
 
-!ChangesTest methodsFor: 'scan tests' stamp: 'HAW 11/1/2019 17:08:31'!
+!ChangesTest methodsFor: 'scan tests' stamp: 'HAW 1/Nov/2019 17:08:31'!
 test02ScanNewMethodChange
 
 	| newMethodChange newClass |
@@ -25605,7 +25605,7 @@ test02ScanNewMethodChange
 		self assert: newMethodChange prior isNil.
 		self deny: newMethodChange stamp isNil ] ! !
 
-!ChangesTest methodsFor: 'scan tests' stamp: 'HAW 11/1/2019 17:08:34'!
+!ChangesTest methodsFor: 'scan tests' stamp: 'HAW 1/Nov/2019 17:08:34'!
 test03ScanMethodModifiedChange
 
 	| methodModifiedChange newClass |
@@ -25624,7 +25624,7 @@ test03ScanMethodModifiedChange
 		self deny: methodModifiedChange stamp isNil ]
 ! !
 
-!ChangesTest methodsFor: 'scan tests' stamp: 'HAW 11/1/2019 17:08:37'!
+!ChangesTest methodsFor: 'scan tests' stamp: 'HAW 1/Nov/2019 17:08:37'!
 test04ScanMethodRemovalChange
 
 	| methodRemovalChange newClass |
@@ -25641,7 +25641,7 @@ test04ScanMethodRemovalChange
 		self deny: methodRemovalChange stamp isNil ]
 ! !
 
-!ChangesTest methodsFor: 'scan tests' stamp: 'HAW 11/1/2019 17:08:40'!
+!ChangesTest methodsFor: 'scan tests' stamp: 'HAW 1/Nov/2019 17:08:40'!
 test05ScanClassRemovalChange
 
 	| classRemovalChange newClass |
@@ -25659,7 +25659,7 @@ test05ScanClassRemovalChange
 
 ! !
 
-!ChangesTest methodsFor: 'scan tests' stamp: 'MGD 12/19/2019 19:37:24'!
+!ChangesTest methodsFor: 'scan tests' stamp: 'MGD 19/Dec/2019 19:37:24'!
 test06ScanClassRenamedChange
 
 	| classRenamedChange newClass |
@@ -25676,7 +25676,7 @@ test06ScanClassRenamedChange
 		self deny: classRenamedChange stamp isNil. ]
 ! !
 
-!ChangesTest methodsFor: 'log tests' stamp: 'jmv 9/10/2023 18:55:14'!
+!ChangesTest methodsFor: 'log tests' stamp: 'jmv 10/Sep/2023 18:55:14'!
 test01AddingAClassShouldBeLogged
 	" Log format expected:
 
@@ -25695,7 +25695,7 @@ test01AddingAClassShouldBeLogged
 		self assertIsLoggedOnce: '!!classDefinition: #', self testDataClassName, ' category: #''', self classCategoryOfTestData,''' stamp:'.
 		self assertIsLoggedOnce: newClass definition ] ! !
 
-!ChangesTest methodsFor: 'log tests' stamp: 'HAW 11/1/2019 17:08:48'!
+!ChangesTest methodsFor: 'log tests' stamp: 'HAW 1/Nov/2019 17:08:48'!
 test02AddingANewMethodShouldBeLogged
 	" Log format expected:
 
@@ -25712,7 +25712,7 @@ test02AddingANewMethodShouldBeLogged
 		self assertIsLoggedOnce: 'm1 ^ 1'] 
 ! !
 
-!ChangesTest methodsFor: 'log tests' stamp: 'HAW 11/1/2019 17:08:50'!
+!ChangesTest methodsFor: 'log tests' stamp: 'HAW 1/Nov/2019 17:08:50'!
 test03ChangingAMethodShouldBeLogged
 	" Log format expected:
 
@@ -25730,7 +25730,7 @@ test03ChangingAMethodShouldBeLogged
 		self assertIsLoggedOnce: 'prior: '.
 		self assertIsLoggedOnce: 'm1 ^ 2' ] ! !
 
-!ChangesTest methodsFor: 'log tests' stamp: 'jmv 7/31/2023 12:36:30'!
+!ChangesTest methodsFor: 'log tests' stamp: 'jmv 31/Jul/2023 12:36:30'!
 test04RemovingAMethodShouldBeLogged
 	" Log format expected:
 
@@ -25754,7 +25754,7 @@ test04RemovingAMethodShouldBeLogged
 		
 				self assert: methodSource equals: 'm1 ^ 1!!' ]].! !
 
-!ChangesTest methodsFor: 'log tests' stamp: 'jmv 7/31/2023 12:36:57'!
+!ChangesTest methodsFor: 'log tests' stamp: 'jmv 31/Jul/2023 12:36:57'!
 test05RemovingAClassShouldBeLogged
 	" Log format expected:
 
@@ -25778,7 +25778,7 @@ test05RemovingAClassShouldBeLogged
 				
 				self assert: loggedDefinition equals: definition,'!!' ]].! !
 
-!ChangesTest methodsFor: 'log tests' stamp: 'MGD 3/30/2020 17:00:58'!
+!ChangesTest methodsFor: 'log tests' stamp: 'MGD 30/Mar/2020 17:00:58'!
 test06RenamingAClassShouldBeLogged
 	" Log format expected:
 
@@ -25795,7 +25795,7 @@ test06RenamingAClassShouldBeLogged
 		self assertIsLoggedOnce: 'Smalltalk renameClassNamed: #', self testDataClassName, ' as: #NewTestClass__'.
 	]! !
 
-!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 9/5/2021 22:02:42'!
+!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 5/Sep/2021 22:02:42'!
 test01FindsSelectionOnSourceMethod
 
 	| sourceMethodName finder methodsToExtractFrom sourceMethod |
@@ -25813,7 +25813,7 @@ test01FindsSelectionOnSourceMethod
 	self assert: (4 to: 5) equals: methodsToExtractFrom first intervalToExtract.
 	self assert: sourceMethod equals: methodsToExtractFrom first methodToExtractFrom.! !
 
-!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 11/1/2024 16:49:33'!
+!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 1/Nov/2024 16:49:33'!
 test02FindsRepetitionsAfterSelection
 
 	| sourceMethodName finder methodsToExtractFrom sourceMethod replacement |
@@ -25835,7 +25835,7 @@ test02FindsRepetitionsAfterSelection
 	self assert: (8 to: 9) equals: replacement intervalToExtract.
 	self assert: (replacement isOf: sourceMethod).! !
 
-!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 11/1/2024 16:49:43'!
+!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 1/Nov/2024 16:49:43'!
 test03FindsRepetitionsBeforeSelection
 
 	| sourceMethodName finder methodsToExtractFrom sourceMethod replacement |
@@ -25858,7 +25858,7 @@ test03FindsRepetitionsBeforeSelection
 	self assert: (replacement isOf: sourceMethod).
 	! !
 
-!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 11/1/2024 16:49:59'!
+!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 1/Nov/2024 16:49:59'!
 test04DoesNotIncludeComments
 
 	| sourceMethodName finder methodsToExtractFrom sourceMethod replacement |
@@ -25878,7 +25878,7 @@ test04DoesNotIncludeComments
 	
 	! !
 
-!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 11/1/2024 16:50:03'!
+!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 1/Nov/2024 16:50:03'!
 test05DoesNotIncludeNotExtractableSourceCode
 
 	| sourceMethodName finder methodsToExtractFrom sourceMethod replacement |
@@ -25896,7 +25896,7 @@ test05DoesNotIncludeNotExtractableSourceCode
 	self assert: (4 to: 5) equals: replacement intervalToExtract.
 	self assert: (replacement isOf: sourceMethod).! !
 
-!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 11/1/2024 16:50:08'!
+!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 1/Nov/2024 16:50:08'!
 test06FindsRepetitionsInOtherClassMethods
 
 	| sourceMethodName finder methodsToExtractFrom sourceMethod replacement |
@@ -25919,7 +25919,7 @@ test06FindsRepetitionsInOtherClassMethods
 	
 	! !
 
-!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 11/1/2024 16:50:13'!
+!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 1/Nov/2024 16:50:13'!
 test07FindsRepetitionsInSubclassesMethods
 
 	| sourceMethodName finder methodsToExtractFrom sourceMethod replacement subclassToRefactor |
@@ -25950,7 +25950,7 @@ test07FindsRepetitionsInSubclassesMethods
 	self assert:(replacement isOf: (subclassToRefactor >> #m3) asMethodReference)
 	! !
 
-!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 11/1/2024 16:50:18'!
+!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 1/Nov/2024 16:50:18'!
 test08FindsRepetitionsWithMultipleSelection
 
 	| sourceMethodName finder methodsToExtractFrom sourceMethod replacement |
@@ -25973,7 +25973,7 @@ test08FindsRepetitionsWithMultipleSelection
 	self assert: (replacement isOf: sourceMethod).
 	! !
 
-!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 11/1/2024 16:50:22'!
+!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 1/Nov/2024 16:50:22'!
 test09FindsRepetitionsWithCascade
 
 	| sourceMethodName finder methodsToExtractFrom sourceMethod replacement |
@@ -25996,7 +25996,7 @@ test09FindsRepetitionsWithCascade
 	self assert: (replacement isOf: sourceMethod).
 	! !
 
-!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 11/1/2024 16:50:27'!
+!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 1/Nov/2024 16:50:27'!
 test10FindsRepetitionsWithBrace
 
 	| sourceMethodName finder methodsToExtractFrom sourceMethod replacement |
@@ -26019,7 +26019,7 @@ test10FindsRepetitionsWithBrace
 	self assert: (replacement isOf: sourceMethod).
 	! !
 
-!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 11/1/2024 16:50:32'!
+!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 1/Nov/2024 16:50:32'!
 test11FindsRepetitionsWithMoreThanTwoStatementsSelection
 
 	| sourceMethodName finder methodsToExtractFrom sourceMethod replacement |
@@ -26042,7 +26042,7 @@ test11FindsRepetitionsWithMoreThanTwoStatementsSelection
 	self assert: (replacement isOf: sourceMethod).
 	! !
 
-!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 11/1/2024 16:50:36'!
+!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 1/Nov/2024 16:50:36'!
 test12FindsRepetitionsOfOneMessageSend
 
 	| sourceMethodName finder methodsToExtractFrom sourceMethod replacement |
@@ -26065,7 +26065,7 @@ test12FindsRepetitionsOfOneMessageSend
 	self assert: (replacement isOf: sourceMethod).
 	! !
 
-!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 11/1/2024 16:50:40'!
+!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 1/Nov/2024 16:50:40'!
 test13FindsRepetitionsOfLiteral
 
 	| sourceMethodName finder methodsToExtractFrom sourceMethod replacement |
@@ -26088,7 +26088,7 @@ test13FindsRepetitionsOfLiteral
 	self assert: (replacement isOf: sourceMethod).
 	! !
 
-!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 11/1/2024 16:48:36'!
+!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 1/Nov/2024 16:48:36'!
 test14FindsRepetitionsOfLiteralVariable
 
 	| sourceMethodName finder methodsToExtractFrom sourceMethod replacement |
@@ -26111,7 +26111,7 @@ test14FindsRepetitionsOfLiteralVariable
 	self assert: (replacement isOf: sourceMethod).
 	! !
 
-!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 11/1/2024 16:50:47'!
+!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 1/Nov/2024 16:50:47'!
 test15FindsRepetitionsOfInstanceVariable
 
 	| sourceMethodName finder methodsToExtractFrom sourceMethod replacement |
@@ -26135,7 +26135,7 @@ test15FindsRepetitionsOfInstanceVariable
 	self assert: (replacement isOf: sourceMethod).
 	! !
 
-!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 11/1/2024 16:50:51'!
+!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 1/Nov/2024 16:50:51'!
 test16FindsRepetitionsOfParameter
 
 	| sourceMethodName finder methodsToExtractFrom sourceMethod replacement |
@@ -26158,7 +26158,7 @@ test16FindsRepetitionsOfParameter
 	self assert: (replacement isOf: sourceMethod).
 	! !
 
-!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 11/1/2024 16:50:56'!
+!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 1/Nov/2024 16:50:56'!
 test17KeepsOriginalSelection
 
 	| sourceMethodName finder methodsToExtractFrom sourceMethod replacement |
@@ -26181,7 +26181,7 @@ test17KeepsOriginalSelection
 	self assert: (replacement isOf: sourceMethod).
 	! !
 
-!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 11/1/2024 16:45:40'!
+!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 1/Nov/2024 16:45:40'!
 test18FindsMultipleLiteralNodes
 
 	| sourceMethodName finder methodsToExtractFrom sourceMethod replacement |
@@ -26204,7 +26204,7 @@ test18FindsMultipleLiteralNodes
 	self assert: (replacement isOf: sourceMethod).
 	! !
 
-!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 11/5/2024 09:31:40'!
+!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 5/Nov/2024 09:31:40'!
 test19FindsBlockNodesWithTemporaries
 
 	| sourceMethodName finder methodsToExtractFrom sourceMethod |
@@ -26224,7 +26224,7 @@ test19FindsBlockNodesWithTemporaries
 	self assert: (16 to: 27) equals: methodsToExtractFrom second intervalToExtract.
 	! !
 
-!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 11/1/2024 16:51:07'!
+!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 1/Nov/2024 16:51:07'!
 test20FindsTemporary
 
 	| sourceMethodName finder methodsToExtractFrom sourceMethod replacement |
@@ -26247,7 +26247,7 @@ test20FindsTemporary
 	self assert: (replacement isOf: sourceMethod).
 	! !
 
-!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 10/31/2024 20:20:33'!
+!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 31/Oct/2024 20:20:33'!
 test21FindsTemporaryWhenSelectingDefinition
 
 	| sourceMethodName finder methodsToExtractFrom sourceMethod replacement |
@@ -26266,7 +26266,7 @@ test21FindsTemporaryWhenSelectingDefinition
 	self assert: (replacement isOf: sourceMethod).
 	! !
 
-!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 7/21/2025 18:31:34'!
+!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 21/Jul/2025 18:31:34'!
 test22_1_FindsTemporaryWhenSelectingDefinitionInInnerClosure
 
 	| sourceMethodName finder methodsToExtractFrom sourceMethod replacement |
@@ -26298,7 +26298,7 @@ test22_1_FindsTemporaryWhenSelectingDefinitionInInnerClosure
 	self assert: (replacement isOf: sourceMethod).
 	! !
 
-!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 11/1/2024 03:31:10'!
+!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 1/Nov/2024 03:31:10'!
 test22FindsTemporaryWhenSelectingDefinitionInInnerClosure
 
 	| sourceMethodName finder methodsToExtractFrom sourceMethod replacement |
@@ -26317,7 +26317,7 @@ test22FindsTemporaryWhenSelectingDefinitionInInnerClosure
 	self assert: (replacement isOf: sourceMethod).
 	! !
 
-!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 11/1/2024 16:28:11'!
+!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 1/Nov/2024 16:28:11'!
 test23WhenExtractingAllLiteralsUsesStringComparison
 
 	| sourceMethodName finder methodsToExtractFrom sourceMethod replacement |
@@ -26340,7 +26340,7 @@ test23WhenExtractingAllLiteralsUsesStringComparison
 	self assert: (replacement isOf: sourceMethod).
 ! !
 
-!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 11/1/2024 16:30:38'!
+!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 1/Nov/2024 16:30:38'!
 test24NotWorkingCase
 
 	| sourceMethodName finder methodsToExtractFrom sourceMethod replacement |
@@ -26364,7 +26364,7 @@ test24NotWorkingCase
 		self assert: (replacement isOf: sourceMethod).]
 ! !
 
-!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 11/2/2024 10:02:18'!
+!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 2/Nov/2024 10:02:18'!
 test25NotWorkingCase
 
 	| sourceMethodName finder methodsToExtractFrom sourceMethod replacement |
@@ -26385,7 +26385,7 @@ test25NotWorkingCase
 	]
 ! !
 
-!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 6/13/2025 10:09:29'!
+!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 13/Jun/2025 10:09:29'!
 test26FindsInsideParentesis
 
 	| sourceMethodName finder sourceMethod intervalToExtract newMessage methodsToExtractFrom replacement |
@@ -26406,7 +26406,7 @@ test26FindsInsideParentesis
 	self assert: (replacement isOf: sourceMethod).
 ! !
 
-!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 6/13/2025 10:09:41'!
+!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 13/Jun/2025 10:09:41'!
 test27FindsWithMoreThanOneStatementAndFirstWithParentesis
 
 	| sourceMethodName finder sourceMethod intervalToExtract newMessage methodsToExtractFrom replacement |
@@ -26427,7 +26427,7 @@ test27FindsWithMoreThanOneStatementAndFirstWithParentesis
 	self assert: (replacement isOf: sourceMethod).
 ! !
 
-!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 6/13/2025 10:09:48'!
+!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 13/Jun/2025 10:09:48'!
 test28FindsRepeatedBlocks
 
 	| sourceMethodName finder sourceMethod intervalToExtract newMessage methodsToExtractFrom replacement |
@@ -26452,7 +26452,7 @@ test28FindsRepeatedBlocks
 	self assert: (replacement isOf: sourceMethod).
 ! !
 
-!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 9/21/2025 16:33:34'!
+!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 21/Sep/2025 16:33:34'!
 test29DoesNotFailWithUnnecesaryDot
 
 	| sourceMethodName finder sourceMethod intervalToExtract newMessage |
@@ -26468,37 +26468,54 @@ test29DoesNotFailWithUnnecesaryDot
 		shouldnt: [ finder value ] 
 		raise: Error! !
 
-!ExtractMethodFinderTest methodsFor: 'setup/teardown' stamp: 'HAW 9/2/2021 18:02:12'!
+!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 1/Dec/2025 18:11:39'!
+test30DoesNotFailWhenLookingForABlockEquivalentToAMethod
+
+	| sourceMethodName finder sourceMethod intervalToExtract newMessage |
+
+	sourceMethodName := classToRefactor compile: 'm1. [10 factorial]'.
+	classToRefactor compile: 'm2. 10 factorial'.
+	
+	sourceMethod := (classToRefactor >> sourceMethodName) asMethodReference.
+	intervalToExtract := (5 to: 18) asSourceCodeInterval.
+	newMessage := Message selector: #m3.
+	finder := ExtractMethodReplacementsFinder ofCodeIn: intervalToExtract at: sourceMethod to: newMessage. 
+	
+	self 
+		shouldnt: [ finder value ] 
+		raise: Error! !
+
+!ExtractMethodFinderTest methodsFor: 'setup/teardown' stamp: 'HAW 2/Sep/2021 18:02:12'!
 setUp
 
 	super setUp.
 	classToRefactor := self createClassNamed: self classToRefactorName! !
 
-!ExtractMethodFinderTest methodsFor: 'class names' stamp: 'HAW 9/2/2021 16:54:18'!
+!ExtractMethodFinderTest methodsFor: 'class names' stamp: 'HAW 2/Sep/2021 16:54:18'!
 classToRefactorName
 	
 	^#ClassToExtractMethod! !
 
-!ExtractMethodFinderTest methodsFor: 'class names' stamp: 'HAW 9/4/2021 20:53:12'!
+!ExtractMethodFinderTest methodsFor: 'class names' stamp: 'HAW 4/Sep/2021 20:53:12'!
 subclassToRefactorName
 	
 	^#SubclassToExtractMethod! !
 
-!ExtractMethodFinderTest methodsFor: 'assertions' stamp: 'jmv 7/31/2023 11:40:00'!
+!ExtractMethodFinderTest methodsFor: 'assertions' stamp: 'jmv 31/Jul/2023 11:40:00'!
 assert: expected equals: actual
 	"This tests assumes the order of arguments used by Cuis before July 31, 2023,
 	and also used by Squeak."
 
 	super assert: actual equals: expected! !
 
-!RefactoringTest methodsFor: 'assertions' stamp: 'jmv 7/31/2023 11:39:13'!
+!RefactoringTest methodsFor: 'assertions' stamp: 'jmv 31/Jul/2023 11:39:13'!
 assert: expected equals: actual
 	"This tests assumes the order of arguments used by Cuis before July 31, 2023,
 	and also used by Squeak."
 
 	super assert: actual equals: expected! !
 
-!RefactoringTest methodsFor: 'assertions' stamp: 'jmv 3/20/2024 15:59:45'!
+!RefactoringTest methodsFor: 'assertions' stamp: 'jmv 20/Mar/2024 15:59:45'!
 assertCreation: aCreationBlock failsWith: aStringOrBlock
 
 	self 
@@ -26506,7 +26523,7 @@ assertCreation: aCreationBlock failsWith: aStringOrBlock
 		raise: self refactoringError
 		withMessageText: aStringOrBlock ! !
 
-!RefactoringTest methodsFor: 'assertions' stamp: 'jmv 3/20/2024 18:23:28'!
+!RefactoringTest methodsFor: 'assertions' stamp: 'jmv 20/Mar/2024 18:23:28'!
 assertCreation: aCreationBlock warnsWith: aStringOrBlock
 
 	| warningSignaled |
@@ -26521,27 +26538,27 @@ assertCreation: aCreationBlock warnsWith: aStringOrBlock
 
 	self assert: warningSignaled description: 'Warning was not signaled'! !
 
-!RefactoringTest methodsFor: 'exceptions' stamp: 'HAW 8/17/2018 16:38:44'!
+!RefactoringTest methodsFor: 'exceptions' stamp: 'HAW 17/Aug/2018 16:38:44'!
 canNotRefactorDueToReferencesRefactoringError
 	
 	^ Refactoring canNotRefactorDueToReferencesErrorClass - MessageNotUnderstood.! !
 
-!RefactoringTest methodsFor: 'exceptions' stamp: 'HAW 6/3/2017 11:58:26'!
+!RefactoringTest methodsFor: 'exceptions' stamp: 'HAW 3/Jun/2017 11:58:26'!
 refactoringError
 
 	^ Refactoring refactoringErrorClass - MessageNotUnderstood.! !
 
-!RefactoringTest methodsFor: 'exceptions' stamp: 'HAW 6/3/2017 12:05:52'!
+!RefactoringTest methodsFor: 'exceptions' stamp: 'HAW 3/Jun/2017 12:05:52'!
 refactoringWarning
 
 	^ Refactoring refactoringWarningClass - MessageNotUnderstood.! !
 
-!RefactoringTest methodsFor: 'exceptions' stamp: 'HAW 12/18/2019 16:02:50'!
+!RefactoringTest methodsFor: 'exceptions' stamp: 'HAW 18/Dec/2019 16:02:50'!
 referencesRefactoringWarning
 
 	^ Refactoring referencesWarningClass - MessageNotUnderstood.! !
 
-!AddAsSubclassResponsabilityTest methodsFor: 'tests' stamp: 'jmv 11/26/2024 12:06:20'!
+!AddAsSubclassResponsabilityTest methodsFor: 'tests' stamp: 'jmv 26/Nov/2024 12:06:20'!
 test01AMethodOnClassToRefactorShouldBeAddedAsSubclassResponsibilityInSuperclass
 
 	| classToRefactorSuperclass classToRefactor selector push methodCategory |
@@ -26560,7 +26577,7 @@ test01AMethodOnClassToRefactorShouldBeAddedAsSubclassResponsibilityInSuperclass
 	self assert: (classToRefactor includesSelector: selector).
 	self assert: methodCategory equals: (classToRefactorSuperclass organization categoryOfElement: selector)! !
 
-!AddAsSubclassResponsabilityTest methodsFor: 'tests' stamp: 'jmv 11/26/2024 12:06:30'!
+!AddAsSubclassResponsabilityTest methodsFor: 'tests' stamp: 'jmv 26/Nov/2024 12:06:30'!
 test02ShouldWarnWhenMethodWithSameNameExistsInSuperclass
 	
 	| classToRefactor classToRefactorSuperclass selector |
@@ -26578,7 +26595,7 @@ test02ShouldWarnWhenMethodWithSameNameExistsInSuperclass
 		
 	! !
 
-!AddAsSubclassResponsabilityTest methodsFor: 'tests' stamp: 'jmv 11/26/2024 12:06:35'!
+!AddAsSubclassResponsabilityTest methodsFor: 'tests' stamp: 'jmv 26/Nov/2024 12:06:35'!
 test03ShouldNotWarnWhenMethodInSuperclassIsAbstract
 	
 	| classToRefactor classToRefactorSuperclass selector |
@@ -26595,17 +26612,17 @@ test03ShouldNotWarnWhenMethodInSuperclassIsAbstract
 		raise: self refactoringWarning 
 	! !
 
-!AddAsSubclassResponsabilityTest methodsFor: 'class factory' stamp: 'jmv 11/26/2024 12:06:08'!
+!AddAsSubclassResponsabilityTest methodsFor: 'class factory' stamp: 'jmv 26/Nov/2024 12:06:08'!
 classToRefactorName	
 
 	^#ClassToAddMethodInSuperClassAsSubclassResponsibility! !
 
-!AddInstanceVariableTest methodsFor: 'class factory' stamp: 'HAW 6/11/2017 18:12:55'!
+!AddInstanceVariableTest methodsFor: 'class factory' stamp: 'HAW 11/Jun/2017 18:12:55'!
 classToRefactorName
 
 	^#ClassToAddInstVar! !
 
-!AddInstanceVariableTest methodsFor: 'tests' stamp: 'HAW 3/3/2019 08:42:17'!
+!AddInstanceVariableTest methodsFor: 'tests' stamp: 'HAW 3/Mar/2019 08:42:17'!
 test01NewVariableNameCanNotBeEmpty
 	
 	newVariable := '   '.
@@ -26614,7 +26631,7 @@ test01NewVariableNameCanNotBeEmpty
 		failsWith: [NewInstanceVariablePrecondition newVariableCanNotBeEmptyErrorMessage ]
 ! !
 
-!AddInstanceVariableTest methodsFor: 'tests' stamp: 'HAW 3/3/2019 08:42:21'!
+!AddInstanceVariableTest methodsFor: 'tests' stamp: 'HAW 3/Mar/2019 08:42:21'!
 test02NewVariableNameCanNotContainBlanks
 	
 	newVariable := 'a b'.
@@ -26624,7 +26641,7 @@ test02NewVariableNameCanNotContainBlanks
 
 	! !
 
-!AddInstanceVariableTest methodsFor: 'tests' stamp: 'HAW 3/3/2019 08:42:25'!
+!AddInstanceVariableTest methodsFor: 'tests' stamp: 'HAW 3/Mar/2019 08:42:25'!
 test03NewVariableNameCanNotContainInvalidCharacters
 
 	newVariable := '2a'.
@@ -26634,14 +26651,14 @@ test03NewVariableNameCanNotContainInvalidCharacters
 
 ! !
 
-!AddInstanceVariableTest methodsFor: 'tests' stamp: 'HAW 6/11/2017 18:38:49'!
+!AddInstanceVariableTest methodsFor: 'tests' stamp: 'HAW 11/Jun/2017 18:38:49'!
 test04ValidNewVariableNameGetBlanksTrimmed
 
 	newVariable := ' a '.
 			
 	self assert: newVariable withBlanksTrimmed equals: (AddInstanceVariable named: newVariable to: self class) newVariable! !
 
-!AddInstanceVariableTest methodsFor: 'tests' stamp: 'HAW 3/3/2019 08:42:31'!
+!AddInstanceVariableTest methodsFor: 'tests' stamp: 'HAW 3/Mar/2019 08:42:31'!
 test05NewVariableNameCanNotBeDefinedInClass
 
 	| classToRefactor |
@@ -26654,7 +26671,7 @@ test05NewVariableNameCanNotBeDefinedInClass
 		failsWith: [NewInstanceVariablePrecondition errorMessageForNewInstanceVariable: newVariable alreadyDefinedInAll: (Array with: classToRefactor )]
 	! !
 
-!AddInstanceVariableTest methodsFor: 'tests' stamp: 'HAW 3/3/2019 08:42:43'!
+!AddInstanceVariableTest methodsFor: 'tests' stamp: 'HAW 3/Mar/2019 08:42:43'!
 test06NewVariableNameCanNotBeDefinedInSuperclasses
 
 	|  classToRefactorSuperclass classToRefactor  |
@@ -26668,7 +26685,7 @@ test06NewVariableNameCanNotBeDefinedInSuperclasses
 		failsWith: [NewInstanceVariablePrecondition errorMessageForNewInstanceVariable: newVariable alreadyDefinedInAll: (Array with: classToRefactorSuperclass)]
 ! !
 
-!AddInstanceVariableTest methodsFor: 'tests' stamp: 'HAW 3/3/2019 08:42:47'!
+!AddInstanceVariableTest methodsFor: 'tests' stamp: 'HAW 3/Mar/2019 08:42:47'!
 test07NewVariableNameCanNotBeDefinedInAnySubclass
 
 	| classToRefactor classToRefactorSubclass |
@@ -26683,7 +26700,7 @@ test07NewVariableNameCanNotBeDefinedInAnySubclass
 	
 		! !
 
-!AddInstanceVariableTest methodsFor: 'tests' stamp: 'HAW 8/13/2018 12:33:14'!
+!AddInstanceVariableTest methodsFor: 'tests' stamp: 'HAW 13/Aug/2018 12:33:14'!
 test08AddCreatesNewInstanceVariable
 
 	| classToRefactor add | 
@@ -26697,7 +26714,7 @@ test08AddCreatesNewInstanceVariable
 	self assert: (classToRefactor definesInstanceVariableNamed: newVariable).
 	! !
 
-!AddInstanceVariableTest methodsFor: 'tests' stamp: 'HAW 3/7/2019 22:43:31'!
+!AddInstanceVariableTest methodsFor: 'tests' stamp: 'HAW 7/Mar/2019 22:43:31'!
 test09FailsWhenNewVariableEqualsTemporaryVariableOfAMethodInClass
 
 	| selector classToRefactor |
@@ -26712,7 +26729,7 @@ test09FailsWhenNewVariableEqualsTemporaryVariableOfAMethodInClass
 		failsWith: [ NewInstanceVariablePrecondition errorMessageForNewVariable: newVariable willBeHiddenAtAll: (Array with: (classToRefactor>>selector)) ].
 	! !
 
-!AddInstanceVariableTest methodsFor: 'tests' stamp: 'HAW 3/7/2019 22:43:45'!
+!AddInstanceVariableTest methodsFor: 'tests' stamp: 'HAW 7/Mar/2019 22:43:45'!
 test10FailsWhenNewVariableEqualsArgumentOfAMethodInClass
 
 	| selector classToRefactor |
@@ -26727,7 +26744,7 @@ test10FailsWhenNewVariableEqualsArgumentOfAMethodInClass
 		failsWith: [ NewInstanceVariablePrecondition errorMessageForNewVariable: newVariable willBeHiddenAtAll: (Array with: (classToRefactor>>selector)) ].
 	! !
 
-!AddInstanceVariableTest methodsFor: 'tests' stamp: 'HAW 3/7/2019 22:44:12'!
+!AddInstanceVariableTest methodsFor: 'tests' stamp: 'HAW 7/Mar/2019 22:44:12'!
 test11FailsWhenNewVariableEqualsArgumentOfABlockInAMethodInClass
 
 	| selector classToRefactor |
@@ -26742,7 +26759,7 @@ test11FailsWhenNewVariableEqualsArgumentOfABlockInAMethodInClass
 		failsWith: [ NewInstanceVariablePrecondition errorMessageForNewVariable: newVariable willBeHiddenAtAll: (Array with: (classToRefactor>>selector)) ].
 	! !
 
-!AddInstanceVariableTest methodsFor: 'tests' stamp: 'HAW 3/7/2019 22:44:28'!
+!AddInstanceVariableTest methodsFor: 'tests' stamp: 'HAW 7/Mar/2019 22:44:28'!
 test12FailsWhenNewVariableEqualsTemporaryOfABlockInAMethodInClass
 
 	| selector classToRefactor |
@@ -26758,7 +26775,7 @@ test12FailsWhenNewVariableEqualsTemporaryOfABlockInAMethodInClass
 	
 	! !
 
-!AddInstanceVariableTest methodsFor: 'tests' stamp: 'HAW 3/7/2019 22:44:46'!
+!AddInstanceVariableTest methodsFor: 'tests' stamp: 'HAW 7/Mar/2019 22:44:46'!
 test13FailsWhenNewVariableIsHiddenInAnyMethodOfAnySubclass
 
 	| selector classToRefactor subclass |
@@ -26775,7 +26792,7 @@ test13FailsWhenNewVariableIsHiddenInAnyMethodOfAnySubclass
 	
 	! !
 
-!AddInstanceVariableTest methodsFor: 'tests' stamp: 'HAW 3/3/2019 08:43:17'!
+!AddInstanceVariableTest methodsFor: 'tests' stamp: 'HAW 3/Mar/2019 08:43:17'!
 test14NewVariableNameCanNotBeAReservedName
 
 	| classToRefactor |
@@ -26788,7 +26805,7 @@ test14NewVariableNameCanNotBeAReservedName
 			failsWith: [NewInstanceVariablePrecondition errorMessageForNewInstanceVariableCanNotBeAReservedName: aReservedName ]]
 		! !
 
-!AddParameterTest methodsFor: 'tests' stamp: 'jmv 7/8/2025 14:44:32'!
+!AddParameterTest methodsFor: 'tests' stamp: 'jmv 8/Jul/2025 14:44:32'!
 test01AddingParameterToUnaryMessageAddsColonAndParameter
 
 	| refactoring classToRefactor oldSelector newSelector newImplementorMethodNode newParameter newParameterValue senderSelector senderMethod |
@@ -26823,7 +26840,7 @@ test01AddingParameterToUnaryMessageAddsColonAndParameter
 
 ! !
 
-!AddParameterTest methodsFor: 'tests' stamp: 'jmv 7/8/2025 14:44:49'!
+!AddParameterTest methodsFor: 'tests' stamp: 'jmv 8/Jul/2025 14:44:49'!
 test02AddingParameterToKeywordMessageAddsNewKeywordAndParameter
 
 	| refactoring classToRefactor oldSelector newSelector newImplementorMethodNode newParameter newParameterValue senderSelector senderMethod newSelectorAddedKeyword |
@@ -26859,7 +26876,7 @@ test02AddingParameterToKeywordMessageAddsNewKeywordAndParameter
 
 ! !
 
-!AddParameterTest methodsFor: 'tests' stamp: 'jmv 7/8/2025 14:44:55'!
+!AddParameterTest methodsFor: 'tests' stamp: 'jmv 8/Jul/2025 14:44:55'!
 test03AddingParameterToKeywordMessageMultipleSendsInSameMethodSameLiteral
 
 	| refactoring classToRefactor oldSelector newSelector newImplementorMethodNode newParameter newParameterValue senderSelector senderMethod newSelectorAddedKeyword collaboration |
@@ -26896,7 +26913,7 @@ test03AddingParameterToKeywordMessageMultipleSendsInSameMethodSameLiteral
 
 ! !
 
-!AddParameterTest methodsFor: 'tests' stamp: 'jmv 7/8/2025 14:45:02'!
+!AddParameterTest methodsFor: 'tests' stamp: 'jmv 8/Jul/2025 14:45:02'!
 test04AddingParameterToKeywordMessageWithMessageSendAsLastFormalParameter
 
 	| refactoring classToRefactor oldSelector newSelector newImplementorMethodNode newParameter newParameterValue senderSelector senderMethod newSelectorAddedKeyword collaboration |
@@ -26933,7 +26950,7 @@ test04AddingParameterToKeywordMessageWithMessageSendAsLastFormalParameter
 
 ! !
 
-!AddParameterTest methodsFor: 'tests' stamp: 'jmv 7/8/2025 14:45:09'!
+!AddParameterTest methodsFor: 'tests' stamp: 'jmv 8/Jul/2025 14:45:09'!
 test05AddingParameterToKeywordMessageWithBinaryMessageSendAsLastFormalParameter
 
 	| refactoring classToRefactor oldSelector newSelector newImplementorMethodNode newParameter newParameterValue senderSelector senderMethod newSelectorAddedKeyword collaboration |
@@ -26970,7 +26987,7 @@ test05AddingParameterToKeywordMessageWithBinaryMessageSendAsLastFormalParameter
 
 ! !
 
-!AddParameterTest methodsFor: 'tests' stamp: 'jmv 7/8/2025 14:45:13'!
+!AddParameterTest methodsFor: 'tests' stamp: 'jmv 8/Jul/2025 14:45:13'!
 test06AddingParameterToKeywordMessageWithKeywordMessageSendAsLastFormalParameter
 
 	| refactoring classToRefactor oldSelector newSelector newImplementorMethodNode newParameter newParameterValue senderSelector senderMethod newSelectorAddedKeyword collaboration |
@@ -27007,7 +27024,7 @@ test06AddingParameterToKeywordMessageWithKeywordMessageSendAsLastFormalParameter
 
 ! !
 
-!AddParameterTest methodsFor: 'tests' stamp: 'HAW 12/17/2019 19:12:33'!
+!AddParameterTest methodsFor: 'tests' stamp: 'HAW 17/Dec/2019 19:12:33'!
 test07AddingParameterToUnaryMessageChangesReferencesToSelector
 
 	| refactoring classToRefactor oldSelector newSelector newImplementorMethodNode newParameter newParameterValue senderSelector senderMethod |
@@ -27040,7 +27057,7 @@ test07AddingParameterToUnaryMessageChangesReferencesToSelector
 	
 ! !
 
-!AddParameterTest methodsFor: 'tests' stamp: 'HAW 12/17/2019 19:12:33'!
+!AddParameterTest methodsFor: 'tests' stamp: 'HAW 17/Dec/2019 19:12:33'!
 test08AddingParameterToKeywordMessageChangesReferencesToSelector
 
 	| refactoring classToRefactor oldSelector newSelector newImplementorMethodNode newParameter newParameterValue senderSelector senderMethod newSelectorAddedKeyword collaboration |
@@ -27075,7 +27092,7 @@ test08AddingParameterToKeywordMessageChangesReferencesToSelector
 
 ! !
 
-!AddParameterTest methodsFor: 'tests' stamp: 'HAW 8/17/2018 12:24:53'!
+!AddParameterTest methodsFor: 'tests' stamp: 'HAW 17/Aug/2018 12:24:53'!
 test09FailsIfNewParameterValueCanNotBeCompiled
 
 	self 
@@ -27086,7 +27103,7 @@ test09FailsIfNewParameterValueCanNotBeCompiled
 	
 ! !
 
-!AddParameterTest methodsFor: 'tests' stamp: 'HAW 8/17/2018 12:25:16'!
+!AddParameterTest methodsFor: 'tests' stamp: 'HAW 17/Aug/2018 12:25:16'!
 test10FailsIfNewParameterValueIsEmpty
 
 	self 
@@ -27096,7 +27113,7 @@ test10FailsIfNewParameterValueIsEmpty
 		 failsWith: [ AddParameter newParameterValueCanNotBeEmptyErrorMessage ]
 ! !
 
-!AddParameterTest methodsFor: 'tests' stamp: 'HAW 8/17/2018 16:57:23'!
+!AddParameterTest methodsFor: 'tests' stamp: 'HAW 17/Aug/2018 16:57:23'!
 test11NewParameterNameCanNotBeEmpty
 
 	| newParameter |
@@ -27110,7 +27127,7 @@ test11NewParameterNameCanNotBeEmpty
 	
 ! !
 
-!AddParameterTest methodsFor: 'tests' stamp: 'HAW 8/17/2018 12:34:07'!
+!AddParameterTest methodsFor: 'tests' stamp: 'HAW 17/Aug/2018 12:34:07'!
 test12NewParameterNameCanNotStartWithNumber
 
 	| newParameter |
@@ -27124,7 +27141,7 @@ test12NewParameterNameCanNotStartWithNumber
 	
 ! !
 
-!AddParameterTest methodsFor: 'tests' stamp: 'HAW 8/17/2018 12:34:28'!
+!AddParameterTest methodsFor: 'tests' stamp: 'HAW 17/Aug/2018 12:34:28'!
 test13NewParameterNameCanNotContainSpaces
 
 	| newParameter |
@@ -27138,7 +27155,7 @@ test13NewParameterNameCanNotContainSpaces
 	
 ! !
 
-!AddParameterTest methodsFor: 'tests' stamp: 'HAW 8/17/2018 15:14:45'!
+!AddParameterTest methodsFor: 'tests' stamp: 'HAW 17/Aug/2018 15:14:45'!
 test14NewParameterCanNotBeDefinedAsInstanceVariableInAnyImplementor
 
 	| classToRefactor oldSelector newParameter  |
@@ -27157,7 +27174,7 @@ test14NewParameterCanNotBeDefinedAsInstanceVariableInAnyImplementor
 	
 ! !
 
-!AddParameterTest methodsFor: 'tests' stamp: 'HAW 9/2/2018 19:59:27'!
+!AddParameterTest methodsFor: 'tests' stamp: 'HAW 2/Sep/2018 19:59:27'!
 test15NewParameterCanNotBeDefinedAsParameterInAnyImplementor
 
 	| classToRefactor oldSelector newParameter implementors |
@@ -27177,7 +27194,7 @@ test15NewParameterCanNotBeDefinedAsParameterInAnyImplementor
 	
 ! !
 
-!AddParameterTest methodsFor: 'tests' stamp: 'HAW 8/18/2018 12:21:52'!
+!AddParameterTest methodsFor: 'tests' stamp: 'HAW 18/Aug/2018 12:21:52'!
 test16WhenCreatedForUnarySelectorMustBeUnary
 
 	self 
@@ -27188,7 +27205,7 @@ test16WhenCreatedForUnarySelectorMustBeUnary
 	
 ! !
 
-!AddParameterTest methodsFor: 'tests' stamp: 'HAW 8/18/2018 12:27:42'!
+!AddParameterTest methodsFor: 'tests' stamp: 'HAW 18/Aug/2018 12:27:42'!
 test17WhenCreatedForBinarySelectorMustBeBinary
 
 	self 
@@ -27199,7 +27216,7 @@ test17WhenCreatedForBinarySelectorMustBeBinary
 	
 ! !
 
-!AddParameterTest methodsFor: 'tests' stamp: 'HAW 9/4/2018 20:10:41'!
+!AddParameterTest methodsFor: 'tests' stamp: 'HAW 4/Sep/2018 20:10:41'!
 test18CanNotAddParameterToBinaryKeyword
 
 	self 
@@ -27211,7 +27228,7 @@ test18CanNotAddParameterToBinaryKeyword
 	
 ! !
 
-!AddParameterTest methodsFor: 'tests' stamp: 'HAW 8/18/2018 15:48:13'!
+!AddParameterTest methodsFor: 'tests' stamp: 'HAW 18/Aug/2018 15:48:13'!
 test19AllImplementorsMustImplementOldSelector
 
 	| implementors |
@@ -27225,7 +27242,7 @@ test19AllImplementorsMustImplementOldSelector
 	
 ! !
 
-!AddParameterTest methodsFor: 'tests' stamp: 'HAW 8/18/2018 15:53:37'!
+!AddParameterTest methodsFor: 'tests' stamp: 'HAW 18/Aug/2018 15:53:37'!
 test20AllSendersShouldSendOldSelector
 
 	| oldSelector invalidSenders |
@@ -27240,7 +27257,7 @@ test20AllSendersShouldSendOldSelector
 	
 ! !
 
-!AddParameterTest methodsFor: 'tests' stamp: 'HAW 8/18/2018 16:24:22'!
+!AddParameterTest methodsFor: 'tests' stamp: 'HAW 18/Aug/2018 16:24:22'!
 test21NewKeywordToAddToOldSelectorCanNotBeUnary
 
 	self 
@@ -27251,7 +27268,7 @@ test21NewKeywordToAddToOldSelectorCanNotBeUnary
 	
 ! !
 
-!AddParameterTest methodsFor: 'tests' stamp: 'HAW 8/18/2018 16:26:55'!
+!AddParameterTest methodsFor: 'tests' stamp: 'HAW 18/Aug/2018 16:26:55'!
 test22NewKeywordToAddToOldSelectorCanNotBeBinary
 
 	self 
@@ -27262,7 +27279,7 @@ test22NewKeywordToAddToOldSelectorCanNotBeBinary
 	
 ! !
 
-!AddParameterTest methodsFor: 'tests' stamp: 'HAW 8/18/2018 16:27:58'!
+!AddParameterTest methodsFor: 'tests' stamp: 'HAW 18/Aug/2018 16:27:58'!
 test23NewKeywordToAddToOldSelectorCanNotBeKeywordWithMoreThanOneParameter
 
 	self 
@@ -27273,7 +27290,7 @@ test23NewKeywordToAddToOldSelectorCanNotBeKeywordWithMoreThanOneParameter
 	
 ! !
 
-!AddParameterTest methodsFor: 'tests' stamp: 'HAW 8/24/2018 17:10:04'!
+!AddParameterTest methodsFor: 'tests' stamp: 'HAW 24/Aug/2018 17:10:04'!
 test24AddingParameterToSendersTakeCaresOfSeparators
 
 	| refactoring classToRefactor oldSelector newSelector newParameter newParameterValue senderSelector |
@@ -27295,7 +27312,7 @@ test24AddingParameterToSendersTakeCaresOfSeparators
 	
 	! !
 
-!AddParameterTest methodsFor: 'tests' stamp: 'jmv 7/8/2025 14:45:17'!
+!AddParameterTest methodsFor: 'tests' stamp: 'jmv 8/Jul/2025 14:45:17'!
 test25IfNewParameterValueIsKeywordMessageSendAddParenthesisToItForUnaryMessages
 
 	| refactoring classToRefactor oldSelector newParameter newParameterValue senderSelector newSelector senderMethod senderMethodNode senderSourceCode senderSourceRange |
@@ -27325,7 +27342,7 @@ test25IfNewParameterValueIsKeywordMessageSendAddParenthesisToItForUnaryMessages
 	
 	! !
 
-!AddParameterTest methodsFor: 'tests' stamp: 'jmv 7/8/2025 14:45:21'!
+!AddParameterTest methodsFor: 'tests' stamp: 'jmv 8/Jul/2025 14:45:21'!
 test26IfNewParameterValueIsKeywordMessageSendAddParenthesisToItForKeywordMessages
 
 	| refactoring classToRefactor oldSelector newParameter newParameterValue senderSelector newSelector senderMethod newSelectorAddedKeyword senderMethodNode senderSourceCode senderSourceRange |
@@ -27356,7 +27373,7 @@ test26IfNewParameterValueIsKeywordMessageSendAddParenthesisToItForKeywordMessage
 	
 	! !
 
-!AddParameterTest methodsFor: 'tests' stamp: 'HAW 8/25/2018 11:23:42'!
+!AddParameterTest methodsFor: 'tests' stamp: 'HAW 25/Aug/2018 11:23:42'!
 test27NewParameterValueCanNotHaveMoreThanOneStatement
 
 	self 
@@ -27367,7 +27384,7 @@ test27NewParameterValueCanNotHaveMoreThanOneStatement
 	
 	! !
 
-!AddParameterTest methodsFor: 'tests' stamp: 'jmv 7/8/2025 14:45:25'!
+!AddParameterTest methodsFor: 'tests' stamp: 'jmv 8/Jul/2025 14:45:25'!
 test28WhenSenderLastParameterIsABlockAddedParameterIsNotAddedInsideTheBlock
 
 	| refactoring classToRefactor oldSelector newParameter newParameterValue senderSelector newSelector senderMethod newSelectorAddedKeyword senderMethodNode senderSourceCode senderSourceRange senderFirstParameterValue |
@@ -27398,7 +27415,7 @@ test28WhenSenderLastParameterIsABlockAddedParameterIsNotAddedInsideTheBlock
 	self assert: senderFirstParameterValue equals: senderSourceCode
 	! !
 
-!AddParameterTest methodsFor: 'tests' stamp: 'jmv 7/8/2025 14:45:49'!
+!AddParameterTest methodsFor: 'tests' stamp: 'jmv 8/Jul/2025 14:45:49'!
 test29AddingParameterAsFirstOneWorksAsExpected
 
 	| refactoring classToRefactor oldSelector newSelector newImplementorMethodNode newParameter newParameterValue senderSelector senderMethod newSelectorAddedKeyword |
@@ -27433,7 +27450,7 @@ test29AddingParameterAsFirstOneWorksAsExpected
 	self assert: senderMethod sourceCode equals: senderSelector asString, ' self m2: 2 m1: 1'.
 ! !
 
-!AddParameterTest methodsFor: 'tests' stamp: 'jmv 7/8/2025 14:45:54'!
+!AddParameterTest methodsFor: 'tests' stamp: 'jmv 8/Jul/2025 14:45:54'!
 test30AddingParameterInTheMiddleWorksAsExpected
 
 	| refactoring classToRefactor oldSelector newSelector newImplementorMethodNode newParameter newParameterValue senderSelector senderMethod newSelectorAddedKeyword |
@@ -27468,7 +27485,7 @@ test30AddingParameterInTheMiddleWorksAsExpected
 	self assert: senderMethod sourceCode equals: senderSelector asString, ' self m1: 1 m2: 2 m3: 3'.
 ! !
 
-!AddParameterTest methodsFor: 'tests' stamp: 'HAW 1/7/2019 13:45:01'!
+!AddParameterTest methodsFor: 'tests' stamp: 'HAW 7/Jan/2019 13:45:01'!
 test31AddingParameterInTheMiddleWithManySendersWorksAsExpected
 
 	| refactoring classToRefactor oldSelector newSelector newParameter newParameterValue senderSelector senderMethod newSelectorAddedKeyword |
@@ -27501,7 +27518,7 @@ test31AddingParameterInTheMiddleWithManySendersWorksAsExpected
 		m2: 2 m3: 6'.
 ! !
 
-!AddParameterTest methodsFor: 'tests' stamp: 'HAW 1/7/2019 13:44:50'!
+!AddParameterTest methodsFor: 'tests' stamp: 'HAW 7/Jan/2019 13:44:50'!
 test32IndexCanNotBeLessThanOne
 	
 	self 
@@ -27516,7 +27533,7 @@ test32IndexCanNotBeLessThanOne
 				senders: {} ]
 		failsWith: [ AddParameter errorMessageForInvalidParameterIndex: 0 for: 1 ]! !
 
-!AddParameterTest methodsFor: 'tests' stamp: 'HAW 1/7/2019 13:44:43'!
+!AddParameterTest methodsFor: 'tests' stamp: 'HAW 7/Jan/2019 13:44:43'!
 test33IndexCanNotBeBiggerThanNumberOfParametersPlusOne
 	
 	self 
@@ -27531,7 +27548,7 @@ test33IndexCanNotBeBiggerThanNumberOfParametersPlusOne
 				senders: {} ]
 		failsWith: [ AddParameter errorMessageForInvalidParameterIndex: 3 for: 1 ]! !
 
-!AddParameterTest methodsFor: 'tests' stamp: 'HAW 1/7/2019 13:44:36'!
+!AddParameterTest methodsFor: 'tests' stamp: 'HAW 7/Jan/2019 13:44:36'!
 test34IndexMustBeInteger
 	
 	self 
@@ -27546,7 +27563,7 @@ test34IndexMustBeInteger
 				senders: {} ]
 		failsWith: [ AddParameter errorMessageForInvalidParameterIndex: 1.5 for: 1 ]! !
 
-!AddParameterTest methodsFor: 'tests' stamp: 'HAW 1/7/2019 13:44:23'!
+!AddParameterTest methodsFor: 'tests' stamp: 'HAW 7/Jan/2019 13:44:23'!
 test35AddingParameterRetractsInsertionPointWhenAtInsertionPointIsANewLine
 
 	| refactoring classToRefactor oldSelector newParameter newParameterValue senderSelector |
@@ -27567,7 +27584,7 @@ test35AddingParameterRetractsInsertionPointWhenAtInsertionPointIsANewLine
 	
 	! !
 
-!AddParameterTest methodsFor: 'tests' stamp: 'HAW 1/7/2019 13:44:13'!
+!AddParameterTest methodsFor: 'tests' stamp: 'HAW 7/Jan/2019 13:44:13'!
 test36ParentesisAreAddedToSendersOfUnaryMessage
 
 	self shouldFail: [ | refactoring classToRefactor oldSelector newParameter newParameterValue senderSelector |
@@ -27589,33 +27606,33 @@ test36ParentesisAreAddedToSendersOfUnaryMessage
 	self assert: senderSelector asString, ' (self ', oldSelector asString, '), self size' equals: (classToRefactor>>senderSelector) sourceCode 
 	]! !
 
-!AddParameterTest methodsFor: 'class factory' stamp: 'HAW 8/24/2018 17:20:56'!
+!AddParameterTest methodsFor: 'class factory' stamp: 'HAW 24/Aug/2018 17:20:56'!
 classToRefactorName
 	
 	^#ClassToAddParameter! !
 
-!ChangeKeywordsSelectorOrderTest methodsFor: 'tests' stamp: 'HAW 3/17/2019 06:18:58'!
+!ChangeKeywordsSelectorOrderTest methodsFor: 'tests' stamp: 'HAW 17/Mar/2019 06:18:58'!
 test01CannotChangeSelectorOrderInUnaryMessages
 
 	self
 		assertCreation: [ ChangeKeywordsSelectorOrder from: #m1 to: #m1 implementors: #() senders: #() ]
 		failsWith: [ ChangeKeywordsSelectorOrder selectorToChangeIsNotKeywordWithMoreThanOneParameterErrorMessage ]! !
 
-!ChangeKeywordsSelectorOrderTest methodsFor: 'tests' stamp: 'HAW 3/17/2019 06:18:58'!
+!ChangeKeywordsSelectorOrderTest methodsFor: 'tests' stamp: 'HAW 17/Mar/2019 06:18:58'!
 test02CannotChangeSelectorOrderInBinaryMessages
 
 	self
 		assertCreation: [ ChangeKeywordsSelectorOrder from: #+ to: #+ implementors: #() senders: #() ]
 		failsWith: [ ChangeKeywordsSelectorOrder selectorToChangeIsNotKeywordWithMoreThanOneParameterErrorMessage ]! !
 
-!ChangeKeywordsSelectorOrderTest methodsFor: 'tests' stamp: 'HAW 3/17/2019 06:18:58'!
+!ChangeKeywordsSelectorOrderTest methodsFor: 'tests' stamp: 'HAW 17/Mar/2019 06:18:58'!
 test03CannotChangeSelectorOrderInKeywordMessagesWithOneParameterOnly
 
 	self
 		assertCreation: [ ChangeKeywordsSelectorOrder from: #m1: to: #m1: implementors: #() senders: #() ]
 		 failsWith: [ ChangeKeywordsSelectorOrder selectorToChangeIsNotKeywordWithMoreThanOneParameterErrorMessage ]! !
 
-!ChangeKeywordsSelectorOrderTest methodsFor: 'tests' stamp: 'HAW 3/17/2019 05:44:03'!
+!ChangeKeywordsSelectorOrderTest methodsFor: 'tests' stamp: 'HAW 17/Mar/2019 05:44:03'!
 test04ChangesKeywordsOrder
 
 	| classToRefactor refactoring oldSelector newSelector |
@@ -27631,7 +27648,7 @@ test04ChangesKeywordsOrder
 	self assert: (classToRefactor includesSelector: newSelector).
 	self deny: (classToRefactor includesSelector: oldSelector)! !
 
-!ChangeKeywordsSelectorOrderTest methodsFor: 'tests' stamp: 'HAW 3/17/2019 05:52:51'!
+!ChangeKeywordsSelectorOrderTest methodsFor: 'tests' stamp: 'HAW 17/Mar/2019 05:52:51'!
 test05ChangesParametersOrder
 
 	| classToRefactor refactoring oldSelector newSelector renamedMethod parameters selectorAndParameters |
@@ -27651,7 +27668,7 @@ test05ChangesParametersOrder
 		assert: (OrderedCollection with: parameters second with: parameters first)
 		equals: renamedMethod methodNode argumentNames ! !
 
-!ChangeKeywordsSelectorOrderTest methodsFor: 'tests' stamp: 'HAW 3/17/2019 05:31:03'!
+!ChangeKeywordsSelectorOrderTest methodsFor: 'tests' stamp: 'HAW 17/Mar/2019 05:31:03'!
 test06NewSelectorMustIncludeOldSelectorKeywords
 
 	self
@@ -27659,7 +27676,7 @@ test06NewSelectorMustIncludeOldSelectorKeywords
 		failsWith: [ ChangeKeywordsSelectorOrder newSelectorDoesNotIncludeOldSelectorKeywordsErrorMessage ]
 		! !
 
-!ChangeKeywordsSelectorOrderTest methodsFor: 'tests' stamp: 'HAW 3/17/2019 05:52:00'!
+!ChangeKeywordsSelectorOrderTest methodsFor: 'tests' stamp: 'HAW 17/Mar/2019 05:52:00'!
 test07ChangesKeywordsAndParametersOrderForMoreThanTwoKeywords
 
 	| classToRefactor refactoring renamedMethod oldSelector newSelector selectorAndParameters parameters |
@@ -27679,7 +27696,7 @@ test07ChangesKeywordsAndParametersOrderForMoreThanTwoKeywords
 		assert: (OrderedCollection with: parameters second with: parameters third with: parameters first)
 		equals: renamedMethod methodNode argumentNames ! !
 
-!ChangeKeywordsSelectorOrderTest methodsFor: 'source code creation' stamp: 'HAW 3/17/2019 05:43:44'!
+!ChangeKeywordsSelectorOrderTest methodsFor: 'source code creation' stamp: 'HAW 17/Mar/2019 05:43:44'!
 selectorAndParametersFor: aKeywordSelector
 
 	^String streamContents: [ :stream |
@@ -27693,12 +27710,12 @@ selectorAndParametersFor: aKeywordSelector
 			separatedBy: [  stream space ]]
 				! !
 
-!ExtractAsParameterTest methodsFor: 'assertions' stamp: 'HAW 9/22/2021 16:02:51'!
+!ExtractAsParameterTest methodsFor: 'assertions' stamp: 'HAW 22/Sep/2021 16:02:51'!
 assertCanExtractAsParameter: toExtract
 
 	self assertCanExtractFrom: toExtract size: toExtract size introducing: toExtract! !
 
-!ExtractAsParameterTest methodsFor: 'assertions' stamp: 'HAW 7/8/2024 11:22:22'!
+!ExtractAsParameterTest methodsFor: 'assertions' stamp: 'HAW 8/Jul/2024 11:22:22'!
 assertCanExtractFrom: sourceCode interval: interval introducing: toIntroduced 
 
 	| refactoring classToRefactor oldSelector newSelector newImplementorSourceCode newParameter senderSelector senderMethod |
@@ -27729,12 +27746,12 @@ assertCanExtractFrom: sourceCode interval: interval introducing: toIntroduced
 	senderMethod := classToRefactor compiledMethodAt: senderSelector.
 	self assert: senderSelector asString, ' self ', newSelector asString, ' ', toIntroduced equals: senderMethod sourceCode! !
 
-!ExtractAsParameterTest methodsFor: 'assertions' stamp: 'HAW 9/22/2021 11:51:22'!
+!ExtractAsParameterTest methodsFor: 'assertions' stamp: 'HAW 22/Sep/2021 11:51:22'!
 assertCanExtractFrom: sourceCode size: toExtractSize introducing: toIntroduced 
 
 	self assertCanExtractFrom: sourceCode interval: (1 to: toExtractSize) introducing: toIntroduced ! !
 
-!ExtractAsParameterTest methodsFor: 'assertions' stamp: 'HAW 9/22/2021 16:03:34'!
+!ExtractAsParameterTest methodsFor: 'assertions' stamp: 'HAW 22/Sep/2021 16:03:34'!
 assertCannotExtractAsParameter: newParameterValue withErrorMessage: anErrorMessage
 
 	| classToRefactor oldSelector  |
@@ -27753,74 +27770,74 @@ assertCannotExtractAsParameter: newParameterValue withErrorMessage: anErrorMessa
 			senders: {} ]
 		failsWith: anErrorMessage ! !
 
-!ExtractAsParameterTest methodsFor: 'assertions' stamp: 'HAW 9/22/2021 16:06:03'!
+!ExtractAsParameterTest methodsFor: 'assertions' stamp: 'HAW 22/Sep/2021 16:06:03'!
 assertCannotExtractInvalidNodeAsParameter: newParameterValue
 
 	self 
 		assertCannotExtractAsParameter: newParameterValue 
 		withErrorMessage: ExtractAsParameter errorMessageForInvalidExpressionToExtractAsParameter! !
 
-!ExtractAsParameterTest methodsFor: 'assertions' stamp: 'HAW 9/22/2021 16:05:39'!
+!ExtractAsParameterTest methodsFor: 'assertions' stamp: 'HAW 22/Sep/2021 16:05:39'!
 assertCannotExtractInvalidSelectionAsParameter: newParameterValue
 
 	self 
 		assertCannotExtractAsParameter: newParameterValue 
 		withErrorMessage: ExtractAsParameter errorMessageForInvalidSelection ! !
 
-!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 9/22/2021 16:07:02'!
+!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 22/Sep/2021 16:07:02'!
 test01CanExtractLiterals
 
 	self assertCanExtractAsParameter: '1'
 ! !
 
-!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 9/22/2021 16:07:26'!
+!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 22/Sep/2021 16:07:26'!
 test02CannotExtract_self
 
 	self assertCannotExtractInvalidNodeAsParameter: 'self'.
 	
 	! !
 
-!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 9/22/2021 16:08:15'!
+!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 22/Sep/2021 16:08:15'!
 test03CannotExtract_super
 
 	self assertCannotExtractInvalidNodeAsParameter: 'super'.
 	
 	! !
 
-!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 9/22/2021 16:09:04'!
+!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 22/Sep/2021 16:09:04'!
 test04CannotExtract_thisContext
 
 	self assertCannotExtractInvalidNodeAsParameter: 'thisContext'.
 	
 	! !
 
-!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 9/22/2021 16:08:57'!
+!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 22/Sep/2021 16:08:57'!
 test05CanExtractMessageSendToLiteralWithLiterals
 
 	self assertCanExtractAsParameter: '1 + 1'.
 	
 	! !
 
-!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 9/22/2021 16:09:15'!
+!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 22/Sep/2021 16:09:15'!
 test06CanExtract_true
 
 	self assertCanExtractAsParameter: 'true'! !
 
-!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 9/22/2021 16:09:30'!
+!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 22/Sep/2021 16:09:30'!
 test07CannotExtract_comment
 
 	self assertCannotExtractInvalidSelectionAsParameter: '"comment"'.
 	
 	! !
 
-!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 9/22/2021 16:09:52'!
+!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 22/Sep/2021 16:09:52'!
 test08CanExtractSelectionWithSeparators
 
 	self assertCanExtractFrom: ' 10 ' size: 4 introducing: '10'
 	
 	! !
 
-!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 9/22/2021 16:10:22'!
+!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 22/Sep/2021 16:10:22'!
 test09RemovesTrailingDotsFromSelection
 
 	| refactoring classToRefactor oldSelector newSelector newImplementorSourceCode newParameter senderSelector senderMethod toExtract |
@@ -27852,29 +27869,29 @@ test09RemovesTrailingDotsFromSelection
 	senderMethod := classToRefactor compiledMethodAt: senderSelector.
 	self assert: senderSelector asString, ' self ', newSelector asString, ' 1' equals: senderMethod sourceCode! !
 
-!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 9/22/2021 16:10:35'!
+!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 22/Sep/2021 16:10:35'!
 test10CanExtractWithParenthesis
 
 	self assertCanExtractFrom: '(1)' size: 3 introducing: '1' 
 	
 	! !
 
-!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 9/22/2021 16:10:45'!
+!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 22/Sep/2021 16:10:45'!
 test11CanExtract_symbol
 
 	self assertCanExtractAsParameter: '#assert:'! !
 
-!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 9/22/2021 16:10:55'!
+!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 22/Sep/2021 16:10:55'!
 test12CanExtract_false
 
 	self assertCanExtractAsParameter: 'false'! !
 
-!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 9/22/2021 16:11:03'!
+!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 22/Sep/2021 16:11:03'!
 test13CanExtract_nil
 
 	self assertCanExtractAsParameter: 'nil'! !
 
-!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 9/22/2021 16:11:34'!
+!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 22/Sep/2021 16:11:34'!
 test14CanExtactFromKeywordSelector
 
 	| refactoring classToRefactor oldSelector newSelector newImplementorSourceCode newParameter senderSelector senderMethod toExtract newKeyword |
@@ -27909,7 +27926,7 @@ test14CanExtactFromKeywordSelector
 	senderMethod := classToRefactor compiledMethodAt: senderSelector.
 	self assert: senderSelector, ' self ', oldSelector, ' #x ', newKeyword, ' 1 ' equals: senderMethod sourceCode! !
 
-!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 9/22/2021 16:12:01'!
+!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 22/Sep/2021 16:12:01'!
 test15CanExtractMessageSendToLiteral
 
 	| refactoring classToRefactor oldSelector newSelector newImplementorSourceCode newParameter senderSelector senderMethod toExtract |
@@ -27941,63 +27958,63 @@ test15CanExtractMessageSendToLiteral
 	senderMethod := classToRefactor compiledMethodAt: senderSelector.
 	self assert: senderSelector, ' self ', newSelector, ' ', toExtract equals: senderMethod sourceCode! !
 
-!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 9/22/2021 16:12:21'!
+!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 22/Sep/2021 16:12:21'!
 test16CannotExtractMessageSendWithInvalidNode
 
 	self assertCannotExtractInvalidNodeAsParameter: '10 + self'! !
 
-!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 9/22/2021 16:12:38'!
+!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 22/Sep/2021 16:12:38'!
 test17CannotExtractMessageSendToInvalidNode
 
 	self assertCannotExtractInvalidNodeAsParameter: 'self + 10'! !
 
-!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 9/22/2021 16:12:59'!
+!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 22/Sep/2021 16:12:59'!
 test18CanExtractManyMessageSends
 
 	self assertCanExtractAsParameter: '10 + 10 + 10'! !
 
-!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 9/22/2021 16:13:19'!
+!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 22/Sep/2021 16:13:19'!
 test19CannotExtractManyMessageSendsWithInvalidNode
 
 	self assertCannotExtractInvalidNodeAsParameter: '10 + 10 + self'! !
 
-!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 9/22/2021 16:13:38'!
+!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 22/Sep/2021 16:13:38'!
 test20CanExtractPartOfAValidExpression
 
 	self assertCanExtractFrom: '10 + 10' size: 2 introducing: '10'
 	! !
 
-!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 9/22/2021 16:13:48'!
+!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 22/Sep/2021 16:13:48'!
 test21CanExtractABlock
 
 	self assertCanExtractAsParameter: '[10]'
 	! !
 
-!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 9/22/2021 16:14:01'!
+!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 22/Sep/2021 16:14:01'!
 test22CannotExtractBlockWithInvalidNode
 
 	self assertCannotExtractInvalidNodeAsParameter: '[self]'
 	! !
 
-!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 9/22/2021 16:14:17'!
+!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 22/Sep/2021 16:14:17'!
 test23CannotExtractBlockWithMessageSendWithInvalidNode
 
 	self assertCannotExtractInvalidNodeAsParameter: '[1 + self]'
 	! !
 
-!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 9/22/2021 16:14:34'!
+!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 22/Sep/2021 16:14:34'!
 test24CanExtractBlockWithManyExpressions
 
 	self assertCanExtractAsParameter: '[1 + 1. 2 + 2]'
 	! !
 
-!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 9/22/2021 16:14:44'!
+!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 22/Sep/2021 16:14:44'!
 test25CanExtractBlockWithParameters
 
 	self assertCanExtractAsParameter: '[:p1 | 1 + p1]'
 	! !
 
-!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 9/22/2021 16:15:06'!
+!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 22/Sep/2021 16:15:06'!
 test26CannotExtractBlockThatReferencesMethodVariable
 
 	| classToRefactor oldSelector  |
@@ -28018,13 +28035,13 @@ test26CannotExtractBlockThatReferencesMethodVariable
 
 ! !
 
-!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 9/22/2021 16:15:23'!
+!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 22/Sep/2021 16:15:23'!
 test27CanExtractBlockWithParameterAndLocalVariable
 
 	self assertCanExtractAsParameter: '[:p1 | | v1 | v1 := 1. v1 + p1]'
 	! !
 
-!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 9/22/2021 16:16:13'!
+!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 22/Sep/2021 16:16:13'!
 test28CanExtractBlockEvaluation
 
 	| toExtract |
@@ -28033,7 +28050,7 @@ test28CanExtractBlockEvaluation
 	self assertCanExtractFrom: toExtract size: toExtract size introducing: '(', toExtract ,')'
 	! !
 
-!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 9/22/2021 16:16:32'!
+!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 22/Sep/2021 16:16:32'!
 test29CannotExtractInvalidInterval
 
 	| classToRefactor oldSelector  |
@@ -28052,7 +28069,7 @@ test29CannotExtractInvalidInterval
 			senders: {} ]
 		failsWith: ExtractMethodNewMethod noSelectionErrorMessage ! !
 
-!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 9/22/2021 16:16:45'!
+!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 22/Sep/2021 16:16:45'!
 test30CannotExtractIntervalOutOfBounds
 
 	| classToRefactor oldSelector  |
@@ -28071,7 +28088,7 @@ test30CannotExtractIntervalOutOfBounds
 			senders: {} ]
 		failsWith: ExtractMethodNewMethod outOfBoundsSelectionErrorMessage ! !
 
-!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 9/22/2021 16:17:03'!
+!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 22/Sep/2021 16:17:03'!
 test31CannotExtractIfOriginalMethodIsNotInImplementors
 
 	| classToRefactor oldSelector  |
@@ -28090,12 +28107,12 @@ test31CannotExtractIfOriginalMethodIsNotInImplementors
 			senders: {} ]
 		failsWith: ExtractAsParameter errorMessageForOrigialMethodMustBeInImplementorsToChange! !
 
-!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 9/22/2021 16:21:15'!
+!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 22/Sep/2021 16:21:15'!
 test32CannotExtractMoreThanOneExpression
 
 	self assertCannotExtractInvalidSelectionAsParameter: '1+1. 2+2' ! !
 
-!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 9/22/2021 19:54:04'!
+!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 22/Sep/2021 19:54:04'!
 test33WhenAddingToUnaryMessageSelectorMustBeUnary
 	
 	| classToRefactor oldSelector  |
@@ -28114,7 +28131,7 @@ test33WhenAddingToUnaryMessageSelectorMustBeUnary
 			senders: {} ]
 		failsWith: AddParameter selectorMustBeUnaryErrorMessage ! !
 
-!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 9/22/2021 19:54:11'!
+!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 22/Sep/2021 19:54:11'!
 test34WhenAddingToKeywordMessageSelectorMustBeKeyword
 	
 	| classToRefactor oldSelector  |
@@ -28135,7 +28152,7 @@ test34WhenAddingToKeywordMessageSelectorMustBeKeyword
 			senders: {} ]
 		failsWith: AddParameter selectorMustBeKeywordErrorMessage ! !
 
-!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 9/24/2021 18:19:43'!
+!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 24/Sep/2021 18:19:43'!
 test35CanExtractManyIntervals
 	
 	| classToRefactor oldSelector  refactoring |
@@ -28157,7 +28174,7 @@ test35CanExtractManyIntervals
 	self assert: 'm1: newParam newParam + newParam' equals: (classToRefactor >> #m1:) sourceCode
 		! !
 
-!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 9/24/2021 18:20:26'!
+!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 24/Sep/2021 18:20:26'!
 test36CannotExtractIfAnyIntervalIsNotValid
 	
 	| classToRefactor oldSelector |
@@ -28179,7 +28196,7 @@ test36CannotExtractIfAnyIntervalIsNotValid
 	
 		! !
 
-!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 9/24/2021 18:20:36'!
+!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 24/Sep/2021 18:20:36'!
 test37CannotExtractIfSourceToExtractAreNotEqualInAllIntervals
 	
 	| classToRefactor oldSelector |
@@ -28201,7 +28218,7 @@ test37CannotExtractIfSourceToExtractAreNotEqualInAllIntervals
 	
 		! !
 
-!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 9/24/2021 18:20:55'!
+!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 24/Sep/2021 18:20:55'!
 test38CanExtractManyBlocksIfAreEqual
 	
 	| classToRefactor oldSelector  refactoring |
@@ -28223,7 +28240,7 @@ test38CanExtractManyBlocksIfAreEqual
 	self assert: 'm1: newParam newParam + newParam' equals: (classToRefactor >> #m1:) sourceCode
 		! !
 
-!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 9/24/2021 18:21:22'!
+!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 24/Sep/2021 18:21:22'!
 test39CanExtractManyBlocksIfSourceCodeNotEqualButSameAst
 	
 	| classToRefactor oldSelector  refactoring |
@@ -28245,7 +28262,7 @@ test39CanExtractManyBlocksIfSourceCodeNotEqualButSameAst
 	self assert: 'm1: newParam newParam + newParam' equals: (classToRefactor >> #m1:) sourceCode
 		! !
 
-!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 9/24/2021 18:21:48'!
+!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 24/Sep/2021 18:21:48'!
 test40CannotExtractWithoutIntervals
 	
 	| classToRefactor oldSelector |
@@ -28267,7 +28284,7 @@ test40CannotExtractWithoutIntervals
 	
 		! !
 
-!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 9/24/2021 20:32:04'!
+!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 24/Sep/2021 20:32:04'!
 test41DetectsAllRangesForLiteral
 	
 	| classToRefactor selector intervals |
@@ -28281,7 +28298,7 @@ test41DetectsAllRangesForLiteral
 
 	self assert: { (4 to: 5). (9 to: 10) } equals: intervals asArray.! !
 
-!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 9/24/2021 20:32:28'!
+!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 24/Sep/2021 20:32:28'!
 test42DoesNotMixesRangesForDifferentLiterals
 	
 	| classToRefactor selector intervals |
@@ -28295,7 +28312,7 @@ test42DoesNotMixesRangesForDifferentLiterals
 
 	self assert: { (4 to: 5) } equals: intervals asArray.! !
 
-!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 9/24/2021 20:32:48'!
+!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 24/Sep/2021 20:32:48'!
 test43DetectsRangesForEquivalentBlocks
 	
 	| classToRefactor selector intervals |
@@ -28309,7 +28326,7 @@ test43DetectsRangesForEquivalentBlocks
 
 	self assert: { (4 to: 7). (11 to: 16) } equals: intervals asArray.! !
 
-!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 9/24/2021 20:33:01'!
+!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 24/Sep/2021 20:33:01'!
 test44DetectsRangesForEquivalentMessageSends
 	
 	| classToRefactor selector intervals |
@@ -28323,7 +28340,7 @@ test44DetectsRangesForEquivalentMessageSends
 
 	self assert: { (4 to: 15). (19 to: 33) } equals: intervals asArray.! !
 
-!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 9/24/2021 20:34:32'!
+!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 24/Sep/2021 20:34:32'!
 test45DoesNotDetectEquiallySemanticBlocks
 	
 	| classToRefactor selector intervals |
@@ -28339,7 +28356,7 @@ test45DoesNotDetectEquiallySemanticBlocks
 
 	self assert: { (4 to: 13) } equals: intervals asArray.! !
 
-!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 12/6/2021 11:44:09'!
+!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 6/Dec/2021 11:44:09'!
 test46CanExtractMessageSendToClassWithValidParameters
 
 	| toExtract |
@@ -28350,42 +28367,42 @@ test46CanExtractMessageSendToClassWithValidParameters
 	
 	! !
 
-!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 12/6/2021 11:44:47'!
+!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 6/Dec/2021 11:44:47'!
 test47CanExtractEmptyBraceArray
 
 	self assertCanExtractAsParameter: '{}'! !
 
-!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 12/6/2021 11:46:33'!
+!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 6/Dec/2021 11:46:33'!
 test48CanExtractBraceArrayWithExtractableElements
 
 	self assertCanExtractAsParameter: '{1. {}. Array with: 1}'! !
 
-!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 12/6/2021 11:49:29'!
+!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 6/Dec/2021 11:49:29'!
 test49CannotExtractBraceArrayWithNoExtractableElements
 
 	self assertCannotExtractInvalidNodeAsParameter: '{1. self m2 }'! !
 
-!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 12/6/2021 12:05:47'!
+!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 6/Dec/2021 12:05:47'!
 test50CanExtractReferenceToGlobal
 
 	self assertCanExtractAsParameter: 'Smalltalk'! !
 
-!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 12/6/2021 12:05:01'!
+!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 6/Dec/2021 12:05:01'!
 test51CannotExtractNotExistingGlobalReference
 
 	self assertCannotExtractInvalidNodeAsParameter: '__Smalltalk__'! !
 
-!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 7/8/2024 09:35:25'!
+!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 8/Jul/2024 09:35:25'!
 test52CanExtractReferenceToInstVar
 
 	self assertCanExtractAsParameter: self instVarName ! !
 
-!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 7/8/2024 09:39:29'!
+!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 8/Jul/2024 09:39:29'!
 test53CanExtractReferenceToClassVar
 
 	self assertCanExtractAsParameter: self classVarName ! !
 
-!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 7/8/2024 11:26:06'!
+!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 8/Jul/2024 11:26:06'!
 test54CannotExtractInstVarWhenInLeftPartOfAssigment
 	
 	| classToRefactor oldSelector |
@@ -28407,7 +28424,7 @@ test54CannotExtractInstVarWhenInLeftPartOfAssigment
 	
 		! !
 
-!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 7/8/2024 12:13:57'!
+!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 8/Jul/2024 12:13:57'!
 test55CanExtractInstVarEvenIsLeftPartOfAssigmentOfOtherNode
 	
 	| classToRefactor oldSelector sourceCode |
@@ -28430,17 +28447,17 @@ test55CanExtractInstVarEvenIsLeftPartOfAssigmentOfOtherNode
 	
 		! !
 
-!ExtractAsParameterTest methodsFor: 'class factory' stamp: 'HAW 9/8/2021 22:00:32'!
+!ExtractAsParameterTest methodsFor: 'class factory' stamp: 'HAW 8/Sep/2021 22:00:32'!
 classToRefactorName
 	
 	^#ClassToIntroduceParameter! !
 
-!ExtractAsParameterTest methodsFor: 'class factory' stamp: 'HAW 7/8/2024 09:33:19'!
+!ExtractAsParameterTest methodsFor: 'class factory' stamp: 'HAW 8/Jul/2024 09:33:19'!
 classVarName
 	
 	^'ClassVar1'! !
 
-!ExtractAsParameterTest methodsFor: 'class factory' stamp: 'HAW 3/13/2025 13:59:28'!
+!ExtractAsParameterTest methodsFor: 'class factory' stamp: 'HAW 13/Mar/2025 13:59:28'!
 createDefaultClassToRefactor
 
 	^ self 
@@ -28449,29 +28466,29 @@ createDefaultClassToRefactor
 		instanceVariableNames: self instVarName 
 		classVariableNames: self classVarName! !
 
-!ExtractAsParameterTest methodsFor: 'class factory' stamp: 'HAW 7/8/2024 09:33:01'!
+!ExtractAsParameterTest methodsFor: 'class factory' stamp: 'HAW 8/Jul/2024 09:33:01'!
 instVarName
 	
 	^'iv1'! !
 
-!ExtractMethodApplierTest methodsFor: 'tests' stamp: 'HAW 7/19/2023 10:02:33'!
+!ExtractMethodApplierTest methodsFor: 'tests' stamp: 'HAW 19/Jul/2023 10:02:33'!
 test01InvalidMessageNameWhenKeywordWithoutParamenter
 
 	self assertSignals: ExtractMethodNewMethod invalidMethodNameError with: 'm1:' argumentNames: {'p1'} ! !
 
-!ExtractMethodApplierTest methodsFor: 'tests' stamp: 'HAW 7/19/2023 10:04:21'!
+!ExtractMethodApplierTest methodsFor: 'tests' stamp: 'HAW 19/Jul/2023 10:04:21'!
 test02InvalidMessageNameWhenMultipleParamentersBetweenKeywords
 
 	self assertSignals: ExtractMethodNewMethod invalidMethodNameError with: 'm1: a b m2: c' argumentNames: {'p1'. 'p2'}.
 	! !
 
-!ExtractMethodApplierTest methodsFor: 'tests' stamp: 'HAW 7/19/2023 10:05:24'!
+!ExtractMethodApplierTest methodsFor: 'tests' stamp: 'HAW 19/Jul/2023 10:05:24'!
 test03WrongNumberOfArgumentsWhenParsedArgumensAreNotTheSameAsUserEnteredArguments
 
 	self assertSignals: ExtractMethodNewMethod wrongNumberOfArgumentsGivenErrorMessage with: 'm1: a' argumentNames: {}.
 	! !
 
-!ExtractMethodApplierTest methodsFor: 'assertions' stamp: 'HAW 7/19/2023 10:03:49'!
+!ExtractMethodApplierTest methodsFor: 'assertions' stamp: 'HAW 19/Jul/2023 10:03:49'!
 assertSignals: anErrorMessage with: userAnswer argumentNames: argumentNames  
 
 	| argumentNodes |
@@ -28483,27 +28500,27 @@ assertSignals: anErrorMessage with: userAnswer argumentNames: argumentNames
 		raise: RefactoringError 
 		withMessageText: anErrorMessage ! !
 
-!ExtractMethodApplierTest methodsFor: 'object factory' stamp: 'HAW 7/19/2023 10:06:29'!
+!ExtractMethodApplierTest methodsFor: 'object factory' stamp: 'HAW 19/Jul/2023 10:06:29'!
 argumentNamed: anArgumentName
 
 	"The instance is not complete, but it is enoght for testing - Hernan"
 	^TempVariableNode new name: anArgumentName
 		! !
 
-!ExtractMethodTest methodsFor: 'assertions' stamp: 'RNG 9/28/2019 00:49:10'!
+!ExtractMethodTest methodsFor: 'assertions' stamp: 'RNG 28/Sep/2019 00:49:10'!
 assertClassHasDefined: aSelector withBody: newSourceCode
 
 	self
 		assert: newSourceCode
 		equals: (classToRefactor >> aSelector) sourceCode! !
 
-!ExtractMethodTest methodsFor: 'assertions' stamp: 'RNG 6/23/2019 18:30:02'!
+!ExtractMethodTest methodsFor: 'assertions' stamp: 'RNG 23/Jun/2019 18:30:02'!
 assertClassHasDefined: aSelector withBody: newSourceCode inCategory: aCategory
 
 	self assertClassHasDefined: aSelector withBody: newSourceCode.
 	self assert: aCategory equals: (classToRefactor >> aSelector) category! !
 
-!ExtractMethodTest methodsFor: 'assertions' stamp: 'HAW 7/18/2023 17:13:27'!
+!ExtractMethodTest methodsFor: 'assertions' stamp: 'HAW 18/Jul/2023 17:13:27'!
 assertExtracting: codeToExtract from: originalCode named: newMessage defines: newCode andUpdates: updatedCode
 
 	| originalSelector category |
@@ -28521,7 +28538,7 @@ assertExtracting: codeToExtract from: originalCode named: newMessage defines: ne
 		assertClassHasDefined: originalSelector withBody: updatedCode inCategory: category;
 		assertClassHasDefined: newMessage selector withBody: newCode inCategory: category! !
 
-!ExtractMethodTest methodsFor: 'assertions' stamp: 'pau 7/17/2023 18:25:23'!
+!ExtractMethodTest methodsFor: 'assertions' stamp: 'pau 17/Jul/2023 18:25:23'!
 assertExtracting: codeToExtract from: originalCode named: newMessage defines: newMethodCodeWithRenamedArg andUpdates: updatedCode withRenamedArguments: renamedArgs
 
 	| category originalSelector |
@@ -28539,7 +28556,7 @@ assertExtracting: codeToExtract from: originalCode named: newMessage defines: ne
 		assertClassHasDefined: originalSelector withBody: updatedCode inCategory: category;
 		assertClassHasDefined: newMessage selector withBody: newMethodCodeWithRenamedArg inCategory: category! !
 
-!ExtractMethodTest methodsFor: 'assertions' stamp: 'jmv 3/26/2024 12:55:29'!
+!ExtractMethodTest methodsFor: 'assertions' stamp: 'jmv 26/Mar/2024 12:55:29'!
 creationWithMessage: aMessage onInterval: anIntervalToExtract ofMethod: methodToExtractCodeFrom failsWith: aRefactoringExceptionMessageEvaluationBlock errorCondition: anExceptionHandlingCondition
 
 	self
@@ -28553,7 +28570,7 @@ creationWithMessage: aMessage onInterval: anIntervalToExtract ofMethod: methodTo
 		raise: anExceptionHandlingCondition
 		withMessageText: aRefactoringExceptionMessageEvaluationBlock! !
 
-!ExtractMethodTest methodsFor: 'assertions' stamp: 'RNG 5/25/2020 01:13:01'!
+!ExtractMethodTest methodsFor: 'assertions' stamp: 'RNG 25/May/2020 01:13:01'!
 creationWithSelectorNamed: aSelectorName onInterval: anIntervalToExtract ofMethod: aMethodToRefactor failsWith: aRefactoringErrorMessageEvaluationBlock errorCondition: anExceptionHandlingCondition 
 
 	self
@@ -28563,7 +28580,7 @@ creationWithSelectorNamed: aSelectorName onInterval: anIntervalToExtract ofMetho
 		failsWith: aRefactoringErrorMessageEvaluationBlock
 		errorCondition: anExceptionHandlingCondition! !
 
-!ExtractMethodTest methodsFor: 'assertions' stamp: 'RNG 5/25/2020 01:09:14'!
+!ExtractMethodTest methodsFor: 'assertions' stamp: 'RNG 25/May/2020 01:09:14'!
 tryingToExtract: someCode from: anExistingSourceCode failsWith: aRefactoringErrorMessageEvaluationBlock
 
 	| existingSelector |
@@ -28576,7 +28593,7 @@ tryingToExtract: someCode from: anExistingSourceCode failsWith: aRefactoringErro
 		failsWith: aRefactoringErrorMessageEvaluationBlock
 		errorCondition: self refactoringError! !
 
-!ExtractMethodTest methodsFor: 'assertions' stamp: 'RNG 5/25/2020 01:11:49'!
+!ExtractMethodTest methodsFor: 'assertions' stamp: 'RNG 25/May/2020 01:11:49'!
 tryingToExtract: someCode from: anExistingSourceCode using: aMessage failsWith: aRefactoringErrorMessageEvaluationBlock
 
 	| existingSelector |
@@ -28589,7 +28606,7 @@ tryingToExtract: someCode from: anExistingSourceCode using: aMessage failsWith: 
 		failsWith: aRefactoringErrorMessageEvaluationBlock
 		errorCondition: self refactoringError! !
 
-!ExtractMethodTest methodsFor: 'assertions' stamp: 'RNG 5/25/2020 01:12:03'!
+!ExtractMethodTest methodsFor: 'assertions' stamp: 'RNG 25/May/2020 01:12:03'!
 tryingToExtract: someCode from: anExistingSourceCode using: aMessage raisesWarning: aRefactoringWarningMessageEvaluationBlock
 
 	| existingSelector |
@@ -28602,7 +28619,7 @@ tryingToExtract: someCode from: anExistingSourceCode using: aMessage raisesWarni
 		failsWith: aRefactoringWarningMessageEvaluationBlock
 		errorCondition: self refactoringWarning! !
 
-!ExtractMethodTest methodsFor: 'assertions' stamp: 'RNG 5/25/2020 01:09:47'!
+!ExtractMethodTest methodsFor: 'assertions' stamp: 'RNG 25/May/2020 01:09:47'!
 tryingToExtractOnInterval: anIntervalToExtract failsWith: aRefactoringErrorMessageEvaluationBlock
 
 	self
@@ -28612,7 +28629,7 @@ tryingToExtractOnInterval: anIntervalToExtract failsWith: aRefactoringErrorMessa
 		failsWith: aRefactoringErrorMessageEvaluationBlock
 		errorCondition: self refactoringError! !
 
-!ExtractMethodTest methodsFor: 'assertions' stamp: 'RNG 5/25/2020 01:10:02'!
+!ExtractMethodTest methodsFor: 'assertions' stamp: 'RNG 25/May/2020 01:10:02'!
 tryingToExtractWithSelectorNamed: aSelectorName failsWith: aRefactoringErrorMessageEvaluationBlock
 
 	| originalSource selectorOfOriginalMethod |
@@ -28626,7 +28643,7 @@ tryingToExtractWithSelectorNamed: aSelectorName failsWith: aRefactoringErrorMess
 		failsWith: aRefactoringErrorMessageEvaluationBlock
 		errorCondition: self refactoringError! !
 
-!ExtractMethodTest methodsFor: 'assertions' stamp: 'RNG 5/25/2020 01:08:00'!
+!ExtractMethodTest methodsFor: 'assertions' stamp: 'RNG 25/May/2020 01:08:00'!
 tryingToExtractWithSelectorNamed: aSelectorName raisesWarning: aRefactoringWarningMessageEvaluationBlock
 
 	| originalSource selectorOfOriginalMethod |
@@ -28641,27 +28658,27 @@ tryingToExtractWithSelectorNamed: aSelectorName raisesWarning: aRefactoringWarni
 		errorCondition: self refactoringWarning
 		! !
 
-!ExtractMethodTest methodsFor: 'class factory' stamp: 'RNG 4/20/2019 21:31:05'!
+!ExtractMethodTest methodsFor: 'class factory' stamp: 'RNG 20/Apr/2019 21:31:05'!
 classToRefactorName
 
 	^ #ClassToExtractMethod! !
 
-!ExtractMethodTest methodsFor: 'method and source code helpers' stamp: 'RNG 5/12/2019 23:21:30'!
+!ExtractMethodTest methodsFor: 'method and source code helpers' stamp: 'RNG 12/May/2019 23:21:30'!
 compileMethodToExtractCodeFrom
 
 	classToRefactor compile: self sourceCodeOfMethodToExtractCodeFrom! !
 
-!ExtractMethodTest methodsFor: 'method and source code helpers' stamp: 'RNG 5/12/2019 23:22:01'!
+!ExtractMethodTest methodsFor: 'method and source code helpers' stamp: 'RNG 12/May/2019 23:22:01'!
 methodToExtractCodeFrom
 
 	^ classToRefactor >> self selectorOfMethodToExtractCodeFrom! !
 
-!ExtractMethodTest methodsFor: 'method and source code helpers' stamp: 'RNG 5/12/2019 23:25:05'!
+!ExtractMethodTest methodsFor: 'method and source code helpers' stamp: 'RNG 12/May/2019 23:25:05'!
 selectorOfMethodToExtractCodeFrom
 
 	^ #mExtractMethodExample:! !
 
-!ExtractMethodTest methodsFor: 'method and source code helpers' stamp: 'RNG 9/8/2019 18:40:40'!
+!ExtractMethodTest methodsFor: 'method and source code helpers' stamp: 'RNG 8/Sep/2019 18:40:40'!
 sourceCodeOfMethodToExtractCodeFrom
 
 	^ self selectorOfMethodToExtractCodeFrom, ' anArgument
@@ -28676,21 +28693,21 @@ sourceCodeOfMethodToExtractCodeFrom
 	localVar := #($x $y $z) size and: [ (9) * 3 ].
 	^ localVar + ((4))'! !
 
-!ExtractMethodTest methodsFor: 'refactoring helpers' stamp: 'RNG 5/8/2020 21:06:17'!
+!ExtractMethodTest methodsFor: 'refactoring helpers' stamp: 'RNG 8/May/2020 21:06:17'!
 intervalOf: aPieceOfSourceCode locatedIn: sourceCode
 
 	| interval |
 	interval _ sourceCode intervalOfSubCollection: aPieceOfSourceCode.
 	^ (interval first to: interval last - 1) asSourceCodeInterval! !
 
-!ExtractMethodTest methodsFor: 'set up' stamp: 'HAW 8/28/2021 17:39:00'!
+!ExtractMethodTest methodsFor: 'set up' stamp: 'HAW 28/Aug/2021 17:39:00'!
 setUp
 
 	super setUp.
 	classToRefactor _ self createClassNamed: self classToRefactorName.
 	! !
 
-!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'RNG 1/12/2020 21:08:55'!
+!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'RNG 12/Jan/2020 21:08:55'!
 test09ExtractingALiteralCreatesANewMethodAndChangesExistingCodeToCallThatNewMethod
 
 	| codeToExtract newMethodCode originalCode updatedCode |
@@ -28705,7 +28722,7 @@ test09ExtractingALiteralCreatesANewMethodAndChangesExistingCodeToCallThatNewMeth
 		assertExtracting: codeToExtract from: originalCode named: (Message selector: #m2)
 		defines: newMethodCode andUpdates: updatedCode! !
 
-!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'RNG 1/12/2020 21:08:55'!
+!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'RNG 12/Jan/2020 21:08:55'!
 test15ExtractingAListOfStatementsCreatesANewMethodWithoutReturn
 
 	| codeToExtract newMethodCode originalCode updatedCode |
@@ -28721,7 +28738,7 @@ test15ExtractingAListOfStatementsCreatesANewMethodWithoutReturn
 		assertExtracting: codeToExtract from: originalCode named: (Message selector: #m2)
 		defines: newMethodCode andUpdates: updatedCode! !
 
-!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'RNG 1/12/2020 21:08:55'!
+!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'RNG 12/Jan/2020 21:08:55'!
 test17AStringContainingTheReturnCharacterCanBeExtracted
 	"this is to make sure the return is found using AST logic, not by text"
 
@@ -28737,7 +28754,7 @@ test17AStringContainingTheReturnCharacterCanBeExtracted
 		assertExtracting: codeToExtract from: originalCode named: (Message selector: #m2)
 		defines: newMethodCode andUpdates: updatedCode! !
 
-!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'RNG 1/12/2020 21:08:55'!
+!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'RNG 12/Jan/2020 21:08:55'!
 test18ExtractingAListOfStatementsIncludingDotsRemovesThemAndContinuesWithMethodExtraction
 
 	| codeToExtract newMethodCode originalCode updatedCode |
@@ -28758,7 +28775,7 @@ test18ExtractingAListOfStatementsIncludingDotsRemovesThemAndContinuesWithMethodE
 		assertExtracting: codeToExtract from: originalCode named: (Message selector: #m2)
 		defines: newMethodCode andUpdates: updatedCode! !
 
-!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'RNG 1/12/2020 21:08:55'!
+!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'RNG 12/Jan/2020 21:08:55'!
 test19ASelectionContainingAdditionalParenthesesAtTheBeginningAndOrEndCanBeExtracted
 
 	| codeToExtract newMethodCode originalCode updatedCode |
@@ -28773,7 +28790,7 @@ test19ASelectionContainingAdditionalParenthesesAtTheBeginningAndOrEndCanBeExtrac
 		assertExtracting: codeToExtract from: originalCode named: (Message selector: #m2)
 		defines: newMethodCode andUpdates: updatedCode! !
 
-!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'RNG 1/12/2020 21:08:55'!
+!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'RNG 12/Jan/2020 21:08:55'!
 test20ASelectionContainingALocalVariableIsParameterizedOnTheExtractedMessage
 
 	| codeToExtract newMethodCode originalCode updatedCode |
@@ -28788,7 +28805,7 @@ test20ASelectionContainingALocalVariableIsParameterizedOnTheExtractedMessage
 		assertExtracting: codeToExtract from: originalCode named: (Message selector: #m2: arguments: #('local'))
 		defines: newMethodCode andUpdates: updatedCode! !
 
-!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'RNG 1/12/2020 21:08:55'!
+!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'RNG 12/Jan/2020 21:08:55'!
 test21ASelectionContainingAdditionalParenthesesOnOneSideCanBeExtractedAndItIsNotTrimmed
 
 	| codeToExtract newMethodCode originalCode updatedCode |
@@ -28803,7 +28820,7 @@ test21ASelectionContainingAdditionalParenthesesOnOneSideCanBeExtractedAndItIsNot
 		assertExtracting: codeToExtract from: originalCode named: (Message selector: #m2)
 		defines: newMethodCode andUpdates: updatedCode! !
 
-!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'RNG 1/12/2020 21:08:55'!
+!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'RNG 12/Jan/2020 21:08:55'!
 test22ItIsPossibleToExtractTheLastExpressionOfAMethod
 
 	| codeToExtract newMethodCode originalCode updatedCode |
@@ -28818,7 +28835,7 @@ test22ItIsPossibleToExtractTheLastExpressionOfAMethod
 		assertExtracting: codeToExtract from: originalCode named: (Message selector: #m2: arguments: #('localVar'))
 		defines: newMethodCode andUpdates: updatedCode! !
 
-!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'RNG 1/12/2020 21:08:55'!
+!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'RNG 12/Jan/2020 21:08:55'!
 test26ItIsPossibleToExtractAnEntireBlockIncludingALocalAssignment
 
 	| codeToExtract newMethodCode originalCode updatedCode |
@@ -28833,7 +28850,7 @@ test26ItIsPossibleToExtractAnEntireBlockIncludingALocalAssignment
 		assertExtracting: codeToExtract from: originalCode named: (Message selector: #m2)
 		defines: newMethodCode andUpdates: updatedCode! !
 
-!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'RNG 1/12/2020 21:08:55'!
+!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'RNG 12/Jan/2020 21:08:55'!
 test27ItIsPossibleToExtractExpressionsWithOptimizedSelectors
 
 	| codeToExtract newMethodCode originalCode updatedCode |
@@ -28848,7 +28865,7 @@ test27ItIsPossibleToExtractExpressionsWithOptimizedSelectors
 		assertExtracting: codeToExtract from: originalCode named: (Message selector: #m2)
 		defines: newMethodCode andUpdates: updatedCode! !
 
-!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'RNG 1/12/2020 21:08:55'!
+!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'RNG 12/Jan/2020 21:08:55'!
 test29ExtractingABinaryExpressionToAKeywordMessageIntroducesParenthesesToNotBreakOriginalPrecedence
 
 	| codeToExtract newMethodCode originalCode updatedCode |
@@ -28863,7 +28880,7 @@ test29ExtractingABinaryExpressionToAKeywordMessageIntroducesParenthesesToNotBrea
 		assertExtracting: codeToExtract from: originalCode named: (Message selector: #m2: arguments: #('arg'))
 		defines: newMethodCode andUpdates: updatedCode! !
 
-!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'RNG 1/12/2020 21:11:36'!
+!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'RNG 12/Jan/2020 21:11:36'!
 test30ItIsPossibleToExtractAQuotedExpression
 
 	| codeToExtract newMethodCode originalCode updatedCode |
@@ -28878,7 +28895,7 @@ test30ItIsPossibleToExtractAQuotedExpression
 		assertExtracting: codeToExtract from: originalCode named: (Message selector: #m2)
 		defines: newMethodCode andUpdates: updatedCode! !
 
-!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'HAW 3/30/2020 16:16:37'!
+!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'HAW 30/Mar/2020 16:16:37'!
 test31ItIsPossibleToExtractExpressionsWithOptimizedSelectorsWhereTheReceiverIsNotASimpleLiteral
 
 	| codeToExtract newMethodCode originalCode updatedCode |
@@ -28893,7 +28910,7 @@ test31ItIsPossibleToExtractExpressionsWithOptimizedSelectorsWhereTheReceiverIsNo
 		assertExtracting: codeToExtract from: originalCode named: (Message selector: #m2)
 		defines: newMethodCode andUpdates: updatedCode! !
 
-!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'RNG 4/5/2020 23:19:13'!
+!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'RNG 5/Apr/2020 23:19:13'!
 test32ItIsPossibleToExtractATemporaryDeclarationOfABlockIfItIsNotUsedOutsideOfSelectionInterval
 
 	| codeToExtract newMethodCode originalCode updatedCode |
@@ -28908,7 +28925,7 @@ test32ItIsPossibleToExtractATemporaryDeclarationOfABlockIfItIsNotUsedOutsideOfSe
 		assertExtracting: codeToExtract from: originalCode named: (Message selector: #m2)
 		defines: newMethodCode andUpdates: updatedCode! !
 
-!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'RNG 4/5/2020 23:19:23'!
+!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'RNG 5/Apr/2020 23:19:23'!
 test33ItIsPossibleToExtractATemporaryDeclarationIfItIsNotUsedOutsideOfSelectionInterval
 
 	| codeToExtract newMethodCode originalCode updatedCode |
@@ -28923,7 +28940,7 @@ test33ItIsPossibleToExtractATemporaryDeclarationIfItIsNotUsedOutsideOfSelectionI
 		assertExtracting: codeToExtract from: originalCode named: (Message selector: #m2)
 		defines: newMethodCode andUpdates: updatedCode! !
 
-!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'RNG 4/14/2020 20:52:00'!
+!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'RNG 14/Apr/2020 20:52:00'!
 test36ItIsPossibleToExtractACascadeExpression
 
 	| codeToExtract newMethodCode originalCode updatedCode |
@@ -28938,7 +28955,7 @@ test36ItIsPossibleToExtractACascadeExpression
 		assertExtracting: codeToExtract from: originalCode named: (Message selector: #m2)
 		defines: newMethodCode andUpdates: updatedCode! !
 
-!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'RNG 4/24/2020 20:32:48'!
+!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'RNG 24/Apr/2020 20:32:48'!
 test37ItIsPossibleATempDeclarationAlongWithABlock
 
 	| codeToExtract newMethodCode originalCode updatedCode |
@@ -28953,7 +28970,7 @@ test37ItIsPossibleATempDeclarationAlongWithABlock
 		assertExtracting: codeToExtract from: originalCode named: (Message selector: #m2)
 		defines: newMethodCode andUpdates: updatedCode! !
 
-!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'RNG 5/4/2020 20:08:01'!
+!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'RNG 4/May/2020 20:08:01'!
 test38ItIsPossibleToExtractCodeThatContainsMultipleParenthesisWithSpacesBetweenThem
 
 	| codeToExtract newMethodCode originalCode updatedCode |
@@ -28968,7 +28985,7 @@ test38ItIsPossibleToExtractCodeThatContainsMultipleParenthesisWithSpacesBetweenT
 		assertExtracting: codeToExtract from: originalCode named: (Message selector: #m2)
 		defines: newMethodCode andUpdates: updatedCode! !
 
-!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'HAW 9/22/2021 15:01:48'!
+!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'HAW 22/Sep/2021 15:01:48'!
 test44CanExtractManyStatementsInsideABlock
 
 	| codeToExtract newMethodCode originalCode updatedCode |
@@ -28986,7 +29003,7 @@ test44CanExtractManyStatementsInsideABlock
 		assertExtracting: codeToExtract from: originalCode named: (Message selector: #m2)
 		defines: newMethodCode andUpdates: updatedCode! !
 
-!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'HAW 10/18/2021 18:42:26'!
+!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'HAW 18/Oct/2021 18:42:26'!
 test45CanExtractCodeWithMoreThanOneBlockAndABlockAtTheEndInsideAnotherBlock
 
 	| codeToExtract newMethodCode originalCode updatedCode |
@@ -29006,7 +29023,7 @@ test45CanExtractCodeWithMoreThanOneBlockAndABlockAtTheEndInsideAnotherBlock
 		assertExtracting: codeToExtract from: originalCode named: (Message selector: #m4)
 		defines: newMethodCode andUpdates: updatedCode! !
 
-!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'HAW 7/19/2023 12:29:27'!
+!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'HAW 19/Jul/2023 12:29:27'!
 test46CanModifyArgumentsNamesInExtractedMethod
 
 	| codeToExtract newMethodCodeWithRenamedArg originalCode updatedCode newMessage |
@@ -29031,7 +29048,7 @@ test46CanModifyArgumentsNamesInExtractedMethod
 		withRenamedArguments: (Dictionary with:'arg'->'argModified' ). 
 	! !
 
-!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'HAW 7/19/2023 12:32:51'!
+!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'HAW 19/Jul/2023 12:32:51'!
 test47OnlyModifiedArgumentsNamesAreModifiedInExtractedMethod
 
 	| codeToExtract newMethodCodeWithRenamedArg originalCode updatedCode newMessage |
@@ -29056,7 +29073,7 @@ test47OnlyModifiedArgumentsNamesAreModifiedInExtractedMethod
 	
 ! !
 
-!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'HAW 7/25/2023 17:39:33'!
+!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'HAW 25/Jul/2023 17:39:33'!
 test49CanExtractFromOptimizedMessageSends
 
 	| codeToExtract newMethodCodeWithRenamedArg originalCode updatedCode newMessage |
@@ -29078,21 +29095,21 @@ test49CanExtractFromOptimizedMessageSends
 	
 ! !
 
-!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'RNG 7/12/2020 19:13:15'!
+!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'RNG 12/Jul/2020 19:13:15'!
 test01NewSelectorShouldNotBeEmpty
 
 	self
 		tryingToExtractWithSelectorNamed: #''
 		failsWith: [ NewSelectorPrecondition newSelectorCanNotBeEmptyErrorMessage ]! !
 
-!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'RNG 7/12/2020 19:13:15'!
+!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'RNG 12/Jul/2020 19:13:15'!
 test02NewSelectorShouldNotContainSeparators
 
 	self
 		tryingToExtractWithSelectorNamed: #'my selector'
 		failsWith: [ NewSelectorPrecondition newSelectorCanNotContainSeparatorsErrorMessage ]! !
 
-!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'HAW 8/28/2021 17:40:41'!
+!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'HAW 28/Aug/2021 17:40:41'!
 test03ExtractingToSelectorAlreadyDefinedInTheClassRaisesAWarning
 
 	self compileMethodToExtractCodeFrom.
@@ -29103,21 +29120,21 @@ test03ExtractingToSelectorAlreadyDefinedInTheClassRaisesAWarning
 				warningMessageFor: self selectorOfMethodToExtractCodeFrom
 				isAlreadyDefinedIn: classToRefactor ]! !
 
-!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'RNG 7/12/2020 19:13:15'!
+!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'RNG 12/Jul/2020 19:13:15'!
 test04NewSelectorShouldNotStartWithANumber
 
 	self
 		tryingToExtractWithSelectorNamed: #'2selector'
 		failsWith: [ NewSelectorPrecondition invalidStartingCharacterOfNewSelectorErrorMessage ]! !
 
-!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'RNG 7/12/2020 19:13:15'!
+!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'RNG 12/Jul/2020 19:13:15'!
 test05NewUnarySelectorShouldNotStartWithASymbol
 
 	self
 		tryingToExtractWithSelectorNamed: #-
 		failsWith: [ NewSelectorPrecondition invalidStartingCharacterOfNewSelectorErrorMessage ]! !
 
-!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'HAW 9/4/2021 21:25:24'!
+!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'HAW 4/Sep/2021 21:25:24'!
 test06IntervalToExtractIsNotBeforeMethodSourceCodeBoundaries
 
 	self compileMethodToExtractCodeFrom.
@@ -29125,7 +29142,7 @@ test06IntervalToExtractIsNotBeforeMethodSourceCodeBoundaries
 		tryingToExtractOnInterval: (-1 to: 2) asSourceCodeInterval
 		failsWith: [ ExtractMethodNewMethod outOfBoundsSelectionErrorMessage ]! !
 
-!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'HAW 9/4/2021 21:25:40'!
+!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'HAW 4/Sep/2021 21:25:40'!
 test07IntervalToExtractIsNotAfterMethodSourceCodeBoundaries
 
 	self compileMethodToExtractCodeFrom.
@@ -29133,7 +29150,7 @@ test07IntervalToExtractIsNotAfterMethodSourceCodeBoundaries
 		tryingToExtractOnInterval: (1 to: self sourceCodeOfMethodToExtractCodeFrom size + 2) asSourceCodeInterval
 		failsWith: [ ExtractMethodNewMethod outOfBoundsSelectionErrorMessage ]! !
 
-!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'RNG 5/24/2020 21:51:01'!
+!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'RNG 24/May/2020 21:51:01'!
 test08IntervalToExtractShouldNotContainAReturnExpression
 
 	self
@@ -29141,7 +29158,7 @@ test08IntervalToExtractShouldNotContainAReturnExpression
 		from: 'm1 ^ localVar + ((4))'
 		failsWith: [ SourceCodeOfMethodToBeExtractedPrecondition errorMessageForSourceCodeIncludingAReturnStatement ]! !
 
-!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'RNG 5/25/2020 00:48:14'!
+!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'RNG 25/May/2020 00:48:14'!
 test10IntervalToExtractDoesNotContainsPartOfTheOriginalSelector
 
 	self
@@ -29149,7 +29166,7 @@ test10IntervalToExtractDoesNotContainsPartOfTheOriginalSelector
 		from: 'm1 ^ 8'
 		failsWith: [ SourceCodeOfMethodToBeExtractedPrecondition errorMessageForSourceCodeContainingInvalidExpression ]! !
 
-!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'RNG 5/24/2020 22:55:57'!
+!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'RNG 24/May/2020 22:55:57'!
 test11IntervalToExtractDoesNotContainsPartOfLocalVariablesDefinition
 
 	self
@@ -29157,7 +29174,7 @@ test11IntervalToExtractDoesNotContainsPartOfLocalVariablesDefinition
 		from: 'm1 | localVar | ^ localVar + 3'
 		failsWith: [ SourceCodeOfMethodToBeExtractedPrecondition errorMessageForExtractingTemporaryVariablesDefinition ]! !
 
-!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'RNG 5/25/2020 00:48:14'!
+!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'RNG 25/May/2020 00:48:14'!
 test12IntervalToExtractDoesNotContainsPartOfPragmasDefinition
 
 	self
@@ -29165,7 +29182,7 @@ test12IntervalToExtractDoesNotContainsPartOfPragmasDefinition
 		from: 'm1 <annoyingPragma>'
 		failsWith: [ SourceCodeOfMethodToBeExtractedPrecondition errorMessageForSourceCodeContainingInvalidExpression ]! !
 
-!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'RNG 5/25/2020 00:48:14'!
+!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'RNG 25/May/2020 00:48:14'!
 test13IntervalToExtractShouldBeAValidSmalltalkExpression
 
 	self
@@ -29173,7 +29190,7 @@ test13IntervalToExtractShouldBeAValidSmalltalkExpression
 		from: 'm1 ^ 3 + ((4))'
 		failsWith: [ SourceCodeOfMethodToBeExtractedPrecondition errorMessageForSourceCodeContainingInvalidExpression ]! !
 
-!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'HAW 8/28/2021 17:41:13'!
+!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'HAW 28/Aug/2021 17:41:13'!
 test14ItIsNotPossibleToExtractTheLeftSideOfAnAssignment
 
 	| firstOccurrence secondOccurrence intervalToExtract |
@@ -29188,7 +29205,7 @@ test14ItIsNotPossibleToExtractTheLeftSideOfAnAssignment
 		tryingToExtractOnInterval: intervalToExtract asSourceCodeInterval
 		failsWith: [ SourceCodeOfMethodToBeExtractedPrecondition errorMessageForExtractingLeftSideOfAssignment ]! !
 
-!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'RNG 5/25/2020 00:48:13'!
+!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'RNG 25/May/2020 00:48:13'!
 test16CanNotExtractPartOfALiteral
 
 	self
@@ -29196,7 +29213,7 @@ test16CanNotExtractPartOfALiteral
 		from: 'm1 ^ ''hey true'''
 		failsWith: [ SourceCodeOfMethodToBeExtractedPrecondition errorMessageForSourceCodeContainingInvalidExpression ]! !
 
-!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'HAW 9/4/2021 21:26:00'!
+!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'HAW 4/Sep/2021 21:26:00'!
 test23CanNotExtractWithAnInvalidInterval
 
 	self compileMethodToExtractCodeFrom.
@@ -29204,7 +29221,7 @@ test23CanNotExtractWithAnInvalidInterval
 		tryingToExtractOnInterval: (10 to: 9) asSourceCodeInterval
 		failsWith: [ ExtractMethodNewMethod noSelectionErrorMessage ]! !
 
-!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'RNG 5/25/2020 00:26:46'!
+!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'RNG 25/May/2020 00:26:46'!
 test24ItIsNotPossibleToExtractAnIntervalIncludingATemporaryAssignmentExpression
 
 	self
@@ -29212,14 +29229,14 @@ test24ItIsNotPossibleToExtractAnIntervalIncludingATemporaryAssignmentExpression
 		from: 'm1 | localVar | localVar _ 8'
 		failsWith: [ SourceCodeOfMethodToBeExtractedPrecondition errorMessageForExtractedTemporaryAssignmentWithoutItsDeclaration ]! !
 
-!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'RNG 7/12/2020 19:13:15'!
+!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'RNG 12/Jul/2020 19:13:15'!
 test25NewUnarySelectorShouldNotContainInvalidCharacters
 
 	self
 		tryingToExtractWithSelectorNamed: 'hola)' asSymbol
 		failsWith: [ NewSelectorPrecondition invalidCharacterInsideNewSelectorErrorMessage ]! !
 
-!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'RNG 5/25/2020 00:30:44'!
+!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'RNG 25/May/2020 00:30:44'!
 test28ItIsNotPossibleToExtractALocalVariableInsideOfItsDeclaration
 
 	self
@@ -29227,7 +29244,7 @@ test28ItIsNotPossibleToExtractALocalVariableInsideOfItsDeclaration
 		from: 'm1 | localVar | ^ #foo'
 		failsWith: [ SourceCodeOfMethodToBeExtractedPrecondition errorMessageForExtractingTemporaryVariablesDefinition ]! !
 
-!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'HAW 9/4/2021 21:26:21'!
+!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'HAW 4/Sep/2021 21:26:21'!
 test34TryingToExtractAMethodWithLessArgumentsThanNeededFails
 
 	self
@@ -29236,7 +29253,7 @@ test34TryingToExtractAMethodWithLessArgumentsThanNeededFails
 		using: (Message selector: #m1: arguments: #('localVar1'))
 		failsWith: [ ExtractMethodNewMethod wrongNumberOfArgumentsGivenErrorMessage ]! !
 
-!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'HAW 9/4/2021 21:26:39'!
+!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'HAW 4/Sep/2021 21:26:39'!
 test35TryingToExtractAMethodWithMoreArgumentsThanNeededFails
 
 	self
@@ -29245,7 +29262,7 @@ test35TryingToExtractAMethodWithMoreArgumentsThanNeededFails
 		using: (Message selector: #m1:m2:m3: arguments: #('localVar1' 'localVar2' 'localVar3'))
 		failsWith: [ ExtractMethodNewMethod wrongNumberOfArgumentsGivenErrorMessage ]! !
 
-!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'RNG 7/12/2020 19:13:15'!
+!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'RNG 12/Jul/2020 19:13:15'!
 test39TryingToExtractToAMethodThatExistsInASuperclassRaisesAWarning
 
 	self
@@ -29254,7 +29271,7 @@ test39TryingToExtractToAMethodThatExistsInASuperclassRaisesAWarning
 		using: (Message selector: #yourself)
 		raisesWarning: [ NewSelectorPrecondition warningMessageFor: #yourself isAlreadyDefinedIn: Object ]! !
 
-!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'RNG 5/25/2020 00:37:19'!
+!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'RNG 25/May/2020 00:37:19'!
 test40CanNotExtractTemporaryAssignmentWithDeclarationIfTheVariableIsUsedOutsideOfSelectionInterval
 
 	self
@@ -29262,7 +29279,7 @@ test40CanNotExtractTemporaryAssignmentWithDeclarationIfTheVariableIsUsedOutsideO
 		from: 'm1 |var| var _ 42. ^ var'
 		failsWith: [ SourceCodeOfMethodToBeExtractedPrecondition errorMessageForTemporaryAssignmentWithUsagesOutsideOfSelectionInterval ]! !
 
-!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'RNG 7/12/2020 15:35:08'!
+!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'RNG 12/Jul/2020 15:35:08'!
 test41CannotExtractPartOfMethodSignature
 
 	self
@@ -29271,7 +29288,7 @@ test41CannotExtractPartOfMethodSignature
 		using: (Message selector: #m2: arguments: #('arg'))
 		failsWith: [ SourceCodeOfMethodToBeExtractedPrecondition errorMessageForExtractingPartOfMethodSignature ]! !
 
-!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'HAW 7/19/2023 12:07:09'!
+!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'HAW 19/Jul/2023 12:07:09'!
 test48NewSelectorMustBeUnaryWhenNoArguments
 
 	self
@@ -29280,7 +29297,7 @@ test48NewSelectorMustBeUnaryWhenNoArguments
 		using: (Message selector: #m2: arguments: #())
 		failsWith: [ ExtractMethodNewMethod wrongNumberOfArgumentsGivenErrorMessage ]! !
 
-!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'HAW 11/2/2024 10:07:45'!
+!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'HAW 2/Nov/2024 10:07:45'!
 test53NotWorkingCase_IncompleteCascadeMessage
 
 	self shouldFail: [
@@ -29290,7 +29307,7 @@ test53NotWorkingCase_IncompleteCascadeMessage
 			failsWith: [ SourceCodeOfMethodToBeExtractedPrecondition errorMessageForSourceCodeContainingInvalidExpression ]
 	]! !
 
-!ExtractMethodTest methodsFor: 'tests - many repetitions' stamp: 'HAW 7/18/2023 17:13:57'!
+!ExtractMethodTest methodsFor: 'tests - many repetitions' stamp: 'HAW 18/Jul/2023 17:13:57'!
 test42ExtractsManyRepetitionsOnSameMethod
 
 	| sourceMethodName finder sourceMethod extractMethod intervalToExtract newMessage |
@@ -29321,7 +29338,7 @@ test42ExtractsManyRepetitionsOnSameMethod
 	self assert: 'm1 self m2. self m2' equals: (classToRefactor >> #m1) sourceCode.
 	! !
 
-!ExtractMethodTest methodsFor: 'tests - many repetitions' stamp: 'HAW 7/18/2023 17:14:14'!
+!ExtractMethodTest methodsFor: 'tests - many repetitions' stamp: 'HAW 18/Jul/2023 17:14:14'!
 test43ExtractsRepetitionsOnMoreThanOneMethod
 
 	| sourceMethodName finder sourceMethod extractMethod intervalToExtract newMessage |
@@ -29350,7 +29367,7 @@ test43ExtractsRepetitionsOnMoreThanOneMethod
 	self assert: 'm1b 100+self m2' equals: (classToRefactor >> #m1b) sourceCode.
 	! !
 
-!ExtractMethodTest methodsFor: 'tests - many repetitions' stamp: 'MEGL 10/9/2024 00:11:26'!
+!ExtractMethodTest methodsFor: 'tests - many repetitions' stamp: 'MEGL 9/Oct/2024 00:11:26'!
 test50ExtractsManyRepetitionsWithMultipleStatementsOnSameMethod
 
 	| sourceMethodName finder sourceMethod extractMethod intervalToExtract newMessage |
@@ -29381,7 +29398,7 @@ test50ExtractsManyRepetitionsWithMultipleStatementsOnSameMethod
 	self assert: 'm1 self m2. true ifTrue: [ self m2]' equals: (classToRefactor >> #m1) sourceCode.
 	! !
 
-!ExtractMethodTest methodsFor: 'tests - many repetitions' stamp: 'MEGL 10/9/2024 10:41:54'!
+!ExtractMethodTest methodsFor: 'tests - many repetitions' stamp: 'MEGL 9/Oct/2024 10:41:54'!
 test51ExtractsManyRepetitionsWithMoreThanTwoStatementsOnSameMethod
 
 	| sourceMethodName finder sourceMethod extractMethod intervalToExtract newMessage |
@@ -29412,18 +29429,18 @@ test51ExtractsManyRepetitionsWithMoreThanTwoStatementsOnSameMethod
 	self assert: 'm1 self m2. true ifTrue: [ self m2]' equals: (classToRefactor >> #m1) sourceCode.
 	! !
 
-!ExtractToTemporaryTest methodsFor: 'class factory' stamp: 'RNG 2/22/2020 21:20:46'!
+!ExtractToTemporaryTest methodsFor: 'class factory' stamp: 'RNG 22/Feb/2020 21:20:46'!
 classToRefactorName
 
 	^ #ClassToDoExtractTemporary! !
 
-!ExtractToTemporaryTest methodsFor: 'set up' stamp: 'RNG 3/24/2020 22:30:57'!
+!ExtractToTemporaryTest methodsFor: 'set up' stamp: 'RNG 24/Mar/2020 22:30:57'!
 setUp
 
 	super setUp.
 	classToRefactor _ self createClassNamed: self classToRefactorName! !
 
-!ExtractToTemporaryTest methodsFor: 'test helpers' stamp: 'jmv 4/26/2023 15:10:28'!
+!ExtractToTemporaryTest methodsFor: 'test helpers' stamp: 'jmv 26/Apr/2023 15:10:28'!
 assertExtracting: codeToExtract from: sourceCodeOfMethodToRefactor toVariableNamed: newVariable updatesTo: sourceCodeAfterRefactoring
 
 	| intervalToExtract methodToRefactor actualSourceCodeAfterRefactoring |
@@ -29435,14 +29452,14 @@ assertExtracting: codeToExtract from: sourceCodeOfMethodToRefactor toVariableNam
 	
 	self assert: sourceCodeAfterRefactoring equals: actualSourceCodeAfterRefactoring! !
 
-!ExtractToTemporaryTest methodsFor: 'test helpers' stamp: 'RNG 5/8/2020 21:06:24'!
+!ExtractToTemporaryTest methodsFor: 'test helpers' stamp: 'RNG 8/May/2020 21:06:24'!
 intervalOf: aPieceOfSourceCode locatedIn: sourceCode
 
 	| interval |
 	interval _ sourceCode intervalOfSubCollection: aPieceOfSourceCode.
 	^ (interval first to: interval last - 1) asSourceCodeInterval! !
 
-!ExtractToTemporaryTest methodsFor: 'tests - successful' stamp: 'jmv 4/26/2023 15:11:11'!
+!ExtractToTemporaryTest methodsFor: 'tests - successful' stamp: 'jmv 26/Apr/2023 15:11:11'!
 test12ItIsPossibleToExtractASingleLiteralFromAMethodWithoutAnyTempsOrArguments
 
 	| sourceCode sourceCodeAfterRefactoring |
@@ -29457,7 +29474,7 @@ test12ItIsPossibleToExtractASingleLiteralFromAMethodWithoutAnyTempsOrArguments
 
 	self assertExtracting: '42' from: sourceCode toVariableNamed: 'new' updatesTo: sourceCodeAfterRefactoring! !
 
-!ExtractToTemporaryTest methodsFor: 'tests - successful' stamp: 'jmv 4/26/2023 15:11:38'!
+!ExtractToTemporaryTest methodsFor: 'tests - successful' stamp: 'jmv 26/Apr/2023 15:11:38'!
 test13ItIsPossibleToExtractASingleExpressionFromAMethodThatHasAlreadyOtherTemporary
 
 	| sourceCode sourceCodeAfterRefactoring |
@@ -29475,7 +29492,7 @@ test13ItIsPossibleToExtractASingleExpressionFromAMethodThatHasAlreadyOtherTempor
 
 	self assertExtracting: '2' from: sourceCode toVariableNamed: 'two' updatesTo: sourceCodeAfterRefactoring! !
 
-!ExtractToTemporaryTest methodsFor: 'tests - successful' stamp: 'jmv 4/26/2023 15:11:50'!
+!ExtractToTemporaryTest methodsFor: 'tests - successful' stamp: 'jmv 26/Apr/2023 15:11:50'!
 test14ItIsPossibleToExtractASingleExpressionFromAMethodThatHasAnEmptyTemporariesDeclaration
 
 	| sourceCode sourceCodeAfterRefactoring |
@@ -29491,7 +29508,7 @@ test14ItIsPossibleToExtractASingleExpressionFromAMethodThatHasAnEmptyTemporaries
 
 	self assertExtracting: '3 factorial' from: sourceCode toVariableNamed: 'f' updatesTo: sourceCodeAfterRefactoring! !
 
-!ExtractToTemporaryTest methodsFor: 'tests - successful' stamp: 'jmv 4/26/2023 15:10:45'!
+!ExtractToTemporaryTest methodsFor: 'tests - successful' stamp: 'jmv 26/Apr/2023 15:10:45'!
 test15ItIsPossibleToExtractCodeAndGenerateAssignmentUsingAnsiAssignmentStyle
 
 	| sourceCode sourceCodeAfterRefactoring |
@@ -29506,7 +29523,7 @@ test15ItIsPossibleToExtractCodeAndGenerateAssignmentUsingAnsiAssignmentStyle
 
 	self assertExtracting: '42' from: sourceCode toVariableNamed: 'new' updatesTo: sourceCodeAfterRefactoring! !
 
-!ExtractToTemporaryTest methodsFor: 'tests - successful' stamp: 'jmv 4/26/2023 15:11:59'!
+!ExtractToTemporaryTest methodsFor: 'tests - successful' stamp: 'jmv 26/Apr/2023 15:11:59'!
 test16ItIsPossibleToExtractASingleLiteralFromABlockWithoutAnyTempsOrArguments
 
 	| sourceCode sourceCodeAfterRefactoring |
@@ -29520,7 +29537,7 @@ test16ItIsPossibleToExtractASingleLiteralFromABlockWithoutAnyTempsOrArguments
 
 	self assertExtracting: 'self m2' from: sourceCode toVariableNamed: 'new' updatesTo: sourceCodeAfterRefactoring! !
 
-!ExtractToTemporaryTest methodsFor: 'tests - successful' stamp: 'jmv 4/26/2023 15:12:04'!
+!ExtractToTemporaryTest methodsFor: 'tests - successful' stamp: 'jmv 26/Apr/2023 15:12:04'!
 test19ItIsPossibleToExtractAnIntervalWithSomeExtraSpaces
 
 	| sourceCode sourceCodeAfterRefactoring |
@@ -29535,7 +29552,7 @@ test19ItIsPossibleToExtractAnIntervalWithSomeExtraSpaces
 
 	self assertExtracting: ' 42' from: sourceCode toVariableNamed: 'new' updatesTo: sourceCodeAfterRefactoring! !
 
-!ExtractToTemporaryTest methodsFor: 'tests - successful' stamp: 'jmv 4/26/2023 15:12:09'!
+!ExtractToTemporaryTest methodsFor: 'tests - successful' stamp: 'jmv 26/Apr/2023 15:12:09'!
 test20ItIsPossibleToExtractAnEmptyBlock
 
 	| sourceCode sourceCodeAfterRefactoring |
@@ -29550,7 +29567,7 @@ test20ItIsPossibleToExtractAnEmptyBlock
 
 	self assertExtracting: '[]' from: sourceCode toVariableNamed: 'new' updatesTo: sourceCodeAfterRefactoring! !
 
-!ExtractToTemporaryTest methodsFor: 'tests - successful' stamp: 'jmv 4/26/2023 15:12:14'!
+!ExtractToTemporaryTest methodsFor: 'tests - successful' stamp: 'jmv 26/Apr/2023 15:12:14'!
 test22ItIsPossibleToExtractACascadeExpression
 
 	| sourceCode sourceCodeAfterRefactoring |
@@ -29565,7 +29582,7 @@ test22ItIsPossibleToExtractACascadeExpression
 
 	self assertExtracting: '3 factorial; yourself' from: sourceCode toVariableNamed: 'new' updatesTo: sourceCodeAfterRefactoring! !
 
-!ExtractToTemporaryTest methodsFor: 'tests - successful' stamp: 'jmv 4/26/2023 15:12:18'!
+!ExtractToTemporaryTest methodsFor: 'tests - successful' stamp: 'jmv 26/Apr/2023 15:12:18'!
 test24WhenExtractingAnEntireStatementItOnlyGeneratesTheVariableAssignment
 
 	| sourceCode sourceCodeAfterRefactoring |
@@ -29579,7 +29596,7 @@ test24WhenExtractingAnEntireStatementItOnlyGeneratesTheVariableAssignment
 
 	self assertExtracting: 'self run' from: sourceCode toVariableNamed: 'action' updatesTo: sourceCodeAfterRefactoring! !
 
-!ExtractToTemporaryTest methodsFor: 'tests - successful' stamp: 'HAW 7/21/2023 16:56:47'!
+!ExtractToTemporaryTest methodsFor: 'tests - successful' stamp: 'HAW 21/Jul/2023 16:56:47'!
 test26ExtractsCorrectlyWithParentesisInsideParentesis
 
 	| sourceCode sourceCodeAfterRefactoring |
@@ -29591,7 +29608,7 @@ test26ExtractsCorrectlyWithParentesisInsideParentesis
 
 	self assertExtracting: '((self m2) + (self m3))' from: sourceCode toVariableNamed: 'action' updatesTo: sourceCodeAfterRefactoring! !
 
-!ExtractToTemporaryTest methodsFor: 'tests - successful' stamp: 'HAW 7/24/2023 15:51:16'!
+!ExtractToTemporaryTest methodsFor: 'tests - successful' stamp: 'HAW 24/Jul/2023 15:51:16'!
 test27ExtractRightNodeWhenDuplicates
 
 	| sourceCode sourceCodeAfterRefactoring |
@@ -29606,7 +29623,7 @@ self m2.
 
 	self assertExtracting: 'self m2' from: sourceCode toVariableNamed: 'a' updatesTo: sourceCodeAfterRefactoring! !
 
-!ExtractToTemporaryTest methodsFor: 'tests - successful' stamp: 'HAW 7/24/2023 15:54:10'!
+!ExtractToTemporaryTest methodsFor: 'tests - successful' stamp: 'HAW 24/Jul/2023 15:54:10'!
 test28ExtractRightNodeWhenDuplicatesAndSelectedLastOne
 
 	| sourceCode sourceCodeAfterRefactoring intervalToExtract methodToRefactor actualSourceCodeAfterRefactoring |
@@ -29626,7 +29643,7 @@ a := self m2.
 	actualSourceCodeAfterRefactoring := (ExtractToTemporary named: 'a' at: intervalToExtract from: methodToRefactor) apply.
 	self assert: sourceCodeAfterRefactoring equals: actualSourceCodeAfterRefactoring! !
 
-!ExtractToTemporaryTest methodsFor: 'tests - successful' stamp: 'JEC 3/15/2025 21:05:20'!
+!ExtractToTemporaryTest methodsFor: 'tests - successful' stamp: 'JEC 15/Mar/2025 21:05:20'!
 test29ExctractsCorrectlyWhenTempVariablesDeclarationDoesNotHaveSpaces
 
 	| sourceCode sourceCodeAfterRefactoring |
@@ -29643,7 +29660,7 @@ anotherVar := var + 50.
 
 	self assertExtracting: 'var + 50' from: sourceCode toVariableNamed: 'anotherVar' updatesTo: sourceCodeAfterRefactoring! !
 
-!ExtractToTemporaryTest methodsFor: 'tests - validations' stamp: 'RNG 2/25/2020 15:13:05'!
+!ExtractToTemporaryTest methodsFor: 'tests - validations' stamp: 'RNG 25/Feb/2020 15:13:05'!
 test01NewVariableCanNotBeEmpty
 
 	| newVariable sourceCodeToExtract sourceCode intervalToExtract |
@@ -29657,7 +29674,7 @@ test01NewVariableCanNotBeEmpty
 		assertCreation: [ ExtractToTemporary named: newVariable at: intervalToExtract from: (classToRefactor >> #m1) ]
 		failsWith: [ NewTemporaryPrecondition errorMessageForEmptyTemporaryVariable ]! !
 
-!ExtractToTemporaryTest methodsFor: 'tests - validations' stamp: 'RNG 2/25/2020 15:13:01'!
+!ExtractToTemporaryTest methodsFor: 'tests - validations' stamp: 'RNG 25/Feb/2020 15:13:01'!
 test02NewVariableHasToBeValid
 
 	| newVariable sourceCodeToExtract sourceCode intervalToExtract |
@@ -29672,7 +29689,7 @@ test02NewVariableHasToBeValid
 		failsWith: [ NewTemporaryPrecondition errorMessageForInvalidTemporaryVariable: newVariable ]
 	! !
 
-!ExtractToTemporaryTest methodsFor: 'tests - validations' stamp: 'RNG 2/25/2020 15:12:58'!
+!ExtractToTemporaryTest methodsFor: 'tests - validations' stamp: 'RNG 25/Feb/2020 15:12:58'!
 test03NewVariableNameCanNotBeDefinedInMethod
 
 	| newVariable sourceCodeToExtract sourceCode intervalToExtract methodToRefactor |
@@ -29687,7 +29704,7 @@ test03NewVariableNameCanNotBeDefinedInMethod
 		assertCreation: [ ExtractToTemporary named: newVariable at: intervalToExtract from: methodToRefactor ]
 		failsWith: [ NewTemporaryPrecondition errorMessageForNewTemporaryVariable: newVariable isAlreadyDefinedIn: methodToRefactor methodNode ]! !
 
-!ExtractToTemporaryTest methodsFor: 'tests - validations' stamp: 'RNG 5/24/2020 20:01:16'!
+!ExtractToTemporaryTest methodsFor: 'tests - validations' stamp: 'RNG 24/May/2020 20:01:16'!
 test04FailsIfNewTemporaryIsEqualToInstanceVariableInClass
 
 	| newVariable sourceCode sourceCodeToExtract methodToRefactor intervalToExtract |
@@ -29703,7 +29720,7 @@ test04FailsIfNewTemporaryIsEqualToInstanceVariableInClass
 		assertCreation: [ ExtractToTemporary named: newVariable at: intervalToExtract from: methodToRefactor ]
 		failsWith: [ NewTemporaryPrecondition errorMessageFor: newVariable canNotBeNamedDueToInstanceVariableDefinedIn: classToRefactor ]! !
 
-!ExtractToTemporaryTest methodsFor: 'tests - validations' stamp: 'jmv 6/13/2024 13:07:57'!
+!ExtractToTemporaryTest methodsFor: 'tests - validations' stamp: 'jmv 13/Jun/2024 13:07:57'!
 test05FailsIfNewTemporaryIsEqualToInstanceVariableInAnySuperclass
 
 	| newVariable sourceCode sourceCodeToExtract methodToRefactor superclassToRefactor intervalToExtract |
@@ -29724,7 +29741,7 @@ test05FailsIfNewTemporaryIsEqualToInstanceVariableInAnySuperclass
 		assertCreation: [ ExtractToTemporary named: newVariable at: intervalToExtract from: methodToRefactor ]
 		failsWith: [ NewTemporaryPrecondition errorMessageFor: newVariable canNotBeNamedDueToInstanceVariableDefinedIn: superclassToRefactor ]! !
 
-!ExtractToTemporaryTest methodsFor: 'tests - validations' stamp: 'RNG 7/12/2020 17:10:14'!
+!ExtractToTemporaryTest methodsFor: 'tests - validations' stamp: 'RNG 12/Jul/2020 17:10:14'!
 test06SourceCodeToExtractCanNotIncludeReturn
 
 	| newVariable sourceCode sourceCodeToExtract  intervalToExtract methodToRefactor |
@@ -29739,7 +29756,7 @@ test06SourceCodeToExtractCanNotIncludeReturn
 		assertCreation: [ ExtractToTemporary named: newVariable at: intervalToExtract from: methodToRefactor ]
 		failsWith: [ SourceCodeOfTemporaryToBeExtractedPrecondition errorMessageForSourceCodeIncludingAReturnStatement ]! !
 
-!ExtractToTemporaryTest methodsFor: 'tests - validations' stamp: 'RNG 2/25/2020 15:12:44'!
+!ExtractToTemporaryTest methodsFor: 'tests - validations' stamp: 'RNG 25/Feb/2020 15:12:44'!
 test07SourceCodeToExtractCanNotBeEmpty
 
 	| newVariable sourceCode sourceCodeToExtract intervalToExtract methodToRefactor |
@@ -29754,7 +29771,7 @@ test07SourceCodeToExtractCanNotBeEmpty
 		assertCreation: [ ExtractToTemporary named: newVariable at: intervalToExtract from: methodToRefactor ]
 		failsWith: [ ExtractToTemporary errorMessageForSourceCodeToExtractCanNotBeEmpty]! !
 
-!ExtractToTemporaryTest methodsFor: 'tests - validations' stamp: 'RNG 7/12/2020 16:53:38'!
+!ExtractToTemporaryTest methodsFor: 'tests - validations' stamp: 'RNG 12/Jul/2020 16:53:38'!
 test08SourceCodeToExtractCanNotHaveSyntaxErrors
 
 	| newVariable sourceCode sourceCodeToExtract intervalToExtract methodToRefactor expectedSyntaxErrorMessage |
@@ -29774,7 +29791,7 @@ test08SourceCodeToExtractCanNotHaveSyntaxErrors
 		assertCreation: [ ExtractToTemporary named: newVariable at: intervalToExtract from: methodToRefactor ]
 		failsWith: [ SourceCodeOfTemporaryToBeExtractedPrecondition errorMessageForSourceCodeToExtractHasSyntaxError: expectedSyntaxErrorMessage ]! !
 
-!ExtractToTemporaryTest methodsFor: 'tests - validations' stamp: 'RNG 7/12/2020 16:18:15'!
+!ExtractToTemporaryTest methodsFor: 'tests - validations' stamp: 'RNG 12/Jul/2020 16:18:15'!
 test09SourceCodeToExtractHasToBeOneStatement
 
 	| newVariable sourceCode sourceCodeToExtract intervalToExtract methodToRefactor |
@@ -29789,7 +29806,7 @@ test09SourceCodeToExtractHasToBeOneStatement
 		assertCreation: [ ExtractToTemporary named: newVariable at: intervalToExtract from: methodToRefactor ]
 		failsWith: [ SourceCodeOfTemporaryToBeExtractedPrecondition errorMessageForSourceCodeToExtractHasToBeOneStatement ]! !
 
-!ExtractToTemporaryTest methodsFor: 'tests - validations' stamp: 'RNG 2/25/2020 15:12:27'!
+!ExtractToTemporaryTest methodsFor: 'tests - validations' stamp: 'RNG 25/Feb/2020 15:12:27'!
 test10FailsIfIntervalToExtractIsBeforeMethodSourceCodeBoundaries
 
 	| newVariable sourceCode methodToRefactor |	
@@ -29802,7 +29819,7 @@ test10FailsIfIntervalToExtractIsBeforeMethodSourceCodeBoundaries
 		assertCreation: [ ExtractToTemporary named: newVariable at: (-1 to: 2) from: methodToRefactor ]
 		failsWith: [ ExtractToTemporary errorMessageForSourceCodeSelectionOutOfBounds ]! !
 
-!ExtractToTemporaryTest methodsFor: 'tests - validations' stamp: 'RNG 2/25/2020 15:22:19'!
+!ExtractToTemporaryTest methodsFor: 'tests - validations' stamp: 'RNG 25/Feb/2020 15:22:19'!
 test11FailsIfIntervalToExtractIsAfterMethodSourceCodeBoundaries
 
 	| newVariable sourceCode methodToRefactor |	
@@ -29815,7 +29832,7 @@ test11FailsIfIntervalToExtractIsAfterMethodSourceCodeBoundaries
 		assertCreation: [ ExtractToTemporary named: newVariable at: (sourceCode size - 1 to: sourceCode size + 2) from: methodToRefactor ]
 		failsWith: [ ExtractToTemporary errorMessageForSourceCodeSelectionOutOfBounds ]! !
 
-!ExtractToTemporaryTest methodsFor: 'tests - validations' stamp: 'RNG 7/12/2020 18:47:52'!
+!ExtractToTemporaryTest methodsFor: 'tests - validations' stamp: 'RNG 12/Jul/2020 18:47:52'!
 test17CannotExtractPartOfMethodName
 
 	| newVariable sourceCode methodToRefactor intervalToExtract sourceCodeToExtract |	
@@ -29830,7 +29847,7 @@ test17CannotExtractPartOfMethodName
 		assertCreation: [ ExtractToTemporary named: newVariable at: intervalToExtract from: methodToRefactor ]
 		failsWith: [ SourceCodeOfTemporaryToBeExtractedPrecondition errorMessageForExtractingPartOfMethodSignature ]! !
 
-!ExtractToTemporaryTest methodsFor: 'tests - validations' stamp: 'RNG 7/12/2020 16:20:08'!
+!ExtractToTemporaryTest methodsFor: 'tests - validations' stamp: 'RNG 12/Jul/2020 16:20:08'!
 test18CannotExtractPartOfMessageSend
 
 	| newVariable sourceCode methodToRefactor intervalToExtract sourceCodeToExtract |	
@@ -29845,7 +29862,7 @@ test18CannotExtractPartOfMessageSend
 		assertCreation: [ ExtractToTemporary named: newVariable at: intervalToExtract from: methodToRefactor ]
 		failsWith: [ SourceCodeOfTemporaryToBeExtractedPrecondition errorMessageForSourceCodeContainingInvalidExpression ]! !
 
-!ExtractToTemporaryTest methodsFor: 'tests - validations' stamp: 'RNG 7/12/2020 16:20:48'!
+!ExtractToTemporaryTest methodsFor: 'tests - validations' stamp: 'RNG 12/Jul/2020 16:20:48'!
 test21CannotExtractLeftSideOfAssignment
 
 	| newVariable sourceCode methodToRefactor intervalToExtract |
@@ -29859,7 +29876,7 @@ test21CannotExtractLeftSideOfAssignment
 		assertCreation: [ ExtractToTemporary named: newVariable at: intervalToExtract from: methodToRefactor ]
 		failsWith: [ SourceCodeOfTemporaryToBeExtractedPrecondition errorMessageForSourceCodeContainingInvalidExpression ]! !
 
-!ExtractToTemporaryTest methodsFor: 'tests - validations' stamp: 'RNG 4/26/2020 15:23:20'!
+!ExtractToTemporaryTest methodsFor: 'tests - validations' stamp: 'RNG 26/Apr/2020 15:23:20'!
 test23CannotUseAReservedNameAsTheNewTemporaryVariable
 
 	| intervalToExtract methodToRefactor newVariable sourceCode |
@@ -29875,7 +29892,7 @@ test23CannotUseAReservedNameAsTheNewTemporaryVariable
 			assertCreation: [ ExtractToTemporary named: newVariable at: intervalToExtract from: methodToRefactor ]
 			failsWith: [ NewTemporaryPrecondition errorMessageForNewTemporaryVariableCanNotBeAReservedName: newVariable ] ]! !
 
-!ExtractToTemporaryTest methodsFor: 'tests - validations' stamp: 'RNG 7/12/2020 18:48:18'!
+!ExtractToTemporaryTest methodsFor: 'tests - validations' stamp: 'RNG 12/Jul/2020 18:48:18'!
 test25CannotExtractArgumentNamesFromMethodSignature
 
 	| intervalToExtract methodToRefactor newVariable sourceCode |
@@ -29889,7 +29906,7 @@ test25CannotExtractArgumentNamesFromMethodSignature
 		assertCreation: [ ExtractToTemporary named: newVariable at: intervalToExtract from: methodToRefactor ]
 		failsWith: [ SourceCodeOfTemporaryToBeExtractedPrecondition errorMessageForExtractingPartOfMethodSignature ]! !
 
-!InlineMethodTest methodsFor: 'refactoring helpers' stamp: 'FB 11/3/2021 19:50:39'!
+!InlineMethodTest methodsFor: 'refactoring helpers' stamp: 'FB 3/Nov/2021 19:50:39'!
 messageNodeReferenceOf: anImplementor inMethod: aMethodName atIndex: aSourceCodeIndex
 
 	| nodeToInline methodNode sourceCodeRange nodeAndRange |
@@ -29905,7 +29922,7 @@ messageNodeReferenceOf: anImplementor inMethod: aMethodName atIndex: aSourceCode
 	^MessageNodeReference messageNode: nodeToInline selector: methodNode selector
 		class: anImplementor completeSourceRange: sourceCodeRange .! !
 
-!InlineMethodTest methodsFor: 'tests - validations' stamp: 'FB 4/8/2022 23:51:52'!
+!InlineMethodTest methodsFor: 'tests - validations' stamp: 'FB 8/Apr/2022 23:51:52'!
 test12CanNotInlineMethodAccessingPrivateVariablesNotVisibleToSender
 
 	| methodToInlineSource methodToInlineSelector nodeToInline methodWithUsageSelector methodWithUsageSource
@@ -29930,7 +29947,7 @@ test12CanNotInlineMethodAccessingPrivateVariablesNotVisibleToSender
 		removeMethod: false.	
 	] failsWith: [InlineMethod methodAccessPrivateVariablesNotVisibleToSenderErrorMessage ]! !
 
-!InlineMethodTest methodsFor: 'tests - validations' stamp: 'FB 11/3/2021 23:50:29'!
+!InlineMethodTest methodsFor: 'tests - validations' stamp: 'FB 3/Nov/2021 23:50:29'!
 test13CanNotInlineMethodWithMultipleReturns
 
 	| methodToInlineSource methodToInlineSelector nodeToInline methodWithUsageSelector methodWithUsageSource
@@ -29954,7 +29971,7 @@ test13CanNotInlineMethodWithMultipleReturns
 		removeMethod: false.
 	] failsWith: [InlineMethod methodHasMultipleReturnsErrorMessage]! !
 
-!InlineMethodTest methodsFor: 'tests - validations' stamp: 'FB 11/3/2021 23:50:36'!
+!InlineMethodTest methodsFor: 'tests - validations' stamp: 'FB 3/Nov/2021 23:50:36'!
 test14CanNotInlineMethodWithExplicitAndImplicitReturns
 
 	| methodToInlineSource methodToInlineSelector nodeToInline methodWithUsageSelector methodWithUsageSource
@@ -29978,7 +29995,7 @@ test14CanNotInlineMethodWithExplicitAndImplicitReturns
 		removeMethod: false.
 	] failsWith: [InlineMethod methodHasMultipleReturnsErrorMessage]! !
 
-!InlineMethodTest methodsFor: 'tests - validations' stamp: 'FB 4/14/2022 15:23:05'!
+!InlineMethodTest methodsFor: 'tests - validations' stamp: 'FB 14/Apr/2022 15:23:05'!
 test24CanNotInlineCascadingMessageSend
 
 	| methodToInlineSource methodToInlineSelector nodeToInline methodWithUsageSelector  
@@ -30003,7 +30020,7 @@ test24CanNotInlineCascadingMessageSend
 		removeMethod: false.
 	] failsWith: [InlineMethod messageSendCanNotBeCascadeErrorMessage ]! !
 
-!InlineMethodTest methodsFor: 'tests - validations' stamp: 'FB 5/21/2022 17:10:00'!
+!InlineMethodTest methodsFor: 'tests - validations' stamp: 'FB 21/May/2022 17:10:00'!
 test25CanNotInlineMethodFromAnotherClassReferencingSuper
 
 	| methodToInlineSource methodToInlineSelector nodeToInline methodWithUsageSelector methodWithUsageSource
@@ -30028,7 +30045,7 @@ test25CanNotInlineMethodFromAnotherClassReferencingSuper
 		removeMethod: false.
 	] failsWith: [InlineMethod methodToInlineReferencesSuperErrorMessage ]! !
 
-!InlineMethodTest methodsFor: 'tests - validations' stamp: 'FB 5/21/2022 17:22:49'!
+!InlineMethodTest methodsFor: 'tests - validations' stamp: 'FB 21/May/2022 17:22:49'!
 test26CanNotInlineMethodFromAnotherClassReferencingSelfWhenReceiverIsNotAVariable
 
 	| methodToInlineSource methodToInlineSelector nodeToInline methodWithUsageSelector methodWithUsageSource
@@ -30053,7 +30070,7 @@ test26CanNotInlineMethodFromAnotherClassReferencingSelfWhenReceiverIsNotAVariabl
 		removeMethod: false.
 	] failsWith: [InlineMethod methodToInlineReferencesSelfErrorMessage]! !
 
-!InlineMethodTest methodsFor: 'tests - successful' stamp: 'FB 11/3/2021 19:40:24'!
+!InlineMethodTest methodsFor: 'tests - successful' stamp: 'FB 3/Nov/2021 19:40:24'!
 test01InlineMethodOfSameClassWithoutReturnValue
 
 	| implementorAndSenderClass methodToInlineSource methodToInlineSelector 
@@ -30080,7 +30097,7 @@ test01InlineMethodOfSameClassWithoutReturnValue
 	expectedNewSourceCode := methodWithUsageSelector,' | t | self doSomething. ^t'.
 	self assert: expectedNewSourceCode equals: (implementorAndSenderClass >> methodWithUsageSelector) sourceCode! !
 
-!InlineMethodTest methodsFor: 'tests - successful' stamp: 'FB 11/3/2021 23:47:31'!
+!InlineMethodTest methodsFor: 'tests - successful' stamp: 'FB 3/Nov/2021 23:47:31'!
 test02InlineMethodOfSameClassWithParametersAndWithoutReturnValue
 
 	| implementorAndSenderClass methodToInlineSource methodToInlineSelector 
@@ -30112,7 +30129,7 @@ self doSomethingWithParam: 5 andParam: ''aString''.
 	 ^t'.
 	self assert: expectedNewSourceCode equals: (implementorAndSenderClass >> methodWithUsageSelector) sourceCode! !
 
-!InlineMethodTest methodsFor: 'tests - successful' stamp: 'FB 11/3/2021 23:47:48'!
+!InlineMethodTest methodsFor: 'tests - successful' stamp: 'FB 3/Nov/2021 23:47:48'!
 test03InlineMethodOfSameClassReturningConstantLiteral
 
 	| implementorAndSenderClass methodToInlineSource methodToInlineSelector 
@@ -30139,7 +30156,7 @@ test03InlineMethodOfSameClassReturningConstantLiteral
 	expectedNewSourceCode := methodWithUsageSelector,' | t | t := 10. ^t'.
 	self assert: expectedNewSourceCode equals: (implementorAndSenderClass >> methodWithUsageSelector) sourceCode! !
 
-!InlineMethodTest methodsFor: 'tests - successful' stamp: 'FB 11/3/2021 23:47:57'!
+!InlineMethodTest methodsFor: 'tests - successful' stamp: 'FB 3/Nov/2021 23:47:57'!
 test04InlineMethodOfSameClassWithMultipleStatementsAndReturn
 
 	| implementorAndSenderClass methodToInlineSource methodToInlineSelector 
@@ -30170,7 +30187,7 @@ self m4: 5.
 t := 10. ^t'.
 	self assert: expectedNewSourceCode equals: (implementorAndSenderClass >> methodWithUsageSelector) sourceCode! !
 
-!InlineMethodTest methodsFor: 'tests - successful' stamp: 'FB 7/4/2022 19:44:38'!
+!InlineMethodTest methodsFor: 'tests - successful' stamp: 'FB 4/Jul/2022 19:44:38'!
 test05InlineMethodOfSameClassWithUnusedReturn
 
 	| implementorAndSenderClass methodToInlineSource methodToInlineSelector 
@@ -30198,7 +30215,7 @@ test05InlineMethodOfSameClassWithUnusedReturn
 10. ^20'.
 	self assert: expectedNewSourceCode equals: (implementorAndSenderClass >> methodWithUsageSelector) sourceCode! !
 
-!InlineMethodTest methodsFor: 'tests - successful' stamp: 'FB 11/3/2021 23:48:13'!
+!InlineMethodTest methodsFor: 'tests - successful' stamp: 'FB 3/Nov/2021 23:48:13'!
 test06InlineMethodOfSameClassThatDeclaresTemporaryVariables
 
 	| implementorAndSenderClass methodToInlineSource methodToInlineSelector 
@@ -30227,7 +30244,7 @@ self m3.
 t := y. ^20'.
 	self assert: expectedNewSourceCode equals: (implementorAndSenderClass >> methodWithUsageSelector) sourceCode! !
 
-!InlineMethodTest methodsFor: 'tests - successful' stamp: 'FB 11/3/2021 23:49:35'!
+!InlineMethodTest methodsFor: 'tests - successful' stamp: 'FB 3/Nov/2021 23:49:35'!
 test07InlineMethodOfSameClassThatDeclaresTemporaryVariablesAlreadyDeclared
 
 	| implementorAndSenderClass methodToInlineSource methodToInlineSelector 
@@ -30256,7 +30273,7 @@ self m3.
 t := y1. ^20'.
 	self assert: expectedNewSourceCode equals: (implementorAndSenderClass >> methodWithUsageSelector) sourceCode! !
 
-!InlineMethodTest methodsFor: 'tests - successful' stamp: 'FB 6/12/2022 19:27:55'!
+!InlineMethodTest methodsFor: 'tests - successful' stamp: 'FB 12/Jun/2022 19:27:55'!
 test08InlineMethodDeclaresVariablesInClosestScope
 
 	| implementorAndSenderClass methodToInlineSource methodToInlineSelector 
@@ -30286,7 +30303,7 @@ self m3.
 y1.]. ^20'.
 	self assert: expectedNewSourceCode equals: (implementorAndSenderClass >> methodWithUsageSelector) sourceCode! !
 
-!InlineMethodTest methodsFor: 'tests - successful' stamp: 'FB 6/12/2022 19:27:59'!
+!InlineMethodTest methodsFor: 'tests - successful' stamp: 'FB 12/Jun/2022 19:27:59'!
 test09InlineMethodReturnedInFullClosureKeepsTheReturnSymbol
 
 	| implementorAndSenderClass methodToInlineSource methodToInlineSelector 
@@ -30315,7 +30332,7 @@ test09InlineMethodReturnedInFullClosureKeepsTheReturnSymbol
 ^y1.]. ^20'.
 	self assert: expectedNewSourceCode equals: (implementorAndSenderClass >> methodWithUsageSelector) sourceCode! !
 
-!InlineMethodTest methodsFor: 'tests - successful' stamp: 'FB 5/21/2022 15:33:15'!
+!InlineMethodTest methodsFor: 'tests - successful' stamp: 'FB 21/May/2022 15:33:15'!
 test10InlineMethodOfAnotherClass
 
 	| methodToInlineSource methodToInlineSelector nodeToInline methodWithUsageSelector methodWithUsageSource
@@ -30344,7 +30361,7 @@ test10InlineMethodOfAnotherClass
 ^y1.'.
 	self assert: expectedNewSourceCode equals: (senderClass >> methodWithUsageSelector) sourceCode! !
 
-!InlineMethodTest methodsFor: 'tests - successful' stamp: 'FB 5/21/2022 18:00:21'!
+!InlineMethodTest methodsFor: 'tests - successful' stamp: 'FB 21/May/2022 18:00:21'!
 test11InlineClassMethodOfAnotherClass
 
 	| methodToInlineSource methodToInlineSelector nodeToInline methodWithUsageSelector methodWithUsageSource
@@ -30374,7 +30391,7 @@ test11InlineClassMethodOfAnotherClass
 ^y1.'.
 	self assert: expectedNewSourceCode equals: (senderClass >> methodWithUsageSelector) sourceCode! !
 
-!InlineMethodTest methodsFor: 'tests - successful' stamp: 'FB 11/4/2021 22:06:01'!
+!InlineMethodTest methodsFor: 'tests - successful' stamp: 'FB 4/Nov/2021 22:06:01'!
 test15InlineUsagesOnSameClase
 
 	| methodToInlineSource methodToInlineSelector nodeToInline1 nodeToInline2 methodWithUsagesSelector methodWithUsagesSource
@@ -30407,7 +30424,7 @@ self m3.
 y := y2. ^20'.
 	self assert: expectedNewSourceCode equals: (senderClass >> methodWithUsagesSelector) sourceCode! !
 
-!InlineMethodTest methodsFor: 'tests - successful' stamp: 'FB 11/6/2021 16:27:57'!
+!InlineMethodTest methodsFor: 'tests - successful' stamp: 'FB 6/Nov/2021 16:27:57'!
 test16InlineUsageAndRemoveMethod
 
 	| methodToInlineSource methodToInlineSelector nodeToInline1 methodWithUsagesSelector methodWithUsagesSource
@@ -30438,7 +30455,7 @@ t := y1. ^20'.
 	self assert: expectedNewSourceCode equals: (senderClass >> methodWithUsagesSelector) sourceCode.
 	self deny: (implementorClass canUnderstand: methodToInlineSelector).! !
 
-!InlineMethodTest methodsFor: 'tests - successful' stamp: 'FB 6/29/2022 20:52:09'!
+!InlineMethodTest methodsFor: 'tests - successful' stamp: 'FB 29/Jun/2022 20:52:09'!
 test17InlineMethodWithASingleReturnLineWhenLiteralResultIsNotAssigned
 
 	| methodToInlineSource methodToInlineSelector nodeToInline methodWithUsagesSelector methodWithUsagesSource
@@ -30466,7 +30483,7 @@ test17InlineMethodWithASingleReturnLineWhenLiteralResultIsNotAssigned
 	expectedNewSourceCode := methodWithUsagesSelector,' 1. ^20'.
 	self assert: expectedNewSourceCode equals: (senderClass >> methodWithUsagesSelector) sourceCode.! !
 
-!InlineMethodTest methodsFor: 'tests - successful' stamp: 'FB 6/12/2022 19:28:03'!
+!InlineMethodTest methodsFor: 'tests - successful' stamp: 'FB 12/Jun/2022 19:28:03'!
 test18InlineMethodUsedInLastStatementOfClosure
 
 	| methodToInlineSource methodToInlineSelector nodeToInline methodWithUsagesSelector methodWithUsagesSource
@@ -30497,7 +30514,7 @@ y := 2.
 1 + (x + y).]. ^b value'.
 	self assert: expectedNewSourceCode equals: (senderClass >> methodWithUsagesSelector) sourceCode.! !
 
-!InlineMethodTest methodsFor: 'tests - successful' stamp: 'FB 9/2/2022 18:31:08'!
+!InlineMethodTest methodsFor: 'tests - successful' stamp: 'FB 2/Sep/2022 18:31:08'!
 test19InlineMethodIndentation
 
 	| methodToInlineSource methodToInlineSelector nodeToInline methodWithUsagesSelector methodWithUsagesSource
@@ -30539,7 +30556,7 @@ test19InlineMethodIndentation
 		^b value'.
 	self assert: expectedNewSourceCode equals: (senderClass >> methodWithUsagesSelector) sourceCode.! !
 
-!InlineMethodTest methodsFor: 'tests - successful' stamp: 'FB 7/4/2022 20:01:39'!
+!InlineMethodTest methodsFor: 'tests - successful' stamp: 'FB 4/Jul/2022 20:01:39'!
 test20InlineMethodUsedInReturn
 
 	| methodToInlineSource methodToInlineSelector nodeToInline methodWithUsagesSelector methodWithUsagesSource
@@ -30567,7 +30584,7 @@ test20InlineMethodUsedInReturn
 	expectedNewSourceCode := methodWithUsagesSelector,' ^3 * 5'.
 	self assert: expectedNewSourceCode equals: (senderClass >> methodWithUsagesSelector) sourceCode.! !
 
-!InlineMethodTest methodsFor: 'tests - successful' stamp: 'FB 7/4/2022 20:01:53'!
+!InlineMethodTest methodsFor: 'tests - successful' stamp: 'FB 4/Jul/2022 20:01:53'!
 test21InlineMethodAddsParenthesesWhenNeeded
 
 	| methodToInlineSource methodToInlineSelector nodeToInline methodWithUsagesSelector methodWithUsagesSource
@@ -30595,7 +30612,7 @@ test21InlineMethodAddsParenthesesWhenNeeded
 	expectedNewSourceCode := methodWithUsagesSelector,' ^3 * (5 + 10)'.
 	self assert: expectedNewSourceCode equals: (senderClass >> methodWithUsagesSelector) sourceCode.! !
 
-!InlineMethodTest methodsFor: 'tests - successful' stamp: 'FB 4/8/2022 23:52:48'!
+!InlineMethodTest methodsFor: 'tests - successful' stamp: 'FB 8/Apr/2022 23:52:48'!
 test22InlineMethodOnSeveralSenders
 
 	| methodToInlineSource methodToInlineSelector nodeToInline1 nodeToInline2 methodWithUsageSelector1 methodWithUsageSelector2 
@@ -30630,7 +30647,7 @@ test22InlineMethodOnSeveralSenders
 	expectedNewSourceCode2 := methodWithUsageSelector2,' ^1.'.
 	self assert: expectedNewSourceCode2 equals: (senderClass >> methodWithUsageSelector2) sourceCode.! !
 
-!InlineMethodTest methodsFor: 'tests - successful' stamp: 'FB 4/9/2022 00:03:03'!
+!InlineMethodTest methodsFor: 'tests - successful' stamp: 'FB 9/Apr/2022 00:03:03'!
 test23InlineMethodFromSameClassAccessingPrivateVariables
 
 	| methodToInlineSource methodToInlineSelector nodeToInline methodWithUsageSelector  
@@ -30660,7 +30677,7 @@ test23InlineMethodFromSameClassAccessingPrivateVariables
 ^y.'.
 	self assert: expectedNewSourceCode equals: (implementorAndSenderClass >> methodWithUsageSelector) sourceCode.! !
 
-!InlineMethodTest methodsFor: 'tests - successful' stamp: 'FB 5/21/2022 17:35:15'!
+!InlineMethodTest methodsFor: 'tests - successful' stamp: 'FB 21/May/2022 17:35:15'!
 test27InlineMethodFromAnotherClassReferencingSelfWhenReceiverIsAVariable
 
 	| methodToInlineSource methodToInlineSelector nodeToInline methodWithUsageSelector methodWithUsageSource
@@ -30690,7 +30707,7 @@ t m3.
 ^y.'.
 	self assert: expectedNewSourceCode equals: (senderClass >> methodWithUsageSelector) sourceCode.! !
 
-!InlineMethodTest methodsFor: 'tests - successful' stamp: 'FB 7/4/2022 20:02:04'!
+!InlineMethodTest methodsFor: 'tests - successful' stamp: 'FB 4/Jul/2022 20:02:04'!
 test28InlineMethodWithReturnUsedInSenderReturningImplicitSelf
 
 	| implementorAndSenderClass methodToInlineSource methodToInlineSelector 
@@ -30717,7 +30734,7 @@ test28InlineMethodWithReturnUsedInSenderReturningImplicitSelf
 	expectedNewSourceCode := methodWithUsageSelector,'  2 asString'.
 	self assert: expectedNewSourceCode equals: (implementorAndSenderClass >> methodWithUsageSelector) sourceCode! !
 
-!InlineMethodTest methodsFor: 'tests - successful' stamp: 'FB 6/29/2022 19:27:41'!
+!InlineMethodTest methodsFor: 'tests - successful' stamp: 'FB 29/Jun/2022 19:27:41'!
 test29InlineMethodWithASingleReturnLineWhenNonLiteralResultIsNotAssigned
 
 	| methodToInlineSource methodToInlineSelector nodeToInline methodWithUsagesSelector methodWithUsagesSource
@@ -30745,7 +30762,7 @@ test29InlineMethodWithASingleReturnLineWhenNonLiteralResultIsNotAssigned
 	expectedNewSourceCode := methodWithUsagesSelector,' self doSomething. ^20'.
 	self assert: expectedNewSourceCode equals: (senderClass >> methodWithUsagesSelector) sourceCode.! !
 
-!InlineMethodTest methodsFor: 'tests - successful' stamp: 'FB 6/29/2022 19:48:13'!
+!InlineMethodTest methodsFor: 'tests - successful' stamp: 'FB 29/Jun/2022 19:48:13'!
 test30InlineMethodUsedInBrace
 
 	| methodToInlineSource methodToInlineSelector nodeToInline methodWithUsagesSelector methodWithUsagesSource
@@ -30773,7 +30790,7 @@ test30InlineMethodUsedInBrace
 	expectedNewSourceCode := methodWithUsagesSelector,' ^self m2: { 2. 10. 4 }'.
 	self assert: expectedNewSourceCode equals: (senderClass >> methodWithUsagesSelector) sourceCode.! !
 
-!InlineMethodTest methodsFor: 'tests - successful' stamp: 'FB 7/4/2022 20:18:46'!
+!InlineMethodTest methodsFor: 'tests - successful' stamp: 'FB 4/Jul/2022 20:18:46'!
 test31InlineMethodUsedInBraceAddingParentheses
 
 	| methodToInlineSource methodToInlineSelector nodeToInline methodWithUsagesSelector methodWithUsagesSource
@@ -30801,7 +30818,7 @@ test31InlineMethodUsedInBraceAddingParentheses
 	expectedNewSourceCode := methodWithUsagesSelector,' ^self m2: { 2. (10 + 5) * 3. 4 }'.
 	self assert: expectedNewSourceCode equals: (senderClass >> methodWithUsagesSelector) sourceCode.! !
 
-!InlineMethodTest methodsFor: 'tests - successful' stamp: 'FB 7/4/2022 20:47:48'!
+!InlineMethodTest methodsFor: 'tests - successful' stamp: 'FB 4/Jul/2022 20:47:48'!
 test32InlineMethodUsedReturningWithDotInMessageNode
 
 	| methodToInlineSource methodToInlineSelector nodeToInline methodWithUsagesSelector methodWithUsagesSource
@@ -30829,7 +30846,7 @@ test32InlineMethodUsedReturningWithDotInMessageNode
 	expectedNewSourceCode := methodWithUsagesSelector,' 10 + 10. ^20.'.
 	self assert: expectedNewSourceCode equals: (senderClass >> methodWithUsagesSelector) sourceCode.! !
 
-!InlineMethodTest methodsFor: 'tests - successful' stamp: 'FB 8/27/2022 21:07:50'!
+!InlineMethodTest methodsFor: 'tests - successful' stamp: 'FB 27/Aug/2022 21:07:50'!
 test33InlineMethodReturningMessageNodeDoesNotAddParenthesesWhenNotNeeded
 
 	| methodToInlineSource methodToInlineSelector nodeToInline methodWithUsagesSelector methodWithUsagesSource
@@ -30857,27 +30874,27 @@ test33InlineMethodReturningMessageNodeDoesNotAddParenthesesWhenNotNeeded
 	expectedNewSourceCode := methodWithUsagesSelector,' | res | res := 5 + 10. ^res'.
 	self assert: expectedNewSourceCode equals: (senderClass >> methodWithUsagesSelector) sourceCode.! !
 
-!InlineMethodTest methodsFor: 'class factory' stamp: 'FB 11/22/2021 17:09:44'!
+!InlineMethodTest methodsFor: 'class factory' stamp: 'FB 22/Nov/2021 17:09:44'!
 anotherSenderClass
 
 	^#AnotherSenderOfMethodToInlineClass! !
 
-!InlineMethodTest methodsFor: 'class factory' stamp: 'FB 6/26/2021 19:23:34'!
+!InlineMethodTest methodsFor: 'class factory' stamp: 'FB 26/Jun/2021 19:23:34'!
 implementorClass
 
 	^#ImplementorOfMethodToInlineClass! !
 
-!InlineMethodTest methodsFor: 'class factory' stamp: 'FB 9/16/2021 23:31:21'!
+!InlineMethodTest methodsFor: 'class factory' stamp: 'FB 16/Sep/2021 23:31:21'!
 senderClass
 
 	^#SenderOfMethodToInlineClass! !
 
-!InlineTemporaryVariableTest methodsFor: 'class factory' stamp: 'FB 7/12/2020 14:20:19'!
+!InlineTemporaryVariableTest methodsFor: 'class factory' stamp: 'FB 12/Jul/2020 14:20:19'!
 classToRefactor
 
 	^#ClassWithMethodToInlineTemporaryVariable! !
 
-!InlineTemporaryVariableTest methodsFor: 'tests - successful' stamp: 'FB 11/21/2020 18:07:04'!
+!InlineTemporaryVariableTest methodsFor: 'tests - successful' stamp: 'FB 21/Nov/2020 18:07:04'!
 test03RefactoringRemovesUnusedTemporaryVariableDeclaration
 
 	|classToRefactor originalSource methodToRefactorName refactoring tempVarToInline expectedSourceCode |
@@ -30897,7 +30914,7 @@ test03RefactoringRemovesUnusedTemporaryVariableDeclaration
 	self assert: expectedSourceCode
 		equals: ((classToRefactor >> methodToRefactorName asSymbol)) sourceCode.! !
 
-!InlineTemporaryVariableTest methodsFor: 'tests - successful' stamp: 'FB 11/21/2020 18:07:44'!
+!InlineTemporaryVariableTest methodsFor: 'tests - successful' stamp: 'FB 21/Nov/2020 18:07:44'!
 test04AssignmentToVariableToInlineIsDeleted
 
 	|classToRefactor originalSource methodToRefactorName tempVarToInline refactoring expectedNewSourceCode |
@@ -30916,7 +30933,7 @@ test04AssignmentToVariableToInlineIsDeleted
 	expectedNewSourceCode := methodToRefactorName,' ^nil.'.
 	self assert: expectedNewSourceCode equals: (classToRefactor >> methodToRefactorName asSymbol) sourceCode! !
 
-!InlineTemporaryVariableTest methodsFor: 'tests - successful' stamp: 'FB 12/4/2020 09:24:05'!
+!InlineTemporaryVariableTest methodsFor: 'tests - successful' stamp: 'FB 4/Dec/2020 09:24:05'!
 test05RefactoringScopeIsBetweenAssignments
 
 	|classToRefactor originalSource methodToRefactorName tempVarToInline refactoring expectedNewSourceCode |
@@ -30935,7 +30952,7 @@ test05RefactoringScopeIsBetweenAssignments
 	expectedNewSourceCode := methodToRefactorName,' | t1 | t1 := 1. t1 := 3. ^nil.'.
 	self assert: expectedNewSourceCode equals: (classToRefactor >> methodToRefactorName asSymbol) sourceCode! !
 
-!InlineTemporaryVariableTest methodsFor: 'tests - successful' stamp: 'FB 2/15/2021 17:58:26'!
+!InlineTemporaryVariableTest methodsFor: 'tests - successful' stamp: 'FB 15/Feb/2021 17:58:26'!
 test06InlinedVariableUsagesAreReplacedWithTheVariablesValue
 
 	|classToRefactor originalSource methodToRefactorName tempVarToInline refactoring expectedNewSourceCode |
@@ -30954,7 +30971,7 @@ test06InlinedVariableUsagesAreReplacedWithTheVariablesValue
 	expectedNewSourceCode := methodToRefactorName,' self m2: self m1: 1'.
 	self assert: expectedNewSourceCode equals: (classToRefactor >> methodToRefactorName asSymbol) sourceCode! !
 
-!InlineTemporaryVariableTest methodsFor: 'tests - successful' stamp: 'FB 2/15/2021 18:05:02'!
+!InlineTemporaryVariableTest methodsFor: 'tests - successful' stamp: 'FB 15/Feb/2021 18:05:02'!
 test07RefactoringDoesNotAddParenthesesWhenTempIsLiteralAndReferenceIsReceiverOfUnaryMessage
 
 	|classToRefactor originalSource methodToRefactorName tempVarToInline refactoring expectedNewSourceCode |
@@ -30973,7 +30990,7 @@ test07RefactoringDoesNotAddParenthesesWhenTempIsLiteralAndReferenceIsReceiverOfU
 	expectedNewSourceCode := methodToRefactorName,' ^1 abs'.
 	self assert: expectedNewSourceCode equals: (classToRefactor >> methodToRefactorName asSymbol) sourceCode! !
 
-!InlineTemporaryVariableTest methodsFor: 'tests - successful' stamp: 'FB 2/15/2021 18:05:24'!
+!InlineTemporaryVariableTest methodsFor: 'tests - successful' stamp: 'FB 15/Feb/2021 18:05:24'!
 test08RefactoringDoesNotAddParenthesesWhenTempIsLiteralAndReferenceIsArgumentOfBinaryMessage
 
 	|classToRefactor originalSource methodToRefactorName tempVarToInline refactoring expectedNewSourceCode |
@@ -30992,7 +31009,7 @@ test08RefactoringDoesNotAddParenthesesWhenTempIsLiteralAndReferenceIsArgumentOfB
 	expectedNewSourceCode := methodToRefactorName,' ^5 * 1'.
 	self assert: expectedNewSourceCode equals: (classToRefactor >> methodToRefactorName asSymbol) sourceCode! !
 
-!InlineTemporaryVariableTest methodsFor: 'tests - successful' stamp: 'FB 2/15/2021 18:06:27'!
+!InlineTemporaryVariableTest methodsFor: 'tests - successful' stamp: 'FB 15/Feb/2021 18:06:27'!
 test09RefactoringAddsParenthesesWhenTempIsBinaryAndReferenceIsArgumentOfBinaryMessage
 
 	|classToRefactor originalSource methodToRefactorName tempVarToInline refactoring expectedNewSourceCode |
@@ -31011,7 +31028,7 @@ test09RefactoringAddsParenthesesWhenTempIsBinaryAndReferenceIsArgumentOfBinaryMe
 	expectedNewSourceCode := methodToRefactorName,' ^5 * (1 + 2)'.
 	self assert: expectedNewSourceCode equals: (classToRefactor >> methodToRefactorName asSymbol) sourceCode! !
 
-!InlineTemporaryVariableTest methodsFor: 'tests - successful' stamp: 'FB 2/15/2021 18:06:31'!
+!InlineTemporaryVariableTest methodsFor: 'tests - successful' stamp: 'FB 15/Feb/2021 18:06:31'!
 test10RefactoringDoesNotAddParenthesesWhenTempIsBinaryAndReferenceIsReceiverOfBinaryMessage
 
 	|classToRefactor originalSource methodToRefactorName tempVarToInline refactoring expectedNewSourceCode |
@@ -31030,7 +31047,7 @@ test10RefactoringDoesNotAddParenthesesWhenTempIsBinaryAndReferenceIsReceiverOfBi
 	expectedNewSourceCode := methodToRefactorName,' ^1 + 2 * 5'.
 	self assert: expectedNewSourceCode equals: (classToRefactor >> methodToRefactorName asSymbol) sourceCode! !
 
-!InlineTemporaryVariableTest methodsFor: 'tests - successful' stamp: 'FB 2/15/2021 18:10:13'!
+!InlineTemporaryVariableTest methodsFor: 'tests - successful' stamp: 'FB 15/Feb/2021 18:10:13'!
 test11RefactoringAddsParenthesesWhenTempIsBinaryAndReferenceIsReceiverOfUnaryMessage
 
 	|classToRefactor originalSource methodToRefactorName tempVarToInline refactoring expectedNewSourceCode |
@@ -31049,7 +31066,7 @@ test11RefactoringAddsParenthesesWhenTempIsBinaryAndReferenceIsReceiverOfUnaryMes
 	expectedNewSourceCode := methodToRefactorName,' ^(1 - 2) abs'.
 	self assert: expectedNewSourceCode equals: (classToRefactor >> methodToRefactorName asSymbol) sourceCode! !
 
-!InlineTemporaryVariableTest methodsFor: 'tests - successful' stamp: 'FB 2/20/2021 16:43:27'!
+!InlineTemporaryVariableTest methodsFor: 'tests - successful' stamp: 'FB 20/Feb/2021 16:43:27'!
 test12RefactoringAddsParenthesesWhenTempIsBinaryAndReferenceIsPartOfMessageWhereReceiverIsAnotherReferenceToTemp
 
 	|classToRefactor originalSource methodToRefactorName tempVarToInline refactoring expectedNewSourceCode |
@@ -31068,7 +31085,7 @@ test12RefactoringAddsParenthesesWhenTempIsBinaryAndReferenceIsPartOfMessageWhere
 	expectedNewSourceCode := methodToRefactorName,' ^1 * 5 + (1 * 5) + (1 * 5)'.
 	self assert: expectedNewSourceCode equals: (classToRefactor >> methodToRefactorName asSymbol) sourceCode! !
 
-!InlineTemporaryVariableTest methodsFor: 'tests - successful' stamp: 'FB 2/16/2021 20:30:24'!
+!InlineTemporaryVariableTest methodsFor: 'tests - successful' stamp: 'FB 16/Feb/2021 20:30:24'!
 test13RefactoringDoesNotAddParenthesesWhenTempIsBinaryAndReferenceIsArgumentOfKeywordMessage
 
 	|classToRefactor originalSource methodToRefactorName tempVarToInline refactoring expectedNewSourceCode |
@@ -31087,7 +31104,7 @@ test13RefactoringDoesNotAddParenthesesWhenTempIsBinaryAndReferenceIsArgumentOfKe
 	expectedNewSourceCode := methodToRefactorName,' ^self m2: 1 + 2'.
 	self assert: expectedNewSourceCode equals: (classToRefactor >> methodToRefactorName asSymbol) sourceCode! !
 
-!InlineTemporaryVariableTest methodsFor: 'tests - successful' stamp: 'FB 2/16/2021 20:29:05'!
+!InlineTemporaryVariableTest methodsFor: 'tests - successful' stamp: 'FB 16/Feb/2021 20:29:05'!
 test14RefactoringAddsParenthesesWhenTempIsKeywordMessageAndReferenceIsReceiverOfBinaryMessage
 
 	|classToRefactor originalSource methodToRefactorName tempVarToInline refactoring expectedNewSourceCode |
@@ -31106,7 +31123,7 @@ test14RefactoringAddsParenthesesWhenTempIsKeywordMessageAndReferenceIsReceiverOf
 	expectedNewSourceCode := methodToRefactorName,' ^(self m2: 5) * 2'.
 	self assert: expectedNewSourceCode equals: (classToRefactor >> methodToRefactorName asSymbol) sourceCode! !
 
-!InlineTemporaryVariableTest methodsFor: 'tests - successful' stamp: 'FB 2/16/2021 21:03:38'!
+!InlineTemporaryVariableTest methodsFor: 'tests - successful' stamp: 'FB 16/Feb/2021 21:03:38'!
 test15RefactoringDoesNotAddParenthesesWhenTempIsKeywordMessageAndReferenceIsArgumentOfBinaryMessage
 
 	|classToRefactor originalSource methodToRefactorName tempVarToInline refactoring expectedNewSourceCode |
@@ -31125,7 +31142,7 @@ test15RefactoringDoesNotAddParenthesesWhenTempIsKeywordMessageAndReferenceIsArgu
 	expectedNewSourceCode := methodToRefactorName,' ^2 * self m2: 5'.
 	self assert: expectedNewSourceCode equals: (classToRefactor >> methodToRefactorName asSymbol) sourceCode! !
 
-!InlineTemporaryVariableTest methodsFor: 'tests - successful' stamp: 'FB 2/20/2021 16:37:35'!
+!InlineTemporaryVariableTest methodsFor: 'tests - successful' stamp: 'FB 20/Feb/2021 16:37:35'!
 test16RefactoringAddsParenthesesWhenTempIsKeywordAndReferenceIsPartOfMessageWhereArgumentIsAnotherReferenceToTemp
 
 	|classToRefactor originalSource methodToRefactorName tempVarToInline refactoring expectedNewSourceCode |
@@ -31144,7 +31161,7 @@ test16RefactoringAddsParenthesesWhenTempIsKeywordAndReferenceIsPartOfMessageWher
 	expectedNewSourceCode := methodToRefactorName,' ^(self m2: 5) + (self m2: 5) + 2 + (self m2: 5) + self m2: 5'.
 	self assert: expectedNewSourceCode equals: (classToRefactor >> methodToRefactorName asSymbol) sourceCode! !
 
-!InlineTemporaryVariableTest methodsFor: 'tests - successful' stamp: 'FB 2/20/2021 19:56:15'!
+!InlineTemporaryVariableTest methodsFor: 'tests - successful' stamp: 'FB 20/Feb/2021 19:56:15'!
 test17RefactoringDoesNotAddParenthesesWhenBothValueAndReferenceAlreadyHaveThem
 
 	|classToRefactor originalSource methodToRefactorName tempVarToInline refactoring expectedNewSourceCode |
@@ -31163,7 +31180,7 @@ test17RefactoringDoesNotAddParenthesesWhenBothValueAndReferenceAlreadyHaveThem
 	expectedNewSourceCode := methodToRefactorName,' ^(1 + 2) + (1 + 2)'.
 	self assert: expectedNewSourceCode equals: (classToRefactor >> methodToRefactorName asSymbol) sourceCode! !
 
-!InlineTemporaryVariableTest methodsFor: 'tests - successful' stamp: 'FB 3/10/2021 19:03:50'!
+!InlineTemporaryVariableTest methodsFor: 'tests - successful' stamp: 'FB 10/Mar/2021 19:03:50'!
 test18RefactoringInlinesUsageOnNextAssignment
 
 	|classToRefactor originalSource methodToRefactorName tempVarToInline refactoring expectedNewSourceCode |
@@ -31182,7 +31199,7 @@ test18RefactoringInlinesUsageOnNextAssignment
 	expectedNewSourceCode := methodToRefactorName,' | t1 t2 | t2 := 5 * (2 * 3). t1 := 3 + (2 * 3)'.
 	self assert: expectedNewSourceCode equals: (classToRefactor >> methodToRefactorName asSymbol) sourceCode ! !
 
-!InlineTemporaryVariableTest methodsFor: 'tests - successful' stamp: 'FB 4/24/2021 18:16:08'!
+!InlineTemporaryVariableTest methodsFor: 'tests - successful' stamp: 'FB 24/Apr/2021 18:16:08'!
 test20RefactoringBlockTemporaryDoesNotChangeFollowingBlocksDeclaringTemporaryWithSameName
 
 	| classToRefactor originalSource methodToRefactorName tempVarToInline refactoring expectedNewSourceCode |
@@ -31204,7 +31221,7 @@ test20RefactoringBlockTemporaryDoesNotChangeFollowingBlocksDeclaringTemporaryWit
 	
 ! !
 
-!InlineTemporaryVariableTest methodsFor: 'tests - successful' stamp: 'FB 4/24/2021 18:16:29'!
+!InlineTemporaryVariableTest methodsFor: 'tests - successful' stamp: 'FB 24/Apr/2021 18:16:29'!
 test21RefactoringBlockTemporaryDoesNotChangePreviousBlocksDeclaringTemporaryWithSameName
 
 	| classToRefactor originalSource methodToRefactorName tempVarToInline refactoring expectedNewSourceCode |
@@ -31226,7 +31243,7 @@ test21RefactoringBlockTemporaryDoesNotChangePreviousBlocksDeclaringTemporaryWith
 	
 ! !
 
-!InlineTemporaryVariableTest methodsFor: 'tests - successful' stamp: 'FB 4/29/2021 21:08:23'!
+!InlineTemporaryVariableTest methodsFor: 'tests - successful' stamp: 'FB 29/Apr/2021 21:08:23'!
 test22RefactoringNestedBlockTemporaryDoesNotChangeFollowingBlocksDeclaringTemporaryWithSameName
 
 	| classToRefactor originalSource methodToRefactorName tempVarToInline refactoring expectedNewSourceCode |
@@ -31248,7 +31265,7 @@ test22RefactoringNestedBlockTemporaryDoesNotChangeFollowingBlocksDeclaringTempor
 	
 ! !
 
-!InlineTemporaryVariableTest methodsFor: 'tests - successful' stamp: 'FB 5/2/2021 19:16:02'!
+!InlineTemporaryVariableTest methodsFor: 'tests - successful' stamp: 'FB 2/May/2021 19:16:02'!
 test23RefactoringBlockTemporaryFromDeclarationDoesNotChangePreviousBlocksDeclaringTemporaryWithSameName
 
 	| classToRefactor originalSource methodToRefactorName tempVarToInline refactoring expectedNewSourceCode |
@@ -31270,7 +31287,7 @@ test23RefactoringBlockTemporaryFromDeclarationDoesNotChangePreviousBlocksDeclari
 	
 ! !
 
-!InlineTemporaryVariableTest methodsFor: 'tests - successful' stamp: 'FB 5/2/2021 19:25:41'!
+!InlineTemporaryVariableTest methodsFor: 'tests - successful' stamp: 'FB 2/May/2021 19:25:41'!
 test24RefactoringOnlyRemovesDeclarationOfInlinedTemporary
 
 	| classToRefactor originalSource methodToRefactorName tempVarToInline refactoring expectedNewSourceCode |
@@ -31292,7 +31309,7 @@ test24RefactoringOnlyRemovesDeclarationOfInlinedTemporary
 	
 ! !
 
-!InlineTemporaryVariableTest methodsFor: 'tests - successful' stamp: 'FB 12/21/2021 20:27:55'!
+!InlineTemporaryVariableTest methodsFor: 'tests - successful' stamp: 'FB 21/Dec/2021 20:27:55'!
 test26RefactoringAddsParenthesesWhenTempIsKeywordMessageAndReferenceIsArgumentOfKeywordMessage
 
 	|classToRefactor originalSource methodToRefactorName tempVarToInline refactoring expectedNewSourceCode |
@@ -31314,7 +31331,7 @@ test26RefactoringAddsParenthesesWhenTempIsKeywordMessageAndReferenceIsArgumentOf
 	
 ! !
 
-!InlineTemporaryVariableTest methodsFor: 'tests - successful' stamp: 'FB 12/28/2021 19:55:21'!
+!InlineTemporaryVariableTest methodsFor: 'tests - successful' stamp: 'FB 28/Dec/2021 19:55:21'!
 test27RefactoringIsAllowedWhenVariableIsUsedInBlockButThereAreNoMoreAssignments
 
 	|classToRefactor originalSource methodToRefactorName tempVarToInline refactoring expectedNewSourceCode |
@@ -31336,7 +31353,7 @@ test27RefactoringIsAllowedWhenVariableIsUsedInBlockButThereAreNoMoreAssignments
 	
 ! !
 
-!InlineTemporaryVariableTest methodsFor: 'tests - successful' stamp: 'FB 3/19/2022 13:23:51'!
+!InlineTemporaryVariableTest methodsFor: 'tests - successful' stamp: 'FB 19/Mar/2022 13:23:51'!
 test29InlineReferenceAtEndOfMethodWithoutStatementEndingCharacter
 
 	|classToRefactor originalSource methodToRefactorName tempVarToInline refactoring expectedNewSourceCode |
@@ -31358,7 +31375,7 @@ test29InlineReferenceAtEndOfMethodWithoutStatementEndingCharacter
 	
 ! !
 
-!InlineTemporaryVariableTest methodsFor: 'tests - successful' stamp: 'FB 3/19/2022 13:26:10'!
+!InlineTemporaryVariableTest methodsFor: 'tests - successful' stamp: 'FB 19/Mar/2022 13:26:10'!
 test30InlineFromReferenceLocatedAfterAssignment
 
 	|classToRefactor originalSource methodToRefactorName tempVarToInline refactoring expectedNewSourceCode |
@@ -31380,7 +31397,7 @@ test30InlineFromReferenceLocatedAfterAssignment
 	
 ! !
 
-!InlineTemporaryVariableTest methodsFor: 'tests - successful' stamp: 'FB 4/3/2022 23:28:22'!
+!InlineTemporaryVariableTest methodsFor: 'tests - successful' stamp: 'FB 3/Apr/2022 23:28:22'!
 test31InlineTemporaryUsedAfterAssignmentInBlock
 
 	|classToRefactor originalSource methodToRefactorName tempVarToInline refactoring expectedNewSourceCode |
@@ -31402,7 +31419,7 @@ test31InlineTemporaryUsedAfterAssignmentInBlock
 	
 ! !
 
-!InlineTemporaryVariableTest methodsFor: 'tests - successful' stamp: 'FB 9/11/2022 20:39:21'!
+!InlineTemporaryVariableTest methodsFor: 'tests - successful' stamp: 'FB 11/Sep/2022 20:39:21'!
 test32InlineTemporaryUsedAfterBlockWhenNotReferencedByIt
 
 	|classToRefactor originalSource methodToRefactorName tempVarToInline refactoring expectedNewSourceCode |
@@ -31422,7 +31439,7 @@ test32InlineTemporaryUsedAfterBlockWhenNotReferencedByIt
 	self assert: expectedNewSourceCode equals: (classToRefactor >> methodToRefactorName asSymbol) sourceCode
 ! !
 
-!InlineTemporaryVariableTest methodsFor: 'tests - validations' stamp: 'FB 12/28/2021 20:02:39'!
+!InlineTemporaryVariableTest methodsFor: 'tests - validations' stamp: 'FB 28/Dec/2021 20:02:39'!
 test01VariableToInlineCanNotBeEmpty
 
 	|classToRefactor originalSource methodToRefactorName tempVarToInline |
@@ -31437,7 +31454,7 @@ test01VariableToInlineCanNotBeEmpty
 		 inMethod: classToRefactor >> methodToRefactorName asSymbol.]
 	 failsWith: [InlineTemporaryVariable selectionIsNotATemporaryVariableErrorMessage].! !
 
-!InlineTemporaryVariableTest methodsFor: 'tests - validations' stamp: 'FB 12/28/2021 20:02:39'!
+!InlineTemporaryVariableTest methodsFor: 'tests - validations' stamp: 'FB 28/Dec/2021 20:02:39'!
 test02VariableToInlineMustExistInSelector
 
 	|classToRefactor originalSource methodToRefactorName tempVarToInline |
@@ -31452,7 +31469,7 @@ test02VariableToInlineMustExistInSelector
 		 inMethod: classToRefactor >> methodToRefactorName asSymbol.]
 	 failsWith: [InlineTemporaryVariable selectionIsNotATemporaryVariableErrorMessage].! !
 
-!InlineTemporaryVariableTest methodsFor: 'tests - validations' stamp: 'FB 7/12/2022 19:02:45'!
+!InlineTemporaryVariableTest methodsFor: 'tests - validations' stamp: 'FB 12/Jul/2022 19:02:45'!
 test19CanNotRefactorTemporaryWhenAssignedAfterBeingReferencedInBlock
 
 	| classToRefactor originalSource methodToRefactorName tempVarToInline refactoring |
@@ -31474,7 +31491,7 @@ test19CanNotRefactorTemporaryWhenAssignedAfterBeingReferencedInBlock
 	
 ! !
 
-!InlineTemporaryVariableTest methodsFor: 'tests - validations' stamp: 'FB 7/12/2022 18:07:21'!
+!InlineTemporaryVariableTest methodsFor: 'tests - validations' stamp: 'FB 12/Jul/2022 18:07:21'!
 test25CanNotRefactorTemporaryFromDeclarationWhenThereAreMultipleAssignments
 
 	| classToRefactor originalSource methodToRefactorName tempVarToInline refactoring |
@@ -31496,7 +31513,7 @@ test25CanNotRefactorTemporaryFromDeclarationWhenThereAreMultipleAssignments
 	
 ! !
 
-!InlineTemporaryVariableTest methodsFor: 'tests - validations' stamp: 'FB 7/12/2022 18:07:26'!
+!InlineTemporaryVariableTest methodsFor: 'tests - validations' stamp: 'FB 12/Jul/2022 18:07:26'!
 test28CanNotRefactorTemporaryFromDeclarationWhenVariableIsReferencedButNotAssigned
 
 	| classToRefactor originalSource methodToRefactorName tempVarToInline refactoring |
@@ -31518,7 +31535,7 @@ test28CanNotRefactorTemporaryFromDeclarationWhenVariableIsReferencedButNotAssign
 	
 ! !
 
-!InlineTemporaryVariableTest methodsFor: 'tests - validations' stamp: 'FB 9/11/2022 20:27:01'!
+!InlineTemporaryVariableTest methodsFor: 'tests - validations' stamp: 'FB 11/Sep/2022 20:27:01'!
 test33InlineTemporaryFromReferenceAfterAssignmentInBlock
 
 	|classToRefactor originalSource methodToRefactorName tempVarToInline refactoring |
@@ -31540,7 +31557,7 @@ test33InlineTemporaryFromReferenceAfterAssignmentInBlock
 	
 ! !
 
-!InsertSuperclassTest methodsFor: 'tests' stamp: 'HAW 8/13/2018 18:01:00'!
+!InsertSuperclassTest methodsFor: 'tests' stamp: 'HAW 13/Aug/2018 18:01:00'!
 test01ChangesTheSuperclassOfTheClassToRefactor
 
 	| classToRefactor refactoring oldSuperclass newSuperclass |
@@ -31555,7 +31572,7 @@ test01ChangesTheSuperclassOfTheClassToRefactor
 	self assert: (newSuperclass subclasses includes: classToRefactor).
 	self assert: oldSuperclass equals: newSuperclass superclass.! !
 
-!InsertSuperclassTest methodsFor: 'tests' stamp: 'HAW 3/13/2025 13:59:15'!
+!InsertSuperclassTest methodsFor: 'tests' stamp: 'HAW 13/Mar/2025 13:59:15'!
 test02ClassToRefactorStructureIsMaintained
 
 	| classToRefactor refactoring instanceVariables category classVariables poolDictionaries |
@@ -31582,7 +31599,7 @@ test02ClassToRefactorStructureIsMaintained
 	self assert: poolDictionaries equals: classToRefactor sharedPoolsString.
 	self assert: category equals: classToRefactor category ] ensure: [ Smalltalk removeKey: poolDictionaries asSymbol ].! !
 
-!InsertSuperclassTest methodsFor: 'tests' stamp: 'HAW 8/13/2018 18:17:48'!
+!InsertSuperclassTest methodsFor: 'tests' stamp: 'HAW 13/Aug/2018 18:17:48'!
 test03NewSuperclassCategoryIsTheSameAsClassToRefactorCategory
 
 	| classToRefactor refactoring classToRefactorCategory newSuperclass |
@@ -31595,7 +31612,7 @@ test03NewSuperclassCategoryIsTheSameAsClassToRefactorCategory
 	
 	self assert: classToRefactorCategory equals: newSuperclass category.! !
 
-!InsertSuperclassTest methodsFor: 'tests' stamp: 'HAW 8/13/2018 18:19:28'!
+!InsertSuperclassTest methodsFor: 'tests' stamp: 'HAW 13/Aug/2018 18:19:28'!
 test04NewSuperclassHasNoVariables
 
 	| classToRefactor refactoring classToRefactorCategory newSuperclass |
@@ -31610,7 +31627,7 @@ test04NewSuperclassHasNoVariables
 	self assert: newSuperclass classVarNames isEmpty.
 	self assert: newSuperclass sharedPools isEmpty.! !
 
-!InsertSuperclassTest methodsFor: 'tests' stamp: 'HAW 8/13/2018 18:21:16'!
+!InsertSuperclassTest methodsFor: 'tests' stamp: 'HAW 13/Aug/2018 18:21:16'!
 test05NewSuperclassShouldNotExist
 
 	| classToRefactor existingClass existingClassName |
@@ -31623,21 +31640,21 @@ test05NewSuperclassShouldNotExist
 		assertCreation: [ InsertSuperclass to: classToRefactor named: existingClassName ]
 		failsWith: [ NewClassPrecondition errorMessageForAlreadyExistClassNamed: existingClass name ].! !
 
-!InsertSuperclassTest methodsFor: 'tests' stamp: 'HAW 8/13/2018 18:22:13'!
+!InsertSuperclassTest methodsFor: 'tests' stamp: 'HAW 13/Aug/2018 18:22:13'!
 test06NewSuperclassNameHasToBeASymbol
 
 	self 
 		assertCreation: [ InsertSuperclass to: self class named: 'aString' ]
 		failsWith: [ NewClassPrecondition newNameMustBeSymbolErrorMessage ].! !
 
-!InsertSuperclassTest methodsFor: 'tests' stamp: 'HAW 5/24/2019 10:09:41'!
+!InsertSuperclassTest methodsFor: 'tests' stamp: 'HAW 24/May/2019 10:09:41'!
 test07NewSuperclassNameHasToStartWithUppercaseLetter
 	
 	self
 		assertCreation: [ InsertSuperclass to: self class named: #_A ]
 		failsWith: [ NewClassPrecondition newNameMustStartWithRightLetterErrorMessage ].! !
 
-!InsertSuperclassTest methodsFor: 'tests' stamp: 'HAW 8/13/2018 18:22:31'!
+!InsertSuperclassTest methodsFor: 'tests' stamp: 'HAW 13/Aug/2018 18:22:31'!
 test08WhenAppliedToMetaclassWorksAsWithClass
 
 	| classToRefactor refactoring newSuperclass |
@@ -31649,21 +31666,21 @@ test08WhenAppliedToMetaclassWorksAsWithClass
 	
 	self assert: newSuperclass equals: classToRefactor superclass.! !
 
-!InsertSuperclassTest methodsFor: 'tests' stamp: 'HAW 8/13/2018 18:22:56'!
+!InsertSuperclassTest methodsFor: 'tests' stamp: 'HAW 13/Aug/2018 18:22:56'!
 test09NewSuperclassNameCanNotBeEmpty
 
 	self 
 		assertCreation: [ InsertSuperclass to: self class named: '' asSymbol ]
 		failsWith: [ NewClassPrecondition newClassNameCanNotBeEmptyErrorMessage ].! !
 
-!InsertSuperclassTest methodsFor: 'tests' stamp: 'HAW 3/3/2019 09:13:27'!
+!InsertSuperclassTest methodsFor: 'tests' stamp: 'HAW 3/Mar/2019 09:13:27'!
 test10NewSuperclassNameCanNotHaveSpaces
 	
 	self
 		assertCreation: [ InsertSuperclass to: self class named: 'With spaces' asSymbol ]
 		failsWith: [ NewClassPrecondition newClassNameCanNotHaveSeparatorsErrorMessage ].! !
 
-!MoveToInstanceOrClassMethodTest methodsFor: 'tests' stamp: 'LMY 12/8/2019 18:08:54'!
+!MoveToInstanceOrClassMethodTest methodsFor: 'tests' stamp: 'LMY 8/Dec/2019 18:08:54'!
 test01CannotMoveWhenReferencingInstanceVariables
 	
 	| classToRefactor selector referencedVariable |
@@ -31679,7 +31696,7 @@ test01CannotMoveWhenReferencingInstanceVariables
 		failsWith: [ MoveToInstanceOrClassMethod referencingInstanceVariablesErrorMessage ]
 ! !
 
-!MoveToInstanceOrClassMethodTest methodsFor: 'tests' stamp: 'LMY 12/8/2019 18:43:15'!
+!MoveToInstanceOrClassMethodTest methodsFor: 'tests' stamp: 'LMY 8/Dec/2019 18:43:15'!
 test02CannotMoveToClassWhenLocalVariableIsTheSameAsClassInstanceVariable
 	
 	| classToRefactor selector referencedVariable |
@@ -31696,7 +31713,7 @@ test02CannotMoveToClassWhenLocalVariableIsTheSameAsClassInstanceVariable
 		failsWith: [ MoveToInstanceOrClassMethod localVariableConflictsWithInstanceVariableErrorMessage ]
 ! !
 
-!MoveToInstanceOrClassMethodTest methodsFor: 'tests' stamp: 'LMY 12/8/2019 23:35:40'!
+!MoveToInstanceOrClassMethodTest methodsFor: 'tests' stamp: 'LMY 8/Dec/2019 23:35:40'!
 test03CannotMoveToInstanceWhenLocalVariableIsTheSameAsClassInstanceVariable
 	
 	| classToRefactor selector referencedVariable |
@@ -31713,7 +31730,7 @@ test03CannotMoveToInstanceWhenLocalVariableIsTheSameAsClassInstanceVariable
 		failsWith: [ MoveToInstanceOrClassMethod localVariableConflictsWithInstanceVariableErrorMessage ]
 ! !
 
-!MoveToInstanceOrClassMethodTest methodsFor: 'tests' stamp: 'LMY 12/8/2019 23:44:00'!
+!MoveToInstanceOrClassMethodTest methodsFor: 'tests' stamp: 'LMY 8/Dec/2019 23:44:00'!
 test04InstanceMethodIsMovedToClassMethod
 	
 	| classToRefactor selector moveMethod |
@@ -31730,7 +31747,7 @@ test04InstanceMethodIsMovedToClassMethod
 	self deny: (classToRefactor includesSelector: selector).
 ! !
 
-!MoveToInstanceOrClassMethodTest methodsFor: 'tests' stamp: 'LMY 12/8/2019 23:51:21'!
+!MoveToInstanceOrClassMethodTest methodsFor: 'tests' stamp: 'LMY 8/Dec/2019 23:51:21'!
 test05ClassMethodIsMovedToInstanceMethod
 	
 	| classToRefactor selector moveMethod |
@@ -31747,16 +31764,16 @@ test05ClassMethodIsMovedToInstanceMethod
 	self deny: (classToRefactor class includesSelector: selector).
 ! !
 
-!MoveToInstanceOrClassMethodTest methodsFor: 'class factory' stamp: 'LMY 12/8/2019 17:35:59'!
+!MoveToInstanceOrClassMethodTest methodsFor: 'class factory' stamp: 'LMY 8/Dec/2019 17:35:59'!
 classToRefactorName
 
 	^#ClassToMoveMethod! !
 
-!PushDownInstanceVariableTest methodsFor: 'class factory' stamp: 'MSC 12/21/2019 09:49:48'!
+!PushDownInstanceVariableTest methodsFor: 'class factory' stamp: 'MSC 21/Dec/2019 09:49:48'!
 classToRefactorName
 	^#ClassToPushInstanceVariableDown.! !
 
-!PushDownInstanceVariableTest methodsFor: 'tests' stamp: 'HAW 12/26/2019 20:13:23'!
+!PushDownInstanceVariableTest methodsFor: 'tests' stamp: 'HAW 26/Dec/2019 20:13:23'!
 test01AnInstanceVariableDoesNotExistOnClassToFactorCannotBePushedDownToSubclasses
 	
 	classToRefactor := self createClassNamed: self classToRefactorName.
@@ -31768,7 +31785,7 @@ test01AnInstanceVariableDoesNotExistOnClassToFactorCannotBePushedDownToSubclasse
 		self deny: (subClass definesInstanceVariableNamed: instanceVariableToPushDown).
 	].! !
 
-!PushDownInstanceVariableTest methodsFor: 'tests' stamp: 'HAW 12/26/2019 20:10:51'!
+!PushDownInstanceVariableTest methodsFor: 'tests' stamp: 'HAW 26/Dec/2019 20:10:51'!
 test02AnInstanceVariableThatIsAccessedOnClassToRefactorCannotBePushedDownToAllSubclasses
 
 	|  selector |
@@ -31789,7 +31806,7 @@ test02AnInstanceVariableThatIsAccessedOnClassToRefactorCannotBePushedDownToAllSu
 	classToRefactor subclassesDo: [ :subClass |
 		self deny: (subClass definesInstanceVariableNamed: instanceVariableToPushDown)].! !
 
-!PushDownInstanceVariableTest methodsFor: 'tests' stamp: 'HAW 12/26/2019 20:49:31'!
+!PushDownInstanceVariableTest methodsFor: 'tests' stamp: 'HAW 26/Dec/2019 20:49:31'!
 test03AnInstanceVariableThatIsNotAccessedOnClassToRefactorShouldBePushedDownToAllSubclasses
 
 	|  pushDown |
@@ -31806,21 +31823,21 @@ test03AnInstanceVariableThatIsNotAccessedOnClassToRefactorShouldBePushedDownToAl
 		self assert: (subClass definesInstanceVariableNamed: instanceVariableToPushDown).
 	].! !
 
-!PushDownInstanceVariableTest methodsFor: 'setup' stamp: 'MSC 12/21/2019 22:01:42'!
+!PushDownInstanceVariableTest methodsFor: 'setup' stamp: 'MSC 21/Dec/2019 22:01:42'!
 setUp
 
 	super setUp.
 	
 	instanceVariableToPushDown := 'a'.! !
 
-!PushDownInstanceVariableTest methodsFor: 'assertions' stamp: 'jmv 3/20/2024 16:00:17'!
+!PushDownInstanceVariableTest methodsFor: 'assertions' stamp: 'jmv 20/Mar/2024 16:00:17'!
 assertPushDownCreationFailsWith: aStringOrBlock
 
 	self
 		assertCreation: [ PushDownInstanceVariable named: instanceVariableToPushDown from: classToRefactor. ]
 		failsWith: aStringOrBlock ! !
 
-!PushDownMethodTest methodsFor: 'assertions' stamp: 'HAW 7/12/2023 21:15:23'!
+!PushDownMethodTest methodsFor: 'assertions' stamp: 'HAW 12/Jul/2023 21:15:23'!
 assert: classToRefactor implementsSendingSubclassResponsibility: selector
 
 	| newMethod |
@@ -31831,32 +31848,32 @@ assert: classToRefactor implementsSendingSubclassResponsibility: selector
 		assert: self methodToPushDownCategory 
 		equals: (newMethod methodClass organization categoryOfElement: selector)! !
 
-!PushDownMethodTest methodsFor: 'class factory' stamp: 'HAW 5/29/2023 15:05:28'!
+!PushDownMethodTest methodsFor: 'class factory' stamp: 'HAW 29/May/2023 15:05:28'!
 classToPushDownTo
 
 	^ #ClassToPushDownTo! !
 
-!PushDownMethodTest methodsFor: 'class factory' stamp: 'HAW 5/29/2023 15:05:42'!
+!PushDownMethodTest methodsFor: 'class factory' stamp: 'HAW 29/May/2023 15:05:42'!
 classToPushDownTo2
 
 	^ #ClassToPushDownTo2! !
 
-!PushDownMethodTest methodsFor: 'class factory' stamp: 'HAW 5/29/2023 14:52:33'!
+!PushDownMethodTest methodsFor: 'class factory' stamp: 'HAW 29/May/2023 14:52:33'!
 classToRefactorName	
 
 	^#ClassToPushMethodDown! !
 
-!PushDownMethodTest methodsFor: 'class factory' stamp: 'HAW 7/12/2023 21:13:14'!
+!PushDownMethodTest methodsFor: 'class factory' stamp: 'HAW 12/Jul/2023 21:13:14'!
 methodToPushDownCategory
 	
 	^'a category'! !
 
-!PushDownMethodTest methodsFor: 'class factory' stamp: 'HAW 5/29/2023 14:58:30'!
+!PushDownMethodTest methodsFor: 'class factory' stamp: 'HAW 29/May/2023 14:58:30'!
 selectorToPushDown
 
 	^ #newMethod! !
 
-!PushDownMethodToOneSubclassTest methodsFor: 'tests' stamp: 'HAW 5/29/2023 15:07:12'!
+!PushDownMethodToOneSubclassTest methodsFor: 'tests' stamp: 'HAW 29/May/2023 15:07:12'!
 test01MethodShouldPushedDownOnlyToSelectedSubclass
 
 	| classToPushDownTo sibling classToRefactor push |
@@ -31878,7 +31895,7 @@ test01MethodShouldPushedDownOnlyToSelectedSubclass
 	
 	! !
 
-!PushDownMethodToOneSubclassTest methodsFor: 'tests' stamp: 'HAW 7/12/2023 21:15:48'!
+!PushDownMethodToOneSubclassTest methodsFor: 'tests' stamp: 'HAW 12/Jul/2023 21:15:48'!
 test02MethodShouldPushedDownIfVarNotShadowedInClassToPushDownTo
 
 	| classToPushDownTo sibling classToRefactor instVar push |
@@ -31900,7 +31917,7 @@ test02MethodShouldPushedDownIfVarNotShadowedInClassToPushDownTo
 	self assert: (classToPushDownTo includesSelector: self selectorToPushDown).
 	self assert: classToRefactor implementsSendingSubclassResponsibility: self selectorToPushDown.! !
 
-!PushDownMethodToOneSubclassTest methodsFor: 'tests' stamp: 'HAW 5/29/2023 15:08:29'!
+!PushDownMethodToOneSubclassTest methodsFor: 'tests' stamp: 'HAW 29/May/2023 15:08:29'!
 test03MethodShouldNotPushedDownIfVarShadowedInClassToPushDownTo
 
 	| classToPushDownTo classToRefactor instVar |
@@ -31918,7 +31935,7 @@ test03MethodShouldNotPushedDownIfVarShadowedInClassToPushDownTo
 			{classToPushDownTo -> {instVar }} asDictionary].
 	! !
 
-!PushDownMethodToOneSubclassTest methodsFor: 'tests' stamp: 'HAW 5/29/2023 15:08:41'!
+!PushDownMethodToOneSubclassTest methodsFor: 'tests' stamp: 'HAW 29/May/2023 15:08:41'!
 test04ExistingMethodInSubclassShouldBeOverriden
 	
 	| classToRefactor classToPushDownMethodTo methodToPushDownSourceCode push |
@@ -31940,7 +31957,7 @@ test04ExistingMethodInSubclassShouldBeOverriden
 	self deny: (classToRefactor includesSelector: self selectorToPushDown).
 	self assert: methodToPushDownSourceCode equals: (classToPushDownMethodTo >> self selectorToPushDown) sourceCode! !
 
-!PushDownMethodToOneSubclassTest methodsFor: 'tests' stamp: 'HAW 5/29/2023 15:08:55'!
+!PushDownMethodToOneSubclassTest methodsFor: 'tests' stamp: 'HAW 29/May/2023 15:08:55'!
 test05AMethodCannotBePushedToClassThatIsNotInHierarchy
 
 	| classNotInRefactorHierarchy classToRefactor |
@@ -31955,7 +31972,7 @@ test05AMethodCannotBePushedToClassThatIsNotInHierarchy
 		failsWith: [ PushDownMethodToOneSubclass errorMessage: classNotInRefactorHierarchy isNotSubclassOf: classToRefactor ].
 	! !
 
-!PushDownMethodToOneSubclassTest methodsFor: 'tests' stamp: 'HAW 5/29/2023 15:09:19'!
+!PushDownMethodToOneSubclassTest methodsFor: 'tests' stamp: 'HAW 29/May/2023 15:09:19'!
 test06WarnWhenMethodNotImplementedInSiblings
 
 	| classToPushDownTo classToRefactor sibling |
@@ -31971,7 +31988,7 @@ test06WarnWhenMethodNotImplementedInSiblings
 		warnsWith: [ PushDownMethodToOneSubclass warningMessageNotARefactoringBecauseNotImplementedIn: { sibling } ].
 	! !
 
-!PushDownMethodToOneSubclassTest methodsFor: 'tests' stamp: 'HAW 5/29/2023 15:09:27'!
+!PushDownMethodToOneSubclassTest methodsFor: 'tests' stamp: 'HAW 29/May/2023 15:09:27'!
 test07ShouldNotWarnWhenMethodImplementedInSiblings
 
 	| classToPushDownTo classToRefactor sibling |
@@ -31987,7 +32004,7 @@ test07ShouldNotWarnWhenMethodImplementedInSiblings
 		shouldnt: [ PushDownMethodToOneSubclass for: classToRefactor >> self selectorToPushDown to: classToPushDownTo] 
 		raise: self refactoringWarning ! !
 
-!PushDownMethodToOneSubclassTest methodsFor: 'tests' stamp: 'HAW 7/12/2023 21:16:03'!
+!PushDownMethodToOneSubclassTest methodsFor: 'tests' stamp: 'HAW 12/Jul/2023 21:16:03'!
 test08ShouldImplementAsSubclassResponsibilityWhenImplementedInAllSubclasses
 
 	| classToPushDownTo classToRefactor sibling push expectedClassToRefactorSourceCode |
@@ -32008,7 +32025,7 @@ test08ShouldImplementAsSubclassResponsibilityWhenImplementedInAllSubclasses
 	self assert: classToRefactor implementsSendingSubclassResponsibility: self selectorToPushDown.
 	self assert: expectedClassToRefactorSourceCode equals: (classToRefactor >> self selectorToPushDown) sourceCode.! !
 
-!PushDownMethodToOneSubclassTest methodsFor: 'tests' stamp: 'HAW 7/17/2023 12:24:30'!
+!PushDownMethodToOneSubclassTest methodsFor: 'tests' stamp: 'HAW 17/Jul/2023 12:24:30'!
 test09AClassMethodShouldBePushedDownToSubclasses
 
 	| classToRefactorSubclass classToRefactor push |
@@ -32025,7 +32042,7 @@ test09AClassMethodShouldBePushedDownToSubclasses
 	self assert: (classToRefactorSubclass class includesSelector: self selectorToPushDown).
 	! !
 
-!PushDownMethodToSubclassesTest methodsFor: 'tests' stamp: 'HAW 7/12/2023 21:16:23'!
+!PushDownMethodToSubclassesTest methodsFor: 'tests' stamp: 'HAW 12/Jul/2023 21:16:23'!
 test01AnEmptyMethodOnClassToRefactorShouldBePushedDownToSubclasses
 
 	| classToRefactorSubclass1 classToRefactorSubclass2 classToRefactor push |
@@ -32044,7 +32061,7 @@ test01AnEmptyMethodOnClassToRefactorShouldBePushedDownToSubclasses
 	self assert: (classToRefactorSubclass2 includesSelector: self selectorToPushDown).
 	! !
 
-!PushDownMethodToSubclassesTest methodsFor: 'tests' stamp: 'HAW 5/29/2023 15:05:18'!
+!PushDownMethodToSubclassesTest methodsFor: 'tests' stamp: 'HAW 29/May/2023 15:05:18'!
 test02CanNotPushDownWhenATemporaryVarIsAnInstVarOnASubclass
 	| classToRefactorSubclass1 classToRefactorSubclass2 classToRefactor newVariable |
 	
@@ -32065,7 +32082,7 @@ test02CanNotPushDownWhenATemporaryVarIsAnInstVarOnASubclass
 	self deny: (classToRefactorSubclass2 includesSelector: self selectorToPushDown).
 	self assert: (classToRefactor includesSelector: self selectorToPushDown).! !
 
-!PushDownMethodToSubclassesTest methodsFor: 'tests' stamp: 'HAW 5/29/2023 15:57:20'!
+!PushDownMethodToSubclassesTest methodsFor: 'tests' stamp: 'HAW 29/May/2023 15:57:20'!
 test03CanNotPushDownWhenAnArgumentIsAnInstVarOnASubclass
 	| classToRefactorSubclass1 classToRefactorSubclass2 classToRefactor newVariable selectorToPushDown |
 	
@@ -32087,7 +32104,7 @@ test03CanNotPushDownWhenAnArgumentIsAnInstVarOnASubclass
 	self deny: (classToRefactorSubclass2 includesSelector: selectorToPushDown).
 	self assert: (classToRefactor includesSelector: selectorToPushDown).! !
 
-!PushDownMethodToSubclassesTest methodsFor: 'tests' stamp: 'HAW 7/12/2023 21:16:32'!
+!PushDownMethodToSubclassesTest methodsFor: 'tests' stamp: 'HAW 12/Jul/2023 21:16:32'!
 test04AMethodAccessesClassToRefactorInstVarShouldBePushedDownToSubclasses
 	| classToRefactorSubclass1 classToRefactorSubclass2 classToRefactor newVariable push |
 
@@ -32106,7 +32123,7 @@ test04AMethodAccessesClassToRefactorInstVarShouldBePushedDownToSubclasses
 	self assert: (classToRefactorSubclass1 includesSelector: self selectorToPushDown).
 	self assert: (classToRefactorSubclass2 includesSelector: self selectorToPushDown).! !
 
-!PushDownMethodToSubclassesTest methodsFor: 'tests' stamp: 'HAW 7/12/2023 21:16:43'!
+!PushDownMethodToSubclassesTest methodsFor: 'tests' stamp: 'HAW 12/Jul/2023 21:16:43'!
 test05AMethodWritesClassToRefactorInstVarShouldBePushedDownToSubclasses
 	| classToRefactorSubclass1 classToRefactorSubclass2 classToRefactor newVariable push |
 
@@ -32125,7 +32142,7 @@ test05AMethodWritesClassToRefactorInstVarShouldBePushedDownToSubclasses
 	self assert: (classToRefactorSubclass1 includesSelector: self selectorToPushDown).
 	self assert: (classToRefactorSubclass2 includesSelector: self selectorToPushDown).! !
 
-!PushDownMethodToSubclassesTest methodsFor: 'tests' stamp: 'HAW 5/29/2023 14:58:09'!
+!PushDownMethodToSubclassesTest methodsFor: 'tests' stamp: 'HAW 29/May/2023 14:58:09'!
 test06AMethodInClassToRefactorExistsInSubClassesShouldOverrideTheExistingSubClassesMethod
 	
 	| classToRefactor classToRefactorSubclass newVariable subclassMethodContent |
@@ -32147,7 +32164,7 @@ test06AMethodInClassToRefactorExistsInSubClassesShouldOverrideTheExistingSubClas
 	self assert: (classToRefactorSubclass includesSelector: self selectorToPushDown).
 	self assert: (classToRefactor includesSelector: self selectorToPushDown).! !
 
-!PushDownMethodToSubclassesTest methodsFor: 'tests' stamp: 'HAW 7/12/2023 21:16:58'!
+!PushDownMethodToSubclassesTest methodsFor: 'tests' stamp: 'HAW 12/Jul/2023 21:16:58'!
 test07AMethodInClassToRefactorShouldBeReplacedBySubclassResponsibility
 
 	| classToRefactor push  expectedBody selectorToPushDown selectorAndArguments |
@@ -32172,7 +32189,7 @@ test07AMethodInClassToRefactorShouldBeReplacedBySubclassResponsibility
  
  	self subclassResponsibility' ! !
 
-!PushDownMethodToSubclassesTest methodsFor: 'tests' stamp: 'HAW 5/29/2023 15:57:59'!
+!PushDownMethodToSubclassesTest methodsFor: 'tests' stamp: 'HAW 29/May/2023 15:57:59'!
 test08AMethodInClassToRefactorExistsInSubClassesShouldNotOverrideTheExistingSubClassesMethodIfEquivalent
 
 	| classToRefactor classToRefactorSubclass newVariable subclassMethodContent push |
@@ -32195,7 +32212,7 @@ test08AMethodInClassToRefactorExistsInSubClassesShouldNotOverrideTheExistingSubC
 	self assert: (classToRefactor includesSelector: self selectorToPushDown).
 	self deny: (subclassMethodContent = (classToRefactor >> self selectorToPushDown) getSource).! !
 
-!PushDownMethodToSubclassesTest methodsFor: 'tests' stamp: 'HAW 5/29/2023 14:58:20'!
+!PushDownMethodToSubclassesTest methodsFor: 'tests' stamp: 'HAW 29/May/2023 14:58:20'!
 test09CannotPushDownMethodWithoutSubclasses
 
 	| classToRefactor |
@@ -32209,7 +32226,7 @@ test09CannotPushDownMethodWithoutSubclasses
 		 failsWith: [ PushDownMethodToSubclasses errorMessageNoSubclassToPushDownMethodTo ].
 	! !
 
-!PushDownMethodToSubclassesTest methodsFor: 'tests' stamp: 'HAW 7/17/2023 12:24:49'!
+!PushDownMethodToSubclassesTest methodsFor: 'tests' stamp: 'HAW 17/Jul/2023 12:24:49'!
 test10AClassMethodShouldBePushedDownToSubclasses
 
 	| classToRefactorSubclass1 classToRefactorSubclass2 classToRefactor push |
@@ -32227,7 +32244,7 @@ test10AClassMethodShouldBePushedDownToSubclasses
 	self assert: (classToRefactorSubclass1 class includesSelector: self selectorToPushDown).
 	self assert: (classToRefactorSubclass2 class includesSelector: self selectorToPushDown).! !
 
-!PushDownMethodToSubclassesTest methodsFor: 'tests' stamp: 'TS 7/9/2023 20:47:34'!
+!PushDownMethodToSubclassesTest methodsFor: 'tests' stamp: 'TS 9/Jul/2023 20:47:34'!
 test11CannotPushDownClassMethodWithoutSubclasses
 
 	| classToRefactor |
@@ -32240,11 +32257,11 @@ test11CannotPushDownClassMethodWithoutSubclasses
 		assertCreation: [ PushDownMethodToSubclasses for: classToRefactor class >> self selectorToPushDown ]
 		 failsWith: [ PushDownMethodToSubclasses errorMessageNoSubclassToPushDownMethodTo ].! !
 
-!PushUpInstanceVariableTest methodsFor: 'class factory' stamp: 'MSC 12/15/2019 12:44:48'!
+!PushUpInstanceVariableTest methodsFor: 'class factory' stamp: 'MSC 15/Dec/2019 12:44:48'!
 classToRefactorName
 	^#ClassToPushInstanceVariableUp.! !
 
-!PushUpInstanceVariableTest methodsFor: 'tests' stamp: 'HAW 12/26/2019 20:18:51'!
+!PushUpInstanceVariableTest methodsFor: 'tests' stamp: 'HAW 26/Dec/2019 20:18:51'!
 test01AnInstanceVariableThatIsNotUsedOnClassToRefactorShouldBePushedUpToSuperclass
 
 	|  pushUp |
@@ -32260,7 +32277,7 @@ test01AnInstanceVariableThatIsNotUsedOnClassToRefactorShouldBePushedUpToSupercla
 		self deny: (subClass definesInstanceVariableNamed: instanceVariableToPushUp)
 	].! !
 
-!PushUpInstanceVariableTest methodsFor: 'tests' stamp: 'HAW 12/26/2019 20:18:52'!
+!PushUpInstanceVariableTest methodsFor: 'tests' stamp: 'HAW 26/Dec/2019 20:18:52'!
 test02AnInstanceVariableOnMultipleSubclassesShouldBeRemovedFromAllSubclassesAndPushedUpToSuperClass
 
 	|  pushUp  |
@@ -32277,7 +32294,7 @@ test02AnInstanceVariableOnMultipleSubclassesShouldBeRemovedFromAllSubclassesAndP
 		self deny: (subClass definesInstanceVariableNamed: instanceVariableToPushUp)
 	].! !
 
-!PushUpInstanceVariableTest methodsFor: 'tests' stamp: 'HAW 12/26/2019 20:13:23'!
+!PushUpInstanceVariableTest methodsFor: 'tests' stamp: 'HAW 26/Dec/2019 20:13:23'!
 test03AnInstanceVariableDoesNotExistOnClassToRefactorCannotBePushedUp
 	
 	classToRefactor := self createClassNamed: self classToRefactorName.
@@ -32286,7 +32303,7 @@ test03AnInstanceVariableDoesNotExistOnClassToRefactorCannotBePushedUp
 	
 	self deny: (classToRefactor definesInstanceVariableNamed: instanceVariableToPushUp).! !
 
-!PushUpInstanceVariableTest methodsFor: 'tests' stamp: 'HAW 12/26/2019 20:34:42'!
+!PushUpInstanceVariableTest methodsFor: 'tests' stamp: 'HAW 26/Dec/2019 20:34:42'!
 test04AnInstanceVariableThatIsUsedOnSuperClassAsTemporaryVariableCannotBePushedUp
 
 	| selector |
@@ -32305,7 +32322,7 @@ test04AnInstanceVariableThatIsUsedOnSuperClassAsTemporaryVariableCannotBePushedU
 	self deny: (classToRefactorSuperClass definesInstanceVariableNamed: instanceVariableToPushUp).
 	self assert: (classToRefactor definesInstanceVariableNamed: instanceVariableToPushUp).! !
 
-!PushUpInstanceVariableTest methodsFor: 'tests' stamp: 'MEGL 5/26/2023 15:30:45'!
+!PushUpInstanceVariableTest methodsFor: 'tests' stamp: 'MEGL 26/May/2023 15:30:45'!
 test05AnInstanceVariableOnMultipleSubclassesInDifferentLevelsShouldBeRemovedFromAllSubclassesAndPushedUpToSuperClass 
 
 	|  pushUp subclassWithoutInstVar  |
@@ -32323,21 +32340,21 @@ test05AnInstanceVariableOnMultipleSubclassesInDifferentLevelsShouldBeRemovedFrom
 		self deny: (subClass definesInstanceVariableNamed: instanceVariableToPushUp)
 	].! !
 
-!PushUpInstanceVariableTest methodsFor: 'setup' stamp: 'MSC 12/21/2019 22:12:16'!
+!PushUpInstanceVariableTest methodsFor: 'setup' stamp: 'MSC 21/Dec/2019 22:12:16'!
 setUp
 
 	super setUp.
 	
 	instanceVariableToPushUp := 'a'.! !
 
-!PushUpInstanceVariableTest methodsFor: 'assertions' stamp: 'jmv 3/20/2024 16:00:22'!
+!PushUpInstanceVariableTest methodsFor: 'assertions' stamp: 'jmv 20/Mar/2024 16:00:22'!
 assertPushUpCreationFailsWith: aStringOrBlock
 
 	self
 		assertCreation: [ PushUpInstanceVariable named: instanceVariableToPushUp from: classToRefactor. ]
 		failsWith: aStringOrBlock.! !
 
-!PushUpMethodTest methodsFor: 'tests' stamp: 'MSC 11/12/2019 11:47:47'!
+!PushUpMethodTest methodsFor: 'tests' stamp: 'MSC 12/Nov/2019 11:47:47'!
 test01AnEmptyMethodOnClassToRefactorShouldBePushedUpToSuperclass
 
 	| classToRefactorSuperclass classToRefactor selector push |
@@ -32356,7 +32373,7 @@ test01AnEmptyMethodOnClassToRefactorShouldBePushedUpToSuperclass
 	
 	! !
 
-!PushUpMethodTest methodsFor: 'tests' stamp: 'MEGL 8/21/2023 16:25:50'!
+!PushUpMethodTest methodsFor: 'tests' stamp: 'MEGL 21/Aug/2023 16:25:50'!
 test02AMethodReadingInstVarWarnsWhenPushedUpToSuperclass
 
 	| classToRefactorSuperclass classToRefactor selector newVariable refactoring |
@@ -32380,7 +32397,7 @@ test02AMethodReadingInstVarWarnsWhenPushedUpToSuperclass
 	self deny: (classToRefactor definesInstanceVariableNamed: newVariable).
 	self deny: (classToRefactor includesSelector: selector).! !
 
-!PushUpMethodTest methodsFor: 'tests' stamp: 'MEGL 8/21/2023 16:26:59'!
+!PushUpMethodTest methodsFor: 'tests' stamp: 'MEGL 21/Aug/2023 16:26:59'!
 test03AMethodWritingInstVarWarnsWhenPushedUpToSuperclass
 
 	| classToRefactorSuperclass classToRefactor selector newVariable refactoring |
@@ -32404,7 +32421,7 @@ test03AMethodWritingInstVarWarnsWhenPushedUpToSuperclass
 	self deny: (classToRefactor definesInstanceVariableNamed: newVariable).
 	self deny: (classToRefactor includesSelector: selector).! !
 
-!PushUpMethodTest methodsFor: 'tests' stamp: 'MSC 11/12/2019 11:47:57'!
+!PushUpMethodTest methodsFor: 'tests' stamp: 'MSC 12/Nov/2019 11:47:57'!
 test04AMethodWritesSuperClassInstVarShouldBePushedUpToSuperclass
 
 	| classToRefactorSuperclass classToRefactor selector newVariable push |
@@ -32423,7 +32440,7 @@ test04AMethodWritesSuperClassInstVarShouldBePushedUpToSuperclass
 	self assert: (classToRefactorSuperclass includesSelector: selector).
 	self deny: (classToRefactor includesSelector: selector).! !
 
-!PushUpMethodTest methodsFor: 'tests' stamp: 'MSC 11/12/2019 11:48:00'!
+!PushUpMethodTest methodsFor: 'tests' stamp: 'MSC 12/Nov/2019 11:48:00'!
 test05AMethodAccessesSuperClassClassToRefactorInstVarShouldBePushedUpToSuperclass
 
 	| classToRefactorSuperclass classToRefactor selector newVariable push |
@@ -32442,7 +32459,7 @@ test05AMethodAccessesSuperClassClassToRefactorInstVarShouldBePushedUpToSuperclas
 	self assert: (classToRefactorSuperclass includesSelector: selector).
 	self deny: (classToRefactor includesSelector: selector).! !
 
-!PushUpMethodTest methodsFor: 'tests' stamp: 'MSC 11/12/2019 11:48:03'!
+!PushUpMethodTest methodsFor: 'tests' stamp: 'MSC 12/Nov/2019 11:48:03'!
 test06AMethodAccessesSuperClassClassToRefactorInstVarShouldBePushedUpToSuperclass
 
 	| classToRefactorSuperclass classToRefactor selector newVariable push |
@@ -32461,7 +32478,7 @@ test06AMethodAccessesSuperClassClassToRefactorInstVarShouldBePushedUpToSuperclas
 	self assert: (classToRefactorSuperclass includesSelector: selector).
 	self deny: (classToRefactor includesSelector: selector).! !
 
-!PushUpMethodTest methodsFor: 'tests' stamp: 'HAW 1/23/2024 15:00:48'!
+!PushUpMethodTest methodsFor: 'tests' stamp: 'HAW 23/Jan/2024 15:00:48'!
 test07ShouldWarnWhenNotEquivalentMethodExistsInSuperclass
 	
 	| classToRefactor classToRefactorSuperclass newVariable selector superclassMethodContent |
@@ -32483,7 +32500,7 @@ test07ShouldWarnWhenNotEquivalentMethodExistsInSuperclass
 		
 	! !
 
-!PushUpMethodTest methodsFor: 'tests' stamp: 'HAW 1/23/2024 15:33:57'!
+!PushUpMethodTest methodsFor: 'tests' stamp: 'HAW 23/Jan/2024 15:33:57'!
 test08RemovesEquivalentMethodsFromSiblings
 
 	| classToRefactorSuperclass classToRefactor selector push sourceCode classToRefactorSibling |
@@ -32506,7 +32523,7 @@ test08RemovesEquivalentMethodsFromSiblings
 	
 	! !
 
-!PushUpMethodTest methodsFor: 'tests' stamp: 'HAW 1/23/2024 15:34:55'!
+!PushUpMethodTest methodsFor: 'tests' stamp: 'HAW 23/Jan/2024 15:34:55'!
 test09CannotRemoveNotImplementedMethodFromAdditionalSubclasses
 
 	| classToRefactorSuperclass classToRefactor selector sourceCode classToRefactorSibling |
@@ -32527,7 +32544,7 @@ test09CannotRemoveNotImplementedMethodFromAdditionalSubclasses
 	
 	! !
 
-!PushUpMethodTest methodsFor: 'tests' stamp: 'HAW 3/13/2025 14:04:11'!
+!PushUpMethodTest methodsFor: 'tests' stamp: 'HAW 13/Mar/2025 14:04:11'!
 test10CannotRemoveMethodFromNoSiblings
 
 	| classToRefactorSuperclass classToRefactor selector sourceCode classToRefactorSibling |
@@ -32549,7 +32566,7 @@ test10CannotRemoveMethodFromNoSiblings
 	
 	! !
 
-!PushUpMethodTest methodsFor: 'tests' stamp: 'HAW 1/23/2024 15:35:07'!
+!PushUpMethodTest methodsFor: 'tests' stamp: 'HAW 23/Jan/2024 15:35:07'!
 test11CannotRemoveNotEquivalantMethodsFromSiblings
 
 	| classToRefactorSuperclass classToRefactor selector classToRefactorSibling |
@@ -32569,7 +32586,7 @@ test11CannotRemoveNotEquivalantMethodsFromSiblings
 	
 	! !
 
-!PushUpMethodTest methodsFor: 'tests' stamp: 'HAW 5/26/2023 19:50:19'!
+!PushUpMethodTest methodsFor: 'tests' stamp: 'HAW 26/May/2023 19:50:19'!
 test12ShouldNotWarnWhenEquivalentMethodExistsInSuperclass
 	
 	| classToRefactor classToRefactorSuperclass selector sourceCode |
@@ -32588,7 +32605,7 @@ test12ShouldNotWarnWhenEquivalentMethodExistsInSuperclass
 		raise: self refactoringWarning 
 	! !
 
-!PushUpMethodTest methodsFor: 'tests' stamp: 'MEGL 7/12/2023 16:38:15'!
+!PushUpMethodTest methodsFor: 'tests' stamp: 'MEGL 12/Jul/2023 16:38:15'!
 test13FailsWhenAccessingInstVarDefinedAsTemporaryInSuperclass
 
 	| classToRefactorSuperclass classToRefactor selector superclassSelector newVariable |
@@ -32607,7 +32624,7 @@ test13FailsWhenAccessingInstVarDefinedAsTemporaryInSuperclass
 		assertCreation: [ PushUpMethod for: classToRefactor >> selector ]
 		failsWith: [ PushUpInstanceVariable errorMessageForInstanceVariable: newVariable isDefinedInMethodsOf: classToRefactorSuperclass ].! !
 
-!PushUpMethodTest methodsFor: 'tests' stamp: 'HAW 7/12/2023 19:27:47'!
+!PushUpMethodTest methodsFor: 'tests' stamp: 'HAW 12/Jul/2023 19:27:47'!
 test14ShouldNotWarnWhenMethodExistsInSuperclassIsSubclassResponsibility
 	
 	| classToRefactor classToRefactorSuperclass selector superclassMethodContent |
@@ -32627,7 +32644,7 @@ test14ShouldNotWarnWhenMethodExistsInSuperclassIsSubclassResponsibility
 	
 	! !
 
-!PushUpMethodTest methodsFor: 'tests' stamp: 'HAW 1/23/2024 15:35:23'!
+!PushUpMethodTest methodsFor: 'tests' stamp: 'HAW 23/Jan/2024 15:35:23'!
 test15AMethodThatDependsOnOtherMethodPushesUpMethodsToSuperclass
 
 	| classToRefactorSuperclass classToRefactor selector dependantSelector refactoring |
@@ -32649,7 +32666,7 @@ test15AMethodThatDependsOnOtherMethodPushesUpMethodsToSuperclass
 	self deny: (classToRefactor includesSelector: selector).
 	self deny: (classToRefactor includesSelector: dependantSelector).! !
 
-!PushUpMethodTest methodsFor: 'tests' stamp: 'HAW 1/23/2024 15:35:32'!
+!PushUpMethodTest methodsFor: 'tests' stamp: 'HAW 23/Jan/2024 15:35:32'!
 test16AMethodThatDependsOnACycleOfMethodsPushesUpMethodsToSuperclass
 
 	| classToRefactorSuperclass classToRefactor selector dependantSelector refactoring otherDependantSelector |
@@ -32675,7 +32692,7 @@ test16AMethodThatDependsOnACycleOfMethodsPushesUpMethodsToSuperclass
 	self deny: (classToRefactor includesSelector: dependantSelector).
 	self deny: (classToRefactor includesSelector: otherDependantSelector).! !
 
-!PushUpMethodTest methodsFor: 'tests' stamp: 'HAW 1/23/2024 15:35:40'!
+!PushUpMethodTest methodsFor: 'tests' stamp: 'HAW 23/Jan/2024 15:35:40'!
 test17FailsWhenPushingADependantMethodAccessingInstVarDefinedAsTemporaryInSuperclass
 
 	| classToRefactorSuperclass classToRefactor selector superclassSelector dependantSelector newVariable |
@@ -32696,7 +32713,7 @@ test17FailsWhenPushingADependantMethodAccessingInstVarDefinedAsTemporaryInSuperc
 		assertCreation: [ PushUpMethod for: classToRefactor >> selector additionallyRemovingFrom: Dictionary new pushingUp: { classToRefactor >> dependantSelector } asSet ]
 		failsWith: [ PushUpInstanceVariable errorMessageForInstanceVariable: newVariable isDefinedInMethodsOf: classToRefactorSuperclass ].! !
 
-!PushUpMethodTest methodsFor: 'tests' stamp: 'HAW 1/23/2024 15:35:48'!
+!PushUpMethodTest methodsFor: 'tests' stamp: 'HAW 23/Jan/2024 15:35:48'!
 test18ShouldWarnWhenNotEquivalentMethodOfDependantMethodExistsInSuperclass
 
 	| classToRefactor classToRefactorSuperclass newVariable selector dependantSelector superclassMethodContent |
@@ -32718,7 +32735,7 @@ test18ShouldWarnWhenNotEquivalentMethodOfDependantMethodExistsInSuperclass
 		assertCreation: [ PushUpMethod for: classToRefactor >> selector additionallyRemovingFrom: Dictionary new pushingUp: { classToRefactor >> dependantSelector } asSet ]
 		warnsWith: [ PushUpMethod methodWithDifferentImplementationInSuperclass: { dependantSelector } ].! !
 
-!PushUpMethodTest methodsFor: 'tests' stamp: 'HAW 1/23/2024 15:19:55'!
+!PushUpMethodTest methodsFor: 'tests' stamp: 'HAW 23/Jan/2024 15:19:55'!
 test19ShouldSelectSiblingClassesWithEquivalentMethod
 
 	| superclass classToTest classWithEquivalentMethod selector methodContent equivalentMethod|
@@ -32740,7 +32757,7 @@ test19ShouldSelectSiblingClassesWithEquivalentMethod
 	self assert: (equivalentMethod includesKey: (classToTest >> selector)).
 	self assert: ((equivalentMethod at: classToTest >> selector) = { classWithEquivalentMethod }).! !
 
-!PushUpMethodTest methodsFor: 'tests' stamp: 'HAW 1/23/2024 15:19:55'!
+!PushUpMethodTest methodsFor: 'tests' stamp: 'HAW 23/Jan/2024 15:19:55'!
 test20ShouldNotSelectSiblingClassesWithNoEquivalentMethod
 
 	| superclass classToTest classWithEquivalentMethod selector  equivalentMethod|
@@ -32759,7 +32776,7 @@ test20ShouldNotSelectSiblingClassesWithNoEquivalentMethod
 	   
 	self assert: (equivalentMethod isEmpty).! !
 
-!PushUpMethodTest methodsFor: 'tests' stamp: 'HAW 1/23/2024 15:19:55'!
+!PushUpMethodTest methodsFor: 'tests' stamp: 'HAW 23/Jan/2024 15:19:55'!
 test21WhenMultipleMethodsShouldSelectSiblingClassesWithEquivalentMethodForEachOne
 
 	| superclass classToTest classWithEquivalentMethod selector anotherSelector methodContent anotherMethodContent equivalentMethod|
@@ -32787,7 +32804,7 @@ test21WhenMultipleMethodsShouldSelectSiblingClassesWithEquivalentMethodForEachOn
 	self assert: ((equivalentMethod at: classToTest >> selector) = { classWithEquivalentMethod }).
 	self assert: ((equivalentMethod at: classToTest >> anotherSelector) = { classWithEquivalentMethod }).! !
 
-!PushUpMethodTest methodsFor: 'tests' stamp: 'MEGL 8/20/2023 20:55:09'!
+!PushUpMethodTest methodsFor: 'tests' stamp: 'MEGL 20/Aug/2023 20:55:09'!
 test22ShouldSelectDependantSelectors
 
 	| superclass classToTest selector dependantSelector methodContent dependantMethodContent dependantSelectors|
@@ -32807,7 +32824,7 @@ test22ShouldSelectDependantSelectors
 	self assert: (dependantSelectors size = 1).
 	self assert: (dependantSelectors includes: dependantSelector).! !
 
-!PushUpMethodTest methodsFor: 'tests' stamp: 'MEGL 8/20/2023 20:58:47'!
+!PushUpMethodTest methodsFor: 'tests' stamp: 'MEGL 20/Aug/2023 20:58:47'!
 test23ShouldNotSelectDependantSelectorsWhenThereIsNone
 
 	| superclass classToTest selector methodContent dependantSelectors|
@@ -32823,7 +32840,7 @@ test23ShouldNotSelectDependantSelectorsWhenThereIsNone
 	   
 	self assert: (dependantSelectors isEmpty).! !
 
-!PushUpMethodTest methodsFor: 'tests' stamp: 'MEGL 8/20/2023 20:57:41'!
+!PushUpMethodTest methodsFor: 'tests' stamp: 'MEGL 20/Aug/2023 20:57:41'!
 test24ShouldSelectCyclicDependantSelectors
 
 	| superclass classToTest selector dependantSelector otherDependantSelector methodContent dependantMethodContent otherDependantMethodContent dependantSelectors|
@@ -32847,12 +32864,12 @@ test24ShouldSelectCyclicDependantSelectors
 	self assert: (dependantSelectors includes: dependantSelector).
 	self assert: (dependantSelectors includes: otherDependantSelector).! !
 
-!PushUpMethodTest methodsFor: 'class factory' stamp: 'MSC 11/12/2019 11:48:09'!
+!PushUpMethodTest methodsFor: 'class factory' stamp: 'MSC 12/Nov/2019 11:48:09'!
 classToRefactorName	
 
 	^#ClassToPushMethodUp! !
 
-!RemoveAllUnreferencedInstanceVariablesTest methodsFor: 'tests' stamp: 'HAW 8/2/2018 16:15:11'!
+!RemoveAllUnreferencedInstanceVariablesTest methodsFor: 'tests' stamp: 'HAW 2/Aug/2018 16:15:11'!
 test01NoVariableIsRemovedWhenClassHasNoInstanceVariable
 
 	| classToRefactor refactoring removedInstanceVariables |
@@ -32864,7 +32881,7 @@ test01NoVariableIsRemovedWhenClassHasNoInstanceVariable
 	
 	self assert: removedInstanceVariables isEmpty! !
 
-!RemoveAllUnreferencedInstanceVariablesTest methodsFor: 'tests' stamp: 'HAW 8/2/2018 16:15:14'!
+!RemoveAllUnreferencedInstanceVariablesTest methodsFor: 'tests' stamp: 'HAW 2/Aug/2018 16:15:14'!
 test02UnreferencedVariablesAreRemoved
 
 	| classToRefactor refactoring removedInstanceVariables unreferencedVariable |
@@ -32879,7 +32896,7 @@ test02UnreferencedVariablesAreRemoved
 	self assert: (removedInstanceVariables includes: unreferencedVariable)
 	! !
 
-!RemoveAllUnreferencedInstanceVariablesTest methodsFor: 'tests' stamp: 'HAW 8/2/2018 16:15:18'!
+!RemoveAllUnreferencedInstanceVariablesTest methodsFor: 'tests' stamp: 'HAW 2/Aug/2018 16:15:18'!
 test03VariablesWithReferencesAreNotRemoved
 
 	| classToRefactor refactoring removedInstanceVariables unreferencedVariableName referencedVariableName |
@@ -32898,7 +32915,7 @@ test03VariablesWithReferencesAreNotRemoved
 	
 ! !
 
-!RemoveAllUnreferencedInstanceVariablesTest methodsFor: 'tests' stamp: 'HAW 8/2/2018 16:22:44'!
+!RemoveAllUnreferencedInstanceVariablesTest methodsFor: 'tests' stamp: 'HAW 2/Aug/2018 16:22:44'!
 test04VariablesWithReferencesInSubclassesAreNotRemoved
 
 	| classToRefactor refactoring removedInstanceVariables unreferencedVariableName referencedVariableName classToRefactorSubclass |
@@ -32917,7 +32934,7 @@ test04VariablesWithReferencesInSubclassesAreNotRemoved
 	
 ! !
 
-!RemoveInstanceVariableTest methodsFor: 'tests' stamp: 'HAW 6/12/2017 19:10:08'!
+!RemoveInstanceVariableTest methodsFor: 'tests' stamp: 'HAW 12/Jun/2017 19:10:08'!
 test01CanNotRemoveAnInstanceVariableNotDefinedInClass
 
 	| variableToRemove classToRefactor |
@@ -32932,7 +32949,7 @@ test01CanNotRemoveAnInstanceVariableNotDefinedInClass
 	
 	! !
 
-!RemoveInstanceVariableTest methodsFor: 'tests' stamp: 'HAW 8/2/2018 15:24:17'!
+!RemoveInstanceVariableTest methodsFor: 'tests' stamp: 'HAW 2/Aug/2018 15:24:17'!
 test02CanNotRemoveInstanceVariableWithReferences
 
 	| variableToRemove classToRefactor selector |
@@ -32949,7 +32966,7 @@ test02CanNotRemoveInstanceVariableWithReferences
 	
 	! !
 
-!RemoveInstanceVariableTest methodsFor: 'tests' stamp: 'HAW 8/2/2018 15:24:28'!
+!RemoveInstanceVariableTest methodsFor: 'tests' stamp: 'HAW 2/Aug/2018 15:24:28'!
 test03WhenAppliedRemovesInstanceVariable
 
 	| variableToRemove classToRefactor remove |
@@ -32964,7 +32981,7 @@ test03WhenAppliedRemovesInstanceVariable
 	
 	! !
 
-!RemoveParameterTest methodsFor: 'tests' stamp: 'HAW 1/2/2020 06:58:49'!
+!RemoveParameterTest methodsFor: 'tests' stamp: 'HAW 2/Jan/2020 06:58:49'!
 test01CanNotRemoveParameterFromUnaryMessages
 
 	self 
@@ -32977,7 +32994,7 @@ test01CanNotRemoveParameterFromUnaryMessages
 		failsWith: [ RemoveParameter canNotRemoveParameterFromUnaryMessagesErrorMessage ]
 ! !
 
-!RemoveParameterTest methodsFor: 'tests' stamp: 'HAW 1/2/2020 06:59:13'!
+!RemoveParameterTest methodsFor: 'tests' stamp: 'HAW 2/Jan/2020 06:59:13'!
 test02CanNotRemoveParameterFromBinaryMessages
 
 	self 
@@ -32990,7 +33007,7 @@ test02CanNotRemoveParameterFromBinaryMessages
 		failsWith: [ RemoveParameter canNotRemoveParameterFromBinaryMessagesErrorMessage ]
 ! !
 
-!RemoveParameterTest methodsFor: 'tests' stamp: 'HAW 9/2/2018 19:46:52'!
+!RemoveParameterTest methodsFor: 'tests' stamp: 'HAW 2/Sep/2018 19:46:52'!
 test03CanNotRemoveParameterNotInMessage
 
 	| classToRefactor selectorToRemoveParameterFrom parameterNotInMessage |
@@ -33009,7 +33026,7 @@ test03CanNotRemoveParameterNotInMessage
 		failsWith: [ RemoveParameter errorMessageForParameterNotInMessage: parameterNotInMessage ]
 ! !
 
-!RemoveParameterTest methodsFor: 'tests' stamp: 'HAW 9/2/2018 19:46:03'!
+!RemoveParameterTest methodsFor: 'tests' stamp: 'HAW 2/Sep/2018 19:46:03'!
 test04AllImplementorsMustImplementSelector
 
 	| classToRefactor selectorToRemoveParameterFrom parameterToRemove implementors |
@@ -33029,7 +33046,7 @@ test04AllImplementorsMustImplementSelector
 		failsWith: [ RemoveParameter errorMessageForInvalidImplementors: implementors ]
 ! !
 
-!RemoveParameterTest methodsFor: 'tests' stamp: 'HAW 9/2/2018 19:49:28'!
+!RemoveParameterTest methodsFor: 'tests' stamp: 'HAW 2/Sep/2018 19:49:28'!
 test05AllSendersShouldSendSelector
 
 	| classToRefactor selectorToRemoveParameterFrom parameterToRemove invalidSenders |
@@ -33050,7 +33067,7 @@ test05AllSendersShouldSendSelector
 	
 ! !
 
-!RemoveParameterTest methodsFor: 'tests' stamp: 'HAW 9/2/2018 19:57:35'!
+!RemoveParameterTest methodsFor: 'tests' stamp: 'HAW 2/Sep/2018 19:57:35'!
 test06NoImplementorReferencesParameterToRemove
 
 	| classToRefactor selectorToRemoveParameterFrom parameterToRemove implementorsReferencingParameter |
@@ -33069,7 +33086,7 @@ test06NoImplementorReferencesParameterToRemove
 			senders: {} ]
 		failsWith: [ RemoveParameter errorMessageForParameterToRemoveIsReferenced: parameterToRemove ]! !
 
-!RemoveParameterTest methodsFor: 'tests' stamp: 'HAW 9/3/2018 17:58:11'!
+!RemoveParameterTest methodsFor: 'tests' stamp: 'HAW 3/Sep/2018 17:58:11'!
 test07FirstParameterIsRemovedCorrectly
 
 	| classToRefactor selectorToRemoveParameterFrom parameterToRemove keywordToRemove keywordToKeep parameterToKeep refactoring |
@@ -33093,7 +33110,7 @@ test07FirstParameterIsRemovedCorrectly
 	self assert: (classToRefactor canUnderstand: keywordToKeep asSymbol).
 	self assert: (classToRefactor sourceCodeAt: keywordToKeep asSymbol) equals: (keywordToKeep, parameterToKeep) ! !
 
-!RemoveParameterTest methodsFor: 'tests' stamp: 'HAW 9/3/2018 18:45:48'!
+!RemoveParameterTest methodsFor: 'tests' stamp: 'HAW 3/Sep/2018 18:45:48'!
 test08LastParameterIsRemovedCorrectly
 
 	| classToRefactor selectorToRemoveParameterFrom parameterToRemove keywordToRemove keywordToKeep parameterToKeep refactoring |
@@ -33118,7 +33135,7 @@ test08LastParameterIsRemovedCorrectly
 	self assert: (classToRefactor sourceCodeAt: keywordToKeep asSymbol) equals: (keywordToKeep, parameterToKeep,' 
 	| t1 |') ! !
 
-!RemoveParameterTest methodsFor: 'tests' stamp: 'HAW 9/4/2018 14:34:22'!
+!RemoveParameterTest methodsFor: 'tests' stamp: 'HAW 4/Sep/2018 14:34:22'!
 test09MiddleParameterIsRemovedCorrectly
 
 	| classToRefactor selectorToRemoveParameterFrom parameterToRemove keywordToRemove keywordToKeep parameterToKeep refactoring newSelector |
@@ -33145,7 +33162,7 @@ test09MiddleParameterIsRemovedCorrectly
 	self assert: (classToRefactor sourceCodeAt: newSelector) equals: ('m0: parameter0 
 	',keywordToKeep, parameterToKeep) ! !
 
-!RemoveParameterTest methodsFor: 'tests' stamp: 'HAW 9/3/2018 17:34:00'!
+!RemoveParameterTest methodsFor: 'tests' stamp: 'HAW 3/Sep/2018 17:34:00'!
 test10ParameterFromOneKeywordSelectorIsRemovedCorrectly
 
 	| classToRefactor selectorToRemoveParameterFrom parameterToRemove refactoring |
@@ -33164,7 +33181,7 @@ test10ParameterFromOneKeywordSelectorIsRemovedCorrectly
 	
 	self assert: (classToRefactor canUnderstand: 'm1' asSymbol).! !
 
-!RemoveParameterTest methodsFor: 'tests' stamp: 'jmv 7/8/2025 14:46:15'!
+!RemoveParameterTest methodsFor: 'tests' stamp: 'jmv 8/Jul/2025 14:46:15'!
 test11ParameterOfSendersOfMoreThanOneKeywordSelectorsIsRemovedCorrectly
 
 	| classToRefactor selectorToRemoveParameterFrom parameterToRemove keywordToRemove keywordToKeep parameterToKeep refactoring senderSelector senderMethod |
@@ -33197,7 +33214,7 @@ test11ParameterOfSendersOfMoreThanOneKeywordSelectorsIsRemovedCorrectly
 	
 	! !
 
-!RemoveParameterTest methodsFor: 'tests' stamp: 'jmv 7/8/2025 14:46:19'!
+!RemoveParameterTest methodsFor: 'tests' stamp: 'jmv 8/Jul/2025 14:46:19'!
 test12ParameterOfSendersOfOneKeywordSelectorsIsRemovedCorrectly
 
 	| classToRefactor selectorToRemoveParameterFrom parameterToRemove refactoring senderSelector senderMethod |
@@ -33227,7 +33244,7 @@ test12ParameterOfSendersOfOneKeywordSelectorsIsRemovedCorrectly
 	
 	! !
 
-!RemoveParameterTest methodsFor: 'tests' stamp: 'jmv 7/8/2025 14:46:23'!
+!RemoveParameterTest methodsFor: 'tests' stamp: 'jmv 8/Jul/2025 14:46:23'!
 test13ParameterIsRemovedCorrecltyFromSendersWithMoreThanOneSend
 
 	| classToRefactor selectorToRemoveParameterFrom parameterToRemove keywordToRemove keywordToKeep parameterToKeep refactoring senderSelector senderMethod |
@@ -33259,7 +33276,7 @@ test13ParameterIsRemovedCorrecltyFromSendersWithMoreThanOneSend
 	
 	! !
 
-!RemoveParameterTest methodsFor: 'tests' stamp: 'HAW 1/1/2020 23:33:19'!
+!RemoveParameterTest methodsFor: 'tests' stamp: 'HAW 1/Jan/2020 23:33:19'!
 test14CanNotRemoveParameterIndexLessThanOne
 
 	| parameterNotInMessage |
@@ -33276,7 +33293,7 @@ test14CanNotRemoveParameterIndexLessThanOne
 		failsWith: [ RemoveParameter invalidParameterIndexErrorMessage ]
 ! !
 
-!RemoveParameterTest methodsFor: 'tests' stamp: 'HAW 1/1/2020 23:36:16'!
+!RemoveParameterTest methodsFor: 'tests' stamp: 'HAW 1/Jan/2020 23:36:16'!
 test15CanNotRemoveParameterIndexBiggerThanOldSelectorNumberOfKeywords
 
 	| parameterNotInMessage |
@@ -33293,7 +33310,7 @@ test15CanNotRemoveParameterIndexBiggerThanOldSelectorNumberOfKeywords
 		failsWith: [ RemoveParameter invalidParameterIndexErrorMessage ]
 ! !
 
-!RemoveParameterTest methodsFor: 'tests' stamp: 'HAW 1/1/2020 23:38:57'!
+!RemoveParameterTest methodsFor: 'tests' stamp: 'HAW 1/Jan/2020 23:38:57'!
 test16ParameterIndexMustBeInteger
 
 	| parameterNotInMessage |
@@ -33310,33 +33327,33 @@ test16ParameterIndexMustBeInteger
 		failsWith: [ RemoveParameter invalidParameterIndexErrorMessage ]
 ! !
 
-!RemoveParameterTest methodsFor: 'class factory' stamp: 'HAW 9/1/2018 12:24:23'!
+!RemoveParameterTest methodsFor: 'class factory' stamp: 'HAW 1/Sep/2018 12:24:23'!
 classToRefactorName
 	
 	^#ClassToRemoveParameter! !
 
-!RenameClassTest methodsFor: 'tests' stamp: 'HAW 6/1/2017 19:44:41'!
+!RenameClassTest methodsFor: 'tests' stamp: 'HAW 1/Jun/2017 19:44:41'!
 test01NewClassNameHasToBeDifferentToOldOne
 
 	self 
 		assertCreation: [ RenameClass from: self class to: self class name ]
 		failsWith: [ RenameClass newNameEqualsOldNameErrorMessage]! !
 
-!RenameClassTest methodsFor: 'tests' stamp: 'HAW 8/13/2018 18:36:20'!
+!RenameClassTest methodsFor: 'tests' stamp: 'HAW 13/Aug/2018 18:36:20'!
 test02NewClassNameHasToBeASymbol
 
 	self 
 		assertCreation: [ RenameClass from: self class to: 'aString' ]
 		failsWith: [ NewClassPrecondition newNameMustBeSymbolErrorMessage]! !
 
-!RenameClassTest methodsFor: 'tests' stamp: 'HAW 5/24/2019 10:09:47'!
+!RenameClassTest methodsFor: 'tests' stamp: 'HAW 24/May/2019 10:09:47'!
 test03NewClassNameHasToStartWithUppercaseLetter
 
 	self 
 		assertCreation: [ RenameClass from: self class to: #_A ]
 		failsWith: [ NewClassPrecondition newNameMustStartWithRightLetterErrorMessage]! !
 
-!RenameClassTest methodsFor: 'tests' stamp: 'HAW 12/13/2018 17:59:19'!
+!RenameClassTest methodsFor: 'tests' stamp: 'HAW 13/Dec/2018 17:59:19'!
 test04_01NewClassNameShouldNotBeAGlobalVariable
 
 	| newClassName |
@@ -33347,7 +33364,7 @@ test04_01NewClassNameShouldNotBeAGlobalVariable
 		assertCreation: [ RenameClass from: self class to: newClassName in: Smalltalk ]
 		failsWith: [ NewClassPrecondition errorMessageForAlreadyExistGlobalNamed: newClassName ]! !
 
-!RenameClassTest methodsFor: 'tests' stamp: 'HAW 8/13/2018 18:33:08'!
+!RenameClassTest methodsFor: 'tests' stamp: 'HAW 13/Aug/2018 18:33:08'!
 test04NewClassShouldNotExist
 
 	| newClassName |
@@ -33358,7 +33375,7 @@ test04NewClassShouldNotExist
 		assertCreation: [ RenameClass from: self class to: newClassName in: Smalltalk ]
 		failsWith: [ NewClassPrecondition errorMessageForAlreadyExistClassNamed: newClassName ]! !
 
-!RenameClassTest methodsFor: 'tests' stamp: 'HAW 8/13/2018 18:33:35'!
+!RenameClassTest methodsFor: 'tests' stamp: 'HAW 13/Aug/2018 18:33:35'!
 test05NewClassShouldNotBeUndeclare
 
 	| newClassName undeclared |
@@ -33371,7 +33388,7 @@ test05NewClassShouldNotBeUndeclare
 		assertCreation: [ RenameClass from: self class to: newClassName in: Smalltalk undeclared: undeclared ]
 		failsWith: [ NewClassPrecondition errorMessageForNewClassIsUndeclared: newClassName ]! !
 
-!RenameClassTest methodsFor: 'tests' stamp: 'HAW 6/4/2017 19:12:10'!
+!RenameClassTest methodsFor: 'tests' stamp: 'HAW 4/Jun/2017 19:12:10'!
 test06OldClassIsRenamedToNewClass
 
 	| oldClassName newClassName classToRefactor rename |
@@ -33386,7 +33403,7 @@ test06OldClassIsRenamedToNewClass
 	self assert: (Smalltalk classNamed: oldClassName) isNil.
 	self deny: (Smalltalk classNamed: newClassName) isNil.! !
 
-!RenameClassTest methodsFor: 'tests' stamp: 'jmv 7/7/2025 17:21:18'!
+!RenameClassTest methodsFor: 'tests' stamp: 'jmv 7/Jul/2025 17:21:18'!
 test07OldClassDirectReferencesAreRenamed
 
 	| oldClassName newClassName classToRefactor selector rename referencingMethod |
@@ -33404,7 +33421,7 @@ test07OldClassDirectReferencesAreRenamed
 	self assert: (referencingMethod hasLiteral: newClassName).
 	self deny: (referencingMethod hasLiteral: oldClassName)! !
 
-!RenameClassTest methodsFor: 'tests' stamp: 'jmv 7/7/2025 17:21:23'!
+!RenameClassTest methodsFor: 'tests' stamp: 'jmv 7/Jul/2025 17:21:23'!
 test08OldClassLiteralReferencesAreRenamed
 
 	| oldClassName newClassName classToRefactor selector rename referencingMethod |
@@ -33422,7 +33439,7 @@ test08OldClassLiteralReferencesAreRenamed
 	self assert: (referencingMethod hasLiteral: newClassName).
 	self deny: (referencingMethod hasLiteral: oldClassName)! !
 
-!RenameClassTest methodsFor: 'tests' stamp: 'jmv 7/7/2025 17:21:28'!
+!RenameClassTest methodsFor: 'tests' stamp: 'jmv 7/Jul/2025 17:21:28'!
 test09OtherClassDirectReferencesAreNotRenamed
 
 	| oldClassName newClassName classToRefactor selector rename referencingMethod |
@@ -33442,7 +33459,7 @@ test09OtherClassDirectReferencesAreNotRenamed
 	self assert: (referencingMethod hasLiteral: #Object).
 ! !
 
-!RenameClassTest methodsFor: 'tests' stamp: 'jmv 7/7/2025 17:21:33'!
+!RenameClassTest methodsFor: 'tests' stamp: 'jmv 7/Jul/2025 17:21:33'!
 test10OtherLiteralReferencesAreNotRenamed
 
 	| oldClassName newClassName classToRefactor selector rename referencingMethod |
@@ -33462,7 +33479,7 @@ test10OtherLiteralReferencesAreNotRenamed
 	self assert: (referencingMethod hasLiteral: #Object).
 ! !
 
-!RenameClassTest methodsFor: 'tests' stamp: 'HAW 8/9/2018 16:30:56'!
+!RenameClassTest methodsFor: 'tests' stamp: 'HAW 9/Aug/2018 16:30:56'!
 test11OldClassDirectAndLiteralReferencesAreRenameAtOnce
 
 	| oldClassName newClassName classToRefactor selector rename renamedReferences |
@@ -33481,21 +33498,21 @@ test11OldClassDirectAndLiteralReferencesAreRenameAtOnce
 	self assert: newClassName equals: renamedReferences anyOne classSymbol.
 	self assert: ((classToRefactor sourceCodeAt: selector) includesSubString: '#', newClassName)! !
 
-!RenameClassTest methodsFor: 'tests' stamp: 'HAW 4/4/2018 19:56:09'!
+!RenameClassTest methodsFor: 'tests' stamp: 'HAW 4/Apr/2018 19:56:09'!
 test12CanNotRenameAMetaclass
 
 	self 
 		assertCreation: [ RenameClass from: self class class to: #Object ]
 		failsWith: [ RenameClass classToRenameCanNotBeMetaclassErrorMessage]! !
 
-!RenameClassTest methodsFor: 'tests' stamp: 'HAW 8/13/2018 18:35:38'!
+!RenameClassTest methodsFor: 'tests' stamp: 'HAW 13/Aug/2018 18:35:38'!
 test13NewClassNameHasToBeASymbol
 
 	self 
 		assertCreation: [ RenameClass from: self class to: '' asSymbol ]
 		failsWith: [ NewClassPrecondition newClassNameCanNotBeEmptyErrorMessage]! !
 
-!RenameClassTest methodsFor: 'tests' stamp: 'HAW 3/3/2019 09:20:07'!
+!RenameClassTest methodsFor: 'tests' stamp: 'HAW 3/Mar/2019 09:20:07'!
 test14NewClassNameCanNotHaveSpaces
 
 	| oldClassName classToRefactor |
@@ -33507,7 +33524,7 @@ test14NewClassNameCanNotHaveSpaces
 		assertCreation: [ RenameClass from: classToRefactor to: 'With spaces' asSymbol ]
 		failsWith: [ NewClassPrecondition newClassNameCanNotHaveSeparatorsErrorMessage]! !
 
-!RenameClassTest methodsFor: 'tests' stamp: 'HAW 8/9/2018 14:44:13'!
+!RenameClassTest methodsFor: 'tests' stamp: 'HAW 9/Aug/2018 14:44:13'!
 test15ItDoesNotRenameReferencesToClassVariableWithSameName
 
 	| classWithClassVariable oldClassName classToRefactor newClassName rename renamedReferences |
@@ -33529,7 +33546,7 @@ test15ItDoesNotRenameReferencesToClassVariableWithSameName
 	
 	! !
 
-!RenameClassTest methodsFor: 'tests' stamp: 'HAW 8/9/2018 14:45:20'!
+!RenameClassTest methodsFor: 'tests' stamp: 'HAW 9/Aug/2018 14:45:20'!
 test16ItDoesNotRenameReferencesToClassVariableWithSameNameDefinedInAnySuperclass
 
 	| classWithClassVariable oldClassName classToRefactor newClassName rename renamedReferences superClassOfClassWithClassVarReference |
@@ -33553,7 +33570,7 @@ test16ItDoesNotRenameReferencesToClassVariableWithSameNameDefinedInAnySuperclass
 	
 	! !
 
-!RenameClassTest methodsFor: 'tests' stamp: 'HAW 8/9/2018 14:46:34'!
+!RenameClassTest methodsFor: 'tests' stamp: 'HAW 9/Aug/2018 14:46:34'!
 test17ItDoesNotRenameReferencesToClassVariableWithSameNameAsNewClassDefinedInAnySuperclass
 
 	| classWithClassVariable oldClassName classToRefactor newClassName rename renamedReferences superClassOfClassWithClassVarReference |
@@ -33577,7 +33594,7 @@ test17ItDoesNotRenameReferencesToClassVariableWithSameNameAsNewClassDefinedInAny
 	
 	! !
 
-!RenameClassTest methodsFor: 'tests' stamp: 'jmv 7/7/2025 17:21:46'!
+!RenameClassTest methodsFor: 'tests' stamp: 'jmv 7/Jul/2025 17:21:46'!
 test18WorksCorrectlyWhenSourceCodeEndsWithClassToRename
 
 	| oldClassName newClassName classToRefactor selector rename referencingMethod |
@@ -33595,7 +33612,7 @@ test18WorksCorrectlyWhenSourceCodeEndsWithClassToRename
 	self assert: (referencingMethod hasLiteral: newClassName).
 	self deny: (referencingMethod hasLiteral: oldClassName)! !
 
-!RenameClassTest methodsFor: 'tests' stamp: 'jmv 7/7/2025 17:21:39'!
+!RenameClassTest methodsFor: 'tests' stamp: 'jmv 7/Jul/2025 17:21:39'!
 test19RenamesClassWhenMethodReferencesClassAndDoesNothing
 
 	| oldClassName newClassName classToRefactor selector rename referencingMethod |
@@ -33617,7 +33634,7 @@ test19RenamesClassWhenMethodReferencesClassAndDoesNothing
 		self assert: (referencingMethod hasLiteral: newClassName).
 		self deny: (referencingMethod hasLiteral: oldClassName)] ! !
 
-!RenameClassTest methodsFor: 'tests' stamp: 'HAW 12/30/2021 16:31:36'!
+!RenameClassTest methodsFor: 'tests' stamp: 'HAW 30/Dec/2021 16:31:36'!
 test20ItDoesNotRenameReferencesToClassVariableWithSameNameAndReferencedInClassMethod
 
 	| classWithClassVariable oldClassName classToRefactor newClassName rename renamedReferences |
@@ -33640,7 +33657,7 @@ test20ItDoesNotRenameReferencesToClassVariableWithSameNameAndReferencedInClassMe
 	
 	! !
 
-!RenameGlobalTest methodsFor: 'tests' stamp: 'HAW 3/26/2019 17:53:53'!
+!RenameGlobalTest methodsFor: 'tests' stamp: 'HAW 26/Mar/2019 17:53:53'!
 define: anOldName with: aGlobalValue toBeRenamedAs: aNewName while: aBlock
 
 	| oldNameAsSymbol newNameAsSymbol |
@@ -33658,14 +33675,14 @@ define: anOldName with: aGlobalValue toBeRenamedAs: aNewName while: aBlock
 			Smalltalk removeKey: newNameAsSymbol ifAbsent: []].
 		! !
 
-!RenameGlobalTest methodsFor: 'tests' stamp: 'HAW 3/26/2019 19:20:03'!
+!RenameGlobalTest methodsFor: 'tests' stamp: 'HAW 26/Mar/2019 19:20:03'!
 test00GlobalCanNotBeClass
 
 	self 
 		assertCreation: [ RenameGlobal from: #Object to: 'NewObject__' asSymbol ]
 		failsWith: [ RenameGlobal globalCanNotBeClassErrorMessage]! !
 
-!RenameGlobalTest methodsFor: 'tests' stamp: 'HAW 3/26/2019 19:20:37'!
+!RenameGlobalTest methodsFor: 'tests' stamp: 'HAW 26/Mar/2019 19:20:37'!
 test01NewNameHasToBeDifferentToOldOne
 
 	self 
@@ -33677,7 +33694,7 @@ test01NewNameHasToBeDifferentToOldOne
 				assertCreation: [ RenameGlobal from: oldName to: newName ]
 				failsWith: [ RenameGlobal newNameEqualsOldNameErrorMessage]]! !
 
-!RenameGlobalTest methodsFor: 'tests' stamp: 'HAW 3/26/2019 19:26:40'!
+!RenameGlobalTest methodsFor: 'tests' stamp: 'HAW 26/Mar/2019 19:26:40'!
 test02NewNameHasToBeASymbol
 
 	self withDefaultsDo: [ :oldName :newName :globalValue |
@@ -33685,7 +33702,7 @@ test02NewNameHasToBeASymbol
 			assertCreation: [ RenameGlobal from: oldName to: newName asString ]
 			failsWith: [ NewGlobalPrecondition newNameMustBeSymbolErrorMessage]]! !
 
-!RenameGlobalTest methodsFor: 'tests' stamp: 'HAW 3/26/2019 19:27:23'!
+!RenameGlobalTest methodsFor: 'tests' stamp: 'HAW 26/Mar/2019 19:27:23'!
 test03NewNameShouldNotBeAClass
 
 	| className |
@@ -33697,7 +33714,7 @@ test03NewNameShouldNotBeAClass
 			assertCreation: [ RenameGlobal from: oldName to: className in: Smalltalk ]
 			failsWith: [ NewGlobalPrecondition errorMessageForAlreadyExistClassNamed: className ]]! !
 
-!RenameGlobalTest methodsFor: 'tests' stamp: 'HAW 3/26/2019 19:27:33'!
+!RenameGlobalTest methodsFor: 'tests' stamp: 'HAW 26/Mar/2019 19:27:33'!
 test04NewNameShouldNotBeAGlobalVariable
 
 	| globalName |
@@ -33709,7 +33726,7 @@ test04NewNameShouldNotBeAGlobalVariable
 			assertCreation: [ RenameGlobal from: oldName to: globalName in: Smalltalk ]
 			failsWith: [ NewGlobalPrecondition errorMessageForAlreadyExistGlobalNamed: globalName ]]! !
 
-!RenameGlobalTest methodsFor: 'tests' stamp: 'HAW 3/26/2019 19:27:45'!
+!RenameGlobalTest methodsFor: 'tests' stamp: 'HAW 26/Mar/2019 19:27:45'!
 test06OldNameIsRenamedToNewName
 
 	| rename |
@@ -33721,7 +33738,7 @@ test06OldNameIsRenamedToNewName
 		self assert: (Smalltalk at: oldName ifAbsent: [nil]) isNil.
 		self assert: (Smalltalk at: newName) equals: globalValue ].! !
 
-!RenameGlobalTest methodsFor: 'tests' stamp: 'jmv 7/7/2025 17:21:50'!
+!RenameGlobalTest methodsFor: 'tests' stamp: 'jmv 7/Jul/2025 17:21:50'!
 test07OldDirectReferencesAreRenamed
 
 	| rename classToRefactor referencingMethod selector |
@@ -33743,7 +33760,7 @@ test07OldDirectReferencesAreRenamed
 	
 ! !
 
-!RenameGlobalTest methodsFor: 'tests' stamp: 'jmv 7/7/2025 17:21:57'!
+!RenameGlobalTest methodsFor: 'tests' stamp: 'jmv 7/Jul/2025 17:21:57'!
 test08OldNameLiteralReferencesAreRenamed
 
 	| rename classToRefactor referencingMethod selector |
@@ -33763,7 +33780,7 @@ test08OldNameLiteralReferencesAreRenamed
 		
 			! !
 
-!RenameGlobalTest methodsFor: 'tests' stamp: 'HAW 3/26/2019 19:28:21'!
+!RenameGlobalTest methodsFor: 'tests' stamp: 'HAW 26/Mar/2019 19:28:21'!
 test09NewNameHasToBeASymbol
 
 	self withDefaultsDo: [ :oldName :newName :globalValue |
@@ -33771,7 +33788,7 @@ test09NewNameHasToBeASymbol
 			assertCreation: [ RenameGlobal from: oldName to: '' asSymbol ]
 			failsWith: [ NewGlobalPrecondition newNameCanNotBeEmptyErrorMessage]]! !
 
-!RenameGlobalTest methodsFor: 'tests' stamp: 'HAW 3/26/2019 19:28:30'!
+!RenameGlobalTest methodsFor: 'tests' stamp: 'HAW 26/Mar/2019 19:28:30'!
 test10NewNameCanNotHaveSpaces
 
 	self withDefaultsDo: [ :oldName :newName :globalValue |
@@ -33779,7 +33796,7 @@ test10NewNameCanNotHaveSpaces
 			assertCreation: [ RenameGlobal from: oldName to: 'With spaces' asSymbol ]
 			failsWith: [ NewGlobalPrecondition newNameCanNotHaveSeparatorsErrorMessage]]! !
 
-!RenameGlobalTest methodsFor: 'tests' stamp: 'HAW 3/26/2019 18:33:27'!
+!RenameGlobalTest methodsFor: 'tests' stamp: 'HAW 26/Mar/2019 18:33:27'!
 test11ItDoesNotRenameReferencesToClassVariableWithSameName
 
 	| rename classWithClassVariable renamedReferences oldNameAsString |
@@ -33802,7 +33819,7 @@ test11ItDoesNotRenameReferencesToClassVariableWithSameName
 	
 	! !
 
-!RenameGlobalTest methodsFor: 'tests' stamp: 'HAW 3/26/2019 18:33:34'!
+!RenameGlobalTest methodsFor: 'tests' stamp: 'HAW 26/Mar/2019 18:33:34'!
 test12ItDoesNotRenameReferencesToClassVariableWithSameNameDefinedInAnySuperclass
 
 	| classWithClassVariable rename renamedReferences superClassOfClassWithClassVarReference oldNameAsString |
@@ -33829,14 +33846,14 @@ test12ItDoesNotRenameReferencesToClassVariableWithSameNameDefinedInAnySuperclass
 	
 	! !
 
-!RenameGlobalTest methodsFor: 'tests' stamp: 'HAW 3/26/2019 19:29:03'!
+!RenameGlobalTest methodsFor: 'tests' stamp: 'HAW 26/Mar/2019 19:29:03'!
 test13OldNameMustBeDefined
 	
 	self 
 		assertCreation: [ RenameGlobal from: 'AGlobal__' asSymbol to: 'AGlobal' asSymbol in: Smalltalk ]
 		failsWith: [ RenameGlobal errorMessageForGlobalNotDefined: 'AGlobal__' asSymbol ]! !
 
-!RenameGlobalTest methodsFor: 'tests' stamp: 'HAW 3/26/2019 19:34:06'!
+!RenameGlobalTest methodsFor: 'tests' stamp: 'HAW 26/Mar/2019 19:34:06'!
 test14ItDoesNotRenameReferencesToClassVariableFromClassSideWithSameName
 
 	| rename classWithClassVariable renamedReferences oldNameAsString |
@@ -33859,14 +33876,14 @@ test14ItDoesNotRenameReferencesToClassVariableFromClassSideWithSameName
 	
 	! !
 
-!RenameGlobalTest methodsFor: 'tests' stamp: 'HAW 3/26/2019 19:49:43'!
+!RenameGlobalTest methodsFor: 'tests' stamp: 'HAW 26/Mar/2019 19:49:43'!
 test15OldNameCanNotBeEmpty
 	
 	self 
 		assertCreation: [ RenameGlobal from: '' asSymbol to: 'AGlobal' asSymbol in: Smalltalk ]
 		failsWith: [ RenameGlobal oldNameCanNotBeEmptyErrorMessage ]! !
 
-!RenameGlobalTest methodsFor: 'tests' stamp: 'HAW 3/26/2019 19:26:58'!
+!RenameGlobalTest methodsFor: 'tests' stamp: 'HAW 26/Mar/2019 19:26:58'!
 withDefaultsDo: aBlock
 
 	self 
@@ -33875,30 +33892,30 @@ withDefaultsDo: aBlock
 		toBeRenamedAs: 'NewNameToRename__' 
 		while: aBlock! !
 
-!RenameInstanceVariableTest methodsFor: 'class factory' stamp: 'HAW 6/11/2017 18:13:05'!
+!RenameInstanceVariableTest methodsFor: 'class factory' stamp: 'HAW 11/Jun/2017 18:13:05'!
 classToRefactorName
 
 	^#ClassToRenameInstVar! !
 
-!RenameInstanceVariableTest methodsFor: 'class factory' stamp: 'HAW 6/1/2017 14:28:02'!
+!RenameInstanceVariableTest methodsFor: 'class factory' stamp: 'HAW 1/Jun/2017 14:28:02'!
 createClassToRefactor
 	
 	classToRefactor := self createClassNamed: self classToRefactorName instanceVariableNames: oldVariable ! !
 
-!RenameInstanceVariableTest methodsFor: 'class factory' stamp: 'jmv 3/20/2024 16:00:33'!
+!RenameInstanceVariableTest methodsFor: 'class factory' stamp: 'jmv 20/Mar/2024 16:00:33'!
 createClassToRefactorAndAssertRenameCreationFailsWith: aStringOrBlock
 
 	self createClassToRefactor.
 	self assertRenameCreationFailsWith: aStringOrBlock ! !
 
-!RenameInstanceVariableTest methodsFor: 'assertions' stamp: 'jmv 3/20/2024 16:00:27'!
+!RenameInstanceVariableTest methodsFor: 'assertions' stamp: 'jmv 20/Mar/2024 16:00:27'!
 assertRenameCreationFailsWith: aStringOrBlock
 
 	self
 		assertCreation: [ RenameInstanceVariable from: oldVariable to: newVariable in: classToRefactor ]
 		failsWith: aStringOrBlock ! !
 
-!RenameInstanceVariableTest methodsFor: 'setup' stamp: 'HAW 5/28/2017 21:33:44'!
+!RenameInstanceVariableTest methodsFor: 'setup' stamp: 'HAW 28/May/2017 21:33:44'!
 setUp
 
 	super setUp.
@@ -33906,7 +33923,7 @@ setUp
 	oldVariable := 'old'.
 	newVariable := 'new'.! !
 
-!RenameInstanceVariableTest methodsFor: 'tests' stamp: 'HAW 5/27/2017 11:21:06'!
+!RenameInstanceVariableTest methodsFor: 'tests' stamp: 'HAW 27/May/2017 11:21:06'!
 test01CanNotRenameAnInstanceVariableNotDefinedInClass
 
 	classToRefactor := self createClassNamed: #ClassWithoutInstVar instanceVariableNames: ''.
@@ -33914,28 +33931,28 @@ test01CanNotRenameAnInstanceVariableNotDefinedInClass
 	self assertRenameCreationFailsWith: [ RenameInstanceVariable errorMessageForInstanceVariable: oldVariable notDefinedIn: classToRefactor ]
 	! !
 
-!RenameInstanceVariableTest methodsFor: 'tests' stamp: 'HAW 3/3/2019 08:45:01'!
+!RenameInstanceVariableTest methodsFor: 'tests' stamp: 'HAW 3/Mar/2019 08:45:01'!
 test02NewVariableNameCanNotBeEmpty
 	
 	newVariable := '   '.
 	self createClassToRefactorAndAssertRenameCreationFailsWith: [NewInstanceVariablePrecondition newVariableCanNotBeEmptyErrorMessage ]
 ! !
 
-!RenameInstanceVariableTest methodsFor: 'tests' stamp: 'HAW 3/3/2019 08:45:05'!
+!RenameInstanceVariableTest methodsFor: 'tests' stamp: 'HAW 3/Mar/2019 08:45:05'!
 test03NewVariableNameCanNotContainBlanks
 	
 	newVariable := 'a b'.
 	self createClassToRefactorAndAssertRenameCreationFailsWith: [NewInstanceVariablePrecondition errorMessageForInvalidInstanceVariable: newVariable]
 ! !
 
-!RenameInstanceVariableTest methodsFor: 'tests' stamp: 'HAW 3/3/2019 08:45:10'!
+!RenameInstanceVariableTest methodsFor: 'tests' stamp: 'HAW 3/Mar/2019 08:45:10'!
 test04NewVariableNameCanNotContainInvalidCharacters
 
 	newVariable := '2a'.
 	self createClassToRefactorAndAssertRenameCreationFailsWith: [NewInstanceVariablePrecondition errorMessageForInvalidInstanceVariable: newVariable]
 ! !
 
-!RenameInstanceVariableTest methodsFor: 'tests' stamp: 'HAW 5/28/2017 21:33:30'!
+!RenameInstanceVariableTest methodsFor: 'tests' stamp: 'HAW 28/May/2017 21:33:30'!
 test05ValidNewVariableNameGetBlanksTrimmed
 
 	newVariable := ' a '.
@@ -33945,14 +33962,14 @@ test05ValidNewVariableNameGetBlanksTrimmed
 		shouldnt: [ RenameInstanceVariable from: oldVariable to: newVariable in: classToRefactor ]
 		raise: self refactoringError ! !
 
-!RenameInstanceVariableTest methodsFor: 'tests' stamp: 'HAW 3/3/2019 08:45:17'!
+!RenameInstanceVariableTest methodsFor: 'tests' stamp: 'HAW 3/Mar/2019 08:45:17'!
 test06NewVariableNameCanNotBeDefinedInClass
 
 	newVariable := oldVariable.
 	self createClassToRefactorAndAssertRenameCreationFailsWith: [NewInstanceVariablePrecondition errorMessageForNewInstanceVariable: newVariable alreadyDefinedInAll: (Array with: classToRefactor )]
 	! !
 
-!RenameInstanceVariableTest methodsFor: 'tests' stamp: 'HAW 3/3/2019 08:45:22'!
+!RenameInstanceVariableTest methodsFor: 'tests' stamp: 'HAW 3/Mar/2019 08:45:22'!
 test07NewVariableNameCanNotBeDefinedInSuperclasses
 
 	|  classToRefactorSuperclass  |
@@ -33965,7 +33982,7 @@ test07NewVariableNameCanNotBeDefinedInSuperclasses
 	
 ! !
 
-!RenameInstanceVariableTest methodsFor: 'tests' stamp: 'HAW 3/3/2019 08:45:39'!
+!RenameInstanceVariableTest methodsFor: 'tests' stamp: 'HAW 3/Mar/2019 08:45:39'!
 test08NewVariableNameCanNotBeDefinedInAnySubclass
 
 	| classToRefactorSubclass |
@@ -33977,7 +33994,7 @@ test08NewVariableNameCanNotBeDefinedInAnySubclass
 	
 		! !
 
-!RenameInstanceVariableTest methodsFor: 'tests' stamp: 'HAW 5/27/2017 11:36:03'!
+!RenameInstanceVariableTest methodsFor: 'tests' stamp: 'HAW 27/May/2017 11:36:03'!
 test09RenameCreatesNewInstanceVariableAndDeletesOldOne
 
 	| rename |
@@ -33991,7 +34008,7 @@ test09RenameCreatesNewInstanceVariableAndDeletesOldOne
 	self deny: (classToRefactor definesInstanceVariableNamed: oldVariable) 
 ! !
 
-!RenameInstanceVariableTest methodsFor: 'tests' stamp: 'HAW 5/28/2017 21:05:15'!
+!RenameInstanceVariableTest methodsFor: 'tests' stamp: 'HAW 28/May/2017 21:05:15'!
 test10ReadReferencesToOldVariableAreRenamed
 
 	| selector method rename |
@@ -34008,7 +34025,7 @@ test10ReadReferencesToOldVariableAreRenamed
 	self deny: (method readsInstanceVariable: oldVariable) 
 ! !
 
-!RenameInstanceVariableTest methodsFor: 'tests' stamp: 'HAW 5/28/2017 21:07:27'!
+!RenameInstanceVariableTest methodsFor: 'tests' stamp: 'HAW 28/May/2017 21:07:27'!
 test11WriteReferencesToOldVariableAreRenamed
 
 	|  selector method rename |
@@ -34025,7 +34042,7 @@ test11WriteReferencesToOldVariableAreRenamed
 	self deny: (method writesInstanceVariable: oldVariable) 
 ! !
 
-!RenameInstanceVariableTest methodsFor: 'tests' stamp: 'HAW 5/28/2017 21:10:59'!
+!RenameInstanceVariableTest methodsFor: 'tests' stamp: 'HAW 28/May/2017 21:10:59'!
 test12ReferencesInSubclassesAreRenamed
 
 	| selector method classToRefactorSubclass rename |
@@ -34044,7 +34061,7 @@ test12ReferencesInSubclassesAreRenamed
 	self deny: (method readsInstanceVariable: oldVariable).
 	self deny: (method writesInstanceVariable: oldVariable) ! !
 
-!RenameInstanceVariableTest methodsFor: 'tests' stamp: 'HAW 5/28/2017 21:46:36'!
+!RenameInstanceVariableTest methodsFor: 'tests' stamp: 'HAW 28/May/2017 21:46:36'!
 test13ReferencesToOtherVariablesAreNotRenamed
 
 	| variableToKeep selector method rename |
@@ -34062,7 +34079,7 @@ test13ReferencesToOtherVariablesAreNotRenamed
 	self assert: (method writesInstanceVariable: variableToKeep) 
 ! !
 
-!RenameInstanceVariableTest methodsFor: 'tests' stamp: 'HAW 5/28/2017 21:15:59'!
+!RenameInstanceVariableTest methodsFor: 'tests' stamp: 'HAW 28/May/2017 21:15:59'!
 test14NewVariableOfExistingInstancesReferToOldVariableValue
 
 	| rename instance |
@@ -34077,7 +34094,7 @@ test14NewVariableOfExistingInstancesReferToOldVariableValue
 	self assert: 1 equals:  (instance instVarNamed: newVariable).
 	! !
 
-!RenameInstanceVariableTest methodsFor: 'tests' stamp: 'HAW 3/7/2019 22:45:27'!
+!RenameInstanceVariableTest methodsFor: 'tests' stamp: 'HAW 7/Mar/2019 22:45:27'!
 test15FailsWhenNewVariableEqualsTemporaryVariableOfAMethodInClass
 
 	| selector |
@@ -34091,7 +34108,7 @@ test15FailsWhenNewVariableEqualsTemporaryVariableOfAMethodInClass
 		failsWith: [ NewInstanceVariablePrecondition errorMessageForNewVariable: newVariable willBeHiddenAtAll: (Array with: (classToRefactor>>selector)) ].
 	! !
 
-!RenameInstanceVariableTest methodsFor: 'tests' stamp: 'HAW 3/7/2019 22:45:44'!
+!RenameInstanceVariableTest methodsFor: 'tests' stamp: 'HAW 7/Mar/2019 22:45:44'!
 test16FailsWhenNewVariableEqualsArgumentOfAMethodInClass
 
 	| selector |
@@ -34105,7 +34122,7 @@ test16FailsWhenNewVariableEqualsArgumentOfAMethodInClass
 		failsWith: [ NewInstanceVariablePrecondition errorMessageForNewVariable: newVariable willBeHiddenAtAll: (Array with: (classToRefactor>>selector)) ].
 	! !
 
-!RenameInstanceVariableTest methodsFor: 'tests' stamp: 'HAW 3/7/2019 22:45:59'!
+!RenameInstanceVariableTest methodsFor: 'tests' stamp: 'HAW 7/Mar/2019 22:45:59'!
 test17FailsWhenNewVariableEqualsArgumentOfABlockInAMethodInClass
 
 	| selector |
@@ -34119,7 +34136,7 @@ test17FailsWhenNewVariableEqualsArgumentOfABlockInAMethodInClass
 		failsWith: [ NewInstanceVariablePrecondition errorMessageForNewVariable: newVariable willBeHiddenAtAll: (Array with: (classToRefactor>>selector)) ].
 	! !
 
-!RenameInstanceVariableTest methodsFor: 'tests' stamp: 'HAW 3/7/2019 22:46:25'!
+!RenameInstanceVariableTest methodsFor: 'tests' stamp: 'HAW 7/Mar/2019 22:46:25'!
 test18FailsWhenNewVariableEqualsTemporaryOfABlockInAMethodInClass
 
 	| selector |
@@ -34133,7 +34150,7 @@ test18FailsWhenNewVariableEqualsTemporaryOfABlockInAMethodInClass
 		failsWith: [ NewInstanceVariablePrecondition errorMessageForNewVariable: newVariable willBeHiddenAtAll: (Array with: (classToRefactor>>selector)) ].
 	! !
 
-!RenameInstanceVariableTest methodsFor: 'tests' stamp: 'HAW 3/7/2019 22:46:39'!
+!RenameInstanceVariableTest methodsFor: 'tests' stamp: 'HAW 7/Mar/2019 22:46:39'!
 test19FailsWhenNewVariableIsHiddenInAnyMethodOfAnySubclass
 
 	| selector subclass |
@@ -34148,7 +34165,7 @@ test19FailsWhenNewVariableIsHiddenInAnyMethodOfAnySubclass
 		failsWith: [ NewInstanceVariablePrecondition errorMessageForNewVariable: newVariable willBeHiddenAtAll: (Array with: (subclass>>selector)) ].
 	! !
 
-!RenameInstanceVariableTest methodsFor: 'tests' stamp: 'HAW 3/13/2025 18:06:18'!
+!RenameInstanceVariableTest methodsFor: 'tests' stamp: 'HAW 13/Mar/2025 18:06:18'!
 test20ClassChangeIsAddedWhenRenamingAnInstanceVariable
 
 	| rename classChanges refactorClassChangeSet refactorClassChangeSets package |
@@ -34177,7 +34194,7 @@ test20ClassChangeIsAddedWhenRenamingAnInstanceVariable
 	self assert: package notNil.
 	package hasUnsavedChanges: false ! !
 
-!RenameSelectorTest methodsFor: 'class factory' stamp: 'HAW 3/20/2025 20:46:45'!
+!RenameSelectorTest methodsFor: 'class factory' stamp: 'HAW 20/Mar/2025 20:46:45'!
 allClassCategoriesOfTestData
 
 	^Array 
@@ -34185,17 +34202,17 @@ allClassCategoriesOfTestData
 		with: self anotherClassCategoryOfTestData 
 		with: self siblingClassCategory ! !
 
-!RenameSelectorTest methodsFor: 'class factory' stamp: 'HAW 3/4/2019 14:59:42'!
+!RenameSelectorTest methodsFor: 'class factory' stamp: 'HAW 4/Mar/2019 14:59:42'!
 anotherClassCategoryOfTestData
 
 	^self classCategoryOfTestData,'-Another'! !
 
-!RenameSelectorTest methodsFor: 'class factory' stamp: 'HAW 8/15/2018 12:03:16'!
+!RenameSelectorTest methodsFor: 'class factory' stamp: 'HAW 15/Aug/2018 12:03:16'!
 classToRefactorName
 
 	^#ClassToRenameSelector! !
 
-!RenameSelectorTest methodsFor: 'class factory' stamp: 'HAW 3/13/2025 18:07:17'!
+!RenameSelectorTest methodsFor: 'class factory' stamp: 'HAW 13/Mar/2025 18:07:17'!
 createClassToRefactor
 
 	classToRefactor := self 
@@ -34204,7 +34221,7 @@ createClassToRefactor
 		categorizedAd: self classCategoryOfTestData
 ! !
 
-!RenameSelectorTest methodsFor: 'class factory' stamp: 'HAW 5/25/2017 23:14:02'!
+!RenameSelectorTest methodsFor: 'class factory' stamp: 'HAW 25/May/2017 23:14:02'!
 createClassWithImplementorAndSenderInMetaTooNamed: aName subclassOf: aSuperclass categorizedAd: aCategory
 
 	| newClass |
@@ -34216,7 +34233,7 @@ createClassWithImplementorAndSenderInMetaTooNamed: aName subclassOf: aSuperclass
 	^newClass
 ! !
 
-!RenameSelectorTest methodsFor: 'class factory' stamp: 'HAW 5/28/2017 21:49:40'!
+!RenameSelectorTest methodsFor: 'class factory' stamp: 'HAW 28/May/2017 21:49:40'!
 createClassWithImplementorAndSenderNamed: aName subclassOf: aSuperclass categorizedAd: aCategory
 
 	| newClass |
@@ -34228,12 +34245,12 @@ createClassWithImplementorAndSenderNamed: aName subclassOf: aSuperclass categori
 	^newClass
 ! !
 
-!RenameSelectorTest methodsFor: 'class factory' stamp: 'HAW 3/20/2025 20:46:54'!
+!RenameSelectorTest methodsFor: 'class factory' stamp: 'HAW 20/Mar/2025 20:46:54'!
 siblingClassCategory
 
 	^self classCategoryOfTestData,'-sibling'! !
 
-!RenameSelectorTest methodsFor: 'assertions' stamp: 'jmv 7/8/2025 14:46:37'!
+!RenameSelectorTest methodsFor: 'assertions' stamp: 'jmv 8/Jul/2025 14:46:37'!
 assertWasNotRenamedInClass: aClass 
 
 	| senderMethod |
@@ -34242,7 +34259,7 @@ assertWasNotRenamedInClass: aClass
 	self deny: (senderMethod sendsSelector: newSelector).
 	self assert: (senderMethod sendsSelector: oldSelector)! !
 
-!RenameSelectorTest methodsFor: 'assertions' stamp: 'jmv 7/8/2025 14:46:41'!
+!RenameSelectorTest methodsFor: 'assertions' stamp: 'jmv 8/Jul/2025 14:46:41'!
 assertWasRenamedInClass: aClass
 	
 	| senderMethod |
@@ -34254,14 +34271,14 @@ assertWasRenamedInClass: aClass
 	self assert: (senderMethod sendsSelector: newSelector).
 ! !
 
-!RenameSelectorTest methodsFor: 'assertions' stamp: 'HAW 3/7/2020 18:44:59'!
+!RenameSelectorTest methodsFor: 'assertions' stamp: 'HAW 7/Mar/2020 18:44:59'!
 assertWasRenamedInClassAndMeta: aClass
 	
 	self
 		assertWasRenamedInClass: aClass;
 		assertWasRenamedInClass: aClass class! !
 
-!RenameSelectorTest methodsFor: 'setup' stamp: 'HAW 5/28/2017 21:46:55'!
+!RenameSelectorTest methodsFor: 'setup' stamp: 'HAW 28/May/2017 21:46:55'!
 setUp
 
 	super setUp.
@@ -34270,7 +34287,7 @@ setUp
 	newSelector := 'newXyz__' asSymbol.
 	senderOfOldSelector := 'm1__' asSymbol.! !
 
-!RenameSelectorTest methodsFor: 'tests' stamp: 'HAW 8/15/2018 12:03:44'!
+!RenameSelectorTest methodsFor: 'tests' stamp: 'HAW 15/Aug/2018 12:03:44'!
 test01MessageWithNoSendersCreatesNewMethodAndRemovesOldOne
 	
 	| rename |
@@ -34284,7 +34301,7 @@ test01MessageWithNoSendersCreatesNewMethodAndRemovesOldOne
 	self assert: (classToRefactor includesSelector: newSelector) 
 ! !
 
-!RenameSelectorTest methodsFor: 'tests' stamp: 'jmv 7/8/2025 14:46:46'!
+!RenameSelectorTest methodsFor: 'tests' stamp: 'jmv 8/Jul/2025 14:46:46'!
 test02SendersOfMessageAreRenamed
 	
 	| rename senderMethod |
@@ -34298,7 +34315,7 @@ test02SendersOfMessageAreRenamed
 	self deny: (senderMethod sendsSelector: oldSelector).
 	self assert: (senderMethod sendsSelector: newSelector)! !
 
-!RenameSelectorTest methodsFor: 'tests' stamp: 'jmv 7/8/2025 14:46:59'!
+!RenameSelectorTest methodsFor: 'tests' stamp: 'jmv 8/Jul/2025 14:46:59'!
 test03OtherMessagesSendsAreNotRenamed
 
 	|  rename senderMethod selectorToKeep |
@@ -34316,7 +34333,7 @@ test03OtherMessagesSendsAreNotRenamed
 	self assert: (senderMethod sendsSelector: selectorToKeep) 
 ! !
 
-!RenameSelectorTest methodsFor: 'tests' stamp: 'HAW 8/15/2018 11:52:37'!
+!RenameSelectorTest methodsFor: 'tests' stamp: 'HAW 15/Aug/2018 11:52:37'!
 test04OldSelectorCanNotBeEmpty
 
 	self 
@@ -34324,7 +34341,7 @@ test04OldSelectorCanNotBeEmpty
 		failsWith: [ RenameSelector oldSelectorCanNotBeEmptyErrorMessage ]
 ! !
 
-!RenameSelectorTest methodsFor: 'tests' stamp: 'HAW 8/15/2018 11:52:37'!
+!RenameSelectorTest methodsFor: 'tests' stamp: 'HAW 15/Aug/2018 11:52:37'!
 test05NewSelectorCanNotBeEmpty
 
 	self 
@@ -34332,13 +34349,13 @@ test05NewSelectorCanNotBeEmpty
 		failsWith: [ RenameSelector newSelectorCanNotBeEmptyErrorMessage ]
 ! !
 
-!RenameSelectorTest methodsFor: 'tests' stamp: 'HAW 12/30/2019 18:01:00'!
+!RenameSelectorTest methodsFor: 'tests' stamp: 'HAW 30/Dec/2019 18:01:00'!
 test06CanRenameWithoutImplementors
 
 	self shouldntFail: [ RenameSelector from: oldSelector to: newSelector implementors: #() senders: #() ]
 		! !
 
-!RenameSelectorTest methodsFor: 'tests' stamp: 'HAW 8/18/2018 15:48:43'!
+!RenameSelectorTest methodsFor: 'tests' stamp: 'HAW 18/Aug/2018 15:48:43'!
 test07AllImplementorsMustImplementOldSelector
 
 	| invalidImplementors |
@@ -34350,7 +34367,7 @@ test07AllImplementorsMustImplementOldSelector
 		failsWith: [ RenameSelector errorMessageForInvalidImplementors: invalidImplementors ]
 ! !
 
-!RenameSelectorTest methodsFor: 'tests' stamp: 'HAW 8/15/2018 11:52:37'!
+!RenameSelectorTest methodsFor: 'tests' stamp: 'HAW 15/Aug/2018 11:52:37'!
 test08AllSendersShouldSendOldSelector
 
 	| implementors invalidSenders |
@@ -34364,7 +34381,7 @@ test08AllSendersShouldSendOldSelector
 		failsWith: [ RenameSelector errorMessageForInvalidSenders: invalidSenders of: oldSelector ]
 ! !
 
-!RenameSelectorTest methodsFor: 'tests' stamp: 'HAW 8/15/2018 11:52:37'!
+!RenameSelectorTest methodsFor: 'tests' stamp: 'HAW 15/Aug/2018 11:52:37'!
 test09NewSelectorMustBeOfSameTypeAsOldSelector
 
 	oldSelector := #size.
@@ -34375,7 +34392,7 @@ test09NewSelectorMustBeOfSameTypeAsOldSelector
 		failsWith: [ RenameSelector errorMessageForNewSelector: newSelector isNotOfSameTypeAs: oldSelector ]
 ! !
 
-!RenameSelectorTest methodsFor: 'tests' stamp: 'HAW 8/15/2018 11:52:37'!
+!RenameSelectorTest methodsFor: 'tests' stamp: 'HAW 15/Aug/2018 11:52:37'!
 test10NewSelectorMustHaveSameNumberOfArgumentsAsOldSelector
 
 	oldSelector := #printOn:.
@@ -34386,7 +34403,7 @@ test10NewSelectorMustHaveSameNumberOfArgumentsAsOldSelector
 		failsWith: [ RenameSelector errorMessageForNewSelector: newSelector doesNotHaveSameNumberOfArgumentsAs: oldSelector ]
 ! !
 
-!RenameSelectorTest methodsFor: 'tests' stamp: 'HAW 8/15/2018 11:52:37'!
+!RenameSelectorTest methodsFor: 'tests' stamp: 'HAW 15/Aug/2018 11:52:37'!
 test11NewImplementorsKeepMethodCategory
 	
 	| rename oldSelectorCategory |
@@ -34401,7 +34418,7 @@ test11NewImplementorsKeepMethodCategory
 	self assert: oldSelectorCategory equals: (classToRefactor organization categoryOfElement: newSelector)
 ! !
 
-!RenameSelectorTest methodsFor: 'tests' stamp: 'jmv 7/8/2025 14:47:03'!
+!RenameSelectorTest methodsFor: 'tests' stamp: 'jmv 8/Jul/2025 14:47:03'!
 test12RenamesRecursiveMethodsWhenNotInSenders
 
 	| rename senderMethod |
@@ -34417,7 +34434,7 @@ test12RenamesRecursiveMethodsWhenNotInSenders
 	self assert: (senderMethod sendsSelector: newSelector)
 ! !
 
-!RenameSelectorTest methodsFor: 'tests' stamp: 'jmv 7/8/2025 14:47:23'!
+!RenameSelectorTest methodsFor: 'tests' stamp: 'jmv 8/Jul/2025 14:47:23'!
 test13RenamesRecursiveMethodsWhenInSenders
 
 	| rename senderMethod implementorsAndSenders |
@@ -34434,7 +34451,7 @@ test13RenamesRecursiveMethodsWhenInSenders
 	self assert: (senderMethod sendsSelector: newSelector)
 ! !
 
-!RenameSelectorTest methodsFor: 'tests' stamp: 'jmv 7/8/2025 14:56:35'!
+!RenameSelectorTest methodsFor: 'tests' stamp: 'jmv 8/Jul/2025 14:56:35'!
 test14RenamesSymbolsEqualToOldSelector
 
 	| rename senderMethod referencerToOldSelector |
@@ -34452,7 +34469,7 @@ test14RenamesSymbolsEqualToOldSelector
 	self assert: (senderMethod hasLiteral: newSelector) 
 ! !
 
-!RenameSelectorTest methodsFor: 'tests' stamp: 'HAW 3/13/2025 13:59:15'!
+!RenameSelectorTest methodsFor: 'tests' stamp: 'HAW 13/Mar/2025 13:59:15'!
 test15ScopeToRenameCanBeClassOnly
 	
 	| rename anotherClassSendingMessage |
@@ -34468,7 +34485,7 @@ test15ScopeToRenameCanBeClassOnly
 	self assertWasRenamedInClassAndMeta: classToRefactor.
 	self assertWasNotRenamedInClass: anotherClassSendingMessage ! !
 
-!RenameSelectorTest methodsFor: 'tests' stamp: 'HAW 3/13/2025 13:59:15'!
+!RenameSelectorTest methodsFor: 'tests' stamp: 'HAW 13/Mar/2025 13:59:15'!
 test16ScopeToRenameCanBeHierarchyOnly
 	
 	| rename anotherClassSendingMessage superclassToRefactor subclassToRefactor |
@@ -34488,7 +34505,7 @@ test16ScopeToRenameCanBeHierarchyOnly
 	self assertWasRenamedInClassAndMeta: subclassToRefactor.
 	self assertWasNotRenamedInClass: anotherClassSendingMessage ! !
 
-!RenameSelectorTest methodsFor: 'tests' stamp: 'HAW 3/20/2025 20:46:45'!
+!RenameSelectorTest methodsFor: 'tests' stamp: 'HAW 20/Mar/2025 20:46:45'!
 test17CategoryScopeRenamesInAllCategoryTree
 	
 	| rename classToRefactorInSiblingCategory  anotherClassToRefactor |
@@ -34514,7 +34531,7 @@ test17CategoryScopeRenamesInAllCategoryTree
 	self assertWasRenamedInClassAndMeta: classToRefactorInSiblingCategory
 		! !
 
-!RenameSelectorTest methodsFor: 'tests' stamp: 'HAW 3/20/2025 20:51:49'!
+!RenameSelectorTest methodsFor: 'tests' stamp: 'HAW 20/Mar/2025 20:51:49'!
 test18HierarchyAndCategoryRenamesInHierarchyAndCategoryTree
 	
 	| rename superclassToRefactor subclassToRefactor anotherClassToRefactor classInOtherCategoryToRefactor |
@@ -34554,7 +34571,7 @@ test18HierarchyAndCategoryRenamesInHierarchyAndCategoryTree
 	self assertWasRenamedInClassAndMeta: classInOtherCategoryToRefactor.
 ! !
 
-!RenameSelectorTest methodsFor: 'tests' stamp: 'HAW 3/13/2025 13:59:15'!
+!RenameSelectorTest methodsFor: 'tests' stamp: 'HAW 13/Mar/2025 13:59:15'!
 test19ScopeToRenameCanBeTheCompleteSystem
 	
 	| rename anotherClassToRefactor |
@@ -34574,7 +34591,7 @@ test19ScopeToRenameCanBeTheCompleteSystem
 	self assertWasRenamedInClassAndMeta: anotherClassToRefactor  
 ! !
 
-!RenameSelectorTest methodsFor: 'tests' stamp: 'HAW 8/15/2018 11:52:37'!
+!RenameSelectorTest methodsFor: 'tests' stamp: 'HAW 15/Aug/2018 11:52:37'!
 test20CanNotRenameToItSelf
 
 	self 
@@ -34582,7 +34599,7 @@ test20CanNotRenameToItSelf
 		failsWith: [ RenameSelector newSelectorEqualToOldSelectorErrorMessage ]
 ! !
 
-!RenameSelectorTest methodsFor: 'tests' stamp: 'HAW 8/15/2018 11:52:37'!
+!RenameSelectorTest methodsFor: 'tests' stamp: 'HAW 15/Aug/2018 11:52:37'!
 test21NewSelectorCanNotBeImplementedOnAnyClassImplementingOldSelector
 
 	| implementors |
@@ -34596,7 +34613,7 @@ test21NewSelectorCanNotBeImplementedOnAnyClassImplementingOldSelector
 		failsWith: [ RenameSelector errorMessageForNewSelector: newSelector implementedInAll: (Array with: Object) ]
 ! !
 
-!RenameSelectorTest methodsFor: 'tests' stamp: 'HAW 8/15/2018 11:52:37'!
+!RenameSelectorTest methodsFor: 'tests' stamp: 'HAW 15/Aug/2018 11:52:37'!
 test22WarnsWhenOverridesSuperclassImplementation
 
 	| implementors |
@@ -34610,7 +34627,7 @@ test22WarnsWhenOverridesSuperclassImplementation
 		warnsWith: [ RenameSelector warningMessageForImplementationOf: newSelector in: Number willOverrideImplementationIn: Object ]
 ! !
 
-!RenameSelectorTest methodsFor: 'tests' stamp: 'jmv 7/8/2025 14:56:51'!
+!RenameSelectorTest methodsFor: 'tests' stamp: 'jmv 8/Jul/2025 14:56:51'!
 test23OldSelectorIsRenamedWhenDefinedInLiteralArray
 
 	| rename senderMethod referencerToOldSelector |
@@ -34628,7 +34645,7 @@ test23OldSelectorIsRenamedWhenDefinedInLiteralArray
 	self assert: (senderMethod hasLiteral: newSelector) 
 ! !
 
-!RenameSelectorTest methodsFor: 'tests' stamp: 'jmv 7/8/2025 14:56:58'!
+!RenameSelectorTest methodsFor: 'tests' stamp: 'jmv 8/Jul/2025 14:56:58'!
 test24OldSelectorIsRenamedWhenDefinedInLiteralArrayMoreThanOnce
 
 	| rename senderMethod referencerToOldSelector |
@@ -34646,7 +34663,7 @@ test24OldSelectorIsRenamedWhenDefinedInLiteralArrayMoreThanOnce
 	self assert: (senderMethod hasLiteral: newSelector) 
 ! !
 
-!RenameSelectorTest methodsFor: 'tests' stamp: 'jmv 7/8/2025 14:57:04'!
+!RenameSelectorTest methodsFor: 'tests' stamp: 'jmv 8/Jul/2025 14:57:04'!
 test25OldSelectorIsRenamedWhenDefinedInMoreThanOneLiteralArrayMoreThanOnce
 
 	| rename senderMethod referencerToOldSelector |
@@ -34664,7 +34681,7 @@ test25OldSelectorIsRenamedWhenDefinedInMoreThanOneLiteralArrayMoreThanOnce
 	self assert: (senderMethod hasLiteral: newSelector) 
 ! !
 
-!RenameSelectorTest methodsFor: 'tests' stamp: 'jmv 7/8/2025 14:57:09'!
+!RenameSelectorTest methodsFor: 'tests' stamp: 'jmv 8/Jul/2025 14:57:09'!
 test26DoesNotRenameLiteralsThatBeginsWithOldSelectorInsideLiteralArray
 
 	| rename senderMethod referencerToOldSelector |
@@ -34683,7 +34700,7 @@ test26DoesNotRenameLiteralsThatBeginsWithOldSelectorInsideLiteralArray
 	self assert: (senderMethod hasLiteral: (oldSelector,'1') asSymbol) 
 ! !
 
-!RenameSelectorTest methodsFor: 'tests' stamp: 'jmv 7/8/2025 14:57:14'!
+!RenameSelectorTest methodsFor: 'tests' stamp: 'jmv 8/Jul/2025 14:57:14'!
 test27DoesNotRenameLiteralsThatBeginsWithOldSelectorAndEndWithColonInsideLiteralArray
 
 	| rename senderMethod referencerToOldSelector |
@@ -34702,7 +34719,7 @@ test27DoesNotRenameLiteralsThatBeginsWithOldSelectorAndEndWithColonInsideLiteral
 	self assert: (senderMethod hasLiteral: (oldSelector,':') asSymbol) 
 ! !
 
-!RenameSelectorTest methodsFor: 'tests' stamp: 'jmv 7/8/2025 14:47:53'!
+!RenameSelectorTest methodsFor: 'tests' stamp: 'jmv 8/Jul/2025 14:47:53'!
 test28CanRenameFromBinaryToKeywordOfOneParameter
 
 	| rename senderMethod referencerToOldSelector |
@@ -34724,7 +34741,7 @@ test28CanRenameFromBinaryToKeywordOfOneParameter
 	self assert: (senderMethod sendsSelector: newSelector). 
 ! !
 
-!RenameSelectorTest methodsFor: 'tests' stamp: 'jmv 7/8/2025 14:47:57'!
+!RenameSelectorTest methodsFor: 'tests' stamp: 'jmv 8/Jul/2025 14:47:57'!
 test29CanRenameFromKeywordOfOneParameterToBinary
 
 	| rename senderMethod referencerToOldSelector |
@@ -34746,7 +34763,7 @@ test29CanRenameFromKeywordOfOneParameterToBinary
 	self assert: (senderMethod sendsSelector: newSelector). 
 ! !
 
-!RenameSelectorTest methodsFor: 'tests' stamp: 'HAW 12/13/2018 19:00:10'!
+!RenameSelectorTest methodsFor: 'tests' stamp: 'HAW 13/Dec/2018 19:00:10'!
 test30CanNotRenameFromBinaryToKeywordOfMoreThanOneParameter
 
 	oldSelector := '&&' asSymbol.
@@ -34759,7 +34776,7 @@ test30CanNotRenameFromBinaryToKeywordOfMoreThanOneParameter
 		raise: Error
 		withMessageText: (RenameSelector errorMessageForNewSelector: newSelector isNotOfSameTypeAs: oldSelector)! !
 
-!RenameSelectorTest methodsFor: 'tests' stamp: 'HAW 12/13/2018 18:59:39'!
+!RenameSelectorTest methodsFor: 'tests' stamp: 'HAW 13/Dec/2018 18:59:39'!
 test31CanNotRenameFromKeywordOfOneParameterToBinary
 
 	oldSelector := 'abc:def:' asSymbol.
@@ -34772,7 +34789,7 @@ test31CanNotRenameFromKeywordOfOneParameterToBinary
 		raise: Error
 		withMessageText: (RenameSelector errorMessageForNewSelector: newSelector isNotOfSameTypeAs: oldSelector)! !
 
-!RenameSelectorTest methodsFor: 'tests' stamp: 'HAW 3/13/2025 13:59:15'!
+!RenameSelectorTest methodsFor: 'tests' stamp: 'HAW 13/Mar/2025 13:59:15'!
 test32HierarchyScopeRenamesSelectorsFromSuperclassDefiningSelector
 	
 	| rename superclassToRefactor subclassToRefactor |
@@ -34789,7 +34806,7 @@ test32HierarchyScopeRenamesSelectorsFromSuperclassDefiningSelector
 	self assertWasRenamedInClassAndMeta: subclassToRefactor.
 	! !
 
-!RenameSelectorTest methodsFor: 'tests' stamp: 'HAW 3/13/2025 13:59:15'!
+!RenameSelectorTest methodsFor: 'tests' stamp: 'HAW 13/Mar/2025 13:59:15'!
 test33DoNotRenameSendersAndImplementorsWhoseCompilerClassIsDifferentToCompiler
 	
 	"Requested by Phil B. to avoid refactoring OMeta2 classes - Hernan"
@@ -34820,22 +34837,22 @@ test33DoNotRenameSendersAndImplementorsWhoseCompilerClassIsDifferentToCompiler
 	self assertWasRenamedInClass: anotherClassSendingMessage class.
 	! !
 
-!RenameTemporaryTest methodsFor: 'class factory' stamp: 'HAW 6/25/2017 21:53:44'!
+!RenameTemporaryTest methodsFor: 'class factory' stamp: 'HAW 25/Jun/2017 21:53:44'!
 classToRefactorName
 
 	^#ClassToRenameTemp! !
 
-!RenameTemporaryTest methodsFor: 'class factory' stamp: 'HAW 6/25/2017 21:53:44'!
+!RenameTemporaryTest methodsFor: 'class factory' stamp: 'HAW 25/Jun/2017 21:53:44'!
 methodNodeOf: aSourceCode
 
 	^self methodNodeOf: aSourceCode in: self class! !
 
-!RenameTemporaryTest methodsFor: 'class factory' stamp: 'HAW 8/9/2018 23:23:12'!
+!RenameTemporaryTest methodsFor: 'class factory' stamp: 'HAW 9/Aug/2018 23:23:12'!
 methodNodeOf: aSourceCode in: aClass
 
 	^aClass methodNodeFor: aSourceCode ! !
 
-!RenameTemporaryTest methodsFor: 'tests' stamp: 'HAW 10/4/2017 17:04:33'!
+!RenameTemporaryTest methodsFor: 'tests' stamp: 'HAW 4/Oct/2017 17:04:33'!
 test01VariableToRenameHasToBeDefined
 
 	| newVariable oldVariable methodNode |
@@ -34849,7 +34866,7 @@ test01VariableToRenameHasToBeDefined
 		assertCreation: [ RenameTemporary from: oldVariable to: newVariable in: methodNode ]
 		failsWith: [ RenameTemporary errorMessageForTemporaryVariable: oldVariable notDefinedIn: methodNode ]! !
 
-!RenameTemporaryTest methodsFor: 'tests' stamp: 'RNG 2/25/2020 00:02:32'!
+!RenameTemporaryTest methodsFor: 'tests' stamp: 'RNG 25/Feb/2020 00:02:32'!
 test02NewVariableNameCanNotBeEmpty
 
 	| methodNode newVariable oldVariable |
@@ -34863,7 +34880,7 @@ test02NewVariableNameCanNotBeEmpty
 		assertCreation: [ RenameTemporary from: oldVariable to: newVariable in: methodNode ]
 		failsWith: [ NewTemporaryPrecondition errorMessageForEmptyTemporaryVariable ]! !
 
-!RenameTemporaryTest methodsFor: 'tests' stamp: 'RNG 2/25/2020 00:06:33'!
+!RenameTemporaryTest methodsFor: 'tests' stamp: 'RNG 25/Feb/2020 00:06:33'!
 test03NewVariableHasToBeValid
 
 	| methodNode newVariable oldVariable |
@@ -34878,7 +34895,7 @@ test03NewVariableHasToBeValid
 		failsWith: [ NewTemporaryPrecondition errorMessageForInvalidTemporaryVariable: newVariable ]
 	! !
 
-!RenameTemporaryTest methodsFor: 'tests' stamp: 'RNG 2/25/2020 00:07:12'!
+!RenameTemporaryTest methodsFor: 'tests' stamp: 'RNG 25/Feb/2020 00:07:12'!
 test04NewVariableNameCanNotBeDefinedInMethod
 
 	| methodNode oldVariable |
@@ -34891,7 +34908,7 @@ test04NewVariableNameCanNotBeDefinedInMethod
 		assertCreation: [RenameTemporary from: oldVariable to: oldVariable in: methodNode ]
 		failsWith: [ NewTemporaryPrecondition errorMessageForNewTemporaryVariable: oldVariable isAlreadyDefinedIn: methodNode ]! !
 
-!RenameTemporaryTest methodsFor: 'tests' stamp: 'RNG 5/24/2020 20:01:16'!
+!RenameTemporaryTest methodsFor: 'tests' stamp: 'RNG 24/May/2020 20:01:16'!
 test05FailsIfNewTemporaryIsEqualToInstanceVariableInClass
 
 	| methodNode oldVariable newVariable classToRefactor |
@@ -34906,7 +34923,7 @@ test05FailsIfNewTemporaryIsEqualToInstanceVariableInClass
 		assertCreation: [ RenameTemporary from: oldVariable to: newVariable in: methodNode ]
 		failsWith: [ NewTemporaryPrecondition errorMessageFor: newVariable canNotBeNamedDueToInstanceVariableDefinedIn: classToRefactor ]! !
 
-!RenameTemporaryTest methodsFor: 'tests' stamp: 'RNG 5/24/2020 20:01:16'!
+!RenameTemporaryTest methodsFor: 'tests' stamp: 'RNG 24/May/2020 20:01:16'!
 test06FailsIfNewTemporaryIsEqualToInstanceVariableInAnySuperclass
 
 	| methodNode oldVariable newVariable classToRefactor superclassToRefactor |
@@ -34922,7 +34939,7 @@ test06FailsIfNewTemporaryIsEqualToInstanceVariableInAnySuperclass
 		assertCreation: [ RenameTemporary from: oldVariable to: newVariable in: methodNode ]
 		failsWith: [ NewTemporaryPrecondition errorMessageFor: newVariable canNotBeNamedDueToInstanceVariableDefinedIn: superclassToRefactor ]! !
 
-!RenameTemporaryTest methodsFor: 'tests' stamp: 'HAW 12/17/2019 19:12:33'!
+!RenameTemporaryTest methodsFor: 'tests' stamp: 'HAW 17/Dec/2019 19:12:33'!
 test07RenameCreatesNewTemporaryVariableAndDeletesOldOne
 
 	| methodNode oldVariable newVariable rename newMethodNode |
@@ -34938,7 +34955,7 @@ test07RenameCreatesNewTemporaryVariableAndDeletesOldOne
 	self deny: (newMethodNode hasArgumentOrTemporaryNamed: oldVariable).
 	self assert: (newMethodNode hasArgumentOrTemporaryNamed: newVariable)! !
 
-!RenameTemporaryTest methodsFor: 'tests' stamp: 'HAW 8/9/2018 19:28:42'!
+!RenameTemporaryTest methodsFor: 'tests' stamp: 'HAW 9/Aug/2018 19:28:42'!
 test08RenameChangesReferencesFromOldVariableToNewVariable
 
 	| methodNode oldVariable newVariable rename newMethodNode assigmentNode |
@@ -34955,7 +34972,7 @@ test08RenameChangesReferencesFromOldVariableToNewVariable
 	self assert: newVariable equals: assigmentNode variable name.
 	self assert: newVariable equals: assigmentNode value arguments first name.! !
 
-!RenameTemporaryTest methodsFor: 'tests' stamp: 'HAW 12/17/2019 19:12:33'!
+!RenameTemporaryTest methodsFor: 'tests' stamp: 'HAW 17/Dec/2019 19:12:33'!
 test09RenamesArguments
 
 	| methodNode oldVariable newVariable rename newMethodNode |
@@ -34972,7 +34989,7 @@ test09RenamesArguments
 	self assert: (newMethodNode hasArgumentOrTemporaryNamed: newVariable).
 	self assert: newVariable equals: newMethodNode block statements first expr name.! !
 
-!RenameTemporaryTest methodsFor: 'tests' stamp: 'RNG 2/25/2020 00:07:53'!
+!RenameTemporaryTest methodsFor: 'tests' stamp: 'RNG 25/Feb/2020 00:07:53'!
 test10NewVariableNameCanNotBeDefinedAsBlockArgument
 
 	| methodNode oldVariable newVariable |
@@ -34986,7 +35003,7 @@ test10NewVariableNameCanNotBeDefinedAsBlockArgument
 		assertCreation: [RenameTemporary from: oldVariable to: newVariable in: methodNode ]
 		failsWith: [ NewTemporaryPrecondition errorMessageForNewTemporaryVariable: newVariable isAlreadyDefinedIn: methodNode ]! !
 
-!RenameTemporaryTest methodsFor: 'tests' stamp: 'HAW 12/17/2019 19:12:33'!
+!RenameTemporaryTest methodsFor: 'tests' stamp: 'HAW 17/Dec/2019 19:12:33'!
 test11RenamesBlockArguments
 
 	| methodNode oldVariable newVariable rename newMethodNode |
@@ -35006,7 +35023,7 @@ test11RenamesBlockArguments
 	"asserts it renamed reference to block argument - Hernan"
 	self assert: newVariable equals: newMethodNode block statements first block statements first expr name! !
 
-!RenameTemporaryTest methodsFor: 'tests' stamp: 'HAW 12/17/2019 19:12:33'!
+!RenameTemporaryTest methodsFor: 'tests' stamp: 'HAW 17/Dec/2019 19:12:33'!
 test12RenamesBlockTemporaries
 
 	| methodNode oldVariable newVariable rename newMethodNode |
@@ -35026,7 +35043,7 @@ test12RenamesBlockTemporaries
 	"asserts it renamed reference to block temporary - Hernan"
 	self assert: newVariable equals: newMethodNode block statements first block statements first expr name! !
 
-!RenameTemporaryTest methodsFor: 'tests' stamp: 'HAW 12/17/2019 19:15:28'!
+!RenameTemporaryTest methodsFor: 'tests' stamp: 'HAW 17/Dec/2019 19:15:28'!
 test13OldNodeMustBePartOfMethodNode
 
 	| methodNode oldVariable newVariable oldVariableNode |
@@ -35041,7 +35058,7 @@ test13OldNodeMustBePartOfMethodNode
 		assertCreation: [RenameTemporary fromOldVariableNode: oldVariableNode copy to: newVariable in: methodNode ]
 		failsWith: [RenameTemporary oldVariableNodeNotPartOfMethodNodeErrorDescription ]	! !
 
-!RenameTemporaryTest methodsFor: 'tests' stamp: 'HAW 12/17/2019 19:15:28'!
+!RenameTemporaryTest methodsFor: 'tests' stamp: 'HAW 17/Dec/2019 19:15:28'!
 test14OldVariableNodeMustBeArgOrTempNode
 
 	| methodNode newVariable oldVariableNode |
@@ -35055,7 +35072,7 @@ test14OldVariableNodeMustBeArgOrTempNode
 		assertCreation: [RenameTemporary fromOldVariableNode: oldVariableNode to: newVariable in: methodNode ]
 		failsWith: [RenameTemporary oldVariableNodeMustBeArgOrTempNodeErrorDescription ]	! !
 
-!RenameTemporaryTest methodsFor: 'tests' stamp: 'HAW 12/17/2019 19:15:28'!
+!RenameTemporaryTest methodsFor: 'tests' stamp: 'HAW 17/Dec/2019 19:15:28'!
 test15RenameVariablesWithSameNameInDifferentBlocksCorrectly
 
 	| methodNode oldVariable newVariable oldVariableNode newMethodNode rename |
@@ -35073,7 +35090,7 @@ test15RenameVariablesWithSameNameInDifferentBlocksCorrectly
 		assert: 'm1 [|',newVariable,'| ^',newVariable, '].[|',oldVariable,'| ^',oldVariable, '].'
 		equals: newMethodNode sourceText! !
 
-!RenameTemporaryTest methodsFor: 'tests' stamp: 'RNG 2/25/2020 00:08:04'!
+!RenameTemporaryTest methodsFor: 'tests' stamp: 'RNG 25/Feb/2020 00:08:04'!
 test16CantRenameVariableToANameAlreadyUsedInAnUpperBlock
 
 	| methodNode oldVariable newVariable oldVariableNode |
@@ -35090,7 +35107,7 @@ test16CantRenameVariableToANameAlreadyUsedInAnUpperBlock
 			NewTemporaryPrecondition errorMessageForNewTemporaryVariable: newVariable isAlreadyDefinedIn: methodNode ]
 	! !
 
-!RenameTemporaryTest methodsFor: 'tests' stamp: 'HAW 2/29/2020 18:09:43'!
+!RenameTemporaryTest methodsFor: 'tests' stamp: 'HAW 29/Feb/2020 18:09:43'!
 test17RenamesOneCharVariableAfterAReturnWithoutCharsAfterThatCorrectly
 
 	| methodNode oldVariable newVariable rename newSource |
@@ -35111,7 +35128,7 @@ test17RenamesOneCharVariableAfterAReturnWithoutCharsAfterThatCorrectly
 		equals: newSource
 		! !
 
-!RenameTemporaryTest methodsFor: 'tests' stamp: 'RNG 4/26/2020 15:19:20'!
+!RenameTemporaryTest methodsFor: 'tests' stamp: 'RNG 26/Apr/2020 15:19:20'!
 test18CantRenameVariableToAReservedName
 
 	| methodNode oldVariable newVariable |
@@ -35126,7 +35143,7 @@ test18CantRenameVariableToAReservedName
 			assertCreation: [ RenameTemporary from: oldVariable to: newVariable in: methodNode ]
 			failsWith: [ NewTemporaryPrecondition errorMessageForNewTemporaryVariableCanNotBeAReservedName: newVariable ] ]! !
 
-!SafelyRemoveClassTest methodsFor: 'tests' stamp: 'HAW 8/1/2018 16:43:08'!
+!SafelyRemoveClassTest methodsFor: 'tests' stamp: 'HAW 1/Aug/2018 16:43:08'!
 test02ClassesWithNoReferencesAndNoSubclassesAreSafetelyRemoved
 
 	| classToRemove safeRemove | 
@@ -35137,7 +35154,7 @@ test02ClassesWithNoReferencesAndNoSubclassesAreSafetelyRemoved
 	
 	self assert: classToRemove isObsolete ! !
 
-!SafelyRemoveClassTest methodsFor: 'tests' stamp: 'HAW 8/1/2018 16:43:11'!
+!SafelyRemoveClassTest methodsFor: 'tests' stamp: 'HAW 1/Aug/2018 16:43:11'!
 test03RemovingTheMetaclassRemovesTheClass
 
 	| classToRemove safeRemove | 
@@ -35148,7 +35165,7 @@ test03RemovingTheMetaclassRemovesTheClass
 	
 	self assert: classToRemove isObsolete ! !
 
-!SafelyRemoveClassTest methodsFor: 'tests' stamp: 'HAW 8/17/2018 16:40:06'!
+!SafelyRemoveClassTest methodsFor: 'tests' stamp: 'HAW 17/Aug/2018 16:40:06'!
 test04CanNotRemoveClassWithReferencesOutsideHierarchy
 
 	| classToRemove classReferencing methodNameReferencingClass | 
@@ -35170,7 +35187,7 @@ test04CanNotRemoveClassWithReferencesOutsideHierarchy
 			self assert: classReferencing name equals: reference classSymbol.
 			self assert: methodNameReferencingClass equals: reference methodSymbol ]! !
 
-!SafelyRemoveClassTest methodsFor: 'tests' stamp: 'HAW 8/1/2018 16:43:21'!
+!SafelyRemoveClassTest methodsFor: 'tests' stamp: 'HAW 1/Aug/2018 16:43:21'!
 test05CanRemoveClassWithReferencesFromItself
 
 	| classToRemove methodNameReferencingClass remove | 
@@ -35184,7 +35201,7 @@ test05CanRemoveClassWithReferencesFromItself
 	
 	self assert: classToRemove isObsolete ! !
 
-!SafelyRemoveClassTest methodsFor: 'tests' stamp: 'HAW 8/1/2018 16:43:27'!
+!SafelyRemoveClassTest methodsFor: 'tests' stamp: 'HAW 1/Aug/2018 16:43:27'!
 test06WarnIfClassToRemoveHasSubclasses
 
 	| classToRemove classToRemoveSubclass | 
@@ -35196,7 +35213,7 @@ test06WarnIfClassToRemoveHasSubclasses
 		assertCreation: [ SafelyRemoveClass of: classToRemove ]
 		warnsWith: [ SafelyRemoveClass warningMessageFor: classToRemove hasSubclasses: (Array with: classToRemoveSubclass) ]! !
 
-!SafelyRemoveClassTest methodsFor: 'tests' stamp: 'HAW 8/17/2018 16:38:44'!
+!SafelyRemoveClassTest methodsFor: 'tests' stamp: 'HAW 17/Aug/2018 16:38:44'!
 test07CanNotRemoveClassWhenSubclassesHaveReferencesOutsideTheHierarchy
 
 	| classToRemove classToRemoveSubclass classReferencing methodNameReferencingClass | 
@@ -35220,7 +35237,7 @@ test07CanNotRemoveClassWhenSubclassesHaveReferencesOutsideTheHierarchy
 			self assert: methodNameReferencingClass equals: reference methodSymbol ]	
 ! !
 
-!SafelyRemoveClassTest methodsFor: 'tests' stamp: 'HAW 8/1/2018 16:47:12'!
+!SafelyRemoveClassTest methodsFor: 'tests' stamp: 'HAW 1/Aug/2018 16:47:12'!
 test08HierarchyIsRemovedIfSubclassesWarningIsResumed
 
 	| classToRemove classToRemoveSubclass | 
@@ -35236,7 +35253,7 @@ test08HierarchyIsRemovedIfSubclassesWarningIsResumed
 	
 		! !
 
-!SafelyRemoveClassTest methodsFor: 'tests' stamp: 'HAW 8/1/2018 16:47:17'!
+!SafelyRemoveClassTest methodsFor: 'tests' stamp: 'HAW 1/Aug/2018 16:47:17'!
 test09CanRemoveIfReferencesToSubclassesAreInTheHierarchy
 
 	| classToRemove classToRemoveSubclass | 
@@ -35251,7 +35268,7 @@ test09CanRemoveIfReferencesToSubclassesAreInTheHierarchy
 	self assert: classToRemove isObsolete.	
 	self assert: classToRemoveSubclass isObsolete.! !
 
-!SafelyRemoveClassTest methodsFor: 'tests' stamp: 'HAW 12/18/2019 16:04:18'!
+!SafelyRemoveClassTest methodsFor: 'tests' stamp: 'HAW 18/Dec/2019 16:04:18'!
 test10WarnWhenHasReferencesToName
 
 	| classToRemove classReferencing methodNameReferencingClass | 
@@ -35273,7 +35290,7 @@ test10WarnWhenHasReferencesToName
 			self assert: classReferencing name equals: reference classSymbol.
 			self assert: methodNameReferencingClass equals: reference methodSymbol ]! !
 
-!SafelyRemoveClassTest methodsFor: 'test support' stamp: 'HAW 8/1/2018 15:48:56'!
+!SafelyRemoveClassTest methodsFor: 'test support' stamp: 'HAW 1/Aug/2018 15:48:56'!
 assertSubclassesReturnsACopy
 
 	"This is a precondition for the remove to work properly with subclasses of the class to remove. 
@@ -35281,7 +35298,7 @@ assertSubclassesReturnsACopy
 	It is not a seprate test because I do not want senders of this precondition to run if it fails - Hernan"
 	self deny: self class superclass subclasses == self class superclass subclasses! !
 
-!SafelyRemoveClassTest methodsFor: 'test support' stamp: 'HAW 5/29/2023 16:22:33'!
+!SafelyRemoveClassTest methodsFor: 'test support' stamp: 'HAW 29/May/2023 16:22:33'!
 safelyRemoveHierarchyOf: classToRemove
 		
 	| remove |
@@ -35295,19 +35312,19 @@ safelyRemoveHierarchyOf: classToRemove
 		
 	remove apply.! !
 
-!SafelyRemoveClassTest methodsFor: 'class factory' stamp: 'HAW 7/11/2018 16:56:05'!
+!SafelyRemoveClassTest methodsFor: 'class factory' stamp: 'HAW 11/Jul/2018 16:56:05'!
 classToRemoveName
 
 	"I can not use the symbol directly because it would be a reference - Hernan"
 	^ 'ClassToRemove' asSymbol.
 	! !
 
-!TemporaryToInstanceVariableTest methodsFor: 'testing' stamp: 'EB 5/25/2019 00:26:04'!
+!TemporaryToInstanceVariableTest methodsFor: 'testing' stamp: 'EB 25/May/2019 00:26:04'!
 methodSourceCodeNamed: aSelector withTemporaryVariableDeclaration: aTemporaryVariableName
 
 	^aSelector, '| ', aTemporaryVariableName, ' |'.! !
 
-!TemporaryToInstanceVariableTest methodsFor: 'testing' stamp: 'EB 5/25/2019 00:31:12'!
+!TemporaryToInstanceVariableTest methodsFor: 'testing' stamp: 'EB 25/May/2019 00:31:12'!
 methodSourceCodeNamed: aSelector withTemporaryVariableDeclarations: temporaryVariableNames
 	^String streamContents: [ :stream |
 		stream nextPutAll: aSelector, '| '.
@@ -35315,7 +35332,7 @@ methodSourceCodeNamed: aSelector withTemporaryVariableDeclarations: temporaryVar
 			stream nextPutAll: temporaryVariableName, ' ' ].	
 		stream nextPut: $|. ].! !
 
-!TemporaryToInstanceVariableTest methodsFor: 'testing' stamp: 'EB 5/25/2019 00:26:04'!
+!TemporaryToInstanceVariableTest methodsFor: 'testing' stamp: 'EB 25/May/2019 00:26:04'!
 test01ApplyChangesTemporaryVariableToInstanceVariable
 
 	| variableName classToRefactor messageName refactoring sourceText methodNode changedMethodNode |
@@ -35335,7 +35352,7 @@ test01ApplyChangesTemporaryVariableToInstanceVariable
 	changedMethodNode _ self methodNodeIn: classToRefactor named: messageName.
 	self assert: 0 equals: changedMethodNode temporaries size.! !
 
-!TemporaryToInstanceVariableTest methodsFor: 'testing' stamp: 'EB 5/25/2019 00:26:04'!
+!TemporaryToInstanceVariableTest methodsFor: 'testing' stamp: 'EB 25/May/2019 00:26:04'!
 test02ApplyDoesntChangeRestOfSourceCode
 
 	| variableName classToRefactor messageName refactoring sourceText methodNode changedMethodNode restOfSourceCode |
@@ -35355,7 +35372,7 @@ test02ApplyDoesntChangeRestOfSourceCode
 	changedMethodNode _ self methodNodeIn: classToRefactor named: messageName.
 	self assert: (changedMethodNode sourceText findString: restOfSourceCode :: > 0).! !
 
-!TemporaryToInstanceVariableTest methodsFor: 'testing' stamp: 'HAW 5/19/2019 17:35:13'!
+!TemporaryToInstanceVariableTest methodsFor: 'testing' stamp: 'HAW 19/May/2019 17:35:13'!
 test03TemporaryToChangeShouldExist
 
 	|  classToRefactor messageName methodNode sourceText |
@@ -35375,7 +35392,7 @@ test03TemporaryToChangeShouldExist
 			
 			self assertMethodNamed: messageName in: classToRefactor hasSourceEqualTo: sourceText ].! !
 
-!TemporaryToInstanceVariableTest methodsFor: 'testing' stamp: 'EB 5/25/2019 00:26:04'!
+!TemporaryToInstanceVariableTest methodsFor: 'testing' stamp: 'EB 25/May/2019 00:26:04'!
 test04TemporaryShouldNotExistInOtherClassMethod
 
 	|  classToRefactor firstMessageName firstMethodNode firstSourceText variableName secondMessageName secondSourceText |
@@ -35408,7 +35425,7 @@ test04TemporaryShouldNotExistInOtherClassMethod
 			self assertMethodNamed: firstMessageName in: classToRefactor hasSourceEqualTo: firstSourceText.
 			self assertMethodNamed: secondMessageName in: classToRefactor hasSourceEqualTo: secondSourceText ].! !
 
-!TemporaryToInstanceVariableTest methodsFor: 'testing' stamp: 'EB 5/25/2019 00:26:04'!
+!TemporaryToInstanceVariableTest methodsFor: 'testing' stamp: 'EB 25/May/2019 00:26:04'!
 test05InstanceVariableShouldNotExistInSubclass
 
 	| classToRefactor messageName methodNode sourceText variableName subclassToRefactor |
@@ -35444,7 +35461,7 @@ test05InstanceVariableShouldNotExistInSubclass
 			self assertMethodNamed: messageName in: classToRefactor hasSourceEqualTo: sourceText.
 			self assert: (subclassToRefactor instVarNames includes: variableName) ].! !
 
-!TemporaryToInstanceVariableTest methodsFor: 'testing' stamp: 'EB 5/25/2019 00:26:04'!
+!TemporaryToInstanceVariableTest methodsFor: 'testing' stamp: 'EB 25/May/2019 00:26:04'!
 test06TemporaryShouldNotExistInSubclassMethod
 
 	| classToRefactor firstMessageName firstMethodNode firstSourceText variableName secondMessageName secondSourceText subclassToRefactor |
@@ -35485,7 +35502,7 @@ test06TemporaryShouldNotExistInSubclassMethod
 			self assertMethodNamed: firstMessageName in: classToRefactor hasSourceEqualTo: firstSourceText.
 			self assertMethodNamed: secondMessageName in: subclassToRefactor hasSourceEqualTo: secondSourceText ].! !
 
-!TemporaryToInstanceVariableTest methodsFor: 'testing' stamp: 'EB 5/28/2019 19:13:24'!
+!TemporaryToInstanceVariableTest methodsFor: 'testing' stamp: 'EB 28/May/2019 19:13:24'!
 test07RemovesPipesWhenRemovingLastTemporaryInMethod
 
 	| variableName classToRefactor messageName refactoring sourceText methodNode |
@@ -35500,7 +35517,7 @@ test07RemovesPipesWhenRemovingLastTemporaryInMethod
 	
 	self assertMethodNamed: messageName in: classToRefactor hasSourceEqualTo: 'm1 '.! !
 
-!TemporaryToInstanceVariableTest methodsFor: 'testing' stamp: 'EB 5/25/2019 00:30:25'!
+!TemporaryToInstanceVariableTest methodsFor: 'testing' stamp: 'EB 25/May/2019 00:30:25'!
 test08DoesntRemoveOtherVariables
 
 	| variableName classToRefactor messageName refactoring sourceText methodNode otherVariableName |
@@ -35518,7 +35535,7 @@ test08DoesntRemoveOtherVariables
 	
 	self assertMethodNamed: messageName in: classToRefactor hasSourceEqualTo: 'm1|  b |'.! !
 
-!TemporaryToInstanceVariableTest methodsFor: 'testing' stamp: 'EB 5/28/2019 00:17:27'!
+!TemporaryToInstanceVariableTest methodsFor: 'testing' stamp: 'EB 28/May/2019 00:17:27'!
 test09TemporaryShouldNotExistInOtherBlockInSameMethod
 
 	| classToRefactor messageName methodNode sourceText variableName blockWithVariableString |
@@ -35546,7 +35563,7 @@ test09TemporaryShouldNotExistInOtherBlockInSameMethod
 			
 			self assertMethodNamed: messageName in: classToRefactor hasSourceEqualTo: sourceText. ].! !
 
-!TemporaryToInstanceVariableTest methodsFor: 'testing' stamp: 'EB 5/28/2019 19:52:12'!
+!TemporaryToInstanceVariableTest methodsFor: 'testing' stamp: 'EB 28/May/2019 19:52:12'!
 test10RemovesPipesWhenRemovingLastTemporaryInBlock
 
 	| classToRefactor messageName methodNode sourceText variableName blockWithVariableString newSourceCode refactoring |
@@ -35570,7 +35587,7 @@ test10RemovesPipesWhenRemovingLastTemporaryInBlock
 	
 	self assertMethodNamed: messageName in: classToRefactor hasSourceEqualTo: newSourceCode.! !
 
-!TemporaryToInstanceVariableTest methodsFor: 'testing' stamp: 'EB 12/22/2019 18:18:26'!
+!TemporaryToInstanceVariableTest methodsFor: 'testing' stamp: 'EB 22/Dec/2019 18:18:26'!
 test11TemporaryShouldNotExistAsArgumentInOtherBlocksInSameMethod
 
 	| classToRefactor messageName methodNode sourceText variableName blockWithTempString blockWithArgumentString |
@@ -35591,7 +35608,7 @@ test11TemporaryShouldNotExistAsArgumentInOtherBlocksInSameMethod
 		failsWith: [ TemporaryToInstanceVariable temporaryExistsInOtherBlockErrorDescription ].
 ! !
 
-!TemporaryToInstanceVariableTest methodsFor: 'testing' stamp: 'EB 12/22/2019 18:38:40'!
+!TemporaryToInstanceVariableTest methodsFor: 'testing' stamp: 'EB 22/Dec/2019 18:38:40'!
 test12CantExtractArgument
 
 	| classToRefactor methodNode sourceText |
@@ -35608,7 +35625,7 @@ test12CantExtractArgument
 		failsWith: [ TemporaryToInstanceVariable inexistentTemporaryErrorDescription ].
 ! !
 
-!TemporaryToInstanceVariableTest methodsFor: 'assertions' stamp: 'HAW 5/19/2019 17:29:33'!
+!TemporaryToInstanceVariableTest methodsFor: 'assertions' stamp: 'HAW 19/May/2019 17:29:33'!
 assertMethodNamed: aMethodName in: aClass hasSourceEqualTo: aSourceCode
 
 	| changedMethodNode |
@@ -35617,81 +35634,81 @@ assertMethodNamed: aMethodName in: aClass hasSourceEqualTo: aSourceCode
 	self assert: aSourceCode equals: changedMethodNode sourceText.
 			! !
 
-!TemporaryToInstanceVariableTest methodsFor: 'class factory' stamp: 'HAW 5/19/2019 17:29:44'!
+!TemporaryToInstanceVariableTest methodsFor: 'class factory' stamp: 'HAW 19/May/2019 17:29:44'!
 classToRefactorName
 
 	^ #ClassToChangeVariable.! !
 
-!TemporaryToInstanceVariableTest methodsFor: 'class factory' stamp: 'HAW 5/19/2019 17:31:47'!
+!TemporaryToInstanceVariableTest methodsFor: 'class factory' stamp: 'HAW 19/May/2019 17:31:47'!
 compileMethodNodeIn: aClass named: aSelector sourceCode: sourceCode
 
 	aClass compile: sourceCode.
 
 	^self methodNodeIn: aClass named: aSelector.! !
 
-!TemporaryToInstanceVariableTest methodsFor: 'class factory' stamp: 'HAW 5/19/2019 17:31:40'!
+!TemporaryToInstanceVariableTest methodsFor: 'class factory' stamp: 'HAW 19/May/2019 17:31:40'!
 methodNodeIn: aClass named: aSelector
 
 	^ aClass compiledMethodAt: aSelector :: methodNode.! !
 
-!SHST80RangeTypeTest methodsFor: 'tests' stamp: 'HAW 10/5/2020 12:16:37'!
+!SHST80RangeTypeTest methodsFor: 'tests' stamp: 'HAW 5/Oct/2020 12:16:37'!
 test00MessagesForTestingAreImplemented
 
 	self assert: (self respondsTo: #_zz).
 	self assert: (self respondsTo: #!!).
 	! !
 
-!SHST80RangeTypeTest methodsFor: 'tests' stamp: 'HAW 10/5/2020 11:56:57'!
+!SHST80RangeTypeTest methodsFor: 'tests' stamp: 'HAW 5/Oct/2020 11:56:57'!
 test01TypeOfMessageSentToLiteralNumberAreObtainedCorrectly
 
 	self assertTypesAreValidWhenMessageSendTo: '1'! !
 
-!SHST80RangeTypeTest methodsFor: 'tests' stamp: 'HAW 10/5/2020 11:58:55'!
+!SHST80RangeTypeTest methodsFor: 'tests' stamp: 'HAW 5/Oct/2020 11:58:55'!
 test02TypeOfMessageSentToLiteralStringAreObtainedCorrectly
 
 	self assertTypesAreValidWhenMessageSendTo: '''a'''! !
 
-!SHST80RangeTypeTest methodsFor: 'tests' stamp: 'HAW 10/5/2020 11:58:39'!
+!SHST80RangeTypeTest methodsFor: 'tests' stamp: 'HAW 5/Oct/2020 11:58:39'!
 test03TypeOfMessageSentToLiteralSymbolAreObtainedCorrectly
 
 	self assertTypesAreValidWhenMessageSendTo: '#a'! !
 
-!SHST80RangeTypeTest methodsFor: 'tests' stamp: 'HAW 10/5/2020 11:59:12'!
+!SHST80RangeTypeTest methodsFor: 'tests' stamp: 'HAW 5/Oct/2020 11:59:12'!
 test04TypeOfMessageSentToLiteralArrayAreObtainedCorrectly
 
 	self assertTypesAreValidWhenMessageSendTo: '#(1)'! !
 
-!SHST80RangeTypeTest methodsFor: 'tests' stamp: 'HAW 10/5/2020 11:59:23'!
+!SHST80RangeTypeTest methodsFor: 'tests' stamp: 'HAW 5/Oct/2020 11:59:23'!
 test05TypeOfMessageSentToLiteralBraceArrayAreObtainedCorrectly
 
 	self assertTypesAreValidWhenMessageSendTo: '{1}'! !
 
-!SHST80RangeTypeTest methodsFor: 'tests' stamp: 'HAW 10/5/2020 11:59:33'!
+!SHST80RangeTypeTest methodsFor: 'tests' stamp: 'HAW 5/Oct/2020 11:59:33'!
 test06TypeOfMessageSentToLiteralBlockAreObtainedCorrectly
 
 	self assertTypesAreValidWhenMessageSendTo: '[1]'! !
 
-!SHST80RangeTypeTest methodsFor: 'tests' stamp: 'HAW 10/5/2020 11:59:42'!
+!SHST80RangeTypeTest methodsFor: 'tests' stamp: 'HAW 5/Oct/2020 11:59:42'!
 test07TypeOfMessageSentToLiteralCharacterAreObtainedCorrectly
 
 	self assertTypesAreValidWhenMessageSendTo: '$a'! !
 
-!SHST80RangeTypeTest methodsFor: 'tests' stamp: 'HAW 10/5/2020 11:59:51'!
+!SHST80RangeTypeTest methodsFor: 'tests' stamp: 'HAW 5/Oct/2020 11:59:51'!
 test08TypeOfMessageSentToLiteralNilAreObtainedCorrectly
 
 	self assertTypesAreValidWhenMessageSendTo: 'nil'! !
 
-!SHST80RangeTypeTest methodsFor: 'tests' stamp: 'HAW 10/5/2020 11:59:59'!
+!SHST80RangeTypeTest methodsFor: 'tests' stamp: 'HAW 5/Oct/2020 11:59:59'!
 test09TypeOfMessageSentToLiteralTrueAreObtainedCorrectly
 
 	self assertTypesAreValidWhenMessageSendTo: 'true'! !
 
-!SHST80RangeTypeTest methodsFor: 'tests' stamp: 'HAW 10/5/2020 12:00:08'!
+!SHST80RangeTypeTest methodsFor: 'tests' stamp: 'HAW 5/Oct/2020 12:00:08'!
 test10TypeOfMessageSentToLiteralFalseAreObtainedCorrectly
 
 	self assertTypesAreValidWhenMessageSendTo: 'false'! !
 
-!SHST80RangeTypeTest methodsFor: 'tests' stamp: 'HAW 7/15/2021 10:47:18'!
+!SHST80RangeTypeTest methodsFor: 'tests' stamp: 'HAW 15/Jul/2021 10:47:18'!
 test11TypeOfMessageSentToSelfAreObtainedCorrectly
 
 	self 
@@ -35722,12 +35739,12 @@ test11TypeOfMessageSentToSelfAreObtainedCorrectly
 		receiverRange: [ :ranges | ranges antepenultimate ]
 		messageRange: [ :ranges | ranges penultimate ].! !
 
-!SHST80RangeTypeTest methodsFor: 'tests' stamp: 'HAW 10/5/2020 12:00:26'!
+!SHST80RangeTypeTest methodsFor: 'tests' stamp: 'HAW 5/Oct/2020 12:00:26'!
 test12TypeOfMessageSentToSuperAreObtainedCorrectly
 
 	self assertTypesAreValidWhenMessageSendTo: 'super'! !
 
-!SHST80RangeTypeTest methodsFor: 'tests' stamp: 'HAW 7/15/2021 10:47:00'!
+!SHST80RangeTypeTest methodsFor: 'tests' stamp: 'HAW 15/Jul/2021 10:47:00'!
 test13TypesIsUndefinedForAnyMessageSendToSuperFromProtoObject
 
 	self 
@@ -35745,18 +35762,18 @@ test13TypesIsUndefinedForAnyMessageSendToSuperFromProtoObject
 		receiverRange: [ :ranges | ranges antepenultimate ]
 		messageRange: [ :ranges | ranges penultimate ]."! !
 
-!SHST80RangeTypeTest methodsFor: 'tests' stamp: 'HAW 10/5/2020 12:00:37'!
+!SHST80RangeTypeTest methodsFor: 'tests' stamp: 'HAW 5/Oct/2020 12:00:37'!
 test14TypeOfMessageSentToGlobalVarAreObtainedCorrectly
 
 	self assertTypesAreValidWhenMessageSendTo: 'Smalltalk'! !
 
-!SHST80RangeTypeTest methodsFor: 'tests' stamp: 'HAW 10/5/2020 12:24:04'!
+!SHST80RangeTypeTest methodsFor: 'tests' stamp: 'HAW 5/Oct/2020 12:24:04'!
 test15TypeOfMessageSentToClassVarAreObtainedCorrectly
 
 	ClassVar1 := 1.
 	self assertTypesAreValidWhenMessageSendTo: 'ClassVar1'! !
 
-!SHST80RangeTypeTest methodsFor: 'assertions' stamp: 'HAW 10/5/2020 12:02:43'!
+!SHST80RangeTypeTest methodsFor: 'assertions' stamp: 'HAW 5/Oct/2020 12:02:43'!
 assertTypeOfBinaryMessageSend: aSourceCode is: aExpectedType
 
 	self 
@@ -35766,7 +35783,7 @@ assertTypeOfBinaryMessageSend: aSourceCode is: aExpectedType
 		messageRange: [ :ranges | ranges penultimate ]
 ! !
 
-!SHST80RangeTypeTest methodsFor: 'assertions' stamp: 'jmv 7/31/2023 11:32:34'!
+!SHST80RangeTypeTest methodsFor: 'assertions' stamp: 'jmv 31/Jul/2023 11:32:34'!
 assertTypeOfMessageSend: aSourceCode 
 	is: aExpectedType
 	in: aClassOrMetaClass 
@@ -35790,7 +35807,7 @@ assertTypeOfMessageSend: aSourceCode
 	self assert: type equals: aExpectedType
 	! !
 
-!SHST80RangeTypeTest methodsFor: 'assertions' stamp: 'HAW 10/5/2020 12:23:51'!
+!SHST80RangeTypeTest methodsFor: 'assertions' stamp: 'HAW 5/Oct/2020 12:23:51'!
 assertTypeOfMessageSend: aSourceCode 
 	is: aExpectedType 
 	receiverRange: aReceiverRangeBlock 
@@ -35803,7 +35820,7 @@ assertTypeOfMessageSend: aSourceCode
 		receiverRange: aReceiverRangeBlock 
 		messageRange: aMessageRangeBlock! !
 
-!SHST80RangeTypeTest methodsFor: 'assertions' stamp: 'HAW 10/5/2020 12:02:52'!
+!SHST80RangeTypeTest methodsFor: 'assertions' stamp: 'HAW 5/Oct/2020 12:02:52'!
 assertTypeOfUnaryMessageSend: aSourceCode is: aExpectedType
 
 	self 
@@ -35813,7 +35830,7 @@ assertTypeOfUnaryMessageSend: aSourceCode is: aExpectedType
 		messageRange: [ :ranges | ranges last ]
 ! !
 
-!SHST80RangeTypeTest methodsFor: 'assertions' stamp: 'HAW 7/15/2021 10:45:30'!
+!SHST80RangeTypeTest methodsFor: 'assertions' stamp: 'HAW 15/Jul/2021 10:45:30'!
 assertTypesAreValidWhenMessageSendTo: aReceiverAsString
 
 	self assertTypeOfUnaryMessageSend: 'm1 ', aReceiverAsString, ' _zz' is: #undefinedUnary.
@@ -35824,17 +35841,17 @@ assertTypesAreValidWhenMessageSendTo: aReceiverAsString
 	self assertTypeOfBinaryMessageSend: 'm1 ', aReceiverAsString, ' = 2' is: #binary
 	"! !
 
-!SHST80RangeTypeTest methodsFor: 'messages for testing' stamp: 'HAW 10/5/2020 12:15:40'!
+!SHST80RangeTypeTest methodsFor: 'messages for testing' stamp: 'HAW 5/Oct/2020 12:15:40'!
 !! something
 
 	"Do not remove this method because it exists for its name to have implementors - Hernan"! !
 
-!SHST80RangeTypeTest methodsFor: 'messages for testing' stamp: 'HAW 10/5/2020 12:15:50'!
+!SHST80RangeTypeTest methodsFor: 'messages for testing' stamp: 'HAW 5/Oct/2020 12:15:50'!
 _zz
 
 	"Do not remove this method because it exists for its name to have implementors - Hernan"! !
 
-!TaskbarTest methodsFor: 'Running' stamp: 'jmv 3/20/2024 15:45:15'!
+!TaskbarTest methodsFor: 'Running' stamp: 'jmv 20/Mar/2024 15:45:15'!
 setUp
 
 	super setUp.
@@ -35843,45 +35860,45 @@ setUp
 	taskbar screenSizeChanged.
 	"taskbar world runStepMethods"! !
 
-!TaskbarTest methodsFor: 'Running' stamp: 'jmv 12/28/2017 16:12:13'!
+!TaskbarTest methodsFor: 'Running' stamp: 'jmv 28/Dec/2017 16:12:13'!
 tearDown
 
 	needsDelete ifTrue: [
 		UISupervisor ui hideTaskbar ]! !
 
-!TaskbarTest methodsFor: 'test cases' stamp: 'jmv 12/28/2017 16:12:16'!
+!TaskbarTest methodsFor: 'test cases' stamp: 'jmv 28/Dec/2017 16:12:16'!
 testClassSingleton
 
 	self should: [ taskbar == UISupervisor ui taskbar ].
 ! !
 
-!TaskbarTest methodsFor: 'test cases' stamp: 'jmv 9/2/2024 20:10:32'!
+!TaskbarTest methodsFor: 'test cases' stamp: 'jmv 2/Sep/2024 20:10:32'!
 testHorizontalAlignment
 
 	self should: [ taskbar positionInWorld x = 0 ]! !
 
-!TaskbarTest methodsFor: 'test cases' stamp: 'jmv 12/28/2017 16:12:01'!
+!TaskbarTest methodsFor: 'test cases' stamp: 'jmv 28/Dec/2017 16:12:01'!
 testWidth
 	
 	self should: [ taskbar morphWidth = UISupervisor ui morphWidth ]! !
 
-!TestCaseTest methodsFor: 'testing' stamp: 'jpb 8/2/2019 23:47:26'!
+!TestCaseTest methodsFor: 'testing' stamp: 'jpb 2/Aug/2019 23:47:26'!
 testIsTestCase
 	self assert: (TestCase new is: #TestCase).! !
 
-!TestCaseTest methodsFor: 'exception testing tests' stamp: 'HAW 3/17/2019 07:31:39'!
+!TestCaseTest methodsFor: 'exception testing tests' stamp: 'HAW 17/Mar/2019 07:31:39'!
 testShouldFailErrorsWhenNoErrorIsSignaled
 
 	self
 		should: [ self shouldFail: [] ]
 		raise: TestResult failure! !
 
-!TestCaseTest methodsFor: 'exception testing tests' stamp: 'HAW 3/17/2019 07:32:19'!
+!TestCaseTest methodsFor: 'exception testing tests' stamp: 'HAW 17/Mar/2019 07:32:19'!
 testShouldFailPassesWhenAnErrorIsSignaled
 
 	self shouldFail: [ self error: 'an error' ]! !
 
-!TestCaseTest methodsFor: 'exception testing tests' stamp: 'HAW 4/5/2018 14:32:15'!
+!TestCaseTest methodsFor: 'exception testing tests' stamp: 'HAW 5/Apr/2018 14:32:15'!
 testShouldRaiseWithExceptionDoCanExpectException
 
 	"This test is important because TestFailure is a subclass of Exception, therefore if we are expecting Exception to be raised it should not 
@@ -35897,7 +35914,7 @@ testShouldRaiseWithExceptionDoCanExpectException
 		
 	self assert: failureRaised ! !
 
-!TestCaseTest methodsFor: 'exception testing tests' stamp: 'HernanWilkinson 1/19/2017 20:52:39'!
+!TestCaseTest methodsFor: 'exception testing tests' stamp: 'HernanWilkinson 19/Jan/2017 20:52:39'!
 testShouldRaiseWithExceptionDoFailsWhenNoExceptionIsSignaled
 	
 	| failureSignaled |
@@ -35913,7 +35930,7 @@ testShouldRaiseWithExceptionDoFailsWhenNoExceptionIsSignaled
 		
 	self assert: failureSignaled ! !
 
-!TestCaseTest methodsFor: 'exception testing tests' stamp: 'jmv 7/31/2023 12:29:46'!
+!TestCaseTest methodsFor: 'exception testing tests' stamp: 'jmv 31/Jul/2023 12:29:46'!
 testShouldRaiseWithExceptionDoFailsWhenOtherExceptionTypeIsSignaled
 
 	| exceptionToRaise |
@@ -35927,7 +35944,7 @@ testShouldRaiseWithExceptionDoFailsWhenOtherExceptionTypeIsSignaled
 		on: Error
 		do: [:anError | self assert: anError equals: anError ].! !
 
-!TestCaseTest methodsFor: 'exception testing tests' stamp: 'jmv 7/31/2023 12:30:07'!
+!TestCaseTest methodsFor: 'exception testing tests' stamp: 'jmv 31/Jul/2023 12:30:07'!
 testShouldRaiseWithExceptionDoPassSignaledExceptionToAssertionsBlock
 
 	| exceptionToRaise |
@@ -35940,7 +35957,7 @@ testShouldRaiseWithExceptionDoPassSignaledExceptionToAssertionsBlock
 		withExceptionDo: [:signaledException |
 			self assert: signaledException equals: exceptionToRaise ].! !
 
-!TestCaseTest methodsFor: 'exception testing tests' stamp: 'HernanWilkinson 1/19/2017 20:51:45'!
+!TestCaseTest methodsFor: 'exception testing tests' stamp: 'HernanWilkinson 19/Jan/2017 20:51:45'!
 testShouldRaiseWithExceptionDoValuesAssertionsBlockWhenExceptionIsRaised
 
 	| exceptionToRaise assertionsBlockEvaluated |
@@ -35956,7 +35973,7 @@ testShouldRaiseWithExceptionDoValuesAssertionsBlockWhenExceptionIsRaised
 		
 	self assert: assertionsBlockEvaluated ! !
 
-!TestCaseTest methodsFor: 'exception testing tests' stamp: 'HAW 2/6/2019 13:37:19'!
+!TestCaseTest methodsFor: 'exception testing tests' stamp: 'HAW 6/Feb/2019 13:37:19'!
 testShouldRaiseWithMessageTextDoesNotFailWithRightMessageText
 
 	| messageText |
@@ -35972,7 +35989,7 @@ testShouldRaiseWithMessageTextDoesNotFailWithRightMessageText
 		raise: TestResult failure 
 		! !
 
-!TestCaseTest methodsFor: 'exception testing tests' stamp: 'HAW 2/6/2019 13:38:00'!
+!TestCaseTest methodsFor: 'exception testing tests' stamp: 'HAW 6/Feb/2019 13:38:00'!
 testShouldRaiseWithMessageTextFailsWithDifferentMessageText
 
 	self 
@@ -35983,19 +36000,19 @@ testShouldRaiseWithMessageTextFailsWithDifferentMessageText
 				withMessageText: '' ]
 		raise: TestResult failure! !
 
-!TestCaseTest methodsFor: 'exception testing tests' stamp: 'HAW 3/17/2019 06:42:30'!
+!TestCaseTest methodsFor: 'exception testing tests' stamp: 'HAW 17/Mar/2019 06:42:30'!
 testShoulndFailErrorsWhenAnErrorIsSignaled
 
 	self
 		should: [ self shouldntFail: [ self fail ]]
 		raise: TestResult failure! !
 
-!TestCaseTest methodsFor: 'exception testing tests' stamp: 'HAW 3/17/2019 06:41:26'!
+!TestCaseTest methodsFor: 'exception testing tests' stamp: 'HAW 17/Mar/2019 06:41:26'!
 testShoulndFailPassesWhenNoErrorIsSignaled
 
 	self shouldntFail: [ 1+2 ]! !
 
-!TestCaseTest methodsFor: 'changes' stamp: 'HAW 5/15/2019 18:33:28'!
+!TestCaseTest methodsFor: 'changes' stamp: 'HAW 15/May/2019 18:33:28'!
 testAssertChangesByPassesWhenActionChangesConditionByTheSpecifiedAmount
 
 	|aCollection|
@@ -36004,7 +36021,7 @@ testAssertChangesByPassesWhenActionChangesConditionByTheSpecifiedAmount
 	
 	self assert: [ aCollection add: 1; add: 2 ] changes: [ aCollection size ] by: 2! !
 
-!TestCaseTest methodsFor: 'changes' stamp: 'HAW 5/15/2019 18:34:29'!
+!TestCaseTest methodsFor: 'changes' stamp: 'HAW 15/May/2019 18:34:29'!
 testAssertChangesFromToPassesWhenActionChangesConditionFromAndToTheSpecifiedValues
 
 	|aCollection|
@@ -36013,7 +36030,7 @@ testAssertChangesFromToPassesWhenActionChangesConditionFromAndToTheSpecifiedValu
 	
 	self assert: [ aCollection add: 2 ] changes: [ aCollection size ] from: 1 to: 2! !
 
-!TestCaseTest methodsFor: 'changes' stamp: 'HAW 5/15/2019 18:33:34'!
+!TestCaseTest methodsFor: 'changes' stamp: 'HAW 15/May/2019 18:33:34'!
 testAssertChangesPassesWhenConditionIsAlteredByAction
 
 	|aCollection|
@@ -36022,7 +36039,7 @@ testAssertChangesPassesWhenConditionIsAlteredByAction
 	
 	self assert: [ aCollection add: 1 ] changes: [ aCollection size ]! !
 
-!TestCaseTest methodsFor: 'changes' stamp: 'HAW 5/15/2019 18:33:39'!
+!TestCaseTest methodsFor: 'changes' stamp: 'HAW 15/May/2019 18:33:39'!
 testAssertDoeNotChangePassesWhenConditionIsNotAlteredByAction
 
 	|aCollection|
@@ -36031,7 +36048,7 @@ testAssertDoeNotChangePassesWhenConditionIsNotAlteredByAction
 	
 	self assert: [ aCollection sum ] doesNotChange: [ aCollection size ]! !
 
-!TestCaseTest methodsFor: 'includes' stamp: 'jmv 3/20/2024 18:35:09'!
+!TestCaseTest methodsFor: 'includes' stamp: 'jmv 20/Mar/2024 18:35:09'!
 testAssertIncludesFailsWhenElementIsNotIncludedInCollection
 
 	| collection anElement |
@@ -36045,7 +36062,7 @@ testAssertIncludesFailsWhenElementIsNotIncludedInCollection
 			expectedError := collection asString, ' does not include ', anElement asString.
 			self assert: (anException messageText endsWith: expectedError) ]! !
 
-!TestCaseTest methodsFor: 'includes' stamp: 'HAW 5/15/2019 18:50:04'!
+!TestCaseTest methodsFor: 'includes' stamp: 'HAW 15/May/2019 18:50:04'!
 testAssertIncludesShouldNotFailWhenElementIsInCollection
 	
 	| collection anElement |
@@ -36057,33 +36074,33 @@ testAssertIncludesShouldNotFailWhenElementIsInCollection
 		shouldnt: [ self assert: collection includes: anElement ] 
 		raise: TestResult failure! !
 
-!TestCaseTest methodsFor: 'should take less than' stamp: 'jmv 3/10/2022 11:42:41'!
+!TestCaseTest methodsFor: 'should take less than' stamp: 'jmv 10/Mar/2022 11:42:41'!
 testShouldNotTakeMoreThanFailsWhenClosureTakesMoreThanTheLimit
 
 	self shouldFail: [ self should: [(Delay forMilliseconds: 50) wait ] notTakeMoreThan: 10 milliSeconds ]! !
 
-!TestCaseTest methodsFor: 'should take less than' stamp: 'HAW 5/15/2019 19:07:04'!
+!TestCaseTest methodsFor: 'should take less than' stamp: 'HAW 15/May/2019 19:07:04'!
 testShouldNotTakeMoreThanPassesWhenClosureTakesLessThanTheLimit
 
 	self shouldntFail: [ self should: [] notTakeMoreThan: 1 milliSeconds ]
 		! !
 
-!TestCaseTest methodsFor: 'symbols' stamp: 'jmv 6/19/2024 09:39:01'!
+!TestCaseTest methodsFor: 'symbols' stamp: 'jmv 19/Jun/2024 09:39:01'!
 testIsNotTestSelectorWhenHasParameters
 
 	self deny: (TestCase isTestSelector: #test01:)! !
 
-!TestCaseTest methodsFor: 'symbols' stamp: 'jmv 6/19/2024 09:38:48'!
+!TestCaseTest methodsFor: 'symbols' stamp: 'jmv 19/Jun/2024 09:38:48'!
 testIsNotTestSelectorWhenItDoesNotStartsWithTest
 
 	self deny: (TestCase isTestSelector: #tes01)! !
 
-!TestCaseTest methodsFor: 'symbols' stamp: 'jmv 6/19/2024 09:38:23'!
+!TestCaseTest methodsFor: 'symbols' stamp: 'jmv 19/Jun/2024 09:38:23'!
 testIsTestSelectorWhenStartsWithTestAndHasNoParameters
 
 	self assert: (TestCase isTestSelector: #test01)! !
 
-!TestSuiteTest methodsFor: 'assertions' stamp: 'jmv 7/31/2023 12:30:31'!
+!TestSuiteTest methodsFor: 'assertions' stamp: 'jmv 31/Jul/2023 12:30:31'!
 assert: expectedTestSuite hasSameTestsAs: resultTestSuite
 
 	| expectedTests resultTests |
@@ -36094,7 +36111,7 @@ assert: expectedTestSuite hasSameTestsAs: resultTestSuite
 	self assert: resultTests size equals: expectedTests size.
 	self assert: (expectedTests allSatisfy: [:expectedTest | resultTests anySatisfy: [:resultTest | self is: expectedTest equalTo: resultTest ]]).! !
 
-!TestSuiteTest methodsFor: 'assertions' stamp: 'jmv 3/12/2018 20:41:35'!
+!TestSuiteTest methodsFor: 'assertions' stamp: 'jmv 12/Mar/2018 20:41:35'!
 assertIncludesThisTest: aTestSuite 
 	
 	| thisTestSelector |
@@ -36102,32 +36119,32 @@ assertIncludesThisTest: aTestSuite
 	thisTestSelector _ thisContext sender selector.
 	^aTestSuite tests anySatisfy: [ :aTestCase | aTestCase class = self class and: [aTestCase selector = thisTestSelector ]]! !
 
-!TestSuiteTest methodsFor: 'assertions' stamp: 'HAW 2/10/2017 15:20:29'!
+!TestSuiteTest methodsFor: 'assertions' stamp: 'HAW 10/Feb/2017 15:20:29'!
 is: expectedTest equalTo: resultTest
 
 	^expectedTest class = resultTest class and: [ expectedTest selector =  resultTest selector ]! !
 
-!TestSuiteTest methodsFor: 'test support' stamp: 'HAW 10/29/2019 11:13:21'!
+!TestSuiteTest methodsFor: 'test support' stamp: 'HAW 29/Oct/2019 11:13:21'!
 hardCodedReferenceToSelfClass
 
 	^TestSuiteTest ! !
 
-!TestSuiteTest methodsFor: 'test support' stamp: 'HAW 3/3/2017 16:37:00'!
+!TestSuiteTest methodsFor: 'test support' stamp: 'HAW 3/Mar/2017 16:37:00'!
 quickMethodTest
 
 	"stub for a quick method - Hernan"! !
 
-!TestSuiteTest methodsFor: 'tests - instance creation' stamp: 'HAW 2/10/2017 15:22:49'!
+!TestSuiteTest methodsFor: 'tests - instance creation' stamp: 'HAW 10/Feb/2017 15:22:49'!
 test01SuiteForTestCaseClassHasTheSameTestAsCreatingTheSuiteFromTheTestCaseClass
 
 	self assert: self class buildSuite hasSameTestsAs: (TestSuite forClass: self class)! !
 
-!TestSuiteTest methodsFor: 'tests - instance creation' stamp: 'HAW 2/10/2017 15:24:17'!
+!TestSuiteTest methodsFor: 'tests - instance creation' stamp: 'HAW 10/Feb/2017 15:24:17'!
 test02SuiteForNoTestCaseClassUsesTestClassWithSameNameEndingWithTest
 
 	self assert: self class buildSuite hasSameTestsAs: (TestSuite forClass: TestSuite)! !
 
-!TestSuiteTest methodsFor: 'tests - instance creation' stamp: 'HAW 10/29/2019 11:12:11'!
+!TestSuiteTest methodsFor: 'tests - instance creation' stamp: 'HAW 29/Oct/2019 11:12:11'!
 test03SuiteForNoTestCaseClassAndNoTestClassLooksForReferencesInTests
 
 	| objectTestSuite referencesToObject testCaseClasses |
@@ -36143,12 +36160,12 @@ test03SuiteForNoTestCaseClassAndNoTestClassLooksForReferencesInTests
 	self assert: (testCaseClasses allSatisfy: [:aTestCaseClass | (aTestCaseClass is: #TestCaseClass) and: [ referencesToObject includes: aTestCaseClass ]])
 	! !
 
-!TestSuiteTest methodsFor: 'tests - instance creation' stamp: 'HAW 2/10/2017 15:41:52'!
+!TestSuiteTest methodsFor: 'tests - instance creation' stamp: 'HAW 10/Feb/2017 15:41:52'!
 test04SuiteForTestMethodIncludesOnlyTheMethod
 
 	self assert: (TestSuite new addTest: (self class selector: thisContext selector)) hasSameTestsAs: (TestSuite forCompiledMethod: thisContext method)! !
 
-!TestSuiteTest methodsFor: 'tests - instance creation' stamp: 'HAW 2/10/2017 15:56:00'!
+!TestSuiteTest methodsFor: 'tests - instance creation' stamp: 'HAW 10/Feb/2017 15:56:00'!
 test05SuiteForNoTestMethodIncludesTestCaseSendingTheCompiledMethodSelector
 
 	| compiledMethodSuite compiledMethodSelector senders |
@@ -36160,7 +36177,7 @@ test05SuiteForNoTestMethodIncludesTestCaseSendingTheCompiledMethodSelector
 	self assert: compiledMethodSuite tests notEmpty.
 	self assert: (compiledMethodSuite tests allSatisfy: [:aTestCase | (aTestCase class is: #TestCaseClass) and: [ senders includes: aTestCase selector]])! !
 
-!TestSuiteTest methodsFor: 'tests - instance creation' stamp: 'HAW 2/10/2017 16:39:30'!
+!TestSuiteTest methodsFor: 'tests - instance creation' stamp: 'HAW 10/Feb/2017 16:39:30'!
 test06ForSystemCategoryWithTestCasesIncludesOnlyTestCasesClasses
 
 	| suite |
@@ -36170,7 +36187,7 @@ test06ForSystemCategoryWithTestCasesIncludesOnlyTestCasesClasses
 	"I just make a simple assertion that verifies this test is included - Hernan"
 	self assertIncludesThisTest: suite ! !
 
-!TestSuiteTest methodsFor: 'tests - instance creation' stamp: 'HAW 2/10/2017 16:41:00'!
+!TestSuiteTest methodsFor: 'tests - instance creation' stamp: 'HAW 10/Feb/2017 16:41:00'!
 test07ForSystemCategoryWithNoTestCasesIncludesTestClassesTests
 
 	| suite |
@@ -36180,7 +36197,7 @@ test07ForSystemCategoryWithNoTestCasesIncludesTestClassesTests
 	"I just make a simple assertion that verifies this test is included - Hernan"
 	self assertIncludesThisTest: suite ! !
 
-!TestSuiteTest methodsFor: 'tests - instance creation' stamp: 'HAW 2/10/2017 16:41:08'!
+!TestSuiteTest methodsFor: 'tests - instance creation' stamp: 'HAW 10/Feb/2017 16:41:08'!
 test08ForMessageCategoryContainingTestCasesIncludesThoseTestCases
 
 	| suite classOrganizer |
@@ -36191,7 +36208,7 @@ test08ForMessageCategoryContainingTestCasesIncludesThoseTestCases
 	"I just make a simple assertion that verifies this test is included - Hernan"
 	self assertIncludesThisTest: suite ! !
 
-!TestSuiteTest methodsFor: 'tests - instance creation' stamp: 'HAW 2/10/2017 16:38:46'!
+!TestSuiteTest methodsFor: 'tests - instance creation' stamp: 'HAW 10/Feb/2017 16:38:46'!
 test09ForMessageCategoryWihoutTestIsEmpty
 
 	| suite classOrganizer |
@@ -36201,7 +36218,7 @@ test09ForMessageCategoryWihoutTestIsEmpty
 
 	self assert: suite tests isEmpty! !
 
-!TestSuiteTest methodsFor: 'tests - instance creation' stamp: 'HAW 3/20/2025 21:40:58'!
+!TestSuiteTest methodsFor: 'tests - instance creation' stamp: 'HAW 20/Mar/2025 21:40:58'!
 test10SuiteForClassCategoryTreeIncludesAllTestsInCategoryTree
 
 	| categoryTreeSuite suiteFromCategoryRoot |
@@ -36213,7 +36230,7 @@ test10SuiteForClassCategoryTreeIncludesAllTestsInCategoryTree
 		assert: (categoryTreeSuite tests collect: [ :test | test methodForTest ]) 
 		equals: (suiteFromCategoryRoot tests collect: [ :test | test methodForTest ])! !
 
-!BoxedFloat64 methodsFor: '*BaseImageTests-Kernel-Numbers' stamp: 'jmv 2/25/2019 17:20:54'!
+!BoxedFloat64 methodsFor: '*BaseImageTests-Kernel-Numbers' stamp: 'jmv 25/Feb/2019 17:20:54'!
 primTestAdd: aNumber
 	"Primitive. Answer the sum of the receiver and aNumber. Essential.
 	Fail if the argument is not a Float. See Object documentation
@@ -36222,13 +36239,13 @@ primTestAdd: aNumber
 	<primitive: 41>
 	^ #fail! !
 
-!BoxedFloat64 methodsFor: '*BaseImageTests-Kernel-Numbers' stamp: 'jmv 3/14/2019 14:01:17'!
+!BoxedFloat64 methodsFor: '*BaseImageTests-Kernel-Numbers' stamp: 'jmv 14/Mar/2019 14:01:17'!
 primTestArcTan
 
 	<primitive: 57>
 	^ #fail! !
 
-!BoxedFloat64 methodsFor: '*BaseImageTests-Kernel-Numbers' stamp: 'jmv 2/25/2019 17:20:58'!
+!BoxedFloat64 methodsFor: '*BaseImageTests-Kernel-Numbers' stamp: 'jmv 25/Feb/2019 17:20:58'!
 primTestDivideBy: aNumber
 	"Primitive. Answer the result of dividing receiver by aNumber.
 	Fail if the argument is not a Float.
@@ -36237,7 +36254,7 @@ primTestDivideBy: aNumber
 	<primitive: 50>
 	^ #fail! !
 
-!BoxedFloat64 methodsFor: '*BaseImageTests-Kernel-Numbers' stamp: 'jmv 2/25/2019 17:37:44'!
+!BoxedFloat64 methodsFor: '*BaseImageTests-Kernel-Numbers' stamp: 'jmv 25/Feb/2019 17:37:44'!
 primTestEqual: aNumber
 	"Primitive. Compare the receiver with the argument and return true
 	if the receiver is equal to the argument. Otherwise return false.
@@ -36247,7 +36264,7 @@ primTestEqual: aNumber
 	<primitive: 47>
 	^#fail! !
 
-!BoxedFloat64 methodsFor: '*BaseImageTests-Kernel-Numbers' stamp: 'jmv 3/14/2019 12:42:41'!
+!BoxedFloat64 methodsFor: '*BaseImageTests-Kernel-Numbers' stamp: 'jmv 14/Mar/2019 12:42:41'!
 primTestExp
 	"Primitive. Answer the sum of the receiver and aNumber. Essential.
 	Fail if the argument is not a Float. See Object documentation
@@ -36256,7 +36273,7 @@ primTestExp
 	<primitive: 59>
 	^ #fail! !
 
-!BoxedFloat64 methodsFor: '*BaseImageTests-Kernel-Numbers' stamp: 'jmv 3/14/2019 13:42:23'!
+!BoxedFloat64 methodsFor: '*BaseImageTests-Kernel-Numbers' stamp: 'jmv 14/Mar/2019 13:42:23'!
 primTestExponent
 	"Primitive. Answer the sum of the receiver and aNumber. Essential.
 	Fail if the argument is not a Float. See Object documentation
@@ -36265,7 +36282,7 @@ primTestExponent
 	<primitive: 53>
 	^ #fail! !
 
-!BoxedFloat64 methodsFor: '*BaseImageTests-Kernel-Numbers' stamp: 'jmv 2/25/2019 17:37:41'!
+!BoxedFloat64 methodsFor: '*BaseImageTests-Kernel-Numbers' stamp: 'jmv 25/Feb/2019 17:37:41'!
 primTestGreater: aNumber 
 	"Primitive. Compare the receiver with the argument and return true
 	if the receiver is greater than the argument. Otherwise return false.
@@ -36275,7 +36292,7 @@ primTestGreater: aNumber
 	<primitive: 44>
 	^#fail! !
 
-!BoxedFloat64 methodsFor: '*BaseImageTests-Kernel-Numbers' stamp: 'jmv 2/25/2019 17:37:38'!
+!BoxedFloat64 methodsFor: '*BaseImageTests-Kernel-Numbers' stamp: 'jmv 25/Feb/2019 17:37:38'!
 primTestGreaterEqual: aNumber 
 	"Primitive. Compare the receiver with the argument and return true
 	if the receiver is greater than or equal to the argument. Otherwise return
@@ -36285,7 +36302,7 @@ primTestGreaterEqual: aNumber
 	<primitive: 46>
 	^#fail! !
 
-!BoxedFloat64 methodsFor: '*BaseImageTests-Kernel-Numbers' stamp: 'jmv 2/25/2019 17:37:35'!
+!BoxedFloat64 methodsFor: '*BaseImageTests-Kernel-Numbers' stamp: 'jmv 25/Feb/2019 17:37:35'!
 primTestLess: aNumber 
 	"Primitive. Compare the receiver with the argument and return true
 	if the receiver is less than the argument. Otherwise return false.
@@ -36295,7 +36312,7 @@ primTestLess: aNumber
 	<primitive: 43>
 	^#fail! !
 
-!BoxedFloat64 methodsFor: '*BaseImageTests-Kernel-Numbers' stamp: 'jmv 2/25/2019 17:37:32'!
+!BoxedFloat64 methodsFor: '*BaseImageTests-Kernel-Numbers' stamp: 'jmv 25/Feb/2019 17:37:32'!
 primTestLessEqual: aNumber 
 	"Primitive. Compare the receiver with the argument and return true
 	if the receiver is less than or equal to the argument. Otherwise return
@@ -36305,7 +36322,7 @@ primTestLessEqual: aNumber
 	<primitive: 45>
 	^#fail! !
 
-!BoxedFloat64 methodsFor: '*BaseImageTests-Kernel-Numbers' stamp: 'jmv 3/14/2019 12:42:00'!
+!BoxedFloat64 methodsFor: '*BaseImageTests-Kernel-Numbers' stamp: 'jmv 14/Mar/2019 12:42:00'!
 primTestLn
 	"Primitive. Answer the sum of the receiver and aNumber. Essential.
 	Fail if the argument is not a Float. See Object documentation
@@ -36314,7 +36331,7 @@ primTestLn
 	<primitive: 58>
 	^ #fail! !
 
-!BoxedFloat64 methodsFor: '*BaseImageTests-Kernel-Numbers' stamp: 'jmv 2/25/2019 17:21:03'!
+!BoxedFloat64 methodsFor: '*BaseImageTests-Kernel-Numbers' stamp: 'jmv 25/Feb/2019 17:21:03'!
 primTestMultiplyBy: aNumber
 	"Primitive. Answer the result of multiplying the receiver by aNumber.
 	Fail if the argument is not a Float. Essential. See Object documentation
@@ -36323,7 +36340,7 @@ primTestMultiplyBy: aNumber
 	<primitive: 49>
 	^ #fail! !
 
-!BoxedFloat64 methodsFor: '*BaseImageTests-Kernel-Numbers' stamp: 'jmv 2/25/2019 17:37:29'!
+!BoxedFloat64 methodsFor: '*BaseImageTests-Kernel-Numbers' stamp: 'jmv 25/Feb/2019 17:37:29'!
 primTestNotEqual: aNumber 
 	"Primitive. Compare the receiver with the argument and return true
 	if the receiver is not equal to the argument. Otherwise return false.
@@ -36333,17 +36350,17 @@ primTestNotEqual: aNumber
 	<primitive: 48>
 	^#fail! !
 
-!BoxedFloat64 methodsFor: '*BaseImageTests-Kernel-Numbers' stamp: 'jmv 3/14/2019 13:55:50'!
+!BoxedFloat64 methodsFor: '*BaseImageTests-Kernel-Numbers' stamp: 'jmv 14/Mar/2019 13:55:50'!
 primTestSin
 	<primitive: 56>
 	^ #fail! !
 
-!BoxedFloat64 methodsFor: '*BaseImageTests-Kernel-Numbers' stamp: 'jmv 2/28/2019 15:38:43'!
+!BoxedFloat64 methodsFor: '*BaseImageTests-Kernel-Numbers' stamp: 'jmv 28/Feb/2019 15:38:43'!
 primTestSqrt
 	<primitive: 55>
 	^ #fail! !
 
-!BoxedFloat64 methodsFor: '*BaseImageTests-Kernel-Numbers' stamp: 'jmv 2/25/2019 17:21:01'!
+!BoxedFloat64 methodsFor: '*BaseImageTests-Kernel-Numbers' stamp: 'jmv 25/Feb/2019 17:21:01'!
 primTestSubtract: aNumber
 	"Primitive. Answer the difference between the receiver and aNumber.
 	Fail if the argument is not a Float. Essential. See Object documentation
@@ -36352,12 +36369,12 @@ primTestSubtract: aNumber
 	<primitive: 42>
 	^ #fail! !
 
-!BoxedFloat64 methodsFor: '*BaseImageTests-Kernel-Numbers' stamp: 'jmv 3/11/2019 17:05:25'!
+!BoxedFloat64 methodsFor: '*BaseImageTests-Kernel-Numbers' stamp: 'jmv 11/Mar/2019 17:05:25'!
 primTestTruncated
 	<primitive: 51>
 	^ #fail! !
 
-!SmallFloat64 methodsFor: '*BaseImageTests-Kernel-Numbers' stamp: 'jmv 2/25/2019 17:20:13'!
+!SmallFloat64 methodsFor: '*BaseImageTests-Kernel-Numbers' stamp: 'jmv 25/Feb/2019 17:20:13'!
 primTestAdd: aNumber
 	"Primitive. Answer the sum of the receiver and aNumber. Essential.
 	Fail if the argument is not a Float. See Object documentation
@@ -36366,13 +36383,13 @@ primTestAdd: aNumber
 	<primitive: 541>
 	^ #fail! !
 
-!SmallFloat64 methodsFor: '*BaseImageTests-Kernel-Numbers' stamp: 'jmv 3/14/2019 14:01:27'!
+!SmallFloat64 methodsFor: '*BaseImageTests-Kernel-Numbers' stamp: 'jmv 14/Mar/2019 14:01:27'!
 primTestArcTan
 
 	<primitive: 557>
 	^ #fail! !
 
-!SmallFloat64 methodsFor: '*BaseImageTests-Kernel-Numbers' stamp: 'jmv 2/25/2019 17:20:25'!
+!SmallFloat64 methodsFor: '*BaseImageTests-Kernel-Numbers' stamp: 'jmv 25/Feb/2019 17:20:25'!
 primTestDivideBy: aNumber
 	"Primitive. Answer the result of dividing receiver by aNumber.
 	Fail if the argument is not a Float.
@@ -36381,7 +36398,7 @@ primTestDivideBy: aNumber
 	<primitive: 550>
 	^ #fail! !
 
-!SmallFloat64 methodsFor: '*BaseImageTests-Kernel-Numbers' stamp: 'jmv 2/25/2019 17:38:02'!
+!SmallFloat64 methodsFor: '*BaseImageTests-Kernel-Numbers' stamp: 'jmv 25/Feb/2019 17:38:02'!
 primTestEqual: aNumber 
 	"Primitive. Compare the receiver with the argument and return true
 	if the receiver is equal to the argument. Otherwise return false.
@@ -36391,7 +36408,7 @@ primTestEqual: aNumber
 	<primitive: 547>
 	^#fail! !
 
-!SmallFloat64 methodsFor: '*BaseImageTests-Kernel-Numbers' stamp: 'jmv 3/14/2019 12:42:31'!
+!SmallFloat64 methodsFor: '*BaseImageTests-Kernel-Numbers' stamp: 'jmv 14/Mar/2019 12:42:31'!
 primTestExp
 	"Primitive. Answer the sum of the receiver and aNumber. Essential.
 	Fail if the argument is not a Float. See Object documentation
@@ -36400,7 +36417,7 @@ primTestExp
 	<primitive: 559>
 	^ #fail! !
 
-!SmallFloat64 methodsFor: '*BaseImageTests-Kernel-Numbers' stamp: 'jmv 3/14/2019 13:42:28'!
+!SmallFloat64 methodsFor: '*BaseImageTests-Kernel-Numbers' stamp: 'jmv 14/Mar/2019 13:42:28'!
 primTestExponent
 	"Primitive. Answer the sum of the receiver and aNumber. Essential.
 	Fail if the argument is not a Float. See Object documentation
@@ -36409,7 +36426,7 @@ primTestExponent
 	<primitive: 553>
 	^ #fail! !
 
-!SmallFloat64 methodsFor: '*BaseImageTests-Kernel-Numbers' stamp: 'jmv 2/25/2019 17:38:00'!
+!SmallFloat64 methodsFor: '*BaseImageTests-Kernel-Numbers' stamp: 'jmv 25/Feb/2019 17:38:00'!
 primTestGreater: aNumber 
 	"Primitive. Compare the receiver with the argument and return true
 	if the receiver is greater than the argument. Otherwise return false.
@@ -36419,7 +36436,7 @@ primTestGreater: aNumber
 	<primitive: 544>
 	^#fail! !
 
-!SmallFloat64 methodsFor: '*BaseImageTests-Kernel-Numbers' stamp: 'jmv 2/25/2019 17:37:57'!
+!SmallFloat64 methodsFor: '*BaseImageTests-Kernel-Numbers' stamp: 'jmv 25/Feb/2019 17:37:57'!
 primTestGreaterEqual: aNumber 
 	"Primitive. Compare the receiver with the argument and return true
 	if the receiver is greater than or equal to the argument. Otherwise return
@@ -36429,7 +36446,7 @@ primTestGreaterEqual: aNumber
 	<primitive: 546>
 	^#fail! !
 
-!SmallFloat64 methodsFor: '*BaseImageTests-Kernel-Numbers' stamp: 'jmv 2/25/2019 17:37:54'!
+!SmallFloat64 methodsFor: '*BaseImageTests-Kernel-Numbers' stamp: 'jmv 25/Feb/2019 17:37:54'!
 primTestLess: aNumber 
 	"Primitive. Compare the receiver with the argument and return true
 	if the receiver is less than the argument. Otherwise return false.
@@ -36439,7 +36456,7 @@ primTestLess: aNumber
 	<primitive: 543>
 	^#fail! !
 
-!SmallFloat64 methodsFor: '*BaseImageTests-Kernel-Numbers' stamp: 'jmv 2/25/2019 17:37:52'!
+!SmallFloat64 methodsFor: '*BaseImageTests-Kernel-Numbers' stamp: 'jmv 25/Feb/2019 17:37:52'!
 primTestLessEqual: aNumber 
 	"Primitive. Compare the receiver with the argument and return true
 	if the receiver is less than or equal to the argument. Otherwise return
@@ -36449,7 +36466,7 @@ primTestLessEqual: aNumber
 	<primitive: 545>
 	^#fail! !
 
-!SmallFloat64 methodsFor: '*BaseImageTests-Kernel-Numbers' stamp: 'jmv 3/14/2019 12:42:10'!
+!SmallFloat64 methodsFor: '*BaseImageTests-Kernel-Numbers' stamp: 'jmv 14/Mar/2019 12:42:10'!
 primTestLn
 	"Primitive. Answer the sum of the receiver and aNumber. Essential.
 	Fail if the argument is not a Float. See Object documentation
@@ -36458,7 +36475,7 @@ primTestLn
 	<primitive: 558>
 	^ #fail! !
 
-!SmallFloat64 methodsFor: '*BaseImageTests-Kernel-Numbers' stamp: 'jmv 2/25/2019 17:20:40'!
+!SmallFloat64 methodsFor: '*BaseImageTests-Kernel-Numbers' stamp: 'jmv 25/Feb/2019 17:20:40'!
 primTestMultiplyBy: aNumber
 	"Primitive. Answer the result of multiplying the receiver by aNumber.
 	Fail if the argument is not a Float. Essential. See Object documentation
@@ -36467,7 +36484,7 @@ primTestMultiplyBy: aNumber
 	<primitive: 549>
 	^ #fail! !
 
-!SmallFloat64 methodsFor: '*BaseImageTests-Kernel-Numbers' stamp: 'jmv 2/25/2019 17:37:49'!
+!SmallFloat64 methodsFor: '*BaseImageTests-Kernel-Numbers' stamp: 'jmv 25/Feb/2019 17:37:49'!
 primTestNotEqual: aNumber 
 	"Primitive. Compare the receiver with the argument and return true
 	if the receiver is not equal to the argument. Otherwise return false.
@@ -36477,17 +36494,17 @@ primTestNotEqual: aNumber
 	<primitive: 548>
 	^#fail! !
 
-!SmallFloat64 methodsFor: '*BaseImageTests-Kernel-Numbers' stamp: 'jmv 3/14/2019 13:55:56'!
+!SmallFloat64 methodsFor: '*BaseImageTests-Kernel-Numbers' stamp: 'jmv 14/Mar/2019 13:55:56'!
 primTestSin
 	<primitive: 556>
 	^ #fail! !
 
-!SmallFloat64 methodsFor: '*BaseImageTests-Kernel-Numbers' stamp: 'jmv 2/28/2019 15:38:37'!
+!SmallFloat64 methodsFor: '*BaseImageTests-Kernel-Numbers' stamp: 'jmv 28/Feb/2019 15:38:37'!
 primTestSqrt
 	<primitive: 555>
 	^ #fail! !
 
-!SmallFloat64 methodsFor: '*BaseImageTests-Kernel-Numbers' stamp: 'jmv 2/25/2019 17:20:31'!
+!SmallFloat64 methodsFor: '*BaseImageTests-Kernel-Numbers' stamp: 'jmv 25/Feb/2019 17:20:31'!
 primTestSubtract: aNumber
 	"Primitive. Answer the difference between the receiver and aNumber.
 	Fail if the argument is not a Float. Essential. See Object documentation
@@ -36496,12 +36513,12 @@ primTestSubtract: aNumber
 	<primitive: 542>
 	^ #fail! !
 
-!SmallFloat64 methodsFor: '*BaseImageTests-Kernel-Numbers' stamp: 'jmv 3/11/2019 17:05:16'!
+!SmallFloat64 methodsFor: '*BaseImageTests-Kernel-Numbers' stamp: 'jmv 11/Mar/2019 17:05:16'!
 primTestTruncated
 	<primitive: 551>
 	^ #fail! !
 
-!PreferenceSet methodsFor: '*BaseImageTests' stamp: 'jmv 5/16/2022 08:57:42'!
+!PreferenceSet methodsFor: '*BaseImageTests' stamp: 'jmv 16/May/2022 08:57:42'!
 withTemporaryValue: temporaryValue of: aPreferenceName do: aBlock
 	"Allows to execute a piece of code with a temporary value of the given preference. Useful for testing purposes."
 	
@@ -36510,7 +36527,7 @@ withTemporaryValue: temporaryValue of: aPreferenceName do: aBlock
 	self at: aPreferenceName put: temporaryValue.
 	[ aBlock value ] ensure: [ self at: aPreferenceName put: currentValue ]! !
 
-!SmalltalkCompleter methodsFor: '*BaseImageTests' stamp: 'NPM 3/17/2020 03:12:11'!
+!SmalltalkCompleter methodsFor: '*BaseImageTests' stamp: 'NPM 17/Mar/2020 03:12:11'!
 changePositionTo: newPosition 
 	
 	position _ newPosition! !
