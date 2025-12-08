@@ -1,6 +1,6 @@
-'From Cuis7.5 [latest update: #7593] on 19 September 2025 at 4:54:28 pm'!
+'From Cuis7.5 [latest update: #7659] on 7 December 2025 at 4:40:49 pm'!
 'Description FFI (Foreign Function Interface) provides access to foreign functions in external libraries, provided they use the platform''s Application Binary Interface (ABI), which is essentially the C calling convention for the platform. FFI supports callbacks, allowing one to pass callbacks that invoke Smalltalk blocks when called from foreign code. FFI provides support for defining classes that correspond to C struct types, with named fields, etc. See Tests-FFI for examples.'!
-!provides: 'FFI' 1 57!
+!provides: 'FFI' 1 58!
 !requires: 'WeakDictionaries' 1 1 nil!
 !requires: 'Alien-Core' 1 0 nil!
 SystemOrganization addCategory: #'FFI-Pools'!
@@ -10,7 +10,7 @@ SystemOrganization addCategory: #'FFI-Kernel'!
 !classDefinition: #FFIConstants category: #'FFI-Pools'!
 SharedPool subclass: #FFIConstants
 	instanceVariableNames: ''
-	classVariableNames: 'FFIAtomicTypeMask FFIAtomicTypeShift FFICallFlagThreaded FFICallTypeApi FFICallTypeCDecl FFICallTypesMask FFIErrorAddressNotFound FFIErrorAttemptToPassVoid FFIErrorBadAddress FFIErrorBadArg FFIErrorBadArgs FFIErrorBadAtomicType FFIErrorBadExternalFunction FFIErrorBadExternalLibrary FFIErrorBadReturn FFIErrorCallFrameTooBig FFIErrorCallType FFIErrorCoercionFailed FFIErrorGenericError FFIErrorIntAsPointer FFIErrorInvalidPointer FFIErrorModuleNotFound FFIErrorNoModule FFIErrorNotFunction FFIErrorStructSize FFIErrorWrongType FFIFlagAtomic FFIFlagPointer FFIFlagStructure FFIFlagVariadic FFINoCalloutAvailable FFIStructSizeMask FFITypeBool FFITypeDoubleFloat FFITypeInt16 FFITypeInt32 FFITypeInt64 FFITypeInt8 FFITypeSignedChar FFITypeSingleFloat FFITypeUint16 FFITypeUint32 FFITypeUint64 FFITypeUint8 FFITypeUnsignedChar FFITypeVoid'
+	classVariableNames: 'FFIAtomicTypeMask FFIAtomicTypeShift FFICallFlagExternalFunctionHasErrorReaper FFICallTypeApi FFICallTypeCDecl FFICallTypesMask FFIErrorAddressNotFound FFIErrorAttemptToPassVoid FFIErrorBadAddress FFIErrorBadArg FFIErrorBadArgs FFIErrorBadAtomicType FFIErrorBadErrorReaper FFIErrorBadExternalFunction FFIErrorBadExternalLibrary FFIErrorBadReturn FFIErrorCallFrameTooBig FFIErrorCallType FFIErrorCoercionFailed FFIErrorGenericError FFIErrorIntAsPointer FFIErrorInvalidPointer FFIErrorModuleNotFound FFIErrorNoModule FFIErrorNotFunction FFIErrorStructSize FFIErrorWrongType FFIFlagAtomic FFIFlagPointer FFIFlagStructure FFIFlagVariadic FFINoCalloutAvailable FFIStructSizeMask FFITypeBool FFITypeDoubleFloat FFITypeInt16 FFITypeInt32 FFITypeInt64 FFITypeInt8 FFITypeSignedChar FFITypeSingleFloat FFITypeUint16 FFITypeUint32 FFITypeUint64 FFITypeUint8 FFITypeUnsignedChar FFITypeVoid'
 	poolDictionaries: ''
 	category: 'FFI-Pools'!
 !classDefinition: 'FFIConstants class' category: #'FFI-Pools'!
@@ -39,7 +39,7 @@ ExternalFunction class
 
 !classDefinition: #ExternalLibraryFunction category: #'FFI-Kernel'!
 ExternalFunction subclass: #ExternalLibraryFunction
-	instanceVariableNames: 'name module errorCodeName'
+	instanceVariableNames: 'name module errorReaper errorCodeName'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'FFI-Kernel'!
@@ -85,6 +85,16 @@ ExternalStructure subclass: #ExternalUnion
 	category: 'FFI-Kernel'!
 !classDefinition: 'ExternalUnion class' category: #'FFI-Kernel'!
 ExternalUnion class
+	instanceVariableNames: ''!
+
+!classDefinition: #ExternalVariable category: #'FFI-Kernel'!
+ExternalObject subclass: #ExternalVariable
+	instanceVariableNames: 'type name module'
+	classVariableNames: ''
+	poolDictionaries: 'FFIConstants'
+	category: 'FFI-Kernel'!
+!classDefinition: 'ExternalVariable class' category: #'FFI-Kernel'!
+ExternalVariable class
 	instanceVariableNames: ''!
 
 !classDefinition: #ExternalType category: #'FFI-Kernel'!
@@ -149,10 +159,23 @@ The arguments consist of an array with the first element defining the return typ
 !ExternalLibraryFunction commentStamp: '<historical>' prior: 0!
 An ExternalLibraryFunction specifies a fully qualified function from an external library.
 
-Instance variables:
-	name			<String | Integer>	name or ordinal of function
-	module			<String | nil>		name of module (nil if bound in the VM).
-	errorCodeName <String | nil>		name of temp receiving error code, if any!
+Instance Variables
+	errorCodeName:	<String | nil>
+	errorReaper:		<ExternalLibraryFunction | ExternalVariable | nil>
+	module:			<String | nil>
+	name:			<String | Integer>
+
+errorCodeName
+	- name of temp receiving error code, if any
+
+errorReaper
+	- function or variable supplying an error code to be invoked immediately after the receivers function to collect any potential error before any potential preemtion point
+
+module
+	- name of module (nil if bound in the VM)
+
+name
+	- name or ordinal of function!
 
 !ExternalLibrary commentStamp: '<historical>' prior: 0!
 An external library bundles calls to functions from the same library. It is provided mainly as convenience since every external function can be fully specified by the name and the module it resides in.
@@ -262,6 +285,23 @@ We see that color and name fields both interpret the same zone of data (starting
 The size of the union can be verified with:
 	UnionExample byteSize = (Smalltalk wordSize max: 4).!
 
+!ExternalVariable commentStamp: 'eem 12/3/2025 18:04' prior: 0!
+An ExternalVariable is a named variable in some module. The classic example is unix's errno, of type int, a.k.a. FFITypeSignedInt32.
+
+Instance Variables
+	module:	<ByteString>
+	name:		<ByteString>
+	type:		<ExternalAtomicType>
+
+module
+	- the name of the module containing the variable name
+
+name
+	- the name of the variable within the module
+
+type
+	- the type of the variable!
+
 !ExternalType commentStamp: 'eem 11/22/2024 09:23' prior: 0!
 An external type represents the type of external objects.
 
@@ -340,7 +380,7 @@ initialize
 	self initializeErrorConstants.
 	self initializeCallingConventions.! !
 
-!FFIConstants class methodsFor: 'pool initialization' stamp: 'eem 8/4/2009 19:49'!
+!FFIConstants class methodsFor: 'pool initialization' stamp: 'eem 12/7/2025 14:39:08'!
 initializeCallingConventions
 	"These constants map onto the flags inst var of an ExternalFunction.
 	 The first eight bits define the calling convention.  Attribute flags
@@ -349,9 +389,9 @@ initializeCallingConventions
 	FFICallTypesMask := 255.
 	FFICallTypeCDecl := 0.
 	FFICallTypeApi := 1.
-	FFICallFlagThreaded := 256! !
+	FFICallFlagExternalFunctionHasErrorReaper := 256! !
 
-!FFIConstants class methodsFor: 'pool initialization' stamp: 'eem 11/5/2009 10:21'!
+!FFIConstants class methodsFor: 'pool initialization' stamp: 'eem 12/7/2025 14:42:10'!
 initializeErrorConstants
 	"FFIConstants initializeErrorConstants"
 
@@ -397,7 +437,9 @@ initializeErrorConstants
 	"ExternalAddress points to ST memory (don't you dare to do this!!)"
 	FFIErrorInvalidPointer := 18.
 	"Stack frame required more than 16k bytes to pass arguments."
-	FFIErrorCallFrameTooBig := 19! !
+	FFIErrorCallFrameTooBig := 19.
+	"Error reaper incorrect for some reason"
+	FFIErrorBadErrorReaper := 20! !
 
 !FFIConstants class methodsFor: 'pool initialization' stamp: 'eem 11/25/2024 13:33:41'!
 initializeTypeConstants
@@ -545,15 +587,11 @@ callingConventionString
 		ifTrue:[^'apicall']
 		ifFalse:[^'cdecl']! !
 
-!ExternalFunction methodsFor: 'printing' stamp: 'jmv 4/21/2022 15:10:38'!
+!ExternalFunction methodsFor: 'printing' stamp: 'eem 12/7/2025 14:26:03'!
 printOn: aStream
 	aStream
 		nextPut:$<;
 		nextPutAll: self callingConventionString; nextPutAll:': '.
-	{ 'threaded' } with: { FFICallFlagThreaded } do:
-		[:modifier :flag|
-		(flags anyMask: flag) ifTrue:
-			[aStream nextPutAll: modifier; space]].
 	aStream print: argTypes first; space.
 	self name == nil
 		ifTrue:[aStream nextPutAll:'(*) ']
@@ -638,10 +676,13 @@ callingConventionFor: aString
 	aString = 'apicall:' ifTrue:[^self callTypeAPI].
 	^nil! !
 
-!ExternalFunction class methodsFor: 'compiler support' stamp: 'eem 8/4/2009 19:44'!
+!ExternalFunction class methodsFor: 'compiler support' stamp: 'eem 11/21/2025 11:57'!
 callingConventionModifierFor: aString
-	"Return the constant describing the calling convention modifier for the given string specification or nil if unknown."
-	aString = 'threaded' ifTrue:[^FFICallFlagThreaded].
+	"Answer the constant describing the calling convention modifier for the given string specification or nil if unknown.
+	 Used to be the now obsolete
+		aString = 'threaded' ifTrue:[^FFICallFlagThreaded].
+	 since in the threaded VM any and all FFI calls may potentially thread.
+	 Simply answer nil for backwards compatibility."
 	^nil! !
 
 !ExternalFunction class methodsFor: 'compiler support' stamp: 'ar 12/2/1999 16:49'!
@@ -763,6 +804,14 @@ name
 !ExternalLibraryFunction methodsFor: 'accessing' stamp: 'eem 10/28/2009 17:07'!
 setErrorCodeName: aString
 	errorCodeName := aString! !
+
+!ExternalLibraryFunction methodsFor: 'accessing' stamp: 'eem 11/28/2025 13:23'!
+setErrorReaper: anExternalLibraryFunctionOrNamedExternalDatumOrNil
+	"Set or clear the errorreaper"
+	errorReaper := anExternalLibraryFunctionOrNamedExternalDatumOrNil.
+	flags := anExternalLibraryFunctionOrNamedExternalDatumOrNil
+				ifNil: [flags bitClear: FFICallFlagExternalFunctionHasErrorReaper]
+				ifNotNil: [flags bitOr: FFICallFlagExternalFunctionHasErrorReaper]! !
 
 !ExternalLibraryFunction methodsFor: 'accessing' stamp: 'jmv 1/6/2023 13:45:11'!
 setModule: aString
@@ -1335,6 +1384,33 @@ compileFields: specArray withAccessors: aSymbol
 !ExternalUnion class methodsFor: 'converting' stamp: 'eem 5/1/2018 15:18'!
 compositeName
 	^'union'! !
+
+!ExternalVariable methodsFor: 'accessing' stamp: 'eem 11/28/2025 13:24'!
+module
+	^module! !
+
+!ExternalVariable methodsFor: 'accessing' stamp: 'eem 11/28/2025 13:24'!
+name
+	^name! !
+
+!ExternalVariable methodsFor: 'accessing' stamp: 'eem 11/28/2025 13:24'!
+type
+	^type! !
+
+!ExternalVariable methodsFor: 'instance initialization' stamp: 'eem 12/5/2025 16:02'!
+name: aName module: aModule type: aType
+
+	handle := ExternalAddress new.
+	name := aName.
+	module := aModule.
+	type := aType.! !
+
+!ExternalVariable class methodsFor: 'instance creation' stamp: 'eem 11/28/2025 13:21'!
+name: aName module: aModule type: aType
+	^self new
+		name: aName
+		module: aModule
+		type: aType! !
 
 !ExternalType methodsFor: 'printing' stamp: 'jmv 11/14/2023 12:23:33'!
 printAtomicType: spec on: aStream
@@ -2336,6 +2412,10 @@ externalCallFailed
 	| errCode |
 	errCode := ExternalFunction getLastError. "this allows us to look at the actual error code"
 	^self error: (ExternalFunction errorMessageFor: errCode).! !
+
+!Encoder methodsFor: '*FFI-Kernel-accessing' stamp: 'eem 11/25/2025 12:20'!
+firstLiteral
+	^literalStream originalContents first! !
 
 !SequenceableCollection methodsFor: '*FFI-Kernel' stamp: 'jmv 5/7/2023 10:42:19'!
 asMachineWordArray
