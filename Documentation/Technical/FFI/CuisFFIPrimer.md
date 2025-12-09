@@ -302,7 +302,9 @@ There is a preemption point on a callout returning before it executes Smalltalk.
 Since a returning callout may block in ownVM another thread may make a callout before the blocking thread can continue.
 There  is therefore the possibility that if the callout returns an error the collection of the error information may be preempted and when accessed will be stale.
 So there needs to be a way of accessing errors associated with callouts such that there is no possibility of preemption.
-To achieve this one can specify an error reaper in a pragma immediately following a callout pragma. Here are two examples, the first reading Unix's errno variable, the second calling Window's GetLastError function.
+To achieve this one can specify an error reaper in a pragma immediately following a callout pragma. Here are two examples, the first reading Unix's errno variable[^10], the second calling Window's GetLastError function.
+
+[^10]: note that here 'libc' is just a placeholder. The setModule: accessor must be used to assign the actual libc name on the current platform which is available via Alien libcName.
 
 *FFITestLibrary class methods for error reaping examples*<br>
 <b>unixSysCallOpen:</b><font color="#000000"> </font><font color="#000080">path</font><font color="#000000"> </font><b>oflag:</b><font color="#000000"> </font><font color="#000080">oflag</font><font color="#000000"><br>
@@ -338,8 +340,8 @@ This section details
 - constraints the garbage collector imposes on the programmer
 
 #### Primitive Types
-The SqueakFFIPrims plugin understands a limited number of types; see FFIConstants class>>#initializeTypeConstants.[^10]
-[^10]: in addition, the SqueakFFIPrims plugin has 16-bit and 32-bit Character types. These are useful for functions that return Character values. Passing Characters as parameters requires no special types since Characters are treated as unsigned integers by the argument marshalling machinery. **It may be useful to us to extent the FFI to allow the use of char16 and char32 return types.**
+The SqueakFFIPrims plugin understands a limited number of types; see FFIConstants class>>#initializeTypeConstants.[^11]
+[^11]: in addition, the SqueakFFIPrims plugin has 16-bit and 32-bit Character types. These are useful for functions that return Character values. Passing Characters as parameters requires no special types since Characters are treated as unsigned integers by the argument marshalling machinery. **It may be useful to us to extent the FFI to allow the use of char16 and char32 return types.**
 
 These are
 
@@ -347,7 +349,7 @@ These are
 |:-----------|:------------------------------------|:------------------------------------|
 |  bool      |  32-bit Boolean                     |  64-bit Boolean                     |
 |  char      |  8-bit Character (Unsigned)         |  8-bit Character (Unsigned)         |
-| schar[^11]  |  8-bit Character (Signed)           |  8-bit Character (Signed)           |
+| schar[^12]  |  8-bit Character (Signed)           |  8-bit Character (Signed)           |
 |  float     | 4-byte Single precision float       | 4-byte Single precision float       |
 |  double    | 8-byte Double precision float       | 8-byte Double precision float       |
 | uint8      |  8-bit Integer (Unsigned)           |  8-bit Integer (Unsigned)           |
@@ -361,7 +363,7 @@ These are
 | uint3264   | 32-bit Integer (Unsigned)           | 64-bit Integer (Unsigned)           |
 |  int3264   | 32-bit Integer (Signed)             | 64-bit Integer (Signed)             |
 
-[^11]: schar is a misnomer. Functions declared as returning schars answer Character instances that are fundamentally unsigned. As far as the SqueakFFIPrims plugin is concerned char and schar are the same type.
+[^12]: schar is a misnomer. Functions declared as returning schars answer Character instances that are fundamentally unsigned. As far as the SqueakFFIPrims plugin is concerned char and schar are the same type.
 
 #### Deprecated Argument Types
 
@@ -381,23 +383,23 @@ The FFI (should??) redefines interface methods (and structure types) on start-up
 
 #### Parameter Passing
 
-Several Smalltalk objects can be passed as actual parameters to formal parameters of the above types. In passing values through narrow parameters (e.g. passing SmallInteger maxVal through an int16) the value is first truncated, and then either zero-extended, if the type is unsigned, or sign-extended (from the most significant bit of the formal parameter's width, *not* the sign of the Smalltalk object) as dictated by the size and signedness of the formal parameter type. Any of these scalar types can be passed as either integer or floating point values, coerced according to C's integer/float implicit conversion rules (as applied in C assignment, cast, or return statements). N.B. There is *no* range checking beyond the plugin refusing to accept integers outside of the -2 ^ 63 to (2 ^ 64) - 1 range!![^10]
-[^10]: e.g. if you pass 1234.5678 through a formal parameter of type uint8, it will be passed as `1234.5678 asInteger bitAnd: 16rFF`, which happens to be 210; if you pass -1234.5678 through a formal parameter of type int8, it will be passed as `(-1234.5678 asInteger bitOr: (-1 bitShift: 7))`, which happens to be -82.
+Several Smalltalk objects can be passed as actual parameters to formal parameters of the above types. In passing values through narrow parameters (e.g. passing SmallInteger maxVal through an int16) the value is first truncated, and then either zero-extended, if the type is unsigned, or sign-extended (from the most significant bit of the formal parameter's width, *not* the sign of the Smalltalk object) as dictated by the size and signedness of the formal parameter type. Any of these scalar types can be passed as either integer or floating point values, coerced according to C's integer/float implicit conversion rules (as applied in C assignment, cast, or return statements). N.B. There is *no* range checking beyond the plugin refusing to accept integers outside of the -2 ^ 63 to (2 ^ 64) - 1 range!![^13]
+[^13]: e.g. if you pass 1234.5678 through a formal parameter of type uint8, it will be passed as `1234.5678 asInteger bitAnd: 16rFF`, which happens to be 210; if you pass -1234.5678 through a formal parameter of type int8, it will be passed as `(-1234.5678 asInteger bitOr: (-1 bitShift: 7))`, which happens to be -82.
 
 - Integers in the range -2 ^ 63 to (2 ^ 64) - 1 (i.e. the union of the signed 64-bit 2's compliment and unsigned 64-bit ranges) are either zero-extended or sign extended 
-- Floats[^11] are passed by value as implied by the introductory paragraph.
+- Floats[^14] are passed by value as implied by the introductory paragraph.
 - `true` and `false` are mapped to 1 and 0, and zero extended to fill the width of the parameter (if integral, or passed as 1.0 and 0.0 if floating point)
 - Character instances are mapped to their character code and zero extended to fill the width of the parameter (ditto).
 
-[^11]: Cuis has only 64-bit Float objects obeying the IEEE 754-1985 standard (C's `double` type). But there are 32-bit float containers that convert between the external 64-bit and internal 32-bit representation, thereby saving space and providing compatibility with C's `float` type.
+[^14]: Cuis has only 64-bit Float objects obeying the IEEE 754-1985 standard (C's `double` type). But there are 32-bit float containers that convert between the external 64-bit and internal 32-bit representation, thereby saving space and providing compatibility with C's `float` type.
 
 If a formal parameter is a pointer then as far as the SqueakFFIPrims plugin is concerned there are three cases.
 - an instance of ExternalAddress is passed by value
 - an instance of a raw bits object (String, Float32Array, Float32PointArray, Float64Array, IntegerArray, LargeNegativeInteger (!!), LargePositiveInteger (!!) et al; `(Smalltalk allClasses select: #isBits) reject: #isImmediateClass`) is passed as a pointer to the first byte of its data
 - a general instance of ExternalStructure (an instance of a structure type) is passed as a pointer to the first byte of its data
 
-If a formal parameter is a structure type then the actual parameter *must* be a general instance of ExternalStructure, and as many bytes as the sizeof the type of the formal parameter is passed. N.B. if the actual parameter is too small then garbage bytes will be passed following the bytes of the actual parameter.[^12]
-[^12]: The SqueakFFIPrims plugin can easily be extended to pass the memory pointed to by an ExternalAddress. Please inform Eliot if this is a pressing need.
+If a formal parameter is a structure type then the actual parameter *must* be a general instance of ExternalStructure, and as many bytes as the sizeof the type of the formal parameter is passed. N.B. if the actual parameter is too small then garbage bytes will be passed following the bytes of the actual parameter.[^15]
+[^15]: The SqueakFFIPrims plugin can easily be extended to pass the memory pointed to by an ExternalAddress. Please inform Eliot if this is a pressing need.
 
 #### Returning Results
 
