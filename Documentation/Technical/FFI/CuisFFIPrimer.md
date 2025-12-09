@@ -257,11 +257,12 @@ This section is specific to the Threaded VM only, and discusses
 Internally the VM uses two operations, *disownVM* and *ownVM*, to manage switching between threads.
 In the non-threaded VM these are noops. In the threaded VM disownVM releases the VM to allow other threads to execute it,
 and ownVM blocks until the calling thread becomes the one thread that is now running Smalltalk.
-Within the SqueakFFIPrims plugin, after marshalling arguments and immediately before calling the specified function, disoanVM is invoked.
+Within the SqueakFFIPrims plugin, after marshalling arguments and immediately before calling the specified function, disownVM is invoked.
 Immediately after the call of the external function and the receipt of its return value
 ownVM is is invoked, which blocks if some other thread is executing Smalltalk,
 and continues to block until the Smalltalk process running on the blocked thread is chosen by the Smalltalk scheduler.
-There is a heartbeat thread in both VMs running at 500Hz (controllable via a vmParameter) that periodically interrupts Smalltalk execution to poll for events.
+
+There is a heartbeat thread in both VMs running at a default 500Hz (controllable via a vmParameter) that periodically interrupts Smalltalk execution to poll for events.
 In the threaded VM the heartbeat also checks if the VM is unowned, and if so wakes up a thread to run Smalltalk.
 For short-running FFI calls the disowning thread will own the VM immediately because the heartbeat thread will not have performed its check.
 Only if the FFI callout takes considerable time, on average half of the heartbeat period, or by default 1 millisecond, [^9]
@@ -270,7 +271,7 @@ The two threads then race to take ownership. If the newly awakened thread wins t
 it will start executing the highest-priority runnable Smalltalk process, and so the system will continue to run,
 and will not be blocked while the long-running callout executes in parallel, running on the thread that made the callout.
 
-The operations ownVM and disownVM are very simple, lock-free operations, much cheaper than witing on and signalling OS semaphores.  So in this architecture
+The operations ownVM and disownVM are very simple, lock-free operations, much cheaper than signalling and waiting on OS semaphores.  So in this architecture
 - the existing Smalltalk process scheduler remains unchanged except that an FFI callout is now another process suspension point where, like Semaphore>>wait et al, a process is blocked until its external call completes (or calls back).
 - any and all callouts may potentially thread
 - short-running callouts are not penalised since ownVM and disownVM are cheap operations relative to marshalling, callout and return.
@@ -288,20 +289,20 @@ The FCP's priority can be chosen, and hence prioritises foreign callbacks relati
 
 #### Thread Affinity
 When a Smalltalk process makes an FFI callout it becomes "affined" (from affinity) to the currently executing thread, and will remain affined until the callout returns.
-Nested callbacks and callouts within an affined process will stay affined fr the dynamic extent of the outermost callout and hence occur on the same thread.
+Nested callbacks and callouts within an affined process will stay affined for the dynamic extent of the outermost callout and hence occur on the same thread.
 An FCP is affined to the foreign thread that invoked it through a callback.
 
 In addition the programmer can affine a Smalltalk process to a thread or preclude it from being affined to a specific thread.
-Threads known to the threded VM that can run Smalltalk (including those introduced to the VM by foreign callbacks) are giuven a numeric identifier starting at 1.
-A Smalltalk process has a **threadAffinity** inst var that is normally nil, meaning it can run on any thread. In a callout if a Process's threadAffinity is nil it will be set to the thread id of the current thread, affining it for the dynamic extent of the callout, threadASffinity being reset to nil on return of the callout.
-The programmer can set threadAffinity through the simple threadAffinity: accessor. Setting threadAffinity to a negatiubve integer causes that Process to run on any trhread other than the thread whos ID is the positive value of that negative threadAffinity.
+Threads known to the threded VM that can run Smalltalk (including those introduced to the VM by foreign callbacks) are given a numeric identifier starting at 1.
+A Smalltalk process has a **threadAffinity** inst var that is normally nil, meaning it can run on any thread. In a callout if a Process's threadAffinity is nil it will be set to the thread id of the current thread, affining it for the dynamic extent of the callout, threadAffinity being reset to nil on return of the callout.
+The programmer can set threadAffinity through the simple threadAffinity: accessor. Setting threadAffinity to a negative integer causes that Process to run on any thread other than the thread whose ID is the positive value of that negative threadAffinity.
 
 #### Collecting Errors in Threaded Callouts
 There is a preemption point on a callout returning before it executes Smalltalk.
 Since a returning callout may block in ownVM another thread may make a callout before the blocking thread can continue.
 There  is therefore the possibility that if the callout returns an error the collection of the error information may be preempted and when accessed will be stale.
 So there needs to be a way of accessing errors associated with callouts such that there is no possibility of preemption.
-To achieve this one can specify an error reaper in a pragma immediately following a callout pragma. Here are two examples
+To achieve this one can specify an error reaper in a pragma immediately following a callout pragma. Here are two examples, the first reading Unix's errno variable, the second calling Window's GetLastError function.
 
 *FFITestLibrary class methods for error reaping examples*<br>
 <b>unixSysCallOpen:</b><font color="#000000"> </font><font color="#000080">path</font><font color="#000000"> </font><b>oflag:</b><font color="#000000"> </font><font color="#000080">oflag</font><font color="#000000"><br>
@@ -328,7 +329,7 @@ The value is then assigned to the activeProcess's osError variable once the VM i
 
 #### Passing data to threaded callouts
 
-See the section [**Garbage Collection, Object Lifetime, and Pinning**](#garbage-collection-object-lifetime-and-pinning), especially references to pinning.
+See the section [**Garbage Collection, Object Lifetime, and Pinning**](#garbage-collection-object-lifetime-and-pinning) below, especially references to pinning.
 
 ### Representing and Managing Data
 This section details
@@ -414,7 +415,7 @@ If the return type is pointer then
 If the return type is a general instance of ExternalStructure, an instance of that class will be answered, whose data will be a ByteArray.
 
 #### Garbage Collection, Object Lifetime, and Pinning
-The OpenSmalltalk VM's Spur garbage collection scheme is the classical pairing of a generation scavenger for young objects with a mark-sweep collector for old objects. Most young objects are created in "eden", one of three small spaces, eden, past survivor space, and future survivor space, used to collect efficiently newly created objects. Large objects (64k words or larger) are created in old space. Objects living in new space are moved to old space when new space fills up with objects that survive; objects survive a scavenge when they are referenced from old objects. Objects living in new space are moved often, i.e. once every scavenge. Much less frequently old space is collected using the conventional recursive marking algorithm, and then compacted using a three finger algorithm that moves ordinary objects around "pinned" objects, leaving "pinned" objects where they are.
+The OpenSmalltalk VM's Spur garbage collection scheme is the classical pairing of a generation scavenger for young objects with a mark-sweep collector for old objects. Most young objects are created in "eden", one of three small spaces, eden, past survivor space, and future survivor space, used to collect efficiently newly created objects. Large objects (64k words or larger) are created in old space. Objects living in new space are moved to old space when new space fills up with objects that survive; objects survive a scavenge when they are referenced from old objects and running processes. Objects living in new space are moved often, i.e. once every scavenge. Much less frequently old space is collected using the conventional recursive marking algorithm, and then compacted using a three finger algorithm that moves ordinary objects around "pinned" objects, leaving "pinned" objects where they are.
 
 Given the Cuis VM's garbage collector moves objects, and the FFI supports callbacks, during which the garbage collector may run, and hence move objects, it is unsafe to pass reference parameters that live on the Cuis heap, unless the actual parameter has been pinned, or the function being called does not call-back. With the threaded FFI it is never safe to pass objects that live on the Cuis heap unless they have been pinned (see the next but one paragraph), because Smalltalk execution can overlap with FFI callouts, and therefore unpinned objects may be moved during a callout.  It is always safe to pass data stored on the external C heap (general instances of ExternalData, things pointed to by general instances of ExternalAddress), provided this data is live.
 
