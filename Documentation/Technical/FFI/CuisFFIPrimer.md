@@ -138,7 +138,8 @@ An interface method pragma defining a foreign function is composed of the follow
 [^6]: Defining too many should be fine but is pointless and confusing.
 - ends with `>`.
 
-<a id="argtype">A return or argument type</a> is a sequence of
+<a name="argtype"></a>
+A return or argument type is a sequence of
 - optional `const` keyword
 - a type name, either one of the standard type names in the table below, or the name of a class inheriting from ExternalStructure that defines a C structure.
 - optional whitespace
