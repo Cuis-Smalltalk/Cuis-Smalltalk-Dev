@@ -1,7 +1,7 @@
 # FFI or VM Plugins, what to use?
 *by jmv (Juan Vuletich)*
 
-I've used buth alternatives over the years. I developed or fixed bugs in JPEGReadWriterPlugin2, BitBltPlugin, ExtendedClipboardPlugin, SoundPlugin, and VectorEnginePlugin. I ported FFI to 64 bit Cuis (the 32 bit FFI was inherited from Squeak), and used it for OpenCL. I don't have a favorite, and I think there shouldn't be one. So, today I spent a couple of hours writing this:
+I've used both alternatives over the years. I developed or fixed bugs in JPEGReadWriterPlugin2, BitBltPlugin, ExtendedClipboardPlugin, SoundPlugin, and VectorEnginePlugin. I ported FFI to 64 bit Cuis (the 32 bit FFI was inherited from Squeak), and used it for OpenCL. I don't have a favorite, and I think there shouldn't be one. So, today I spent a couple of hours writing this:
 
 
 ## Introduction
