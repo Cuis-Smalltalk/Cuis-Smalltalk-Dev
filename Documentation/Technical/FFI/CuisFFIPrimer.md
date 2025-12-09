@@ -133,7 +133,7 @@ An interface method pragma defining a foreign function is composed of the follow
 - The function's return [type](#argtype)
 - The function's name as a string
 - a left parenthesis `(`
-- zero or more argument types#(argtype), one for each interface method argument/function argument pair, separated by whitespace. There is no checking beyond syntax. Chaos may ensue is you define too few arguments to a given function.[^6]
+- zero or more argument [types](#argtype), one for each interface method argument/function argument pair, separated by whitespace. There is no checking beyond syntax. Chaos may ensue is you define too few arguments to a given function.[^6]
 - one may include an "optional arguments" puncuator (```...```) at the relevant point. On most platforms ```...``` is unnecessary but on Apple ARMv8 (Apple Silicon) it is required for correct operation because there-on all optional arguments are passed on the stack and none in registers.
 [^6]: Defining too many should be fine but is pointless and confusing.
 - ends with `>`.
