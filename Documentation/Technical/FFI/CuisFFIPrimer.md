@@ -341,7 +341,7 @@ This section details
 
 #### Primitive Types
 The SqueakFFIPrims plugin understands a limited number of types; see FFIConstants class>>#initializeTypeConstants.[^11]
-[^11]: in addition, the SqueakFFIPrims plugin has 16-bit and 32-bit Character types. These are useful for functions that return Character values. Passing Characters as parameters requires no special types since Characters are treated as unsigned integers by the argument marshalling machinery. **It may be useful to us to extent the FFI to allow the use of char16 and char32 return types.**
+[^11]: in addition, the SqueakFFIPrims plugin has 16-bit and 32-bit Character types. These are useful for functions that return Character values. Passing Characters as parameters requires no special types since Characters are treated as unsigned integers by the argument marshalling machinery. **It may be useful to us to extend the FFI to allow the use of char16 and char32 return types.**
 
 These are
 
