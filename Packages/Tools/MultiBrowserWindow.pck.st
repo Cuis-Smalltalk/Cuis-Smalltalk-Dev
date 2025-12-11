@@ -1,6 +1,6 @@
 'From Cuis7.5 [latest update: #7710] on 24 November 2025 at 5:08:13 pm'!
 'Description '!
-!provides: 'MultiBrowserWindow' 1 6!
+!provides: 'MultiBrowserWindow' 1 7!
 SystemOrganization addCategory: #MultiBrowserWindow!
 
 
@@ -207,6 +207,10 @@ mainLayoutAt: i
 !MultiBrowserWindow methodsFor: 'private' stamp: 'jmv 12/3/2024 10:50:55'!
 mainLayoutsDo: aBlock
 	browserWindowsState do: [ :bws | aBlock value: bws mainLayout ].! !
+
+!MultiBrowserWindow class methodsFor: 'class initialization' stamp: 'eem 12/11/2025 10:26:00'!
+install
+	self beDefaultBrowserWindowClass! !
 
 !MultiBrowserWindow class methodsFor: 'utilities' stamp: 'eem 12/5/2024 16:30:28'!
 beDefaultBrowserWindowClass
