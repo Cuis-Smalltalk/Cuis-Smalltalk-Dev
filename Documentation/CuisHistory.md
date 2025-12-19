@@ -157,7 +157,7 @@ https://lists.cuis.st/mailman/archives/cuis-dev/2023-December/008269.html
 - Updated Random Number Generator.
 - Usability. Performance. Robustness.
 
-## 2025-Dec-190 - Cuis 7.6 Stable Release, Cuis 7.7 Rolling Release
+## 2025-Dec-19 - Cuis 7.6 Stable Release, Cuis 7.7 Rolling Release
 - Completed support for the Sista Bytecode set.
 - Debugger robustness against non-reentrant code. #effectiveProcess.
 - Allow adding instance variables to ClassDescription.
@@ -166,8 +166,9 @@ https://lists.cuis.st/mailman/archives/cuis-dev/2023-December/008269.html
 - Improved handling of Keyboard Focus and ClickToFocus.
 - Bubbling up on unhandled Keyboard Sortcuts.
 - Ongoing work on Bootstrap and Compiled Libraries:
-    - Support for the Sista Bytecode Set.
+    - Use the Sista Bytecode Set by default.
     - Unrestricted class reshaping and merge of class definitions
     - Remap of instance variable access in CompiledMethods.
+- Usability. Performance. Robustness.
 
 ## Ongoing since 2025-Dec-19 - Cuis 7.7 Rolling Release
