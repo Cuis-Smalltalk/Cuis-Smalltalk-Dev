@@ -4,4 +4,4 @@ if %PROCESSOR_ARCHITECTURE%==ARM64 (
     SET ProgramPath=CuisVM.app\Contents\Windows-x86_64\Squeak.exe
 )
 
-START /B %ProgramPath% "CuisImage/Cuis7.5-7708.image" -u
+START /B %ProgramPath% "CuisImage/Cuis7.5-7775.image" -u
