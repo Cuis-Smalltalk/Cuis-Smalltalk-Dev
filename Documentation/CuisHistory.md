@@ -157,7 +157,7 @@ https://lists.cuis.st/mailman/archives/cuis-dev/2023-December/008269.html
 - Updated Random Number Generator.
 - Usability. Performance. Robustness.
 
-## Ongoing since 2025-05-30 - Cuis 7.5 Rolling Release
+## 2025-Dec-190 - Cuis 7.6 Stable Release, Cuis 7.7 Rolling Release
 - Completed support for the Sista Bytecode set.
 - Debugger robustness against non-reentrant code. #effectiveProcess.
 - Allow adding instance variables to ClassDescription.
@@ -169,3 +169,5 @@ https://lists.cuis.st/mailman/archives/cuis-dev/2023-December/008269.html
     - Support for the Sista Bytecode Set.
     - Unrestricted class reshaping and merge of class definitions
     - Remap of instance variable access in CompiledMethods.
+
+## Ongoing since 2025-Dec-19 - Cuis 7.7 Rolling Release
