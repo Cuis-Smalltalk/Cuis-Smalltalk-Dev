@@ -1,61 +1,64 @@
-'From Cuis6.3 [latest update: #6247] on 2 March 2024 at 9:00:22 pm'!
+'From Cuis7.7 [latest update: #7779] on 23 December 2025 at 4:40:34 pm'!
 'Description '!
 !provides: 'Tests-Locales' 1 2!
 !requires: 'Locales' 1 12 nil!
 !requires: 'Gettext' 1 30 nil!
-SystemOrganization addCategory: 'Tests-Locales'!
+SystemOrganization addCategory: #'Tests-Locales'!
 
 
-!classDefinition: #ISOLanguageDefinitionTest category: 'Tests-Locales'!
-TestCase subclass: #ISOLanguageDefinitionTest
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Tests-Locales'!
-!classDefinition: 'ISOLanguageDefinitionTest class' category: 'Tests-Locales'!
-ISOLanguageDefinitionTest class
-	instanceVariableNames: ''!
-
-!classDefinition: #LocaleIDTest category: 'Tests-Locales'!
-TestCase subclass: #LocaleIDTest
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Tests-Locales'!
-!classDefinition: 'LocaleIDTest class' category: 'Tests-Locales'!
-LocaleIDTest class
-	instanceVariableNames: ''!
-
-!classDefinition: #LocaleTest category: 'Tests-Locales'!
-TestCase subclass: #LocaleTest
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Tests-Locales'!
-!classDefinition: 'LocaleTest class' category: 'Tests-Locales'!
-LocaleTest class
-	instanceVariableNames: ''!
-
-!classDefinition: #NaturalLanguageTranslatorTest category: 'Tests-Locales'!
-TestCase subclass: #NaturalLanguageTranslatorTest
-	instanceVariableNames: 'previousRegistered'
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Tests-Locales'!
-!classDefinition: 'NaturalLanguageTranslatorTest class' category: 'Tests-Locales'!
-NaturalLanguageTranslatorTest class
-	instanceVariableNames: ''!
-
-!classDefinition: #RegisterableTranslatorMock category: 'Tests-Locales'!
+!classDefinition: #RegisterableTranslatorMock category: #'Tests-Locales'!
 Object subclass: #RegisterableTranslatorMock
 	instanceVariableNames: 'translations'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Tests-Locales'!
-!classDefinition: 'RegisterableTranslatorMock class' category: 'Tests-Locales'!
+!classDefinition: 'RegisterableTranslatorMock class' category: #'Tests-Locales'!
 RegisterableTranslatorMock class
 	instanceVariableNames: ''!
 
+!classDefinition: #ISOLanguageDefinitionTest category: #'Tests-Locales'!
+TestCase subclass: #ISOLanguageDefinitionTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Tests-Locales'!
+!classDefinition: 'ISOLanguageDefinitionTest class' category: #'Tests-Locales'!
+ISOLanguageDefinitionTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #LocaleIDTest category: #'Tests-Locales'!
+TestCase subclass: #LocaleIDTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Tests-Locales'!
+!classDefinition: 'LocaleIDTest class' category: #'Tests-Locales'!
+LocaleIDTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #LocaleTest category: #'Tests-Locales'!
+TestCase subclass: #LocaleTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Tests-Locales'!
+!classDefinition: 'LocaleTest class' category: #'Tests-Locales'!
+LocaleTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #NaturalLanguageTranslatorTest category: #'Tests-Locales'!
+TestCase subclass: #NaturalLanguageTranslatorTest
+	instanceVariableNames: 'previousRegistered'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Tests-Locales'!
+!classDefinition: 'NaturalLanguageTranslatorTest class' category: #'Tests-Locales'!
+NaturalLanguageTranslatorTest class
+	instanceVariableNames: ''!
+
+
+!RegisterableTranslatorMock commentStamp: '' prior: 0!
+I'm a mock object to mock a translator!
 
 !ISOLanguageDefinitionTest commentStamp: '' prior: 0!
 Unit tests on ISO language definitions!
@@ -69,30 +72,46 @@ A unit test class for class Locale!
 !NaturalLanguageTranslatorTest commentStamp: '' prior: 0!
 Tests for NaturalLanguageTranslator!
 
-!RegisterableTranslatorMock commentStamp: '' prior: 0!
-I'm a mock object to mock a translator!
+!RegisterableTranslatorMock methodsFor: 'initialization' stamp: ''!
+initialize
+	"Initializes the receiver"
+	
+	super initialize.
+	translations _ Dictionary new.
+	translations at: #'TestCase' put: 'Testfall'! !
 
-!ISOLanguageDefinitionTest methodsFor: 'tests'!
+!RegisterableTranslatorMock methodsFor: 'translate' stamp: ''!
+translate: aString
+	"Dispatch to a registered translator to translate the given string or (if there is no translator) return the untranslated string."
+	^translations at: aString asSymbol ifAbsent: [ aString ] 
+! !
+
+!RegisterableTranslatorMock methodsFor: 'translate' stamp: ''!
+translate: aString toLocale: localeID
+ 
+	^self translate: aString! !
+
+!ISOLanguageDefinitionTest methodsFor: 'tests' stamp: ''!
 testISO2LanguageDefinition
 
 	self 
 		assert: (ISOLanguageDefinition iso2LanguageDefinition: 'de') language equals: 'German';
 		assert: (ISOLanguageDefinition iso2LanguageDefinition: 'fr') language equals: 'French'! !
 
-!ISOLanguageDefinitionTest methodsFor: 'tests'!
+!ISOLanguageDefinitionTest methodsFor: 'tests' stamp: ''!
 testISO3LanguageDefinition
 
 	self 
 		assert: (ISOLanguageDefinition iso3LanguageDefinition: 'deu') language equals: 'German';
 		assert: (ISOLanguageDefinition iso3LanguageDefinition: 'fra') language equals: 'French'! !
 
-!LocaleIDTest methodsFor: 'tests' stamp: 'hlsf 3/4/2022 09:17:47'!
+!LocaleIDTest methodsFor: 'tests' stamp: 'hlsf 4/Mar/2022 09:17:47'!
 testComparision
 
 	self deny: self germanLocaleID = self frenchLocaleID.
 	self assert: self germanLocaleID equals: self germanLocaleID.	! !
 
-!LocaleIDTest methodsFor: 'tests'!
+!LocaleIDTest methodsFor: 'tests' stamp: ''!
 testFromISOString
 
 	| locale |
@@ -101,7 +120,7 @@ testFromISOString
 		assert: locale isoLanguage equals: 'en';
 		assert: locale isoCountry equals: 'us'! !
 
-!LocaleIDTest methodsFor: 'tests'!
+!LocaleIDTest methodsFor: 'tests' stamp: ''!
 testFromSingleISOString
 
 	| locale |
@@ -110,21 +129,21 @@ testFromSingleISOString
 		assert: locale isoLanguage equals: 'en';
 		assert: locale isoCountry isNil! !
 
-!LocaleIDTest methodsFor: 'tests'!
+!LocaleIDTest methodsFor: 'tests' stamp: ''!
 testHashing
 
 	self assert: self germanLocaleID hash equals: self germanLocaleID hash.
 	self assert: self frenchLocaleID hash equals: self frenchLocaleID hash.	
 ! !
 
-!LocaleIDTest methodsFor: 'tests'!
+!LocaleIDTest methodsFor: 'tests' stamp: ''!
 testInstanceCreationWithISOLanguage
 
 	|germanLocale|
 	germanLocale _ LocaleID isoLanguage: 'de'.
 	self assert: germanLocale isoLanguage equals: 'de'! !
 
-!LocaleIDTest methodsFor: 'tests'!
+!LocaleIDTest methodsFor: 'tests' stamp: ''!
 testInstanceCreationWithISOLanguageAndCountry
 
 	|locale|
@@ -133,7 +152,7 @@ testInstanceCreationWithISOLanguageAndCountry
 		assert: locale isoLanguage equals: 'zh';
 		assert: locale isoCountry equals: 'CN'! !
 
-!LocaleIDTest methodsFor: 'tests'!
+!LocaleIDTest methodsFor: 'tests' stamp: ''!
 testPosixNameConversion
 
 	| locale |
@@ -142,7 +161,7 @@ testPosixNameConversion
 		assert: locale isoLanguage equals: 'en';
 		assert: locale isoCountry equals: 'us'! !
 
-!LocaleIDTest methodsFor: 'tests'!
+!LocaleIDTest methodsFor: 'tests' stamp: ''!
 testPrintString
 
 	| locale |
@@ -150,35 +169,35 @@ testPrintString
 	self assert: locale printString equals: 'en-us'
 ! !
 
-!LocaleIDTest methodsFor: 'tests - test data'!
+!LocaleIDTest methodsFor: 'tests - test data' stamp: ''!
 frenchLocaleID
 
 	^LocaleID isoLanguage: 'fr'! !
 
-!LocaleIDTest methodsFor: 'tests - test data'!
+!LocaleIDTest methodsFor: 'tests - test data' stamp: ''!
 germanLocaleID
 
 	^LocaleID isoLanguage: 'de'! !
 
-!LocaleTest methodsFor: 'tests'!
+!LocaleTest methodsFor: 'tests' stamp: ''!
 testCurrent
 
 	self assert: Locale current notNil
 	! !
 
-!NaturalLanguageTranslatorTest methodsFor: 'running'!
+!NaturalLanguageTranslatorTest methodsFor: 'running' stamp: ''!
 setUp
 
 	super setUp.
 	previousRegistered _ NaturalLanguageTranslator current! !
 
-!NaturalLanguageTranslatorTest methodsFor: 'running'!
+!NaturalLanguageTranslatorTest methodsFor: 'running' stamp: ''!
 tearDown
 
 	NaturalLanguageTranslator current: previousRegistered.
 	super tearDown! !
 
-!NaturalLanguageTranslatorTest methodsFor: 'tests'!
+!NaturalLanguageTranslatorTest methodsFor: 'tests' stamp: ''!
 testRegisterCustomTranslator
 
 	NaturalLanguageTranslator current: RegisterableTranslatorMock new.
@@ -188,26 +207,7 @@ testRegisterCustomTranslator
 	
 	! !
 
-!NaturalLanguageTranslatorTest methodsFor: 'tests'!
+!NaturalLanguageTranslatorTest methodsFor: 'tests' stamp: ''!
 testTranslatePureString
 
 	self assert: 'Pharo' translated equals: 'Pharo'! !
-
-!RegisterableTranslatorMock methodsFor: 'initialization'!
-initialize
-	"Initializes the receiver"
-	
-	super initialize.
-	translations _ Dictionary new.
-	translations at: #'TestCase' put: 'Testfall'! !
-
-!RegisterableTranslatorMock methodsFor: 'translate'!
-translate: aString
-	"Dispatch to a registered translator to translate the given string or (if there is no translator) return the untranslated string."
-	^translations at: aString asSymbol ifAbsent: [ aString ] 
-! !
-
-!RegisterableTranslatorMock methodsFor: 'translate'!
-translate: aString toLocale: localeID
- 
-	^self translate: aString! !

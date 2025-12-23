@@ -1,4 +1,4 @@
-'From Cuis7.5 [latest update: #7593] on 19 September 2025 at 4:54:31 pm'!
+'From Cuis7.7 [latest update: #7779] on 23 December 2025 at 4:33:43 pm'!
 'Description Alien provides the infrastructure for FFI Callbacks, implementing the Callback hierarchy and marshalling methods within it.'!
 !provides: 'Alien-Core' 1 3!
 !requires: 'WeakDictionaries' 1 1 nil!
@@ -312,7 +312,7 @@ ExecutablePages <Set of: Alien "executable page"> - collection of pages with exe
 !LibrarySymbolNotFoundError commentStamp: 'TorstenBergmann 6/14/2019 21:47' prior: 0!
 A symbol within a library was not found, see Alien>>#primFindSymbol:!
 
-!Callback methodsFor: 'private' stamp: 'KenD 8/1/2022 16:05'!
+!Callback methodsFor: 'private' stamp: 'KenD 1/Aug/2022 16:05:00'!
 addToThunkTable
 	FlushThunkToCallbackMap ifTrue:
 		[FlushThunkToCallbackMap := false.
@@ -320,7 +320,7 @@ addToThunkTable
 			[:k| (ThunkToCallbackMap at: k) ifNil: [ThunkToCallbackMap removeKey: k]]].
 	ThunkToCallbackMap at: thunk addressField put: self! !
 
-!Callback methodsFor: 'private' stamp: 'eem 6/17/2016 18:51'!
+!Callback methodsFor: 'private' stamp: 'eem 17/Jun/2016 18:51:00'!
 evaluatorForSignature: signature "<String|Array>"
 	"Search the methods marked with the signature: primtiive for those that match signature.
 	 signature is typically a literal Array for the function's C signature, e.g. #(int (*)(int, char *))."
@@ -331,7 +331,7 @@ evaluatorForSignature: signature "<String|Array>"
 			[^pragma method]].
 	self error: 'could not find Callback signature'! !
 
-!Callback methodsFor: 'private' stamp: 'eem 10/17/2020 14:03'!
+!Callback methodsFor: 'private' stamp: 'eem 17/Oct/2020 14:03:00'!
 printSignature: aLiteralArray on: aStream
 	aStream nextPut: $(.
 	aLiteralArray
@@ -346,7 +346,7 @@ printSignature: aLiteralArray on: aStream
 		separatedBy: [aStream space].
 	aStream nextPut: $)! !
 
-!Callback methodsFor: 'evaluation' stamp: 'eem 9/27/2020 16:37'!
+!Callback methodsFor: 'evaluation' stamp: 'eem 27/Sep/2020 16:37:00'!
 valueInContext: callbackContext "<VMCallbackContext32|VMCallbackContext64> ^<Integer>"
 	"Perform the evaluator with arguments derived from the callback context in an order most appropriate for the ABI.
 	 On x86 the order is callbackContext, stackPointerAlien.
@@ -372,27 +372,27 @@ valueInContext: callbackContext "<VMCallbackContext32|VMCallbackContext64> ^<Int
 			with: callbackContext].
 	self error: 'invalid evaluator argument count'! !
 
-!Callback methodsFor: 'signatures' stamp: 'eem 6/17/2016 18:29'!
+!Callback methodsFor: 'signatures' stamp: 'eem 17/Jun/2016 18:29:00'!
 intcharstarRetint: callbackContext regs: regsAlien
 	<signature: #(int (*)(int, char *))>
 	self subclassResponsibility! !
 
-!Callback methodsFor: 'signatures' stamp: 'eem 6/17/2016 18:29'!
+!Callback methodsFor: 'signatures' stamp: 'eem 17/Jun/2016 18:29:00'!
 intcharstarRetint: callbackContext sp: spAlien
 	<signature: #(int (*)(int, char *))>
 	self subclassResponsibility! !
 
-!Callback methodsFor: 'signatures' stamp: 'eem 6/17/2016 18:28'!
+!Callback methodsFor: 'signatures' stamp: 'eem 17/Jun/2016 18:28:00'!
 voidstarvoidstarRetint: callbackContext regs: regsAlien
 	<signature: #(int (*)(const void *, const void *))>
 	self subclassResponsibility! !
 
-!Callback methodsFor: 'signatures' stamp: 'eem 6/17/2016 18:28'!
+!Callback methodsFor: 'signatures' stamp: 'eem 17/Jun/2016 18:28:00'!
 voidstarvoidstarRetint: callbackContext sp: spAlien
 	<signature: #(int (*)(const void *, const void *))>
 	self subclassResponsibility! !
 
-!Callback methodsFor: 'instance initialization' stamp: 'eem 10/15/2010 10:51'!
+!Callback methodsFor: 'instance initialization' stamp: 'eem 15/Oct/2010 10:51:00'!
 signature: signature "<String>" block: aBlock "<BlockClosure>"
 	| method |
 	method := self evaluatorForSignature: signature.
@@ -405,11 +405,11 @@ signature: signature "<String>" block: aBlock "<BlockClosure>"
 	numEvaluatorArgs := (evaluator := method selector) numArgs.
 	self addToThunkTable! !
 
-!Callback methodsFor: 'accessing' stamp: 'eem 11/19/2007 16:54'!
+!Callback methodsFor: 'accessing' stamp: 'eem 19/Nov/2007 16:54:00'!
 thunk
 	^thunk! !
 
-!Callback methodsFor: 'printing' stamp: 'eem 10/17/2020 18:33'!
+!Callback methodsFor: 'printing' stamp: 'eem 17/Oct/2020 18:33:00'!
 printOn: aStream
 	super printOn: aStream.
 	(self class lookupSelector: evaluator) ifNotNil:
@@ -421,11 +421,11 @@ printOn: aStream
 	block ifNotNil:
 		[aStream nextPutAll: ' block: '; print: block]! !
 
-!Callback class methodsFor: 'accessing' stamp: 'eem 6/17/2016 10:48'!
+!Callback class methodsFor: 'accessing' stamp: 'eem 17/Jun/2016 10:48:00'!
 abi
 	^ABI! !
 
-!Callback class methodsFor: 'class initialization' stamp: 'nice 3/2/2020 10:31'!
+!Callback class methodsFor: 'class initialization' stamp: 'nice 2/Mar/2020 10:31:00'!
 ensureNotifiedAtStartup
 	"Callback needs to be notified at system startup to clear the ThunkToCallbackMap and determine concreteClass."
 	self ~~ Callback ifTrue: [^self].
@@ -438,7 +438,7 @@ ensureNotifiedAtStartup
 			[FFICallbackThunk ensureNotifiedAtStartup.
 			Smalltalk addToStartUpList: self after: FFICallbackThunk]! !
 
-!Callback class methodsFor: 'class initialization' stamp: 'eem 5/31/2024 17:10:00'!
+!Callback class methodsFor: 'class initialization' stamp: 'eem 31/May/2024 17:10:00'!
 initialize
 	"Callback initialize"
 	self ensureNotifiedAtStartup.
@@ -448,7 +448,7 @@ initialize
 	(Smalltalk specialObjectsArray at: 54) ~~ #invokeCallbackContext: ifTrue:
 		[self inform: (Character cr asString join: #('this version of Callbacks requires the callback selector to be' '#invokeCallbackContext:.  recreate the specialObjects Array.'))]! !
 
-!Callback class methodsFor: 'class initialization' stamp: 'jmv 1/17/2025 15:51:45'!
+!Callback class methodsFor: 'class initialization' stamp: 'jmv 17/Jan/2025 15:51:45'!
 startUp: isInANewSession
 	"Callback startUp: false"
 	| prevMap |
@@ -462,7 +462,7 @@ startUp: isInANewSession
 			[:thunkAddress :callback|
 			ThunkToCallbackMap at: thunkAddress put: callback]]! !
 
-!Callback class methodsFor: 'evaluation' stamp: 'eem 10/17/2010 15:06'!
+!Callback class methodsFor: 'evaluation' stamp: 'eem 17/Oct/2010 15:06:00'!
 evaluateCallbackForContext: callbackContext "<VMCallbackContext32|VMCallbackContext64> ^<FFICallbackReturnValue>"
 	(ThunkToCallbackMap
 		at: callbackContext thunkp
@@ -472,24 +472,24 @@ evaluateCallbackForContext: callbackContext "<VMCallbackContext32|VMCallbackCont
 			[:callback|
 			^callback valueInContext: callbackContext]! !
 
-!Callback class methodsFor: 'finalization' stamp: 'eem 2/20/2008 16:11'!
+!Callback class methodsFor: 'finalization' stamp: 'eem 20/Feb/2008 16:11:00'!
 finalizeValues
 	FlushThunkToCallbackMap := true! !
 
-!Callback class methodsFor: 'instance creation' stamp: 'eem 6/17/2016 13:58'!
+!Callback class methodsFor: 'instance creation' stamp: 'eem 17/Jun/2016 13:58:00'!
 newForPlatform
 	"Answer an instance of the subclass for this platform's ABI, if any."
 	^concreteClass
 		ifNotNil: [:cc| cc new]
 		ifNil: [self error: 'could not find a concrete Callback class for this platform']! !
 
-!Callback class methodsFor: 'instance creation' stamp: 'eem 6/18/2016 16:35'!
+!Callback class methodsFor: 'instance creation' stamp: 'eem 18/Jun/2016 16:35:00'!
 signature: signature "<String>" block: aBlock "<BlockClosure> ^<Callback>"
 	"Answer a Callback that evaluates aBlock whose C signature is signature 
 	 and whose thunk should conform to the C calling convention."
 	^self newForPlatform signature: signature block: aBlock! !
 
-!CallbackForARM32 methodsFor: 'signatures' stamp: 'eem 2/15/2018 09:48'!
+!CallbackForARM32 methodsFor: 'signatures' stamp: 'eem 15/Feb/2018 09:48:00'!
 hwndlparamRetbool: callbackContext regs: regsAlien
 	<signature: #(BOOL CALLBACK (*)(HWND, LPARAM))>
 	^callbackContext wordResult:
@@ -497,7 +497,7 @@ hwndlparamRetbool: callbackContext regs: regsAlien
 			value: (Alien forPointer: (regsAlien unsignedLongAt: 1))
 			value: (regsAlien unsignedLongAt: 5)) asAlien "i.e. coerce true to 1 and false to 0"! !
 
-!CallbackForARM32 methodsFor: 'signatures' stamp: 'eem 6/17/2016 18:45'!
+!CallbackForARM32 methodsFor: 'signatures' stamp: 'eem 17/Jun/2016 18:45:00'!
 intcharstarRetint: callbackContext regs: regsAlien
 	<signature: #(int (*)(int, char *))>
 	^callbackContext wordResult:
@@ -505,7 +505,7 @@ intcharstarRetint: callbackContext regs: regsAlien
 			value: (regsAlien signedLongAt: 1)
 			value: (Alien forPointer: (regsAlien unsignedLongAt: 5)))! !
 
-!CallbackForARM32 methodsFor: 'signatures' stamp: 'eem 2/15/2018 09:04'!
+!CallbackForARM32 methodsFor: 'signatures' stamp: 'eem 15/Feb/2018 09:04:00'!
 logfontstartextmetricstardwordlparamRetint: callbackContext regs: regsAlien
 	<signature: #(int CALLBACK (*)(const LOGFONT *, const TEXTMETRIC *, DWORD, LPARAM))>
 	^callbackContext wordResult:
@@ -515,7 +515,7 @@ logfontstartextmetricstardwordlparamRetint: callbackContext regs: regsAlien
 			value: (regsAlien unsignedLongAt: 9)
 			value: (regsAlien signedLongAt: 13))! !
 
-!CallbackForARM32 methodsFor: 'signatures' stamp: 'eem 6/17/2016 18:26'!
+!CallbackForARM32 methodsFor: 'signatures' stamp: 'eem 17/Jun/2016 18:26:00'!
 voidstarvoidstarRetint: callbackContext regs: regsAlien
 	<signature: #(int (*)(const void *, const void *))>
 	^callbackContext wordResult:
@@ -523,17 +523,17 @@ voidstarvoidstarRetint: callbackContext regs: regsAlien
 			value: (Alien forPointer: (regsAlien unsignedLongAt: 1))
 			value: (Alien forPointer: (regsAlien unsignedLongAt: 5)))! !
 
-!CallbackForARM32 class methodsFor: 'accessing' stamp: 'eem 6/17/2016 13:44'!
+!CallbackForARM32 class methodsFor: 'accessing' stamp: 'eem 17/Jun/2016 13:44:00'!
 abi
 	^'ARM32'! !
 
-!CallbackForARM32 class methodsFor: 'class initialization' stamp: 'eem 05/31/2024 17:35'!
+!CallbackForARM32 class methodsFor: 'class initialization' stamp: 'eem 31/May/2024 17:35:00'!
 isForCurrentPlatform
 	| processor |
 	processor := (Smalltalk getSystemAttribute: 1003) asLowercase.
 	^processor = 'arm' or: [(processor beginsWith: 'armv') and: [processor fifth <= $7]]! !
 
-!CallbackForARMv8 methodsFor: 'signatures' stamp: 'eem 6/17/2016 18:45'!
+!CallbackForARMv8 methodsFor: 'signatures' stamp: 'eem 17/Jun/2016 18:45:00'!
 intcharstarRetint: callbackContext regs: regsAlien
 	<signature: #(int (*)(int, char *))>
 	^callbackContext wordResult:
@@ -541,7 +541,7 @@ intcharstarRetint: callbackContext regs: regsAlien
 			value: (regsAlien signedLongLongAt: 1)
 			value: (Alien forPointer: (regsAlien unsignedLongLongAt: 9)))! !
 
-!CallbackForARMv8 methodsFor: 'signatures' stamp: 'eem 6/17/2016 18:40'!
+!CallbackForARMv8 methodsFor: 'signatures' stamp: 'eem 17/Jun/2016 18:40:00'!
 voidstarvoidstarRetint: callbackContext regs: regsAlien
 	<signature: #(int (*)(const void *, const void *))>
 	^callbackContext wordResult:
@@ -549,15 +549,15 @@ voidstarvoidstarRetint: callbackContext regs: regsAlien
 			value: (Alien forPointer: (regsAlien unsignedLongLongAt: 1))
 			value: (Alien forPointer: (regsAlien unsignedLongLongAt: 9)))! !
 
-!CallbackForARMv8 class methodsFor: 'class initialization' stamp: 'eem 05/31/2024 17:35'!
+!CallbackForARMv8 class methodsFor: 'class initialization' stamp: 'eem 31/May/2024 17:35:00'!
 isForCurrentPlatform
 	^#('aarch64' 'arm64') includes: (Smalltalk getSystemAttribute: 1003)! !
 
-!CallbackForARMv8 class methodsFor: 'accessing' stamp: 'eem 9/30/2020 08:17'!
+!CallbackForARMv8 class methodsFor: 'accessing' stamp: 'eem 30/Sep/2020 08:17:00'!
 abi
 	^'ARMv8'! !
 
-!CallbackForIA32 methodsFor: 'signatures' stamp: 'eem 2/15/2018 09:49'!
+!CallbackForIA32 methodsFor: 'signatures' stamp: 'eem 15/Feb/2018 09:49:00'!
 hwndlparamRetbool: callbackContext sp: spAlien
 	<signature: #(BOOL CALLBACK (*)(HWND, LPARAM))>
 	^callbackContext wordResult:
@@ -565,7 +565,7 @@ hwndlparamRetbool: callbackContext sp: spAlien
 			value: (Alien forPointer: (spAlien unsignedLongAt: 1))
 			value: (spAlien unsignedLongAt: 5)) asAlien "i.e. coerce true to 1 and false to 0"! !
 
-!CallbackForIA32 methodsFor: 'signatures' stamp: 'eem 6/17/2016 18:46'!
+!CallbackForIA32 methodsFor: 'signatures' stamp: 'eem 17/Jun/2016 18:46:00'!
 intcharstarRetint: callbackContext sp: spAlien
 	<signature: #(int (*)(int, char *))>
 	^callbackContext wordResult:
@@ -573,7 +573,7 @@ intcharstarRetint: callbackContext sp: spAlien
 			value: (spAlien signedLongAt: 1)
 			value: (Alien forPointer: (spAlien unsignedLongAt: 5)))! !
 
-!CallbackForIA32 methodsFor: 'signatures' stamp: 'eem 2/15/2018 09:07'!
+!CallbackForIA32 methodsFor: 'signatures' stamp: 'eem 15/Feb/2018 09:07:00'!
 logfontstartextmetricstardwordlparamRetint: callbackContext sp: spAlien
 	<signature: #(int CALLBACK (*)(const LOGFONT *, const TEXTMETRIC *, DWORD, LPARAM))>
 	^callbackContext wordResult:
@@ -583,7 +583,7 @@ logfontstartextmetricstardwordlparamRetint: callbackContext sp: spAlien
 			value: (spAlien unsignedLongAt: 9)
 			value: (spAlien signedLongAt: 13))! !
 
-!CallbackForIA32 methodsFor: 'signatures' stamp: 'eem 6/17/2016 18:27'!
+!CallbackForIA32 methodsFor: 'signatures' stamp: 'eem 17/Jun/2016 18:27:00'!
 voidstarvoidstarRetint: callbackContext sp: spAlien
 	<signature: #(int (*)(const void *, const void *))>
 	^callbackContext wordResult:
@@ -591,7 +591,7 @@ voidstarvoidstarRetint: callbackContext sp: spAlien
 			value: (Alien forPointer: (spAlien unsignedLongAt: 1))
 			value: (Alien forPointer: (spAlien unsignedLongAt: 5)))! !
 
-!CallbackForIA32 methodsFor: 'evaluation' stamp: 'eem 6/17/2016 18:39'!
+!CallbackForIA32 methodsFor: 'evaluation' stamp: 'eem 17/Jun/2016 18:39:00'!
 valueInContext: callbackContext "<VMCallbackContext32|VMCallbackContext64> ^<Integer>"
 	numEvaluatorArgs = 2 ifTrue:
 		[^self perform: evaluator
@@ -613,17 +613,17 @@ valueInContext: callbackContext "<VMCallbackContext32|VMCallbackContext64> ^<Int
 			with: callbackContext].
 	self error: 'invalid evaluator argument count'! !
 
-!CallbackForIA32 class methodsFor: 'accessing' stamp: 'eem 6/17/2016 13:45'!
+!CallbackForIA32 class methodsFor: 'accessing' stamp: 'eem 17/Jun/2016 13:45:00'!
 abi
 	^'IA32'! !
 
-!CallbackForIA32 class methodsFor: 'class initialization' stamp: 'eem 05/31/2024 17:35'!
+!CallbackForIA32 class methodsFor: 'class initialization' stamp: 'eem 31/May/2024 17:35:00'!
 isForCurrentPlatform
 	| processor |
 	processor := (Smalltalk getSystemAttribute: 1003) asLowercase.
 	^processor first = $i and: [processor = 'intel' or: ['i#86' match: processor]]! !
 
-!CallbackForRiscV64 methodsFor: 'signatures' stamp: 'KenD 6/26/2022 14:50'!
+!CallbackForRiscV64 methodsFor: 'signatures' stamp: 'KenD 26/Jun/2022 14:50:00'!
 intcharstarRetint: callbackContext regs: regsAlien
 	<signature: #(int (*)(int, char *))>
 	^callbackContext wordResult:
@@ -631,7 +631,7 @@ intcharstarRetint: callbackContext regs: regsAlien
 			value: (regsAlien signedLongLongAt: 1)
 			value: (Alien forPointer: (regsAlien unsignedLongLongAt: 9)))! !
 
-!CallbackForRiscV64 methodsFor: 'signatures' stamp: 'KenD 6/26/2022 14:50'!
+!CallbackForRiscV64 methodsFor: 'signatures' stamp: 'KenD 26/Jun/2022 14:50:00'!
 voidstarvoidstarRetint: callbackContext regs: regsAlien
 	<signature: #(int (*)(const void *, const void *))>
 	^callbackContext wordResult:
@@ -639,15 +639,15 @@ voidstarvoidstarRetint: callbackContext regs: regsAlien
 			value: (Alien forPointer: (regsAlien unsignedLongLongAt: 1))
 			value: (Alien forPointer: (regsAlien unsignedLongLongAt: 9)))! !
 
-!CallbackForRiscV64 class methodsFor: 'class initialization' stamp: 'eem 05/31/2024 17:35'!
+!CallbackForRiscV64 class methodsFor: 'class initialization' stamp: 'eem 31/May/2024 17:35:00'!
 isForCurrentPlatform
 	^#('riscv64' 'RiscV64') includes: (Smalltalk getSystemAttribute: 1003)! !
 
-!CallbackForRiscV64 class methodsFor: 'accessing' stamp: 'KenD 6/26/2022 14:49'!
+!CallbackForRiscV64 class methodsFor: 'accessing' stamp: 'KenD 26/Jun/2022 14:49:00'!
 abi
 	^'RiscV64'! !
 
-!CallbackForWin64X64 methodsFor: 'signatures' stamp: 'eem 2/15/2018 09:47'!
+!CallbackForWin64X64 methodsFor: 'signatures' stamp: 'eem 15/Feb/2018 09:47:00'!
 hwndlparamRetbool: callbackContext regs: regsAlien
 	<signature: #(BOOL CALLBACK (*)(HWND, LPARAM))>
 	^callbackContext wordResult:
@@ -655,7 +655,7 @@ hwndlparamRetbool: callbackContext regs: regsAlien
 			value: (Alien forPointer: (regsAlien unsignedLongLongAt: 1))
 			value: (regsAlien unsignedLongLongAt: 9)) asAlien "i.e. coerce true to 1 and false to 0"! !
 
-!CallbackForWin64X64 methodsFor: 'signatures' stamp: 'eem 6/17/2016 18:46'!
+!CallbackForWin64X64 methodsFor: 'signatures' stamp: 'eem 17/Jun/2016 18:46:00'!
 intcharstarRetint: callbackContext regs: regsAlien
 	<signature: #(int (*)(int, char *))>
 	^callbackContext wordResult:
@@ -663,7 +663,7 @@ intcharstarRetint: callbackContext regs: regsAlien
 			value: (regsAlien signedLongLongAt: 1)
 			value: (Alien forPointer: (regsAlien unsignedLongLongAt: 9)))! !
 
-!CallbackForWin64X64 methodsFor: 'signatures' stamp: 'eem 2/15/2018 09:09'!
+!CallbackForWin64X64 methodsFor: 'signatures' stamp: 'eem 15/Feb/2018 09:09:00'!
 logfontstartextmetricstardwordlparamRetint: callbackContext regs: regsAlien
 	<signature: #(int CALLBACK (*)(const LOGFONT *, const TEXTMETRIC *, DWORD, LPARAM))>
 	^callbackContext wordResult:
@@ -673,7 +673,7 @@ logfontstartextmetricstardwordlparamRetint: callbackContext regs: regsAlien
 			value: (regsAlien unsignedLongAt: 17)
 			value: (regsAlien signedLongLongAt: 25))! !
 
-!CallbackForWin64X64 methodsFor: 'signatures' stamp: 'eem 6/17/2016 18:37'!
+!CallbackForWin64X64 methodsFor: 'signatures' stamp: 'eem 17/Jun/2016 18:37:00'!
 voidstarvoidstarRetint: callbackContext regs: regsAlien
 	<signature: #(int (*)(const void *, const void *))>
 	^callbackContext wordResult:
@@ -681,11 +681,11 @@ voidstarvoidstarRetint: callbackContext regs: regsAlien
 			value: (Alien forPointer: (regsAlien unsignedLongLongAt: 1))
 			value: (Alien forPointer: (regsAlien unsignedLongLongAt: 9)))! !
 
-!CallbackForWin64X64 class methodsFor: 'accessing' stamp: 'nice 8/21/2016 11:59'!
+!CallbackForWin64X64 class methodsFor: 'accessing' stamp: 'nice 21/Aug/2016 11:59:00'!
 abi
 	^'X64Win64'! !
 
-!CallbackForWin64X64 class methodsFor: 'class initialization' stamp: 'eem 05/31/2024 17:35'!
+!CallbackForWin64X64 class methodsFor: 'class initialization' stamp: 'eem 31/May/2024 17:35:00'!
 isForCurrentPlatform
 	| processor |
 	(#('Win32' 'Win64') includes: (Smalltalk getSystemAttribute: 1001)) ifFalse:
@@ -693,7 +693,7 @@ isForCurrentPlatform
 	processor := (Smalltalk getSystemAttribute: 1003) asLowercase.
 	^processor first = $x and: [processor = 'x64' or: [('x86#64*' match: processor)]]! !
 
-!CallbackForX64 methodsFor: 'signatures' stamp: 'eem 6/17/2016 18:45'!
+!CallbackForX64 methodsFor: 'signatures' stamp: 'eem 17/Jun/2016 18:45:00'!
 intcharstarRetint: callbackContext regs: regsAlien
 	<signature: #(int (*)(int, char *))>
 	^callbackContext wordResult:
@@ -701,7 +701,7 @@ intcharstarRetint: callbackContext regs: regsAlien
 			value: (regsAlien signedLongLongAt: 1)
 			value: (Alien forPointer: (regsAlien unsignedLongLongAt: 9)))! !
 
-!CallbackForX64 methodsFor: 'signatures' stamp: 'eem 6/17/2016 18:40'!
+!CallbackForX64 methodsFor: 'signatures' stamp: 'eem 17/Jun/2016 18:40:00'!
 voidstarvoidstarRetint: callbackContext regs: regsAlien
 	<signature: #(int (*)(const void *, const void *))>
 	^callbackContext wordResult:
@@ -709,11 +709,11 @@ voidstarvoidstarRetint: callbackContext regs: regsAlien
 			value: (Alien forPointer: (regsAlien unsignedLongLongAt: 1))
 			value: (Alien forPointer: (regsAlien unsignedLongLongAt: 9)))! !
 
-!CallbackForX64 class methodsFor: 'accessing' stamp: 'eem 6/17/2016 13:44'!
+!CallbackForX64 class methodsFor: 'accessing' stamp: 'eem 17/Jun/2016 13:44:00'!
 abi
 	^'X64'! !
 
-!CallbackForX64 class methodsFor: 'class initialization' stamp: 'eem 05/31/2024 17:35'!
+!CallbackForX64 class methodsFor: 'class initialization' stamp: 'eem 31/May/2024 17:35:00'!
 isForCurrentPlatform
 	| processor |
 	CallbackForWin64X64 isForCurrentPlatform ifTrue:
@@ -721,24 +721,24 @@ isForCurrentPlatform
 	processor := (Smalltalk getSystemAttribute: 1003) asLowercase.
 	^processor first = $x and: [processor = 'x64' or: [('x86#64*' match: processor)]]! !
 
-!Alien methodsFor: 'accessing' stamp: 'eem 2/5/2008 16:27'!
+!Alien methodsFor: 'accessing' stamp: 'eem 5/Feb/2008 16:27:00'!
 address
 	^self sizeField <= 0
 		ifTrue: [self addressField]
 		ifFalse: [self error: 'One cannot take the address of direct Alien instances; they may move']! !
 
-!Alien methodsFor: 'accessing' stamp: 'eem 12/20/2007 17:41'!
+!Alien methodsFor: 'accessing' stamp: 'eem 20/Dec/2007 17:41:00'!
 dataSize
 	^self sizeField abs! !
 
-!Alien methodsFor: 'accessing' stamp: 'eem 4/18/2008 15:14'!
+!Alien methodsFor: 'accessing' stamp: 'eem 18/Apr/2008 15:14:00'!
 freeAfter: aBlock
 	"The receiver must be a pointer to a previously allocated external C heap memory block. Invoke aBlock passing the receiver as the argument, then free the receiver. Allows automatic allocation and freeing of C artifacts using patters such as
 	(Alien newCString: 'foo') freeAfter: [:cstring | ...use cstring here...]."
 	
 	^[aBlock value: self] ensure: [self free]! !
 
-!Alien methodsFor: 'accessing' stamp: 'Ahe 10/3/2008 15:31'!
+!Alien methodsFor: 'accessing' stamp: 'Ahe 3/Oct/2008 15:31:00'!
 pointer
 	"Answer a pointer to the receiver in the form of an Alien.
 	 This will fail if the receiver is not indirect."
@@ -746,17 +746,17 @@ pointer
 		[self error: 'One cannot take the address of pointer Alien instances; they may move, and are already pointers'].
 	^self class forPointer: self address! !
 
-!Alien methodsFor: 'accessing' stamp: 'eem 2/15/2018 08:32'!
+!Alien methodsFor: 'accessing' stamp: 'eem 15/Feb/2018 08:32:00'!
 signedWordAtWordIndex: wordIndex
 	^WordSize = 4
 		ifTrue: [self signedLongAt: wordIndex - 1 * 4 + 1]
 		ifFalse: [self signedLongLongAt: wordIndex - 1 * 8 + 1]! !
 
-!Alien methodsFor: 'accessing' stamp: 'eem 2/4/2008 16:29'!
+!Alien methodsFor: 'accessing' stamp: 'eem 4/Feb/2008 16:29:00'!
 strcpy "^<ByteString>"
 	^self strcpyFrom: 1! !
 
-!Alien methodsFor: 'accessing' stamp: 'eem 5/31/2024 17:01:52'!
+!Alien methodsFor: 'accessing' stamp: 'eem 31/May/2024 17:01:52'!
 strcpyFrom: startIndex "<Integer> ^<ByteString>"
 	| length string |
 	length := self strlenStartingAt: startIndex.
@@ -765,11 +765,11 @@ strcpyFrom: startIndex "<Integer> ^<ByteString>"
 		in: self startingAt: startIndex.
 	^string! !
 
-!Alien methodsFor: 'accessing' stamp: 'eem 2/4/2008 16:29'!
+!Alien methodsFor: 'accessing' stamp: 'eem 4/Feb/2008 16:29:00'!
 strcpyUTF8 "^<String>"
 	^self strcpyUTF8From: 1! !
 
-!Alien methodsFor: 'accessing' stamp: 'John M McIntosh 11/23/2008 23:41'!
+!Alien methodsFor: 'accessing' stamp: 'John M McIntosh 23/Nov/2008 23:41:00'!
 strcpyUTF8From: startIndex "<Integer> ^<String>"
 	| length bytes |
 	length := self strlenStartingAt: startIndex.
@@ -778,61 +778,61 @@ strcpyUTF8From: startIndex "<Integer> ^<String>"
 		in: self startingAt: startIndex.
 	^bytes utf8ToIso! !
 
-!Alien methodsFor: 'accessing' stamp: 'Ahe 8/25/2008 20:39'!
+!Alien methodsFor: 'accessing' stamp: 'Ahe 25/Aug/2008 20:39:00'!
 strlen
 	^self strlenStartingAt: 1! !
 
-!Alien methodsFor: 'primitives-accessing' stamp: 'eem 12/5/2008 09:41'!
+!Alien methodsFor: 'primitives-accessing' stamp: 'eem 5/Dec/2008 09:41:00'!
 addressField "^<Integer>"
 	<primitive: 'primAddressField' module: 'IA32ABI' error: errorCode>
 	^self primitiveFailed! !
 
-!Alien methodsFor: 'primitives-accessing' stamp: 'eem 12/5/2008 09:41'!
+!Alien methodsFor: 'primitives-accessing' stamp: 'eem 5/Dec/2008 09:41:00'!
 addressFieldPut: value "<Integer> ^<Integer>"
 	<primitive: 'primAddressFieldPut' module: 'IA32ABI' error: errorCode>
 	^self primitiveFailed! !
 
-!Alien methodsFor: 'primitives-accessing' stamp: 'eem 9/27/2020 16:15'!
+!Alien methodsFor: 'primitives-accessing' stamp: 'eem 27/Sep/2020 16:15:00'!
 copyFrom: start "<Integer>" to: stop "<Integer>" into: aByteObject "<Alien | indexableByteSubclass>" startingAt: destStart "<Integer>" "^<self>"
 	<primitive: 'primAlienCopyInto' module: 'IA32ABI' error: errorCode>
 	^self primitiveFailed! !
 
-!Alien methodsFor: 'primitives-accessing' stamp: 'eem 12/5/2008 09:41'!
+!Alien methodsFor: 'primitives-accessing' stamp: 'eem 5/Dec/2008 09:41:00'!
 copyInto: aByteObject "<Alien | indexableByteSubclass>" from: start "<Integer>" to: stop "<Integer>" in: replacement "<Alien | indexableByteSubclass>" startingAt: repStart "<Integer>" "^<self>"
 	<primitive: 'primAlienReplace' module: 'IA32ABI' error: errorCode>
 	^self primitiveFailed! !
 
-!Alien methodsFor: 'primitives-accessing' stamp: 'eem 12/5/2008 09:41'!
+!Alien methodsFor: 'primitives-accessing' stamp: 'eem 5/Dec/2008 09:41:00'!
 doubleAt: index "<Integer> ^<Float>"
 	<primitive: 'primDoubleAt' module: 'IA32ABI' error: errorCode>
 	^self primitiveFailed! !
 
-!Alien methodsFor: 'primitives-accessing' stamp: 'eem 12/5/2008 09:41'!
+!Alien methodsFor: 'primitives-accessing' stamp: 'eem 5/Dec/2008 09:41:00'!
 doubleAt: index "<Integer>" put: value "<Float | Integer> ^<Float | Integer>"
 	<primitive: 'primDoubleAtPut' module: 'IA32ABI' error: errorCode>
 	^self primitiveFailed! !
 
-!Alien methodsFor: 'primitives-accessing' stamp: 'eem 12/5/2008 09:41'!
+!Alien methodsFor: 'primitives-accessing' stamp: 'eem 5/Dec/2008 09:41:00'!
 floatAt: index "<Integer> ^<Float>"
 	<primitive: 'primFloatAt' module: 'IA32ABI' error: errorCode>
 	^self primitiveFailed! !
 
-!Alien methodsFor: 'primitives-accessing' stamp: 'eem 12/5/2008 09:41'!
+!Alien methodsFor: 'primitives-accessing' stamp: 'eem 5/Dec/2008 09:41:00'!
 floatAt: index "<Integer>" put: value "<Float | Integer> ^<Float | Integer>"
 	<primitive: 'primFloatAtPut' module: 'IA32ABI' error: errorCode>
 	^self primitiveFailed! !
 
-!Alien methodsFor: 'primitives-accessing' stamp: 'eem 10/26/2020 20:26'!
+!Alien methodsFor: 'primitives-accessing' stamp: 'eem 26/Oct/2020 20:26:00'!
 oopAt: index "<Integer> ^<Object>"
 	<primitive: 'primOopAt' module: 'IA32ABI' error: errorCode>
 	^self primitiveFailed! !
 
-!Alien methodsFor: 'primitives-accessing' stamp: 'eem 10/26/2020 20:28'!
+!Alien methodsFor: 'primitives-accessing' stamp: 'eem 26/Oct/2020 20:28:00'!
 oopAt: index "<Integer>" put: value "<Object> ^<Object>"
 	<primitive: 'primOopAtPut' module: 'IA32ABI' error: errorCode>
 	^self primitiveFailed! !
 
-!Alien methodsFor: 'primitives-accessing' stamp: 'eem 7/19/2021 13:53'!
+!Alien methodsFor: 'primitives-accessing' stamp: 'eem 19/Jul/2021 13:53:00'!
 replaceFrom: start "<Integer>" to: stop "<Integer>" with: replacement "<Alien | indexableByteSubclass>" startingAt: repStart "<Integer>" "^<self>"
 	"N.B. on platforms where executable memory cannot be written to unless flipped out of
 	 executability, this primitive, and only this primitive, will contain code to identify an attempt
@@ -841,107 +841,107 @@ replaceFrom: start "<Integer>" to: stop "<Integer>" with: replacement "<Alien | 
 	<primitive: 'primAlienReplace' module: 'IA32ABI' error: errorCode>
 	^self primitiveFailed! !
 
-!Alien methodsFor: 'primitives-accessing' stamp: 'eem 12/5/2008 09:41'!
+!Alien methodsFor: 'primitives-accessing' stamp: 'eem 5/Dec/2008 09:41:00'!
 signedByteAt: index "<Integer> ^<Integer>"
 	<primitive: 'primSignedByteAt' module: 'IA32ABI' error: errorCode>
 	^self primitiveFailed! !
 
-!Alien methodsFor: 'primitives-accessing' stamp: 'eem 12/5/2008 09:41'!
+!Alien methodsFor: 'primitives-accessing' stamp: 'eem 5/Dec/2008 09:41:00'!
 signedByteAt: index "<Integer>" put: value "<Integer> ^<Integer>"
 	<primitive: 'primSignedByteAtPut' module: 'IA32ABI' error: errorCode>
 	^self primitiveFailed! !
 
-!Alien methodsFor: 'primitives-accessing' stamp: 'eem 12/5/2008 09:41'!
+!Alien methodsFor: 'primitives-accessing' stamp: 'eem 5/Dec/2008 09:41:00'!
 signedLongAt: index "<Integer> ^<Integer>"
 	<primitive: 'primSignedLongAt' module: 'IA32ABI' error: errorCode>
 	^self primitiveFailed! !
 
-!Alien methodsFor: 'primitives-accessing' stamp: 'eem 12/5/2008 09:41'!
+!Alien methodsFor: 'primitives-accessing' stamp: 'eem 5/Dec/2008 09:41:00'!
 signedLongAt: index "<Integer>" put: value "<Integer> ^<Integer>"
 	<primitive: 'primSignedLongAtPut' module: 'IA32ABI' error: errorCode>
 	^self primitiveFailed! !
 
-!Alien methodsFor: 'primitives-accessing' stamp: 'John M McIntosh 12/5/2008 09:41'!
+!Alien methodsFor: 'primitives-accessing' stamp: 'John M McIntosh 5/Dec/2008 09:41:00'!
 signedLongLongAt: index "<Integer> ^<Integer>"
 	<primitive: 'primSignedLongLongAt' module: 'IA32ABI' error: errorCode>
 	^self primitiveFailed! !
 
-!Alien methodsFor: 'primitives-accessing' stamp: 'John M McIntosh 12/5/2008 09:41'!
+!Alien methodsFor: 'primitives-accessing' stamp: 'John M McIntosh 5/Dec/2008 09:41:00'!
 signedLongLongAt: index "<Integer>" put: value "<Integer> ^<Integer>"
 	<primitive: 'primSignedLongLongAtPut' module: 'IA32ABI' error: errorCode>
 	^self primitiveFailed! !
 
-!Alien methodsFor: 'primitives-accessing' stamp: 'eem 12/5/2008 09:41'!
+!Alien methodsFor: 'primitives-accessing' stamp: 'eem 5/Dec/2008 09:41:00'!
 signedShortAt: index "<Integer> ^<Integer>"
 	<primitive: 'primSignedShortAt' module: 'IA32ABI' error: errorCode>
 	^self primitiveFailed! !
 
-!Alien methodsFor: 'primitives-accessing' stamp: 'eem 12/5/2008 09:41'!
+!Alien methodsFor: 'primitives-accessing' stamp: 'eem 5/Dec/2008 09:41:00'!
 signedShortAt: index "<Integer>" put: value "<Integer> ^<Integer>"
 	<primitive: 'primSignedShortAtPut' module: 'IA32ABI' error: errorCode>
 	^self primitiveFailed! !
 
-!Alien methodsFor: 'primitives-accessing' stamp: 'eem 12/5/2008 09:41'!
+!Alien methodsFor: 'primitives-accessing' stamp: 'eem 5/Dec/2008 09:41:00'!
 sizeField "^<Integer>"
 	<primitive: 'primSizeField' module: 'IA32ABI' error: errorCode>
 	^self primitiveFailed! !
 
-!Alien methodsFor: 'primitives-accessing' stamp: 'eem 12/5/2008 09:41'!
+!Alien methodsFor: 'primitives-accessing' stamp: 'eem 5/Dec/2008 09:41:00'!
 sizeFieldPut: size "<Integer> ^<Integer>"
 	<primitive: 'primSizeFieldPut' module: 'IA32ABI' error: errorCode>
 	^self primitiveFailed! !
 
-!Alien methodsFor: 'primitives-accessing' stamp: 'eem 12/5/2008 09:41'!
+!Alien methodsFor: 'primitives-accessing' stamp: 'eem 5/Dec/2008 09:41:00'!
 strlenStartingAt: index "<Integer> ^<Integer>"
 	<primitive: 'primStrlenFromStartIndex' module: 'IA32ABI' error: errorCode>
 	^self primitiveFailed! !
 
-!Alien methodsFor: 'primitives-accessing' stamp: 'eem 12/5/2008 09:41'!
+!Alien methodsFor: 'primitives-accessing' stamp: 'eem 5/Dec/2008 09:41:00'!
 strlenThroughPointerAt: index "<Integer> ^<Integer>"
 	<primitive: 'primStrlenThroughPointerAtIndex' module: 'IA32ABI' error: errorCode>
 	^self primitiveFailed! !
 
-!Alien methodsFor: 'primitives-accessing' stamp: 'eem 12/5/2008 09:41'!
+!Alien methodsFor: 'primitives-accessing' stamp: 'eem 5/Dec/2008 09:41:00'!
 unsignedByteAt: index "<Integer> ^<Integer>"
 	<primitive: 'primUnsignedByteAt' module: 'IA32ABI' error: errorCode>
 	^self primitiveFailed! !
 
-!Alien methodsFor: 'primitives-accessing' stamp: 'eem 12/5/2008 09:41'!
+!Alien methodsFor: 'primitives-accessing' stamp: 'eem 5/Dec/2008 09:41:00'!
 unsignedByteAt: index "<Integer>" put: value "<Integer> ^<Integer>"
 	<primitive: 'primUnsignedByteAtPut' module: 'IA32ABI' error: errorCode>
 	^self primitiveFailed! !
 
-!Alien methodsFor: 'primitives-accessing' stamp: 'eem 12/5/2008 09:41'!
+!Alien methodsFor: 'primitives-accessing' stamp: 'eem 5/Dec/2008 09:41:00'!
 unsignedLongAt: index "<Integer> ^<Integer>"
 	<primitive: 'primUnsignedLongAt' module: 'IA32ABI' error: errorCode>
 	^self primitiveFailed! !
 
-!Alien methodsFor: 'primitives-accessing' stamp: 'eem 12/5/2008 09:41'!
+!Alien methodsFor: 'primitives-accessing' stamp: 'eem 5/Dec/2008 09:41:00'!
 unsignedLongAt: index "<Integer>" put: value "<Integer> ^<Integer>"
 	<primitive: 'primUnsignedLongAtPut' module: 'IA32ABI' error: errorCode>
 	^self primitiveFailed! !
 
-!Alien methodsFor: 'primitives-accessing' stamp: 'John M McIntosh 12/5/2008 09:41'!
+!Alien methodsFor: 'primitives-accessing' stamp: 'John M McIntosh 5/Dec/2008 09:41:00'!
 unsignedLongLongAt: index "<Integer> ^<Integer>"
 	<primitive: 'primUnsignedLongLongAt' module: 'IA32ABI' error: errorCode>
 	^self primitiveFailed! !
 
-!Alien methodsFor: 'primitives-accessing' stamp: 'John M McIntosh 12/5/2008 09:41'!
+!Alien methodsFor: 'primitives-accessing' stamp: 'John M McIntosh 5/Dec/2008 09:41:00'!
 unsignedLongLongAt: index "<Integer>" put: value "<Integer> ^<Integer>"
 	<primitive: 'primUnsignedLongLongAtPut' module: 'IA32ABI' error: errorCode>
 	^self primitiveFailed! !
 
-!Alien methodsFor: 'primitives-accessing' stamp: 'eem 12/5/2008 09:41'!
+!Alien methodsFor: 'primitives-accessing' stamp: 'eem 5/Dec/2008 09:41:00'!
 unsignedShortAt: index "<Integer> ^<Integer>"
 	<primitive: 'primUnsignedShortAt' module: 'IA32ABI' error: errorCode>
 	^self primitiveFailed! !
 
-!Alien methodsFor: 'primitives-accessing' stamp: 'eem 12/5/2008 09:41'!
+!Alien methodsFor: 'primitives-accessing' stamp: 'eem 5/Dec/2008 09:41:00'!
 unsignedShortAt: index "<Integer>" put: value "<Integer> ^<Integer>"
 	<primitive: 'primUnsignedShortAtPut' module: 'IA32ABI' error: errorCode>
 	^self primitiveFailed! !
 
-!Alien methodsFor: 'coercing' stamp: 'eem 2/15/2018 08:56'!
+!Alien methodsFor: 'coercing' stamp: 'eem 15/Feb/2018 08:56:00'!
 as: anAlienClass
 	"Attempt to coerce the receiver into a different class of Alien.  Performs minimal checks!!!! Use with caution!!!!"
 	| alienClassDataSize |
@@ -952,130 +952,130 @@ as: anAlienClass
 			[self error: 'receiver too small to coerce']].
 	anAlienClass adoptInstance: self! !
 
-!Alien methodsFor: 'coercing' stamp: 'eem 1/10/2008 22:01'!
+!Alien methodsFor: 'coercing' stamp: 'eem 10/Jan/2008 22:01:00'!
 asAlien
 	^self! !
 
-!Alien methodsFor: 'converting' stamp: 'vb 12/6/2007 11:24'!
+!Alien methodsFor: 'converting' stamp: 'vb 6/Dec/2007 11:24:00'!
 asSignedByte "^<Integer>"
 	"Answer an Integer created from the first byte of the receiver interpreted as a signed value."
 	
 	^self signedByteAt: 1! !
 
-!Alien methodsFor: 'converting' stamp: 'vb 12/6/2007 11:24'!
+!Alien methodsFor: 'converting' stamp: 'vb 6/Dec/2007 11:24:00'!
 asSignedLong "^<Integer>"
 	"Answer an Integer created from the first 4 bytes of the receiver interpreted as a signed value."
 	
 	^self signedLongAt: 1! !
 
-!Alien methodsFor: 'converting' stamp: 'vb 12/6/2007 11:24'!
+!Alien methodsFor: 'converting' stamp: 'vb 6/Dec/2007 11:24:00'!
 asSignedShort "^<Integer>"
 	"Answer an Integer created from the first 2 bytes of the receiver interpreted as a signed value."
 	
 	^self signedShortAt: 1! !
 
-!Alien methodsFor: 'converting' stamp: 'vb 12/6/2007 11:24'!
+!Alien methodsFor: 'converting' stamp: 'vb 6/Dec/2007 11:24:00'!
 asUnsignedByte "^<Integer>"
 	"Answer an Integer created from the first byte of the receiver interpreted as an unsigned value."
 	
 	^self unsignedByteAt: 1! !
 
-!Alien methodsFor: 'converting' stamp: 'vb 12/6/2007 11:24'!
+!Alien methodsFor: 'converting' stamp: 'vb 6/Dec/2007 11:24:00'!
 asUnsignedLong "^<Integer>"
 	"Answer an Integer created from the first 4 bytes of the receiver interpreted as an unsigned value."
 	
 	^self unsignedLongAt: 1! !
 
-!Alien methodsFor: 'converting' stamp: 'vb 12/6/2007 11:24'!
+!Alien methodsFor: 'converting' stamp: 'vb 6/Dec/2007 11:24:00'!
 asUnsignedShort "^<Integer>"
 	"Answer an Integer created from the first 2 bytes of the receiver interpreted as an unsigned value."
 	
 	^self unsignedShortAt: 1! !
 
-!Alien methodsFor: 'memory management' stamp: 'eem 12/21/2007 15:50'!
+!Alien methodsFor: 'memory management' stamp: 'eem 21/Dec/2007 15:50:00'!
 free
 	self primFree! !
 
-!Alien methodsFor: 'instance initalization' stamp: 'eem 11/6/2007 12:09'!
+!Alien methodsFor: 'instance initalization' stamp: 'eem 6/Nov/2007 12:09:00'!
 initialize
 	"Subclasses should redefine this method to perform initializations on instance creation"
 	"Overrides ProtoObjects' method for explicitness."! !
 
-!Alien methodsFor: 'testing' stamp: 'Ahe 10/3/2008 15:30'!
+!Alien methodsFor: 'testing' stamp: 'Ahe 3/Oct/2008 15:30:00'!
 isPointer
 	^self sizeField = 0! !
 
-!Alien methodsFor: 'primitives-callouts' stamp: 'eem 12/5/2008 09:41'!
+!Alien methodsFor: 'primitives-callouts' stamp: 'eem 5/Dec/2008 09:41:00'!
 primFFICallResult: result "<Alien> ^<Alien>"
 	<primitive: 'primCallOutIntegralReturn' module: 'IA32ABI' error: errorCode>
 	^self primitiveFailed! !
 
-!Alien methodsFor: 'primitives-callouts' stamp: 'eem 12/5/2008 09:41'!
+!Alien methodsFor: 'primitives-callouts' stamp: 'eem 5/Dec/2008 09:41:00'!
 primFFICallResult: result "<Alien>" with: firstArg "<Alien | Integer> ^<Alien>"
 	<primitive: 'primCallOutIntegralReturn' module: 'IA32ABI' error: errorCode>
 	^self primitiveFailed! !
 
-!Alien methodsFor: 'primitives-callouts' stamp: 'eem 12/5/2008 09:41'!
+!Alien methodsFor: 'primitives-callouts' stamp: 'eem 5/Dec/2008 09:41:00'!
 primFFICallResult: result "<Alien>" with: firstArg "<Alien | Integer>" with: secondArg "<Alien | Integer> ^<Alien>"
 	<primitive: 'primCallOutIntegralReturn' module: 'IA32ABI' error: errorCode>
 	^self primitiveFailed! !
 
-!Alien methodsFor: 'primitives-callouts' stamp: 'eem 12/5/2008 09:41'!
+!Alien methodsFor: 'primitives-callouts' stamp: 'eem 5/Dec/2008 09:41:00'!
 primFFICallResult: result "<Alien>" with: firstArg "<Alien | Integer>" with: secondArg "<Alien | Integer>" with: thirdArg "<Alien | SmallInteger> ^<Alien>"
 	<primitive: 'primCallOutIntegralReturn' module: 'IA32ABI' error: errorCode>
 	^self primitiveFailed! !
 
-!Alien methodsFor: 'primitives-callouts' stamp: 'eem 12/5/2008 09:41'!
+!Alien methodsFor: 'primitives-callouts' stamp: 'eem 5/Dec/2008 09:41:00'!
 primFFICallResult: result "<Alien>" with: firstArg "<Alien | Integer>" with: secondArg "<Alien | Integer>" with: thirdArg "<Alien | Integer>" with: fourthArg "<Alien | Integer> ^<Alien>"
 	<primitive: 'primCallOutIntegralReturn' module: 'IA32ABI' error: errorCode>
 	^self primitiveFailed! !
 
-!Alien methodsFor: 'primitives-callouts' stamp: 'eem 12/5/2008 09:41'!
+!Alien methodsFor: 'primitives-callouts' stamp: 'eem 5/Dec/2008 09:41:00'!
 primFFICallResult: result "<Alien>" with: firstArg "<Alien | Integer>" with: secondArg "<Alien | Integer>" with: thirdArg "<Alien | Integer>" with: fourthArg "<Alien | Integer>" with: fifthArg "<Alien | Integer> ^<Alien>"
 	<primitive: 'primCallOutIntegralReturn' module: 'IA32ABI' error: errorCode>
 	^self primitiveFailed! !
 
-!Alien methodsFor: 'primitives-callouts' stamp: 'eem 12/5/2008 09:41'!
+!Alien methodsFor: 'primitives-callouts' stamp: 'eem 5/Dec/2008 09:41:00'!
 primFFICallResult: result "<Alien>" with: firstArg "<Alien | Integer>" with: secondArg "<Alien | Integer>" with: thirdArg "<Alien | Integer>" with: fourthArg "<Alien | Integer>" with: fifthArg "<Alien | Integer>" with: sixthArg "<Alien | Integer> ^<Alien>"
 	<primitive: 'primCallOutIntegralReturn' module: 'IA32ABI' error: errorCode>
 	^self primitiveFailed! !
 
-!Alien methodsFor: 'primitives-callouts' stamp: 'eem 12/5/2008 09:41'!
+!Alien methodsFor: 'primitives-callouts' stamp: 'eem 5/Dec/2008 09:41:00'!
 primFFICallResult: result "<Alien>" with: firstArg "<Alien | Integer>" with: secondArg "<Alien | Integer>" with: thirdArg "<Alien | Integer>" with: fourthArg "<Alien | Integer>" with: fifthArg "<Alien | Integer>" with: sixthArg "<Alien | Integer>" with: arg7 "<Alien | Integer>" "^<Alien>"
 	<primitive: 'primCallOutIntegralReturn' module: 'IA32ABI' error: errorCode>
 	^self primitiveFailed! !
 
-!Alien methodsFor: 'primitives-callouts' stamp: 'eem 12/5/2008 09:41'!
+!Alien methodsFor: 'primitives-callouts' stamp: 'eem 5/Dec/2008 09:41:00'!
 primFFICallResult: result "<Alien>" with: firstArg "<Alien | Integer>" with: secondArg "<Alien | Integer>" with: thirdArg "<Alien | Integer>" with: fourthArg "<Alien | Integer>" with: fifthArg "<Alien | Integer>" with: sixthArg "<Alien | Integer>" with: arg7 "<Alien | Integer>" with: arg8 "<Alien | Integer>" "^<Alien>"
 	<primitive: 'primCallOutIntegralReturn' module: 'IA32ABI' error: errorCode>
 	^self primitiveFailed! !
 
-!Alien methodsFor: 'primitives-callouts' stamp: 'eem 12/5/2008 09:41'!
+!Alien methodsFor: 'primitives-callouts' stamp: 'eem 5/Dec/2008 09:41:00'!
 primFFICallResult: result "<Alien>" with: firstArg "<Alien | Integer>" with: secondArg "<Alien | Integer>" with: thirdArg "<Alien | Integer>" with: fourthArg "<Alien | Integer>" with: fifthArg "<Alien | Integer>" with: sixthArg "<Alien | Integer>" with: arg7 "<Alien | Integer>" with: arg8 "<Alien | Integer>" with: arg9 "<Alien | Integer>" "^<Alien>"
 	<primitive: 'primCallOutIntegralReturn' module: 'IA32ABI' error: errorCode>
 	^self primitiveFailed! !
 
-!Alien methodsFor: 'primitives-callouts' stamp: 'eem 12/5/2008 09:41'!
+!Alien methodsFor: 'primitives-callouts' stamp: 'eem 5/Dec/2008 09:41:00'!
 primFFICallResult: result "<Alien>" with: firstArg "<Alien | Integer>" with: secondArg "<Alien | Integer>" with: thirdArg "<Alien | Integer>" with: fourthArg "<Alien | Integer>" with: fifthArg "<Alien | Integer>" with: sixthArg "<Alien | Integer>" with: arg7 "<Alien | Integer>" with: arg8 "<Alien | Integer>" with: arg9 "<Alien | Integer>" with: arg10 "<Alien | Integer>" "^<Alien>"
 	<primitive: 'primCallOutIntegralReturn' module: 'IA32ABI' error: errorCode>
 	^self primitiveFailed! !
 
-!Alien methodsFor: 'primitives-callouts' stamp: 'eem 12/5/2008 09:41'!
+!Alien methodsFor: 'primitives-callouts' stamp: 'eem 5/Dec/2008 09:41:00'!
 primFFICallResult: result "<Alien>" with: firstArg "<Alien | Integer>" with: secondArg "<Alien | Integer>" with: thirdArg "<Alien | Integer>" with: fourthArg "<Alien | Integer>" with: fifthArg "<Alien | Integer>" with: sixthArg "<Alien | Integer>" with: arg7 "<Alien | Integer>" with: arg8 "<Alien | Integer>" with: arg9 "<Alien | Integer>" with: arg10 "<Alien | Integer>" with: arg11 "<Alien | Integer>" "^<Alien>"
 	<primitive: 'primCallOutIntegralReturn' module: 'IA32ABI' error: errorCode>
 	^self primitiveFailed! !
 
-!Alien methodsFor: 'primitives-callouts' stamp: 'eem 12/5/2008 09:41'!
+!Alien methodsFor: 'primitives-callouts' stamp: 'eem 5/Dec/2008 09:41:00'!
 primFFICallResult: result "<Alien>" with: firstArg "<Alien | Integer>" with: secondArg "<Alien | Integer>" with: thirdArg "<Alien | Integer>" with: fourthArg "<Alien | Integer>" with: fifthArg "<Alien | Integer>" with: sixthArg "<Alien | Integer>" with: arg7 "<Alien | Integer>" with: arg8 "<Alien | Integer>" with: arg9 "<Alien | Integer>" with: arg10 "<Alien | Integer>" with: arg11 "<Alien | Integer>" with: arg12 "<Alien | Integer>" "^<Alien>"
 	<primitive: 'primCallOutIntegralReturn' module: 'IA32ABI' error: errorCode>
 	^self primitiveFailed! !
 
-!Alien methodsFor: 'primitives-callouts' stamp: 'eem 12/5/2008 09:41'!
+!Alien methodsFor: 'primitives-callouts' stamp: 'eem 5/Dec/2008 09:41:00'!
 primFFICallResult: result "<Alien>" withArguments: args "<Array of: Alien | Integer> ^<Alien>"
 	<primitive: 'primVarArgsCallOutIntegralReturn' module: 'IA32ABI' error: errorCode>
 	^self primitiveFailed! !
 
-!Alien methodsFor: 'primitives-library loading' stamp: 'eem 12/10/2019 20:56'!
+!Alien methodsFor: 'primitives-library loading' stamp: 'eem 10/Dec/2019 20:56:00'!
 primFindSymbol: symbolName "<String> ^<Integer>"
 	"The receiver is assumed to be a proxy whose first field contans the handle of a library
 	 answered by primLoadLibrary.  Attempt to find symbolName in the library and answer
@@ -1085,7 +1085,7 @@ primFindSymbol: symbolName "<String> ^<Integer>"
 		ifTrue: [LibrarySymbolNotFoundError signal]
 		ifFalse: [self primitiveFailed]! !
 
-!Alien methodsFor: 'primitives-memory management' stamp: 'eem 12/5/2008 09:41'!
+!Alien methodsFor: 'primitives-memory management' stamp: 'eem 5/Dec/2008 09:41:00'!
 primFree
 	"Free the memory referenced by the receiver, or fail if
 	 the receiver is direct or the indirect pointer is invalid.
@@ -1094,7 +1094,7 @@ primFree
 	<primitive: 'primBoxedFree' module: 'IA32ABI' error: errorCode>
 	^self primitiveFailed! !
 
-!Alien methodsFor: 'printing' stamp: 'jmv 10/29/2024 14:56:09'!
+!Alien methodsFor: 'printing' stamp: 'jmv 29/Oct/2024 14:56:09'!
 storeOn: aStream
 	| sizeField |
 	(sizeField := self sizeField) ~= 0 ifTrue:
@@ -1121,26 +1121,26 @@ storeOn: aStream
 		(Alien new: 8) storeString.
 		(Alien newC: 8) storeString }"! !
 
-!Alien methodsFor: 'finalization' stamp: 'jmv 1/17/2025 15:46:21'!
+!Alien methodsFor: 'finalization' stamp: 'jmv 17/Jan/2025 15:46:21'!
 finalizationRegistry
 	^GCMallocedAliens! !
 
-!Alien class methodsFor: 'primitives-memory management' stamp: 'eem 12/5/2008 09:41'!
+!Alien class methodsFor: 'primitives-memory management' stamp: 'eem 5/Dec/2008 09:41:00'!
 Ccalloc: byteSize "<Integer> ^<Integer>"
 	<primitive: 'primCalloc' module: 'IA32ABI' error: errorCode>
 	^self primitiveFailed! !
 
-!Alien class methodsFor: 'primitives-memory management' stamp: 'eem 12/5/2008 09:41'!
+!Alien class methodsFor: 'primitives-memory management' stamp: 'eem 5/Dec/2008 09:41:00'!
 Cmalloc: byteSize "<Integer> ^<Integer>"
 	<primitive: 'primMalloc' module: 'IA32ABI' error: errorCode>
 	^self primitiveFailed! !
 
-!Alien class methodsFor: 'primitives-memory management' stamp: 'eem 12/5/2008 09:41'!
+!Alien class methodsFor: 'primitives-memory management' stamp: 'eem 5/Dec/2008 09:41:00'!
 primFree: address "<Integer>"
 	<primitive: 'primFree' module: 'IA32ABI' error: errorCode>
 	^self primitiveFailed! !
 
-!Alien class methodsFor: 'instance creation' stamp: 'eem 12/14/2015 11:46'!
+!Alien class methodsFor: 'instance creation' stamp: 'eem 14/Dec/2015 11:46:00'!
 atAddress: pointer "<Integer>" "^<Alien>"
 	"N.B.  This method assumes one is creating a pointer to already initialized data, hence initiaize is not sent.
 	(Perhaps some alternative, eg. initializePointer, should be sent?"
@@ -1149,7 +1149,7 @@ atAddress: pointer "<Integer>" "^<Alien>"
 		addressFieldPut: pointer;
 		yourself! !
 
-!Alien class methodsFor: 'instance creation' stamp: 'eem 12/14/2015 11:46'!
+!Alien class methodsFor: 'instance creation' stamp: 'eem 14/Dec/2015 11:46:00'!
 atAddress: address "<Integer>" dataSize: dataByteSize "<Integer>" "^<Alien>"
 	"N.B.  This method assumes one is creating a pointer to already initialized data, hence initiaize is not sent.
 	(Perhaps some alternative, eg. initializePointer, should be sent?"
@@ -1158,13 +1158,13 @@ atAddress: address "<Integer>" dataSize: dataByteSize "<Integer>" "^<Alien>"
 		addressFieldPut: address;
 		yourself! !
 
-!Alien class methodsFor: 'instance creation' stamp: 'eem 12/3/2008 09:50'!
+!Alien class methodsFor: 'instance creation' stamp: 'eem 3/Dec/2008 09:50:00'!
 dataSize "^<Integer>"
 	"Answer the number of bytes required to represent an instance of the receiver.
 	This excludes the size word's own bytes and is just the size of the data."
 	^self subclassResponsibility! !
 
-!Alien class methodsFor: 'instance creation' stamp: 'eem 12/14/2015 11:46'!
+!Alien class methodsFor: 'instance creation' stamp: 'eem 14/Dec/2015 11:46:00'!
 forPointer: address "<Integer>" "^<Alien>"
 	"N.B.  This method assumes one is creating a pointer to already initialized data, hence initiaize is not sent.
 	(Perhaps some alternative, eg. initializePointer, should be sent?"
@@ -1173,30 +1173,30 @@ forPointer: address "<Integer>" "^<Alien>"
 		addressFieldPut: address;
 		yourself! !
 
-!Alien class methodsFor: 'instance creation' stamp: 'eem 2/15/2018 08:28'!
+!Alien class methodsFor: 'instance creation' stamp: 'eem 15/Feb/2018 08:28:00'!
 forWord "<Integer>" "^<Alien>"
 	^(self basicNew: WordSize * 2)
 		sizeFieldPut: WordSize;
 		yourself! !
 
-!Alien class methodsFor: 'instance creation' stamp: 'eem 11/27/2007 10:47'!
+!Alien class methodsFor: 'instance creation' stamp: 'eem 27/Nov/2007 10:47:00'!
 new
 	"Answer a new instance of the default size whose data resides on the Smalltalk heap directly in the instance."
 	^self new: self dataSize! !
 
-!Alien class methodsFor: 'instance creation' stamp: 'eem 12/14/2015 11:45'!
+!Alien class methodsFor: 'instance creation' stamp: 'eem 14/Dec/2015 11:45:00'!
 new: byteSize
 	"Answer a new instance of the given byte size whose data resides on the Smalltalk heap directly in the instance."
 	^(self basicNew: byteSize + WordSize)
 		sizeFieldPut: byteSize;
 		initialize! !
 
-!Alien class methodsFor: 'instance creation' stamp: 'eem 11/6/2007 12:13'!
+!Alien class methodsFor: 'instance creation' stamp: 'eem 6/Nov/2007 12:13:00'!
 newC
 	"Answer a new instance of the default size whose data resides on the external C heap."
 	^self newC: self dataSize! !
 
-!Alien class methodsFor: 'instance creation' stamp: 'eem 12/14/2015 11:45'!
+!Alien class methodsFor: 'instance creation' stamp: 'eem 14/Dec/2015 11:45:00'!
 newC: byteSize
 	"Answer a new instance of the given byte size whose data resides on the external C heap.
 	 As with instances residing on the Smalltalk heap the data is zero-filled."
@@ -1205,7 +1205,7 @@ newC: byteSize
 		addressFieldPut: (self Ccalloc: byteSize);
 		initialize! !
 
-!Alien class methodsFor: 'instance creation' stamp: 'TorstenBergmann 1/8/2018 19:50'!
+!Alien class methodsFor: 'instance creation' stamp: 'TorstenBergmann 8/Jan/2018 19:50:00'!
 newCString: aString "<String> ^<Alien>"
 	"Answer an Alien pointing to a null-terminated copy of aString on the external C heap."
 
@@ -1216,13 +1216,13 @@ newCString: aString "<String> ^<Alien>"
 		unsignedByteAt: size + 1 put: 0;
 		yourself! !
 
-!Alien class methodsFor: 'instance creation' stamp: 'eem 12/2/2008 12:01'!
+!Alien class methodsFor: 'instance creation' stamp: 'eem 2/Dec/2008 12:01:00'!
 newGC
 	"Answer a new instance of the default size whose data resides on the external C heap,
 	 and whose data will be reclaimed automatically when the instance is garbage collected."
 	^self newGC: self dataSize! !
 
-!Alien class methodsFor: 'instance creation' stamp: 'jmv 1/17/2025 15:47:29'!
+!Alien class methodsFor: 'instance creation' stamp: 'jmv 17/Jan/2025 15:47:29'!
 newGC: byteSize
 	"Answer a new instance of the given byte size whose data resides on the external C heap,
 	 and whose data will be reclaimed automatically when the instance is garbage collected.
@@ -1237,7 +1237,7 @@ newGC: byteSize
 		initialize.
 	^alien! !
 
-!Alien class methodsFor: 'instance creation' stamp: 'eem 12/14/2015 11:45'!
+!Alien class methodsFor: 'instance creation' stamp: 'eem 14/Dec/2015 11:45:00'!
 rawNewC: byteSize
 	"Answer a new instance of the given byte size whose data resides on the external C heap.
 	 Unlike newC: the data is *not* zero-filled."
@@ -1246,7 +1246,7 @@ rawNewC: byteSize
 		addressFieldPut: (self Cmalloc: byteSize);
 		initialize! !
 
-!Alien class methodsFor: 'class initialization' stamp: 'eem 7/27/2022 10:04'!
+!Alien class methodsFor: 'class initialization' stamp: 'eem 27/Jul/2022 10:04:00'!
 ensureInSpecialObjectsArray
 	"Alien must be in the specialObjectsArray to enable various primitives, FFI marshalling of
 	 Aliens, and especially callbacks.  Because of the bootstrap the specialObjectsArray may
@@ -1274,7 +1274,7 @@ ensureInSpecialObjectsArray
 
 	Smalltalk specialObjectsArray at: index put: self! !
 
-!Alien class methodsFor: 'class initialization' stamp: 'eem 3/8/2016 14:11'!
+!Alien class methodsFor: 'class initialization' stamp: 'eem 8/Mar/2016 14:11:00'!
 ensureNotifiedAtStartup
 	"Alien needs to be notified at system startup to clear the LoadedLibraries table
 	and otherwise sanitise Aliens with dangling pointers."
@@ -1286,7 +1286,7 @@ ensureNotifiedAtStartup
 				atPriority: 60]
 		ifNil: [Smalltalk addToStartUpList: self after: Delay]! !
 
-!Alien class methodsFor: 'class initialization' stamp: 'jmv 1/17/2025 15:48:56'!
+!Alien class methodsFor: 'class initialization' stamp: 'jmv 17/Jan/2025 15:48:56'!
 initialize
 	"Alien initialize"
 	LoadedLibraries ifNil:
@@ -1301,7 +1301,7 @@ initialize
 	self ensureInSpecialObjectsArray.
 	self ensureNotifiedAtStartup! !
 
-!Alien class methodsFor: 'libraries' stamp: 'eem 6/18/2016 16:33'!
+!Alien class methodsFor: 'libraries' stamp: 'eem 18/Jun/2016 16:33:00'!
 ensureLoaded: aLibraryName "<String> ^<Alien>"
 	^LoadedLibraries
 		at: aLibraryName
@@ -1314,14 +1314,14 @@ ensureLoaded: aLibraryName "<String> ^<Alien>"
 				ifFalse: [alien unsignedLongLongAt: 1 put: lib].
 			 alien]! !
 
-!Alien class methodsFor: 'libraries' stamp: 'eem 5/19/2012 13:53'!
+!Alien class methodsFor: 'libraries' stamp: 'eem 19/May/2012 13:53:00'!
 lookup: symbol "<String>" inLibrary: libraryNameOrAlien "<String|Alien> ^<Alien>"
 	^self forPointer: ((libraryNameOrAlien isString
 						ifTrue: [self ensureLoaded: libraryNameOrAlien]
 						ifFalse: [libraryNameOrAlien])
 							primFindSymbol: symbol)! !
 
-!Alien class methodsFor: 'libraries' stamp: 'eem 12/10/2019 20:56'!
+!Alien class methodsFor: 'libraries' stamp: 'eem 10/Dec/2019 20:56:00'!
 lookupOrNil: symbol  "<String>" inLibrary: libraryName "<String> ^<Alien>"
 	"Answer the address of symbol in libraryName, or nil if it is not in the library.
 	Exceptions will be raised for invalid libraries, symbol names, etc."
@@ -1329,7 +1329,7 @@ lookupOrNil: symbol  "<String>" inLibrary: libraryName "<String> ^<Alien>"
 		on: LibrarySymbolNotFoundError
 		do: [:ex| nil]! !
 
-!Alien class methodsFor: 'examples' stamp: 'eem 7/20/2021 16:08'!
+!Alien class methodsFor: 'examples' stamp: 'eem 20/Jul/2021 16:08:00'!
 exampleCqsort
 	"Call the libc qsort function (which requires a callback)."
 	"Alien exampleCqsort"
@@ -1362,7 +1362,7 @@ exampleCqsort
 	values free.
 	^{ orig. sort. usecs. callbackCount }! !
 
-!Alien class methodsFor: 'examples' stamp: 'eem 5/31/2024 17:39:51'!
+!Alien class methodsFor: 'examples' stamp: 'eem 31/May/2024 17:39:51'!
 libcName
 	| platform macosVersionNumber |
 	platform := Smalltalk platformName.
@@ -1382,11 +1382,11 @@ libcName
 		[^'msvcrt.dll'].
 	^nil! !
 
-!Alien class methodsFor: 'finalization' stamp: 'eem 12/21/2007 15:15'!
+!Alien class methodsFor: 'finalization' stamp: 'eem 21/Dec/2007 15:15:00'!
 finalize: mallocTag
 	self primFree: mallocTag! !
 
-!Alien class methodsFor: 'callbacks' stamp: 'eem 10/17/2020 17:53'!
+!Alien class methodsFor: 'callbacks' stamp: 'eem 17/Oct/2020 17:53:00'!
 invokeCallbackContext: vmCallbackContextAddress "<Integer>"
 	"The low-level entry-point for callbacks sent from the VM/IA32ABI plugin.
 	 Evaluate the callback corresponding to the thunk referenced by vmCallbackContextAddress,
@@ -1416,12 +1416,12 @@ invokeCallbackContext: vmCallbackContextAddress "<Integer>"
 		whileFalse:
 			[lifoCallbackSemaphore wait]! !
 
-!Alien class methodsFor: 'primitives-library loading' stamp: 'eem 12/5/2008 09:41'!
+!Alien class methodsFor: 'primitives-library loading' stamp: 'eem 5/Dec/2008 09:41:00'!
 primInLibrary: libraryHandle "<Alien>" findSymbol: symbolName "<String> ^<Integer>"
 	<primitive: 'primInLibraryFindSymbol' module: 'IA32ABI' error: errorCode>
 	^self primitiveFailed! !
 
-!Alien class methodsFor: 'primitives-library loading' stamp: 'eem 12/5/2008 09:41'!
+!Alien class methodsFor: 'primitives-library loading' stamp: 'eem 5/Dec/2008 09:41:00'!
 primLoadLibrary: libraryName "<String> ^<Integer>"
 	"Attempt to load the shared library/DLL named libraryName and
 	 answer a handle which can be used in primFindSymbol:inLibrary:,
@@ -1429,7 +1429,7 @@ primLoadLibrary: libraryName "<String> ^<Integer>"
 	<primitive: 'primLoadLibrary' module: 'IA32ABI' error: errorCode>
 	^self primitiveFailed! !
 
-!Alien class methodsFor: 'system startup' stamp: 'eem 05/31/2024 18:32'!
+!Alien class methodsFor: 'system startup' stamp: 'eem 31/May/2024 18:32:00'!
 startUp: resuming
 	resuming ifTrue:
 		["Any addresses in the finalization registry at the time the image
@@ -1448,23 +1448,23 @@ startUp: resuming
 		 "Makes sure no stale libraries remain."
 		 LoadedLibraries := Dictionary new]! !
 
-!Alien class methodsFor: 'accessing' stamp: 'eem 2/15/2018 09:24'!
+!Alien class methodsFor: 'accessing' stamp: 'eem 15/Feb/2018 09:24:00'!
 wordSize
 	^WordSize! !
 
-!Alien class methodsFor: 'primitives-callbacks' stamp: 'eem 10/17/2020 14:15'!
+!Alien class methodsFor: 'primitives-callbacks' stamp: 'eem 17/Oct/2020 14:15:00'!
 mostRecentCallbackContextAddress
 	"Answer the address of the mostRecentCallbackContext, which will be 0 if no callback is running.
 	 Does not fail (if the plugin is present and implements the primitive)."
 	<primitive: 'primMostRecentCallbackContext' module: 'IA32ABI' error: ec>
 	self primitiveFailed! !
 
-!AbstractVMCallbackContext methodsFor: 'accessing' stamp: 'eem 9/27/2020 16:52'!
+!AbstractVMCallbackContext methodsFor: 'accessing' stamp: 'eem 27/Sep/2020 16:52:00'!
 voidResult
 	"Actually return garbage via retword"
 	^1! !
 
-!AbstractVMCallbackContext methodsFor: 'primitives' stamp: 'eem 10/17/2020 18:40'!
+!AbstractVMCallbackContext methodsFor: 'primitives' stamp: 'eem 17/Oct/2020 18:40:00'!
 primSignal: aSemaphore andReturnAs: anIntegerTypeCode fromContext: aContext
 	"Attempt to return from a callback. This must be done in LIFO order.  The IA32ABI
 	 plugin maintains a linked list of vmCallbackContextAddresses to record this order.
@@ -1476,44 +1476,44 @@ primSignal: aSemaphore andReturnAs: anIntegerTypeCode fromContext: aContext
 	<primitive: 'primReturnAsFromContextThrough' module: 'IA32ABI' error: ec>
 	^self primitiveFailed! !
 
-!AbstractVMCallbackContext class methodsFor: 'instance creation' stamp: 'eem 10/14/2010 14:01'!
+!AbstractVMCallbackContext class methodsFor: 'instance creation' stamp: 'eem 14/Oct/2010 14:01:00'!
 dataSize
 	"We only access the fields before trampoline, so this is fine."
 	^32! !
 
-!VMCallbackContext32 methodsFor: 'accessing' stamp: 'eem 4/9/2014 17:20'!
+!VMCallbackContext32 methodsFor: 'accessing' stamp: 'eem 9/Apr/2014 17:20:00'!
 floatResult: aFloat
 	self doubleAt: 25 put: aFloat.
 	^3! !
 
-!VMCallbackContext32 methodsFor: 'accessing' stamp: 'eem 10/15/2010 10:12'!
+!VMCallbackContext32 methodsFor: 'accessing' stamp: 'eem 15/Oct/2010 10:12:00'!
 floatregargsp
 	^Alien forPointer: (self unsignedLongAt: 13)! !
 
-!VMCallbackContext32 methodsFor: 'accessing' stamp: 'eem 10/15/2010 10:12'!
+!VMCallbackContext32 methodsFor: 'accessing' stamp: 'eem 15/Oct/2010 10:12:00'!
 intregargsp
 	^Alien forPointer: (self unsignedLongAt: 9)! !
 
-!VMCallbackContext32 methodsFor: 'accessing' stamp: 'eem 10/26/2020 20:32'!
+!VMCallbackContext32 methodsFor: 'accessing' stamp: 'eem 26/Oct/2020 20:32:00'!
 oopResult: anObject
 	"Accept any object."
 	self oopAt: 25 put: anObject.
 	^1! !
 
-!VMCallbackContext32 methodsFor: 'accessing' stamp: 'RonieSalgado 2/13/2017 23:18'!
+!VMCallbackContext32 methodsFor: 'accessing' stamp: 'RonieSalgado 13/Feb/2017 23:18:00'!
 singleFloatResult: aFloat
 	self floatAt: 25 put: aFloat.
 	^3! !
 
-!VMCallbackContext32 methodsFor: 'accessing' stamp: 'eem 10/14/2010 21:59'!
+!VMCallbackContext32 methodsFor: 'accessing' stamp: 'eem 14/Oct/2010 21:59:00'!
 stackp
 	^Alien forPointer: (self unsignedLongAt: 5)! !
 
-!VMCallbackContext32 methodsFor: 'accessing' stamp: 'eem 10/12/2010 17:36'!
+!VMCallbackContext32 methodsFor: 'accessing' stamp: 'eem 12/Oct/2010 17:36:00'!
 thunkp
 	^self unsignedLongAt: 1! !
 
-!VMCallbackContext32 methodsFor: 'accessing' stamp: 'eem 6/17/2016 18:44'!
+!VMCallbackContext32 methodsFor: 'accessing' stamp: 'eem 17/Jun/2016 18:44:00'!
 wordResult: aValue
 	"Accept any value in the -2^31 to 2^32-1 range or booleans."
 	| anInteger |
@@ -1526,52 +1526,52 @@ wordResult: aValue
 		ifFalse: [self signedLongAt: 25 put: anInteger].
 	^1! !
 
-!VMCallbackContext32 methodsFor: 'accessing' stamp: 'eem 10/14/2010 13:47'!
+!VMCallbackContext32 methodsFor: 'accessing' stamp: 'eem 14/Oct/2010 13:47:00'!
 wordSize
 	^4! !
 
-!VMCallbackContext32 methodsFor: 'accessing-debugging' stamp: 'eem 10/17/2020 18:30'!
+!VMCallbackContext32 methodsFor: 'accessing-debugging' stamp: 'eem 17/Oct/2020 18:30:00'!
 savedMostRecentCallbackContext
 	^self unsignedLongAt: 37! !
 
-!VMCallbackContext32 class methodsFor: 'instance creation' stamp: 'eem 10/14/2010 14:01'!
+!VMCallbackContext32 class methodsFor: 'instance creation' stamp: 'eem 14/Oct/2010 14:01:00'!
 dataSize
 	"We only access the fields before trampoline, so this is fine."
 	^32! !
 
-!VMCallbackContext64 methodsFor: 'accessing' stamp: 'eem 10/15/2010 10:14'!
+!VMCallbackContext64 methodsFor: 'accessing' stamp: 'eem 15/Oct/2010 10:14:00'!
 floatResult: aFloat
 	self doubleAt: 49 put: aFloat.
 	^3! !
 
-!VMCallbackContext64 methodsFor: 'accessing' stamp: 'eem 6/17/2016 13:02'!
+!VMCallbackContext64 methodsFor: 'accessing' stamp: 'eem 17/Jun/2016 13:02:00'!
 floatregargsp
 	^Alien forPointer: (self unsignedLongLongAt: 25)! !
 
-!VMCallbackContext64 methodsFor: 'accessing' stamp: 'eem 6/17/2016 13:02'!
+!VMCallbackContext64 methodsFor: 'accessing' stamp: 'eem 17/Jun/2016 13:02:00'!
 intregargsp
 	^Alien forPointer: (self unsignedLongLongAt: 17)! !
 
-!VMCallbackContext64 methodsFor: 'accessing' stamp: 'eem 10/26/2020 20:33'!
+!VMCallbackContext64 methodsFor: 'accessing' stamp: 'eem 26/Oct/2020 20:33:00'!
 oopResult: anObject
 	"Accept any object."
 	self oopAt: 49 put: anObject.
 	^1! !
 
-!VMCallbackContext64 methodsFor: 'accessing' stamp: 'RonieSalgado 2/13/2017 23:18'!
+!VMCallbackContext64 methodsFor: 'accessing' stamp: 'RonieSalgado 13/Feb/2017 23:18:00'!
 singleFloatResult: aFloat
 	self floatAt: 49 put: aFloat.
 	^3! !
 
-!VMCallbackContext64 methodsFor: 'accessing' stamp: 'eem 10/15/2010 10:13'!
+!VMCallbackContext64 methodsFor: 'accessing' stamp: 'eem 15/Oct/2010 10:13:00'!
 stackp
 	^Alien forPointer: (self unsignedLongLongAt: 9)! !
 
-!VMCallbackContext64 methodsFor: 'accessing' stamp: 'eem 10/12/2010 17:35'!
+!VMCallbackContext64 methodsFor: 'accessing' stamp: 'eem 12/Oct/2010 17:35:00'!
 thunkp
 	^self unsignedLongLongAt: 1! !
 
-!VMCallbackContext64 methodsFor: 'accessing' stamp: 'eem 6/17/2016 18:44'!
+!VMCallbackContext64 methodsFor: 'accessing' stamp: 'eem 17/Jun/2016 18:44:00'!
 wordResult: aValue
 	"Accept any value in the -2^63 to 2^64-1 range or booleans."
 	| anInteger |
@@ -1584,31 +1584,31 @@ wordResult: aValue
 		ifFalse: [self signedLongLongAt: 49 put: anInteger].
 	^1! !
 
-!VMCallbackContext64 methodsFor: 'accessing' stamp: 'eem 10/14/2010 13:47'!
+!VMCallbackContext64 methodsFor: 'accessing' stamp: 'eem 14/Oct/2010 13:47:00'!
 wordSize
 	^8! !
 
-!VMCallbackContext64 methodsFor: 'accessing-debugging' stamp: 'eem 10/17/2020 18:28'!
+!VMCallbackContext64 methodsFor: 'accessing-debugging' stamp: 'eem 17/Oct/2020 18:28:00'!
 savedMostRecentCallbackContext
 	^self unsignedLongLongAt: 73! !
 
-!VMCallbackContext64 class methodsFor: 'instance creation' stamp: 'eem 10/14/2010 14:01'!
+!VMCallbackContext64 class methodsFor: 'instance creation' stamp: 'eem 14/Oct/2010 14:01:00'!
 dataSize
 	"We only access the fields before trampoline, so this is fine."
 	^64! !
 
-!FFICallbackThunk methodsFor: 'accessing' stamp: 'eem 1/29/2008 13:06'!
+!FFICallbackThunk methodsFor: 'accessing' stamp: 'eem 29/Jan/2008 13:06:00'!
 address
 	"Thunks are hacked - again they need to be indirect objects with a 0 size field."
 	^self addressField! !
 
-!FFICallbackThunk methodsFor: 'accessing' stamp: 'eem 9/28/2020 15:18'!
+!FFICallbackThunk methodsFor: 'accessing' stamp: 'eem 28/Sep/2020 15:18:00'!
 thunk
 	"For polymorphism and coercion with Callback>>thunk, which answers an instance of me.
 	 Instead of answering an error if a client sends thunk to a Callback's thunk, just answer self."
 	^self! !
 
-!FFICallbackThunk methodsFor: 'memory management' stamp: 'eem 12/21/2007 15:38'!
+!FFICallbackThunk methodsFor: 'memory management' stamp: 'eem 21/Dec/2007 15:38:00'!
 free
 	"Recycle the memory in the executable page containing the receiver's thunk.
 	 Since the receiver is a derived pointer to a block in an executable page this
@@ -1621,7 +1621,7 @@ free
 			[self addressFieldPut: 0.
 			 self class freeBlockInExecutablePage: address]]! !
 
-!FFICallbackThunk methodsFor: 'private-instance initalization' stamp: 'eem 2/15/2018 10:21'!
+!FFICallbackThunk methodsFor: 'private-instance initalization' stamp: 'eem 15/Feb/2018 10:21:00'!
 initializeARM32
 	"Initialize the receiver with a __ccall thunk.  The thunk calls thunkEntry in the Alien/IA32ABI plugin,
 	 whose source is in platforms/Cross/plugins/IA32ABI/arm32abicc.c.  thunkEntry is the entry point
@@ -1661,7 +1661,7 @@ initializeARM32
 
 	"self newCCall"! !
 
-!FFICallbackThunk methodsFor: 'private-instance initalization' stamp: 'eem 7/19/2021 17:33'!
+!FFICallbackThunk methodsFor: 'private-instance initalization' stamp: 'eem 19/Jul/2021 17:33:00'!
 initializeARMv8
 	"Initialize the receiver with a __ccall thunk.  The thunk calls thunkEntry in the Alien/IA32ABI plugin,
 	 whose source is in platforms/Cross/plugins/IA32ABI/arm64abicc.c.  thunkEntry is the entry point
@@ -1695,7 +1695,7 @@ initializeARMv8
 
 	"self newCCall"! !
 
-!FFICallbackThunk methodsFor: 'private-instance initalization' stamp: 'KenD 8/1/2022 11:22'!
+!FFICallbackThunk methodsFor: 'private-instance initalization' stamp: 'KenD 1/Aug/2022 11:22:00'!
 initializeRiscV64
 	"Initialize the receiver with a __ccall thunk.  The thunk calls thunkEntry in the Alien/IA32ABI plugin,
 	 whose source is in platforms/Cross/plugins/IA32ABI/riscv64abicc.c.  thunkEntry is the entry point
@@ -1741,13 +1741,13 @@ initializeRiscV64
 
 	"self newCCall"! !
 
-!FFICallbackThunk methodsFor: 'private-instance initalization' stamp: 'eem 6/17/2016 10:52'!
+!FFICallbackThunk methodsFor: 'private-instance initalization' stamp: 'eem 17/Jun/2016 10:52:00'!
 initializeStdcall: bytes
 	"Initialize the receiver with a __stdcall thunk with bytes argument bytes."
 	Callback abi caseOf: {
 	['IA32']		->	[self initializeX86Stdcall: bytes] }! !
 
-!FFICallbackThunk methodsFor: 'private-instance initalization' stamp: 'eem 9/30/2020 00:13'!
+!FFICallbackThunk methodsFor: 'private-instance initalization' stamp: 'eem 30/Sep/2020 00:13:00'!
 initializeX64
 	"Initialize the receiver with a __ccall thunk.  The thunk calls thunkEntry in the Alien/IA32ABI plugin,
 	 whose source is in platforms/Cross/plugins/IA32ABI/x64sysvabicc.c.  thunkEntry is the entry point
@@ -1784,7 +1784,7 @@ initializeX64
 
 	"self newCCall"! !
 
-!FFICallbackThunk methodsFor: 'private-instance initalization' stamp: 'eem 9/30/2020 00:13'!
+!FFICallbackThunk methodsFor: 'private-instance initalization' stamp: 'eem 30/Sep/2020 00:13:00'!
 initializeX64Win64
 	"Initialize the receiver with a __ccall thunk.  The thunk calls thunkEntry in the Alien/IA32ABI plugin,
 	 whose source is in platforms/Cross/plugins/IA32ABI/x64win64abicc.c.  thunkEntry is the entry point
@@ -1822,7 +1822,7 @@ initializeX64Win64
 
 	"self newCCall"! !
 
-!FFICallbackThunk methodsFor: 'private-instance initalization' stamp: 'eem 2/15/2018 10:19'!
+!FFICallbackThunk methodsFor: 'private-instance initalization' stamp: 'eem 15/Feb/2018 10:19:00'!
 initializeX86
 	"Initialize the receiver with a __ccall thunk.  The thunk calls thunkEntry in the Alien/IA32ABI plugin,
 	 whose source is in platforms/Cross/plugins/IA32ABI/x64win64abicc.c.  thunkEntry is the entry point
@@ -1856,7 +1856,7 @@ initializeX86
 		unsignedLongAt: 17 put: 16rC483D0FF;
 		unsignedLongAt: 21 put: 16r9090C30C! !
 
-!FFICallbackThunk methodsFor: 'private-instance initalization' stamp: 'eem 2/15/2018 10:08'!
+!FFICallbackThunk methodsFor: 'private-instance initalization' stamp: 'eem 15/Feb/2018 10:08:00'!
 initializeX86Stdcall: bytes
 	"Initialize the receiver with a __stdcall thunk with bytes argument bytes. (See initializeX86 fort more info)"
 	"thunk:		push   %esp				0x54							0xa1905454
@@ -1880,11 +1880,11 @@ initializeX86Stdcall: bytes
 		unsignedShortAt: 21 put: 16rC20C;
 		unsignedShortAt: 23 put: bytes! !
 
-!FFICallbackThunk methodsFor: 'primitives-memory management' stamp: 'eem 12/21/2007 15:45'!
+!FFICallbackThunk methodsFor: 'primitives-memory management' stamp: 'eem 21/Dec/2007 15:45:00'!
 primFree
 	self shouldNotImplement! !
 
-!FFICallbackThunk methodsFor: 'private-primitives' stamp: 'eem 6/17/2016 13:07'!
+!FFICallbackThunk methodsFor: 'private-primitives' stamp: 'eem 17/Jun/2016 13:07:00'!
 primThunkEntryAddress "^<Integer>"
 	"Answer the address of the entry-point for thunk callbacks:
 		x86: long thunkEntry(void *thunkp, long *stackp);
@@ -1901,11 +1901,11 @@ primThunkEntryAddress "^<Integer>"
 	<primitive: 'primThunkEntryAddress' module: 'IA32ABI' error: errorCode>
 	^self primitiveFailed! !
 
-!FFICallbackThunk methodsFor: 'finalization' stamp: 'jmv 1/17/2025 15:46:03'!
+!FFICallbackThunk methodsFor: 'finalization' stamp: 'jmv 17/Jan/2025 15:46:03'!
 finalizationRegistry
 	^AllocatedThunks! !
 
-!FFICallbackThunk class methodsFor: 'executable page management' stamp: 'eem 12/5/2008 09:41'!
+!FFICallbackThunk class methodsFor: 'executable page management' stamp: 'eem 5/Dec/2008 09:41:00'!
 allocateExecutablePage "^<Alien>"
 	"Answer an Alien around a piece of (probably malloced) memory, of some multiple
 	 of the pagesize, that has execute permissions set.  This memory can be parcelled
@@ -1913,7 +1913,7 @@ allocateExecutablePage "^<Alien>"
 	<primitive: 'primAllocateExecutablePage' module: 'IA32ABI' error: errorCode>
 	^self primitiveFailed! !
 
-!FFICallbackThunk class methodsFor: 'executable page management' stamp: 'eem 7/19/2021 13:25'!
+!FFICallbackThunk class methodsFor: 'executable page management' stamp: 'eem 19/Jul/2021 13:25:00'!
 freeBlockInExecutablePage: address
 	ExecutablePages do:
 		[:alienPage| | alienAddress |
@@ -1923,7 +1923,7 @@ freeBlockInExecutablePage: address
 			[^alienPage replaceFrom: address - alienAddress + 1 to:address - alienAddress + 4 with: #[0 0 0 0] startingAt: 1]]
 			! !
 
-!FFICallbackThunk class methodsFor: 'executable page management' stamp: 'eem 7/19/2021 13:41'!
+!FFICallbackThunk class methodsFor: 'executable page management' stamp: 'eem 19/Jul/2021 13:41:00'!
 unusedBlockInExecutablePage
 	"Callback thunks must be executable. This is achieved by allocating one or more executable pages
 	 of memory via the allocateExecutablePage, and allocating dataSize sized chunks from them, marking
@@ -1951,11 +1951,11 @@ unusedBlockInExecutablePage
 			replaceFrom: 1 to: 4 with: 'used' startingAt: 1;
 			address]! !
 
-!FFICallbackThunk class methodsFor: 'instance creation' stamp: 'eem 7/19/2021 17:19'!
+!FFICallbackThunk class methodsFor: 'instance creation' stamp: 'eem 19/Jul/2021 17:19:00'!
 dataSize
 	^48 "see FFICallbackThunk initialize & initializeStdcall:; must be big enough for the largest thunk created."! !
 
-!FFICallbackThunk class methodsFor: 'instance creation' stamp: 'KenD 7/27/2022 10:26'!
+!FFICallbackThunk class methodsFor: 'instance creation' stamp: 'KenD 27/Jul/2022 10:26:00'!
 initializerForPlatform
 	"Answer the relevant initialize method for a C calling convention thunk on the current platform."
 	^Callback abi caseOf: {
@@ -1967,18 +1967,18 @@ initializerForPlatform
 	['RiscV64']		-> [#initializeRiscV64]
 	}! !
 
-!FFICallbackThunk class methodsFor: 'instance creation' stamp: 'eem 9/30/2020 08:52'!
+!FFICallbackThunk class methodsFor: 'instance creation' stamp: 'eem 30/Sep/2020 08:52:00'!
 newCCall
 	"Answer a new instance for the C calling-convention."
 	^self privateFinalizingNew perform: (initializer ifNil: [initializer := self initializerForPlatform])! !
 
-!FFICallbackThunk class methodsFor: 'instance creation' stamp: 'eem 12/21/2007 15:32'!
+!FFICallbackThunk class methodsFor: 'instance creation' stamp: 'eem 21/Dec/2007 15:32:00'!
 newStdCall: argBytes
 	"Answer a new instance for Windows' StdCall (Pascal) convention, given the
 	 size of the arguments in bytes (bytes to cut-back from the stack on return)."
 	^self privateFinalizingNew initializeStdcall: argBytes! !
 
-!FFICallbackThunk class methodsFor: 'instance creation' stamp: 'jmv 1/17/2025 15:47:33'!
+!FFICallbackThunk class methodsFor: 'instance creation' stamp: 'jmv 17/Jan/2025 15:47:33'!
 privateFinalizingNew
 	"Answer a new instance that will free its page when garbage collected."
 	| address answer |
@@ -1987,7 +1987,7 @@ privateFinalizingNew
 	answer toFinalizeSend: #finalize: to: self with: address.
 	^answer! !
 
-!FFICallbackThunk class methodsFor: 'class initialization' stamp: 'nice 3/2/2020 10:32'!
+!FFICallbackThunk class methodsFor: 'class initialization' stamp: 'nice 2/Mar/2020 10:32:00'!
 ensureNotifiedAtStartup
 	"FFICallbackThunk needs to be notified at system startup to clear the ExecutablePages table."
 	self ~~ FFICallbackThunk ifTrue: [^self].
@@ -2000,7 +2000,7 @@ ensureNotifiedAtStartup
 			[Alien ensureNotifiedAtStartup.
 			Smalltalk addToStartUpList: self after: Alien]! !
 
-!FFICallbackThunk class methodsFor: 'class initialization' stamp: 'jmv 1/17/2025 15:49:03'!
+!FFICallbackThunk class methodsFor: 'class initialization' stamp: 'jmv 17/Jan/2025 15:49:03'!
 initialize
 	"FFICallbackThunk initialize"
 	AccessProtect := Semaphore forMutualExclusion.
@@ -2008,7 +2008,7 @@ initialize
 	ExecutablePages := Set new.
 	self ensureNotifiedAtStartup! !
 
-!FFICallbackThunk class methodsFor: 'class initialization' stamp: 'eem 9/30/2020 08:48'!
+!FFICallbackThunk class methodsFor: 'class initialization' stamp: 'eem 30/Sep/2020 08:48:00'!
 startUp: inANewImageSession
 	"Any thunks in the finalization registry at the time the image comes up in a
 	 new session MUST NOT be finalized and should immediately be discarded.
@@ -2019,25 +2019,25 @@ startUp: inANewImageSession
 		ExecutablePages := Set new.
 		initializer := nil]! !
 
-!FFICallbackThunk class methodsFor: 'finalization' stamp: 'eem 12/21/2007 15:17'!
+!FFICallbackThunk class methodsFor: 'finalization' stamp: 'eem 21/Dec/2007 15:17:00'!
 finalize: address
 	self freeBlockInExecutablePage: address! !
 
-!String methodsFor: '*Alien-Core' stamp: 'eem 2/21/2008 15:45'!
+!String methodsFor: '*Alien-Core' stamp: 'eem 21/Feb/2008 15:45:00'!
 asAlien
 	| bs |
 	^(Alien newC: (bs := self byteSize) + 1)
 		replaceFrom: 1 to: bs with: self startingAt: 1! !
 
-!False methodsFor: '*Alien-Core' stamp: 'John M McIntosh 11/17/2008 17:02'!
+!False methodsFor: '*Alien-Core' stamp: 'John M McIntosh 17/Nov/2008 17:02:00'!
 asAlien
 	^ 0! !
 
-!True methodsFor: '*Alien-Core' stamp: 'eem 1/25/2008 13:09'!
+!True methodsFor: '*Alien-Core' stamp: 'eem 25/Jan/2008 13:09:00'!
 asAlien
 	^ 1! !
 
-!UndefinedObject methodsFor: '*Alien-Core' stamp: 'eem 1/25/2008 13:10'!
+!UndefinedObject methodsFor: '*Alien-Core' stamp: 'eem 25/Jan/2008 13:10:00'!
 asAlien
 	^0! !
 Callback initialize!

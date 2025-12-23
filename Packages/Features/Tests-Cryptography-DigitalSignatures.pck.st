@@ -1,37 +1,37 @@
-'From Cuis 5.0 [latest update: #4415] on 22 October 2020 at 9:35:07 pm'!
+'From Cuis7.7 [latest update: #7779] on 23 December 2025 at 4:40:26 pm'!
 'Description '!
 !provides: 'Tests-Cryptography-DigitalSignatures' 1 0!
 !requires: 'Cryptography-DigitalSignatures' 1 14 nil!
-SystemOrganization addCategory: 'Tests-Cryptography-DigitalSignatures'!
+SystemOrganization addCategory: #'Tests-Cryptography-DigitalSignatures'!
 
 
-!classDefinition: #SecureHashAlgorithm256Test category: 'Tests-Cryptography-DigitalSignatures'!
+!classDefinition: #SecureHashAlgorithm256Test category: #'Tests-Cryptography-DigitalSignatures'!
 TestCase subclass: #SecureHashAlgorithm256Test
 	instanceVariableNames: 'hash usedClass'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Tests-Cryptography-DigitalSignatures'!
-!classDefinition: 'SecureHashAlgorithm256Test class' category: 'Tests-Cryptography-DigitalSignatures'!
+!classDefinition: 'SecureHashAlgorithm256Test class' category: #'Tests-Cryptography-DigitalSignatures'!
 SecureHashAlgorithm256Test class
 	instanceVariableNames: ''!
 
-!classDefinition: #SecureHashAlgorithmTest category: 'Tests-Cryptography-DigitalSignatures'!
+!classDefinition: #SecureHashAlgorithmTest category: #'Tests-Cryptography-DigitalSignatures'!
 TestCase subclass: #SecureHashAlgorithmTest
 	instanceVariableNames: 'hash'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Tests-Cryptography-DigitalSignatures'!
-!classDefinition: 'SecureHashAlgorithmTest class' category: 'Tests-Cryptography-DigitalSignatures'!
+!classDefinition: 'SecureHashAlgorithmTest class' category: #'Tests-Cryptography-DigitalSignatures'!
 SecureHashAlgorithmTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #ThirtyTwoBitRegisterTest category: 'Tests-Cryptography-DigitalSignatures'!
+!classDefinition: #ThirtyTwoBitRegisterTest category: #'Tests-Cryptography-DigitalSignatures'!
 TestCase subclass: #ThirtyTwoBitRegisterTest
 	instanceVariableNames: 'random'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Tests-Cryptography-DigitalSignatures'!
-!classDefinition: 'ThirtyTwoBitRegisterTest class' category: 'Tests-Cryptography-DigitalSignatures'!
+!classDefinition: 'ThirtyTwoBitRegisterTest class' category: #'Tests-Cryptography-DigitalSignatures'!
 ThirtyTwoBitRegisterTest class
 	instanceVariableNames: ''!
 
@@ -42,16 +42,16 @@ This is the unit test for the class SecureHashAlgorithm. Unit tests are a good w
 	- http://minnow.cc.gatech.edu/squeak/1547
 	- the sunit class category!
 
-!SecureHashAlgorithm256Test methodsFor: 'as yet unclassified' stamp: 'jpb 4/25/2020 19:18:23'!
+!SecureHashAlgorithm256Test methodsFor: 'as yet unclassified' stamp: 'jpb 25/Apr/2020 19:18:23'!
 setUp
 	usedClass _ SecureHashAlgorithm256 ! !
 
-!SecureHashAlgorithm256Test methodsFor: 'as yet unclassified' stamp: 'jpb 4/25/2020 18:25:31'!
+!SecureHashAlgorithm256Test methodsFor: 'as yet unclassified' stamp: 'jpb 25/Apr/2020 18:25:31'!
 testEmptyInput
 	self assert: 'E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855'
 		equals: ((usedClass new hashMessage: '') printStringBase: 16).! !
 
-!SecureHashAlgorithm256Test methodsFor: 'as yet unclassified' stamp: 'jpb 4/30/2020 17:26:02'!
+!SecureHashAlgorithm256Test methodsFor: 'as yet unclassified' stamp: 'jpb 30/Apr/2020 17:26:02'!
 testFoobar2Input
 	| message |
 	message _ #[16r66 16r6F 16r6F 16r62 16r61 16r72]. "foobar"
@@ -59,7 +59,7 @@ testFoobar2Input
 	self assert: 'C3AB8FF13720E8AD9047DD39466B3C8974E592C2FA383D4A3960714CAEF0C4F2' 
 		equals: ((usedClass new hashMessage: message) printStringBase: 16).! !
 
-!SecureHashAlgorithm256Test methodsFor: 'as yet unclassified' stamp: 'jpb 4/30/2020 17:24:22'!
+!SecureHashAlgorithm256Test methodsFor: 'as yet unclassified' stamp: 'jpb 30/Apr/2020 17:24:22'!
 testFoobarInput
 	| message |
 	message _ #[16r66 16r6F 16r6F 16r62 16r61 16r72 16r0A]. "foobar\n"
@@ -67,7 +67,7 @@ testFoobarInput
 	self assert:  'AEC070645FE53EE3B3763059376134F058CC337247C978ADD178B6CCDFB0019F' 
 		equals: ((usedClass new hashMessage: message) printStringBase: 16).! !
 
-!SecureHashAlgorithm256Test methodsFor: 'as yet unclassified' stamp: 'jpb 5/3/2020 22:25:32'!
+!SecureHashAlgorithm256Test methodsFor: 'as yet unclassified' stamp: 'jpb 3/May/2020 22:25:32'!
 testUsingTestVector1
 	"Source : https://www.di-mgt.com.au/sha_testvectors.html"
 	| message |
@@ -76,7 +76,7 @@ testUsingTestVector1
 	self assert: 'BA7816BF8F01CFEA414140DE5DAE2223B00361A396177A9CB410FF61F20015AD'
 		equals: ((usedClass new hashMessage: message) printStringBase: 16).! !
 
-!SecureHashAlgorithm256Test methodsFor: 'as yet unclassified' stamp: 'jpb 4/30/2020 17:33:05'!
+!SecureHashAlgorithm256Test methodsFor: 'as yet unclassified' stamp: 'jpb 30/Apr/2020 17:33:05'!
 testUsingTestVector3
 	"Source : https://www.di-mgt.com.au/sha_testvectors.html"
 	| message |
@@ -85,7 +85,7 @@ testUsingTestVector3
 	self assert: '248D6A61D20638B8E5C026930C3E6039A33CE45964FF2167F6ECEDD419DB06C1'
 		equals: ((usedClass new hashMessage: message) printStringBase: 16).! !
 
-!SecureHashAlgorithm256Test methodsFor: 'as yet unclassified' stamp: 'jpb 4/30/2020 17:36:04'!
+!SecureHashAlgorithm256Test methodsFor: 'as yet unclassified' stamp: 'jpb 30/Apr/2020 17:36:04'!
 testUsingTestVector4
 	"Source : https://www.di-mgt.com.au/sha_testvectors.html"
 	| message |
@@ -94,12 +94,12 @@ testUsingTestVector4
 	self assert: 'CF5B16A778AF8380036CE59E7B0492370B249B11E8F07A51AFAC45037AFEE9D1'
 		equals: ((usedClass new hashMessage: message) printStringBase: 16).! !
 
-!SecureHashAlgorithmTest methodsFor: 'testing - examples' stamp: 'DSG 3/28/2015 15:02'!
+!SecureHashAlgorithmTest methodsFor: 'testing - examples' stamp: 'DSG 28/Mar/2015 15:02:00'!
 testEmptyInput
 	self assert: ((SecureHashAlgorithm new hashMessage: '') printStringBase: 16)
 			= 'DA39A3EE5E6B4B0D3255BFEF95601890AFD80709'! !
 
-!SecureHashAlgorithmTest methodsFor: 'testing - examples' stamp: 'md 4/21/2003 12:23'!
+!SecureHashAlgorithmTest methodsFor: 'testing - examples' stamp: 'md 21/Apr/2003 12:23:00'!
 testExample1
 
 	"This is the first example from the specification document (FIPS PUB 180-1)"
@@ -108,7 +108,7 @@ testExample1
 	self assert: (hash = 16rA9993E364706816ABA3E25717850C26C9CD0D89D).
 		! !
 
-!SecureHashAlgorithmTest methodsFor: 'testing - examples' stamp: 'md 4/21/2003 12:23'!
+!SecureHashAlgorithmTest methodsFor: 'testing - examples' stamp: 'md 21/Apr/2003 12:23:00'!
 testExample2
 
 	"This is the second example from the specification document (FIPS PUB 180-1)"
@@ -117,7 +117,7 @@ testExample2
 		'abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq'.
 	self assert: (hash = 16r84983E441C3BD26EBAAE4AA1F95129E5E54670F1).! !
 
-!SecureHashAlgorithmTest methodsFor: 'testing - examples' stamp: 'md 4/21/2003 12:25'!
+!SecureHashAlgorithmTest methodsFor: 'testing - examples' stamp: 'md 21/Apr/2003 12:25:00'!
 testExample3
 
 	"This is the third example from the specification document (FIPS PUB 180-1). 
@@ -126,7 +126,7 @@ testExample3
 	hash := SecureHashAlgorithm new hashMessage: (String new: 1000000 withAll: $a).
 	self assert: (hash = 16r34AA973CD4C4DAA4F61EEB2BDBAD27316534016F).! !
 
-!ThirtyTwoBitRegisterTest methodsFor: 'helpers' stamp: 'ul 4/11/2015 04:21'!
+!ThirtyTwoBitRegisterTest methodsFor: 'helpers' stamp: 'ul 11/Apr/2015 04:21:00'!
 assertBinaryRegisterOperation: registerOperationBlock gives: integerOperationBlock times: n
 
 	| rx ry |
@@ -142,7 +142,7 @@ assertBinaryRegisterOperation: registerOperationBlock gives: integerOperationBlo
 		registerOperationBlock value: rx value: ry.
 		self assert: expectedResult equals: rx asInteger ]! !
 
-!ThirtyTwoBitRegisterTest methodsFor: 'helpers' stamp: 'ul 4/11/2015 04:48'!
+!ThirtyTwoBitRegisterTest methodsFor: 'helpers' stamp: 'ul 11/Apr/2015 04:48:00'!
 assertComparisonRegisterOperation: registerOperationBlock gives: integerOperationBlock times: n
 
 	| rx ry |
@@ -158,7 +158,7 @@ assertComparisonRegisterOperation: registerOperationBlock gives: integerOperatio
 		actualResult := registerOperationBlock value: rx value: ry.
 		self assert: expectedResult equals: actualResult ]! !
 
-!ThirtyTwoBitRegisterTest methodsFor: 'helpers' stamp: 'ul 4/11/2015 04:22'!
+!ThirtyTwoBitRegisterTest methodsFor: 'helpers' stamp: 'ul 11/Apr/2015 04:22:00'!
 assertUnaryRegisterOperation: registerOperationBlock gives: integerOperationBlock times: n
 
 	| rx |
@@ -171,18 +171,18 @@ assertUnaryRegisterOperation: registerOperationBlock gives: integerOperationBloc
 		registerOperationBlock value: rx.
 		self assert: expectedResult equals: rx asInteger ]! !
 
-!ThirtyTwoBitRegisterTest methodsFor: 'helpers' stamp: 'jpb 4/30/2020 18:37:57'!
+!ThirtyTwoBitRegisterTest methodsFor: 'helpers' stamp: 'jpb 30/Apr/2020 18:37:57'!
 nextRandom
 	"Return the next random 32-bit unsigned integer value."
 
 	^(random nextInteger: 4294967296) - 1! !
 
-!ThirtyTwoBitRegisterTest methodsFor: 'running' stamp: 'jpb 4/30/2020 18:37:42'!
+!ThirtyTwoBitRegisterTest methodsFor: 'running' stamp: 'jpb 30/Apr/2020 18:37:42'!
 setUp
 
 	random := Random seed: 36rSQUEAK! !
 
-!ThirtyTwoBitRegisterTest methodsFor: 'tests - accumulator ops' stamp: 'ul 4/11/2015 04:19'!
+!ThirtyTwoBitRegisterTest methodsFor: 'tests - accumulator ops' stamp: 'ul 11/Apr/2015 04:19:00'!
 testAddition
 
 	self
@@ -190,7 +190,7 @@ testAddition
 		gives: [ :x :y | x + y bitAnd: 16rFFFFFFFF ]
 		times: 10000! !
 
-!ThirtyTwoBitRegisterTest methodsFor: 'tests - accumulator ops' stamp: 'ul 4/11/2015 04:19'!
+!ThirtyTwoBitRegisterTest methodsFor: 'tests - accumulator ops' stamp: 'ul 11/Apr/2015 04:19:00'!
 testBitAnd
 
 	self
@@ -198,7 +198,7 @@ testBitAnd
 		gives: [ :x :y | x bitAnd: y ]
 		times: 10000! !
 
-!ThirtyTwoBitRegisterTest methodsFor: 'tests - accumulator ops' stamp: 'ul 4/11/2015 04:26'!
+!ThirtyTwoBitRegisterTest methodsFor: 'tests - accumulator ops' stamp: 'ul 11/Apr/2015 04:26:00'!
 testBitInvert
 
 	self
@@ -206,7 +206,7 @@ testBitInvert
 		gives: [ :x | x bitInvert32 ]
 		times: 10000! !
 
-!ThirtyTwoBitRegisterTest methodsFor: 'tests - accumulator ops' stamp: 'ul 4/11/2015 04:20'!
+!ThirtyTwoBitRegisterTest methodsFor: 'tests - accumulator ops' stamp: 'ul 11/Apr/2015 04:20:00'!
 testBitOr
 
 	self
@@ -214,7 +214,7 @@ testBitOr
 		gives: [ :x :y | x bitOr: y ]
 		times: 10000! !
 
-!ThirtyTwoBitRegisterTest methodsFor: 'tests - accumulator ops' stamp: 'ul 4/11/2015 04:20'!
+!ThirtyTwoBitRegisterTest methodsFor: 'tests - accumulator ops' stamp: 'ul 11/Apr/2015 04:20:00'!
 testBitXor
 
 	self
@@ -222,7 +222,7 @@ testBitXor
 		gives: [ :x :y | x bitXor: y ]
 		times: 10000! !
 
-!ThirtyTwoBitRegisterTest methodsFor: 'tests - accumulator ops' stamp: 'ul 4/11/2015 04:36'!
+!ThirtyTwoBitRegisterTest methodsFor: 'tests - accumulator ops' stamp: 'ul 11/Apr/2015 04:36:00'!
 testLeftRotateBy
 
 	0 to: 33 do: [ :shift |
@@ -234,7 +234,7 @@ testLeftRotateBy
 				(x << actualShift bitOr: x >> (32 - actualShift)) bitAnd: 16rFFFFFFFF ]
 			times: 1000 ]! !
 
-!ThirtyTwoBitRegisterTest methodsFor: 'tests - accumulator ops' stamp: 'ul 4/11/2015 04:25'!
+!ThirtyTwoBitRegisterTest methodsFor: 'tests - accumulator ops' stamp: 'ul 11/Apr/2015 04:25:00'!
 testLeftShift
 
 	0 to: 33 do: [ :shift |
@@ -243,7 +243,7 @@ testLeftShift
 			gives: [ :x | x << shift bitAnd: 16rFFFFFFFF ]
 			times: 1000 ]! !
 
-!ThirtyTwoBitRegisterTest methodsFor: 'tests - accumulator ops' stamp: 'ul 4/11/2015 04:20'!
+!ThirtyTwoBitRegisterTest methodsFor: 'tests - accumulator ops' stamp: 'ul 11/Apr/2015 04:20:00'!
 testMultiplication
 
 	self
@@ -251,7 +251,7 @@ testMultiplication
 		gives: [ :x :y | x * y bitAnd: 16rFFFFFFFF ]
 		times: 10000! !
 
-!ThirtyTwoBitRegisterTest methodsFor: 'tests - accumulator ops' stamp: 'jpb 5/1/2020 14:03:07'!
+!ThirtyTwoBitRegisterTest methodsFor: 'tests - accumulator ops' stamp: 'jpb 1/May/2020 14:03:07'!
 testRightRotateBy
 
 	0 to: 33 do: [ :shift |
@@ -264,7 +264,7 @@ testRightRotateBy
 					bitAnd: 16rFFFFFFFF ]
 			times: 1000 ]! !
 
-!ThirtyTwoBitRegisterTest methodsFor: 'tests - accumulator ops' stamp: 'ul 4/11/2015 04:25'!
+!ThirtyTwoBitRegisterTest methodsFor: 'tests - accumulator ops' stamp: 'ul 11/Apr/2015 04:25:00'!
 testRightShift
 
 	0 to: 33 do: [ :shift |
@@ -273,7 +273,7 @@ testRightShift
 			gives: [ :x | x >> shift bitAnd: 16rFFFFFFFF ]
 			times: 1000 ]! !
 
-!ThirtyTwoBitRegisterTest methodsFor: 'tests - comparison' stamp: 'ul 4/11/2015 04:50'!
+!ThirtyTwoBitRegisterTest methodsFor: 'tests - comparison' stamp: 'ul 11/Apr/2015 04:50:00'!
 testEquals
 
 	self
@@ -281,7 +281,7 @@ testEquals
 		gives: [ :x :y | x = y ]
 		times: 1000! !
 
-!ThirtyTwoBitRegisterTest methodsFor: 'tests - comparison' stamp: 'ul 4/11/2015 04:51'!
+!ThirtyTwoBitRegisterTest methodsFor: 'tests - comparison' stamp: 'ul 11/Apr/2015 04:51:00'!
 testGreater
 
 	self
@@ -289,7 +289,7 @@ testGreater
 		gives: [ :x :y | x > y ]
 		times: 1000! !
 
-!ThirtyTwoBitRegisterTest methodsFor: 'tests - comparison' stamp: 'ul 4/11/2015 04:51'!
+!ThirtyTwoBitRegisterTest methodsFor: 'tests - comparison' stamp: 'ul 11/Apr/2015 04:51:00'!
 testGreaterOrEqual
 
 	self
@@ -297,7 +297,7 @@ testGreaterOrEqual
 		gives: [ :x :y | x >= y ]
 		times: 1000! !
 
-!ThirtyTwoBitRegisterTest methodsFor: 'tests - comparison' stamp: 'ul 4/11/2015 04:49'!
+!ThirtyTwoBitRegisterTest methodsFor: 'tests - comparison' stamp: 'ul 11/Apr/2015 04:49:00'!
 testLess
 
 	self
@@ -305,7 +305,7 @@ testLess
 		gives: [ :x :y | x < y ]
 		times: 1000! !
 
-!ThirtyTwoBitRegisterTest methodsFor: 'tests - comparison' stamp: 'ul 4/11/2015 04:50'!
+!ThirtyTwoBitRegisterTest methodsFor: 'tests - comparison' stamp: 'ul 11/Apr/2015 04:50:00'!
 testLessOrEqual
 
 	self
@@ -313,7 +313,7 @@ testLessOrEqual
 		gives: [ :x :y | x <= y ]
 		times: 1000! !
 
-!ThirtyTwoBitRegisterTest methodsFor: 'tests' stamp: 'ul 4/11/2015 04:32'!
+!ThirtyTwoBitRegisterTest methodsFor: 'tests' stamp: 'ul 11/Apr/2015 04:32:00'!
 testHi
 
 	self
@@ -321,7 +321,7 @@ testHi
 		gives: [ :x | x bitShift: -16 ]
 		times: 1000! !
 
-!ThirtyTwoBitRegisterTest methodsFor: 'tests' stamp: 'ul 4/11/2015 04:29'!
+!ThirtyTwoBitRegisterTest methodsFor: 'tests' stamp: 'ul 11/Apr/2015 04:29:00'!
 testLoad
 
 	1000 timesRepeat: [
@@ -332,7 +332,7 @@ testLoad
 			gives: [ :x | value ]
 			times: 1 ]! !
 
-!ThirtyTwoBitRegisterTest methodsFor: 'tests' stamp: 'ul 4/11/2015 04:29'!
+!ThirtyTwoBitRegisterTest methodsFor: 'tests' stamp: 'ul 11/Apr/2015 04:29:00'!
 testLoadFrom
 
 	self
@@ -340,7 +340,7 @@ testLoadFrom
 		gives: [ :x :y | y ]
 		times: 10000! !
 
-!ThirtyTwoBitRegisterTest methodsFor: 'tests' stamp: 'ul 4/11/2015 04:32'!
+!ThirtyTwoBitRegisterTest methodsFor: 'tests' stamp: 'ul 11/Apr/2015 04:32:00'!
 testLow
 
 	self

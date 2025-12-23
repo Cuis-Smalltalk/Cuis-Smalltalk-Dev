@@ -1,4 +1,4 @@
-'From Cuis7.1 [latest update: #6387] on 21 May 2024 at 11:07:09 am'!
+'From Cuis7.7 [latest update: #7779] on 23 December 2025 at 4:39:08 pm'!
 'Description '!
 !provides: 'Locales' 1 14!
 SystemOrganization addCategory: #Locales!
@@ -58,46 +58,46 @@ http://mitglied.lycos.de/buran/knowhow/codes/locales/!
 !LocaleID commentStamp: '' prior: 0!
 The ID for localization!
 
-!ISOLanguageDefinition methodsFor: 'accessing' stamp: 'mir 7/1/2004 18:20'!
+!ISOLanguageDefinition methodsFor: 'accessing' stamp: 'mir 1/Jul/2004 18:20:00'!
 iso2
 	^iso2 ifNil: [self iso3]! !
 
-!ISOLanguageDefinition methodsFor: 'accessing' stamp: 'mir 7/1/2004 18:21'!
+!ISOLanguageDefinition methodsFor: 'accessing' stamp: 'mir 1/Jul/2004 18:21:00'!
 iso3
 	^iso3 ifNil: ['']! !
 
-!ISOLanguageDefinition methodsFor: 'accessing' stamp: 'mir 6/30/2004 15:47'!
+!ISOLanguageDefinition methodsFor: 'accessing' stamp: 'mir 30/Jun/2004 15:47:00'!
 iso3Alternate
 	^iso3Alternate ifNil: ['']! !
 
-!ISOLanguageDefinition methodsFor: 'accessing' stamp: 'mir 8/15/2003 13:13'!
+!ISOLanguageDefinition methodsFor: 'accessing' stamp: 'mir 15/Aug/2003 13:13:00'!
 language
 	^language! !
 
-!ISOLanguageDefinition methodsFor: 'initialize' stamp: 'mir 6/30/2004 15:54'!
+!ISOLanguageDefinition methodsFor: 'initialize' stamp: 'mir 30/Jun/2004 15:54:00'!
 iso2: aString
 	iso2 := aString ifEmpty: [nil] ifNotEmpty: [aString]! !
 
-!ISOLanguageDefinition methodsFor: 'initialize' stamp: 'mir 6/30/2004 15:54'!
+!ISOLanguageDefinition methodsFor: 'initialize' stamp: 'mir 30/Jun/2004 15:54:00'!
 iso3: aString
 	iso3 := aString ifEmpty: [nil] ifNotEmpty: [aString]! !
 
-!ISOLanguageDefinition methodsFor: 'initialize' stamp: 'mir 6/30/2004 15:54'!
+!ISOLanguageDefinition methodsFor: 'initialize' stamp: 'mir 30/Jun/2004 15:54:00'!
 iso3Alternate: aString
 	iso3Alternate := aString ifEmpty: [nil] ifNotEmpty: [aString]! !
 
-!ISOLanguageDefinition methodsFor: 'initialize' stamp: 'mir 8/15/2003 13:40'!
+!ISOLanguageDefinition methodsFor: 'initialize' stamp: 'mir 15/Aug/2003 13:40:00'!
 language: aString
 	language := aString! !
 
-!ISOLanguageDefinition class methodsFor: 'initialization'!
+!ISOLanguageDefinition class methodsFor: 'initialization' stamp: ''!
 initialize
 	"self initialize"
 
 	ISO3Table _ nil.
 	ISO2Table _ nil! !
 
-!ISOLanguageDefinition class methodsFor: 'private'!
+!ISOLanguageDefinition class methodsFor: 'private' stamp: ''!
 initISOCountries
 	"self initISOCountries"
 	| iso3166Table |
@@ -109,7 +109,7 @@ initISOCountries
 		ISO3Countries at: (entry at: 3) put: (entry at: 1)].
 	! !
 
-!ISOLanguageDefinition class methodsFor: 'private' stamp: 'mir 9/1/2005 14:18'!
+!ISOLanguageDefinition class methodsFor: 'private' stamp: 'mir 1/Sep/2005 14:18:00'!
 iso2Countries
 	"ISOLanguageDefinition iso2Countries"
 	"ISO2Countries := nil. ISO3Countries := nil"
@@ -117,7 +117,7 @@ iso2Countries
 	ISO2Countries ifNil: [self initISOCountries].
 	^ISO2Countries! !
 
-!ISOLanguageDefinition class methodsFor: 'private' stamp: 'mir 9/1/2005 13:57'!
+!ISOLanguageDefinition class methodsFor: 'private' stamp: 'mir 1/Sep/2005 13:57:00'!
 iso3166Codes
 "http://www.unicode.org/onlinedat/countries.html"
 
@@ -2083,7 +2083,7 @@ CTRY_ZIMBABWE
  
 '! !
 
-!ISOLanguageDefinition class methodsFor: 'private' stamp: 'mir 9/1/2005 14:18'!
+!ISOLanguageDefinition class methodsFor: 'private' stamp: 'mir 1/Sep/2005 14:18:00'!
 iso3Countries
 	"ISOLanguageDefinition iso3Countries"
 	"ISO2Countries := nil. ISO3Countries := nil"
@@ -2091,13 +2091,13 @@ iso3Countries
 	ISO3Countries ifNil: [self initISOCountries].
 	^ISO3Countries! !
 
-!ISOLanguageDefinition class methodsFor: 'private' stamp: 'mir 7/21/2004 13:10'!
+!ISOLanguageDefinition class methodsFor: 'private' stamp: 'mir 21/Jul/2004 13:10:00'!
 iso3LanguageTable
 	"ISOLanguageDefinition iso3LanguageTable"
 
 	^ISO3Table ifNil: [ISO3Table := self initISO3LanguageTable]! !
 
-!ISOLanguageDefinition class methodsFor: 'private' stamp: 'yo 12/3/2004 17:46'!
+!ISOLanguageDefinition class methodsFor: 'private' stamp: 'yo 3/Dec/2004 17:46:00'!
 isoLanguages
 	"ISO 639: 3-letter codes"
 	^'abk	ab	Abkhazian
@@ -2505,7 +2505,7 @@ zha	za	Zhuang
 zul	zu	Zulu
 zun		Zuni'! !
 
-!ISOLanguageDefinition class methodsFor: 'private'!
+!ISOLanguageDefinition class methodsFor: 'private' stamp: ''!
 readISOLanguagesFrom: stream
 	"self readISOLanguagesFrom: self isoLanguages readStream "
 	| languages language code3 index line |
@@ -2526,15 +2526,15 @@ readISOLanguagesFrom: stream
 			languages at: language iso3 put: language].
 	^languages! !
 
-!ISOLanguageDefinition class methodsFor: 'accessing' stamp: 'mir 7/1/2004 18:06'!
+!ISOLanguageDefinition class methodsFor: 'accessing' stamp: 'mir 1/Jul/2004 18:06:00'!
 iso2LanguageDefinition: aString
 	^self iso2LanguageTable at: aString! !
 
-!ISOLanguageDefinition class methodsFor: 'accessing' stamp: 'mir 7/1/2004 18:06'!
+!ISOLanguageDefinition class methodsFor: 'accessing' stamp: 'mir 1/Jul/2004 18:06:00'!
 iso3LanguageDefinition: aString
 	^self iso3LanguageTable at: aString! !
 
-!ISOLanguageDefinition class methodsFor: 'private - ISO 2' stamp: 'jmv 2/6/2024 10:14:35'!
+!ISOLanguageDefinition class methodsFor: 'private - ISO 2' stamp: 'jmv 6/Feb/2024 10:14:35'!
 iso2LanguageTable
 	"self iso2LanguageTable"
 
@@ -2544,7 +2544,7 @@ iso2LanguageTable
 		ISO2Table at: entry iso2 put: entry].
 	^ISO2Table! !
 
-!ISOLanguageDefinition class methodsFor: 'private - ISO 3166' stamp: 'jmv 2/6/2024 10:20:20'!
+!ISOLanguageDefinition class methodsFor: 'private - ISO 3166' stamp: 'jmv 6/Feb/2024 10:20:20'!
 buildIso3166CodesTables
 	"ISOLanguageDefinition buildIso3166CodesTables"
 	| rawdata stream country isoa2 isoa3 unNumeric macName macCode windowsName windowsCode empty table |
@@ -2568,19 +2568,19 @@ buildIso3166CodesTables
 		table add: { country.  isoa2. isoa3.  unNumeric. windowsName.  windowsCode.  macName. macCode. }].
 	^table! !
 
-!ISOLanguageDefinition class methodsFor: 'private - ISO 3166'!
+!ISOLanguageDefinition class methodsFor: 'private - ISO 3166' stamp: ''!
 initISO3LanguageTable
 	"self  initISO3LanguageTable"
 	
 	^ self readISOLanguagesFrom: self isoLanguages readStream.
 	! !
 
-!Locale methodsFor: 'printing'!
+!Locale methodsFor: 'printing' stamp: ''!
 printOn: aStream 
 	super printOn: aStream.
 	aStream nextPutAll:  '(' ; print: id ; nextPutAll:  ')'! !
 
-!Locale methodsFor: 'private' stamp: 'jmv 1/29/2024 15:46:14'!
+!Locale methodsFor: 'private' stamp: 'jmv 29/Jan/2024 15:46:14'!
 fetchISO2Language
 	"Locale current fetchISO2Language"
 
@@ -2592,11 +2592,11 @@ fetchISO2Language
 	isoLang := ISOLanguageDefinition iso3LanguageDefinition: lang.
 	^ isoLang ifNotNil: [ isoLang iso2 ]! !
 
-!Locale methodsFor: 'accessing' stamp: 'mir 8/31/2005 17:03'!
+!Locale methodsFor: 'accessing' stamp: 'mir 31/Aug/2005 17:03:00'!
 determineLocale
 	self localeID: self determineLocaleID! !
 
-!Locale methodsFor: 'accessing' stamp: 'jmv 1/29/2024 15:46:26'!
+!Locale methodsFor: 'accessing' stamp: 'jmv 29/Jan/2024 15:46:26'!
 determineLocaleID
 	"Locale current determineLocaleID"
 	| langCode isoLang countryCode isoCountry |
@@ -2610,72 +2610,72 @@ determineLocaleID
 		ifNotNil: [countryCode].
 	^LocaleID isoLanguage: isoLang isoCountry: isoCountry! !
 
-!Locale methodsFor: 'accessing' stamp: 'nk 8/31/2004 09:39'!
+!Locale methodsFor: 'accessing' stamp: 'nk 31/Aug/2004 09:39:00'!
 isoCountry
 	^self localeID isoCountry! !
 
-!Locale methodsFor: 'accessing' stamp: 'nk 8/31/2004 09:39'!
+!Locale methodsFor: 'accessing' stamp: 'nk 31/Aug/2004 09:39:00'!
 isoLanguage
 	^self localeID isoLanguage! !
 
-!Locale methodsFor: 'accessing' stamp: 'mir 7/15/2004 12:41'!
+!Locale methodsFor: 'accessing' stamp: 'mir 15/Jul/2004 12:41:00'!
 isoLocale
 	"<language>-<country>"
 	^self isoCountry
 		ifNil: [self isoLanguage]
 		ifNotNil: [self isoLanguage , '-' , self isoCountry]! !
 
-!Locale methodsFor: 'accessing' stamp: 'mir 7/15/2004 14:55'!
+!Locale methodsFor: 'accessing' stamp: 'mir 15/Jul/2004 14:55:00'!
 localeID
 	^id! !
 
-!Locale methodsFor: 'accessing' stamp: 'mir 7/15/2004 14:55'!
+!Locale methodsFor: 'accessing' stamp: 'mir 15/Jul/2004 14:55:00'!
 localeID: anID
 	id := anID! !
 
-!Locale methodsFor: 'system primitives'!
+!Locale methodsFor: 'system primitives' stamp: ''!
 primCountry
 	"Returns string with country tag according to ISO 639"
 	<primitive: 'primitiveCountry' module: 'LocalePlugin'>
 	^'FR'! !
 
-!Locale methodsFor: 'system primitives' stamp: 'tpr 6/1/2005 18:45'!
+!Locale methodsFor: 'system primitives' stamp: 'tpr 1/Jun/2005 18:45:00'!
 primCurrencyNotation
 	"Returns boolean if symbol is pre- (true) or post-fix (false)"
 	<primitive: 'primitiveCurrencyNotation' module: 'LocalePlugin'>
 	^true! !
 
-!Locale methodsFor: 'system primitives' stamp: 'tpr 6/1/2005 18:47'!
+!Locale methodsFor: 'system primitives' stamp: 'tpr 1/Jun/2005 18:47:00'!
 primCurrencySymbol
 	"Returns string with currency symbol"
 	<primitive: 'primitiveCurrencySymbol' module:'LocalePlugin'>
 	^'$'! !
 
-!Locale methodsFor: 'system primitives' stamp: 'tpr 6/1/2005 18:48'!
+!Locale methodsFor: 'system primitives' stamp: 'tpr 1/Jun/2005 18:48:00'!
 primDST
 	"Returns boolean if DST  (daylight saving time) is active or not"
 	<primitive:'primitiveDaylightSavings' module: 'LocalePlugin'>
 	^false! !
 
-!Locale methodsFor: 'system primitives' stamp: 'tpr 6/2/2005 13:42'!
+!Locale methodsFor: 'system primitives' stamp: 'tpr 2/Jun/2005 13:42:00'!
 primDecimalSymbol
 	"Returns string with e.g. '.' or ','"
 	<primitive:'primitiveDecimalSymbol' module: 'LocalePlugin'>
 	^'.'! !
 
-!Locale methodsFor: 'system primitives' stamp: 'tpr 6/2/2005 13:42'!
+!Locale methodsFor: 'system primitives' stamp: 'tpr 2/Jun/2005 13:42:00'!
 primDigitGrouping
 	"Returns string with e.g. '.' or ',' (thousands etc)"
 	<primitive:'primitiveDigitGroupingSymbol' module: 'LocalePlugin'>
 	^','! !
 
-!Locale methodsFor: 'system primitives'!
+!Locale methodsFor: 'system primitives' stamp: ''!
 primLanguage
 	"returns string with language tag according to ISO 639"
 	<primitive:'primitiveLanguage' module: 'LocalePlugin'>
 	^'en'! !
 
-!Locale methodsFor: 'system primitives'!
+!Locale methodsFor: 'system primitives' stamp: ''!
 primLongDateFormat
 	"Returns the long date format
 	d day, m month, y year,
@@ -2686,14 +2686,14 @@ primLongDateFormat
 	^'dddd, mmmm d, yyyy'
 ! !
 
-!Locale methodsFor: 'system primitives' stamp: 'tpr 6/2/2005 13:43'!
+!Locale methodsFor: 'system primitives' stamp: 'tpr 2/Jun/2005 13:43:00'!
 primMeasurement
 	"Returns boolean denoting metric(true) or imperial(false)."
 	<primitive:'primitiveMeasurementMetric' module: 'LocalePlugin'>
 	^true
 ! !
 
-!Locale methodsFor: 'system primitives'!
+!Locale methodsFor: 'system primitives' stamp: ''!
 primShortDateFormat
 	"Returns the short date format
 	d day, m month, y year,
@@ -2704,7 +2704,7 @@ primShortDateFormat
 	^'m/d/yy'
 ! !
 
-!Locale methodsFor: 'system primitives'!
+!Locale methodsFor: 'system primitives' stamp: ''!
 primTimeFormat
 	"Returns string time format
 	Format is made up of 
@@ -2714,14 +2714,14 @@ primTimeFormat
 	^'h:mmx'
 ! !
 
-!Locale methodsFor: 'system primitives' stamp: 'tpr 6/2/2005 13:43'!
+!Locale methodsFor: 'system primitives' stamp: 'tpr 2/Jun/2005 13:43:00'!
 primTimezone
 	"The offset from UTC in minutes, with positive offsets being towards the east.
 	(San Francisco is in UTC -08*60 and Paris is in GMT +01*60 (daylight savings is not in effect)."
 	<primitive:'primitiveTimezoneOffset' module: 'LocalePlugin'>
 	^0! !
 
-!Locale methodsFor: 'system primitives' stamp: 'tpr 6/2/2005 13:44'!
+!Locale methodsFor: 'system primitives' stamp: 'tpr 2/Jun/2005 13:44:00'!
 primVMOffsetToUTC
 	"Returns the offset in minutes between the VM and UTC.
 	If the VM does not support UTC times, this is 0.
@@ -2729,7 +2729,7 @@ primVMOffsetToUTC
 	<primitive:'primitiveVMOffsetToUTC' module: 'LocalePlugin'>
 	^0! !
 
-!Locale class methodsFor: 'system startup' stamp: 'hlsf 7/3/2022 13:08:00'!
+!Locale class methodsFor: 'system startup' stamp: 'hlsf 3/Jul/2022 13:08:00'!
 startUp: resuming
 	resuming ifFalse: [^self].
 	(Preferences at: #useLocale)
@@ -2739,14 +2739,14 @@ startUp: resuming
 			newID ~= LocaleID current
 				ifTrue: [self switchToID: newID]]! !
 
-!Locale class methodsFor: 'private' stamp: 'hlsf 2/20/2022 10:07:50'!
+!Locale class methodsFor: 'private' stamp: 'hlsf 20/Feb/2022 10:07:50'!
 defaultLocales
 	
 	"return IDs of default locales"
 	
 	^ #(de en es fr it)! !
 
-!Locale class methodsFor: 'private' stamp: 'mir 7/28/2005 00:24'!
+!Locale class methodsFor: 'private' stamp: 'mir 28/Jul/2005 00:24:00'!
 determineCurrentLocale
 	"For now just return the default locale.
 	A smarter way would be to determine the current platforms default locale."
@@ -2754,7 +2754,7 @@ determineCurrentLocale
 
 	^self new determineLocale! !
 
-!Locale class methodsFor: 'private'!
+!Locale class methodsFor: 'private' stamp: ''!
 initKnownLocales
 	| locales |
 	locales _ Dictionary new.
@@ -2764,12 +2764,12 @@ initKnownLocales
 		locales at: id put: (self new localeID: id)].
 	^locales! !
 
-!Locale class methodsFor: 'private' stamp: 'mir 7/15/2004 16:44'!
+!Locale class methodsFor: 'private' stamp: 'mir 15/Jul/2004 16:44:00'!
 knownLocales
 	"KnownLocales := nil"
 	^KnownLocales ifNil: [KnownLocales := self initKnownLocales]! !
 
-!Locale class methodsFor: 'initialization' stamp: 'Install-Locales 7/3/2022 12:37:18'!
+!Locale class methodsFor: 'initialization' stamp: 'Install-Locales 3/Jul/2022 12:37:18'!
 initialize
 	Smalltalk addToStartUpList: Locale.
 	Preferences 
@@ -2780,7 +2780,7 @@ initialize
 		value: false
 ! !
 
-!Locale class methodsFor: 'initialization'!
+!Locale class methodsFor: 'initialization' stamp: ''!
 initializePlatformEncodings
 	"Locale initializePlatformEncodings"
 
@@ -2810,15 +2810,15 @@ initializePlatformEncodings
 		at: 'Win32 CE' put: 'utf-8'.
 ! !
 
-!Locale class methodsFor: 'settings'!
+!Locale class methodsFor: 'settings' stamp: ''!
 activated
 	^ Activated ifNil: [Activated _ false]! !
 
-!Locale class methodsFor: 'settings'!
+!Locale class methodsFor: 'settings' stamp: ''!
 activated: aBoolean
 	Activated _ aBoolean! !
 
-!Locale class methodsFor: 'platform specific' stamp: 'hlsf 2/20/2022 10:17:30'!
+!Locale class methodsFor: 'platform specific' stamp: 'hlsf 20/Feb/2022 10:17:30'!
 defaultEncodingName: languageSymbol 
 	| encodings platformName osVersion |
 	platformName _ Smalltalk platformName.
@@ -2830,12 +2830,12 @@ defaultEncodingName: languageSymbol
 		ifPresent: [:encoding | ^encoding].
 	^encodings at: #default! !
 
-!Locale class methodsFor: 'accessing'!
+!Locale class methodsFor: 'accessing' stamp: ''!
 current
 
 	^ Current ifNil: [ Current _ self determineCurrentLocale ]! !
 
-!Locale class methodsFor: 'accessing'!
+!Locale class methodsFor: 'accessing' stamp: ''!
 currentPlatform: locale during: aBlock 
 	"Alter current locale during a block"
 	| savedLocale |
@@ -2844,30 +2844,30 @@ currentPlatform: locale during: aBlock
 	aBlock value]
 		ensure: [self switchTo: savedLocale]! !
 
-!Locale class methodsFor: 'accessing' stamp: 'mir 7/15/2004 14:20'!
+!Locale class methodsFor: 'accessing' stamp: 'mir 15/Jul/2004 14:20:00'!
 isoLanguage: isoLanguage
 	^self isoLanguage: isoLanguage isoCountry: nil! !
 
-!Locale class methodsFor: 'accessing' stamp: 'mir 7/15/2004 14:31'!
+!Locale class methodsFor: 'accessing' stamp: 'mir 15/Jul/2004 14:31:00'!
 isoLanguage: isoLanguage isoCountry: isoCountry
 	^self localeID: (LocaleID  isoLanguage: isoLanguage isoCountry: isoCountry)! !
 
-!Locale class methodsFor: 'accessing' stamp: 'mir 7/13/2004 00:24'!
+!Locale class methodsFor: 'accessing' stamp: 'mir 13/Jul/2004 00:24:00'!
 languageSymbol: languageSymbol
 	"Locale languageSymbol: #Deutsch"
 
 	^self isoLanguage: (LanguageSymbols at: languageSymbol)! !
 
-!Locale class methodsFor: 'accessing' stamp: 'mir 7/15/2004 14:30'!
+!Locale class methodsFor: 'accessing' stamp: 'mir 15/Jul/2004 14:30:00'!
 localeID: id
 	^self knownLocales at: id ifAbsentPut: [Locale new localeID: id]! !
 
-!Locale class methodsFor: 'accessing' stamp: 'hlsf 2/20/2022 10:13:01'!
+!Locale class methodsFor: 'accessing' stamp: 'hlsf 20/Feb/2022 10:13:01'!
 switchTo: locale
 	self switchTo: locale gently: false.
 ! !
 
-!Locale class methodsFor: 'accessing' stamp: 'jmv 5/17/2024 11:24:29'!
+!Locale class methodsFor: 'accessing' stamp: 'jmv 17/May/2024 11:24:29'!
 switchTo: locale gently: gentlyFlag
 	"Locale switchTo: (Locale isoLanguage: 'de')"
 	| nlTranslatorClass availableID |
@@ -2882,38 +2882,38 @@ switchTo: locale gently: gentlyFlag
 			nlTranslatorClass ifNotNil: [ nlTranslatorClass localeChanged ].
 			gentlyFlag ifTrue: [self localeChangedGently] ifFalse: [self localeChanged]]! !
 
-!Locale class methodsFor: 'accessing' stamp: 'mir 7/15/2004 19:07'!
+!Locale class methodsFor: 'accessing' stamp: 'mir 15/Jul/2004 19:07:00'!
 switchToID: localeID
 	"Locale switchToID: (LocaleID isoLanguage: 'de') "
 
 	self switchTo: (Locale localeID: localeID)! !
 
-!Locale class methodsFor: 'notification' stamp: 'mir 6/30/2004 16:15'!
+!Locale class methodsFor: 'notification' stamp: 'mir 30/Jun/2004 16:15:00'!
 addLocalChangedListener: anObjectOrClass
 	self localeChangedListeners add: anObjectOrClass! !
 
-!Locale class methodsFor: 'notification' stamp: 'hlsf 2/20/2022 09:55:07'!
+!Locale class methodsFor: 'notification' stamp: 'hlsf 20/Feb/2022 09:55:07'!
 localeChanged
 "	SystemNavigation default allBehaviorsDo: [:b |
 		b == self ifFalse: [b localeChanged]].
 "! !
 
-!Locale class methodsFor: 'notification' stamp: 'hlsf 2/20/2022 09:55:21'!
+!Locale class methodsFor: 'notification' stamp: 'hlsf 20/Feb/2022 09:55:21'!
 localeChangedGently
 "	SystemNavigation default allBehaviorsDo: [:b | b == self ifFalse: [b localeChangedGently]].
 "! !
 
-!Locale class methodsFor: 'notification' stamp: 'mir 6/30/2004 16:15'!
+!Locale class methodsFor: 'notification' stamp: 'mir 30/Jun/2004 16:15:00'!
 localeChangedListeners
 	^LocaleChangeListeners ifNil: [LocaleChangeListeners := OrderedCollection new]! !
 
-!Locale class methodsFor: 'class initialization' stamp: 'nk 8/29/2004 13:20'!
+!Locale class methodsFor: 'class initialization' stamp: 'nk 29/Aug/2004 13:20:00'!
 platformEncodings
 	PlatformEncodings isEmptyOrNil ifTrue: [ self initializePlatformEncodings ].
 	^PlatformEncodings
 ! !
 
-!LocaleID methodsFor: 'printing'!
+!LocaleID methodsFor: 'printing' stamp: ''!
 posixName
 	"(LocaleID isoString: 'es-MX') posixName"
 	"(LocaleID isoString: 'es') posixName"
@@ -2922,14 +2922,14 @@ posixName
 		ifNil: [self isoLanguage]
 		ifNotNil: [self isoLanguage , '_' , self isoCountry]! !
 
-!LocaleID methodsFor: 'printing' stamp: 'mir 7/15/2004 12:45'!
+!LocaleID methodsFor: 'printing' stamp: 'mir 15/Jul/2004 12:45:00'!
 printOn: stream
 	"<language>-<country>"
 	stream nextPutAll: self isoLanguage.
 	self isoCountry
 		ifNotNil: [stream nextPut: $-; nextPutAll: self isoCountry]! !
 
-!LocaleID methodsFor: 'printing' stamp: 'tak 11/15/2004 12:45'!
+!LocaleID methodsFor: 'printing' stamp: 'tak 15/Nov/2004 12:45:00'!
 storeOn: aStream 
 	aStream nextPut: $(.
 	aStream nextPutAll: self class name.
@@ -2938,31 +2938,31 @@ storeOn: aStream
 	aStream nextPut: $).
 ! !
 
-!LocaleID methodsFor: 'comparing' stamp: 'mir 7/15/2004 14:23'!
+!LocaleID methodsFor: 'comparing' stamp: 'mir 15/Jul/2004 14:23:00'!
 = anotherObject
 	self class == anotherObject class
 		ifFalse: [^false].
 	^self isoLanguage = anotherObject isoLanguage
 		and: [self isoCountry = anotherObject isoCountry]! !
 
-!LocaleID methodsFor: 'comparing' stamp: 'mir 7/15/2004 14:23'!
+!LocaleID methodsFor: 'comparing' stamp: 'mir 15/Jul/2004 14:23:00'!
 hash
 	^self isoLanguage hash bitXor: self isoCountry hash! !
 
-!LocaleID methodsFor: 'testing' stamp: 'mir 7/15/2004 14:34'!
+!LocaleID methodsFor: 'testing' stamp: 'mir 15/Jul/2004 14:34:00'!
 hasParent
 	^self isoCountry notNil! !
 
-!LocaleID methodsFor: 'initialize' stamp: 'mir 7/15/2004 12:44'!
+!LocaleID methodsFor: 'initialize' stamp: 'mir 15/Jul/2004 12:44:00'!
 isoLanguage: langString isoCountry: countryStringOrNil
 	isoLanguage := langString.
 	isoCountry := countryStringOrNil! !
 
-!LocaleID methodsFor: 'accessing' stamp: 'mir 9/1/2005 14:17'!
+!LocaleID methodsFor: 'accessing' stamp: 'mir 1/Sep/2005 14:17:00'!
 displayCountry
 	^(ISOLanguageDefinition iso2Countries at: self isoCountry asUppercase ifAbsent: [ self isoCountry ]) ! !
 
-!LocaleID methodsFor: 'accessing'!
+!LocaleID methodsFor: 'accessing' stamp: ''!
 displayLanguage
 	| language |
 	language _ (ISOLanguageDefinition iso2LanguageTable
@@ -2972,41 +2972,41 @@ displayLanguage
 		ifNil: [language]
 		ifNotNil: [language , ' (' , self displayCountry , ')']! !
 
-!LocaleID methodsFor: 'accessing' stamp: 'mir 7/15/2004 12:43'!
+!LocaleID methodsFor: 'accessing' stamp: 'mir 15/Jul/2004 12:43:00'!
 isoCountry
 	^isoCountry! !
 
-!LocaleID methodsFor: 'accessing' stamp: 'mir 7/15/2004 12:43'!
+!LocaleID methodsFor: 'accessing' stamp: 'mir 15/Jul/2004 12:43:00'!
 isoLanguage
 	^isoLanguage! !
 
-!LocaleID methodsFor: 'accessing' stamp: 'mir 7/21/2004 19:17'!
+!LocaleID methodsFor: 'accessing' stamp: 'mir 21/Jul/2004 19:17:00'!
 isoString
 	^self asString! !
 
-!LocaleID methodsFor: 'accessing' stamp: 'mir 7/15/2004 14:34'!
+!LocaleID methodsFor: 'accessing' stamp: 'mir 15/Jul/2004 14:34:00'!
 parent
 	^self class isoLanguage: self isoLanguage! !
 
-!LocaleID methodsFor: 'accessing' stamp: 'jmv 5/17/2024 11:25:49'!
+!LocaleID methodsFor: 'accessing' stamp: 'jmv 17/May/2024 11:25:49'!
 translator
 
 	^Smalltalk at: #NaturalLanguageTranslator ifPresent: [ :nlTranslatorClass |
 		nlTranslatorClass localeID: self ]! !
 
-!LocaleID class methodsFor: 'accessing' stamp: 'mir 7/15/2004 15:09'!
+!LocaleID class methodsFor: 'accessing' stamp: 'mir 15/Jul/2004 15:09:00'!
 current
 	^Locale current localeID! !
 
-!LocaleID class methodsFor: 'instance creation' stamp: 'mir 7/15/2004 14:35'!
+!LocaleID class methodsFor: 'instance creation' stamp: 'mir 15/Jul/2004 14:35:00'!
 isoLanguage: langString
 	^self isoLanguage: langString isoCountry: nil! !
 
-!LocaleID class methodsFor: 'instance creation' stamp: 'mir 7/15/2004 12:46'!
+!LocaleID class methodsFor: 'instance creation' stamp: 'mir 15/Jul/2004 12:46:00'!
 isoLanguage: langString isoCountry: countryStringOrNil
 	^self new isoLanguage: langString isoCountry: countryStringOrNil! !
 
-!LocaleID class methodsFor: 'instance creation' stamp: 'mir 7/21/2004 13:59'!
+!LocaleID class methodsFor: 'instance creation' stamp: 'mir 21/Jul/2004 13:59:00'!
 isoString: isoString
 	"Parse the isoString (<language>-<country>) into its components and return the matching LocaleID"
 	"LocaleID isoString: 'en' "
@@ -3019,12 +3019,12 @@ isoString: isoString
 		ifTrue: [country := parts second].
 	^self isoLanguage: language isoCountry: country! !
 
-!LocaleID class methodsFor: 'instance creation'!
+!LocaleID class methodsFor: 'instance creation' stamp: ''!
 posixName: aString 
 	^ self
 		isoString: (aString copyReplaceAll: '_' with: '-')! !
 
-!LocaleID class methodsFor: 'accessing-defaults'!
+!LocaleID class methodsFor: 'accessing-defaults' stamp: ''!
 default
 	^ self isoLanguage: 'en'! !
 ISOLanguageDefinition initialize!

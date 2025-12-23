@@ -1,4 +1,4 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3319] on 12 May 2018 at 5:43:49 pm'!
+'From Cuis7.7 [latest update: #7779] on 23 December 2025 at 4:42:06 pm'!
 'Description CSS2 color names come from an internet web standard by W3C:
       CSSColor Module Level 2
 These have been subsumed by the larger CSS3 color name set.
@@ -17,7 +17,7 @@ To reset the Color name->color dictionary:
 
 
 
-!Color class methodsFor: '*css2-namedcolors' stamp: 'KenD 1/28/2013 19:34'!
+!Color class methodsFor: '*css2-namedcolors' stamp: 'KenD 28/Jan/2013 19:34:00'!
 css2ColorDictionary
 	"Answer a dictionary of CSS2 compliant color names to Color objects."
 "
@@ -27,7 +27,7 @@ css2ColorDictionary
 	^(self css2NamedColors1 addAll: self css2NamedColors2; yourself)
 	! !
 
-!Color class methodsFor: '*css2-namedcolors' stamp: 'KenD 1/28/2013 19:32'!
+!Color class methodsFor: '*css2-namedcolors' stamp: 'KenD 28/Jan/2013 19:32:00'!
 css2NamedColors1
 	"Answer a dictionary of CSS2 compliant color names to Color objects.
 	First half!!"
@@ -106,7 +106,7 @@ css2NamedColors1
 		at: 'lightgoldenrodyellow' put: (Color r: 250 g: 250 b: 210 range: 255);
 		yourself! !
 
-!Color class methodsFor: '*css2-namedcolors' stamp: 'KenD 1/28/2013 19:32'!
+!Color class methodsFor: '*css2-namedcolors' stamp: 'KenD 28/Jan/2013 19:32:00'!
 css2NamedColors2
 	"Answer a dictionary of CSS2 compliant color names to Color objects.
 	Second half!!"
@@ -190,7 +190,7 @@ css2NamedColors2
 		at: 'yellowgreen' put: (Color r: 154 g: 205 b: 50 range: 255);
 		yourself! !
 
-!Color class methodsFor: '*css2-namedcolors' stamp: 'jmv 2/14/2013 09:22'!
+!Color class methodsFor: '*css2-namedcolors' stamp: 'jmv 14/Feb/2013 09:22:00'!
 fromCSS2String: aString
 	"Answer a color from the given W3C spec.
 	Color fromCSS2String: 'aliceblue'

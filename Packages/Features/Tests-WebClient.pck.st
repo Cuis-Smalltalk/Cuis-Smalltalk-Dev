@@ -1,27 +1,27 @@
-'From Cuis 6.0 [latest update: #5766] on 14 April 2023 at 1:00:02 pm'!
+'From Cuis7.7 [latest update: #7779] on 23 December 2025 at 4:40:37 pm'!
 'Description '!
 !provides: 'Tests-WebClient' 1 4!
 !requires: 'WebClient' 1 19 nil!
-SystemOrganization addCategory: 'Tests-WebClient'!
+SystemOrganization addCategory: #'Tests-WebClient'!
 
 
-!classDefinition: #SqueakSSLTest category: 'Tests-WebClient'!
+!classDefinition: #SqueakSSLTest category: #'Tests-WebClient'!
 TestCase subclass: #SqueakSSLTest
 	instanceVariableNames: 'clientReadQueue serverWriteQueue serverReadQueue clientWriteQueue sslClient sslServer clientProcess serverProcess'
 	classVariableNames: 'CertName'
 	poolDictionaries: ''
 	category: 'Tests-WebClient'!
-!classDefinition: 'SqueakSSLTest class' category: 'Tests-WebClient'!
+!classDefinition: 'SqueakSSLTest class' category: #'Tests-WebClient'!
 SqueakSSLTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #WebClientServerTest category: 'Tests-WebClient'!
+!classDefinition: #WebClientServerTest category: #'Tests-WebClient'!
 TestCase subclass: #WebClientServerTest
 	instanceVariableNames: 'server user password oldAuthHandler oldProxyHandler port'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Tests-WebClient'!
-!classDefinition: 'WebClientServerTest class' category: 'Tests-WebClient'!
+!classDefinition: 'WebClientServerTest class' category: #'Tests-WebClient'!
 WebClientServerTest class
 	instanceVariableNames: ''!
 
@@ -29,13 +29,13 @@ WebClientServerTest class
 !WebClientServerTest commentStamp: 'ar 2/24/2010 00:13' prior: 0!
 Tests for both WebClient and WebServer.!
 
-!SqueakSSLTest methodsFor: 'setup' stamp: 'ar 7/30/2010 21:00'!
+!SqueakSSLTest methodsFor: 'setup' stamp: 'ar 30/Jul/2010 21:00:00'!
 certName
 	"Answer the name of the cert to use in tests"
 	
 	^self class certName! !
 
-!SqueakSSLTest methodsFor: 'setup' stamp: 'ar 11/27/2011 11:25'!
+!SqueakSSLTest methodsFor: 'setup' stamp: 'ar 27/Nov/2011 11:25:00'!
 expectedFailures
 	"If we don't have a cert all the tests fail"
 
@@ -54,25 +54,25 @@ expectedFailures
 		)
 	] ifFalse:[^#()].! !
 
-!SqueakSSLTest methodsFor: 'setup' stamp: 'ar 7/18/2010 21:28'!
+!SqueakSSLTest methodsFor: 'setup' stamp: 'ar 18/Jul/2010 21:28:00'!
 hasCertInfo
 	"Returns true if we have cert information available"
 
 	^self class certName notNil! !
 
-!SqueakSSLTest methodsFor: 'setup' stamp: 'ar 7/30/2010 20:55'!
+!SqueakSSLTest methodsFor: 'setup' stamp: 'ar 30/Jul/2010 20:55:00'!
 port
 	^8844! !
 
-!SqueakSSLTest methodsFor: 'setup' stamp: 'ar 6/17/2012 11:28'!
+!SqueakSSLTest methodsFor: 'setup' stamp: 'ar 17/Jun/2012 11:28:00'!
 secureSocket
 	^SqueakSSL secureSocket! !
 
-!SqueakSSLTest methodsFor: 'setup' stamp: 'ar 6/17/2012 11:21'!
+!SqueakSSLTest methodsFor: 'setup' stamp: 'ar 17/Jun/2012 11:21:00'!
 secureSocketStream
 	^SqueakSSL secureSocketStream! !
 
-!SqueakSSLTest methodsFor: 'setup' stamp: 'ar 11/16/2011 16:40'!
+!SqueakSSLTest methodsFor: 'setup' stamp: 'ar 16/Nov/2011 16:40:00'!
 setUp
 	"The default setUp"
 
@@ -103,7 +103,7 @@ setUp
 	].
 ! !
 
-!SqueakSSLTest methodsFor: 'setup' stamp: 'ar 7/15/2010 21:07'!
+!SqueakSSLTest methodsFor: 'setup' stamp: 'ar 15/Jul/2010 21:07:00'!
 tearDown
 	"Shut down everything"
 
@@ -113,7 +113,7 @@ tearDown
 	sslServer ifNotNil:[sslServer destroy].
 ! !
 
-!SqueakSSLTest methodsFor: 'tests' stamp: 'jmv 6/25/2017 21:16:53'!
+!SqueakSSLTest methodsFor: 'tests' stamp: 'jmv 25/Jun/2017 21:16:53'!
 testConnectAccept
 	"Tests the SqueakSSL server and client handshake. "
 
@@ -159,7 +159,7 @@ testConnectAccept
 	self assert: sslServer isConnected.
 ! !
 
-!SqueakSSLTest methodsFor: 'tests' stamp: 'ar 7/18/2010 14:59'!
+!SqueakSSLTest methodsFor: 'tests' stamp: 'ar 18/Jul/2010 14:59:00'!
 testEncryptDecrypt
 	"Simple encrypt/decrypt test with a single frame of data.
 	Ensures that the common case works properly."
@@ -179,7 +179,7 @@ testEncryptDecrypt
 	self assert: decrypted = 'Server to Client'.
 ! !
 
-!SqueakSSLTest methodsFor: 'tests' stamp: 'ar 11/19/2011 17:55'!
+!SqueakSSLTest methodsFor: 'tests' stamp: 'ar 19/Nov/2011 17:55:00'!
 testFaceBookAPI
 	"Facebook sends incomplete data during SSL handshake. 
 	Useful for testing an edge condition in SqueakSSL."
@@ -197,7 +197,7 @@ testFaceBookAPI
 	]..
 ! !
 
-!SqueakSSLTest methodsFor: 'tests' stamp: 'jmv 6/25/2017 21:31:50'!
+!SqueakSSLTest methodsFor: 'tests' stamp: 'jmv 25/Jun/2017 21:31:50'!
 testGooglePopStream
 	"This tests the dreaded data-in-last-handshake problem that some people
 	have been seeing. Google mail (at times) sends the first data chunk together
@@ -218,7 +218,7 @@ testGooglePopStream
 	] ensure:[stream destroy].
 ! !
 
-!SqueakSSLTest methodsFor: 'tests' stamp: 'ar 7/25/2010 17:39'!
+!SqueakSSLTest methodsFor: 'tests' stamp: 'ar 25/Jul/2010 17:39:00'!
 testMultiFrameDecrypt
 	"A test verifying that even if we feed multiple encrypted frames at once
 	we get them one-by-one out of the decryptor. Mainly a test to ensure
@@ -256,7 +256,7 @@ testMultiFrameDecrypt
 	self assert: decrypted = 'More data is coming'.
 ! !
 
-!SqueakSSLTest methodsFor: 'tests' stamp: 'jmv 4/13/2023 15:52:08'!
+!SqueakSSLTest methodsFor: 'tests' stamp: 'jmv 13/Apr/2023 15:52:08'!
 testSSLSockets
 	"Connect client and server"
 	| client listener server sema connectProcess |
@@ -284,7 +284,7 @@ testSSLSockets
 			server ifNotNil:[server destroy].
 			connectProcess ifNotNil: [connectProcess terminate]]! !
 
-!SqueakSSLTest methodsFor: 'tests' stamp: 'ar 7/18/2010 14:58'!
+!SqueakSSLTest methodsFor: 'tests' stamp: 'ar 18/Jul/2010 14:58:00'!
 testSingleByteDecrypt
 	"A test verifying that even if we feed the decryptor with single bytes it 
 	produces the correct output. Mainly a test that the underlying plugin 
@@ -308,7 +308,7 @@ testSingleByteDecrypt
 	decrypted := sslServer decrypt: (encrypted last: 1).
 	self assert: decrypted = 'Hello World'.! !
 
-!SqueakSSLTest methodsFor: 'tests' stamp: 'jmv 8/2/2017 13:05:46'!
+!SqueakSSLTest methodsFor: 'tests' stamp: 'jmv 2/Aug/2017 13:05:46'!
 testSocketAccept
 	"Tests the SecureSocketStream server handshake. "
 
@@ -343,7 +343,7 @@ testSocketAccept
 		serverSocket ifNotNil:[serverSocket destroy].
 	].! !
 
-!SqueakSSLTest methodsFor: 'tests' stamp: 'jmv 8/2/2017 13:06:08'!
+!SqueakSSLTest methodsFor: 'tests' stamp: 'jmv 2/Aug/2017 13:06:08'!
 testSocketConnect
 	"Tests the SecureSocket client handshake. "
 
@@ -378,7 +378,7 @@ testSocketConnect
 		serverSocket ifNotNil:[serverSocket destroy].
 	].! !
 
-!SqueakSSLTest methodsFor: 'tests' stamp: 'jmv 6/25/2017 21:17:36'!
+!SqueakSSLTest methodsFor: 'tests' stamp: 'jmv 25/Jun/2017 21:17:36'!
 testSplitTlsFrameRead
 	"Tests the SecureSocketStream client handshake. "
 
@@ -422,7 +422,7 @@ testSplitTlsFrameRead
 		secureStream ifNotNil:[secureStream destroy].
 	].! !
 
-!SqueakSSLTest methodsFor: 'tests' stamp: 'jmv 6/25/2017 21:17:56'!
+!SqueakSSLTest methodsFor: 'tests' stamp: 'jmv 25/Jun/2017 21:17:56'!
 testStreamAccept
 	"Tests the SecureSocketStream server handshake. "
 
@@ -459,7 +459,7 @@ testStreamAccept
 		secureStream ifNotNil:[secureStream destroy].
 	].! !
 
-!SqueakSSLTest methodsFor: 'tests' stamp: 'jmv 6/25/2017 21:18:15'!
+!SqueakSSLTest methodsFor: 'tests' stamp: 'jmv 25/Jun/2017 21:18:15'!
 testStreamConnect
 	"Tests the SecureSocketStream client handshake. "
 
@@ -496,7 +496,7 @@ testStreamConnect
 		secureStream ifNotNil:[secureStream destroy].
 	].! !
 
-!SqueakSSLTest methodsFor: 'tests' stamp: 'jmv 6/25/2017 21:18:35'!
+!SqueakSSLTest methodsFor: 'tests' stamp: 'jmv 25/Jun/2017 21:18:35'!
 testStreamTransfer
 	"Tests the SecureSocketStream data transfer"
 
@@ -536,7 +536,7 @@ testStreamTransfer
 		serverStream ifNotNil:[serverStream destroy].
 	].! !
 
-!SqueakSSLTest methodsFor: 'tests' stamp: 'ar 11/27/2011 11:26'!
+!SqueakSSLTest methodsFor: 'tests' stamp: 'ar 27/Nov/2011 11:26:00'!
 testYahooOpenID
 	"Yahoo sends an SSL shutdown sequence which we didn't handle in the past.
 	Also, there were some issues with SecureSocketStream that were unearthed
@@ -554,13 +554,13 @@ testYahooOpenID
 		] raise: Error.
 	].! !
 
-!SqueakSSLTest class methodsFor: 'accessing' stamp: 'ar 7/17/2010 22:35'!
+!SqueakSSLTest class methodsFor: 'accessing' stamp: 'ar 17/Jul/2010 22:35:00'!
 certName
 	"The name of the cert to use for the test"
 
 	^CertName! !
 
-!SqueakSSLTest class methodsFor: 'accessing' stamp: 'ar 7/18/2010 22:06'!
+!SqueakSSLTest class methodsFor: 'accessing' stamp: 'ar 18/Jul/2010 22:06:00'!
 certName: aString
 	"The name of the cert to use for the test.
 		SqueakSSLTest certName: nil.
@@ -570,26 +570,26 @@ certName: aString
 
 	CertName := aString! !
 
-!SqueakSSLTest class methodsFor: 'utilities' stamp: 'ar 6/17/2012 14:58'!
+!SqueakSSLTest class methodsFor: 'utilities' stamp: 'ar 17/Jun/2012 14:58:00'!
 ensureValidCert
 	"Ensure that we have a valid certificate for the tests"
 
 	CertName := SqueakSSL ensureSampleCert.
 ! !
 
-!WebClientServerTest methodsFor: 'tests - json' stamp: 'ar 2/10/2012 13:47'!
+!WebClientServerTest methodsFor: 'tests - json' stamp: 'ar 10/Feb/2012 13:47:00'!
 decode: aString
 	"Decodes the given string"
 	
 	^WebUtils jsonDecode: aString readStream! !
 
-!WebClientServerTest methodsFor: 'tests - json' stamp: 'ar 2/10/2012 13:47'!
+!WebClientServerTest methodsFor: 'tests - json' stamp: 'ar 10/Feb/2012 13:47:00'!
 encode: anObject
 	"Encodes the given object"
 	
 	^WebUtils jsonEncode: anObject! !
 
-!WebClientServerTest methodsFor: 'tests - json' stamp: 'ar 2/10/2012 13:46'!
+!WebClientServerTest methodsFor: 'tests - json' stamp: 'ar 10/Feb/2012 13:46:00'!
 testArrays
 	"Test array encodings"
 
@@ -611,7 +611,7 @@ testArrays
 	self should: [self decode: '[[[]]'] raise: Error.
 ! !
 
-!WebClientServerTest methodsFor: 'tests - json' stamp: 'ar 2/10/2012 13:47'!
+!WebClientServerTest methodsFor: 'tests - json' stamp: 'ar 10/Feb/2012 13:47:00'!
 testDictionaries
 	"Test dictionary encodings"
 
@@ -661,7 +661,7 @@ testDictionaries
 
 	self should: [self encode: (Dictionary newFromPairs: {1. 1})] raise: Error.! !
 
-!WebClientServerTest methodsFor: 'tests - json' stamp: 'ar 2/10/2012 13:47'!
+!WebClientServerTest methodsFor: 'tests - json' stamp: 'ar 10/Feb/2012 13:47:00'!
 testNilTrueFalse
 	"Test encodings of nil, true, false"
 
@@ -680,7 +680,7 @@ testNilTrueFalse
 	self should: [self decode: 'truefalse'] raise: Error.
 ! !
 
-!WebClientServerTest methodsFor: 'tests - json' stamp: 'topa 4/20/2015 14:49'!
+!WebClientServerTest methodsFor: 'tests - json' stamp: 'topa 20/Apr/2015 14:49:00'!
 testNumbers
 	"Test the encodings of numbers"
 
@@ -700,7 +700,7 @@ testNumbers
 	self should: [self decode: '-.e'] raise: Error.
 ! !
 
-!WebClientServerTest methodsFor: 'tests - json' stamp: 'jmv 1/10/2023 14:37:56'!
+!WebClientServerTest methodsFor: 'tests - json' stamp: 'jmv 10/Jan/2023 14:37:56'!
 testStrings
 	"Test string encodings"
 
@@ -727,28 +727,28 @@ testStrings
 	self should: [self decode: '"\'] raise: Error.
 	self should: [self decode: '"\"'] raise: Error.! !
 
-!WebClientServerTest methodsFor: 'setup' stamp: 'SvenVanCaekenberghe 6/14/2010 15:49'!
+!WebClientServerTest methodsFor: 'setup' stamp: 'SvenVanCaekenberghe 14/Jun/2010 15:49:00'!
 localHostUrl
 	^'http://localhost:', self port asString! !
 
-!WebClientServerTest methodsFor: 'setup' stamp: 'fbs 4/4/2013 22:25'!
+!WebClientServerTest methodsFor: 'setup' stamp: 'fbs 4/Apr/2013 22:25:00'!
 port
 	"Use a random port to minimise chances of concurrently running test suites clashing."
 	^ port
 		ifNil: [port := (10000 to: 50000) atRandom]! !
 
-!WebClientServerTest methodsFor: 'setup' stamp: 'ar 2/10/2012 13:27'!
+!WebClientServerTest methodsFor: 'setup' stamp: 'ar 10/Feb/2012 13:27:00'!
 setUp
 	server := WebServer new listenOn: self port.
 	server passwordAt: 'user' realm: 'test' put: 'pass'.
 ! !
 
-!WebClientServerTest methodsFor: 'setup' stamp: 'ar 2/10/2012 13:27'!
+!WebClientServerTest methodsFor: 'setup' stamp: 'ar 10/Feb/2012 13:27:00'!
 tearDown
 	server ifNotNil:[server destroy].
 ! !
 
-!WebClientServerTest methodsFor: 'tests - oauth' stamp: 'ar 8/23/2010 21:56'!
+!WebClientServerTest methodsFor: 'tests - oauth' stamp: 'ar 23/Aug/2010 21:56:00'!
 oAuthParams
 	"The base parameter set for oauth related tests.
 	Example values taken from 
@@ -772,7 +772,7 @@ oAuthParams
 		'oauth_signature_method'.	'HMAC-SHA1'.
 	}.! !
 
-!WebClientServerTest methodsFor: 'tests - oauth' stamp: 'ar 8/11/2010 21:20'!
+!WebClientServerTest methodsFor: 'tests - oauth' stamp: 'ar 11/Aug/2010 21:20:00'!
 testHmacSha1
 	"Test the SHA1 HMAC algorithm"
 
@@ -782,7 +782,7 @@ testHmacSha1
 
 	self assert: (WebUtils hmacSha1: message key: key) base64Encoded = '8wUi7m5HFQy76nowoCThusfgB+Q='! !
 
-!WebClientServerTest methodsFor: 'tests - oauth' stamp: 'jmv 4/13/2023 15:47:22'!
+!WebClientServerTest methodsFor: 'tests - oauth' stamp: 'jmv 13/Apr/2023 15:47:22'!
 testSignOAuthGet
 	"Ensure that we can sign a request correctly using OAuth.
 	Example values taken from 
@@ -798,7 +798,7 @@ testSignOAuthGet
 	self assert: (request headerAt: 'Authorization')
 		equals: ( 'OAuth oauth_consumer_key="abcd",oauth_nonce="FWNkVaRJVzE",oauth_signature_method="HMAC-SHA1",oauth_timestamp="1281668113",oauth_token="ijkl",oauth_version="1.0",oauth_signature="dSI3zjYnriSnaB787UH2NDcS8Ss%3D"'  withLineEndings: String crString).! !
 
-!WebClientServerTest methodsFor: 'tests - oauth' stamp: 'ar 8/23/2010 22:04'!
+!WebClientServerTest methodsFor: 'tests - oauth' stamp: 'ar 23/Aug/2010 22:04:00'!
 testSignOAuthGetDupFields
 	"Ensure that we can sign a request with duplicate fields correctly using OAuth.
 	Example values taken from 
@@ -815,7 +815,7 @@ testSignOAuthGetDupFields
 		equals: 'OAuth oauth_consumer_key="abcd",oauth_nonce="FWNkVaRJVzE",oauth_signature_method="HMAC-SHA1",oauth_timestamp="1281668113",oauth_token="ijkl",oauth_version="1.0",oauth_signature="30p67coAX8YbxCKAGfaimydYK6g%3D"'.
 ! !
 
-!WebClientServerTest methodsFor: 'tests - oauth' stamp: 'ar 8/23/2010 22:07'!
+!WebClientServerTest methodsFor: 'tests - oauth' stamp: 'ar 23/Aug/2010 22:07:00'!
 testSignOAuthGetFields
 	"Ensure that we can sign a GET request with fields correctly using OAuth.
 	Example values taken from 
@@ -832,7 +832,7 @@ testSignOAuthGetFields
 		equals: 'OAuth oauth_consumer_key="abcd",oauth_nonce="FWNkVaRJVzE",oauth_signature_method="HMAC-SHA1",oauth_timestamp="1281668113",oauth_token="ijkl",oauth_version="1.0",oauth_signature="N6TOtNK6h3u9zqjqaF2kgpIVb%2F8%3D"'.
 ! !
 
-!WebClientServerTest methodsFor: 'tests - oauth' stamp: 'ar 8/23/2010 22:04'!
+!WebClientServerTest methodsFor: 'tests - oauth' stamp: 'ar 23/Aug/2010 22:04:00'!
 testSignOAuthPostFields
 	"Ensure that we can sign a POST request with fields correctly using OAuth.
 	Example values taken from 
@@ -850,7 +850,7 @@ testSignOAuthPostFields
 		equals: 'OAuth oauth_consumer_key="abcd",oauth_nonce="FWNkVaRJVzE",oauth_signature_method="HMAC-SHA1",oauth_timestamp="1281668113",oauth_token="ijkl",oauth_version="1.0",oauth_signature="E7yVjmf%2F8UTF9ij15CtbBBhulMw%3D"'.
 ! !
 
-!WebClientServerTest methodsFor: 'tests - oauth' stamp: 'ar 8/23/2010 22:04'!
+!WebClientServerTest methodsFor: 'tests - oauth' stamp: 'ar 23/Aug/2010 22:04:00'!
 testSignOAuthUrlEncoding
 	"Ensure that we can sign a request requiring url-encoded oauth params.
 	Example values taken from 
@@ -870,7 +870,7 @@ testSignOAuthUrlEncoding
 	self assert: (request headerAt: 'Authorization')
 		equals: 'OAuth oauth_consumer_key="key%20with%20spaces",oauth_nonce="FWNkVaRJVzE",oauth_signature_method="HMAC-SHA1",oauth_timestamp="1281668113",oauth_token="ijkl",oauth_version="1.0",oauth_signature="%2FxrAsx0Utt3V6ZbX00jWWpkqrvg%3D"'.! !
 
-!WebClientServerTest methodsFor: 'tests - auth' stamp: 'ar 2/10/2012 13:26'!
+!WebClientServerTest methodsFor: 'tests - auth' stamp: 'ar 10/Feb/2012 13:26:00'!
 testAuthException
 	"Test client and server handling of digest auth"
 
@@ -891,7 +891,7 @@ testAuthException
 	self assert: resp code = 401.
 ! !
 
-!WebClientServerTest methodsFor: 'tests - auth' stamp: 'ar 2/10/2012 13:53'!
+!WebClientServerTest methodsFor: 'tests - auth' stamp: 'ar 10/Feb/2012 13:53:00'!
 testBasicAuth
 	"Test client and server basic auth"
 
@@ -916,7 +916,7 @@ testBasicAuth
 	self assert: (reqHeader beginsWith: 'Basic ').
 ! !
 
-!WebClientServerTest methodsFor: 'tests - auth' stamp: 'ar 2/10/2012 13:53'!
+!WebClientServerTest methodsFor: 'tests - auth' stamp: 'ar 10/Feb/2012 13:53:00'!
 testDigestAuth
 	"Test client and server handling of digest auth"
 
@@ -942,7 +942,7 @@ testDigestAuth
 	self assert: (reqHeader beginsWith: 'Digest ').
 ! !
 
-!WebClientServerTest methodsFor: 'tests - redirect' stamp: 'jmv 4/13/2023 15:12:42'!
+!WebClientServerTest methodsFor: 'tests - redirect' stamp: 'jmv 13/Apr/2023 15:12:42'!
 testAuthRedirectSession
 	"Run a test for a full auth-redirect-cookie loop"
 
@@ -978,7 +978,7 @@ testAuthRedirectSession
 	self assert: (finalFields at: 'number') = '42'.
 ! !
 
-!WebClientServerTest methodsFor: 'tests - redirect' stamp: 'ar 8/10/2010 09:23'!
+!WebClientServerTest methodsFor: 'tests - redirect' stamp: 'ar 10/Aug/2010 09:23:00'!
 testNo302Redirect
 	"Ensure compliance with RFC 2616 rules prohibiting auto redirect 
 	for 302/307 responses."
@@ -1024,7 +1024,7 @@ testNo302Redirect
 
 ! !
 
-!WebClientServerTest methodsFor: 'tests - redirect' stamp: 'jmv 4/13/2023 15:43:55'!
+!WebClientServerTest methodsFor: 'tests - redirect' stamp: 'jmv 13/Apr/2023 15:43:55'!
 testPersistentAuthRedirectSession
 	"Run a test for a full auth-redirect-cookie loop.
 	Ensure that the connection is persistent for the entire loop."
@@ -1070,7 +1070,7 @@ testPersistentAuthRedirectSession
 	self assert: (finalFields at: 'number') = '42'.
 ! !
 
-!WebClientServerTest methodsFor: 'tests - redirect' stamp: 'ar 5/7/2010 20:32'!
+!WebClientServerTest methodsFor: 'tests - redirect' stamp: 'ar 7/May/2010 20:32:00'!
 testRedirect
 	"Test client and server handling of redirects"
 
@@ -1097,7 +1097,7 @@ testRedirect
 	self assert: resp content = 'redirect ok'.
 ! !
 
-!WebClientServerTest methodsFor: 'tests - redirect' stamp: 'ar 5/7/2010 20:32'!
+!WebClientServerTest methodsFor: 'tests - redirect' stamp: 'ar 7/May/2010 20:32:00'!
 testRedirectLoop
 	"Test client handling of redirect loops"
 
@@ -1113,7 +1113,7 @@ testRedirectLoop
 	self assert: resp code = 302.
 ! !
 
-!WebClientServerTest methodsFor: 'tests - redirect' stamp: 'ar 5/7/2010 20:33'!
+!WebClientServerTest methodsFor: 'tests - redirect' stamp: 'ar 7/May/2010 20:33:00'!
 testRedirectTrailingSlash
 	"Special test to ensure that a redirect from /foo to /foo/ works"
 
@@ -1131,7 +1131,7 @@ testRedirectTrailingSlash
 	self assert: resp content = 'redirect ok'.
 ! !
 
-!WebClientServerTest methodsFor: 'tests - chunked' stamp: 'ar 8/31/2010 23:17'!
+!WebClientServerTest methodsFor: 'tests - chunked' stamp: 'ar 31/Aug/2010 23:17:00'!
 testChunkedLoopback
 	"Test HTTP loopback streaming using chunked transfer-encoding"
 
@@ -1192,7 +1192,7 @@ testChunkedLoopback
 	self assert: response nextChunk equals: nil.
 ! !
 
-!WebClientServerTest methodsFor: 'tests - chunked' stamp: 'ar 8/31/2010 22:07'!
+!WebClientServerTest methodsFor: 'tests - chunked' stamp: 'ar 31/Aug/2010 22:07:00'!
 testChunkedRequest
 	"Test HTTP post using chunked transfer-encoding"
 
@@ -1213,7 +1213,7 @@ testChunkedRequest
 	self assert: resp content = 'HelloWorldDude'.
 	self assert: (request headerAt: 'Transfer-Encoding') = 'chunked'! !
 
-!WebClientServerTest methodsFor: 'tests - chunked' stamp: 'ar 8/31/2010 22:17'!
+!WebClientServerTest methodsFor: 'tests - chunked' stamp: 'ar 31/Aug/2010 22:17:00'!
 testChunkedResponse
 	"Test HTTP response using chunked transfer-encoding"
 
@@ -1231,7 +1231,7 @@ testChunkedResponse
 	self assert: resp content = 'HelloWorldDude'.
 	self assert: (resp headerAt: 'Transfer-Encoding') = 'chunked'.! !
 
-!WebClientServerTest methodsFor: 'tests - cookies' stamp: 'ar 8/5/2010 19:28'!
+!WebClientServerTest methodsFor: 'tests - cookies' stamp: 'ar 5/Aug/2010 19:28:00'!
 testCookieDomainRules
 	"Test cookie domain rules"
 
@@ -1266,7 +1266,7 @@ testCookieDomainRules
 			path: '/').
 ! !
 
-!WebClientServerTest methodsFor: 'tests - cookies' stamp: 'ar 8/21/2011 11:36'!
+!WebClientServerTest methodsFor: 'tests - cookies' stamp: 'ar 21/Aug/2011 11:36:00'!
 testCookieExpiryParsing
 	"Test parsing of cookie expiry dates"
 
@@ -1282,7 +1282,7 @@ testCookieExpiryParsing
 	self assert: b expiry = exp asUTC.
 ! !
 
-!WebClientServerTest methodsFor: 'tests - cookies' stamp: 'jmv 6/26/2017 19:41:44'!
+!WebClientServerTest methodsFor: 'tests - cookies' stamp: 'jmv 26/Jun/2017 19:41:44'!
 testCookieParsing
 	"Test client and server handling of cookies"
 
@@ -1321,7 +1321,7 @@ testCookieParsing
 				'x=32', String crString,
 				'y=55', String crString.! !
 
-!WebClientServerTest methodsFor: 'tests - cookies' stamp: 'ar 8/5/2010 19:36'!
+!WebClientServerTest methodsFor: 'tests - cookies' stamp: 'ar 5/Aug/2010 19:36:00'!
 testCookies
 	"Test client and server handling of cookies"
 
@@ -1351,7 +1351,7 @@ testCookies
 	self assert: resp content = ''.
 ! !
 
-!WebClientServerTest methodsFor: 'tests - cookies' stamp: 'ar 8/5/2010 19:36'!
+!WebClientServerTest methodsFor: 'tests - cookies' stamp: 'ar 5/Aug/2010 19:36:00'!
 testDuplicateCookies
 	"Tests deleting cookies in WebClient"
 
@@ -1380,7 +1380,7 @@ testDuplicateCookies
 	self assert: resp content = '1'.
 ! !
 
-!WebClientServerTest methodsFor: 'tests - cookies' stamp: 'ar 5/11/2010 20:42'!
+!WebClientServerTest methodsFor: 'tests - cookies' stamp: 'ar 11/May/2010 20:42:00'!
 testInvalidCookies
 	"Test client and server handling of cookies"
 
@@ -1453,7 +1453,7 @@ testInvalidCookies
 	self deny: resp content = '123'.
 ! !
 
-!WebClientServerTest methodsFor: 'tests - websockets' stamp: 'ar 7/20/2010 20:38'!
+!WebClientServerTest methodsFor: 'tests - websockets' stamp: 'ar 20/Jul/2010 20:38:00'!
 testDecodeWebSocketKey
 	"Ensure that decoding the Sec-WebSocket-Key fields works properly."
 
@@ -1467,7 +1467,7 @@ testDecodeWebSocketKey
 
 	self assert: (WebUtils webSocketHandshake: key1 with: key2 with: data) asString = 'fQJ,fN/4F4!!~K~MH'.! !
 
-!WebClientServerTest methodsFor: 'tests - websockets' stamp: 'ar 9/26/2011 10:29'!
+!WebClientServerTest methodsFor: 'tests - websockets' stamp: 'ar 26/Sep/2011 10:29:00'!
 testWebSocketHash07
 	"self run: #testWebSocketHash07"
 	"From http://tools.ietf.org/html/draft-ietf-hybi-thewebsocketprotocol-07"
@@ -1477,7 +1477,7 @@ testWebSocketHash07
 	hash := WebUtils webSocketHash07: key.
 	self assert: hash = 's3pPLMBiTxaQ9kYGzzhZRbK+xOo='.! !
 
-!WebClientServerTest methodsFor: 'tests - websockets' stamp: 'ar 9/26/2011 12:07'!
+!WebClientServerTest methodsFor: 'tests - websockets' stamp: 'ar 26/Sep/2011 12:07:00'!
 testWebSockets
 	"Test the WebSocket interface"
 
@@ -1486,7 +1486,37 @@ testWebSockets
 	].
 ! !
 
-!WebClientServerTest methodsFor: 'tests - websockets' stamp: 'ar 9/26/2011 12:07'!
+!WebClientServerTest methodsFor: 'tests - websockets' stamp: 'ar 26/Sep/2011 12:50:00'!
+testWebSockets: aBlock
+	"Test the WebSocket interface"
+
+	| sema cws resp sws |
+	server addService: '/websockets' action:[:req |
+		sws := req asWebSocket.
+		sws onError:[:ex| 
+			Transcript cr; show: ex description.
+			Transcript cr; show: ex signalerContext longStack.
+		].
+		sws onMessage:[:sdata| sws send: 'Response: ', sdata].
+		sws run.
+	].
+
+	sema := Semaphore new.
+	cws := aBlock value.
+	cws onMessage:[:cdata| resp := cdata. sema signal].
+	cws onClose:[resp := nil. sema signal].
+	cws fork.
+
+	cws send: 'Testing, one, two'.
+	sema wait.
+	self assert: (resp = 'Response: Testing, one, two').
+
+	cws close.
+	sema wait.
+	self assert: (resp = nil).
+! !
+
+!WebClientServerTest methodsFor: 'tests - websockets' stamp: 'ar 26/Sep/2011 12:07:00'!
 testWebSockets00
 	"Test the WebSocket interface"
 
@@ -1495,7 +1525,7 @@ testWebSockets00
 	].
 ! !
 
-!WebClientServerTest methodsFor: 'tests - websockets' stamp: 'ar 9/26/2011 12:07'!
+!WebClientServerTest methodsFor: 'tests - websockets' stamp: 'ar 26/Sep/2011 12:07:00'!
 testWebSockets07
 	"Test the WebSocket interface"
 
@@ -1504,7 +1534,7 @@ testWebSockets07
 	].
 ! !
 
-!WebClientServerTest methodsFor: 'tests - websockets' stamp: 'ar 11/17/2011 17:28'!
+!WebClientServerTest methodsFor: 'tests - websockets' stamp: 'ar 17/Nov/2011 17:28:00'!
 testWebSockets07ControlDecode
 	"Tests from section 4.7 of the WebSockets spec"
 
@@ -1528,7 +1558,7 @@ testWebSockets07ControlDecode
 	self assert: pong = 'Hello'.
 ! !
 
-!WebClientServerTest methodsFor: 'tests - websockets' stamp: 'jmv 6/26/2017 19:39:28'!
+!WebClientServerTest methodsFor: 'tests - websockets' stamp: 'jmv 26/Jun/2017 19:39:28'!
 testWebSockets07ControlInterleave
 	"Test the WebSocket 07 control interleave"
 
@@ -1579,7 +1609,7 @@ testWebSockets07ControlInterleave
 
 	cws close.! !
 
-!WebClientServerTest methodsFor: 'tests - websockets' stamp: 'ar 11/17/2011 17:23'!
+!WebClientServerTest methodsFor: 'tests - websockets' stamp: 'ar 17/Nov/2011 17:23:00'!
 testWebSockets07DataDecode
 	"Tests from section 4.7 of the WebSockets spec"
 
@@ -1608,7 +1638,7 @@ testWebSockets07DataDecode
 	self assert: data = 'Hello'.
 ! !
 
-!WebClientServerTest methodsFor: 'tests - websockets' stamp: 'ar 9/27/2011 13:48'!
+!WebClientServerTest methodsFor: 'tests - websockets' stamp: 'ar 27/Sep/2011 13:48:00'!
 testWebSockets07NoMask
 	"Test the WebSocket interface"
 
@@ -1618,7 +1648,7 @@ testWebSockets07NoMask
 			yourself].
 ! !
 
-!WebClientServerTest methodsFor: 'tests - websockets' stamp: 'ar 9/26/2011 12:07'!
+!WebClientServerTest methodsFor: 'tests - websockets' stamp: 'ar 26/Sep/2011 12:07:00'!
 testWebSockets68
 	"Test the WebSocket interface"
 
@@ -1627,37 +1657,7 @@ testWebSockets68
 	].
 ! !
 
-!WebClientServerTest methodsFor: 'tests - websockets' stamp: 'ar 9/26/2011 12:50'!
-testWebSockets: aBlock
-	"Test the WebSocket interface"
-
-	| sema cws resp sws |
-	server addService: '/websockets' action:[:req |
-		sws := req asWebSocket.
-		sws onError:[:ex| 
-			Transcript cr; show: ex description.
-			Transcript cr; show: ex signalerContext longStack.
-		].
-		sws onMessage:[:sdata| sws send: 'Response: ', sdata].
-		sws run.
-	].
-
-	sema := Semaphore new.
-	cws := aBlock value.
-	cws onMessage:[:cdata| resp := cdata. sema signal].
-	cws onClose:[resp := nil. sema signal].
-	cws fork.
-
-	cws send: 'Testing, one, two'.
-	sema wait.
-	self assert: (resp = 'Response: Testing, one, two').
-
-	cws close.
-	sema wait.
-	self assert: (resp = nil).
-! !
-
-!WebClientServerTest methodsFor: 'tests - websockets' stamp: 'jmv 6/26/2017 19:39:38'!
+!WebClientServerTest methodsFor: 'tests - websockets' stamp: 'jmv 26/Jun/2017 19:39:38'!
 testWebSocketsFraming
 	"Test the WebSocket 00 framing"
 
@@ -1703,7 +1703,7 @@ testWebSocketsFraming
 	self assert: (resp = nil).
 	self assert: (frameType = 255).! !
 
-!WebClientServerTest methodsFor: 'tests - misc' stamp: 'ar 5/7/2010 20:30'!
+!WebClientServerTest methodsFor: 'tests - misc' stamp: 'ar 7/May/2010 20:30:00'!
 testDefault404
 	"Test that a new server responds with 404 to anything"
 
@@ -1712,7 +1712,7 @@ testDefault404
 	self assert: resp code = 404.
 ! !
 
-!WebClientServerTest methodsFor: 'tests - misc' stamp: 'ar 6/1/2010 20:22'!
+!WebClientServerTest methodsFor: 'tests - misc' stamp: 'ar 1/Jun/2010 20:22:00'!
 testHtmlSubmit
 	"Ensure that we have round-trip conversion for html submit"
 
@@ -1722,7 +1722,7 @@ testHtmlSubmit
 	self testHtmlSubmitUsing: fieldDict.
 	self testHtmlSubmitUsing: fieldList.! !
 
-!WebClientServerTest methodsFor: 'tests - misc' stamp: 'jmv 1/10/2023 14:48:27'!
+!WebClientServerTest methodsFor: 'tests - misc' stamp: 'jmv 10/Jan/2023 14:48:27'!
 testHtmlSubmitUsing: fields
 	"Ensure that we have round-trip conversion for html submit"
 
@@ -1744,7 +1744,7 @@ foo=123' withLineEndings: String crString).
 bar=yoho
 foo=123'withLineEndings: String crString).! !
 
-!WebClientServerTest methodsFor: 'tests - misc' stamp: 'dtl 7/17/2012 19:40'!
+!WebClientServerTest methodsFor: 'tests - misc' stamp: 'dtl 17/Jul/2012 19:40:00'!
 testListenOnInterface
 	"Test that listening on a particular interface listens only on that interface"
 
@@ -1768,7 +1768,7 @@ testListenOnInterface
 	self assert: resp content = 'ok'.
 ! !
 
-!WebClientServerTest methodsFor: 'tests - misc' stamp: 'jmv 6/26/2017 20:00:44'!
+!WebClientServerTest methodsFor: 'tests - misc' stamp: 'jmv 26/Jun/2017 20:00:44'!
 testLogging200
 	"Test logging a regular 200 a-ok response"
 
@@ -1789,7 +1789,7 @@ testLogging200
 	self assert: ('localhost - - [*] "GET /test HTTP/1.1" 200 2', String newLineString match: log).
 ! !
 
-!WebClientServerTest methodsFor: 'tests - misc' stamp: 'jmv 6/26/2017 20:01:17'!
+!WebClientServerTest methodsFor: 'tests - misc' stamp: 'jmv 26/Jun/2017 20:01:17'!
 testLogging404
 	"Test logging a 404 response"
 
@@ -1808,7 +1808,7 @@ testLogging404
 	self assert: ('localhost - - [*] "GET / HTTP/1.1" 404 145', String newLineString match: log).
 ! !
 
-!WebClientServerTest methodsFor: 'tests - misc' stamp: 'ar 5/7/2010 20:32'!
+!WebClientServerTest methodsFor: 'tests - misc' stamp: 'ar 7/May/2010 20:32:00'!
 testNestedAction
 	"Test handling of nested actions"
 
@@ -1829,7 +1829,7 @@ testNestedAction
 	self assert: resp content = 'ok'.
 ! !
 
-!WebClientServerTest methodsFor: 'tests - misc' stamp: 'ar 8/24/2010 21:42'!
+!WebClientServerTest methodsFor: 'tests - misc' stamp: 'ar 24/Aug/2010 21:42:00'!
 testResponseUrl
 	"Tests that the response url is pointing to the final location"
 
@@ -1853,7 +1853,7 @@ testResponseUrl
 	self assert: resp url = (self localHostUrl, '/foo').
 ! !
 
-!WebClientServerTest methodsFor: 'tests - misc' stamp: 'ar 11/19/2011 18:20'!
+!WebClientServerTest methodsFor: 'tests - misc' stamp: 'ar 19/Nov/2011 18:20:00'!
 testServerDestroy
 	"Tests that connections get nuked when server gets killed"
 	
@@ -1880,7 +1880,7 @@ testServerDestroy
 	self deny: client isConnected
 ! !
 
-!WebClientServerTest methodsFor: 'tests - misc' stamp: 'ar 5/7/2010 20:33'!
+!WebClientServerTest methodsFor: 'tests - misc' stamp: 'ar 7/May/2010 20:33:00'!
 testServerError
 	"Test server handling of errors"
 
@@ -1891,7 +1891,7 @@ testServerError
 	self assert: resp code = 500.
 ! !
 
-!WebClientServerTest methodsFor: 'tests - misc' stamp: 'ar 11/1/2010 21:09'!
+!WebClientServerTest methodsFor: 'tests - misc' stamp: 'ar 1/Nov/2010 21:09:00'!
 testServerRegistry
 	"Ensure that the WebServer registry functions as intended"
 
@@ -1919,7 +1919,7 @@ testServerRegistry
 		serverB ifNotNil:[serverB destroy].
 	].! !
 
-!WebClientServerTest methodsFor: 'tests - misc' stamp: 'ar 6/14/2010 21:06'!
+!WebClientServerTest methodsFor: 'tests - misc' stamp: 'ar 14/Jun/2010 21:06:00'!
 testSimpleServerAction
 	"Test client and server handling simple defaults"
 
@@ -1934,7 +1934,7 @@ testSimpleServerAction
 	self assert: resp content = 'ok'.
 ! !
 
-!WebClientServerTest methodsFor: 'tests - misc' stamp: 'ar 5/7/2010 20:33'!
+!WebClientServerTest methodsFor: 'tests - misc' stamp: 'ar 7/May/2010 20:33:00'!
 testStreaming
 	"Run a test for a full auth-redirect-cookie loop"
 
@@ -1950,7 +1950,7 @@ testStreaming
 	self assert: stream position = amount.
 ! !
 
-!WebClientServerTest methodsFor: 'tests - misc' stamp: 'ar 6/19/2010 00:05'!
+!WebClientServerTest methodsFor: 'tests - misc' stamp: 'ar 19/Jun/2010 00:05:00'!
 testTransientPostContent
 	"Ensure that WebRequest>>content doesn't close the socket 
 	when used in a transient post request"
@@ -1967,7 +1967,7 @@ testTransientPostContent
 	self assert: resp content = 'hello'.
 ! !
 
-!WebClientServerTest methodsFor: 'tests - misc' stamp: 'jmv 4/13/2023 15:25:43'!
+!WebClientServerTest methodsFor: 'tests - misc' stamp: 'jmv 13/Apr/2023 15:25:43'!
 testUrlEncoding
 	"Test the default URL encoding behavior"
 
@@ -1987,7 +1987,7 @@ testUrlEncoding
 	self assert: resp code = 200.
 	self assert: resp content = 'ok'.! !
 
-!WebClientServerTest methodsFor: 'tests - misc' stamp: 'jmv 4/13/2023 15:26:29'!
+!WebClientServerTest methodsFor: 'tests - misc' stamp: 'jmv 13/Apr/2023 15:26:29'!
 testUrlEncodingUnicode
 	"Test the default URL encoding behavior with Unicode characters.
 	Original example is
@@ -2009,7 +2009,7 @@ testUrlEncodingUnicode
 	self assert: resp code = 200.
 	self assert: resp content = 'ok'.! !
 
-!WebClientServerTest methodsFor: 'tests - fields' stamp: 'jmv 1/10/2023 14:45:36'!
+!WebClientServerTest methodsFor: 'tests - fields' stamp: 'jmv 10/Jan/2023 14:45:36'!
 testGetFields
 	"Test client and server handling simple fields"
 
@@ -2026,7 +2026,7 @@ testGetFields
 bar=yoho
 foo=123' withLineEndings: String crString).! !
 
-!WebClientServerTest methodsFor: 'tests - fields' stamp: 'jmv 1/10/2023 14:45:02'!
+!WebClientServerTest methodsFor: 'tests - fields' stamp: 'jmv 10/Jan/2023 14:45:02'!
 testMultipartFields
 	"Test client and server handling multipart/form-data fields"
 
@@ -2047,7 +2047,7 @@ bar=yoho
 foo=123' withLineEndings: String crString).
 ! !
 
-!WebClientServerTest methodsFor: 'tests - fields' stamp: 'jmv 1/10/2023 14:45:26'!
+!WebClientServerTest methodsFor: 'tests - fields' stamp: 'jmv 10/Jan/2023 14:45:26'!
 testPostFields
 	"Test client and server handling fields in url-encoded encoded post requests"
 
@@ -2067,7 +2067,7 @@ bar=yoho
 foo=123' withLineEndings: String crString).
 ! !
 
-!WebClientServerTest methodsFor: 'tests - methods' stamp: 'ar 5/11/2010 20:42'!
+!WebClientServerTest methodsFor: 'tests - methods' stamp: 'ar 11/May/2010 20:42:00'!
 testHttpDelete
 	"Test for handling a DELETE request"
 
@@ -2093,7 +2093,7 @@ testHttpDelete
 	self assert: resp code = 405.
 ! !
 
-!WebClientServerTest methodsFor: 'tests - methods' stamp: 'ar 8/5/2010 22:32'!
+!WebClientServerTest methodsFor: 'tests - methods' stamp: 'ar 5/Aug/2010 22:32:00'!
 testHttpHead
 	"Test for handling a HEAD request"
 
@@ -2115,7 +2115,7 @@ testHttpHead
 	self assert: resp content = ''.
 ! !
 
-!WebClientServerTest methodsFor: 'tests - methods' stamp: 'ar 5/11/2010 20:42'!
+!WebClientServerTest methodsFor: 'tests - methods' stamp: 'ar 11/May/2010 20:42:00'!
 testHttpOptions
 	"Test for handling the OPTIONS request"
 
@@ -2134,7 +2134,7 @@ testHttpOptions
 	self assert: resp content = ''.
 	self assert: (resp headerAt: 'allow') = 'HEAD,TRACE,OPTIONS,GET,PUT,DELETE'.! !
 
-!WebClientServerTest methodsFor: 'tests - methods' stamp: 'jmv 6/26/2017 19:25:31'!
+!WebClientServerTest methodsFor: 'tests - methods' stamp: 'jmv 26/Jun/2017 19:25:31'!
 testHttpTrace
 	"Test for handling the TRACE request"
 
@@ -2147,7 +2147,7 @@ testHttpTrace
 		'user-agent: ', WebClient new userAgent, String crlfString,
 		'host: localhost:', self port printString, String crlfString, String crlfString	)! !
 
-!WebClientServerTest methodsFor: 'tests - https' stamp: 'ar 7/21/2010 20:59'!
+!WebClientServerTest methodsFor: 'tests - https' stamp: 'ar 21/Jul/2010 20:59:00'!
 testSchemeHandling
 	"Ensure that we handle only http and https schemes"
 

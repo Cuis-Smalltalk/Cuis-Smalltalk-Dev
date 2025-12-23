@@ -1,22 +1,22 @@
-'From Cuis 5.0 [latest update: #4415] on 22 October 2020 at 9:22:39 pm'!
+'From Cuis7.7 [latest update: #7779] on 23 December 2025 at 4:41:43 pm'!
 'Description '!
 !provides: 'Tests-ExtendedClipboard' 1 0!
 !requires: 'ExtendedClipboard' 1 12 nil!
-SystemOrganization addCategory: 'Tests-ExtendedClipboard'!
+SystemOrganization addCategory: #'Tests-ExtendedClipboard'!
 
 
-!classDefinition: #ExtendedClipboardTest category: 'Tests-ExtendedClipboard'!
+!classDefinition: #ExtendedClipboardTest category: #'Tests-ExtendedClipboard'!
 TestCase subclass: #ExtendedClipboardTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Tests-ExtendedClipboard'!
-!classDefinition: 'ExtendedClipboardTest class' category: 'Tests-ExtendedClipboard'!
+!classDefinition: 'ExtendedClipboardTest class' category: #'Tests-ExtendedClipboard'!
 ExtendedClipboardTest class
 	instanceVariableNames: ''!
 
 
-!ExtendedClipboardTest methodsFor: 'testing' stamp: 'jmv 7/14/2015 22:57'!
+!ExtendedClipboardTest methodsFor: 'testing' stamp: 'jmv 14/Jul/2015 22:57:00'!
 testStar16BitToAndFromImageClipboard
 	"
 	ExtendedClipboardTest new testStar16BitToAndFromImageClipboard
@@ -40,7 +40,7 @@ testStar16BitToAndFromImageClipboard
 	form1 addDeltasFrom: form2.
 	self assert: form1 primCountBits = 0 description: 'Form copyPasted from Clipboard appears to be bad.'.! !
 
-!ExtendedClipboardTest methodsFor: 'testing' stamp: 'jmv 4/2/2016 14:40'!
+!ExtendedClipboardTest methodsFor: 'testing' stamp: 'jmv 2/Apr/2016 14:40:00'!
 testStar8BitToAndFromImageClipboard
 	"
 	ExtendedClipboardTest new testStar8BitToAndFromImageClipboard
@@ -67,7 +67,7 @@ testStar8BitToAndFromImageClipboard
 	form1 addDeltasFrom: form2.
 	self assert: form1 primCountBits = 0 description: 'Form copyPasted from Clipboard appears to be bad.'.! !
 
-!ExtendedClipboardTest methodsFor: 'testing' stamp: 'jmv 7/14/2015 22:57'!
+!ExtendedClipboardTest methodsFor: 'testing' stamp: 'jmv 14/Jul/2015 22:57:00'!
 testStarToAndFromImageClipboard
 	"
 	ExtendedClipboardTest new testStarToAndFromImageClipboard

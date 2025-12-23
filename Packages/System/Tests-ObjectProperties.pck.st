@@ -1,7 +1,7 @@
-'From Cuis 6.0 [latest update: #6072] on 16 November 2023 at 11:48:32 am'!
+'From Cuis7.7 [latest update: #7779] on 23 December 2025 at 4:36:07 pm'!
 'Description '!
 !provides: 'Tests-ObjectProperties' 1 0!
-!requires: 'ObjectProperties' 1 0!
+!requires: 'ObjectProperties' 1 0 nil!
 SystemOrganization addCategory: #'Tests-ObjectProperties'!
 
 
@@ -16,7 +16,7 @@ TestObjectProperties class
 	instanceVariableNames: ''!
 
 
-!TestObjectProperties methodsFor: 'tests' stamp: 'jmv 11/16/2023 11:40:22'!
+!TestObjectProperties methodsFor: 'tests' stamp: 'jmv 16/Nov/2023 11:40:22'!
 testObjectProperties01None
 	| collected subject |
 	subject := 3@5.
@@ -33,7 +33,7 @@ testObjectProperties01None
 	subject propertyNamesAndValuesDo: [ :propName | collected add: propName ].
 	self assert: collected isEmpty.! !
 
-!TestObjectProperties methodsFor: 'tests' stamp: 'jmv 11/16/2023 11:43:42'!
+!TestObjectProperties methodsFor: 'tests' stamp: 'jmv 16/Nov/2023 11:43:42'!
 testObjectProperties02Some
 	| collected subject |
 	subject := 3@5.
@@ -56,7 +56,7 @@ testObjectProperties02Some
 	self assert: collected anyOne first equals: #property1Name.
 	self assert: collected anyOne second equals: #property1Value.! !
 
-!TestObjectProperties methodsFor: 'tests' stamp: 'jmv 11/16/2023 11:44:18'!
+!TestObjectProperties methodsFor: 'tests' stamp: 'jmv 16/Nov/2023 11:44:18'!
 testObjectProperties03AddAndRemove
 	| collected subject |
 	subject := 3@5.
@@ -75,7 +75,7 @@ testObjectProperties03AddAndRemove
 	subject propertyNamesAndValuesDo: [ :propName | collected add: propName ].
 	self assert: collected isEmpty.! !
 
-!TestObjectProperties methodsFor: 'tests' stamp: 'jmv 11/16/2023 11:45:24'!
+!TestObjectProperties methodsFor: 'tests' stamp: 'jmv 16/Nov/2023 11:45:24'!
 testObjectProperties04NilValue
 	| collected subject |
 	subject := 3@5.
@@ -99,7 +99,7 @@ testObjectProperties04NilValue
 	self assert: collected anyOne first equals: #property1Name.
 	self assert: collected anyOne second equals: nil.! !
 
-!TestObjectProperties methodsFor: 'tests' stamp: 'jmv 11/16/2023 11:48:15'!
+!TestObjectProperties methodsFor: 'tests' stamp: 'jmv 16/Nov/2023 11:48:15'!
 testObjectWithProperties11None
 	| collected subject |
 	subject := ObjectWithProperties new.
@@ -116,7 +116,7 @@ testObjectWithProperties11None
 	subject propertyNamesAndValuesDo: [ :propName | collected add: propName ].
 	self assert: collected isEmpty.! !
 
-!TestObjectProperties methodsFor: 'tests' stamp: 'jmv 11/16/2023 11:48:18'!
+!TestObjectProperties methodsFor: 'tests' stamp: 'jmv 16/Nov/2023 11:48:18'!
 testObjectWithProperties12Some
 	| collected subject |
 	subject := ObjectWithProperties new.
@@ -139,7 +139,7 @@ testObjectWithProperties12Some
 	self assert: collected anyOne first equals: #property1Name.
 	self assert: collected anyOne second equals: #property1Value.! !
 
-!TestObjectProperties methodsFor: 'tests' stamp: 'jmv 11/16/2023 11:48:22'!
+!TestObjectProperties methodsFor: 'tests' stamp: 'jmv 16/Nov/2023 11:48:22'!
 testObjectWithProperties13AddAndRemove
 	| collected subject |
 	subject := ObjectWithProperties new.
@@ -158,7 +158,7 @@ testObjectWithProperties13AddAndRemove
 	subject propertyNamesAndValuesDo: [ :propName | collected add: propName ].
 	self assert: collected isEmpty.! !
 
-!TestObjectProperties methodsFor: 'tests' stamp: 'jmv 11/16/2023 11:48:25'!
+!TestObjectProperties methodsFor: 'tests' stamp: 'jmv 16/Nov/2023 11:48:25'!
 testObjectWithProperties14NilValue
 	| collected subject |
 	subject := ObjectWithProperties new.

@@ -1,4 +1,4 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3319] on 12 May 2018 at 5:44:25 pm'!
+'From Cuis7.7 [latest update: #7779] on 23 December 2025 at 4:42:13 pm'!
 'Description Crayon Colors from
 	http://www.colourlovers.com/web/blog/2008/04/22/all-120-crayon-names-color-codes-and-fun-facts'!
 !provides: 'Crayon-NamedColors' 1 1!
@@ -6,7 +6,7 @@
 
 
 
-!Color class methodsFor: '*crayon-namedcolors' stamp: 'KenD 5/28/2015 15:36'!
+!Color class methodsFor: '*crayon-namedcolors' stamp: 'KenD 28/May/2015 15:36:00'!
 crayonColorDictionary
 	"Answer a dictionary of Crayon color names.
 	http://www.colourlovers.com/web/blog/2008/04/22/all-120-crayon-names-color-codes-and-fun-facts"
@@ -24,7 +24,7 @@ To reset the Color name->color dictionary:
 	^crayonColorDict
 ! !
 
-!Color class methodsFor: '*crayon-namedcolors' stamp: 'KenD 5/28/2015 15:33'!
+!Color class methodsFor: '*crayon-namedcolors' stamp: 'KenD 28/May/2015 15:33:00'!
 crayonColors1
 	"Answer a dictionary of XKCD color names survey name to Color objects."
 
@@ -52,7 +52,7 @@ crayonColors1
     at: #'Raw Sienna' put: (Color r: 214 g: 138 b: 89 range: 255);
 yourself! !
 
-!Color class methodsFor: '*crayon-namedcolors' stamp: 'KenD 5/28/2015 15:34'!
+!Color class methodsFor: '*crayon-namedcolors' stamp: 'KenD 28/May/2015 15:34:00'!
 crayonColors2
 	"Answer a dictionary of XKCD color names survey name to Color objects."
 
@@ -134,7 +134,7 @@ crayonColors2
     at: #'Wild Strawberry' put: (Color r: 255 g: 67 b: 164 range: 255);
 yourself! !
 
-!Color class methodsFor: '*crayon-namedcolors' stamp: 'KenD 5/28/2015 15:35'!
+!Color class methodsFor: '*crayon-namedcolors' stamp: 'KenD 28/May/2015 15:35:00'!
 crayonColors3
 	"Answer a dictionary of XKCD color names survey name to Color objects."
 

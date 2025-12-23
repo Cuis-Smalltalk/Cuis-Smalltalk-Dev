@@ -1,4 +1,4 @@
-'From Cuis7.5 [latest update: #7657] on 14 October 2025 at 9:34:37 am'!
+'From Cuis7.7 [latest update: #7779] on 23 December 2025 at 4:38:47 pm'!
 'Description '!
 !provides: 'Complex' 1 9!
 SystemOrganization addCategory: #Complex!
@@ -90,7 +90,7 @@ Missing methods
 	Complex | mathematical functions | arcCos
 	Complex | mathematical functions | arcTan!
 
-!Complex methodsFor: 'printing' stamp: 'jmv 7/2/2019 08:43:23'!
+!Complex methodsFor: 'printing' stamp: 'jmv 2/Jul/2019 08:43:23'!
 printOn: aStream
 	real printOn: aStream.
 	aStream nextPut: Character space.
@@ -103,7 +103,7 @@ printOn: aStream
 	aStream nextPut: $i
 ! !
 
-!Complex methodsFor: 'accessing' stamp: 'jmv 6/25/2018 12:01:46'!
+!Complex methodsFor: 'accessing' stamp: 'jmv 25/Jun/2018 12:01:46'!
 argument
 	"Answer the argument of the receiver.
 	Answer is in (-Pi .. +Pi]"
@@ -111,17 +111,17 @@ argument
 	self isZero ifTrue: [ ^0.0 ].
 	^imaginary arcTan: real! !
 
-!Complex methodsFor: 'accessing' stamp: 'mk 10/27/2003 17:39'!
+!Complex methodsFor: 'accessing' stamp: 'mk 27/Oct/2003 17:39:00'!
 imaginary
 	^ imaginary! !
 
-!Complex methodsFor: 'accessing' stamp: 'jmv 6/25/2018 11:52:36'!
+!Complex methodsFor: 'accessing' stamp: 'jmv 25/Jun/2018 11:52:36'!
 magnitude
 	"Answer the distance of the receiver from zero (0 + 0 i)."
 
 	^ self abs! !
 
-!Complex methodsFor: 'accessing' stamp: 'jmv 6/25/2018 12:03:15'!
+!Complex methodsFor: 'accessing' stamp: 'jmv 25/Jun/2018 12:03:15'!
 phase
 	"Answer the argument of the receiver.
 	Answer is in (-Pi .. +Pi]
@@ -129,11 +129,11 @@ phase
 
 	^ self argument! !
 
-!Complex methodsFor: 'accessing' stamp: 'mk 10/27/2003 17:39'!
+!Complex methodsFor: 'accessing' stamp: 'mk 27/Oct/2003 17:39:00'!
 real
 	^ real! !
 
-!Complex methodsFor: 'arithmetic' stamp: 'jmv 10/14/2025 09:31:28'!
+!Complex methodsFor: 'arithmetic' stamp: 'jmv 14/Oct/2025 09:31:28'!
 * aNumber
 	"Answer the result of multiplying the receiver by aNumber."
 	| c d newReal newImaginary |
@@ -155,7 +155,7 @@ real
 			newImaginary := imaginary * aNumber ].
 	^ Complex real: newReal imaginary: newImaginary! !
 
-!Complex methodsFor: 'arithmetic' stamp: 'jmv 10/14/2025 09:32:30'!
+!Complex methodsFor: 'arithmetic' stamp: 'jmv 14/Oct/2025 09:32:30'!
 + aNumber
 	"Answer the sum of the receiver and aNumber."
 	aNumber isNumber
@@ -164,7 +164,7 @@ real
 		real: real + aNumber real
 		imaginary: imaginary + aNumber imaginary.! !
 
-!Complex methodsFor: 'arithmetic' stamp: 'jmv 10/14/2025 09:32:38'!
+!Complex methodsFor: 'arithmetic' stamp: 'jmv 14/Oct/2025 09:32:38'!
 - aNumber
 	"Answer the difference between the receiver and aNumber."
 	aNumber isNumber
@@ -173,7 +173,7 @@ real
 		real: real - aNumber real
 		imaginary: imaginary - aNumber imaginary.! !
 
-!Complex methodsFor: 'arithmetic' stamp: 'jmv 10/14/2025 09:32:46'!
+!Complex methodsFor: 'arithmetic' stamp: 'jmv 14/Oct/2025 09:32:46'!
 / aNumber
 	"Answer the result of dividing receiver by aNumber"
 	| c d newReal newImaginary s e f |
@@ -196,7 +196,7 @@ real
 			newImaginary := imaginary / aNumber ].
 	^ Complex real: newReal imaginary: newImaginary! !
 
-!Complex methodsFor: 'arithmetic' stamp: 'jmv 4/5/2019 19:56:25'!
+!Complex methodsFor: 'arithmetic' stamp: 'jmv 5/Apr/2019 19:56:25'!
 abs
 	"Answer the distance of the receiver from zero (0 + 0 i)."
 
@@ -209,7 +209,7 @@ abs
 			^ self safeAbs ]].
 	^absSquared sqrt! !
 
-!Complex methodsFor: 'arithmetic' stamp: 'jmv 6/25/2018 12:02:03'!
+!Complex methodsFor: 'arithmetic' stamp: 'jmv 25/Jun/2018 12:02:03'!
 arg
 	"Answer the argument of the receiver.
 	Answer is in (-Pi .. +Pi]
@@ -218,13 +218,13 @@ arg
 	self isZero ifTrue: [self error: 'zero has no argument.'].
 	^imaginary arcTan: real! !
 
-!Complex methodsFor: 'arithmetic' stamp: 'jmv 4/5/2019 09:09:44'!
+!Complex methodsFor: 'arithmetic' stamp: 'jmv 5/Apr/2019 09:09:44'!
 complexConjugate
 	"Return the complex conjugate of this complex number."
 
 	^self class real: real imaginary: imaginary negated! !
 
-!Complex methodsFor: 'arithmetic' stamp: 'nice 2/5/2006 03:25'!
+!Complex methodsFor: 'arithmetic' stamp: 'nice 5/Feb/2006 03:25:00'!
 i
 	"Answer the result of multiplying the receiver with pure imaginary.
 		^self * 1 i
@@ -232,20 +232,20 @@ i
 
 	^self class real: imaginary negated imaginary: real! !
 
-!Complex methodsFor: 'arithmetic' stamp: 'nice 4/20/2011 22:06'!
+!Complex methodsFor: 'arithmetic' stamp: 'nice 20/Apr/2011 22:06:00'!
 negated
 	"Answer a Number that is the negation of the receiver."
 
 	^self class real: real negated imaginary: imaginary negated! !
 
-!Complex methodsFor: 'arithmetic' stamp: 'jmv 7/2/2019 09:05:11'!
+!Complex methodsFor: 'arithmetic' stamp: 'jmv 2/Jul/2019 09:05:11'!
 reciprocal
 	"Returns the reciprocal of self.
 	In case self is 0 the / signals ZeroDivide"
 	
 	^1 / self! !
 
-!Complex methodsFor: 'arithmetic' stamp: 'jmv 4/5/2019 19:37:44'!
+!Complex methodsFor: 'arithmetic' stamp: 'jmv 5/Apr/2019 19:37:44'!
 safeAbs
 	"Answer the distance of the receiver from zero (0 + 0 i).
 	Try avoiding overflow and/or underflow"
@@ -258,7 +258,7 @@ safeAbs
 	b _ imaginary / scale.
 	^((a * a) + (b * b)) sqrt * scale! !
 
-!Complex methodsFor: 'arithmetic' stamp: 'jmv 4/8/2019 09:44:54'!
+!Complex methodsFor: 'arithmetic' stamp: 'jmv 8/Apr/2019 09:44:54'!
 safeDivideBy: aComplex
 	"Answer the result of dividing receiver by aNumber"
 	" Both operands are scaled to avoid arithmetic overflow. 
@@ -279,51 +279,51 @@ safeDivideBy: aComplex
 		real: newReal
 		imaginary: newImaginary.! !
 
-!Complex methodsFor: 'arithmetic' stamp: 'nice 2/5/2006 03:27'!
+!Complex methodsFor: 'arithmetic' stamp: 'nice 5/Feb/2006 03:27:00'!
 squaredNorm
 	"Answer the square of receiver norm."
 
 	^real * real + (imaginary * imaginary)! !
 
-!Complex methodsFor: 'comparing' stamp: 'jmv 4/5/2019 08:37:31'!
+!Complex methodsFor: 'comparing' stamp: 'jmv 5/Apr/2019 08:37:31'!
 = anObject
 	self == anObject ifTrue: [ ^ true ].
 	anObject isNumber ifFalse: [^false].
 	^real = anObject real and: [ imaginary = anObject imaginary ]! !
 
-!Complex methodsFor: 'comparing' stamp: 'mk 10/27/2003 20:35'!
+!Complex methodsFor: 'comparing' stamp: 'mk 27/Oct/2003 20:35:00'!
 hash
 	"Hash is reimplemented because = is implemented."
 	
 	^ real hash bitXor: imaginary hash.! !
 
-!Complex methodsFor: 'converting' stamp: 'mk 10/27/2003 21:51'!
+!Complex methodsFor: 'converting' stamp: 'mk 27/Oct/2003 21:51:00'!
 adaptToCollection: rcvr andSend: selector
 	"If I am involved in arithmetic with a Collection, return a Collection of
 	the results of each element combined with me in that expression."
 
 	^ rcvr collect: [:element | element perform: selector with: self]! !
 
-!Complex methodsFor: 'converting' stamp: 'mk 10/27/2003 18:32'!
+!Complex methodsFor: 'converting' stamp: 'mk 27/Oct/2003 18:32:00'!
 adaptToFloat: rcvr andSend: selector
 	"If I am involved in arithmetic with a Float, convert it to a Complex number."
 	^ rcvr asComplex perform: selector with: self! !
 
-!Complex methodsFor: 'converting' stamp: 'mk 10/27/2003 18:32'!
+!Complex methodsFor: 'converting' stamp: 'mk 27/Oct/2003 18:32:00'!
 adaptToFraction: rcvr andSend: selector
 	"If I am involved in arithmetic with a Fraction, convert it to a Complex number."
 	^ rcvr asComplex perform: selector with: self! !
 
-!Complex methodsFor: 'converting' stamp: 'mk 10/27/2003 18:31'!
+!Complex methodsFor: 'converting' stamp: 'mk 27/Oct/2003 18:31:00'!
 adaptToInteger: rcvr andSend: selector
 	"If I am involved in arithmetic with an Integer, convert it to a Complex number."
 	^ rcvr asComplex perform: selector with: self! !
 
-!Complex methodsFor: 'converting' stamp: 'nice 10/16/2011 16:34'!
+!Complex methodsFor: 'converting' stamp: 'nice 16/Oct/2011 16:34:00'!
 asComplex
 	^self! !
 
-!Complex methodsFor: 'mathematical functions' stamp: 'nice 4/24/2011 22:44'!
+!Complex methodsFor: 'mathematical functions' stamp: 'nice 24/Apr/2011 22:44:00'!
 arCosh
 	"Answer receiver's area hyperbolic cosine.
 	That is the inverse function of cosh.
@@ -354,7 +354,7 @@ arCosh
 	y := imaginary copySignTo: (real / chx) arcCos.
 	^self class real: x imaginary: y! !
 
-!Complex methodsFor: 'mathematical functions' stamp: 'nice 4/23/2011 01:31'!
+!Complex methodsFor: 'mathematical functions' stamp: 'nice 23/Apr/2011 01:31:00'!
 arSinh
 	"Answer receiver's area hyperbolic sine.
 	That is the inverse function of sinh."
@@ -367,7 +367,7 @@ arSinh
 
 	^self i arcSin i negated! !
 
-!Complex methodsFor: 'mathematical functions' stamp: 'nice 4/23/2011 01:31'!
+!Complex methodsFor: 'mathematical functions' stamp: 'nice 23/Apr/2011 01:31:00'!
 arTanh
 	"Answer receiver's area hyperbolic tangent.
 	That is the inverse function of tanh."
@@ -378,7 +378,7 @@ arTanh
 
 	^self i arcTan i negated! !
 
-!Complex methodsFor: 'mathematical functions' stamp: 'nice 4/24/2011 21:31'!
+!Complex methodsFor: 'mathematical functions' stamp: 'nice 24/Apr/2011 21:31:00'!
 arcCos
 	"Answer the arc cosine of the receiver.
 	This is the inverse function of cos."
@@ -402,7 +402,7 @@ arcCos
 	x := (real / chy) arcCos.
 	^self class real: x imaginary: y negated! !
 
-!Complex methodsFor: 'mathematical functions' stamp: 'nice 4/24/2011 22:46'!
+!Complex methodsFor: 'mathematical functions' stamp: 'nice 24/Apr/2011 22:46:00'!
 arcSin
 	"Answer the arc sine of the receiver.
 	This is the inverse function of sin."
@@ -426,7 +426,7 @@ arcSin
 	x := (real / chy) arcSin.
 	^self class real: x imaginary: y! !
 
-!Complex methodsFor: 'mathematical functions' stamp: 'nice 4/21/2011 21:45'!
+!Complex methodsFor: 'mathematical functions' stamp: 'nice 21/Apr/2011 21:45:00'!
 arcTan
 	"Answer the arc tangent of the receiver.
 	This is the inverse function of tan."
@@ -437,7 +437,7 @@ arcTan
 		real: (real * 2 arcTan: 1 - r2) / 2
 		imaginary: ((r2 + (imaginary * 2) + 1) / (r2 - (imaginary * 2) + 1)) ln / 4! !
 
-!Complex methodsFor: 'mathematical functions' stamp: 'jmv 5/6/2020 16:42:19'!
+!Complex methodsFor: 'mathematical functions' stamp: 'jmv 6/May/2020 16:42:19'!
 arcTan: denominator 
 	"Answer the  four quadrants arc tangent of receiver over denominator."
 
@@ -461,13 +461,13 @@ arcTan: denominator
 				ifTrue: [res := res - (Float pi * 2)].
 			res]! !
 
-!Complex methodsFor: 'mathematical functions' stamp: 'nice 4/23/2011 00:54'!
+!Complex methodsFor: 'mathematical functions' stamp: 'nice 23/Apr/2011 00:54:00'!
 cos
 	"Answer receiver's cosine."
 
 	^self i cosh! !
 
-!Complex methodsFor: 'mathematical functions' stamp: 'nice 4/23/2011 21:30'!
+!Complex methodsFor: 'mathematical functions' stamp: 'nice 23/Apr/2011 21:30:00'!
 cosh
 	"Answer receiver's hyperbolic cosine.
 	Hyperbolic cosine is defined by same power serie expansion as for real numbers, that is in term of exponential:
@@ -478,25 +478,25 @@ cosh
 		real: real cosh * imaginary cos
 		imaginary: real sinh * imaginary sin! !
 
-!Complex methodsFor: 'mathematical functions' stamp: 'nice 4/22/2011 00:38'!
+!Complex methodsFor: 'mathematical functions' stamp: 'nice 22/Apr/2011 00:38:00'!
 exp
 	"Answer the exponential of the receiver."
 
 	^ real exp * (imaginary cos + imaginary sin i)! !
 
-!Complex methodsFor: 'mathematical functions' stamp: 'nice 4/22/2011 00:39'!
+!Complex methodsFor: 'mathematical functions' stamp: 'nice 22/Apr/2011 00:39:00'!
 ln
 	"Answer the natural log of the receiver."
 
 	^ self abs ln + self arg i! !
 
-!Complex methodsFor: 'mathematical functions' stamp: 'mk 10/27/2003 22:05'!
+!Complex methodsFor: 'mathematical functions' stamp: 'mk 27/Oct/2003 22:05:00'!
 log: aNumber 
 	"Answer the log base aNumber of the receiver."
 
 	^self ln / aNumber ln! !
 
-!Complex methodsFor: 'mathematical functions' stamp: 'jmv 5/26/2018 22:57:33'!
+!Complex methodsFor: 'mathematical functions' stamp: 'jmv 26/May/2018 22:57:33'!
 nthRoot: aPositiveInteger
 
 	aPositiveInteger = 2 ifTrue: [
@@ -507,7 +507,7 @@ nthRoot: aPositiveInteger
 
 	^ Complex abs: (self abs nthRoot: aPositiveInteger) arg: self arg / aPositiveInteger! !
 
-!Complex methodsFor: 'mathematical functions' stamp: 'jmv 8/2/2019 10:44:13'!
+!Complex methodsFor: 'mathematical functions' stamp: 'jmv 2/Aug/2019 10:44:13'!
 raisedTo: exponent 
 	"Answer the receiver raised to aNumber."
 
@@ -527,12 +527,12 @@ raisedTo: exponent
 			ifFalse: [self]].
 	^ (exponent * self ln) exp							"Otherwise use logarithms"! !
 
-!Complex methodsFor: 'mathematical functions' stamp: 'jmv 8/2/2019 09:47:10'!
+!Complex methodsFor: 'mathematical functions' stamp: 'jmv 2/Aug/2019 09:47:10'!
 raisedToFraction: aFraction
 	"Raise an exception if argument is not a Fraction"
 	^ (self nthRoot: aFraction denominator) raisedToInteger: aFraction numerator! !
 
-!Complex methodsFor: 'mathematical functions' stamp: 'jmv 8/2/2019 11:47:34'!
+!Complex methodsFor: 'mathematical functions' stamp: 'jmv 2/Aug/2019 11:47:34'!
 raisedToInteger: exponent 
 	"Answer the receiver raised to the power operand, an Integer."
 	
@@ -553,13 +553,13 @@ raisedToInteger: exponent
 				result := result * result].
 	^result! !
 
-!Complex methodsFor: 'mathematical functions' stamp: 'nice 4/23/2011 00:54'!
+!Complex methodsFor: 'mathematical functions' stamp: 'nice 23/Apr/2011 00:54:00'!
 sin
 	"Answer receiver's sine."
 
 	^self i sinh i negated! !
 
-!Complex methodsFor: 'mathematical functions' stamp: 'nice 4/23/2011 21:30'!
+!Complex methodsFor: 'mathematical functions' stamp: 'nice 23/Apr/2011 21:30:00'!
 sinh
 	"Answer receiver's hyperbolic sine.
 	Hyperbolic sine is defined by same power serie expansion as for real numbers, that is in term of exponential:
@@ -570,7 +570,7 @@ sinh
 		real: real sinh * imaginary cos
 		imaginary: real cosh * imaginary sin! !
 
-!Complex methodsFor: 'mathematical functions' stamp: 'jmv 5/6/2020 16:51:58'!
+!Complex methodsFor: 'mathematical functions' stamp: 'jmv 6/May/2020 16:51:58'!
 sqrt
 	"Return the square root of the receiver with a positive imaginary part."
 
@@ -583,23 +583,23 @@ sqrt
 	u := imaginary / 2 / v.
 	^self class real: u imaginary: v! !
 
-!Complex methodsFor: 'mathematical functions' stamp: 'jmv 6/25/2019 18:52:15'!
+!Complex methodsFor: 'mathematical functions' stamp: 'jmv 25/Jun/2019 18:52:15'!
 sqrtNonPrimitive 
 	^ self raisedTo: 1/2! !
 
-!Complex methodsFor: 'mathematical functions' stamp: 'md 7/20/2004 12:02'!
+!Complex methodsFor: 'mathematical functions' stamp: 'md 20/Jul/2004 12:02:00'!
 squared
 	"Answer the receiver multipled by itself."
 
 	^self * self! !
 
-!Complex methodsFor: 'mathematical functions' stamp: 'mk 10/27/2003 22:04'!
+!Complex methodsFor: 'mathematical functions' stamp: 'mk 27/Oct/2003 22:04:00'!
 tan
 	"Answer receivers tangent."
 
 	^ self sin / self cos! !
 
-!Complex methodsFor: 'mathematical functions' stamp: 'nice 4/23/2011 00:55'!
+!Complex methodsFor: 'mathematical functions' stamp: 'nice 23/Apr/2011 00:55:00'!
 tanh
 	"Answer receiver's hyperbolic tangent."
 
@@ -614,37 +614,37 @@ tanh
 
 	^self i tan i negated! !
 
-!Complex methodsFor: 'testing' stamp: 'mk 10/27/2003 17:33'!
+!Complex methodsFor: 'testing' stamp: 'mk 27/Oct/2003 17:33:00'!
 isComplex
 	^ true! !
 
-!Complex methodsFor: 'testing' stamp: 'jmv 7/2/2019 12:11:25'!
+!Complex methodsFor: 'testing' stamp: 'jmv 2/Jul/2019 12:11:25'!
 isComplexNaN
 	^real isNaN or: [ imaginary isNaN ]! !
 
-!Complex methodsFor: 'testing' stamp: 'jmv 5/6/2020 16:44:07'!
+!Complex methodsFor: 'testing' stamp: 'jmv 6/May/2020 16:44:07'!
 isFloatOrFloatComplex
 	"If imaginary part is Float, real will also be."
 
 	^ real isFloat! !
 
-!Complex methodsFor: 'testing' stamp: 'jmv 5/20/2018 21:10:51'!
+!Complex methodsFor: 'testing' stamp: 'jmv 20/May/2018 21:10:51'!
 isInfinite
 	^real isInfinite or: [ imaginary isInfinite ]! !
 
-!Complex methodsFor: 'testing' stamp: 'jmv 5/26/2018 23:00:13'!
+!Complex methodsFor: 'testing' stamp: 'jmv 26/May/2018 23:00:13'!
 isNaN
 	^real isNaN or: [ imaginary isNaN ]! !
 
-!Complex methodsFor: 'testing' stamp: 'hmm 11/1/2006 23:34'!
+!Complex methodsFor: 'testing' stamp: 'hmm 1/Nov/2006 23:34:00'!
 isNumber
 	^ true! !
 
-!Complex methodsFor: 'testing' stamp: 'nice 4/20/2011 22:06'!
+!Complex methodsFor: 'testing' stamp: 'nice 20/Apr/2011 22:06:00'!
 isZero
 	^ real isZero and: [imaginary isZero]! !
 
-!Complex methodsFor: 'private' stamp: 'jmv 5/6/2020 16:25:56'!
+!Complex methodsFor: 'private' stamp: 'jmv 6/May/2020 16:25:56'!
 setReal: realPart imaginary: imaginaryPart
 	"Private - initialize the real and imaginary parts of a Complex.
 	If either the real part or the imaginary part is a Float, then both will be."
@@ -657,7 +657,7 @@ setReal: realPart imaginary: imaginaryPart
 			real _ realPart.
 			imaginary _ imaginaryPart ]! !
 
-!Complex class methodsFor: 'instance creation' stamp: 'jmv 5/20/2018 20:27:23'!
+!Complex class methodsFor: 'instance creation' stamp: 'jmv 20/May/2018 20:27:23'!
 abs: rho arg: theta
 	| theta1 |
 	"So that if theta is any integer multiple of twoPi, answer is real"
@@ -666,25 +666,25 @@ abs: rho arg: theta
 		real: rho * theta1 cos
 		imaginary: rho * theta1 sin! !
 
-!Complex class methodsFor: 'instance creation' stamp: 'jmv 5/6/2020 16:51:21'!
+!Complex class methodsFor: 'instance creation' stamp: 'jmv 6/May/2020 16:51:21'!
 basicReal: realPart imaginary: imaginaryPart
 	"Answer a Complex even if imaginary part is zero.
 	Usually you might don't want to enforce this and just call #real:imaginary:"
 	^self basicNew setReal: realPart imaginary: imaginaryPart! !
 
-!Complex class methodsFor: 'instance creation' stamp: 'jmv 7/4/2018 17:03:13'!
+!Complex class methodsFor: 'instance creation' stamp: 'jmv 4/Jul/2018 17:03:13'!
 magnitude: rho phase: theta
 	^ self abs: rho arg: theta! !
 
-!Complex class methodsFor: 'instance creation' stamp: 'mk 10/27/2003 17:28'!
+!Complex class methodsFor: 'instance creation' stamp: 'mk 27/Oct/2003 17:28:00'!
 new
 	^ self real: 0 imaginary: 0! !
 
-!Complex class methodsFor: 'instance creation' stamp: 'nice 9/18/2008 22:50'!
+!Complex class methodsFor: 'instance creation' stamp: 'nice 18/Sep/2008 22:50:00'!
 one
 	^ self real: 1 imaginary: 0! !
 
-!Complex class methodsFor: 'instance creation' stamp: 'jmv 2/28/2023 11:37:34'!
+!Complex class methodsFor: 'instance creation' stamp: 'jmv 28/Feb/2023 11:37:34'!
 real: realPart imaginary: imaginaryPart
 
 	"This implementation allows reducing Complex to Integer or Fraction, avoiding instances of Complex where the imaginary part is zero. It is currently disabled."
@@ -700,24 +700,24 @@ real: realPart imaginary: imaginaryPart
 	"We allow for instances of Complex that actually just real numbers"
 	^ self basicReal: realPart imaginary: imaginaryPart.! !
 
-!Complex class methodsFor: 'instance creation' stamp: 'nice 9/18/2008 22:50'!
+!Complex class methodsFor: 'instance creation' stamp: 'nice 18/Sep/2008 22:50:00'!
 zero
 	^ self real: 0 imaginary: 0! !
 
-!Complex class methodsFor: 'constants' stamp: 'jmv 7/2/2019 10:13:02'!
+!Complex class methodsFor: 'constants' stamp: 'jmv 2/Jul/2019 10:13:02'!
 infinity
 	^ (1 + 1 i) * Float infinity! !
 
-!Complex class methodsFor: 'constants' stamp: 'jmv 7/2/2019 08:30:04'!
+!Complex class methodsFor: 'constants' stamp: 'jmv 2/Jul/2019 08:30:04'!
 nan
 	^ (1 + 1 i) * Float nan! !
 
-!NegativePowerError methodsFor: '*Complex' stamp: 'jmv 6/25/2019 18:53:10'!
+!NegativePowerError methodsFor: '*Complex' stamp: 'jmv 25/Jun/2019 18:53:10'!
 defaultAction
 
 	^(Complex basicReal: receiver imaginary: 0) perform: selector withArguments: arguments! !
 
-!Number methodsFor: '*Complex' stamp: 'jmv 2/28/2023 11:44:03'!
+!Number methodsFor: '*Complex' stamp: 'jmv 28/Feb/2023 11:44:03'!
 arg
 	"Answer the argument of the receiver (see Complex | arg).
 	Note: #argument and #phase assume the convention of 0+0i having argument=0"
@@ -727,7 +727,7 @@ arg
 		ifFalse: [0]
 		ifTrue: [Float pi]! !
 
-!Number methodsFor: '*Complex' stamp: 'jmv 2/28/2023 11:44:12'!
+!Number methodsFor: '*Complex' stamp: 'jmv 28/Feb/2023 11:44:12'!
 argument
 	"Compatibility with Complex numbers.
 	Answer the argument of the receiver (see Complex | argument).
@@ -738,28 +738,28 @@ argument
 		ifFalse: [0]
 		ifTrue: [Float pi]! !
 
-!Number methodsFor: '*Complex' stamp: 'jmv 5/20/2018 20:33:20'!
+!Number methodsFor: '*Complex' stamp: 'jmv 20/May/2018 20:33:20'!
 asComplex
 	"Answer a Complex number that represents value of the the receiver."
 
 	^ Complex basicReal: self imaginary: 0! !
 
-!Number methodsFor: '*Complex' stamp: 'jmv 2/28/2023 11:32:36'!
+!Number methodsFor: '*Complex' stamp: 'jmv 28/Feb/2023 11:32:36'!
 complexConjugate
 	"Return the complex conjugate of this complex number."
 
 	^self! !
 
-!Number methodsFor: '*Complex' stamp: 'mk 10/27/2003 18:17'!
+!Number methodsFor: '*Complex' stamp: 'mk 27/Oct/2003 18:17:00'!
 i
 	^ Complex real: 0 imaginary: self! !
 
-!Number methodsFor: '*Complex' stamp: 'jmv 2/28/2023 11:44:56'!
+!Number methodsFor: '*Complex' stamp: 'jmv 28/Feb/2023 11:44:56'!
 imaginary
 	"Compatibility with Complex numbers"
 	^ 0! !
 
-!Number methodsFor: '*Complex' stamp: 'jmv 2/28/2023 11:44:52'!
+!Number methodsFor: '*Complex' stamp: 'jmv 28/Feb/2023 11:44:52'!
 phase
 	"Compatibility with Complex numbers.
 	Answer the argument of the receiver.
@@ -768,24 +768,24 @@ phase
 
 	^ self argument! !
 
-!Number methodsFor: '*Complex' stamp: 'jmv 2/28/2023 11:45:04'!
+!Number methodsFor: '*Complex' stamp: 'jmv 28/Feb/2023 11:45:04'!
 real
 	"Compatibility with Complex numbers"
 	^ self! !
 
-!Number methodsFor: '*Complex' stamp: 'jmv 2/28/2023 11:32:12'!
+!Number methodsFor: '*Complex' stamp: 'jmv 28/Feb/2023 11:32:12'!
 squaredNorm
 	"Answer the square of receiver norm."
 
 	^self squared! !
 
-!BoxedFloat64 methodsFor: '*Complex' stamp: 'jmv 2/28/2023 11:43:51'!
+!BoxedFloat64 methodsFor: '*Complex' stamp: 'jmv 28/Feb/2023 11:43:51'!
 arg
 	"Compatibility with Complex numbers."
 	self isNaN ifTrue: [^self].
 	^super arg! !
 
-!BoxedFloat64 methodsFor: '*Complex' stamp: 'jmv 2/28/2023 11:44:22'!
+!BoxedFloat64 methodsFor: '*Complex' stamp: 'jmv 28/Feb/2023 11:44:22'!
 argument
 	"Compatibility with Complex numbers."
 	self isNaN ifTrue: [^self].

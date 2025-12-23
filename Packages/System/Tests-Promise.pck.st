@@ -1,56 +1,56 @@
-'From Cuis7.1 [latest update: #6742] on 25 October 2024 at 12:32:10 PM'!
+'From Cuis7.7 [latest update: #7779] on 23 December 2025 at 4:36:15 pm'!
 'Description '!
 !provides: 'Tests-Promise' 1 1!
 !requires: 'Promise' 1 0 nil!
-SystemOrganization addCategory: 'Tests-Promise'!
+SystemOrganization addCategory: #'Tests-Promise'!
 
 
-!classDefinition: #KeyNotFound category: 'Tests-Promise'!
+!classDefinition: #KeyNotFound category: #'Tests-Promise'!
 Error subclass: #KeyNotFound
 	instanceVariableNames: 'key'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Tests-Promise'!
-!classDefinition: 'KeyNotFound class' category: 'Tests-Promise'!
+!classDefinition: 'KeyNotFound class' category: #'Tests-Promise'!
 KeyNotFound class
 	instanceVariableNames: ''!
 
-!classDefinition: #PromiseTest category: 'Tests-Promise'!
+!classDefinition: #PromiseTest category: #'Tests-Promise'!
 TestCase subclass: #PromiseTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Tests-Promise'!
-!classDefinition: 'PromiseTest class' category: 'Tests-Promise'!
+!classDefinition: 'PromiseTest class' category: #'Tests-Promise'!
 PromiseTest class
 	instanceVariableNames: ''!
 
 
-!KeyNotFound methodsFor: 'accessing' stamp: 'nice 11/19/2013 23:21'!
+!KeyNotFound methodsFor: 'accessing' stamp: 'nice 19/Nov/2013 23:21:00'!
 description
 	"Return a textual description of the exception."
 	^self messageText! !
 
-!KeyNotFound methodsFor: 'accessing' stamp: 'ar 11/20/2007 14:49'!
+!KeyNotFound methodsFor: 'accessing' stamp: 'ar 20/Nov/2007 14:49:00'!
 key
 	"The key which wasn't found"
 	^key! !
 
-!KeyNotFound methodsFor: 'accessing' stamp: 'ar 11/20/2007 14:49'!
+!KeyNotFound methodsFor: 'accessing' stamp: 'ar 20/Nov/2007 14:49:00'!
 key: anObject
 	"The key which wasn't found"
 	key := anObject! !
 
-!KeyNotFound methodsFor: 'accessing' stamp: 'ct 4/12/2021 22:01'!
+!KeyNotFound methodsFor: 'accessing' stamp: 'ct 12/Apr/2021 22:01:00'!
 messageText
 
 	^ messageText ifNil: ['Key not found: {1}' translated format: {self key}]! !
 
-!KeyNotFound class methodsFor: 'instance creation' stamp: 'ar 11/20/2007 14:49'!
+!KeyNotFound class methodsFor: 'instance creation' stamp: 'ar 20/Nov/2007 14:49:00'!
 key: anObject
 	^self new key: anObject! !
 
-!PromiseTest methodsFor: 'tests - monad' stamp: 'tonyg 6/4/2020 16:32'!
+!PromiseTest methodsFor: 'tests - monad' stamp: 'tonyg 4/Jun/2020 16:32:00'!
 testAnErrorInOnRejectedRejectsPromise
 	"https://promisesaplus.com section 2.2.7.2"
 	| p q error |
@@ -62,7 +62,7 @@ testAnErrorInOnRejectedRejectsPromise
 	self assert: p error = 1.
 	self assert: q error == error.! !
 
-!PromiseTest methodsFor: 'tests - monad' stamp: 'tonyg 6/4/2020 16:28'!
+!PromiseTest methodsFor: 'tests - monad' stamp: 'tonyg 4/Jun/2020 16:28:00'!
 testAnErrorInThenRejectsPromise
 	"https://promisesaplus.com section 2.2.7.2"
 	| p q error |
@@ -74,13 +74,13 @@ testAnErrorInThenRejectsPromise
 	self assert: p value = 1.
 	self assert: q error == error.! !
 
-!PromiseTest methodsFor: 'tests - monad' stamp: 'fbs 5/17/2013 18:26'!
+!PromiseTest methodsFor: 'tests - monad' stamp: 'fbs 17/May/2013 18:26:00'!
 testCanRejectPromise
 	| p |
 	p := Promise new.
 	p rejectWith: Error new.! !
 
-!PromiseTest methodsFor: 'tests - monad' stamp: 'tonyg 1/29/2018 14:32'!
+!PromiseTest methodsFor: 'tests - monad' stamp: 'tonyg 29/Jan/2018 14:32:00'!
 testCannotRejectFulfilledPromise
 	| p |
 	p := Promise unit: 1.
@@ -89,7 +89,7 @@ testCannotRejectFulfilledPromise
 	self assert: 1 equals: p value.
 ! !
 
-!PromiseTest methodsFor: 'tests - monad' stamp: 'tonyg 1/29/2018 14:34'!
+!PromiseTest methodsFor: 'tests - monad' stamp: 'tonyg 29/Jan/2018 14:34:00'!
 testCannotResolveaRejectedPromise
 	| p e |
 	p := Promise new.
@@ -100,7 +100,7 @@ testCannotResolveaRejectedPromise
 	self assert: p error == e.
 ! !
 
-!PromiseTest methodsFor: 'tests - monad' stamp: 'tonyg 1/28/2018 16:23'!
+!PromiseTest methodsFor: 'tests - monad' stamp: 'tonyg 28/Jan/2018 16:23:00'!
 testCollapsesChainsOfPromises
 	"The monadic bind operator has signature (m a -> (a -> m b) -> m b): that is, in our setting,
 	the block given to `then:` is expected to return a *Promise* of a value, not a value directly.
@@ -114,7 +114,7 @@ testCollapsesChainsOfPromises
 	self assert: 4 * 2 equals: q value.
 	self assert: (4 * 2 + 1) equals: r value.! !
 
-!PromiseTest methodsFor: 'tests - monad' stamp: 'tonyg 1/31/2018 23:33'!
+!PromiseTest methodsFor: 'tests - monad' stamp: 'tonyg 31/Jan/2018 23:33:00'!
 testFirstResolutionWins
 	| p |
 	p := Promise new.
@@ -124,7 +124,7 @@ testFirstResolutionWins
 	self assert: p value == 1.
 ! !
 
-!PromiseTest methodsFor: 'tests - monad' stamp: 'tonyg 6/4/2020 19:45'!
+!PromiseTest methodsFor: 'tests - monad' stamp: 'tonyg 4/Jun/2020 19:45:00'!
 testNilErrBlockPropagation
 	"https://promisesaplus.com section 2.2.7.4"
 	| p q |
@@ -136,7 +136,7 @@ testNilErrBlockPropagation
 	self assert: p error equals: 1.
 	self assert: q error equals: 1.! !
 
-!PromiseTest methodsFor: 'tests - monad' stamp: 'tonyg 6/4/2020 19:44'!
+!PromiseTest methodsFor: 'tests - monad' stamp: 'tonyg 4/Jun/2020 19:44:00'!
 testNilResolvedBlockPropagation
 	"https://promisesaplus.com section 2.2.7.3"
 	| p q |
@@ -148,7 +148,7 @@ testNilResolvedBlockPropagation
 	self assert: p value equals: 1.
 	self assert: q value equals: 1.! !
 
-!PromiseTest methodsFor: 'tests - monad' stamp: 'fbs 5/20/2013 20:36'!
+!PromiseTest methodsFor: 'tests - monad' stamp: 'fbs 20/May/2013 20:36:00'!
 testRejectWithInvokesErrorHandlers
 	| p error returnedError |
 	returnedError := nil.
@@ -159,7 +159,7 @@ testRejectWithInvokesErrorHandlers
 	self assert: error equals: returnedError description: 'Error not passed into block'.
 	self assert: error equals: p error description: 'Promise didn''t store error'.! !
 
-!PromiseTest methodsFor: 'tests - monad' stamp: 'fbs 5/23/2013 17:35'!
+!PromiseTest methodsFor: 'tests - monad' stamp: 'fbs 23/May/2013 17:35:00'!
 testThenPermitsChainingOfPromises
 	| p q r |
 	p := Promise new.
@@ -169,34 +169,34 @@ testThenPermitsChainingOfPromises
 	self assert: 4 * 2 equals: q value.
 	self assert: (4 * 2 + 1) equals: r value.! !
 
-!PromiseTest methodsFor: 'tests - monad' stamp: 'fbs 5/15/2013 17:23'!
+!PromiseTest methodsFor: 'tests - monad' stamp: 'fbs 15/May/2013 17:23:00'!
 testThenReturnsaPromise
 	| p |
 	p := Promise new then: [:v | v * 2].
 	self assert: Promise equals: p class.! !
 
-!PromiseTest methodsFor: 'tests - monad' stamp: 'fbs 5/15/2013 17:12'!
+!PromiseTest methodsFor: 'tests - monad' stamp: 'fbs 15/May/2013 17:12:00'!
 testUnitReturnsaPromise
 	| p |
 	p := Promise unit: 1.
 	self assert: Promise equals: p class.
 	self assert: p isResolved.! !
 
-!PromiseTest methodsFor: 'tests - monad' stamp: 'tonyg 2/17/2017 14:04'!
+!PromiseTest methodsFor: 'tests - monad' stamp: 'tonyg 17/Feb/2017 14:04:00'!
 testWaitForRejection
 	| p |
 	p := Promise new.
 	[ (Delay forMilliseconds: 1) wait. p rejectWith: Error new ] fork.
 	self should: [ p wait ] raise: BrokenPromise.! !
 
-!PromiseTest methodsFor: 'tests - monad' stamp: 'tonyg 2/17/2017 14:01'!
+!PromiseTest methodsFor: 'tests - monad' stamp: 'tonyg 17/Feb/2017 14:01:00'!
 testWaitForResolution
 	| p |
 	p := Promise new.
 	[ (Delay forMilliseconds: 1) wait. p resolveWith: #ok ] fork.
 	self assert: [ p wait = #ok ]! !
 
-!PromiseTest methodsFor: 'tests - monad' stamp: 'tonyg 2/17/2017 14:04'!
+!PromiseTest methodsFor: 'tests - monad' stamp: 'tonyg 17/Feb/2017 14:04:00'!
 testWaitRejectionYieldsCorrectBrokenPromise
 	| p |
 	p := Promise new.
@@ -204,7 +204,7 @@ testWaitRejectionYieldsCorrectBrokenPromise
 	[ p wait ] on: BrokenPromise do: [ :bp | ^ self assert: [ bp promise == p ] ].
 	self fail: 'Should not reach this point'! !
 
-!PromiseTest methodsFor: 'tests - monad' stamp: 'fbs 5/26/2013 14:13'!
+!PromiseTest methodsFor: 'tests - monad' stamp: 'fbs 26/May/2013 14:13:00'!
 testifRejectedDoesNotRunBlockIfPromiseResolves
 	| p q error |
 	error := nil.
@@ -214,7 +214,7 @@ testifRejectedDoesNotRunBlockIfPromiseResolves
 	self deny: q isRejected.
 	self assert: nil equals: error.! !
 
-!PromiseTest methodsFor: 'tests - monad' stamp: 'tonyg 6/4/2020 16:33'!
+!PromiseTest methodsFor: 'tests - monad' stamp: 'tonyg 4/Jun/2020 16:33:00'!
 testifRejectedRunsBlockIfPromiseFails
 	"https://promisesaplus.com section 2.2.7.1"
 	| p q error |
@@ -226,7 +226,7 @@ testifRejectedRunsBlockIfPromiseFails
 	self assert: KeyNotFound equals: error class.
 	self assert: q value == error.! !
 
-!PromiseTest methodsFor: 'tests' stamp: 'jcg 4/5/2010 00:36'!
+!PromiseTest methodsFor: 'tests' stamp: 'jcg 5/Apr/2010 00:36:00'!
 testChainedResolvers
 	| promise1 promise2 result |
 	promise1 := Promise new.
@@ -236,7 +236,7 @@ testChainedResolvers
 	promise1 resolveWith: false.
 	self should: [result].! !
 
-!PromiseTest methodsFor: 'tests' stamp: 'tonyg 2/13/2018 11:30'!
+!PromiseTest methodsFor: 'tests' stamp: 'tonyg 13/Feb/2018 11:30:00'!
 testFulfillWithError
 	| p |
 	p := Promise new.
@@ -244,7 +244,7 @@ testFulfillWithError
 	self assert: p isRejected.
 	self assert: ZeroDivide equals: p error class.! !
 
-!PromiseTest methodsFor: 'tests' stamp: 'tonyg 2/13/2018 16:40'!
+!PromiseTest methodsFor: 'tests' stamp: 'tonyg 13/Feb/2018 16:40:00'!
 testFulfillWithHaltAndResult
 	| p |
 	p := Promise new.
@@ -254,7 +254,7 @@ testFulfillWithHaltAndResult
 	self assert: p isResolved.
 	self assert: 7 equals: p value.! !
 
-!PromiseTest methodsFor: 'tests' stamp: 'tonyg 2/13/2018 11:24'!
+!PromiseTest methodsFor: 'tests' stamp: 'tonyg 13/Feb/2018 11:24:00'!
 testFulfillWithResult
 	| p |
 	p := Promise new.
@@ -262,7 +262,7 @@ testFulfillWithResult
 	self assert: p isResolved.
 	self assert: 7 equals: p value.! !
 
-!PromiseTest methodsFor: 'tests' stamp: 'jcg 4/5/2010 00:31'!
+!PromiseTest methodsFor: 'tests' stamp: 'jcg 5/Apr/2010 00:31:00'!
 testMultipleResolvers
 	| promise sum |
 	sum := 0.
@@ -274,7 +274,7 @@ testMultipleResolvers
 	self should: [sum = 25].
 	! !
 
-!PromiseTest methodsFor: 'tests' stamp: 'fbs 5/23/2013 08:28'!
+!PromiseTest methodsFor: 'tests' stamp: 'fbs 23/May/2013 08:28:00'!
 testSingleResolver
 	| promise sum |
 	sum := 0.
@@ -284,7 +284,7 @@ testSingleResolver
 	self assert: 5 equals: sum.
 	! !
 
-!PromiseTest methodsFor: 'tests' stamp: 'tonyg 2/9/2018 11:45'!
+!PromiseTest methodsFor: 'tests' stamp: 'tonyg 9/Feb/2018 11:45:00'!
 testTimeout
 	| promise |
 	promise := Promise new.
@@ -296,7 +296,7 @@ testTimeout
 	self should: [promise isResolved].
 	self shouldnt: [promise isRejected].! !
 
-!PromiseTest methodsFor: 'tests' stamp: 'tonyg 2/9/2018 11:47'!
+!PromiseTest methodsFor: 'tests' stamp: 'tonyg 9/Feb/2018 11:47:00'!
 testTimeoutRejected
 	| promise |
 	promise := Promise new.
@@ -308,7 +308,7 @@ testTimeoutRejected
 	self shouldnt: [promise isResolved].
 	self should: [promise isRejected].! !
 
-!PromiseTest methodsFor: 'private' stamp: 'mt 9/18/2019 11:50'!
+!PromiseTest methodsFor: 'private' stamp: 'mt 18/Sep/2019 11:50:00'!
 waitUntil: aBlock orCycleCount: anInteger
 	"This is a gross hack that depends on running the tests in Morphic.
 	We simply repeatedly do a cycle of the interaction loop, which happens

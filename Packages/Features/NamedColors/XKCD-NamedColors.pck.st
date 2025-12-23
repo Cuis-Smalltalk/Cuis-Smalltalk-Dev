@@ -1,4 +1,4 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3319] on 12 May 2018 at 5:45:12 pm'!
+'From Cuis7.7 [latest update: #7779] on 23 December 2025 at 4:42:33 pm'!
 'Description XKCD color names come from user surveys which attempt to determine which names people agree on to  use for colors.
 
 	 http://blog.xkcd.com/2010/05/03/color-survey-results/
@@ -10,13 +10,13 @@ To reset the Color name->color dictionary:
  	Color setColorNamesDict: (Color xkcdColorDictionary).
 '!
 !provides: 'XKCD-NamedColors' 1 1!
-!requires: 'Graphics-Files-Additional' 1 nil nil!
 !requires: 'Cuis-Base' 42 1788 nil!
 !requires: 'Color-Extras' 1 4 nil!
+!requires: 'Graphics-Files-Additional' 1 nil nil!
 
 
 
-!Color class methodsFor: '*xkcd-namedcolors' stamp: 'KenD 1/28/2013 19:59'!
+!Color class methodsFor: '*xkcd-namedcolors' stamp: 'KenD 28/Jan/2013 19:59:00'!
 xkcdColorDictionary
 	"Answer a dictionary of XKCD color name survey to Color objects.
 	 http://blog.xkcd.com/2010/05/03/color-survey-results/"
@@ -37,7 +37,7 @@ To reset the Color name->color dictionary:
 	^xkcdDict
 ! !
 
-!Color class methodsFor: '*xkcd-namedcolors' stamp: 'KenD 1/28/2013 19:31'!
+!Color class methodsFor: '*xkcd-namedcolors' stamp: 'KenD 28/Jan/2013 19:31:00'!
 xkcdColors1
 	"Answer a dictionary of XKCD color names survey name to Color objects."
 
@@ -158,7 +158,7 @@ xkcdColors1
   at: #washedOutGreen put: (Color fromString: '#bcf5a6') ;
 yourself! !
 
-!Color class methodsFor: '*xkcd-namedcolors' stamp: 'KenD 1/28/2013 19:31'!
+!Color class methodsFor: '*xkcd-namedcolors' stamp: 'KenD 28/Jan/2013 19:31:00'!
 xkcdColors2
 	"Answer a dictionary of XKCD color names survey name to Color objects."
 
@@ -288,7 +288,7 @@ xkcdColors2
   at: #petrol put: (Color fromString: '#005f6a') ;
 yourself! !
 
-!Color class methodsFor: '*xkcd-namedcolors' stamp: 'KenD 1/28/2013 19:31'!
+!Color class methodsFor: '*xkcd-namedcolors' stamp: 'KenD 28/Jan/2013 19:31:00'!
 xkcdColors3
 	"Answer a dictionary of XKCD color names survey name to Color objects."
 
@@ -396,7 +396,7 @@ xkcdColors3
   at: #merlot put: (Color fromString: '#730039') ;
 yourself! !
 
-!Color class methodsFor: '*xkcd-namedcolors' stamp: 'KenD 1/28/2013 19:31'!
+!Color class methodsFor: '*xkcd-namedcolors' stamp: 'KenD 28/Jan/2013 19:31:00'!
 xkcdColors4
 	"Answer a dictionary of XKCD color names survey name to Color objects."
 
@@ -509,7 +509,7 @@ xkcdColors4
   at: #blood put: (Color fromString: '#770001') ;
 yourself! !
 
-!Color class methodsFor: '*xkcd-namedcolors' stamp: 'KenD 1/28/2013 19:31'!
+!Color class methodsFor: '*xkcd-namedcolors' stamp: 'KenD 28/Jan/2013 19:31:00'!
 xkcdColors5
 	"Answer a dictionary of XKCD color names survey name to Color objects."
 
@@ -617,7 +617,7 @@ xkcdColors5
   at: #blueyPurple put: (Color fromString: '#6241c7') ;
 yourself! !
 
-!Color class methodsFor: '*xkcd-namedcolors' stamp: 'KenD 1/28/2013 19:31'!
+!Color class methodsFor: '*xkcd-namedcolors' stamp: 'KenD 28/Jan/2013 19:31:00'!
 xkcdColors6
 	"Answer a dictionary of XKCD color names survey name to Color objects."
 
@@ -729,7 +729,7 @@ xkcdColors6
   at: #greenGrey put: (Color fromString: '#77926f') ;
 yourself! !
 
-!Color class methodsFor: '*xkcd-namedcolors' stamp: 'KenD 1/28/2013 19:31'!
+!Color class methodsFor: '*xkcd-namedcolors' stamp: 'KenD 28/Jan/2013 19:31:00'!
 xkcdColors7
 	"Answer a dictionary of XKCD color names survey name to Color objects."
 
@@ -841,7 +841,7 @@ xkcdColors7
   at: #aquaGreen put: (Color fromString: '#12e193') ;
 yourself! !
 
-!Color class methodsFor: '*xkcd-namedcolors' stamp: 'KenD 1/28/2013 19:31'!
+!Color class methodsFor: '*xkcd-namedcolors' stamp: 'KenD 28/Jan/2013 19:31:00'!
 xkcdColors8
 	"Answer a dictionary of XKCD color names survey name to Color objects."
 
@@ -959,7 +959,7 @@ xkcdColors8
   at: #springGreen put: (Color fromString: '#a9f971') ;
 yourself! !
 
-!Color class methodsFor: '*xkcd-namedcolors' stamp: 'KenD 1/28/2013 19:31'!
+!Color class methodsFor: '*xkcd-namedcolors' stamp: 'KenD 28/Jan/2013 19:31:00'!
 xkcdColors9
 	"Answer a dictionary of XKCD color names survey name to Color objects."
 

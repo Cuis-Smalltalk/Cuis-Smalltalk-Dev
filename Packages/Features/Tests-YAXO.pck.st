@@ -1,4 +1,4 @@
-'From Cuis7.1 [latest update: #6776] on 15 October 2024 at 1:02:21 pm'!
+'From Cuis7.7 [latest update: #7779] on 23 December 2025 at 4:40:41 pm'!
 'Description '!
 !provides: 'Tests-YAXO' 1 4!
 !requires: 'YAXO' 1 15 nil!
@@ -16,7 +16,7 @@ YAXOTest class
 	instanceVariableNames: ''!
 
 
-!YAXOTest methodsFor: 'tests' stamp: 'jmv 1/4/2023 12:53:32'!
+!YAXOTest methodsFor: 'tests' stamp: 'jmv 4/Jan/2023 12:53:32'!
 test01
 	| xmlDocument element subElements heading |
 	xmlDocument _ XMLDOMParser parseDocumentFrom: self exampleString01 readStream.
@@ -40,7 +40,7 @@ test01
 <heading>Reminder</heading>
 <body>Don''t forget me this weekend!!</body></note>'.! !
 
-!YAXOTest methodsFor: 'tests' stamp: 'jmv 1/4/2023 12:55:54'!
+!YAXOTest methodsFor: 'tests' stamp: 'jmv 4/Jan/2023 12:55:54'!
 test02
 	| xmlDocument element subElements heading |
 	xmlDocument _ XMLDOMParser parseDocumentFrom: self exampleString02 readStream.
@@ -64,7 +64,7 @@ test02
 <heading>„Sicherheitshinweise“</heading>
 <body>Don''t forget me this weekend!!</body></note>' ! !
 
-!YAXOTest methodsFor: 'tests' stamp: 'jmv 10/15/2024 13:02:00'!
+!YAXOTest methodsFor: 'tests' stamp: 'jmv 15/Oct/2024 13:02:00'!
 test03
 	| xmlDocument element subElements |
 	xmlDocument := XMLDOMParser parseDocumentFrom: self exampleString03 readStream.
@@ -129,7 +129,7 @@ test03
 <description>Two eggs, bacon or sausage, toast, and our ever-popular hash browns</description>
 <calories>950</calories></food></breakfast_menu>' .! !
 
-!YAXOTest methodsFor: 'tests' stamp: 'jmv 10/15/2024 13:01:53'!
+!YAXOTest methodsFor: 'tests' stamp: 'jmv 15/Oct/2024 13:01:53'!
 test04
 	| xmlDocument element subElements |
 	xmlDocument := XMLDOMParser parseDocumentFrom: self exampleString04 readStream.
@@ -194,7 +194,7 @@ test04
 <description>¿Querés agüita, ñandú?</description>
 <calories>950</calories></food></breakfast_menu>' .! !
 
-!YAXOTest methodsFor: 'tests' stamp: 'jmv 10/15/2024 13:01:42'!
+!YAXOTest methodsFor: 'tests' stamp: 'jmv 15/Oct/2024 13:01:42'!
 test05
 	| xmlDocument element subElements |
 	xmlDocument := XMLDOMParser parseDocumentFrom: self exampleString05 readStream.
@@ -259,7 +259,7 @@ test05
 <Лорем>¿Querés agüita, ñandú?</Лорем>
 <ελιτ>950</ελιτ></food></breakfast_menu>' .! !
 
-!YAXOTest methodsFor: 'tests' stamp: 'jmv 1/8/2023 20:25:51'!
+!YAXOTest methodsFor: 'tests' stamp: 'jmv 8/Jan/2023 20:25:51'!
 test06
 	| xmlDocument element subElements heading |
 	xmlDocument _ XMLDOMParser parseDocumentFrom: self exampleString06 readStream.
@@ -283,7 +283,7 @@ test06
 <heading>Reminder</heading>
 <body>Don''t forget me this weekend!!</body></note>'.! !
 
-!YAXOTest methodsFor: 'examples' stamp: 'jmv 6/7/2018 11:14:23'!
+!YAXOTest methodsFor: 'examples' stamp: 'jmv 7/Jun/2018 11:14:23'!
 exampleString01
 	"https://www.w3schools.com/xml/note.xml"
 	^
@@ -295,7 +295,7 @@ exampleString01
   <body>Don''t forget me this weekend!!</body>
 </note>'! !
 
-!YAXOTest methodsFor: 'examples' stamp: 'jmv 1/8/2023 20:47:51'!
+!YAXOTest methodsFor: 'examples' stamp: 'jmv 8/Jan/2023 20:47:51'!
 exampleString02
 	"https://www.w3schools.com/xml/note.xml"
 	^
@@ -307,7 +307,7 @@ exampleString02
   <body>Don''t forget me this weekend!!</body>
 </note>'! !
 
-!YAXOTest methodsFor: 'examples' stamp: 'jmv 1/4/2023 12:45:42'!
+!YAXOTest methodsFor: 'examples' stamp: 'jmv 4/Jan/2023 12:45:42'!
 exampleString03
 	"https://www.w3schools.com/xml/note.xml"
 	^
@@ -340,7 +340,7 @@ exampleString03
        <calories>950</calories> </food>
 </breakfast_menu>'! !
 
-!YAXOTest methodsFor: 'examples' stamp: 'jmv 1/8/2023 16:14:58'!
+!YAXOTest methodsFor: 'examples' stamp: 'jmv 8/Jan/2023 16:14:58'!
 exampleString04
 	"Exercise a bit Unicode."
 	^
@@ -373,7 +373,7 @@ exampleString04
        <calories>950</calories> </food>
 </breakfast_menu>'! !
 
-!YAXOTest methodsFor: 'examples' stamp: 'jmv 1/8/2023 16:19:32'!
+!YAXOTest methodsFor: 'examples' stamp: 'jmv 8/Jan/2023 16:19:32'!
 exampleString05
 	"Exercise a bit Unicode."
 	^
@@ -406,7 +406,7 @@ exampleString05
        <ελιτ>950</ελιτ> </food>
 </breakfast_menu>'! !
 
-!YAXOTest methodsFor: 'examples' stamp: 'jmv 1/8/2023 20:25:42'!
+!YAXOTest methodsFor: 'examples' stamp: 'jmv 8/Jan/2023 20:25:42'!
 exampleString06
 	"Exercise a bit Unicode."
 	^

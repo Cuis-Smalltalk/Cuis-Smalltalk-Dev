@@ -1,4 +1,4 @@
-'From Cuis7.1 [latest update: #6713] on 12 September 2024 at 12:08:34 pm'!
+'From Cuis7.7 [latest update: #7779] on 23 December 2025 at 4:38:54 pm'!
 'Description This package contains implementations of common digital signature algorithms.
 For example SHA1, DSA.
 
@@ -147,7 +147,7 @@ largeIntegerXorShift128 := [
 xorShift128 bench. '4,990,000 per second. 201 nanoseconds per run.'.
 largeIntegerXorShift128 bench. '529,000 per second. 1.89 microseconds per run.'.!
 
-!DigitalSignatureAlgorithm methodsFor: 'public' stamp: 'nice 9/2/2010 21:48'!
+!DigitalSignatureAlgorithm methodsFor: 'public' stamp: 'nice 2/Sep/2010 21:48:00'!
 computeSignatureForMessageHash: hash privateKey: privateKey
 	"Answer the digital signature of the given message hash using the given private key. A signature is a pair of large integers. The private key is an array of four large integers: (p, q, g, x)."
 
@@ -167,7 +167,7 @@ computeSignatureForMessageHash: hash privateKey: privateKey
 	^ Array with: r with: s
 ! !
 
-!DigitalSignatureAlgorithm methodsFor: 'public' stamp: 'jmv 5/19/2015 21:41'!
+!DigitalSignatureAlgorithm methodsFor: 'public' stamp: 'jmv 19/May/2015 21:41:00'!
 generateKeySet
 	"Generate and answer a key set for DSA. The result is a pair (<private key><public key>). Each key is an array of four large integers. The private key is (p, q, g, x); the public one is (p, q, g, y). The signer must be sure to record (p, q, g, x), and must keep x secret to prevent someone from forging their signature."
 	"Note: Key generation can take some time. Open a transcript so you can see what's happening and take a coffee break!!"
@@ -191,7 +191,7 @@ generateKeySet
 		with: (Array with: p with: q with: g with: y)
 ! !
 
-!DigitalSignatureAlgorithm methodsFor: 'public' stamp: 'md 7/30/2005 14:12'!
+!DigitalSignatureAlgorithm methodsFor: 'public' stamp: 'md 30/Jul/2005 14:12:00'!
 signatureToString: aSignature
 	"Answer a string representation of the given signature. This string can be parsed using the stringToSignature: method."
 
@@ -205,7 +205,7 @@ signatureToString: aSignature
 	^ s contents
 ! !
 
-!DigitalSignatureAlgorithm methodsFor: 'public' stamp: 'jm 12/14/1999 13:33'!
+!DigitalSignatureAlgorithm methodsFor: 'public' stamp: 'jm 14/Dec/1999 13:33:00'!
 stringToSignature: aString
 	"Answer the signature stored in the given string. A signature string has the format:
 
@@ -224,7 +224,7 @@ stringToSignature: aString
 	^ Array with: r with: s
 ! !
 
-!DigitalSignatureAlgorithm methodsFor: 'public' stamp: 'nice 9/2/2010 21:48'!
+!DigitalSignatureAlgorithm methodsFor: 'public' stamp: 'nice 2/Sep/2010 21:48:00'!
 verifySignature: aSignature ofMessageHash: hash publicKey: publicKey
 	"Answer true if the given signature is the authentic signature of the given message hash. That is, if the signature must have been computed using the private key set corresponding to the given public key. The public key is an array of four large integers: (p, q, g, y)."
 
@@ -246,7 +246,7 @@ verifySignature: aSignature ofMessageHash: hash publicKey: publicKey
 	^ v = r
 ! !
 
-!DigitalSignatureAlgorithm methodsFor: 'private' stamp: 'jmv 5/19/2015 21:41'!
+!DigitalSignatureAlgorithm methodsFor: 'private' stamp: 'jmv 19/May/2015 21:41:00'!
 generateQandP
 	"Generate the two industrial-grade primes, q (160-bits) and p (512-bit) needed to build a key set. Answer the array (q, p, s), where s is the seed that from which q and p were created. This seed is normally discarded, but can be used to verify the key generation process if desired."
 
@@ -276,7 +276,7 @@ generateQandP
 			n := n + chunkCount + 1.
 			c := c + 1]] repeat! !
 
-!DigitalSignatureAlgorithm methodsFor: 'private' stamp: 'jm 12/13/1999 16:36'!
+!DigitalSignatureAlgorithm methodsFor: 'private' stamp: 'jm 13/Dec/1999 16:36:00'!
 generateRandomLength: bitLength s: s n: n
 	"Answer a random number of bitLength bits generated using the secure hash algorithm."
 
@@ -293,7 +293,7 @@ generateRandomLength: bitLength s: s n: n
 	^ out
 ! !
 
-!DigitalSignatureAlgorithm methodsFor: 'private' stamp: 'nice 4/11/2011 17:01'!
+!DigitalSignatureAlgorithm methodsFor: 'private' stamp: 'nice 11/Apr/2011 17:01:00'!
 generateSandQ
 	"Generate a 160-bit random seed s and an industrial grade prime q."
 
@@ -307,14 +307,14 @@ generateSandQ
 		q := u bitOr: ((1 bitShift: 159) bitOr: 1).
 		(self isProbablyPrime: q) ifTrue: [^ Array with: s with: q]] repeat! !
 
-!DigitalSignatureAlgorithm methodsFor: 'private' stamp: 'nice 8/28/2010 21:04'!
+!DigitalSignatureAlgorithm methodsFor: 'private' stamp: 'nice 28/Aug/2010 21:04:00'!
 logOfLargestPowerOfTwoDividing: aPositiveInteger
 	"Answer the base-2 log of the largest power of two that divides the given integer. For example, the largest power of two that divides 24 is 8, whose log base-2 is 3. Do this efficiently even when the given number is a large integer. Assume that the given integer is > 0."
 	"DigitalSignatureAlgorithm new logOfLargestPowerOfTwoDividing: (32 * 3)"
 
 	^aPositiveInteger lowBit - 1! !
 
-!DigitalSignatureAlgorithm methodsFor: 'private' stamp: 'jm 12/13/1999 14:39'!
+!DigitalSignatureAlgorithm methodsFor: 'private' stamp: 'jm 13/Dec/1999 14:39:00'!
 nextRandom160
 	"Answer a newly generated 160-bit random number in the range [1..(2^160 - 1)]."
 	"Details: Try again in the extremely unlikely chance that zero is encountered."
@@ -327,7 +327,7 @@ nextRandom160
 	^ result
 ! !
 
-!DigitalSignatureAlgorithm methodsFor: 'initialization' stamp: 'jmv 5/19/2015 21:41'!
+!DigitalSignatureAlgorithm methodsFor: 'initialization' stamp: 'jmv 19/May/2015 21:41:00'!
 initRandom: randomInteger
 	"Initialize the the secure random number generator with the given value. The argument should be a positive integer of up to 512 bits chosen randomly to avoid someone being able to predict the sequence of random values generated."
 	"Note: The random generator must be initialized before generating a key set or signature. Signature verification does not require initialization of the random generator."
@@ -337,7 +337,7 @@ initRandom: randomInteger
 	Transcript show: 'Random seed: ', randomInteger printString; newLine.
 ! !
 
-!DigitalSignatureAlgorithm methodsFor: 'initialization' stamp: 'jmv 1/9/2024 16:21:14'!
+!DigitalSignatureAlgorithm methodsFor: 'initialization' stamp: 'jmv 9/Jan/2024 16:21:14'!
 initRandomFromString: aString
 	"Ask the user to type a long random string and use the result to seed the secure random number generator."
 
@@ -352,7 +352,7 @@ initRandomFromString: aString
 	self initRandom: k.
 ! !
 
-!DigitalSignatureAlgorithm methodsFor: 'initialization' stamp: 'jmv 9/12/2024 12:07:04'!
+!DigitalSignatureAlgorithm methodsFor: 'initialization' stamp: 'jmv 12/Sep/2024 12:07:04'!
 initRandomFromUser
 	"Ask the user to type a long random string and use the result to seed the secure random number generator."
 
@@ -367,7 +367,7 @@ initRandomFromUser
 	self initRandom: k.
 ! !
 
-!DigitalSignatureAlgorithm methodsFor: 'initialization' stamp: 'DSG 12/4/2013 17:41'!
+!DigitalSignatureAlgorithm methodsFor: 'initialization' stamp: 'DSG 4/Dec/2013 17:41:00'!
 initRandomNonInteractively
 	[self initRandom: (SoundSystem default randomBitsFromSoundInput: 512)]
 		ifError: [self initRandomFromString: 
@@ -375,7 +375,7 @@ initRandomNonInteractively
 			Date today printString, 
 			Smalltalk platformName printString].! !
 
-!DigitalSignatureAlgorithm methodsFor: 'large integer arithmetic' stamp: 'nice 8/28/2010 21:16'!
+!DigitalSignatureAlgorithm methodsFor: 'large integer arithmetic' stamp: 'nice 28/Aug/2010 21:16:00'!
 inverseOf: x mod: n
 	"Answer the inverse of x modulus n. That is, the integer y such that (x * y) \\ n is 1. Both x and n must be positive, and it is assumed that x < n and that x and n are integers."
 	"Details: Use the extended Euclidean algorithm, Schneier, p. 247."
@@ -420,7 +420,7 @@ inverseOf: x mod: n
 	^ u - u2
 ! !
 
-!DigitalSignatureAlgorithm methodsFor: 'large integer arithmetic' stamp: 'jmv 5/19/2015 21:46'!
+!DigitalSignatureAlgorithm methodsFor: 'large integer arithmetic' stamp: 'jmv 19/May/2015 21:46:00'!
 isProbablyPrime: p
 	"Answer true if p is prime with very high probability. Such a number is sometimes called an 'industrial grade prime'--a large number that is so extremely likely to be prime that it can assumed that it actually is prime for all practical purposes. This implementation uses the Rabin-Miller algorithm (Schneier, p. 159)."
 
@@ -460,7 +460,7 @@ isProbablyPrime: p
 	^ true  "passed all tests; probably prime"
 ! !
 
-!DigitalSignatureAlgorithm class methodsFor: 'examples' stamp: 'jm 12/22/1999 11:23'!
+!DigitalSignatureAlgorithm class methodsFor: 'examples' stamp: 'jm 22/Dec/1999 11:23:00'!
 example
 	"Example of signing a message and verifying its signature."
 	"Note: Secure random numbers are needed for key generation and message signing, but not for signature verification. There is no need to call initRandomFromUser if you are merely checking a signature."
@@ -476,7 +476,7 @@ example
 		ifFalse: [self error: 'ERROR!! Signature verification failed'].
 ! !
 
-!DigitalSignatureAlgorithm class methodsFor: 'examples' stamp: 'pb 5/25/2016 01:32'!
+!DigitalSignatureAlgorithm class methodsFor: 'examples' stamp: 'pb 25/May/2016 01:32:00'!
 testExamplesFromDisk
 	"verify messages from file on disk"
 	"Note: Secure random numbers are needed for key generation and message signing, but not for signature verification. There is no need to call initRandomFromUser if you are merely checking a signature."
@@ -496,7 +496,7 @@ testExamplesFromDisk
 		].
 	]! !
 
-!DigitalSignatureAlgorithm class methodsFor: 'examples' stamp: 'jm 12/22/1999 11:28'!
+!DigitalSignatureAlgorithm class methodsFor: 'examples' stamp: 'jm 22/Dec/1999 11:28:00'!
 testKeySet
 	"Answer a pair of keys for testing. The first key is the private key, the second one is the public key."
 	"WARNING: This test key set is public should be used only for testing!! In a real application, the user would create a set of keys using generateKeySet and would keep the private key secret."
@@ -506,7 +506,7 @@ testKeySet
 		(8343811888543852523216773185009428259187948644369498021763210776677854991854533186365944349987509452133156416880596803846631577352387751880552969116768071 1197175832754339660404549606408619548226315875117 1433467472198821951822151391684734233265646022897503720591270330985699984763922266163182803556189497900262038518780931942996381297743579119123094520048965 4645213122572190617807944614677917601101008235397095646475699959851618402406173485853587185431290863173614335452934961425661774118334228449202337038283799))
 ! !
 
-!DigitalSignatureAlgorithm class methodsFor: 'examples' stamp: 'jmv 1/9/2024 16:21:30'!
+!DigitalSignatureAlgorithm class methodsFor: 'examples' stamp: 'jmv 9/Jan/2024 16:21:30'!
 timeDecode: count
 	"Example of signing a message and verifying its signature."
 	"Note: Secure random numbers are needed for key generation and message signing, but not for signature verification. There is no need to call initRandomFromUser if you are merely checking a signature."
@@ -533,7 +533,7 @@ timeDecode: count
 	].
 ! !
 
-!DigitalSignatureAlgorithm class methodsFor: 'examples' stamp: 'pb 5/25/2016 01:36'!
+!DigitalSignatureAlgorithm class methodsFor: 'examples' stamp: 'pb 25/May/2016 01:36:00'!
 writeExamplesToDisk
 	"Example of signing a message and verifying its signature. Used to create samples from one implementation that could later be tested with a different implementation"
 	"Note: Secure random numbers are needed for key generation and message signing, but not for signature verification. There is no need to call initRandomFromUser if you are merely checking a signature."
@@ -562,7 +562,7 @@ writeExamplesToDisk
 		].
 	]! !
 
-!DigitalSignatureAlgorithm class methodsFor: 'public' stamp: 'ads 7/31/2003 14:01'!
+!DigitalSignatureAlgorithm class methodsFor: 'public' stamp: 'ads 31/Jul/2003 14:01:00'!
 generateKeySet
 	"Generate and answer a key set for code signing. The result is a pair (<private key><public key>). Each key is an array of four large integers. The signer must be sure to record this keys set and must keep the private key secret to prevent someone from forging their signature."
 	"Note: Key generation can take some time. Open a transcript so you can see what's happening and take a coffee break!!"
@@ -577,7 +577,7 @@ generateKeySet
 	^ dsa generateKeySet
 ! !
 
-!DigitalSignatureAlgorithm class methodsFor: 'public' stamp: 'jm 12/22/1999 11:18'!
+!DigitalSignatureAlgorithm class methodsFor: 'public' stamp: 'jm 22/Dec/1999 11:18:00'!
 sign: aStringOrStream privateKey: privateKey
 	"Sign the given message (a stream or string) and answer a signature string."
 	"Note: Unguessable random numbers are needed for message signing. The user will be prompted to type a really long random string (two or three lines) to initialize the random number generator before signing a message. A different random string should be typed for every session; it is not a password and we wish to produce different random number streams."
@@ -593,7 +593,7 @@ sign: aStringOrStream privateKey: privateKey
 	^ dsa signatureToString: sig
 ! !
 
-!DigitalSignatureAlgorithm class methodsFor: 'public' stamp: 'RAA 5/31/2000 08:46'!
+!DigitalSignatureAlgorithm class methodsFor: 'public' stamp: 'RAA 31/May/2000 08:46:00'!
 sign: aStringOrStream privateKey: privateKey dsa: dsa
 	"Sign the given message (a stream or string) and answer a signature string."
 	"Note: Unguessable random numbers are needed for message signing. The user will be prompted to type a really long random string (two or three lines) to initialize the random number generator before signing a message. A different random string should be typed for every session; it is not a password and we wish to produce different random number streams."
@@ -608,7 +608,7 @@ sign: aStringOrStream privateKey: privateKey dsa: dsa
 	^ dsa signatureToString: sig
 ! !
 
-!DigitalSignatureAlgorithm class methodsFor: 'public' stamp: 'jm 12/22/1999 11:20'!
+!DigitalSignatureAlgorithm class methodsFor: 'public' stamp: 'jm 22/Dec/1999 11:20:00'!
 verify: signatureString isSignatureOf: aStringOrStream publicKey: publicKey
 	"Answer true if the given signature string signs the given message (a stream or string)."
 	"Note: Random numbers are not needed for signature verification; thus, there is no need to call initRandomFromUser before verifying a signature."
@@ -623,7 +623,7 @@ verify: signatureString isSignatureOf: aStringOrStream publicKey: publicKey
 	^ dsa verifySignature: sig ofMessageHash: h publicKey: publicKey
 ! !
 
-!DigitalSignatureAlgorithm class methodsFor: 'class initialization' stamp: 'jm 12/21/1999 19:15'!
+!DigitalSignatureAlgorithm class methodsFor: 'class initialization' stamp: 'jm 21/Dec/1999 19:15:00'!
 initialize
 	"DigitalSignatureAlgorithm initialize"
 
@@ -635,12 +635,12 @@ initialize
 	HighBitOfByte := (0 to: 255) collect: [:byte | byte highBit].
 ! !
 
-!DigitalSignatureAlgorithm class methodsFor: 'testing' stamp: 'RAA 5/31/2000 08:21'!
+!DigitalSignatureAlgorithm class methodsFor: 'testing' stamp: 'RAA 31/May/2000 08:21:00'!
 time: aBlock as: aString count: anInteger
 
 	^{anInteger. aString. (Time millisecondsToRun: aBlock)}! !
 
-!DigitalSignatureAlgorithm class methodsFor: 'testing' stamp: 'jmv 5/19/2015 21:48'!
+!DigitalSignatureAlgorithm class methodsFor: 'testing' stamp: 'jmv 19/May/2015 21:48:00'!
 timeDirect: aBlock as: aString count: anInteger
 
 	Transcript show: anInteger printStringWithCommas,'  ',
@@ -648,7 +648,7 @@ timeDirect: aBlock as: aString count: anInteger
 		(Time millisecondsToRun: aBlock) printStringWithCommas,' ms'; newLine
 ! !
 
-!SecureHashAlgorithm methodsFor: 'private' stamp: 'jm 12/7/1999 23:25'!
+!SecureHashAlgorithm methodsFor: 'private' stamp: 'jm 7/Dec/1999 23:25:00'!
 constantForStep: i
 	"Answer the constant for the i-th step of the block hash loop. We number our steps 1-80, versus the 0-79 of the standard."
 
@@ -658,7 +658,7 @@ constantForStep: i
 	^ K4
 ! !
 
-!SecureHashAlgorithm methodsFor: 'private' stamp: 'nice 8/28/2010 22:43'!
+!SecureHashAlgorithm methodsFor: 'private' stamp: 'nice 28/Aug/2010 22:43:00'!
 expandedBlock: aByteArray
 	"Convert the given 64 byte buffer into 80 32-bit registers and answer the result." 
 	| out src v |
@@ -678,7 +678,7 @@ expandedBlock: aByteArray
 	^ out
 ! !
 
-!SecureHashAlgorithm methodsFor: 'private' stamp: 'jm 12/21/1999 20:02'!
+!SecureHashAlgorithm methodsFor: 'private' stamp: 'jm 21/Dec/1999 20:02:00'!
 finalHash
 	"Concatenate the final totals to build the 160-bit integer result."
 	"Details: If the primitives are supported, the results are in the totals array. Otherwise, they are in the instance variables totalA through totalE."
@@ -698,7 +698,7 @@ finalHash
 	^ r
 ! !
 
-!SecureHashAlgorithm methodsFor: 'private' stamp: 'jm 12/7/1999 22:15'!
+!SecureHashAlgorithm methodsFor: 'private' stamp: 'jm 7/Dec/1999 22:15:00'!
 hashFunction: i of: x with: y with: z
 	"Compute the hash function for the i-th step of the block hash loop. We number our steps 1-80, versus the 0-79 of the standard."
 	"Details: There are four functions, one for each 20 iterations. The second and fourth are the same."
@@ -709,7 +709,7 @@ hashFunction: i of: x with: y with: z
 	^ x copy bitXor: y; bitXor: z
 ! !
 
-!SecureHashAlgorithm methodsFor: 'private' stamp: 'nice 8/28/2010 22:39'!
+!SecureHashAlgorithm methodsFor: 'private' stamp: 'nice 28/Aug/2010 22:39:00'!
 initializeTotals
 	"Initialize totalA through totalE to their seed values."
 
@@ -722,7 +722,7 @@ initializeTotals
 	self initializeTotalsArray.
 ! !
 
-!SecureHashAlgorithm methodsFor: 'private' stamp: 'jm 12/21/1999 19:38'!
+!SecureHashAlgorithm methodsFor: 'private' stamp: 'jm 21/Dec/1999 19:38:00'!
 initializeTotalsArray
 	"Initialize the totals array from the registers for use with the primitives."
 
@@ -734,7 +734,7 @@ initializeTotalsArray
 	totals at: 5 put: totalE asInteger.
 ! !
 
-!SecureHashAlgorithm methodsFor: 'private' stamp: 'nice 8/28/2010 22:28'!
+!SecureHashAlgorithm methodsFor: 'private' stamp: 'nice 28/Aug/2010 22:28:00'!
 processBuffer: aByteArray
 	"Process given 64-byte buffer, accumulating the results in totalA through totalE."
 
@@ -772,7 +772,7 @@ processBuffer: aByteArray
 	totalE += e.
 ! !
 
-!SecureHashAlgorithm methodsFor: 'private' stamp: 'jm 12/21/1999 23:32'!
+!SecureHashAlgorithm methodsFor: 'private' stamp: 'jm 21/Dec/1999 23:32:00'!
 processBufferUsingPrimitives: aByteArray
 	"Process given 64-byte buffer using the primitives, accumulating the results in totals."
 
@@ -783,7 +783,7 @@ processBufferUsingPrimitives: aByteArray
 	self primHashBlock: w using: totals.
 ! !
 
-!SecureHashAlgorithm methodsFor: 'private' stamp: 'jm 12/14/1999 11:40'!
+!SecureHashAlgorithm methodsFor: 'private' stamp: 'jm 14/Dec/1999 11:40:00'!
 processFinalBuffer: buffer bitLength: bitLength
 	"Process given buffer, whose length may be <= 64 bytes, accumulating the results in totalA through totalE. Also process the final padding bits and length."
 
@@ -810,7 +810,7 @@ processFinalBuffer: buffer bitLength: bitLength
 	self processBuffer: out.
 ! !
 
-!SecureHashAlgorithm methodsFor: 'private' stamp: 'jm 12/14/1999 11:10'!
+!SecureHashAlgorithm methodsFor: 'private' stamp: 'jm 14/Dec/1999 11:10:00'!
 storeLength: bitLength in: aByteArray
 	"Fill in the final 8 bytes of the given ByteArray with a 64-bit big-endian representation of the original message length in bits."
 
@@ -823,7 +823,7 @@ storeLength: bitLength in: aByteArray
 		i := i - 1].
 ! !
 
-!SecureHashAlgorithm methodsFor: 'public' stamp: 'jm 12/14/1999 11:56'!
+!SecureHashAlgorithm methodsFor: 'public' stamp: 'jm 14/Dec/1999 11:56:00'!
 hashInteger: aPositiveInteger
 	"Hash the given positive integer. The integer to be hashed should have 512 or fewer bits. This entry point is used in key generation."
 
@@ -844,7 +844,7 @@ hashInteger: aPositiveInteger
 	^ self finalHash
 ! !
 
-!SecureHashAlgorithm methodsFor: 'public' stamp: 'nice 8/28/2010 22:40'!
+!SecureHashAlgorithm methodsFor: 'public' stamp: 'nice 28/Aug/2010 22:40:00'!
 hashInteger: aPositiveInteger seed: seedInteger
 	"Hash the given positive integer. The integer to be hashed should have 512 or fewer bits. This entry point is used in the production of random numbers"
 
@@ -874,14 +874,14 @@ hashInteger: aPositiveInteger seed: seedInteger
 	^ self finalHash
 ! !
 
-!SecureHashAlgorithm methodsFor: 'public' stamp: 'jm 12/14/1999 11:28'!
+!SecureHashAlgorithm methodsFor: 'public' stamp: 'jm 14/Dec/1999 11:28:00'!
 hashMessage: aStringOrByteArray
 	"Hash the given message using the Secure Hash Algorithm."
 
 	^ self hashStream: (ReadStream on: aStringOrByteArray asByteArray)
 ! !
 
-!SecureHashAlgorithm methodsFor: 'public' stamp: 'ar 2/25/2010 23:40'!
+!SecureHashAlgorithm methodsFor: 'public' stamp: 'ar 25/Feb/2010 23:40:00'!
 hashStream: aPositionableStream
 	"Hash the contents of the given stream from the current position to the end using the Secure Hash Algorithm. The SHA algorithm is defined in FIPS PUB 180-1. It is also described on p. 442 of 'Applied Cryptography: Protocols, Algorithms, and Source Code in C' by Bruce Scheier, Wiley, 1996."
 	"SecureHashAlgorithm new hashStream: (ReadStream on: 'foo')"
@@ -905,7 +905,7 @@ hashStream: aPositionableStream
 	^ self finalHash
 ! !
 
-!SecureHashAlgorithm methodsFor: 'primitives' stamp: 'jm 12/21/1999 20:11'!
+!SecureHashAlgorithm methodsFor: 'primitives' stamp: 'jm 21/Dec/1999 20:11:00'!
 primExpandBlock: aByteArray into: wordBitmap
 	"Expand the given 64-byte buffer into the given Bitmap of length 80."
 
@@ -913,7 +913,7 @@ primExpandBlock: aByteArray into: wordBitmap
 	^ self primitiveFailed
 ! !
 
-!SecureHashAlgorithm methodsFor: 'primitives' stamp: 'jm 12/21/1999 22:58'!
+!SecureHashAlgorithm methodsFor: 'primitives' stamp: 'jm 21/Dec/1999 22:58:00'!
 primHasSecureHashPrimitive
 	"Answer true if this platform has primitive support for the Secure Hash Algorithm."
 
@@ -921,7 +921,7 @@ primHasSecureHashPrimitive
 	^ false
 ! !
 
-!SecureHashAlgorithm methodsFor: 'primitives' stamp: 'jm 12/21/1999 20:13'!
+!SecureHashAlgorithm methodsFor: 'primitives' stamp: 'jm 21/Dec/1999 20:13:00'!
 primHashBlock: blockBitmap using: workingTotalsBitmap
 	"Hash the given block (a Bitmap) of 80 32-bit words, using the given workingTotals."
 
@@ -929,7 +929,7 @@ primHashBlock: blockBitmap using: workingTotalsBitmap
 	^ self primitiveFailed
 ! !
 
-!SecureHashAlgorithm class methodsFor: 'class initialization' stamp: 'nice 8/28/2010 22:39'!
+!SecureHashAlgorithm class methodsFor: 'class initialization' stamp: 'nice 28/Aug/2010 22:39:00'!
 initialize
 	"SecureHashAlgorithm initialize"
 	"For the curious, here's where these constants come from:
@@ -941,7 +941,7 @@ initialize
 	K4 := ThirtyTwoBitRegister fromInteger: 16rCA62C1D6.
 ! !
 
-!SecureHashAlgorithm256 methodsFor: 'as yet unclassified' stamp: 'jpb 5/2/2020 23:05:57'!
+!SecureHashAlgorithm256 methodsFor: 'as yet unclassified' stamp: 'jpb 2/May/2020 23:05:57'!
 expandedBlock: aByteArray
 	"Convert the given 64 byte buffer into 64 32-bit registers and answer the result." 
 	| out src |
@@ -972,7 +972,7 @@ expandedBlock: aByteArray
 	^ out
 ! !
 
-!SecureHashAlgorithm256 methodsFor: 'as yet unclassified' stamp: 'jpb 5/2/2020 14:18:46'!
+!SecureHashAlgorithm256 methodsFor: 'as yet unclassified' stamp: 'jpb 2/May/2020 14:18:46'!
 finalHash
 	"Concatenate the final totals to build the 256-bit integer result."
 
@@ -985,11 +985,11 @@ finalHash
 	   (totalG asInteger bitShift: 32) +
 	   (totalH asInteger)! !
 
-!SecureHashAlgorithm256 methodsFor: 'as yet unclassified' stamp: 'jpb 5/2/2020 13:59:19'!
+!SecureHashAlgorithm256 methodsFor: 'as yet unclassified' stamp: 'jpb 2/May/2020 13:59:19'!
 findConstantBy: aSmallInteger 
 	^(RoundConstants at: aSmallInteger) copy! !
 
-!SecureHashAlgorithm256 methodsFor: 'as yet unclassified' stamp: 'jpb 5/2/2020 23:32:38'!
+!SecureHashAlgorithm256 methodsFor: 'as yet unclassified' stamp: 'jpb 2/May/2020 23:32:38'!
 hash1With: register1 with: register2 with: register3 
 	 "BSIG1(e) + CH(e,f,g) "
 	| result chResult |
@@ -1009,7 +1009,7 @@ hash1With: register1 with: register2 with: register3
 	
 	^result.! !
 
-!SecureHashAlgorithm256 methodsFor: 'as yet unclassified' stamp: 'jpb 5/2/2020 23:37:28'!
+!SecureHashAlgorithm256 methodsFor: 'as yet unclassified' stamp: 'jpb 2/May/2020 23:37:28'!
 hash2With: register1 with: register2 with: register3
 	| result majResult |
 
@@ -1031,14 +1031,14 @@ hash2With: register1 with: register2 with: register3
 	
 	^result! !
 
-!SecureHashAlgorithm256 methodsFor: 'as yet unclassified' stamp: 'jpb 4/25/2020 19:19:04'!
+!SecureHashAlgorithm256 methodsFor: 'as yet unclassified' stamp: 'jpb 25/Apr/2020 19:19:04'!
 hashMessage: aStringOrByteArray
 	"Hash the given message using the Secure Hash Algorithm 256."
 
 	^ self hashStream: (ReadStream on: aStringOrByteArray asByteArray)
 ! !
 
-!SecureHashAlgorithm256 methodsFor: 'as yet unclassified' stamp: 'jpb 4/30/2020 18:12:30'!
+!SecureHashAlgorithm256 methodsFor: 'as yet unclassified' stamp: 'jpb 30/Apr/2020 18:12:30'!
 hashStream: aPositionableStream
 	| startPosition buf bitLength |
 	self initializeTotals.
@@ -1057,7 +1057,7 @@ hashStream: aPositionableStream
 	^ self finalHash
 ! !
 
-!SecureHashAlgorithm256 methodsFor: 'as yet unclassified' stamp: 'jpb 5/3/2020 23:01:19'!
+!SecureHashAlgorithm256 methodsFor: 'as yet unclassified' stamp: 'jpb 3/May/2020 23:01:19'!
 initializeTotals
 	| initialValues |
 	initialValues _ self class makeHashValuesArray.
@@ -1072,7 +1072,7 @@ initializeTotals
 	totalH _ initialValues at: 8.
 	! !
 
-!SecureHashAlgorithm256 methodsFor: 'as yet unclassified' stamp: 'jpb 5/3/2020 23:01:56'!
+!SecureHashAlgorithm256 methodsFor: 'as yet unclassified' stamp: 'jpb 3/May/2020 23:01:56'!
 processBuffer: aByteArray
 	"Process given 64-byte buffer, accumulating the results in totalA through totalE."
 	| a b c d e f g h w tmp1 tmp2 |
@@ -1118,7 +1118,7 @@ processBuffer: aByteArray
 	totalH += h.
 ! !
 
-!SecureHashAlgorithm256 methodsFor: 'as yet unclassified' stamp: 'jpb 5/2/2020 14:39:11'!
+!SecureHashAlgorithm256 methodsFor: 'as yet unclassified' stamp: 'jpb 2/May/2020 14:39:11'!
 processFinalBuffer: buffer bitLength: bitLength 
 	"Process given buffer, whose length may be <= 64 bytes, accumulating the results in totalA through totalE. Also process the final padding bits and length."
 
@@ -1148,7 +1148,7 @@ processFinalBuffer: buffer bitLength: bitLength
 	self processBuffer: out.
 ! !
 
-!SecureHashAlgorithm256 methodsFor: 'as yet unclassified' stamp: 'jpb 5/2/2020 11:09:27'!
+!SecureHashAlgorithm256 methodsFor: 'as yet unclassified' stamp: 'jpb 2/May/2020 11:09:27'!
 smallSigmaOne: register
 	"SSIG1(x) = ROTR^17(x) XOR ROTR^19(x) XOR SHR^10(x)"
 	| result v1 v2 |
@@ -1166,7 +1166,7 @@ smallSigmaOne: register
 	^result
 	! !
 
-!SecureHashAlgorithm256 methodsFor: 'as yet unclassified' stamp: 'jpb 5/2/2020 11:07:55'!
+!SecureHashAlgorithm256 methodsFor: 'as yet unclassified' stamp: 'jpb 2/May/2020 11:07:55'!
 smallSigmaZero: register
 	"SSIG0(x) = ROTR^7(x) XOR ROTR^18(x) XOR SHR^3(x)"
 	| result v1 v2 |
@@ -1183,7 +1183,7 @@ smallSigmaZero: register
 	
 	^result! !
 
-!SecureHashAlgorithm256 methodsFor: 'as yet unclassified' stamp: 'jpb 4/27/2020 17:07:04'!
+!SecureHashAlgorithm256 methodsFor: 'as yet unclassified' stamp: 'jpb 27/Apr/2020 17:07:04'!
 storeLength: bitLength in: aByteArray
 	"Fill in the final 8 bytes of the given ByteArray with a 64-bit big-endian representation of the original message length in bits."
 
@@ -1197,12 +1197,12 @@ storeLength: bitLength in: aByteArray
 		i _ i - 1].
 ! !
 
-!SecureHashAlgorithm256 class methodsFor: 'as yet unclassified' stamp: 'jpb 4/25/2020 18:41:51'!
+!SecureHashAlgorithm256 class methodsFor: 'as yet unclassified' stamp: 'jpb 25/Apr/2020 18:41:51'!
 initialize
 	HashValues _ self makeHashValuesArray.
 	RoundConstants _ self makeRoundConstantsArray.! !
 
-!SecureHashAlgorithm256 class methodsFor: 'as yet unclassified' stamp: 'jpb 4/25/2020 18:46:21'!
+!SecureHashAlgorithm256 class methodsFor: 'as yet unclassified' stamp: 'jpb 25/Apr/2020 18:46:21'!
 makeHashValuesArray
 	| constants |
 	constants _ #(
@@ -1211,7 +1211,7 @@ makeHashValuesArray
 	).
 	^constants collect: [:const| ThirtyTwoBitRegister fromInteger: const ]! !
 
-!SecureHashAlgorithm256 class methodsFor: 'as yet unclassified' stamp: 'jpb 5/3/2020 22:18:14'!
+!SecureHashAlgorithm256 class methodsFor: 'as yet unclassified' stamp: 'jpb 3/May/2020 22:18:14'!
 makeRoundConstantsArray
 	| constants |
 	constants _ #(
@@ -1231,7 +1231,7 @@ makeRoundConstantsArray
 	).
 	^constants collect: [:const | ThirtyTwoBitRegister fromInteger: const ].! !
 
-!ThirtyTwoBitRegister methodsFor: 'accumulator ops' stamp: 'ul 4/11/2015 02:24'!
+!ThirtyTwoBitRegister methodsFor: 'accumulator ops' stamp: 'ul 11/Apr/2015 02:24:00'!
 *= aThirtTwoBitRegister
 	"Replace my contents with the product of the given register and my current contents."
 
@@ -1269,7 +1269,7 @@ makeRoundConstantsArray
 	low := newLow bitAnd: 16rFFFF 
 ! !
 
-!ThirtyTwoBitRegister methodsFor: 'accumulator ops' stamp: 'jm 12/7/1999 15:36'!
+!ThirtyTwoBitRegister methodsFor: 'accumulator ops' stamp: 'jm 7/Dec/1999 15:36:00'!
 += aThirtTwoBitRegister
 	"Replace my contents with the sum of the given register and my current contents."
 
@@ -1279,7 +1279,7 @@ makeRoundConstantsArray
 	low := lowSum bitAnd: 16rFFFF.
 ! !
 
-!ThirtyTwoBitRegister methodsFor: 'accumulator ops' stamp: 'ul 4/11/2015 04:39'!
+!ThirtyTwoBitRegister methodsFor: 'accumulator ops' stamp: 'ul 11/Apr/2015 04:39:00'!
 << anInteger
 	"Unsigned left shift."
 
@@ -1300,7 +1300,7 @@ makeRoundConstantsArray
 		hi := ((hi bitShift: bitCount) bitAnd: 16rFFFF) bitOr: (low bitShift: bitCount - 16).
 		low := (low bitShift: bitCount) bitAnd: 16rFFFF ]! !
 
-!ThirtyTwoBitRegister methodsFor: 'accumulator ops' stamp: 'ul 4/10/2015 20:54'!
+!ThirtyTwoBitRegister methodsFor: 'accumulator ops' stamp: 'ul 10/Apr/2015 20:54:00'!
 >> anInteger
 	"Unsigned right shift."
 
@@ -1322,7 +1322,7 @@ makeRoundConstantsArray
 		low := (low bitShift: -1) bitOr: ((hi bitAnd: 16r1) bitShift: 15).
 		hi := hi bitShift: -1 ]! !
 
-!ThirtyTwoBitRegister methodsFor: 'accumulator ops' stamp: 'jm 12/7/1999 15:41'!
+!ThirtyTwoBitRegister methodsFor: 'accumulator ops' stamp: 'jm 7/Dec/1999 15:41:00'!
 bitAnd: aThirtTwoBitRegister
 	"Replace my contents with the bitwise AND of the given register and my current contents."
 
@@ -1330,7 +1330,7 @@ bitAnd: aThirtTwoBitRegister
 	low := low bitAnd: aThirtTwoBitRegister low.
 ! !
 
-!ThirtyTwoBitRegister methodsFor: 'accumulator ops' stamp: 'jm 12/7/1999 15:40'!
+!ThirtyTwoBitRegister methodsFor: 'accumulator ops' stamp: 'jm 7/Dec/1999 15:40:00'!
 bitInvert
 	"Replace my contents with the bitwise inverse my current contents."
 
@@ -1338,7 +1338,7 @@ bitInvert
 	low := low bitXor: 16rFFFF.
 ! !
 
-!ThirtyTwoBitRegister methodsFor: 'accumulator ops' stamp: 'jm 12/7/1999 15:40'!
+!ThirtyTwoBitRegister methodsFor: 'accumulator ops' stamp: 'jm 7/Dec/1999 15:40:00'!
 bitOr: aThirtTwoBitRegister
 	"Replace my contents with the bitwise OR of the given register and my current contents."
 
@@ -1346,7 +1346,7 @@ bitOr: aThirtTwoBitRegister
 	low := low bitOr: aThirtTwoBitRegister low.
 ! !
 
-!ThirtyTwoBitRegister methodsFor: 'accumulator ops' stamp: 'jm 12/7/1999 15:38'!
+!ThirtyTwoBitRegister methodsFor: 'accumulator ops' stamp: 'jm 7/Dec/1999 15:38:00'!
 bitXor: aThirtTwoBitRegister
 	"Replace my contents with the bitwise exclusive OR of the given register and my current contents."
 
@@ -1354,7 +1354,7 @@ bitXor: aThirtTwoBitRegister
 	low := low bitXor: aThirtTwoBitRegister low.
 ! !
 
-!ThirtyTwoBitRegister methodsFor: 'accumulator ops' stamp: 'ul 3/6/2015 02:50'!
+!ThirtyTwoBitRegister methodsFor: 'accumulator ops' stamp: 'ul 6/Mar/2015 02:50:00'!
 leftRotateBy: bits
 	"Rotate my contents left by the given number of bits, retaining exactly 32 bits."
 	"Details: Perform this operation with no LargeInteger arithmetic."
@@ -1379,7 +1379,7 @@ leftRotateBy: bits
 		low := ((low bitShift: bitCount) bitAnd: 16rFFFF) bitOr: (hi bitShift: shift).
 		hi := newHi ]! !
 
-!ThirtyTwoBitRegister methodsFor: 'accumulator ops' stamp: 'jpb 5/1/2020 19:23:07'!
+!ThirtyTwoBitRegister methodsFor: 'accumulator ops' stamp: 'jpb 1/May/2020 19:23:07'!
 rightRotateBy: bits
 	"Rotate my contents right by the given number of bits, retaining exactly 32 bits."
 	"Details: Perform this operation with no LargeInteger arithmetic."
@@ -1406,7 +1406,7 @@ rightRotateBy: bits
 		hi _ ((low bitShift: shift) bitAnd: 16rFFFF) bitOr: hi >> bitCount.
 		low _ newLow ]! !
 
-!ThirtyTwoBitRegister methodsFor: 'printing' stamp: 'laza 3/29/2004 12:22'!
+!ThirtyTwoBitRegister methodsFor: 'printing' stamp: 'laza 29/Mar/2004 12:22:00'!
 printOn: aStream
 	"Print my contents in hex with a leading 'R' to show that it is a register object being printed."
 
@@ -1414,13 +1414,13 @@ printOn: aStream
 	self asInteger storeOn: aStream base: 16.
 ! !
 
-!ThirtyTwoBitRegister methodsFor: 'accessing' stamp: 'jm 12/7/1999 15:26'!
+!ThirtyTwoBitRegister methodsFor: 'accessing' stamp: 'jm 7/Dec/1999 15:26:00'!
 hi
 
 	^ hi
 ! !
 
-!ThirtyTwoBitRegister methodsFor: 'accessing' stamp: 'nice 8/28/2010 22:34'!
+!ThirtyTwoBitRegister methodsFor: 'accessing' stamp: 'nice 28/Aug/2010 22:34:00'!
 load: anInteger
 	"Set my contents to the value of given integer."
 
@@ -1430,7 +1430,7 @@ load: anInteger
 	hi := (anInteger bitShift: -16) bitAnd: 16rFFFF
 ! !
 
-!ThirtyTwoBitRegister methodsFor: 'accessing' stamp: 'ul 4/11/2015 04:01'!
+!ThirtyTwoBitRegister methodsFor: 'accessing' stamp: 'ul 11/Apr/2015 04:01:00'!
 loadFrom: aThirtyTwoBitRegister
 	"Set my contents from the given ThirtyTwoBitRegister."
 
@@ -1438,7 +1438,7 @@ loadFrom: aThirtyTwoBitRegister
 	low := aThirtyTwoBitRegister low
 ! !
 
-!ThirtyTwoBitRegister methodsFor: 'accessing' stamp: 'jm 12/14/1999 16:07'!
+!ThirtyTwoBitRegister methodsFor: 'accessing' stamp: 'jm 14/Dec/1999 16:07:00'!
 loadFrom: aByteArray at: index
 	"Load my 32-bit value from the four bytes of the given ByteArray starting at the given index. Consider the first byte to contain the most significant bits of the word (i.e., use big-endian byte ordering)."
 
@@ -1446,12 +1446,12 @@ loadFrom: aByteArray at: index
 	low := ((aByteArray at: index + 2) bitShift: 8) + ( aByteArray at: index + 3).
 ! !
 
-!ThirtyTwoBitRegister methodsFor: 'accessing' stamp: 'jm 12/7/1999 15:26'!
+!ThirtyTwoBitRegister methodsFor: 'accessing' stamp: 'jm 7/Dec/1999 15:26:00'!
 low
 
 	^ low! !
 
-!ThirtyTwoBitRegister methodsFor: 'copying' stamp: 'jm 12/7/1999 15:26'!
+!ThirtyTwoBitRegister methodsFor: 'copying' stamp: 'jm 7/Dec/1999 15:26:00'!
 copy
 	"Use the clone primitive for speed."
 
@@ -1459,54 +1459,54 @@ copy
 	^ super copy
 ! !
 
-!ThirtyTwoBitRegister methodsFor: 'comparing' stamp: 'ul 4/11/2015 04:50'!
+!ThirtyTwoBitRegister methodsFor: 'comparing' stamp: 'ul 11/Apr/2015 04:50:00'!
 < aThirtyTwoBitRegister
 
 	^hi < aThirtyTwoBitRegister hi or: [
 		hi = aThirtyTwoBitRegister hi and: [
 			low < aThirtyTwoBitRegister low ] ]! !
 
-!ThirtyTwoBitRegister methodsFor: 'comparing' stamp: 'ul 4/11/2015 04:51'!
+!ThirtyTwoBitRegister methodsFor: 'comparing' stamp: 'ul 11/Apr/2015 04:51:00'!
 <= aThirtyTwoBitRegister
 
 	^hi < aThirtyTwoBitRegister hi or: [
 		hi = aThirtyTwoBitRegister hi and: [
 			low <= aThirtyTwoBitRegister low ] ]! !
 
-!ThirtyTwoBitRegister methodsFor: 'comparing' stamp: 'ul 4/6/2015 02:30'!
+!ThirtyTwoBitRegister methodsFor: 'comparing' stamp: 'ul 6/Apr/2015 02:30:00'!
 = anObject
 
 	^self class == anObject class
 		and: [ anObject low = low
 		and: [ anObject hi = hi ] ]! !
 
-!ThirtyTwoBitRegister methodsFor: 'comparing' stamp: 'ul 4/11/2015 04:51'!
+!ThirtyTwoBitRegister methodsFor: 'comparing' stamp: 'ul 11/Apr/2015 04:51:00'!
 > aThirtyTwoBitRegister
 
 	^hi > aThirtyTwoBitRegister hi or: [
 		hi = aThirtyTwoBitRegister hi and: [
 			low > aThirtyTwoBitRegister low ] ]! !
 
-!ThirtyTwoBitRegister methodsFor: 'comparing' stamp: 'ul 4/11/2015 04:51'!
+!ThirtyTwoBitRegister methodsFor: 'comparing' stamp: 'ul 11/Apr/2015 04:51:00'!
 >= aThirtyTwoBitRegister
 
 	^hi > aThirtyTwoBitRegister hi or: [
 		hi = aThirtyTwoBitRegister hi and: [
 			low >= aThirtyTwoBitRegister low ] ]! !
 
-!ThirtyTwoBitRegister methodsFor: 'comparing' stamp: 'ul 4/6/2015 03:06'!
+!ThirtyTwoBitRegister methodsFor: 'comparing' stamp: 'ul 6/Apr/2015 03:06:00'!
 hash
 
 	^((hi bitShift: 14) bitXor: low) hashMultiply! !
 
-!ThirtyTwoBitRegister methodsFor: 'converting' stamp: 'jm 12/14/1999 16:03'!
+!ThirtyTwoBitRegister methodsFor: 'converting' stamp: 'jm 14/Dec/1999 16:03:00'!
 asInteger
 	"Answer the integer value of my current contents."
 
 	^ (hi bitShift: 16) + low
 ! !
 
-!ThirtyTwoBitRegister methodsFor: 'converting' stamp: 'ul 4/10/2015 20:52'!
+!ThirtyTwoBitRegister methodsFor: 'converting' stamp: 'ul 10/Apr/2015 20:52:00'!
 asSignedInteger
 	"Answer the signed integer value of my current contents."
 
@@ -1516,7 +1516,7 @@ asSignedInteger
 
 ! !
 
-!ThirtyTwoBitRegister class methodsFor: 'instance creation' stamp: 'nice 8/28/2010 22:42'!
+!ThirtyTwoBitRegister class methodsFor: 'instance creation' stamp: 'nice 28/Aug/2010 22:42:00'!
 fromByteArray: aByteArray at: startIndex
 	"Answer a new instance whose initial contents is copied from next four bytes from aByteArray starting at startIndex..
 	Convention is Most Significant Byte first (aka big endian)."
@@ -1524,7 +1524,7 @@ fromByteArray: aByteArray at: startIndex
 	^ self basicNew loadFrom: aByteArray at: startIndex
 ! !
 
-!ThirtyTwoBitRegister class methodsFor: 'instance creation' stamp: 'nice 8/28/2010 22:38'!
+!ThirtyTwoBitRegister class methodsFor: 'instance creation' stamp: 'nice 28/Aug/2010 22:38:00'!
 fromInteger: aPositiveInteger
 	"Answer a new instance whose initial contents is copied from aPositiveInteger.
 	It is required that aPositiveInteger has no more than 32 bits."
@@ -1532,7 +1532,7 @@ fromInteger: aPositiveInteger
 	^ self basicNew load: aPositiveInteger
 ! !
 
-!ThirtyTwoBitRegister class methodsFor: 'instance creation' stamp: 'jm 12/14/1999 16:05'!
+!ThirtyTwoBitRegister class methodsFor: 'instance creation' stamp: 'jm 14/Dec/1999 16:05:00'!
 new
 	"Answer a new instance whose initial contents is zero."
 

@@ -1,4 +1,4 @@
-'From Cuis6.3 [latest update: #6189] on 9 January 2024 at 5:53:00 pm'!
+'From Cuis7.7 [latest update: #7779] on 23 December 2025 at 4:34:35 pm'!
 'Description First version. See message #beImmutable and ImmutableTest'!
 !provides: 'Immutability' 1 4!
 SystemOrganization addCategory: #Immutability!
@@ -15,7 +15,7 @@ ModificationForbidden class
 	instanceVariableNames: ''!
 
 
-!ModificationForbidden methodsFor: 'initialization' stamp: 'HAW 7/3/2019 18:48:33'!
+!ModificationForbidden methodsFor: 'initialization' stamp: 'HAW 3/Jul/2019 18:48:33'!
 initializeFor: anObject at: anIndex with: aValue retrySelector: aSelector
 
 	object := anObject.
@@ -23,54 +23,54 @@ initializeFor: anObject at: anIndex with: aValue retrySelector: aSelector
 	newValue := aValue.
 	retrySelector := aSelector ! !
 
-!ModificationForbidden methodsFor: 'accessing' stamp: 'HAW 7/3/2019 18:48:27'!
+!ModificationForbidden methodsFor: 'accessing' stamp: 'HAW 3/Jul/2019 18:48:27'!
 fieldIndex
 	
 	^fieldIndex ! !
 
-!ModificationForbidden methodsFor: 'accessing' stamp: 'HAW 7/3/2019 18:48:33'!
+!ModificationForbidden methodsFor: 'accessing' stamp: 'HAW 3/Jul/2019 18:48:33'!
 newValue
 	
 	^newValue ! !
 
-!ModificationForbidden methodsFor: 'accessing' stamp: 'HAW 7/3/2019 18:28:02'!
+!ModificationForbidden methodsFor: 'accessing' stamp: 'HAW 3/Jul/2019 18:28:02'!
 object
 	
 	^object! !
 
-!ModificationForbidden methodsFor: 'accessing' stamp: 'HAW 7/3/2019 18:28:34'!
+!ModificationForbidden methodsFor: 'accessing' stamp: 'HAW 3/Jul/2019 18:28:34'!
 retrySelector
 	
 	^retrySelector! !
 
-!ModificationForbidden methodsFor: 'exceptionDescription' stamp: 'HAW 7/3/2019 18:45:13'!
+!ModificationForbidden methodsFor: 'exceptionDescription' stamp: 'HAW 3/Jul/2019 18:45:13'!
 messageText
 
 	^self class messageText ! !
 
-!ModificationForbidden methodsFor: 'retrying' stamp: 'HAW 7/5/2019 08:55:03'!
+!ModificationForbidden methodsFor: 'retrying' stamp: 'HAW 5/Jul/2019 08:55:03'!
 retryModification
 
 	object perform: retrySelector with: fieldIndex with: newValue.
 		
 	self resumeUnchecked: newValue! !
 
-!ModificationForbidden class methodsFor: 'signaling' stamp: 'HAW 7/3/2019 18:22:48'!
+!ModificationForbidden class methodsFor: 'signaling' stamp: 'HAW 3/Jul/2019 18:22:48'!
 signalFor: anObject at: anIndex with: aValue retrySelector: aSelector
 
 	^(self for: anObject at: anIndex with: aValue retrySelector: aSelector) signal! !
 
-!ModificationForbidden class methodsFor: 'instance creation' stamp: 'HAW 7/3/2019 18:23:10'!
+!ModificationForbidden class methodsFor: 'instance creation' stamp: 'HAW 3/Jul/2019 18:23:10'!
 for: anObject at: anIndex with: aValue retrySelector: aSelector
 
 	^self new initializeFor: anObject at: anIndex with: aValue retrySelector: aSelector! !
 
-!ModificationForbidden class methodsFor: 'error message' stamp: 'HAW 7/3/2019 18:44:55'!
+!ModificationForbidden class methodsFor: 'error message' stamp: 'HAW 3/Jul/2019 18:44:55'!
 messageText
 	
 	^'Attempt to modify an immutable object'! !
 
-!Object methodsFor: '*Immutability' stamp: 'HAW 7/3/2019 19:01:30'!
+!Object methodsFor: '*Immutability' library: #MinimalKernel01 stamp: 'HAW 3/Jul/2019 19:01:30'!
 at: index put: value 
 	"Primitive. Assumes receiver is indexable. Store the argument value in 
 	the indexable element of the receiver indicated by index. Fail if the 
@@ -93,7 +93,7 @@ at: index put: value
 		ifTrue: [^self at: index asInteger put: value]
 		ifFalse: [self errorNonIntegerIndex]! !
 
-!Object methodsFor: '*Immutability' stamp: 'HAW 7/4/2019 16:04:53'!
+!Object methodsFor: '*Immutability' stamp: 'HAW 4/Jul/2019 16:04:53'!
 attemptToAssign: value withIndex: index 
 
 	"Called by the VM when assigning an instance variable of an immutable object.
@@ -107,7 +107,7 @@ attemptToAssign: value withIndex: index
 	thisContext sender jump
 	"CAN'T REACH"! !
 
-!Object methodsFor: '*Immutability' stamp: 'HAW 7/3/2019 19:11:30'!
+!Object methodsFor: '*Immutability' library: #MinimalKernel01 stamp: 'HAW 3/Jul/2019 19:11:30'!
 basicAt: index put: value 
 	"Primitive. Assumes receiver is indexable. Store the second argument 
 	value in the indexable element of the receiver indicated by index. Fail 
@@ -129,7 +129,7 @@ basicAt: index put: value
 		ifTrue: [^self basicAt: index asInteger put: value]
 		ifFalse: [self errorNonIntegerIndex]! !
 
-!Object methodsFor: '*Immutability' stamp: 'HAW 7/12/2019 13:57:48'!
+!Object methodsFor: '*Immutability' stamp: 'HAW 12/Jul/2019 13:57:48'!
 beImmutable
 	
 	" If the VM supports read-only objects it will not write to read-only objects.
@@ -144,19 +144,19 @@ beImmutable
 	
 	^self beImmutable: true! !
 
-!Object methodsFor: '*Immutability' stamp: 'HAW 7/3/2019 18:05:05'!
+!Object methodsFor: '*Immutability' stamp: 'HAW 3/Jul/2019 18:05:05'!
 beImmutable: aBoolean
 
 	<primitive: 164 error: ec>
 	^self primitiveFailed
 ! !
 
-!Object methodsFor: '*Immutability' stamp: 'HAW 7/3/2019 18:10:57'!
+!Object methodsFor: '*Immutability' stamp: 'HAW 3/Jul/2019 18:10:57'!
 beMutable
 	
 	^self beImmutable: false! !
 
-!Object methodsFor: '*Immutability' stamp: 'HAW 7/12/2019 13:55:35'!
+!Object methodsFor: '*Immutability' library: #MinimalKernel01 stamp: 'HAW 12/Jul/2019 13:55:35'!
 instVarAt: index put: anObject
 	"Primitive. Store a value into a fixed variable in an object. The numbering of the
 	 variables corresponds to the named instance variables, followed by the indexed
@@ -175,13 +175,13 @@ instVarAt: index put: anObject
 
 	self primitiveFailed! !
 
-!Object methodsFor: '*Immutability' stamp: 'HAW 7/3/2019 18:06:54'!
+!Object methodsFor: '*Immutability' stamp: 'HAW 3/Jul/2019 18:06:54'!
 isImmutable
 
 	<primitive: 163 error: ec>
 	^self class isImmediateClass ! !
 
-!Object methodsFor: '*Immutability' stamp: 'HAW 7/3/2019 18:21:53'!
+!Object methodsFor: '*Immutability' stamp: 'HAW 3/Jul/2019 18:21:53'!
 modificationForbiddenFor: selector index: index value: value
 
 	^ ModificationForbidden 
@@ -190,7 +190,7 @@ modificationForbiddenFor: selector index: index value: value
 		with: value
 		retrySelector: selector! !
 
-!Object methodsFor: '*Immutability' stamp: 'HAW 7/3/2019 19:24:09'!
+!Object methodsFor: '*Immutability' stamp: 'HAW 3/Jul/2019 19:24:09'!
 rawBasicAt: index put: value 
 	"A verbatim copy of #basicAt:put:
 	To be used when subclasses might redefine #basicAt:, but unaltered, raw behavior is desired.
@@ -214,7 +214,7 @@ rawBasicAt: index put: value
 		ifTrue: [^self rawBasicAt: index asInteger put: value]
 		ifFalse: [self errorNonIntegerIndex]! !
 
-!Object methodsFor: '*Immutability' stamp: 'HAW 6/20/2019 16:19:35'!
+!Object methodsFor: '*Immutability' stamp: 'HAW 20/Jun/2019 16:19:35'!
 setIsReadOnlyObject: aBoolean
 	"If the VM supports read-only objects it will not write to read-only objects.
 	 An attempt to write to an instance variable of a read-only object will
@@ -229,7 +229,32 @@ setIsReadOnlyObject: aBoolean
 	^self primitiveFailed
 	! !
 
-!String methodsFor: '*Immutability' stamp: 'jmv 1/9/2024 16:58:30'!
+!Array2D methodsFor: '*Immutability' stamp: 'HAW 3/Jul/2019 19:49:50'!
+beImmutable
+	
+	elements beImmutable.
+	^super beImmutable.
+	! !
+
+!Array2D methodsFor: '*Immutability' stamp: 'HAW 3/Jul/2019 19:50:15'!
+beMutable
+	
+	elements beMutable.
+	^super beMutable! !
+
+!OrderedCollection methodsFor: '*Immutability' stamp: 'HAW 4/Jul/2019 15:39:31'!
+beImmutable
+	
+	array beImmutable.
+	^super beImmutable ! !
+
+!OrderedCollection methodsFor: '*Immutability' stamp: 'HAW 4/Jul/2019 15:41:10'!
+beMutable
+	
+	array beMutable.
+	^super beMutable ! !
+
+!String methodsFor: '*Immutability' library: #MinimalKernel01 stamp: 'jmv 9/Jan/2024 16:58:30'!
 at: index put: aCharacter 
 	"Primitive. Store the Character in the field of the receiver indicated by
 	the index. Fail if the index is not an Integer or is out of bounds, or if
@@ -250,39 +275,14 @@ at: index put: aCharacter
 				ifFalse: [self errorNonIntegerIndex]]
 		ifFalse: [self error: 'Strings only store Characters']! !
 
-!OrderedCollection methodsFor: '*Immutability' stamp: 'HAW 7/4/2019 15:39:31'!
+!Set methodsFor: '*Immutability' stamp: 'HAW 3/Jul/2019 19:58:03'!
 beImmutable
 	
 	array beImmutable.
 	^super beImmutable ! !
 
-!OrderedCollection methodsFor: '*Immutability' stamp: 'HAW 7/4/2019 15:41:10'!
+!Set methodsFor: '*Immutability' stamp: 'HAW 3/Jul/2019 19:57:48'!
 beMutable
 	
 	array beMutable.
 	^super beMutable ! !
-
-!Set methodsFor: '*Immutability' stamp: 'HAW 7/3/2019 19:58:03'!
-beImmutable
-	
-	array beImmutable.
-	^super beImmutable ! !
-
-!Set methodsFor: '*Immutability' stamp: 'HAW 7/3/2019 19:57:48'!
-beMutable
-	
-	array beMutable.
-	^super beMutable ! !
-
-!Array2D methodsFor: '*Immutability' stamp: 'HAW 7/3/2019 19:49:50'!
-beImmutable
-	
-	elements beImmutable.
-	^super beImmutable.
-	! !
-
-!Array2D methodsFor: '*Immutability' stamp: 'HAW 7/3/2019 19:50:15'!
-beMutable
-	
-	elements beMutable.
-	^super beMutable! !

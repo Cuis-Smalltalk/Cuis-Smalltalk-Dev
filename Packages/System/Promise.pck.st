@@ -1,4 +1,4 @@
-'From Cuis7.1 [latest update: #6795] on 28 October 2024 at 9:45:45 pm'!
+'From Cuis7.7 [latest update: #7779] on 23 December 2025 at 4:35:26 pm'!
 'Description '!
 !provides: 'Promise' 1 1!
 SystemOrganization addCategory: #Promise!
@@ -44,71 +44,71 @@ A Mutex is a light-weight MUTual EXclusion object being used when two or more pr
 !Promise commentStamp: 'tonyg 1/31/2018 23:34' prior: 0!
 I represent the result of an asynchronous message.  Once the message is processed, I will be resolved to a value.  I am typically instantiated by invocations of #futureSend:at:args: (and not by #futureDo:atArgs:).See class-comment of FutureNode.I also implement the Promises/A+ Javascript specification. This allows you to chain my instances to perform arbitrarily complex asynchronous tasks with error handling baked in.A Promise may be in one of three possible states: #pending, #fulfilled or #rejected. A Promise may move from #pending -> #fulfilled (by way of the resolveWith: message), or from #pending -> #rejected (by way of rejectWith:). No other state changes may occur.Once #fulfilled or #rejected, a Promise's value must not change. In keeping with the major Javascript Promise implementations' interpretations of this, calls to resolveWith: or rejectWith: when a Promise is in #fulfilled or #rejected state are simply ignored - an error is not signalled. (See test cases PromiseTest testFirstResolutionWins, testCannotRejectFulfilledPromise and testCannotResolveaRejectedPromise.)!
 
-!BrokenPromise methodsFor: 'as yet unclassified' stamp: 'tonyg 2/17/2017 13:52'!
+!BrokenPromise methodsFor: 'as yet unclassified' stamp: 'tonyg 17/Feb/2017 13:52:00'!
 defaultAction
 	self messageText: 'Promise was rejected'.
 	^super defaultAction! !
 
-!BrokenPromise methodsFor: 'as yet unclassified' stamp: 'tonyg 2/17/2017 13:52'!
+!BrokenPromise methodsFor: 'as yet unclassified' stamp: 'tonyg 17/Feb/2017 13:52:00'!
 isResumable
 	^ true! !
 
-!BrokenPromise methodsFor: 'as yet unclassified' stamp: 'tonyg 2/17/2017 13:51'!
+!BrokenPromise methodsFor: 'as yet unclassified' stamp: 'tonyg 17/Feb/2017 13:51:00'!
 promise
 	^ promise! !
 
-!BrokenPromise methodsFor: 'as yet unclassified' stamp: 'tonyg 2/17/2017 13:51'!
+!BrokenPromise methodsFor: 'as yet unclassified' stamp: 'tonyg 17/Feb/2017 13:51:00'!
 promise: aPromise
 	promise := aPromise! !
 
-!NullMutex methodsFor: 'mutual exclusion' stamp: 'fbs 5/17/2013 20:29'!
+!NullMutex methodsFor: 'mutual exclusion' stamp: 'fbs 17/May/2013 20:29:00'!
 critical: aBlock
 	^ aBlock value.! !
 
-!Promise methodsFor: 'accessing' stamp: 'fbs 5/17/2013 18:42'!
+!Promise methodsFor: 'accessing' stamp: 'fbs 17/May/2013 18:42:00'!
 error
 	^ error.! !
 
-!Promise methodsFor: 'accessing' stamp: 'jcg 12/17/2009 01:03'!
+!Promise methodsFor: 'accessing' stamp: 'jcg 17/Dec/2009 01:03:00'!
 value
 	^value! !
 
-!Promise methodsFor: 'initialize' stamp: 'fbs 5/26/2013 14:19'!
+!Promise methodsFor: 'initialize' stamp: 'fbs 26/May/2013 14:19:00'!
 initialize
 	state := #pending.
 	resolvers := #().
 	rejecters := #().
 	mutex := Mutex new.! !
 
-!Promise methodsFor: 'initialize' stamp: 'fbs 5/20/2013 20:37'!
+!Promise methodsFor: 'initialize' stamp: 'fbs 20/May/2013 20:37:00'!
 initializeWithIfRejected: aBlock
 	self initialize.
 	rejecters := {aBlock}.! !
 
-!Promise methodsFor: 'initialize' stamp: 'fbs 5/15/2013 17:37'!
+!Promise methodsFor: 'initialize' stamp: 'fbs 15/May/2013 17:37:00'!
 initializeWithResolvedValue: anObject
 	self initialize.
 	self resolveWith: anObject.! !
 
-!Promise methodsFor: 'monad' stamp: 'tonyg 1/28/2018 16:07'!
+!Promise methodsFor: 'monad' stamp: 'tonyg 28/Jan/2018 16:07:00'!
 >> resolvedBlock
 	"Like >>=, but discards the result of the promise."
 	^ self then: [:v | resolvedBlock value]! !
 
-!Promise methodsFor: 'monad' stamp: 'tonyg 1/28/2018 15:54'!
+!Promise methodsFor: 'monad' stamp: 'tonyg 28/Jan/2018 15:54:00'!
 >>= resolvedBlock
 	"Alias for `then:` allowing convenient chaining."
 	^ self then: resolvedBlock! !
 
-!Promise methodsFor: 'monad' stamp: 'tonyg 6/4/2020 19:45'!
+!Promise methodsFor: 'monad' stamp: 'tonyg 4/Jun/2020 19:45:00'!
 ifRejected: errBlock
 	^ self then: nil ifRejected: errBlock! !
 
-!Promise methodsFor: 'monad' stamp: 'tonyg 6/4/2020 19:45'!
+!Promise methodsFor: 'monad' stamp: 'tonyg 4/Jun/2020 19:45:00'!
 then: resolvedBlock
 	^ self then: resolvedBlock ifRejected: nil! !
 
-!Promise methodsFor: 'monad' stamp: 'tonyg 10/8/2020 18:05'!
+!Promise methodsFor: 'monad' stamp: 'tonyg 8/Oct/2020 18:05:00'!
 then: resolvedBlock ifRejected: errBlock
 	"Return a Promise that, if it resolves, runs the resolvedBlock. If resolution throws an Exception, it runs the errBlock."
 	| p |
@@ -127,7 +127,7 @@ then: resolvedBlock ifRejected: errBlock
 					on: Error do: [:e2 | p rejectWith: e2]]].
 	^ p.! !
 
-!Promise methodsFor: 'printing' stamp: 'fbs 5/20/2013 20:42'!
+!Promise methodsFor: 'printing' stamp: 'fbs 20/May/2013 20:42:00'!
 printOn: aStream
 	aStream nextPutAll: 'a Promise'.
 	self isResolved ifTrue: [
@@ -141,11 +141,11 @@ printOn: aStream
 			nextPutAll: error printString;
 			nextPutAll: ')'].! !
 
-!Promise methodsFor: 'resolving' stamp: 'tonyg 2/13/2018 15:35'!
+!Promise methodsFor: 'resolving' stamp: 'tonyg 13/Feb/2018 15:35:00'!
 fulfillWith: aBlock
 	self fulfillWith: aBlock passErrors: rejecters isEmpty! !
 
-!Promise methodsFor: 'resolving' stamp: 'tonyg 2/13/2018 16:41'!
+!Promise methodsFor: 'resolving' stamp: 'tonyg 13/Feb/2018 16:41:00'!
 fulfillWith: aBlock passErrors: aBoolean
 	"Evaluate aBlock. If it signals an exception, reject this promise with the exception
 	as the argument; if it returns a value [or another Promise], resolve this promise
@@ -163,12 +163,12 @@ fulfillWith: aBlock passErrors: aBoolean
 					self rejectWith: ex.
 					aBoolean ifTrue: [ ex pass ] ]]! !
 
-!Promise methodsFor: 'resolving' stamp: 'pre 12/17/2018 17:42'!
+!Promise methodsFor: 'resolving' stamp: 'pre 17/Dec/2018 17:42:00'!
 reject
 
 	self rejectWith: nil! !
 
-!Promise methodsFor: 'resolving' stamp: 'tonyg 2/11/2018 15:44'!
+!Promise methodsFor: 'resolving' stamp: 'tonyg 11/Feb/2018 15:44:00'!
 rejectWith: anObject
 	"Reject this promise."
 	mutex critical: [
@@ -180,12 +180,12 @@ rejectWith: anObject
 			rejecters := #().
 			worklist do: [:r | self evaluateRejecter: r]]]! !
 
-!Promise methodsFor: 'resolving' stamp: 'pre 12/17/2018 17:41'!
+!Promise methodsFor: 'resolving' stamp: 'pre 17/Dec/2018 17:41:00'!
 resolve
 	
 	self resolveWith: nil! !
 
-!Promise methodsFor: 'resolving' stamp: 'tonyg 1/24/2020 15:26'!
+!Promise methodsFor: 'resolving' stamp: 'tonyg 24/Jan/2020 15:26:00'!
 resolveWith: arg
 	"Resolve this promise. If arg is itself a Promise, make this promise depend upon it,
 	as detailed in the Promises/A+ spec:
@@ -205,7 +205,7 @@ resolveWith: arg
 					rejecters := #().
 					worklist do: [:r | self evaluateResolver: r]]]]! !
 
-!Promise methodsFor: 'resolving' stamp: 'tonyg 2/11/2018 15:48'!
+!Promise methodsFor: 'resolving' stamp: 'tonyg 11/Feb/2018 15:48:00'!
 whenRejected: aBlock
 	"Evaluate aBlock when I am rejected"
 	aBlock numArgs <= 1 ifFalse: [self error: 'Must be 0- or 1-argument block'].
@@ -215,7 +215,7 @@ whenRejected: aBlock
 			ifFalse: [self isRejected ifTrue: [self evaluateRejecter: aBlock]]].
 	^ nil! !
 
-!Promise methodsFor: 'resolving' stamp: 'tonyg 2/11/2018 15:50'!
+!Promise methodsFor: 'resolving' stamp: 'tonyg 11/Feb/2018 15:50:00'!
 whenResolved: aBlock
 	"Evaluate aBlock when I am resolved"
 	aBlock numArgs <= 1 ifFalse:[self error: 'Must be 0- or 1-argument block'].
@@ -225,19 +225,19 @@ whenResolved: aBlock
 			ifFalse: [self isResolved ifTrue: [self evaluateResolver: aBlock]]].
 	^ nil! !
 
-!Promise methodsFor: 'testing' stamp: 'tonyg 2/1/2018 09:57'!
+!Promise methodsFor: 'testing' stamp: 'tonyg 1/Feb/2018 09:57:00'!
 isPromise
 	^ true! !
 
-!Promise methodsFor: 'testing' stamp: 'fbs 5/20/2013 09:32'!
+!Promise methodsFor: 'testing' stamp: 'fbs 20/May/2013 09:32:00'!
 isRejected
 	^ state == #rejected.! !
 
-!Promise methodsFor: 'testing' stamp: 'fbs 5/17/2013 18:33'!
+!Promise methodsFor: 'testing' stamp: 'fbs 17/May/2013 18:33:00'!
 isResolved
 	^ state == #fulfilled.! !
 
-!Promise methodsFor: 'waiting' stamp: 'tonyg 2/17/2017 13:55'!
+!Promise methodsFor: 'waiting' stamp: 'tonyg 17/Feb/2017 13:55:00'!
 wait
 	"Wait unconditionally for this promise to become fulfilled or rejected."
 	| sema |
@@ -249,7 +249,7 @@ wait
 		ifTrue: [ value ]
 		ifFalse: [ BrokenPromise new promise: self; signal ]! !
 
-!Promise methodsFor: 'waiting' stamp: 'tonyg 2/9/2018 11:49'!
+!Promise methodsFor: 'waiting' stamp: 'tonyg 9/Feb/2018 11:49:00'!
 waitTimeoutMSecs: msecs
 	"Wait for at most the given number of milliseconds for this promise to settle.
 	Answer true if it is resolved, false otherwise. False can therefore mean EITHER 'timeout' OR 'rejected'."
@@ -261,28 +261,28 @@ waitTimeoutMSecs: msecs
 	[sema wait] ensure: [delay unschedule].
 	^ self isResolved.! !
 
-!Promise methodsFor: 'waiting' stamp: 'jcg 12/17/2009 01:11'!
+!Promise methodsFor: 'waiting' stamp: 'jcg 17/Dec/2009 01:11:00'!
 waitTimeoutSeconds: seconds
 	"Wait for at most the given number of seconds for this promise to resolve. Answer true if it is resolved, false otherwise."
 	^self waitTimeoutMSecs: seconds*1000! !
 
-!Promise methodsFor: 'private' stamp: 'jmv 10/28/2024 21:16:55'!
+!Promise methodsFor: 'private' stamp: 'jmv 28/Oct/2024 21:16:55'!
 evaluateRejecter: rejecterBlock
 	^ rejecterBlock valueWithPossibleArgument: error.! !
 
-!Promise methodsFor: 'private' stamp: 'jmv 10/28/2024 21:17:34'!
+!Promise methodsFor: 'private' stamp: 'jmv 28/Oct/2024 21:17:34'!
 evaluateResolver: resolverBlock
 	^ resolverBlock valueWithPossibleArgument: value.! !
 
-!Promise class methodsFor: 'instance creation' stamp: 'tonyg 10/8/2020 18:05'!
+!Promise class methodsFor: 'instance creation' stamp: 'tonyg 8/Oct/2020 18:05:00'!
 ifRejected: aBlock
 	^ self basicNew initializeWithIfRejected: aBlock.! !
 
-!Promise class methodsFor: 'instance creation' stamp: 'tonyg 10/8/2020 18:05'!
+!Promise class methodsFor: 'instance creation' stamp: 'tonyg 8/Oct/2020 18:05:00'!
 unit: anObject
 	"Return a resolved Promise. #new is the other half of Promise's unit function; #new returns an unresolved Promise."
 	^ self basicNew initializeWithResolvedValue: anObject.! !
 
-!Object methodsFor: '*Promise' stamp: 'JMM 10/23/2024 11:11:29'!
+!Object methodsFor: '*Promise' stamp: 'JMM 23/Oct/2024 11:11:29'!
 isPromise
 	^ false! !

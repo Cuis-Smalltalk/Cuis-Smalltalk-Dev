@@ -1,4 +1,4 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3319] on 12 May 2018 at 5:44:44 pm'!
+'From Cuis7.7 [latest update: #7779] on 23 December 2025 at 4:42:23 pm'!
 'Description NBS-ISCC color names originating from Munsell''s idea of a rational naming scheme based around "color centroids":
 	http://tx4.us/nbs-iscc.htm 
 
@@ -8,13 +8,13 @@ See Class side:
 To reset the Color name->color dictionary:
  	Color setColorNamesDict: (Color nbsisccColorDictionary).'!
 !provides: 'NBSISCC-NamedColors' 1 1!
-!requires: 'Graphics-Files-Additional' 1 nil nil!
-!requires: 'Color-Extras' 1 4 nil!
 !requires: 'Cuis-Base' 42 1788 nil!
+!requires: 'Color-Extras' 1 4 nil!
+!requires: 'Graphics-Files-Additional' 1 nil nil!
 
 
 
-!Color class methodsFor: '*nbsiscc-namedcolors' stamp: 'KenD 1/28/2013 19:59'!
+!Color class methodsFor: '*nbsiscc-namedcolors' stamp: 'KenD 28/Jan/2013 19:59:00'!
 nbsisccColorDictionary
 	"Answer a dictionary of NBS-ISCC compliant color names to Color objects.
 	http://tx4.us/nbs-iscc.htm"
@@ -32,7 +32,7 @@ To reset the Color name->color dictionary:
 		
 	^nbsisccDict! !
 
-!Color class methodsFor: '*nbsiscc-namedcolors' stamp: 'KenD 1/28/2013 19:38'!
+!Color class methodsFor: '*nbsiscc-namedcolors' stamp: 'KenD 28/Jan/2013 19:38:00'!
 nbsisccColors1
 	"Answer a dictionary of NBS-ISCC compliant color names to Color objects.
 	First half!!"
@@ -154,7 +154,7 @@ nbsisccColors1
     at: #oliveBlack  put: (Color fromString: '#25241D');
 		yourself! !
 
-!Color class methodsFor: '*nbsiscc-namedcolors' stamp: 'KenD 1/28/2013 19:38'!
+!Color class methodsFor: '*nbsiscc-namedcolors' stamp: 'KenD 28/Jan/2013 19:38:00'!
 nbsisccColors2
 	"Answer a dictionary of NBS-ISCC compliant color names to Color objects.
 	First half!!"
@@ -267,7 +267,7 @@ nbsisccColors2
  
 		yourself! !
 
-!Color class methodsFor: '*nbsiscc-namedcolors' stamp: 'KenD 1/28/2013 19:38'!
+!Color class methodsFor: '*nbsiscc-namedcolors' stamp: 'KenD 28/Jan/2013 19:38:00'!
 nbsisccColors3
 	"Answer a dictionary of NBS-ISCC compliant color names to Color objects.
 	First half!!"

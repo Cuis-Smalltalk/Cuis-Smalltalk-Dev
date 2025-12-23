@@ -1,4 +1,4 @@
-'From Cuis 5.0 [latest update: #4140] on 8 May 2020 at 3:32:18 pm'!
+'From Cuis7.7 [latest update: #7779] on 23 December 2025 at 4:40:20 pm'!
 'Description '!
 !provides: 'Tests-Complex' 1 4!
 !requires: 'BaseImageTests' 1 0 nil!
@@ -17,7 +17,7 @@ ComplexTest class
 	instanceVariableNames: ''!
 
 
-!ComplexTest methodsFor: 'tests - creation' stamp: 'jmv 5/6/2020 16:30:15'!
+!ComplexTest methodsFor: 'tests - creation' stamp: 'jmv 6/May/2020 16:30:15'!
 testCreation
 	| c c1 c2 c3 |
 	c _ 1 + 2i.
@@ -48,7 +48,7 @@ testCreation
 	c3 _ Complex abs: 5.1 arg: Float twoPi.
 	self assert: c3 = 5.1.! !
 
-!ComplexTest methodsFor: 'tests - creation' stamp: 'jmv 4/5/2019 09:14:05'!
+!ComplexTest methodsFor: 'tests - creation' stamp: 'jmv 5/Apr/2019 09:14:05'!
 testCreation2
 	
 	| c |
@@ -73,7 +73,7 @@ testCreation2
 	self assert: (c imaginary = 5).
 	! !
 
-!ComplexTest methodsFor: 'tests - accessing' stamp: 'jmv 4/5/2019 19:56:05'!
+!ComplexTest methodsFor: 'tests - accessing' stamp: 'jmv 5/Apr/2019 19:56:05'!
 testAbs
 	
 	| c |
@@ -84,7 +84,7 @@ testAbs
 	c _ 2.0e-155 + 3.0e-155 i.
 	self assert: c abs = c safeAbs.! !
 
-!ComplexTest methodsFor: 'tests - accessing' stamp: 'jmv 4/5/2019 09:13:12'!
+!ComplexTest methodsFor: 'tests - accessing' stamp: 'jmv 5/Apr/2019 09:13:12'!
 testArg
 	
 	| c |
@@ -92,14 +92,14 @@ testArg
 	self assert: c arg  = (Float pi/ 2).
 	! !
 
-!ComplexTest methodsFor: 'tests - arithmetic' stamp: 'jmv 4/5/2019 09:12:49'!
+!ComplexTest methodsFor: 'tests - arithmetic' stamp: 'jmv 5/Apr/2019 09:12:49'!
 testAdd
 	
 	| c |
 	c := (5 - 6 i) + (-5 + 8 i).     "Complex with Complex"
 	self assert: (c =  (0 + 2 i)).! !
 
-!ComplexTest methodsFor: 'tests - arithmetic' stamp: 'jmv 4/5/2019 09:10:03'!
+!ComplexTest methodsFor: 'tests - arithmetic' stamp: 'jmv 5/Apr/2019 09:10:03'!
 testComplexConjugate
 	
 	| c cc |
@@ -108,7 +108,7 @@ testComplexConjugate
 	self assert: cc real = c real.
 	self assert: cc imaginary = c imaginary negated.! !
 
-!ComplexTest methodsFor: 'tests - arithmetic' stamp: 'jmv 7/2/2019 12:07:10'!
+!ComplexTest methodsFor: 'tests - arithmetic' stamp: 'jmv 2/Jul/2019 12:07:10'!
 testDivideComplexByZero
 
 	self assert: 1 i / 0.0 = Complex infinity.
@@ -133,7 +133,7 @@ testDivideComplexByZero
 	self assert: -1.0  / (Complex basicReal: -0.0 imaginary: 0.0) = Float negativeInfinity.
 	self assert: -1.0  / (Complex basicReal: -0.0 imaginary: -0.0) = Float negativeInfinity.! !
 
-!ComplexTest methodsFor: 'tests - arithmetic' stamp: 'jmv 7/2/2019 12:12:20'!
+!ComplexTest methodsFor: 'tests - arithmetic' stamp: 'jmv 2/Jul/2019 12:12:20'!
 testDivideComplexZeroByZero
 
 	self assert: ((Complex basicReal: 0.0 imaginary: 0.0) / 0) isComplexNaN.
@@ -169,7 +169,7 @@ testDivideComplexZeroByZero
 	self assert: ((Complex basicReal: -0.0 imaginary: 0.0) / (Complex basicReal: -0.0 imaginary: -0.0)) isComplexNaN.
 	self assert: ((Complex basicReal: -0.0 imaginary: -0.0) / (Complex basicReal: -0.0 imaginary: -0.0)) isComplexNaN.! !
 
-!ComplexTest methodsFor: 'tests - arithmetic' stamp: 'jmv 7/2/2019 12:05:24'!
+!ComplexTest methodsFor: 'tests - arithmetic' stamp: 'jmv 2/Jul/2019 12:05:24'!
 testDivideFloatByZero
 
 	self assert: 1  / (Complex basicReal: 0.0 imaginary: 0.0) = Float infinity.
@@ -190,7 +190,7 @@ testDivideFloatByZero
 	self assert: -1.0  / (Complex basicReal: -0.0 imaginary: 0.0) = Float negativeInfinity.
 	self assert: -1.0  / (Complex basicReal: -0.0 imaginary: -0.0) = Float negativeInfinity.! !
 
-!ComplexTest methodsFor: 'tests - arithmetic' stamp: 'jmv 7/2/2019 12:07:43'!
+!ComplexTest methodsFor: 'tests - arithmetic' stamp: 'jmv 2/Jul/2019 12:07:43'!
 testDivideFloatZeroByZero
 
 	self assert: (0 / (Complex basicReal: 0.0 imaginary: 0.0)) isNaN.
@@ -202,7 +202,7 @@ testDivideFloatZeroByZero
 	self assert: (0.0 / (Complex basicReal: -0.0 imaginary: 0.0)) isNaN.
 	self assert: (0.0 / (Complex basicReal: -0.0 imaginary: -0.0)) isNaN.! !
 
-!ComplexTest methodsFor: 'tests - arithmetic' stamp: 'jmv 4/5/2019 10:28:50'!
+!ComplexTest methodsFor: 'tests - arithmetic' stamp: 'jmv 5/Apr/2019 10:28:50'!
 testDivideLarge
 
 	| c1 c2 quotient |
@@ -226,7 +226,7 @@ testDivideLarge
 	quotient := c1 / c2.
 	self assert: quotient = 1.! !
 
-!ComplexTest methodsFor: 'tests - arithmetic' stamp: 'jmv 4/5/2019 10:29:27'!
+!ComplexTest methodsFor: 'tests - arithmetic' stamp: 'jmv 5/Apr/2019 10:29:27'!
 testDivideSmall
 
 	| c1 c2 quotient |
@@ -250,14 +250,14 @@ testDivideSmall
 	quotient := c1 / c2.
 	self assert: quotient = 1.! !
 
-!ComplexTest methodsFor: 'tests - arithmetic' stamp: 'jmv 4/5/2019 09:14:41'!
+!ComplexTest methodsFor: 'tests - arithmetic' stamp: 'jmv 5/Apr/2019 09:14:41'!
 testMultiply
 	
 	| c |
 	c := (5 - 6 i).
 	self assert: (c * 1i = c i)! !
 
-!ComplexTest methodsFor: 'tests - arithmetic' stamp: 'jmv 4/5/2019 09:13:36'!
+!ComplexTest methodsFor: 'tests - arithmetic' stamp: 'jmv 5/Apr/2019 09:13:36'!
 testNegated
 
 	| c |
@@ -265,7 +265,7 @@ testNegated
 	self assert: c negated  = (-2 - 5i).
 	! !
 
-!ComplexTest methodsFor: 'tests - arithmetic' stamp: 'jmv 4/5/2019 09:13:40'!
+!ComplexTest methodsFor: 'tests - arithmetic' stamp: 'jmv 5/Apr/2019 09:13:40'!
 testReciprocal
 	
 	| c |
@@ -273,7 +273,7 @@ testReciprocal
 	self assert: c reciprocal  = ((2/29) - (5/29)i).
 	! !
 
-!ComplexTest methodsFor: 'tests - arithmetic' stamp: 'jmv 4/5/2019 09:13:44'!
+!ComplexTest methodsFor: 'tests - arithmetic' stamp: 'jmv 5/Apr/2019 09:13:44'!
 testReciprocalError
 	
 	| c |
@@ -281,7 +281,7 @@ testReciprocalError
 	self should: [c reciprocal] raise: ZeroDivide
 	! !
 
-!ComplexTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 5/6/2020 16:36:42'!
+!ComplexTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 6/May/2020 16:36:42'!
 testArcTan
 	| c |
 	c := (0.5 + 0 i).
@@ -291,7 +291,7 @@ testArcTan
 			c := real + imag i.
 			self verify: c arcTan tan isTrigonometricallyEqualTo: c ]]! !
 
-!ComplexTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 12/17/2018 19:17:39'!
+!ComplexTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 17/Dec/2018 19:17:39'!
 testCos
 	| c c2 |
 	c := (2 + 0 i).
@@ -300,7 +300,7 @@ testCos
 	c2 := c i exp + c i negated exp / 2.
 	self verify: c cos isTrigonometricallyEqualTo: c2.! !
 
-!ComplexTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 12/17/2018 19:19:33'!
+!ComplexTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 17/Dec/2018 19:19:33'!
 testCosh
 	| c c2 |
 	c := (2 + 0 i).
@@ -311,7 +311,7 @@ testCosh
 	c2 := c i cos.
 	self verify: c cosh isHyperbolicallyEqualTo: c2.! !
 
-!ComplexTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 12/18/2018 16:51:47'!
+!ComplexTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 18/Dec/2018 16:51:47'!
 testFourthRoot
 
 	"SmallInteger"
@@ -328,11 +328,11 @@ testFourthRoot
 	self verify: (-1.0 nthRoot: 4) isMagnitudeAndArgumentWithin: 1 floatsAwayFrom: 1.0 / 2.0 sqrt + (1.0 / 2.0 sqrt)i.
 	self verify: (-0.25 nthRoot: 4) isMagnitudeAndArgumentWithin: 1 floatsAwayFrom: 0.5 + 0.5 i.! !
 
-!ComplexTest methodsFor: 'tests - mathematical functions' stamp: 'laza 9/26/2005 10:24'!
+!ComplexTest methodsFor: 'tests - mathematical functions' stamp: 'laza 26/Sep/2005 10:24:00'!
 testLn
 	self assert: (Float e + 0 i) ln = Float e ln "See Bug 1815 on Mantis"! !
 
-!ComplexTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 12/18/2018 16:53:09'!
+!ComplexTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 18/Dec/2018 16:53:09'!
 testRaisedTo
 	
 	| c c3 |
@@ -340,7 +340,7 @@ testRaisedTo
 	c3 := (c raisedTo: 0.2) raisedTo: 5.
 	self verify: c3 isMagnitudeAndArgumentWithin: 7 floatsAwayFrom: c.! !
 
-!ComplexTest methodsFor: 'tests - mathematical functions' stamp: 'nice 4/23/2011 03:05'!
+!ComplexTest methodsFor: 'tests - mathematical functions' stamp: 'nice 23/Apr/2011 03:05:00'!
 testRaisedToInteger
 	
 	| c c3 |
@@ -349,13 +349,13 @@ testRaisedToInteger
 	self assert: (c3 = (c raisedToInteger: 3)).
 	self assert: (c3 reciprocal = (c raisedToInteger: -3)).! !
 
-!ComplexTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 7/2/2019 12:00:13'!
+!ComplexTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 2/Jul/2019 12:00:13'!
 testRaisedToMinusOne
 	
 	self assert: ((Complex basicReal: 0.0 imaginary: 0.0) raisedTo: -1) = Float infinity.
 	self assert: ((Complex basicReal: 0.0 imaginary: 0.0) raisedTo: -1.0) = Float infinity.! !
 
-!ComplexTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 12/18/2018 16:54:06'!
+!ComplexTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 18/Dec/2018 16:54:06'!
 testRaisedToOneFourth
 
 	"SmallInteger"
@@ -372,7 +372,7 @@ testRaisedToOneFourth
 	self verify: (-1.0 raisedTo: 1/4) isMagnitudeAndArgumentWithin: 1 floatsAwayFrom: 1.0 / 2.0 sqrt + (1.0 / 2.0 sqrt)i.
 	self verify: (-0.25 raisedTo: 1/4) isMagnitudeAndArgumentWithin: 1 floatsAwayFrom: 0.5 + 0.5 i.! !
 
-!ComplexTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 6/22/2019 15:55:41'!
+!ComplexTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 22/Jun/2019 15:55:41'!
 testRaisedToOneHalf
 
 	"SmallInteger"
@@ -410,7 +410,7 @@ testRaisedToOneHalf
 	self assert: ((Complex basicReal: -3 imaginary: 0) raisedTo: 1/2) imaginary isFloat.
 	self verify: (1+1i raisedTo: 1/2 :: raisedTo: 2) isMagnitudeAndArgumentWithin: 3 floatsAwayFrom: 1.0 + 1.0 i.! !
 
-!ComplexTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 12/18/2018 17:01:09'!
+!ComplexTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 18/Dec/2018 17:01:09'!
 testRaisedToPointFive
 
 	"SmallInteger"
@@ -431,7 +431,7 @@ testRaisedToPointFive
 	self verify: ((Complex basicReal: -1.0 imaginary: 0.0) raisedTo: 0.5) isMagnitudeAndArgumentWithin: 1 floatsAwayFrom: 1 i.
 	self verify: ((Complex basicReal: -0.25 imaginary: 0.0) raisedTo: 0.5) isMagnitudeAndArgumentWithin: 1 floatsAwayFrom: 0.5 i.! !
 
-!ComplexTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 5/26/2018 20:26:06'!
+!ComplexTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 26/May/2018 20:26:06'!
 testSecondRoot
 
 	"SmallInteger"
@@ -452,7 +452,7 @@ testSecondRoot
 	self assert: (-0.25 nthRoot: 2) = (1/2)i.
 	self assert: (-0.25 nthRoot: 2) imaginary isFloat.! !
 
-!ComplexTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 12/17/2018 19:26:13'!
+!ComplexTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 17/Dec/2018 19:26:13'!
 testSin
 	| c c2 |
 	c := (2 + 0 i).
@@ -461,7 +461,7 @@ testSin
 	c2 := c i exp - c i negated exp / 2 i.
 	self verify: c sin isTrigonometricallyEqualTo: c2.! !
 
-!ComplexTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 12/17/2018 19:27:05'!
+!ComplexTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 17/Dec/2018 19:27:05'!
 testSinh
 	| c c2 |
 	c := (2 + 0 i).
@@ -474,7 +474,7 @@ testSinh
 	c2 := c i sin i negated.
 	self verify: c sinh isHyperbolicallyEqualTo: c2.! !
 
-!ComplexTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 11/27/2018 10:49:57'!
+!ComplexTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 27/Nov/2018 10:49:57'!
 testSqrt
 
 	"SmallInteger"
@@ -496,7 +496,7 @@ testSqrt
 	self assert: -0.25 sqrt imaginary isFloat.
 	self assert: Float negativeInfinity sqrt = Float infinity i.! !
 
-!ComplexTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 4/5/2019 09:13:56'!
+!ComplexTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 5/Apr/2019 09:13:56'!
 testSquared
 	
 	| c c2 |
@@ -505,7 +505,7 @@ testSquared
 	self assert: c2 imaginary = -72.
 	self assert: c2 real = 0.! !
 
-!ComplexTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 12/17/2018 19:27:24'!
+!ComplexTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 17/Dec/2018 19:27:24'!
 testTan
 	| c c2 |
 	c := (2 + 0 i).
@@ -514,7 +514,7 @@ testTan
 	c2 := c sin / c cos.
 	self verify: c2 isTrigonometricallyEqualTo: c tan.! !
 
-!ComplexTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 5/6/2020 16:37:53'!
+!ComplexTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 6/May/2020 16:37:53'!
 testTanh
 	| c c2 |
 	c := (2 + 0 i).
@@ -523,7 +523,7 @@ testTanh
 	c2 := c sinh / c cosh.
 	self verify: c2 isHyperbolicallyEqualTo: c tanh.! !
 
-!ComplexTest methodsFor: 'tests - function properties' stamp: 'jmv 12/17/2018 19:18:13'!
+!ComplexTest methodsFor: 'tests - function properties' stamp: 'jmv 17/Dec/2018 19:18:13'!
 testCos2PlusSin2
 	| c |
 	#(-0.5 -2 -3 0 0.5 2 3) do:  [:real |
@@ -531,7 +531,7 @@ testCos2PlusSin2
 		c := real + imag i.
 		self verify: (c cos squared + c sin squared) isTrigonometricallyEqualTo: 1.0 ]]! !
 
-!ComplexTest methodsFor: 'tests - function properties' stamp: 'jmv 12/17/2018 19:19:49'!
+!ComplexTest methodsFor: 'tests - function properties' stamp: 'jmv 17/Dec/2018 19:19:49'!
 testCosh2MinusSinh2
 	| c |
 	#(-0.5 -2 -3 0 0.5 2 3) do: [:real |
@@ -539,7 +539,7 @@ testCosh2MinusSinh2
 		c := real + imag i.
 		self verify: (c cosh squared - c sinh squared) isHyperbolicallyEqualTo: 1.0 ]]! !
 
-!ComplexTest methodsFor: 'tests - comparing' stamp: 'jmv 4/5/2019 09:13:29'!
+!ComplexTest methodsFor: 'tests - comparing' stamp: 'jmv 5/Apr/2019 09:13:29'!
 testEquality
 	
 	self assert: 0i = 0.
@@ -567,7 +567,7 @@ testEquality
 	self assert:  (1/2 + 0 i) = (1/2).
 	self assert:  (1/2) = (1/2+ 0 i).! !
 
-!ComplexTest methodsFor: 'tests - conversion and rounding' stamp: 'jmv 4/5/2019 09:13:19'!
+!ComplexTest methodsFor: 'tests - conversion and rounding' stamp: 'jmv 5/Apr/2019 09:13:19'!
 testConversion
 	
 	self assert: ((1 + 2i) + 1) =  (2 + 2 i).
@@ -577,7 +577,7 @@ testConversion
 	self assert: ((1 + 2i) + (2/3)) = ((5/3) + 2 i ).
 	self assert: ((2/3) + (1 + 2i)) = ((5/3) + 2 i )! !
 
-!ComplexTest methodsFor: 'tests - misc' stamp: 'jmv 4/5/2019 09:13:16'!
+!ComplexTest methodsFor: 'tests - misc' stamp: 'jmv 5/Apr/2019 09:13:16'!
 testComplexCollection
 	
 	| array array2 |
@@ -585,37 +585,37 @@ testComplexCollection
 	array2 := 2 * array.
 	array with:  array2 do: [:one :two | self assert: (2 * one) = two ] ! !
 
-!ComplexTest methodsFor: 'tests - bugs' stamp: 'md 2/18/2006 16:53'!
+!ComplexTest methodsFor: 'tests - bugs' stamp: 'md 18/Feb/2006 16:53:00'!
 testBug1
 
 	self assert: (0.5 * (2+0i) ln) exp = (0.5 * 2 ln) exp.! !
 
-!ComplexTest methodsFor: 'helpers' stamp: 'sqr 12/18/2018 16:27:27'!
+!ComplexTest methodsFor: 'helpers' stamp: 'sqr 18/Dec/2018 16:27:27'!
 effectiveZeroExponentForTrigonometry
 
 	^-46! !
 
-!ComplexTest methodsFor: 'helpers' stamp: 'sqr 12/15/2018 01:19:43'!
+!ComplexTest methodsFor: 'helpers' stamp: 'sqr 15/Dec/2018 01:19:43'!
 hyperbolicPrecision
 
 	^384! !
 
-!ComplexTest methodsFor: 'helpers' stamp: 'sqr 12/15/2018 00:55:13'!
+!ComplexTest methodsFor: 'helpers' stamp: 'sqr 15/Dec/2018 00:55:13'!
 trigonometricPrecision
 
 	^384! !
 
-!ComplexTest methodsFor: 'helpers' stamp: 'jmv 12/17/2018 19:13:11'!
+!ComplexTest methodsFor: 'helpers' stamp: 'jmv 17/Dec/2018 19:13:11'!
 verify: aComplex isHyperbolicallyEqualTo: anotherComplex
 	super verify: aComplex real asFloat isHyperbolicallyEqualTo: anotherComplex real asFloat.
 	super verify: aComplex imaginary asFloat isHyperbolicallyEqualTo: anotherComplex imaginary asFloat.! !
 
-!ComplexTest methodsFor: 'helpers' stamp: 'jmv 12/18/2018 16:47:43'!
+!ComplexTest methodsFor: 'helpers' stamp: 'jmv 18/Dec/2018 16:47:43'!
 verify: aComplex isMagnitudeAndArgumentWithin: anInteger floatsAwayFrom: anotherComplex
 	self verify: aComplex magnitude asFloat isWithin: anInteger floatsAwayFrom: anotherComplex magnitude asFloat.
 	self verify: aComplex argument asFloat isWithin: anInteger floatsAwayFrom: anotherComplex argument asFloat.! !
 
-!ComplexTest methodsFor: 'helpers' stamp: 'jmv 12/17/2018 19:13:18'!
+!ComplexTest methodsFor: 'helpers' stamp: 'jmv 17/Dec/2018 19:13:18'!
 verify: aComplex isTrigonometricallyEqualTo: anotherComplex
 	super verify: aComplex real asFloat isTrigonometricallyEqualTo: anotherComplex real asFloat.
 	super verify: aComplex imaginary asFloat isTrigonometricallyEqualTo: anotherComplex imaginary asFloat.! !

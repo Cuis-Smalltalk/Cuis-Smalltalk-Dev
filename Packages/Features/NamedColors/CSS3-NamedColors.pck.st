@@ -1,4 +1,4 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3319] on 12 May 2018 at 5:44:06 pm'!
+'From Cuis7.7 [latest update: #7779] on 23 December 2025 at 4:42:09 pm'!
 'Description CSS3 color names come from an internet web standard by W3C:
       CSSColor Module Level 3
 
@@ -11,13 +11,13 @@ To reset the Color name->color dictionary:
  	Color setColorNamesDict: (Color css3ColorDictionary).
 '!
 !provides: 'CSS3-NamedColors' 1 1!
+!requires: 'Cuis-Base' 42 1788 nil!
 !requires: 'Color-Extras' 1 4 nil!
 !requires: 'Graphics-Files-Additional' 1 nil nil!
-!requires: 'Cuis-Base' 42 1788 nil!
 
 
 
-!Color class methodsFor: '*css3-namedcolors' stamp: 'KenD 2/14/2013 14:24'!
+!Color class methodsFor: '*css3-namedcolors' stamp: 'KenD 14/Feb/2013 14:24:00'!
 css3ColorDictionary
 	"Answer a dictionary of CSS3 compliant color names to Color objects.
 	http://www.w3.org/TR/css3-color/#hsl-color"
@@ -40,7 +40,7 @@ To reset the Color name->color dictionary:
 		
 	^css3Dict! !
 
-!Color class methodsFor: '*css3-namedcolors' stamp: 'KenD 1/28/2013 19:36'!
+!Color class methodsFor: '*css3-namedcolors' stamp: 'KenD 28/Jan/2013 19:36:00'!
 css3Colors1
 	"Answer a dictionary of CCS3 color name to Color objects."
 
@@ -286,7 +286,7 @@ css3Colors1
 			b: 0.8784313725490196);
 			yourself! !
 
-!Color class methodsFor: '*css3-namedcolors' stamp: 'KenD 1/28/2013 19:36'!
+!Color class methodsFor: '*css3-namedcolors' stamp: 'KenD 28/Jan/2013 19:36:00'!
 css3Colors2
 	"Answer a dictionary of CCS3 color name to Color objects."
 
@@ -534,7 +534,7 @@ css3Colors2
 			b: 0.8784313725490196);
 			yourself! !
 
-!Color class methodsFor: '*css3-namedcolors' stamp: 'KenD 1/28/2013 19:36'!
+!Color class methodsFor: '*css3-namedcolors' stamp: 'KenD 28/Jan/2013 19:36:00'!
 css3Colors3
 	"Answer a dictionary of CCS3 color name to Color objects."
 
@@ -1116,7 +1116,7 @@ css3Colors3
 			b: 0.5450980392156862);
 			yourself! !
 
-!Color class methodsFor: '*css3-namedcolors' stamp: 'KenD 1/28/2013 19:36'!
+!Color class methodsFor: '*css3-namedcolors' stamp: 'KenD 28/Jan/2013 19:36:00'!
 css3Colors4
 	"Answer a dictionary of CCS3 color name to Color objects."
 
@@ -1263,7 +1263,7 @@ css3Colors4
 			b: 0.5450980392156862);
 			yourself! !
 
-!Color class methodsFor: '*css3-namedcolors' stamp: 'KenD 1/28/2013 19:36'!
+!Color class methodsFor: '*css3-namedcolors' stamp: 'KenD 28/Jan/2013 19:36:00'!
 css3Colors5
 	"Answer a dictionary of CCS3 color name to Color objects."
 
@@ -1710,7 +1710,7 @@ css3Colors5
 			b: 0.03137254901960784);
 			yourself! !
 
-!Color class methodsFor: '*css3-namedcolors' stamp: 'KenD 1/28/2013 19:36'!
+!Color class methodsFor: '*css3-namedcolors' stamp: 'KenD 28/Jan/2013 19:36:00'!
 css3Colors6
 	"Answer a dictionary of CCS3 color name to Color objects."
 
@@ -2137,7 +2137,7 @@ css3Colors6
 			b: 0.396078431372549);
 			yourself! !
 
-!Color class methodsFor: '*css3-namedcolors' stamp: 'KenD 1/28/2013 19:36'!
+!Color class methodsFor: '*css3-namedcolors' stamp: 'KenD 28/Jan/2013 19:36:00'!
 css3Colors7
 	"Answer a dictionary of CCS3 color name to Color objects."
 
@@ -2391,7 +2391,7 @@ css3Colors7
 			b: 0.5647058823529412);
 			yourself! !
 
-!Color class methodsFor: '*css3-namedcolors' stamp: 'KenD 1/28/2013 19:36'!
+!Color class methodsFor: '*css3-namedcolors' stamp: 'KenD 28/Jan/2013 19:36:00'!
 css3Colors8
 	"Answer a dictionary of CCS3 color name to Color objects."
 
@@ -2918,7 +2918,7 @@ at: #grey94
 			b: 0.6627450980392157);
 			yourself! !
 
-!Color class methodsFor: '*css3-namedcolors' stamp: 'jmv 2/14/2013 09:23'!
+!Color class methodsFor: '*css3-namedcolors' stamp: 'jmv 14/Feb/2013 09:23:00'!
 fromCSS3String: aString
 	"Answer a color from the given W3C spec.
 	Color fromCSS3String: 'aquamarine3'

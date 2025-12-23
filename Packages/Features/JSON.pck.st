@@ -1,4 +1,4 @@
-'From Cuis7.5 [latest update: #7437] on 25 August 2025 at 4:15:53 pm'!
+'From Cuis7.7 [latest update: #7779] on 23 December 2025 at 4:39:06 pm'!
 'Description '!
 !provides: 'JSON' 1 28!
 !requires: 'Cuis-Base' 60 5557 nil!
@@ -42,12 +42,12 @@ This class reads and writes JSON format data - strings, numbers, boolean, nil, a
 !JsonSyntaxError commentStamp: '<historical>' prior: 0!
 Class Json signals instances of me when an input stream contains invalid JSON input.!
 
-!Json methodsFor: 'private' stamp: 'KenD 11/23/2022 15:10:58'!
+!Json methodsFor: 'private' stamp: 'KenD 23/Nov/2022 15:10:58'!
 consume: aString returning: anObject
 	aString do: [:c | stream next = c ifFalse: [JsonSyntaxError signal: 'Expected ''', aString, ''''] ].
 	^ anObject! !
 
-!Json methodsFor: 'private' stamp: 'KenD 11/23/2022 15:11:16'!
+!Json methodsFor: 'private' stamp: 'KenD 23/Nov/2022 15:11:16'!
 interpretStringEscapeTo: aStream
 	| c |
 	c _ stream next.
@@ -71,7 +71,7 @@ interpretStringEscapeTo: aStream
 		^ self ].
 	aStream nextPut: c! !
 
-!Json methodsFor: 'private' stamp: 'Igor.Stasenko 4/7/2010 01:39'!
+!Json methodsFor: 'private' stamp: 'Igor.Stasenko 7/Apr/2010 01:39:00'!
 readArray
 	| a |
 	a := OrderedCollection new.
@@ -87,7 +87,7 @@ readArray
 	] repeat.
 ! !
 
-!Json methodsFor: 'private' stamp: 'KenD 11/23/2022 15:11:36'!
+!Json methodsFor: 'private' stamp: 'KenD 23/Nov/2022 15:11:36'!
 readConstructor
 	| s c v ctor |
 	s := WriteStream on: ''.
@@ -105,7 +105,7 @@ readConstructor
 	] repeat.
 ! !
 
-!Json methodsFor: 'private' stamp: 'jmv 8/25/2025 14:59:13'!
+!Json methodsFor: 'private' stamp: 'jmv 25/Aug/2025 14:59:13'!
 readDictionary
 	| m k v needComma |
 	"Don't use JsonObject by default. A Dictionary suffices most uses.
@@ -130,7 +130,7 @@ readDictionary
 	] repeat.
 ! !
 
-!Json methodsFor: 'private' stamp: 'jmv 11/17/2016 11:35:09'!
+!Json methodsFor: 'private' stamp: 'jmv 17/Nov/2016 11:35:09'!
 readNumber
 	| acc c |
 	acc := WriteStream on: ''.
@@ -148,7 +148,7 @@ readNumber
 	^Number readFrom: stream
 	"! !
 
-!Json methodsFor: 'private' stamp: 'KenD 11/23/2022 15:39:37'!
+!Json methodsFor: 'private' stamp: 'KenD 23/Nov/2022 15:39:37'!
 readString
 	| s c |
 	s _ WriteStream on: ''.
@@ -160,7 +160,7 @@ readString
 			c = $" ifTrue: [ ^ s contents ].
 			s nextPut: c ]] repeat! !
 
-!Json methodsFor: 'private' stamp: 'KenD 11/23/2022 15:12:09'!
+!Json methodsFor: 'private' stamp: 'KenD 23/Nov/2022 15:12:09'!
 skipComment
 	stream peek = $/ ifTrue: [
 		stream next.
@@ -171,7 +171,7 @@ skipComment
 						ifFalse: [JsonSyntaxError signal: 'Invalid comment syntax']]]
 ! !
 
-!Json methodsFor: 'private' stamp: 'KenD 11/23/2022 15:12:18'!
+!Json methodsFor: 'private' stamp: 'KenD 23/Nov/2022 15:12:18'!
 skipCommentBody
 	[
 		[stream next = $*] whileFalse.
@@ -180,19 +180,19 @@ skipCommentBody
 	stream next. "skip that last slash"
 	self skipWhitespace.! !
 
-!Json methodsFor: 'private' stamp: 'KenD 11/23/2022 15:12:30'!
+!Json methodsFor: 'private' stamp: 'KenD 23/Nov/2022 15:12:30'!
 skipToEndOfLine
 	| cr lf |
 	cr := Character cr. lf := Character lf.
 	[ | c | (c := stream peek) = cr or: [ c = lf]] whileFalse: [stream next].
 	self skipWhitespace! !
 
-!Json methodsFor: 'private' stamp: 'Igor.Stasenko 4/7/2010 01:24'!
+!Json methodsFor: 'private' stamp: 'Igor.Stasenko 7/Apr/2010 01:24:00'!
 skipWhitespace
 	[stream peek isSeparator] whileTrue: [stream next].
 	self skipComment.! !
 
-!Json methodsFor: 'private' stamp: 'jmv 1/9/2024 16:27:42'!
+!Json methodsFor: 'private' stamp: 'jmv 9/Jan/2024 16:27:42'!
 unescapeUnicodeTo: aStream
 	"Next 4 chars from `stream` are hex unicode point value"
 	| string codePoint |
@@ -200,21 +200,21 @@ unescapeUnicodeTo: aStream
 	codePoint := Integer readFrom: string asUppercase readStream base: 16.
 	aStream nextPut: (Character codePoint: codePoint) ! !
 
-!Json methodsFor: 'accessing' stamp: 'tonyg 11/29/2005 11:40'!
+!Json methodsFor: 'accessing' stamp: 'tonyg 29/Nov/2005 11:40:00'!
 ctorMap
 	^ ctorMap! !
 
-!Json methodsFor: 'accessing' stamp: 'dkb 12/25/2009 02:52'!
+!Json methodsFor: 'accessing' stamp: 'dkb 25/Dec/2009 02:52:00'!
 ctorMap: m
 	ctorMap := m! !
 
-!Json methodsFor: 'accessing' stamp: 'tonyg 8/16/2005 20:20'!
+!Json methodsFor: 'accessing' stamp: 'tonyg 16/Aug/2005 20:20:00'!
 stream
 	"Answer the value of stream"
 
 	^ stream! !
 
-!Json methodsFor: 'accessing' stamp: 'jmv 8/25/2025 15:36:34'!
+!Json methodsFor: 'accessing' stamp: 'jmv 25/Aug/2025 15:36:34'!
 stream: aStream
 	"Set the value of stream"
 	"aStream must be on a String or UnicodeString."
@@ -226,7 +226,7 @@ stream: aStream
 	stream reset
 	"! !
 
-!Json methodsFor: 'parsing' stamp: 'KenD 11/23/2022 15:13:04'!
+!Json methodsFor: 'parsing' stamp: 'KenD 23/Nov/2022 15:13:04'!
 readAny
 	"This is the main entry point for the JSON parser. See also readFrom: on the class side."
 	| c |
@@ -247,7 +247,7 @@ readAny
 	c = $I ifTrue: [^ self consume: 'Infinity' returning: Float infinity].
 	JsonSyntaxError signal: 'Unknown Json input'! !
 
-!Json methodsFor: 'parsing' stamp: 'jmv 8/25/2025 15:36:21'!
+!Json methodsFor: 'parsing' stamp: 'jmv 25/Aug/2025 15:36:21'!
 readFrom: aStream
 	"aStream must be on a String or UnicodeString."
 	"Don't use JsonObject by default. A Dictionary suffices most uses.
@@ -256,13 +256,13 @@ readFrom: aStream
 	self stream: aStream.
 	^ self readAny! !
 
-!Json class methodsFor: 'as yet unclassified' stamp: 'jmv 11/27/2024 15:18:03'!
+!Json class methodsFor: 'as yet unclassified' stamp: 'jmv 27/Nov/2024 15:18:03'!
 escapeForCharacter: c
 	
 	c isAscii ifTrue:  [ ^escapeArray at: (c asciiValue) + 1 ].
 	^nil! !
 
-!Json class methodsFor: 'as yet unclassified' stamp: 'ul 11/4/2008 06:23'!
+!Json class methodsFor: 'as yet unclassified' stamp: 'ul 4/Nov/2008 06:23:00'!
 initialize
 	"Json initialize."
 	
@@ -281,11 +281,11 @@ initialize
 		escapeArray at: each key asciiValue + 1 put: each value ].
 ! !
 
-!Json class methodsFor: 'as yet unclassified' stamp: 'DSG 9/10/2013 17:26'!
+!Json class methodsFor: 'as yet unclassified' stamp: 'DSG 10/Sep/2013 17:26:00'!
 mimeType
 	^ 'application/json'! !
 
-!Json class methodsFor: 'as yet unclassified' stamp: 'dkb 12/25/2009 02:51'!
+!Json class methodsFor: 'as yet unclassified' stamp: 'dkb 25/Dec/2009 02:51:00'!
 newWithConstructors: aCollection
 	| m |
 	m := Dictionary new.
@@ -295,51 +295,51 @@ newWithConstructors: aCollection
 			ifFalse: [m at: each name asString put: each]].
 	^ self new ctorMap: m; yourself.! !
 
-!Json class methodsFor: 'as yet unclassified' stamp: 'tonyg 8/17/2005 09:09'!
+!Json class methodsFor: 'as yet unclassified' stamp: 'tonyg 17/Aug/2005 09:09:00'!
 numbersMayContain: aChar
 	^ aChar isDigit or: [#($- $+ $. $e $E) includes: aChar]! !
 
-!Json class methodsFor: 'as yet unclassified' stamp: 'tonyg 11/29/2005 17:45'!
+!Json class methodsFor: 'as yet unclassified' stamp: 'tonyg 29/Nov/2005 17:45:00'!
 readFrom: aStream
 	^ self new readFrom: aStream.! !
 
-!Json class methodsFor: 'as yet unclassified' stamp: 'tonyg 8/17/2005 07:45'!
+!Json class methodsFor: 'as yet unclassified' stamp: 'tonyg 17/Aug/2005 07:45:00'!
 render: anObject
 	| s |
 	s := WriteStream on: String new.
 	anObject jsonWriteOn: s.
 	^ s contents.! !
 
-!Json class methodsFor: 'as yet unclassified' stamp: 'tonyg 11/30/2005 16:32'!
+!Json class methodsFor: 'as yet unclassified' stamp: 'tonyg 30/Nov/2005 16:32:00'!
 render: anObject withConstructor: aConstructorName on: aStream
 	aStream nextPutAll: '@', aConstructorName.
 	anObject jsonWriteOn: aStream.
 ! !
 
-!Json class methodsFor: 'as yet unclassified' stamp: 'dkb 12/25/2009 02:52'!
+!Json class methodsFor: 'as yet unclassified' stamp: 'dkb 25/Dec/2009 02:52:00'!
 renderInstanceVariables: aCollection of: anObject on: aStream
 	| map |
 	map := Dictionary new.
 	aCollection do: [:ivarName | map at: ivarName put: (anObject instVarNamed: ivarName)].
 	self render: map withConstructor: anObject class name asString on: aStream! !
 
-!JsonObject methodsFor: 'accessing' stamp: 'rh 2/19/2010 21:34'!
+!JsonObject methodsFor: 'accessing' stamp: 'rh 19/Feb/2010 21:34:00'!
 at: aKey
 
 	"make it work more like javascript objects"
 	^ self at: aKey ifAbsent: [nil]! !
 
-!JsonObject methodsFor: 'accessing' stamp: 'rh 2/27/2010 00:03'!
+!JsonObject methodsFor: 'accessing' stamp: 'rh 27/Feb/2010 00:03:00'!
 name
 "override 'cause Object defines this"
 	^self at: 'name'! !
 
-!JsonObject methodsFor: 'accessing' stamp: 'rh 2/27/2010 00:04'!
+!JsonObject methodsFor: 'accessing' stamp: 'rh 27/Feb/2010 00:04:00'!
 value
 "override 'cause Object defines this"
 	^self at: 'value'! !
 
-!JsonObject methodsFor: 'as yet unclassified' stamp: 'rh 2/19/2010 21:33'!
+!JsonObject methodsFor: 'as yet unclassified' stamp: 'rh 19/Feb/2010 21:33:00'!
 doesNotUnderstand: aMessage
 	| key |
 	key := aMessage selector.
@@ -351,7 +351,7 @@ doesNotUnderstand: aMessage
 				
 	! !
 
-!JsonObject class methodsFor: 'as yet unclassified' stamp: 'Igor.Stasenko 1/9/2010 16:51'!
+!JsonObject class methodsFor: 'as yet unclassified' stamp: 'Igor.Stasenko 9/Jan/2010 16:51:00'!
 fromAssociations: collectionOfAssociations
 
 	| result |
@@ -361,13 +361,13 @@ fromAssociations: collectionOfAssociations
 		result at: each key put: each value ].
 	^ result! !
 
-!Object methodsFor: '*JSON' stamp: 'Igor.Stasenko 1/9/2010 16:18'!
+!Object methodsFor: '*JSON' stamp: 'Igor.Stasenko 9/Jan/2010 16:18:00'!
 asJsonString
 
 	^ String streamContents: [:str |
 		self jsonWriteOn: str ]! !
 
-!Array2D methodsFor: '*JSON' stamp: 'jmv 7/11/2018 17:33:20'!
+!Array2D methodsFor: '*JSON' stamp: 'jmv 11/Jul/2018 17:33:20'!
 jsonWriteOn: aStream
 	"By default, use array braces "
 	aStream nextPut: $[.
@@ -381,7 +381,7 @@ jsonWriteOn: aStream
 		separatedBy: [aStream nextPut: $, ; newLine ].
 	aStream nextPut: $]! !
 
-!Collection methodsFor: '*JSON' stamp: 'jmv 5/17/2016 13:11'!
+!Collection methodsFor: '*JSON' stamp: 'jmv 17/May/2016 13:11:00'!
 jsonObjectWriteOn: aStream
 	"Write as 'JSON Object' format
 	This is a list of (name:value) pairs, and is analogous to Smalltalk Dictionaries where names (keys) are strings.
@@ -399,13 +399,13 @@ jsonObjectWriteOn: aStream
 		assoc jsonWriteOn: aStream ].
 	aStream nextPut: $}! !
 
-!Collection methodsFor: '*JSON' stamp: 'jmv 7/11/2018 17:31:14'!
+!Collection methodsFor: '*JSON' stamp: 'jmv 11/Jul/2018 17:31:14'!
 jsonWriteElement: element on: aStream
 	"Allow for specific subclasses (FloatArray, using 32 bit Floats!!) to use specific way to write its elements"
 
 	element jsonWriteOn: aStream! !
 
-!Collection methodsFor: '*JSON' stamp: 'jmv 7/11/2018 17:31:50'!
+!Collection methodsFor: '*JSON' stamp: 'jmv 11/Jul/2018 17:31:50'!
 jsonWriteOn: aStream
 	"By default, use array braces "
 	| useNewLines |
@@ -422,14 +422,14 @@ jsonWriteOn: aStream
 
 	aStream nextPut: $]! !
 
-!FloatArray methodsFor: '*JSON' stamp: 'jmv 7/11/2018 18:14:09'!
+!FloatArray methodsFor: '*JSON' stamp: 'jmv 11/Jul/2018 18:14:09'!
 jsonWriteElement: element on: aStream
 	"FloatArray elements are answered as 64 bit Float, but are really 32 bit Float.
 	When writing to JSON (or printing), print them as 32 bit Float."
 
 	element printAsIEEE32BitPrecisionFloatOn: aStream base: 10! !
 
-!CharacterSequence methodsFor: '*JSON-writing' stamp: 'jmv 11/25/2022 12:38:09'!
+!CharacterSequence methodsFor: '*JSON-writing' stamp: 'jmv 25/Nov/2022 12:38:09'!
 jsonWriteOn: aStream
 
 	aStream nextPut: $".
@@ -441,50 +441,50 @@ jsonWriteOn: aStream
 	aStream nextPut: $".
 ! !
 
-!Text methodsFor: '*JSON-printing' stamp: 'cwp 10/26/2006 22:25'!
+!Text methodsFor: '*JSON-printing' stamp: 'cwp 26/Oct/2006 22:25:00'!
 jsonWriteOn: aStream
 	self string jsonWriteOn: aStream! !
 
-!Dictionary methodsFor: '*JSON-writing' stamp: 'jmv 5/17/2016 12:47'!
+!Dictionary methodsFor: '*JSON-writing' stamp: 'jmv 17/May/2016 12:47:00'!
 jsonWriteOn: aStream
 	"Dictionaries are written as 'JSON Objects'
 	Use the general implementation for that."
 
 	self jsonObjectWriteOn: aStream! !
 
-!WriteStream methodsFor: '*JSON-printing' stamp: 'cwp 10/25/2006 12:27'!
+!WriteStream methodsFor: '*JSON-printing' stamp: 'cwp 25/Oct/2006 12:27:00'!
 jsonPrint: anObject
 	anObject jsonWriteOn: self! !
 
-!False methodsFor: '*JSON-writing' stamp: 'tonyg 8/17/2005 00:43'!
+!False methodsFor: '*JSON-writing' stamp: 'tonyg 17/Aug/2005 00:43:00'!
 jsonWriteOn: aStream
 	aStream nextPutAll: 'false'! !
 
-!True methodsFor: '*JSON-writing' stamp: 'tonyg 8/17/2005 00:44'!
+!True methodsFor: '*JSON-writing' stamp: 'tonyg 17/Aug/2005 00:44:00'!
 jsonWriteOn: aStream
 	aStream nextPutAll: 'true'! !
 
-!Number methodsFor: '*JSON-writing' stamp: 'ul 11/4/2008 04:46'!
+!Number methodsFor: '*JSON-writing' stamp: 'ul 4/Nov/2008 04:46:00'!
 jsonWriteOn: aWriteStream 
 
 	self printOn: aWriteStream base: 10! !
 
-!Integer methodsFor: '*JSON-writing' stamp: 'Igor.Stasenko 12/27/2009 08:05'!
+!Integer methodsFor: '*JSON-writing' stamp: 'Igor.Stasenko 27/Dec/2009 08:05:00'!
 jsonWriteOn: aWriteStream
 	^ self printOn: aWriteStream base: 10
 ! !
 
-!Association methodsFor: '*JSON-writing' stamp: 'jmv 6/2/2016 09:35'!
+!Association methodsFor: '*JSON-writing' stamp: 'jmv 2/Jun/2016 09:35:00'!
 jsonWriteOn: aStream
 	self key asString jsonWriteOn: aStream.
 	aStream nextPut: $:; space.
 	self value jsonWriteOn: aStream.! !
 
-!UndefinedObject methodsFor: '*JSON-writing' stamp: 'tonyg 8/17/2005 00:45'!
+!UndefinedObject methodsFor: '*JSON-writing' stamp: 'tonyg 17/Aug/2005 00:45:00'!
 jsonWriteOn: aWriteStream 
 	aWriteStream nextPutAll: 'null'! !
 
-!FileEntry methodsFor: '*json' stamp: 'pb 5/25/2016 01:32'!
+!FileEntry methodsFor: '*json' stamp: 'pb 25/May/2016 01:32:00'!
 jsonContents
 	"
 	'noesta.json' asFileEntry jsonContents

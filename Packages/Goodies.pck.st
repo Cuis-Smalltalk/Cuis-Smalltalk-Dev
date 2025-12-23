@@ -1,4 +1,4 @@
-'From Cuis7.1 [latest update: #6713] on 12 September 2024 at 12:08:37 pm'!
+'From Cuis7.7 [latest update: #7779] on 23 December 2025 at 4:33:01 pm'!
 'Description '!
 !provides: 'Goodies' 1 11!
 SystemOrganization addCategory: #'Goodies-AsyncFile'!
@@ -16,36 +16,6 @@ ProtoObject subclass: #ProtocolCatcher
 	category: 'Goodies-Tools-Profiling'!
 !classDefinition: 'ProtocolCatcher class' category: #'Goodies-Tools-Profiling'!
 ProtocolCatcher class
-	instanceVariableNames: ''!
-
-!classDefinition: #MappedCollection category: #'Goodies-Collections'!
-SequenceableCollection subclass: #MappedCollection
-	instanceVariableNames: 'domain map'
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Goodies-Collections'!
-!classDefinition: 'MappedCollection class' category: #'Goodies-Collections'!
-MappedCollection class
-	instanceVariableNames: ''!
-
-!classDefinition: #SkipList category: #'Goodies-Collections'!
-Collection subclass: #SkipList
-	instanceVariableNames: 'sortBlock pointers numElements level splice'
-	classVariableNames: 'Rand'
-	poolDictionaries: ''
-	category: 'Goodies-Collections'!
-!classDefinition: 'SkipList class' category: #'Goodies-Collections'!
-SkipList class
-	instanceVariableNames: ''!
-
-!classDefinition: #IdentitySkipList category: #'Goodies-Collections'!
-SkipList subclass: #IdentitySkipList
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Goodies-Collections'!
-!classDefinition: 'IdentitySkipList class' category: #'Goodies-Collections'!
-IdentitySkipList class
 	instanceVariableNames: ''!
 
 !classDefinition: #AsyncFile category: #'Goodies-AsyncFile'!
@@ -98,6 +68,36 @@ Object subclass: #ProtocolCatcher2
 ProtocolCatcher2 class
 	instanceVariableNames: ''!
 
+!classDefinition: #SkipList category: #'Goodies-Collections'!
+Collection subclass: #SkipList
+	instanceVariableNames: 'sortBlock pointers numElements level splice'
+	classVariableNames: 'Rand'
+	poolDictionaries: ''
+	category: 'Goodies-Collections'!
+!classDefinition: 'SkipList class' category: #'Goodies-Collections'!
+SkipList class
+	instanceVariableNames: ''!
+
+!classDefinition: #IdentitySkipList category: #'Goodies-Collections'!
+SkipList subclass: #IdentitySkipList
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Goodies-Collections'!
+!classDefinition: 'IdentitySkipList class' category: #'Goodies-Collections'!
+IdentitySkipList class
+	instanceVariableNames: ''!
+
+!classDefinition: #MappedCollection category: #'Goodies-Collections'!
+SequenceableCollection subclass: #MappedCollection
+	instanceVariableNames: 'domain map'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Goodies-Collections'!
+!classDefinition: 'MappedCollection class' category: #'Goodies-Collections'!
+MappedCollection class
+	instanceVariableNames: ''!
+
 !classDefinition: #StandardFileMenu category: #'Goodies-Tools-FileList'!
 SelectionMenu subclass: #StandardFileMenu
 	instanceVariableNames: 'canTypeFileName pattern excludePattern'
@@ -133,8 +133,17 @@ ProtocolCatcher protocolFor: ParagraphEditor
 
 Finally, this class also serves as an example on how to do a ProtocolCatcher. Sometimes, when replacing an existing class in the system, it is useful to know the actually used protocol. But it can also be useful to keep the forwarding mechanism available after the new class has been installed. This way it is easier to add behavior that is still missing.!
 
-!MappedCollection commentStamp: '<historical>' prior: 0!
-I represent an access mechanism for a sequencable collection re-ordering or filtering its elements.!
+!AsyncFile commentStamp: '<historical>' prior: 0!
+An asynchronous file allows simple file read and write operations to be performed in parallel with other processing. This is useful in multimedia applications that need to stream large amounts of sound or image data from or to a file while doing other work.
+!
+
+!Stopwatch commentStamp: '<historical>' prior: 0!
+A Stopwatch maintains a collection of timespans.!
+
+!ProtocolCatcher2 commentStamp: 'jmv 11/3/2008 14:49' prior: 0!
+See class comment in ProtocolCatcher.
+
+The only difference between ProtocolCatcher and ProtocolCatcher2 is that this is subclass of Object. This means it will not catch protocol inherited from Object. This is not usually a problem, and inspectors are more comfortable to use if the catcher is not that transparent.!
 
 !SkipList commentStamp: 'KLC 2/26/2004 12:04' prior: 0!
 From "Skip Lists: A Probabilistic Alternative to Balanced Trees" by William Pugh ( http://epaperpress.com/sortsearch/download/skiplist.pdf ):
@@ -153,17 +162,8 @@ Like a SkipList, except that elements are compared with #== instead of #= .
 See the comment of IdentitySet for more information.
 !
 
-!AsyncFile commentStamp: '<historical>' prior: 0!
-An asynchronous file allows simple file read and write operations to be performed in parallel with other processing. This is useful in multimedia applications that need to stream large amounts of sound or image data from or to a file while doing other work.
-!
-
-!Stopwatch commentStamp: '<historical>' prior: 0!
-A Stopwatch maintains a collection of timespans.!
-
-!ProtocolCatcher2 commentStamp: 'jmv 11/3/2008 14:49' prior: 0!
-See class comment in ProtocolCatcher.
-
-The only difference between ProtocolCatcher and ProtocolCatcher2 is that this is subclass of Object. This means it will not catch protocol inherited from Object. This is not usually a problem, and inspectors are more comfortable to use if the catcher is not that transparent.!
+!MappedCollection commentStamp: '<historical>' prior: 0!
+I represent an access mechanism for a sequencable collection re-ordering or filtering its elements.!
 
 !StandardFileMenu commentStamp: '<historical>' prior: 0!
 I represent a SelectionMenu which operates like a modal dialog for selecting files, somewhat similar to the StandardFile dialogs in MacOS and Java Swing.
@@ -179,7 +179,7 @@ Try for example, the following:
 	((StandardFileMenu new 
 		newFileFrom: DirectoryEntry smalltalkImageDirectory withPattern: '*.st') startUpWithCaption: 'dale') inspect!
 
-!ProtocolCatcher methodsFor: 'catching' stamp: 'jmv 11/3/2008 13:03'!
+!ProtocolCatcher methodsFor: 'catching' stamp: 'jmv 3/Nov/2008 13:03:00'!
 doesNotUnderstand: aMessage
 
 	| protocol object answer |
@@ -195,348 +195,52 @@ doesNotUnderstand: aMessage
 		ifTrue: [ self ]
 		ifFalse: [ answer ]! !
 
-!ProtocolCatcher methodsFor: 'services' stamp: 'jmv 11/3/2008 12:40'!
+!ProtocolCatcher methodsFor: 'services' stamp: 'jmv 3/Nov/2008 12:40:00'!
 initialize
 	realObject _ self! !
 
-!ProtocolCatcher methodsFor: 'accessing' stamp: 'jmv 11/3/2008 13:04'!
+!ProtocolCatcher methodsFor: 'accessing' stamp: 'jmv 3/Nov/2008 13:04:00'!
 realObject
 	realObject == self ifTrue: [^self halt].
 	^realObject class == ProtocolCatcher
 		ifTrue: [ realObject realObject ]
 		ifFalse: [ realObject ]! !
 
-!ProtocolCatcher methodsFor: 'accessing' stamp: 'jmv 3/5/2013 22:20'!
+!ProtocolCatcher methodsFor: 'accessing' stamp: 'jmv 5/Mar/2013 22:20:00'!
 realObject: anObject
 	realObject _ anObject! !
 
-!ProtocolCatcher class methodsFor: 'services' stamp: 'jmv 11/3/2008 11:28'!
+!ProtocolCatcher class methodsFor: 'services' stamp: 'jmv 3/Nov/2008 11:28:00'!
 clear
 	Protocols _ Dictionary new.
 	Started _ false! !
 
-!ProtocolCatcher class methodsFor: 'services' stamp: 'jmv 11/3/2008 11:10'!
+!ProtocolCatcher class methodsFor: 'services' stamp: 'jmv 3/Nov/2008 11:10:00'!
 observedClasses
 
 	^Protocols keys! !
 
-!ProtocolCatcher class methodsFor: 'services' stamp: 'jmv 11/3/2008 11:11'!
+!ProtocolCatcher class methodsFor: 'services' stamp: 'jmv 3/Nov/2008 11:11:00'!
 protocolFor: aClass
 
 	^Protocols at: aClass! !
 
-!ProtocolCatcher class methodsFor: 'services' stamp: 'jmv 11/3/2008 11:28'!
+!ProtocolCatcher class methodsFor: 'services' stamp: 'jmv 3/Nov/2008 11:28:00'!
 start
 	Started _ true! !
 
-!ProtocolCatcher class methodsFor: 'services' stamp: 'jmv 11/3/2008 11:28'!
+!ProtocolCatcher class methodsFor: 'services' stamp: 'jmv 3/Nov/2008 11:28:00'!
 stop
 	Started _ false! !
 
-!ProtocolCatcher class methodsFor: 'instance creation' stamp: 'jmv 3/5/2013 22:20'!
+!ProtocolCatcher class methodsFor: 'instance creation' stamp: 'jmv 5/Mar/2013 22:20:00'!
 on: anObject
 	| catcher |
 	catcher _ self new.
 	catcher realObject: anObject.
 	^catcher! !
 
-!MappedCollection methodsFor: 'adding'!
-add: newObject
-
-	self shouldNotImplement! !
-
-!MappedCollection methodsFor: 'accessing'!
-at: anIndex
-
-	^domain at: (map at: anIndex)! !
-
-!MappedCollection methodsFor: 'accessing'!
-at: anIndex put: anObject
-
-	^domain at: (map at: anIndex) put: anObject! !
-
-!MappedCollection methodsFor: 'accessing'!
-contents
-	"Answer the receiver's domain for mapping, a Dictionary or 
-	SequenceableCollection."
-
-	^map collect: [:mappedIndex | domain at: mappedIndex]! !
-
-!MappedCollection methodsFor: 'accessing'!
-size
-
-	^map size! !
-
-!MappedCollection methodsFor: 'enumerating'!
-collect: aBlock 
-	"Refer to the comment in Collection|collect:."
-
-	| aStream |
-	aStream _ WriteStream on: (self species new: self size).
-	self do:
-		[:domainValue | 
-		aStream nextPut: (aBlock value: domainValue)].
-	^aStream contents! !
-
-!MappedCollection methodsFor: 'enumerating'!
-do: aBlock 
-	"Refer to the comment in Collection|do:."
-
-	map do:
-		[:mapValue | aBlock value: (domain at: mapValue)]! !
-
-!MappedCollection methodsFor: 'enumerating'!
-select: aBlock 
-	"Refer to the comment in Collection|select:."
-
-	| aStream |
-	aStream _ WriteStream on: (self species new: self size).
-	self do:
-		[:domainValue | 
-		(aBlock value: domainValue)
-			ifTrue: [aStream nextPut: domainValue]].
-	^aStream contents! !
-
-!MappedCollection methodsFor: 'private'!
-setCollection: aCollection map: aDictionary
-
-	domain _ aCollection.
-	map _ aDictionary! !
-
-!MappedCollection methodsFor: 'private'!
-species
-
-	^domain species! !
-
-!MappedCollection methodsFor: 'printing' stamp: 'sma 5/11/2000 19:53'!
-storeOn: aStream
-	aStream
-		nextPut: $(;
-		nextPutAll: self class name;
-		nextPutAll: ' collection: ';
-		store: domain;
-		nextPutAll: ' map: ';
-		store: map;
-		nextPut: $)! !
-
-!MappedCollection class methodsFor: 'instance creation'!
-collection: aCollection map: aSequenceableCollection 
-	"Answer an instance of me that maps aCollection by 
-	aSequenceableCollection."
-
-	^self basicNew setCollection: aCollection map: aSequenceableCollection! !
-
-!MappedCollection class methodsFor: 'instance creation'!
-new
-
-	self error: 'MappedCollections must be created using the collection:map: message'! !
-
-!MappedCollection class methodsFor: 'instance creation'!
-newFrom: aCollection 
-	"Answer an instance of me containing the same elements as aCollection."
-
-	^ self collection: aCollection map: (1 to: aCollection size)
-
-"	MappedCollection newFrom: {1. 2. 3}
-	{4. 3. 8} as: MappedCollection
-"! !
-
-!SkipList methodsFor: 'adding' stamp: 'LC 6/18/2001 18:30'!
-add: element 
-	self add: element ifPresent: nil.
-	^ element! !
-
-!SkipList methodsFor: 'adding' stamp: 'LC 6/18/2001 20:42'!
-add: element ifPresent: aBlock
-	| node lvl s |
-	node _ self search: element updating: splice.
-	node ifNotNil: [aBlock ifNotNil: [^ aBlock value: node]].
-	lvl _ self randomLevel.
-	node _ SkipListNode on: element level: lvl.
-	level + 1 to: lvl do: [:i | splice at: i put: self].
-	1 to: lvl do: [:i |
-				s _ splice at: i.
-				node atForward: i put: (s forward: i).
-				s atForward: i put: node].
-	numElements _ numElements + 1.
-	splice atAllPut: nil.
-	^ element
-! !
-
-!SkipList methodsFor: 'private' stamp: 'LC 6/18/2001 19:26'!
-atForward: i put: node
-	level _ node
-		ifNil: [pointers findLast: [:n | n notNil]]
-		ifNotNil: [level max: i].
-	^ pointers at: i put: node! !
-
-!SkipList methodsFor: 'private' stamp: 'LC 6/18/2001 11:21'!
-forward: i 
-	^ pointers at: i! !
-
-!SkipList methodsFor: 'private' stamp: 'LC 6/18/2001 20:14'!
-is: node before: element 
-	| object |
-	node ifNil: [^ false].
-	object _ node object.
-	^ sortBlock
-		ifNil: [object < element]
-		ifNotNil: [(self is: object equalTo: element) ifTrue: [^ false].
-			sortBlock value: object value: element]! !
-
-!SkipList methodsFor: 'private' stamp: 'LC 6/18/2001 13:19'!
-is: node theNodeFor: element 
-	node ifNil: [^ false].
-	node == self ifTrue: [^ false].
-	^ self is: node object equalTo: element! !
-
-!SkipList methodsFor: 'private' stamp: 'LC 6/18/2001 16:15'!
-next
-	^ pointers first! !
-
-!SkipList methodsFor: 'private' stamp: 'LC 6/18/2001 15:37'!
-randomLevel
-	| p answer max |
-	p _ 0.5.
-	answer _ 1.
-	max _ self maxLevel.
-	[Rand next < p and: [answer < max]]
-		whileTrue: [answer _ answer + 1].
-	^ answer! !
-
-!SkipList methodsFor: 'private' stamp: 'LC 6/18/2001 19:28'!
-search: element updating: array
-	| node forward |
-	node _ self.
-	level to: 1 by: -1 do: [:i |
-			[forward _ node forward: i.
-			self is: forward before: element] whileTrue: [node _ forward].
-			"At this point: node < element <= forward"
-			array ifNotNil: [array at: i put: node]].
-	node _ node next.
-	^ (self is: node theNodeFor: element) ifTrue: [node]! !
-
-!SkipList methodsFor: 'enumerating' stamp: 'LC 6/18/2001 15:39'!
-do: aBlock
-	self nodesDo: [:node | aBlock value: node object]! !
-
-!SkipList methodsFor: 'testing' stamp: 'LC 6/18/2001 16:59'!
-includes: element
-	^ (self search: element updating: nil) notNil! !
-
-!SkipList methodsFor: 'testing' stamp: 'LC 6/18/2001 12:53'!
-isEmpty
-	^ numElements = 0! !
-
-!SkipList methodsFor: 'initialization' stamp: 'LC 6/18/2001 20:08'!
-initialize: maxLevel
-	pointers _ Array new: maxLevel.
-	splice _ Array new: maxLevel.
-	numElements _ 0.
-	level _ 0.
-	Rand ifNil: [Rand _ Random new]! !
-
-!SkipList methodsFor: 'element comparison' stamp: 'LC 6/18/2001 10:14'!
-is: element1 equalTo: element2
-	^ element1 = element2! !
-
-!SkipList methodsFor: 'accessing' stamp: 'LC 6/18/2001 19:22'!
-level
-	^ level! !
-
-!SkipList methodsFor: 'accessing' stamp: 'LC 6/17/2001 12:05'!
-maxLevel
-	^ pointers size! !
-
-!SkipList methodsFor: 'accessing' stamp: 'LC 6/18/2001 20:18'!
-maxLevel: n
-	| newLevel oldPointers |
-	newLevel _ n max: level.
-	oldPointers _ pointers.
-	pointers _ Array new: newLevel.
-	splice _ Array new: newLevel.
-	1 to: level do: [:i | pointers at: i put: (oldPointers at: i)]
-! !
-
-!SkipList methodsFor: 'accessing' stamp: 'LC 6/18/2001 15:40'!
-size
-	^ numElements! !
-
-!SkipList methodsFor: 'accessing' stamp: 'LC 6/18/2001 20:19'!
-sortBlock
-	^ sortBlock! !
-
-!SkipList methodsFor: 'accessing' stamp: 'LC 6/18/2001 17:30'!
-sortBlock: aBlock
-	sortBlock _ aBlock! !
-
-!SkipList methodsFor: 'node enumeration' stamp: 'LC 6/18/2001 19:30'!
-nodesDo: aBlock
-	| node |
-	node _ pointers first.
-	[node notNil]
-		whileTrue:
-			[aBlock value: node.
-			node _ node next]! !
-
-!SkipList methodsFor: 'removing' stamp: 'LC 6/18/2001 20:42'!
-remove: element ifAbsent: aBlock
-	| node i s |
-	node _ self search: element updating: splice.
-	node ifNil: [^ aBlock value].
-	i _ 1.
-	[s _ splice at: i.
-	i <= level and: [(s forward: i) == node]]
-				whileTrue:
-					[s atForward: i put: (node forward: i).
-					i _ i + 1].
-	numElements _ numElements - 1.
-	splice atAllPut: nil.
-	^ node object
-! !
-
-!SkipList methodsFor: 'removing' stamp: 'LC 6/18/2001 20:25'!
-removeAll
-	pointers atAllPut: nil.
-	splice atAllPut: nil.
-	numElements _ 0.
-	level _ 0.! !
-
-!SkipList class methodsFor: 'instance creation' stamp: 'LC 6/18/2001 17:33'!
-maxLevel: maxLevel
-	"
-	SkipList maxLevel: 5
-	"
-	^ super new initialize: maxLevel! !
-
-!SkipList class methodsFor: 'instance creation' stamp: 'LC 6/18/2001 17:34'!
-maxLevel: anInteger sortBlock: aBlock
-	^ (self maxLevel: anInteger) sortBlock: aBlock! !
-
-!SkipList class methodsFor: 'instance creation' stamp: 'LC 6/17/2001 11:52'!
-new
-	"
-	SkipList new
-	"
-	^ super new initialize: 10! !
-
-!SkipList class methodsFor: 'instance creation' stamp: 'LC 6/18/2001 17:39'!
-new: anInteger
-	^ self maxLevel: (anInteger log: 2) ceiling! !
-
-!SkipList class methodsFor: 'instance creation' stamp: 'LC 6/18/2001 18:40'!
-new: anInteger sortBlock: aBlock
-	^ (self new: anInteger) sortBlock: aBlock! !
-
-!SkipList class methodsFor: 'instance creation' stamp: 'LC 6/18/2001 17:32'!
-sortBlock: aBlock
-	^ self new sortBlock: aBlock! !
-
-!IdentitySkipList methodsFor: 'element comparison' stamp: 'LC 6/18/2001 20:28'!
-is: element1 equalTo: element2
-	^ element1 == element2! !
-
-!AsyncFile methodsFor: 'as yet unclassified'!
+!AsyncFile methodsFor: 'as yet unclassified' stamp: ''!
 close
 
 	fileHandle ifNil: [^ self].  "already closed"
@@ -546,11 +250,11 @@ close
 	fileHandle _ nil.
 ! !
 
-!AsyncFile methodsFor: 'as yet unclassified' stamp: 'di 7/6/1998 10:58'!
+!AsyncFile methodsFor: 'as yet unclassified' stamp: 'di 6/Jul/1998 10:58:00'!
 fileHandle
 	^ fileHandle! !
 
-!AsyncFile methodsFor: 'as yet unclassified' stamp: 'jm 6/25/1998 07:54'!
+!AsyncFile methodsFor: 'as yet unclassified' stamp: 'jm 25/Jun/1998 07:54:00'!
 open: fullFileName forWrite: aBoolean
 	"Open a file of the given name, and return a handle for that file. Answer the receiver if the primitive succeeds, nil otherwise.
 	If openForWrite is true, then:
@@ -574,7 +278,7 @@ open: fullFileName forWrite: aBoolean
 		^ nil].
 ! !
 
-!AsyncFile methodsFor: 'as yet unclassified' stamp: 'jmv 4/19/2015 08:49'!
+!AsyncFile methodsFor: 'as yet unclassified' stamp: 'jmv 19/Apr/2015 08:49:00'!
 readByteCount: byteCount fromFilePosition: fPosition onCompletionDo: aBlock
 	"Start a read operation to read byteCount's from the given position in this file. and fork a process to await its completion. When the operation completes, evaluate the given block. Note that, since the completion block may run asynchronous, the client may need to use a SharedQueue or a semaphore for synchronization."
 
@@ -593,7 +297,7 @@ readByteCount: byteCount fromFilePosition: fPosition onCompletionDo: aBlock
 	] forkAt: Processor userInterruptPriority.
 ! !
 
-!AsyncFile methodsFor: 'as yet unclassified' stamp: 'jmv 9/16/2015 08:30'!
+!AsyncFile methodsFor: 'as yet unclassified' stamp: 'jmv 16/Sep/2015 08:30:00'!
 test: byteCount fileName: fileName
 	"
 	AsyncFile new test: 10000 fileName: 'testData'
@@ -627,11 +331,11 @@ test: byteCount fileName: fileName
 	   'read ', bytesRead printString, ' bytes'
 ! !
 
-!AsyncFile methodsFor: 'as yet unclassified' stamp: 'di 7/6/1998 10:58'!
+!AsyncFile methodsFor: 'as yet unclassified' stamp: 'di 6/Jul/1998 10:58:00'!
 waitForCompletion
 	semaphore wait! !
 
-!AsyncFile methodsFor: 'as yet unclassified' stamp: 'jmv 4/19/2015 08:49'!
+!AsyncFile methodsFor: 'as yet unclassified' stamp: 'jmv 19/Apr/2015 08:49:00'!
 writeBuffer: buffer atFilePosition: fPosition onCompletionDo: aBlock
 	"Start an operation to write the contents of the buffer at given position in this file, and fork a process to await its completion. When the write completes, evaluate the given block. Note that, since the completion block runs asynchronously, the client may need to use a SharedQueue or a semaphore for synchronization."
 
@@ -653,14 +357,14 @@ writeBuffer: buffer atFilePosition: fPosition onCompletionDo: aBlock
 	] forkAt: Processor userInterruptPriority.
 ! !
 
-!AsyncFile methodsFor: 'primitives' stamp: 'ar 2/2/2001 15:09'!
+!AsyncFile methodsFor: 'primitives' stamp: 'ar 2/Feb/2001 15:09:00'!
 primClose: fHandle
 	"Close this file. Do nothing if primitive fails."
 
 	<primitive: 'primitiveAsyncFileClose' module: 'AsynchFilePlugin'>
 ! !
 
-!AsyncFile methodsFor: 'primitives' stamp: 'ar 2/2/2001 15:09'!
+!AsyncFile methodsFor: 'primitives' stamp: 'ar 2/Feb/2001 15:09:00'!
 primOpen: fileName forWrite: openForWrite semaIndex: semaIndex
 	"Open a file of the given name, and return a handle for that file. Answer the receiver if the primitive succeeds, nil otherwise."
 
@@ -668,7 +372,7 @@ primOpen: fileName forWrite: openForWrite semaIndex: semaIndex
 	^ nil
 ! !
 
-!AsyncFile methodsFor: 'primitives' stamp: 'ar 2/2/2001 15:09'!
+!AsyncFile methodsFor: 'primitives' stamp: 'ar 2/Feb/2001 15:09:00'!
 primReadResult: fHandle intoBuffer: buffer at: startIndex count: count
 	"Copy the result of the last read operation into the given buffer starting at the given index. The buffer may be any sort of bytes or words object, excluding CompiledMethods. Answer the number of bytes read. A negative result means:
 		-1 the last operation is still in progress
@@ -678,7 +382,7 @@ primReadResult: fHandle intoBuffer: buffer at: startIndex count: count
 	self primitiveFailed
 ! !
 
-!AsyncFile methodsFor: 'primitives' stamp: 'ar 2/2/2001 15:09'!
+!AsyncFile methodsFor: 'primitives' stamp: 'ar 2/Feb/2001 15:09:00'!
 primReadStart: fHandle fPosition: fPosition count: count
 	"Start a read operation of count bytes starting at the given offset in the given file."
 
@@ -698,7 +402,7 @@ then save-and-quit, restart, and try again.
 
 ! !
 
-!AsyncFile methodsFor: 'primitives' stamp: 'ar 2/2/2001 15:09'!
+!AsyncFile methodsFor: 'primitives' stamp: 'ar 2/Feb/2001 15:09:00'!
 primWriteResult: fHandle
 	"Answer the number of bytes written. A negative result means:
 		-1 the last operation is still in progress
@@ -708,7 +412,7 @@ primWriteResult: fHandle
 	self primitiveFailed
 ! !
 
-!AsyncFile methodsFor: 'primitives' stamp: 'ar 2/2/2001 15:09'!
+!AsyncFile methodsFor: 'primitives' stamp: 'ar 2/Feb/2001 15:09:00'!
 primWriteStart: fHandle fPosition: fPosition fromBuffer: buffer at: startIndex count: count
 	"Start a write operation of count bytes starting at the given index in the given buffer. The buffer may be any sort of bytes or words object, excluding CompiledMethods. The contents of the buffer are copied into an internal buffer immediately, so the buffer can be reused after the write operation has been started. Fail if there is insufficient C heap to allocate an internal buffer of the requested size."
 
@@ -717,35 +421,35 @@ primWriteStart: fHandle fPosition: fPosition fromBuffer: buffer at: startIndex c
 	self primitiveFailed
 ! !
 
-!SkipListNode methodsFor: 'accessing' stamp: 'LC 6/17/2001 12:55'!
+!SkipListNode methodsFor: 'accessing' stamp: 'LC 17/Jun/2001 12:55:00'!
 atForward: i put: node
 	^ pointers at: i put: node! !
 
-!SkipListNode methodsFor: 'accessing' stamp: 'LC 6/18/2001 13:34'!
+!SkipListNode methodsFor: 'accessing' stamp: 'LC 18/Jun/2001 13:34:00'!
 forward: i 
 	^ pointers at: i! !
 
-!SkipListNode methodsFor: 'accessing' stamp: 'LC 6/18/2001 12:21'!
+!SkipListNode methodsFor: 'accessing' stamp: 'LC 18/Jun/2001 12:21:00'!
 level
 	^ pointers size! !
 
-!SkipListNode methodsFor: 'accessing' stamp: 'LC 6/18/2001 19:20'!
+!SkipListNode methodsFor: 'accessing' stamp: 'LC 18/Jun/2001 19:20:00'!
 next
 	^ pointers first! !
 
-!SkipListNode methodsFor: 'accessing' stamp: 'LC 6/18/2001 10:40'!
+!SkipListNode methodsFor: 'accessing' stamp: 'LC 18/Jun/2001 10:40:00'!
 object
 	^ object! !
 
-!SkipListNode methodsFor: 'initialization' stamp: 'LC 6/17/2001 11:54'!
+!SkipListNode methodsFor: 'initialization' stamp: 'LC 17/Jun/2001 11:54:00'!
 initialize: maxLevel
 	pointers _ Array new: maxLevel! !
 
-!SkipListNode methodsFor: 'private' stamp: 'LC 6/18/2001 10:18'!
+!SkipListNode methodsFor: 'private' stamp: 'LC 18/Jun/2001 10:18:00'!
 object: anObject
 	object _ anObject! !
 
-!SkipListNode methodsFor: 'printing' stamp: 'LC 6/18/2001 15:26'!
+!SkipListNode methodsFor: 'printing' stamp: 'LC 18/Jun/2001 15:26:00'!
 printOn: aStream
 	| first |
 	aStream
@@ -759,20 +463,20 @@ printOn: aStream
 	aStream nextPut: $)
 ! !
 
-!SkipListNode class methodsFor: 'instance creation' stamp: 'LC 6/17/2001 09:16'!
+!SkipListNode class methodsFor: 'instance creation' stamp: 'LC 17/Jun/2001 09:16:00'!
 new: maxLevel
 	^ super new initialize: maxLevel! !
 
-!SkipListNode class methodsFor: 'instance creation' stamp: 'LC 6/18/2001 10:20'!
+!SkipListNode class methodsFor: 'instance creation' stamp: 'LC 18/Jun/2001 10:20:00'!
 on: element level: maxLevel 
 	^ (self new: maxLevel)
 		object: element! !
 
-!SkipListNode class methodsFor: 'instance creation' stamp: 'LC 6/18/2001 12:44'!
+!SkipListNode class methodsFor: 'instance creation' stamp: 'LC 18/Jun/2001 12:44:00'!
 tailOfLevel: n
 	^ self on: nil level: n! !
 
-!Stopwatch methodsFor: 'squeak protocol' stamp: 'brp 9/24/2003 23:12'!
+!Stopwatch methodsFor: 'squeak protocol' stamp: 'brp 24/Sep/2003 23:12:00'!
 activate
 
 	self isSuspended ifTrue:
@@ -781,7 +485,7 @@ activate
 		self state: #active]
 ! !
 
-!Stopwatch methodsFor: 'squeak protocol' stamp: 'brp 9/24/2003 23:45'!
+!Stopwatch methodsFor: 'squeak protocol' stamp: 'brp 24/Sep/2003 23:45:00'!
 duration
 
 	| ts last |
@@ -798,27 +502,27 @@ duration
 	^ (ts collect: [ :t | t duration ]) sum
 ! !
 
-!Stopwatch methodsFor: 'squeak protocol' stamp: 'brp 9/25/2003 11:21'!
+!Stopwatch methodsFor: 'squeak protocol' stamp: 'brp 25/Sep/2003 11:21:00'!
 end
 
 	^ self timespans last next
 
 ! !
 
-!Stopwatch methodsFor: 'squeak protocol' stamp: 'brp 9/24/2003 22:48'!
+!Stopwatch methodsFor: 'squeak protocol' stamp: 'brp 24/Sep/2003 22:48:00'!
 isActive
 
 	^ self state = #active
 ! !
 
-!Stopwatch methodsFor: 'squeak protocol' stamp: 'brp 9/24/2003 22:48'!
+!Stopwatch methodsFor: 'squeak protocol' stamp: 'brp 24/Sep/2003 22:48:00'!
 isSuspended
 
 	^ self state = #suspended
 
 ! !
 
-!Stopwatch methodsFor: 'squeak protocol' stamp: 'brp 9/25/2003 13:25'!
+!Stopwatch methodsFor: 'squeak protocol' stamp: 'brp 25/Sep/2003 13:25:00'!
 printOn: aStream
 
 	super printOn: aStream.
@@ -831,7 +535,7 @@ printOn: aStream
 
 ! !
 
-!Stopwatch methodsFor: 'squeak protocol' stamp: 'brp 9/25/2003 12:03'!
+!Stopwatch methodsFor: 'squeak protocol' stamp: 'brp 25/Sep/2003 12:03:00'!
 reActivate
 
 	self 
@@ -839,7 +543,7 @@ reActivate
 		activate.
 ! !
 
-!Stopwatch methodsFor: 'squeak protocol' stamp: 'brp 9/25/2003 11:54'!
+!Stopwatch methodsFor: 'squeak protocol' stamp: 'brp 25/Sep/2003 11:54:00'!
 reset
 
 	self suspend.
@@ -847,26 +551,26 @@ reset
 
 ! !
 
-!Stopwatch methodsFor: 'squeak protocol' stamp: 'brp 9/24/2003 23:18'!
+!Stopwatch methodsFor: 'squeak protocol' stamp: 'brp 24/Sep/2003 23:18:00'!
 start
 
 	^ self timespans first start
 
 ! !
 
-!Stopwatch methodsFor: 'squeak protocol' stamp: 'brp 9/24/2003 22:47'!
+!Stopwatch methodsFor: 'squeak protocol' stamp: 'brp 24/Sep/2003 22:47:00'!
 state
 
 	^ state ifNil: [ state _ #suspended ]
 ! !
 
-!Stopwatch methodsFor: 'squeak protocol' stamp: 'brp 9/24/2003 22:46'!
+!Stopwatch methodsFor: 'squeak protocol' stamp: 'brp 24/Sep/2003 22:46:00'!
 state: aSymbol
 
 	state _ aSymbol
 ! !
 
-!Stopwatch methodsFor: 'squeak protocol' stamp: 'brp 9/24/2003 23:13'!
+!Stopwatch methodsFor: 'squeak protocol' stamp: 'brp 24/Sep/2003 23:13:00'!
 suspend
 
 	| ts |
@@ -876,33 +580,33 @@ suspend
 		self state: #suspended]
 ! !
 
-!Stopwatch methodsFor: 'squeak protocol' stamp: 'brp 9/24/2003 22:44'!
+!Stopwatch methodsFor: 'squeak protocol' stamp: 'brp 24/Sep/2003 22:44:00'!
 timespans
 
 	^ timespans ifNil: [ timespans _ OrderedCollection new ]
 ! !
 
-!StandardFileMenuResult methodsFor: 'accessing' stamp: 'acg 4/15/1999 08:43'!
+!StandardFileMenuResult methodsFor: 'accessing' stamp: 'acg 15/Apr/1999 08:43:00'!
 directory
 
 	^directory! !
 
-!StandardFileMenuResult methodsFor: 'accessing' stamp: 'acg 4/15/1999 08:43'!
+!StandardFileMenuResult methodsFor: 'accessing' stamp: 'acg 15/Apr/1999 08:43:00'!
 directory: aDirectory
 
 	^directory _ aDirectory! !
 
-!StandardFileMenuResult methodsFor: 'accessing' stamp: 'acg 4/15/1999 08:43'!
+!StandardFileMenuResult methodsFor: 'accessing' stamp: 'acg 15/Apr/1999 08:43:00'!
 name
 
 	^name! !
 
-!StandardFileMenuResult methodsFor: 'accessing' stamp: 'acg 4/15/1999 08:43'!
+!StandardFileMenuResult methodsFor: 'accessing' stamp: 'acg 15/Apr/1999 08:43:00'!
 name: aString
 
 	^name _ aString! !
 
-!StandardFileMenuResult methodsFor: 'accessing' stamp: 'sw 6/9/1999 11:50'!
+!StandardFileMenuResult methodsFor: 'accessing' stamp: 'sw 9/Jun/1999 11:50:00'!
 printOn: aStream
 	super printOn: aStream.
 	aStream nextPutAll: ' with directory: '.
@@ -912,29 +616,29 @@ printOn: aStream
 
 "StandardFileMenu oldFile"! !
 
-!StandardFileMenuResult methodsFor: 'private' stamp: 'acg 4/15/1999 08:42'!
+!StandardFileMenuResult methodsFor: 'private' stamp: 'acg 15/Apr/1999 08:42:00'!
 directory: aDirectory name: aString
 
 	directory _ aDirectory.
 	name _ aString.
 	^self! !
 
-!StandardFileMenuResult methodsFor: 'testing' stamp: 'acg 4/15/1999 09:05'!
+!StandardFileMenuResult methodsFor: 'testing' stamp: 'acg 15/Apr/1999 09:05:00'!
 isCommand
 
 	^name isNil! !
 
-!StandardFileMenuResult methodsFor: 'testing' stamp: 'acg 4/15/1999 20:57'!
+!StandardFileMenuResult methodsFor: 'testing' stamp: 'acg 15/Apr/1999 20:57:00'!
 isDirectory
 
 	^name = ''! !
 
-!StandardFileMenuResult class methodsFor: 'instance creation' stamp: 'acg 4/15/1999 08:42'!
+!StandardFileMenuResult class methodsFor: 'instance creation' stamp: 'acg 15/Apr/1999 08:42:00'!
 directory: aDirectory name: aString
 
 	^super new directory: aDirectory name: aString! !
 
-!ProtocolCatcher2 methodsFor: 'catching' stamp: 'jmv 11/3/2008 13:03'!
+!ProtocolCatcher2 methodsFor: 'catching' stamp: 'jmv 3/Nov/2008 13:03:00'!
 doesNotUnderstand: aMessage
 
 	| protocol object answer |
@@ -950,48 +654,344 @@ doesNotUnderstand: aMessage
 		ifTrue: [ self ]
 		ifFalse: [ answer ]! !
 
-!ProtocolCatcher2 methodsFor: 'services' stamp: 'jmv 11/3/2008 13:00'!
+!ProtocolCatcher2 methodsFor: 'services' stamp: 'jmv 3/Nov/2008 13:00:00'!
 initialize
 	realObject _ self! !
 
-!ProtocolCatcher2 methodsFor: 'accessing' stamp: 'jmv 11/3/2008 14:55'!
+!ProtocolCatcher2 methodsFor: 'accessing' stamp: 'jmv 3/Nov/2008 14:55:00'!
 realObject
 	realObject == self ifTrue: [^self halt].
 	^realObject class == ProtocolCatcher2
 		ifTrue: [ realObject realObject ]
 		ifFalse: [ realObject ]! !
 
-!ProtocolCatcher2 class methodsFor: 'services' stamp: 'jmv 11/3/2008 12:51'!
+!ProtocolCatcher2 class methodsFor: 'services' stamp: 'jmv 3/Nov/2008 12:51:00'!
 clear
 	Protocols _ Dictionary new.
 	Started _ false! !
 
-!ProtocolCatcher2 class methodsFor: 'services' stamp: 'jmv 11/3/2008 12:51'!
+!ProtocolCatcher2 class methodsFor: 'services' stamp: 'jmv 3/Nov/2008 12:51:00'!
 observedClasses
 
 	^Protocols keys! !
 
-!ProtocolCatcher2 class methodsFor: 'services' stamp: 'jmv 11/3/2008 12:51'!
+!ProtocolCatcher2 class methodsFor: 'services' stamp: 'jmv 3/Nov/2008 12:51:00'!
 protocolFor: aClass
 
 	^Protocols at: aClass! !
 
-!ProtocolCatcher2 class methodsFor: 'services' stamp: 'jmv 11/3/2008 12:51'!
+!ProtocolCatcher2 class methodsFor: 'services' stamp: 'jmv 3/Nov/2008 12:51:00'!
 start
 	Started _ true! !
 
-!ProtocolCatcher2 class methodsFor: 'services' stamp: 'jmv 11/3/2008 12:51'!
+!ProtocolCatcher2 class methodsFor: 'services' stamp: 'jmv 3/Nov/2008 12:51:00'!
 stop
 	Started _ false! !
 
-!ProtocolCatcher2 class methodsFor: 'instance creation' stamp: 'jmv 4/14/2011 16:04'!
+!ProtocolCatcher2 class methodsFor: 'instance creation' stamp: 'jmv 14/Apr/2011 16:04:00'!
 on: anObject
 	| catcher |
 	catcher _ self new.
 	catcher instVarNamed: 'realObject' put: anObject.
 	^catcher! !
 
-!StandardFileMenu methodsFor: 'private' stamp: 'KenD 10/27/2015 19:13'!
+!SkipList methodsFor: 'adding' stamp: 'LC 18/Jun/2001 18:30:00'!
+add: element 
+	self add: element ifPresent: nil.
+	^ element! !
+
+!SkipList methodsFor: 'adding' stamp: 'LC 18/Jun/2001 20:42:00'!
+add: element ifPresent: aBlock
+	| node lvl s |
+	node _ self search: element updating: splice.
+	node ifNotNil: [aBlock ifNotNil: [^ aBlock value: node]].
+	lvl _ self randomLevel.
+	node _ SkipListNode on: element level: lvl.
+	level + 1 to: lvl do: [:i | splice at: i put: self].
+	1 to: lvl do: [:i |
+				s _ splice at: i.
+				node atForward: i put: (s forward: i).
+				s atForward: i put: node].
+	numElements _ numElements + 1.
+	splice atAllPut: nil.
+	^ element
+! !
+
+!SkipList methodsFor: 'private' stamp: 'LC 18/Jun/2001 19:26:00'!
+atForward: i put: node
+	level _ node
+		ifNil: [pointers findLast: [:n | n notNil]]
+		ifNotNil: [level max: i].
+	^ pointers at: i put: node! !
+
+!SkipList methodsFor: 'private' stamp: 'LC 18/Jun/2001 11:21:00'!
+forward: i 
+	^ pointers at: i! !
+
+!SkipList methodsFor: 'private' stamp: 'LC 18/Jun/2001 20:14:00'!
+is: node before: element 
+	| object |
+	node ifNil: [^ false].
+	object _ node object.
+	^ sortBlock
+		ifNil: [object < element]
+		ifNotNil: [(self is: object equalTo: element) ifTrue: [^ false].
+			sortBlock value: object value: element]! !
+
+!SkipList methodsFor: 'private' stamp: 'LC 18/Jun/2001 13:19:00'!
+is: node theNodeFor: element 
+	node ifNil: [^ false].
+	node == self ifTrue: [^ false].
+	^ self is: node object equalTo: element! !
+
+!SkipList methodsFor: 'private' stamp: 'LC 18/Jun/2001 16:15:00'!
+next
+	^ pointers first! !
+
+!SkipList methodsFor: 'private' stamp: 'LC 18/Jun/2001 15:37:00'!
+randomLevel
+	| p answer max |
+	p _ 0.5.
+	answer _ 1.
+	max _ self maxLevel.
+	[Rand next < p and: [answer < max]]
+		whileTrue: [answer _ answer + 1].
+	^ answer! !
+
+!SkipList methodsFor: 'private' stamp: 'LC 18/Jun/2001 19:28:00'!
+search: element updating: array
+	| node forward |
+	node _ self.
+	level to: 1 by: -1 do: [:i |
+			[forward _ node forward: i.
+			self is: forward before: element] whileTrue: [node _ forward].
+			"At this point: node < element <= forward"
+			array ifNotNil: [array at: i put: node]].
+	node _ node next.
+	^ (self is: node theNodeFor: element) ifTrue: [node]! !
+
+!SkipList methodsFor: 'enumerating' stamp: 'LC 18/Jun/2001 15:39:00'!
+do: aBlock
+	self nodesDo: [:node | aBlock value: node object]! !
+
+!SkipList methodsFor: 'testing' stamp: 'LC 18/Jun/2001 16:59:00'!
+includes: element
+	^ (self search: element updating: nil) notNil! !
+
+!SkipList methodsFor: 'testing' stamp: 'LC 18/Jun/2001 12:53:00'!
+isEmpty
+	^ numElements = 0! !
+
+!SkipList methodsFor: 'initialization' stamp: 'LC 18/Jun/2001 20:08:00'!
+initialize: maxLevel
+	pointers _ Array new: maxLevel.
+	splice _ Array new: maxLevel.
+	numElements _ 0.
+	level _ 0.
+	Rand ifNil: [Rand _ Random new]! !
+
+!SkipList methodsFor: 'element comparison' stamp: 'LC 18/Jun/2001 10:14:00'!
+is: element1 equalTo: element2
+	^ element1 = element2! !
+
+!SkipList methodsFor: 'accessing' stamp: 'LC 18/Jun/2001 19:22:00'!
+level
+	^ level! !
+
+!SkipList methodsFor: 'accessing' stamp: 'LC 17/Jun/2001 12:05:00'!
+maxLevel
+	^ pointers size! !
+
+!SkipList methodsFor: 'accessing' stamp: 'LC 18/Jun/2001 20:18:00'!
+maxLevel: n
+	| newLevel oldPointers |
+	newLevel _ n max: level.
+	oldPointers _ pointers.
+	pointers _ Array new: newLevel.
+	splice _ Array new: newLevel.
+	1 to: level do: [:i | pointers at: i put: (oldPointers at: i)]
+! !
+
+!SkipList methodsFor: 'accessing' stamp: 'LC 18/Jun/2001 15:40:00'!
+size
+	^ numElements! !
+
+!SkipList methodsFor: 'accessing' stamp: 'LC 18/Jun/2001 20:19:00'!
+sortBlock
+	^ sortBlock! !
+
+!SkipList methodsFor: 'accessing' stamp: 'LC 18/Jun/2001 17:30:00'!
+sortBlock: aBlock
+	sortBlock _ aBlock! !
+
+!SkipList methodsFor: 'node enumeration' stamp: 'LC 18/Jun/2001 19:30:00'!
+nodesDo: aBlock
+	| node |
+	node _ pointers first.
+	[node notNil]
+		whileTrue:
+			[aBlock value: node.
+			node _ node next]! !
+
+!SkipList methodsFor: 'removing' stamp: 'LC 18/Jun/2001 20:42:00'!
+remove: element ifAbsent: aBlock
+	| node i s |
+	node _ self search: element updating: splice.
+	node ifNil: [^ aBlock value].
+	i _ 1.
+	[s _ splice at: i.
+	i <= level and: [(s forward: i) == node]]
+				whileTrue:
+					[s atForward: i put: (node forward: i).
+					i _ i + 1].
+	numElements _ numElements - 1.
+	splice atAllPut: nil.
+	^ node object
+! !
+
+!SkipList methodsFor: 'removing' stamp: 'LC 18/Jun/2001 20:25:00'!
+removeAll
+	pointers atAllPut: nil.
+	splice atAllPut: nil.
+	numElements _ 0.
+	level _ 0.! !
+
+!SkipList class methodsFor: 'instance creation' stamp: 'LC 18/Jun/2001 17:33:00'!
+maxLevel: maxLevel
+	"
+	SkipList maxLevel: 5
+	"
+	^ super new initialize: maxLevel! !
+
+!SkipList class methodsFor: 'instance creation' stamp: 'LC 18/Jun/2001 17:34:00'!
+maxLevel: anInteger sortBlock: aBlock
+	^ (self maxLevel: anInteger) sortBlock: aBlock! !
+
+!SkipList class methodsFor: 'instance creation' stamp: 'LC 17/Jun/2001 11:52:00'!
+new
+	"
+	SkipList new
+	"
+	^ super new initialize: 10! !
+
+!SkipList class methodsFor: 'instance creation' stamp: 'LC 18/Jun/2001 17:39:00'!
+new: anInteger
+	^ self maxLevel: (anInteger log: 2) ceiling! !
+
+!SkipList class methodsFor: 'instance creation' stamp: 'LC 18/Jun/2001 18:40:00'!
+new: anInteger sortBlock: aBlock
+	^ (self new: anInteger) sortBlock: aBlock! !
+
+!SkipList class methodsFor: 'instance creation' stamp: 'LC 18/Jun/2001 17:32:00'!
+sortBlock: aBlock
+	^ self new sortBlock: aBlock! !
+
+!IdentitySkipList methodsFor: 'element comparison' stamp: 'LC 18/Jun/2001 20:28:00'!
+is: element1 equalTo: element2
+	^ element1 == element2! !
+
+!MappedCollection methodsFor: 'adding' stamp: ''!
+add: newObject
+
+	self shouldNotImplement! !
+
+!MappedCollection methodsFor: 'accessing' stamp: ''!
+at: anIndex
+
+	^domain at: (map at: anIndex)! !
+
+!MappedCollection methodsFor: 'accessing' stamp: ''!
+at: anIndex put: anObject
+
+	^domain at: (map at: anIndex) put: anObject! !
+
+!MappedCollection methodsFor: 'accessing' stamp: ''!
+contents
+	"Answer the receiver's domain for mapping, a Dictionary or 
+	SequenceableCollection."
+
+	^map collect: [:mappedIndex | domain at: mappedIndex]! !
+
+!MappedCollection methodsFor: 'accessing' stamp: ''!
+size
+
+	^map size! !
+
+!MappedCollection methodsFor: 'enumerating' stamp: ''!
+collect: aBlock 
+	"Refer to the comment in Collection|collect:."
+
+	| aStream |
+	aStream _ WriteStream on: (self species new: self size).
+	self do:
+		[:domainValue | 
+		aStream nextPut: (aBlock value: domainValue)].
+	^aStream contents! !
+
+!MappedCollection methodsFor: 'enumerating' stamp: ''!
+do: aBlock 
+	"Refer to the comment in Collection|do:."
+
+	map do:
+		[:mapValue | aBlock value: (domain at: mapValue)]! !
+
+!MappedCollection methodsFor: 'enumerating' stamp: ''!
+select: aBlock 
+	"Refer to the comment in Collection|select:."
+
+	| aStream |
+	aStream _ WriteStream on: (self species new: self size).
+	self do:
+		[:domainValue | 
+		(aBlock value: domainValue)
+			ifTrue: [aStream nextPut: domainValue]].
+	^aStream contents! !
+
+!MappedCollection methodsFor: 'private' stamp: ''!
+setCollection: aCollection map: aDictionary
+
+	domain _ aCollection.
+	map _ aDictionary! !
+
+!MappedCollection methodsFor: 'private' stamp: ''!
+species
+
+	^domain species! !
+
+!MappedCollection methodsFor: 'printing' stamp: 'sma 11/May/2000 19:53:00'!
+storeOn: aStream
+	aStream
+		nextPut: $(;
+		nextPutAll: self class name;
+		nextPutAll: ' collection: ';
+		store: domain;
+		nextPutAll: ' map: ';
+		store: map;
+		nextPut: $)! !
+
+!MappedCollection class methodsFor: 'instance creation' stamp: ''!
+collection: aCollection map: aSequenceableCollection 
+	"Answer an instance of me that maps aCollection by 
+	aSequenceableCollection."
+
+	^self basicNew setCollection: aCollection map: aSequenceableCollection! !
+
+!MappedCollection class methodsFor: 'instance creation' stamp: ''!
+new
+
+	self error: 'MappedCollections must be created using the collection:map: message'! !
+
+!MappedCollection class methodsFor: 'instance creation' stamp: ''!
+newFrom: aCollection 
+	"Answer an instance of me containing the same elements as aCollection."
+
+	^ self collection: aCollection map: (1 to: aCollection size)
+
+"	MappedCollection newFrom: {1. 2. 3}
+	{4. 3. 8} as: MappedCollection
+"! !
+
+!StandardFileMenu methodsFor: 'private' stamp: 'KenD 27/Oct/2015 19:13:00'!
 advance: anInteger containingDirectoriesFrom: aDirectory
 
 	| theDirectory |
@@ -999,12 +999,12 @@ advance: anInteger containingDirectoriesFrom: aDirectory
 	1 to: anInteger do: [:i | theDirectory _ theDirectory parent].
 	^theDirectory! !
 
-!StandardFileMenu methodsFor: 'private' stamp: 'hlsf 7/25/2023 17:46:51'!
+!StandardFileMenu methodsFor: 'private' stamp: 'hlsf 25/Jul/2023 17:46:51'!
 newFileFrom: aDirectory withPattern: aPattern
 
 	self newFileFrom: aDirectory withPattern: aPattern excludePattern: nil! !
 
-!StandardFileMenu methodsFor: 'private' stamp: 'hlsf 7/25/2023 17:46:25'!
+!StandardFileMenu methodsFor: 'private' stamp: 'hlsf 25/Jul/2023 17:46:25'!
 newFileFrom: aDirectory withPattern: aPattern excludePattern: anotherPattern
 
 	canTypeFileName := true.
@@ -1012,17 +1012,17 @@ newFileFrom: aDirectory withPattern: aPattern excludePattern: anotherPattern
 	self excludePattern: anotherPattern.
 	^self makeFileMenuFor: aDirectory! !
 
-!StandardFileMenu methodsFor: 'private' stamp: 'acg 4/15/1999 22:03'!
+!StandardFileMenu methodsFor: 'private' stamp: 'acg 15/Apr/1999 22:03:00'!
 oldFileFrom: aDirectory
 
 	canTypeFileName _ false.
 	^self makeFileMenuFor: aDirectory! !
 
-!StandardFileMenu methodsFor: 'private' stamp: 'hlsf 7/25/2023 17:48:32'!
+!StandardFileMenu methodsFor: 'private' stamp: 'hlsf 25/Jul/2023 17:48:32'!
 oldFileFrom: aDirectory withPattern: aPattern
 	self oldFileFrom: aDirectory withPattern: aPattern excludePattern: nil! !
 
-!StandardFileMenu methodsFor: 'private' stamp: 'hlsf 7/25/2023 17:48:02'!
+!StandardFileMenu methodsFor: 'private' stamp: 'hlsf 25/Jul/2023 17:48:02'!
 oldFileFrom: aDirectory withPattern: aPattern excludePattern: anotherPattern
 
 	canTypeFileName := false.
@@ -1030,7 +1030,7 @@ oldFileFrom: aDirectory withPattern: aPattern excludePattern: anotherPattern
 	self excludePattern: anotherPattern.
 	^self makeFileMenuFor: aDirectory! !
 
-!StandardFileMenu methodsFor: 'basic control sequences' stamp: 'KenD 10/27/2015 19:00'!
+!StandardFileMenu methodsFor: 'basic control sequences' stamp: 'KenD 27/Oct/2015 19:00:00'!
 confirmExistingFiles: aResult
 
 	|choice|
@@ -1056,7 +1056,7 @@ Select another file'].
 	^nil
  ! !
 
-!StandardFileMenu methodsFor: 'basic control sequences' stamp: 'jmv 9/12/2024 12:05:29'!
+!StandardFileMenu methodsFor: 'basic control sequences' stamp: 'jmv 12/Sep/2024 12:05:29'!
 getTypedFileName: aResult
 
 	| name |
@@ -1069,7 +1069,7 @@ getTypedFileName: aResult
 			name: name
 ! !
 
-!StandardFileMenu methodsFor: 'basic control sequences' stamp: 'jmv 7/27/2018 20:59:10'!
+!StandardFileMenu methodsFor: 'basic control sequences' stamp: 'jmv 27/Jul/2018 20:59:10'!
 startUpWithCaption: aString at: location allowKeyboard: aBoolean
 
 	|result|
@@ -1085,7 +1085,7 @@ startUpWithCaption: aString at: location allowKeyboard: aBoolean
 	^result
 	! !
 
-!StandardFileMenu methodsFor: 'menu building' stamp: 'hlsf 7/25/2023 23:33:54'!
+!StandardFileMenu methodsFor: 'menu building' stamp: 'hlsf 25/Jul/2023 23:33:54'!
 directoryNamesString: aDirectory
 "Answer a string concatenating the directory name strings in aDirectory, each string followed by a '[...]' indicator, and followed by a newLine."
 
@@ -1095,7 +1095,7 @@ directoryNamesString: aDirectory
 
 ! !
 
-!StandardFileMenu methodsFor: 'menu building' stamp: 'hlsf 7/25/2023 23:45:13'!
+!StandardFileMenu methodsFor: 'menu building' stamp: 'hlsf 25/Jul/2023 23:45:13'!
 fileNamesString: aDirectory
 "Answer a string concatenating the file name strings in aDirectory, each string followed by a newLine."
 
@@ -1103,7 +1103,7 @@ fileNamesString: aDirectory
 		(self matchingFiles: aDirectory) do: 	[:file |
 			s nextPutAll: file name withBlanksTrimmed; newLine]]! !
 
-!StandardFileMenu methodsFor: 'menu building' stamp: 'hlsf 7/25/2023 23:48:19'!
+!StandardFileMenu methodsFor: 'menu building' stamp: 'hlsf 25/Jul/2023 23:48:19'!
 makeFileMenuFor: aDirectory
 "Initialize an instance of me to operate on aDirectory"
 
@@ -1116,7 +1116,7 @@ makeFileMenuFor: aDirectory
 	theMenu := self selections: (self menuSelectionsArray: aDirectory).
 	^theMenu! !
 
-!StandardFileMenu methodsFor: 'menu building' stamp: 'acg 4/15/1999 21:57'!
+!StandardFileMenu methodsFor: 'menu building' stamp: 'acg 15/Apr/1999 21:57:00'!
 menuLabelsString: aDirectory
 "Answer a menu labels object corresponding to aDirectory"
 
@@ -1129,7 +1129,7 @@ menuLabelsString: aDirectory
 			s nextPutAll: (self fileNamesString: aDirectory).
 			s skip: -1]! !
 
-!StandardFileMenu methodsFor: 'menu building' stamp: 'hlsf 7/25/2023 23:47:12'!
+!StandardFileMenu methodsFor: 'menu building' stamp: 'hlsf 25/Jul/2023 23:47:12'!
 menuLinesArray: aDirectory
 "Answer a menu lines object corresponding to aDirectory"
 
@@ -1144,7 +1144,7 @@ menuLinesArray: aDirectory
 		s nextPut: dirDepth + typeCount + 1.
 		s nextPut: dirDepth + nameCnt + typeCount + 1]! !
 
-!StandardFileMenu methodsFor: 'menu building' stamp: 'hlsf 7/25/2023 23:43:56'!
+!StandardFileMenu methodsFor: 'menu building' stamp: 'hlsf 25/Jul/2023 23:43:56'!
 menuSelectionsArray: aDirectory
 "Answer a menu selections object corresponding to aDirectory.  The object is an array corresponding to each item, each element itself constituting a two-element array, the first element of which contains a selector to operate on and the second element of which contains the parameters for that selector."
 
@@ -1173,7 +1173,7 @@ menuSelectionsArray: aDirectory
 					directory: aDirectory
 					name: file name)]]! !
 
-!StandardFileMenu methodsFor: 'menu building' stamp: 'jmv 4/2/2016 23:07'!
+!StandardFileMenu methodsFor: 'menu building' stamp: 'jmv 2/Apr/2016 23:07:00'!
 pathPartsString: aDirectory
 "Answer a string concatenating the path parts strings in aDirectory, each string followed by a newLine."
 
@@ -1185,24 +1185,24 @@ pathPartsString: aDirectory
 					s next: i put: $ .
 					s nextPutAll: part withBlanksTrimmed; newLine]]! !
 
-!StandardFileMenu methodsFor: 'pattern' stamp: 'KenD 7/27/2023 12:19:08'!
+!StandardFileMenu methodsFor: 'pattern' stamp: 'KenD 27/Jul/2023 12:19:08'!
 excludePattern: patString
 " See method pattern: "
 
 	excludePattern := patString ifNotNil: [ patString substrings ]! !
 
-!StandardFileMenu methodsFor: 'pattern' stamp: 'hlsf 7/25/2023 17:59:48'!
+!StandardFileMenu methodsFor: 'pattern' stamp: 'hlsf 25/Jul/2023 17:59:48'!
 excludePatternMatches: aString
 	^excludePattern anySatisfy: [ :pat | pat match: aString ]! !
 
-!StandardFileMenu methodsFor: 'pattern' stamp: 'hlsf 7/25/2023 23:52:31'!
+!StandardFileMenu methodsFor: 'pattern' stamp: 'hlsf 25/Jul/2023 23:52:31'!
 matchingDirectories: parentDirectory
 	^ (parentDirectory directories reject: [: aDirectory |
 		self excludePatternMatches: aDirectory name]) sort: [:d1 :d2 | 
 			d1 name asLowercase < d2 name asLowercase ]
 	! !
 
-!StandardFileMenu methodsFor: 'pattern' stamp: 'hlsf 7/25/2023 23:54:52'!
+!StandardFileMenu methodsFor: 'pattern' stamp: 'hlsf 25/Jul/2023 23:54:52'!
 matchingFiles: parentDirectory
 	^ (parentDirectory files select: [: aFile |
 		(self excludePatternMatches: aFile name) not 
@@ -1210,7 +1210,7 @@ matchingFiles: parentDirectory
 			f1 name asLowercase < f2 name asLowercase ]
 	! !
 
-!StandardFileMenu methodsFor: 'pattern' stamp: 'jmv 7/9/2009 08:44'!
+!StandardFileMenu methodsFor: 'pattern' stamp: 'jmv 9/Jul/2009 08:44:00'!
 pattern: patString
 	" * for all files, or '*.cs' for changeSets, etc.  Just like fileLists
 	jmv- Added support for multiple patterns, separated by spaces.
@@ -1218,18 +1218,18 @@ pattern: patString
 
 	pattern _ patString substrings! !
 
-!StandardFileMenu methodsFor: 'pattern' stamp: 'jmv 7/9/2009 08:45'!
+!StandardFileMenu methodsFor: 'pattern' stamp: 'jmv 9/Jul/2009 08:45:00'!
 patternMatches: aString
 
 	^pattern anySatisfy: [ :pat | pat match: aString ]! !
 
-!StandardFileMenu class methodsFor: 'standard file operations' stamp: 'jmv 1/21/2013 22:59'!
+!StandardFileMenu class methodsFor: 'standard file operations' stamp: 'jmv 21/Jan/2013 22:59:00'!
 oldFileFrom: aDirectory
 
 	^(self oldFileMenu: aDirectory)
 		startUpWithCaption: 'Select a File:'! !
 
-!StandardFileMenu class methodsFor: 'instance creation' stamp: 'pb 5/25/2016 01:13'!
+!StandardFileMenu class methodsFor: 'instance creation' stamp: 'pb 25/May/2016 01:13:00'!
 oldFileMenu: aDirectory
 
 	(aDirectory isKindOf: DirectoryEntry)
@@ -1237,21 +1237,21 @@ oldFileMenu: aDirectory
 
 	^self new oldFileFrom: aDirectory! !
 
-!Collection methodsFor: '*Goodies-Collections' stamp: 'LC 6/18/2001 20:30'!
+!Collection methodsFor: '*Goodies-Collections' stamp: 'LC 18/Jun/2001 20:30:00'!
 asIdentitySkipList
 	"Answer a IdentitySkipList whose elements are the elements of the 
 	receiver. The sort order is the default less than or equal."
 
 	^ self as: IdentitySkipList! !
 
-!Collection methodsFor: '*Goodies-Collections' stamp: 'LC 6/18/2001 18:47'!
+!Collection methodsFor: '*Goodies-Collections' stamp: 'LC 18/Jun/2001 18:47:00'!
 asSkipList
 	"Answer a SkipList whose elements are the elements of the 
 	receiver. The sort order is the default less than or equal."
 
 	^ self as: SkipList! !
 
-!Collection methodsFor: '*Goodies-Collections' stamp: 'jmv 12/18/2015 14:58'!
+!Collection methodsFor: '*Goodies-Collections' stamp: 'jmv 18/Dec/2015 14:58:00'!
 asSkipList: aSortBlock 
 	"Answer a SkipList whose elements are the elements of the 
 	receiver. The sort order is defined by the argument, aSortBlock."

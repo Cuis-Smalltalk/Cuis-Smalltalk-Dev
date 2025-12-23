@@ -1,22 +1,22 @@
-'From Cuis 6.0 [latest update: #5621] on 4 January 2023 at 6:02:26 pm'!
+'From Cuis7.7 [latest update: #7779] on 23 December 2025 at 4:35:47 pm'!
 'Description '!
 !provides: 'Tests-Immutability' 1 1!
 !requires: 'Immutability' 1 2 nil!
-SystemOrganization addCategory: 'Tests-Immutability'!
+SystemOrganization addCategory: #'Tests-Immutability'!
 
 
-!classDefinition: #ImmutabilityTest category: 'Tests-Immutability'!
+!classDefinition: #ImmutabilityTest category: #'Tests-Immutability'!
 TestCase subclass: #ImmutabilityTest
 	instanceVariableNames: 'instVar1'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Tests-Immutability'!
-!classDefinition: 'ImmutabilityTest class' category: 'Tests-Immutability'!
+!classDefinition: 'ImmutabilityTest class' category: #'Tests-Immutability'!
 ImmutabilityTest class
 	instanceVariableNames: ''!
 
 
-!ImmutabilityTest methodsFor: 'tests' stamp: 'HAW 7/3/2019 18:36:37'!
+!ImmutabilityTest methodsFor: 'tests' stamp: 'HAW 3/Jul/2019 18:36:37'!
 test01AnObjectCanBeMarkAsImmutable
 
 	| testObject |
@@ -26,7 +26,7 @@ test01AnObjectCanBeMarkAsImmutable
 	
 	self assert: testObject isImmutable! !
 
-!ImmutabilityTest methodsFor: 'tests' stamp: 'HAW 7/3/2019 18:36:49'!
+!ImmutabilityTest methodsFor: 'tests' stamp: 'HAW 3/Jul/2019 18:36:49'!
 test02beImmutableReturnsThePreviousMutableState
 
 	| testObject wasImmutable |
@@ -36,7 +36,7 @@ test02beImmutableReturnsThePreviousMutableState
 	
 	self deny: wasImmutable! !
 
-!ImmutabilityTest methodsFor: 'tests' stamp: 'HAW 7/3/2019 18:37:01'!
+!ImmutabilityTest methodsFor: 'tests' stamp: 'HAW 3/Jul/2019 18:37:01'!
 test03ImmutableObjectCanBeTurnMutable
 
 	| testObject |
@@ -48,7 +48,7 @@ test03ImmutableObjectCanBeTurnMutable
 	
 	self deny: testObject isImmutable.! !
 
-!ImmutabilityTest methodsFor: 'tests' stamp: 'HAW 7/3/2019 18:37:13'!
+!ImmutabilityTest methodsFor: 'tests' stamp: 'HAW 3/Jul/2019 18:37:13'!
 test04beMutableReturnsThePreviousMutableState
 
 	| testObject wasImmutable |
@@ -60,7 +60,7 @@ test04beMutableReturnsThePreviousMutableState
 	
 	self assert: wasImmutable! !
 
-!ImmutabilityTest methodsFor: 'tests' stamp: 'HAW 7/3/2019 18:44:32'!
+!ImmutabilityTest methodsFor: 'tests' stamp: 'HAW 3/Jul/2019 18:44:32'!
 test05InstanceVariablesOfImmutableObjectsCanNotBeModified
 
 	| testObject newValue |
@@ -80,7 +80,7 @@ test05InstanceVariablesOfImmutableObjectsCanNotBeModified
 			self assert: newValue equals: modificationForbidden newValue.
 			self assert: #instVarAt:put: equals: modificationForbidden retrySelector ]! !
 
-!ImmutabilityTest methodsFor: 'tests' stamp: 'HAW 7/3/2019 18:47:50'!
+!ImmutabilityTest methodsFor: 'tests' stamp: 'HAW 3/Jul/2019 18:47:50'!
 test06retryModificationMutatesTheObjectIfMadeMutable
 
 	| testObject newValue |
@@ -97,7 +97,7 @@ test06retryModificationMutatesTheObjectIfMadeMutable
 		
 	self assert: newValue equals: testObject instVar1 ! !
 
-!ImmutabilityTest methodsFor: 'tests' stamp: 'HAW 7/4/2019 15:58:54'!
+!ImmutabilityTest methodsFor: 'tests' stamp: 'HAW 4/Jul/2019 15:58:54'!
 test07atPutInformsModificationForbiddenForImmutableObjects
 
 	| testObject newValue |
@@ -114,7 +114,7 @@ test07atPutInformsModificationForbiddenForImmutableObjects
 			self assert: #at:put: equals: modificationForbidden retrySelector ]		
 	! !
 
-!ImmutabilityTest methodsFor: 'tests' stamp: 'HAW 7/4/2019 15:59:38'!
+!ImmutabilityTest methodsFor: 'tests' stamp: 'HAW 4/Jul/2019 15:59:38'!
 test08retryModificationWorkAsExpectedWhenSentatPut
 
 	| testObject newValue |
@@ -131,7 +131,7 @@ test08retryModificationWorkAsExpectedWhenSentatPut
 		
 	self assert: newValue equals: testObject first! !
 
-!ImmutabilityTest methodsFor: 'tests' stamp: 'HAW 7/4/2019 15:59:56'!
+!ImmutabilityTest methodsFor: 'tests' stamp: 'HAW 4/Jul/2019 15:59:56'!
 test09basicAtPutInformsModificationForbiddenForImmutableObjects
 
 	| testObject newValue |
@@ -148,7 +148,7 @@ test09basicAtPutInformsModificationForbiddenForImmutableObjects
 			self assert: #basicAt:put: equals: modificationForbidden retrySelector ]		
 	! !
 
-!ImmutabilityTest methodsFor: 'tests' stamp: 'HAW 7/4/2019 16:00:11'!
+!ImmutabilityTest methodsFor: 'tests' stamp: 'HAW 4/Jul/2019 16:00:11'!
 test10rawBasicAtPutInformsModificationForbiddenForImmutableObjects
 
 	| testObject newValue |
@@ -165,7 +165,7 @@ test10rawBasicAtPutInformsModificationForbiddenForImmutableObjects
 			self assert: #rawBasicAt:put: equals: modificationForbidden retrySelector ]		
 	! !
 
-!ImmutabilityTest methodsFor: 'tests' stamp: 'HAW 7/4/2019 15:56:21'!
+!ImmutabilityTest methodsFor: 'tests' stamp: 'HAW 4/Jul/2019 15:56:21'!
 test11AnArray2DCanBeImmutable
 
 	| testObject newValue |
@@ -185,7 +185,7 @@ test11AnArray2DCanBeImmutable
 			self assert: testObject elements == modificationForbidden object ]		
 	! !
 
-!ImmutabilityTest methodsFor: 'tests' stamp: 'HAW 7/4/2019 15:56:29'!
+!ImmutabilityTest methodsFor: 'tests' stamp: 'HAW 4/Jul/2019 15:56:29'!
 test12retryModificationWorksAsExpectedWithAnArray2D
 
 	| testObject newValue |
@@ -203,7 +203,7 @@ test12retryModificationWorksAsExpectedWithAnArray2D
 	self assert: newValue equals: (testObject i: 1 j: 1)		
 	! !
 
-!ImmutabilityTest methodsFor: 'tests' stamp: 'HAW 7/4/2019 15:57:11'!
+!ImmutabilityTest methodsFor: 'tests' stamp: 'HAW 4/Jul/2019 15:57:11'!
 test13DictionariesCanBeImmutable
 
 	| testObject newValue |
@@ -223,7 +223,7 @@ test13DictionariesCanBeImmutable
 			self assert: testObject array == modificationForbidden object ]		
 	! !
 
-!ImmutabilityTest methodsFor: 'tests' stamp: 'HAW 7/4/2019 15:56:46'!
+!ImmutabilityTest methodsFor: 'tests' stamp: 'HAW 4/Jul/2019 15:56:46'!
 test14retryModificationWorksAsExpectedWithDictionaries
 
 	| testObject newValue |
@@ -242,7 +242,7 @@ test14retryModificationWorksAsExpectedWithDictionaries
 	self assert: 1 equals: testObject size		
 	! !
 
-!ImmutabilityTest methodsFor: 'tests' stamp: 'HAW 7/4/2019 15:57:33'!
+!ImmutabilityTest methodsFor: 'tests' stamp: 'HAW 4/Jul/2019 15:57:33'!
 test15SetsCanBeImmutable
 
 	| testObject newValue |
@@ -262,7 +262,7 @@ test15SetsCanBeImmutable
 			self assert: testObject array == modificationForbidden object ]		
 	! !
 
-!ImmutabilityTest methodsFor: 'tests' stamp: 'HAW 7/4/2019 15:57:39'!
+!ImmutabilityTest methodsFor: 'tests' stamp: 'HAW 4/Jul/2019 15:57:39'!
 test16retryModificationWorksAsExpectedWithSets
 
 	| testObject newValue |
@@ -281,7 +281,7 @@ test16retryModificationWorksAsExpectedWithSets
 	self assert: 1 equals: testObject size		
 	! !
 
-!ImmutabilityTest methodsFor: 'tests' stamp: 'HAW 7/4/2019 15:57:50'!
+!ImmutabilityTest methodsFor: 'tests' stamp: 'HAW 4/Jul/2019 15:57:50'!
 test17OrderedCollectionsCanBeImmutable
 
 	| testObject newValue |
@@ -299,7 +299,7 @@ test17OrderedCollectionsCanBeImmutable
 			self assert: testObject == modificationForbidden object ]		
 	! !
 
-!ImmutabilityTest methodsFor: 'tests' stamp: 'HAW 7/4/2019 15:57:59'!
+!ImmutabilityTest methodsFor: 'tests' stamp: 'HAW 4/Jul/2019 15:57:59'!
 test18retryModificationWorksAsExpectedWithOrderedCollections
 
 	| testObject newValue |
@@ -318,7 +318,7 @@ test18retryModificationWorksAsExpectedWithOrderedCollections
 	self assert: 1 equals: testObject size		
 	! !
 
-!ImmutabilityTest methodsFor: 'tests' stamp: 'HAW 7/4/2019 15:50:18'!
+!ImmutabilityTest methodsFor: 'tests' stamp: 'HAW 4/Jul/2019 15:50:18'!
 test19StringsCanBeImmutable
 
 	| testObject newValue |
@@ -336,7 +336,7 @@ test19StringsCanBeImmutable
 			self assert: testObject == modificationForbidden object ]		
 	! !
 
-!ImmutabilityTest methodsFor: 'tests' stamp: 'jmv 1/4/2023 17:31:00'!
+!ImmutabilityTest methodsFor: 'tests' stamp: 'jmv 4/Jan/2023 17:31:00'!
 test20retryModificationWorksAsExpectedWithStrings
 
 	| testObject newValue |
@@ -354,7 +354,7 @@ test20retryModificationWorksAsExpectedWithStrings
 	self assert: newValue equals: testObject first.
 		! !
 
-!ImmutabilityTest methodsFor: 'tests' stamp: 'HAW 7/12/2019 14:37:29'!
+!ImmutabilityTest methodsFor: 'tests' stamp: 'HAW 12/Jul/2019 14:37:29'!
 test21InstVarAtPutSignalModificationForbiddenWhenObjectIsImmutable
 
 	| testObject newValue instVar1Index |
@@ -372,7 +372,7 @@ test21InstVarAtPutSignalModificationForbiddenWhenObjectIsImmutable
 			self assert: #instVarAt:put: equals: modificationForbidden retrySelector.
 			self assert: testObject == modificationForbidden object ]			! !
 
-!ImmutabilityTest methodsFor: 'tests' stamp: 'HAW 7/12/2019 14:37:11'!
+!ImmutabilityTest methodsFor: 'tests' stamp: 'HAW 12/Jul/2019 14:37:11'!
 test22retyModificationWorksAsExpectedWithInstVarAtPut
 
 	| testObject newValue instVar1Index |
@@ -391,12 +391,12 @@ test22retyModificationWorksAsExpectedWithInstVarAtPut
 	self assert: newValue equals: (testObject instVarAt: instVar1Index).
 ! !
 
-!ImmutabilityTest methodsFor: 'test support' stamp: 'HAW 7/3/2019 18:27:52'!
+!ImmutabilityTest methodsFor: 'test support' stamp: 'HAW 3/Jul/2019 18:27:52'!
 instVar1
 	
 	^instVar1! !
 
-!ImmutabilityTest methodsFor: 'test support' stamp: 'HAW 7/3/2019 18:20:51'!
+!ImmutabilityTest methodsFor: 'test support' stamp: 'HAW 3/Jul/2019 18:20:51'!
 instVar1: anObject
 
 	instVar1 := anObject ! !

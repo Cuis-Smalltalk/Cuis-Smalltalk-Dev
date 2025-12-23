@@ -1,15 +1,15 @@
-'From Cuis6.3 [latest update: #6283] on 20 March 2024 at 12:50:31 pm'!
+'From Cuis7.7 [latest update: #7779] on 23 December 2025 at 4:39:11 pm'!
 'Description '!
 !provides: 'SUnitJsonReports' 1 1!
 !requires: 'JSON' 1 nil nil!
 
 
 
-!TestCase methodsFor: '*SUnitJsonReports' stamp: 'mir 3/20/2024 17:43:50'!
+!TestCase methodsFor: '*SUnitJsonReports' stamp: 'mir 20/Mar/2024 17:43:50'!
 errorDescription
 	^self failureDescription! !
 
-!TestCase methodsFor: '*SUnitJsonReports' stamp: 'mir 3/20/2024 17:43:16'!
+!TestCase methodsFor: '*SUnitJsonReports' stamp: 'mir 20/Mar/2024 17:43:16'!
 failureDescription
 	^String streamContents: [:stream |
 		self class printOn: stream.
@@ -21,7 +21,7 @@ failureDescription
 				nextPutAll: ': ';
 				nextPutAll: failureString]]! !
 
-!TestResult methodsFor: '*SUnitJsonReports' stamp: 'mir 3/20/2024 17:44:30'!
+!TestResult methodsFor: '*SUnitJsonReports' stamp: 'mir 20/Mar/2024 17:44:30'!
 json
 	| jsonDict |
 	jsonDict := Dictionary new..

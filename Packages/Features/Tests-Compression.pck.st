@@ -1,22 +1,22 @@
-'From Cuis 6.0 [latest update: #5544] on 31 October 2022 at 11:51:22 am'!
+'From Cuis7.7 [latest update: #7779] on 23 December 2025 at 4:40:24 pm'!
 'Description '!
 !provides: 'Tests-Compression' 1 2!
 !requires: 'Compression' 1 22 nil!
-SystemOrganization addCategory: 'Tests-Compression'!
+SystemOrganization addCategory: #'Tests-Compression'!
 
 
-!classDefinition: #ZipCrcTests category: 'Tests-Compression'!
+!classDefinition: #ZipCrcTests category: #'Tests-Compression'!
 TestCase subclass: #ZipCrcTests
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Tests-Compression'!
-!classDefinition: 'ZipCrcTests class' category: 'Tests-Compression'!
+!classDefinition: 'ZipCrcTests class' category: #'Tests-Compression'!
 ZipCrcTests class
 	instanceVariableNames: ''!
 
 
-!ZipCrcTests methodsFor: 'tests' stamp: 'jmv 10/31/2022 11:47:11'!
+!ZipCrcTests methodsFor: 'tests' stamp: 'jmv 31/Oct/2022 11:47:11'!
 testInvalidGZipCrc
 	"See that a wrong CRC raises an appropriate error"
 	| reader writer bytes crcByte |
@@ -38,7 +38,7 @@ testInvalidGZipCrc
 	self should:[reader next: 100] raise: CRCError.
 ! !
 
-!ZipCrcTests methodsFor: 'tests' stamp: 'jmv 10/31/2022 11:47:14'!
+!ZipCrcTests methodsFor: 'tests' stamp: 'jmv 31/Oct/2022 11:47:14'!
 testInvalidZLibCrc
 	"See that a wrong CRC raises an appropriate error"
 	| reader writer bytes crcByte |
@@ -60,7 +60,7 @@ testInvalidZLibCrc
 	self should:[reader next: 100] raise: CRCError.
 ! !
 
-!ZipCrcTests methodsFor: 'tests' stamp: 'jmv 10/31/2022 10:44:31'!
+!ZipCrcTests methodsFor: 'tests' stamp: 'jmv 31/Oct/2022 10:44:31'!
 testInvalidZipCrc
 	"See that a wrong CRC raises an appropriate error"
 	| reader writer bytes |
@@ -83,7 +83,7 @@ testInvalidZipCrc
 	self should:[reader next: 100] raise: CRCError.
 ! !
 
-!ZipCrcTests methodsFor: 'tests' stamp: 'jmv 10/31/2022 10:43:33'!
+!ZipCrcTests methodsFor: 'tests' stamp: 'jmv 31/Oct/2022 10:43:33'!
 testMissingGZipCrc
 	"See that the lack of a CRC raises an appropriate error"
 	| reader writer bytes |
@@ -104,7 +104,7 @@ testMissingGZipCrc
 	self should:[reader next: 100] raise: CRCError.
 ! !
 
-!ZipCrcTests methodsFor: 'tests' stamp: 'jmv 10/31/2022 10:42:47'!
+!ZipCrcTests methodsFor: 'tests' stamp: 'jmv 31/Oct/2022 10:42:47'!
 testMissingZLibCrc
 	"See that the lack of a CRC raises an appropriate error"
 	| reader writer bytes |
@@ -125,7 +125,7 @@ testMissingZLibCrc
 	self should:[reader next: 100] raise: CRCError.
 ! !
 
-!ZipCrcTests methodsFor: 'tests' stamp: 'jmv 10/31/2022 11:05:45'!
+!ZipCrcTests methodsFor: 'tests' stamp: 'jmv 31/Oct/2022 11:05:45'!
 testMissingZipCrc
 	"See that the lack of a CRC does not raise an error"
 	| reader writer bytes readBytes |
@@ -146,7 +146,7 @@ testMissingZipCrc
 	self shouldnt:[reader next: 100] raise: CRCError.
 ! !
 
-!ZipCrcTests methodsFor: 'tests' stamp: 'jmv 10/31/2022 11:07:05'!
+!ZipCrcTests methodsFor: 'tests' stamp: 'jmv 31/Oct/2022 11:07:05'!
 testValidGZipCrc
 	| reader writer bytes |
 	writer := GZipWriteStream on: ByteArray new.
@@ -157,7 +157,7 @@ testValidGZipCrc
 	reader := GZipReadStream on: bytes.
 	self assert: reader upToEnd = 'Hello World' asUtf8Bytes.! !
 
-!ZipCrcTests methodsFor: 'tests' stamp: 'jmv 10/31/2022 11:06:59'!
+!ZipCrcTests methodsFor: 'tests' stamp: 'jmv 31/Oct/2022 11:06:59'!
 testValidZLibCrc
 	| reader writer bytes |
 	writer := ZLibWriteStream on: ByteArray new.
@@ -172,7 +172,7 @@ testValidZLibCrc
 	reader := ZLibReadStream on: bytes.
 	self assert: (reader next: 100) = 'Hello World' asUtf8Bytes.! !
 
-!ZipCrcTests methodsFor: 'tests' stamp: 'jmv 10/31/2022 11:05:59'!
+!ZipCrcTests methodsFor: 'tests' stamp: 'jmv 31/Oct/2022 11:05:59'!
 testValidZipCrc
 	"See that a correct CRC does not raise an error and that we can read what we wrote."
 	| reader writer bytes readBytes |

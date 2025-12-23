@@ -1,34 +1,34 @@
-'From Cuis 5.0 [latest update: #4843] on 6 September 2021 at 12:54:40 pm'!
+'From Cuis7.7 [latest update: #7779] on 23 December 2025 at 4:38:44 pm'!
 'Description '!
 !provides: 'Color-Extras' 1 9!
-SystemOrganization addCategory: 'Color-Extras'!
+SystemOrganization addCategory: #'Color-Extras'!
 
 
-!classDefinition: #ColorExtrasPackage category: 'Color-Extras'!
+!classDefinition: #ColorExtrasPackage category: #'Color-Extras'!
 CodePackage subclass: #ColorExtrasPackage
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Color-Extras'!
-!classDefinition: 'ColorExtrasPackage class' category: 'Color-Extras'!
+!classDefinition: 'ColorExtrasPackage class' category: #'Color-Extras'!
 ColorExtrasPackage class
 	instanceVariableNames: ''!
 
 
-!ColorExtrasPackage class methodsFor: 'installing' stamp: 'jmv 6/1/2018 20:58:19'!
+!ColorExtrasPackage class methodsFor: 'installing' stamp: 'jmv 1/Jun/2018 20:58:19'!
 postPackageInstall
 	"This gets called after installing all the package code"
 
 	Color initializeColorExtras! !
 
-!ColorExtrasPackage class methodsFor: 'installing' stamp: 'jmv 6/1/2018 20:57:48'!
+!ColorExtrasPackage class methodsFor: 'installing' stamp: 'jmv 1/Jun/2018 20:57:48'!
 prePackageInstall
 	"This gets called after creating the package class and installing its code, but before installing the rest of the package code"
 
 	Color classPool declare: #ColorNamesDict from: Undeclared! !
 ColorExtrasPackage prePackageInstall!
 
-!Color methodsFor: '*color-extras-named colors' stamp: 'KenD 12/8/2013 14:59'!
+!Color methodsFor: '*color-extras-named colors' stamp: 'KenD 8/Dec/2013 14:59:00'!
 closestAssocFrom: aColorDict
 	"Answer closest associated color in aColorDict"
 "
@@ -63,7 +63,7 @@ closestAssocFrom: aColorDict
 	
 	^ close! !
 
-!Color methodsFor: '*color-extras-named colors' stamp: 'KenD 1/26/2013 16:33'!
+!Color methodsFor: '*color-extras-named colors' stamp: 'KenD 26/Jan/2013 16:33:00'!
 closestColor
 	"Answer the closest matching color in the colorNames dictionary"
 
@@ -72,7 +72,7 @@ closestColor
 "
 	^ self closestColorFrom: (Color colorNamesDict)! !
 
-!Color methodsFor: '*color-extras-named colors' stamp: 'KenD 1/26/2013 16:36'!
+!Color methodsFor: '*color-extras-named colors' stamp: 'KenD 26/Jan/2013 16:36:00'!
 closestColorAssociation
 	"Answer this color's closest name->color match."
 
@@ -81,7 +81,7 @@ closestColorAssociation
 "	
 	^ self closestAssocFrom: (Color colorNamesDict)! !
 
-!Color methodsFor: '*color-extras-named colors' stamp: 'KenD 1/25/2013 14:31'!
+!Color methodsFor: '*color-extras-named colors' stamp: 'KenD 25/Jan/2013 14:31:00'!
 closestColorFrom: aColorDict
 	"Answer closest associated color"
 "
@@ -89,7 +89,7 @@ closestColorFrom: aColorDict
 "
 	^(self closestAssocFrom: aColorDict) value! !
 
-!Color methodsFor: '*color-extras-named colors' stamp: 'KenD 1/26/2013 16:36'!
+!Color methodsFor: '*color-extras-named colors' stamp: 'KenD 26/Jan/2013 16:36:00'!
 closestColorName
 	"Answer the name symbol of the closest matching color in the colorNames dictionary"
 "
@@ -98,7 +98,7 @@ closestColorName
 	
 	^ self closestNameFrom: (Color colorNamesDict)! !
 
-!Color methodsFor: '*color-extras-named colors' stamp: 'KenD 1/26/2013 16:36'!
+!Color methodsFor: '*color-extras-named colors' stamp: 'KenD 26/Jan/2013 16:36:00'!
 closestNameFrom: aColorDict
 	"Answer closest associated color name"
 "
@@ -106,7 +106,7 @@ closestNameFrom: aColorDict
 "
 	^(self closestAssocFrom: aColorDict) key! !
 
-!Color methodsFor: '*color-extras-selection' stamp: 'KenD 1/30/2013 16:37'!
+!Color methodsFor: '*color-extras-selection' stamp: 'KenD 30/Jan/2013 16:37:00'!
 isBlueGreen
 	"Am I considered BlueGreen ?"
 
@@ -114,13 +114,13 @@ isBlueGreen
 		and: [self red < 0.3]
 			and: [(self green - self blue) abs < 0.1]! !
 
-!Color methodsFor: '*color-extras-selection' stamp: 'KenD 1/30/2013 16:50'!
+!Color methodsFor: '*color-extras-selection' stamp: 'KenD 30/Jan/2013 16:50:00'!
 isBright
 	"Am I considered a Bright color ?"
 
 	^self brightness > 0.6! !
 
-!Color methodsFor: '*color-extras-selection' stamp: 'KenD 1/30/2013 16:40'!
+!Color methodsFor: '*color-extras-selection' stamp: 'KenD 30/Jan/2013 16:40:00'!
 isBrown
 	"Am I considered Brown ?"
 
@@ -129,67 +129,67 @@ isBrown
 			and: [(self red - self green) < 0.5]	
 				and: [(self green - self blue) < 0.3]! !
 
-!Color methodsFor: '*color-extras-selection' stamp: 'KenD 1/30/2013 16:50'!
+!Color methodsFor: '*color-extras-selection' stamp: 'KenD 30/Jan/2013 16:50:00'!
 isDark
 	"Am I considered a Dark color ?"
 
 	^self brightness < 0.5! !
 
-!Color methodsFor: '*color-extras-selection' stamp: 'jmv 12/17/2018 10:45:56'!
+!Color methodsFor: '*color-extras-selection' stamp: 'jmv 17/Dec/2018 10:45:56'!
 isGray
 	"Am I considered Gray  ?"
 
 	^ self saturation < 0.03! !
 
-!Color methodsFor: '*color-extras-selection' stamp: 'KenD 1/30/2013 17:40'!
+!Color methodsFor: '*color-extras-selection' stamp: 'KenD 30/Jan/2013 17:40:00'!
 isGrey
 	"Am I considered Grey  ?"
 
 	^self isGray! !
 
-!Color methodsFor: '*color-extras-selection' stamp: 'jmv 4/19/2013 17:06'!
+!Color methodsFor: '*color-extras-selection' stamp: 'jmv 19/Apr/2013 17:06:00'!
 isLight
 	"Am I considered a Light color ?"
 
 	^self brightness > 0.6! !
 
-!Color methodsFor: '*color-extras-selection' stamp: 'KenD 1/30/2013 16:44'!
+!Color methodsFor: '*color-extras-selection' stamp: 'KenD 30/Jan/2013 16:44:00'!
 isOrange
 	"Am I considered Orange ?"
 
 	^self red > ((self green max: self blue) + 0.2)  
 		and: [self green > (self blue + 0.2)]! !
 
-!Color methodsFor: '*color-extras-selection' stamp: 'KenD 1/30/2013 16:45'!
+!Color methodsFor: '*color-extras-selection' stamp: 'KenD 30/Jan/2013 16:45:00'!
 isPastel
 	"Am I considered Pastel ?"
 
 	^self saturation < 0.4! !
 
-!Color methodsFor: '*color-extras-selection' stamp: 'KenD 1/30/2013 16:46'!
+!Color methodsFor: '*color-extras-selection' stamp: 'KenD 30/Jan/2013 16:46:00'!
 isPink
 	"Am I considered Pink ?"
 
 	^self red > ((self green max: self blue) + 0.3)  
 		and: [self blue > (self green + 0.2)]! !
 
-!Color methodsFor: '*color-extras-selection' stamp: 'KenD 1/30/2013 16:55'!
+!Color methodsFor: '*color-extras-selection' stamp: 'KenD 30/Jan/2013 16:55:00'!
 isSaturated
 	"Am I considered to be a Saturated color ?"
 
 	^self saturation > 0.6! !
 
-!Color class methodsFor: '*color-extras-named colors' stamp: 'jmv 4/17/2015 14:58'!
+!Color class methodsFor: '*color-extras-named colors' stamp: 'jmv 17/Apr/2015 14:58:00'!
 aqua
 
 	^ ColorNamesDict at: #aqua! !
 
-!Color class methodsFor: '*color-extras-named colors' stamp: 'jmv 4/17/2015 14:58'!
+!Color class methodsFor: '*color-extras-named colors' stamp: 'jmv 17/Apr/2015 14:58:00'!
 beige
 
 	^ ColorNamesDict at: #beige! !
 
-!Color class methodsFor: '*color-extras-selection' stamp: 'KenD 1/30/2013 17:26'!
+!Color class methodsFor: '*color-extras-selection' stamp: 'KenD 30/Jan/2013 17:26:00'!
 blueColorDict
 	"Answer a dictionary of named colors considered Blue"
 "
@@ -197,7 +197,7 @@ blueColorDict
 "
 	^self blueColorDict: ColorNamesDict! !
 
-!Color class methodsFor: '*color-extras-selection' stamp: 'KenD 1/30/2013 17:24'!
+!Color class methodsFor: '*color-extras-selection' stamp: 'KenD 30/Jan/2013 17:24:00'!
 blueColorDict: aColorDict
 	"Answer a dictionary of named colors considered Blue"
 
@@ -211,7 +211,7 @@ blueColorDict: aColorDict
 		].
 	^dict! !
 
-!Color class methodsFor: '*color-extras-selection' stamp: 'KenD 1/30/2013 17:28'!
+!Color class methodsFor: '*color-extras-selection' stamp: 'KenD 30/Jan/2013 17:28:00'!
 blueGreenColorDict
 	"Answer a dictionary of named colors considered Blue"
 "
@@ -219,7 +219,7 @@ blueGreenColorDict
 "
 	^self blueGreenColorDict: ColorNamesDict! !
 
-!Color class methodsFor: '*color-extras-selection' stamp: 'KenD 1/30/2013 17:29'!
+!Color class methodsFor: '*color-extras-selection' stamp: 'KenD 30/Jan/2013 17:29:00'!
 blueGreenColorDict: aColorDict
 	"Answer a dictionary of named colors considered Blue"
 
@@ -233,7 +233,7 @@ blueGreenColorDict: aColorDict
 		].
 	^dict! !
 
-!Color class methodsFor: '*color-extras-selection' stamp: 'KenD 1/30/2013 17:31'!
+!Color class methodsFor: '*color-extras-selection' stamp: 'KenD 30/Jan/2013 17:31:00'!
 brightColorDict
 	"Answer a dictionary of named colors considered Bright"
 "
@@ -241,7 +241,7 @@ brightColorDict
 "
 	^self brightColorDict: ColorNamesDict! !
 
-!Color class methodsFor: '*color-extras-selection' stamp: 'KenD 1/30/2013 17:31'!
+!Color class methodsFor: '*color-extras-selection' stamp: 'KenD 30/Jan/2013 17:31:00'!
 brightColorDict: aColorDict
 	"Answer a dictionary of named colors considered Bright"
 
@@ -253,12 +253,12 @@ brightColorDict: aColorDict
 		].
 	^dict! !
 
-!Color class methodsFor: '*color-extras-named colors' stamp: 'jmv 4/17/2015 14:58'!
+!Color class methodsFor: '*color-extras-named colors' stamp: 'jmv 17/Apr/2015 14:58:00'!
 brightGreen
 
 	^ ColorNamesDict at: #brightGreen! !
 
-!Color class methodsFor: '*color-extras-selection' stamp: 'KenD 1/30/2013 17:34'!
+!Color class methodsFor: '*color-extras-selection' stamp: 'KenD 30/Jan/2013 17:34:00'!
 brownColorDict
 	"Answer a dictionary of named colors considered Brown"
 "
@@ -266,7 +266,7 @@ brownColorDict
 "
 	^self brownColorDict: ColorNamesDict! !
 
-!Color class methodsFor: '*color-extras-selection' stamp: 'KenD 1/30/2013 17:33'!
+!Color class methodsFor: '*color-extras-selection' stamp: 'KenD 30/Jan/2013 17:33:00'!
 brownColorDict: aColorDict
 	"Answer a dictionary of named colors considered Brown"
 
@@ -280,13 +280,13 @@ brownColorDict: aColorDict
 		].
 	^dict! !
 
-!Color class methodsFor: '*color-extras-color name lookup' stamp: 'KenD 1/26/2013 20:13'!
+!Color class methodsFor: '*color-extras-color name lookup' stamp: 'KenD 26/Jan/2013 20:13:00'!
 colorNames
 	"Answer the current dictionary of  name->color associations."
 
 	^ColorNamesDict keys! !
 
-!Color class methodsFor: '*color-extras-cached state access' stamp: 'jmv 3/27/2018 10:51:21'!
+!Color class methodsFor: '*color-extras-cached state access' stamp: 'jmv 27/Mar/2018 10:51:21'!
 colorNamesDict
 	"Answer the current dictionary of  name->color associations."
 "
@@ -294,12 +294,12 @@ colorNamesDict
 "
 	^ColorNamesDict! !
 
-!Color class methodsFor: '*color-extras-named colors' stamp: 'jmv 4/17/2015 14:59'!
+!Color class methodsFor: '*color-extras-named colors' stamp: 'jmv 17/Apr/2015 14:59:00'!
 darkBlue
 
 	^ ColorNamesDict at: #darkBlue! !
 
-!Color class methodsFor: '*color-extras-selection' stamp: 'KenD 1/30/2013 17:36'!
+!Color class methodsFor: '*color-extras-selection' stamp: 'KenD 30/Jan/2013 17:36:00'!
 darkColorDict
 	"Answer a dictionary of named colors considered Dark"
 "
@@ -307,7 +307,7 @@ darkColorDict
 "
 	^self darkColorDict: ColorNamesDict! !
 
-!Color class methodsFor: '*color-extras-selection' stamp: 'KenD 1/30/2013 17:37'!
+!Color class methodsFor: '*color-extras-selection' stamp: 'KenD 30/Jan/2013 17:37:00'!
 darkColorDict: aColorDict
 	"Answer a dictionary of named colors considered Dark"
 
@@ -319,22 +319,22 @@ darkColorDict: aColorDict
 		].
 	^dict! !
 
-!Color class methodsFor: '*color-extras-named colors' stamp: 'jmv 4/17/2015 14:59'!
+!Color class methodsFor: '*color-extras-named colors' stamp: 'jmv 17/Apr/2015 14:59:00'!
 darkGreen
 
 	^ ColorNamesDict at: #darkGreen! !
 
-!Color class methodsFor: '*color-extras-named colors' stamp: 'jmv 4/17/2015 14:59'!
+!Color class methodsFor: '*color-extras-named colors' stamp: 'jmv 17/Apr/2015 14:59:00'!
 darkPink
 
 	^ ColorNamesDict at: #darkPink! !
 
-!Color class methodsFor: '*color-extras-named colors' stamp: 'jmv 4/17/2015 14:59'!
+!Color class methodsFor: '*color-extras-named colors' stamp: 'jmv 17/Apr/2015 14:59:00'!
 darkPurple
 
 	^ ColorNamesDict at: #darkPurple! !
 
-!Color class methodsFor: '*color-extras-color name lookup' stamp: 'KenD 1/28/2013 20:34'!
+!Color class methodsFor: '*color-extras-color name lookup' stamp: 'KenD 28/Jan/2013 20:34:00'!
 defaultColorNamesDictionary
 	"Answer a amall but  useful name->color dictionary"
 	
@@ -353,7 +353,7 @@ defaultColorNamesDictionary
 	
 	^defaultDict! !
 
-!Color class methodsFor: '*color-extras-color name lookup' stamp: 'KenD 2/1/2013 14:39'!
+!Color class methodsFor: '*color-extras-color name lookup' stamp: 'KenD 1/Feb/2013 14:39:00'!
 doesNotUnderstand: aMessage
 	"Some code takes
 		 Color colorNames 
@@ -366,7 +366,7 @@ doesNotUnderstand: aMessage
 		at: (aMessage selector)
 		ifAbsent: [super doesNotUnderstand: aMessage]! !
 
-!Color class methodsFor: '*color-extras-color name lookup' stamp: 'KenD 1/26/2013 20:51'!
+!Color class methodsFor: '*color-extras-color name lookup' stamp: 'KenD 26/Jan/2013 20:51:00'!
 exactColorNamed: aColorName
 
 	"Answer color matching name or nil 
@@ -374,12 +374,12 @@ exactColorNamed: aColorName
 	
 	^ ColorNamesDict at: (aColorName asSymbol) ifAbsent: [nil]! !
 
-!Color class methodsFor: '*color-extras-named colors' stamp: 'jmv 4/17/2015 14:59'!
+!Color class methodsFor: '*color-extras-named colors' stamp: 'jmv 17/Apr/2015 14:59:00'!
 forestGreen
 
 	^ ColorNamesDict at: #forestGreen! !
 
-!Color class methodsFor: '*color-extras-instance creation' stamp: 'jmv 9/6/2021 11:38:53'!
+!Color class methodsFor: '*color-extras-instance creation' stamp: 'jmv 6/Sep/2021 11:38:53'!
 fromString: aString
 	"For HTML color spec: #FFCCAA. Also support named colors.
 	See http://www.w3schools.com/cssref/css_colors_legal.asp"
@@ -408,7 +408,7 @@ fromString: aString
 
 	^self exactColorNamed: aString! !
 
-!Color class methodsFor: '*color-extras-selection' stamp: 'KenD 1/30/2013 17:41'!
+!Color class methodsFor: '*color-extras-selection' stamp: 'KenD 30/Jan/2013 17:41:00'!
 grayColorDict: aColorDict
 	"Answer a dictionary of named colors considered Grey"
 
@@ -422,7 +422,7 @@ grayColorDict: aColorDict
 		].
 	^dict! !
 
-!Color class methodsFor: '*color-extras-selection' stamp: 'KenD 1/30/2013 17:38'!
+!Color class methodsFor: '*color-extras-selection' stamp: 'KenD 30/Jan/2013 17:38:00'!
 greenColorDict
 	"Answer a dictionary of named colors considered Green"
 "
@@ -430,7 +430,7 @@ greenColorDict
 "
 	^self greenColorDict: ColorNamesDict! !
 
-!Color class methodsFor: '*color-extras-selection' stamp: 'KenD 1/30/2013 17:38'!
+!Color class methodsFor: '*color-extras-selection' stamp: 'KenD 30/Jan/2013 17:38:00'!
 greenColorDict: aColorDict
 	"Answer a dictionary of named colors considered Green"
 
@@ -444,12 +444,12 @@ greenColorDict: aColorDict
 		].
 	^dict! !
 
-!Color class methodsFor: '*color-extras-named colors' stamp: 'jmv 4/17/2015 14:59'!
+!Color class methodsFor: '*color-extras-named colors' stamp: 'jmv 17/Apr/2015 14:59:00'!
 grey
 
 	^ ColorNamesDict at: #grey! !
 
-!Color class methodsFor: '*color-extras-selection' stamp: 'KenD 1/30/2013 17:41'!
+!Color class methodsFor: '*color-extras-selection' stamp: 'KenD 30/Jan/2013 17:41:00'!
 greyColorDict
 	"Answer a dictionary of named colors considered Grey"
 "
@@ -457,7 +457,7 @@ greyColorDict
 "
 	^self greyColorDict: ColorNamesDict! !
 
-!Color class methodsFor: '*color-extras-selection' stamp: 'KenD 1/30/2013 17:40'!
+!Color class methodsFor: '*color-extras-selection' stamp: 'KenD 30/Jan/2013 17:40:00'!
 greyColorDict: aColorDict
 	"Answer a dictionary of named colors considered Grey"
 
@@ -471,28 +471,28 @@ greyColorDict: aColorDict
 		].
 	^dict! !
 
-!Color class methodsFor: '*color-extras-named colors' stamp: 'jmv 4/17/2015 14:59'!
+!Color class methodsFor: '*color-extras-named colors' stamp: 'jmv 17/Apr/2015 14:59:00'!
 hotPink
 
 	^ ColorNamesDict at: #hotPink! !
 
-!Color class methodsFor: '*color-extras-named colors' stamp: 'jmv 4/17/2015 14:59'!
+!Color class methodsFor: '*color-extras-named colors' stamp: 'jmv 17/Apr/2015 14:59:00'!
 indigo
 
 	^ ColorNamesDict at: #indigo! !
 
-!Color class methodsFor: '*color-extras-initialization' stamp: 'jmv 3/27/2018 10:52:59'!
+!Color class methodsFor: '*color-extras-initialization' stamp: 'jmv 27/Mar/2018 10:52:59'!
 initializeColorExtras
 
 	ColorNamesDict ifNil: [
 		self setColorNamesDict: self defaultColorNamesDictionary ]! !
 
-!Color class methodsFor: '*color-extras-named colors' stamp: 'jmv 4/17/2015 14:59'!
+!Color class methodsFor: '*color-extras-named colors' stamp: 'jmv 17/Apr/2015 14:59:00'!
 lavender
 
 	^ ColorNamesDict at: #lavender! !
 
-!Color class methodsFor: '*color-extras-selection' stamp: 'KenD 1/30/2013 17:44'!
+!Color class methodsFor: '*color-extras-selection' stamp: 'KenD 30/Jan/2013 17:44:00'!
 lightColorDict
 	"Answer a dictionary of named colors considered light"
 "
@@ -500,68 +500,68 @@ lightColorDict
 "
 	^self lightColorDict: ColorNamesDict! !
 
-!Color class methodsFor: '*color-extras-selection' stamp: 'KenD 1/30/2013 17:43'!
+!Color class methodsFor: '*color-extras-selection' stamp: 'KenD 30/Jan/2013 17:43:00'!
 lightColorDict: aColorDict
 	"Answer a dictionary of named colors considered Liight"
 
 	^self brightColorDict: aColorDict! !
 
-!Color class methodsFor: '*color-extras-named colors' stamp: 'jmv 4/17/2015 15:00'!
+!Color class methodsFor: '*color-extras-named colors' stamp: 'jmv 17/Apr/2015 15:00:00'!
 lightPink
 
 	^ ColorNamesDict at: #lightPink! !
 
-!Color class methodsFor: '*color-extras-named colors' stamp: 'jmv 4/17/2015 15:00'!
+!Color class methodsFor: '*color-extras-named colors' stamp: 'jmv 17/Apr/2015 15:00:00'!
 lightPurple
 
 	^ ColorNamesDict at: #lightPurple! !
 
-!Color class methodsFor: '*color-extras-named colors' stamp: 'jmv 4/17/2015 15:00'!
+!Color class methodsFor: '*color-extras-named colors' stamp: 'jmv 17/Apr/2015 15:00:00'!
 lilac
 
 	^ ColorNamesDict at: #lilac! !
 
-!Color class methodsFor: '*color-extras-named colors' stamp: 'jmv 4/17/2015 15:00'!
+!Color class methodsFor: '*color-extras-named colors' stamp: 'jmv 17/Apr/2015 15:00:00'!
 lime
 
 	^ ColorNamesDict at: #lime! !
 
-!Color class methodsFor: '*color-extras-named colors' stamp: 'jmv 4/17/2015 15:00'!
+!Color class methodsFor: '*color-extras-named colors' stamp: 'jmv 17/Apr/2015 15:00:00'!
 limeGreen
 
 	^ ColorNamesDict at: #limeGreen! !
 
-!Color class methodsFor: '*color-extras-named colors' stamp: 'jmv 4/17/2015 15:00'!
+!Color class methodsFor: '*color-extras-named colors' stamp: 'jmv 17/Apr/2015 15:00:00'!
 maroon
 
 	^ ColorNamesDict at: #maroon! !
 
-!Color class methodsFor: '*color-extras-named colors' stamp: 'jmv 4/17/2015 15:00'!
+!Color class methodsFor: '*color-extras-named colors' stamp: 'jmv 17/Apr/2015 15:00:00'!
 mauve
 
 	^ ColorNamesDict at: #mauve! !
 
-!Color class methodsFor: '*color-extras-named colors' stamp: 'jmv 4/17/2015 15:00'!
+!Color class methodsFor: '*color-extras-named colors' stamp: 'jmv 17/Apr/2015 15:00:00'!
 mustard
 
 	^ ColorNamesDict at: #mustard! !
 
-!Color class methodsFor: '*color-extras-named colors' stamp: 'jmv 4/17/2015 15:00'!
+!Color class methodsFor: '*color-extras-named colors' stamp: 'jmv 17/Apr/2015 15:00:00'!
 navyBlue
 
 	^ ColorNamesDict at: #navyBlue! !
 
-!Color class methodsFor: '*color-extras-named colors' stamp: 'jmv 4/17/2015 15:00'!
+!Color class methodsFor: '*color-extras-named colors' stamp: 'jmv 17/Apr/2015 15:00:00'!
 olive
 
 	^ ColorNamesDict at: #olive! !
 
-!Color class methodsFor: '*color-extras-named colors' stamp: 'jmv 4/17/2015 15:00'!
+!Color class methodsFor: '*color-extras-named colors' stamp: 'jmv 17/Apr/2015 15:00:00'!
 oliveGreen
 
 	^ ColorNamesDict at: #oliveGreen! !
 
-!Color class methodsFor: '*color-extras-selection' stamp: 'KenD 1/30/2013 17:46'!
+!Color class methodsFor: '*color-extras-selection' stamp: 'KenD 30/Jan/2013 17:46:00'!
 orangeColorDict
 	"Answer a dictionary of named colors considered Orange"
 "
@@ -569,7 +569,7 @@ orangeColorDict
 "
 	^self orangeColorDict: ColorNamesDict! !
 
-!Color class methodsFor: '*color-extras-selection' stamp: 'KenD 1/30/2013 17:46'!
+!Color class methodsFor: '*color-extras-selection' stamp: 'KenD 30/Jan/2013 17:46:00'!
 orangeColorDict: aColorDict
 	"Answer a dictionary of named colors considered Orange"
 
@@ -583,12 +583,12 @@ orangeColorDict: aColorDict
 		].
 	^dict! !
 
-!Color class methodsFor: '*color-extras-named colors' stamp: 'jmv 4/17/2015 15:00'!
+!Color class methodsFor: '*color-extras-named colors' stamp: 'jmv 17/Apr/2015 15:00:00'!
 paleGreen
 
 	^ ColorNamesDict at: #paleGreen! !
 
-!Color class methodsFor: '*color-extras-selection' stamp: 'KenD 1/30/2013 17:48'!
+!Color class methodsFor: '*color-extras-selection' stamp: 'KenD 30/Jan/2013 17:48:00'!
 pastelColorDict
 	"Answer a dictionary of named colors considered Pastel"
 "
@@ -596,7 +596,7 @@ pastelColorDict
 "
 	^self pastelColorDict: ColorNamesDict! !
 
-!Color class methodsFor: '*color-extras-selection' stamp: 'KenD 1/30/2013 17:48'!
+!Color class methodsFor: '*color-extras-selection' stamp: 'KenD 30/Jan/2013 17:48:00'!
 pastelColorDict: aColorDict
 	"Answer a dictionary of named colors considered Bright"
 
@@ -608,17 +608,17 @@ pastelColorDict: aColorDict
 		].
 	^dict! !
 
-!Color class methodsFor: '*color-extras-named colors' stamp: 'jmv 4/17/2015 15:00'!
+!Color class methodsFor: '*color-extras-named colors' stamp: 'jmv 17/Apr/2015 15:00:00'!
 peach
 
 	^ ColorNamesDict at: #peach! !
 
-!Color class methodsFor: '*color-extras-named colors' stamp: 'jmv 4/17/2015 15:00'!
+!Color class methodsFor: '*color-extras-named colors' stamp: 'jmv 17/Apr/2015 15:00:00'!
 periwinkle
 
 	^ ColorNamesDict at: #periwinkle! !
 
-!Color class methodsFor: '*color-extras-selection' stamp: 'KenD 1/30/2013 17:50'!
+!Color class methodsFor: '*color-extras-selection' stamp: 'KenD 30/Jan/2013 17:50:00'!
 pinkColorDict
 	"Answer a dictionary of named colors considered Pink"
 "
@@ -626,7 +626,7 @@ pinkColorDict
 "
 	^self pinkColorDict: ColorNamesDict! !
 
-!Color class methodsFor: '*color-extras-selection' stamp: 'KenD 1/30/2013 17:50'!
+!Color class methodsFor: '*color-extras-selection' stamp: 'KenD 30/Jan/2013 17:50:00'!
 pinkColorDict: aColorDict
 	"Answer a dictionary of named colors considered Pink"
 
@@ -640,7 +640,7 @@ pinkColorDict: aColorDict
 		].
 	^dict! !
 
-!Color class methodsFor: '*color-extras-selection' stamp: 'KenD 1/30/2013 17:52'!
+!Color class methodsFor: '*color-extras-selection' stamp: 'KenD 30/Jan/2013 17:52:00'!
 purpleColorDict
 	"Answer a dictionary of named colors considered Purple"
 "
@@ -648,7 +648,7 @@ purpleColorDict
 "
 	^self purpleColorDict: ColorNamesDict! !
 
-!Color class methodsFor: '*color-extras-selection' stamp: 'KenD 1/30/2013 17:52'!
+!Color class methodsFor: '*color-extras-selection' stamp: 'KenD 30/Jan/2013 17:52:00'!
 purpleColorDict: aColorDict
 	"Answer a dictionary of named colors considered Pink"
 
@@ -662,7 +662,7 @@ purpleColorDict: aColorDict
 		].
 	^dict! !
 
-!Color class methodsFor: '*color-extras-selection' stamp: 'KenD 1/30/2013 17:54'!
+!Color class methodsFor: '*color-extras-selection' stamp: 'KenD 30/Jan/2013 17:54:00'!
 redColorDict
 	"Answer a dictionary of named colors considered Red"
 "
@@ -670,7 +670,7 @@ redColorDict
 "
 	^self redColorDict: ColorNamesDict! !
 
-!Color class methodsFor: '*color-extras-selection' stamp: 'KenD 1/30/2013 17:53'!
+!Color class methodsFor: '*color-extras-selection' stamp: 'KenD 30/Jan/2013 17:53:00'!
 redColorDict: aColorDict
 	"Answer a dictionary of named colors considered Red"
 
@@ -684,17 +684,17 @@ redColorDict: aColorDict
 		].
 	^dict! !
 
-!Color class methodsFor: '*color-extras-named colors' stamp: 'jmv 4/17/2015 15:01'!
+!Color class methodsFor: '*color-extras-named colors' stamp: 'jmv 17/Apr/2015 15:01:00'!
 royalBlue
 
 	^ ColorNamesDict at: #royalBlue! !
 
-!Color class methodsFor: '*color-extras-named colors' stamp: 'jmv 4/17/2015 15:01'!
+!Color class methodsFor: '*color-extras-named colors' stamp: 'jmv 17/Apr/2015 15:01:00'!
 salmon
 
 	^ ColorNamesDict at: #salmon! !
 
-!Color class methodsFor: '*color-extras-selection' stamp: 'KenD 1/30/2013 17:56'!
+!Color class methodsFor: '*color-extras-selection' stamp: 'KenD 30/Jan/2013 17:56:00'!
 saturatedColorDict
 	"Answer a dictionary of named colors considered Saturated"
 "
@@ -702,7 +702,7 @@ saturatedColorDict
 "
 	^self saturatedColorDict: ColorNamesDict! !
 
-!Color class methodsFor: '*color-extras-selection' stamp: 'KenD 1/30/2013 17:55'!
+!Color class methodsFor: '*color-extras-selection' stamp: 'KenD 30/Jan/2013 17:55:00'!
 saturatedColorDict: aColorDict
 	"Answer a dictionary of named colors considered Saturated"
 
@@ -714,12 +714,12 @@ saturatedColorDict: aColorDict
 		].
 	^dict! !
 
-!Color class methodsFor: '*color-extras-named colors' stamp: 'jmv 4/17/2015 15:01'!
+!Color class methodsFor: '*color-extras-named colors' stamp: 'jmv 17/Apr/2015 15:01:00'!
 seaGreen
 
 	^ ColorNamesDict at: #seaGreen! !
 
-!Color class methodsFor: '*color-extras-color name lookup' stamp: 'KenD 7/25/2014 21:22'!
+!Color class methodsFor: '*color-extras-color name lookup' stamp: 'KenD 25/Jul/2014 21:22:00'!
 setColorNamesDict: aNameColorDictionary
 	"Answer the current dictionary of  name->color associations."
 	
@@ -733,17 +733,17 @@ setColorNamesDict: aNameColorDictionary
 
 	ColorNamesDict := aNameColorDictionary! !
 
-!Color class methodsFor: '*color-extras-named colors' stamp: 'jmv 4/17/2015 15:01'!
+!Color class methodsFor: '*color-extras-named colors' stamp: 'jmv 17/Apr/2015 15:01:00'!
 skyBlue
 
 	^ ColorNamesDict at: #skyBlue! !
 
-!Color class methodsFor: '*color-extras-named colors' stamp: 'jmv 4/17/2015 15:01'!
+!Color class methodsFor: '*color-extras-named colors' stamp: 'jmv 17/Apr/2015 15:01:00'!
 teal
 
 	^ ColorNamesDict at: #teal! !
 
-!Color class methodsFor: '*color-extras-color name lookup' stamp: 'jmv 3/10/2018 20:42:11'!
+!Color class methodsFor: '*color-extras-color name lookup' stamp: 'jmv 10/Mar/2018 20:42:11'!
 traditionalColorNamesDictionary
 	"Answer a dictionary of Squeak traditional name->color associations.."
 
@@ -779,17 +779,17 @@ traditionalColorNamesDictionary
 	^nameDict
 ! !
 
-!Color class methodsFor: '*color-extras-named colors' stamp: 'jmv 4/17/2015 15:01'!
+!Color class methodsFor: '*color-extras-named colors' stamp: 'jmv 17/Apr/2015 15:01:00'!
 turquoise
 
 	^ ColorNamesDict at: #turquoise! !
 
-!Color class methodsFor: '*color-extras-named colors' stamp: 'jmv 4/17/2015 15:01'!
+!Color class methodsFor: '*color-extras-named colors' stamp: 'jmv 17/Apr/2015 15:01:00'!
 violet
 
 	^ ColorNamesDict at: #violet! !
 
-!Color class methodsFor: '*color-extras-color name lookup' stamp: 'jmv 6/30/2014 15:22'!
+!Color class methodsFor: '*color-extras-color name lookup' stamp: 'jmv 30/Jun/2014 15:22:00'!
 xkcdFirst48ColorNamesDictionary
 	"XKCD color names are based on a survey oc colors people call by the same name.
 	 http://blog.xkcd.com/2010/05/03/color-survey-results/"
@@ -854,7 +854,7 @@ xkcdFirst48ColorNamesDictionary
 
 ! !
 
-!Color class methodsFor: '*color-extras-selection' stamp: 'KenD 1/30/2013 17:26'!
+!Color class methodsFor: '*color-extras-selection' stamp: 'KenD 30/Jan/2013 17:26:00'!
 yellowColorDict
 	"Answer a dictionary of named colors considered Yellow"
 "
@@ -862,7 +862,7 @@ yellowColorDict
 "
 	^self yellowColorDict: ColorNamesDict! !
 
-!Color class methodsFor: '*color-extras-selection' stamp: 'KenD 1/30/2013 17:19'!
+!Color class methodsFor: '*color-extras-selection' stamp: 'KenD 30/Jan/2013 17:19:00'!
 yellowColorDict: aColorDict
 	"Answer a dictionary of named colors considered Yellow"
 

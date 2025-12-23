@@ -1,4 +1,4 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3622] on 21 February 2019 at 5:15:32 pm'!
+'From Cuis7.7 [latest update: #7779] on 23 December 2025 at 4:40:17 pm'!
 'Description '!
 !provides: 'Tests-Color-Extras' 1 1!
 !requires: 'Color-Extras' 1 7 nil!
@@ -16,7 +16,7 @@ ColorTest class
 	instanceVariableNames: ''!
 
 
-!ColorTest methodsFor: 'tests' stamp: 'sqr 12/14/2018 20:31:38'!
+!ColorTest methodsFor: 'tests' stamp: 'sqr 14/Dec/2018 20:31:38'!
 testIsGrey
 
 	self assert: Color black isGrey.

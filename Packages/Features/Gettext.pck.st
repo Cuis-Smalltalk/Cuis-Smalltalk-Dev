@@ -1,4 +1,4 @@
-'From Cuis7.1 [latest update: #6387] on 21 May 2024 at 11:07:07 am'!
+'From Cuis7.7 [latest update: #7779] on 23 December 2025 at 4:38:57 pm'!
 'Description '!
 !provides: 'Gettext' 1 31!
 !requires: 'Locales' 1 12 nil!
@@ -155,14 +155,14 @@ You can use me to browse all methods sending translation messages to non-string 
 
 	TranslatedReceiverFinder browseNonLiteralReceivers!
 
-!GetTextExporter methodsFor: 'exporting'!
+!GetTextExporter methodsFor: 'exporting' stamp: ''!
 appendTranslations: domains 
 
 	self 
 		appendTranslations: domains 
 		for: self class defaultSelectors ! !
 
-!GetTextExporter methodsFor: 'exporting'!
+!GetTextExporter methodsFor: 'exporting' stamp: ''!
 appendTranslations: domains for: someSelectors
 	"Append translations in the given domains.
 	Will be done by searching for strings receiving the given selectors"
@@ -171,13 +171,13 @@ appendTranslations: domains for: someSelectors
 		self appendStringReceivers: selector into: domains]
 ! !
 
-!GetTextExporter methodsFor: 'exporting' stamp: 'hlsf 3/5/2022 14:32:37'!
+!GetTextExporter methodsFor: 'exporting' stamp: 'hlsf 5/Mar/2022 14:32:37'!
 dirNameDomain: domain
 "Answer a file name for the domain."
 	^ 'po' asDirectoryEntry / domain // (domain , '.pot')
 ! !
 
-!GetTextExporter methodsFor: 'exporting' stamp: 'drgeo 9/10/2022 22:24:17'!
+!GetTextExporter methodsFor: 'exporting' stamp: 'drgeo 10/Sep/2022 22:24:17'!
 exportFor: someSelectors
 "Export translation files. the file extention is 'pot'"
 	| domains |
@@ -186,12 +186,12 @@ exportFor: someSelectors
 	domains 	keysAndValuesDo: [:domainName :value | 	
 		self export: value 	domain: domainName]! !
 
-!GetTextExporter methodsFor: 'exporting' stamp: 'hlsf 3/5/2022 14:48:19'!
+!GetTextExporter methodsFor: 'exporting' stamp: 'hlsf 5/Mar/2022 14:48:19'!
 exportTemplate
 	"GetTextExporter new exportTemplate"
 	self exportFor: self class defaultSelectors ! !
 
-!GetTextExporter methodsFor: 'file out' stamp: 'hlsf 3/5/2022 14:41:32'!
+!GetTextExporter methodsFor: 'file out' stamp: 'hlsf 5/Mar/2022 14:41:32'!
 exportBody: literals
 	"Export a gettext file body. literals is a dictionary of keyword ->
 	#(MethodReference...) in the textDomain."
@@ -222,15 +222,15 @@ exportBody: literals
 		self exportRecordHeader: comment.
 		self exportPhrase: msgid]! !
 
-!GetTextExporter methodsFor: 'accessing'!
+!GetTextExporter methodsFor: 'accessing' stamp: ''!
 stream
 	^ stream! !
 
-!GetTextExporter methodsFor: 'accessing'!
+!GetTextExporter methodsFor: 'accessing' stamp: ''!
 stream: aStream
 	stream _ aStream! !
 
-!GetTextExporter methodsFor: 'private' stamp: 'hlsf 3/5/2022 12:18:51'!
+!GetTextExporter methodsFor: 'private' stamp: 'hlsf 5/Mar/2022 12:18:51'!
 appendStringReceivers: aSymbol into: domains
 	| literals references domainName methodReference keywords found |
 	
@@ -247,7 +247,7 @@ appendStringReceivers: aSymbol into: domains
 	]. 
 ! !
 
-!GetTextExporter methodsFor: 'private' stamp: 'hlsf 3/5/2022 12:42:28'!
+!GetTextExporter methodsFor: 'private' stamp: 'hlsf 5/Mar/2022 12:42:28'!
 createHeaders
 	| headers |
 	headers _ OrderedCollection new.
@@ -262,7 +262,7 @@ createHeaders
 	headers add: 'X-Cuis-SystemVersion' -> (SystemVersion current asString).
 	^ headers! !
 
-!GetTextExporter methodsFor: 'private'!
+!GetTextExporter methodsFor: 'private' stamp: ''!
 currentDateAndTime
 	^ String
 		streamContents: [:aStream | 
@@ -274,7 +274,7 @@ currentDateAndTime
 				on: aStream.
 			aStream nextPutAll: '-0000']! !
 
-!GetTextExporter methodsFor: 'private' stamp: 'hlsf 3/5/2022 14:43:11'!
+!GetTextExporter methodsFor: 'private' stamp: 'hlsf 5/Mar/2022 14:43:11'!
 export: literals domain: domainName 
 "Export a gettext file in a category. literals is a dictionary of keyword -> #(MethodReference...) in the textDomain."
 	| fileEntry |	
@@ -285,7 +285,7 @@ export: literals domain: domainName
 	self exportBody: literals] 		
 		ensure: 	[stream close]! !
 
-!GetTextExporter methodsFor: 'private' stamp: 'hlsf 3/5/2022 12:48:57'!
+!GetTextExporter methodsFor: 'private' stamp: 'hlsf 5/Mar/2022 12:48:57'!
 exportHeader: domainName
 	| headers |
 	self exportTag: 'msgid' msg: ''.
@@ -295,7 +295,7 @@ exportHeader: domainName
 	headers do: [:each | self exportHeaderLineKey: each key value: each value].
 	stream lf! !
 
-!GetTextExporter methodsFor: 'private' stamp: 'hlsf 3/5/2022 12:48:29'!
+!GetTextExporter methodsFor: 'private' stamp: 'hlsf 5/Mar/2022 12:48:29'!
 exportHeaderLineKey: keyString value: valueString 
 	stream nextPut: $";
 		 nextPutAll: keyString;
@@ -306,7 +306,7 @@ exportHeaderLineKey: keyString value: valueString
 		 nextPut: $";
 		 lf.! !
 
-!GetTextExporter methodsFor: 'private' stamp: 'hlsf 3/5/2022 14:38:35'!
+!GetTextExporter methodsFor: 'private' stamp: 'hlsf 5/Mar/2022 14:38:35'!
 exportPhrase: phraseString
 	phraseString ifEmpty: [^ self].
 	self exportTag: 'msgid' msg: phraseString.
@@ -314,14 +314,14 @@ exportPhrase: phraseString
 	stream lf
 ! !
 
-!GetTextExporter methodsFor: 'private' stamp: 'hlsf 3/5/2022 12:56:23'!
+!GetTextExporter methodsFor: 'private' stamp: 'hlsf 5/Mar/2022 12:56:23'!
 exportRecordHeader: context
 	stream 
 		nextPutAll: '#: ';
 		nextPutAll: context;
 		lf.! !
 
-!GetTextExporter methodsFor: 'private' stamp: 'drgeo 9/10/2022 22:32:39'!
+!GetTextExporter methodsFor: 'private' stamp: 'drgeo 10/Sep/2022 22:32:39'!
 exportTag: tag msg: aString 
 	| pos end line |
 	(aString indexOf: Character lf)	 = 0
@@ -341,7 +341,7 @@ exportTag: tag msg: aString
 						 lf.
 					pos _ end + 1]]! !
 
-!GetTextExporter methodsFor: 'private' stamp: 'hlsf 3/5/2022 12:54:57'!
+!GetTextExporter methodsFor: 'private' stamp: 'hlsf 5/Mar/2022 12:54:57'!
 exportTag: tag singleLine: aString 
 	stream nextPutAll: tag.
 	stream space.
@@ -351,7 +351,7 @@ exportTag: tag singleLine: aString
 	stream nextPut: $".
 	stream lf! !
 
-!GetTextExporter methodsFor: 'private' stamp: 'drgeo 9/10/2022 22:37:22'!
+!GetTextExporter methodsFor: 'private' stamp: 'drgeo 10/Sep/2022 22:37:22'!
 formatReplacements
 	| replacements |
 	replacements _ OrderedCollection new.
@@ -361,7 +361,7 @@ formatReplacements
 	replacements add: '"' -> '\"'.
 	^ replacements! !
 
-!GetTextExporter methodsFor: 'private'!
+!GetTextExporter methodsFor: 'private' stamp: ''!
 formatString: aString 
 	| result |
 	result _ aString.
@@ -369,31 +369,31 @@ formatString: aString
 		do: [:each | result _ result copyReplaceAll: each key with: each value].
 	^ result! !
 
-!GetTextExporter methodsFor: 'private'!
+!GetTextExporter methodsFor: 'private' stamp: ''!
 getTextDomainForClassCategory: aClassCategory
 	^TextDomainManager domainForClassCategory:  aClassCategory
 		! !
 
-!GetTextExporter class methodsFor: 'utilities'!
+!GetTextExporter class methodsFor: 'utilities' stamp: ''!
 exportTemplate
 	"GetTextExporter exportTemplate"
 	self new exportTemplate! !
 
-!GetTextExporter class methodsFor: 'utilities' stamp: 'hlsf 3/5/2022 14:48:45'!
+!GetTextExporter class methodsFor: 'utilities' stamp: 'hlsf 5/Mar/2022 14:48:45'!
 exportTemplateFor: someSelectors
 	"Writes files to be used as the translation template.
 	It will include strings that are receivers of any of someSelectors"
 	
 	self new exportFor: someSelectors ! !
 
-!GetTextExporter class methodsFor: 'utilities'!
+!GetTextExporter class methodsFor: 'utilities' stamp: ''!
 exportTemplateIncluding: aSelector
 	"Writes files to be used as the translation template.
 	It will include strings that are receivers of aSelector"
 	
 	self exportTemplateFor: self defaultSelectors, {aSelector} ! !
 
-!GetTextExporter class methodsFor: 'utilities'!
+!GetTextExporter class methodsFor: 'utilities' stamp: ''!
 keys
 	| categories |
 	categories _ Dictionary new.
@@ -403,7 +403,7 @@ keys
 		into: [:set :next | set addAll: next keys;
 				 yourself]! !
 
-!GetTextExporter class methodsFor: 'accessing'!
+!GetTextExporter class methodsFor: 'accessing' stamp: ''!
 defaultSelectors
 	"Answers the selectors that are sent to strings that should be translated"
 	
@@ -412,7 +412,7 @@ defaultSelectors
 		#translatedNoop
 		)! !
 
-!MOFile methodsFor: 'experimental'!
+!MOFile methodsFor: 'experimental' stamp: ''!
 hashPjw: aString
 	"This is the hash function used by the (unused) hashTable. Kept in case someone wants to try and make it work"
 	"So called `hashpjw' function by P.J. Weinberger
@@ -433,7 +433,7 @@ hashPjw: aString
 	^hash.
 ! !
 
-!MOFile methodsFor: 'public' stamp: 'jmv 2/6/2024 10:14:53'!
+!MOFile methodsFor: 'public' stamp: 'jmv 6/Feb/2024 10:14:53'!
 load: aFileEntry localeID: id
 "all of strings are loaded. 
 translation strings are converted to internal string format on load time.
@@ -451,7 +451,7 @@ original-string/index pairs are registerd to Dictionary on load time."
 			translations at: key put: index].
 		originalStrings := nil] ! !
 
-!MOFile methodsFor: 'public'!
+!MOFile methodsFor: 'public' stamp: ''!
 searchFor: aString
 	| index |
 	index _ translations at: aString ifAbsent: [^nil].
@@ -459,13 +459,13 @@ searchFor: aString
 	
 ! !
 
-!MOFile methodsFor: 'public'!
+!MOFile methodsFor: 'public' stamp: ''!
 translationFor: aString 
 	aString size = 0 ifTrue: [^ '']. "Gettext header"
 	^ (self searchFor: aString) ifNil: [aString]
 ! !
 
-!MOFile methodsFor: 'private' stamp: 'hlsf 5/11/2023 11:26:33'!
+!MOFile methodsFor: 'private' stamp: 'hlsf 11/May/2023 11:26:33'!
 loadHeader: strm
 	strm binary.
 	magic :=  strm nextUint32BigEndian: true .
@@ -482,7 +482,7 @@ loadHeader: strm
 	hashTableSize := strm nextUint32BigEndian: isLittleEndian not.
 	hashTableOffset := strm nextUint32BigEndian: isLittleEndian not! !
 
-!MOFile methodsFor: 'private' stamp: 'hlsf 5/11/2023 11:26:16'!
+!MOFile methodsFor: 'private' stamp: 'hlsf 11/May/2023 11:26:16'!
 loadStringPointers: strm offset: tableOffset
 "returns tupple {arrayOfOffsetToString  arrayOfLengthOfString}"
 	| offsetTable lenTable len offset tupple |
@@ -500,7 +500,7 @@ loadStringPointers: strm offset: tableOffset
 	tupple at: 2 put:  lenTable.
 	^tupple! !
 
-!MOFile methodsFor: 'private' stamp: 'hlsf 10/27/2023 22:35:57'!
+!MOFile methodsFor: 'private' stamp: 'hlsf 27/Oct/2023 22:35:57'!
 loadStrings: strm pointers: table
 "We convert string encoding at load time.
 Currently, we do not take care to set the leadingChar for a languageEnvironment"
@@ -519,71 +519,71 @@ Currently, we do not take care to set the leadingChar for a languageEnvironment"
 		strings at: index put: (UnicodeString fromUtf8Bytes: rawStr contents asByteArray	)].
 	^strings.! !
 
-!MOFile class methodsFor: 'class initialization'!
+!MOFile class methodsFor: 'class initialization' stamp: ''!
 initialize
 	Cr _ Character cr.
 	Lf _ Character lf.
 ! !
 
-!MOFile class methodsFor: 'instance creation'!
+!MOFile class methodsFor: 'instance creation' stamp: ''!
 fileName: path localeID: id
 	^self new 
 			load:path localeID: id! !
 
-!NaturalLanguageTranslator methodsFor: 'printing' stamp: 'nk 8/29/2004 10:51'!
+!NaturalLanguageTranslator methodsFor: 'printing' stamp: 'nk 29/Aug/2004 10:51:00'!
 printOn: aStream
 	aStream nextPutAll: self class name; nextPut: $(; print: self localeID; nextPut: $)! !
 
-!NaturalLanguageTranslator methodsFor: 'translation'!
+!NaturalLanguageTranslator methodsFor: 'translation' stamp: ''!
 translate: aString inDomain: aDomainName
 	^ aString! !
 
-!NaturalLanguageTranslator methodsFor: 'accessing'!
+!NaturalLanguageTranslator methodsFor: 'accessing' stamp: ''!
 domainRegistered: aDomainName
 	"notify that new TextDomain is registered.  Concrete subclass can responds to this event if needed"! !
 
-!NaturalLanguageTranslator methodsFor: 'accessing'!
+!NaturalLanguageTranslator methodsFor: 'accessing' stamp: ''!
 domainUnregistered: aDomainName
 	"notify that new TextDomain is unregistered.  Concrete subclass can responds to this event if needed"! !
 
-!NaturalLanguageTranslator methodsFor: 'accessing' stamp: 'mir 7/15/2004 14:42'!
+!NaturalLanguageTranslator methodsFor: 'accessing' stamp: 'mir 15/Jul/2004 14:42:00'!
 localeID
 	^id! !
 
-!NaturalLanguageTranslator methodsFor: 'language switching'!
+!NaturalLanguageTranslator methodsFor: 'language switching' stamp: ''!
 setCurrent
 	"notify locale of the translator become current"
 ! !
 
-!NaturalLanguageTranslator methodsFor: 'initialize-release' stamp: 'mir 7/15/2004 14:41'!
+!NaturalLanguageTranslator methodsFor: 'initialize-release' stamp: 'mir 15/Jul/2004 14:41:00'!
 localeID: anID
 	id := anID! !
 
-!NaturalLanguageTranslator class methodsFor: 'class initialization' stamp: 'hlsf 8/16/2022 11:09:35'!
+!NaturalLanguageTranslator class methodsFor: 'class initialization' stamp: 'hlsf 16/Aug/2022 11:09:35'!
 initialize
 	Smalltalk addToStartUpList: NaturalLanguageTranslator
 	
 	! !
 
-!NaturalLanguageTranslator class methodsFor: 'class initialization'!
+!NaturalLanguageTranslator class methodsFor: 'class initialization' stamp: ''!
 privateStartUp
 	self reset.
 	GetTextTranslator reset.
 	self localeChanged.! !
 
-!NaturalLanguageTranslator class methodsFor: 'class initialization'!
+!NaturalLanguageTranslator class methodsFor: 'class initialization' stamp: ''!
 startUp: resuming 
 	resuming
 		ifFalse: [^ self].
 	self privateStartUp.! !
 
-!NaturalLanguageTranslator class methodsFor: 'actions'!
+!NaturalLanguageTranslator class methodsFor: 'actions' stamp: ''!
 reset
 	"Flush the translator instances"
 	
 	Translators _ nil! !
 
-!NaturalLanguageTranslator class methodsFor: 'accessing'!
+!NaturalLanguageTranslator class methodsFor: 'accessing' stamp: ''!
 availableForLocaleID: localeID 
 	"Answer available locale ID.
 	If translator is not found for correct locale ID, then isoLanguage is
@@ -596,7 +596,7 @@ availableForLocaleID: localeID
 						ifAbsent: [self default]]
 				ifFalse: [self default]] ! !
 
-!NaturalLanguageTranslator class methodsFor: 'accessing'!
+!NaturalLanguageTranslator class methodsFor: 'accessing' stamp: ''!
 availableLanguageLocaleIDs
 	"Return the locale ids for the currently available languages.  
 	Meaning those which either internally or externally have  
@@ -604,62 +604,62 @@ availableLanguageLocaleIDs
 	"NaturalLanguageTranslator availableLanguageLocaleIDs"
 	^ self translators values collect:[:each | each localeID]! !
 
-!NaturalLanguageTranslator class methodsFor: 'accessing'!
+!NaturalLanguageTranslator class methodsFor: 'accessing' stamp: ''!
 current
 	^ self availableForLocaleID: LocaleID current! !
 
-!NaturalLanguageTranslator class methodsFor: 'accessing'!
+!NaturalLanguageTranslator class methodsFor: 'accessing' stamp: ''!
 default
 	"Answer translator for backstop"
 	"self default translate: 'test'"
 	^ self new
 		localeID: (LocaleID isoLanguage: 'en')! !
 
-!NaturalLanguageTranslator class methodsFor: 'accessing'!
+!NaturalLanguageTranslator class methodsFor: 'accessing' stamp: ''!
 domainRegistered: aDomainName
 	"notify that new TextDomain is registered"
 	self translators do: [:each | each domainRegistered: aDomainName]! !
 
-!NaturalLanguageTranslator class methodsFor: 'accessing'!
+!NaturalLanguageTranslator class methodsFor: 'accessing' stamp: ''!
 domainUnregistered: aDomainName
 	"notify that new TextDomain is unregistered"
 	self translators do: [:each | each domainUnregistered: aDomainName]! !
 
-!NaturalLanguageTranslator class methodsFor: 'accessing'!
+!NaturalLanguageTranslator class methodsFor: 'accessing' stamp: ''!
 localeChanged
 	"notify some project starts to use this locale.
 	 this facility may use the event to load translation data dynamically" 
 	self current setCurrent
 ! !
 
-!NaturalLanguageTranslator class methodsFor: 'accessing'!
+!NaturalLanguageTranslator class methodsFor: 'accessing' stamp: ''!
 removeLocaleID: localeID 
 	"self removeLocaleID: (LocaleID isoString: 'ja-kids')"
 	^ self translators
 		removeKey: localeID
 		ifAbsent: []! !
 
-!NaturalLanguageTranslator class methodsFor: 'accessing'!
+!NaturalLanguageTranslator class methodsFor: 'accessing' stamp: ''!
 translators
 	^ Translators ifNil: [Translators _ Dictionary new]	! !
 
-!NaturalLanguageTranslator class methodsFor: 'translation'!
+!NaturalLanguageTranslator class methodsFor: 'translation' stamp: ''!
 translate: aString
 	^ self translate: aString toLocale: LocaleID current! !
 
-!NaturalLanguageTranslator class methodsFor: 'translation' stamp: 'hlsf 3/9/2022 21:42:29'!
+!NaturalLanguageTranslator class methodsFor: 'translation' stamp: 'hlsf 9/Mar/2022 21:42:29'!
 translate: aString toLocale: localeID
 	| here domain |
 	here _ thisContext sender sender sender methodClass.
 	domain _ TextDomainManager domainForClass: here.
 	^ self translate: aString toLocale: localeID inDomain: domain! !
 
-!NaturalLanguageTranslator class methodsFor: 'translation'!
+!NaturalLanguageTranslator class methodsFor: 'translation' stamp: ''!
 translate: aString toLocale: localeID inDomain: aDomainName
 	^ (self availableForLocaleID: localeID)
 		translate: aString inDomain: aDomainName! !
 
-!GetTextTranslator methodsFor: 'accessing'!
+!GetTextTranslator methodsFor: 'accessing' stamp: ''!
 domainRegistered: aDomainName
 	"only current translator actually load the MO, to minimize loading time.
 	 other translator will load anyway when it goes current"
@@ -667,31 +667,31 @@ domainRegistered: aDomainName
 		ifTrue: [self moFileForDomain: aDomainName].
 	! !
 
-!GetTextTranslator methodsFor: 'accessing'!
+!GetTextTranslator methodsFor: 'accessing' stamp: ''!
 domainUnregistered: aDomainName
 	moFiles removeKey: aDomainName ifAbsent: [^self]
 	! !
 
-!GetTextTranslator methodsFor: 'accessing' stamp: 'hlsf 10/27/2023 22:22:34'!
+!GetTextTranslator methodsFor: 'accessing' stamp: 'hlsf 27/Oct/2023 22:22:34'!
 loadMOFiles
 	TextDomainManager allKnownDomains 
 		do: [:domainName | 
 			self moFileForDomain: domainName
 		].! !
 
-!GetTextTranslator methodsFor: 'accessing'!
+!GetTextTranslator methodsFor: 'accessing' stamp: ''!
 refresh
 	"Purge the cached translations (and load on demand)"
 	
 	moFiles _ Dictionary new
 ! !
 
-!GetTextTranslator methodsFor: 'language switching'!
+!GetTextTranslator methodsFor: 'language switching' stamp: ''!
 setCurrent
 	"ensure actual contents of MOs is loaded on switching language"
 	self loadMOFiles! !
 
-!GetTextTranslator methodsFor: 'private' stamp: 'hlsf 3/9/2022 15:58:41'!
+!GetTextTranslator methodsFor: 'private' stamp: 'hlsf 9/Mar/2022 15:58:41'!
 loadMOFileForDomain: aDomainName
 	| moName |
 	moName _ self class 
@@ -703,7 +703,7 @@ loadMOFileForDomain: aDomainName
 		ifFalse: [^nil]
 ! !
 
-!GetTextTranslator methodsFor: 'private' stamp: 'hlsf 3/9/2022 15:59:04'!
+!GetTextTranslator methodsFor: 'private' stamp: 'hlsf 9/Mar/2022 15:59:04'!
 moFileForDomain: domainName
 "Returns the cached MOFile for the given domainName (or nil).
 If none is cached, it will try to load one (every time) and cache it on demand."
@@ -715,7 +715,7 @@ If none is cached, it will try to load one (every time) and cache it on demand."
 			moFile notNil ifTrue:[				moFiles at: domainName put: moFile].
 			moFile]! !
 
-!GetTextTranslator methodsFor: 'translation'!
+!GetTextTranslator methodsFor: 'translation' stamp: ''!
 translate: aString inDomain: aDomainName
 	| mo |
 	mo _ self moFileForDomain: aDomainName.
@@ -724,22 +724,22 @@ translate: aString inDomain: aDomainName
 		ifFalse: [mo translationFor: aString]
 ! !
 
-!GetTextTranslator methodsFor: 'initialize-release'!
+!GetTextTranslator methodsFor: 'initialize-release' stamp: ''!
 initialize
 	moFiles _ Dictionary new.! !
 
-!GetTextTranslator class methodsFor: 'class initialization'!
+!GetTextTranslator class methodsFor: 'class initialization' stamp: ''!
 initialize
 	SystemDefaultLocaleDirs _ OrderedCollection new.
 	UserDefaultLocaleDirs _ OrderedCollection new.
 	LocaleDirsForDomain _ Dictionary new.! !
 
-!GetTextTranslator class methodsFor: 'translation data layout'!
+!GetTextTranslator class methodsFor: 'translation data layout' stamp: ''!
 addSystemDefaultLocaleDir: dir
 	"new dir will be put as first"
  	self systemDefaultLocaleDirs addFirst: dir! !
 
-!GetTextTranslator class methodsFor: 'translation data layout'!
+!GetTextTranslator class methodsFor: 'translation data layout' stamp: ''!
 defaultLocaleDirs
 	| dirs |
 	dirs _ OrderedCollection new.
@@ -748,12 +748,12 @@ defaultLocaleDirs
 	^dirs
 ! !
 
-!GetTextTranslator class methodsFor: 'translation data layout'!
+!GetTextTranslator class methodsFor: 'translation data layout' stamp: ''!
 localeDirForDomain: aDomainName
 	"returns registered localeDirectory for the textdomain. returns nil if not registered"
 	^LocaleDirsForDomain at: aDomainName ifAbsent: [nil]! !
 
-!GetTextTranslator class methodsFor: 'translation data layout'!
+!GetTextTranslator class methodsFor: 'translation data layout' stamp: ''!
 localeDirsForDomain: aDomainName
 	"returns collection of locale directories for text domain.  
 	This includes user defined one for the domain, user defaults and system defaults" 
@@ -765,13 +765,13 @@ localeDirsForDomain: aDomainName
 	
 	^dirs! !
 
-!GetTextTranslator class methodsFor: 'translation data layout' stamp: 'hlsf 3/9/2022 16:54:45'!
+!GetTextTranslator class methodsFor: 'translation data layout' stamp: 'hlsf 9/Mar/2022 16:54:45'!
 setLocaleDir: path forDoamin: aDomainName
 	self localeDirsForDomain
 		at: aDomainName
 		put: path.! !
 
-!GetTextTranslator class methodsFor: 'translation data layout' stamp: 'hlsf 3/9/2022 15:47:55'!
+!GetTextTranslator class methodsFor: 'translation data layout' stamp: 'hlsf 9/Mar/2022 15:47:55'!
 setupLocaleDirs
 	| dirs |
 	SystemDefaultLocaleDirs _ nil.
@@ -780,17 +780,17 @@ setupLocaleDirs
 	dirs add:  DirectoryEntry vmDirectory / 'locale'.
 	^dirs! !
 
-!GetTextTranslator class methodsFor: 'translation data layout'!
+!GetTextTranslator class methodsFor: 'translation data layout' stamp: ''!
 systemDefaultLocaleDirs
 	^SystemDefaultLocaleDirs ifNil: [SystemDefaultLocaleDirs _ OrderedCollection new]
 ! !
 
-!GetTextTranslator class methodsFor: 'translation data layout'!
+!GetTextTranslator class methodsFor: 'translation data layout' stamp: ''!
 userDefaultLocaleDirs
 	^UserDefaultLocaleDirs ifNil: [UserDefaultLocaleDirs _ OrderedCollection new]
 ! !
 
-!GetTextTranslator class methodsFor: 'private' stamp: 'hlsf 3/9/2022 17:48:52'!
+!GetTextTranslator class methodsFor: 'private' stamp: 'hlsf 9/Mar/2022 17:48:52'!
 availableLanguageLocaleIDs
 "GetTextTranslator availableLanguageLocaleIDs"
 	| ids dirs localeDirForLang directoryNames |
@@ -812,7 +812,7 @@ availableLanguageLocaleIDs
 	].
 	^ids! !
 
-!GetTextTranslator class methodsFor: 'private' stamp: 'hlsf 3/9/2022 17:48:45'!
+!GetTextTranslator class methodsFor: 'private' stamp: 'hlsf 9/Mar/2022 17:48:45'!
 createAvailableTranslators
 "Load new instances of translators corresponding to the currently available translation files"
 	self setupLocaleDirs.
@@ -822,7 +822,7 @@ createAvailableTranslators
 			put: (self newForLocaleID: localeID).
 	]! !
 
-!GetTextTranslator class methodsFor: 'private' stamp: 'hlsf 3/9/2022 15:57:31'!
+!GetTextTranslator class methodsFor: 'private' stamp: 'hlsf 9/Mar/2022 15:57:31'!
 findMOForLocaleID: id domain: aDomainName
 	| moFile |
 	(self localeDirsForDomain: aDomainName) do: [:each |
@@ -832,20 +832,20 @@ findMOForLocaleID: id domain: aDomainName
 			do: [:e | ^nil]].
 	^nil! !
 
-!GetTextTranslator class methodsFor: 'private'!
+!GetTextTranslator class methodsFor: 'private' stamp: ''!
 localeDirsForDomain
 	^LocaleDirsForDomain ifNil: [LocaleDirsForDomain _ Dictionary new]! !
 
-!GetTextTranslator class methodsFor: 'private'!
+!GetTextTranslator class methodsFor: 'private' stamp: ''!
 privateStartUp
 
 	self createAvailableTranslators! !
 
-!GetTextTranslator class methodsFor: 'instance creation'!
+!GetTextTranslator class methodsFor: 'instance creation' stamp: ''!
 newForLocaleID: id
 	^self new localeID: id! !
 
-!GetTextTranslator class methodsFor: 'actions'!
+!GetTextTranslator class methodsFor: 'actions' stamp: ''!
 reset
 	"Flush remembered stuff.
 	Load new translators (based on the files currently found)"
@@ -856,25 +856,25 @@ reset
 	 
 	! !
 
-!TextDomainInfo methodsFor: 'initialize-release'!
+!TextDomainInfo methodsFor: 'initialize-release' stamp: ''!
 initialize
 	categoryPrefixes _ Set new.
 	categories _ IdentitySet new.
 ! !
 
-!TextDomainInfo methodsFor: 'private'!
+!TextDomainInfo methodsFor: 'private' stamp: ''!
 category: categoryName matches: prefix
 	^ categoryName notNil and: [categoryName = prefix or: [categoryName beginsWith: prefix, '-']]! !
 
-!TextDomainInfo methodsFor: 'accessing'!
+!TextDomainInfo methodsFor: 'accessing' stamp: ''!
 categories
 	^categories! !
 
-!TextDomainInfo methodsFor: 'accessing'!
+!TextDomainInfo methodsFor: 'accessing' stamp: ''!
 categoryPrefixes
 	^categoryPrefixes! !
 
-!TextDomainInfo methodsFor: 'accessing'!
+!TextDomainInfo methodsFor: 'accessing' stamp: ''!
 includesCategory: categorySymbol
 	(categories includes: categorySymbol) ifTrue: [^true].
 	categoryPrefixes do: [:each |
@@ -883,12 +883,12 @@ includesCategory: categorySymbol
 
 	^false.! !
 
-!TextDomainInfo methodsFor: 'accessing'!
+!TextDomainInfo methodsFor: 'accessing' stamp: ''!
 matchedSystemCategories
 	^SystemOrganization categories 
 		select: [:cat | self includesCategory: cat]! !
 
-!TextDomainManager class methodsFor: 'accessing'!
+!TextDomainManager class methodsFor: 'accessing' stamp: ''!
 allKnownDomains
 	| domains |
 	domains _ Set new.
@@ -897,36 +897,36 @@ allKnownDomains
 	^domains
 ! !
 
-!TextDomainManager class methodsFor: 'accessing'!
+!TextDomainManager class methodsFor: 'accessing' stamp: ''!
 defaultDomain
 	^DefaultDomain! !
 
-!TextDomainManager class methodsFor: 'accessing'!
+!TextDomainManager class methodsFor: 'accessing' stamp: ''!
 defaultDomain: aDomainName
 	DefaultDomain _ aDomainName! !
 
-!TextDomainManager class methodsFor: 'accessing'!
+!TextDomainManager class methodsFor: 'accessing' stamp: ''!
 domainForClass: aClass
 	^Classes at: aClass theNonMetaClass name ifAbsent: [self defaultDomain]! !
 
-!TextDomainManager class methodsFor: 'accessing'!
+!TextDomainManager class methodsFor: 'accessing' stamp: ''!
 domainForClassCategory: aCategorySymbol
 	^ClassCategories at: aCategorySymbol ifAbsent: [self defaultDomain]! !
 
-!TextDomainManager class methodsFor: 'accessing'!
+!TextDomainManager class methodsFor: 'accessing' stamp: ''!
 registerCategoryPrefix: aString domain: aDomainName
 	| domInfo |
 	domInfo _ self domainInfoFor: aDomainName.
 	domInfo categoryPrefixes add: aString.
 	self refresh.! !
 
-!TextDomainManager class methodsFor: 'accessing'!
+!TextDomainManager class methodsFor: 'accessing' stamp: ''!
 registerClass: className domain: aDomainName
 	LoneClasses at: className put: aDomainName.
 	self refresh.	"moves it to Classes"
 ! !
 
-!TextDomainManager class methodsFor: 'accessing'!
+!TextDomainManager class methodsFor: 'accessing' stamp: ''!
 registerClassCategory: categorySymbol domain: aDomainName
 	| domInfo |
 	domInfo _ self domainInfoFor: aDomainName.
@@ -934,7 +934,7 @@ registerClassCategory: categorySymbol domain: aDomainName
 	self refresh.
 ! !
 
-!TextDomainManager class methodsFor: 'accessing'!
+!TextDomainManager class methodsFor: 'accessing' stamp: ''!
 registerDomain: domainName
 	| domInfo |
 	domInfo _ TextDomainInfo new.
@@ -942,22 +942,22 @@ registerDomain: domainName
 	NaturalLanguageTranslator domainRegistered: domainName.
 	^domInfo! !
 
-!TextDomainManager class methodsFor: 'accessing'!
+!TextDomainManager class methodsFor: 'accessing' stamp: ''!
 unregisterDomain: domainName
 	DomainInfos removeKey: domainName.
 	self refresh.
 	NaturalLanguageTranslator domainUnregistered: domainName.
 ! !
 
-!TextDomainManager class methodsFor: 'private'!
+!TextDomainManager class methodsFor: 'private' stamp: ''!
 domainInfoFor: domainName
 	^DomainInfos at: domainName ifAbsentPut: [ self registerDomain: domainName]! !
 
-!TextDomainManager class methodsFor: 'private'!
+!TextDomainManager class methodsFor: 'private' stamp: ''!
 domainInfos
 	^DomainInfos! !
 
-!TextDomainManager class methodsFor: 'private'!
+!TextDomainManager class methodsFor: 'private' stamp: ''!
 refresh
 	ClassCategories _ IdentityDictionary new.
 	Classes _ IdentityDictionary new.
@@ -972,7 +972,7 @@ refresh
 	].
 	Classes addAll: LoneClasses.! !
 
-!TextDomainManager class methodsFor: 'class initialization' stamp: 'hlsf 3/5/2022 12:17:54'!
+!TextDomainManager class methodsFor: 'class initialization' stamp: 'hlsf 5/Mar/2022 12:17:54'!
 initialize
 	"	TextDomainManager initialize	"
 
@@ -982,7 +982,7 @@ initialize
 	DomainInfos _ Dictionary new.
 	self defaultDomain: 'cuis'.! !
 
-!TranslatedReceiverFinder methodsFor: 'private'!
+!TranslatedReceiverFinder methodsFor: 'private' stamp: ''!
 arraySearch: aSymbol fromArray: anArray addTo: aCollection 
 	"Find literals ahead of aSymbol from arrays in the method."
 	"BUG: it can handle just one occurrence"
@@ -997,7 +997,7 @@ arraySearch: aSymbol fromArray: anArray addTo: aCollection
 				addTo: aCollection].
 	^ aCollection! !
 
-!TranslatedReceiverFinder methodsFor: 'private'!
+!TranslatedReceiverFinder methodsFor: 'private' stamp: ''!
 arraySearch: aSymbol messageNode: aParseNode addTo: aCollection 
 	"Find literals ahead of aSymbol from arrays in the method."
 	
@@ -1010,7 +1010,7 @@ arraySearch: aSymbol messageNode: aParseNode addTo: aCollection
 					addTo: aCollection]]].		
 	^ aCollection! !
 
-!TranslatedReceiverFinder methodsFor: 'private' stamp: 'hlsf 3/5/2022 11:42:28'!
+!TranslatedReceiverFinder methodsFor: 'private' stamp: 'hlsf 5/Mar/2022 11:42:28'!
 search: aSymbol messageNode: aParseNode addTo: aCollection 
 	aParseNode nodesDo: [:node | 
 		node isMessage ifTrue: [
@@ -1018,7 +1018,7 @@ search: aSymbol messageNode: aParseNode addTo: aCollection
 				aCollection add: node]]].
 	^ aCollection! !
 
-!TranslatedReceiverFinder methodsFor: 'accessing' stamp: 'hlsf 3/5/2022 11:54:04'!
+!TranslatedReceiverFinder methodsFor: 'accessing' stamp: 'hlsf 5/Mar/2022 11:54:04'!
 findWordsWith: aSymbol in: aMethodReference 
 	"Find words for translation with the symbol in a method. See
 	LanguageEditorTest >>testFindTranslatedWords"
@@ -1046,7 +1046,7 @@ findWordsWith: aSymbol in: aMethodReference
 		addTo: keywords.
 	^ keywords! !
 
-!TranslatedReceiverFinder methodsFor: 'accessing' stamp: 'hlsf 3/5/2022 11:10:34'!
+!TranslatedReceiverFinder methodsFor: 'accessing' stamp: 'hlsf 5/Mar/2022 11:10:34'!
 nonLiteralReceiversOf: aSymbol
 	"self new nonLiteralReceiversOf: aSymbol"
 	| receivers |
@@ -1058,7 +1058,7 @@ nonLiteralReceiversOf: aSymbol
 			receivers
 				anySatisfy: [:each | (each receiver isLiteralNode) not]]! !
 
-!TranslatedReceiverFinder methodsFor: 'accessing' stamp: 'hlsf 3/5/2022 11:47:45'!
+!TranslatedReceiverFinder methodsFor: 'accessing' stamp: 'hlsf 5/Mar/2022 11:47:45'!
 stringReceiversOf: aSymbol
 	"Find string receivers for a symbol.
 	Answer a collection of aMethodReference -> {keyword. keyword...}"
@@ -1072,7 +1072,7 @@ stringReceiversOf: aSymbol
 		list]
 ! !
 
-!TranslatedReceiverFinder methodsFor: 'actions'!
+!TranslatedReceiverFinder methodsFor: 'actions' stamp: ''!
 searchBlockNode: aBlockNode addTo: aCollection
 
 	aBlockNode statements do: [:e |
@@ -1081,7 +1081,7 @@ searchBlockNode: aBlockNode addTo: aCollection
 	].
 ! !
 
-!TranslatedReceiverFinder methodsFor: 'actions'!
+!TranslatedReceiverFinder methodsFor: 'actions' stamp: ''!
 searchMessageNode: aMessageNode addTo: aCollection
 
 	((aMessageNode receiver isMemberOf: LiteralNode) and: [(aMessageNode selector isMemberOf: SelectorNode) and: [aMessageNode selector key = #translated]]) ifTrue: [
@@ -1099,7 +1099,7 @@ searchMessageNode: aMessageNode addTo: aCollection
 	].
 ! !
 
-!TranslatedReceiverFinder methodsFor: 'actions'!
+!TranslatedReceiverFinder methodsFor: 'actions' stamp: ''!
 searchMethodNode: aMethodNode addTo: aCollection
 
 	(aMethodNode block isMemberOf: BlockNode) ifTrue: [self searchBlockNode: aMethodNode block addTo: aCollection].
@@ -1107,14 +1107,14 @@ searchMethodNode: aMethodNode addTo: aCollection
 	(aMethodNode block isMemberOf: ReturnNode) ifTrue: [self searchReturnNode: aMethodNode block addTo: aCollection].
 ! !
 
-!TranslatedReceiverFinder methodsFor: 'actions'!
+!TranslatedReceiverFinder methodsFor: 'actions' stamp: ''!
 searchReturnNode: aReturnNode addTo: aCollection
 
 	(aReturnNode expr isMemberOf: BlockNode) ifTrue: [self searchBlockNode: aReturnNode expr addTo: aCollection].
 	(aReturnNode expr isMemberOf: MessageNode) ifTrue: [self searchMessageNode: aReturnNode expr addTo: aCollection].
 ! !
 
-!TranslatedReceiverFinder methodsFor: 'actions' stamp: 'hlsf 3/5/2022 11:07:48'!
+!TranslatedReceiverFinder methodsFor: 'actions' stamp: 'hlsf 5/Mar/2022 11:07:48'!
 senders
 	| m o |
 	m _ Smalltalk allCallsOn: #translated.
@@ -1127,13 +1127,13 @@ senders
 	m do: [ :e | self searchMethodNode: e addTo: o ].
 	^ o sort! !
 
-!CharacterSequence methodsFor: '*Gettext' stamp: 'hlsf 10/31/2022 21:54:01'!
+!CharacterSequence methodsFor: '*Gettext' stamp: 'hlsf 31/Oct/2022 21:54:01'!
 translated
 "answer the receiver translated to the default language"
 	^ NaturalLanguageTranslator translate: self
 ! !
 
-!CharacterSequence methodsFor: '*Gettext' stamp: 'hlsf 10/31/2022 21:54:07'!
+!CharacterSequence methodsFor: '*Gettext' stamp: 'hlsf 31/Oct/2022 21:54:07'!
 translatedTo: localeID 
 	"answer the receiver translated to the given locale id"
 	^ NaturalLanguageTranslator translate: self toLocale: localeID! !

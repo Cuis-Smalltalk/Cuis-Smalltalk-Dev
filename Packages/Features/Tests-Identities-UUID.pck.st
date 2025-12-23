@@ -1,4 +1,4 @@
-'From Cuis6.3 [latest update: #6213] on 6 February 2024 at 10:26:48 am'!
+'From Cuis7.7 [latest update: #7779] on 23 December 2025 at 4:40:30 pm'!
 'Description '!
 !provides: 'Tests-Identities-UUID' 1 1!
 !requires: 'Identities-UUID' 1 8 nil!
@@ -26,7 +26,7 @@ UUIDTest class
 	instanceVariableNames: ''!
 
 
-!UUIDPrimitivesTest methodsFor: 'tests' stamp: 'JMM 11/22/2001 17:14'!
+!UUIDPrimitivesTest methodsFor: 'tests' stamp: 'JMM 22/Nov/2001 17:14:00'!
 testCreation
 	| uuid |
 	uuid := UUID new.
@@ -35,7 +35,7 @@ testCreation
 	self should: [uuid asString size = 36].
 ! !
 
-!UUIDPrimitivesTest methodsFor: 'tests' stamp: 'JMM 11/22/2001 17:27'!
+!UUIDPrimitivesTest methodsFor: 'tests' stamp: 'JMM 22/Nov/2001 17:27:00'!
 testCreationEquality
 	| uuid1 uuid2 |
 	uuid1 := UUID new.
@@ -46,7 +46,7 @@ testCreationEquality
 	self shouldnt: [uuid1 hash = uuid2 hash].
 ! !
 
-!UUIDPrimitivesTest methodsFor: 'tests' stamp: 'JMM 11/22/2001 17:17'!
+!UUIDPrimitivesTest methodsFor: 'tests' stamp: 'JMM 22/Nov/2001 17:17:00'!
 testCreationFromString
 	| uuid string |
 	string := UUID nilUUID asString.
@@ -59,7 +59,7 @@ testCreationFromString
 	self should: [(uuid asArray asSet asArray at: 1) = 0].
 ! !
 
-!UUIDPrimitivesTest methodsFor: 'tests' stamp: 'JMM 11/22/2001 17:18'!
+!UUIDPrimitivesTest methodsFor: 'tests' stamp: 'JMM 22/Nov/2001 17:18:00'!
 testCreationFromStringNotNil
 	| uuid string |
 	string := UUID new asString.
@@ -69,7 +69,7 @@ testCreationFromStringNotNil
 
 ! !
 
-!UUIDPrimitivesTest methodsFor: 'tests' stamp: 'JMM 11/22/2001 17:16'!
+!UUIDPrimitivesTest methodsFor: 'tests' stamp: 'JMM 22/Nov/2001 17:16:00'!
 testCreationNil
 	| uuid |
 	uuid := UUID nilUUID.
@@ -80,7 +80,7 @@ testCreationNil
 	self should: [(uuid asArray asSet asArray at: 1) = 0].
 ! !
 
-!UUIDPrimitivesTest methodsFor: 'tests' stamp: 'nice 12/27/2009 04:14'!
+!UUIDPrimitivesTest methodsFor: 'tests' stamp: 'nice 27/Dec/2009 04:14:00'!
 testCreationNodeBased
 	
 
@@ -92,7 +92,7 @@ testCreationNodeBased
 		self should: [((uuid at: 9) bitAnd: 16rC0) = 16r80]]
 ! !
 
-!UUIDPrimitivesTest methodsFor: 'tests' stamp: 'jmv 2/6/2024 10:12:47'!
+!UUIDPrimitivesTest methodsFor: 'tests' stamp: 'jmv 6/Feb/2024 10:12:47'!
 testDuplicationsKinda
 	| check size |
 
@@ -105,7 +105,7 @@ testDuplicationsKinda
 		check add: uuid].
 		! !
 
-!UUIDPrimitivesTest methodsFor: 'tests' stamp: 'nice 12/27/2009 04:15'!
+!UUIDPrimitivesTest methodsFor: 'tests' stamp: 'nice 27/Dec/2009 04:15:00'!
 testOrder
 	
 	100 timesRepeat:
@@ -118,7 +118,7 @@ testOrder
 			self shouldnt: [uuid1 = uuid2]]]
 ! !
 
-!UUIDTest methodsFor: 'as yet unclassified' stamp: 'DSG 5/28/2013 09:37'!
+!UUIDTest methodsFor: 'as yet unclassified' stamp: 'DSG 28/May/2013 09:37:00'!
 testComparison
 	"Test if the comparison operators define a total sort function."
 

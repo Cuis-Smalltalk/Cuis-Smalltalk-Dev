@@ -1,4 +1,4 @@
-'From Cuis7.3 [latest update: #7067] on 13 March 2025 at 12:39:03 pm'!
+'From Cuis7.7 [latest update: #7779] on 23 December 2025 at 4:39:01 pm'!
 'Description '!
 !provides: 'Graphics-Files-Additional' 1 30!
 !requires: 'Compression' 1 nil nil!
@@ -171,7 +171,7 @@ I hold the logical structure of the TIFF, but I do not preserve the physical str
 
 See TIFFReader (and future TIFFWriter) for more information about the structure into which I fit.!
 
-!PNGReadWriter methodsFor: 'pixel copies' stamp: 'DSM 3/26/2000 21:32'!
+!PNGReadWriter methodsFor: 'pixel copies' stamp: 'DSM 26/Mar/2000 21:32:00'!
 copyPixels: y
 	"Handle non-interlaced pixels of supported colorTypes"
 
@@ -181,7 +181,7 @@ copyPixels: y
 	self perform: s asSymbol with: y
 ! !
 
-!PNGReadWriter methodsFor: 'pixel copies' stamp: 'RAA 11/4/2000 16:08'!
+!PNGReadWriter methodsFor: 'pixel copies' stamp: 'RAA 4/Nov/2000 16:08:00'!
 copyPixels: y at: startX by: incX
 	"Handle interlaced pixels of supported colorTypes"
 
@@ -191,7 +191,7 @@ copyPixels: y at: startX by: incX
 	self perform: s asSymbol with: y with: startX with: incX
 ! !
 
-!PNGReadWriter methodsFor: 'pixel copies' stamp: 'jmv 6/7/2016 10:36'!
+!PNGReadWriter methodsFor: 'pixel copies' stamp: 'jmv 7/Jun/2016 10:36:00'!
 copyPixelsGray: y
 	"Handle non-interlaced grayscale color mode (colorType = 0)"
 
@@ -257,7 +257,7 @@ copyPixelsGray: y
 			bits at: base + (thisScanline size // 4) put: word ].
 	]! !
 
-!PNGReadWriter methodsFor: 'pixel copies' stamp: 'nice 5/10/2014 20:14'!
+!PNGReadWriter methodsFor: 'pixel copies' stamp: 'nice 10/May/2014 20:14:00'!
 copyPixelsGray: y at: startX by: incX
 	"Handle interlaced grayscale color mode (colorType = 0)"
 
@@ -313,7 +313,7 @@ copyPixelsGray: y at: startX by: incX
 	].
 ! !
 
-!PNGReadWriter methodsFor: 'pixel copies' stamp: 'jmv 9/23/2012 21:45'!
+!PNGReadWriter methodsFor: 'pixel copies' stamp: 'jmv 23/Sep/2012 21:45:00'!
 copyPixelsGrayAlpha: y
 	"Handle non-interlaced grayscale with alpha color mode (colorType = 4)"
 
@@ -338,7 +338,7 @@ copyPixelsGrayAlpha: y
 			]
 ! !
 
-!PNGReadWriter methodsFor: 'pixel copies' stamp: 'jmv 9/23/2012 21:45'!
+!PNGReadWriter methodsFor: 'pixel copies' stamp: 'jmv 23/Sep/2012 21:45:00'!
 copyPixelsGrayAlpha: y at: startX by: incX
 	"Handle interlaced grayscale with alpha color mode (colorType = 4)"
 
@@ -363,7 +363,7 @@ copyPixelsGrayAlpha: y at: startX by: incX
 			]
 ! !
 
-!PNGReadWriter methodsFor: 'pixel copies' stamp: 'jmv 1/15/2013 18:24'!
+!PNGReadWriter methodsFor: 'pixel copies' stamp: 'jmv 15/Jan/2013 18:24:00'!
 copyPixelsGrayWeirdBitBltHack: y 
 	"Handle non-interlaced black and white color mode (colorType = 0)
 	By Andreas Raab
@@ -502,7 +502,7 @@ gg=='
 				base64Decoded asByteArray readStream) display
 "! !
 
-!PNGReadWriter methodsFor: 'pixel copies' stamp: 'jmv 6/30/2011 10:22'!
+!PNGReadWriter methodsFor: 'pixel copies' stamp: 'jmv 30/Jun/2011 10:22:00'!
 copyPixelsIndexed: y
 	"Handle non-interlaced indexed color mode (colorType = 3)"
 	| hack hackBlt swizzleHack swizzleBlt scanline hackDepth |
@@ -527,7 +527,7 @@ copyPixelsIndexed: y
 
 	hackBlt copyBits! !
 
-!PNGReadWriter methodsFor: 'pixel copies' stamp: 'jmv 9/23/2012 21:45'!
+!PNGReadWriter methodsFor: 'pixel copies' stamp: 'jmv 23/Sep/2012 21:45:00'!
 copyPixelsIndexed: y at: startX by: incX
 	"Handle interlaced indexed color mode (colorType = 3)"
 
@@ -569,7 +569,7 @@ copyPixelsIndexed: y at: startX by: incX
 	].
 ! !
 
-!PNGReadWriter methodsFor: 'pixel copies' stamp: 'jmv 1/24/2017 11:22:33'!
+!PNGReadWriter methodsFor: 'pixel copies' stamp: 'jmv 24/Jan/2017 11:22:33'!
 copyPixelsRGB: y
 	"Handle non-interlaced RGB color mode (colorType = 2)"
 
@@ -609,7 +609,7 @@ copyPixelsRGB: y
 					i _ i + 6 ]].
 	tempForm displayOn: form at: 0 @ y rule: Form over! !
 
-!PNGReadWriter methodsFor: 'pixel copies' stamp: 'jmv 1/24/2017 11:22:49'!
+!PNGReadWriter methodsFor: 'pixel copies' stamp: 'jmv 24/Jan/2017 11:22:49'!
 copyPixelsRGB: y at: startX by: incX
 	"Handle interlaced RGB color mode (colorType = 2)"
 	| i pixel tempForm tempBits xx loopsToDo |
@@ -657,7 +657,7 @@ copyPixelsRGB: y at: startX by: incX
 					xx _ xx + incX ]].
 	tempForm displayOn: form at: 0 @ y rule: Form over! !
 
-!PNGReadWriter methodsFor: 'pixel copies' stamp: 'jmv 1/24/2017 11:23:10'!
+!PNGReadWriter methodsFor: 'pixel copies' stamp: 'jmv 24/Jan/2017 11:23:10'!
 copyPixelsRGBA: y
 	"Handle non-interlaced RGBA color modes (colorType = 6)"
 
@@ -689,7 +689,7 @@ copyPixelsRGBA: y
 	tempForm displayOn: form at: 0@y rule: Form over.
 ! !
 
-!PNGReadWriter methodsFor: 'pixel copies' stamp: 'jmv 1/24/2017 11:23:39'!
+!PNGReadWriter methodsFor: 'pixel copies' stamp: 'jmv 24/Jan/2017 11:23:39'!
 copyPixelsRGBA: y at: startX by: incX
 	"Handle interlaced RGBA color modes (colorType = 6)"
 
@@ -723,7 +723,7 @@ copyPixelsRGBA: y at: startX by: incX
 
 ! !
 
-!PNGReadWriter methodsFor: 'pixel copies' stamp: 'ar 2/19/2004 00:10'!
+!PNGReadWriter methodsFor: 'pixel copies' stamp: 'ar 19/Feb/2004 00:10:00'!
 rgbaDecoderMapForDepth: decoderDepth
 	bigEndian ifTrue:[
 		depth = 16 ifTrue:[
@@ -750,12 +750,12 @@ rgbaDecoderMapForDepth: decoderDepth
 			masks: #(16rFF0000 16rFF00 16rFF 16rFF000000).
 	].! !
 
-!PNGReadWriter methodsFor: 'accessing' stamp: 'RAA 11/7/2000 09:20'!
+!PNGReadWriter methodsFor: 'accessing' stamp: 'RAA 7/Nov/2000 09:20:00'!
 debugging
 
 	^Debugging == true! !
 
-!PNGReadWriter methodsFor: 'accessing' stamp: 'jmv 12/8/2020 16:33:59'!
+!PNGReadWriter methodsFor: 'accessing' stamp: 'jmv 8/Dec/2020 16:33:59'!
 nextImage
 	bigEndian := Smalltalk isBigEndian.
 	filtersSeen _ Bag new.
@@ -793,14 +793,14 @@ nextImage
 	^ form
 ! !
 
-!PNGReadWriter methodsFor: 'accessing' stamp: 'DSM 3/24/2000 01:12'!
+!PNGReadWriter methodsFor: 'accessing' stamp: 'DSM 24/Mar/2000 01:12:00'!
 understandsImageFormat
 	#(137 80 78 71 13 10 26 10) do: [ :byte |
 		stream next = byte ifFalse: [^ false]].
 	^ true
 ! !
 
-!PNGReadWriter methodsFor: 'miscellaneous' stamp: 'DSM 4/27/2000 13:09'!
+!PNGReadWriter methodsFor: 'miscellaneous' stamp: 'DSM 27/Apr/2000 13:09:00'!
 doPass: pass
 	"Certain interlace passes are skipped with certain small image
 dimensions"
@@ -816,7 +816,7 @@ dimensions"
 
 ! !
 
-!PNGReadWriter methodsFor: 'miscellaneous' stamp: 'jmv 4/15/2010 10:19'!
+!PNGReadWriter methodsFor: 'miscellaneous' stamp: 'jmv 15/Apr/2010 10:19:00'!
 grayColorsFor: d
 	"return a color table for a gray image"
 
@@ -845,7 +845,7 @@ grayColorsFor: d
 		].
 ! !
 
-!PNGReadWriter methodsFor: 'filtering' stamp: 'RAA 11/7/2000 09:43'!
+!PNGReadWriter methodsFor: 'filtering' stamp: 'RAA 7/Nov/2000 09:43:00'!
 filterAverage: count
 	"Use the average of the pixel to the left and the pixel above as a predictor"
 
@@ -859,7 +859,7 @@ filterAverage: count
 			+ ((prevScanline at: i)
 			+ (thisScanline at: i - delta) // 2) bitAnd: 255)]! !
 
-!PNGReadWriter methodsFor: 'filtering' stamp: 'DSM 3/25/2000 17:54'!
+!PNGReadWriter methodsFor: 'filtering' stamp: 'DSM 25/Mar/2000 17:54:00'!
 filterHorizontal: count
 	"Use the pixel to the left as a predictor"
 
@@ -872,11 +872,11 @@ filterHorizontal: count
 
 ! !
 
-!PNGReadWriter methodsFor: 'filtering' stamp: 'DSM 3/25/2000 17:55'!
+!PNGReadWriter methodsFor: 'filtering' stamp: 'DSM 25/Mar/2000 17:55:00'!
 filterNone: count
 ! !
 
-!PNGReadWriter methodsFor: 'filtering' stamp: 'RAA 11/7/2000 09:45'!
+!PNGReadWriter methodsFor: 'filtering' stamp: 'RAA 7/Nov/2000 09:45:00'!
 filterPaeth: count
 	"Select one of (the pixel to the left, the pixel above and the pixel to above left) to
 	predict the value of this pixel"
@@ -897,7 +897,7 @@ filterPaeth: count
 
 ! !
 
-!PNGReadWriter methodsFor: 'filtering' stamp: 'eat 9/11/2000 20:08'!
+!PNGReadWriter methodsFor: 'filtering' stamp: 'eat 11/Sep/2000 20:08:00'!
 filterScanline: filterType count: count
 
 	self
@@ -908,7 +908,7 @@ filterScanline: filterType count: count
 
 ! !
 
-!PNGReadWriter methodsFor: 'filtering' stamp: 'DSM 3/25/2000 17:54'!
+!PNGReadWriter methodsFor: 'filtering' stamp: 'DSM 25/Mar/2000 17:54:00'!
 filterVertical: count
 	"Use the pixel above as a predictor"
 
@@ -918,7 +918,7 @@ filterVertical: count
 
 ! !
 
-!PNGReadWriter methodsFor: 'filtering' stamp: 'eat 9/11/2000 20:05'!
+!PNGReadWriter methodsFor: 'filtering' stamp: 'eat 11/Sep/2000 20:05:00'!
 paethPredictLeft: a above: b aboveLeft: c
 	"Predicts the value of a pixel based on nearby pixels, based on
 Paeth (GG II, 1991)"
@@ -934,12 +934,12 @@ Paeth (GG II, 1991)"
 	^ c
 ! !
 
-!PNGReadWriter methodsFor: 'writing' stamp: 'ar 12/12/2003 16:37'!
+!PNGReadWriter methodsFor: 'writing' stamp: 'ar 12/Dec/2003 16:37:00'!
 nextPutImage: aForm
 	"Write out the given form. We're keeping it simple here, no interlacing, no filters."
 	^self nextPutImage: aForm interlace: 0 filter: 0. "no filtering"! !
 
-!PNGReadWriter methodsFor: 'writing' stamp: 'jmv 5/13/2016 14:48'!
+!PNGReadWriter methodsFor: 'writing' stamp: 'jmv 13/May/2016 14:48:00'!
 nextPutImage: aForm interlace: aMethod filter: aFilterType
 	"Note: For now we keep it simple - interlace and filtering are simply ignored"
 	| crcStream |
@@ -995,11 +995,11 @@ nextPutImage: aForm interlace: aMethod filter: aFilterType
 	self writeIENDChunkOn: crcStream.
 	self writeChunk: crcStream.! !
 
-!PNGReadWriter methodsFor: 'writing' stamp: 'nk 2/17/2004 16:51'!
+!PNGReadWriter methodsFor: 'writing' stamp: 'nk 17/Feb/2004 16:51:00'!
 updateCrc: oldCrc from: start to: stop in: aCollection
 	^ZipWriteStream updateCrc: oldCrc from: start to: stop in: aCollection! !
 
-!PNGReadWriter methodsFor: 'writing' stamp: 'jmv 5/7/2023 18:57:39'!
+!PNGReadWriter methodsFor: 'writing' stamp: 'jmv 7/May/2023 18:57:39'!
 writeChunk: crcStream
 	| bytes length crc debug |
 	debug := self debugging.
@@ -1019,11 +1019,11 @@ writeChunk: crcStream
 	debug ifTrue: [ Transcript nextPutAll: ' afterPos='; print: stream position ].
 	crcStream resetToStart.! !
 
-!PNGReadWriter methodsFor: 'writing' stamp: 'nice 1/18/2010 18:08'!
+!PNGReadWriter methodsFor: 'writing' stamp: 'nice 18/Jan/2010 18:08:00'!
 writeFileSignature
 	stream nextPutAll: #[ 16r89 16r50 16r4E  16r47 16r0D 16r0A 16r1A 16r0A ]! !
 
-!PNGReadWriter methodsFor: 'writing' stamp: 'jmv 3/12/2017 19:19:47'!
+!PNGReadWriter methodsFor: 'writing' stamp: 'jmv 12/Mar/2017 19:19:47'!
 writeIDATChunkOn: aStream
 	"Write the IDAT chunk"
 	| z |
@@ -1046,12 +1046,12 @@ writeIDATChunkOn: aStream
 			nextPutAll: ' uncompressed size=';
 			print: z position ]! !
 
-!PNGReadWriter methodsFor: 'writing' stamp: 'ar 12/12/2003 17:08'!
+!PNGReadWriter methodsFor: 'writing' stamp: 'ar 12/Dec/2003 17:08:00'!
 writeIENDChunkOn: aStream
 	"Write the IEND chunk"
 	aStream nextPutAll: 'IEND' asByteArray.! !
 
-!PNGReadWriter methodsFor: 'writing' stamp: 'jmv 5/7/2023 19:01:35'!
+!PNGReadWriter methodsFor: 'writing' stamp: 'jmv 7/May/2023 19:01:35'!
 writeIHDRChunkOn: aStream
 	"Write the IHDR chunk"
 	aStream nextPutAll: 'IHDR' asByteArray.
@@ -1064,7 +1064,7 @@ writeIHDRChunkOn: aStream
 	aStream nextPut: 0. "interlace method"
 ! !
 
-!PNGReadWriter methodsFor: 'writing' stamp: 'jmv 12/8/2020 16:35:46'!
+!PNGReadWriter methodsFor: 'writing' stamp: 'jmv 8/Dec/2020 16:35:46'!
 writePLTEChunkOn: aStream
 	"Write the PLTE chunk.
 	Ignore any form of translucency."
@@ -1080,7 +1080,7 @@ writePLTEChunkOn: aStream
 		aStream nextPut: r; nextPut: g; nextPut: b.
 	].! !
 
-!PNGReadWriter methodsFor: 'writing' stamp: 'ar 12/12/2003 18:29'!
+!PNGReadWriter methodsFor: 'writing' stamp: 'ar 12/Dec/2003 18:29:00'!
 writeSBITChunkOn: aStream
 	"Write the IDAT chunk"
 	aStream nextPutAll: 'sBIT' asByteArray.
@@ -1090,7 +1090,7 @@ writeSBITChunkOn: aStream
 	aStream nextPut: 5.
 	aStream nextPut: 1.! !
 
-!PNGReadWriter methodsFor: 'writing' stamp: 'ar 12/12/2003 17:34'!
+!PNGReadWriter methodsFor: 'writing' stamp: 'ar 12/Dec/2003 17:34:00'!
 writeTRNSChunkOn: aStream
 	"Write out tRNS chunk"
 	aStream nextPutAll: 'tRNS' asByteArray.
@@ -1098,7 +1098,7 @@ writeTRNSChunkOn: aStream
 		aStream nextPut: (aColor alpha * 255) truncated.
 	].! !
 
-!PNGReadWriter methodsFor: 'writing' stamp: 'jmv 10/3/2015 14:18'!
+!PNGReadWriter methodsFor: 'writing' stamp: 'jmv 3/Oct/2015 14:18:00'!
 writeType3DataOn: zStream
 	"Write color indexed data."
 	| scanline hack hackBlt swizzleBlt swizzleHack hackDepth |
@@ -1124,7 +1124,7 @@ writeType3DataOn: zStream
 		zStream next: bytesPerScanline putAll: scanline startingAt: 1.
 	]! !
 
-!PNGReadWriter methodsFor: 'writing' stamp: 'jmv 10/3/2015 14:19'!
+!PNGReadWriter methodsFor: 'writing' stamp: 'jmv 3/Oct/2015 14:19:00'!
 writeType6DataOn: zStream
 	"Write RGBA data."
 	| scanline hack hackBlt cm miscBlt |
@@ -1165,7 +1165,7 @@ writeType6DataOn: zStream
 		zStream nextPutAll: scanline.
 	]! !
 
-!PNGReadWriter methodsFor: 'chunks' stamp: 'jmv 5/7/2023 10:43:29'!
+!PNGReadWriter methodsFor: 'chunks' stamp: 'jmv 7/May/2023 10:43:29'!
 processBackgroundChunk
 
 	| val red green blue max |
@@ -1220,7 +1220,7 @@ When present, the bKGD chunk must precede the first IDAT chunk, and must follow 
 ==="
 ! !
 
-!PNGReadWriter methodsFor: 'chunks' stamp: 'RAA 11/4/2000 17:00'!
+!PNGReadWriter methodsFor: 'chunks' stamp: 'RAA 4/Nov/2000 17:00:00'!
 processIDATChunk
 
 	interlaceMethod = 0
@@ -1228,7 +1228,7 @@ processIDATChunk
 		ifFalse: [ self processInterlaced ]
 ! !
 
-!PNGReadWriter methodsFor: 'chunks' stamp: 'jmv 5/7/2023 10:41:51'!
+!PNGReadWriter methodsFor: 'chunks' stamp: 'jmv 7/May/2023 10:41:51'!
 processIHDRChunk
 	width := chunk int32At: 1 bigEndian: true.
 	height := chunk int32At: 5 bigEndian: true.
@@ -1252,7 +1252,7 @@ processIHDRChunk
 	rowSize := width * depth + 31 >> 5.
 ! !
 
-!PNGReadWriter methodsFor: 'chunks' stamp: 'nice 12/26/2009 19:05'!
+!PNGReadWriter methodsFor: 'chunks' stamp: 'nice 26/Dec/2009 19:05:00'!
 processInterlaced
 	| z startingCol colIncrement rowIncrement startingRow |
 	startingCol := #(0 4 0 2 0 1 0 ).
@@ -1289,7 +1289,7 @@ processInterlaced
 	].
 	z atEnd ifFalse:[self error:'Unexpected data'].! !
 
-!PNGReadWriter methodsFor: 'chunks' stamp: 'jmv 5/7/2023 10:29:28'!
+!PNGReadWriter methodsFor: 'chunks' stamp: 'jmv 7/May/2023 10:29:28'!
 processNextChunk
 
 	| length chunkType crc chunkCrc chunkTypeBytes |
@@ -1333,7 +1333,7 @@ processNextChunk
 	unknownChunks add: chunkType.
 ! !
 
-!PNGReadWriter methodsFor: 'chunks' stamp: 'jmv 3/13/2012 12:42'!
+!PNGReadWriter methodsFor: 'chunks' stamp: 'jmv 13/Mar/2012 12:42:00'!
 processNonInterlaced
 	| z filter temp copyMethod debug |
 	debug := self debugging.
@@ -1372,7 +1372,7 @@ processNonInterlaced
 	debug ifTrue: [Transcript  nextPutAll: ' compressed size='; print: z position  ].
 ! !
 
-!PNGReadWriter methodsFor: 'chunks' stamp: 'ar 2/11/2004 01:02'!
+!PNGReadWriter methodsFor: 'chunks' stamp: 'ar 11/Feb/2004 01:02:00'!
 processPLTEChunk
 
 	| colorCount i |
@@ -1385,13 +1385,13 @@ processPLTEChunk
 			(Color r: (chunk at: i)/255.0 g: (chunk at: i+1)/255.0 b: (chunk at: i+2)/255.0)
 		].! !
 
-!PNGReadWriter methodsFor: 'chunks' stamp: 'RAA 11/5/2000 11:24'!
+!PNGReadWriter methodsFor: 'chunks' stamp: 'RAA 5/Nov/2000 11:24:00'!
 processPhysicalPixelChunk
 
 	"Transcript show: '  PHYSICAL: ',chunk printString."
 ! !
 
-!PNGReadWriter methodsFor: 'chunks' stamp: 'ar 12/12/2003 18:33'!
+!PNGReadWriter methodsFor: 'chunks' stamp: 'ar 12/Dec/2003 18:33:00'!
 processSBITChunk
 	| rBits gBits bBits aBits |
 	colorType = 6 ifFalse:[^self].
@@ -1403,7 +1403,7 @@ processSBITChunk
 		depth := 16.
 	].! !
 
-!PNGReadWriter methodsFor: 'chunks' stamp: 'jmv 5/7/2023 10:43:41'!
+!PNGReadWriter methodsFor: 'chunks' stamp: 'jmv 7/May/2023 10:43:41'!
 processTransparencyChunk
 
 	"Transcript show: '  TRANSPARENCY ',chunk printString."
@@ -1431,7 +1431,7 @@ processTransparencyChunk
 			palette at: index put: ((palette at: index) alpha: alpha / 255) ].
 		^ self ]! !
 
-!PNGReadWriter class methodsFor: 'as yet unclassified' stamp: 'ar 2/11/2004 00:54'!
+!PNGReadWriter class methodsFor: 'as yet unclassified' stamp: 'ar 11/Feb/2004 00:54:00'!
 computeSwizzleMapForDepth: depth
 	"Answer a map that maps pixels in a word to their opposite location. Used for 'middle-endian' forms where the byte-order is different from the bit order (good joke, eh?)."
 	| map swizzled |
@@ -1475,12 +1475,12 @@ computeSwizzleMapForDepth: depth
 	].
 	self error: 'Unrecognized depth'! !
 
-!PNGReadWriter class methodsFor: 'as yet unclassified' stamp: 'RAA 11/7/2000 09:20'!
+!PNGReadWriter class methodsFor: 'as yet unclassified' stamp: 'RAA 7/Nov/2000 09:20:00'!
 debugging: aBoolean
 
 	Debugging _ aBoolean! !
 
-!PNGReadWriter class methodsFor: 'as yet unclassified' stamp: 'jmv 12/8/2020 16:34:09'!
+!PNGReadWriter class methodsFor: 'as yet unclassified' stamp: 'jmv 8/Dec/2020 16:34:09'!
 initialize
 	"
 	PNGReadWriter initialize
@@ -1501,12 +1501,12 @@ initialize
 	StandardSwizzleMaps := Array new: 4.
 	#(1 2 4) do:[:i| StandardSwizzleMaps at: i put: (self computeSwizzleMapForDepth: i)].! !
 
-!PNGReadWriter class methodsFor: 'image reading/writing' stamp: 'nk 7/16/2003 17:57'!
+!PNGReadWriter class methodsFor: 'image reading/writing' stamp: 'nk 16/Jul/2003 17:57:00'!
 typicalFileExtensions
 	"Answer a collection of file extensions (lowercase) which files that I can read might commonly have"
 	^#('png')! !
 
-!TIFFReadWriter methodsFor: 'private' stamp: 'jmv 12/21/2013 09:26'!
+!TIFFReadWriter methodsFor: 'private' stamp: 'jmv 21/Dec/2013 09:26:00'!
 binaryStream: aPositionableStream
 	"Reset the given Stream, wrap it in a TIFFStream, and set it as my stream."
 
@@ -1518,24 +1518,24 @@ binaryStream: aPositionableStream
 		on: aPositionableStream 
 		bigEndian: bigEndian.! !
 
-!TIFFReadWriter methodsFor: 'accessing' stamp: 'jmv 4/8/2015 15:39'!
+!TIFFReadWriter methodsFor: 'accessing' stamp: 'jmv 8/Apr/2015 15:39:00'!
 nextImage
 	"Decode an image on my stream and answer the image as a Form."
 	^ self reader readForm! !
 
-!TIFFReadWriter methodsFor: 'accessing' stamp: 'mrm 7/22/2001 18:46'!
+!TIFFReadWriter methodsFor: 'accessing' stamp: 'mrm 22/Jul/2001 18:46:00'!
 nextPutImage: aForm
 	"Encode aForm into TIFF form and write on my stream."
 
 	^self error: 'Not Yet Implemented.'.! !
 
-!TIFFReadWriter methodsFor: 'accessing' stamp: 'jmv 4/8/2015 15:39'!
+!TIFFReadWriter methodsFor: 'accessing' stamp: 'jmv 8/Apr/2015 15:39:00'!
 reader
 	| reader |
 	reader _ TIFFReader onTiffStream: stream.
 	^ reader! !
 
-!TIFFReadWriter methodsFor: 'testing' stamp: 'mrm 7/22/2001 19:07'!
+!TIFFReadWriter methodsFor: 'testing' stamp: 'mrm 22/Jul/2001 19:07:00'!
 understandsImageFormat
 	"Test to see if the image stream format is understood by this decoder."
 	"Return true if this stream appears to contain a TIFF file, otherwise 
@@ -1550,13 +1550,13 @@ understandsImageFormat
 	^ (self hasMagicNumber: 
 		(ByteArray with: 16r49 with: 16r49 with: 16r2A with: 16r00) ).! !
 
-!TIFFField methodsFor: 'printing' stamp: 'mrm 7/31/2001 21:51'!
+!TIFFField methodsFor: 'printing' stamp: 'mrm 31/Jul/2001 21:51:00'!
 printOn: aStream
 
 	super printOn: aStream.
 	values printOn: aStream.! !
 
-!TIFFField methodsFor: 'private' stamp: 'mrm 7/28/2001 13:47'!
+!TIFFField methodsFor: 'private' stamp: 'mrm 28/Jul/2001 13:47:00'!
 isSingleValued
 	"Answer true iff my tag is one that should only have one value, and I only have one value.
 	Raise an error if I should have exactly one value but I have some other number of values."
@@ -1566,7 +1566,7 @@ isSingleValued
 		ifTrue: [self error: 'Field not single-valued that should be.'].
 	^ singleValued.! !
 
-!TIFFField methodsFor: 'private' stamp: 'jmv 5/7/2023 10:32:03'!
+!TIFFField methodsFor: 'private' stamp: 'jmv 7/May/2023 10:32:03'!
 parseFrom: aTIFFStream
 	"Fill in my state with the results from parsing the given TIFFStream from its current position. Leave the stream positioned after the field, which will be the beginning of the next field, if any. Answer nil if the field has an unknown tag, otherwise answer self."
 
@@ -1584,14 +1584,14 @@ parseFrom: aTIFFStream
 	self perform: selector with: aTIFFStream.
 	! !
 
-!TIFFField methodsFor: 'private' stamp: 'mrm 7/28/2001 16:27'!
+!TIFFField methodsFor: 'private' stamp: 'mrm 28/Jul/2001 16:27:00'!
 tag: tagInteger type: typeInteger values: valueArray
 	"Set my state to the given values."
 	tag _ tagInteger.
 	type _ typeInteger.
 	values _ valueArray.! !
 
-!TIFFField methodsFor: 'private-value reading' stamp: 'jmv 1/9/2024 16:23:28'!
+!TIFFField methodsFor: 'private-value reading' stamp: 'jmv 9/Jan/2024 16:23:28'!
 read: count charsFrom: aTIFFStream
 	"Read count bytes from the current position of aTIFFStream and return them as an Array of Strings, using NUL as the separating character between strings. Don't worry about the ending position of aTIFFStream."
 	| strings oneString size |
@@ -1606,7 +1606,7 @@ read: count charsFrom: aTIFFStream
 				strings add: ((String new: size) replaceFrom: 1 to: size with: oneString) ]].
 	^ strings asArray! !
 
-!TIFFField methodsFor: 'private-value reading' stamp: 'jmv 5/7/2023 10:29:33'!
+!TIFFField methodsFor: 'private-value reading' stamp: 'jmv 7/May/2023 10:29:33'!
 readAsciiValuesFrom: aTIFFStream
 	"Read the count long and count number of characters from aTIFFStream at its current position according to my type. Store the result as one or more Strings in my array of values, using the NUL character to detect separation between strings. Leave aTIFFStream positioned eight bytes past its starting position."
 
@@ -1616,7 +1616,7 @@ readAsciiValuesFrom: aTIFFStream
 		ifTrue: [self readImmediate: count charsFrom: aTIFFStream.]
 		ifFalse: [self readIndirect: count charsFrom: aTIFFStream.].! !
 
-!TIFFField methodsFor: 'private-value reading' stamp: 'jmv 5/7/2023 10:29:36'!
+!TIFFField methodsFor: 'private-value reading' stamp: 'jmv 7/May/2023 10:29:36'!
 readByteValuesFrom: aTIFFStream
 	"Read the count long and count number of bytes from aTIFFStream at its current position according to my type. Store the result as my array of values. Leave aTIFFStream positioned eight bytes past its starting position."
 
@@ -1628,7 +1628,7 @@ readByteValuesFrom: aTIFFStream
 		ifFalse: [self readIndirect: count bytesFrom: aTIFFStream.].
 ! !
 
-!TIFFField methodsFor: 'private-value reading' stamp: 'jmv 4/7/2015 16:32'!
+!TIFFField methodsFor: 'private-value reading' stamp: 'jmv 7/Apr/2015 16:32:00'!
 readImmediate: count bytesFrom: aTIFFStream
 	"Put the next count bytes in aTIFFStream into my values array, starting from values at: 1. Leave aTIFFStream positioned four bytes past its starting position. Count must be <= 4."
 	| position |
@@ -1637,7 +1637,7 @@ readImmediate: count bytesFrom: aTIFFStream
 	aTIFFStream position: position + 4.
 	! !
 
-!TIFFField methodsFor: 'private-value reading' stamp: 'mrm 7/27/2001 16:56'!
+!TIFFField methodsFor: 'private-value reading' stamp: 'mrm 27/Jul/2001 16:56:00'!
 readImmediate: count charsFrom: aTIFFStream
 	"Read the next count bytes in aTIFFStream and return an Array of Strings, using NUL as the separating character between strings. Leave aTIFFStream positioned four bytes past its starting position. Count must be <= 4."
 	| position result |
@@ -1646,7 +1646,7 @@ readImmediate: count charsFrom: aTIFFStream
 	aTIFFStream position: position + 4.
 	^ result.! !
 
-!TIFFField methodsFor: 'private-value reading' stamp: 'jmv 5/7/2023 10:29:40'!
+!TIFFField methodsFor: 'private-value reading' stamp: 'jmv 7/May/2023 10:29:40'!
 readImmediate: count longsFrom: aTIFFStream
 	"Put the next count 32-bit longs in aTIFFStream into my values array, starting from values at: 1. Leave aTIFFStream positioned four bytes past its starting position. Count must be <= 1."
 	| position |
@@ -1655,7 +1655,7 @@ readImmediate: count longsFrom: aTIFFStream
 	aTIFFStream position: position + 4.
 	! !
 
-!TIFFField methodsFor: 'private-value reading' stamp: 'jmv 5/7/2023 10:32:08'!
+!TIFFField methodsFor: 'private-value reading' stamp: 'jmv 7/May/2023 10:32:08'!
 readImmediate: count shortsFrom: aTIFFStream
 	"Put the next count 16-bit shorts in aTIFFStream into my values array, starting from values at: 1. Leave aTIFFStream positioned four bytes past its starting position. Count must be <= 2."
 	| position |
@@ -1664,7 +1664,7 @@ readImmediate: count shortsFrom: aTIFFStream
 	aTIFFStream position: position + 4.
 	! !
 
-!TIFFField methodsFor: 'private-value reading' stamp: 'jmv 5/7/2023 10:29:44'!
+!TIFFField methodsFor: 'private-value reading' stamp: 'jmv 7/May/2023 10:29:44'!
 readIndirect: count bytesFrom: aTIFFStream
 	"Read a long offset from aTIFFStream, then read count bytes from that offset in aTIFFStream into my values array, starting from values at: 1. Leave aTIFFStream positioned four bytes past its starting position."
 	| offset position |
@@ -1674,7 +1674,7 @@ readIndirect: count bytesFrom: aTIFFStream
 	1 to: count do: [:i | values at: i put: aTIFFStream nextByte].
 	aTIFFStream position: position.! !
 
-!TIFFField methodsFor: 'private-value reading' stamp: 'jmv 5/7/2023 10:29:47'!
+!TIFFField methodsFor: 'private-value reading' stamp: 'jmv 7/May/2023 10:29:47'!
 readIndirect: count charsFrom: aTIFFStream
 	"Read a long offset from aTIFFStream, then read count bytes from that offset in aTIFFStream and return them as an Array of Strings, using NUL as the separating character between strings. Leave aTIFFStream positioned four bytes past its starting position."
 	| offset position result |
@@ -1685,7 +1685,7 @@ readIndirect: count charsFrom: aTIFFStream
 	aTIFFStream position: position.
 	^ result.! !
 
-!TIFFField methodsFor: 'private-value reading' stamp: 'jmv 5/7/2023 10:29:52'!
+!TIFFField methodsFor: 'private-value reading' stamp: 'jmv 7/May/2023 10:29:52'!
 readIndirect: count longsFrom: aTIFFStream
 	"Read a 32-bit offset from aTIFFStream, then read count 32-bit longs from that offset in aTIFFStream into my values array, starting from values at: 1. Leave aTIFFStream positioned four bytes past its starting position."
 	| offset position |
@@ -1695,7 +1695,7 @@ readIndirect: count longsFrom: aTIFFStream
 	1 to: count do: [:i | values at: i put: aTIFFStream nextUint32].
 	aTIFFStream position: position.! !
 
-!TIFFField methodsFor: 'private-value reading' stamp: 'jmv 5/7/2023 10:29:59'!
+!TIFFField methodsFor: 'private-value reading' stamp: 'jmv 7/May/2023 10:29:59'!
 readIndirect: count rationalsFrom: aTIFFStream
 	"Read a 32-bit offset from aTIFFStream, then read count 32-bit longs from that offset in aTIFFStream into my values array, starting from values at: 1. Leave aTIFFStream positioned four bytes past its starting position."
 	| offset position |
@@ -1705,7 +1705,7 @@ readIndirect: count rationalsFrom: aTIFFStream
 	1 to: count do: [:i | values at: i put: (aTIFFStream nextUint32 / aTIFFStream nextUint32)].
 	aTIFFStream position: position.! !
 
-!TIFFField methodsFor: 'private-value reading' stamp: 'jmv 5/7/2023 10:32:11'!
+!TIFFField methodsFor: 'private-value reading' stamp: 'jmv 7/May/2023 10:32:11'!
 readIndirect: count shortsFrom: aTIFFStream
 	"Read a long offset from aTIFFStream, then read count 16-bit shorts from that offset in aTIFFStream into my values array, starting from values at: 1. Leave aTIFFStream positioned four bytes past its starting position."
 	| offset position |
@@ -1715,7 +1715,7 @@ readIndirect: count shortsFrom: aTIFFStream
 	1 to: count do: [:i | values at: i put: aTIFFStream nextUint16].
 	aTIFFStream position: position.! !
 
-!TIFFField methodsFor: 'private-value reading' stamp: 'jmv 5/7/2023 10:30:06'!
+!TIFFField methodsFor: 'private-value reading' stamp: 'jmv 7/May/2023 10:30:06'!
 readLongValuesFrom: aTIFFStream
 	"Read the 32-bit count and count number of 32-bit values from aTIFFStream at its current position according to my type. Store the result as my array of values. Leave aTIFFStream positioned eight bytes past its starting position."
 
@@ -1727,7 +1727,7 @@ readLongValuesFrom: aTIFFStream
 		ifFalse: [self readIndirect: count longsFrom: aTIFFStream.].
 ! !
 
-!TIFFField methodsFor: 'private-value reading' stamp: 'jmv 5/7/2023 10:30:09'!
+!TIFFField methodsFor: 'private-value reading' stamp: 'jmv 7/May/2023 10:30:09'!
 readRationalValuesFrom: aTIFFStream
 	"Read the 32-bit count and count number of 64-bit rational values from aTIFFStream at its current position according to my type. Store the result as my array of values. Leave aTIFFStream positioned eight bytes past its starting position."
 
@@ -1738,7 +1738,7 @@ readRationalValuesFrom: aTIFFStream
 	self readIndirect: count rationalsFrom: aTIFFStream.
 ! !
 
-!TIFFField methodsFor: 'private-value reading' stamp: 'jmv 5/7/2023 10:30:13'!
+!TIFFField methodsFor: 'private-value reading' stamp: 'jmv 7/May/2023 10:30:13'!
 readShortValuesFrom: aTIFFStream
 	"Read the 32-bit count and count number of 16-bit shorts from aTIFFStream at its current position according to my type. Store the result as my array of values. Leave aTIFFStream positioned eight bytes past its starting position."
 
@@ -1750,20 +1750,20 @@ readShortValuesFrom: aTIFFStream
 		ifFalse: [self readIndirect: count shortsFrom: aTIFFStream.].
 ! !
 
-!TIFFField methodsFor: 'accessing' stamp: 'mrm 7/27/2001 17:50'!
+!TIFFField methodsFor: 'accessing' stamp: 'mrm 27/Jul/2001 17:50:00'!
 tag
 	"Return the tag integer that indicates what kind of TIFF field this is."
 	^ tag.
 ! !
 
-!TIFFField methodsFor: 'accessing' stamp: 'mrm 7/31/2001 20:12'!
+!TIFFField methodsFor: 'accessing' stamp: 'mrm 31/Jul/2001 20:12:00'!
 tagSymbol
 	"Answer the Symbol that indicates what kind of TIFF field this is.
 	If it's an unknown tag, answer nil."
 	^ TagSymbols at: tag ifAbsent: [nil].
 ! !
 
-!TIFFField methodsFor: 'accessing' stamp: 'mrm 7/28/2001 13:38'!
+!TIFFField methodsFor: 'accessing' stamp: 'mrm 28/Jul/2001 13:38:00'!
 value
 	"Answer my value. All TIFF fields are structured with array values, but many tags never have an array with more than one value. Thus, I answer the sole value for such tags, and answer an array for tags that can have more than one value.
 	I report an error if I have more than one value for a tag that should only have one value."
@@ -1772,14 +1772,14 @@ value
 		ifTrue: [values at: 1]
 		ifFalse: [values].! !
 
-!TIFFField class methodsFor: 'defaults' stamp: 'mrm 7/28/2001 15:53'!
+!TIFFField class methodsFor: 'defaults' stamp: 'mrm 28/Jul/2001 15:53:00'!
 defaultFor: tagSymbol
 		"Answer the default field for the given tag Symbol. Raise an error if there is no default field for the given tag Symbol."
 	^ DefaultFields 
 		at: tagSymbol
 		ifAbsent: [self error: 'No default value for this tag.']. ! !
 
-!TIFFField class methodsFor: 'initializing' stamp: 'mrm 7/28/2001 15:56'!
+!TIFFField class methodsFor: 'initializing' stamp: 'mrm 28/Jul/2001 15:56:00'!
 initialize
 	"TIFFField initialize."
 
@@ -1788,7 +1788,7 @@ initialize
 	self initializeSingleValuedTagSymbols.
 	self initializeDefaultFields.! !
 
-!TIFFField class methodsFor: 'initializing' stamp: 'jmv 1/12/2011 15:58'!
+!TIFFField class methodsFor: 'initializing' stamp: 'jmv 12/Jan/2011 15:58:00'!
 initializeDefaultFields
 	"DefaultFields				Dictionary -- maps tag symbols to the default field with that tag. Only maps tag symbols for which the TIFF spec defines a default."
 
@@ -1834,7 +1834,7 @@ initializeDefaultFields
 		
 ! !
 
-!TIFFField class methodsFor: 'initializing' stamp: 'jmv 1/12/2011 15:59'!
+!TIFFField class methodsFor: 'initializing' stamp: 'jmv 12/Jan/2011 15:59:00'!
 initializeSingleValuedTagSymbols
 	"SingleValuedTagSymbols		Set -- contains the tag symbols of the fields types that should have a value that consists of an array of length one."
 	SingleValuedTagSymbols _ Set new.
@@ -1861,7 +1861,7 @@ initializeSingleValuedTagSymbols
 		add: #YResolution .
 ! !
 
-!TIFFField class methodsFor: 'initializing' stamp: 'jmv 1/12/2011 15:58'!
+!TIFFField class methodsFor: 'initializing' stamp: 'jmv 12/Jan/2011 15:58:00'!
 initializeTagSymbols
 	"TagSymbols					Dictionary -- maps TIFF tag integers to tag symbols."
 	TagSymbols _ Dictionary new.
@@ -1905,7 +1905,7 @@ initializeTagSymbols
 		at: 283 put: #YResolution .
 ! !
 
-!TIFFField class methodsFor: 'initializing' stamp: 'mrm 7/27/2001 17:47'!
+!TIFFField class methodsFor: 'initializing' stamp: 'mrm 27/Jul/2001 17:47:00'!
 initializeValueReaderSelectors
 	"ValueReaderSelectors 	Dictionary -- maps TIFF type integers to the selectors of the methods used to read field values of that type."
 
@@ -1918,13 +1918,13 @@ initializeValueReaderSelectors
 		at: 5 put: #readRationalValuesFrom: .
 ! !
 
-!TIFFField class methodsFor: 'instance creation' stamp: 'mrm 7/25/2001 22:22'!
+!TIFFField class methodsFor: 'instance creation' stamp: 'mrm 25/Jul/2001 22:22:00'!
 parseFrom: aTIFFStream
 	"Answer a new instance of the receiver resulting from parsing the given TIFFStream from its current position. Leave the stream positioned after the field, which will be the beginning of the next field, if any."
 
 	^ self new parseFrom: aTIFFStream.! !
 
-!TIFFField class methodsFor: 'private' stamp: 'mrm 7/28/2001 16:25'!
+!TIFFField class methodsFor: 'private' stamp: 'mrm 28/Jul/2001 16:25:00'!
 tag: tagInteger type: typeInteger values: valueArray
 	"Answer a new instance with the given state."
 	^ self new 
@@ -1932,7 +1932,7 @@ tag: tagInteger type: typeInteger values: valueArray
 		type: typeInteger
 		values: valueArray.! !
 
-!TIFFImageFileDirectory methodsFor: 'accessing' stamp: 'mrm 7/28/2001 15:52'!
+!TIFFImageFileDirectory methodsFor: 'accessing' stamp: 'mrm 28/Jul/2001 15:52:00'!
 at: tagSymbol
 	"Answer the value I have for the given tag Symbol. If I have no value for that tag, return the default value for that tag. 
 	All TIFF tags are structured with array values, but many tags never have an array with more than one value. Thus, I answer the sole value for such tags, and answer an array for tags that can have more than one value.
@@ -1945,7 +1945,7 @@ at: tagSymbol
 			[TIFFField defaultFor: tagSymbol]. "Raises error if no default."
 	^ field value.! !
 
-!TIFFImageFileDirectory methodsFor: 'private' stamp: 'jmv 2/6/2024 10:15:14'!
+!TIFFImageFileDirectory methodsFor: 'private' stamp: 'jmv 6/Feb/2024 10:15:14'!
 parseFrom: aTIFFStream
 	"Blow away any former state I had and parse a new collection of fields from the given stream.
 	Leave the stream positioned at the end of the IFD, just before the pointer to the next IFD."
@@ -1957,24 +1957,24 @@ parseFrom: aTIFFStream
 		field isNil ifFalse: [fields at: field tagSymbol put: field] ].
 ! !
 
-!TIFFImageFileDirectory class methodsFor: 'instance creation' stamp: 'mrm 7/25/2001 22:22'!
+!TIFFImageFileDirectory class methodsFor: 'instance creation' stamp: 'mrm 25/Jul/2001 22:22:00'!
 parseFrom: aTIFFStream
 	"Answer a new instance of the receiver resulting from parsing the given TIFFStream from its current position. Leave the stream positioned at the start of the next IFD, or at 0 if no more."
 	^ self new parseFrom: aTIFFStream.! !
 
-!TIFFReader methodsFor: 'accessing' stamp: 'mrm 7/28/2001 17:03'!
+!TIFFReader methodsFor: 'accessing' stamp: 'mrm 28/Jul/2001 17:03:00'!
 extent
 	"Answer a Point that defines my image's size in pixels."
 	^ (structure at: #ImageWidth) @ (structure at: #ImageLength).
 ! !
 
-!TIFFReader methodsFor: 'private' stamp: 'jmv 1/12/2011 16:52'!
+!TIFFReader methodsFor: 'private' stamp: 'jmv 12/Jan/2011 16:52:00'!
 positionStreamToStripNum: anInteger
 	"Position my TIFFStream at the start of the given strip, where 1 is the first strip."
 	stream position: ((structure at: #StripOffsets) at: anInteger).
 	stream newStrip! !
 
-!TIFFReader methodsFor: 'private' stamp: 'jmv 5/7/2023 10:32:19'!
+!TIFFReader methodsFor: 'private' stamp: 'jmv 7/May/2023 10:32:19'!
 readGray16PixelsInto: aShortWordMatrix
 	"Replace the given Form's pixel values with pixel values from my TIFFStream. aForm must have the correct extent.
 	Handles 16 bit pixels on source, float as destination."
@@ -1995,7 +1995,7 @@ readGray16PixelsInto: aShortWordMatrix
 		pixel := stream nextUint16.
 		elements at: pixNum put: pixel ]! !
 
-!TIFFReader methodsFor: 'private' stamp: 'jmv 5/12/2016 18:27'!
+!TIFFReader methodsFor: 'private' stamp: 'jmv 12/May/2016 18:27:00'!
 readGray8PixelsInto: aGrayForm horizontalPredictor: useHorizontalPredictor
 	"Replace the given Form's pixel values with pixel values from my TIFFStream. aForm must have the correct extent.
 	Only handles 8-bit gray pixels on both source and destination."
@@ -2030,7 +2030,7 @@ readGray8PixelsInto: aGrayForm horizontalPredictor: useHorizontalPredictor
 		pixel _ g.
 		bits byteAt: (row *  bytesPerRow) + column put: pixel bigEndian: aGrayForm isBigEndian ]! !
 
-!TIFFReader methodsFor: 'private' stamp: 'jmv 4/8/2015 11:54'!
+!TIFFReader methodsFor: 'private' stamp: 'jmv 8/Apr/2015 11:54:00'!
 readPlanarRGB8PixelsInto: a32BitForm readAlpha: doReadAlpha horizontalPredictor: useHorizontalPredictor
 	"Replace the given Form's pixel values with pixel values from my TIFFStream. aForm must have the correct extent.
 	Handles 24 or 32-bit pixels on source, and destination of 32 bits per pixel."
@@ -2068,7 +2068,7 @@ readPlanarRGB8PixelsInto: a32BitForm readAlpha: doReadAlpha horizontalPredictor:
 	doReadAlpha ifFalse: [
 		a32BitForm makeAllPixelsOpaque ]! !
 
-!TIFFReader methodsFor: 'private' stamp: 'jmv 4/7/2015 16:34'!
+!TIFFReader methodsFor: 'private' stamp: 'jmv 7/Apr/2015 16:34:00'!
 readRGB8PixelsInto: a32BitForm readAlpha: doReadAlpha horizontalPredictor: useHorizontalPredictor
 	"Replace the given Form's pixel values with pixel values from my TIFFStream. aForm must have the correct extent.
 	Handles 24 or 32-bit pixels on source, and destination of 32 bits per pixel."
@@ -2112,14 +2112,14 @@ readRGB8PixelsInto: a32BitForm readAlpha: doReadAlpha horizontalPredictor: useHo
 		pixel _ (r << 16) + (g << 8) + b + (a << 24).
 		bits at: pixNum put: pixel.].! !
 
-!TIFFReader methodsFor: 'private' stamp: 'jmv 12/21/2013 09:28'!
+!TIFFReader methodsFor: 'private' stamp: 'jmv 21/Dec/2013 09:28:00'!
 tiffStream: aTIFFStream
 	"Set the given stream as my stream, and read the TIFF's structure from that stream."
 	stream _ aTIFFStream.
 	structure _ TIFFStructure parseFrom: stream.
 ! !
 
-!TIFFReader methodsFor: 'private' stamp: 'jmv 4/8/2015 11:13'!
+!TIFFReader methodsFor: 'private' stamp: 'jmv 8/Apr/2015 11:13:00'!
 validateTIFFType
 	"Examine my structure to see if it represents a TIFF that I know how to read. 
 	At the moment, I can read only
@@ -2148,7 +2148,7 @@ validateTIFFType
 	((#(1 3 4) includes: bpsArray size) and: [ (bpsArray allSatisfy: [ :d | d = 8 ]) or: [bpsArray = #(16)]])
 		ifFalse: [self error: 'Cannot read, this TIFF is not a Gray, RGB or RGBA TIFF with 8bpp or Gray 16bpp.']! !
 
-!TIFFReader methodsFor: 'reading' stamp: 'jmv 8/1/2016 10:37:24'!
+!TIFFReader methodsFor: 'reading' stamp: 'jmv 1/Aug/2016 10:37:24'!
 readForm
 	"Answer a Form created from the data in my stream and structure."
 	| result bps |
@@ -2190,20 +2190,20 @@ readForm
 
 	^ result! !
 
-!TIFFReader class methodsFor: 'instance creation' stamp: 'jmv 12/21/2013 09:28'!
+!TIFFReader class methodsFor: 'instance creation' stamp: 'jmv 21/Dec/2013 09:28:00'!
 onTiffStream: aTIFFStream
 	"Create and answer an instance of the receiver based on the given TIFFStream. Parse the structure at this time as well."
 	^ self new tiffStream: aTIFFStream.
 ! !
 
-!TIFFStream methodsFor: 'LZW uncompressions' stamp: 'jmv 1/12/2011 16:52'!
+!TIFFStream methodsFor: 'LZW uncompressions' stamp: 'jmv 12/Jan/2011 16:52:00'!
 checkLZWCodeSize
 
 	(freeCode+1 > maxCode and: [ codeSize < 12 ]) ifTrue: [
 		codeSize := codeSize + 1.
 		maxCode := (1 bitShift: codeSize) - 1 ]! !
 
-!TIFFStream methodsFor: 'LZW uncompressions' stamp: 'jmv 1/12/2011 16:57'!
+!TIFFStream methodsFor: 'LZW uncompressions' stamp: 'jmv 12/Jan/2011 16:57:00'!
 initializeLZWDecompression
 
 	maxOutCodes := 4096.
@@ -2214,7 +2214,7 @@ initializeLZWDecompression
 	suffixTable := Array new: 4096.
 	bitMask := (1 bitShift: 8) - 1! !
 
-!TIFFStream methodsFor: 'LZW uncompressions' stamp: 'jmv 1/12/2011 17:02'!
+!TIFFStream methodsFor: 'LZW uncompressions' stamp: 'jmv 12/Jan/2011 17:02:00'!
 nextLZWCode
 	| integer readBitCount shiftCount byte |
 	integer := 0.
@@ -2242,7 +2242,7 @@ nextLZWCode
 	integer _ integer bitShift: remainBitCount negated.
 	^integer! !
 
-!TIFFStream methodsFor: 'LZW uncompressions' stamp: 'jmv 1/12/2011 17:04'!
+!TIFFStream methodsFor: 'LZW uncompressions' stamp: 'jmv 12/Jan/2011 17:04:00'!
 nextLZWUncompressedByte
 	"Answer the next 8-bit unsigned quantity from the stream."
 	| answer |
@@ -2253,7 +2253,7 @@ nextLZWUncompressedByte
 	outCount _ outCount - 1.
 	^answer! !
 
-!TIFFStream methodsFor: 'LZW uncompressions' stamp: 'jmv 1/12/2011 15:18'!
+!TIFFStream methodsFor: 'LZW uncompressions' stamp: 'jmv 12/Jan/2011 15:18:00'!
 reInitializeLZWDecompression
 	clearCode := 1 bitShift: 8.
 	eoiCode := clearCode + 1.
@@ -2261,7 +2261,7 @@ reInitializeLZWDecompression
 	codeSize := 9.	
 	maxCode := (1 bitShift: codeSize) - 1! !
 
-!TIFFStream methodsFor: 'LZW uncompressions' stamp: 'jmv 1/12/2011 17:13'!
+!TIFFStream methodsFor: 'LZW uncompressions' stamp: 'jmv 12/Jan/2011 17:13:00'!
 readAdditionalLZWStuff
 	"Answer the next 8-bit unsigned quantity from the stream."
 	| code curCode inCode |
@@ -2301,30 +2301,30 @@ readAdditionalLZWStuff
 		at: (outCount := outCount + 1)
 		put: finChar! !
 
-!TIFFStream methodsFor: 'accessing' stamp: 'jmv 1/12/2011 16:05'!
+!TIFFStream methodsFor: 'accessing' stamp: 'jmv 12/Jan/2011 16:05:00'!
 compressionType: aNumber
 	compressionType _ aNumber.
 	aNumber = 5 ifTrue: [
 		self initializeLZWDecompression ]! !
 
-!TIFFStream methodsFor: 'accessing' stamp: 'mrm 7/22/2001 21:59'!
+!TIFFStream methodsFor: 'accessing' stamp: 'mrm 22/Jul/2001 21:59:00'!
 isBigEndian
 	"Return true if I am a big-endian TIFF, false if I am little-endian."
 	^ bigEndian.
 ! !
 
-!TIFFStream methodsFor: 'TIFF type access' stamp: 'jmv 1/12/2011 17:02'!
+!TIFFStream methodsFor: 'TIFF type access' stamp: 'jmv 12/Jan/2011 17:02:00'!
 newStrip
 	remainBitCount _ 0.
 	self reInitializeLZWDecompression! !
 
-!TIFFStream methodsFor: 'TIFF type access' stamp: 'mrm 7/27/2001 17:49'!
+!TIFFStream methodsFor: 'TIFF type access' stamp: 'mrm 27/Jul/2001 17:49:00'!
 nextByte
 	"Answer the next 8-bit unsigned quantity from the stream."
 
 	^ stream next.! !
 
-!TIFFStream methodsFor: 'TIFF type access' stamp: 'jmv 1/13/2011 10:13'!
+!TIFFStream methodsFor: 'TIFF type access' stamp: 'jmv 13/Jan/2011 10:13:00'!
 nextByteInBody
 	"Answer the next 8-bit unsigned quantity from the stream.
 	Uncompress data if appropriate"
@@ -2332,25 +2332,25 @@ nextByteInBody
 		^self nextLZWUncompressedByte ].
 	^ stream next! !
 
-!TIFFStream methodsFor: 'TIFF type access' stamp: 'jmv 5/7/2023 18:50:59'!
+!TIFFStream methodsFor: 'TIFF type access' stamp: 'jmv 7/May/2023 18:50:59'!
 nextUint16
 	"Read a 16-bit unsigned quantity from the stream."
 
 	^ stream nextUint16BigEndian: bigEndian! !
 
-!TIFFStream methodsFor: 'TIFF type access' stamp: 'jmv 5/7/2023 18:56:26'!
+!TIFFStream methodsFor: 'TIFF type access' stamp: 'jmv 7/May/2023 18:56:26'!
 nextUint32
 	"Read a 32-bit unsigned quantity from the stream."
 
 	^ stream nextUint32BigEndian: bigEndian! !
 
-!TIFFStream methodsFor: 'stream access' stamp: 'mrm 7/22/2001 20:23'!
+!TIFFStream methodsFor: 'stream access' stamp: 'mrm 22/Jul/2001 20:23:00'!
 next: anInteger
 
 	"Answer the next anInteger elements of my stream's collection."
 	^ stream next: anInteger.! !
 
-!TIFFStream methodsFor: 'stream access' stamp: 'mrm 7/27/2001 17:35'!
+!TIFFStream methodsFor: 'stream access' stamp: 'mrm 27/Jul/2001 17:35:00'!
 peek
 
 	"Answer the next byte of my underlying stream."
@@ -2358,13 +2358,13 @@ peek
 
 ! !
 
-!TIFFStream methodsFor: 'stream access' stamp: 'mrm 7/22/2001 20:11'!
+!TIFFStream methodsFor: 'stream access' stamp: 'mrm 22/Jul/2001 20:11:00'!
 position
 
 	"Answer the current position of accessing the sequence of objects."
 	^ stream position.! !
 
-!TIFFStream methodsFor: 'stream access' stamp: 'mrm 7/22/2001 20:18'!
+!TIFFStream methodsFor: 'stream access' stamp: 'mrm 22/Jul/2001 20:18:00'!
 position: anInteger 
 
 	"Set the current position for accessing the objects to be anInteger, as long 
@@ -2372,12 +2372,12 @@ position: anInteger
 	create an error notification."
 	stream position: anInteger.! !
 
-!TIFFStream methodsFor: 'stream access' stamp: 'jmv 1/12/2011 10:01'!
+!TIFFStream methodsFor: 'stream access' stamp: 'jmv 12/Jan/2011 10:01:00'!
 reset
 	"Goto start."
 	stream reset! !
 
-!TIFFStream methodsFor: 'stream access' stamp: 'mrm 7/22/2001 20:13'!
+!TIFFStream methodsFor: 'stream access' stamp: 'mrm 22/Jul/2001 20:13:00'!
 size
 
 	"Answer the size of my underlying stream."
@@ -2385,13 +2385,13 @@ size
 
 ! !
 
-!TIFFStream methodsFor: 'stream access' stamp: 'mrm 7/31/2001 21:44'!
+!TIFFStream methodsFor: 'stream access' stamp: 'mrm 31/Jul/2001 21:44:00'!
 skip: anInteger
 	"Set the receiver's position to be the current position+anInteger."
 
 	stream skip: anInteger.! !
 
-!TIFFStream methodsFor: 'private' stamp: 'mrm 7/22/2001 20:34'!
+!TIFFStream methodsFor: 'private' stamp: 'mrm 22/Jul/2001 20:34:00'!
 on: aPositionableStream bigEndian: aBoolean
 
 	"Make aPositionableStream be the stream I'm wrapping. Interpret it as big or little-endian according to aBoolean."
@@ -2399,7 +2399,7 @@ on: aPositionableStream bigEndian: aBoolean
 	bigEndian _ aBoolean.
 ! !
 
-!TIFFStream class methodsFor: 'instance creation' stamp: 'mrm 7/22/2001 20:42'!
+!TIFFStream class methodsFor: 'instance creation' stamp: 'mrm 22/Jul/2001 20:42:00'!
 on: aPositionableStream bigEndian: aBoolean
 
 	"Answer an instance of the receiver for encoding and/or decoding TIFFs on the given."
@@ -2409,7 +2409,7 @@ on: aPositionableStream bigEndian: aBoolean
 		bigEndian: aBoolean.
 ! !
 
-!TIFFStructure methodsFor: 'accessing' stamp: 'mrm 7/28/2001 09:33'!
+!TIFFStructure methodsFor: 'accessing' stamp: 'mrm 28/Jul/2001 09:33:00'!
 at: tagSymbol
 	"Answer the value I have for the given tag Symbol. If I have no value for that tag, return the default value for that tag. 
 	All TIFF tags are structured with array values, but many tags never have an array with more than one value. Thus, I answer the sole value for such tags, and answer an array for tags that can have more than one value.
@@ -2420,7 +2420,7 @@ at: tagSymbol
 	ifd _ imageFileDirectories first. "Reports an error if no IFDs."
 	^ ifd at: tagSymbol.! !
 
-!TIFFStructure methodsFor: 'parsing' stamp: 'jmv 1/12/2011 16:06'!
+!TIFFStructure methodsFor: 'parsing' stamp: 'jmv 12/Jan/2011 16:06:00'!
 parseFrom: aTIFFStream
 	"Parse the given TIFFStream and set my internal state to match. Error if the TIFFStream does not contain a valid TIFF."
 
@@ -2431,7 +2431,7 @@ parseFrom: aTIFFStream
 	self parseIFDsFrom: aTIFFStream.
 	aTIFFStream compressionType: (self at: #Compression)! !
 
-!TIFFStructure methodsFor: 'parsing' stamp: 'jmv 5/7/2023 10:30:17'!
+!TIFFStructure methodsFor: 'parsing' stamp: 'jmv 7/May/2023 10:30:17'!
 parseIFDsFrom: aTIFFStream
 	"Read as many image file directories as aTIFFStream contains, and put them into my state. Per the TIFF spec, there must be at least one IFD."
 
@@ -2446,7 +2446,7 @@ parseIFDsFrom: aTIFFStream
 			ifdPosition := aTIFFStream nextUint32].
 ! !
 
-!TIFFStructure methodsFor: 'parsing' stamp: 'jmv 5/7/2023 10:32:24'!
+!TIFFStructure methodsFor: 'parsing' stamp: 'jmv 7/May/2023 10:32:24'!
 validateHeaderOf: aTIFFStream
 	"Report an error if the header of the given stream is not valid, 
 	or does not match the endian-ness of the TIFFStream."
@@ -2462,27 +2462,27 @@ validateHeaderOf: aTIFFStream
 	(aTIFFStream nextUint16 = douglasAdams) 
 		ifFalse: [self error: 'TIFF Header not valid. Answer not 42.']! !
 
-!TIFFStructure class methodsFor: 'instance creation' stamp: 'mrm 7/25/2001 21:52'!
+!TIFFStructure class methodsFor: 'instance creation' stamp: 'mrm 25/Jul/2001 21:52:00'!
 parseFrom: aTIFFStream
 	"Answer a new instance of the receiver resulting from parsing the given TIFFStream from a position of 0. Error if the TIFFStream does not contain a valid TIFF."
 
 	^ self new parseFrom: aTIFFStream.! !
 
-!Form methodsFor: '*Graphics-Files-Additional' stamp: 'jmv 9/21/2018 16:57:37'!
+!Form methodsFor: '*Graphics-Files-Additional' stamp: 'jmv 21/Sep/2018 16:57:37'!
 writePNGfile: fileEntry
 	"
 	Display writePNGfile: 'display.png' asFileEntry
 	"
 	PNGReadWriter putForm: self onFile: fileEntry! !
 
-!Form methodsFor: '*Graphics-Files-Additional' stamp: 'jmv 6/8/2013 14:08'!
+!Form methodsFor: '*Graphics-Files-Additional' stamp: 'jmv 8/Jun/2013 14:08:00'!
 writePNGfileNamed: fName
 	"
 	Display writePNGfileNamed: 'display.png'
 	"
 	PNGReadWriter putForm: self onFileNamed: fName! !
 
-!Morph methodsFor: '*Graphics-Files-Additional' stamp: 'hlsf 3/10/2025 21:41:54'!
+!Morph methodsFor: '*Graphics-Files-Additional' stamp: 'hlsf 10/Mar/2025 21:41:54'!
 exportAsPNG
 	"Export the receiver's image as a PNG."
 	self request: 'Enter file name'

@@ -1,4 +1,4 @@
-'From Cuis7.5 [latest update: #7597] on 21 September 2025 at 12:50:31 pm'!
+'From Cuis7.7 [latest update: #7779] on 23 December 2025 at 4:34:53 pm'!
 'Description '!
 !provides: 'Network-Kernel' 1 12!
 SystemOrganization addCategory: #'Network-Kernel'!
@@ -287,17 +287,17 @@ SS can not be run unbuffered, since that seems unneeded. The option to autoFlush
 
 The first performance tests shows that, as noted above, receiving large amounts of data using #upToAll: is greatly improved - factor of 10. Serving HTTP with small payloads seemed at first not be faster at all - but this is due to the high overhead of Socket connect/close and other things. Increasing payloads show a difference and especially with keep alive on - where the new SS roughly doubles the throughput!!!
 
-!SocketAddress methodsFor: 'converting' stamp: 'dtl 6/3/2012 13:19'!
+!SocketAddress methodsFor: 'converting' stamp: 'dtl 3/Jun/2012 13:19:00'!
 asByteArray
 	"Assuming IPV4, answer a byte array representation of the host number"
 	^ ((self hostNumber findTokens: '.')
 		collect: [:e | e asInteger]) asByteArray! !
 
-!SocketAddress methodsFor: 'converting' stamp: 'mir 6/17/2007 23:13'!
+!SocketAddress methodsFor: 'converting' stamp: 'mir 17/Jun/2007 23:13:00'!
 asSocketAddress
 ! !
 
-!SocketAddress methodsFor: 'accessing' stamp: 'ikp 6/8/2007 18:41'!
+!SocketAddress methodsFor: 'accessing' stamp: 'ikp 8/Jun/2007 18:41:00'!
 hostName
 
 	| size name |
@@ -307,7 +307,7 @@ hostName
 	NetNameResolver primGetNameInfoHostResult: name.
 	^name! !
 
-!SocketAddress methodsFor: 'accessing' stamp: 'ikp 6/8/2007 18:41'!
+!SocketAddress methodsFor: 'accessing' stamp: 'ikp 8/Jun/2007 18:41:00'!
 hostNumber
 
 	| size name |
@@ -317,7 +317,7 @@ hostNumber
 	NetNameResolver primGetNameInfoHostResult: name.
 	^name! !
 
-!SocketAddress methodsFor: 'accessing' stamp: 'ikp 6/8/2007 18:41'!
+!SocketAddress methodsFor: 'accessing' stamp: 'ikp 8/Jun/2007 18:41:00'!
 serviceName
 
 	| size name |
@@ -327,7 +327,7 @@ serviceName
 	NetNameResolver primGetNameInfoServiceResult: name.
 	^name! !
 
-!SocketAddress methodsFor: 'accessing' stamp: 'ikp 6/8/2007 18:41'!
+!SocketAddress methodsFor: 'accessing' stamp: 'ikp 8/Jun/2007 18:41:00'!
 serviceNumber
 
 	| size name |
@@ -337,21 +337,21 @@ serviceNumber
 	NetNameResolver primGetNameInfoServiceResult: name.
 	^name! !
 
-!SocketAddress methodsFor: 'primitives' stamp: 'ikp 6/9/2007 08:21'!
+!SocketAddress methodsFor: 'primitives' stamp: 'ikp 9/Jun/2007 08:21:00'!
 port
 
 	<primitive: 'primitiveSocketAddressGetPort' module: 'SocketPlugin'>
 	self primitiveFailed
 ! !
 
-!SocketAddress methodsFor: 'primitives' stamp: 'ikp 6/9/2007 08:21'!
+!SocketAddress methodsFor: 'primitives' stamp: 'ikp 9/Jun/2007 08:21:00'!
 port: anInteger
 
 	<primitive: 'primitiveSocketAddressSetPort' module: 'SocketPlugin'>
 	self primitiveFailed
 ! !
 
-!SocketAddress methodsFor: 'printing' stamp: 'dtl 11/7/2015 15:50'!
+!SocketAddress methodsFor: 'printing' stamp: 'dtl 7/Nov/2015 15:50:00'!
 printOn: aStream
 
 	[aStream
@@ -366,7 +366,7 @@ printOn: aStream
 				nextPut: Character space.
 			^super printOn: aStream]! !
 
-!SocketAddress class methodsFor: 'instance creation' stamp: 'dtl 6/4/2012 20:55'!
+!SocketAddress class methodsFor: 'instance creation' stamp: 'dtl 4/Jun/2012 20:55:00'!
 fromOldByteAddress: byteArray
 	"Use the resolver to find a socket address corresponding to byteArray"
 
@@ -384,17 +384,17 @@ fromOldByteAddress: byteArray
 	^addressInfo socketAddress "first available inet4 interface"
 ! !
 
-!SocketAddress class methodsFor: 'accessing' stamp: 'ikp 6/9/2007 10:04'!
+!SocketAddress class methodsFor: 'accessing' stamp: 'ikp 9/Jun/2007 10:04:00'!
 loopback4
 
 	^self loopbacks4 first! !
 
-!SocketAddress class methodsFor: 'accessing' stamp: 'ikp 6/9/2007 10:04'!
+!SocketAddress class methodsFor: 'accessing' stamp: 'ikp 9/Jun/2007 10:04:00'!
 loopback6
 
 	^self loopbacks6 first! !
 
-!SocketAddress class methodsFor: 'accessing' stamp: 'JMM 10/22/2024 14:07:42'!
+!SocketAddress class methodsFor: 'accessing' stamp: 'JMM 22/Oct/2024 14:07:42'!
 loopbacks
 
 	^SocketAddressInformation forHost: '' service: '0'
@@ -403,7 +403,7 @@ loopbacks
 		socketType:SocketAddressInformation socketTypeStream
 		protocol:		 SocketAddressInformation protocolTCP! !
 
-!SocketAddress class methodsFor: 'accessing' stamp: 'JMM 10/22/2024 14:08:51'!
+!SocketAddress class methodsFor: 'accessing' stamp: 'JMM 22/Oct/2024 14:08:51'!
 loopbacks4
 
 	^SocketAddressInformation forHost: 'localhost' service: ''
@@ -412,7 +412,7 @@ loopbacks4
 		socketType: SocketAddressInformation socketTypeStream 
 		protocol: SocketAddressInformation protocolTCP! !
 
-!SocketAddress class methodsFor: 'accessing' stamp: 'ikp 6/9/2007 10:02'!
+!SocketAddress class methodsFor: 'accessing' stamp: 'ikp 9/Jun/2007 10:02:00'!
 loopbacks6
 
 	^SocketAddressInformation forHost: '' service: '0'
@@ -421,17 +421,17 @@ loopbacks6
 		socketType:		0
 		protocol:		0! !
 
-!SocketAddress class methodsFor: 'accessing' stamp: 'ikp 6/9/2007 10:04'!
+!SocketAddress class methodsFor: 'accessing' stamp: 'ikp 9/Jun/2007 10:04:00'!
 wildcard4
 
 	^self wildcards4 first! !
 
-!SocketAddress class methodsFor: 'accessing' stamp: 'ikp 6/9/2007 10:04'!
+!SocketAddress class methodsFor: 'accessing' stamp: 'ikp 9/Jun/2007 10:04:00'!
 wildcard6
 
 	^self wildcards6 first! !
 
-!SocketAddress class methodsFor: 'accessing' stamp: 'JMM 10/22/2024 14:08:30'!
+!SocketAddress class methodsFor: 'accessing' stamp: 'JMM 22/Oct/2024 14:08:30'!
 wildcards
 
 	^SocketAddressInformation forHost: '' service: '0'
@@ -440,7 +440,7 @@ wildcards
 		socketType: SocketAddressInformation socketTypeStream
 		protocol: SocketAddressInformation protocolTCP! !
 
-!SocketAddress class methodsFor: 'accessing' stamp: 'JMM 10/22/2024 14:10:02'!
+!SocketAddress class methodsFor: 'accessing' stamp: 'JMM 22/Oct/2024 14:10:02'!
 wildcards4
 
 	^SocketAddressInformation forHost: '' service: '0'
@@ -449,7 +449,7 @@ wildcards4
 		socketType:		 SocketAddressInformation socketTypeStream
 		protocol:		 SocketAddressInformation protocolTCP! !
 
-!SocketAddress class methodsFor: 'accessing' stamp: 'ikp 6/9/2007 10:03'!
+!SocketAddress class methodsFor: 'accessing' stamp: 'ikp 9/Jun/2007 10:03:00'!
 wildcards6
 
 	^SocketAddressInformation forHost: '' service: '0'
@@ -458,24 +458,24 @@ wildcards6
 		socketType:		0
 		protocol:		0! !
 
-!ConnectionRefused methodsFor: 'accessing' stamp: 'len 12/14/2002 11:58'!
+!ConnectionRefused methodsFor: 'accessing' stamp: 'len 14/Dec/2002 11:58:00'!
 host
 	^ host! !
 
-!ConnectionRefused methodsFor: 'accessing' stamp: 'len 12/14/2002 11:39'!
+!ConnectionRefused methodsFor: 'accessing' stamp: 'len 14/Dec/2002 11:39:00'!
 host: addressOrHostName port: portNumber
 	host _ addressOrHostName.
 	port _ portNumber! !
 
-!ConnectionRefused methodsFor: 'accessing' stamp: 'len 12/14/2002 11:58'!
+!ConnectionRefused methodsFor: 'accessing' stamp: 'len 14/Dec/2002 11:58:00'!
 port
 	^ port! !
 
-!ConnectionRefused class methodsFor: 'instance creation' stamp: 'len 12/14/2002 11:39'!
+!ConnectionRefused class methodsFor: 'instance creation' stamp: 'len 14/Dec/2002 11:39:00'!
 host: addressOrHostName port: portNumber
 	^ self new host: addressOrHostName port: portNumber! !
 
-!NameLookupFailure methodsFor: 'accessing' stamp: 'jmv 3/13/2012 23:13'!
+!NameLookupFailure methodsFor: 'accessing' stamp: 'jmv 13/Mar/2012 23:13:00'!
 defaultAction
 	"Backward compatibility"
 	| response |
@@ -484,26 +484,26 @@ defaultAction
 	^ response = 2
 		ifFalse: [self retry]! !
 
-!NameLookupFailure methodsFor: 'accessing' stamp: 'len 12/14/2002 11:57'!
+!NameLookupFailure methodsFor: 'accessing' stamp: 'len 14/Dec/2002 11:57:00'!
 hostName
 	^ hostName! !
 
-!NameLookupFailure methodsFor: 'accessing' stamp: 'len 12/14/2002 11:57'!
+!NameLookupFailure methodsFor: 'accessing' stamp: 'len 14/Dec/2002 11:57:00'!
 hostName: aString
 	hostName _ aString! !
 
-!NameLookupFailure class methodsFor: 'instance creation' stamp: 'len 12/14/2002 11:57'!
+!NameLookupFailure class methodsFor: 'instance creation' stamp: 'len 14/Dec/2002 11:57:00'!
 hostName: aString
 	^ self new hostName: aString! !
 
-!ConnectionQueue methodsFor: 'public' stamp: 'nice 12/26/2009 01:23'!
+!ConnectionQueue methodsFor: 'public' stamp: 'nice 26/Dec/2009 01:23:00'!
 connectionCount
 	"Return an estimate of the number of currently queued connections. This is only an estimate since a new connection could be made, or an existing one aborted, at any moment."
 
 	self pruneStaleConnections.
 	^accessSema critical: [connections size]! !
 
-!ConnectionQueue methodsFor: 'public' stamp: 'jm 3/9/98 14:34'!
+!ConnectionQueue methodsFor: 'public' stamp: 'jm 9/Mar/1998 14:34:00'!
 destroy
 	"Terminate the listener process and destroy all sockets in my possesion."
 
@@ -517,7 +517,7 @@ destroy
 	connections := OrderedCollection new.
 ! !
 
-!ConnectionQueue methodsFor: 'public' stamp: 'nice 12/26/2009 01:24'!
+!ConnectionQueue methodsFor: 'public' stamp: 'nice 26/Dec/2009 01:24:00'!
 getConnectionOrNil
 	"Return a connected socket, or nil if no connection has been established."
 
@@ -532,7 +532,7 @@ getConnectionOrNil
 					result := nil]].
 		result]! !
 
-!ConnectionQueue methodsFor: 'public' stamp: 'nice 12/26/2009 01:25'!
+!ConnectionQueue methodsFor: 'public' stamp: 'nice 26/Dec/2009 01:25:00'!
 getConnectionOrNilLenient
 	"Return a connected socket, or nil if no connection has been established."
 
@@ -552,29 +552,29 @@ getConnectionOrNilLenient
 	].
 ! !
 
-!ConnectionQueue methodsFor: 'public' stamp: 'ls 9/26/1999 15:34'!
+!ConnectionQueue methodsFor: 'public' stamp: 'ls 26/Sep/1999 15:34:00'!
 isValid
 	^process notNil! !
 
-!ConnectionQueue methodsFor: 'public' stamp: 'bf 7/1/2008 18:27'!
+!ConnectionQueue methodsFor: 'public' stamp: 'bf 1/Jul/2008 18:27:00'!
 portNumber
 	^ portNumber isCollection
 		ifTrue: [portNumber first]
 		ifFalse: [portNumber]! !
 
-!ConnectionQueue methodsFor: 'public' stamp: 'bf 7/4/2008 18:29'!
+!ConnectionQueue methodsFor: 'public' stamp: 'bf 4/Jul/2008 18:29:00'!
 portNumberOrNil
 	"Answer nil while actual port has not been established"
 	^ portNumber isCollection
 		ifFalse: [portNumber]! !
 
-!ConnectionQueue methodsFor: 'public' stamp: 'bf 7/1/2008 18:27'!
+!ConnectionQueue methodsFor: 'public' stamp: 'bf 1/Jul/2008 18:27:00'!
 portNumbers
 	^ portNumber isCollection
 		ifTrue: [portNumber]
 		ifFalse: [{portNumber}]! !
 
-!ConnectionQueue methodsFor: 'private' stamp: 'bf 7/1/2008 19:32'!
+!ConnectionQueue methodsFor: 'private' stamp: 'bf 1/Jul/2008 19:32:00'!
 createListeningSocketWithBacklog: aNumber
 	| addressInfo sock |
 	self portNumbers do: [:trialportNumber | 
@@ -591,7 +591,7 @@ createListeningSocketWithBacklog: aNumber
 			^ sock]].
 	^ nil! !
 
-!ConnectionQueue methodsFor: 'private' stamp: 'JMM 10/21/2024 13:22:39'!
+!ConnectionQueue methodsFor: 'private' stamp: 'JMM 21/Oct/2024 13:22:39'!
 initPortNumber: anInteger queueLength: queueLength
 	"Private!! Initialize the receiver to listen on the given port number. Up to queueLength connections will be queued."
 
@@ -606,7 +606,7 @@ initPortNumber: anInteger queueLength: queueLength
 	process resume.
 ! !
 
-!ConnectionQueue methodsFor: 'private' stamp: 'dtl 5/28/2012 12:52'!
+!ConnectionQueue methodsFor: 'private' stamp: 'dtl 28/May/2012 12:52:00'!
 listenLoop
 	"Private!! This loop is run in a separate process. It will establish up to maxQueueLength connections on the given port."
 	"Details: When out of sockets or queue is full, retry more frequently, since a socket may become available, space may open in the queue, or a previously queued connection may be aborted by the client, making it available for a fresh connection."
@@ -638,7 +638,7 @@ listenLoop
 			self changed].
 		self pruneStaleConnections] repeat! !
 
-!ConnectionQueue methodsFor: 'private' stamp: 'dtl 5/28/2012 12:54'!
+!ConnectionQueue methodsFor: 'private' stamp: 'dtl 28/May/2012 12:54:00'!
 oldStyleListenLoop
 	"Private!! This loop is run in a separate process. It will establish up to maxQueueLength connections on the given port."
 	"Details: When out of sockets or queue is full, retry more frequently, since a socket may become available, space may open in the queue, or a previously queued connection may be aborted by the client, making it available for a fresh connection."
@@ -666,7 +666,7 @@ oldStyleListenLoop
 		self pruneStaleConnections] repeat
 ! !
 
-!ConnectionQueue methodsFor: 'private' stamp: 'nice 12/26/2009 01:25'!
+!ConnectionQueue methodsFor: 'private' stamp: 'nice 26/Dec/2009 01:25:00'!
 pruneStaleConnections
 	"Private!! The client may establish a connection and then disconnect while it is still in the connection queue. This method is called periodically to prune such sockets out of the connection queue and make room for fresh connections."
 
@@ -681,13 +681,13 @@ pruneStaleConnections
 			connections := connections select: [:s | s isValid]]].
 ! !
 
-!ConnectionQueue class methodsFor: 'instance creation' stamp: 'jm 3/9/98 14:09'!
+!ConnectionQueue class methodsFor: 'instance creation' stamp: 'jm 9/Mar/1998 14:09:00'!
 portNumber: anInteger queueLength: queueLength
 
 	^ self new initPortNumber: anInteger queueLength: queueLength
 ! !
 
-!ExternalObjectTable methodsFor: 'accessing' stamp: 'ul 10/27/2014 15:53'!
+!ExternalObjectTable methodsFor: 'accessing' stamp: 'ul 27/Oct/2014 15:53:00'!
 clearExternalObjects
 	"Clear the array of objects that have been registered for use in non-Smalltalk code."
 
@@ -697,14 +697,14 @@ clearExternalObjects
 			initializeCaches;
 			synchronizeExternalObjectsArrayAndForceUpdate: true ]! !
 
-!ExternalObjectTable methodsFor: 'accessing' stamp: 'eem 10/16/2020 10:24'!
+!ExternalObjectTable methodsFor: 'accessing' stamp: 'eem 16/Oct/2020 10:24:00'!
 externalObjectAt: index ifAbsent: errorBlock
 	"Answer the externalObject at index, or the result of errorBlock if none."
 
 	^(semaphore critical: [externalObjectsArray at: index ifAbsent: nil]) ifNil:
 		[errorBlock value]! !
 
-!ExternalObjectTable methodsFor: 'accessing' stamp: 'ul 10/27/2014 15:53'!
+!ExternalObjectTable methodsFor: 'accessing' stamp: 'ul 27/Oct/2014 15:53:00'!
 externalObjects
 	"Return a copy of the externalObjectsArray."
 
@@ -712,7 +712,7 @@ externalObjects
 		self synchronizeExternalObjectsArrayAndForceUpdate: false.
 		externalObjectsArray copy ]! !
 
-!ExternalObjectTable methodsFor: 'accessing' stamp: 'ul 10/27/2014 15:53'!
+!ExternalObjectTable methodsFor: 'accessing' stamp: 'ul 27/Oct/2014 15:53:00'!
 newExternalSemaphore
 	"Create and register a new Semaphore, and return an array containing itself and its index."
 
@@ -724,7 +724,7 @@ newExternalSemaphore
 				synchronizeExternalObjectsArrayAndForceUpdate: false;
 				safelyRegisterNewExternalObject: newSemaphore ] }! !
 
-!ExternalObjectTable methodsFor: 'accessing' stamp: 'ul 10/27/2014 15:53'!
+!ExternalObjectTable methodsFor: 'accessing' stamp: 'ul 27/Oct/2014 15:53:00'!
 newExternalSemaphoreDo: aBlock
 	"Create and register a new Semaphore, then evaluate aBlock with it and its index."
 
@@ -736,7 +736,7 @@ newExternalSemaphoreDo: aBlock
 				synchronizeExternalObjectsArrayAndForceUpdate: false;
 				safelyRegisterNewExternalObject: newSemaphore ])! !
 
-!ExternalObjectTable methodsFor: 'accessing' stamp: 'ul 10/27/2014 15:53'!
+!ExternalObjectTable methodsFor: 'accessing' stamp: 'ul 27/Oct/2014 15:53:00'!
 newExternalSemaphores: count
 	"Create and register multiple Semaphores, and return an array containing the semaphores and their indexes in separate arrays."
 
@@ -751,7 +751,7 @@ newExternalSemaphores: count
 				self safelyRegisterNewExternalObject: (semaphores at: index)) ] ].
 	^{ semaphores. indexes }! !
 
-!ExternalObjectTable methodsFor: 'accessing' stamp: 'ul 10/27/2014 15:53'!
+!ExternalObjectTable methodsFor: 'accessing' stamp: 'ul 27/Oct/2014 15:53:00'!
 registerExternalObject: anObject
 	"Register the given object in the external objects array and return its index. If it is already there, just return its index."
 
@@ -761,7 +761,7 @@ registerExternalObject: anObject
 			synchronizeExternalObjectsArrayAndForceUpdate: false;
 			safelyRegisterExternalObject: anObject ]! !
 
-!ExternalObjectTable methodsFor: 'accessing' stamp: 'ul 10/27/2014 15:53'!
+!ExternalObjectTable methodsFor: 'accessing' stamp: 'ul 27/Oct/2014 15:53:00'!
 unregisterExternalObject: anObject
 	"Unregister the given object from the external objects array. Do nothing if it isn't registered."
 
@@ -771,7 +771,7 @@ unregisterExternalObject: anObject
 			synchronizeExternalObjectsArrayAndForceUpdate: false;
 			safelyUnregisterExternalObject: anObject ]! !
 
-!ExternalObjectTable methodsFor: 'accessing' stamp: 'ul 10/27/2014 15:53'!
+!ExternalObjectTable methodsFor: 'accessing' stamp: 'ul 27/Oct/2014 15:53:00'!
 unregisterExternalObjects: aCollection
 	"Unregister the given objects from the external objects array. Do nothing if they aren't registered."
 
@@ -781,7 +781,7 @@ unregisterExternalObjects: aCollection
 			each ifNotNil: [
 				self safelyUnregisterExternalObject: each ] ] ]! !
 
-!ExternalObjectTable methodsFor: 'private' stamp: 'ul 10/27/2014 16:30'!
+!ExternalObjectTable methodsFor: 'private' stamp: 'ul 27/Oct/2014 16:30:00'!
 ensureFreeSlot
 	"Make sure there's at least one free slot."
 
@@ -813,7 +813,7 @@ ensureFreeSlot
 
 	! !
 
-!ExternalObjectTable methodsFor: 'private' stamp: 'ul 10/27/2014 16:30'!
+!ExternalObjectTable methodsFor: 'private' stamp: 'ul 27/Oct/2014 16:30:00'!
 externalObjectsArray: anArray
 	"Update the index mapping using anArray as the new externalObjectsArray."
 
@@ -825,13 +825,13 @@ externalObjectsArray: anArray
 			ifNil: [ freeSlotIndexes addFirst: index ]
 			ifNotNil: [ :object | indexesByObjects at: object put: index ] ]! !
 
-!ExternalObjectTable methodsFor: 'private' stamp: 'ul 10/27/2014 15:53'!
+!ExternalObjectTable methodsFor: 'private' stamp: 'ul 27/Oct/2014 15:53:00'!
 initializeCaches
 
 	freeSlotIndexes := OrderedCollection new.
 	indexesByObjects := IdentityDictionary new! !
 
-!ExternalObjectTable methodsFor: 'private' stamp: 'ul 10/27/2014 15:53'!
+!ExternalObjectTable methodsFor: 'private' stamp: 'ul 27/Oct/2014 15:53:00'!
 safelyRegisterExternalObject: anObject
 
 	| index |
@@ -843,7 +843,7 @@ safelyRegisterExternalObject: anObject
 			safelyRegisterExternalObject: anObject ].
 	^self safelyRegisterNewExternalObject: anObject! !
 
-!ExternalObjectTable methodsFor: 'private' stamp: 'ul 10/27/2014 15:53'!
+!ExternalObjectTable methodsFor: 'private' stamp: 'ul 27/Oct/2014 15:53:00'!
 safelyRegisterNewExternalObject: anObject
 
 	| index |
@@ -858,7 +858,7 @@ safelyRegisterNewExternalObject: anObject
 	indexesByObjects at: anObject put: index.
 	^index! !
 
-!ExternalObjectTable methodsFor: 'private' stamp: 'JMM 10/18/2024 11:08:52'!
+!ExternalObjectTable methodsFor: 'private' stamp: 'JMM 18/Oct/2024 11:08:52'!
 safelyUnregisterExternalObject: anObject
 
 	(indexesByObjects removeKey: anObject ifAbsent: nil)
@@ -878,7 +878,7 @@ safelyUnregisterExternalObject: anObject
 				synchronizeExternalObjectsArrayAndForceUpdate: true;
 				safelyUnregisterExternalObject: anObject ]! !
 
-!ExternalObjectTable methodsFor: 'private' stamp: 'ul 10/27/2014 15:53'!
+!ExternalObjectTable methodsFor: 'private' stamp: 'ul 27/Oct/2014 15:53:00'!
 synchronizeExternalObjectsArrayAndForceUpdate: forceUpdate
 
 	| actualExternalObjectsArray |
@@ -887,19 +887,19 @@ synchronizeExternalObjectsArrayAndForceUpdate: forceUpdate
 		ifTrue: [ ^self ].
 	self externalObjectsArray: actualExternalObjectsArray! !
 
-!ExternalObjectTable methodsFor: 'initialize-release' stamp: 'ul 10/27/2014 15:53'!
+!ExternalObjectTable methodsFor: 'initialize-release' stamp: 'ul 27/Oct/2014 15:53:00'!
 initialize
 
 	semaphore := Semaphore forMutualExclusion.
 	self initializeCaches! !
 
-!ExternalObjectTable class methodsFor: 'initialize-release' stamp: 'ul 10/27/2014 15:53'!
+!ExternalObjectTable class methodsFor: 'initialize-release' stamp: 'ul 27/Oct/2014 15:53:00'!
 cleanUp: aggressive
 	"It's safe to release the instance"
 
 	self reset! !
 
-!ExternalObjectTable class methodsFor: 'accessing' stamp: 'ul 10/27/2014 15:53'!
+!ExternalObjectTable class methodsFor: 'accessing' stamp: 'ul 27/Oct/2014 15:53:00'!
 current
 
 	^current ifNil: [
@@ -908,12 +908,12 @@ current
 		" Check again, because another process might have registered another instance. "
 		current ifNil: [ current := newInstance ] ]! !
 
-!ExternalObjectTable class methodsFor: 'accessing' stamp: 'ul 10/27/2014 15:53'!
+!ExternalObjectTable class methodsFor: 'accessing' stamp: 'ul 27/Oct/2014 15:53:00'!
 reset
 
 	current := nil! !
 
-!NetNameResolver class methodsFor: 'lookups' stamp: 'mir 6/26/2007 18:29'!
+!NetNameResolver class methodsFor: 'lookups' stamp: 'mir 26/Jun/2007 18:29:00'!
 addressForName: hostName
 	"NetNameResolver addressForName: 'impara.de' "
 	"NetNameResolver addressForName: 'localhost' "
@@ -926,7 +926,7 @@ addressForName: hostName
 		ifEmpty: [nil]
 		ifNotEmpty: [addresses first socketAddress]! !
 
-!NetNameResolver class methodsFor: 'lookups' stamp: 'eem 9/25/2020 13:16'!
+!NetNameResolver class methodsFor: 'lookups' stamp: 'eem 25/Sep/2020 13:16:00'!
 addressForName: hostName family: addressFamily
 	"NetNameResolver addressForName: 'squeak.org' family: SocketAddressInformation addressFamilyINET4"
 	"NetNameResolver addressForName: 'localhost' family: SocketAddressInformation addressFamilyINET6"
@@ -939,7 +939,7 @@ addressForName: hostName family: addressFamily
 		ifEmpty: [nil]
 		ifNotEmpty: [addresses first socketAddress]! !
 
-!NetNameResolver class methodsFor: 'lookups' stamp: 'eem 1/5/2016 13:07'!
+!NetNameResolver class methodsFor: 'lookups' stamp: 'eem 5/Jan/2016 13:07:00'!
 addressForName: hostName timeout: secs
 	"Look up the given host name and return its address. Return nil if the address is not found in the given number of seconds."
 	"NetNameResolver addressForName: 'create.ucsb.edu' timeout: 30"
@@ -965,7 +965,7 @@ addressForName: hostName timeout: secs
 				self primNameLookupResult. ] ] ])
 		ifNil: [ (NameLookupFailure hostName: hostName) signal: 'Could not resolve the server named: ', hostName ]		! !
 
-!NetNameResolver class methodsFor: 'lookups' stamp: 'mir 7/30/2007 11:37'!
+!NetNameResolver class methodsFor: 'lookups' stamp: 'mir 30/Jul/2007 11:37:00'!
 localAddressString
 	"Return a string representing the local host address as four decimal bytes delimited with decimal points."
 	"NetNameResolver localAddressString"
@@ -974,7 +974,7 @@ localAddressString
 		ifTrue: [^self stringFromAddress: self primLocalAddress].
 	^self localHostAddress hostNumber! !
 
-!NetNameResolver class methodsFor: 'lookups' stamp: 'ul 11/11/2010 07:29'!
+!NetNameResolver class methodsFor: 'lookups' stamp: 'ul 11/Nov/2010 07:29:00'!
 localHostAddress
 	"Return the local address of this host."
 	"NetNameResolver localHostAddress"
@@ -984,7 +984,7 @@ localHostAddress
 		^self primLocalAddress ].
 	^NetNameResolver addressForName: self localHostName! !
 
-!NetNameResolver class methodsFor: 'lookups' stamp: 'ul 11/11/2010 07:31'!
+!NetNameResolver class methodsFor: 'lookups' stamp: 'ul 11/Nov/2010 07:31:00'!
 localHostName
 	"Return the local name of this host."
 	"NetNameResolver localHostName"
@@ -1000,16 +1000,16 @@ localHostName
 	NetNameResolver primHostNameResult: host.
 	^host! !
 
-!NetNameResolver class methodsFor: 'lookups' stamp: 'JMM 10/22/2024 12:08:07'!
+!NetNameResolver class methodsFor: 'lookups' stamp: 'JMM 22/Oct/2024 12:08:07'!
 loopBackName
 	^'localhost'! !
 
-!NetNameResolver class methodsFor: 'lookups' stamp: 'ul 10/9/2015 21:20'!
+!NetNameResolver class methodsFor: 'lookups' stamp: 'ul 9/Oct/2015 21:20:00'!
 nameForAddress: hostAddress
 
 	^self nameForAddress: hostAddress timeout: 60! !
 
-!NetNameResolver class methodsFor: 'lookups' stamp: 'eem 1/5/2016 13:07'!
+!NetNameResolver class methodsFor: 'lookups' stamp: 'eem 5/Jan/2016 13:07:00'!
 nameForAddress: hostAddress timeout: secs
 	"Look up the given host address and return its name. Return nil if the lookup fails or is not completed in the given number of seconds. Depends on the given host address being known to the gateway, which may not be the case for dynamically allocated addresses."
 	"NetNameResolver
@@ -1026,7 +1026,7 @@ nameForAddress: hostAddress timeout: secs
 			(self waitForCompletionUntil: deadline) ifTrue: [
 				self primAddressLookupResult ] ] ]! !
 
-!NetNameResolver class methodsFor: 'lookups' stamp: 'jm 9/17/97 16:26'!
+!NetNameResolver class methodsFor: 'lookups' stamp: 'jm 17/Sep/1997 16:26:00'!
 promptUserForHostAddress
 	"Ask the user for a host name and return its address."
 	"NetNameResolver promptUserForHostAddress"
@@ -1034,7 +1034,7 @@ promptUserForHostAddress
 	^ NetNameResolver promptUserForHostAddressDefault: ''
 ! !
 
-!NetNameResolver class methodsFor: 'lookups' stamp: 'jmv 9/12/2024 12:07:52'!
+!NetNameResolver class methodsFor: 'lookups' stamp: 'jmv 12/Sep/2024 12:07:52'!
 promptUserForHostAddressDefault: defaultName
 	"Ask the user for a host name and return its address. If the default name is the empty string, use the last host name as the default."
 	"NetNameResolver promptUserForHostAddressDefault: ''"
@@ -1051,17 +1051,17 @@ promptUserForHostAddressDefault: defaultName
 	hostName size > 0 ifTrue: [DefaultHostName := hostName].
 	^ serverAddr! !
 
-!NetNameResolver class methodsFor: 'lookups' stamp: 'JMM 5/3/2000 11:25'!
+!NetNameResolver class methodsFor: 'lookups' stamp: 'JMM 3/May/2000 11:25:00'!
 resolverError
 	^self primNameResolverError
 ! !
 
-!NetNameResolver class methodsFor: 'lookups' stamp: 'JMM 5/3/2000 11:25'!
+!NetNameResolver class methodsFor: 'lookups' stamp: 'JMM 3/May/2000 11:25:00'!
 resolverStatus
 	^self primNameResolverStatus
 ! !
 
-!NetNameResolver class methodsFor: 'address string utils' stamp: 'jm 9/15/97 06:19'!
+!NetNameResolver class methodsFor: 'address string utils' stamp: 'jm 15/Sep/1997 06:19:00'!
 addressFromString: addressString
 	"Return the internet address represented by the given string. The string should contain four positive decimal integers delimited by periods, commas, or spaces, where each integer represents one address byte. Return nil if the string is not a host address in an acceptable format."
 	"NetNameResolver addressFromString: '1.2.3.4'"
@@ -1083,7 +1083,7 @@ addressFromString: addressString
 	^ newAddr
 ! !
 
-!NetNameResolver class methodsFor: 'address string utils' stamp: 'dtl 7/17/2012 07:12'!
+!NetNameResolver class methodsFor: 'address string utils' stamp: 'dtl 17/Jul/2012 07:12:00'!
 stringFromAddress: addr
 	"Return a string representing the given host address as four decimal bytes delimited with decimal points."
 	"NetNameResolver stringFromAddress: NetNameResolver localHostAddress"
@@ -1096,7 +1096,7 @@ stringFromAddress: addr
 	^ s contents
 ! !
 
-!NetNameResolver class methodsFor: 'class initialization' stamp: 'JMM 10/18/2024 14:04:54'!
+!NetNameResolver class methodsFor: 'class initialization' stamp: 'JMM 18/Oct/2024 14:04:54'!
 initialize
 	"NetNameResolver initialize"
 	"Note: On the Mac, the name resolver is asynchronous (i.e., Squeak can do other things while it is working), but can only handle one request at a time. On other platforms, such as Unix, the resolver is synchronous; a call to, say, the name lookup primitive will block all Squeak processes until it returns."
@@ -1114,7 +1114,7 @@ initialize
 
 ! !
 
-!NetNameResolver class methodsFor: 'network initialization' stamp: 'tpr 8/2/2017 12:45'!
+!NetNameResolver class methodsFor: 'network initialization' stamp: 'tpr 2/Aug/2017 12:45:00'!
 initializeNetwork
 	"Initialize the network drivers and record the semaphore to be used by the resolver. Do nothing if the network is already initialized. Signal NoNetworkError if network initialization fails."
 	"NetNameResolver initializeNetwork" 
@@ -1135,7 +1135,7 @@ initializeNetwork
 
 	self initializeOldNetworkFlag! !
 
-!NetNameResolver class methodsFor: 'network initialization' stamp: 'ar 2/2/2001 15:09'!
+!NetNameResolver class methodsFor: 'network initialization' stamp: 'ar 2/Feb/2001 15:09:00'!
 primInitializeNetwork: resolverSemaIndex
 	"Initialize the network drivers on platforms that need it, such as the Macintosh, and return nil if network initialization failed or the reciever if it succeeds. Since mobile computers may not always be connected to a network, this method should NOT be called automatically at startup time; rather, it should be called when first starting a networking application. It is a noop if the network driver has already been initialized. If non-zero, resolverSemaIndex is the index of a VM semaphore to be associated with the network name resolver. This semaphore will be signalled when the resolver status changes, such as when a name lookup query is completed."
 	"Note: some platforms (e.g., Mac) only allow only one name lookup query at a time, so a manager process should be used to serialize resolver lookup requests."
@@ -1144,7 +1144,7 @@ primInitializeNetwork: resolverSemaIndex
 	^ nil  "return nil if primitive fails"
 ! !
 
-!NetNameResolver class methodsFor: 'primitives' stamp: 'ar 2/2/2001 15:09'!
+!NetNameResolver class methodsFor: 'primitives' stamp: 'ar 2/Feb/2001 15:09:00'!
 primAbortLookup
 	"Abort the current lookup operation, freeing the name resolver for the next query."
 
@@ -1152,7 +1152,7 @@ primAbortLookup
 	self primitiveFailed
 ! !
 
-!NetNameResolver class methodsFor: 'primitives' stamp: 'ar 2/2/2001 15:09'!
+!NetNameResolver class methodsFor: 'primitives' stamp: 'ar 2/Feb/2001 15:09:00'!
 primAddressLookupResult
 	"Return the host name found by the last host address lookup. Returns nil if the last lookup was unsuccessful."
 
@@ -1160,7 +1160,7 @@ primAddressLookupResult
 	self primitiveFailed
 ! !
 
-!NetNameResolver class methodsFor: 'primitives' stamp: 'ar 2/2/2001 15:09'!
+!NetNameResolver class methodsFor: 'primitives' stamp: 'ar 2/Feb/2001 15:09:00'!
 primLocalAddress
 	"Return the local address of this host."
 
@@ -1168,7 +1168,7 @@ primLocalAddress
 	self primitiveFailed
 ! !
 
-!NetNameResolver class methodsFor: 'primitives' stamp: 'ar 2/2/2001 15:09'!
+!NetNameResolver class methodsFor: 'primitives' stamp: 'ar 2/Feb/2001 15:09:00'!
 primNameLookupResult
 	"Return the host address found by the last host name lookup. Returns nil if the last lookup was unsuccessful."
 
@@ -1176,7 +1176,7 @@ primNameLookupResult
 	self primitiveFailed
 ! !
 
-!NetNameResolver class methodsFor: 'primitives' stamp: 'ar 2/2/2001 15:09'!
+!NetNameResolver class methodsFor: 'primitives' stamp: 'ar 2/Feb/2001 15:09:00'!
 primNameResolverError
 	"Return an integer reflecting the error status of the last network name resolver request. Zero means no error."
 
@@ -1184,7 +1184,7 @@ primNameResolverError
 	self primitiveFailed
 ! !
 
-!NetNameResolver class methodsFor: 'primitives' stamp: 'ar 2/2/2001 15:09'!
+!NetNameResolver class methodsFor: 'primitives' stamp: 'ar 2/Feb/2001 15:09:00'!
 primNameResolverStatus
 	"Return an integer reflecting the status of the network name resolver. For a list of possible values, see the comment in the 'initialize' method of this class."
 
@@ -1192,7 +1192,7 @@ primNameResolverStatus
 	self primitiveFailed
 ! !
 
-!NetNameResolver class methodsFor: 'primitives' stamp: 'ar 2/2/2001 15:09'!
+!NetNameResolver class methodsFor: 'primitives' stamp: 'ar 2/Feb/2001 15:09:00'!
 primStartLookupOfAddress: hostAddr
 	"Look up the given host address in the Domain Name Server to find its name. This call is asynchronous. To get the results, wait for it to complete or time out and then use primAddressLookupResult."
 
@@ -1200,7 +1200,7 @@ primStartLookupOfAddress: hostAddr
 	self primitiveFailed
 ! !
 
-!NetNameResolver class methodsFor: 'primitives' stamp: 'ar 2/2/2001 15:09'!
+!NetNameResolver class methodsFor: 'primitives' stamp: 'ar 2/Feb/2001 15:09:00'!
 primStartLookupOfName: hostName
 	"Look up the given host name in the Domain Name Server to find its address. This call is asynchronous. To get the results, wait for it to complete or time out and then use primNameLookupResult."
 
@@ -1208,7 +1208,7 @@ primStartLookupOfName: hostName
 	self primitiveFailed
 ! !
 
-!NetNameResolver class methodsFor: 'private' stamp: 'ikp 6/8/2007 18:12'!
+!NetNameResolver class methodsFor: 'private' stamp: 'ikp 8/Jun/2007 18:12:00'!
 nextSocketAddressInformation
 
 	| addrSize addr info |
@@ -1224,7 +1224,7 @@ nextSocketAddressInformation
 	self primGetAddressInfoNext.
 	^info! !
 
-!NetNameResolver class methodsFor: 'private' stamp: 'JMM 5/3/2000 13:57'!
+!NetNameResolver class methodsFor: 'private' stamp: 'JMM 3/May/2000 13:57:00'!
 readDecimalByteFrom: aStream
 	"Read a positive, decimal integer from the given stream. Stop when a non-digit or end-of-stream is encountered. Return nil if stream is not positioned at a decimal digit or if the integer value read exceeds 255.
 JMM - 000503 fixed didn't work correctly"
@@ -1244,21 +1244,21 @@ JMM - 000503 fixed didn't work correctly"
 	^ value
 ! !
 
-!NetNameResolver class methodsFor: 'private' stamp: 'mir 6/18/2001 21:05'!
+!NetNameResolver class methodsFor: 'private' stamp: 'mir 18/Jun/2001 21:05:00'!
 resolverMutex
 	ResolverMutex ifNil: [ResolverMutex := Semaphore forMutualExclusion].
 	^ResolverMutex! !
 
-!NetNameResolver class methodsFor: 'private' stamp: 'bf 6/27/2007 11:38'!
+!NetNameResolver class methodsFor: 'private' stamp: 'bf 27/Jun/2007 11:38:00'!
 useOldNetwork
 	^UseOldNetwork ~~ false! !
 
-!NetNameResolver class methodsFor: 'private' stamp: 'dtl 6/4/2012 21:24'!
+!NetNameResolver class methodsFor: 'private' stamp: 'dtl 4/Jun/2012 21:24:00'!
 useOldNetwork: flag
 	"Unit test support, not intended for public access"
 	^UseOldNetwork := flag! !
 
-!NetNameResolver class methodsFor: 'private' stamp: 'eem 1/5/2016 13:09'!
+!NetNameResolver class methodsFor: 'private' stamp: 'eem 5/Jan/2016 13:09:00'!
 waitForCompletionUntil: deadline
 	"Wait until deadline for the resolver to be ready to accept a new request.
 	 Return true if the resolver is ready, false if the network is not initialized or
@@ -1276,7 +1276,7 @@ waitForCompletionUntil: deadline
 	status = ResolverBusy ifTrue: [ self primAbortLookup ].
 	^false! !
 
-!NetNameResolver class methodsFor: 'private' stamp: 'eem 1/5/2016 13:10'!
+!NetNameResolver class methodsFor: 'private' stamp: 'eem 5/Jan/2016 13:10:00'!
 waitForResolverReadyUntil: deadline
 	"Wait until deadline for the resolver to be ready to accept a new request. Return true if the resolver is not busy, false if the network is not initialized or the resolver has not become free within the given time period."
 
@@ -1290,7 +1290,7 @@ waitForResolverReadyUntil: deadline
 			  status := self resolverStatus ].
 	^status ~= ResolverBusy! !
 
-!NetNameResolver class methodsFor: 'lookup' stamp: 'eem 9/25/2020 12:53'!
+!NetNameResolver class methodsFor: 'lookup' stamp: 'eem 25/Sep/2020 12:53:00'!
 addressesForName: hostName
 	"NetNameResolver addressesForName: 'impara.de' "
 	
@@ -1302,7 +1302,7 @@ addressesForName: hostName
 		socketType: SocketAddressInformation socketTypeStream
 		protocol: SocketAddressInformation protocolTCP! !
 
-!NetNameResolver class methodsFor: 'lookup' stamp: 'eem 9/25/2020 12:54'!
+!NetNameResolver class methodsFor: 'lookup' stamp: 'eem 25/Sep/2020 12:54:00'!
 addressesForName: hostName family: addressFamily
 	"NetNameResolver
 		addressesForName: 'squeak.org'
@@ -1319,7 +1319,7 @@ addressesForName: hostName family: addressFamily
 		socketType: SocketAddressInformation socketTypeStream
 		protocol: SocketAddressInformation protocolTCP! !
 
-!NetNameResolver class methodsFor: 'system startup' stamp: 'mt 10/14/2020 15:59:14.918983'!
+!NetNameResolver class methodsFor: 'system startup' stamp: 'mt 14/Oct/2020 15:59:14'!
 enableIPv6
 	<preference: 'Enable IPv6 and new network support'
 		category: 'general'
@@ -1327,7 +1327,7 @@ enableIPv6
 		type: #Boolean>
 	^EnableIPv6 ifNil: [true]! !
 
-!NetNameResolver class methodsFor: 'system startup' stamp: 'dtl 9/23/2012 13:17'!
+!NetNameResolver class methodsFor: 'system startup' stamp: 'dtl 23/Sep/2012 13:17:00'!
 enableIPv6: aBool
 	"Set a preference to control whether IPv6 primitives and new network support
 	should be used if available, and reinitialize the UseOldNetwork flag to recognize
@@ -1340,7 +1340,7 @@ enableIPv6: aBool
 	self initializeOldNetworkFlag
 ! !
 
-!NetNameResolver class methodsFor: 'system startup' stamp: 'dtl 6/6/2012 07:42'!
+!NetNameResolver class methodsFor: 'system startup' stamp: 'dtl 6/Jun/2012 07:42:00'!
 hasIpv6PrimSupport
 	"True if the VM includes the ipv6 primitives"
 	^[NetNameResolver primHostNameSize. true]
@@ -1348,7 +1348,7 @@ hasIpv6PrimSupport
 		do: [false]
 ! !
 
-!NetNameResolver class methodsFor: 'system startup' stamp: 'dtl 12/18/2012 18:41'!
+!NetNameResolver class methodsFor: 'system startup' stamp: 'dtl 18/Dec/2012 18:41:00'!
 initializeOldNetworkFlag
 	"If the VM does not provide support for IPv6 primitives, or if the enable IPv6
 	preference is not selected, then set a flag to force use of traditional IPv4
@@ -1357,67 +1357,67 @@ initializeOldNetworkFlag
 
 	UseOldNetwork := self hasIpv6PrimSupport not or: [self enableIPv6 ~= true]! !
 
-!NetNameResolver class methodsFor: 'system startup' stamp: 'dtl 9/23/2012 13:11'!
+!NetNameResolver class methodsFor: 'system startup' stamp: 'dtl 23/Sep/2012 13:11:00'!
 startUp: resuming
 	"Set the UseOldNetwork flag if ipv6 primitives are not present or if the EnableIPv6 preference is not set."
 
 	resuming ifTrue: [self initializeOldNetworkFlag]! !
 
-!NetNameResolver class methodsFor: 'lookups-old' stamp: 'mir 6/26/2007 18:53'!
+!NetNameResolver class methodsFor: 'lookups-old' stamp: 'mir 26/Jun/2007 18:53:00'!
 oldAddressForName: aString
 	"NetNameResolver oldAddressForName: 'vpri.org' "
 	^self addressForName: aString timeout: 60! !
 
-!NetNameResolver class methodsFor: 'primitives-ipv6' stamp: 'ikp 6/8/2007 18:00'!
+!NetNameResolver class methodsFor: 'primitives-ipv6' stamp: 'ikp 8/Jun/2007 18:00:00'!
 primGetAddressInfoFamily
 
 	<primitive: 'primitiveResolverGetAddressInfoFamily' module: 'SocketPlugin'>
 	self primitiveFailed
 ! !
 
-!NetNameResolver class methodsFor: 'primitives-ipv6' stamp: 'ikp 6/8/2007 17:24'!
+!NetNameResolver class methodsFor: 'primitives-ipv6' stamp: 'ikp 8/Jun/2007 17:24:00'!
 primGetAddressInfoHost: hostName service: servName flags: flags family: family type: type protocol: protocol
 
 	<primitive: 'primitiveResolverGetAddressInfo' module: 'SocketPlugin'>
 	self primitiveFailed
 ! !
 
-!NetNameResolver class methodsFor: 'primitives-ipv6' stamp: 'ikp 6/8/2007 18:19'!
+!NetNameResolver class methodsFor: 'primitives-ipv6' stamp: 'ikp 8/Jun/2007 18:19:00'!
 primGetAddressInfoNext
 
 	<primitive: 'primitiveResolverGetAddressInfoNext' module: 'SocketPlugin'>
 	self primitiveFailed
 ! !
 
-!NetNameResolver class methodsFor: 'primitives-ipv6' stamp: 'ikp 6/8/2007 18:00'!
+!NetNameResolver class methodsFor: 'primitives-ipv6' stamp: 'ikp 8/Jun/2007 18:00:00'!
 primGetAddressInfoProtocol
 
 	<primitive: 'primitiveResolverGetAddressInfoProtocol' module: 'SocketPlugin'>
 	self primitiveFailed
 ! !
 
-!NetNameResolver class methodsFor: 'primitives-ipv6' stamp: 'ikp 6/8/2007 17:41'!
+!NetNameResolver class methodsFor: 'primitives-ipv6' stamp: 'ikp 8/Jun/2007 17:41:00'!
 primGetAddressInfoResult: socketAddress
 
 	<primitive: 'primitiveResolverGetAddressInfoResult' module: 'SocketPlugin'>
 	self primitiveFailed
 ! !
 
-!NetNameResolver class methodsFor: 'primitives-ipv6' stamp: 'ikp 6/8/2007 17:30'!
+!NetNameResolver class methodsFor: 'primitives-ipv6' stamp: 'ikp 8/Jun/2007 17:30:00'!
 primGetAddressInfoSize
 
 	<primitive: 'primitiveResolverGetAddressInfoSize' module: 'SocketPlugin'>
 	self primitiveFailed
 ! !
 
-!NetNameResolver class methodsFor: 'primitives-ipv6' stamp: 'ikp 6/8/2007 18:00'!
+!NetNameResolver class methodsFor: 'primitives-ipv6' stamp: 'ikp 8/Jun/2007 18:00:00'!
 primGetAddressInfoType
 
 	<primitive: 'primitiveResolverGetAddressInfoType' module: 'SocketPlugin'>
 	self primitiveFailed
 ! !
 
-!NetNameResolver class methodsFor: 'primitives-ipv6' stamp: 'ikp 6/9/2007 10:36'!
+!NetNameResolver class methodsFor: 'primitives-ipv6' stamp: 'ikp 9/Jun/2007 10:36:00'!
 primGetNameInfo: socketAddress flags: flags
 
 	<primitive: 'primitiveResolverGetNameInfo' module: 'SocketPlugin'>
@@ -1425,49 +1425,49 @@ primGetNameInfo: socketAddress flags: flags
 						flags: SocketAddressInformation numericFlag].
 	self primitiveFailed! !
 
-!NetNameResolver class methodsFor: 'primitives-ipv6' stamp: 'ikp 6/8/2007 18:34'!
+!NetNameResolver class methodsFor: 'primitives-ipv6' stamp: 'ikp 8/Jun/2007 18:34:00'!
 primGetNameInfoHostResult: aString
 
 	<primitive: 'primitiveResolverGetNameInfoHostResult' module: 'SocketPlugin'>
 	self primitiveFailed
 ! !
 
-!NetNameResolver class methodsFor: 'primitives-ipv6' stamp: 'ikp 6/8/2007 18:34'!
+!NetNameResolver class methodsFor: 'primitives-ipv6' stamp: 'ikp 8/Jun/2007 18:34:00'!
 primGetNameInfoHostSize
 
 	<primitive: 'primitiveResolverGetNameInfoHostSize' module: 'SocketPlugin'>
 	self primitiveFailed
 ! !
 
-!NetNameResolver class methodsFor: 'primitives-ipv6' stamp: 'ikp 6/8/2007 18:35'!
+!NetNameResolver class methodsFor: 'primitives-ipv6' stamp: 'ikp 8/Jun/2007 18:35:00'!
 primGetNameInfoServiceResult: aString
 
 	<primitive: 'primitiveResolverGetNameInfoServiceResult' module: 'SocketPlugin'>
 	self primitiveFailed
 ! !
 
-!NetNameResolver class methodsFor: 'primitives-ipv6' stamp: 'ikp 6/8/2007 18:34'!
+!NetNameResolver class methodsFor: 'primitives-ipv6' stamp: 'ikp 8/Jun/2007 18:34:00'!
 primGetNameInfoServiceSize
 
 	<primitive: 'primitiveResolverGetNameInfoServiceSize' module: 'SocketPlugin'>
 	self primitiveFailed
 ! !
 
-!NetNameResolver class methodsFor: 'primitives-ipv6' stamp: 'ikp 6/9/2007 09:05'!
+!NetNameResolver class methodsFor: 'primitives-ipv6' stamp: 'ikp 9/Jun/2007 09:05:00'!
 primHostNameResult: aString
 
 	<primitive: 'primitiveResolverHostNameResult' module: 'SocketPlugin'>
 	self primitiveFailed
 ! !
 
-!NetNameResolver class methodsFor: 'primitives-ipv6' stamp: 'ikp 6/9/2007 09:04'!
+!NetNameResolver class methodsFor: 'primitives-ipv6' stamp: 'ikp 9/Jun/2007 09:04:00'!
 primHostNameSize
 
 	<primitive: 'primitiveResolverHostNameSize' module: 'SocketPlugin'>
 	self primitiveFailed
 ! !
 
-!NetNameResolver class methodsFor: 'tests' stamp: 'JMM 10/22/2024 12:06:48'!
+!NetNameResolver class methodsFor: 'tests' stamp: 'JMM 22/Oct/2024 12:06:48'!
 isConnected
 	"Dirty, but avoids fixing the plugin bug"
 
@@ -1476,7 +1476,7 @@ isConnected
 		do: [ :exception | ^ false ].
 	^ true! !
 
-!NetNameResolver class methodsFor: 'tests' stamp: 'JMM 10/22/2024 15:37:05'!
+!NetNameResolver class methodsFor: 'tests' stamp: 'JMM 22/Oct/2024 15:37:05'!
 testIPv6
 	"NetNameResolver testIPv6"
 	| infos addr sock size host serverSocket listeningSocket clientSocket |
@@ -1588,7 +1588,7 @@ testIPv6
 			listeningSocket close; destroy].
 	Transcript show: '---- trivial tests done ---'; cr.! !
 
-!NetNameResolver class methodsFor: 'tests' stamp: 'mir 1/5/2007 18:18'!
+!NetNameResolver class methodsFor: 'tests' stamp: 'mir 5/Jan/2007 18:18:00'!
 testPort80
 	"NetNameResolver testPort80"
 	| infos |
@@ -1600,20 +1600,20 @@ testPort80
 						addressFamily: 0 socketType: 0 protocol: 0) printString; cr.
 ! !
 
-!Socket methodsFor: 'connection open/close' stamp: 'JMM 10/22/2024 10:56:55'!
+!Socket methodsFor: 'connection open/close' stamp: 'JMM 22/Oct/2024 10:56:55'!
 accept
 	"Accept a connection from the receiver socket.
 	Return a new socket that is connected to the client"
 	^self class acceptFrom: self! !
 
-!Socket methodsFor: 'connection open/close' stamp: 'jm 9/11/97 20:29'!
+!Socket methodsFor: 'connection open/close' stamp: 'jm 11/Sep/1997 20:29:00'!
 close
 	"Close this connection gracefully. For TCP, this sends a close request, but the stream remains open until the other side also closes it."
 
 	self primSocketCloseConnection: socketHandle.  "close this end"
 ! !
 
-!Socket methodsFor: 'connection open/close' stamp: 'jm 11/4/97 07:15'!
+!Socket methodsFor: 'connection open/close' stamp: 'jm 4/Nov/1997 07:15:00'!
 closeAndDestroy
 	"First, try to close this connection gracefully. If the close attempt fails or times out, abort the connection. In either case, destroy the socket. Do nothing if the socket has already been destroyed (i.e., if its socketHandle is nil)."
 
@@ -1621,7 +1621,7 @@ closeAndDestroy
 
 ! !
 
-!Socket methodsFor: 'connection open/close' stamp: 'klub 10/27/2016 16:39'!
+!Socket methodsFor: 'connection open/close' stamp: 'klub 27/Oct/2016 16:39:00'!
 closeAndDestroy: timeoutSeconds
 	"First, try to close this connection gracefully. If the close attempt fails or times out, abort the connection. In either case, destroy the socket. Do nothing if the socket has already been destroyed (i.e., if its socketHandle is nil)."
 
@@ -1633,7 +1633,7 @@ closeAndDestroy: timeoutSeconds
 			self primSocketAbortConnection: socketHandle ] ].
 	self destroy! !
 
-!Socket methodsFor: 'connection open/close' stamp: 'dtl 6/3/2012 19:28'!
+!Socket methodsFor: 'connection open/close' stamp: 'dtl 3/Jun/2012 19:28:00'!
 connectNonBlockingTo: hostAddress port: port
 	"Initiate a connection to the given port at the given host address. This operation will return immediately; follow it with waitForConnectionUntil: to wait until the connection is established."
 
@@ -1650,7 +1650,7 @@ connectNonBlockingTo: hostAddress port: port
 			socketAddress port: port.
 			self connectNonBlockingTo: socketAddress]! !
 
-!Socket methodsFor: 'connection open/close' stamp: 'dtl 6/3/2012 09:47'!
+!Socket methodsFor: 'connection open/close' stamp: 'dtl 3/Jun/2012 09:47:00'!
 connectTo: hostAddress port: port
 	"Initiate a connection to the given port at the given host address.
 	Waits until the connection is established or time outs."
@@ -1662,7 +1662,7 @@ connectTo: hostAddress port: port
 			socketAddress port: port.
 			self connectTo: socketAddress]! !
 
-!Socket methodsFor: 'connection open/close' stamp: 'tonyg 6/2/2022 10:39'!
+!Socket methodsFor: 'connection open/close' stamp: 'tonyg 2/Jun/2022 10:39:00'!
 connectTo: hostAddress port: port waitForConnectionFor: timeout 
 	"Initiate a connection to the given port at the given host 
 	address. Waits until the connection is established or time outs."
@@ -1672,21 +1672,21 @@ connectTo: hostAddress port: port waitForConnectionFor: timeout
 		ifTimedOut: [ConnectionTimedOut signal: ('Cannot connect to {1}' translated format: {hostAddress printString})]
 		ifRefused: [ConnectionRefused signal: ('Cannot connect to {1}' translated format: {hostAddress printString})]! !
 
-!Socket methodsFor: 'connection open/close' stamp: 'mir 5/8/2003 16:03'!
+!Socket methodsFor: 'connection open/close' stamp: 'mir 8/May/2003 16:03:00'!
 connectToHostNamed: hostName port: portNumber
 	| serverIP |
 	serverIP := NetNameResolver addressForName: hostName timeout: 20.
 	^self connectTo: serverIP port: portNumber
 ! !
 
-!Socket methodsFor: 'connection open/close' stamp: 'jm 3/10/98 11:56'!
+!Socket methodsFor: 'connection open/close' stamp: 'jm 10/Mar/1998 11:56:00'!
 disconnect
 	"Break this connection, no matter what state it is in. Data that has been sent but not received will be lost."
 
 	self primSocketAbortConnection: socketHandle.
 ! !
 
-!Socket methodsFor: 'connection open/close' stamp: 'mir 2/22/2002 16:25'!
+!Socket methodsFor: 'connection open/close' stamp: 'mir 22/Feb/2002 16:25:00'!
 listenOn: port
 	"Listen for a connection on the given port. This operation will return immediately; follow it with waitForConnectionUntil: to wait until a connection is established."
 
@@ -1698,7 +1698,7 @@ listenOn: port
 	self primSocket: socketHandle listenOn: port.
 ! !
 
-!Socket methodsFor: 'connection open/close' stamp: 'mir 2/22/2002 16:25'!
+!Socket methodsFor: 'connection open/close' stamp: 'mir 22/Feb/2002 16:25:00'!
 listenOn: portNumber backlogSize: backlog
 	"Listen for a connection on the given port.
 	If this method succeeds, #accept may be used to establish a new connection"
@@ -1709,7 +1709,7 @@ listenOn: portNumber backlogSize: backlog
 	self primSocket: socketHandle listenOn: portNumber backlogSize: backlog.
 ! !
 
-!Socket methodsFor: 'connection open/close' stamp: 'dtl 6/3/2012 13:19'!
+!Socket methodsFor: 'connection open/close' stamp: 'dtl 3/Jun/2012 13:19:00'!
 listenOn: portNumber backlogSize: backlog interface: ifAddr
 	"Listen for a connection on the given port.
 	If this method succeeds, #accept may be used to establish a new connection"
@@ -1720,7 +1720,7 @@ listenOn: portNumber backlogSize: backlog interface: ifAddr
 	self primSocket: socketHandle listenOn: portNumber backlogSize: backlog interface: ifAddr asByteArray.
 ! !
 
-!Socket methodsFor: 'initialize-destroy' stamp: 'ul 3/26/2016 05:14'!
+!Socket methodsFor: 'initialize-destroy' stamp: 'ul 26/Mar/2016 05:14:00'!
 acceptFrom: aSocket
 	"Initialize a new socket handle from an accept call"
 
@@ -1733,7 +1733,7 @@ acceptFrom: aSocket
 			readSemaIndex: readSemaIndex
 			writeSemaIndex: writeSemaIndex ]! !
 
-!Socket methodsFor: 'initialize-destroy' stamp: 'ul 10/27/2014 16:44'!
+!Socket methodsFor: 'initialize-destroy' stamp: 'ul 27/Oct/2014 16:44:00'!
 destroy
 	"Destroy this socket. Its connection, if any, is aborted and its resources are freed. Do nothing if the socket has already been destroyed (i.e., if its socketHandle is nil)."
 
@@ -1747,7 +1747,7 @@ destroy
 		readSemaphore := writeSemaphore := semaphore := nil.
 		self unregister ]! !
 
-!Socket methodsFor: 'initialize-destroy' stamp: 'ul 3/26/2016 05:14'!
+!Socket methodsFor: 'initialize-destroy' stamp: 'ul 26/Mar/2016 05:14:00'!
 initialize: socketType
 	"Initialize a new socket handle. If socket creation fails, socketHandle will be set to nil."
 
@@ -1760,7 +1760,7 @@ initialize: socketType
 			readSemaIndex: readSemaIndex
 			writeSemaIndex: writeSemaIndex ]! !
 
-!Socket methodsFor: 'initialize-destroy' stamp: 'eem 9/25/2020 13:01'!
+!Socket methodsFor: 'initialize-destroy' stamp: 'eem 25/Sep/2020 13:01:00'!
 initialize: socketType family: addressFamily
 	"Initialize a new socket handle. If socket creation fails, socketHandle will be set to nil."
 
@@ -1775,11 +1775,11 @@ initialize: socketType family: addressFamily
 			readSemaIndex: readSemaIndex
 			writeSemaIndex: writeSemaIndex ]! !
 
-!Socket methodsFor: 'initialize-destroy' stamp: 'mir 2/22/2002 15:48'!
+!Socket methodsFor: 'initialize-destroy' stamp: 'mir 22/Feb/2002 15:48:00'!
 initializeNetwork
 	self class initializeNetwork! !
 
-!Socket methodsFor: 'initialize-destroy' stamp: 'ul 10/27/2014 16:44'!
+!Socket methodsFor: 'initialize-destroy' stamp: 'ul 27/Oct/2014 16:44:00'!
 initializeSocketHandleUsing: aBlock
 	"Initialize a new socket handle. If socket creation fails, socketHandle will be set to nil."
 	
@@ -1797,16 +1797,16 @@ initializeSocketHandleUsing: aBlock
 			semaphore := readSemaphore := writeSemaphore := nil.
 			Smalltalk unregisterExternalObjects: semaphores ]! !
 
-!Socket methodsFor: 'accessing' stamp: 'ar 4/30/1999 04:25'!
+!Socket methodsFor: 'accessing' stamp: 'ar 30/Apr/1999 04:25:00'!
 address
 	"Shortcut"
 	^self localAddress! !
 
-!Socket methodsFor: 'accessing' stamp: 'eem 9/25/2020 13:00'!
+!Socket methodsFor: 'accessing' stamp: 'eem 25/Sep/2020 13:00:00'!
 addressFamily
 	^family! !
 
-!Socket methodsFor: 'accessing' stamp: 'dtl 6/4/2012 07:49'!
+!Socket methodsFor: 'accessing' stamp: 'dtl 4/Jun/2012 07:49:00'!
 localAddress
 
 	self isWaitingForConnection ifFalse: [
@@ -1821,15 +1821,15 @@ localAddress
 		ifFalse: [^(self primSocketLocalAddress: socketHandle) asSocketAddress]
 ! !
 
-!Socket methodsFor: 'accessing' stamp: 'mtf 10/18/2011 18:51'!
+!Socket methodsFor: 'accessing' stamp: 'mtf 18/Oct/2011 18:51:00'!
 localAddressPortString
 	^ self localAddressString, ':', self localPort printString! !
 
-!Socket methodsFor: 'accessing' stamp: 'mtf 10/18/2011 18:50'!
+!Socket methodsFor: 'accessing' stamp: 'mtf 18/Oct/2011 18:50:00'!
 localAddressString
 	^ NetNameResolver stringFromAddress: self localAddress! !
 
-!Socket methodsFor: 'accessing' stamp: 'ul 11/25/2010 21:21'!
+!Socket methodsFor: 'accessing' stamp: 'ul 25/Nov/2010 21:21:00'!
 localPort
 
 	self isWaitingForConnection ifFalse: [
@@ -1838,7 +1838,7 @@ localPort
 			ifTimedOut: [ ^0] ].
 	^ self primSocketLocalPort: socketHandle! !
 
-!Socket methodsFor: 'accessing' stamp: 'ul 3/26/2016 16:28'!
+!Socket methodsFor: 'accessing' stamp: 'ul 26/Mar/2016 16:28:00'!
 peerName
 	"Return the name of the host I'm connected to, or nil if its name isn't known to the domain name server or the request times out."
 	"Note: Slow. Calls the domain name server, taking up to 20 seconds to time out. Even when sucessful, delays of up to 13 seconds have been observed during periods of high network load." 
@@ -1852,23 +1852,23 @@ peerName
 		nameForAddress:  remoteAddress
 		timeout: 20! !
 
-!Socket methodsFor: 'accessing' stamp: 'ar 4/30/1999 04:25'!
+!Socket methodsFor: 'accessing' stamp: 'ar 30/Apr/1999 04:25:00'!
 port
 	"Shortcut"
 	^self localPort! !
 
-!Socket methodsFor: 'accessing' stamp: 'ul 4/20/2011 02:00'!
+!Socket methodsFor: 'accessing' stamp: 'ul 20/Apr/2011 02:00:00'!
 primitiveOnlySupportsOneSemaphore
 	
 	self deprecated: 'All sockets have 3 semaphores.'.
 	^false! !
 
-!Socket methodsFor: 'accessing' stamp: 'ul 4/20/2011 01:54'!
+!Socket methodsFor: 'accessing' stamp: 'ul 20/Apr/2011 01:54:00'!
 readSemaphore
 	
 	^readSemaphore! !
 
-!Socket methodsFor: 'accessing' stamp: 'dtl 6/3/2012 23:26'!
+!Socket methodsFor: 'accessing' stamp: 'dtl 3/Jun/2012 23:26:00'!
 remoteAddress
 
 	NetNameResolver useOldNetwork
@@ -1876,34 +1876,34 @@ remoteAddress
 		ifFalse: [^(self primSocketRemoteAddress: socketHandle) asSocketAddress]
 ! !
 
-!Socket methodsFor: 'accessing' stamp: 'mtf 10/18/2011 18:51'!
+!Socket methodsFor: 'accessing' stamp: 'mtf 18/Oct/2011 18:51:00'!
 remoteAddressPortString
 	^ self remoteAddressString, ':', self remotePort printString! !
 
-!Socket methodsFor: 'accessing' stamp: 'mtf 10/18/2011 18:50'!
+!Socket methodsFor: 'accessing' stamp: 'mtf 18/Oct/2011 18:50:00'!
 remoteAddressString
 	^ NetNameResolver stringFromAddress: self remoteAddress! !
 
-!Socket methodsFor: 'accessing' stamp: 'jm 9/17/97 14:34'!
+!Socket methodsFor: 'accessing' stamp: 'jm 17/Sep/1997 14:34:00'!
 remotePort
 
 	^ self primSocketRemotePort: socketHandle
 ! !
 
-!Socket methodsFor: 'accessing' stamp: 'JMM 5/9/2000 15:32'!
+!Socket methodsFor: 'accessing' stamp: 'JMM 9/May/2000 15:32:00'!
 semaphore
 	^semaphore! !
 
-!Socket methodsFor: 'accessing' stamp: 'ar 7/16/1999 17:22'!
+!Socket methodsFor: 'accessing' stamp: 'ar 16/Jul/1999 17:22:00'!
 socketHandle
 	^socketHandle! !
 
-!Socket methodsFor: 'accessing' stamp: 'ul 4/20/2011 01:56'!
+!Socket methodsFor: 'accessing' stamp: 'ul 20/Apr/2011 01:56:00'!
 writeSemaphore
 	
 	^writeSemaphore! !
 
-!Socket methodsFor: 'queries' stamp: 'jm 2/25/1999 13:52'!
+!Socket methodsFor: 'queries' stamp: 'jm 25/Feb/1999 13:52:00'!
 dataAvailable
 	"Return true if this socket has unread received data."
 
@@ -1911,7 +1911,7 @@ dataAvailable
 	^ self primSocketReceiveDataAvailable: socketHandle
 ! !
 
-!Socket methodsFor: 'queries' stamp: 'jm 2/25/1999 13:52'!
+!Socket methodsFor: 'queries' stamp: 'jm 25/Feb/1999 13:52:00'!
 isConnected
 	"Return true if this socket is connected."
 
@@ -1919,7 +1919,7 @@ isConnected
 	^ (self primSocketConnectionStatus: socketHandle) == Connected
 ! !
 
-!Socket methodsFor: 'queries' stamp: 'JMM 5/5/2000 12:15'!
+!Socket methodsFor: 'queries' stamp: 'JMM 5/May/2000 12:15:00'!
 isOtherEndClosed
 	"Return true if this socket had the other end closed."
 
@@ -1927,7 +1927,7 @@ isOtherEndClosed
 	^ (self primSocketConnectionStatus: socketHandle) == OtherEndClosed
 ! !
 
-!Socket methodsFor: 'queries' stamp: 'ul 7/16/2016 02:03'!
+!Socket methodsFor: 'queries' stamp: 'ul 16/Jul/2016 02:03:00'!
 isOtherEndConnected
 	"Return true if this socket is connected, or this end has closed the connection but not the other end, so we can still receive data."
 
@@ -1937,7 +1937,7 @@ isOtherEndConnected
 	^state == ThisEndClosed
 ! !
 
-!Socket methodsFor: 'queries' stamp: 'JMM 5/5/2000 12:17'!
+!Socket methodsFor: 'queries' stamp: 'JMM 5/May/2000 12:17:00'!
 isThisEndClosed
 	"Return true if this socket had the this end closed."
 
@@ -1945,7 +1945,7 @@ isThisEndClosed
 	^ (self primSocketConnectionStatus: socketHandle) == ThisEndClosed
 ! !
 
-!Socket methodsFor: 'queries' stamp: 'ul 7/16/2016 02:03'!
+!Socket methodsFor: 'queries' stamp: 'ul 16/Jul/2016 02:03:00'!
 isThisEndConnected
 	"Return true if this socket is connected, other the other end has closed the connection but not this end, so we can still send data."
 
@@ -1955,7 +1955,7 @@ isThisEndConnected
 	^state == OtherEndClosed
 ! !
 
-!Socket methodsFor: 'queries' stamp: 'jm 2/25/1999 13:54'!
+!Socket methodsFor: 'queries' stamp: 'jm 25/Feb/1999 13:54:00'!
 isUnconnected
 	"Return true if this socket's state is Unconnected."
 
@@ -1963,7 +1963,7 @@ isUnconnected
 	^ (self primSocketConnectionStatus: socketHandle) == Unconnected
 ! !
 
-!Socket methodsFor: 'queries' stamp: 'jm 2/25/1999 13:54'!
+!Socket methodsFor: 'queries' stamp: 'jm 25/Feb/1999 13:54:00'!
 isUnconnectedOrInvalid
 	"Return true if this socket is completely disconnected or is invalid."
 
@@ -1973,7 +1973,7 @@ isUnconnectedOrInvalid
 	^ (status = Unconnected) | (status = InvalidSocket)
 ! !
 
-!Socket methodsFor: 'queries' stamp: 'jm 2/25/1999 13:51'!
+!Socket methodsFor: 'queries' stamp: 'jm 25/Feb/1999 13:51:00'!
 isValid
 	"Return true if this socket contains a valid, non-nil socket handle."
 
@@ -1983,7 +1983,7 @@ isValid
 	^ status ~= InvalidSocket
 ! !
 
-!Socket methodsFor: 'queries' stamp: 'jm 2/25/1999 13:54'!
+!Socket methodsFor: 'queries' stamp: 'jm 25/Feb/1999 13:54:00'!
 isWaitingForConnection
 	"Return true if this socket is waiting for a connection."
 
@@ -1991,7 +1991,7 @@ isWaitingForConnection
 	^ (self primSocketConnectionStatus: socketHandle) == WaitingForConnection
 ! !
 
-!Socket methodsFor: 'queries' stamp: 'jm 2/25/1999 13:54'!
+!Socket methodsFor: 'queries' stamp: 'jm 25/Feb/1999 13:54:00'!
 sendDone
 	"Return true if the most recent send operation on this socket has completed."
 
@@ -1999,11 +1999,11 @@ sendDone
 	^ self primSocketSendDone: socketHandle
 ! !
 
-!Socket methodsFor: 'queries' stamp: 'JMM 5/8/2000 23:24'!
+!Socket methodsFor: 'queries' stamp: 'JMM 8/May/2000 23:24:00'!
 socketError
 	^self primSocketError: socketHandle! !
 
-!Socket methodsFor: 'queries' stamp: 'jm 2/25/1999 13:56'!
+!Socket methodsFor: 'queries' stamp: 'jm 25/Feb/1999 13:56:00'!
 statusString
 	"Return a string describing the status of this socket."
 
@@ -2019,7 +2019,7 @@ statusString
 	^ 'unknown socket status'
 ! !
 
-!Socket methodsFor: 'receiving' stamp: 'gk 12/14/2005 10:02'!
+!Socket methodsFor: 'receiving' stamp: 'gk 14/Dec/2005 10:02:00'!
 discardReceivedData
 	"Discard any data received up until now, and return the number of bytes discarded."
 
@@ -2032,7 +2032,7 @@ discardReceivedData
 	^ totalBytesDiscarded
 ! !
 
-!Socket methodsFor: 'receiving' stamp: 'mir 5/15/2003 13:52'!
+!Socket methodsFor: 'receiving' stamp: 'mir 15/May/2003 13:52:00'!
 receiveAvailableData
 	"Receive all available data (if any). Do not wait."
  
@@ -2041,7 +2041,7 @@ receiveAvailableData
 	bytesRead := self receiveAvailableDataInto: buffer.
 	^buffer copyFrom: 1 to: bytesRead! !
 
-!Socket methodsFor: 'receiving' stamp: 'mir 5/15/2003 13:52'!
+!Socket methodsFor: 'receiving' stamp: 'mir 15/May/2003 13:52:00'!
 receiveAvailableDataInto: buffer
 	"Receive all available data into the given buffer and return the number of bytes received.
 	Note the given buffer may be only partially filled by the received data.
@@ -2049,7 +2049,7 @@ receiveAvailableDataInto: buffer
 
 	^self receiveAvailableDataInto: buffer startingAt: 1! !
 
-!Socket methodsFor: 'receiving' stamp: 'mu 8/9/2003 18:04'!
+!Socket methodsFor: 'receiving' stamp: 'mu 9/Aug/2003 18:04:00'!
 receiveAvailableDataInto: buffer startingAt: startIndex
 	"Receive all available data into the given buffer and return the number of bytes received.
 	Note the given buffer may be only partially filled by the received data.
@@ -2064,7 +2064,7 @@ receiveAvailableDataInto: buffer startingAt: startIndex
 			bufferPos := bufferPos + bytesRead].
 	^bufferPos - startIndex! !
 
-!Socket methodsFor: 'receiving' stamp: 'yo 10/10/2005 18:47'!
+!Socket methodsFor: 'receiving' stamp: 'yo 10/Oct/2005 18:47:00'!
 receiveAvailableDataIntoBuffer: buffer
 	"Receive all available data (if any). Do not wait."
  
@@ -2072,7 +2072,7 @@ receiveAvailableDataIntoBuffer: buffer
 	bytesRead := self receiveAvailableDataInto: buffer.
 	^buffer copyFrom: 1 to: bytesRead! !
 
-!Socket methodsFor: 'receiving' stamp: 'mir 5/15/2003 16:05'!
+!Socket methodsFor: 'receiving' stamp: 'mir 15/May/2003 16:05:00'!
 receiveData
 	"Receive data into the given buffer and return the number of bytes received. 
 	Note the given buffer may be only partially filled by the received data.
@@ -2084,7 +2084,7 @@ receiveData
 	bytesRead := self receiveDataInto: buffer.
 	^buffer copyFrom: 1 to: bytesRead! !
 
-!Socket methodsFor: 'receiving' stamp: 'mir 5/15/2003 16:05'!
+!Socket methodsFor: 'receiving' stamp: 'mir 15/May/2003 16:05:00'!
 receiveDataInto: aStringOrByteArray
 	"Receive data into the given buffer and return the number of bytes received. 
 	Note the given buffer may be only partially filled by the received data.
@@ -2093,7 +2093,7 @@ receiveDataInto: aStringOrByteArray
 
 	^self receiveDataInto: aStringOrByteArray startingAt: 1! !
 
-!Socket methodsFor: 'receiving' stamp: 'eem 2/25/2016 12:58'!
+!Socket methodsFor: 'receiving' stamp: 'eem 25/Feb/2016 12:58:00'!
 receiveDataInto: aStringOrByteArray startingAt: aNumber
 	"Receive data into the given buffer and return the number of bytes received. 
 	Note the given buffer may be only partially filled by the received data.
@@ -2113,7 +2113,7 @@ receiveDataInto: aStringOrByteArray startingAt: aNumber
 	^bytesRead
 ! !
 
-!Socket methodsFor: 'receiving' stamp: 'ul 11/15/2010 12:04'!
+!Socket methodsFor: 'receiving' stamp: 'ul 15/Nov/2010 12:04:00'!
 receiveDataSignallingClosedInto: aStringOrByteArray startingAt: aNumber
 	"Receive data into the given buffer and return the number of bytes received. 
 	Note the given buffer may be only partially filled by the received data.
@@ -2132,7 +2132,7 @@ receiveDataSignallingClosedInto: aStringOrByteArray startingAt: aNumber
 	^bytesRead
 ! !
 
-!Socket methodsFor: 'receiving' stamp: 'gk 2/9/2005 12:24'!
+!Socket methodsFor: 'receiving' stamp: 'gk 9/Feb/2005 12:24:00'!
 receiveDataSignallingTimeout: timeout into: aStringOrByteArray startingAt: aNumber
 	"Receive data into the given buffer and return the number of bytes received. 
 	Note the given buffer may be only partially filled by the received data.
@@ -2146,7 +2146,7 @@ receiveDataSignallingTimeout: timeout into: aStringOrByteArray startingAt: aNumb
 		count: aStringOrByteArray size-aNumber+1
 ! !
 
-!Socket methodsFor: 'receiving' stamp: 'svp 9/23/2003 00:03'!
+!Socket methodsFor: 'receiving' stamp: 'svp 23/Sep/2003 00:03:00'!
 receiveDataTimeout: timeout
 	"Receive data into the given buffer and return the number of bytes received. 
 	Note the given buffer may be only partially filled by the received data.
@@ -2157,7 +2157,7 @@ receiveDataTimeout: timeout
 	bytesRead := self receiveDataTimeout: timeout into: buffer.
 	^buffer copyFrom: 1 to: bytesRead! !
 
-!Socket methodsFor: 'receiving' stamp: 'svp 9/23/2003 00:01'!
+!Socket methodsFor: 'receiving' stamp: 'svp 23/Sep/2003 00:01:00'!
 receiveDataTimeout: timeout into: aStringOrByteArray 
 	"Receive data into the given buffer and return the number of bytes received. 
 	Note the given buffer may be only partially filled by the received data.
@@ -2165,7 +2165,7 @@ receiveDataTimeout: timeout into: aStringOrByteArray
 
 	^self receiveDataTimeout: timeout into: aStringOrByteArray startingAt: 1! !
 
-!Socket methodsFor: 'receiving' stamp: 'svp 9/22/2003 23:58'!
+!Socket methodsFor: 'receiving' stamp: 'svp 22/Sep/2003 23:58:00'!
 receiveDataTimeout: timeout into: aStringOrByteArray startingAt: aNumber
 	"Receive data into the given buffer and return the number of bytes received. 
 	Note the given buffer may be only partially filled by the received data.
@@ -2179,7 +2179,7 @@ receiveDataTimeout: timeout into: aStringOrByteArray startingAt: aNumber
 		count: aStringOrByteArray size-aNumber+1
 ! !
 
-!Socket methodsFor: 'receiving' stamp: 'mir 5/15/2003 16:18'!
+!Socket methodsFor: 'receiving' stamp: 'mir 15/May/2003 16:18:00'!
 receiveDataWithTimeout
 	"Receive data into the given buffer and return the number of bytes received. 
 	Note the given buffer may be only partially filled by the received data.
@@ -2191,7 +2191,7 @@ receiveDataWithTimeout
 	bytesRead := self receiveDataWithTimeoutInto: buffer.
 	^buffer copyFrom: 1 to: bytesRead! !
 
-!Socket methodsFor: 'receiving' stamp: 'mir 5/15/2003 16:18'!
+!Socket methodsFor: 'receiving' stamp: 'mir 15/May/2003 16:18:00'!
 receiveDataWithTimeoutInto: aStringOrByteArray
 	"Receive data into the given buffer and return the number of bytes received. 
 	Note the given buffer may be only partially filled by the received data.
@@ -2200,7 +2200,7 @@ receiveDataWithTimeoutInto: aStringOrByteArray
 
 	^self receiveDataWithTimeoutInto: aStringOrByteArray startingAt: 1! !
 
-!Socket methodsFor: 'receiving' stamp: 'svp 9/23/2003 00:01'!
+!Socket methodsFor: 'receiving' stamp: 'svp 23/Sep/2003 00:01:00'!
 receiveDataWithTimeoutInto: aStringOrByteArray startingAt: aNumber
 	"Receive data into the given buffer and return the number of bytes received. 
 	Note the given buffer may be only partially filled by the received data.
@@ -2209,7 +2209,7 @@ receiveDataWithTimeoutInto: aStringOrByteArray startingAt: aNumber
 	^self receiveDataTimeout: Socket standardTimeout into: aStringOrByteArray startingAt: aNumber 
 ! !
 
-!Socket methodsFor: 'receiving' stamp: 'mir 5/15/2003 13:46'!
+!Socket methodsFor: 'receiving' stamp: 'mir 15/May/2003 13:46:00'!
 receiveSomeData
 	"Receive currently available data (if any). Do not wait."
  
@@ -2218,13 +2218,13 @@ receiveSomeData
 	bytesRead := self receiveSomeDataInto: buffer.
 	^buffer copyFrom: 1 to: bytesRead! !
 
-!Socket methodsFor: 'receiving' stamp: 'mir 5/15/2003 13:46'!
+!Socket methodsFor: 'receiving' stamp: 'mir 15/May/2003 13:46:00'!
 receiveSomeDataInto: aStringOrByteArray
 	"Receive data into the given buffer and return the number of bytes received. Note the given buffer may be only partially filled by the received data."
 
 	^self receiveSomeDataInto: aStringOrByteArray startingAt: 1! !
 
-!Socket methodsFor: 'receiving' stamp: 'mir 5/15/2003 13:46'!
+!Socket methodsFor: 'receiving' stamp: 'mir 15/May/2003 13:46:00'!
 receiveSomeDataInto: aStringOrByteArray startingAt: aNumber
 	"Receive data into the given buffer and return the number of bytes received. Note the given buffer may be only partially filled by the received data."
 
@@ -2234,7 +2234,7 @@ receiveSomeDataInto: aStringOrByteArray startingAt: aNumber
 		count: aStringOrByteArray size-aNumber+1
 ! !
 
-!Socket methodsFor: 'finalization' stamp: 'ul 10/27/2014 16:44'!
+!Socket methodsFor: 'finalization' stamp: 'ul 27/Oct/2014 16:44:00'!
 finalize
 
 	self primSocketDestroyGently: socketHandle.
@@ -2244,7 +2244,7 @@ finalize
 		writeSemaphore }
 ! !
 
-!Socket methodsFor: 'other' stamp: 'JMM 10/21/2024 11:36:22'!
+!Socket methodsFor: 'other' stamp: 'JMM 21/Oct/2024 11:36:22'!
 getOption: aName 
 	"Get options on this socket, see Unix man pages for values for 
 	sockets, IP, TCP, UDP. IE SO_KEEPALIVE
@@ -2288,7 +2288,7 @@ foo waitForConnectionUntil: (Socket standardDeadline).
 	Transcript show: (options at: i),fum printString;cr].
 "! !
 
-!Socket methodsFor: 'other' stamp: 'ul 12/8/2015 20:03'!
+!Socket methodsFor: 'other' stamp: 'ul 8/Dec/2015 20:03:00'!
 setOption: aName value: aValue 
 	| value |
 	"setup options on this socket, see Unix man pages for values for 
@@ -2306,20 +2306,20 @@ setOption: aName value: aValue
 		otherwise: [ aValue asString ].
 	^ self primSocket: socketHandle setOption: aName value: value! !
 
-!Socket methodsFor: 'primitives' stamp: 'ar 2/2/2001 15:09'!
+!Socket methodsFor: 'primitives' stamp: 'ar 2/Feb/2001 15:09:00'!
 primAcceptFrom: aHandle receiveBufferSize: rcvBufSize sendBufSize: sndBufSize semaIndex: semaIndex
 	"Create and return a new socket handle based on accepting the connection from the given listening socket"
 	<primitive: 'primitiveSocketAccept' module: 'SocketPlugin'>
 	^self primitiveFailed! !
 
-!Socket methodsFor: 'primitives' stamp: 'ul 4/20/2011 01:55'!
+!Socket methodsFor: 'primitives' stamp: 'ul 20/Apr/2011 01:55:00'!
 primAcceptFrom: aHandle receiveBufferSize: rcvBufSize sendBufSize: sndBufSize semaIndex: semaIndex readSemaIndex: aReadSema writeSemaIndex: aWriteSema
 	"Create and return a new socket handle based on accepting the connection from the given listening socket"
 	
 	<primitive: 'primitiveSocketAccept3Semaphores' module: 'SocketPlugin'>
 	self primitiveFailed! !
 
-!Socket methodsFor: 'primitives' stamp: 'ar 2/2/2001 15:09'!
+!Socket methodsFor: 'primitives' stamp: 'ar 2/Feb/2001 15:09:00'!
 primSocket: socketID connectTo: hostAddress port: port
 	"Attempt to establish a connection to the given port of the given host. This is an asynchronous call; query the socket status to discover if and when the connection is actually completed."
 
@@ -2327,7 +2327,7 @@ primSocket: socketID connectTo: hostAddress port: port
 	self primitiveFailed
 ! !
 
-!Socket methodsFor: 'primitives' stamp: 'JMM 5/25/2000 21:48'!
+!Socket methodsFor: 'primitives' stamp: 'JMM 25/May/2000 21:48:00'!
 primSocket: socketID getOption: aString 
 	"Get some option information on this socket. Refer to the UNIX 
 	man pages for valid SO, TCP, IP, UDP options. In case of doubt
@@ -2339,7 +2339,7 @@ primSocket: socketID getOption: aString
 	self primitiveFailed
 ! !
 
-!Socket methodsFor: 'primitives' stamp: 'ar 2/2/2001 15:09'!
+!Socket methodsFor: 'primitives' stamp: 'ar 2/Feb/2001 15:09:00'!
 primSocket: socketID listenOn: port
 	"Listen for a connection on the given port. This is an asynchronous call; query the socket status to discover if and when the connection is actually completed."
 
@@ -2347,21 +2347,21 @@ primSocket: socketID listenOn: port
 	self primitiveFailed
 ! !
 
-!Socket methodsFor: 'primitives' stamp: 'ar 2/2/2001 15:09'!
+!Socket methodsFor: 'primitives' stamp: 'ar 2/Feb/2001 15:09:00'!
 primSocket: aHandle listenOn: portNumber backlogSize: backlog
 	"Primitive. Set up the socket to listen on the given port.
 	Will be used in conjunction with #accept only."
 	<primitive: 'primitiveSocketListenWithOrWithoutBacklog' module: 'SocketPlugin'>
 	self destroy. "Accept not supported so clean up"! !
 
-!Socket methodsFor: 'primitives' stamp: 'ikp 9/1/2003 20:33'!
+!Socket methodsFor: 'primitives' stamp: 'ikp 1/Sep/2003 20:33:00'!
 primSocket: aHandle listenOn: portNumber backlogSize: backlog interface: ifAddr
 	"Primitive. Set up the socket to listen on the given port.
 	Will be used in conjunction with #accept only."
 	<primitive: 'primitiveSocketListenOnPortBacklogInterface' module: 'SocketPlugin'>
 	self destroy. "Accept not supported so clean up"! !
 
-!Socket methodsFor: 'primitives' stamp: 'ar 2/2/2001 15:09'!
+!Socket methodsFor: 'primitives' stamp: 'ar 2/Feb/2001 15:09:00'!
 primSocket: socketID receiveDataInto: aStringOrByteArray startingAt: startIndex count: count
 	"Receive data from the given socket into the given array starting at the given index. Return the number of bytes read or zero if no data is available."
 
@@ -2369,7 +2369,7 @@ primSocket: socketID receiveDataInto: aStringOrByteArray startingAt: startIndex 
 	self primitiveFailed
 ! !
 
-!Socket methodsFor: 'primitives' stamp: 'JMM 5/24/2000 17:19'!
+!Socket methodsFor: 'primitives' stamp: 'JMM 24/May/2000 17:19:00'!
 primSocket: socketID receiveUDPDataInto: aStringOrByteArray startingAt: startIndex count: count
 	"Receive data from the given socket into the given array starting at the given index. 
 	Return an Array containing the amount read, the host address byte array, the host port, and the more flag"
@@ -2378,7 +2378,7 @@ primSocket: socketID receiveUDPDataInto: aStringOrByteArray startingAt: startInd
 	self primitiveFailed
 ! !
 
-!Socket methodsFor: 'primitives' stamp: 'ar 2/2/2001 15:09'!
+!Socket methodsFor: 'primitives' stamp: 'ar 2/Feb/2001 15:09:00'!
 primSocket: socketID sendData: aStringOrByteArray startIndex: startIndex count: count
 	"Send data to the remote host through the given socket starting with the given byte index of the given byte array. The data sent is 'pushed' immediately. Return the number of bytes of data actually sent; any remaining data should be re-submitted for sending after the current send operation has completed."
 	"Note: In general, it many take several sendData calls to transmit a large data array since the data is sent in send-buffer-sized chunks. The size of the send buffer is determined when the socket is created."
@@ -2387,7 +2387,7 @@ primSocket: socketID sendData: aStringOrByteArray startIndex: startIndex count: 
 	self primitiveFailed
 ! !
 
-!Socket methodsFor: 'primitives' stamp: 'JMM 5/25/2000 00:08'!
+!Socket methodsFor: 'primitives' stamp: 'JMM 25/May/2000 00:08:00'!
 primSocket: socketID sendUDPData: aStringOrByteArray toHost: hostAddress  port: portNumber startIndex: startIndex count: count
 	"Send data to the remote host through the given socket starting with the given byte index of the given byte array. The data sent is 'pushed' immediately. Return the number of bytes of data actually sent; any remaining data should be re-submitted for sending after the current send operation has completed."
 	"Note: In general, it many take several sendData calls to transmit a large data array since the data is sent in send-buffer-sized chunks. The size of the send buffer is determined when the socket is created."
@@ -2397,7 +2397,7 @@ primSocket: socketID sendUDPData: aStringOrByteArray toHost: hostAddress  port: 
 
 ! !
 
-!Socket methodsFor: 'primitives' stamp: 'ar 7/18/2000 11:42'!
+!Socket methodsFor: 'primitives' stamp: 'ar 18/Jul/2000 11:42:00'!
 primSocket: socketID setOption: aString value: aStringValue
 	"Set some option information on this socket. Refer to the UNIX 
 	man pages for valid SO, TCP, IP, UDP options. In case of doubt
@@ -2408,7 +2408,7 @@ primSocket: socketID setOption: aString value: aStringValue
 	<primitive: 'primitiveSocketSetOptions' module: 'SocketPlugin'>
 	^nil! !
 
-!Socket methodsFor: 'primitives' stamp: 'ar 2/2/2001 15:09'!
+!Socket methodsFor: 'primitives' stamp: 'ar 2/Feb/2001 15:09:00'!
 primSocket: socketID setPort: port
 	"Set the local port associated with a UDP socket.
 	Note: this primitive is overloaded.  The primitive will not fail on a TCP socket, but
@@ -2419,7 +2419,7 @@ primSocket: socketID setPort: port
 	self primitiveFailed
 ! !
 
-!Socket methodsFor: 'primitives' stamp: 'ar 2/2/2001 15:09'!
+!Socket methodsFor: 'primitives' stamp: 'ar 2/Feb/2001 15:09:00'!
 primSocketAbortConnection: socketID
 	"Terminate the connection on the given port immediately without going through the normal close sequence. This is an asynchronous call; query the socket status to discover if and when the connection is actually terminated."
 
@@ -2427,7 +2427,7 @@ primSocketAbortConnection: socketID
 	self primitiveFailed
 ! !
 
-!Socket methodsFor: 'primitives' stamp: 'ar 2/2/2001 15:09'!
+!Socket methodsFor: 'primitives' stamp: 'ar 2/Feb/2001 15:09:00'!
 primSocketCloseConnection: socketID
 	"Close the connection on the given port. The remote end is informed that this end has closed and will do no further sends. This is an asynchronous call; query the socket status to discover if and when the connection is actually closed."
 
@@ -2435,7 +2435,7 @@ primSocketCloseConnection: socketID
 	self primitiveFailed
 ! !
 
-!Socket methodsFor: 'primitives' stamp: 'ar 2/2/2001 15:09'!
+!Socket methodsFor: 'primitives' stamp: 'ar 2/Feb/2001 15:09:00'!
 primSocketConnectionStatus: socketID
 	"Return an integer reflecting the connection status of this socket. For a list of possible values, see the comment in the 'initialize' method of this class. If the primitive fails, return a status indicating that the socket handle is no longer valid, perhaps because the Squeak image was saved and restored since the socket was created. (Sockets do not survive snapshots.)"
 
@@ -2443,7 +2443,7 @@ primSocketConnectionStatus: socketID
 	^ InvalidSocket
 ! !
 
-!Socket methodsFor: 'primitives' stamp: 'ar 2/2/2001 15:09'!
+!Socket methodsFor: 'primitives' stamp: 'ar 2/Feb/2001 15:09:00'!
 primSocketCreateNetwork: netType type: socketType receiveBufferSize: rcvBufSize sendBufSize: sendBufSize semaIndex: semaIndex
 	"Return a new socket handle for a socket of the given type and buffer sizes. Return nil if socket creation fails.
 	The netType parameter is platform dependent and can be used to encode both the protocol type (IP, Xerox XNS, etc.) and/or the physical network interface to use if this host is connected to multiple networks. A zero netType means to use IP protocols and the primary (or only) network interface.
@@ -2457,14 +2457,14 @@ primSocketCreateNetwork: netType type: socketType receiveBufferSize: rcvBufSize 
 	^ nil  "socket creation failed"
 ! !
 
-!Socket methodsFor: 'primitives' stamp: 'ul 4/20/2011 01:56'!
+!Socket methodsFor: 'primitives' stamp: 'ul 20/Apr/2011 01:56:00'!
 primSocketCreateNetwork: netType type: socketType receiveBufferSize: rcvBufSize sendBufSize: sendBufSize semaIndex: semaIndex readSemaIndex: aReadSema writeSemaIndex: aWriteSema
 	"See comment in primSocketCreateNetwork: with one semaIndex. However you should know that some implementations ignore the buffer size and this interface supports three semaphores,  one for open/close/listen and the other two for reading and writing"
 
 	<primitive: 'primitiveSocketCreate3Semaphores' module: 'SocketPlugin'>
 	self primitiveFailed! !
 
-!Socket methodsFor: 'primitives' stamp: 'ar 2/2/2001 15:09'!
+!Socket methodsFor: 'primitives' stamp: 'ar 2/Feb/2001 15:09:00'!
 primSocketDestroy: socketID
 	"Release the resources associated with this socket. If a connection is open, it is aborted."
 
@@ -2472,7 +2472,7 @@ primSocketDestroy: socketID
 	self primitiveFailed
 ! !
 
-!Socket methodsFor: 'primitives' stamp: 'ar 2/2/2001 15:09'!
+!Socket methodsFor: 'primitives' stamp: 'ar 2/Feb/2001 15:09:00'!
 primSocketDestroyGently: socketID
 	"Release the resources associated with this socket. If a connection is open, it is aborted.
 	Do not fail if the receiver is already closed."
@@ -2480,7 +2480,7 @@ primSocketDestroyGently: socketID
 	<primitive: 'primitiveSocketDestroy' module: 'SocketPlugin'>
 ! !
 
-!Socket methodsFor: 'primitives' stamp: 'ar 2/2/2001 15:09'!
+!Socket methodsFor: 'primitives' stamp: 'ar 2/Feb/2001 15:09:00'!
 primSocketError: socketID
 	"Return an integer encoding the most recent error on this socket. Zero means no error."
 
@@ -2488,7 +2488,7 @@ primSocketError: socketID
 	self primitiveFailed
 ! !
 
-!Socket methodsFor: 'primitives' stamp: 'ar 2/2/2001 15:09'!
+!Socket methodsFor: 'primitives' stamp: 'ar 2/Feb/2001 15:09:00'!
 primSocketLocalAddress: socketID
 	"Return the local host address for this socket."
 
@@ -2496,7 +2496,7 @@ primSocketLocalAddress: socketID
 	self primitiveFailed
 ! !
 
-!Socket methodsFor: 'primitives' stamp: 'ar 2/2/2001 15:09'!
+!Socket methodsFor: 'primitives' stamp: 'ar 2/Feb/2001 15:09:00'!
 primSocketLocalPort: socketID
 	"Return the local port for this socket, or zero if no port has yet been assigned."
 
@@ -2504,7 +2504,7 @@ primSocketLocalPort: socketID
 	self primitiveFailed
 ! !
 
-!Socket methodsFor: 'primitives' stamp: 'eem 8/20/2020 11:30'!
+!Socket methodsFor: 'primitives' stamp: 'eem 20/Aug/2020 11:30:00'!
 primSocketReceiveDataAvailable: socketID
 	"Answer if data may be available for reading from the current socket."
 
@@ -2512,7 +2512,7 @@ primSocketReceiveDataAvailable: socketID
 	self primitiveFailed
 ! !
 
-!Socket methodsFor: 'primitives' stamp: 'ar 2/2/2001 15:09'!
+!Socket methodsFor: 'primitives' stamp: 'ar 2/Feb/2001 15:09:00'!
 primSocketRemoteAddress: socketID
 	"Return the remote host address for this socket, or zero if no connection has been made."
 
@@ -2520,7 +2520,7 @@ primSocketRemoteAddress: socketID
 	self primitiveFailed
 ! !
 
-!Socket methodsFor: 'primitives' stamp: 'ar 2/2/2001 15:09'!
+!Socket methodsFor: 'primitives' stamp: 'ar 2/Feb/2001 15:09:00'!
 primSocketRemotePort: socketID
 	"Return the remote port for this socket, or zero if no connection has been made."
 
@@ -2528,7 +2528,7 @@ primSocketRemotePort: socketID
 	self primitiveFailed
 ! !
 
-!Socket methodsFor: 'primitives' stamp: 'ar 2/2/2001 15:09'!
+!Socket methodsFor: 'primitives' stamp: 'ar 2/Feb/2001 15:09:00'!
 primSocketSendDone: socketID
 	"Return true if there is no send in progress on the current socket."
 
@@ -2536,11 +2536,11 @@ primSocketSendDone: socketID
 	self primitiveFailed
 ! !
 
-!Socket methodsFor: 'primitives' stamp: 'mtf 3/14/2011 19:59'!
+!Socket methodsFor: 'primitives' stamp: 'mtf 14/Mar/2011 19:59:00'!
 primitiveFailed: selector
 	SocketPrimitiveFailed signal: selector asString, ' failed'! !
 
-!Socket methodsFor: 'printing' stamp: 'JMM 10/22/2024 14:15:48'!
+!Socket methodsFor: 'printing' stamp: 'JMM 22/Oct/2024 14:15:48'!
 printOn: aStream
 
 	super printOn: aStream.
@@ -2549,7 +2549,7 @@ printOn: aStream
 	aStream nextPutAll: ' : '.
 	[self remotePort printOn: aStream] on: Error do: [:ex | '-'].! !
 
-!Socket methodsFor: 'datagrams' stamp: 'ul 4/20/2011 01:55'!
+!Socket methodsFor: 'datagrams' stamp: 'ul 20/Apr/2011 01:55:00'!
 receiveDataInto: aStringOrByteArray fromHost: hostAddress port: portNumber
 	| datagram |
 	"Receive a UDP packet from the given hostAddress/portNumber, storing the data in the given buffer, and return the number of bytes received. Note the given buffer may be only partially filled by the received data."
@@ -2560,7 +2560,7 @@ receiveDataInto: aStringOrByteArray fromHost: hostAddress port: portNumber
 			ifTrue: [^datagram at: 1]
 			ifFalse: [^0]] repeat! !
 
-!Socket methodsFor: 'datagrams' stamp: 'JMM 6/3/2000 21:54'!
+!Socket methodsFor: 'datagrams' stamp: 'JMM 3/Jun/2000 21:54:00'!
 receiveUDPDataInto: aStringOrByteArray
 	"Receive UDP data into the given buffer and return the number of bytes received. Note the given buffer may be only partially filled by the received data. What is returned is an array, the first element is the bytes read, the second the sending bytearray address, the third the senders port, the fourth, true if more of the datagram awaits reading"
 
@@ -2570,13 +2570,13 @@ receiveUDPDataInto: aStringOrByteArray
 		count: aStringOrByteArray size
 ! !
 
-!Socket methodsFor: 'datagrams' stamp: 'ul 4/20/2011 01:53'!
+!Socket methodsFor: 'datagrams' stamp: 'ul 20/Apr/2011 01:53:00'!
 sendData: aStringOrByteArray toHost: hostAddress port: portNumber
 	"Send a UDP packet containing the given data to the specified host/port."
 
 	^self sendUDPData: aStringOrByteArray toHost: hostAddress port: portNumber! !
 
-!Socket methodsFor: 'datagrams' stamp: 'jmv 1/19/2023 13:37:38'!
+!Socket methodsFor: 'datagrams' stamp: 'jmv 19/Jan/2023 13:37:38'!
 sendUDPData: aStringOrByteArray toHost: hostAddress port: portNumber
 	"Send a UDP packet containing the given data to the specified host/port."
 
@@ -2597,36 +2597,36 @@ sendUDPData: aStringOrByteArray toHost: hostAddress port: portNumber
 
 	^ bytesSent! !
 
-!Socket methodsFor: 'datagrams' stamp: 'dtl 6/3/2012 19:32'!
+!Socket methodsFor: 'datagrams' stamp: 'dtl 3/Jun/2012 19:32:00'!
 setPeer: hostAddress port: port
 	"Set the default send/recv address."
 
 	self primSocket: socketHandle connectTo: hostAddress asByteArray port: port.
 ! !
 
-!Socket methodsFor: 'datagrams' stamp: 'ar 4/30/1999 04:29'!
+!Socket methodsFor: 'datagrams' stamp: 'ar 30/Apr/1999 04:29:00'!
 setPort: port
 	"Associate a local port number with a UDP socket.  Not applicable to TCP sockets."
 
 	self primSocket: socketHandle setPort: port.
 ! !
 
-!Socket methodsFor: 'datagrams' stamp: 'ul 12/7/2014 05:48'!
+!Socket methodsFor: 'datagrams' stamp: 'ul 7/Dec/2014 05:48:00'!
 setPort: portNumber interface: ifAddr
 	"Allow an UDP socket to bind to a specific interface."
  
 	self primSocket: socketHandle listenOn: portNumber backlogSize: 0 interface: ifAddr asByteArray.
 ! !
 
-!Socket methodsFor: 'registry' stamp: 'ar 3/21/98 17:40'!
+!Socket methodsFor: 'registry' stamp: 'ar 21/Mar/1998 17:40:00'!
 register
 	^self class register: self! !
 
-!Socket methodsFor: 'registry' stamp: 'ar 3/21/98 17:41'!
+!Socket methodsFor: 'registry' stamp: 'ar 21/Mar/1998 17:41:00'!
 unregister
 	^self class unregister: self! !
 
-!Socket methodsFor: 'sending' stamp: 'jmv 1/19/2023 13:07:15'!
+!Socket methodsFor: 'sending' stamp: 'jmv 19/Jan/2023 13:07:15'!
 sendData: aStringOrByteArray
 	"Send all of the data in the given array, even if it requires multiple calls to send it all. Return the number of bytes sent."
 
@@ -2648,7 +2648,7 @@ sendData: aStringOrByteArray
 	^ bytesSent
 ! !
 
-!Socket methodsFor: 'sending' stamp: 'eem 2/29/2016 19:11'!
+!Socket methodsFor: 'sending' stamp: 'eem 29/Feb/2016 19:11:00'!
 sendData: buffer count: n
 	"Send the amount of data from the given buffer."
 	| sent totalSent |
@@ -2659,7 +2659,7 @@ sendData: buffer count: n
 		 sent = 0 ifTrue: "If no data was sent don't just sit here spinning hard..."
 			[Processor yield]].! !
 
-!Socket methodsFor: 'sending' stamp: 'ls 1/5/1999 15:05'!
+!Socket methodsFor: 'sending' stamp: 'ls 5/Jan/1999 15:05:00'!
 sendSomeData: aStringOrByteArray
 	"Send as much of the given data as possible and answer the number of bytes actually sent."
 	"Note: This operation may have to be repeated multiple times to send a large amount of data."
@@ -2669,7 +2669,7 @@ sendSomeData: aStringOrByteArray
 		startIndex: 1
 		count: aStringOrByteArray size! !
 
-!Socket methodsFor: 'sending' stamp: 'ls 3/3/1999 18:59'!
+!Socket methodsFor: 'sending' stamp: 'ls 3/Mar/1999 18:59:00'!
 sendSomeData: aStringOrByteArray startIndex: startIndex
 	"Send as much of the given data as possible starting at the given index. Answer the number of bytes actually sent."
 	"Note: This operation may have to be repeated multiple times to send a large amount of data."
@@ -2679,11 +2679,11 @@ sendSomeData: aStringOrByteArray startIndex: startIndex
 		startIndex: startIndex
 		count: (aStringOrByteArray size - startIndex + 1)! !
 
-!Socket methodsFor: 'sending' stamp: 'mtf 3/5/2011 17:54'!
+!Socket methodsFor: 'sending' stamp: 'mtf 5/Mar/2011 17:54:00'!
 sendSomeData: aStringOrByteArray startIndex: startIndex count: count
 	^ self sendSomeData: aStringOrByteArray startIndex: startIndex count: count for: Socket standardTimeout! !
 
-!Socket methodsFor: 'sending' stamp: 'jmv 1/19/2023 13:15:19'!
+!Socket methodsFor: 'sending' stamp: 'jmv 19/Jan/2023 13:15:19'!
 sendSomeData: aStringOrByteArray startIndex: startIndex count: count for: aTimeoutInSeconds
 	"Send up to count bytes of the given data starting at the given index. Answer the number of bytes actually sent."
 	"Note: This operation may have to be repeated multiple times to send a large amount of data."
@@ -2700,14 +2700,14 @@ sendSomeData: aStringOrByteArray startIndex: startIndex count: count for: aTimeo
 	^ bytesSent
 ! !
 
-!Socket methodsFor: 'sending' stamp: 'mir 2/19/2002 18:33'!
+!Socket methodsFor: 'sending' stamp: 'mir 19/Feb/2002 18:33:00'!
 sendStreamContents: stream
 	"Send the data in the stream. Close the stream.
 	Usefull for directly sending contents of a file without reading into memory first."
 
 	self sendStreamContents: stream checkBlock: [true]! !
 
-!Socket methodsFor: 'sending' stamp: 'nice 12/26/2009 21:50'!
+!Socket methodsFor: 'sending' stamp: 'nice 26/Dec/2009 21:50:00'!
 sendStreamContents: stream checkBlock: checkBlock
 	"Send the data in the stream. Close the stream after you are done. After each block of data evaluate checkBlock and abort if it returns false.
 	Usefull for directly sending contents of a file without reading into memory first."
@@ -2722,7 +2722,7 @@ sendStreamContents: stream checkBlock: checkBlock
 			self sendData: buffer]]
 		ensure: [stream close]! !
 
-!Socket methodsFor: 'waiting' stamp: 'dc 10/21/2008 08:19'!
+!Socket methodsFor: 'waiting' stamp: 'dc 21/Oct/2008 08:19:00'!
 waitForAcceptFor: timeout
 	"Wait and accept an incoming connection. Return nil if it falis"
 	self waitForConnectionFor: timeout ifTimedOut: [^ nil].
@@ -2730,7 +2730,7 @@ waitForAcceptFor: timeout
 		ifTrue:[self accept]
 		! !
 
-!Socket methodsFor: 'waiting' stamp: 'yo 12/21/2007 11:36'!
+!Socket methodsFor: 'waiting' stamp: 'yo 21/Dec/2007 11:36:00'!
 waitForAcceptFor: timeout ifTimedOut: timeoutBlock
 	"Wait and accept an incoming connection"
 	self waitForConnectionFor: timeout ifTimedOut: [^timeoutBlock value].
@@ -2738,7 +2738,7 @@ waitForAcceptFor: timeout ifTimedOut: timeoutBlock
 		ifTrue:[self accept]
 ! !
 
-!Socket methodsFor: 'waiting' stamp: 'dtl 6/13/2012 21:30'!
+!Socket methodsFor: 'waiting' stamp: 'dtl 13/Jun/2012 21:30:00'!
 waitForConnectionFor: timeout
 	"Wait up until the given deadline for a connection to be established. Return true if it is established by the deadline, false if not."
 
@@ -2748,14 +2748,14 @@ waitForConnectionFor: timeout
 		ifRefused: [ConnectionRefused signal: 'Failed to connect in ', timeout asString, ' seconds']
 ! !
 
-!Socket methodsFor: 'waiting' stamp: 'dtl 6/13/2012 21:32'!
+!Socket methodsFor: 'waiting' stamp: 'dtl 13/Jun/2012 21:32:00'!
 waitForConnectionFor: timeout ifTimedOut: timeoutBlock
 	"Wait up until the given deadline for a connection to be established. Return true if it is established by the deadline, false if not."
 
 	^ self waitForConnectionFor: timeout ifTimedOut: timeoutBlock ifRefused: timeoutBlock
 ! !
 
-!Socket methodsFor: 'waiting' stamp: 'ul 7/16/2016 17:51'!
+!Socket methodsFor: 'waiting' stamp: 'ul 16/Jul/2016 17:51:00'!
 waitForConnectionFor: timeout ifTimedOut: timeoutBlock ifRefused: refusedBlock
 	"Wait up until the given deadline for a connection to be established. Return true if it is established by the deadline, false if not."
 
@@ -2772,7 +2772,7 @@ waitForConnectionFor: timeout ifTimedOut: timeoutBlock ifRefused: refusedBlock
 		ifFalse: [ refusedBlock value ].
 	^false! !
 
-!Socket methodsFor: 'waiting' stamp: 'ul 7/16/2016 17:37'!
+!Socket methodsFor: 'waiting' stamp: 'ul 16/Jul/2016 17:37:00'!
 waitForConnectionUntil: deadline
 	"Wait up until the given deadline for a connection to be established. Return true if it is established by the deadline, false if not."
 
@@ -2783,7 +2783,7 @@ waitForConnectionUntil: deadline
 		(timeLeft := deadline - Time millisecondClockValue) <= 0 ifTrue: [ ^false ].
 		semaphore waitTimeoutMSecs: timeLeft ] repeat! !
 
-!Socket methodsFor: 'waiting' stamp: 'svp 9/23/2003 00:09'!
+!Socket methodsFor: 'waiting' stamp: 'svp 23/Sep/2003 00:09:00'!
 waitForData
 	"Wait for data to arrive.  This method will block until
 	data is available or the socket is closed.  If the socket is closed
@@ -2792,7 +2792,7 @@ waitForData
 	^self waitForDataIfClosed:
 		[ConnectionClosed signal: 'Connection close while waiting for data.']! !
 
-!Socket methodsFor: 'waiting' stamp: 'ct 1/3/2022 22:17'!
+!Socket methodsFor: 'waiting' stamp: 'ct 3/Jan/2022 22:17:00'!
 waitForDataFor: timeout
 	"Wait for the given nr of seconds for data to arrive.
 	Signal a time out or connection close exception if either happens before data becomes available."
@@ -2803,7 +2803,7 @@ waitForDataFor: timeout
 		ifTimedOut: [ConnectionTimedOut signal: 'Data receive timed out.' translated]
 ! !
 
-!Socket methodsFor: 'waiting' stamp: 'ul 8/13/2016 21:18'!
+!Socket methodsFor: 'waiting' stamp: 'ul 13/Aug/2016 21:18:00'!
 waitForDataFor: timeout ifClosed: closedBlock ifTimedOut: timedOutBlock
 	"Wait for the given nr of seconds for data to arrive."
 	
@@ -2818,7 +2818,7 @@ waitForDataFor: timeout ifClosed: closedBlock ifTimedOut: timedOutBlock
 		readSemaphore waitTimeoutMSecs: 
 			(timeLeft min: self class maximumReadSemaphoreWaitTimeout) ] repeat! !
 
-!Socket methodsFor: 'waiting' stamp: 'eem 9/25/2020 12:37'!
+!Socket methodsFor: 'waiting' stamp: 'eem 25/Sep/2020 12:37:00'!
 waitForDataIfClosed: closedBlock
 	"Wait indefinitely for data to arrive.  This method will block until
 	data is available or the socket is closed."
@@ -2833,7 +2833,7 @@ waitForDataIfClosed: closedBlock
 	  part with ""wait"" when the bug is fixed."
 	 readSemaphore waitTimeoutMSecs: self class maximumReadSemaphoreWaitTimeout ] repeat! !
 
-!Socket methodsFor: 'waiting' stamp: 'ul 8/13/2016 21:18'!
+!Socket methodsFor: 'waiting' stamp: 'ul 13/Aug/2016 21:18:00'!
 waitForDisconnectionFor: timeout
 	"Wait for the given nr of seconds for the connection to be broken.
 	Return true if it is broken by the deadline, false if not.
@@ -2851,7 +2851,7 @@ waitForDisconnectionFor: timeout
 				(deadline - Time millisecondClockValue min: self class maximumReadSemaphoreWaitTimeout) ].
 	^self isConnected! !
 
-!Socket methodsFor: 'waiting' stamp: 'ul 8/13/2016 21:18'!
+!Socket methodsFor: 'waiting' stamp: 'ul 13/Aug/2016 21:18:00'!
 waitForSendDoneFor: timeout
 	"Wait up until the given deadline for the current send operation to complete. Return true if it completes by the deadline, false if not."
 
@@ -2863,7 +2863,7 @@ waitForSendDoneFor: timeout
 		(timeleft := deadline - Time millisecondClockValue) <= 0 ifTrue: [ ^false ].
 		writeSemaphore waitTimeoutMSecs: timeleft ] repeat! !
 
-!Socket methodsFor: 'ipv6' stamp: 'ikp 6/9/2007 09:35'!
+!Socket methodsFor: 'ipv6' stamp: 'ikp 9/Jun/2007 09:35:00'!
 bindTo: aSocketAddress
 
 	| status |
@@ -2875,7 +2875,7 @@ bindTo: aSocketAddress
 	self primSocket: socketHandle bindTo: aSocketAddress.
 ! !
 
-!Socket methodsFor: 'ipv6' stamp: 'ikp 6/8/2007 22:11'!
+!Socket methodsFor: 'ipv6' stamp: 'ikp 8/Jun/2007 22:11:00'!
 connectNonBlockingTo: aSocketAddress
 
 	| status |
@@ -2887,12 +2887,12 @@ connectNonBlockingTo: aSocketAddress
 	self primSocket: socketHandle connectTo: aSocketAddress.
 ! !
 
-!Socket methodsFor: 'ipv6' stamp: 'ikp 6/8/2007 22:09'!
+!Socket methodsFor: 'ipv6' stamp: 'ikp 8/Jun/2007 22:09:00'!
 connectTo: aSocketAddress
 
 	self connectTo: aSocketAddress waitForConnectionFor: Socket standardTimeout! !
 
-!Socket methodsFor: 'ipv6' stamp: 'tonyg 6/7/2022 09:30'!
+!Socket methodsFor: 'ipv6' stamp: 'tonyg 7/Jun/2022 09:30:00'!
 connectTo: aSocketAddress waitForConnectionFor: timeout 
 
 	self connectNonBlockingTo: aSocketAddress.
@@ -2901,7 +2901,7 @@ connectTo: aSocketAddress waitForConnectionFor: timeout
 		ifTimedOut: [ConnectionTimedOut signal: ('Cannot connect to {1}' translated format: {aSocketAddress printString})]
 		ifRefused: [ConnectionRefused signal: ('Cannot connect to {1}' translated format: {aSocketAddress printString})]! !
 
-!Socket methodsFor: 'ipv6' stamp: 'ikp 6/9/2007 09:39'!
+!Socket methodsFor: 'ipv6' stamp: 'ikp 9/Jun/2007 09:39:00'!
 listenWithBacklog: backlogSize
 
 	| status |
@@ -2913,7 +2913,7 @@ listenWithBacklog: backlogSize
 	self primSocket: socketHandle listenWithBacklog: backlogSize.
 ! !
 
-!Socket methodsFor: 'ipv6' stamp: 'ikp 6/9/2007 10:28'!
+!Socket methodsFor: 'ipv6' stamp: 'ikp 9/Jun/2007 10:28:00'!
 localSocketAddress
 
 	| size addr |
@@ -2922,7 +2922,7 @@ localSocketAddress
 	self primSocket: socketHandle localAddressResult: addr.
 	^addr! !
 
-!Socket methodsFor: 'ipv6' stamp: 'ul 8/15/2012 17:08'!
+!Socket methodsFor: 'ipv6' stamp: 'ul 15/Aug/2012 17:08:00'!
 remoteSocketAddress
 
 	NetNameResolver useOldNetwork
@@ -2934,97 +2934,97 @@ remoteSocketAddress
 			self primSocket: socketHandle remoteAddressResult: addr.
 			^addr]! !
 
-!Socket methodsFor: 'primitives-ipv6' stamp: 'ikp 6/9/2007 09:36'!
+!Socket methodsFor: 'primitives-ipv6' stamp: 'ikp 9/Jun/2007 09:36:00'!
 primSocket: socketID bindTo: socketAddress
 
 	<primitive: 'primitiveSocketBindTo' module: 'SocketPlugin'>
 	self primitiveFailed
 ! !
 
-!Socket methodsFor: 'primitives-ipv6' stamp: 'ikp 6/8/2007 22:08'!
+!Socket methodsFor: 'primitives-ipv6' stamp: 'ikp 8/Jun/2007 22:08:00'!
 primSocket: socketID connectTo: socketAddress
 
 	<primitive: 'primitiveSocketConnectTo' module: 'SocketPlugin'>
 	self primitiveFailed
 ! !
 
-!Socket methodsFor: 'primitives-ipv6' stamp: 'ikp 6/9/2007 09:39'!
+!Socket methodsFor: 'primitives-ipv6' stamp: 'ikp 9/Jun/2007 09:39:00'!
 primSocket: socketID listenWithBacklog: backlogSize
 
 	<primitive: 'primitiveSocketListenWithBacklog' module: 'SocketPlugin'>
 	self primitiveFailed
 ! !
 
-!Socket methodsFor: 'primitives-ipv6' stamp: 'ikp 6/9/2007 10:23'!
+!Socket methodsFor: 'primitives-ipv6' stamp: 'ikp 9/Jun/2007 10:23:00'!
 primSocket: socketID localAddressResult: socketAddress
 
 	<primitive: 'primitiveSocketLocalAddressResult' module: 'SocketPlugin'>
 	self primitiveFailed
 ! !
 
-!Socket methodsFor: 'primitives-ipv6' stamp: 'ikp 6/9/2007 10:23'!
+!Socket methodsFor: 'primitives-ipv6' stamp: 'ikp 9/Jun/2007 10:23:00'!
 primSocket: socketID remoteAddressResult: socketAddress
 
 	<primitive: 'primitiveSocketRemoteAddressResult' module: 'SocketPlugin'>
 	self primitiveFailed
 ! !
 
-!Socket methodsFor: 'primitives-ipv6' stamp: 'ikp 6/9/2007 10:24'!
+!Socket methodsFor: 'primitives-ipv6' stamp: 'ikp 9/Jun/2007 10:24:00'!
 primSocketLocalAddressSize: handle
 
 	<primitive: 'primitiveSocketLocalAddressSize' module: 'SocketPlugin'>
 	self primitiveFailed
 ! !
 
-!Socket methodsFor: 'primitives-ipv6' stamp: 'ikp 6/9/2007 10:24'!
+!Socket methodsFor: 'primitives-ipv6' stamp: 'ikp 9/Jun/2007 10:24:00'!
 primSocketRemoteAddressSize: handle
 
 	<primitive: 'primitiveSocketRemoteAddressSize' module: 'SocketPlugin'>
 	self primitiveFailed
 ! !
 
-!Socket class methodsFor: 'instance creation' stamp: 'ls 9/24/1999 09:45'!
+!Socket class methodsFor: 'instance creation' stamp: 'ls 24/Sep/1999 09:45:00'!
 acceptFrom: aSocket
 	^[ super new acceptFrom: aSocket ]
 		repeatWithGCIf: [ :sock | sock isValid not ]! !
 
-!Socket class methodsFor: 'instance creation' stamp: 'ar 4/30/1999 04:15'!
+!Socket class methodsFor: 'instance creation' stamp: 'ar 30/Apr/1999 04:15:00'!
 createIfFail: failBlock
 	"Attempt to create a new socket. If successful, return the new socket. Otherwise, return the result of evaluating the given block. Socket creation can fail if the network isn't available or if there are not sufficient resources available to create another socket."
 	"Note: The default creates a TCP socket"
 	^self tcpCreateIfFail: failBlock! !
 
-!Socket class methodsFor: 'instance creation' stamp: 'ar 4/30/1999 04:13'!
+!Socket class methodsFor: 'instance creation' stamp: 'ar 30/Apr/1999 04:13:00'!
 new
 	"Return a new, unconnected Socket. Note that since socket creation may fail, it is safer to use the method createIfFail: to handle such failures gracefully; this method is primarily for backward compatibility and may be disallowed in a future release."
 	"Note: The default creates a TCP socket - this is also backward compatibility."
 	^self newTCP! !
 
-!Socket class methodsFor: 'instance creation' stamp: 'mir 1/5/2007 18:27'!
+!Socket class methodsFor: 'instance creation' stamp: 'mir 5/Jan/2007 18:27:00'!
 newTCP
 	"Create a socket and initialise it for TCP"
 	^self newTCP: SocketAddressInformation addressFamilyINET4! !
 
-!Socket class methodsFor: 'instance creation' stamp: 'ikp 6/8/2007 23:02'!
+!Socket class methodsFor: 'instance creation' stamp: 'ikp 8/Jun/2007 23:02:00'!
 newTCP: family
 	"Create a socket and initialise it for TCP"
 	self initializeNetwork.
 	^[ super new initialize: TCPSocketType family: family ]
 		repeatWithGCIf: [ :socket | socket isValid not ]! !
 
-!Socket class methodsFor: 'instance creation' stamp: 'mir 1/5/2007 18:27'!
+!Socket class methodsFor: 'instance creation' stamp: 'mir 5/Jan/2007 18:27:00'!
 newUDP
 	"Create a socket and initialise it for UDP"
 	^self newUDP: SocketAddressInformation addressFamilyINET4! !
 
-!Socket class methodsFor: 'instance creation' stamp: 'mir 6/17/2007 21:20'!
+!Socket class methodsFor: 'instance creation' stamp: 'mir 17/Jun/2007 21:20:00'!
 newUDP: family
 	"Create a socket and initialise it for UDP"
 	self initializeNetwork.
 	^[ super new initialize: UDPSocketType family: family ]
 		repeatWithGCIf: [ :socket | socket isValid not ]! !
 
-!Socket class methodsFor: 'instance creation' stamp: 'mir 1/5/2007 18:21'!
+!Socket class methodsFor: 'instance creation' stamp: 'mir 5/Jan/2007 18:21:00'!
 tcpCreateIfFail: failBlock
 	"Attempt to create a new socket. If successful, return the new socket. Otherwise, return the result of evaluating the given block. Socket creation can fail if the network isn't available or if there are not sufficient resources available to create another socket."
 
@@ -3035,7 +3035,7 @@ tcpCreateIfFail: failBlock
 	^ sock
 ! !
 
-!Socket class methodsFor: 'instance creation' stamp: 'mir 1/5/2007 18:22'!
+!Socket class methodsFor: 'instance creation' stamp: 'mir 5/Jan/2007 18:22:00'!
 udpCreateIfFail: failBlock
 	"Attempt to create a new socket. If successful, return the new socket. Otherwise, return the result of evaluating the given block. Socket creation can fail if the network isn't available or if there are not sufficient resources available to create another socket."
 
@@ -3046,18 +3046,18 @@ udpCreateIfFail: failBlock
 	^ sock
 ! !
 
-!Socket class methodsFor: 'utilities' stamp: 'tk 4/9/98 15:54'!
+!Socket class methodsFor: 'utilities' stamp: 'tk 9/Apr/1998 15:54:00'!
 deadServer
 
 	^ DeadServer! !
 
-!Socket class methodsFor: 'utilities' stamp: 'tk 4/9/98 15:56'!
+!Socket class methodsFor: 'utilities' stamp: 'tk 9/Apr/1998 15:56:00'!
 deadServer: aStringOrNil
 	"Keep the machine name of the most recently encoutered non-responding machine.  Next time the user can move it to the last in a list of servers to try."
 
 	DeadServer := aStringOrNil! !
 
-!Socket class methodsFor: 'utilities' stamp: 'eem 6/2/2017 11:18'!
+!Socket class methodsFor: 'utilities' stamp: 'eem 2/Jun/2017 11:18:00'!
 deadlineSecs: secs
 	"Answer a deadline time in milliseconds a given number of seconds from now.
 	 Note that because the millisecondClockValue is derived from the non-wrapping
@@ -3066,7 +3066,7 @@ deadlineSecs: secs
 	^Time millisecondClockValue + (secs * 1000) truncated
 ! !
 
-!Socket class methodsFor: 'utilities' stamp: 'jm 1/14/1999 12:13'!
+!Socket class methodsFor: 'utilities' stamp: 'jm 14/Jan/1999 12:13:00'!
 nameForWellKnownTCPPort: portNum
 	"Answer the name for the given well-known TCP port number. Answer a string containing the port number if it isn't well-known."
 
@@ -3079,7 +3079,7 @@ nameForWellKnownTCPPort: portNum
 	^ entry last
 ! !
 
-!Socket class methodsFor: 'utilities' stamp: 'ul 11/25/2010 21:09'!
+!Socket class methodsFor: 'utilities' stamp: 'ul 25/Nov/2010 21:09:00'!
 ping: hostName
 	"Ping the given host. Useful for checking network connectivity. The host must be running a TCP echo server."
 	"Socket ping: 'squeak.cs.uiuc.edu'"
@@ -3113,7 +3113,7 @@ ping: hostName
 	self inform: hostName, ' responded in ', echoTime printString, ' milliseconds'.
 ! !
 
-!Socket class methodsFor: 'utilities' stamp: 'ul 11/25/2010 21:34'!
+!Socket class methodsFor: 'utilities' stamp: 'ul 25/Nov/2010 21:34:00'!
 pingPorts: portList on: hostName timeOutSecs: timeOutSecs
 	"Attempt to connect to each of the given sockets on the given host. Wait at most timeOutSecs for the connections to be established. Answer an array of strings indicating the available ports."
 
@@ -3159,7 +3159,7 @@ pingPorts: portList on: hostName timeOutSecs: timeOutSecs
 	sockets do: [ :s | s destroy ].
 	^ result! !
 
-!Socket class methodsFor: 'utilities' stamp: 'jm 1/14/1999 17:25'!
+!Socket class methodsFor: 'utilities' stamp: 'jm 14/Jan/1999 17:25:00'!
 pingPortsOn: hostName
 	"Attempt to connect to a set of well-known sockets on the given host, and answer the names of the available ports."
 	"Socket pingPortsOn: 'www.disney.com'"
@@ -3170,33 +3170,33 @@ pingPortsOn: hostName
 		timeOutSecs: 20
 ! !
 
-!Socket class methodsFor: 'utilities' stamp: 'mir 5/15/2003 16:17'!
+!Socket class methodsFor: 'utilities' stamp: 'mir 15/May/2003 16:17:00'!
 standardDeadline
 	"Return a default deadline time some seconds into the future."
 
 	^ self deadlineSecs: self standardTimeout
 ! !
 
-!Socket class methodsFor: 'utilities' stamp: 'mir 5/15/2003 16:16'!
+!Socket class methodsFor: 'utilities' stamp: 'mir 15/May/2003 16:16:00'!
 standardTimeout
 
 	^45
 ! !
 
-!Socket class methodsFor: 'utilities' stamp: 'ar 4/30/1999 04:21'!
+!Socket class methodsFor: 'utilities' stamp: 'ar 30/Apr/1999 04:21:00'!
 wildcardAddress
 	"Answer a don't-care address for use with UDP sockets."
 
 	^ByteArray new: 4		"0.0.0.0"! !
 
-!Socket class methodsFor: 'utilities' stamp: 'ar 4/30/1999 04:21'!
+!Socket class methodsFor: 'utilities' stamp: 'ar 30/Apr/1999 04:21:00'!
 wildcardPort
 	"Answer a don't-care port for use with UDP sockets.  (The system will allocate an
 	unused port number to the socket.)"
 
 	^0! !
 
-!Socket class methodsFor: 'class initialization' stamp: 'ul 3/26/2016 05:13'!
+!Socket class methodsFor: 'class initialization' stamp: 'ul 26/Mar/2016 05:13:00'!
 initialize
 	"Socket initialize"
 
@@ -3216,14 +3216,14 @@ initialize
 	DefaultReceiveBufferSize := 8192.
 	DefaultSendBufferSize := 8192! !
 
-!Socket class methodsFor: 'network initialization' stamp: 'mir 2/22/2002 15:01'!
+!Socket class methodsFor: 'network initialization' stamp: 'mir 22/Feb/2002 15:01:00'!
 initializeNetwork
 	"Initialize the network drivers and the NetNameResolver. Do nothing if the network is already initialized."
 	"Note: The network must be re-initialized every time Squeak starts up, so applications that persist across snapshots should be prepared to re-initialize the network as needed. Such applications should call 'Socket initializeNetwork' before every network transaction. "
 
 	NetNameResolver initializeNetwork! !
 
-!Socket class methodsFor: 'network initialization' stamp: 'mir 2/22/2002 14:59'!
+!Socket class methodsFor: 'network initialization' stamp: 'mir 22/Feb/2002 14:59:00'!
 primInitializeNetwork: resolverSemaIndex
 	"Initialize the network drivers on platforms that need it, such as the Macintosh, and return nil if network initialization failed or the reciever if it succeeds. Since mobile computers may not always be connected to a network, this method should NOT be called automatically at startup time; rather, it should be called when first starting a networking application. It is a noop if the network driver has already been initialized. If non-zero, resolverSemaIndex is the index of a VM semaphore to be associated with the network name resolver. This semaphore will be signalled when the resolver status changes, such as when a name lookup query is completed."
 	"Note: some platforms (e.g., Mac) only allow only one name lookup query at a time, so a manager process should be used to serialize resolver lookup requests."
@@ -3232,7 +3232,7 @@ primInitializeNetwork: resolverSemaIndex
 	^ nil  "return nil if primitive fails"
 ! !
 
-!Socket class methodsFor: 'tests' stamp: 'JMM 10/10/2024 13:28:16'!
+!Socket class methodsFor: 'tests' stamp: 'JMM 10/Oct/2024 13:28:16'!
 loopbackTest
 	"Send data from one socket to another on the local machine.
 	Tests most of the socket primitives."
@@ -3305,7 +3305,7 @@ loopbackTest
 		newLine.
 	Transcript endEntry! !
 
-!Socket class methodsFor: 'tests' stamp: 'gk 12/15/2005 01:03'!
+!Socket class methodsFor: 'tests' stamp: 'gk 15/Dec/2005 01:03:00'!
 newAcceptCheck
 	"Check if the platform has support for the BSD style accept()."
 
@@ -3321,7 +3321,7 @@ newAcceptCheck
 		self inform: 'It appears that you DO NOT have support for the BSD style accept()'].
 	socket destroy! !
 
-!Socket class methodsFor: 'tests' stamp: 'JMM 10/21/2024 10:36:55'!
+!Socket class methodsFor: 'tests' stamp: 'JMM 21/Oct/2024 10:36:55'!
 sendTest
 	"Send data to the 'discard' socket of the given host.
 	Tests the speed of one-way data transfers across the
@@ -3357,22 +3357,22 @@ sendTest
 		show: 'send test done; time = ' , t printString; cr;
 		show: (bytesToSend asFloat / t roundTo: 0.01) printString, ' * 1000 bytes/sec';cr;endEntry! !
 
-!Socket class methodsFor: 'registry' stamp: 'ul 8/27/2010 23:24'!
+!Socket class methodsFor: 'registry' stamp: 'ul 27/Aug/2010 23:24:00'!
 register: anObject
 	
 	^self registry add: anObject! !
 
-!Socket class methodsFor: 'registry' stamp: 'jmv 1/17/2025 09:35:22'!
+!Socket class methodsFor: 'registry' stamp: 'jmv 17/Jan/2025 09:35:22'!
 registry
 
 	^Registry ifNil: [ Registry := FinalizationRegistry new ]! !
 
-!Socket class methodsFor: 'registry' stamp: 'ul 8/27/2010 23:24'!
+!Socket class methodsFor: 'registry' stamp: 'ul 27/Aug/2010 23:24:00'!
 unregister: anObject
 	
 	^self registry remove: anObject ifAbsent: nil! !
 
-!Socket class methodsFor: 'examples' stamp: 'JMM 10/10/2024 13:34:39'!
+!Socket class methodsFor: 'examples' stamp: 'JMM 10/Oct/2024 13:34:39'!
 timeTest
 	"Socket timeTest"
 
@@ -3404,7 +3404,7 @@ timeTest
 		show: '---------- Connection Closed ----------';
 		cr! !
 
-!Socket class methodsFor: 'examples' stamp: 'JMM 10/10/2024 13:34:56'!
+!Socket class methodsFor: 'examples' stamp: 'JMM 10/Oct/2024 13:34:56'!
 timeTestUDP
 	"Socket timeTestUDP"
 
@@ -3440,7 +3440,7 @@ timeTestUDP
 		show: '---------- Socket closed ----------';
 		cr! !
 
-!Socket class methodsFor: 'preferences' stamp: 'ul 8/13/2014 21:09'!
+!Socket class methodsFor: 'preferences' stamp: 'ul 13/Aug/2014 21:09:00'!
 maximumReadSemaphoreWaitTimeout
 
 	<preference: 'Maximum readSemaphore wait timeout.'
@@ -3449,33 +3449,33 @@ maximumReadSemaphoreWaitTimeout
 	type: #Number>
 	^MaximumReadSemaphoreWaitTimeout ifNil: [ 500 ]! !
 
-!Socket class methodsFor: 'preferences' stamp: 'ul 8/13/2014 21:04'!
+!Socket class methodsFor: 'preferences' stamp: 'ul 13/Aug/2014 21:04:00'!
 maximumReadSemaphoreWaitTimeout: anInteger
 	"The number of milliseconds for which we'll wait for the readSemaphore to signal. This is used by a workaround for a VM bug."
 
 	MaximumReadSemaphoreWaitTimeout := anInteger! !
 
-!SocketAddressInformation methodsFor: 'accessing' stamp: 'ikp 6/8/2007 18:20'!
+!SocketAddressInformation methodsFor: 'accessing' stamp: 'ikp 8/Jun/2007 18:20:00'!
 addressFamilyName
 
 	^#(unspecified local inet4 inet6) at: addressFamily + 1! !
 
-!SocketAddressInformation methodsFor: 'accessing' stamp: 'ikp 6/8/2007 18:20'!
+!SocketAddressInformation methodsFor: 'accessing' stamp: 'ikp 8/Jun/2007 18:20:00'!
 protocolName
 
 	^#(unspecified tcp udp) at: socketType + 1! !
 
-!SocketAddressInformation methodsFor: 'accessing' stamp: 'ikp 6/9/2007 08:35'!
+!SocketAddressInformation methodsFor: 'accessing' stamp: 'ikp 9/Jun/2007 08:35:00'!
 socketAddress
 
 	^socketAddress! !
 
-!SocketAddressInformation methodsFor: 'accessing' stamp: 'ikp 6/8/2007 18:20'!
+!SocketAddressInformation methodsFor: 'accessing' stamp: 'ikp 8/Jun/2007 18:20:00'!
 socketTypeName
 
 	^#(unspecified stream dgram) at: socketType + 1! !
 
-!SocketAddressInformation methodsFor: 'circuit setup' stamp: 'ct 1/3/2022 22:16'!
+!SocketAddressInformation methodsFor: 'circuit setup' stamp: 'ct 3/Jan/2022 22:16:00'!
 connect
 
 	| sock |
@@ -3487,7 +3487,7 @@ connect
 		ifRefused: [ConnectionRefused signal: ('Cannot connect to {1}' translated format: {self})].
 	^sock! !
 
-!SocketAddressInformation methodsFor: 'circuit setup' stamp: 'ikp 6/9/2007 09:52'!
+!SocketAddressInformation methodsFor: 'circuit setup' stamp: 'ikp 9/Jun/2007 09:52:00'!
 listenWithBacklog: backlog
 
 	| sock |
@@ -3497,7 +3497,7 @@ listenWithBacklog: backlog
 	sock listenWithBacklog: 5.
 	^sock! !
 
-!SocketAddressInformation methodsFor: 'initialize-release' stamp: 'ikp 6/8/2007 18:11'!
+!SocketAddressInformation methodsFor: 'initialize-release' stamp: 'ikp 8/Jun/2007 18:11:00'!
 initSocketAddress: aSocketAddress family: familyInteger type: typeInteger protocol: protocolInteger
 
 	socketAddress := aSocketAddress.
@@ -3505,7 +3505,7 @@ initSocketAddress: aSocketAddress family: familyInteger type: typeInteger protoc
 	socketType := typeInteger.
 	protocol := protocolInteger.! !
 
-!SocketAddressInformation methodsFor: 'printing' stamp: 'ikp 6/8/2007 21:54'!
+!SocketAddressInformation methodsFor: 'printing' stamp: 'ikp 8/Jun/2007 21:54:00'!
 printOn: aStream
 
 	aStream
@@ -3514,67 +3514,67 @@ printOn: aStream
 		nextPut: $-; nextPutAll: self socketTypeName;
 		nextPut: $-; nextPutAll: self protocolName! !
 
-!SocketAddressInformation class methodsFor: 'accessing' stamp: 'ikp 6/8/2007 22:02'!
+!SocketAddressInformation class methodsFor: 'accessing' stamp: 'ikp 8/Jun/2007 22:02:00'!
 addressFamilyINET4
 
 	^AddressFamilyINET4! !
 
-!SocketAddressInformation class methodsFor: 'accessing' stamp: 'ikp 6/8/2007 22:02'!
+!SocketAddressInformation class methodsFor: 'accessing' stamp: 'ikp 8/Jun/2007 22:02:00'!
 addressFamilyINET6
 
 	^AddressFamilyINET6! !
 
-!SocketAddressInformation class methodsFor: 'accessing' stamp: 'ikp 6/8/2007 22:02'!
+!SocketAddressInformation class methodsFor: 'accessing' stamp: 'ikp 8/Jun/2007 22:02:00'!
 addressFamilyLocal
 
 	^AddressFamilyLocal! !
 
-!SocketAddressInformation class methodsFor: 'accessing' stamp: 'ikp 6/8/2007 22:01'!
+!SocketAddressInformation class methodsFor: 'accessing' stamp: 'ikp 8/Jun/2007 22:01:00'!
 addressFamilyUnspecified
 
 	^AddressFamilyUnspecified! !
 
-!SocketAddressInformation class methodsFor: 'accessing' stamp: 'ikp 6/9/2007 09:13'!
+!SocketAddressInformation class methodsFor: 'accessing' stamp: 'ikp 9/Jun/2007 09:13:00'!
 numericFlag
 
 	^NumericFlag! !
 
-!SocketAddressInformation class methodsFor: 'accessing' stamp: 'ikp 6/9/2007 09:12'!
+!SocketAddressInformation class methodsFor: 'accessing' stamp: 'ikp 9/Jun/2007 09:12:00'!
 passiveFlag
 
 	^PassiveFlag! !
 
-!SocketAddressInformation class methodsFor: 'accessing' stamp: 'ikp 6/8/2007 22:02'!
+!SocketAddressInformation class methodsFor: 'accessing' stamp: 'ikp 8/Jun/2007 22:02:00'!
 protocolTCP
 
 	^ProtocolTCP! !
 
-!SocketAddressInformation class methodsFor: 'accessing' stamp: 'ikp 6/8/2007 22:02'!
+!SocketAddressInformation class methodsFor: 'accessing' stamp: 'ikp 8/Jun/2007 22:02:00'!
 protocolUDP
 
 	^ProtocolUDP! !
 
-!SocketAddressInformation class methodsFor: 'accessing' stamp: 'ikp 6/8/2007 22:02'!
+!SocketAddressInformation class methodsFor: 'accessing' stamp: 'ikp 8/Jun/2007 22:02:00'!
 protocolUnspecified
 
 	^ProtocolUnspecified! !
 
-!SocketAddressInformation class methodsFor: 'accessing' stamp: 'ikp 6/8/2007 22:02'!
+!SocketAddressInformation class methodsFor: 'accessing' stamp: 'ikp 8/Jun/2007 22:02:00'!
 socketTypeDGram
 
 	^SocketTypeDGram! !
 
-!SocketAddressInformation class methodsFor: 'accessing' stamp: 'ikp 6/8/2007 22:02'!
+!SocketAddressInformation class methodsFor: 'accessing' stamp: 'ikp 8/Jun/2007 22:02:00'!
 socketTypeStream
 
 	^SocketTypeStream! !
 
-!SocketAddressInformation class methodsFor: 'accessing' stamp: 'ikp 6/8/2007 22:02'!
+!SocketAddressInformation class methodsFor: 'accessing' stamp: 'ikp 8/Jun/2007 22:02:00'!
 socketTypeUnspecified
 
 	^SocketTypeUnspecified! !
 
-!SocketAddressInformation class methodsFor: 'instance creation' stamp: 'JMM 10/3/2024 09:26:04'!
+!SocketAddressInformation class methodsFor: 'instance creation' stamp: 'JMM 3/Oct/2024 09:26:04'!
 forHost: hostName service: servName flags: flags addressFamily: family socketType: type protocol: protocol
 
 	| result addr |
@@ -3592,12 +3592,12 @@ forHost: hostName service: servName flags: flags addressFamily: family socketTyp
 				whileTrue: [result add: addr]].
 	^ result! !
 
-!SocketAddressInformation class methodsFor: 'instance creation' stamp: 'ikp 6/8/2007 18:11'!
+!SocketAddressInformation class methodsFor: 'instance creation' stamp: 'ikp 8/Jun/2007 18:11:00'!
 withSocketAddress: socketAddress family: family type: type protocol: protocol
 
 	^self new initSocketAddress: socketAddress family: family type: type protocol: protocol! !
 
-!SocketAddressInformation class methodsFor: 'class initialization' stamp: 'dtl 6/13/2012 22:15'!
+!SocketAddressInformation class methodsFor: 'class initialization' stamp: 'dtl 13/Jun/2012 22:15:00'!
 initialize
 	"SocketAddressInformation initialize"
 
@@ -3619,14 +3619,14 @@ initialize
 	PrimitiveAccessProtect := Semaphore forMutualExclusion.
 ! !
 
-!SocketStream methodsFor: 'private' stamp: 'kph 11/6/2008 16:43'!
+!SocketStream methodsFor: 'private' stamp: 'kph 6/Nov/2008 16:43:00'!
 << items
 
  	items putOn: self.
 	
 	^ self! !
 
-!SocketStream methodsFor: 'private' stamp: 'gk 2/9/2005 22:44'!
+!SocketStream methodsFor: 'private' stamp: 'gk 9/Feb/2005 22:44:00'!
 adjustInBuffer: bytesRead
 	"Adjust markers and possibly grow inBuffer or move data down.
 	Currently grows through doubling when less than 1024 bytes are left.
@@ -3645,7 +3645,7 @@ adjustInBuffer: bytesRead
 				ifFalse: [self growInBuffer]].
 	^old! !
 
-!SocketStream methodsFor: 'private' stamp: 'gk 2/9/2005 22:42'!
+!SocketStream methodsFor: 'private' stamp: 'gk 9/Feb/2005 22:42:00'!
 adjustOutBuffer: bytesToWrite
 	"Possibly grow outBuffer to accommodate the new data.
 	Currently grows through doubling when less
@@ -3656,7 +3656,7 @@ adjustOutBuffer: bytesToWrite
 		outBuffer := (self streamBuffer: ((outBuffer size max: bytesToWrite) * 2))
 						replaceFrom: 1 to: outBuffer size with: outBuffer startingAt: 1]! !
 
-!SocketStream methodsFor: 'private' stamp: 'ar 11/22/2010 23:48'!
+!SocketStream methodsFor: 'private' stamp: 'ar 22/Nov/2010 23:48:00'!
 beSignalingWhile: aBlock
 	"Temporarily turn a non-signaling SocketStream into a signaling one.
 	Required for some of operations that will catch ConnectionClosed in 
@@ -3668,7 +3668,7 @@ beSignalingWhile: aBlock
 	^aBlock ensure:[shouldSignal := signaling]
 ! !
 
-!SocketStream methodsFor: 'private' stamp: 'gk 2/7/2005 13:09'!
+!SocketStream methodsFor: 'private' stamp: 'gk 7/Feb/2005 13:09:00'!
 checkFlush
 	"If autoFlush is true we flush if
 	we have reached the bufferSize
@@ -3677,13 +3677,13 @@ checkFlush
 	(autoFlush and: [outNextToWrite > bufferSize])
 		ifTrue: [self flush]! !
 
-!SocketStream methodsFor: 'private' stamp: 'gk 2/7/2005 23:05'!
+!SocketStream methodsFor: 'private' stamp: 'gk 7/Feb/2005 23:05:00'!
 growInBuffer
 	"Grows through doubling."
 
 	self resizeInBuffer: inBuffer size * 2! !
 
-!SocketStream methodsFor: 'private' stamp: 'gk 2/8/2005 22:15'!
+!SocketStream methodsFor: 'private' stamp: 'gk 8/Feb/2005 22:15:00'!
 moveInBufferDown
 	"Move down contents of inBuffer to the start.
 	Return distance moved."
@@ -3697,7 +3697,7 @@ moveInBufferDown
 	^distanceMoved
 ! !
 
-!SocketStream methodsFor: 'private' stamp: 'ul 8/13/2016 21:20'!
+!SocketStream methodsFor: 'private' stamp: 'ul 13/Aug/2016 21:20:00'!
 resetBuffers
 	"Recreate the buffers with default start sizes."
 
@@ -3709,7 +3709,7 @@ resetBuffers
 		outBuffer := self streamBuffer: bufferSize ].
 	outNextToWrite := 1! !
 
-!SocketStream methodsFor: 'private' stamp: 'gk 9/9/2005 02:29'!
+!SocketStream methodsFor: 'private' stamp: 'gk 9/Sep/2005 02:29:00'!
 resizeInBuffer: newSize
 	"Resize the inBuffer by recreating it.
 	This also has the effect of getting rid of
@@ -3719,7 +3719,7 @@ resizeInBuffer: newSize
 	inBuffer := (self streamBuffer: newSize)
 					replaceFrom: 1 to: inNextToWrite - 1 with: inBuffer startingAt: 1! !
 
-!SocketStream methodsFor: 'private' stamp: 'gk 2/9/2005 22:35'!
+!SocketStream methodsFor: 'private' stamp: 'gk 9/Feb/2005 22:35:00'!
 streamBuffer: size
 	"Create a buffer of the correct class and given size."
 
@@ -3727,7 +3727,7 @@ streamBuffer: size
 		ifTrue: [ByteArray]
 		ifFalse: [String]) new: size! !
 
-!SocketStream methodsFor: 'configuration' stamp: 'nice 3/16/2010 22:34'!
+!SocketStream methodsFor: 'configuration' stamp: 'nice 16/Mar/2010 22:34:00'!
 ascii
 	"Tell the SocketStream to send data
 	as Strings instead of ByteArrays.
@@ -3740,7 +3740,7 @@ ascii
 			[inBuffer := inBuffer asString.
 			outBuffer := outBuffer asString]! !
 
-!SocketStream methodsFor: 'configuration' stamp: 'gk 2/9/2005 22:26'!
+!SocketStream methodsFor: 'configuration' stamp: 'gk 9/Feb/2005 22:26:00'!
 autoFlush
 	"If autoFlush is enabled data will be sent through
 	the socket (flushed) when the bufferSize is reached
@@ -3750,7 +3750,7 @@ autoFlush
 
 	^autoFlush! !
 
-!SocketStream methodsFor: 'configuration' stamp: 'gk 2/9/2005 22:27'!
+!SocketStream methodsFor: 'configuration' stamp: 'gk 9/Feb/2005 22:27:00'!
 autoFlush: aBoolean
 	"If autoFlush is enabled data will be sent through
 	the socket (flushed) when the bufferSize is reached
@@ -3760,7 +3760,7 @@ autoFlush: aBoolean
 
 	autoFlush := aBoolean! !
 
-!SocketStream methodsFor: 'configuration' stamp: 'nice 3/16/2010 22:35'!
+!SocketStream methodsFor: 'configuration' stamp: 'nice 16/Mar/2010 22:35:00'!
 binary
 	"Tell the SocketStream to send data
 	as ByteArrays instead of Strings.
@@ -3773,39 +3773,39 @@ binary
 			[inBuffer := inBuffer asByteArray.
 			outBuffer := outBuffer asByteArray]! !
 
-!SocketStream methodsFor: 'configuration' stamp: 'gk 2/9/2005 22:28'!
+!SocketStream methodsFor: 'configuration' stamp: 'gk 9/Feb/2005 22:28:00'!
 bufferSize
 	"Default buffer size is 4kb.
 	increased from earlier 2000 bytes."
 	
 	^bufferSize! !
 
-!SocketStream methodsFor: 'configuration' stamp: 'gk 2/9/2005 22:28'!
+!SocketStream methodsFor: 'configuration' stamp: 'gk 9/Feb/2005 22:28:00'!
 bufferSize: anInt
 	"Default buffer size is 4kb.
 	increased from earlier 2000 bytes."
 
 	bufferSize := anInt! !
 
-!SocketStream methodsFor: 'configuration' stamp: 'gk 2/10/2005 17:58'!
+!SocketStream methodsFor: 'configuration' stamp: 'gk 10/Feb/2005 17:58:00'!
 inBufferSize
 	"Answers the current size of data in the inBuffer."
 
 	^inNextToWrite - lastRead - 1! !
 
-!SocketStream methodsFor: 'configuration' stamp: 'gk 2/10/2005 17:59'!
+!SocketStream methodsFor: 'configuration' stamp: 'gk 10/Feb/2005 17:59:00'!
 noTimeout
 	"Do not use timeout."
 
 	timeout := 0! !
 
-!SocketStream methodsFor: 'configuration' stamp: 'gk 2/10/2005 17:59'!
+!SocketStream methodsFor: 'configuration' stamp: 'gk 10/Feb/2005 17:59:00'!
 outBufferSize
 	"Answers the current size of data in the outBuffer."
 
 	^outNextToWrite - 1! !
 
-!SocketStream methodsFor: 'configuration' stamp: 'gk 2/10/2005 18:00'!
+!SocketStream methodsFor: 'configuration' stamp: 'gk 10/Feb/2005 18:00:00'!
 shouldSignal
 	"If shouldSignal is enabled the Socket Exceptions
 	ConnectionClosed and ConnectionTimedOut
@@ -3814,7 +3814,7 @@ shouldSignal
 
 	^shouldSignal! !
 
-!SocketStream methodsFor: 'configuration' stamp: 'gk 2/10/2005 18:03'!
+!SocketStream methodsFor: 'configuration' stamp: 'gk 10/Feb/2005 18:03:00'!
 shouldSignal: aBoolean
 	"If shouldSignal is enabled the Socket Exceptions
 	ConnectionClosed and ConnectionTimedOut will not be swallowed.
@@ -3834,18 +3834,18 @@ shouldSignal: aBoolean
 
 	shouldSignal := aBoolean! !
 
-!SocketStream methodsFor: 'configuration' stamp: 'gk 2/3/2005 20:35'!
+!SocketStream methodsFor: 'configuration' stamp: 'gk 3/Feb/2005 20:35:00'!
 socket: aSocket
 	socket := aSocket! !
 
-!SocketStream methodsFor: 'configuration' stamp: 'gk 2/7/2005 08:41'!
+!SocketStream methodsFor: 'configuration' stamp: 'gk 7/Feb/2005 08:41:00'!
 timeout
 	"Lazily initialized unless it has been set explicitly."
 
 	timeout ifNil: [timeout := Socket standardTimeout].
 	^timeout! !
 
-!SocketStream methodsFor: 'testing' stamp: 'gk 2/25/2005 14:23'!
+!SocketStream methodsFor: 'testing' stamp: 'gk 25/Feb/2005 14:23:00'!
 atEnd
 	"There is nothing more to read when
 	there is no more data in our inBuffer, the socket
@@ -3858,17 +3858,17 @@ atEnd
 	^self isConnected not
 		and: [self isDataAvailable not]! !
 
-!SocketStream methodsFor: 'testing' stamp: 'gk 2/3/2005 20:35'!
+!SocketStream methodsFor: 'testing' stamp: 'gk 3/Feb/2005 20:35:00'!
 isBinary
 	^binary! !
 
-!SocketStream methodsFor: 'testing' stamp: 'gk 2/7/2005 12:24'!
+!SocketStream methodsFor: 'testing' stamp: 'gk 7/Feb/2005 12:24:00'!
 isConnected
 	"The stream is connected if the socket is."
 
 	^socket isConnected! !
 
-!SocketStream methodsFor: 'testing' stamp: 'ar 11/23/2010 00:04'!
+!SocketStream methodsFor: 'testing' stamp: 'ar 23/Nov/2010 00:04:00'!
 isDataAvailable
 	"Answer if more data can be read. It the inbuffer is empty, we read more data.
 
@@ -3880,27 +3880,27 @@ isDataAvailable
 	^self receiveAvailableData < inNextToWrite
 ! !
 
-!SocketStream methodsFor: 'testing' stamp: 'gk 2/7/2005 13:02'!
+!SocketStream methodsFor: 'testing' stamp: 'gk 7/Feb/2005 13:02:00'!
 isEmpty
 	"Test if there are more data to read."
 
 	^self isInBufferEmpty and: [self isDataAvailable not]! !
 
-!SocketStream methodsFor: 'testing' stamp: 'gk 2/7/2005 13:02'!
+!SocketStream methodsFor: 'testing' stamp: 'gk 7/Feb/2005 13:02:00'!
 isInBufferEmpty
 	"Any data in the buffer?"
  
 	^lastRead + 1 = inNextToWrite! !
 
-!SocketStream methodsFor: 'testing' stamp: 'gk 2/7/2005 08:59'!
+!SocketStream methodsFor: 'testing' stamp: 'gk 7/Feb/2005 08:59:00'!
 isOtherEndConnected
 	^socket isOtherEndClosed not! !
 
-!SocketStream methodsFor: 'testing' stamp: 'dvf 6/11/2003 18:21'!
+!SocketStream methodsFor: 'testing' stamp: 'dvf 11/Jun/2003 18:21:00'!
 shouldTimeout
 	^self timeout > 0! !
 
-!SocketStream methodsFor: 'control' stamp: 'cmm 9/22/2014 16:13'!
+!SocketStream methodsFor: 'control' stamp: 'cmm 22/Sep/2014 16:13:00'!
 close
 	"Flush any data still not sent
 	and take care of the socket."
@@ -3910,7 +3910,7 @@ close
 	"Reclaim memory consumed by possibly very large buffers."
 	self resetBuffers! !
 
-!SocketStream methodsFor: 'control' stamp: 'cmm 1/28/2011 15:15'!
+!SocketStream methodsFor: 'control' stamp: 'cmm 28/Jan/2011 15:15:00'!
 flush
 	"If the other end is connected and we have something
 	to send, then we send it and reset the outBuffer."
@@ -3922,7 +3922,7 @@ flush
 			do: [ : ex | shouldSignal ifTrue: [ ex pass ] ].
 		outNextToWrite := 1 ]! !
 
-!SocketStream methodsFor: 'control' stamp: 'gk 4/14/2005 09:49'!
+!SocketStream methodsFor: 'control' stamp: 'gk 14/Apr/2005 09:49:00'!
 receiveData: nBytes
 	"Keep reading the socket until we have nBytes
 	in the inBuffer or we reach the end. This method
@@ -3940,29 +3940,29 @@ receiveData: nBytes
 	[self atEnd not and: [nBytes > self inBufferSize]]
 		whileTrue: [self receiveData]! !
 
-!SocketStream methodsFor: 'control' stamp: 'gk 2/9/2005 23:08'!
+!SocketStream methodsFor: 'control' stamp: 'gk 9/Feb/2005 23:08:00'!
 recentlyRead
 	"Return the number of bytes read
 	during the last socket operation."
 	
 	^recentlyRead! !
 
-!SocketStream methodsFor: 'stream out' stamp: 'JMM 10/10/2024 12:45:32'!
+!SocketStream methodsFor: 'stream out' stamp: 'JMM 10/Oct/2024 12:45:32'!
 cr
 	self nextPutAll: String crString! !
 
-!SocketStream methodsFor: 'stream out' stamp: 'jmv 5/27/2013 11:02'!
+!SocketStream methodsFor: 'stream out' stamp: 'jmv 27/May/2013 11:02:00'!
 crlf
 	self nextPutAll: String crlfString! !
 
-!SocketStream methodsFor: 'stream out' stamp: 'jmv 3/14/2012 09:13'!
+!SocketStream methodsFor: 'stream out' stamp: 'jmv 14/Mar/2012 09:13:00'!
 newLine
 	"Append a newLine character to the receiver.
 	The Cuis convention is to use lf on output."
 
 	self nextPutAll: String newLineString! !
 
-!SocketStream methodsFor: 'stream out' stamp: 'ul 8/14/2016 20:41'!
+!SocketStream methodsFor: 'stream out' stamp: 'ul 14/Aug/2016 20:41:00'!
 next: n putAll: aCollection startingAt: startIndex
 	"Put a String or a ByteArray onto the stream.
 	Currently a large collection will allocate a large buffer.
@@ -3975,7 +3975,7 @@ next: n putAll: aCollection startingAt: startIndex
 	self checkFlush.
 	^aCollection! !
 
-!SocketStream methodsFor: 'stream out' stamp: 'jmv 1/9/2024 17:36:48'!
+!SocketStream methodsFor: 'stream out' stamp: 'jmv 9/Jan/2024 17:36:48'!
 nextPut: char
 	"Put a single Character or byte onto the stream."
 
@@ -3993,7 +3993,7 @@ nextPut: char
 	"return the argument - added by kwl"
 	^ char! !
 
-!SocketStream methodsFor: 'stream out' stamp: 'nice 3/19/2010 19:14'!
+!SocketStream methodsFor: 'stream out' stamp: 'nice 19/Mar/2010 19:14:00'!
 nextPutAll: aCollection
 	"Put a String or a ByteArray onto the stream.
 	Currently a large collection will allocate a large buffer."
@@ -4006,7 +4006,7 @@ nextPutAll: aCollection
 	self checkFlush.
 	^aCollection! !
 
-!SocketStream methodsFor: 'stream out' stamp: 'cmm 1/28/2011 15:15'!
+!SocketStream methodsFor: 'stream out' stamp: 'cmm 28/Jan/2011 15:15:00'!
 nextPutAllFlush: aCollection 
 	"Put a String or a ByteArray onto the stream.
 	You can use this if you have very large data - it avoids
@@ -4025,18 +4025,18 @@ nextPutAllFlush: aCollection
 			on: ConnectionTimedOut
 			do: [ : ex | shouldSignal ifTrue: [ ex pass ] ] ]! !
 
-!SocketStream methodsFor: 'stream out' stamp: 'jmv 3/13/2012 11:46'!
+!SocketStream methodsFor: 'stream out' stamp: 'jmv 13/Mar/2012 11:46:00'!
 sendCommand: aString
 	"Sends a String ending it with CR LF and then flush
 	causing it to block until sent."
 
 	self nextPutAll: aString, String crlfString; flush! !
 
-!SocketStream methodsFor: 'stream out' stamp: 'mir 5/8/2003 18:23'!
+!SocketStream methodsFor: 'stream out' stamp: 'mir 8/May/2003 18:23:00'!
 space
 	self nextPut: Character space! !
 
-!SocketStream methodsFor: 'printing' stamp: 'jmv 3/13/2012 12:47'!
+!SocketStream methodsFor: 'printing' stamp: 'jmv 13/Mar/2012 12:47:00'!
 debug
 	"Display debug info."
 
@@ -4050,11 +4050,11 @@ debug
 			nextPutAll: 'OutBuffer data size: ', (outNextToWrite - 1) asString; newLine;
 			nextPutAll: 'Out data (20):', (outBuffer copyFrom: 1 to: ((outNextToWrite - 1) min: 20)); newLine]! !
 
-!SocketStream methodsFor: 'printing' stamp: 'md 7/14/2006 12:28'!
+!SocketStream methodsFor: 'printing' stamp: 'md 14/Jul/2006 12:28:00'!
 print: anObject
 	anObject printOn: self! !
 
-!SocketStream methodsFor: 'printing' stamp: 'gk 2/10/2005 11:44'!
+!SocketStream methodsFor: 'printing' stamp: 'gk 10/Feb/2005 11:44:00'!
 printOn: aStream
 	"Display buffer sizes."
 
@@ -4064,13 +4064,13 @@ printOn: aStream
 		(inBuffer size / 1024) rounded asString, 'kb/outbuf:',
 		(outBuffer size / 1024) rounded asString, 'kb]']! !
 
-!SocketStream methodsFor: 'initialization' stamp: 'ar 7/24/2010 15:13'!
+!SocketStream methodsFor: 'initialization' stamp: 'ar 24/Jul/2010 15:13:00'!
 destroy
 	"Destroy the receiver and its underlying socket. Does not attempt to flush the output buffers. For a graceful close use SocketStream>>close instead."
 
 	socket ifNotNil:[socket destroy]! !
 
-!SocketStream methodsFor: 'initialization' stamp: 'gk 2/25/2005 14:20'!
+!SocketStream methodsFor: 'initialization' stamp: 'gk 25/Feb/2005 14:20:00'!
 initialize
 	autoFlush := true.
 	shouldSignal := true.
@@ -4078,7 +4078,7 @@ initialize
 	bufferSize := 4096.
 	self ascii! !
 
-!SocketStream methodsFor: 'stream in' stamp: 'gk 2/7/2005 13:33'!
+!SocketStream methodsFor: 'stream in' stamp: 'gk 7/Feb/2005 13:33:00'!
 next
 	"Return next byte, if inBuffer is empty
 	we recieve some more data and try again."
@@ -4090,7 +4090,7 @@ next
 	lastRead := lastRead + 1.
 	^inBuffer at: lastRead! !
 
-!SocketStream methodsFor: 'stream in' stamp: 'gk 2/15/2005 14:17'!
+!SocketStream methodsFor: 'stream in' stamp: 'gk 15/Feb/2005 14:17:00'!
 next: anInteger
 	"Answer anInteger bytes of data.
 
@@ -4102,14 +4102,14 @@ next: anInteger
 	lastRead := (lastRead + anInteger) min: inNextToWrite - 1.
 	^inBuffer copyFrom: start to: lastRead! !
 
-!SocketStream methodsFor: 'stream in' stamp: 'ar 2/23/2010 13:06'!
+!SocketStream methodsFor: 'stream in' stamp: 'ar 23/Feb/2010 13:06:00'!
 next: n into: aCollection
 	"Read n objects into the given collection.
 	Return aCollection or a partial copy if less than
 	n elements have been read."
 	^self next: n into: aCollection startingAt: 1! !
 
-!SocketStream methodsFor: 'stream in' stamp: 'ar 11/22/2010 23:50'!
+!SocketStream methodsFor: 'stream in' stamp: 'ar 22/Nov/2010 23:50:00'!
 next: anInteger into: aCollection startingAt: startIndex
 	"Read n objects into the given collection. 
 	Return aCollection or a partial copy if less than
@@ -4138,13 +4138,13 @@ next: anInteger into: aCollection startingAt: startIndex
 		ifTrue:[aCollection copyFrom: 1 to:  startIndex + amount-1]
 		ifFalse:[aCollection]! !
 
-!SocketStream methodsFor: 'stream in' stamp: 'gk 2/7/2005 21:26'!
+!SocketStream methodsFor: 'stream in' stamp: 'gk 7/Feb/2005 21:26:00'!
 nextAllInBuffer
 	"Return all data currently in the inBuffer,"
 
 	^self nextInBuffer: inNextToWrite - lastRead - 1! !
 
-!SocketStream methodsFor: 'stream in' stamp: 'gk 2/7/2005 13:47'!
+!SocketStream methodsFor: 'stream in' stamp: 'gk 7/Feb/2005 13:47:00'!
 nextAvailable
 	"Answer all the data currently available,
 	in buffer or in socket."
@@ -4153,7 +4153,7 @@ nextAvailable
 	self isDataAvailable ifTrue: [self receiveData].
 	^self nextAllInBuffer! !
 
-!SocketStream methodsFor: 'stream in' stamp: 'gk 2/7/2005 13:02'!
+!SocketStream methodsFor: 'stream in' stamp: 'gk 7/Feb/2005 13:02:00'!
 nextAvailable: howMany
 	"Answer all the data currently available,
 	in buffer or in socket - but limited to <howMany>."
@@ -4162,7 +4162,7 @@ nextAvailable: howMany
 	self isDataAvailable ifTrue: [self receiveData].
 	^self nextInBuffer: howMany! !
 
-!SocketStream methodsFor: 'stream in' stamp: 'gk 2/7/2005 12:51'!
+!SocketStream methodsFor: 'stream in' stamp: 'gk 7/Feb/2005 12:51:00'!
 nextInBuffer: anInteger
 	"Answer anInteger bytes of data at most,
 	but only from the inBuffer."
@@ -4173,34 +4173,34 @@ nextInBuffer: anInteger
 	lastRead := lastRead + amount.
 	^inBuffer copyFrom: start to: lastRead! !
 
-!SocketStream methodsFor: 'stream in' stamp: 'ar 2/23/2010 13:06'!
+!SocketStream methodsFor: 'stream in' stamp: 'ar 23/Feb/2010 13:06:00'!
 nextInto: aCollection
 	"Read the next elements of the receiver into aCollection.
 	Return aCollection or a partial copy if less than aCollection
 	size elements have been read."
 	^self next: aCollection size into: aCollection startingAt: 1.! !
 
-!SocketStream methodsFor: 'stream in' stamp: 'ar 2/23/2010 13:06'!
+!SocketStream methodsFor: 'stream in' stamp: 'ar 23/Feb/2010 13:06:00'!
 nextInto: aCollection startingAt: startIndex
 	"Read the next elements of the receiver into aCollection.
 	Return aCollection or a partial copy if less than aCollection
 	size elements have been read."
 	^self next: (aCollection size - startIndex+1) into: aCollection startingAt: startIndex.! !
 
-!SocketStream methodsFor: 'stream in' stamp: 'mir 2/21/2002 18:46'!
+!SocketStream methodsFor: 'stream in' stamp: 'mir 21/Feb/2002 18:46:00'!
 nextLine
 	^self nextLineCrLf! !
 
-!SocketStream methodsFor: 'stream in' stamp: 'jmv 3/13/2012 11:46'!
+!SocketStream methodsFor: 'stream in' stamp: 'jmv 13/Mar/2012 11:46:00'!
 nextLineCrLf
 	^self upToAll: String crlfString! !
 
-!SocketStream methodsFor: 'stream in' stamp: 'jmv 3/13/2012 11:55'!
+!SocketStream methodsFor: 'stream in' stamp: 'jmv 13/Mar/2012 11:55:00'!
 nextLineLf
 
 	^self upToAll: String lfString! !
 
-!SocketStream methodsFor: 'stream in' stamp: 'ar 1/13/2010 22:30'!
+!SocketStream methodsFor: 'stream in' stamp: 'ar 13/Jan/2010 22:30:00'!
 peek
 	"Return next byte, if inBuffer is empty
 	we recieve some more data and try again.
@@ -4212,7 +4212,7 @@ peek
 		self atEnd ifTrue: [^nil]].
 	^inBuffer at: lastRead+1! !
 
-!SocketStream methodsFor: 'stream in' stamp: 'gk 2/15/2005 14:16'!
+!SocketStream methodsFor: 'stream in' stamp: 'gk 15/Feb/2005 14:16:00'!
 peek: anInteger
 	"Answer anInteger bytes of data.
 	Do not consume data.
@@ -4224,7 +4224,7 @@ peek: anInteger
 	start := lastRead + 1.
 	^inBuffer copyFrom: start to: ((lastRead + anInteger) min: inNextToWrite - 1).! !
 
-!SocketStream methodsFor: 'stream in' stamp: 'nice 1/13/2010 23:16'!
+!SocketStream methodsFor: 'stream in' stamp: 'nice 13/Jan/2010 23:16:00'!
 peekFor: aCharacterOrByte
 	"Read and return next character or byte
 	if it is equal to the argument.
@@ -4242,7 +4242,7 @@ peekFor: aCharacterOrByte
 	^false
 ! !
 
-!SocketStream methodsFor: 'stream in' stamp: 'gk 2/15/2005 14:16'!
+!SocketStream methodsFor: 'stream in' stamp: 'gk 15/Feb/2005 14:16:00'!
 peekForAll: aString
 	"Answer whether or not the next string of characters in the receiver
 	matches aString. If a match is made, advance over that string in the receiver and
@@ -4261,7 +4261,7 @@ peekForAll: aString
 	lastRead := lastRead + sz.
 	^true! !
 
-!SocketStream methodsFor: 'stream in' stamp: 'ar 11/22/2010 23:52'!
+!SocketStream methodsFor: 'stream in' stamp: 'ar 22/Nov/2010 23:52:00'!
 readInto: aCollection startingAt: startIndex count: anInteger
 	"Read n objects into the given collection starting at startIndex. 
 	Return number of elements that have been read."
@@ -4287,7 +4287,7 @@ readInto: aCollection startingAt: startIndex count: anInteger
 		startingAt: start.
 	^amount! !
 
-!SocketStream methodsFor: 'stream in' stamp: 'gk 2/15/2005 14:15'!
+!SocketStream methodsFor: 'stream in' stamp: 'gk 15/Feb/2005 14:15:00'!
 skip: anInteger
 	"Skip a number of bytes.
 	This is faster than #next: since it does not
@@ -4298,13 +4298,13 @@ skip: anInteger
 	self receiveData: anInteger.
 	lastRead := (lastRead + anInteger) min: inNextToWrite - 1! !
 
-!SocketStream methodsFor: 'stream in' stamp: 'ul 12/5/2011 01:46'!
+!SocketStream methodsFor: 'stream in' stamp: 'ul 5/Dec/2011 01:46:00'!
 upTo: aCharacterOrByte
 	"Answer a subcollection from the current access position to the occurrence (if any, but not inclusive) of anObject in the receiver. If anObject is not in the collection, answer the entire rest of the receiver."
 
 	^self upTo: aCharacterOrByte limit: nil! !
 
-!SocketStream methodsFor: 'stream in' stamp: 'jmv 1/9/2024 17:36:06'!
+!SocketStream methodsFor: 'stream in' stamp: 'jmv 9/Jan/2024 17:36:06'!
 upTo: aCharacterOrByte limit: nBytes
 	"Return data up to, but not including given character or byte. If the character is not in the stream, or not found within nBytes answer the available contents of the stream"
 
@@ -4350,7 +4350,7 @@ upTo: aCharacterOrByte limit: nBytes
 	"not found and (non-signaling) connection was closed"
 	^self nextAllInBuffer! !
 
-!SocketStream methodsFor: 'stream in' stamp: 'ar 8/2/2010 18:48'!
+!SocketStream methodsFor: 'stream in' stamp: 'ar 2/Aug/2010 18:48:00'!
 upToAll: aStringOrByteArray
 	"Answer a subcollection from the current access position to the occurrence (if any, but not inclusive) of aCollection. If aCollection is not in the stream, answer the entire rest of the stream."
 
@@ -4358,7 +4358,7 @@ upToAll: aStringOrByteArray
 
 	^self upToAll: aStringOrByteArray limit: 100000! !
 
-!SocketStream methodsFor: 'stream in' stamp: 'eem 2/25/2017 10:43'!
+!SocketStream methodsFor: 'stream in' stamp: 'eem 25/Feb/2017 10:43:00'!
 upToAll: aStringOrByteArray limit: nBytes
 	"Answer a subcollection from the current access position to the occurrence (if any, but not inclusive) of aStringOrByteArray. If aCollection is not in the stream, or not found within nBytes answer the available contents of the stream"
 
@@ -4401,7 +4401,7 @@ upToAll: aStringOrByteArray limit: nBytes
 	"not found and (non-signaling) connection was closed"
 	^self nextAllInBuffer! !
 
-!SocketStream methodsFor: 'stream in' stamp: 'ar 11/22/2010 23:49'!
+!SocketStream methodsFor: 'stream in' stamp: 'ar 22/Nov/2010 23:49:00'!
 upToEnd
 	"Answer all data coming in on the socket until the socket
 	is closed by the other end, or we get a timeout.
@@ -4412,47 +4412,47 @@ upToEnd
 		do: [:ex | "swallow it"]. 
 	^self nextAllInBuffer! !
 
-!SocketStream methodsFor: 'private-socket' stamp: 'ar 7/24/2010 15:07'!
+!SocketStream methodsFor: 'private-socket' stamp: 'ar 24/Jul/2010 15:07:00'!
 receiveAvailableData
 	"Receive available data (as much as fits in the inBuffer) but not waiting for more to arrive. Return the position in the buffer where the new data starts, regardless if anything was read, see #adjustInBuffer."
 	
 	recentlyRead := self receiveDataInto: inBuffer startingAt: inNextToWrite.
 	^self adjustInBuffer: recentlyRead! !
 
-!SocketStream methodsFor: 'private-socket' stamp: 'mtf 1/15/2011 20:15'!
+!SocketStream methodsFor: 'private-socket' stamp: 'mtf 15/Jan/2011 20:15:00'!
 receiveData
 	self waitForData.
 	^self receiveAvailableData! !
 
-!SocketStream methodsFor: 'private-socket' stamp: 'pre 12/16/2020 09:37'!
+!SocketStream methodsFor: 'private-socket' stamp: 'pre 16/Dec/2020 09:37:00'!
 receiveDataIfAvailable
 
 	self deprecated: 'Use #receiveAvailableData instead'.
 	^ self receiveAvailableData! !
 
-!SocketStream methodsFor: 'private-socket' stamp: 'HAW 9/20/2025 18:11:44'!
+!SocketStream methodsFor: 'private-socket' stamp: 'HAW 20/Sep/2025 18:11:44'!
 receiveDataInto: buffer startingAt: index
 	"Read data from the underlying socket. This method may be overridden by subclasses wanting to control incoming traffic for other purposes like encryption or statistics."
 
 	^socket  receiveAvailableDataInto: buffer startingAt: index.! !
 
-!SocketStream methodsFor: 'private-socket' stamp: 'ar 7/24/2010 14:50'!
+!SocketStream methodsFor: 'private-socket' stamp: 'ar 24/Jul/2010 14:50:00'!
 sendData: buffer count: n
 	"Sends outgoing data directly on the underlying socket."
 
 	^socket sendData: buffer count: n! !
 
-!SocketStream methodsFor: 'private-socket' stamp: 'mtf 1/15/2011 20:09'!
+!SocketStream methodsFor: 'private-socket' stamp: 'mtf 15/Jan/2011 20:09:00'!
 signalClosed
 	self shouldSignal ifFalse: [^ self]. 
 	ConnectionClosed signal: 'Connection closed while waiting for data.'! !
 
-!SocketStream methodsFor: 'private-socket' stamp: 'mtf 1/15/2011 20:10'!
+!SocketStream methodsFor: 'private-socket' stamp: 'mtf 15/Jan/2011 20:10:00'!
 signalTimeout
 	self shouldSignal ifFalse: [^ self]. 
 	ConnectionTimedOut signal: 'Data receive timed out.'! !
 
-!SocketStream methodsFor: 'private-socket' stamp: 'mtf 1/15/2011 20:16'!
+!SocketStream methodsFor: 'private-socket' stamp: 'mtf 15/Jan/2011 20:16:00'!
 waitForData
 	"Wait for data. If shouldTimeout, we will time out if nothing arrives, otherwise we wait indefinitely"
 
@@ -4462,15 +4462,15 @@ waitForData
 			ifTimedOut: [self signalTimeout]]
 		ifFalse: [socket waitForDataIfClosed: [self signalClosed]]! !
 
-!SocketStream methodsFor: 'accessing' stamp: 'mir 10/31/2000 12:50'!
+!SocketStream methodsFor: 'accessing' stamp: 'mir 31/Oct/2000 12:50:00'!
 socket
 	^socket! !
 
-!SocketStream methodsFor: 'accessing' stamp: 'mir 5/15/2003 20:50'!
+!SocketStream methodsFor: 'accessing' stamp: 'mir 15/May/2003 20:50:00'!
 timeout: seconds
 	timeout := seconds! !
 
-!SocketStream class methodsFor: 'example' stamp: 'jmv 3/13/2012 12:47'!
+!SocketStream class methodsFor: 'example' stamp: 'jmv 13/Mar/2012 12:47:00'!
 finger: userName
 	"SocketStream finger: 'stp'"
 
@@ -4484,24 +4484,24 @@ finger: userName
 	Transcript show: '---------- Connection Closed ----------'; newLine; endEntry.
 ! !
 
-!SocketStream class methodsFor: 'instance creation' stamp: 'gk 2/3/2005 22:19'!
+!SocketStream class methodsFor: 'instance creation' stamp: 'gk 3/Feb/2005 22:19:00'!
 on: socket
 	"Create a socket stream on a connected server socket."
 
 	^self basicNew initialize socket: socket! !
 
-!SocketStream class methodsFor: 'instance creation' stamp: 'jmv 8/5/2011 17:26'!
+!SocketStream class methodsFor: 'instance creation' stamp: 'jmv 5/Aug/2011 17:26:00'!
 openConnectionToHost: hostIP port: portNumber
 	^ self openConnectionToHost: hostIP port: portNumber timeout: Socket standardTimeout! !
 
-!SocketStream class methodsFor: 'instance creation' stamp: 'kph 9/23/2008 00:30'!
+!SocketStream class methodsFor: 'instance creation' stamp: 'kph 23/Sep/2008 00:30:00'!
 openConnectionToHost: hostIP port: portNumber timeout: timeout
 	| socket |
 	socket := Socket new.
 	socket connectTo: hostIP port: portNumber waitForConnectionFor: timeout.
 	^self on: socket! !
 
-!SocketStream class methodsFor: 'instance creation' stamp: 'ct 1/3/2022 17:44'!
+!SocketStream class methodsFor: 'instance creation' stamp: 'ct 3/Jan/2022 17:44:00'!
 openConnectionToHostNamed: hostName port: portNumber
 	
 	| addressInformations stream |
@@ -4529,27 +4529,27 @@ openConnectionToHostNamed: hostName port: portNumber
 						["retry with next address"
 						exc retry]].! !
 
-!Object methodsFor: '*Network-Kernel' stamp: 'MPW 1/1/1901 00:49'!
+!Object methodsFor: '*Network-Kernel' stamp: 'MPW 1/Jan/1901 00:49:00'!
 putOn:aStream
 	^aStream nextPut:self.
 ! !
 
-!SequenceableCollection methodsFor: '*Network-Kernel' stamp: 'kph 9/27/2007 21:18'!
+!SequenceableCollection methodsFor: '*Network-Kernel' stamp: 'kph 27/Sep/2007 21:18:00'!
 putOn: aStream
 
 	self do: [ :each | each putOn: aStream ]! !
 
-!String methodsFor: '*Network-Kernel' stamp: 'yo 8/26/2002 22:31'!
+!String methodsFor: '*Network-Kernel' stamp: 'yo 26/Aug/2002 22:31:00'!
 putOn:aStream
 
 	^aStream nextPutAll: self.
 ! !
 
-!String methodsFor: '*Network-Kernel' stamp: 'JMM 10/17/2024 10:04:10'!
+!String methodsFor: '*Network-Kernel' stamp: 'JMM 17/Oct/2024 10:04:10'!
 translated
 	^self! !
 
-!SystemDictionary methodsFor: '*Network-Kernel' stamp: 'ul 10/27/2014 16:37'!
+!SystemDictionary methodsFor: '*Network-Kernel' stamp: 'ul 27/Oct/2014 16:37:00'!
 clearExternalObjects
 	"Clear the array of objects that have been registered for use in non-Smalltalk code."
 	"Smalltalk clearExternalObjects"
@@ -4557,13 +4557,13 @@ clearExternalObjects
 	ExternalObjectTable current clearExternalObjects
 ! !
 
-!SystemDictionary methodsFor: '*Network-Kernel' stamp: 'eem 10/16/2020 10:25'!
+!SystemDictionary methodsFor: '*Network-Kernel' stamp: 'eem 16/Oct/2020 10:25:00'!
 externalObjectAt: index ifAbsent: errorBlock
 	"Answer the externalObject at index, or the result of errorBlock if none."
 
 	^ExternalObjectTable current externalObjectAt: index ifAbsent: errorBlock! !
 
-!SystemDictionary methodsFor: '*Network-Kernel' stamp: 'ul 10/27/2014 16:38'!
+!SystemDictionary methodsFor: '*Network-Kernel' stamp: 'ul 27/Oct/2014 16:38:00'!
 externalObjects
 	"Return an array of objects that have been registered for use in non-Smalltalk code. Smalltalk objects should be referrenced by external code only via indirection through this array, thus allowing the objects to move during compaction. This array can be cleared when the VM re-starts, since variables in external code do not survive snapshots. Note that external code should not attempt to access a Smalltalk object, even via this mechanism, while garbage collection is in progress."
 	"Note that this is just a copy of the array used by the VM."
@@ -4572,57 +4572,57 @@ externalObjects
 	^ExternalObjectTable current externalObjects
 ! !
 
-!SystemDictionary methodsFor: '*Network-Kernel' stamp: 'ul 10/27/2014 16:38'!
+!SystemDictionary methodsFor: '*Network-Kernel' stamp: 'ul 27/Oct/2014 16:38:00'!
 newExternalSemaphore
 	"Create and register a new Semaphore, and return an array containing itself and its index."
 
 	^ExternalObjectTable current newExternalSemaphore! !
 
-!SystemDictionary methodsFor: '*Network-Kernel' stamp: 'ul 10/27/2014 16:38'!
+!SystemDictionary methodsFor: '*Network-Kernel' stamp: 'ul 27/Oct/2014 16:38:00'!
 newExternalSemaphoreDo: aBlock 
 	"Create and register a new Semaphore, then evaluate aBlock with it and its index."
 
 	^ExternalObjectTable current newExternalSemaphoreDo: aBlock! !
 
-!SystemDictionary methodsFor: '*Network-Kernel' stamp: 'ul 10/27/2014 16:39'!
+!SystemDictionary methodsFor: '*Network-Kernel' stamp: 'ul 27/Oct/2014 16:39:00'!
 newExternalSemaphores: count 
 	"Create and register multiple Semaphores, and return an array containing the semaphores and their indexes in separate arrays."
 
 	^ExternalObjectTable current newExternalSemaphores: count! !
 
-!SystemDictionary methodsFor: '*Network-Kernel' stamp: 'ul 10/27/2014 16:36'!
+!SystemDictionary methodsFor: '*Network-Kernel' stamp: 'ul 27/Oct/2014 16:36:00'!
 registerExternalObject: anObject
 	"Register the given object in the external objects array and return its index. If it is already there, just return its index."
 
 	^ExternalObjectTable current registerExternalObject: anObject! !
 
-!SystemDictionary methodsFor: '*Network-Kernel' stamp: 'ul 10/27/2014 16:36'!
+!SystemDictionary methodsFor: '*Network-Kernel' stamp: 'ul 27/Oct/2014 16:36:00'!
 unregisterExternalObject: anObject
 	"Unregister the given object in the external objects array. Do nothing if it isn't registered."
 
 	ExternalObjectTable current unregisterExternalObject: anObject! !
 
-!SystemDictionary methodsFor: '*Network-Kernel' stamp: 'ul 10/27/2014 16:36'!
+!SystemDictionary methodsFor: '*Network-Kernel' stamp: 'ul 27/Oct/2014 16:36:00'!
 unregisterExternalObjects: aCollection
 	"Unregister the given objects from the external objects array. Do nothing if they aren't registered."
 
 	ExternalObjectTable current unregisterExternalObjects: aCollection! !
 
-!Magnitude methodsFor: '*Network-Kernel' stamp: 'kph 9/27/2007 22:10'!
+!Magnitude methodsFor: '*Network-Kernel' stamp: 'kph 27/Sep/2007 22:10:00'!
 putOn: aStream
 
 	(aStream isBinary ifTrue: [ self asByteArray ] ifFalse: [ self asString]) putOn: aStream
 	
  ! !
 
-!Time class methodsFor: '*Network-Kernel' stamp: 'JMM 10/10/2024 13:30:17'!
+!Time class methodsFor: '*Network-Kernel' stamp: 'JMM 10/Oct/2024 13:30:17'!
 milliseconds: currentTime since: lastTime
 	"Answer the elapsed time since last recorded in milliseconds (i.e. of millisecondClockValue).
 	 Since the time basis is now a 61-bit or greater UTC microsecond clock, rollover is no longer an issue."
 
 	^currentTime - lastTime! !
 
-!Time class methodsFor: '*Network-Kernel' stamp: 'JMM 10/10/2024 13:29:53'!
+!Time class methodsFor: '*Network-Kernel' stamp: 'JMM 10/Oct/2024 13:29:53'!
 millisecondsSince: lastTime
 	"Answer the elapsed time since last recorded in milliseconds.
 	Compensate for rollover."
@@ -4630,7 +4630,7 @@ millisecondsSince: lastTime
 	^self milliseconds: self millisecondClockValue since: lastTime
 ! !
 
-!Time class methodsFor: '*Network-Kernel' stamp: 'JMM 10/4/2024 14:11:19'!
+!Time class methodsFor: '*Network-Kernel' stamp: 'JMM 4/Oct/2024 14:11:19'!
 utcMicrosecondClock
 	"Answer the UTC microseconds since the Smalltalk epoch (January 1st 1901, the start of the 20th century).
 	 The value is derived from the Posix epoch with a constant offset corresponding to elapsed microseconds

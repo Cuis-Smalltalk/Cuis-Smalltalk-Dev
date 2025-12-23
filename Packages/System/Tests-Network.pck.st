@@ -1,52 +1,52 @@
-'From Cuis7.1 [latest update: #6742] on 25 October 2024 at 12:32:50 PM'!
+'From Cuis7.7 [latest update: #7779] on 23 December 2025 at 4:35:58 pm'!
 'Description '!
 !provides: 'Tests-Network' 1 1!
 !requires: 'Network-Kernel' 1 10 nil!
 !requires: 'Identities-UUID' 1 10 nil!
-SystemOrganization addCategory: 'Tests-Network'!
-SystemOrganization addCategory: 'Tests-Network-Kernel'!
+SystemOrganization addCategory: #'Tests-Network'!
+SystemOrganization addCategory: #'Tests-Network-Kernel'!
 
 
-!classDefinition: #NetNameResolverTest category: 'Tests-Network'!
+!classDefinition: #NetNameResolverTest category: #'Tests-Network'!
 TestCase subclass: #NetNameResolverTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Tests-Network'!
-!classDefinition: 'NetNameResolverTest class' category: 'Tests-Network'!
+!classDefinition: 'NetNameResolverTest class' category: #'Tests-Network'!
 NetNameResolverTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #SocketStreamTest category: 'Tests-Network-Kernel'!
+!classDefinition: #SocketStreamTest category: #'Tests-Network-Kernel'!
 TestCase subclass: #SocketStreamTest
 	instanceVariableNames: 'clientStream serverStream'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Tests-Network-Kernel'!
-!classDefinition: 'SocketStreamTest class' category: 'Tests-Network-Kernel'!
+!classDefinition: 'SocketStreamTest class' category: #'Tests-Network-Kernel'!
 SocketStreamTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #SocketTest category: 'Tests-Network-Kernel'!
+!classDefinition: #SocketTest category: #'Tests-Network-Kernel'!
 TestCase subclass: #SocketTest
 	instanceVariableNames: 'listenerSocket clientSocket serverSocket'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Tests-Network-Kernel'!
-!classDefinition: 'SocketTest class' category: 'Tests-Network-Kernel'!
+!classDefinition: 'SocketTest class' category: #'Tests-Network-Kernel'!
 SocketTest class
 	instanceVariableNames: ''!
 
 
-!NetNameResolverTest methodsFor: 'accessing' stamp: '9/24/2024 06:46'!
+!NetNameResolverTest methodsFor: 'accessing' stamp: 'unknown 24/Sep/2024 06:46:00'!
 localHostAddressIsLoopBackAddress
 		^NetNameResolver localHostAddress = NetNameResolver loopBackAddress! !
 
-!NetNameResolverTest methodsFor: 'accessing' stamp: '9/24/2024 06:46'!
+!NetNameResolverTest methodsFor: 'accessing' stamp: 'unknown 24/Sep/2024 06:46:00'!
 localHostNameIsLoopBackName
 		^NetNameResolver localHostName = NetNameResolver loopBackName! !
 
-!NetNameResolverTest methodsFor: 'testing' stamp: '9/24/2024 06:46'!
+!NetNameResolverTest methodsFor: 'testing' stamp: 'unknown 24/Sep/2024 06:46:00'!
 testLocalHostAddress
 false ifTrue: [
 	self skip. "This test is currently broken"
@@ -56,14 +56,14 @@ false ifTrue: [
 ]
 		! !
 
-!NetNameResolverTest methodsFor: 'testing' stamp: '9/24/2024 06:46'!
+!NetNameResolverTest methodsFor: 'testing' stamp: 'unknown 24/Sep/2024 06:46:00'!
 testLocalHostName
 	self deny: NetNameResolver localHostName isNil.
 	NetNameResolver isConnected
 		ifTrue: [self deny: self localHostNameIsLoopBackName]
 		ifFalse: [self assert: self localHostNameIsLoopBackName]! !
 
-!SocketStreamTest methodsFor: 'running' stamp: 'ar 8/2/2010 18:10'!
+!SocketStreamTest methodsFor: 'running' stamp: 'ar 2/Aug/2010 18:10:00'!
 setUp
 	| listener clientSocket serverSocket |
 	listener := Socket newTCP.
@@ -82,12 +82,12 @@ setUp
 	serverStream := SocketStream on: serverSocket.
 ! !
 
-!SocketStreamTest methodsFor: 'running' stamp: 'ar 8/2/2010 17:59'!
+!SocketStreamTest methodsFor: 'running' stamp: 'ar 2/Aug/2010 17:59:00'!
 tearDown
 	clientStream ifNotNil:[clientStream destroy].
 	serverStream ifNotNil:[serverStream destroy].! !
 
-!SocketStreamTest methodsFor: 'tests - stream protocol' stamp: 'ar 8/5/2010 12:20'!
+!SocketStreamTest methodsFor: 'tests - stream protocol' stamp: 'ar 5/Aug/2010 12:20:00'!
 testNextIntoClose
 	"Ensure that #next:into: will function properly when the connection is closed"
 
@@ -98,7 +98,7 @@ testNextIntoClose
 		equals: 'A line of text'.
 ! !
 
-!SocketStreamTest methodsFor: 'tests - stream protocol' stamp: 'ar 8/5/2010 12:20'!
+!SocketStreamTest methodsFor: 'tests - stream protocol' stamp: 'ar 5/Aug/2010 12:20:00'!
 testNextIntoCloseNonSignaling
 	"Ensure that #next:into: will function properly when the connection is closed"
 
@@ -110,7 +110,7 @@ testNextIntoCloseNonSignaling
 		equals: 'A line of text'.
 ! !
 
-!SocketStreamTest methodsFor: 'tests - stream protocol' stamp: 'ar 8/2/2010 18:32'!
+!SocketStreamTest methodsFor: 'tests - stream protocol' stamp: 'ar 2/Aug/2010 18:32:00'!
 testUpTo
 	"Tests correct behavior of #upTo:"
 
@@ -121,7 +121,7 @@ testUpTo
 	self assert: (serverStream upTo: Character cr) = 'with more text'.
 ! !
 
-!SocketStreamTest methodsFor: 'tests - stream protocol' stamp: 'ar 8/2/2010 18:32'!
+!SocketStreamTest methodsFor: 'tests - stream protocol' stamp: 'ar 2/Aug/2010 18:32:00'!
 testUpToAfterCloseNonSignaling
 	"Tests correct behavior of #upToAll"
 
@@ -132,7 +132,7 @@ testUpToAfterCloseNonSignaling
 	self shouldnt: [resp := serverStream upTo: Character cr] raise: ConnectionClosed.
 	self assert: resp = 'A line of text'.! !
 
-!SocketStreamTest methodsFor: 'tests - stream protocol' stamp: 'ar 8/2/2010 18:32'!
+!SocketStreamTest methodsFor: 'tests - stream protocol' stamp: 'ar 2/Aug/2010 18:32:00'!
 testUpToAfterCloseSignaling
 	"Tests correct behavior of #upToAll"
 
@@ -141,7 +141,7 @@ testUpToAfterCloseSignaling
 	self should: [serverStream upTo: Character cr] raise: ConnectionClosed.
 ! !
 
-!SocketStreamTest methodsFor: 'tests - stream protocol' stamp: 'ar 8/2/2010 18:29'!
+!SocketStreamTest methodsFor: 'tests - stream protocol' stamp: 'ar 2/Aug/2010 18:29:00'!
 testUpToAll
 	"Tests correct behavior of #upToAll"
 
@@ -152,7 +152,7 @@ testUpToAll
 	self assert: (serverStream upToAll: String crlf) = 'with more text'.
 ! !
 
-!SocketStreamTest methodsFor: 'tests - stream protocol' stamp: 'ar 8/2/2010 18:02'!
+!SocketStreamTest methodsFor: 'tests - stream protocol' stamp: 'ar 2/Aug/2010 18:02:00'!
 testUpToAllAfterCloseNonSignaling
 	"Tests correct behavior of #upToAll"
 
@@ -163,7 +163,7 @@ testUpToAllAfterCloseNonSignaling
 	self shouldnt: [resp := serverStream upToAll: String crlf] raise: ConnectionClosed.
 	self assert: resp = 'A line of text'.! !
 
-!SocketStreamTest methodsFor: 'tests - stream protocol' stamp: 'ar 8/2/2010 18:26'!
+!SocketStreamTest methodsFor: 'tests - stream protocol' stamp: 'ar 2/Aug/2010 18:26:00'!
 testUpToAllAfterCloseSignaling
 	"Tests correct behavior of #upToAll"
 
@@ -172,7 +172,7 @@ testUpToAllAfterCloseSignaling
 	self should: [serverStream upToAll: String crlf] raise: ConnectionClosed.
 ! !
 
-!SocketStreamTest methodsFor: 'tests - stream protocol' stamp: 'ar 8/22/2010 13:28'!
+!SocketStreamTest methodsFor: 'tests - stream protocol' stamp: 'ar 22/Aug/2010 13:28:00'!
 testUpToAllAsciiVsBinary
 	"Tests correct behavior of #upToAll"
 
@@ -185,7 +185,7 @@ testUpToAllAsciiVsBinary
 	self assert: (serverStream upToAll: String crlf) asString = 'with more text'.
 ! !
 
-!SocketStreamTest methodsFor: 'tests - stream protocol' stamp: 'tonyg 2/19/2017 11:47'!
+!SocketStreamTest methodsFor: 'tests - stream protocol' stamp: 'tonyg 19/Feb/2017 11:47:00'!
 testUpToAllCrlfAscii
 	"Tests correct behavior of #upToAll with a two-byte delimiter in ascii mode"
 	self testUpToAllDelimiter: String crlf
@@ -194,7 +194,7 @@ testUpToAllCrlfAscii
 		binary: false.
 ! !
 
-!SocketStreamTest methodsFor: 'tests - stream protocol' stamp: 'tonyg 2/19/2017 11:48'!
+!SocketStreamTest methodsFor: 'tests - stream protocol' stamp: 'tonyg 19/Feb/2017 11:48:00'!
 testUpToAllCrlfBinary
 	"Tests correct behavior of #upToAll with a two-byte delimiter in binary mode"
 	self testUpToAllDelimiter: String crlf
@@ -203,7 +203,7 @@ testUpToAllCrlfBinary
 		binary: true.
 ! !
 
-!SocketStreamTest methodsFor: 'tests - stream protocol' stamp: 'tonyg 2/19/2017 11:47'!
+!SocketStreamTest methodsFor: 'tests - stream protocol' stamp: 'tonyg 19/Feb/2017 11:47:00'!
 testUpToAllCrlfCrlfAscii
 	"Tests correct behavior of #upToAll with a four-byte delimiter in ascii mode"
 	self testUpToAllDelimiter: String crlfcrlf
@@ -212,7 +212,7 @@ testUpToAllCrlfCrlfAscii
 		binary: false.
 ! !
 
-!SocketStreamTest methodsFor: 'tests - stream protocol' stamp: 'tonyg 2/19/2017 11:47'!
+!SocketStreamTest methodsFor: 'tests - stream protocol' stamp: 'tonyg 19/Feb/2017 11:47:00'!
 testUpToAllCrlfCrlfBinary
 	"Tests correct behavior of #upToAll with a four-byte delimiter in binary mode"
 	self testUpToAllDelimiter: String crlfcrlf
@@ -221,7 +221,7 @@ testUpToAllCrlfCrlfBinary
 		binary: true.
 ! !
 
-!SocketStreamTest methodsFor: 'tests - stream protocol' stamp: 'tonyg 2/19/2017 11:39'!
+!SocketStreamTest methodsFor: 'tests - stream protocol' stamp: 'tonyg 19/Feb/2017 11:39:00'!
 testUpToAllDelimiter: delimiter input: input expected: aCollection binary: useBinary
 	"General test of #upToAll."
 	clientStream nextPutAll: input; close.
@@ -232,7 +232,7 @@ testUpToAllDelimiter: delimiter input: input expected: aCollection binary: useBi
 		self assert: actual = expected].
 ! !
 
-!SocketStreamTest methodsFor: 'tests - stream protocol' stamp: 'tonyg 2/19/2017 11:41'!
+!SocketStreamTest methodsFor: 'tests - stream protocol' stamp: 'tonyg 19/Feb/2017 11:41:00'!
 testUpToAllEmptyPatternAscii
 	"Tests correct behavior of #upToAll with an empty delimiter string, in ascii mode"
 	self testUpToAllDelimiter: ''
@@ -241,7 +241,7 @@ testUpToAllEmptyPatternAscii
 		binary: false.
 ! !
 
-!SocketStreamTest methodsFor: 'tests - stream protocol' stamp: 'tonyg 2/19/2017 11:41'!
+!SocketStreamTest methodsFor: 'tests - stream protocol' stamp: 'tonyg 19/Feb/2017 11:41:00'!
 testUpToAllEmptyPatternBinary
 	"Tests correct behavior of #upToAll with an empty delimiter string, in binary mode"
 	self testUpToAllDelimiter: ''
@@ -250,14 +250,14 @@ testUpToAllEmptyPatternBinary
 		binary: true.
 ! !
 
-!SocketStreamTest methodsFor: 'tests - stream protocol' stamp: 'ar 8/2/2010 18:48'!
+!SocketStreamTest methodsFor: 'tests - stream protocol' stamp: 'ar 2/Aug/2010 18:48:00'!
 testUpToAllLimit
 	"Tests correct behavior of #upToAll:limit:"
 
 	clientStream nextPutAll:'A line of text'; flush.
 	self assert: (serverStream upToAll: String crlf limit: 5) = 'A line of text'.! !
 
-!SocketStreamTest methodsFor: 'tests - stream protocol' stamp: 'tonyg 2/19/2017 11:43'!
+!SocketStreamTest methodsFor: 'tests - stream protocol' stamp: 'tonyg 19/Feb/2017 11:43:00'!
 testUpToAllLongPatternAscii
 	"Tests correct behavior of #upToAll with a long delimiter string, in ascii mode"
 	self testUpToAllDelimiter: 'xxxxx'
@@ -266,7 +266,7 @@ testUpToAllLongPatternAscii
 		binary: false.
 ! !
 
-!SocketStreamTest methodsFor: 'tests - stream protocol' stamp: 'tonyg 2/19/2017 11:43'!
+!SocketStreamTest methodsFor: 'tests - stream protocol' stamp: 'tonyg 19/Feb/2017 11:43:00'!
 testUpToAllLongPatternBinary
 	"Tests correct behavior of #upToAll with a long delimiter string, in binary mode"
 	self testUpToAllDelimiter: 'xxxxx'
@@ -275,7 +275,7 @@ testUpToAllLongPatternBinary
 		binary: true.
 ! !
 
-!SocketStreamTest methodsFor: 'tests - stream protocol' stamp: 'tonyg 2/19/2017 11:45'!
+!SocketStreamTest methodsFor: 'tests - stream protocol' stamp: 'tonyg 19/Feb/2017 11:45:00'!
 testUpToAllMediumPatternAscii
 	"Tests correct behavior of #upToAll with a two-character delimiter string, in ascii mode"
 	self testUpToAllDelimiter: 'xx'
@@ -284,7 +284,7 @@ testUpToAllMediumPatternAscii
 		binary: false.
 ! !
 
-!SocketStreamTest methodsFor: 'tests - stream protocol' stamp: 'tonyg 2/19/2017 11:45'!
+!SocketStreamTest methodsFor: 'tests - stream protocol' stamp: 'tonyg 19/Feb/2017 11:45:00'!
 testUpToAllMediumPatternBinary
 	"Tests correct behavior of #upToAll with a two-character delimiter string, in binary mode"
 	self testUpToAllDelimiter: 'xx'
@@ -293,7 +293,7 @@ testUpToAllMediumPatternBinary
 		binary: true.
 ! !
 
-!SocketStreamTest methodsFor: 'tests - stream protocol' stamp: 'tonyg 2/19/2017 11:40'!
+!SocketStreamTest methodsFor: 'tests - stream protocol' stamp: 'tonyg 19/Feb/2017 11:40:00'!
 testUpToAllShortPatternAscii
 	"Tests correct behavior of #upToAll with a short delimiter string, in ascii mode"
 	self testUpToAllDelimiter: 'x'
@@ -302,7 +302,7 @@ testUpToAllShortPatternAscii
 		binary: false.
 ! !
 
-!SocketStreamTest methodsFor: 'tests - stream protocol' stamp: 'tonyg 2/19/2017 11:42'!
+!SocketStreamTest methodsFor: 'tests - stream protocol' stamp: 'tonyg 19/Feb/2017 11:42:00'!
 testUpToAllShortPatternAscii2
 	"Tests correct behavior of #upToAll with a short delimiter string, in ascii mode"
 	self testUpToAllDelimiter: 'x'
@@ -311,7 +311,7 @@ testUpToAllShortPatternAscii2
 		binary: false.
 ! !
 
-!SocketStreamTest methodsFor: 'tests - stream protocol' stamp: 'tonyg 2/19/2017 11:38'!
+!SocketStreamTest methodsFor: 'tests - stream protocol' stamp: 'tonyg 19/Feb/2017 11:38:00'!
 testUpToAllShortPatternBinary
 	"Tests correct behavior of #upToAll with a short delimiter string, in binary mode"
 	self testUpToAllDelimiter: 'x'
@@ -320,7 +320,7 @@ testUpToAllShortPatternBinary
 		binary: true.
 ! !
 
-!SocketStreamTest methodsFor: 'tests - stream protocol' stamp: 'tonyg 2/19/2017 11:42'!
+!SocketStreamTest methodsFor: 'tests - stream protocol' stamp: 'tonyg 19/Feb/2017 11:42:00'!
 testUpToAllShortPatternBinary2
 	"Tests correct behavior of #upToAll with a short delimiter string, in binary mode"
 	self testUpToAllDelimiter: 'x'
@@ -329,7 +329,7 @@ testUpToAllShortPatternBinary2
 		binary: true.
 ! !
 
-!SocketStreamTest methodsFor: 'tests - stream protocol' stamp: 'ar 8/2/2010 18:11'!
+!SocketStreamTest methodsFor: 'tests - stream protocol' stamp: 'ar 2/Aug/2010 18:11:00'!
 testUpToAllTimeout
 	"Tests correct behavior of #upToAll"
 
@@ -338,7 +338,7 @@ testUpToAllTimeout
 	self should: [serverStream upToAll: String crlf] raise: ConnectionTimedOut.
 ! !
 
-!SocketStreamTest methodsFor: 'tests - stream protocol' stamp: 'ar 8/22/2010 13:28'!
+!SocketStreamTest methodsFor: 'tests - stream protocol' stamp: 'ar 22/Aug/2010 13:28:00'!
 testUpToAsciiVsBinary
 	"Tests correct behavior of #upTo:"
 
@@ -351,7 +351,7 @@ testUpToAsciiVsBinary
 	self assert: (serverStream upTo: Character cr) asString = 'with more text'.
 ! !
 
-!SocketStreamTest methodsFor: 'tests - stream protocol' stamp: 'ar 8/5/2010 12:20'!
+!SocketStreamTest methodsFor: 'tests - stream protocol' stamp: 'ar 5/Aug/2010 12:20:00'!
 testUpToEndClose
 	"Ensure that #upToEnd will function properly when the connection is closed"
 
@@ -362,7 +362,7 @@ testUpToEndClose
 		equals: 'A line of text'.
 ! !
 
-!SocketStreamTest methodsFor: 'tests - stream protocol' stamp: 'ar 8/5/2010 12:20'!
+!SocketStreamTest methodsFor: 'tests - stream protocol' stamp: 'ar 5/Aug/2010 12:20:00'!
 testUpToEndCloseNonSignaling
 	"Ensure that #upToEnd will function properly when the connection is closed"
 
@@ -374,14 +374,14 @@ testUpToEndCloseNonSignaling
 		equals: 'A line of text'.
 ! !
 
-!SocketStreamTest methodsFor: 'tests - stream protocol' stamp: 'ar 8/2/2010 18:49'!
+!SocketStreamTest methodsFor: 'tests - stream protocol' stamp: 'ar 2/Aug/2010 18:49:00'!
 testUpToMax
 	"Tests correct behavior of #upToAll:max:"
 
 	clientStream nextPutAll:'A line of text'; flush.
 	self assert: (serverStream upTo: Character cr limit: 5) = 'A line of text'.! !
 
-!SocketStreamTest methodsFor: 'tests - stream protocol' stamp: 'ar 8/2/2010 18:32'!
+!SocketStreamTest methodsFor: 'tests - stream protocol' stamp: 'ar 2/Aug/2010 18:32:00'!
 testUpToTimeout
 	"Tests correct behavior of #upToAll"
 
@@ -390,7 +390,7 @@ testUpToTimeout
 	self should: [serverStream upTo: Character cr] raise: ConnectionTimedOut.
 ! !
 
-!SocketTest methodsFor: 'tests' stamp: 'eem 9/25/2020 13:07'!
+!SocketTest methodsFor: 'tests' stamp: 'eem 25/Sep/2020 13:07:00'!
 testClientConnect
 	"Tests a client socket connection"
 
@@ -399,7 +399,7 @@ testClientConnect
 	clientSocket waitForConnectionFor: 2.
 	self assert: clientSocket isConnected! !
 
-!SocketTest methodsFor: 'tests' stamp: 'ar 11/26/2010 11:08'!
+!SocketTest methodsFor: 'tests' stamp: 'ar 26/Nov/2010 11:08:00'!
 testDataReceive
 	"Test data transfer and related methods"
 
@@ -411,7 +411,7 @@ testDataReceive
 	self deny: (serverSocket dataAvailable).
 ! !
 
-!SocketTest methodsFor: 'tests' stamp: 'ar 11/26/2010 11:06'!
+!SocketTest methodsFor: 'tests' stamp: 'ar 26/Nov/2010 11:06:00'!
 testDataSending
 	"Test data transfer and related methods"
 
@@ -422,7 +422,7 @@ testDataSending
 
 ! !
 
-!SocketTest methodsFor: 'tests' stamp: 'eem 9/25/2020 13:09'!
+!SocketTest methodsFor: 'tests' stamp: 'eem 25/Sep/2020 13:09:00'!
 testLocalAddress
 	"Tests the various localAddress values for sockets"
 
@@ -431,7 +431,7 @@ testLocalAddress
 	self assert: clientSocket localAddress equals: (self listenerAddressForFamily: clientSocket addressFamily).
 	self assert: serverSocket localAddress equals: (self listenerAddressForFamily: serverSocket addressFamily)! !
 
-!SocketTest methodsFor: 'tests' stamp: 'ar 11/26/2010 10:25'!
+!SocketTest methodsFor: 'tests' stamp: 'ar 26/Nov/2010 10:25:00'!
 testLocalPort
 	"Tests the various localPort values for sockets"
 
@@ -441,7 +441,7 @@ testLocalPort
 	self assert: serverSocket localPort > 0.
 ! !
 
-!SocketTest methodsFor: 'tests' stamp: 'topa 9/7/2015 23:39'!
+!SocketTest methodsFor: 'tests' stamp: 'topa 7/Sep/2015 23:39:00'!
 testPeerName
 	"None of these should throw an exception."
 	"This can actually take a while, depending on networks availability"
@@ -453,14 +453,14 @@ testPeerName
 	clientSocket peerName.
 	serverSocket peerName.! !
 
-!SocketTest methodsFor: 'tests' stamp: 'ar 9/4/2011 15:45'!
+!SocketTest methodsFor: 'tests' stamp: 'ar 4/Sep/2011 15:45:00'!
 testReceiveTimeout
 	"Test data transfer and related methods"
 
 	self testServerAccept.
 	self assert: (serverSocket receiveDataTimeout: 1) isEmpty.! !
 
-!SocketTest methodsFor: 'tests' stamp: 'dtl 6/3/2012 19:23'!
+!SocketTest methodsFor: 'tests' stamp: 'dtl 3/Jun/2012 19:23:00'!
 testRemoteAddress
 	"Tests the various remoteAddress values for sockets"
 
@@ -470,7 +470,7 @@ testRemoteAddress
 	self assert: serverSocket remoteAddress = self listenerAddress.
 ! !
 
-!SocketTest methodsFor: 'tests' stamp: 'ar 11/26/2010 10:25'!
+!SocketTest methodsFor: 'tests' stamp: 'ar 26/Nov/2010 10:25:00'!
 testRemotePort
 	"Tests the various remoteAddress values for sockets"
 
@@ -480,7 +480,7 @@ testRemotePort
 	self assert: serverSocket remotePort > 0.
 ! !
 
-!SocketTest methodsFor: 'tests' stamp: 'dtl 11/3/2012 14:11'!
+!SocketTest methodsFor: 'tests' stamp: 'dtl 3/Nov/2012 14:11:00'!
 testSendTimeout
 	"Test data transfer and related methods"
 
@@ -507,7 +507,7 @@ testSendTimeout
 	self assert: ex notNil.
 ! !
 
-!SocketTest methodsFor: 'tests' stamp: 'ar 11/26/2010 10:25'!
+!SocketTest methodsFor: 'tests' stamp: 'ar 26/Nov/2010 10:25:00'!
 testServerAccept
 	"Tests a server-side accept"
 
@@ -517,7 +517,7 @@ testServerAccept
 	self assert: (serverSocket isConnected).
 ! !
 
-!SocketTest methodsFor: 'tests' stamp: 'eem 10/9/2020 01:19'!
+!SocketTest methodsFor: 'tests' stamp: 'eem 9/Oct/2020 01:19:00'!
 testSocketReuse
 	"Test for SO_REUSEADDR/SO_REUSEPORT. Should probably be called testUDPSocketReuse.
 	 c.f. testTCPSocketReuse"
@@ -577,7 +577,7 @@ testSocketReuse
 	].
 ! !
 
-!SocketTest methodsFor: 'tests' stamp: 'dtl 7/17/2012 08:08'!
+!SocketTest methodsFor: 'tests' stamp: 'dtl 17/Jul/2012 08:08:00'!
 testStringFromAddress
 	"Addresses are represented by a ByteArray if NetNameResolver useOldNetwork
 	is true, or by by SocketAddress otherwise. Ensure the #stringFromAddress: works
@@ -592,7 +592,7 @@ testStringFromAddress
 	self assert: localName1 = localName2
 ! !
 
-!SocketTest methodsFor: 'tests' stamp: 'eem 10/9/2020 01:17'!
+!SocketTest methodsFor: 'tests' stamp: 'eem 9/Oct/2020 01:17:00'!
 testTCPSocketReuse
 	"Test for SO_REUSEADDR/SO_REUSEPORT using TCP sockets.  c.f. testSocketReuse"
 
@@ -644,7 +644,7 @@ testTCPSocketReuse
 		sendProcess ifNotNil: [ sendProcess terminate ].
 		recvProcess ifNotNil: [ recvProcess terminate ]]! !
 
-!SocketTest methodsFor: 'tests' stamp: 'ar 9/4/2011 15:50'!
+!SocketTest methodsFor: 'tests' stamp: 'ar 4/Sep/2011 15:50:00'!
 testUDP
 	"Test udp recv() and send() functionality"
 
@@ -661,34 +661,34 @@ testUDP
 	self assert: (serverSocket receiveData = 'Hello World').
 ! !
 
-!SocketTest methodsFor: 'failures' stamp: 'mt 6/16/2022 16:15'!
+!SocketTest methodsFor: 'failures' stamp: 'mt 16/Jun/2022 16:15:00'!
 expectedFailures
 
 	^ Smalltalk platformName = 'Win32'
 		ifTrue: [#(testSocketReuse testTCPSocketReuse)]
 		ifFalse: [#()]! !
 
-!SocketTest methodsFor: 'fixtures' stamp: 'topa 9/8/2015 00:02'!
+!SocketTest methodsFor: 'fixtures' stamp: 'topa 8/Sep/2015 00:02:00'!
 listenerAddress
 	^NetNameResolver addressForName: 'localhost'
 ! !
 
-!SocketTest methodsFor: 'fixtures' stamp: 'eem 9/25/2020 13:10'!
+!SocketTest methodsFor: 'fixtures' stamp: 'eem 25/Sep/2020 13:10:00'!
 listenerAddressForFamily: addressFamily
 	^NetNameResolver addressForName: 'localhost' family: addressFamily! !
 
-!SocketTest methodsFor: 'fixtures' stamp: 'ar 11/26/2010 10:13'!
+!SocketTest methodsFor: 'fixtures' stamp: 'ar 26/Nov/2010 10:13:00'!
 listenerPort
 	^42324
 ! !
 
-!SocketTest methodsFor: 'running' stamp: 'ar 11/26/2010 10:24'!
+!SocketTest methodsFor: 'running' stamp: 'ar 26/Nov/2010 10:24:00'!
 setUp
 
 	listenerSocket := Socket newTCP listenOn: self listenerPort backlogSize: 4 interface: self listenerAddress.
 ! !
 
-!SocketTest methodsFor: 'running' stamp: 'ar 11/26/2010 10:24'!
+!SocketTest methodsFor: 'running' stamp: 'ar 26/Nov/2010 10:24:00'!
 tearDown
 
 	listenerSocket ifNotNil:[listenerSocket destroy].
@@ -696,17 +696,17 @@ tearDown
 	serverSocket ifNotNil:[serverSocket destroy].
 ! !
 
-!String class methodsFor: '*Tests-Network' stamp: 'JMM 10/25/2024 11:33:29'!
+!String class methodsFor: '*Tests-Network' stamp: 'JMM 25/Oct/2024 11:33:29'!
 cr
 	^ self crString! !
 
-!String class methodsFor: '*Tests-Network' stamp: 'JMM 10/25/2024 11:35:25'!
+!String class methodsFor: '*Tests-Network' stamp: 'JMM 25/Oct/2024 11:35:25'!
 crlf
 	"Answer a string containing a carriage return and a linefeed."
 
 	^ self crlfString! !
 
-!String class methodsFor: '*Tests-Network' stamp: 'JMM 10/25/2024 11:36:49'!
+!String class methodsFor: '*Tests-Network' stamp: 'JMM 25/Oct/2024 11:36:49'!
 crlfcrlf
 	^self crlf , self crlf.
 ! !
