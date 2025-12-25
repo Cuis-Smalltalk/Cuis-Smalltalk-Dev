@@ -1,6 +1,6 @@
-'From Cuis7.7 [latest update: #7779] on 23 December 2025 at 4:39:06 pm'!
+'From Cuis7.7 [latest update: #7780] on 25 December 2025 at 12:12:18 pm'!
 'Description '!
-!provides: 'JSON' 1 28!
+!provides: 'JSON' 1 29!
 !requires: 'Cuis-Base' 60 5557 nil!
 SystemOrganization addCategory: #JSON!
 
@@ -187,9 +187,11 @@ skipToEndOfLine
 	[ | c | (c := stream peek) = cr or: [ c = lf]] whileFalse: [stream next].
 	self skipWhitespace! !
 
-!Json methodsFor: 'private' stamp: 'Igor.Stasenko 7/Apr/2010 01:24:00'!
+!Json methodsFor: 'private' stamp: 'JEP 23/Dec/2025 11:19:43'!
 skipWhitespace
-	[stream peek isSeparator] whileTrue: [stream next].
+	[ | next |
+		next := stream peek.
+		next notNil and: [next isSeparator]] whileTrue: [stream next].
 	self skipComment.! !
 
 !Json methodsFor: 'private' stamp: 'jmv 9/Jan/2024 16:27:42'!
@@ -226,12 +228,13 @@ stream: aStream
 	stream reset
 	"! !
 
-!Json methodsFor: 'parsing' stamp: 'KenD 23/Nov/2022 15:13:04'!
+!Json methodsFor: 'parsing' stamp: 'JEP 23/Dec/2025 11:24:41'!
 readAny
 	"This is the main entry point for the JSON parser. See also readFrom: on the class side."
 	| c |
 	self skipWhitespace.
 	c := stream peek.
+	c ifNil: [JsonSyntaxError signal: 'Reached end of stream when value is expected'].
 	c = ${ ifTrue: [stream next. ^ self readDictionary].
 	c = $[ ifTrue: [stream next. ^ self readArray].
 	c = $" ifTrue: [stream next. ^ self readString].

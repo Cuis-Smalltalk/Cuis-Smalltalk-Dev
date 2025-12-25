@@ -1,6 +1,6 @@
-'From Cuis7.7 [latest update: #7779] on 23 December 2025 at 4:40:32 pm'!
+'From Cuis7.7 [latest update: #7780] on 25 December 2025 at 12:12:15 pm'!
 'Description '!
-!provides: 'Tests-JSON' 1 6!
+!provides: 'Tests-JSON' 1 7!
 !requires: 'JSON' 1 24 nil!
 SystemOrganization addCategory: #'Tests-JSON'!
 
@@ -190,6 +190,17 @@ testMissingCtorNoMap
 	self 
 		should: [Json new readFrom: '@Missing[]' readStream]
 		raise: JsonSyntaxError! !
+
+!JsonTests methodsFor: 'as yet unclassified' stamp: 'JEP 23/Dec/2025 13:52:27'!
+testMissingValue
+	self 
+		should: [self readFrom: '[']
+		raise: JsonSyntaxError.
+		
+	self 
+		should: [self readFrom: '{"key":']
+		raise: JsonSyntaxError
+! !
 
 !JsonTests methodsFor: 'as yet unclassified' stamp: 'jmv 9/Jan/2024 16:28:49'!
 testStringWithUnicode
