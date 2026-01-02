@@ -8,6 +8,9 @@ These are about Smalltalk and Cuis. The ideas behind them. Why they are the way 
 
 [About Cuis Smalltalk](AboutCuis.md).
 
+## The Cuis Smalltalk Documentation Project
+[Dr. Cuis](http://doc.cuis.st/) is a Community curated repository of Tutorials, References, Explanations and HowTo Guides.
+
 ## Smalltalk introductory material
 
 A [general introduction to Smalltalk](https://mvolkmann.github.io/blog/topics/#/blog/smalltalk/01-quick-introduction/) by Mark Volkmann.
