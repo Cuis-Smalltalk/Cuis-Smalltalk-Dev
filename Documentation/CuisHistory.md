@@ -172,3 +172,4 @@ https://lists.cuis.st/mailman/archives/cuis-dev/2023-December/008269.html
 - Usability. Performance. Robustness.
 
 ## Ongoing since 2025-Dec-19 - Cuis 7.7 Rolling Release
+- OKLCH Color model.
