@@ -1,6 +1,6 @@
-'From Cuis7.5 [latest update: #7736] on 2 December 2025 at 9:43:54 am'!
+'From Cuis7.7 [latest update: #7784] on 6 January 2026 at 1:38:00 pm'!
 'Description Rename extentions tests'!
-!provides: 'BaseImageTests' 1 473!
+!provides: 'BaseImageTests' 1 474!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Compiler'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Objects'!
@@ -23877,8 +23877,8 @@ test037_AutocompletesEntriesFor_ReservedNames_WithIdentifiersBegginingWithThem
 	self assertEntriesWhenBrowsing: 'm1 ni' areIdentifiersBeginningWith: 'nil'.
 	self assertEntriesWhenBrowsing: 'm1 thisContex' areIdentifiersBeginningWith: 'thisContext'.! !
 
-!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'MH-NMS 14/Oct/2023 03:53:39'!
-test038_DoesNotAutocompleteEntriesFor_UndefinedIdentifiers
+!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'HAW 5/Jan/2026 20:00:17'!
+test038_DoesNotAutocompleteEntriesFor_SameUndefinedIdentifier
 
 	| completer |
 	completer := self createCompleterForBrowsing: 'asddas: kdkk ads'.
@@ -23886,6 +23886,23 @@ test038_DoesNotAutocompleteEntriesFor_UndefinedIdentifiers
 	completer computeEntries.
 	
 	self denyHasEntries: completer ! !
+
+!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'HAW 5/Jan/2026 20:10:25'!
+test038b_AutocompleteEntriesFor_UndefinedIdentifiers
+
+	| completer undefinedIdentifierEntries |
+	
+	completer := self createCompleterForBrowsing: 'm1 
+	| otherIdentifier |
+	identifier1 + identifier2 + otherIdentifier.
+	ident'.
+	
+	completer computeEntries.
+	undefinedIdentifierEntries := self entriesToCompareFrom: completer entries.
+	self assert: undefinedIdentifierEntries size equals: 2.
+	self assert: (undefinedIdentifierEntries includes: 'identifier1').
+	self assert: (undefinedIdentifierEntries includes: 'identifier2').
+	self deny: completer canShowSelectorDocumentation! !
 
 !SmalltalkCompleterTest methodsFor: 'tests' stamp: 'HAW 3/May/2020 01:18:55'!
 test039_AutocompletesEntriesFor_BinaryMessages_WithIdentifiersBegginingWithThem
@@ -24345,13 +24362,13 @@ denyComputingEntriesIsSupportedWhenBrowsing: sourceCode
 		detectedPossibleInvalidSelector: #()
 		suggested: nil.! !
 
-!SmalltalkCompleterTest methodsFor: 'assertions' stamp: 'NPM 18/Mar/2020 20:25:15'!
+!SmalltalkCompleterTest methodsFor: 'assertions' stamp: 'HAW 5/Jan/2026 19:57:14'!
 denyHasEntries: aCompleter  
 
 	self
 		assert: aCompleter
 		analizedSelectorsFrom: nil
-		canShowDocumentation: nil
+		canShowDocumentation: false
 		detectedPossibleInvalidSelector: #()
 		suggested: #()! !
 
