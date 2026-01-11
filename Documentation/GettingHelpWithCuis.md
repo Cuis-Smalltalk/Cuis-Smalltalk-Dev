@@ -24,7 +24,7 @@ What you saw is not actually the bug. What you experienced is an incident. You e
 
 ## Bug Reports
 
-When you face an incident, we need you to produce a bug report. Writing Bug Reports is not trivial! There's no need to repeat here what has been already written. Please read [How to write an Effective Bug Report](https://www.browserstack.com/guide/how-to-write-a-bug-report)
+When you face an incident, we need you to produce a bug report. Writing Bug Reports is not trivial! There's no need to repeat here what has been already written. Please read [How to write an Effective Bug Report](https://www.browserstack.com/guide/how-to-write-a-bug-report).
 Writing such bug reports, and posting them to our mail list or the appropriate girhub repo (with a mail to the list too, please) is the way to get a good number of eyes on them, and maximize the chance of a quick fix!
 
 Happy exploring!
