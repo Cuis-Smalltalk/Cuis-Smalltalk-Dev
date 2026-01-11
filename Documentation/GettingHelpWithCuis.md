@@ -1,4 +1,4 @@
-# The value of documentation
+# The value of Documentation
 
 In the Cuis community, questions are most welcome. The main place for them is our mail list. In this space we value free speech, and at the same time we want an open and warm place where everybody can feel comfortable.
 
@@ -9,6 +9,8 @@ For any Open Source project, questions are especially valuable if they point to 
 Still, questions that can be addressed by reading the documentation, or a quick query to the system can sometimes feel annoying to maintainers. Authors can carefully write some explanation, investing several hours, and making that part of the documentation. Or we can instead write 10 times about the same issue, only when someone asks, each time improvising a low quality ten minutes email. The first option results in higher quality material, that can benefit many people over the course of years. The second option gives a low quality answer to just one person, that may never be read again.
 
 So, if you read the documentation first, and then point to flaws or missing parts, you are really helping us make a better system. This can't be stressed enough. We really, really, really, very much, prefer this!
+
+# The value of an Open System
 
 Also keep in mind that most languages and frameworks are what is called "black box". You only get the APIs or language constructs to use. If documentation is unclear or missing, your only resource is to ask someone for help. But, as Dan Ingalls says in his "Design Principles Behind Smalltalk", Smalltalk tries to offer a completely different experience. In Smalltalk, all the libraries are "white box". You are encouraged to look in detail what they are doing. Time spent learning how to inspect and query the system is the best investment you can do in Smalltalk. Then, your questions will be better, and the answers will be better too. Your feedback after reading the documentation and the code will result in real improvement in both.
 
