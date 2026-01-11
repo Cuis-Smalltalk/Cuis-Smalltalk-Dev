@@ -63,7 +63,7 @@ We especially value public discussion of ideas. Do you think we should be doing 
 
 Public discussion of ideas and public sharing of your experiments and sketches is the way to move forward. You ideas will be enriched by others, and you'll find helping hands.
 
-Keeping them for yourself for too long may mean they never mature. Sharing them privately with project maintainers may not give the result you expect. We will pay more attention and give deeper consideration to public discussion than to private discussion. Why? Because public discussion will benefit the whole community and project, while private discussion will most likely only benefit you. So, please, don't be shy and help others by engaging in public discussion of ideas.
+Keeping them for yourself for too long may mean they never mature. Sharing them privately only with project maintainers may not give the result you expect. We will pay more attention and give deeper consideration to public discussion than to private discussion. Why? Because public discussion will benefit the whole community and project, while private discussion will most likely only benefit you. So, please, don't be shy and help others by engaging in public discussion of ideas.
 
 You can browse the mail list archives for a glimpse of previous discussions. Before April 2019, we used cuis-dev @ cuis-smalltalk.org. [Zip with Messages](MailList/cuis-dev_cuis-smalltalk.org.txt.zip). Before April 2016, we used cuis @ jvuletich.org: [Archives](http://jvuletich.org/mailman/listinfo/cuis_jvuletich.org). 
 
