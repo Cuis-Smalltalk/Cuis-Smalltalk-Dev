@@ -16,7 +16,7 @@ Also keep in mind that most languages and frameworks are what is called "black b
 
 # Reporting Bugs
 
-Sometimes you may find in a situation where it seems something is not working well. Your reaction may be "this must be a bug". Ok. How do we get that bug fixed?
+Sometimes you may find in a situation where it seems something is not working well in the base system or some package (not in your own code). Your reaction may be "this must be a bug". Ok. How do we get that bug fixed?
 
 ## Incidents
 
