@@ -20,11 +20,11 @@ Sometimes you may find in a situation where it seems something is not working we
 
 ## Incidents
 
-What you saw is not actually the bug. What you experienced is an incident. You expected some behavior and got a different, wrong behavior. This is called an Incident. The bug is the cause behind it. Why is this distiction important? Because what we can see are incidents, but what we need to fix is bugs! We need to find a way to cross that gap. System maintainers can't work with incidents. We need something better. We need:
+What you saw is not actually the bug. What you experienced is an incident. You expected some behavior and got a different, wrong behavior. This is called an Incident. The bug is the cause behind it. Why is this distiction important? Because what we can see are incidents, but what we need to fix is bugs! We need to find a way to cross that gap. System maintainers can't work with incidents. We need something better. We need Bug Reports.
 
 ## Bug Reports
 
-When you face an incident, we need you to produce a bug report. There's no need to repeat here what has been already written. Please read (How to write an Effective Bug Report)[https://www.browserstack.com/guide/how-to-write-a-bug-report]
+When you face an incident, we need you to produce a bug report. Writing Bug Reports is not trivial! There's no need to repeat here what has been already written. Please read (How to write an Effective Bug Report)[https://www.browserstack.com/guide/how-to-write-a-bug-report]
 Writing such bug reports, and posting them to our mail list or the appropriate girhub repo (with a mail to the list too, please) is the way to get a good number of eyes on them, and maximize the chance of a quick fix!
 
 Happy exploring!
