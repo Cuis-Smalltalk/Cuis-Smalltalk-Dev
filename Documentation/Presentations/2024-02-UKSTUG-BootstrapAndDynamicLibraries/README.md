@@ -2,7 +2,7 @@
 
 [Presentation](BootstrapAndDynamicLibraries.pdf) given by Juan at the [UK Smalltalk User Group Feb 2024](https://www.uksmalltalk.org/2024/02/juan-vuletich-bootstrap-dynamic-cuis.html) online meeting.
 
-The video of the presentation will be available online soon.
+[Video recording of the presentation](https://youtu.be/d9x5dZJJ44s?si=zjqbM1Iuljm8gsw9&t=0)
 
 ### Bootstrap: Creating Minimal Images from Scratch
 
