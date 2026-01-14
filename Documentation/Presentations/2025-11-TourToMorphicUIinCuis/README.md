@@ -1,4 +1,4 @@
-# A tour to the Morphic UI in Cuis
+# A Tour to the Morphic UI in Cuis
 
 [Video recording of the presentation](https://www.youtube.com/watch?v=TWtYkqhfqNQ) given by Juan at the [Smalltalks 2025](https://smalltalks2025.fast.org.ar) conference at Buenos Aires.
 
