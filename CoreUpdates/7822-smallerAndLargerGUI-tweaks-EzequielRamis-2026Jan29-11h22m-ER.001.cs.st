@@ -5,8 +5,8 @@ largerDefaultFont
 	| current larger |
 	current := Preferences at: #defaultFontSize.
 	larger := current < 20 ifTrue: [current +1] ifFalse: [(current * 1.08) rounded].
-	larger := larger min: 96*0+121.
-	self setDefaultFontSize: larger print! !
+	larger := larger min: 121.
+	self setDefaultFontSize: larger! !
 
 !Theme class methodsFor: 'user interface' stamp: 'ER 29/Jan/2026 11:16:22'!
 smallerDefaultFont
@@ -14,5 +14,5 @@ smallerDefaultFont
 	current := Preferences at: #defaultFontSize.
 	smaller := current <= 20 ifTrue: [current -1] ifFalse: [(current / 1.08) rounded].
 	smaller := smaller max: 4.
-	self setDefaultFontSize: smaller print! !
+	self setDefaultFontSize: smaller! !
 
