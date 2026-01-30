@@ -87,7 +87,10 @@ At this point, Cuis is the only Smalltalk system that runs with exactly the same
 
 So we can run in at least one VM flavor in MacOS, Linux (Intel, ARM), Windows and Web Browsers. With some effort it is possible to run on Android, IOS, RISC OS. In the past, we have also ran on Solaris, OS/2, and bare metal.
 
-All this also means that we don't need to maintain forked code bases to support this wide array of VMs and platforms. Developers of applications and tools need to focus on a single code base and always get platform independence for free.   
+All this also means that we don't need to maintain forked code bases to support this wide array of VMs and platforms. Developers of applications and tools need to focus on a single code base and always get platform independence for free.
+
+## 2017-01-10 - CuisUniversity is born ##
+[CuisUniversity](https://sites.google.com/view/cuis-university) is a Cuis Distribution prepared by Hernán Wilkinson with built in support for TDD, Automated Refactorings and DenotativeObjects. It is used for teaching at Universidad de Buenos Aires - FCEN (School of Sciences) and FIUBA (School of Engineering), and also at Universidad de Quilmes.
 
 ## 2019-05-10 - TrueType font support ##
 100% Smalltalk code. Top visual quality, surpassing the native font rasterizers used by MacOS, Windows and Linux. No need for FreeType or any other external library.
