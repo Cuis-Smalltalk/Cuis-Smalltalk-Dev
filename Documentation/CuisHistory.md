@@ -90,12 +90,15 @@ So we can run in at least one VM flavor in MacOS, Linux (Intel, ARM), Windows an
 All this also means that we don't need to maintain forked code bases to support this wide array of VMs and platforms. Developers of applications and tools need to focus on a single code base and always get platform independence for free.
 
 ## 2017-01-10 - CuisUniversity is born ##
-[CuisUniversity](https://sites.google.com/view/cuis-university) is a Cuis Distribution prepared by Hernán Wilkinson with built in support for TDD, Automated Refactorings and DenotativeObjects. It is used for teaching at Universidad de Buenos Aires - FCEN (School of Sciences) and FIUBA (School of Engineering), and also at Universidad de Quilmes.
+[CuisUniversity](https://sites.google.com/view/cuis-university) is a Cuis Distribution prepared by Hernán Wilkinson with built in support for TDD, Automated Refactorings and DenotativeObjects. It is used for teaching at Universidad de Buenos Aires - FCEN (School of Sciences) and FIUBA (School of Engineering), and at Universidad de Quilmes.
 
 ## 2019-05-10 - TrueType font support ##
 100% Smalltalk code. Top visual quality, surpassing the native font rasterizers used by MacOS, Windows and Linux. No need for FreeType or any other external library.
 
 https://lists.cuis.st/mailman/archives/cuis-dev/2019-May/000184.html
+
+## 2020-04-16 - DrGeo ##
+Hilaire Fermandes started the port of [Dr. Geo](https://gnu-drgeo.blogspot.com/) to Cuis. Welcome Hilaire and Dr. Geo!
 
 ## 2020 - The Cuis Book ##
 Hilaire Fernandes lead the creation of a book written specifically for people learning about Cuis and Smalltalk.
