@@ -1,6 +1,6 @@
 'From Cuis6.3 [latest update: #6221] on 7 February 2024 at 5:21:36 pm'!
 'Description Various code used in Squeak which is not in Cuis.'!
-!provides: 'SqueakCompatibility' 1 44!
+!provides: 'SqueakCompatibility' 1 45!
 !requires: 'Cuis-Base' 6 3 nil!
 SystemOrganization addCategory: #SqueakCompatibility!
 SystemOrganization addCategory: #'SqueakCompatibility-System-Files'!
@@ -396,7 +396,7 @@ To use the file system for most applications, you typically create a FileStream.
 Usually, the active class is StandardFileStream. But regardless of this, it is conventional to reference FileStream in code. This allows replacing StandardFileStream with something else (and not a real file in the host OS file system) if needed.!
 
 !StandardFileStream commentStamp: 'ul 12/6/2009 05:13' prior: 0!
-Provides a simple, platform-independent, interface to a file system. The instance variable rwmode, inherited from class PositionableStream, here is used to hold a Boolean -- true means opened for read-write, false means opened for read-only.  2/12/96 sw
+Provides a simple, platform-independent, interface to a file system. The instance variable rwmode, inherited from class PositionableStream, here is used to hold a Boolean -- true means opened for read-write, false means opened for read-only.  2/12/1996 sw
 
 I implement a simple read buffering scheme with the variables defined in PositionableStream (which are unused in me otherwise) in the following way:
 	collection	<ByteString> or <ByteArray>	This is the buffer.
@@ -1411,15 +1411,15 @@ primWrite: id from: stringOrByteArray startingAt: startIndex count: count
 			ifTrue: [ 'File [', name, '] is closed' ]
 			ifFalse: [ 'File [', name, '] write failed' ])! !
 
-!StandardFileStream methodsFor: 'registry' stamp: 'ar 3/21/98 17:23'!
+!StandardFileStream methodsFor: 'registry' stamp: 'ar 3/21/1998 17:23'!
 register
 	^self class register: self! !
 
-!StandardFileStream methodsFor: 'registry' stamp: 'ar 3/21/98 17:23'!
+!StandardFileStream methodsFor: 'registry' stamp: 'ar 3/21/1998 17:23'!
 unregister
 	^self class unregister: self! !
 
-!StandardFileStream methodsFor: 'finalization' stamp: 'ar 3/21/98 18:16'!
+!StandardFileStream methodsFor: 'finalization' stamp: 'ar 3/21/1998 18:16'!
 actAsExecutor
 	super actAsExecutor.
 	name := nil.! !
@@ -1614,7 +1614,7 @@ pathName: badPathName
 pathName: badPathName
 	^self new pathName: badPathName! !
 
-!FileDirectory methodsFor: 'printing' stamp: 'jm 12/4/97 19:41'!
+!FileDirectory methodsFor: 'printing' stamp: 'jm 12/4/1997 19:41'!
 printOn: aStream 
 	"Refer to the comment in Object|printOn:."
 
@@ -1696,7 +1696,7 @@ fullNameFor: fileName
 		ifTrue:[^ prefix, correctedLocalName]
 		ifFalse:[^ prefix, self slash, correctedLocalName]! !
 
-!FileDirectory methodsFor: 'file name utilities' stamp: 'jm 12/4/97 21:19'!
+!FileDirectory methodsFor: 'file name utilities' stamp: 'jm 12/4/1997 21:19'!
 isLegalFileName: aString 
 	"Answer true if the given string is a legal file name."
 
@@ -1777,7 +1777,7 @@ splitNameVersionExtensionFor: fileName
 			baseName _ baseName copyFrom: 1 to: j].
 	^ Array with: baseName with: version with: extension! !
 
-!FileDirectory methodsFor: 'enumeration' stamp: 'jm 1/5/98 20:49'!
+!FileDirectory methodsFor: 'enumeration' stamp: 'jm 1/5/1998 20:49'!
 containingDirectory
 	"Return the directory containing this directory."
 
@@ -1801,7 +1801,7 @@ directoryEntryFor: filenameOrPath
 		ifTrue:[^dir entries detect:[:entry| entry name = fName] ifNone: nil]
 		ifFalse:[^dir entries detect:[:entry| entry name sameAs: fName] ifNone: nil]! !
 
-!FileDirectory methodsFor: 'enumeration' stamp: 'jm 12/5/97 15:46'!
+!FileDirectory methodsFor: 'enumeration' stamp: 'jm 12/5/1997 15:46'!
 directoryNamed: localFileName
 	"Return the subdirectory of this directory with the given name."
 
@@ -1876,7 +1876,7 @@ fullNamesOfAllFilesInSubtree
 	^ result asArray
 ! !
 
-!FileDirectory methodsFor: 'enumeration' stamp: 'jm 12/5/97 15:39'!
+!FileDirectory methodsFor: 'enumeration' stamp: 'jm 12/5/1997 15:39'!
 keysDo: nameBlock
 	"Evaluate the given block for each file or directory name in this directory."
 
@@ -1923,7 +1923,7 @@ copyFileWithoutOverwriteConfirmationNamed: fileName1 toFileNamed: fileName2
 	file1 close.
 	file2 close.! !
 
-!FileDirectory methodsFor: 'file operations' stamp: 'jm 12/4/97 22:55'!
+!FileDirectory methodsFor: 'file operations' stamp: 'jm 12/4/1997 22:55'!
 createDirectory: localFileName
 	"Create a directory with the given name in this directory. Fail if the name is bad or if a file or directory with that name already exists."
 
@@ -2272,21 +2272,21 @@ on: fullPath
 
 	^ self class on: fullPath! !
 
-!FileDirectory methodsFor: 'path access' stamp: 'jm 12/5/97 12:18'!
+!FileDirectory methodsFor: 'path access' stamp: 'jm 12/5/1997 12:18'!
 pathName
 	"Return the path from the root of the file system to this directory."
 
 	^ pathName
 ! !
 
-!FileDirectory methodsFor: 'path access' stamp: 'jm 12/5/97 12:19'!
+!FileDirectory methodsFor: 'path access' stamp: 'jm 12/5/1997 12:19'!
 pathNameDelimiter
 	"Return the delimiter character for this kind of directory. This depends on the current platform."
 
 	^ self class pathNameDelimiter
 ! !
 
-!FileDirectory methodsFor: 'path access' stamp: 'jm 12/5/97 12:17'!
+!FileDirectory methodsFor: 'path access' stamp: 'jm 12/5/1997 12:17'!
 pathParts
 	"Return the path from the root of the file system to this directory as an array of directory names."
 
@@ -2344,7 +2344,7 @@ primRename: oldFileFullName to: newFileFullName
 	<primitive: 'primitiveFileRename' module: 'FilePlugin'>
 	^nil! !
 
-!FileDirectory methodsFor: 'private' stamp: 'jm 12/4/97 22:44'!
+!FileDirectory methodsFor: 'private' stamp: 'jm 12/4/1997 22:44'!
 setPathName: pathString
 
 	pathName _ pathString.
@@ -2543,7 +2543,7 @@ on: pathString
 	^ self activeDirectoryClass new setPathName: pathName
 ! !
 
-!FileDirectory class methodsFor: 'instance creation' stamp: 'jm 12/4/97 23:29'!
+!FileDirectory class methodsFor: 'instance creation' stamp: 'jm 12/4/1997 23:29'!
 root
 	"Answer the root directory."
 
@@ -2599,14 +2599,14 @@ deleteFilePath: fileName
 directoryEntryFor: filenameOrPath
 	^self default directoryEntryFor: filenameOrPath! !
 
-!FileDirectory class methodsFor: 'platform specific' stamp: 'jm 3/27/98 08:17'!
+!FileDirectory class methodsFor: 'platform specific' stamp: 'jm 3/27/1998 08:17'!
 dot
 	"Return a one-character string containing the filename extension delimiter for this platform (i.e., the local equivalent of 'dot')"
 
 	^ self extensionDelimiter asString
 ! !
 
-!FileDirectory class methodsFor: 'platform specific' stamp: 'jm 3/27/98 06:57'!
+!FileDirectory class methodsFor: 'platform specific' stamp: 'jm 3/27/1998 06:57'!
 extensionDelimiter
 	"Return the character used to delimit filename extensions on this platform. Most platforms use the period (.) character."
 
@@ -2859,7 +2859,7 @@ maxFileNameLength
 	^ 255
 ! !
 
-!DosFileDirectory class methodsFor: 'platform specific' stamp: 'jm 12/4/97 22:57'!
+!DosFileDirectory class methodsFor: 'platform specific' stamp: 'jm 12/4/1997 22:57'!
 pathNameDelimiter
 
 	^ $\
@@ -2917,7 +2917,7 @@ fullPathFor: path
 		ifTrue: ['/' , path]
 		ifFalse: [pathName , '/' , path]! !
 
-!UnixFileDirectory methodsFor: 'private' stamp: 'jm 12/4/97 23:43'!
+!UnixFileDirectory methodsFor: 'private' stamp: 'jm 12/4/1997 23:43'!
 setPathName: pathString
 	"Unix path names start with a leading delimiter character."
 
@@ -2938,7 +2938,7 @@ maxFileNameLength
 
 	^ 255! !
 
-!UnixFileDirectory class methodsFor: 'platform specific' stamp: 'jm 9/17/97 15:48'!
+!UnixFileDirectory class methodsFor: 'platform specific' stamp: 'jm 9/17/1997 15:48'!
 pathNameDelimiter
 
 	^ $/

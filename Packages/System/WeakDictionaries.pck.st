@@ -1,4 +1,4 @@
-'From Cuis7.5 [latest update: #7593] on 19 September 2025 at 4:53:06 pm'!
+'From Cuis7.7 [latest update: #7829] on 5 February 2026 at 4:21:17 pm'!
 'Description '!
 !provides: 'WeakDictionaries' 1 1!
 SystemOrganization addCategory: #WeakDictionaries!
@@ -71,7 +71,7 @@ I am an association holding only weakly on my key.!
 !WeakValueAssociation commentStamp: '<historical>' prior: 0!
 I am a lookup key (acting like an association but) holding only weakly on my value.!
 
-!WeakKeyDictionary methodsFor: 'finalization' stamp: 'ar 10/21/2000 20:00'!
+!WeakKeyDictionary methodsFor: 'finalization' stamp: 'ar 21/Oct/2000 20:00:00'!
 finalizeValues
 	"remove all nil keys and rehash the receiver afterwards"
 	| assoc |
@@ -81,7 +81,7 @@ finalizeValues
 	].
 	self rehash.! !
 
-!WeakKeyDictionary methodsFor: 'finalization' stamp: 'ar 10/21/2000 20:01'!
+!WeakKeyDictionary methodsFor: 'finalization' stamp: 'ar 21/Oct/2000 20:01:00'!
 finalizeValues: finiObjects
 	"Remove all associations with key == nil and value is in finiObjects.
 	This method is folded with #rehash for efficiency."
@@ -98,12 +98,12 @@ finalizeValues: finiObjects
 		].
 	].! !
 
-!WeakKeyDictionary methodsFor: 'accessing' stamp: 'JMM 12/12/2024 09:19:24'!
+!WeakKeyDictionary methodsFor: 'accessing' stamp: 'JMM 12/Dec/2024 09:19:24'!
 associationClass
 
 	^WeakKeyAssociation! !
 
-!WeakKeyDictionary methodsFor: 'accessing' stamp: 'JMM 12/12/2024 09:08:53'!
+!WeakKeyDictionary methodsFor: 'accessing' stamp: 'JMM 12/Dec/2024 09:08:53'!
 at: key put: anObject 
 	"Set the value at key to be anObject.  If key is not found, create a new
 	entry for key and set is value to anObject. Answer anObject."
@@ -111,18 +111,18 @@ at: key put: anObject
 	key ifNil: [ ^anObject ].
 	^super at: key put: anObject! !
 
-!WeakKeyDictionary methodsFor: 'accessing' stamp: 'ar 2/11/2001 02:21'!
+!WeakKeyDictionary methodsFor: 'accessing' stamp: 'ar 11/Feb/2001 02:21:00'!
 keysDo: aBlock 
 	"Evaluate aBlock for each of the receiver's keys."
 	self associationsDo: [:association | 
 		association key ifNotNil:[aBlock value: association key]].! !
 
-!WeakKeyDictionary methodsFor: 'private' stamp: 'ar 10/21/2000 19:58'!
+!WeakKeyDictionary methodsFor: 'private' stamp: 'ar 21/Oct/2000 19:58:00'!
 fixCollisionsFrom: oldIndex
 	"The element at index has been removed and replaced by nil."
 	self rehash. "Do it the hard way - we may have any number of nil keys and #rehash deals with them"! !
 
-!WeakKeyDictionary methodsFor: 'private' stamp: 'ar 10/21/2000 19:56'!
+!WeakKeyDictionary methodsFor: 'private' stamp: 'ar 21/Oct/2000 19:56:00'!
 rehash
 	"Rehash the receiver. Reimplemented to allow for multiple nil keys"
 	| oldArray assoc newIndex |
@@ -137,7 +137,7 @@ rehash
 		].
 	].! !
 
-!WeakKeyDictionary methodsFor: 'private' stamp: 'ar 10/21/2000 19:46'!
+!WeakKeyDictionary methodsFor: 'private' stamp: 'ar 21/Oct/2000 19:46:00'!
 scanFor: anObject
 	"ar 10/21/2000: The method has been copied to this location to indicate that whenever #scanFor: changes #scanForNil: must be changed in the receiver as well."
 	"Scan the key array for the first slot containing either a nil (indicating an empty slot) or an element that matches anObject. Answer the index of that slot or zero if no slot is found. This method will be overridden in various subclasses that have different interpretations for matching elements."
@@ -157,7 +157,7 @@ scanFor: anObject
 
 	^ 0  "No match AND no empty slot"! !
 
-!WeakKeyDictionary methodsFor: 'private' stamp: 'ar 10/21/2000 19:46'!
+!WeakKeyDictionary methodsFor: 'private' stamp: 'ar 21/Oct/2000 19:46:00'!
 scanForNil: anObject
 	"Private. Scan the key array for the first slot containing nil (indicating an empty slot). Answer the index of that slot."
 	| start finish |
@@ -174,12 +174,12 @@ scanForNil: anObject
 
 	^ 0  "No match AND no empty slot"! !
 
-!WeakKeyDictionary methodsFor: 'adding' stamp: 'ar 3/21/98 16:00'!
+!WeakKeyDictionary methodsFor: 'adding' stamp: 'ar 21/Mar/1998 16:00:00'!
 add: anAssociation
 	self at: anAssociation key put: anAssociation value.
 	^ anAssociation! !
 
-!WeakKeyDictionary methodsFor: 'public' stamp: 'ul 2/4/2010 00:59'!
+!WeakKeyDictionary methodsFor: 'public' stamp: 'ul 4/Feb/2010 00:59:00'!
 slowSize
 	"Careful!! Answer the maximum amount
 	of elements in the receiver, not the
@@ -193,7 +193,7 @@ slowSize
 				count := count + 1 ] ] ].
 	^count! !
 
-!WeakIdentityKeyDictionary methodsFor: 'private' stamp: 'jmv 2/21/2020 12:33:40'!
+!WeakIdentityKeyDictionary methodsFor: 'private' stamp: 'jmv 21/Feb/2020 12:33:40'!
 scanFor: anObject
 	"ar 10/21/2000: The method has been copied to this location to indicate that whenever #scanFor: changes #scanForNil: must be changed in the receiver as well."
 	"Scan the key array for the first slot containing either a nil (indicating an empty slot) or an element that matches anObject. Answer the index of that slot or zero if no slot is found. This method will be overridden in various subclasses that have different interpretations for matching elements."
@@ -215,7 +215,7 @@ scanFor: anObject
 
 	^ 0  "No match AND no empty slot"! !
 
-!WeakIdentityKeyDictionary methodsFor: 'private' stamp: 'jmv 2/21/2020 12:33:43'!
+!WeakIdentityKeyDictionary methodsFor: 'private' stamp: 'jmv 21/Feb/2020 12:33:43'!
 scanForNil: anObject
 	"Private. Scan the key array for the first slot containing nil (indicating an empty slot). Answer the index of that slot."
 
@@ -235,17 +235,17 @@ scanForNil: anObject
 
 	^ 0  "No match AND no empty slot"! !
 
-!WeakValueDictionary methodsFor: 'adding' stamp: 'ar 3/21/98 16:02'!
+!WeakValueDictionary methodsFor: 'adding' stamp: 'ar 21/Mar/1998 16:02:00'!
 add: anAssociation
 	self at: anAssociation key put: anAssociation value.
 	^ anAssociation! !
 
-!WeakValueDictionary methodsFor: 'accessing' stamp: 'JMM 12/12/2024 09:19:43'!
+!WeakValueDictionary methodsFor: 'accessing' stamp: 'JMM 12/Dec/2024 09:19:43'!
 associationClass
 
 	^WeakValueAssociation! !
 
-!WeakValueDictionary methodsFor: 'accessing' stamp: 'jmv 7/23/2009 15:27'!
+!WeakValueDictionary methodsFor: 'accessing' stamp: 'jmv 23/Jul/2009 15:27:00'!
 at: key ifAbsentOrNil: aBlock
 	"In a WeakValueDictionary, normally nil values (i.e. collected values) are considered the same as if the key/value was never added. Hence, this convenience method."
 	
@@ -254,20 +254,20 @@ at: key ifAbsentOrNil: aBlock
 	assoc ifNil: [ ^ aBlock value ].
 	^ assoc value ifNil: [ aBlock value ]! !
 
-!WeakValueDictionary methodsFor: 'accessing' stamp: 'jmv 7/23/2009 15:28'!
+!WeakValueDictionary methodsFor: 'accessing' stamp: 'jmv 23/Jul/2009 15:28:00'!
 at: key ifAbsentOrNilPut: aBlock 
 	"Return the value at the given key.
 	If key is not included in the receiver store the result
 	of evaluating aBlock as new value."
 	^self at: key ifAbsentOrNil: [self at: key put: aBlock value]! !
 
-!WeakKeyAssociation methodsFor: 'comparing' stamp: 'ar 3/21/98 15:45'!
+!WeakKeyAssociation methodsFor: 'comparing' stamp: 'ar 21/Mar/1998 15:45:00'!
 < aLookupKey 
 	"Refer to the comment in Magnitude|<."
 
 	^self key < aLookupKey key! !
 
-!WeakKeyAssociation methodsFor: 'comparing' stamp: 'jmv 8/9/2016 10:01:54'!
+!WeakKeyAssociation methodsFor: 'comparing' stamp: 'jmv 9/Aug/2016 10:01:54'!
 = aLookupKey
 	self == aLookupKey ifTrue: [ ^ true ].
 
@@ -276,13 +276,13 @@ at: key ifAbsentOrNilPut: aBlock
 
 	^self key = aLookupKey key! !
 
-!WeakKeyAssociation methodsFor: 'comparing' stamp: 'ar 3/21/98 15:46'!
+!WeakKeyAssociation methodsFor: 'comparing' stamp: 'ar 21/Mar/1998 15:46:00'!
 hash
 	"Hash is reimplemented because = is implemented."
 
 	^self key hash! !
 
-!WeakKeyAssociation methodsFor: 'printing' stamp: 'ar 3/21/98 15:53'!
+!WeakKeyAssociation methodsFor: 'printing' stamp: 'ar 21/Mar/1998 15:53:00'!
 storeOn: aStream
 	aStream 
 		nextPut: $(;
@@ -293,40 +293,40 @@ storeOn: aStream
 	self value storeOn: aStream.
 	aStream nextPut: $)! !
 
-!WeakKeyAssociation methodsFor: 'accessing' stamp: 'jmv 3/2/2010 16:43'!
+!WeakKeyAssociation methodsFor: 'accessing' stamp: 'jmv 2/Mar/2010 16:43:00'!
 key
 	^key ifNotNil: [ key at: 1]! !
 
-!WeakKeyAssociation methodsFor: 'accessing' stamp: 'ar 3/21/98 15:45'!
+!WeakKeyAssociation methodsFor: 'accessing' stamp: 'ar 21/Mar/1998 15:45:00'!
 key: aKey
 	key := WeakArray with: aKey! !
 
-!WeakKeyAssociation methodsFor: 'accessing' stamp: 'raok 11/29/2002 14:49'!
+!WeakKeyAssociation methodsFor: 'accessing' stamp: 'raok 29/Nov/2002 14:49:00'!
 key: aKey value: anObject
 	key := WeakArray with: aKey.
 	value := anObject.! !
 
-!WeakValueAssociation methodsFor: 'accessing' stamp: 'r++ 5/27/2000 18:11'!
+!WeakValueAssociation methodsFor: 'accessing' stamp: 'r++ 27/May/2000 18:11:00'!
 key: aKey value: anObject 
 	"Store the arguments as the variables of the receiver."
 
 	key := aKey.
 	self value: anObject! !
 
-!WeakValueAssociation methodsFor: 'accessing' stamp: 'r++ 5/27/2000 18:08'!
+!WeakValueAssociation methodsFor: 'accessing' stamp: 'r++ 27/May/2000 18:08:00'!
 value
 	^self at: 1! !
 
-!WeakValueAssociation methodsFor: 'accessing' stamp: 'r++ 5/27/2000 18:08'!
+!WeakValueAssociation methodsFor: 'accessing' stamp: 'r++ 27/May/2000 18:08:00'!
 value: anObject 
 	"Store the argument, anObject, as the value of the receiver."
 
 	self at: 1 put: anObject! !
 
-!WeakValueAssociation class methodsFor: 'instance creation' stamp: 'r++ 5/27/2000 18:07'!
+!WeakValueAssociation class methodsFor: 'instance creation' stamp: 'r++ 27/May/2000 18:07:00'!
 key: anObject value: bObject
 	^ self new key: anObject value: bObject! !
 
-!WeakValueAssociation class methodsFor: 'as yet unclassified' stamp: 'r++ 5/27/2000 18:12'!
+!WeakValueAssociation class methodsFor: 'as yet unclassified' stamp: 'r++ 27/May/2000 18:12:00'!
 new
 	^ self new: 1! !

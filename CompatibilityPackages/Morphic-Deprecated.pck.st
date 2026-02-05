@@ -1,6 +1,6 @@
 'From Cuis7.1 [latest update: #6669] on 2 September 2024 at 8:20:42 pm'!
 'Description '!
-!provides: 'Morphic-Deprecated' 1 5!
+!provides: 'Morphic-Deprecated' 1 6!
 SystemOrganization addCategory: #'Morphic-Deprecated'!
 
 
@@ -233,7 +233,7 @@ font: aFont
 	font _ aFont.
 	^ self font: font emphasis: emphasis! !
 
-!StringMorph methodsFor: 'printing' stamp: 'jm 11/3/97 16:52'!
+!StringMorph methodsFor: 'printing' stamp: 'jm 11/3/1997 16:52'!
 printOn: aStream
 
 	super printOn: aStream.
@@ -378,7 +378,7 @@ minimumExtent
 
 	^ self measureContents ! !
 
-!StringMorph class methodsFor: 'instance creation' stamp: 'sw 8/22/97 22:19'!
+!StringMorph class methodsFor: 'instance creation' stamp: 'sw 8/22/1997 22:19'!
 contents: aString
 	" 'StringMorph contents: str' is faster than 'StringMorph new contents: str' "
 	^ self contents: aString font: nil! !

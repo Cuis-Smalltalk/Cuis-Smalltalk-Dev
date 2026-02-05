@@ -1,6 +1,6 @@
 'From Cuis7.7 [latest update: #7779] on 23 December 2025 at 4:32:30 pm'!
 'Description Add ability to dynamically add topic pages from other sources.'!
-!provides: 'TerseGuide' 1 150!
+!provides: 'TerseGuide' 1 151!
 SystemOrganization addCategory: #TerseGuide!
 
 
@@ -802,7 +802,7 @@ y _ x daysLeftInYear.						"days left in year (364|365)"
 y _ x printFormat: #(2 1 3 $/ 1 1).		"print formatted date"
 b _ (x < Date today).						"comparison"
 y _ x julianDayNumber.
-y _ x mmddyyyy.	"Answer the receiver rendered in standard fmt mm/dd/yyyy. Note that the name #mmddyyyy is slightly misleading -- the month and day numbers don''t show leading zeros, so that for example feb 1 1996 is 2/1/96"
+y _ x mmddyyyy.	"Answer the receiver rendered in standard fmt mm/dd/yyyy. Note that the name #mmddyyyy is slightly misleading -- the month and day numbers don''t show leading zeros, so that for example feb 1 1996 is 2/1/1996"
 y _ x month.
 y _ x monthAbbreviation.
 y _ x monthIndex.
