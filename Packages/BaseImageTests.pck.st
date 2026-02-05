@@ -1,6 +1,6 @@
-'From Cuis7.7 [latest update: #7825] on 3 February 2026 at 12:36:09 pm'!
+'From Cuis7.7 [latest update: #7827] on 5 February 2026 at 12:18:39 pm'!
 'Description Rename extentions tests'!
-!provides: 'BaseImageTests' 1 475!
+!provides: 'BaseImageTests' 1 476!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Compiler'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Objects'!
@@ -8394,37 +8394,43 @@ testToByDo
 	start to: end by: step do: [ :time | last _ time ].
 	self assert: last = end! !
 
-!DateTest methodsFor: 'tests' stamp: 'jmv 13/May/2017 15:03:35'!
+!DateTest methodsFor: 'tests' stamp: 'jmv 5/Feb/2026 12:15:47'!
 testCreation
 
 	| date |
-	date _ '2014/6/30' asDate.
+	date := '2014/6/30' asDate.
 	self assert: date yearNumber = 2014.
 	self assert: date monthIndex = 6.
 	self assert: date dayOfMonth = 30.
 
-	date _ '70/12/30' asDate.
+	[ date := '70/12/30' asDate ] on: BackCompatibilityAlert do: [ :ex | ex resume ].
+	self assert: date yearNumber = 70.
+	self assert: date monthIndex = 12.
+	self assert: date dayOfMonth = 30.
+
+	date := '1970/12/30' asDate.
 	self assert: date yearNumber = 1970.
 	self assert: date monthIndex = 12.
 	self assert: date dayOfMonth = 30.
 
-	date _ '12/30/70' asDate.
+	date := '12/30/1970' asDate.
 	self assert: date yearNumber = 1970.
 	self assert: date monthIndex = 12.
 	self assert: date dayOfMonth = 30.
 
-	date _ '30/12/70' asDate.
-	self assert: date yearNumber = 1970.
-	self assert: date monthIndex = 12.
-	self assert: date dayOfMonth = 30.
+	self should: ['30/12/1970' asDate] raise: Error.
 
-	"Quite ambiguous, actually"
-	date _ '4/5/6' asDate.
+	[ date := '4/5/6' asDate ] on: BackCompatibilityAlert do: [ :ex | ex resume ].
+	self assert: date yearNumber = 4.
+	self assert: date monthIndex = 5.
+	self assert: date dayOfMonth = 6.
+
+	date := '4/5/2006' asDate.
 	self assert: date yearNumber = 2006.
 	self assert: date monthIndex = 4.
 	self assert: date dayOfMonth = 5.
 
-	date _ '15 April 1982' asDate.
+	date := '15 April 1982' asDate.
 	self assert: date yearNumber = 1982.
 	self assert: date monthIndex = 4.
 	self assert: date dayOfMonth = 15.! !
