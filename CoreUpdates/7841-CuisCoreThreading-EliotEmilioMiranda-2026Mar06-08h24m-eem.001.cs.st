@@ -66,6 +66,10 @@ processHasThreadAffinityInstVar
 	^flag! !
 
 
+!SystemDictionary methodsFor: 'system attributes' stamp: 'eem 3/5/2026 12:26'!
+isRunningThreadedVM
+	^(self vmParameterAt: 65) anyMask: 2r1000000! !
+
 !Process methodsFor: 'accessing' stamp: 'eem 3/Mar/2026 15:43:00'!
 osError
 	"Answer the receiver's osError from a recent FFI call, or nil.
