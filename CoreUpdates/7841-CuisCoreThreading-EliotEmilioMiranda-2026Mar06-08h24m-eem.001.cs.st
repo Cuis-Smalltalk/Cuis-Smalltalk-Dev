@@ -45,25 +45,25 @@ env
 	- if not nil this is a Dictionary providing process-specific variables.  See e.g. environmentAt:*, DynamicVariable and ProcessSpecificVariable.!
 
 
-!SystemDictionary methodsFor: 'system attributes' stamp: 'eem 3/Mar/2026 18:40:00'!
+!SystemDictionary methodsFor: 'system attributes' stamp: 'eem 3/6/2026 11:01:00'!
 processHasOSErrorInstVar
 	"The threaded VM needs to know if the 5th inst var of Process
 	 is osError which it uses to report FFI errors in a thread-safe manner."
 	
 	| flag |
-	flag := self imageHeaderFlagAt: 0.
-	self assert: [flag ==> [(Process instVarNames at: 5) = 'osError']].
-	^ flag! !
+	flag := (self vmParameterAt: 65) anyMask: 8.
+	self assert: flag == ((Process instVarNames at: 5) = 'osError').
+	^flag! !
 
-!SystemDictionary methodsFor: 'system attributes' stamp: 'mt 8/Dec/2023 11:01:00'!
+!SystemDictionary methodsFor: 'system attributes' stamp: 'eem 3/6/2026 11:01:00'!
 processHasThreadAffinityInstVar
 	"The threaded VM needs to know if the 4th inst var of Process
 	 is threadAffinity which it uses to control process-to-thread binding."
 	
 	| flag |
-	flag := self imageHeaderFlagAt: 0.
-	self assert: [flag ==> [(Process instVarNames at: 4) = 'threadAffinity']].
-	^ flag! !
+	flag := (self vmParameterAt: 65) anyMask: 1.
+	self assert: flag == ((Process instVarNames at: 4) = 'threadAffinity').
+	^flag! !
 
 
 !Process methodsFor: 'accessing' stamp: 'eem 3/Mar/2026 15:43:00'!
