@@ -10,8 +10,6 @@ readFrom: aStream
 		<day> <monthName> <year>		(15 April 1982) (Only if third argument has 3 or more characters)"
 
 	| firstAsNumber firstAsNumberSign second third thirdLength thirdStart |
-	self flag: #newCode. "Replaces by a method with #oldCode flag and _old suffix."
-
 	firstAsNumberSign := aStream peek == $- ifTrue: [-1] ifFalse: [1].
 
 	[aStream peek isAlphaNumeric] whileFalse: [aStream skip].
@@ -49,8 +47,6 @@ readFrom: aStream
 		<year> <monthName>		(1982, April; 1982 April; etc)"
 
 	| firstAsNumber firstAsNumberSign second secondLength secondStart |
-	self flag: #newCode. "Replaces by a method with #oldCode flag and _old suffix."
-
 	firstAsNumberSign := aStream peek == $- ifTrue: [-1] ifFalse: [1].
 
 	[aStream peek isAlphaNumeric] whileFalse: [aStream skip].
