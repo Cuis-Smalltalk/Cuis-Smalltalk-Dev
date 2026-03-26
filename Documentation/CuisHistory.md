@@ -154,27 +154,27 @@ https://lists.cuis.st/mailman/archives/cuis-dev/2023-December/008269.html
 ## 2025-05-30 - Cuis 7.4 Stable Release, Cuis 7.5 Rolling Release
 - Updates to Vector Graphics:
     - Clipping to the arbitrary convex shape of multiple nested containers. Correct clipping in SVG Morphs.
-    - Dashed strokes with a convenient, easy to use API.
+    - Fast dashed strokes with a convenient, easy to use API.
     - Support for UTF-32 and ASCII text output (in addition to the UTF-8 text that Cuis uses).
     - Big performance improvements.
-- Ephemerons. New Ephemeron based FinalizationRegistry. New Ephemeron ActionMaps and Property Tables.
+- Ephemerons. New Ephemeron based FinalizationRegistry. New Ephemeron based ActionMaps and Property Tables.
 - New WeakSet. New Symbol table.
 - Debugger enhancements.
 - Updated Random Number Generator.
-- Usability. Performance. Robustness.
+- Enahncements: Usability. Performance. Robustness.
 
 ## 2025-Dec-19 - Cuis 7.6 Stable Release, Cuis 7.7 Rolling Release
-- Completed support for the Sista Bytecode set.
+- Completed the support for the Sista Bytecode set.
 - Debugger robustness against non-reentrant code. #effectiveProcess.
 - Allow adding instance variables to ClassDescription.
-- FormLayout and LayoutSizeSpec.
+- New Layout strategy: FormLayout and LayoutSizeSpec.
 - New better implementation of User Events dispatching to Morphs.
 - Improved handling of Keyboard Focus and ClickToFocus.
 - Bubbling up on unhandled Keyboard Sortcuts.
 - Ongoing work on Bootstrap and Compiled Libraries:
-    - Use the Sista Bytecode Set by default.
-    - Unrestricted class reshaping and merge of class definitions
-    - Remap of instance variable access in CompiledMethods.
+    - Support the Sista Bytecode Set, and use it by default.
+    - Lifted all restrictions on class reshaping and merge of class definitions.
+    - Lifted all restrictions on remap of instance variable access in CompiledMethods.
 - Usability. Performance. Robustness.
 
 ## Ongoing since 2025-Dec-19 - Cuis 7.7 Rolling Release
