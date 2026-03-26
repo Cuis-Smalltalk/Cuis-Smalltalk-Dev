@@ -1,6 +1,6 @@
-'From Cuis7.7 [latest update: #7779] on 23 December 2025 at 4:38:49 pm'!
+'From Cuis7.7 [latest update: #7849] on 26 March 2026 at 11:49:31 am'!
 'Description '!
-!provides: 'Compression' 1 42!
+!provides: 'Compression' 1 43!
 SystemOrganization addCategory: #'Compression-System'!
 SystemOrganization addCategory: #'Compression-Archives'!
 
@@ -4678,6 +4678,21 @@ viewGZipContents
 	Workspace new
 		contents: stringContents;
 		openLabel: 'Decompressed contents of: ', self localName! !
+
+!ReferenceStream class methodsFor: '*Compression-ObjectStorage' stamp: 'jmv 25/Mar/2026 12:40:48'!
+dumpOnCompressedFile: aFileEntry object: anObject
+	"Warning: If the file given by aFileEntry exists, it will be overwritten."
+		
+	aFileEntry forceWriteStreamDo: [ :fileStream | | compressor |
+		compressor := GZipWriteStream on: fileStream.
+		compressor nextPutAll: (self streamedRepresentationOf: anObject).
+		compressor close]! !
+
+!ReferenceStream class methodsFor: '*Compression-ObjectStorage' stamp: 'jmv 25/Mar/2026 12:40:51'!
+restoreFromCompressedFile: aFileEntry
+    ^ aFileEntry readStreamDo: [ :fileStream | | uncompressed |
+        uncompressed := (GZipReadStream on: fileStream) upToEnd.
+        self unStream: uncompressed]! !
 
 !CodeFileBrowser class methodsFor: '*Compression' stamp: 'jmv 9/Apr/2024 15:26:09'!
 browseMCZCode: aFileEntry
