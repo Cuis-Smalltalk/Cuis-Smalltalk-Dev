@@ -1,6 +1,6 @@
-'From Cuis7.7 [latest update: #7779] on 23 December 2025 at 4:39:16 pm'!
+'From Cuis7.7 [latest update: #7850] on 27 March 2026 at 3:10:58 pm'!
 'Description '!
-!provides: 'Sound' 1 35!
+!provides: 'Sound' 1 36!
 !requires: 'Compression' 1 nil nil!
 SystemOrganization addCategory: #'Sound-Synthesis'!
 SystemOrganization addCategory: #'Sound-Scores'!
@@ -4121,15 +4121,14 @@ storeExtendedFloat: aNumber on: aBinaryStream
 	aBinaryStream nextUint32Put: mantissa >> 32 bigEndian: true.
 	aBinaryStream nextUint32Put: (mantissa bitAnd: 16rFFFFFFFF) bigEndian: true.! !
 
-!AbstractSound methodsFor: 'file i/o' stamp: 'jmv 7/May/2023 19:00:38'!
+!AbstractSound methodsFor: 'file i/o' stamp: 'jmv 27/Mar/2026 15:00:32'!
 storeSampleCount: samplesToStore bigEndian: bigEndianFlag on: aBinaryStream
 	"Store my samples on the given stream at the current SoundPlayer sampling rate. If bigFlag is true, then each 16-bit sample is stored most-significant byte first (AIFF files), otherwise it is stored least-significant byte first (WAV files). If self isStereo is true, both channels are stored, creating a stereo file. Otherwise, only the left channel is stored, creating a mono file."
 
-	| bufSize stereoBuffer  |
+	| bufSize stereoBuffer |
 	self reset.
 	bufSize := (2 * self samplingRate rounded) min: samplesToStore.  "two second buffer"
 	stereoBuffer := SoundBuffer newStereoSampleCount: bufSize.
-
 	'Storing audio...' displayProgressAt: Sensor mousePoint
 		from: 0 to: samplesToStore during: [:barBlock | | remaining out |
 			remaining := samplesToStore.
@@ -4140,11 +4139,7 @@ storeSampleCount: samplesToStore bigEndian: bigEndianFlag on: aBinaryStream
 				self isStereo
 					ifTrue: [out := stereoBuffer]
 					ifFalse: [out := stereoBuffer extractLeftChannel].
-				(aBinaryStream isFileStream)
-					ifTrue: [  "optimization for files: write sound buffer directly to file"
-						aBinaryStream next: (out size // 2) putAll: out startingAt: 1]  "size in words"
-					ifFalse: [  "for non-file streams:"
-						1 to: out monoSampleCount do: [:i | aBinaryStream nextInt16Put: (out at: i) bigEndian: bigEndianFlag ]].
+				1 to: (out monoSampleCount min: remaining) do: [:i | aBinaryStream nextInt16Put: (out at: i) bigEndian: bigEndianFlag ].
 				remaining := remaining - bufSize]]! !
 
 !AbstractSound methodsFor: 'file i/o' stamp: 'pb 25/May/2016 01:35:00'!
