@@ -7,10 +7,6 @@ doHaltOnAction
 
 !MenuMorph methodsFor: 'modal control' stamp: 'jmv 13/Apr/2026 11:48:43'!
 doesModalInvokation
-"o algo asi
-En realidad, mejor, que el mismo metodo sea
-#haltOnAction y que devuelva true o false segun si le va a dar bola.
-Hacer una sola pregunta."
 	^(self valueOfProperty: #isModalInvokationDone ifAbsent:[^false]) notNil! !
 
 !MenuMorph methodsFor: 'modal control' stamp: 'jmv 13/Apr/2026 11:46:37'!
