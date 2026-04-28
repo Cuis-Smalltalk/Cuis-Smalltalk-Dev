@@ -1,6 +1,6 @@
-'From Cuis7.7 [latest update: #7849] on 26 March 2026 at 11:49:31 am'!
+'From Cuis7.7 [latest update: #7880] on 28 April 2026 at 6:51:48 pm'!
 'Description '!
-!provides: 'Compression' 1 43!
+!provides: 'Compression' 1 44!
 SystemOrganization addCategory: #'Compression-System'!
 SystemOrganization addCategory: #'Compression-Archives'!
 
@@ -2147,13 +2147,6 @@ skip: aNumber
 
 	^self bufferStream skip: aNumber
 ! !
-
-!GZipSurrogateStream methodsFor: 'as yet unclassified' stamp: 'jmv 13/Mar/2012 12:35:00'!
-timeStamp
-	"Append the current time to the receiver as a String."
-	self bufferStream nextChunkPut:	"double string quotes and !!s"
-		(String streamContents: [:s | Smalltalk timeStamp: s]) printString.
-	self bufferStream newLine! !
 
 !ZipEncoderNode methodsFor: 'printing' stamp: 'ar 26/Dec/1999 10:46:00'!
 printOn: aStream
