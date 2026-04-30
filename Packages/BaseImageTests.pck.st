@@ -1,6 +1,6 @@
-'From Cuis7.7 [latest update: #7889] on 29 April 2026 at 1:38:26 pm'!
+'From Cuis7.7 [latest update: #7898] on 30 April 2026 at 5:06:01 pm'!
 'Description Rename extentions tests'!
-!provides: 'BaseImageTests' 1 477!
+!provides: 'BaseImageTests' 1 478!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Compiler'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Objects'!
@@ -25617,7 +25617,7 @@ testDataClassName
 
 	^ #LogChangesTestClass__! !
 
-!ChangesTest methodsFor: 'scan tests' stamp: 'jmv 25/Aug/2025 10:33:22'!
+!ChangesTest methodsFor: 'scan tests' stamp: 'jmv 30/Apr/2026 17:02:02'!
 test01ScanNewClassChange
 
 	| newClass newClassChange |
@@ -25626,12 +25626,12 @@ test01ScanNewClassChange
 		newClass := self createTestDataClass.
 		newClassChange := self scanChangesFromFile last.
 
-		self assert: newClassChange changeType equals: #classDefinition.
+		self assert: newClassChange isClassDefinition.
 		self assert: newClassChange changeClass equals: newClass.
 		self deny: newClassChange stamp isNil.
 	] ! !
 
-!ChangesTest methodsFor: 'scan tests' stamp: 'HAW 1/Nov/2019 17:08:31'!
+!ChangesTest methodsFor: 'scan tests' stamp: 'jmv 30/Apr/2026 17:02:47'!
 test02ScanNewMethodChange
 
 	| newMethodChange newClass |
@@ -25642,13 +25642,12 @@ test02ScanNewMethodChange
 
 		newMethodChange := self scanChangesFromFile last.
 
-		self assert: newMethodChange changeType equals: #method.
+		self assert: newMethodChange isMethodDefinition.
 		self assert: newMethodChange methodSelector equals: #m1.
 		self assert: newMethodChange changeClass equals: newClass.
-		self assert: newMethodChange prior isNil.
 		self deny: newMethodChange stamp isNil ] ! !
 
-!ChangesTest methodsFor: 'scan tests' stamp: 'HAW 1/Nov/2019 17:08:34'!
+!ChangesTest methodsFor: 'scan tests' stamp: 'jmv 30/Apr/2026 17:02:59'!
 test03ScanMethodModifiedChange
 
 	| methodModifiedChange newClass |
@@ -25660,10 +25659,9 @@ test03ScanMethodModifiedChange
 
 		methodModifiedChange := self scanChangesFromFile last.
 
-		self assert: methodModifiedChange changeType equals: #method.
+		self assert: methodModifiedChange isMethodDefinition.
 		self assert: methodModifiedChange methodSelector equals: #m1.
 		self assert: methodModifiedChange changeClass equals: newClass.
-		self deny: methodModifiedChange prior isNil.
 		self deny: methodModifiedChange stamp isNil ]
 ! !
 
@@ -25684,7 +25682,7 @@ test04ScanMethodRemovalChange
 		self deny: methodRemovalChange stamp isNil ]
 ! !
 
-!ChangesTest methodsFor: 'scan tests' stamp: 'HAW 1/Nov/2019 17:08:40'!
+!ChangesTest methodsFor: 'scan tests' stamp: 'jmv 30/Apr/2026 17:05:44'!
 test05ScanClassRemovalChange
 
 	| classRemovalChange newClass |
@@ -25695,14 +25693,14 @@ test05ScanClassRemovalChange
 
 		classRemovalChange := self scanChangesFromFile last.
 
-		self assert: classRemovalChange changeType equals: #classRemoval.
+		self assert: classRemovalChange isClassDeletion.
 		self assert: classRemovalChange changeClassName equals: self testDataClassName.
 		self assert: classRemovalChange isClassDeletion.
 		self deny: classRemovalChange stamp isNil ]
 
 ! !
 
-!ChangesTest methodsFor: 'scan tests' stamp: 'MGD 19/Dec/2019 19:37:24'!
+!ChangesTest methodsFor: 'scan tests' stamp: 'jmv 30/Apr/2026 17:05:34'!
 test06ScanClassRenamedChange
 
 	| classRenamedChange newClass |
@@ -25713,7 +25711,7 @@ test06ScanClassRenamedChange
 
 		classRenamedChange := self scanChangesFromFile last.
 
-		self assert: classRenamedChange changeType equals: #classRenamed.
+		self assert: classRenamedChange isClassRenamed.
 		self assert: classRenamedChange changeClassName equals: self testDataClassName.
 		self assert: classRenamedChange newClassName equals: #NewTestClass__.
 		self deny: classRenamedChange stamp isNil. ]
