@@ -1,6 +1,6 @@
-'From Cuis7.7 [latest update: #7880] on 28 April 2026 at 6:51:48 pm'!
+'From Cuis7.7 [latest update: #7902] on 3 May 2026 at 8:16:55 pm'!
 'Description '!
-!provides: 'Compression' 1 44!
+!provides: 'Compression' 1 45!
 SystemOrganization addCategory: #'Compression-System'!
 SystemOrganization addCategory: #'Compression-Archives'!
 
@@ -4711,7 +4711,7 @@ serviceBrowseMCZCode
 			argumentGetter: [ :fileList |
 				fileList selectedFileEntry ]! !
 
-!ChangeList class methodsFor: '*Compression' stamp: 'jmv 9/Apr/2024 14:38:46'!
+!ChangeList class methodsFor: '*Compression' stamp: 'jmv 3/May/2026 20:16:48'!
 browseMCZContents: aFileEntry
 	"Browse the selected file."
 	|  unzippedString unzipped changeList fullName packageFile pkName |
@@ -4739,11 +4739,11 @@ browseMCZContents: aFileEntry
 	but are no longer in the CodePackageFile being viewed."
 	packageFile methodsToRemove do: [ :methodReference |
 		changeList
-			addItem: (MethodDeletionChangeRecord new methodReference: methodReference)
+			addItem: (MethodDeletionChange new methodReference: methodReference)
 			text: 'method no longer in package: ', methodReference stringVersion ].
 	packageFile classesToRemove do: [ :clsName |
 		changeList
-			addItem: (ClassDeletionChangeRecord new className: clsName)
+			addItem: (ClassDeletionChange new className: clsName)
 			text: 'class no longer in package: ', clsName ].
 	changeList clearSelections.
 	ChangeListWindow open: changeList label: aFileEntry pathName.! !
