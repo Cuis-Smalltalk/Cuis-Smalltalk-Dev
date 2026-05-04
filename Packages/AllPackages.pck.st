@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2358] on 16 January 2017 at 12:09:03.493729 am'!
+'From Cuis7.7 [latest update: #7902] on 3 May 2026 at 9:19:55 pm'!
 'Description Load all packages included with Cuis and all packages in the Cuis GitGub organization'!
-!provides: 'AllPackages' 1 3!
+!provides: 'AllPackages' 1 4!
 !requires: 'CorePackages' 1 0 nil!
 !requires: 'OpenCL' 1 0 nil!
 !requires: 'Amqp' 1 0 nil!
@@ -29,7 +29,7 @@
 !requires: 'Pen' 1 0 nil!
 !requires: 'ImageProcessing' 1 0 nil!
 !requires: 'LinearAlgebra' 1 0 nil!
-!requires: 'Math 3D' 1 0 nil!
+!requires: 'Math3D' 1 0 nil!
 !requires: 'NumericalMethods' 1 0 nil!
 !requires: 'ProbabilityDistributions' 1 0 nil!
 !requires: 'SignalProcessing' 1 0 nil!
