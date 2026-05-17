@@ -1,6 +1,6 @@
-'From Cuis7.7 [latest update: #7913] on 11 May 2026 at 12:22:32 pm'!
+'From Cuis7.7 [latest update: #7942] on 17 May 2026 at 6:58:14 pm'!
 'Description Rename extentions tests'!
-!provides: 'BaseImageTests' 1 481!
+!provides: 'BaseImageTests' 1 482!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Compiler'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Objects'!
@@ -196,16 +196,6 @@ TestCase subclass: #SequenceableCollectionTest
 	category: 'BaseImageTests-Collections'!
 !classDefinition: 'SequenceableCollectionTest class' category: #'BaseImageTests-Collections'!
 SequenceableCollectionTest class
-	instanceVariableNames: ''!
-
-!classDefinition: #TextTest category: #'BaseImageTests-Collections'!
-TestCase subclass: #TextTest
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'BaseImageTests-Collections'!
-!classDefinition: 'TextTest class' category: #'BaseImageTests-Collections'!
-TextTest class
 	instanceVariableNames: ''!
 
 !classDefinition: #WeakIdentitySetTest category: #'BaseImageTests-Collections'!
@@ -1256,6 +1246,16 @@ TestCase subclass: #TranscriptTest
 	category: 'BaseImageTests-System-Support'!
 !classDefinition: 'TranscriptTest class' category: #'BaseImageTests-System-Support'!
 TranscriptTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #TextTest category: #'BaseImageTests-System-Text'!
+TestCase subclass: #TextTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-System-Text'!
+!classDefinition: 'TextTest class' category: #'BaseImageTests-System-Text'!
+TextTest class
 	instanceVariableNames: ''!
 
 !classDefinition: #TrieTest category: #'BaseImageTests-System-Text'!
@@ -3328,10 +3328,6 @@ testWithIndexDoSeparatedByDoesNotValueSeparatedBlockOnLastElement
 testWithIndexDoSeparatedByDoesNothingForEmptyCollection
 
 	self shouldntFail: [ #() withIndexDo: [ :anElement :index | self fail ] separatedBy: [ self fail ] ]! !
-
-!TextTest methodsFor: 'testing' stamp: 'jpb 2/Aug/2019 23:40:53'!
-testIsText
-	self assert: (Text new is: #Text).! !
 
 !WeakIdentitySetTest methodsFor: 'testing' stamp: 'jmv 15/Jan/2025 09:54:47'!
 test
@@ -23093,6 +23089,64 @@ assertTranscriptContentsAdded2: expectedAddedString after: aBlock
 assertTranscriptContentsDoesNotChangeAfter: aBlock
 	
 	self assertTranscriptContentsAdded: '' after: aBlock! !
+
+!TextTest methodsFor: 'testing' stamp: 'jmv 17/May/2026 18:11:31'!
+testConcatenation
+	| t1 t2 |
+
+	t1 := 'sample' bold.
+	t2 := 'text' italic.
+	self assert: (t1, t2) string = 'sampletext'.
+	self assert: ((1 to: 6) allSatisfy: [ :i | ((t1, t2) runs at: i ) = {TextEmphasis bold}]).
+	self assert: ((7 to: 10) allSatisfy: [ :i | ((t1, t2) runs at: i ) = {TextEmphasis italic}]).
+
+	t1 := 'sample' bold optimizedForMutationSpeed.
+	t2 := 'text' italic.
+	self assert: (t1, t2) string = 'sampletext'.
+	self assert: ((1 to: 6) allSatisfy: [ :i | ((t1, t2) runs at: i ) = {TextEmphasis bold}]).
+	self assert: ((7 to: 10) allSatisfy: [ :i | ((t1, t2) runs at: i ) = {TextEmphasis italic}]).
+
+	t1 := 'sample' bold.
+	t2 := 'text' italic optimizedForMutationSpeed.
+	self assert: (t1, t2) string = 'sampletext'.
+	self assert: ((1 to: 6) allSatisfy: [ :i | ((t1, t2) runs at: i ) = {TextEmphasis bold}]).
+	self assert: ((7 to: 10) allSatisfy: [ :i | ((t1, t2) runs at: i ) = {TextEmphasis italic}]).
+
+	t1 := 'sample' bold optimizedForMutationSpeed.
+	t2 := 'text' italic optimizedForMutationSpeed.
+	self assert: (t1, t2) string = 'sampletext'.
+	self assert: ((1 to: 6) allSatisfy: [ :i | ((t1, t2) runs at: i ) = {TextEmphasis bold}]).
+	self assert: ((7 to: 10) allSatisfy: [ :i | ((t1, t2) runs at: i ) = {TextEmphasis italic}]).! !
+
+!TextTest methodsFor: 'testing' stamp: 'jpb 2/Aug/2019 23:40:53'!
+testIsText
+	self assert: (Text new is: #Text).! !
+
+!TextTest methodsFor: 'testing' stamp: 'jmv 17/May/2026 18:40:12'!
+testRunsBehavior
+	"Weird but true since Smalltalk-80"
+	| c |
+	self assert: ('stuff' bold runs at: 1000) = {TextEmphasis bold}.
+	self assert: ('stuff' bold optimizedForMutationSpeed runs at: 1000) = {TextEmphasis bold}.
+	
+	self assert: ('stuff' bold runs copyFrom: 34 to: 34) first = {TextEmphasis bold}.
+	self assert: ('stuff' bold optimizedForMutationSpeed runs copyFrom: 34 to: 34) first = {TextEmphasis bold}.
+	
+	self assert: ('stuff' bold runs rangeOf: TextEmphasis bold startingAt: 3) = (1 to: 5).
+	self assert: ('stuff' bold optimizedForMutationSpeed runs rangeOf: TextEmphasis bold startingAt: 3) = (1 to: 5).
+	
+	self assert: ('stuff' bold runs runLengthAt: 3) = 3.
+	self assert: ('stuff' bold optimizedForMutationSpeed runs runLengthAt: 3) = 3.
+	
+	c := OrderedCollection new.
+	'stuff' bold runs runsFrom: 1 to: 5 do: [ :attr | c add: attr  ].
+	self assert: c asSet asArray = {{TextEmphasis bold}}.
+	c := OrderedCollection new.
+	'stuff' bold optimizedForMutationSpeed runs runsFrom: 1 to: 5 do: [ :attr | c add: attr ].
+	self assert: c asSet asArray = {{TextEmphasis bold}}.
+	
+	self assert: ('stuff' bold runs copyReplaceFrom: 3 to: 20 with: 'extralongstuff' italic runs) size = 16.
+	self assert: ('stuff' bold optimizedForMutationSpeed runs copyReplaceFrom: 3 to: 20 with: 'extralongstuff' italic optimizedForMutationSpeed runs) size = 16.! !
 
 !TrieTest methodsFor: 'aux' stamp: 'jmv 21/Jun/2011 22:05:00'!
 assert: subject isEquivalentToDictionary: controlGroup
