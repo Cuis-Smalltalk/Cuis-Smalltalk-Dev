@@ -1,6 +1,6 @@
-'From Cuis7.7 [latest update: #7942] on 17 May 2026 at 6:58:14 pm'!
+'From Cuis7.7 [latest update: #7945] on 17 May 2026 at 8:13:06 pm'!
 'Description Rename extentions tests'!
-!provides: 'BaseImageTests' 1 482!
+!provides: 'BaseImageTests' 1 483!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Compiler'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Objects'!
@@ -24833,36 +24833,35 @@ testWords
 		self assert: y = ian]
 ! !
 
-!DebuggerTest methodsFor: 'tests - method categories' stamp: 'jmv 31/Jul/2023 11:35:00'!
+!DebuggerTest methodsFor: 'tests - method categories' stamp: 'jmv 17/May/2026 20:12:44'!
 testCategoriesAreAddedSortedByAndSeparatedByClass
 
 	| objectCategories protoObjectCategories categoriesPrompter |
-	
+
 	objectCategories := Object methodCategoriesAsSortedCollection.
 	protoObjectCategories := ProtoObject methodCategoriesAsSortedCollection removeAllFoundIn: objectCategories; yourself.
-	
+
 	"Test pre-conditions. May seem unnecesary but they are not if we take time into account - Hernan"
 	self assert: Object superclass equals: ProtoObject.
 	self assert: ProtoObject superclass equals: nil.
 	self assert: objectCategories notEmpty.
 	self assert: protoObjectCategories notEmpty.
-	
-	categoriesPrompter := MethodCategoriesPrompter staringFrom: Object rejectingFirst: false.
-	
+
+	categoriesPrompter := MethodCategoriesPrompter startingFrom: Object rejectingFirst: false.
+
 	self assert: categoriesPrompter lines size equals: 2.
 	self assert: categoriesPrompter lines first equals: 1.
 	self assert: (categoriesPrompter categories copyFrom: 2 to: categoriesPrompter lines second) asArray equals: objectCategories asArray.
-	self assert: (categoriesPrompter categories copyFrom: categoriesPrompter lines second + 1 to: categoriesPrompter categories size) asArray equals: protoObjectCategories asArray.
-	! !
+	self assert: (categoriesPrompter categories copyFrom: categoriesPrompter lines second + 1 to: categoriesPrompter categories size) asArray equals: protoObjectCategories asArray.! !
 
-!DebuggerTest methodsFor: 'tests - method categories' stamp: 'jmv 31/Jul/2023 11:33:33'!
+!DebuggerTest methodsFor: 'tests - method categories' stamp: 'jmv 17/May/2026 20:12:59'!
 testMetaclassCategoriesIncludesInstanceCreation
 
 	| categoriesPrompter |
 
-	categoriesPrompter := MethodCategoriesPrompter staringFrom: ProtoObject class rejectingFirst: false.
-	
-	self assert: categoriesPrompter categories second equals: Categorizer instanceCreation! !
+	categoriesPrompter := MethodCategoriesPrompter startingFrom: ProtoObject class rejectingFirst: false.
+
+	self assert: categoriesPrompter categories second equals: Categorizer instanceCreation.! !
 
 !QuickReturnDebuggingTest methodsFor: 'private' stamp: 'FJG 13/Nov/2023 14:01:10'!
 debuggerOn: aBlock
