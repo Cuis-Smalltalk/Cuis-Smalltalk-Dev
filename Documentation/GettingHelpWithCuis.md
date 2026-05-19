@@ -2,7 +2,7 @@
 
 In the Cuis community, questions are most welcome. The main place for them is our mail list. In this space we value free speech, and at the same time we want an open and warm place where everybody can feel comfortable.
 
-Still, thesides the documentation included in this Cuis repo, and in https://github.com/DrCuis, there are very good books, web pages, blogs and videos that include descriptions of the ideas and intentions behind the code in the Cuis system. These are generally better than answers in the mail list, because they were written with great care. Questions on the mail list are often better for filling in details, for example, Cuis specific details when you're reading a non Cuis specific book.
+Still, besides the documentation included in this Cuis repo, and at https://github.com/DrCuis, there are very good books, web pages, blogs and online videos that include descriptions of the ideas and intentions behind the code in the Cuis system. These are generally better than answers in the mail list, because they were written with great care. Questions on the mail list are often better for filling in details, for example, Cuis specific details when you're reading a non Cuis specific book.
 
 For any Open Source project, questions are especially valuable if they point to some aspect not covered in enough clarity and detail in the documentation. Good questions help us refine documentation, or fix annoyances in the system. You know, we old timers don't read the documentation we wrote very often, and we tend to get used to small annoyances in the system to the point where we don't see them any more. Good questions, complaints and bug reports are extremely helpful!
 
