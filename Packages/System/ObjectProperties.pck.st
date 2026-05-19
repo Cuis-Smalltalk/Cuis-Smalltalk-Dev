@@ -1,8 +1,18 @@
-'From Cuis7.7 [latest update: #7779] on 23 December 2025 at 4:35:01 pm'!
+'From Cuis7.7 [latest update: #7951] on 19 May 2026 at 4:01:40 pm'!
 'Description '!
-!provides: 'ObjectProperties' 1 5!
+!provides: 'ObjectProperties' 1 6!
 SystemOrganization addCategory: #ObjectProperties!
 
+
+!classDefinition: #ActiveModelWithProperties category: #ObjectProperties!
+ActiveModel subclass: #ActiveModelWithProperties
+	instanceVariableNames: 'propertyMap'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'ObjectProperties'!
+!classDefinition: 'ActiveModelWithProperties class' category: #ObjectProperties!
+ActiveModelWithProperties class
+	instanceVariableNames: ''!
 
 !classDefinition: #ObjectWithProperties category: #ObjectProperties!
 Object subclass: #ObjectWithProperties
@@ -14,6 +24,25 @@ Object subclass: #ObjectWithProperties
 ObjectWithProperties class
 	instanceVariableNames: ''!
 
+
+!ActiveModelWithProperties methodsFor: 'accessing' stamp: 'jmv 19/May/2026 12:41:34'!
+propertyMap
+	propertyMap ifNil: [
+		propertyMap := IdentityDictionary new ].
+	^propertyMap! !
+
+!ActiveModelWithProperties methodsFor: 'accessing' stamp: 'jmv 19/May/2026 12:41:34'!
+propertyMapOrNil
+	^propertyMap! !
+
+!ActiveModelWithProperties methodsFor: 'accessing' stamp: 'jmv 19/May/2026 12:41:34'!
+releasePropertyMap
+	propertyMap := nil! !
+
+!ActiveModelWithProperties methodsFor: 'copying' stamp: 'jmv 19/May/2026 12:43:04'!
+postCopy
+	super postCopy.
+	propertyMap := nil! !
 
 !ObjectWithProperties methodsFor: 'accessing' stamp: 'jmv 16/Nov/2023 10:48:19'!
 propertyMap
