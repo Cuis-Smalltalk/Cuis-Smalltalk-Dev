@@ -14,21 +14,9 @@ Hard rules:
 
 ## Commands
 
-Safe eject:
+The repository no longer ships the old `.github/scripts/eject-package.sh` helper.
 
-```bash
-.github/scripts/eject-package.sh <PackageName>
-```
-
-Force eject (requires explicit confirmation):
-
-```bash
-.github/scripts/eject-package.sh <PackageName> --force
-```
-
-Notes:
-- This runs `.github/scripts/run-tests.sh` first.
-- If it proceeds, it exports with `TonelWriter` to `src/<PackageName>/` and then unloads the package and snapshots the image.
+If you want to re-enable this workflow, reintroduce an eject script (or implement it inside the agent) and ensure it runs `.github/scripts/run-tests.st` before exporting/unloading.
 
 ## After A Successful Eject
 

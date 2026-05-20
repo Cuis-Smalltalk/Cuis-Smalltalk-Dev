@@ -51,12 +51,6 @@ The system ships as a single image (`CuisImage/Cuis7.7-7777.image`) plus numbere
 
 Tests run automatically on every push via GitHub Actions — amd64 via Docker, arm64 bare-metal.
 
-To run locally:
-
-```sh
-./.github/scripts/run-tests.sh
-```
-
 The main suite is `Packages/BaseImageTests.pck.st`.
 
 ## The VM

@@ -45,8 +45,21 @@ jobs:
             --privileged \
             cuis-workspace:ci \
             bash -c "
-              .github/scripts/install-updates.sh &&
-              .github/scripts/run-tests.sh
+              set -euo pipefail
+
+              IMAGE_FILE=\$(ls CuisImage/ | grep -E 'Cuis[0-9]+\.[0-9]+-[0-9]+\.image' | head -1)
+              [[ -z \"\$IMAGE_FILE\" ]] && { echo 'ERROR: no .image found in CuisImage/' >&2; exit 1; }
+
+              INSTALL_UPDATES_SCRIPT=\"\\
+                Utilities classPool at: #AuthorName put: 'GitHubActions'.
+                Utilities classPool at: #AuthorInitials put: 'GHA'.
+                ChangeSet installNewUpdates.
+                Smalltalk saveAndQuit.\\
+              \"
+
+              \"\$CUIS_VM\" \$CUIS_VM_ARGS CuisImage/\"\$IMAGE_FILE\" -d \"\$INSTALL_UPDATES_SCRIPT\"
+
+              \"\$CUIS_VM\" \$CUIS_VM_ARGS CuisImage/\"\$IMAGE_FILE\" -s .github/scripts/run-tests.st
             "
 
   # ── arm64: bare-metal pipeline ────────────────────────────────────────────
@@ -64,10 +77,58 @@ jobs:
           fetch-depth: 1
 
       - name: Set up VM
-        run: .github/scripts/install-vm.sh
+        run: |
+          set -euo pipefail
+
+          echo "Setting up VM for $RUNNER_OS ($(uname -m))"
+
+          ARCH=$(uname -m)
+          case "$ARCH" in
+            x86_64)
+              CUIS_VM_PATH=CuisVM.app/Contents/Linux-x86_64/squeak
+              ;;
+            aarch64|arm64)
+              CUIS_VM_PATH=CuisVM.app/Contents/Linux-arm64/squeak
+              # The squeak wrapper script uses ldd to detect the libc path.
+              # On Ubuntu 24.04 ARM64 the ldd output format differs from what
+              # the script expects. We export PLATFORMLIBDIR to skip ldd detection.
+              echo "PLATFORMLIBDIR=/lib/aarch64-linux-gnu" >> "$GITHUB_ENV"
+              ;;
+            *)
+              echo "Unsupported Linux architecture: $ARCH" >&2
+              exit 1
+              ;;
+          esac
+
+          CUIS_VM_ARGUMENTS="-vm-sound-null -vm-display-null"
+          chmod +x "$CUIS_VM_PATH"
+          "$CUIS_VM_PATH" --version
+
+          echo "CUIS_VM_PATH=$CUIS_VM_PATH" >> "$GITHUB_ENV"
+          echo "CUIS_VM_ARGUMENTS=$CUIS_VM_ARGUMENTS" >> "$GITHUB_ENV"
 
       - name: Apply core updates
-        run: .github/scripts/install-updates.sh
+        run: |
+          set -euo pipefail
+
+          IMAGE_FILE=$(ls CuisImage/ | grep -E 'Cuis[0-9]+\.[0-9]+-[0-9]+\.image' | head -1)
+          [[ -z "$IMAGE_FILE" ]] && { echo 'ERROR: no .image found in CuisImage/' >&2; exit 1; }
+
+          INSTALL_UPDATES_SCRIPT="\
+            Utilities classPool at: #AuthorName put: 'GitHubActions'.
+            Utilities classPool at: #AuthorInitials put: 'GHA'.
+            ChangeSet installNewUpdates.\
+            Smalltalk saveAndQuit.\
+          "
+
+          # $CUIS_VM_ARGUMENTS must not be quoted so each flag is a separate arg.
+          "$CUIS_VM_PATH" $CUIS_VM_ARGUMENTS "CuisImage/$IMAGE_FILE" -d "$INSTALL_UPDATES_SCRIPT"
 
       - name: Run test suite
-        run: .github/scripts/run-tests.sh
+        run: |
+          set -euo pipefail
+
+          IMAGE_FILE=$(ls CuisImage/ | grep -E 'Cuis[0-9]+\.[0-9]+-[0-9]+\.image' | head -1)
+          [[ -z "$IMAGE_FILE" ]] && { echo 'ERROR: no .image found in CuisImage/' >&2; exit 1; }
+
+          "$CUIS_VM_PATH" $CUIS_VM_ARGUMENTS "CuisImage/$IMAGE_FILE" -s .github/scripts/run-tests.st

@@ -71,7 +71,9 @@ MiClaseTest run: #testAlgo.
 
 Desde la terminal (CI):
 ```bash
-./.github/scripts/run-tests.sh
+ Run the CI test script in headless mode:
+
+ `"$CUIS_VM" $CUIS_VM_ARGS CuisImage/<your-image>.image -s .github/scripts/run-tests.st`
 ```
 
 ---

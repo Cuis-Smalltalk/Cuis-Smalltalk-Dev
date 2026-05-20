@@ -19,9 +19,9 @@
 # Usage (CI):
 #   1. docker build --target workspace --tag cuis-workspace .
 #   2. docker run --rm --security-opt seccomp=unconfined \
-#        cuis-workspace bash .github/scripts/install-updates.sh
+#        cuis-workspace bash -c "...apply updates..."
 #   3. docker run --rm --security-opt seccomp=unconfined \
-#        cuis-workspace bash .github/scripts/run-tests.sh
+#        cuis-workspace bash -c "...run tests..."
 #
 # Build runtime (after tests pass, with updated image extracted):
 #   docker build --target runtime --tag cuis:latest .
@@ -60,7 +60,6 @@ COPY CuisImage/       /workspace/CuisImage/
 COPY CoreUpdates/     /workspace/CoreUpdates/
 COPY Packages/        /workspace/Packages/
 COPY .github/scripts/ /workspace/.github/scripts/
-RUN chmod +x /workspace/.github/scripts/*.sh
 
 # ── Stage 3: runtime ─────────────────────────────────────────────────────────
 # Minimal image to run Cuis.

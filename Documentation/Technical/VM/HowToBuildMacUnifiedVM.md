@@ -8,7 +8,7 @@ This procedure builds a Mac VM that includes both the Apple Silicon and Intel bi
 
 3) Create a folder named after the date of the VM builds, like 2026-04-20 (yes. you're likely to repeat all this in the future). cd to it.
 
-4) Add unify.sh there.
+4) Add `unify.sh` there (from the OpenSmalltalk VM repository/tools).
 
 5) Create subfolder ARM, containing ARM Squeak.app (Mount dmg. Drag Squeak.app to ARM folder)
 
@@ -16,9 +16,8 @@ This procedure builds a Mac VM that includes both the Apple Silicon and Intel bi
 
 7) Create folder Unified
 
-8) Run ./unify.sh
+8) Run `./unify.sh`
 If you get a message such as "You have not agreed to the Xcode and Apple SDKs license...." you may need to `sudo xcodebuild -license`, then "agree" or whatever Apple comes up next.
 
 Done. Unified/Squeak.app is our Unified VM. Its Contents folder is about 7.2Mb.
 (Thanks Cristián Pérez for this recipe)
-

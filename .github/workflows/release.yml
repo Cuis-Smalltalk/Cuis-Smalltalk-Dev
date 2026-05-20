@@ -57,8 +57,21 @@ jobs:
             --privileged \
             cuis-workspace:${{ matrix.arch }} \
             bash -c "
-              .github/scripts/install-updates.sh &&
-              .github/scripts/run-tests.sh
+              set -euo pipefail
+
+              IMAGE_FILE=\$(ls CuisImage/ | grep -E 'Cuis[0-9]+\.[0-9]+-[0-9]+\.image' | head -1)
+              [[ -z \"\$IMAGE_FILE\" ]] && { echo 'ERROR: no .image found in CuisImage/' >&2; exit 1; }
+
+              INSTALL_UPDATES_SCRIPT=\"\\
+                Utilities classPool at: #AuthorName put: 'GitHubActions'.
+                Utilities classPool at: #AuthorInitials put: 'GHA'.
+                ChangeSet installNewUpdates.
+                Smalltalk saveAndQuit.\\
+              \"
+
+              \"\$CUIS_VM\" \$CUIS_VM_ARGS CuisImage/\"\$IMAGE_FILE\" -d \"\$INSTALL_UPDATES_SCRIPT\"
+
+              \"\$CUIS_VM\" \$CUIS_VM_ARGS CuisImage/\"\$IMAGE_FILE\" -s .github/scripts/run-tests.st
             ")
           docker start --attach "$CID"
           docker cp "$CID:/workspace/CuisImage/." CuisImage/
@@ -79,7 +92,103 @@ jobs:
             .
 
       - name: Package release ZIPs for ${{ matrix.arch }}
-        run: .github/scripts/build-release.sh release-artifacts ${{ matrix.arch }}
+        run: |
+          set -euo pipefail
+
+          OUTPUT_DIR="$(realpath "release-artifacts")"
+          ARCH_FILTER="${{ matrix.arch }}"
+          mkdir -p "$OUTPUT_DIR"
+
+          IMAGE_FILE=$(ls CuisImage/ | grep -E '^Cuis[0-9]+\.[0-9]+-[0-9]+\.image$' | head -1)
+          [[ -z "$IMAGE_FILE" ]] && { echo "ERROR: no .image found in CuisImage/" >&2; exit 1; }
+
+          IMAGE_BASE="${IMAGE_FILE%.image}"
+          CHANGES_FILE="${IMAGE_BASE}.changes"
+          SOURCES_FILE=$(ls CuisImage/ | grep -E '^Cuis[0-9]+\.[0-9]+\.sources$' | head -1)
+          [[ -z "$SOURCES_FILE" ]] && { echo "ERROR: no .sources found in CuisImage/" >&2; exit 1; }
+
+          echo "Image   : CuisImage/$IMAGE_FILE"
+          echo "Sources : CuisImage/$SOURCES_FILE"
+          echo "Arch    : $ARCH_FILTER"
+          echo ""
+
+          package_platform() {
+              local PLATFORM="$1"; shift
+              local VM_DIR="$1";   shift
+              local RUN_SCRIPTS=("$@")
+
+              local ZIP_NAME="${IMAGE_BASE}-${PLATFORM}.zip"
+              local STAGING ZIP_PATH
+              STAGING=$(mktemp -d)
+              ZIP_PATH="$OUTPUT_DIR/$ZIP_NAME"
+              local DEST="$STAGING/Cuis-${PLATFORM}"
+              mkdir -p "$DEST/CuisImage" "$DEST/CuisVM.app/Contents" "$DEST/TrueTypeFonts"
+
+              echo "Packaging $PLATFORM ..."
+
+              cp "CuisImage/$IMAGE_FILE"     "$DEST/CuisImage/"
+              cp "CuisImage/$CHANGES_FILE"   "$DEST/CuisImage/" 2>/dev/null || true
+              cp "CuisImage/$SOURCES_FILE"   "$DEST/CuisImage/"
+              cp "CuisImage/UnicodeData.txt" "$DEST/CuisImage/"
+
+              cp -r "$VM_DIR" "$DEST/CuisVM.app/Contents/"
+              cp -r "CuisVM.app/Contents/Resources" "$DEST/CuisVM.app/Contents/"
+
+              cp -r TrueTypeFonts/. "$DEST/TrueTypeFonts/"
+
+              for s in "${RUN_SCRIPTS[@]}"; do
+                  [[ -f "$s" ]] && cp "$s" "$DEST/"
+              done
+
+              cp LICENSE   "$DEST/"
+              cp README.md "$DEST/"
+
+              find "$DEST" \( -name "*.sh" -o -name "*.command" \) -exec chmod +x {} +
+
+              (cd "$STAGING" && zip -qr --symlinks "$ZIP_PATH" "Cuis-${PLATFORM}")
+              rm -rf "$STAGING"
+
+              echo "  -> $ZIP_NAME  ($(du -sh "$ZIP_PATH" | cut -f1))"
+          }
+
+          case "$ARCH_FILTER" in
+            arm64)
+              package_platform "linux-arm64" \
+                  "CuisVM.app/Contents/Linux-arm64" \
+                  "RunCuisOnLinux.sh"
+              ;;
+            amd64|all)
+              package_platform "linux-x86_64" \
+                  "CuisVM.app/Contents/Linux-x86_64" \
+                  "RunCuisOnLinux.sh"
+
+              package_platform "macos" \
+                  "CuisVM.app/Contents/MacOS" \
+                  "RunCuisOnMac.sh" "RunCuisOnFinder.command" "unquarantine.sh"
+
+              package_platform "windows-x86_64" \
+                  "CuisVM.app/Contents/Windows-x86_64" \
+                  "RunCuisOnWindows.bat"
+
+              package_platform "windows-arm64" \
+                  "CuisVM.app/Contents/Windows-arm64" \
+                  "RunCuisOnWindows.bat"
+
+              if [[ "$ARCH_FILTER" == "all" ]]; then
+                package_platform "linux-arm64" \
+                    "CuisVM.app/Contents/Linux-arm64" \
+                    "RunCuisOnLinux.sh"
+              fi
+              ;;
+            *)
+              echo "ERROR: unknown arch filter '$ARCH_FILTER'. Use: amd64, arm64, all" >&2
+              exit 1
+              ;;
+          esac
+
+          echo ""
+          echo "Artifacts:"
+          ls -lh "$OUTPUT_DIR/"
 
       - name: Upload ${{ matrix.arch }} artifacts
         uses: actions/upload-artifact@v4
