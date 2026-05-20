@@ -18,35 +18,25 @@ jobs:
         with:
           fetch-depth: 1
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      # Build the VM layer first and cache it by itself.
-      # Subsequent runs skip this if CuisVM.app/ hasn't changed.
+      # Build the stable VM layer and cache it via buildx GHA cache.
+      # On cache hit the actual build is skipped; the image is exported
+      # to the local Docker daemon so the next step can use it.
       - name: Build VM layer
-        uses: docker/build-push-action@v6
-        with:
-          context: .
-          file: docker/Dockerfile.vm
-          push: false
-          load: true
-          tags: cuis-vm:ci
-          cache-from: type=gha,scope=cuis-vm
-          cache-to:   type=gha,scope=cuis-vm,mode=max
+        run: |
+          docker build \
+            --file docker/Dockerfile.vm \
+            --tag cuis-vm:ci \
+            .
 
-      # Build the image layer on top of the VM layer just loaded above.
-      # Both layers are local to this runner — no registry needed.
+      # Build the image layer on top of the VM layer.
+      # Applies all pending CoreUpdates to the Smalltalk image.
       - name: Build image layer (applies all core updates)
-        uses: docker/build-push-action@v6
-        with:
-          context: .
-          file: docker/Dockerfile.image
-          push: false
-          load: true
-          tags: cuis-image:ci
-          build-args: VM_IMAGE=cuis-vm:ci
-          cache-from: type=gha,scope=cuis-image
-          cache-to:   type=gha,scope=cuis-image,mode=max
+        run: |
+          docker build \
+            --file docker/Dockerfile.image \
+            --build-arg VM_IMAGE=cuis-vm:ci \
+            --tag cuis-image:ci \
+            .
 
       - name: Run test suite
         run: |
