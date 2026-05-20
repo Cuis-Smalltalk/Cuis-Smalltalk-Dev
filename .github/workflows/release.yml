@@ -6,11 +6,22 @@ on:
       - 'v*'
 
 jobs:
-  # ── 1. Tests must pass before anything else ───────────────────────────────
-  test:
-    name: Tests
-    runs-on: ubuntu-latest
-    timeout-minutes: 30
+  # ── 1. Build runtime image per arch (updates + tests + minimal image) ─────
+  build-runtime:
+    name: Build runtime (${{ matrix.platform }})
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 45
+
+    strategy:
+      fail-fast: true
+      matrix:
+        include:
+          - platform: linux/amd64
+            runner: ubuntu-latest
+            arch: amd64
+          - platform: linux/arm64
+            runner: ubuntu-24.04-arm
+            arch: arm64
 
     steps:
       - name: Checkout
@@ -18,87 +29,79 @@ jobs:
         with:
           fetch-depth: 1
 
-      - name: Build VM layer
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build workspace image
         run: |
-          docker build \
-            --file docker/Dockerfile.vm \
-            --tag cuis-vm:release \
+          docker buildx build \
+            --platform ${{ matrix.platform }} \
+            --file docker/Dockerfile \
+            --target workspace \
+            --load \
+            --tag cuis-workspace:${{ matrix.arch }} \
             .
 
-      - name: Build image layer (applies all core updates)
+      # Apply updates + run tests + extract updated image in one container.
+      # Updates modify the image in-place; tests must run in the same container.
+      # We commit the container after updates so we can extract the image.
+      # --privileged: Squeak JIT requires mprotect(PROT_READ|PROT_EXEC).
+      - name: Apply updates, run tests, extract updated image
         run: |
-          docker build \
-            --file docker/Dockerfile.image \
-            --build-arg VM_IMAGE=cuis-vm:release \
-            --tag cuis-image:release \
-            .
-
-      - name: Run full test suite
-        run: |
-          docker run --rm \
-            -v "$PWD/.github/scripts":/workspace/.github/scripts \
-            -v "$PWD/Packages":/workspace/Packages \
-            cuis-image:release \
-            bash .github/scripts/run-tests.sh
-
-  # ── 2. Extract updated image, package per platform ────────────────────────
-  build:
-    name: Build release artifacts
-    needs: test
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 1
-
-      - name: Build VM layer
-        run: |
-          docker build \
-            --file docker/Dockerfile.vm \
-            --tag cuis-vm:release \
-            .
-
-      - name: Build image layer (applies all core updates)
-        run: |
-          docker build \
-            --file docker/Dockerfile.image \
-            --build-arg VM_IMAGE=cuis-vm:release \
-            --tag cuis-image:release \
-            .
-
-      - name: Extract updated image from container
-        run: |
-          CID=$(docker create cuis-image:release)
+          CID=$(docker create \
+            --privileged \
+            cuis-workspace:${{ matrix.arch }} \
+            bash -c "
+              .github/scripts/install-updates.sh &&
+              .github/scripts/run-tests.sh
+            ")
+          docker start --attach "$CID"
           docker cp "$CID:/workspace/CuisImage/." CuisImage/
           docker rm "$CID"
+          echo "Extracted image files:"
           ls -lh CuisImage/
 
-      - name: Package release ZIPs (minimal, all platforms)
-        run: .github/scripts/build-release.sh release-artifacts
+      # Rebuild with the updated CuisImage/ so the runtime stage gets
+      # the post-update image baked in.
+      - name: Build minimal runtime image
+        run: |
+          docker buildx build \
+            --platform ${{ matrix.platform }} \
+            --file docker/Dockerfile \
+            --target runtime \
+            --load \
+            --tag cuis-runtime:${{ matrix.arch }} \
+            .
 
-      - name: Upload artifacts
+      - name: Package release ZIPs for ${{ matrix.arch }}
+        run: .github/scripts/build-release.sh release-artifacts ${{ matrix.arch }}
+
+      - name: Upload ${{ matrix.arch }} artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: release-zips
+          name: release-${{ matrix.arch }}
           path: release-artifacts/*.zip
           retention-days: 7
 
-  # ── 3. Publish GitHub Release ─────────────────────────────────────────────
+  # ── 2. Publish all ZIPs as a single GitHub Release ───────────────────────
   publish:
     name: Publish GitHub Release
-    needs: build
+    needs: build-runtime
     runs-on: ubuntu-latest
     permissions:
       contents: write
 
     steps:
-      - name: Download artifacts
+      - name: Download amd64 artifacts
         uses: actions/download-artifact@v4
         with:
-          name: release-zips
+          name: release-amd64
+          path: release-artifacts
+
+      - name: Download arm64 artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: release-arm64
           path: release-artifacts
 
       - name: List release files
@@ -124,9 +127,8 @@ jobs:
             > **macOS ZIP download:** run `./unquarantine.sh` before launching.
 
             ### What's inside each ZIP
-            - Updated Smalltalk image (all core changesets applied)
+            - Updated Smalltalk image (all core changesets applied, tests verified)
             - VM binary for the target platform
-            - `UnicodeData.txt` and sources file
             - TrueType fonts
             - Start script
 

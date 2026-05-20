@@ -7,10 +7,12 @@ on:
     branches: [master]
 
 jobs:
-  test:
-    name: Tests
+  # ── amd64: Docker pipeline ────────────────────────────────────────────────
+  # Runs the full pipeline inside Docker for reproducibility.
+  test-amd64:
+    name: Tests (linux/amd64, Docker)
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 45
 
     steps:
       - name: Checkout
@@ -18,30 +20,49 @@ jobs:
         with:
           fetch-depth: 1
 
-      # Build the stable VM layer and cache it via buildx GHA cache.
-      # On cache hit the actual build is skipped; the image is exported
-      # to the local Docker daemon so the next step can use it.
-      - name: Build VM layer
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build workspace image
         run: |
-          docker build \
-            --file docker/Dockerfile.vm \
-            --tag cuis-vm:ci \
+          docker buildx build \
+            --platform linux/amd64 \
+            --file docker/Dockerfile \
+            --target workspace \
+            --load \
+            --tag cuis-workspace:ci \
             .
 
-      # Build the image layer on top of the VM layer.
-      # Applies all pending CoreUpdates to the Smalltalk image.
-      - name: Build image layer (applies all core updates)
-        run: |
-          docker build \
-            --file docker/Dockerfile.image \
-            --build-arg VM_IMAGE=cuis-vm:ci \
-            --tag cuis-image:ci \
-            .
-
-      - name: Run test suite
+      # Updates + tests run in one container so tests see the updated image.
+      - name: Apply core updates + run tests
         run: |
           docker run --rm \
-            -v "$PWD/.github/scripts":/workspace/.github/scripts \
-            -v "$PWD/Packages":/workspace/Packages \
-            cuis-image:ci \
-            bash .github/scripts/run-tests.sh
+            --privileged \
+            cuis-workspace:ci \
+            bash -c "
+              .github/scripts/install-updates.sh &&
+              .github/scripts/run-tests.sh
+            "
+
+  # ── arm64: bare-metal pipeline ────────────────────────────────────────────
+  # The ubuntu-24.04-arm runner cannot run the Squeak JIT inside Docker
+  # (mprotect restrictions). We run directly on the runner instead.
+  test-arm64:
+    name: Tests (linux/arm64, bare-metal)
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 45
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Set up VM
+        run: .github/scripts/install-vm.sh
+
+      - name: Apply core updates
+        run: .github/scripts/install-updates.sh
+
+      - name: Run test suite
+        run: .github/scripts/run-tests.sh

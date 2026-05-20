@@ -82,6 +82,48 @@ Los skills portables viven en `.agents/skills/`.
 
 ---
 
+## Convención de Pull Requests
+
+**Todo PR debe tener una descripción completa en castellano.** Esta descripción es documentación pública del proyecto open source: tiene que ser legible por alguien que no participó en la conversación que originó el cambio.
+
+### Estructura obligatoria
+
+```
+## ¿Qué hace este PR?
+
+Descripción clara en 2-4 oraciones de qué cambia y por qué.
+Sin jerga de la sesión, sin referencias a conversaciones privadas.
+
+## ¿Por qué lo queremos mergear?
+
+El valor concreto que aporta: qué problema resuelve, qué mejora,
+qué deuda técnica elimina. Enfocado en el "para qué", no solo el "qué".
+
+## Cambios incluidos
+
+Lista puntual de archivos o componentes modificados con una línea
+explicando qué hace cada uno.
+
+## Qué NO incluye (si aplica)
+
+Lo que quedó fuera del scope y por qué. Evita confusión sobre lo
+que no se tocó intencionalmente.
+
+## Verificación
+
+Cómo se verificó que funciona: tests, CI verde, prueba manual, etc.
+```
+
+### Reglas adicionales
+
+- Escribir como si el lector no sabe nada del contexto previo.
+- No mencionar nombres de sesiones, fechas de conversación ni "como dijimos antes".
+- Si el PR es grande, dividirlo. Cada PR debe poder entenderse solo.
+- El título del PR también en castellano, conciso (máximo 72 caracteres).
+- Si hay screenshots, logs o evidencia de CI, incluirlos.
+
+---
+
 ## Notas sobre el entorno
 
 - **OS**: macOS (darwin), Shell: zsh
