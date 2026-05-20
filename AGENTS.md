@@ -81,6 +81,16 @@ Los skills portables viven en `.agents/skills/`.
 
 ---
 
+## Automatización (OpenCode)
+
+Además de los skills portables en `.agents/skills/`, este repo incluye agentes/skills específicos para OpenCode bajo `.opencode/`.
+
+- Agente driver: `.opencode/agents/cuis-tcr-tdd-driver.md` (Tidy First → TCR cuando sea seguro → objetos de dominio → planificación "zombies" → TDD → export/eject).
+- Subagente planner: `.opencode/agents/zombie-test-planner.md` (solo propone un plan de tests estilo zombies).
+- Skill de workflow: `.opencode/skills/cuis-tidy-tcr-tdd-zombies/SKILL.md`.
+
+---
+
 ## Convenciones de Git
 
 - Commits atómicos con mensaje conciso en inglés o español (consistente con el historial del repo).
