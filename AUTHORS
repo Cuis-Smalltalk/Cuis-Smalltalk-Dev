@@ -1,0 +1,54 @@
+# Authors
+
+## Fork maintainer
+
+Gastón Caruso <gastoncaruso@gmail.com> (github: gstn-caruso)
+
+## Contributors to this fork
+
+Máximo Prieto (github: maximoprieto)
+
+## Upstream: Cuis Smalltalk
+
+This project is built on top of Cuis Smalltalk, created and maintained by:
+
+**Juan Vuletich** — principal author and project lead
+https://github.com/Cuis-Smalltalk/Cuis-Smalltalk-Dev
+
+Additional upstream contributors (by commit count):
+- pbella
+- Hernán Wilkinson
+- Eliot Miranda
+- Bernhard Pieber
+- Dr. Nicola Mingotti
+- John M McIntosh
+- Mariano Montone
+- Hannes Hirzel
+- Douglas Brebner
+- Ken Dickey
+- Stephan Eggermont
+- Josef P. Bernhart
+- Nicolás Papagna Maldonado
+- Nahuel Garbezza
+- Mike Rueger
+- Jaromir Matas
+- Fabio Niephaus
+- Ezequiel Birman
+- Vassili Bykov
+- Pablo Gomez
+- Milan Lajtoš
+- Wilfred Hughes
+- Mohit Chawla
+- Jon Raiford
+- Jacob MacDonald
+- Mario Sebastian Chacon
+- Gonzalo
+- and many others — see `git log` for the full history
+
+## Historical lineage
+
+Cuis Smalltalk descends from:
+
+- **Squeak** contributors (1997–present)
+- **Apple Computer, Inc.** — original Smalltalk-80 implementation (1985–1996)
+- **Xerox Corp.** — Smalltalk-80 at Xerox PARC (1981–1982)
