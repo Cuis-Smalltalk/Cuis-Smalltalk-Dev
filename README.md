@@ -3,11 +3,18 @@
 [![CI](https://github.com/gstn-caruso/Cuis-Smalltalk-Dev/actions/workflows/ci.yml/badge.svg)](https://github.com/gstn-caruso/Cuis-Smalltalk-Dev/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-A clean, minimal [Smalltalk-80](https://en.wikipedia.org/wiki/Smalltalk) system. This fork of [Cuis-Smalltalk/Cuis-Smalltalk-Dev](https://github.com/Cuis-Smalltalk/Cuis-Smalltalk-Dev) exists to lower the barrier of entry: Smalltalk is worth learning, and getting started should not be the hard part.
+A clean, minimal [Smalltalk-80](https://en.wikipedia.org/wiki/Smalltalk) system.
+
+This fork of [Cuis-Smalltalk/Cuis-Smalltalk-Dev](https://github.com/Cuis-Smalltalk/Cuis-Smalltalk-Dev) exists to lower the barrier of entry: Smalltalk is worth learning, and getting started should not be the hard part.
 
 Maintained by [Gastón Caruso](https://github.com/gstn-caruso), with contributions from [Máximo Prieto](https://github.com/maximoprieto) and others.
 
-This repository aims to be respectful of the upstream project and its lineage, while also being strict about scope: if something does not help newcomers, does not belong to this fork, or is better documented elsewhere, we should question whether it belongs here.
+This repository aims to be respectful of upstream and its lineage, while being strict about scope. If something does not help newcomers, does not belong to this fork, or is better documented elsewhere, we should question whether it belongs here.
+
+Documentation is split between:
+
+- Wiki (curated, evolving): https://github.com/gstn-caruso/Cuis-Smalltalk-Dev/wiki
+- `Documentation/` (upstream docs mirrored here)
 
 ## Quick Start
 
@@ -54,11 +61,13 @@ The main suite is `Packages/BaseImageTests.pck.st`.
 
 ## The VM
 
-Cuis runs on the [OpenSmalltalk VM](https://github.com/OpenSmalltalk/opensmalltalk-vm). Pre-built binaries for macOS, Linux, and Windows are included in `CuisVM.app/`.
+Cuis runs on the [OpenSmalltalk VM](https://github.com/OpenSmalltalk/opensmalltalk-vm). VM sources live in that repository.
+
+Pre-built binaries for macOS, Linux, and Windows are included in `CuisVM.app/`.
 
 ## Contributing
 
-Read [CONTRIBUTING.md](CONTRIBUTING.md) and the [project wiki](https://github.com/gstn-caruso/Cuis-Smalltalk-Dev/wiki) before sending patches or PRs.
+Read [CONTRIBUTING.md](CONTRIBUTING.md) and the project wiki before sending patches or PRs.
 
 Short version: contributions must be under the MIT license and include a [Developer Certificate of Origin](DCO). Keep commits small and focused — structural cleanup and behavioral changes go in separate commits.
 
