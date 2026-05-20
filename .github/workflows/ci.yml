@@ -76,7 +76,7 @@ jobs:
       - name: Run test suite
         run: |
           docker run --rm \
-            -v "$PWD/.ContinuousIntegrationScripts":/workspace/.ContinuousIntegrationScripts \
+            -v "$PWD/.github/scripts":/workspace/.github/scripts \
             -v "$PWD/Packages":/workspace/Packages \
             cuis-image:ci \
-            bash .ContinuousIntegrationScripts/runTests.sh
+            bash .github/scripts/run-tests.sh

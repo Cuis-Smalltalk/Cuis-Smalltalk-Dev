@@ -5,7 +5,7 @@ Utilities classPool at: #AuthorInitials put: 'GHA'.
 
 CodePackageFile installPackage: DirectoryEntry currentDirectory // 'Packages/BaseImageTests.pck.st'.
 
-ChangeSet fileIn: DirectoryEntry currentDirectory // '.ContinuousIntegrationScripts/TestResultConsolePrinter.st'.
+ChangeSet fileIn: DirectoryEntry currentDirectory // '.github/scripts/TestResultConsolePrinter.st'.
 
 testSuite := TestSuite new.
 testCases := TestCase allSubclasses reject: [:testCase | testCase isAbstract].

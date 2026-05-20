@@ -18,16 +18,16 @@ FROM ${VM_IMAGE}
 COPY CuisImage/          /workspace/CuisImage/
 COPY CoreUpdates/        /workspace/CoreUpdates/
 
-# Copy the CI scripts (installUpdates.sh uses runCuis.sh internally)
-COPY .ContinuousIntegrationScripts/ /workspace/.ContinuousIntegrationScripts/
-RUN chmod +x /workspace/.ContinuousIntegrationScripts/*.sh
+# Copy the CI scripts (install-updates.sh uses run-cuis.sh internally)
+COPY .github/scripts/ /workspace/.github/scripts/
+RUN chmod +x /workspace/.github/scripts/*.sh
 
 # Apply all pending core updates to produce an up-to-date image
 RUN cd /workspace \
  && RUNNER_OS=Linux \
       CUIS_VM_PATH="$CUIS_VM" \
       CUIS_VM_ARGUMENTS="$CUIS_VM_ARGS" \
-      .ContinuousIntegrationScripts/installUpdates.sh
+      .github/scripts/install-updates.sh
 
 # The image file is now updated in /workspace/CuisImage/
 # Subsequent layers or CI steps can copy it out with:

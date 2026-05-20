@@ -1,5 +1,5 @@
 #!/bin/bash
-# buildRelease.sh — Package Cuis into minimal, platform-specific release ZIPs.
+# build-release.sh — Package Cuis into minimal, platform-specific release ZIPs.
 #
 # Each ZIP contains ONLY what is needed to run Cuis on that platform:
 #   CuisImage/<image>.image
@@ -15,7 +15,7 @@
 # The image passed in must already have all updates applied.
 #
 # Usage:
-#   buildRelease.sh [output-dir]
+#   build-release.sh [output-dir]
 #   output-dir defaults to release-artifacts/
 
 set -euo pipefail

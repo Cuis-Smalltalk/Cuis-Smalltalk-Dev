@@ -71,7 +71,7 @@ MiClaseTest run: #testAlgo.
 
 Desde la terminal (CI):
 ```bash
-./.ContinuousIntegrationScripts/runTests.sh
+./.github/scripts/run-tests.sh
 ```
 
 ---

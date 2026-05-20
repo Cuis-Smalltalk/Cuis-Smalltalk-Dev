@@ -1,6 +1,6 @@
 # Cuis Smalltalk
 
-[![Tests](https://github.com/gstn-caruso/Cuis-Smalltalk-Dev/actions/workflows/runTests.yml/badge.svg)](https://github.com/gstn-caruso/Cuis-Smalltalk-Dev/actions/workflows/runTests.yml)
+[![Tests](https://github.com/gstn-caruso/Cuis-Smalltalk-Dev/actions/workflows/ci.yml/badge.svg)](https://github.com/gstn-caruso/Cuis-Smalltalk-Dev/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 A clean, minimal [Smalltalk-80](https://en.wikipedia.org/wiki/Smalltalk) system focused on simplicity, living objects, and the original Dynabook vision. This is an independent fork of [Cuis-Smalltalk/Cuis-Smalltalk-Dev](https://github.com/Cuis-Smalltalk/Cuis-Smalltalk-Dev) maintained by [Gastón Caruso](https://github.com/gstn-caruso), with contributions from [Máximo Prieto](https://github.com/maximoprieto) and others.
@@ -59,7 +59,7 @@ Tests run automatically on push via GitHub Actions (macOS + Linux).
 To run locally:
 
 ```sh
-./.ContinuousIntegrationScripts/runTests.sh
+./.github/scripts/run-tests.sh
 ```
 
 The main test suite is `Packages/BaseImageTests.pck.st` (~174 TestCase subclasses).

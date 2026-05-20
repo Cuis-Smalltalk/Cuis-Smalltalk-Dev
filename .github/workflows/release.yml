@@ -45,10 +45,10 @@ jobs:
       - name: Run full test suite
         run: |
           docker run --rm \
-            -v "$PWD/.ContinuousIntegrationScripts":/workspace/.ContinuousIntegrationScripts \
+            -v "$PWD/.github/scripts":/workspace/.github/scripts \
             -v "$PWD/Packages":/workspace/Packages \
             cuis-image:release \
-            bash .ContinuousIntegrationScripts/runTests.sh
+            bash .github/scripts/run-tests.sh
 
   # ── 2. Extract updated image from Docker, package per platform ───────────
   build:
@@ -87,9 +87,7 @@ jobs:
           ls -lh CuisImage/
 
       - name: Package release ZIPs (minimal, all platforms)
-        run: |
-          chmod +x .ContinuousIntegrationScripts/buildRelease.sh
-          .ContinuousIntegrationScripts/buildRelease.sh release-artifacts
+        run: .github/scripts/build-release.sh release-artifacts
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4

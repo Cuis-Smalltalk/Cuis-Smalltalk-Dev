@@ -88,4 +88,4 @@ Los skills portables viven en `.agents/skills/`.
 - **Smalltalk**: Cuis Smalltalk (imagen `.image` en `CuisImage/`)
 - **VM**: `CuisVM.app/` para macOS
 - **Scripts de inicio**: `RunCuisOnMac.sh`, `RunCuisOnLinux.sh`, `RunCuisOnWindows.bat`
-- **CI**: `.ContinuousIntegrationScripts/`, `.travis.yml`, `.github/`
+- **CI**: `.github/workflows/` (workflows), `.github/scripts/` (scripts), `docker/` (Dockerfiles)

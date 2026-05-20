@@ -58,6 +58,6 @@ La variante TRC invierte el orden: `test || revert && commit` (commit solo si fa
 
 ## En Cuis Smalltalk
 
-- Los tests se corren desde la imagen o desde scripts CI en `.ContinuousIntegrationScripts/`.
+- Los tests se corren desde la imagen o desde scripts CI en `.github/scripts/`.
 - Para TCR interactivo en la imagen, correr la suite manualmente y hacer commit/revert desde la terminal según el resultado.
 - Preferir un script shell que encapsule el ciclo cuando sea posible.

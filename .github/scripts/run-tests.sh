@@ -4,4 +4,4 @@ set -euo pipefail
 
 CURRENT_SCRIPT_FOLDER=$(dirname "$(realpath "$0")")
 
-"$CURRENT_SCRIPT_FOLDER/runCuis.sh" -s .ContinuousIntegrationScripts/runTests.st
+"$CURRENT_SCRIPT_FOLDER/run-cuis.sh" -s .github/scripts/run-tests.st
