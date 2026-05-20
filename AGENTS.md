@@ -22,6 +22,7 @@ Este repo apunta a **simplificar la experiencia** (especialmente para gente nuev
 
 ## Reglas esenciales
 
+- **Base**: este repo se rige por `MANIFESTO.md`. Todo lo que se proponga, intente o ejecute (humanos o agentes) debe evaluarse contra esos principios.
 - **Tidy First y TDD son el núcleo.** Todo cambio de comportamiento pasa por TDD. Toda sesión empieza con un chequeo Tidy First.
 - **Verificar afirmaciones técnicas antes de acordar.** No confirmar sin evidencia.
 - **Antes de tocar código, hacer el chequeo Tidy First:**
