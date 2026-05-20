@@ -5,6 +5,11 @@ on:
     tags:
       - 'v*'
 
+env:
+  # Opt into Node.js 24 for JavaScript actions ahead of the runner default
+  # switch (June 2026). Helps catch incompatibilities early.
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   # ── 1. Build runtime image per arch (updates + tests + minimal image) ─────
   build-runtime:

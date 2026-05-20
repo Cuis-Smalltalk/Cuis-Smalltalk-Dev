@@ -6,6 +6,11 @@ on:
   pull_request:
     branches: [master]
 
+env:
+  # Opt into Node.js 24 for JavaScript actions ahead of the runner default
+  # switch (June 2026). Helps catch incompatibilities early.
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   # ── amd64: Docker pipeline ────────────────────────────────────────────────
   # Runs the full pipeline inside Docker for reproducibility.
