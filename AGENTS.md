@@ -7,8 +7,16 @@ Este es el archivo canónico de instrucciones para agentes de IA en este reposit
 
 ## Contexto del proyecto
 
-Este repositorio es el entorno de desarrollo de **Cuis Smalltalk**, un sistema Smalltalk limpio y minimalista.
-El trabajo principal es desarrollo en Smalltalk: código fuente en `.st`, imágenes Cuis, paquetes, scripts de CI.
+Este repositorio es un fork de **[Cuis Smalltalk](https://github.com/Cuis-Smalltalk/Cuis-Smalltalk-Dev)** mantenido por Gastón Caruso, con foco en **reducir la brecha de entrada para potenciales usuarios de Smalltalk**.
+
+Cuis Smalltalk es un sistema Smalltalk limpio y minimalista. El trabajo principal es desarrollo en Smalltalk: código fuente en `.st`, imágenes Cuis, paquetes, scripts de CI.
+
+La VM utilizada es **OpenSmalltalk VM** (https://github.com/OpenSmalltalk/opensmalltalk-vm). Los binarios incluidos en este repo están en `CuisVM.app/`.
+
+Este repo apunta a **simplificar la experiencia** (especialmente para gente nueva). En cada cambio, sostener dos ideas a la vez:
+
+- Ser respetuosos con el upstream y su historia.
+- Dudar activamente si algo pertenece acá: si es mejor upstream, mejor wiki, o directamente no aporta, entonces no va.
 
 ---
 
@@ -124,10 +132,21 @@ Cómo se verificó que funciona: tests, CI verde, prueba manual, etc.
 
 ---
 
-## Notas sobre el entorno
+## Entorno técnico
 
 - **OS**: macOS (darwin), Shell: zsh
 - **Smalltalk**: Cuis Smalltalk (imagen `.image` en `CuisImage/`)
-- **VM**: `CuisVM.app/` para macOS
+- **VM**: `CuisVM.app/` — binarios basados en [OpenSmalltalk VM](https://github.com/OpenSmalltalk/opensmalltalk-vm)
 - **Scripts de inicio**: `RunCuisOnMac.sh`, `RunCuisOnLinux.sh`, `RunCuisOnWindows.bat`
-- **CI**: `.github/workflows/` (workflows), `.github/scripts/` (scripts), `docker/` (Dockerfiles)
+- **CI**: GitHub Actions con runners amd64 (Docker) y arm64 (bare-metal)
+  - Workflows: `.github/workflows/ci.yml` (tests), `.github/workflows/release.yml` (tags `v*`)
+  - Scripts: `.github/scripts/`
+  - Dockerfiles: `docker/Dockerfile` (multi-stage, amd64 + arm64)
+
+---
+
+## Formato de código Smalltalk
+
+- **Packages**: formato Monticello, archivos `.pck.st`
+- **Core updates**: changesets numerados `.cs.st` en `CoreUpdates/`
+- **No hay Tonel** en este repositorio

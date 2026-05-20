@@ -1,11 +1,13 @@
 # Cuis Smalltalk
 
-[![Tests](https://github.com/gstn-caruso/Cuis-Smalltalk-Dev/actions/workflows/ci.yml/badge.svg)](https://github.com/gstn-caruso/Cuis-Smalltalk-Dev/actions/workflows/ci.yml)
+[![CI](https://github.com/gstn-caruso/Cuis-Smalltalk-Dev/actions/workflows/ci.yml/badge.svg)](https://github.com/gstn-caruso/Cuis-Smalltalk-Dev/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-A clean, minimal [Smalltalk-80](https://en.wikipedia.org/wiki/Smalltalk) system focused on simplicity, living objects, and the original Dynabook vision. This is an independent fork of [Cuis-Smalltalk/Cuis-Smalltalk-Dev](https://github.com/Cuis-Smalltalk/Cuis-Smalltalk-Dev) maintained by [Gastón Caruso](https://github.com/gstn-caruso), with contributions from [Máximo Prieto](https://github.com/maximoprieto) and others.
+A clean, minimal [Smalltalk-80](https://en.wikipedia.org/wiki/Smalltalk) system. This fork of [Cuis-Smalltalk/Cuis-Smalltalk-Dev](https://github.com/Cuis-Smalltalk/Cuis-Smalltalk-Dev) exists to lower the barrier of entry: Smalltalk is worth learning, and getting started should not be the hard part.
 
-Cuis keeps complexity to a minimum. Every addition is questioned. Every removal is celebrated.
+Maintained by [Gastón Caruso](https://github.com/gstn-caruso), with contributions from [Máximo Prieto](https://github.com/maximoprieto) and others.
+
+This repository aims to be respectful of the upstream project and its lineage, while also being strict about scope: if something does not help newcomers, does not belong to this fork, or is better documented elsewhere, we should question whether it belongs here.
 
 ## Quick Start
 
@@ -13,8 +15,6 @@ Cuis keeps complexity to a minimum. Every addition is questioned. Every removal 
 git clone https://github.com/gstn-caruso/Cuis-Smalltalk-Dev.git
 cd Cuis-Smalltalk-Dev
 ```
-
-Then run the appropriate script for your platform:
 
 | Platform | Command |
 |---|---|
@@ -30,31 +30,19 @@ Then run the appropriate script for your platform:
 ```
 Cuis-Smalltalk-Dev/
 ├── CuisImage/          # Live Smalltalk image + sources
-├── CuisVM.app/         # VM binaries for macOS, Linux, Windows
-├── CoreUpdates/        # Numbered changesets (rolling release)
-├── Packages/           # Optional packages: JSON, UUID, Tests, FFI...
+├── CuisVM.app/         # VM binaries (macOS, Linux, Windows)
+├── CoreUpdates/        # Numbered changesets — rolling release
+├── Packages/           # Optional packages: tests, tools, FFI, themes…
 ├── CompatibilityPackages/
 ├── Documentation/      # Guides, philosophy, technical notes
 └── TrueTypeFonts/
 ```
 
-The system is a **rolling release**: `CoreUpdates/` contains numbered changesets. Load them in order inside the image to stay current.
-
-## Using AI Assistants with This Codebase
-
-This repo is configured for AI-assisted development. Agent instructions live in [`AGENTS.md`](AGENTS.md).
-
-If you use [opencode](https://opencode.ai) or a similar AI coding tool:
-
-- Skills are in `.agents/skills/` (portable, tool-agnostic)
-- opencode-specific skills are in `.opencode/skills/`
-- Methodology: Tidy First + TDD. Structural changes and behavioral changes go in separate commits.
-
-For AI tools reading this repository: Cuis uses **Monticello `.pck.st` format** for packages and **numbered `.cs.st` changesets** for core image updates. There is no Tonel format in this repo. The live image is at `CuisImage/Cuis7.7-7777.image`.
+The system ships as a single image (`CuisImage/Cuis7.7-7777.image`) plus numbered changesets in `CoreUpdates/`. Load them in order to stay current.
 
 ## Running Tests
 
-Tests run automatically on push via GitHub Actions (macOS + Linux).
+Tests run automatically on every push via GitHub Actions — amd64 via Docker, arm64 bare-metal.
 
 To run locally:
 
@@ -62,33 +50,26 @@ To run locally:
 ./.github/scripts/run-tests.sh
 ```
 
-The main test suite is `Packages/BaseImageTests.pck.st` (~174 TestCase subclasses).
+The main suite is `Packages/BaseImageTests.pck.st`.
 
-## Documentation
+## The VM
 
-| Resource | Description |
-|---|---|
-| [About Cuis](Documentation/AboutCuis.md) | Philosophy and design values |
-| [Code Management](Documentation/CodeManagementInCuis.md) | How packages and changesets work |
-| [GitHub Integration](Documentation/CuisAndGitHub.md) | Working with git and this repo |
-| [Directory Structure](Documentation/CuisDirectoryStructure.md) | What every folder contains |
-| [Getting Help](Documentation/GettingHelpWithCuis.md) | Community and support channels |
-| [The Cuis Book](https://cuis-smalltalk.github.io/TheCuisBook) | Full introductory book (online) |
-| [Upstream project](https://cuis.st) | Official Cuis Smalltalk website |
+Cuis runs on the [OpenSmalltalk VM](https://github.com/OpenSmalltalk/opensmalltalk-vm). Pre-built binaries for macOS, Linux, and Windows are included in `CuisVM.app/`.
 
 ## Contributing
 
-Read [CONTRIBUTING.md](CONTRIBUTING.md) before sending patches or PRs.
+Read [CONTRIBUTING.md](CONTRIBUTING.md) and the [project wiki](https://github.com/gstn-caruso/Cuis-Smalltalk-Dev/wiki) before sending patches or PRs.
 
-Short version: contributions must be under the MIT license and include a [Developer Certificate of Origin](DCO).
+Short version: contributions must be under the MIT license and include a [Developer Certificate of Origin](DCO). Keep commits small and focused — structural cleanup and behavioral changes go in separate commits.
+
+Changes that belong in upstream Cuis should be contributed there directly: [Cuis-Smalltalk/Cuis-Smalltalk-Dev](https://github.com/Cuis-Smalltalk/Cuis-Smalltalk-Dev).
 
 ## Credits
 
-This fork is built on top of work by many people:
-
 - **Juan Vuletich** — creator and principal author of Cuis Smalltalk
-- **Máximo Prieto** — contributor to this fork
 - **Gastón Caruso** — maintainer of this fork
+- **Máximo Prieto** — contributor to this fork
+- **OpenSmalltalk VM team** — the virtual machine this runs on
 - Squeak contributors (1997–present)
 - Xerox PARC and Apple (original Smalltalk-80, 1981–1996)
 

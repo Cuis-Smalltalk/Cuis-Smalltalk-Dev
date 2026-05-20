@@ -1,34 +1,55 @@
 # Contributing
 
-## Before you start
+Thanks for your interest in contributing to this fork of Cuis Smalltalk.
 
-Read [AGENTS.md](AGENTS.md) if you plan to use an AI assistant. The methodology here is **Tidy First + TDD**: structural cleanup and behavioral changes go in separate commits, always.
+## Getting started
 
-## License
+1. Fork the repo and create a branch from `master`.
+2. Make your changes following the methodology below.
+3. Open a pull request with a description in Spanish (see below).
 
-All contributions must be under the [MIT License](LICENSE). By contributing, you agree to the [Developer Certificate of Origin (DCO)](DCO) — you have the legal right to make the contribution.
+## Methodology
 
-## Workflow
+We follow **Tidy First + TDD**:
 
-1. Fork the repo and create a branch from `master`
-2. Write a test first if adding or fixing behavior
-3. Keep commits small and focused — one concern per commit
-4. Never mix cleanup with behavior changes in the same commit
-5. Open a pull request with a clear description of what and why
+- **Tidy First**: before touching behavior, check if the code needs structural cleanup. If it does, do it in a separate commit. If it doesn't, say so explicitly.
+- **TDD**: Red → Green → Refactor. Write the test first, make it fail for the right reason, then implement the minimum to make it pass.
+- Keep structural changes separate from behavioral changes. Never mix them in the same commit.
 
-## Changesets vs packages
+## Core changes vs packages
 
-- **Core image changes**: use the ChangeSorter and ChangeList tools inside Cuis to prepare a `.cs.st` changeset. Attach it to a message on the [mailing list](https://lists.cuis.st/mailman/listinfo/cuis-dev) for review.
-- **Package changes**: pull requests are fine for changes to existing packages or new packages in `Packages/`.
+- Changes to **core Cuis** (kernel, morphic, tools): if the change belongs upstream, submit it to [Cuis-Smalltalk/Cuis-Smalltalk-Dev](https://github.com/Cuis-Smalltalk/Cuis-Smalltalk-Dev) as a changeset.
+- Changes specific to this fork: open a PR here.
+- **Packages**: contribute via PR with the updated `.pck.st` file (Monticello) and, if applicable, the corresponding Tonel `.st` files committed to git.
 
-## Code style
+## Pull request convention
 
-Follow the conventions already in the codebase. Cuis Smalltalk values clarity and minimalism — if it doesn't need to be there, remove it.
+PR descriptions must be written in **Spanish**. This is public open source documentation — write as if the reader has no context from prior conversations.
 
-## Upstream
+Required structure:
 
-This repo is a fork of [Cuis-Smalltalk/Cuis-Smalltalk-Dev](https://github.com/Cuis-Smalltalk/Cuis-Smalltalk-Dev). Changes that belong upstream should be contributed there directly.
+```
+## ¿Qué hace este PR?
+## ¿Por qué lo queremos mergear?
+## Cambios incluidos
+## Qué NO incluye (si aplica)
+## Verificación
+```
 
-## Questions
+PR titles: in Spanish, max 72 characters.
 
-Open an issue or read [Getting Help with Cuis](Documentation/GettingHelpWithCuis.md).
+## Documentation
+
+Extended documentation lives in the [project wiki](https://github.com/gstn-caruso/Cuis-Smalltalk-Dev/wiki).
+
+## The VM
+
+The VM used by Cuis is the OpenSmalltalk VM: https://github.com/OpenSmalltalk/opensmalltalk-vm
+
+## DCO and license
+
+By contributing, you certify that you have the right to submit your contribution under the project's [MIT License](LICENSE). This project uses the [Developer Certificate of Origin (DCO)](https://developercertificate.org/). Add a `Signed-off-by` line to your commits:
+
+```
+git commit -s -m "your message"
+```
