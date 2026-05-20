@@ -7,7 +7,7 @@ A clean, minimal [Smalltalk-80](https://en.wikipedia.org/wiki/Smalltalk) system.
 
 This fork of [Cuis-Smalltalk/Cuis-Smalltalk-Dev](https://github.com/Cuis-Smalltalk/Cuis-Smalltalk-Dev) exists to lower the barrier of entry: Smalltalk is worth learning, and getting started should not be the hard part.
 
-Maintained by [Gastón Caruso](https://github.com/gstn-caruso), with contributions from [Máximo Prieto](https://github.com/maximoprieto) and others.
+Maintained by [Gastón Caruso](https://github.com/gstn-caruso).
 
 This repository aims to be respectful of upstream and its lineage, while being strict about scope. If something does not help newcomers, does not belong to this fork, or is better documented elsewhere, we should question whether it belongs here.
 
