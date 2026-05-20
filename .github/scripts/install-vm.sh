@@ -53,5 +53,13 @@ case $RUNNER_OS in
     ;;
 esac
 
-echo "CUIS_VM_PATH=$CUIS_VM_PATH"               >> "$GITHUB_ENV"
-echo "CUIS_VM_ARGUMENTS=$CUIS_VM_ARGUMENTS"     >> "$GITHUB_ENV"
+if [[ -n "${GITHUB_ENV:-}" ]]; then
+  echo "CUIS_VM_PATH=$CUIS_VM_PATH"           >> "$GITHUB_ENV"
+  echo "CUIS_VM_ARGUMENTS=$CUIS_VM_ARGUMENTS" >> "$GITHUB_ENV"
+else
+  # Allow local usage outside GitHub Actions.
+  export CUIS_VM_PATH
+  export CUIS_VM_ARGUMENTS
+  echo "CUIS_VM_PATH=$CUIS_VM_PATH"
+  echo "CUIS_VM_ARGUMENTS=$CUIS_VM_ARGUMENTS"
+fi
