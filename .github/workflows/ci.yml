@@ -1,0 +1,82 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+jobs:
+  # ── Build the VM Docker image (cached by layer) ──────────────────────────
+  build-vm:
+    name: Build VM image
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    outputs:
+      vm-image: ${{ steps.meta.outputs.tags }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build cuis-vm (cached)
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: docker/Dockerfile.vm
+          push: false
+          load: true
+          tags: cuis-vm:ci
+          cache-from: type=gha,scope=cuis-vm
+          cache-to:   type=gha,scope=cuis-vm,mode=max
+
+  # ── Apply updates + run full test suite ──────────────────────────────────
+  test:
+    name: Tests
+    needs: build-vm
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Restore VM layer from cache
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: docker/Dockerfile.vm
+          push: false
+          load: true
+          tags: cuis-vm:ci
+          cache-from: type=gha,scope=cuis-vm
+
+      - name: Build cuis-image (VM + updated Smalltalk image)
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: docker/Dockerfile.image
+          push: false
+          load: true
+          tags: cuis-image:ci
+          build-args: VM_IMAGE=cuis-vm:ci
+          cache-from: type=gha,scope=cuis-image
+          cache-to:   type=gha,scope=cuis-image,mode=max
+
+      - name: Run test suite
+        run: |
+          docker run --rm \
+            -v "$PWD/.ContinuousIntegrationScripts":/workspace/.ContinuousIntegrationScripts \
+            -v "$PWD/Packages":/workspace/Packages \
+            cuis-image:ci \
+            bash .ContinuousIntegrationScripts/runTests.sh

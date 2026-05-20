@@ -1,0 +1,34 @@
+# Layer 2: Cuis image with all core updates applied
+#
+# Extends cuis-vm with the Smalltalk image and applies every pending
+# changeset from CoreUpdates/ so the image is fully up to date.
+#
+# This layer is rebuilt whenever the image or changesets change.
+# The VM layer (Dockerfile.vm) is stable and cached separately.
+#
+# Build:
+#   docker build -f docker/Dockerfile.image -t cuis-image:latest .
+# Run interactively:
+#   docker run --rm -it cuis-image:latest
+
+ARG VM_IMAGE=cuis-vm:latest
+FROM ${VM_IMAGE}
+
+# Copy the image files and the changesets needed to update it
+COPY CuisImage/          /workspace/CuisImage/
+COPY CoreUpdates/        /workspace/CoreUpdates/
+
+# Copy the CI scripts (installUpdates.sh uses runCuis.sh internally)
+COPY .ContinuousIntegrationScripts/ /workspace/.ContinuousIntegrationScripts/
+RUN chmod +x /workspace/.ContinuousIntegrationScripts/*.sh
+
+# Apply all pending core updates to produce an up-to-date image
+RUN cd /workspace \
+ && RUNNER_OS=Linux \
+      CUIS_VM_PATH="$CUIS_VM" \
+      CUIS_VM_ARGUMENTS="$CUIS_VM_ARGS" \
+      .ContinuousIntegrationScripts/installUpdates.sh
+
+# The image file is now updated in /workspace/CuisImage/
+# Subsequent layers or CI steps can copy it out with:
+#   docker cp <container>:/workspace/CuisImage/ .

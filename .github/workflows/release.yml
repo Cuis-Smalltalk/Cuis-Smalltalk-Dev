@@ -6,36 +6,9 @@ on:
       - 'v*'
 
 jobs:
-  # --- 1. Run the full test suite before releasing ---
+  # ── 1. Tests must pass before anything else ───────────────────────────────
   test:
-    name: Test on ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
-    timeout-minutes: 30
-
-    strategy:
-      fail-fast: true
-      matrix:
-        os: [ubuntu-latest, macos-latest]
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 1
-
-      - name: Set up VM
-        run: .ContinuousIntegrationScripts/installVm.sh
-
-      - name: Apply core updates to image
-        run: .ContinuousIntegrationScripts/installUpdates.sh
-
-      - name: Run test suite
-        run: .ContinuousIntegrationScripts/runTests.sh
-
-  # --- 2. Build the updated image and package per platform ---
-  build:
-    name: Build release artifacts
-    needs: test
+    name: Tests
     runs-on: ubuntu-latest
     timeout-minutes: 30
 
@@ -45,13 +18,75 @@ jobs:
         with:
           fetch-depth: 1
 
-      - name: Set up VM (Linux)
-        run: .ContinuousIntegrationScripts/installVm.sh
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
 
-      - name: Apply core updates to image
-        run: .ContinuousIntegrationScripts/installUpdates.sh
+      - name: Build VM layer
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: docker/Dockerfile.vm
+          push: false
+          load: true
+          tags: cuis-vm:release
+          cache-from: type=gha,scope=cuis-vm
 
-      - name: Package release ZIPs (all platforms)
+      - name: Build image layer (applies all core updates)
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: docker/Dockerfile.image
+          push: false
+          load: true
+          tags: cuis-image:release
+          build-args: VM_IMAGE=cuis-vm:release
+          cache-from: type=gha,scope=cuis-image
+
+      - name: Run full test suite
+        run: |
+          docker run --rm \
+            -v "$PWD/.ContinuousIntegrationScripts":/workspace/.ContinuousIntegrationScripts \
+            -v "$PWD/Packages":/workspace/Packages \
+            cuis-image:release \
+            bash .ContinuousIntegrationScripts/runTests.sh
+
+  # ── 2. Extract updated image from Docker, package per platform ───────────
+  build:
+    name: Build release artifacts
+    needs: test
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Restore VM + image layers from cache
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: docker/Dockerfile.image
+          push: false
+          load: true
+          tags: cuis-image:release
+          build-args: VM_IMAGE=cuis-vm:release
+          cache-from: type=gha,scope=cuis-image
+
+      - name: Extract updated image from Docker
+        run: |
+          # Run a container and copy the updated CuisImage/ back to the host
+          CID=$(docker create cuis-image:release)
+          docker cp "$CID:/workspace/CuisImage/." CuisImage/
+          docker rm "$CID"
+          echo "Updated image files:"
+          ls -lh CuisImage/
+
+      - name: Package release ZIPs (minimal, all platforms)
         run: |
           chmod +x .ContinuousIntegrationScripts/buildRelease.sh
           .ContinuousIntegrationScripts/buildRelease.sh release-artifacts
@@ -63,7 +98,7 @@ jobs:
           path: release-artifacts/*.zip
           retention-days: 7
 
-  # --- 3. Publish the GitHub Release ---
+  # ── 3. Publish GitHub Release ─────────────────────────────────────────────
   publish:
     name: Publish GitHub Release
     needs: build
@@ -78,6 +113,9 @@ jobs:
           name: release-zips
           path: release-artifacts
 
+      - name: List release files
+        run: ls -lh release-artifacts/
+
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
@@ -85,28 +123,29 @@ jobs:
           body: |
             ## Cuis Smalltalk ${{ github.ref_name }}
 
-            Ready-to-run packages. Download the ZIP for your platform, unzip, and run the start script — no installation required.
+            Ready-to-run packages. Download the ZIP for your platform, unzip, run the start script — no installation required.
 
-            | Platform | File |
-            |---|---|
-            | macOS | `*-macos.zip` → `RunCuisOnMac.sh` or double-click `RunCuisOnFinder.command` |
-            | Linux x86_64 | `*-linux-x86_64.zip` → `RunCuisOnLinux.sh` |
-            | Linux ARM64 | `*-linux-arm64.zip` → `RunCuisOnLinux.sh` |
-            | Windows x86_64 | `*-windows-x86_64.zip` → `RunCuisOnWindows.bat` |
-            | Windows ARM64 | `*-windows-arm64.zip` → `RunCuisOnWindows.bat` |
+            | Platform | ZIP | Run |
+            |---|---|---|
+            | macOS | `*-macos.zip` | `RunCuisOnMac.sh` or double-click `RunCuisOnFinder.command` |
+            | Linux x86_64 | `*-linux-x86_64.zip` | `RunCuisOnLinux.sh` |
+            | Linux ARM64 | `*-linux-arm64.zip` | `RunCuisOnLinux.sh` |
+            | Windows x86_64 | `*-windows-x86_64.zip` | `RunCuisOnWindows.bat` |
+            | Windows ARM64 | `*-windows-arm64.zip` | `RunCuisOnWindows.bat` |
 
-            > **macOS note:** if downloaded as a ZIP, run `./unquarantine.sh` from the terminal before launching.
+            > **macOS ZIP download:** run `./unquarantine.sh` before launching.
 
-            ### What's included
-            - Updated image with all core changesets applied
-            - VM for the target platform
+            ### What's inside each ZIP
+            - Updated Smalltalk image (all core changesets applied)
+            - VM binary for the target platform
+            - `UnicodeData.txt` and sources file
             - TrueType fonts
-            - Start scripts
+            - Start script
 
-            ### What's not included
-            - `CoreUpdates/` — changesets are already applied to the image
-            - `Packages/` — optional packages, load from the image as needed
-            - `Documentation/` — see [the repository](https://github.com/${{ github.repository }})
+            ### What's NOT included
+            - `CoreUpdates/` — already applied to the image
+            - `Packages/` — load optional packages from inside Cuis
+            - `Documentation/` — see the [repository](https://github.com/${{ github.repository }})
           files: release-artifacts/*.zip
           fail_on_unmatched_files: true
           generate_release_notes: true
