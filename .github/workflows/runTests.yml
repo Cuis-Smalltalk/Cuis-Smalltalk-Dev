@@ -1,19 +1,33 @@
-name: Run tests
-'on':
+name: Tests
+
+on:
   push:
-    branches:
-      - master
+    branches: [master]
   pull_request:
-    branches:
-      - master
+    branches: [master]
+
 jobs:
-  Build:
-    runs-on: '${{ matrix.os }}'
+  test:
+    name: Test on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+
     strategy:
+      fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest]
+
     steps:
-      - uses: actions/checkout@v3
-      - run: .ContinuousIntegrationScripts/installVm.sh
-      - run: .ContinuousIntegrationScripts/installUpdates.sh
-      - run: .ContinuousIntegrationScripts/runTests.sh
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Set up VM
+        run: .ContinuousIntegrationScripts/installVm.sh
+
+      - name: Apply core updates to image
+        run: .ContinuousIntegrationScripts/installUpdates.sh
+
+      - name: Run test suite
+        run: .ContinuousIntegrationScripts/runTests.sh

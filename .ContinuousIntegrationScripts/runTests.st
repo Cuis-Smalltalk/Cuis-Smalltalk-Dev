@@ -1,7 +1,7 @@
 |suite result exitCode|
 
-Utilities classPool at: #AuthorName put: 'TravisCI'.
-Utilities classPool at: #AuthorInitials put: 'TCI'.
+Utilities classPool at: #AuthorName put: 'GitHubActions'.
+Utilities classPool at: #AuthorInitials put: 'GHA'.
 
 CodePackageFile installPackage: DirectoryEntry currentDirectory // 'Packages/BaseImageTests.pck.st'.
 

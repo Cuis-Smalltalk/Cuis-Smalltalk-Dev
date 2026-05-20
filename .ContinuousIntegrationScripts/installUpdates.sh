@@ -5,8 +5,8 @@ set -euo pipefail
 CURRENT_SCRIPT_FOLDER=$(dirname "$(realpath "$0")")
 
 INSTALL_UPDATES_SCRIPT="\
-  Utilities classPool at: #AuthorName put: 'TravisCI'.
-  Utilities classPool at: #AuthorInitials put: 'TCI'.
+  Utilities classPool at: #AuthorName put: 'GitHubActions'.
+  Utilities classPool at: #AuthorInitials put: 'GHA'.
   ChangeSet installNewUpdates.\
   Smalltalk saveAndQuit.\
 "
