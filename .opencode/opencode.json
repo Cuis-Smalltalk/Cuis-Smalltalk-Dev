@@ -2,5 +2,16 @@
   "$schema": "https://opencode.ai/config.json",
   "skills": {
     "paths": [".opencode/skills"]
+  },
+  "mcp": {
+    "cuis-mcp": {
+      "type": "local",
+      "enabled": true,
+      "command": ["bash", ".opencode/scripts/cuis-mcp-bridge.sh"],
+      "env": {
+        "CUIS_MCP_HOST": "127.0.0.1",
+        "CUIS_MCP_PORT": "1470"
+      }
+    }
   }
 }
