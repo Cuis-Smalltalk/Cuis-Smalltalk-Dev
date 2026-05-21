@@ -1,6 +1,6 @@
-'From Cuis7.7 [latest update: #7779] on 23 December 2025 at 4:33:43 pm'!
+'From Cuis7.7 [latest update: #7959] on 21 May 2026 at 5:18:57 pm'!
 'Description Alien provides the infrastructure for FFI Callbacks, implementing the Callback hierarchy and marshalling methods within it.'!
-!provides: 'Alien-Core' 1 3!
+!provides: 'Alien-Core' 1 4!
 !requires: 'WeakDictionaries' 1 1 nil!
 SystemOrganization addCategory: #'Alien-Core'!
 
@@ -1652,7 +1652,7 @@ initializeARM32
 		unsignedLongAt:   5 put: 16rE24DD010;
 		unsignedLongAt:   9 put: 16rE58DF000;
 		unsignedLongAt: 13 put: 16rE58DC004;
-		unsignedLongAt: 17 put: 16rE58DE00c;
+		unsignedLongAt: 17 put: 16rE58DE00C;
 		unsignedLongAt: 21 put: 16rE59FC008;
 		unsignedLongAt: 25 put: 16rE12FFF3C;
 		unsignedLongAt: 29 put: 16rE28DD00C;
