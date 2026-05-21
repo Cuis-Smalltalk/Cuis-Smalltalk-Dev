@@ -23,6 +23,15 @@
 #   3. docker run --rm --security-opt seccomp=unconfined \
 #        cuis-workspace bash -c "...run tests..."
 #
+# Usage (headless runtime):
+#   1. docker buildx build --platform linux/amd64 --file docker/Dockerfile \
+#        --tag cuis-headless:amd64 --load .
+#   2. docker buildx build --platform linux/arm64 --file docker/Dockerfile \
+#        --tag cuis-headless:arm64 --load .
+#   3. docker run --rm --security-opt seccomp=unconfined \
+#        cuis-headless:amd64 -s /workspace/.github/scripts/run-tests.st
+#   4. or build both with: docker/build-headless-images.sh
+#
 # Build runtime (after tests pass, with updated image extracted):
 #   docker build --target runtime --tag cuis:latest .
 
@@ -34,6 +43,12 @@ RUN apt-get update \
       libssl3 \
       libstdc++6 \
       libgcc-s1 \
+      libx11-6 \
+      libxext6 \
+      libxrender1 \
+      libfreetype6 \
+      libfontconfig1 \
+      libgl1 \
       ca-certificates \
  && rm -rf /var/lib/apt/lists/*
 
@@ -53,6 +68,9 @@ ENV CUIS_VM_ARGS="-vm-sound-null -vm-display-null"
 
 WORKDIR /workspace
 
+COPY docker/run-headless.sh /usr/local/bin/run-cuis-headless
+RUN chmod +x /usr/local/bin/run-cuis-headless
+
 # ── Stage 2: workspace ───────────────────────────────────────────────────────
 FROM vm AS workspace
 
@@ -70,7 +88,6 @@ FROM vm AS runtime
 
 COPY CuisImage/   /workspace/CuisImage/
 COPY TrueTypeFonts/ /workspace/TrueTypeFonts/
+COPY .github/scripts/ /workspace/.github/scripts/
 
-CMD ["sh", "-c", \
-  "exec $CUIS_VM $CUIS_VM_ARGS \
-   $(ls /workspace/CuisImage/*.image | head -1)"]
+ENTRYPOINT ["run-cuis-headless"]

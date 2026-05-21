@@ -47,11 +47,10 @@ jobs:
             --tag cuis-workspace:${{ matrix.arch }} \
             .
 
-      # Apply updates + run tests + extract updated image in one container.
-      # Updates modify the image in-place; tests must run in the same container.
-      # We commit the container after updates so we can extract the image.
+      # Test an updated copy with BaseImageTests. If that passes, build a
+      # separate clean image with updates only for release packaging.
       # --privileged: Squeak JIT requires mprotect(PROT_READ|PROT_EXEC).
-      - name: Apply updates, run tests, extract updated image
+      - name: Test updated image, then build clean release image
         run: |
           CID=$(docker create \
             --privileged \
@@ -59,24 +58,20 @@ jobs:
             bash -c "
               set -euo pipefail
 
-              IMAGE_FILE=\$(ls CuisImage/ | grep -E 'Cuis[0-9]+\.[0-9]+-[0-9]+\.image' | head -1)
-              [[ -z \"\$IMAGE_FILE\" ]] && { echo 'ERROR: no .image found in CuisImage/' >&2; exit 1; }
+              rm -rf test-image release-image
+              cp -R CuisImage test-image
+              bash .github/scripts/install-updates.sh test-image
+              bash .github/scripts/run-tests.sh test-image
 
-              INSTALL_UPDATES_SCRIPT=\"\\
-                Utilities classPool at: #AuthorName put: 'GitHubActions'.
-                Utilities classPool at: #AuthorInitials put: 'GHA'.
-                ChangeSet installNewUpdates.
-                Smalltalk saveAndQuit.\\
-              \"
-
-              \"\$CUIS_VM\" \$CUIS_VM_ARGS CuisImage/\"\$IMAGE_FILE\" -d \"\$INSTALL_UPDATES_SCRIPT\"
-
-              \"\$CUIS_VM\" \$CUIS_VM_ARGS CuisImage/\"\$IMAGE_FILE\" -s .github/scripts/run-tests.st
-            ")
+              cp -R CuisImage release-image
+              bash .github/scripts/install-updates.sh release-image
+             ")
           docker start --attach "$CID"
-          docker cp "$CID:/workspace/CuisImage/." CuisImage/
+          rm -rf CuisImage
+          mkdir -p CuisImage
+          docker cp "$CID:/workspace/release-image/." CuisImage/
           docker rm "$CID"
-          echo "Extracted image files:"
+          echo "Extracted clean release image files:"
           ls -lh CuisImage/
 
       # Rebuild with the updated CuisImage/ so the runtime stage gets
@@ -88,116 +83,33 @@ jobs:
             --file docker/Dockerfile \
             --target runtime \
             --load \
-            --tag cuis-runtime:${{ matrix.arch }} \
+            --tag cuis-headless:${{ github.ref_name }}-${{ matrix.arch }} \
             .
 
-      - name: Package release ZIPs for ${{ matrix.arch }}
+      - name: Export runtime image for release
         run: |
           set -euo pipefail
 
-          OUTPUT_DIR="$(realpath "release-artifacts")"
-          ARCH_FILTER="${{ matrix.arch }}"
-          mkdir -p "$OUTPUT_DIR"
+          mkdir -p release-artifacts
+          docker save "cuis-headless:${{ github.ref_name }}-${{ matrix.arch }}" | gzip > \
+            "release-artifacts/cuis-headless-${{ github.ref_name }}-linux-${{ matrix.arch }}.tar.gz"
 
-          IMAGE_FILE=$(ls CuisImage/ | grep -E '^Cuis[0-9]+\.[0-9]+-[0-9]+\.image$' | head -1)
-          [[ -z "$IMAGE_FILE" ]] && { echo "ERROR: no .image found in CuisImage/" >&2; exit 1; }
+          ls -lh release-artifacts/*.tar.gz
 
-          IMAGE_BASE="${IMAGE_FILE%.image}"
-          CHANGES_FILE="${IMAGE_BASE}.changes"
-          SOURCES_FILE=$(ls CuisImage/ | grep -E '^Cuis[0-9]+\.[0-9]+\.sources$' | head -1)
-          [[ -z "$SOURCES_FILE" ]] && { echo "ERROR: no .sources found in CuisImage/" >&2; exit 1; }
-
-          echo "Image   : CuisImage/$IMAGE_FILE"
-          echo "Sources : CuisImage/$SOURCES_FILE"
-          echo "Arch    : $ARCH_FILTER"
-          echo ""
-
-          package_platform() {
-              local PLATFORM="$1"; shift
-              local VM_DIR="$1";   shift
-              local RUN_SCRIPTS=("$@")
-
-              local ZIP_NAME="${IMAGE_BASE}-${PLATFORM}.zip"
-              local STAGING ZIP_PATH
-              STAGING=$(mktemp -d)
-              ZIP_PATH="$OUTPUT_DIR/$ZIP_NAME"
-              local DEST="$STAGING/Cuis-${PLATFORM}"
-              mkdir -p "$DEST/CuisImage" "$DEST/CuisVM.app/Contents" "$DEST/TrueTypeFonts"
-
-              echo "Packaging $PLATFORM ..."
-
-              cp "CuisImage/$IMAGE_FILE"     "$DEST/CuisImage/"
-              cp "CuisImage/$CHANGES_FILE"   "$DEST/CuisImage/" 2>/dev/null || true
-              cp "CuisImage/$SOURCES_FILE"   "$DEST/CuisImage/"
-              cp "CuisImage/UnicodeData.txt" "$DEST/CuisImage/"
-
-              cp -r "$VM_DIR" "$DEST/CuisVM.app/Contents/"
-              cp -r "CuisVM.app/Contents/Resources" "$DEST/CuisVM.app/Contents/"
-
-              cp -r TrueTypeFonts/. "$DEST/TrueTypeFonts/"
-
-              for s in "${RUN_SCRIPTS[@]}"; do
-                  [[ -f "$s" ]] && cp "$s" "$DEST/"
-              done
-
-              cp LICENSE   "$DEST/"
-              cp README.md "$DEST/"
-
-              find "$DEST" \( -name "*.sh" -o -name "*.command" \) -exec chmod +x {} +
-
-              (cd "$STAGING" && zip -qr --symlinks "$ZIP_PATH" "Cuis-${PLATFORM}")
-              rm -rf "$STAGING"
-
-              echo "  -> $ZIP_NAME  ($(du -sh "$ZIP_PATH" | cut -f1))"
-          }
-
-          case "$ARCH_FILTER" in
-            arm64)
-              package_platform "linux-arm64" \
-                  "CuisVM.app/Contents/Linux-arm64" \
-                  "RunCuisOnLinux.sh"
-              ;;
-            amd64|all)
-              package_platform "linux-x86_64" \
-                  "CuisVM.app/Contents/Linux-x86_64" \
-                  "RunCuisOnLinux.sh"
-
-              package_platform "macos" \
-                  "CuisVM.app/Contents/MacOS" \
-                  "RunCuisOnMac.sh" "RunCuisOnFinder.command" "unquarantine.sh"
-
-              package_platform "windows-x86_64" \
-                  "CuisVM.app/Contents/Windows-x86_64" \
-                  "RunCuisOnWindows.bat"
-
-              package_platform "windows-arm64" \
-                  "CuisVM.app/Contents/Windows-arm64" \
-                  "RunCuisOnWindows.bat"
-
-              if [[ "$ARCH_FILTER" == "all" ]]; then
-                package_platform "linux-arm64" \
-                    "CuisVM.app/Contents/Linux-arm64" \
-                    "RunCuisOnLinux.sh"
-              fi
-              ;;
-            *)
-              echo "ERROR: unknown arch filter '$ARCH_FILTER'. Use: amd64, arm64, all" >&2
-              exit 1
-              ;;
-          esac
-
-          echo ""
-          echo "Artifacts:"
-          ls -lh "$OUTPUT_DIR/"
+      - name: Package release ZIPs for ${{ matrix.arch }}
+        run: |
+          bash .github/scripts/package-release-zips.sh "${{ matrix.arch }}" CuisImage release-artifacts cuis-mcp
 
       - name: Upload ${{ matrix.arch }} artifacts
         uses: actions/upload-artifact@v4
         with:
           name: release-${{ matrix.arch }}
-          path: release-artifacts/*.zip
+          path: |
+            release-artifacts/*.zip
+            release-artifacts/*.tar.gz
           retention-days: 7
 
-  # ── 2. Publish all ZIPs as a single GitHub Release ───────────────────────
+  # ── 2. Publish all assets as a single GitHub Release ─────────────────────
   publish:
     name: Publish GitHub Release
     needs: build-runtime
@@ -206,6 +118,11 @@ jobs:
       contents: write
 
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
       - name: Download amd64 artifacts
         uses: actions/download-artifact@v4
         with:
@@ -221,35 +138,63 @@ jobs:
       - name: List release files
         run: ls -lh release-artifacts/
 
+      - name: Build release notes
+        run: |
+          set -euo pipefail
+
+          PREVIOUS_TAG=$(git tag --sort=-creatordate | grep -Fxv "$GITHUB_REF_NAME" | head -1 || true)
+          if [[ -n "$PREVIOUS_TAG" ]]; then
+            COMMIT_RANGE="$PREVIOUS_TAG..$GITHUB_SHA"
+          else
+            COMMIT_RANGE="$GITHUB_SHA"
+          fi
+
+          {
+            echo "## Cuis Smalltalk ${{ github.ref_name }}"
+            echo
+            echo "Ready-to-run packages. Download the ZIP for your platform, unzip, run the start script - no installation required."
+            echo
+            echo "Headless Docker runtime images are also included as \`*.tar.gz\` assets, one per Linux architecture."
+            echo
+            echo "| Platform | ZIP | Run |"
+            echo "|---|---|---|"
+            echo "| macOS | \`*-macos.zip\` | \`RunCuisOnMac.sh\` or double-click \`RunCuisOnFinder.command\` |"
+            echo "| Linux x86_64 | \`*-linux-x86_64.zip\` | \`RunCuisOnLinux.sh\` |"
+            echo
+            echo "> **macOS ZIP download:** run \`./unquarantine.sh\` before launching."
+            echo
+            echo "### What's inside each ZIP"
+            echo "- Clean Smalltalk image with all core updates already applied"
+            echo "- BaseImageTests verified before packaging, but not bundled into the release image"
+            echo "- VM binary for the target platform"
+            echo "- TrueType fonts"
+            echo "- Start script"
+            echo
+            echo "### Docker assets"
+            echo "- \`cuis-headless-${{ github.ref_name }}-linux-amd64.tar.gz\`"
+            echo "- \`cuis-headless-${{ github.ref_name }}-linux-arm64.tar.gz\`"
+            echo "- Load with \`docker load < asset.tar.gz\`"
+            echo
+            echo "### Git digest"
+            if [[ -n "$PREVIOUS_TAG" ]]; then
+              echo "Changes since \`$PREVIOUS_TAG\`:"
+            else
+              echo "Commits included in this release:"
+            fi
+            git log --no-merges --pretty='- `%h` %s' "$COMMIT_RANGE"
+            echo
+            echo "### What's NOT included"
+            echo "- \`CoreUpdates/\` - already applied to the image"
+            echo "- \`Packages/\` - load optional packages from inside Cuis"
+            echo "- \`Documentation/\` - see the [repository](https://github.com/${{ github.repository }})"
+          } > release-notes.md
+
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           name: "Cuis Smalltalk ${{ github.ref_name }}"
-          body: |
-            ## Cuis Smalltalk ${{ github.ref_name }}
-
-            Ready-to-run packages. Download the ZIP for your platform, unzip, run the start script — no installation required.
-
-            | Platform | ZIP | Run |
-            |---|---|---|
-            | macOS | `*-macos.zip` | `RunCuisOnMac.sh` or double-click `RunCuisOnFinder.command` |
-            | Linux x86_64 | `*-linux-x86_64.zip` | `RunCuisOnLinux.sh` |
-            | Linux ARM64 | `*-linux-arm64.zip` | `RunCuisOnLinux.sh` |
-            | Windows x86_64 | `*-windows-x86_64.zip` | `RunCuisOnWindows.bat` |
-            | Windows ARM64 | `*-windows-arm64.zip` | `RunCuisOnWindows.bat` |
-
-            > **macOS ZIP download:** run `./unquarantine.sh` before launching.
-
-            ### What's inside each ZIP
-            - Updated Smalltalk image (all core changesets applied, tests verified)
-            - VM binary for the target platform
-            - TrueType fonts
-            - Start script
-
-            ### What's NOT included
-            - `CoreUpdates/` — already applied to the image
-            - `Packages/` — load optional packages from inside Cuis
-            - `Documentation/` — see the [repository](https://github.com/${{ github.repository }})
-          files: release-artifacts/*.zip
+          body_path: release-notes.md
+          files: |
+            release-artifacts/*.zip
+            release-artifacts/*.tar.gz
           fail_on_unmatched_files: true
-          generate_release_notes: true
