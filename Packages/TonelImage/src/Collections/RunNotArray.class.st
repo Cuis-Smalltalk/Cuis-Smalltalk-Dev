@@ -13,7 +13,9 @@ Class {
 
 { #category : 'accessing' }
 RunNotArray >> at: index [
-	"Tolerates index=0 and index=size+1 for copyReplace: "
+	"Tolerates index=0 and index=size+1 for copyReplace: compatibility.
+	This is intentional: copyReplace:to:with: computes boundary indices (start-1 and stop+1)
+	that fall outside the valid range; these sentinel accesses must not raise errors."
 	index = 0 ifTrue: [ ^ self at: 1 ].
 	index = (self size+1) ifTrue: [ ^ self at: index-1 ].
 	^ super at: index
