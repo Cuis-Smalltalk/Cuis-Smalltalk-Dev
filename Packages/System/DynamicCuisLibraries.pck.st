@@ -1,6 +1,6 @@
-'From Cuis7.5 [latest update: #7608] on 23 September 2025 at 6:04:43 pm'!
+'From Cuis7.7 [latest update: #7963] on 22 May 2026 at 4:12:32 pm'!
 'Description '!
-!provides: 'DynamicCuisLibraries' 1 31!
+!provides: 'DynamicCuisLibraries' 1 32!
 SystemOrganization addCategory: #'DynamicCuisLibraries-Code Model'!
 SystemOrganization addCategory: #'DynamicCuisLibraries-Dynamic Libraries'!
 SystemOrganization addCategory: #DynamicCuisLibraries!
@@ -99,7 +99,7 @@ A MethodSpec describes a CompiledMethod. It includes enough detail for a real Co
 !DynamicCuisLibrary commentStamp: '<historical>' prior: 0!
 A DynamicCuisLibrary defines a set of classes and methods that can be loaded into a running Cuis image. Its parts, instances of ClassSpec and MethodSpec are not actual Classes and CompiledMethods, but regular objects. Actual Classes and CompiledMethods are created from them at load time.!
 
-!BasicFileServices class methodsFor: 'services' library: #MinimalKernel08BasicFileServices stamp: 'jmv 9/14/2023 10:47:07'!
+!BasicFileServices class methodsFor: 'services' library: #MinimalKernel08BasicFileServices stamp: 'jmv 14/Sep/2023 10:47:07'!
 binaryContentsOf: fileName
 	"
 	Answer a ByteArray with the complete contents of a file.
@@ -118,33 +118,38 @@ binaryContentsOf: fileName
 	self primClose: fileID.
 	^bytes! !
 
-!BasicFileServices class methodsFor: 'primitives' library: #MinimalKernel08BasicFileServices stamp: 'jmv 9/4/2023 08:29:31'!
+!BasicFileServices class methodsFor: 'primitives' library: #MinimalKernel08BasicFileServices stamp: 'jmv 4/Sep/2023 08:29:31'!
 primClose: id
 	<primitive: 'primitiveFileClose' module: 'FilePlugin'>
 	^nil! !
 
-!BasicFileServices class methodsFor: 'primitives' library: #MinimalKernel08BasicFileServices stamp: 'jmv 9/4/2023 08:29:25'!
+!BasicFileServices class methodsFor: 'primitives' library: #MinimalKernel08BasicFileServices stamp: 'jmv 4/Sep/2023 08:29:25'!
 primOpen: fileNameAsUtf8Bytes writable: writableFlag
 	<primitive: 'primitiveFileOpen' module: 'FilePlugin'>
 	^ nil
 ! !
 
-!BasicFileServices class methodsFor: 'primitives' library: #MinimalKernel08BasicFileServices stamp: 'jmv 9/4/2023 08:29:19'!
+!BasicFileServices class methodsFor: 'primitives' library: #MinimalKernel08BasicFileServices stamp: 'jmv 4/Sep/2023 08:29:19'!
 primRead: id into: byteArray startingAt: startIndex count: count
 	<primitive: 'primitiveFileRead' module: 'FilePlugin'>
 	^nil! !
 
-!BasicFileServices class methodsFor: 'primitives' library: #MinimalKernel08BasicFileServices stamp: 'jmv 9/4/2023 08:29:13'!
+!BasicFileServices class methodsFor: 'primitives' library: #MinimalKernel08BasicFileServices stamp: 'jmv 4/Sep/2023 08:29:13'!
 primSize: id
 	<primitive: 'primitiveFileSize' module: 'FilePlugin'>
 	^0
 ! !
 
-!CodeElementSpec methodsFor: 'testing' stamp: 'jmv 5/16/2023 14:51:44'!
+!BasicFileServices class methodsFor: 'primitives' library: #MinimalKernel08BasicFileServices stamp: 'jmv 4/Sep/2023 08:29:31'!
+primWorkingDirectory
+	<primitive: 'primitiveGetWorkingDirectory' module: 'FilePlugin' error: ec>
+	^nil! !
+
+!CodeElementSpec methodsFor: 'testing' stamp: 'jmv 16/May/2023 14:51:44'!
 is: aSymbol
 	^aSymbol == #CodeElementSpec or: [ super is: aSymbol]! !
 
-!ClassSpec methodsFor: 'accessing' library: #MinimalKernel09CodeLibraryLoad stamp: 'jmv 9/6/2023 17:49:25'!
+!ClassSpec methodsFor: 'accessing' library: #MinimalKernel09CodeLibraryLoad stamp: 'jmv 6/Sep/2023 17:49:25'!
 allInstVarCountInSpec
 	"In this Spec object. Unrelated to actual Class.
 	Including inherited from superclasses"
@@ -154,37 +159,37 @@ allInstVarCountInSpec
 		ifNil: [ 0 ].
 	^instVarNames size + inherited! !
 
-!ClassSpec methodsFor: 'accessing' stamp: 'jmv 5/20/2023 13:53:54'!
+!ClassSpec methodsFor: 'accessing' stamp: 'jmv 20/May/2023 13:53:54'!
 classInstVarNames
 	^classInstVarNames! !
 
-!ClassSpec methodsFor: 'accessing' stamp: 'jmv 6/30/2023 15:09:56'!
+!ClassSpec methodsFor: 'accessing' stamp: 'jmv 30/Jun/2023 15:09:56'!
 classVarNames
 	^classVarNames! !
 
-!ClassSpec methodsFor: 'accessing' stamp: 'fz 5/24/2023 20:48:53'!
+!ClassSpec methodsFor: 'accessing' stamp: 'fz 24/May/2023 20:48:53'!
 instVarNames
 	^instVarNames! !
 
-!ClassSpec methodsFor: 'accessing' library: #MinimalKernel09CodeLibraryLoad stamp: 'jmv 9/6/2023 17:49:30'!
+!ClassSpec methodsFor: 'accessing' library: #MinimalKernel09CodeLibraryLoad stamp: 'jmv 6/Sep/2023 17:49:30'!
 methodSpecsInstVarIndexMap
 	"To be used during materialization and installing"
 	^methodSpecsInstVarIndexMap! !
 
-!ClassSpec methodsFor: 'accessing' library: #MinimalKernel09CodeLibraryLoad stamp: 'jmv 4/17/2023 15:12:32'!
+!ClassSpec methodsFor: 'accessing' library: #MinimalKernel09CodeLibraryLoad stamp: 'jmv 17/Apr/2023 15:12:32'!
 name
 	^name! !
 
-!ClassSpec methodsFor: 'accessing' stamp: 'jmv 4/17/2023 11:44:53'!
+!ClassSpec methodsFor: 'accessing' stamp: 'jmv 17/Apr/2023 11:44:53'!
 name: aSymbol
 
 	name := aSymbol.! !
 
-!ClassSpec methodsFor: 'accessing' stamp: 'jmv 6/23/2023 11:04:06'!
+!ClassSpec methodsFor: 'accessing' stamp: 'jmv 23/Jun/2023 11:04:06'!
 superclass
 	^superclass! !
 
-!ClassSpec methodsFor: 'accessing' stamp: 'jmv 9/6/2023 17:49:34'!
+!ClassSpec methodsFor: 'accessing' stamp: 'jmv 6/Sep/2023 17:49:34'!
 totalClassInstVarCountInSpec
 	"Including inherited from superclasses"
 	| inherited |
@@ -193,11 +198,11 @@ totalClassInstVarCountInSpec
 		ifNil: [ 0 ].
 	^classInstVarNames size + inherited! !
 
-!ClassSpec methodsFor: 'accessing' stamp: 'jmv 8/1/2023 15:54:10'!
+!ClassSpec methodsFor: 'accessing' stamp: 'jmv 1/Aug/2023 15:54:10'!
 typeOfClass
 	^type! !
 
-!ClassSpec methodsFor: 'enumerating' library: #MinimalKernel09CodeLibraryLoad stamp: 'jmv 8/3/2023 18:53:12'!
+!ClassSpec methodsFor: 'enumerating' library: #MinimalKernel09CodeLibraryLoad stamp: 'jmv 3/Aug/2023 18:53:12'!
 allSuperclassesDo: aBlock 
 	"Evaluate the argument, aBlock, for each of the receiver's superclasses."
 
@@ -205,18 +210,18 @@ allSuperclassesDo: aBlock
 		aBlock value: superclass.
 		superclass allSuperclassesDo: aBlock]! !
 
-!ClassSpec methodsFor: 'enumerating' stamp: 'jmv 9/19/2023 12:37:29'!
+!ClassSpec methodsFor: 'enumerating' stamp: 'jmv 19/Sep/2023 12:37:29'!
 withAllSuperclassesDo: aBlock 
 	"Evaluate the argument, aBlock, for each of the receiver's superclasses."
 	aBlock value: self.
 	superclass
 		ifNotNil: [superclass withAllSuperclassesDo: aBlock]! !
 
-!ClassSpec methodsFor: 'private' stamp: 'jmv 5/20/2023 13:52:05'!
+!ClassSpec methodsFor: 'private' stamp: 'jmv 20/May/2023 13:52:05'!
 classInstVarNames: iVarNameCollection
 	classInstVarNames := iVarNameCollection! !
 
-!ClassSpec methodsFor: 'private' stamp: 'jmv 9/12/2023 15:57:36'!
+!ClassSpec methodsFor: 'private' stamp: 'jmv 12/Sep/2023 15:57:36'!
 name: aSymbol superclass: aClassSpec type: classTypeSymbol instVarNames: iVarNameCollection classVarNames: cVarNameCollection
 
 	name := aSymbol.
@@ -226,12 +231,12 @@ name: aSymbol superclass: aClassSpec type: classTypeSymbol instVarNames: iVarNam
 	classVarNames := cVarNameCollection.
 	poolDictionaryNames := #().! !
 
-!ClassSpec methodsFor: 'printing' stamp: 'fz 5/12/2023 13:43:14'!
+!ClassSpec methodsFor: 'printing' stamp: 'fz 12/May/2023 13:43:14'!
 printOn: stream
 
 	stream nextPut: $<; nextPutAll: self name; nextPutAll: ' Spec'; nextPut: $>! !
 
-!ClassSpec methodsFor: 'testing' library: #MinimalKernel09CodeLibraryLoad stamp: 'jmv 5/9/2025 15:29:44'!
+!ClassSpec methodsFor: 'testing' library: #MinimalKernel09CodeLibraryLoad stamp: 'jmv 9/May/2025 15:29:44'!
 canBeInstalled
 	"Answer false if we can't be installed in the running system.
 	Note: it is assumed that installation will happen in hierarchy order, starting from ProtoObject.
@@ -289,11 +294,11 @@ canBeInstalled
 	"It looks like there are no problems then."
 	^true! !
 
-!ClassSpec methodsFor: 'testing' library: #MinimalKernel09CodeLibraryLoad stamp: 'jmv 8/3/2023 13:48:20'!
+!ClassSpec methodsFor: 'testing' library: #MinimalKernel09CodeLibraryLoad stamp: 'jmv 3/Aug/2023 13:48:20'!
 doesExist
 	^(Smalltalk at: name ifAbsent: nil) isBehavior! !
 
-!ClassSpec methodsFor: 'testing' library: #MinimalKernel09CodeLibraryLoad stamp: 'jmv 9/23/2025 12:50:24'!
+!ClassSpec methodsFor: 'testing' library: #MinimalKernel09CodeLibraryLoad stamp: 'jmv 23/Sep/2025 12:50:24'!
 equalsExisting
 	"
 	(ClassSpec for: Morph addClassesTo: OrderedDictionary new) equalsExisting
@@ -322,7 +327,7 @@ equalsExisting
 	(existing sharedPools hasEqualElements: poolDictionaryNames) ifFalse: [ ^false ].
 	^true! !
 
-!ClassSpec methodsFor: 'ematerialization' library: #MinimalKernel09CodeLibraryLoad stamp: 'jmv 9/6/2023 17:49:38'!
+!ClassSpec methodsFor: 'ematerialization' library: #MinimalKernel09CodeLibraryLoad stamp: 'jmv 6/Sep/2023 17:49:38'!
 allInstVarCountAfterInstall
 	"In the actual Class. How it will look after installing us.
 	Including inherited from superclasses"
@@ -332,7 +337,7 @@ allInstVarCountAfterInstall
 		ifNil: [ 0 ].
 	^instVarCountAfterInstall + inherited! !
 
-!ClassSpec methodsFor: 'ematerialization' library: #MinimalKernel09CodeLibraryLoad stamp: 'jmv 9/6/2023 17:49:41'!
+!ClassSpec methodsFor: 'ematerialization' library: #MinimalKernel09CodeLibraryLoad stamp: 'jmv 6/Sep/2023 17:49:41'!
 allInstVarCountBeforeInstall
 	"In the actual Class. Before installing us.
 	Including inherited from superclasses"
@@ -342,26 +347,26 @@ allInstVarCountBeforeInstall
 		ifNil: [ 0 ].
 	^instVarCountBeforeInstall + inherited! !
 
-!ClassSpec methodsFor: 'ematerialization' library: #MinimalKernel09CodeLibraryLoad stamp: 'jmv 9/6/2023 17:49:44'!
+!ClassSpec methodsFor: 'ematerialization' library: #MinimalKernel09CodeLibraryLoad stamp: 'jmv 6/Sep/2023 17:49:44'!
 instVarCountAfterInstall
 	"In the actual Class. How it will look after installing us."
 
 	^instVarCountAfterInstall! !
 
-!ClassSpec methodsFor: 'ematerialization' library: #MinimalKernel09CodeLibraryLoad stamp: 'jmv 4/28/2025 09:34:41'!
+!ClassSpec methodsFor: 'ematerialization' library: #MinimalKernel09CodeLibraryLoad stamp: 'jmv 28/Apr/2025 09:34:41'!
 instVarCountBeforeInstall
 	"In the existing actual Class. Before installing us."
 
 	^instVarCountBeforeInstall! !
 
-!ClassSpec methodsFor: 'ematerialization' library: #MinimalKernel09CodeLibraryLoad stamp: 'jmv 8/10/2023 16:14:14'!
+!ClassSpec methodsFor: 'ematerialization' library: #MinimalKernel09CodeLibraryLoad stamp: 'jmv 10/Aug/2023 16:14:14'!
 materializeAndInstall
 	
 	^self doesExist
 		ifFalse: [ self materializeNewClass ]
 		ifTrue: [ self mergeInto: (Smalltalk at: name) ].! !
 
-!ClassSpec methodsFor: 'ematerialization' library: #MinimalKernel09CodeLibraryLoad stamp: 'jmv 5/12/2025 12:15:11'!
+!ClassSpec methodsFor: 'ematerialization' library: #MinimalKernel09CodeLibraryLoad stamp: 'jmv 12/May/2025 12:15:11'!
 materializeNewClass
 	"Only for new classes	"
 
@@ -400,7 +405,7 @@ materializeNewClass
 	"
 	^newClass! !
 
-!ClassSpec methodsFor: 'ematerialization' library: #MinimalKernel09CodeLibraryLoad stamp: 'jmv 9/14/2023 10:13:02'!
+!ClassSpec methodsFor: 'ematerialization' library: #MinimalKernel09CodeLibraryLoad stamp: 'jmv 14/Sep/2023 10:13:02'!
 mergeInto: existingClass
 	"Ensure our instance variables, class variables, class instance variables and sharedPools are 
 	included in existingClass. Add them as needed."
@@ -465,7 +470,7 @@ mergeInto: existingClass
 	builder update: existingClass to: newClass.
 	^newClass! !
 
-!ClassSpec methodsFor: 'ematerialization' library: #MinimalKernel09CodeLibraryLoad stamp: 'jmv 5/9/2025 15:36:37'!
+!ClassSpec methodsFor: 'ematerialization' library: #MinimalKernel09CodeLibraryLoad stamp: 'jmv 9/May/2025 15:36:37'!
 preInstall
 	"Prepare classInstVarCountBeforeInstall, classInstVarCountAfterInstall, methodSpecsInstVarIndexMap
 	These will be needed for remapping instance variable accesses both from existing CompiledMethods
@@ -517,7 +522,7 @@ preInstall
 		afterInstallIvarsIndex = specIvarIndex ifFalse: [
 			methodSpecsInstVarIndexMap add: specIvarIndex -> afterInstallIvarsIndex ]].! !
 
-!ClassSpec class methodsFor: 'instance creation' stamp: 'jmv 8/2/2023 11:03:59'!
+!ClassSpec class methodsFor: 'instance creation' stamp: 'jmv 2/Aug/2023 11:03:59'!
 for: aClass addClassesTo: anOrderedDictionaryOfClasses
 	"aClass is a regular class that exists in the system
 	anOrderedDictionaryOfClasses will end having all required ClassSpecs, in a proper hierarchy order."
@@ -549,40 +554,40 @@ for: aClass addClassesTo: anOrderedDictionaryOfClasses
 	anOrderedDictionaryOfClasses at: className put: answer.
 	^answer! !
 
-!LiteralVariableSpec methodsFor: 'private' stamp: 'jmv 4/20/2023 14:17:08'!
+!LiteralVariableSpec methodsFor: 'private' stamp: 'jmv 20/Apr/2023 14:17:08'!
 variableName: aSymbol
 	variableName := aSymbol! !
 
-!LiteralVariableSpec methodsFor: 'printing' stamp: 'fz 5/12/2023 17:25:52'!
+!LiteralVariableSpec methodsFor: 'printing' stamp: 'fz 12/May/2023 17:25:52'!
 printOn: stream
 
 	stream nextPut: $[; nextPutAll: variableName class name ; nextPut: $ ; nextPutAll: 'literal spec -> '; nextPutAll: variableName; nextPut: $]! !
 
-!LiteralVariableSpec methodsFor: 'accessing' library: #MinimalKernel09CodeLibraryLoad stamp: 'jmv 4/20/2023 16:28:40'!
+!LiteralVariableSpec methodsFor: 'accessing' library: #MinimalKernel09CodeLibraryLoad stamp: 'jmv 20/Apr/2023 16:28:40'!
 variableName
 	^variableName! !
 
-!LiteralVariableSpec methodsFor: 'testing' library: #MinimalKernel09CodeLibraryLoad stamp: 'jmv 5/16/2023 14:51:47'!
+!LiteralVariableSpec methodsFor: 'testing' library: #MinimalKernel09CodeLibraryLoad stamp: 'jmv 16/May/2023 14:51:47'!
 is: aSymbol
 	^aSymbol == #LiteralVariableSpec or: [ super is: aSymbol]! !
 
-!LiteralVariableSpec class methodsFor: 'instance creation' stamp: 'jmv 4/20/2023 14:17:08'!
+!LiteralVariableSpec class methodsFor: 'instance creation' stamp: 'jmv 20/Apr/2023 14:17:08'!
 variableName: aSymbol
 	^self basicNew variableName: aSymbol! !
 
-!MethodSpec methodsFor: 'accessing' stamp: 'jmv 6/30/2023 17:41:22'!
+!MethodSpec methodsFor: 'accessing' stamp: 'jmv 30/Jun/2023 17:41:22'!
 bytecodes
 	^bytecodes! !
 
-!MethodSpec methodsFor: 'accessing' stamp: 'jmv 7/29/2025 16:28:16'!
+!MethodSpec methodsFor: 'accessing' stamp: 'jmv 29/Jul/2025 16:28:16'!
 bytecodes: aByteArray
 	bytecodes := aByteArray! !
 
-!MethodSpec methodsFor: 'accessing' library: #MinimalKernel09CodeLibraryLoad stamp: 'fz 6/21/2023 19:57:43'!
+!MethodSpec methodsFor: 'accessing' library: #MinimalKernel09CodeLibraryLoad stamp: 'fz 21/Jun/2023 19:57:43'!
 classSpec
 	^classSpec! !
 
-!MethodSpec methodsFor: 'accessing' library: #MinimalKernel09CodeLibraryLoad stamp: 'jmv 9/17/2025 09:30:42'!
+!MethodSpec methodsFor: 'accessing' library: #MinimalKernel09CodeLibraryLoad stamp: 'jmv 17/Sep/2025 09:30:42'!
 encoderClass
 	"Answer the encoder class that encoded the bytecodes in this method.
 	 The sign flag bit is used by the VM to select a bytecode set.  This formulation
@@ -597,7 +602,7 @@ encoderClass
 		ifTrue:
 			[EncoderForSistaV1]! !
 
-!MethodSpec methodsFor: 'accessing' library: #MinimalKernel09CodeLibraryLoad stamp: 'jmv 9/17/2025 09:48:04'!
+!MethodSpec methodsFor: 'accessing' library: #MinimalKernel09CodeLibraryLoad stamp: 'jmv 17/Sep/2025 09:48:04'!
 header
 	| answer |
 	answer := header.
@@ -605,11 +610,11 @@ header
 		answer := answer + SmallInteger minVal ].
 	^answer! !
 
-!MethodSpec methodsFor: 'accessing' stamp: 'fz 6/23/2023 13:09:41'!
+!MethodSpec methodsFor: 'accessing' stamp: 'fz 23/Jun/2023 13:09:41'!
 isClassSide
 	^isClassSide! !
 
-!MethodSpec methodsFor: 'accessing' library: #MinimalKernel09CodeLibraryLoad stamp: 'jmv 8/31/2023 15:15:25'!
+!MethodSpec methodsFor: 'accessing' library: #MinimalKernel09CodeLibraryLoad stamp: 'jmv 31/Aug/2023 15:15:25'!
 literals
 	"Regular literals.
 	CompiledMethods have two special last literals, that are not included here.
@@ -618,32 +623,32 @@ literals
 
 	^literals ifNil: [ #() ]! !
 
-!MethodSpec methodsFor: 'accessing' stamp: 'jmv 9/22/2025 18:34:45'!
+!MethodSpec methodsFor: 'accessing' stamp: 'jmv 22/Sep/2025 18:34:45'!
 noPrimitive
 	"Take down the primitive flag if present."
 	
 	header := header bitAt: 17 put: 0.! !
 
-!MethodSpec methodsFor: 'accessing' library: #MinimalKernel09CodeLibraryLoad stamp: 'jmv 8/31/2023 15:18:27'!
+!MethodSpec methodsFor: 'accessing' library: #MinimalKernel09CodeLibraryLoad stamp: 'jmv 31/Aug/2023 15:18:27'!
 pragmaSpecs
 	^pragmas ifNil: [ #() ]! !
 
-!MethodSpec methodsFor: 'accessing' stamp: 'fz 6/21/2023 22:23:04'!
+!MethodSpec methodsFor: 'accessing' stamp: 'fz 21/Jun/2023 22:23:04'!
 selector
 	^selector! !
 
-!MethodSpec methodsFor: 'accessing' stamp: 'jmv 8/1/2023 16:32:08'!
+!MethodSpec methodsFor: 'accessing' stamp: 'jmv 1/Aug/2023 16:32:08'!
 selector: aSymbol
 	selector := aSymbol.! !
 
-!MethodSpec methodsFor: 'accessing' stamp: 'jmv 6/2/2023 16:00:26'!
+!MethodSpec methodsFor: 'accessing' stamp: 'jmv 2/Jun/2023 16:00:26'!
 spurNumLiterals
 	"Answer the number of literals used by the receiver.
 	See #numLiterals"
 
 	^ header bitAnd: 16r7FFF! !
 
-!MethodSpec methodsFor: 'copying' stamp: 'jmv 9/22/2025 18:36:21'!
+!MethodSpec methodsFor: 'copying' stamp: 'jmv 22/Sep/2025 18:36:21'!
 copyWithBytecodes: newBytecodes
 	"Assume that newBytecodes are regular bytecodes,
 	meaning the answer will not include a primitive call.
@@ -656,17 +661,17 @@ copyWithBytecodes: newBytecodes
 	answer bytecodes: newBytecodes.
 	^answer! !
 
-!MethodSpec methodsFor: 'private' stamp: 'fgz 9/5/2023 15:00:07'!
+!MethodSpec methodsFor: 'private' stamp: 'fgz 5/Sep/2023 15:00:07'!
 at: index
 	"Compatibility with CompiledMethod"
 	^bytecodes at: index! !
 
-!MethodSpec methodsFor: 'private' stamp: 'fgz 9/5/2023 15:00:16'!
+!MethodSpec methodsFor: 'private' stamp: 'fgz 5/Sep/2023 15:00:16'!
 at: index put: value
 	"Compatibility with CompiledMethod"
 	^bytecodes at: index put: value! !
 
-!MethodSpec methodsFor: 'private' stamp: 'jmv 9/17/2025 09:26:54'!
+!MethodSpec methodsFor: 'private' stamp: 'jmv 17/Sep/2025 09:26:54'!
 classSpec: aClassSpec isClassSide: aBoolean selector: aSymbol headerSignFlag: anotherBoolean header: aNumber literals: arrayOfLiterals pragmas: arrayOfPragmas bytecodes: aByteArray
 
 	classSpec := aClassSpec.
@@ -678,7 +683,7 @@ classSpec: aClassSpec isClassSide: aBoolean selector: aSymbol headerSignFlag: an
 	pragmas := arrayOfPragmas.
 	bytecodes := aByteArray.! !
 
-!MethodSpec methodsFor: 'printing' stamp: 'jmv 7/17/2023 13:53:02'!
+!MethodSpec methodsFor: 'printing' stamp: 'jmv 17/Jul/2023 13:53:02'!
 printOn: aStream
 
 	aStream
@@ -688,26 +693,26 @@ printOn: aStream
 		nextPutAll: '>>';
 		print: selector! !
 
-!MethodSpec methodsFor: 'compatibility with CompiledMethod' stamp: 'jmv 8/23/2023 14:48:38'!
+!MethodSpec methodsFor: 'compatibility with CompiledMethod' stamp: 'jmv 23/Aug/2023 14:48:38'!
 endPC
 	"Compatibility with CompiledMethod"
 	^bytecodes size! !
 
-!MethodSpec methodsFor: 'compatibility with CompiledMethod' stamp: 'jmv 8/26/2023 17:39:26'!
+!MethodSpec methodsFor: 'compatibility with CompiledMethod' stamp: 'jmv 26/Aug/2023 17:39:26'!
 flushCache
 	"NOP here"! !
 
-!MethodSpec methodsFor: 'compatibility with CompiledMethod' stamp: 'jmv 9/6/2023 16:55:16'!
+!MethodSpec methodsFor: 'compatibility with CompiledMethod' stamp: 'jmv 6/Sep/2023 16:55:16'!
 initialPC
 	"Compatibility with CompiledMethod"
 	^1! !
 
-!MethodSpec methodsFor: 'compatibility with CompiledMethod' stamp: 'jmv 9/6/2023 17:50:13'!
+!MethodSpec methodsFor: 'compatibility with CompiledMethod' stamp: 'jmv 6/Sep/2023 17:50:13'!
 isReturnField
 	"Answer whether the receiver is a quick return of an instance variable."
 	^ self primitive between: 264 and: 519! !
 
-!MethodSpec methodsFor: 'compatibility with CompiledMethod' stamp: 'jmv 8/5/2025 17:06:38'!
+!MethodSpec methodsFor: 'compatibility with CompiledMethod' stamp: 'jmv 5/Aug/2025 17:06:38'!
 primitive
 	"Answer the primitive index associated with the receiver.
 	Zero indicates that this is not a primitive method."
@@ -716,7 +721,7 @@ primitive
 		ifTrue: [(self at: 2) + ((self at: 3) bitShift: 8)]
 		ifFalse: [0].! !
 
-!MethodSpec methodsFor: 'compatibility with CompiledMethod' stamp: 'jmv 9/6/2023 17:02:08'!
+!MethodSpec methodsFor: 'compatibility with CompiledMethod' stamp: 'jmv 6/Sep/2023 17:02:08'!
 returnField
 	"Answer the index of the instance variable returned by a quick return 
 	method."
@@ -726,7 +731,7 @@ returnField
 		ifTrue: [self error: 'only meaningful for quick-return']
 		ifFalse: [^ prim - 264]! !
 
-!MethodSpec methodsFor: 'materialization' library: #MinimalKernel09CodeLibraryLoad stamp: 'jmv 8/10/2023 15:41:49'!
+!MethodSpec methodsFor: 'materialization' library: #MinimalKernel09CodeLibraryLoad stamp: 'jmv 10/Aug/2023 15:41:49'!
 materializeAndInstall
 	| theClass method |
 	theClass := Smalltalk at: classSpec name.
@@ -735,7 +740,7 @@ materializeAndInstall
 	theClass addSelectorSilently: selector withMethod: method.
 	^method! !
 
-!MethodSpec methodsFor: 'materialization' library: #MinimalKernel09CodeLibraryLoad stamp: 'jmv 9/17/2025 09:30:58'!
+!MethodSpec methodsFor: 'materialization' library: #MinimalKernel09CodeLibraryLoad stamp: 'jmv 17/Sep/2025 09:30:58'!
 materializeIn: aClass
 "
 Currently:
@@ -771,7 +776,7 @@ header literals pragmas bytecodes
 		j := j + 1 ].
 	^method! !
 
-!MethodSpec class methodsFor: 'instance creation' stamp: 'jmv 9/17/2025 09:29:37'!
+!MethodSpec class methodsFor: 'instance creation' stamp: 'jmv 17/Sep/2025 09:29:37'!
 for: aCompiledMethod addClassesTo: anOrderedDictionaryOfClasses
 	"aCompiledMethod is a regular method that exists in the system
 	"
@@ -804,7 +809,7 @@ for: aCompiledMethod addClassesTo: anOrderedDictionaryOfClasses
 		pragmas: (self pragmaSpecsFor: aCompiledMethod)
 		bytecodes: aCompiledMethod bytecodes.! !
 
-!MethodSpec class methodsFor: 'instance creation' stamp: 'jmv 1/31/2024 09:17:10'!
+!MethodSpec class methodsFor: 'instance creation' stamp: 'jmv 31/Jan/2024 09:17:10'!
 literalSpecsFor: aCompiledMethod
 	"Answer an Array with the regular literals. I.e. not including the last two, #penultimateLiteral and the #methodClassAssociation.
 	Convert variable bindings (shared Associations in globals, class pool or shared pools) into LiteralVariableSpec"
@@ -847,7 +852,7 @@ TextBackgroundColor
 Text + RunArray, NotRunArray, atributos... mhhhhhh
 "! !
 
-!MethodSpec class methodsFor: 'instance creation' stamp: 'jmv 8/31/2023 15:20:30'!
+!MethodSpec class methodsFor: 'instance creation' stamp: 'jmv 31/Aug/2023 15:20:30'!
 pragmaSpecsFor: aCompiledMethod
 	"Answer an Array with the information of Pragmas."
 
@@ -856,7 +861,7 @@ pragmaSpecsFor: aCompiledMethod
 	ps size = 0 ifTrue: [ ^nil ].
 	^aCompiledMethod pragmas collect: [ :p | Array with: p keyword withAll: p arguments ]! !
 
-!MethodSpec class methodsFor: 'services' stamp: 'jmv 1/31/2024 09:17:32'!
+!MethodSpec class methodsFor: 'services' stamp: 'jmv 31/Jan/2024 09:17:32'!
 classesAssumedToExist
 	"
 	MethodSpec classesAssumedToExist collect: [ :clsName | Smalltalk at: clsName ]
@@ -937,7 +942,7 @@ classesAssumedToExist
 			LiteralVariableSpec
 		)! !
 
-!DynamicCuisLibrary methodsFor: 'creation' stamp: 'jmv 4/25/2023 10:50:23'!
+!DynamicCuisLibrary methodsFor: 'creation' stamp: 'jmv 25/Apr/2023 10:50:23'!
 buildClassesAndMethods: aBlock
 
 	| classSpecOrderedDictionary methodSpecOrderedCollection |
@@ -949,7 +954,7 @@ buildClassesAndMethods: aBlock
 	classSpecs := classSpecOrderedDictionary values.
 	methodSpecs := methodSpecOrderedCollection asArray.! !
 
-!DynamicCuisLibrary methodsFor: 'creation from image' stamp: 'jmv 4/25/2023 14:41:28'!
+!DynamicCuisLibrary methodsFor: 'creation from image' stamp: 'jmv 25/Apr/2023 14:41:28'!
 classes: classesOrNames classSelectors: classSideSelectors instanceSelectors: instanceSideSelectors
 	"
 	classesOrNames is an Array
@@ -974,7 +979,7 @@ classes: classesOrNames classSelectors: classSideSelectors instanceSelectors: in
 		].
 	]! !
 
-!DynamicCuisLibrary methodsFor: 'file io' stamp: 'jmv 11/2/2023 10:39:15'!
+!DynamicCuisLibrary methodsFor: 'file io' stamp: 'jmv 2/Nov/2023 10:39:15'!
 writeOnFile: fileEntry
 	"
 	Feature require: 'TestDynamicCuisLibraries'.
@@ -991,7 +996,7 @@ writeOnFile: fileEntry
 		fileStream binary.
 		(ReferenceStream on: fileStream) nextPut: self ].! !
 
-!DynamicCuisLibrary methodsFor: 'installing' library: #MinimalKernel09CodeLibraryLoad stamp: 'jmv 9/23/2025 17:58:19'!
+!DynamicCuisLibrary methodsFor: 'installing' library: #MinimalKernel09CodeLibraryLoad stamp: 'jmv 23/Sep/2025 17:58:19'!
 canBeInstalled
 	classSpecs do: [ :each | each canBeInstalled ifFalse: [ ^false ]].
 
@@ -1014,7 +1019,7 @@ canBeInstalled
 
 	^true! !
 
-!DynamicCuisLibrary methodsFor: 'installing' library: #MinimalKernel09CodeLibraryLoad stamp: 'jmv 9/23/2025 17:57:24'!
+!DynamicCuisLibrary methodsFor: 'installing' library: #MinimalKernel09CodeLibraryLoad stamp: 'jmv 23/Sep/2025 17:57:24'!
 installLibrary
 	"Install classes. Merge into existing classes if appropriate.
 	Note: It is absolutely crucial to have called #canBeInstalled before,
@@ -1040,7 +1045,7 @@ installLibrary
 	methodSpecs do: [ :methodSpec |
 		methodSpec materializeAndInstall ].! !
 
-!DynamicCuisLibrary methodsFor: 'installing' library: #MinimalKernel09CodeLibraryLoad stamp: 'jmv 7/31/2025 10:06:32'!
+!DynamicCuisLibrary methodsFor: 'installing' library: #MinimalKernel09CodeLibraryLoad stamp: 'jmv 31/Jul/2025 10:06:32'!
 remapExistingMethodsInstVarAccesses: doIt
 	"Convert existing methods to new class shapes if needed.
 	(ClassSpecs are allowed to add new instance variables to existing classes)
@@ -1084,7 +1089,7 @@ remapExistingMethodsInstVarAccesses: doIt
 	doIt ifTrue: [ Smalltalk voidCogVMState ].
 	^true.! !
 
-!DynamicCuisLibrary methodsFor: 'installing' library: #MinimalKernel09CodeLibraryLoad stamp: 'jmv 7/31/2025 09:44:41'!
+!DynamicCuisLibrary methodsFor: 'installing' library: #MinimalKernel09CodeLibraryLoad stamp: 'jmv 31/Jul/2025 09:44:41'!
 remapMethodSpecInstVarAccesses: doIt
 	"Remap all instance variable accesses in our methodSpecs to match the final shape of classes.
 	
@@ -1115,7 +1120,7 @@ remapMethodSpecInstVarAccesses: doIt
 			result ifFalse: [ ^false ]]].
 	^true! !
 
-!DynamicCuisLibrary methodsFor: 'installing' stamp: 'jmv 9/23/2025 18:00:00'!
+!DynamicCuisLibrary methodsFor: 'installing' stamp: 'jmv 23/Sep/2025 18:00:00'!
 updateAffectedClassesFormat: doIt
 	"Update the format field of affected classes.
 	These are any existing class whose shape is modified (new instance variables are added by the corresponding ClassSpec)
@@ -1140,7 +1145,7 @@ updateAffectedClassesFormat: doIt
 						modifiedShapeClass setFormat: format ]]]]].
 	^true.! !
 
-!DynamicCuisLibrary class methodsFor: 'instance creation' stamp: 'jmv 4/24/2023 14:27:42'!
+!DynamicCuisLibrary class methodsFor: 'instance creation' stamp: 'jmv 24/Apr/2023 14:27:42'!
 withClasses: arrayOfClasses classSelectors: arrayOfClassSelectors instanceSelectors: arrayOfInstanceSelectors
 	"
 	DynamicCuisLibrary
@@ -1153,7 +1158,7 @@ withClasses: arrayOfClasses classSelectors: arrayOfClassSelectors instanceSelect
 		classSelectors: arrayOfClassSelectors
 		instanceSelectors: arrayOfInstanceSelectors! !
 
-!DynamicCuisLibrary class methodsFor: 'file io' library: #MinimalKernel09CodeLibraryLoad stamp: 'jmv 9/4/2023 12:15:41'!
+!DynamicCuisLibrary class methodsFor: 'file io' library: #MinimalKernel09CodeLibraryLoad stamp: 'jmv 4/Sep/2023 12:15:41'!
 readFromFileNamed: fileName
 	"
 	(DynamicCuisLibrary readFromFileNamed: 'DclExample03.dcl')
