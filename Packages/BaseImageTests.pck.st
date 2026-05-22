@@ -1,6 +1,6 @@
-'From Cuis7.7 [latest update: #7945] on 17 May 2026 at 8:13:06 pm'!
+'From Cuis7.7 [latest update: #7777] on 22 May 2026 at 5:50:40 am'!
 'Description Rename extentions tests'!
-!provides: 'BaseImageTests' 1 483!
+!provides: 'BaseImageTests' 1 484!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Compiler'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Objects'!
@@ -158,6 +158,16 @@ TestCase subclass: #DictionaryTest
 DictionaryTest class
 	instanceVariableNames: ''!
 
+!classDefinition: #HeapTest category: #'BaseImageTests-Collections'!
+TestCase subclass: #HeapTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-Collections'!
+!classDefinition: 'HeapTest class' category: #'BaseImageTests-Collections'!
+HeapTest class
+	instanceVariableNames: ''!
+
 !classDefinition: #IntervalTest category: #'BaseImageTests-Collections'!
 TestCase subclass: #IntervalTest
 	instanceVariableNames: ''
@@ -188,6 +198,16 @@ TestCase subclass: #OrderedDictionaryTest
 OrderedDictionaryTest class
 	instanceVariableNames: ''!
 
+!classDefinition: #RunArrayTest category: #'BaseImageTests-Collections'!
+TestCase subclass: #RunArrayTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-Collections'!
+!classDefinition: 'RunArrayTest class' category: #'BaseImageTests-Collections'!
+RunArrayTest class
+	instanceVariableNames: ''!
+
 !classDefinition: #SequenceableCollectionTest category: #'BaseImageTests-Collections'!
 TestCase subclass: #SequenceableCollectionTest
 	instanceVariableNames: ''
@@ -198,6 +218,16 @@ TestCase subclass: #SequenceableCollectionTest
 SequenceableCollectionTest class
 	instanceVariableNames: ''!
 
+!classDefinition: #SortedCollectionTest category: #'BaseImageTests-Collections'!
+TestCase subclass: #SortedCollectionTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-Collections'!
+!classDefinition: 'SortedCollectionTest class' category: #'BaseImageTests-Collections'!
+SortedCollectionTest class
+	instanceVariableNames: ''!
+
 !classDefinition: #WeakIdentitySetTest category: #'BaseImageTests-Collections'!
 TestCase subclass: #WeakIdentitySetTest
 	instanceVariableNames: ''
@@ -206,6 +236,16 @@ TestCase subclass: #WeakIdentitySetTest
 	category: 'BaseImageTests-Collections'!
 !classDefinition: 'WeakIdentitySetTest class' category: #'BaseImageTests-Collections'!
 WeakIdentitySetTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #Array2DTest category: #'BaseImageTests-Collections-Arrayed'!
+TestCase subclass: #Array2DTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-Collections-Arrayed'!
+!classDefinition: 'Array2DTest class' category: #'BaseImageTests-Collections-Arrayed'!
+Array2DTest class
 	instanceVariableNames: ''!
 
 !classDefinition: #ArrayTest category: #'BaseImageTests-Collections-Arrayed'!
@@ -246,6 +286,16 @@ TestCase subclass: #Float64ArrayTest
 	category: 'BaseImageTests-Collections-Arrayed'!
 !classDefinition: 'Float64ArrayTest class' category: #'BaseImageTests-Collections-Arrayed'!
 Float64ArrayTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #LimitedWriteStreamTest category: #'BaseImageTests-Collections-Streams'!
+TestCase subclass: #LimitedWriteStreamTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-Collections-Streams'!
+!classDefinition: 'LimitedWriteStreamTest class' category: #'BaseImageTests-Collections-Streams'!
+LimitedWriteStreamTest class
 	instanceVariableNames: ''!
 
 !classDefinition: #ReadStreamTest category: #'BaseImageTests-Collections-Streams'!
@@ -2800,6 +2850,96 @@ testKeyNotFoundSignalTheRightMessage
 		raise: Error
 		withMessageText: 'key: ''theKey'' not found'! !
 
+!HeapTest methodsFor: 'tests-zero' stamp: 'GHA 22/May/2026 05:47:42'!
+testNewIsEmpty
+	"A new Heap is empty"
+	| h |
+	h := Heap new.
+	self assert: h isEmpty.
+	self assert: h size = 0! !
+
+!HeapTest methodsFor: 'tests-one' stamp: 'GHA 22/May/2026 05:47:42'!
+testAddOneElement
+	"Adding one element: size=1, peek returns it, not empty"
+	| h |
+	h := Heap new.
+	h add: 42.
+	self assert: h size = 1.
+	self deny: h isEmpty.
+	self assert: h first = 42! !
+
+!HeapTest methodsFor: 'tests-one' stamp: 'GHA 22/May/2026 05:47:42'!
+testRemoveFirstFromSingleElement
+	"removeFirst on a single-element heap leaves it empty"
+	| h removed |
+	h := Heap new.
+	h add: 99.
+	removed := h removeFirst.
+	self assert: removed = 99.
+	self assert: h isEmpty! !
+
+!HeapTest methodsFor: 'tests-many' stamp: 'GHA 22/May/2026 05:47:42'!
+testAddManyPreservesMinAtTop
+	"Default sort: smallest element should always be first"
+	| h |
+	h := Heap new.
+	h add: 5.
+	h add: 1.
+	h add: 3.
+	h add: 2.
+	h add: 4.
+	self assert: h size = 5.
+	self assert: h first = 1! !
+
+!HeapTest methodsFor: 'tests-many' stamp: 'GHA 22/May/2026 05:47:42'!
+testRemoveFirstExtracts
+	"removeFirst extracts in ascending order for default (min) heap"
+	| h result |
+	h := Heap withAll: #(3 1 4 1 5 9 2 6).
+	result := OrderedCollection new.
+	[h isEmpty] whileFalse: [result add: h removeFirst].
+	self assert: result = #(1 1 2 3 4 5 6 9) asOrderedCollection! !
+
+!HeapTest methodsFor: 'tests-many' stamp: 'GHA 22/May/2026 05:47:42'!
+testSizeAfterAddAndRemove
+	"Size tracks adds and removes correctly"
+	| h |
+	h := Heap new.
+	h add: 1. h add: 2. h add: 3.
+	self assert: h size = 3.
+	h removeFirst.
+	self assert: h size = 2.
+	h removeFirst. h removeFirst.
+	self assert: h size = 0.
+	self assert: h isEmpty! !
+
+!HeapTest methodsFor: 'tests-boundary' stamp: 'GHA 22/May/2026 05:47:42'!
+testCustomSortBlockMaxHeap
+	"A max-heap with sort block [:a :b | a >= b] has largest at first"
+	| h |
+	h := Heap sortBlock: [:a :b | a >= b].
+	h add: 3.
+	h add: 7.
+	h add: 1.
+	self assert: h first = 7! !
+
+!HeapTest methodsFor: 'tests-boundary' stamp: 'GHA 22/May/2026 05:47:42'!
+testDoEnumeratesAllElements
+	"do: iterates all elements (not necessarily sorted)"
+	| h result |
+	h := Heap withAll: #(3 1 2).
+	result := OrderedCollection new.
+	h do: [:each | result add: each].
+	self assert: result size = 3.
+	self assert: (result asSortedCollection asArray) = #(1 2 3)! !
+
+!HeapTest methodsFor: 'tests-exception' stamp: 'GHA 22/May/2026 05:47:42'!
+testRemoveFirstOnEmptyRaisesError
+	"removeFirst on empty heap should raise an error"
+	| h |
+	h := Heap new.
+	self should: [h removeFirst] raise: Error! !
+
 !IntervalTest methodsFor: 'testing' stamp: 'jmv 18/Dec/2018 10:56:31'!
 testAt
 	"
@@ -3193,6 +3333,104 @@ sampleData
 sampleData2
 	^ { {1. 'uno'}. {8. 'ocho'}. {3. 'tres'}}! !
 
+!RunArrayTest methodsFor: 'tests-zero' stamp: 'GHA 22/May/2026 05:46:27'!
+testNewIsEmpty
+	"RunArray new should be empty with size 0"
+	| ra |
+	ra := RunArray new.
+	self assert: ra isEmpty.
+	self assert: ra size = 0! !
+
+!RunArrayTest methodsFor: 'tests-zero' stamp: 'GHA 22/May/2026 05:46:27'!
+testNewWithAllZeroSizeIsEmpty
+	"new:withAll: with size 0 should return an empty RunArray"
+	| ra |
+	ra := RunArray new: 0 withAll: $a.
+	self assert: ra isEmpty.
+	self assert: ra size = 0! !
+
+!RunArrayTest methodsFor: 'tests-one' stamp: 'GHA 22/May/2026 05:46:27'!
+testAddLastOneElement
+	"Adding one element creates a run of 1"
+	| ra |
+	ra := RunArray new.
+	ra addLast: $a.
+	self assert: ra size = 1.
+	self assert: (ra at: 1) = $a! !
+
+!RunArrayTest methodsFor: 'tests-one' stamp: 'GHA 22/May/2026 05:46:27'!
+testNewWithAllCreatesOneRun
+	"new:withAll: with size>0 creates a single run"
+	| ra |
+	ra := RunArray new: 5 withAll: 42.
+	self assert: ra size = 5.
+	self assert: ra runs size = 1.
+	1 to: 5 do: [:i | self assert: (ra at: i) = 42]! !
+
+!RunArrayTest methodsFor: 'tests-many' stamp: 'GHA 22/May/2026 05:46:27'!
+testAddLastCoalescesSameValues
+	"Adding the same value extends the current run rather than creating a new one"
+	| ra |
+	ra := RunArray new.
+	ra addLast: $a.
+	ra addLast: $a.
+	ra addLast: $a.
+	self assert: ra size = 3.
+	self assert: ra runs size = 1.
+	self assert: (ra runs at: 1) = 3! !
+
+!RunArrayTest methodsFor: 'tests-many' stamp: 'GHA 22/May/2026 05:46:27'!
+testAddLastMultipleDistinctValues
+	"Adding distinct values creates separate runs"
+	| ra |
+	ra := RunArray new.
+	ra addLast: $a.
+	ra addLast: $b.
+	ra addLast: $c.
+	self assert: ra size = 3.
+	self assert: ra runs size = 3.
+	self assert: (ra at: 1) = $a.
+	self assert: (ra at: 2) = $b.
+	self assert: (ra at: 3) = $c! !
+
+!RunArrayTest methodsFor: 'tests-boundary' stamp: 'GHA 22/May/2026 05:47:04'!
+testAtBoundaryToleranceIsIntentional
+	"at: tolerates index=0 and index=size+1 for copyReplace: compatibility.
+	This is NOT an error condition for RunArray — it returns the nearest value."
+	| ra |
+	ra := RunArray new: 3 withAll: $a.
+	"index=0 and index=size+1 return the first/last value without error"
+	self assert: (ra at: 0) = $a.
+	self assert: (ra at: 4) = $a! !
+
+!RunArrayTest methodsFor: 'tests-boundary' stamp: 'GHA 22/May/2026 05:46:27'!
+testDoIteratesAllElements
+	"do: should visit each logical element, expanding runs"
+	| ra result |
+	ra := RunArray new: 3 withAll: $x.
+	ra addLast: $y.
+	result := OrderedCollection new.
+	ra do: [:each | result add: each].
+	self assert: result size = 4.
+	self assert: (result at: 1) = $x.
+	self assert: (result at: 4) = $y! !
+
+!RunArrayTest methodsFor: 'tests-boundary' stamp: 'GHA 22/May/2026 05:46:27'!
+testRunsAndValuesDo
+	"runsAndValuesDo: should yield run lengths and values"
+	| ra runs values |
+	ra := RunArray new: 3 withAll: $x.
+	ra addLast: $y.
+	ra addLast: $y.
+	runs := OrderedCollection new.
+	values := OrderedCollection new.
+	ra runsAndValuesDo: [:run :val | runs add: run. values add: val].
+	self assert: runs size = 2.
+	self assert: (runs at: 1) = 3.
+	self assert: (runs at: 2) = 2.
+	self assert: (values at: 1) = $x.
+	self assert: (values at: 2) = $y! !
+
 !SequenceableCollectionTest methodsFor: 'tests' stamp: 'HAW 25/May/2019 09:49:41'!
 testCombinationsAtATimeDoShouldEvaluateBlockWithEmptyCollection
 	
@@ -3329,6 +3567,86 @@ testWithIndexDoSeparatedByDoesNothingForEmptyCollection
 
 	self shouldntFail: [ #() withIndexDo: [ :anElement :index | self fail ] separatedBy: [ self fail ] ]! !
 
+!SortedCollectionTest methodsFor: 'tests-zero' stamp: 'GHA 22/May/2026 05:48:16'!
+testNewIsEmpty
+	"A new SortedCollection is empty"
+	| sc |
+	sc := SortedCollection new.
+	self assert: sc isEmpty.
+	self assert: sc size = 0! !
+
+!SortedCollectionTest methodsFor: 'tests-one' stamp: 'GHA 22/May/2026 05:48:16'!
+testAddOneElement
+	"Adding one element sets size to 1 and first=last=that element"
+	| sc |
+	sc := SortedCollection new.
+	sc add: 42.
+	self assert: sc size = 1.
+	self assert: sc first = 42.
+	self assert: sc last = 42! !
+
+!SortedCollectionTest methodsFor: 'tests-many' stamp: 'GHA 22/May/2026 05:48:16'!
+testAddManyMaintainsSortOrder
+	"Adding elements in any order keeps collection sorted ascending"
+	| sc |
+	sc := SortedCollection new.
+	sc add: 5.
+	sc add: 2.
+	sc add: 8.
+	sc add: 1.
+	sc add: 4.
+	self assert: sc size = 5.
+	self assert: sc first = 1.
+	self assert: sc last = 8.
+	self assert: (sc at: 1) = 1.
+	self assert: (sc at: 2) = 2.
+	self assert: (sc at: 3) = 4! !
+
+!SortedCollectionTest methodsFor: 'tests-many' stamp: 'GHA 22/May/2026 05:48:16'!
+testDoIteratesInSortedOrder
+	"do: iterates elements in ascending sorted order"
+	| sc result |
+	sc := SortedCollection new.
+	sc add: 3. sc add: 1. sc add: 2.
+	result := OrderedCollection new.
+	sc do: [:each | result add: each].
+	self assert: result = #(1 2 3) asOrderedCollection! !
+
+!SortedCollectionTest methodsFor: 'tests-many' stamp: 'GHA 22/May/2026 05:48:16'!
+testWithAllSortsElements
+	"withAll: should produce a sorted collection regardless of input order"
+	| sc |
+	sc := SortedCollection withAll: #(5 3 1 4 2).
+	self assert: sc size = 5.
+	self assert: sc asArray = #(1 2 3 4 5)! !
+
+!SortedCollectionTest methodsFor: 'tests-boundary' stamp: 'GHA 22/May/2026 05:48:16'!
+testCustomSortBlockDescending
+	"Custom sort block gives descending order"
+	| sc |
+	sc := SortedCollection sortBlock: [:a :b | a > b].
+	sc add: 3. sc add: 1. sc add: 5. sc add: 2.
+	self assert: sc first = 5.
+	self assert: sc last = 1! !
+
+!SortedCollectionTest methodsFor: 'tests-boundary' stamp: 'GHA 22/May/2026 05:48:16'!
+testSelectReturnsSortedCollection
+	"select: on a SortedCollection returns a SortedCollection"
+	| sc result |
+	sc := SortedCollection withAll: #(1 2 3 4 5 6).
+	result := sc select: [:each | each even].
+	self assert: (result isKindOf: SortedCollection).
+	self assert: result size = 3.
+	self assert: result first = 2.
+	self assert: result last = 6! !
+
+!SortedCollectionTest methodsFor: 'tests-exception' stamp: 'GHA 22/May/2026 05:48:16'!
+testAtPutRaisesError
+	"at:put: should not be implemented on SortedCollection"
+	| sc |
+	sc := SortedCollection withAll: #(1 2 3).
+	self should: [sc at: 1 put: 99] raise: Error! !
+
 !WeakIdentitySetTest methodsFor: 'testing' stamp: 'jmv 15/Jan/2025 09:54:47'!
 test
 	"
@@ -3387,6 +3705,89 @@ test
 	self assert: count = 1.
 	self deny: (wi includes: ary2 first).
 	self assert: (wi includes: ary2 second).! !
+
+!Array2DTest methodsFor: 'tests-zero' stamp: 'GHA 22/May/2026 05:49:42'!
+testNewElementsAreNil
+	"A new Array2D has all nil elements"
+	| a |
+	a := Array2D height: 2 width: 3.
+	self assert: a height = 2.
+	self assert: a width = 3.
+	1 to: 2 do: [:i |
+		1 to: 3 do: [:j |
+			self assert: (a i: i j: j) isNil]]! !
+
+!Array2DTest methodsFor: 'tests-one' stamp: 'GHA 22/May/2026 05:49:42'!
+testOneByOneAccess
+	"A 1x1 Array2D stores and retrieves a single element"
+	| a |
+	a := Array2D height: 1 width: 1.
+	a i: 1 j: 1 put: 99.
+	self assert: (a i: 1 j: 1) = 99! !
+
+!Array2DTest methodsFor: 'tests-many' stamp: 'GHA 22/May/2026 05:49:42'!
+testPutAndGetElements
+	"i:j:put: stores elements retrievable by i:j:"
+	| a |
+	a := Array2D height: 3 width: 3.
+	a i: 1 j: 1 put: 1.
+	a i: 2 j: 2 put: 5.
+	a i: 3 j: 3 put: 9.
+	self assert: (a i: 1 j: 1) = 1.
+	self assert: (a i: 2 j: 2) = 5.
+	self assert: (a i: 3 j: 3) = 9.
+	self assert: (a i: 1 j: 3) isNil! !
+
+!Array2DTest methodsFor: 'tests-boundary' stamp: 'GHA 22/May/2026 05:49:42'!
+testAtWithPoint
+	"at: with a Point uses x as column (j) and y as row (i)"
+	| a |
+	a := Array2D height: 3 width: 3.
+	a i: 2 j: 3 put: 42.
+	self assert: (a at: 3 @ 2) = 42! !
+
+!Array2DTest methodsFor: 'tests-boundary' stamp: 'GHA 22/May/2026 05:49:42'!
+testDoVisitsAllElements
+	"do: visits all height*width elements"
+	| a count |
+	a := Array2D height: 3 width: 4.
+	count := 0.
+	a do: [:each | count := count + 1].
+	self assert: count = 12! !
+
+!Array2DTest methodsFor: 'tests-boundary' stamp: 'GHA 22/May/2026 05:49:42'!
+testExtent
+	"extent returns a Point with x=width, y=height"
+	| a |
+	a := Array2D height: 4 width: 6.
+	self assert: a extent = (6 @ 4)! !
+
+!Array2DTest methodsFor: 'tests-exception' stamp: 'GHA 22/May/2026 05:49:42'!
+testOutOfBoundsColumnRaisesError
+	"Accessing out-of-bounds column should raise an error"
+	| a |
+	a := Array2D height: 2 width: 2.
+	self should: [a i: 1 j: 3] raise: Error! !
+
+!Array2DTest methodsFor: 'tests-scenario' stamp: 'GHA 22/May/2026 05:49:42'!
+testEquality
+	"Two Array2D with same dimensions and contents are equal"
+	| a b |
+	a := Array2D fromArrayOfArrays: #(#(1 2) #(3 4)).
+	b := Array2D fromArrayOfArrays: #(#(1 2) #(3 4)).
+	self assert: a = b! !
+
+!Array2DTest methodsFor: 'tests-scenario' stamp: 'GHA 22/May/2026 05:49:42'!
+testFromArrayOfArrays
+	"fromArrayOfArrays: fills the Array2D from nested arrays"
+	| a |
+	a := Array2D fromArrayOfArrays: #(#(1 2 3) #(4 5 6)).
+	self assert: a height = 2.
+	self assert: a width = 3.
+	self assert: (a i: 1 j: 1) = 1.
+	self assert: (a i: 1 j: 3) = 3.
+	self assert: (a i: 2 j: 1) = 4.
+	self assert: (a i: 2 j: 3) = 6! !
 
 !ArrayTest methodsFor: 'test - insert:ShiftingRight:' stamp: 'HAW 20/Dec/2018 14:41:00'!
 testCanNotInsertShiftingRightWhenInsertionPointIsBiggerThanSize
@@ -3799,6 +4200,53 @@ testSum
 	self assert: ({0.0. 1.0. Float pi. Float e} asFloat64Array + 1) = ({0.0+1. 1.0+1. Float pi+1. Float e+1} asFloat64Array).
 	a _ {0.0. 1.0. Float pi. Float e} asFloat64Array.
 	self assert: (a + a) = (a * 2 )! !
+
+!LimitedWriteStreamTest methodsFor: 'tests-zero' stamp: 'GHA 22/May/2026 05:49:05'!
+testWriteNothing
+	"Writing nothing to a limited stream yields empty contents"
+	| result |
+	result := String streamContents: [:s | "do nothing"] limitedTo: 10.
+	self assert: result = ''! !
+
+!LimitedWriteStreamTest methodsFor: 'tests-one' stamp: 'GHA 22/May/2026 05:49:05'!
+testWriteOneCharWithinLimit
+	"Writing one character within the limit writes it normally"
+	| result |
+	result := String streamContents: [:s | s nextPut: $A] limitedTo: 10.
+	self assert: result = 'A'! !
+
+!LimitedWriteStreamTest methodsFor: 'tests-many' stamp: 'GHA 22/May/2026 05:49:05'!
+testWriteWithinLimitCompletesNormally
+	"Writing a string shorter than the limit returns the full string"
+	| result |
+	result := String streamContents: [:s | s nextPutAll: 'hello'] limitedTo: 10.
+	self assert: result = 'hello'! !
+
+!LimitedWriteStreamTest methodsFor: 'tests-boundary' stamp: 'GHA 22/May/2026 05:49:05'!
+testNextPutAllTruncatesAtLimit
+	"nextPutAll: truncates when the string would exceed the limit"
+	| result |
+	result := String streamContents: [:s |
+		s nextPutAll: '12345678901234567890'] limitedTo: 7.
+	self assert: result = '1234567'! !
+
+!LimitedWriteStreamTest methodsFor: 'tests-boundary' stamp: 'GHA 22/May/2026 05:49:05'!
+testNextPutStopsAtLimit
+	"nextPut: stops writing when the limit is reached, invoking the limit block"
+	| result |
+	result := String streamContents: [:s |
+		'abcdefghij' do: [:c | s nextPut: c]] limitedTo: 5.
+	self assert: result size = 5.
+	self assert: result = 'abcde'! !
+
+!LimitedWriteStreamTest methodsFor: 'tests-scenario' stamp: 'GHA 22/May/2026 05:49:05'!
+testPrintStringUsesLimitedStream
+	"streamContents:limitedTo: is the mechanism behind printString overflow protection"
+	| result |
+	result := String streamContents: [:s |
+		100 timesRepeat: [s nextPutAll: 'overflow']] limitedTo: 20.
+	self assert: result size = 20.
+	self assert: (result copyFrom: 1 to: 8) = 'overflow'! !
 
 !ReadStreamTest methodsFor: 'tests' stamp: 'jmv 28/Oct/2024 20:25:49'!
 testMatchStart

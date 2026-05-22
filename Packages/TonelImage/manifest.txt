@@ -1,19 +1,11 @@
 Tonel image export manifest
-Generated: 2026-05-22T01:43:44.056692-03:00
-Image name: /Users/gaston/Code/Cuis-Smalltalk-Dev/CuisImage/Cuis7.7-7777.image
+Generated: 2026-05-22T05:53:26.066806-03:00
+Image name: /Users/gaston/Code/Cuis-refactor-collections/CuisImage/Cuis7.7-7777.image
 Image version: Cuis7.7
-Exported class count: 712
-Exported method count: 18965
-Package directory count: 9
+Exported class count: 175
+Exported method count: 2566
+Package directory count: 1
 Format: Tonel v3-compatible source
 
 Packages:
-- Collections
-- Compiler
-- Exceptions
-- Graphics
-- Kernel
-- Morphic
-- System
-- Tonel
-- Tools
+- BaseImageTests
