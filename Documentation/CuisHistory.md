@@ -175,7 +175,12 @@ https://lists.cuis.st/mailman/archives/cuis-dev/2023-December/008269.html
     - Support the Sista Bytecode Set, and use it by default.
     - Lifted all restrictions on class reshaping and merge of class definitions.
     - Lifted all restrictions on remap of instance variable access in CompiledMethods.
-- Usability. Performance. Robustness.
+- Enhancements in Usability. Performance. Robustness.
 
-## Ongoing since 2025-Dec-19 - Cuis 7.7 Rolling Release
+## 2026-May-29 - Cuis 7.8 Stable Release, Cuis 7.9 Rolling Release
 - OKLCH Color model.
+- Better ChangeSet capture of moving classes and methods to and from packages
+- Automatic creation of a new package when creating classes in a new system hierarchy
+- Updates to Bootstrap
+- Various bug fixes
+- Enhancements in Usability. Performance. Robustness.
