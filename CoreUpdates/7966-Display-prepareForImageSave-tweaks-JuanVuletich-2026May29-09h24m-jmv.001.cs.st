@@ -5,7 +5,7 @@ prepareForImageSave
 	"Use little memory in saved image"
 
 	bits unpin.
-	self setExtent: `240@120` depth: self nativeDepth.
+	self setExtent: `64@24` depth: self nativeDepth.
 	bits unpin. "In case we ever change initialization to also pin."! !
 
 

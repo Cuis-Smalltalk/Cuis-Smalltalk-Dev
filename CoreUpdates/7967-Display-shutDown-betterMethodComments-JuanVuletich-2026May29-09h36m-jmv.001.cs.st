@@ -6,7 +6,7 @@ prepareForImageSave
 	Useful if there may be references to us that prevent us from being collected."
 
 	bits unpin.
-	self setExtent: `240@120` depth: self nativeDepth.
+	self setExtent: `64@24` depth: self nativeDepth.
 	bits unpin. "In case we ever change initialization to also pin."! !
 
 
