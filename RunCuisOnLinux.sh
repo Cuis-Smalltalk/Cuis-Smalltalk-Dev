@@ -44,7 +44,7 @@ else # all-in-one bundle
     fi
 
     BINDIR="${ROOT}/CuisVM.app/Contents/Linux-${CPU}/"
-    IMAGEDIR="${ROOT}/CuisImage/"
+    IMAGEDIR="${ROOT}/CuisImage"
     IMAGE="`echo ${IMAGEDIR}/Cuis?.?-????.image`"
 fi
 
@@ -177,4 +177,5 @@ detect_sound
 export SQUEAK_DISPLAY_PER_MONITOR_SCALE=1 
 
 echo "Using ${VM} ..."
+echo "Image ${IMAGE}"
 exec ${SOUNDSERVER} "${VM}" ${VMOPTIONS} ${VMARGS} "${IMAGE}" -u "${STARGS[@]}"
