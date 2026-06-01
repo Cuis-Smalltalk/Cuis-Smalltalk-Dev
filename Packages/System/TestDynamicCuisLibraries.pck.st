@@ -1,6 +1,6 @@
-'From Cuis7.5 [latest update: #7608] on 23 September 2025 at 6:04:45 pm'!
+'From Cuis7.9 [latest update: #7981] on 1 June 2026 at 6:25:28 pm'!
 'Description '!
-!provides: 'TestDynamicCuisLibraries' 1 20!
+!provides: 'TestDynamicCuisLibraries' 1 21!
 !requires: 'DynamicCuisLibraries' 1 22 nil!
 SystemOrganization addCategory: #TestDynamicCuisLibraries!
 SystemOrganization addCategory: #'TestDynamicCuisLibraries-Tests'!
@@ -448,522 +448,526 @@ NoclashProtoObject_DclExample05 class
 	instanceVariableNames: ''!
 
 
-!Noclash_Float32ArrayCodeModelExperiment methodsFor: 'accessing' stamp: 'jmv 8/2/2023 16:44:31'!
-floatAt: index
-	<primitive: 'primitiveAt' module: 'FloatArrayPlugin'>! !
+!Noclash_Float32ArrayCodeModelExperiment methodsFor: 'accessing' stamp: 'jmv 1/Jun/2026 18:05:38'!
+at: index
+	"Used to be:
+	<primitive: 'primitiveAt' module: 'FloatArrayPlugin'>"
+	<primitive: 238 error: ec>! !
 
-!Noclash_Float32ArrayCodeModelExperiment methodsFor: 'accessing' stamp: 'jmv 8/2/2023 16:44:31'!
-floatAt: index put: value
-	<primitive: 'primitiveAtPut' module: 'FloatArrayPlugin'>! !
+!Noclash_Float32ArrayCodeModelExperiment methodsFor: 'accessing' stamp: 'jmv 1/Jun/2026 18:05:44'!
+at: index put: value
+	"Used to be:
+	<primitive: 'primitiveAtPut' module: 'FloatArrayPlugin'>"
+	<primitive: 239 error: ec>! !
 
-!Noclash_DclExample01 methodsFor: 'accessing' stamp: 'jmv 8/2/2023 14:25:39'!
+!Noclash_DclExample01 methodsFor: 'accessing' stamp: 'jmv 2/Aug/2023 14:25:39'!
 a
 	^a! !
 
-!Noclash_DclExample01 methodsFor: 'accessing' stamp: 'jmv 8/2/2023 14:25:42'!
+!Noclash_DclExample01 methodsFor: 'accessing' stamp: 'jmv 2/Aug/2023 14:25:42'!
 b
 	^b! !
 
-!Noclash_DclExample01 methodsFor: 'accessing' stamp: 'jmv 8/2/2023 14:25:45'!
+!Noclash_DclExample01 methodsFor: 'accessing' stamp: 'jmv 2/Aug/2023 14:25:45'!
 c
 	^c! !
 
-!Noclash_DclExample01 methodsFor: 'initialization' stamp: 'jmv 8/2/2023 14:25:23'!
+!Noclash_DclExample01 methodsFor: 'initialization' stamp: 'jmv 2/Aug/2023 14:25:23'!
 initialize
 	a := 1.
 	b := 2.
 	c := 3.! !
 
-!Noclash_DclExample01 methodsFor: 'other' stamp: 'jmv 8/2/2023 14:53:02'!
+!Noclash_DclExample01 methodsFor: 'other' stamp: 'jmv 2/Aug/2023 14:53:02'!
 combined
 	^ self a * 10 + self b * 10 + self c.! !
 
-!Noclash_DclExample01 methodsFor: 'other' stamp: 'jmv 8/2/2023 14:37:41'!
+!Noclash_DclExample01 methodsFor: 'other' stamp: 'jmv 2/Aug/2023 14:37:41'!
 maxVal
 	^SmallInteger maxVal.! !
 
-!Noclash_DclExample01 methodsFor: 'other' stamp: 'jmv 8/2/2023 14:39:07'!
+!Noclash_DclExample01 methodsFor: 'other' stamp: 'jmv 2/Aug/2023 14:39:07'!
 someLiteral
 	^#(1 31 #aSymbol #otherSymbol)! !
 
-!Noclash_DclExample01 class methodsFor: 'instance creation' stamp: 'jmv 8/2/2023 14:25:08'!
+!Noclash_DclExample01 class methodsFor: 'instance creation' stamp: 'jmv 2/Aug/2023 14:25:08'!
 new
 	^ self basicNew initialize! !
 
-!Noclash_DclExample01 class methodsFor: 'other' stamp: 'jmv 10/24/2023 09:45:30'!
+!Noclash_DclExample01 class methodsFor: 'other' stamp: 'jmv 24/Oct/2023 09:45:30'!
 combinedCIvars
 	^aa *10 + bb! !
 
-!Noclash_DclExample01 class methodsFor: 'other' stamp: 'jmv 8/2/2023 14:44:20'!
+!Noclash_DclExample01 class methodsFor: 'other' stamp: 'jmv 2/Aug/2023 14:44:20'!
 processor
 	^Processor! !
 
-!Noclash_DclExample01 class methodsFor: 'other' stamp: 'jmv 10/24/2023 09:44:50'!
+!Noclash_DclExample01 class methodsFor: 'other' stamp: 'jmv 24/Oct/2023 09:44:50'!
 setClassIVars
 	aa := 5.
 	bb := 7.! !
 
-!Noclash_DclExample02 methodsFor: 'accessing' stamp: 'jmv 8/2/2023 14:45:23'!
+!Noclash_DclExample02 methodsFor: 'accessing' stamp: 'jmv 2/Aug/2023 14:45:23'!
 a
 	^a! !
 
-!Noclash_DclExample02 methodsFor: 'accessing' stamp: 'jmv 8/2/2023 14:45:23'!
+!Noclash_DclExample02 methodsFor: 'accessing' stamp: 'jmv 2/Aug/2023 14:45:23'!
 b
 	^b! !
 
-!Noclash_DclExample02 methodsFor: 'accessing' stamp: 'jmv 8/2/2023 14:54:12'!
+!Noclash_DclExample02 methodsFor: 'accessing' stamp: 'jmv 2/Aug/2023 14:54:12'!
 c
 	^c! !
 
-!Noclash_DclExample02 methodsFor: 'initialization' stamp: 'jmv 8/2/2023 14:45:23'!
+!Noclash_DclExample02 methodsFor: 'initialization' stamp: 'jmv 2/Aug/2023 14:45:23'!
 initialize
 	a := 1.
 	b := 2.
 	c := 3.! !
 
-!Noclash_DclExample02 methodsFor: 'other' stamp: 'jmv 8/2/2023 14:53:05'!
+!Noclash_DclExample02 methodsFor: 'other' stamp: 'jmv 2/Aug/2023 14:53:05'!
 combined
 	^ self a * 10 + self b * 10 + self c.! !
 
-!Noclash_DclExample02 methodsFor: 'other' stamp: 'jmv 8/2/2023 14:45:23'!
+!Noclash_DclExample02 methodsFor: 'other' stamp: 'jmv 2/Aug/2023 14:45:23'!
 maxVal
 	^SmallInteger maxVal.! !
 
-!Noclash_DclExample02 methodsFor: 'other' stamp: 'jmv 8/2/2023 14:45:23'!
+!Noclash_DclExample02 methodsFor: 'other' stamp: 'jmv 2/Aug/2023 14:45:23'!
 someLiteral
 	^#(1 31 #aSymbol #otherSymbol)! !
 
-!Noclash_DclExample02 class methodsFor: 'instance creation' stamp: 'jmv 8/2/2023 14:45:23'!
+!Noclash_DclExample02 class methodsFor: 'instance creation' stamp: 'jmv 2/Aug/2023 14:45:23'!
 new
 	^ self basicNew initialize! !
 
-!Noclash_DclExample02 class methodsFor: 'other' stamp: 'jmv 10/24/2023 09:50:43'!
+!Noclash_DclExample02 class methodsFor: 'other' stamp: 'jmv 24/Oct/2023 09:50:43'!
 combinedCIvars
 	^aa *10 + bb! !
 
-!Noclash_DclExample02 class methodsFor: 'other' stamp: 'jmv 8/2/2023 14:45:23'!
+!Noclash_DclExample02 class methodsFor: 'other' stamp: 'jmv 2/Aug/2023 14:45:23'!
 processor
 	^Processor! !
 
-!Noclash_DclExample02 class methodsFor: 'other' stamp: 'jmv 10/24/2023 09:50:39'!
+!Noclash_DclExample02 class methodsFor: 'other' stamp: 'jmv 24/Oct/2023 09:50:39'!
 setClassIVars
 	aa := 5.
 	bb := 7.! !
 
-!NoclashExisting_DclExample02 methodsFor: 'accessing' stamp: 'jmv 8/7/2023 18:10:54'!
+!NoclashExisting_DclExample02 methodsFor: 'accessing' stamp: 'jmv 7/Aug/2023 18:10:54'!
 b
 	^ b.! !
 
-!NoclashExisting_DclExample02 methodsFor: 'initialization' stamp: 'jmv 8/7/2023 18:10:54'!
+!NoclashExisting_DclExample02 methodsFor: 'initialization' stamp: 'jmv 7/Aug/2023 18:10:54'!
 initialize
 	a _ 1.
 	b _ 2.
 	c _ 3.! !
 
-!NoclashExisting_DclExample02 methodsFor: 'other' stamp: 'jmv 8/8/2023 15:52:02'!
+!NoclashExisting_DclExample02 methodsFor: 'other' stamp: 'jmv 8/Aug/2023 15:52:02'!
 combined
 	^ 47! !
 
-!NoclashExisting_DclExample02 methodsFor: 'other' stamp: 'jmv 10/24/2023 12:23:50'!
+!NoclashExisting_DclExample02 methodsFor: 'other' stamp: 'jmv 24/Oct/2023 12:23:50'!
 maxVal
 	^ SmallInteger maxVal-1.! !
 
-!NoclashExisting_DclExample02 methodsFor: 'other' stamp: 'jmv 10/24/2023 12:25:06'!
+!NoclashExisting_DclExample02 methodsFor: 'other' stamp: 'jmv 24/Oct/2023 12:25:06'!
 someLiteral
 	^#(22 33)! !
 
-!NoclashExisting_DclExample02 class methodsFor: 'instance creation' stamp: 'jmv 8/7/2023 18:10:54'!
+!NoclashExisting_DclExample02 class methodsFor: 'instance creation' stamp: 'jmv 7/Aug/2023 18:10:54'!
 new
 	^ self basicNew initialize.! !
 
-!NoclashExisting_DclExample02 class methodsFor: 'other' stamp: 'jmv 10/24/2023 12:28:25'!
+!NoclashExisting_DclExample02 class methodsFor: 'other' stamp: 'jmv 24/Oct/2023 12:28:25'!
 combinedCIvars
 	^aa + bb! !
 
-!NoclashExisting_DclExample02 class methodsFor: 'other' stamp: 'jmv 10/24/2023 12:26:21'!
+!NoclashExisting_DclExample02 class methodsFor: 'other' stamp: 'jmv 24/Oct/2023 12:26:21'!
 processor
 	^ nil.! !
 
-!NoclashExisting_DclExample02 class methodsFor: 'other' stamp: 'jmv 10/24/2023 12:28:55'!
+!NoclashExisting_DclExample02 class methodsFor: 'other' stamp: 'jmv 24/Oct/2023 12:28:55'!
 setClassIVars
 	aa := 3.
 	bb := 4.! !
 
-!NoclashAB_DclExample03 methodsFor: 'accessing' stamp: 'jmv 8/4/2023 15:47:11'!
+!NoclashAB_DclExample03 methodsFor: 'accessing' stamp: 'jmv 4/Aug/2023 15:47:11'!
 b
 	^ b.! !
 
-!NoclashAB_DclExample03 methodsFor: 'initialization' stamp: 'jmv 8/4/2023 15:47:11'!
+!NoclashAB_DclExample03 methodsFor: 'initialization' stamp: 'jmv 4/Aug/2023 15:47:11'!
 initialize
 	a := 7.
 	b := 9.! !
 
-!NoclashAB_DclExample03 methodsFor: 'other' stamp: 'jmv 8/4/2023 16:51:12'!
+!NoclashAB_DclExample03 methodsFor: 'other' stamp: 'jmv 4/Aug/2023 16:51:12'!
 combined
 	 ^ a * 10 + b! !
 
-!NoclashAB_DclExample03 methodsFor: 'other' stamp: 'jmv 8/11/2023 12:37:03'!
+!NoclashAB_DclExample03 methodsFor: 'other' stamp: 'jmv 11/Aug/2023 12:37:03'!
 xk47
 	^'xk47'! !
 
-!NoclashAB_DclExample03 class methodsFor: 'instance creation' stamp: 'jmv 8/4/2023 15:47:11'!
+!NoclashAB_DclExample03 class methodsFor: 'instance creation' stamp: 'jmv 4/Aug/2023 15:47:11'!
 new
 	^ self basicNew initialize.! !
 
-!NoclashABD_DclExample03Subclass methodsFor: 'accessing' stamp: 'jmv 8/4/2023 16:40:26'!
+!NoclashABD_DclExample03Subclass methodsFor: 'accessing' stamp: 'jmv 4/Aug/2023 16:40:26'!
 d
 	^d! !
 
-!NoclashABD_DclExample03Subclass methodsFor: 'initialization' stamp: 'jmv 8/10/2023 11:26:59'!
+!NoclashABD_DclExample03Subclass methodsFor: 'initialization' stamp: 'jmv 10/Aug/2023 11:26:59'!
 initialize
 	super initialize.
 	d := 4.! !
 
-!NoclashABD_DclExample03Subclass methodsFor: 'other' stamp: 'jmv 8/10/2023 10:48:38'!
+!NoclashABD_DclExample03Subclass methodsFor: 'other' stamp: 'jmv 10/Aug/2023 10:48:38'!
 combined
 	 ^ a * 10 + b * 10 + d + super combined! !
 
-!NoclashABC_DclExample03 methodsFor: 'accessing' stamp: 'jmv 8/4/2023 15:47:22'!
+!NoclashABC_DclExample03 methodsFor: 'accessing' stamp: 'jmv 4/Aug/2023 15:47:22'!
 a
 	^a! !
 
-!NoclashABC_DclExample03 methodsFor: 'accessing' stamp: 'jmv 8/4/2023 15:47:22'!
+!NoclashABC_DclExample03 methodsFor: 'accessing' stamp: 'jmv 4/Aug/2023 15:47:22'!
 b
 	^b! !
 
-!NoclashABC_DclExample03 methodsFor: 'accessing' stamp: 'jmv 8/4/2023 15:47:22'!
+!NoclashABC_DclExample03 methodsFor: 'accessing' stamp: 'jmv 4/Aug/2023 15:47:22'!
 c
 	^c! !
 
-!NoclashABC_DclExample03 methodsFor: 'initialization' stamp: 'jmv 8/4/2023 15:47:22'!
+!NoclashABC_DclExample03 methodsFor: 'initialization' stamp: 'jmv 4/Aug/2023 15:47:22'!
 initialize
 	a := 1.
 	b := 2.
 	c := 3.! !
 
-!NoclashABC_DclExample03 methodsFor: 'other' stamp: 'jmv 8/4/2023 16:51:03'!
+!NoclashABC_DclExample03 methodsFor: 'other' stamp: 'jmv 4/Aug/2023 16:51:03'!
 combined
 	 ^ a * 10 + b * 10 + c.! !
 
-!NoclashABC_DclExample03 methodsFor: 'other' stamp: 'jmv 8/4/2023 15:47:22'!
+!NoclashABC_DclExample03 methodsFor: 'other' stamp: 'jmv 4/Aug/2023 15:47:22'!
 maxVal
 	^SmallInteger maxVal.! !
 
-!NoclashABC_DclExample03 methodsFor: 'other' stamp: 'jmv 8/4/2023 15:47:22'!
+!NoclashABC_DclExample03 methodsFor: 'other' stamp: 'jmv 4/Aug/2023 15:47:22'!
 someLiteral
 	^#(1 31 #aSymbol #otherSymbol)! !
 
-!NoclashABC_DclExample03 class methodsFor: 'instance creation' stamp: 'jmv 8/4/2023 15:47:22'!
+!NoclashABC_DclExample03 class methodsFor: 'instance creation' stamp: 'jmv 4/Aug/2023 15:47:22'!
 new
 	^ self basicNew initialize! !
 
-!NoclashABCD_DclExample03Subclass methodsFor: 'accessing' stamp: 'jmv 8/4/2023 16:42:33'!
+!NoclashABCD_DclExample03Subclass methodsFor: 'accessing' stamp: 'jmv 4/Aug/2023 16:42:33'!
 d
 	^d! !
 
-!NoclashABCD_DclExample03Subclass methodsFor: 'initialization' stamp: 'jmv 8/4/2023 16:50:20'!
+!NoclashABCD_DclExample03Subclass methodsFor: 'initialization' stamp: 'jmv 4/Aug/2023 16:50:20'!
 initialize
 	super initialize.
 	d := 4.! !
 
-!NoclashABCD_DclExample03Subclass methodsFor: 'other' stamp: 'jmv 8/10/2023 11:07:31'!
+!NoclashABCD_DclExample03Subclass methodsFor: 'other' stamp: 'jmv 10/Aug/2023 11:07:31'!
 combined
 	 ^ a * 10 + b * 10 + c * 10 + d + super combined! !
 
-!NoclashACB_DclExample03 methodsFor: 'initialization' stamp: 'jmv 8/10/2023 12:05:25'!
+!NoclashACB_DclExample03 methodsFor: 'initialization' stamp: 'jmv 10/Aug/2023 12:05:25'!
 initialize2
 	a := 1.
 	b := 2.
 	c := 3.! !
 
-!NoclashABC_DclExample06 methodsFor: 'accessing' stamp: 'jmv 8/11/2023 10:50:24'!
+!NoclashABC_DclExample06 methodsFor: 'accessing' stamp: 'jmv 11/Aug/2023 10:50:24'!
 a
 	^a! !
 
-!NoclashABC_DclExample06 methodsFor: 'accessing' stamp: 'jmv 8/11/2023 10:50:28'!
+!NoclashABC_DclExample06 methodsFor: 'accessing' stamp: 'jmv 11/Aug/2023 10:50:28'!
 b
 	^b! !
 
-!NoclashABC_DclExample06 methodsFor: 'accessing' stamp: 'jmv 8/11/2023 10:50:32'!
+!NoclashABC_DclExample06 methodsFor: 'accessing' stamp: 'jmv 11/Aug/2023 10:50:32'!
 c
 	^c! !
 
-!NoclashABC_DclExample06 methodsFor: 'initialization' stamp: 'jmv 8/11/2023 10:50:51'!
+!NoclashABC_DclExample06 methodsFor: 'initialization' stamp: 'jmv 11/Aug/2023 10:50:51'!
 initialize
 	a := 1.
 	b := 2.
 	c := 3.! !
 
-!NoclashABC_DclExample06 methodsFor: 'other' stamp: 'jmv 8/11/2023 10:51:11'!
+!NoclashABC_DclExample06 methodsFor: 'other' stamp: 'jmv 11/Aug/2023 10:51:11'!
 combined
 	 ^ a * 10 + b * 10 + c.! !
 
-!NoclashABC_DclExample06 methodsFor: 'other' stamp: 'jmv 8/11/2023 10:51:14'!
+!NoclashABC_DclExample06 methodsFor: 'other' stamp: 'jmv 11/Aug/2023 10:51:14'!
 maxVal
 	^SmallInteger maxVal.! !
 
-!NoclashABC_DclExample06 methodsFor: 'other' stamp: 'jmv 8/11/2023 10:51:17'!
+!NoclashABC_DclExample06 methodsFor: 'other' stamp: 'jmv 11/Aug/2023 10:51:17'!
 someLiteral
 	^#(1 31 #aSymbol #otherSymbol)! !
 
-!NoclashABCclasVarZZ_DclExample06 methodsFor: 'other' stamp: 'jmv 8/11/2023 10:53:44'!
+!NoclashABCclasVarZZ_DclExample06 methodsFor: 'other' stamp: 'jmv 11/Aug/2023 10:53:44'!
 setAndAnswerZZ
 	ZZ := 1274.
 	^ZZ! !
 
-!NoclashABCclasVarZZ_DclExample06 class methodsFor: 'other' stamp: 'jmv 8/11/2023 12:33:46'!
+!NoclashABCclasVarZZ_DclExample06 class methodsFor: 'other' stamp: 'jmv 11/Aug/2023 12:33:46'!
 setAndAnswerZZ2
 	ZZ := 12742.
 	^ZZ! !
 
-!NoclashAB_DclExample07 methodsFor: 'accessing' stamp: 'jmv 8/4/2023 15:47:11'!
+!NoclashAB_DclExample07 methodsFor: 'accessing' stamp: 'jmv 4/Aug/2023 15:47:11'!
 b
 	^ b.! !
 
-!NoclashAB_DclExample07 methodsFor: 'initialization' stamp: 'jmv 8/4/2023 15:47:11'!
+!NoclashAB_DclExample07 methodsFor: 'initialization' stamp: 'jmv 4/Aug/2023 15:47:11'!
 initialize
 	a := 7.
 	b := 9.! !
 
-!NoclashAB_DclExample07 methodsFor: 'other' stamp: 'jmv 8/4/2023 16:51:12'!
+!NoclashAB_DclExample07 methodsFor: 'other' stamp: 'jmv 4/Aug/2023 16:51:12'!
 combined
 	 ^ a * 10 + b! !
 
-!NoclashAB_DclExample07 methodsFor: 'other' stamp: 'jmv 8/11/2023 12:37:03'!
+!NoclashAB_DclExample07 methodsFor: 'other' stamp: 'jmv 11/Aug/2023 12:37:03'!
 xk47
 	^'xk47'! !
 
-!NoclashAB_DclExample07 class methodsFor: 'instance creation' stamp: 'jmv 8/4/2023 15:47:11'!
+!NoclashAB_DclExample07 class methodsFor: 'instance creation' stamp: 'jmv 4/Aug/2023 15:47:11'!
 new
 	^ self basicNew initialize.! !
 
-!NoclashABD_DclExample07Subclass methodsFor: 'accessing' stamp: 'jmv 8/4/2023 16:40:26'!
+!NoclashABD_DclExample07Subclass methodsFor: 'accessing' stamp: 'jmv 4/Aug/2023 16:40:26'!
 d
 	^d! !
 
-!NoclashABD_DclExample07Subclass methodsFor: 'initialization' stamp: 'jmv 8/10/2023 11:26:59'!
+!NoclashABD_DclExample07Subclass methodsFor: 'initialization' stamp: 'jmv 10/Aug/2023 11:26:59'!
 initialize
 	super initialize.
 	d := 4.! !
 
-!NoclashABD_DclExample07Subclass methodsFor: 'other' stamp: 'jmv 8/10/2023 10:48:38'!
+!NoclashABD_DclExample07Subclass methodsFor: 'other' stamp: 'jmv 10/Aug/2023 10:48:38'!
 combined
 	 ^ a * 10 + b * 10 + d + super combined! !
 
-!NoclashABC_DclExample07 methodsFor: 'accessing' stamp: 'jmv 8/4/2023 15:47:22'!
+!NoclashABC_DclExample07 methodsFor: 'accessing' stamp: 'jmv 4/Aug/2023 15:47:22'!
 a
 	^a! !
 
-!NoclashABC_DclExample07 methodsFor: 'accessing' stamp: 'jmv 8/4/2023 15:47:22'!
+!NoclashABC_DclExample07 methodsFor: 'accessing' stamp: 'jmv 4/Aug/2023 15:47:22'!
 b
 	^b! !
 
-!NoclashABC_DclExample07 methodsFor: 'accessing' stamp: 'jmv 8/4/2023 15:47:22'!
+!NoclashABC_DclExample07 methodsFor: 'accessing' stamp: 'jmv 4/Aug/2023 15:47:22'!
 c
 	^c! !
 
-!NoclashABC_DclExample07 methodsFor: 'initialization' stamp: 'jmv 8/4/2023 15:47:22'!
+!NoclashABC_DclExample07 methodsFor: 'initialization' stamp: 'jmv 4/Aug/2023 15:47:22'!
 initialize
 	a := 1.
 	b := 2.
 	c := 3.! !
 
-!NoclashABC_DclExample07 methodsFor: 'other' stamp: 'jmv 8/4/2023 16:51:03'!
+!NoclashABC_DclExample07 methodsFor: 'other' stamp: 'jmv 4/Aug/2023 16:51:03'!
 combined
 	 ^ a * 10 + b * 10 + c.! !
 
-!NoclashABC_DclExample07 methodsFor: 'other' stamp: 'jmv 8/4/2023 15:47:22'!
+!NoclashABC_DclExample07 methodsFor: 'other' stamp: 'jmv 4/Aug/2023 15:47:22'!
 maxVal
 	^SmallInteger maxVal.! !
 
-!NoclashABC_DclExample07 methodsFor: 'other' stamp: 'jmv 8/4/2023 15:47:22'!
+!NoclashABC_DclExample07 methodsFor: 'other' stamp: 'jmv 4/Aug/2023 15:47:22'!
 someLiteral
 	^#(1 31 #aSymbol #otherSymbol)! !
 
-!NoclashABC_DclExample07 class methodsFor: 'instance creation' stamp: 'jmv 8/4/2023 15:47:22'!
+!NoclashABC_DclExample07 class methodsFor: 'instance creation' stamp: 'jmv 4/Aug/2023 15:47:22'!
 new
 	^ self basicNew initialize! !
 
-!NoclashABCD_DclExample07Subclass methodsFor: 'accessing' stamp: 'jmv 7/30/2025 12:40:47'!
+!NoclashABCD_DclExample07Subclass methodsFor: 'accessing' stamp: 'jmv 30/Jul/2025 12:40:47'!
 d
 	^d! !
 
-!NoclashABCD_DclExample07Subclass methodsFor: 'initialization' stamp: 'jmv 7/30/2025 12:41:03'!
+!NoclashABCD_DclExample07Subclass methodsFor: 'initialization' stamp: 'jmv 30/Jul/2025 12:41:03'!
 initialize
 	super initialize.
 	d := 4.! !
 
-!NoclashABCD_DclExample07Subclass methodsFor: 'other' stamp: 'jmv 7/30/2025 12:41:14'!
+!NoclashABCD_DclExample07Subclass methodsFor: 'other' stamp: 'jmv 30/Jul/2025 12:41:14'!
 combined
 	 ^ a * 10 + b * 10 + c * 10 + d + super combined! !
 
-!NoclashAB_DclExample08 methodsFor: 'accessing' stamp: 'jmv 8/4/2023 15:47:11'!
+!NoclashAB_DclExample08 methodsFor: 'accessing' stamp: 'jmv 4/Aug/2023 15:47:11'!
 b
 	^ b.! !
 
-!NoclashAB_DclExample08 methodsFor: 'initialization' stamp: 'jmv 8/4/2023 15:47:11'!
+!NoclashAB_DclExample08 methodsFor: 'initialization' stamp: 'jmv 4/Aug/2023 15:47:11'!
 initialize
 	a := 7.
 	b := 9.! !
 
-!NoclashAB_DclExample08 methodsFor: 'other' stamp: 'jmv 8/4/2023 16:51:12'!
+!NoclashAB_DclExample08 methodsFor: 'other' stamp: 'jmv 4/Aug/2023 16:51:12'!
 combined
 	 ^ a * 10 + b! !
 
-!NoclashAB_DclExample08 methodsFor: 'other' stamp: 'jmv 8/11/2023 12:37:03'!
+!NoclashAB_DclExample08 methodsFor: 'other' stamp: 'jmv 11/Aug/2023 12:37:03'!
 xk47
 	^'xk47'! !
 
-!NoclashAB_DclExample08 class methodsFor: 'instance creation' stamp: 'jmv 8/4/2023 15:47:11'!
+!NoclashAB_DclExample08 class methodsFor: 'instance creation' stamp: 'jmv 4/Aug/2023 15:47:11'!
 new
 	^ self basicNew initialize.! !
 
-!NoclashABD_DclExample08Subclass methodsFor: 'accessing' stamp: 'jmv 8/4/2023 16:40:26'!
+!NoclashABD_DclExample08Subclass methodsFor: 'accessing' stamp: 'jmv 4/Aug/2023 16:40:26'!
 d
 	^d! !
 
-!NoclashABD_DclExample08Subclass methodsFor: 'initialization' stamp: 'jmv 8/10/2023 11:26:59'!
+!NoclashABD_DclExample08Subclass methodsFor: 'initialization' stamp: 'jmv 10/Aug/2023 11:26:59'!
 initialize
 	super initialize.
 	d := 4.! !
 
-!NoclashABD_DclExample08Subclass methodsFor: 'other' stamp: 'jmv 8/10/2023 10:48:38'!
+!NoclashABD_DclExample08Subclass methodsFor: 'other' stamp: 'jmv 10/Aug/2023 10:48:38'!
 combined
 	 ^ a * 10 + b * 10 + d + super combined! !
 
-!NoclashABC_DclExample08 methodsFor: 'accessing' stamp: 'jmv 8/4/2023 15:47:22'!
+!NoclashABC_DclExample08 methodsFor: 'accessing' stamp: 'jmv 4/Aug/2023 15:47:22'!
 a
 	^a! !
 
-!NoclashABC_DclExample08 methodsFor: 'accessing' stamp: 'jmv 8/4/2023 15:47:22'!
+!NoclashABC_DclExample08 methodsFor: 'accessing' stamp: 'jmv 4/Aug/2023 15:47:22'!
 b
 	^b! !
 
-!NoclashABC_DclExample08 methodsFor: 'accessing' stamp: 'jmv 8/4/2023 15:47:22'!
+!NoclashABC_DclExample08 methodsFor: 'accessing' stamp: 'jmv 4/Aug/2023 15:47:22'!
 c
 	^c! !
 
-!NoclashABC_DclExample08 methodsFor: 'initialization' stamp: 'jmv 8/4/2023 15:47:22'!
+!NoclashABC_DclExample08 methodsFor: 'initialization' stamp: 'jmv 4/Aug/2023 15:47:22'!
 initialize
 	a := 1.
 	b := 2.
 	c := 3.! !
 
-!NoclashABC_DclExample08 methodsFor: 'other' stamp: 'jmv 8/4/2023 16:51:03'!
+!NoclashABC_DclExample08 methodsFor: 'other' stamp: 'jmv 4/Aug/2023 16:51:03'!
 combined
 	 ^ a * 10 + b * 10 + c.! !
 
-!NoclashABC_DclExample08 methodsFor: 'other' stamp: 'jmv 8/4/2023 15:47:22'!
+!NoclashABC_DclExample08 methodsFor: 'other' stamp: 'jmv 4/Aug/2023 15:47:22'!
 maxVal
 	^SmallInteger maxVal.! !
 
-!NoclashABC_DclExample08 methodsFor: 'other' stamp: 'jmv 8/4/2023 15:47:22'!
+!NoclashABC_DclExample08 methodsFor: 'other' stamp: 'jmv 4/Aug/2023 15:47:22'!
 someLiteral
 	^#(1 31 #aSymbol #otherSymbol)! !
 
-!NoclashABC_DclExample08 class methodsFor: 'instance creation' stamp: 'jmv 8/4/2023 15:47:22'!
+!NoclashABC_DclExample08 class methodsFor: 'instance creation' stamp: 'jmv 4/Aug/2023 15:47:22'!
 new
 	^ self basicNew initialize! !
 
-!NoclashABCD_DclExample08Subclass methodsFor: 'accessing' stamp: 'jmv 7/30/2025 12:40:47'!
+!NoclashABCD_DclExample08Subclass methodsFor: 'accessing' stamp: 'jmv 30/Jul/2025 12:40:47'!
 d
 	^d! !
 
-!NoclashABCD_DclExample08Subclass methodsFor: 'initialization' stamp: 'jmv 7/30/2025 12:41:03'!
+!NoclashABCD_DclExample08Subclass methodsFor: 'initialization' stamp: 'jmv 30/Jul/2025 12:41:03'!
 initialize
 	super initialize.
 	d := 4.! !
 
-!NoclashABCD_DclExample08Subclass methodsFor: 'other' stamp: 'jmv 7/30/2025 12:41:14'!
+!NoclashABCD_DclExample08Subclass methodsFor: 'other' stamp: 'jmv 30/Jul/2025 12:41:14'!
 combined
 	 ^ a * 10 + b * 10 + c * 10 + d + super combined! !
 
-!NoclashAB_DclExample09 methodsFor: 'accessing' stamp: 'jmv 9/22/2025 16:08:35'!
+!NoclashAB_DclExample09 methodsFor: 'accessing' stamp: 'jmv 22/Sep/2025 16:08:35'!
 b
 	^ b.! !
 
-!NoclashAB_DclExample09 methodsFor: 'initialization' stamp: 'jmv 9/22/2025 16:08:35'!
+!NoclashAB_DclExample09 methodsFor: 'initialization' stamp: 'jmv 22/Sep/2025 16:08:35'!
 initialize
 	a := 7.
 	b := 9.! !
 
-!NoclashAB_DclExample09 methodsFor: 'other' stamp: 'jmv 9/22/2025 16:08:35'!
+!NoclashAB_DclExample09 methodsFor: 'other' stamp: 'jmv 22/Sep/2025 16:08:35'!
 combined
 	 ^ a * 10 + b! !
 
-!NoclashAB_DclExample09 methodsFor: 'other' stamp: 'jmv 9/22/2025 16:08:35'!
+!NoclashAB_DclExample09 methodsFor: 'other' stamp: 'jmv 22/Sep/2025 16:08:35'!
 xk47
 	^'xk47'! !
 
-!NoclashAB_DclExample09 class methodsFor: 'instance creation' stamp: 'jmv 9/22/2025 16:08:35'!
+!NoclashAB_DclExample09 class methodsFor: 'instance creation' stamp: 'jmv 22/Sep/2025 16:08:35'!
 new
 	^ self basicNew initialize.! !
 
-!NoclashABD_DclExample09Subclass methodsFor: 'accessing' stamp: 'jmv 9/22/2025 16:08:44'!
+!NoclashABD_DclExample09Subclass methodsFor: 'accessing' stamp: 'jmv 22/Sep/2025 16:08:44'!
 d
 	^d! !
 
-!NoclashABD_DclExample09Subclass methodsFor: 'initialization' stamp: 'jmv 9/22/2025 16:08:44'!
+!NoclashABD_DclExample09Subclass methodsFor: 'initialization' stamp: 'jmv 22/Sep/2025 16:08:44'!
 initialize
 	super initialize.
 	d := 4.! !
 
-!NoclashABD_DclExample09Subclass methodsFor: 'other' stamp: 'jmv 9/22/2025 16:08:45'!
+!NoclashABD_DclExample09Subclass methodsFor: 'other' stamp: 'jmv 22/Sep/2025 16:08:45'!
 combined
 	 ^ a * 10 + b * 10 + d + super combined! !
 
-!NoclashABC_DclExample09 methodsFor: 'accessing' stamp: 'jmv 9/22/2025 16:08:53'!
+!NoclashABC_DclExample09 methodsFor: 'accessing' stamp: 'jmv 22/Sep/2025 16:08:53'!
 a
 	^a! !
 
-!NoclashABC_DclExample09 methodsFor: 'accessing' stamp: 'jmv 9/22/2025 16:08:53'!
+!NoclashABC_DclExample09 methodsFor: 'accessing' stamp: 'jmv 22/Sep/2025 16:08:53'!
 b
 	^b! !
 
-!NoclashABC_DclExample09 methodsFor: 'accessing' stamp: 'jmv 9/22/2025 16:08:53'!
+!NoclashABC_DclExample09 methodsFor: 'accessing' stamp: 'jmv 22/Sep/2025 16:08:53'!
 c
 	^c! !
 
-!NoclashABC_DclExample09 methodsFor: 'initialization' stamp: 'jmv 9/22/2025 16:08:53'!
+!NoclashABC_DclExample09 methodsFor: 'initialization' stamp: 'jmv 22/Sep/2025 16:08:53'!
 initialize
 	a := 1.
 	b := 2.
 	c := 3.! !
 
-!NoclashABC_DclExample09 methodsFor: 'other' stamp: 'jmv 9/22/2025 16:08:53'!
+!NoclashABC_DclExample09 methodsFor: 'other' stamp: 'jmv 22/Sep/2025 16:08:53'!
 combined
 	 ^ a * 10 + b * 10 + c.! !
 
-!NoclashABC_DclExample09 methodsFor: 'other' stamp: 'jmv 9/22/2025 16:08:53'!
+!NoclashABC_DclExample09 methodsFor: 'other' stamp: 'jmv 22/Sep/2025 16:08:53'!
 maxVal
 	^SmallInteger maxVal.! !
 
-!NoclashABC_DclExample09 methodsFor: 'other' stamp: 'jmv 9/22/2025 16:08:53'!
+!NoclashABC_DclExample09 methodsFor: 'other' stamp: 'jmv 22/Sep/2025 16:08:53'!
 someLiteral
 	^#(1 31 #aSymbol #otherSymbol)! !
 
-!NoclashABC_DclExample09 class methodsFor: 'instance creation' stamp: 'jmv 9/22/2025 16:08:53'!
+!NoclashABC_DclExample09 class methodsFor: 'instance creation' stamp: 'jmv 22/Sep/2025 16:08:53'!
 new
 	^ self basicNew initialize! !
 
-!NoclashABCD_DclExample09Subclass methodsFor: 'accessing' stamp: 'jmv 9/22/2025 16:52:17'!
+!NoclashABCD_DclExample09Subclass methodsFor: 'accessing' stamp: 'jmv 22/Sep/2025 16:52:17'!
 bb
 	^b! !
 
-!NoclashABCD_DclExample09Subclass methodsFor: 'accessing' stamp: 'jmv 9/22/2025 16:09:01'!
+!NoclashABCD_DclExample09Subclass methodsFor: 'accessing' stamp: 'jmv 22/Sep/2025 16:09:01'!
 d
 	^d! !
 
-!NoclashABCD_DclExample09Subclass methodsFor: 'initialization' stamp: 'jmv 9/22/2025 16:09:01'!
+!NoclashABCD_DclExample09Subclass methodsFor: 'initialization' stamp: 'jmv 22/Sep/2025 16:09:01'!
 initialize
 	super initialize.
 	d := 4.! !
 
-!NoclashABCD_DclExample09Subclass methodsFor: 'other' stamp: 'jmv 9/22/2025 16:09:01'!
+!NoclashABCD_DclExample09Subclass methodsFor: 'other' stamp: 'jmv 22/Sep/2025 16:09:01'!
 combined
 	 ^ a * 10 + b * 10 + c * 10 + d + super combined! !
 
-!Noclash_CodeModelExperiment methodsFor: 'sample methods' stamp: 'jmv 8/2/2023 16:43:04'!
+!Noclash_CodeModelExperiment methodsFor: 'sample methods' stamp: 'jmv 2/Aug/2023 16:43:04'!
 method01
 	"Just for testing.
 	"
@@ -984,21 +988,21 @@ method01
 + literales arbitrarios (`code`) - PERO NO TENEMOS COMPILADOR!!!!!!!!!!!!!!!!!! 
 	Usar `ReferenceStream streamedRepresentationOf: aLiteral` y después `ReferenceStream unStream: aByteArray`?"! !
 
-!Noclash_PointCodeModelExperiment methodsFor: 'accessing' stamp: 'jmv 8/2/2023 16:44:39'!
+!Noclash_PointCodeModelExperiment methodsFor: 'accessing' stamp: 'jmv 2/Aug/2023 16:44:39'!
 x
 ^x! !
 
-!Noclash_PointCodeModelExperiment methodsFor: 'accessing' stamp: 'jmv 8/2/2023 16:44:39'!
+!Noclash_PointCodeModelExperiment methodsFor: 'accessing' stamp: 'jmv 2/Aug/2023 16:44:39'!
 y
 ^y! !
 
-!Noclash_PointCodeModelExperiment methodsFor: 'private - initialization' stamp: 'jmv 8/2/2023 16:44:39'!
+!Noclash_PointCodeModelExperiment methodsFor: 'private - initialization' stamp: 'jmv 2/Aug/2023 16:44:39'!
 initializePvtX: xValue y: yValue
 	"Points are immutable."
 	x := xValue.
 	y := yValue! !
 
-!Noclash_PointCodeModelExperiment methodsFor: 'printing' stamp: 'jmv 8/2/2023 16:44:39'!
+!Noclash_PointCodeModelExperiment methodsFor: 'printing' stamp: 'jmv 2/Aug/2023 16:44:39'!
 printOn: aStream 
 	"The receiver prints on aStream in terms of infix notation."
 
@@ -1007,13 +1011,13 @@ printOn: aStream
 	y negative ifTrue: [ aStream space ].
 	y printOn: aStream! !
 
-!Noclash_PointCodeModelExperiment class methodsFor: 'instance creation' stamp: 'jmv 8/2/2023 16:44:39'!
+!Noclash_PointCodeModelExperiment class methodsFor: 'instance creation' stamp: 'jmv 2/Aug/2023 16:44:39'!
 x: anX y: anY
 	"Answer an instance of me with supplied coordinates."
 
 	^self new initializePvtX: anX y: anY! !
 
-!CodeModelTest1 methodsFor: 'testing' stamp: 'jmv 9/16/2025 13:04:19'!
+!CodeModelTest1 methodsFor: 'testing' stamp: 'jmv 16/Sep/2025 13:04:19'!
 testAllInstanceSideMethods
 	| classSpecs cmSpecs methods newMethods |
 	classSpecs := OrderedDictionary new.
@@ -1028,7 +1032,7 @@ testAllInstanceSideMethods
 			newMethods with: methods do: [ :newCm :cm |
 				self assert: newCm = cm ]]]! !
 
-!DclBasicTest methodsFor: 'testing' stamp: 'jmv 8/4/2023 13:05:24'!
+!DclBasicTest methodsFor: 'testing' stamp: 'jmv 4/Aug/2023 13:05:24'!
 testCodeModelExperiment
 	| lib oldClass newClass |
 	Smalltalk at: #CodeModelExperiment ifPresent: [ :leftover | leftover removeFromSystemUnlogged ].
@@ -1045,7 +1049,7 @@ testCodeModelExperiment
 	self assert: Noclash_CodeModelExperiment new method01 = newClass new method01.
 	newClass removeFromSystemUnlogged.! !
 
-!DclBasicTest methodsFor: 'testing' stamp: 'jmv 8/4/2023 13:05:33'!
+!DclBasicTest methodsFor: 'testing' stamp: 'jmv 1/Jun/2026 18:04:46'!
 testFloatArray
 	| lib oldClass newClass |
 	Smalltalk at: #Float32ArrayCodeModelExperiment ifPresent: [ :leftover | leftover removeFromSystemUnlogged ].
@@ -1053,17 +1057,17 @@ testFloatArray
 	lib := DynamicCuisLibrary
 		withClasses: { oldClass name }
 		classSelectors: #( #() )
-		instanceSelectors: #( #(floatAt: floatAt:put:) ).	
+		instanceSelectors: #( #(at: at:put:) ).	
 	self assert: lib canBeInstalled.
 	lib installLibrary.
 	newClass := Smalltalk at: #Float32ArrayCodeModelExperiment.
-	self assert: (oldClass compiledMethodAt: #floatAt:) =
-		(newClass compiledMethodAt: #floatAt:).
+	self assert: (oldClass compiledMethodAt: #at:) =
+		(newClass compiledMethodAt: #at:).
 	self assert: ((newClass with: 1.23) + (newClass with: 2.77)) first = 4.0.
 	self assert: (newClass with: 1.23 with: 2.77) sum = 4.0.
 	newClass removeFromSystemUnlogged.! !
 
-!DclBasicTest methodsFor: 'testing' stamp: 'jmv 8/4/2023 13:05:40'!
+!DclBasicTest methodsFor: 'testing' stamp: 'jmv 4/Aug/2023 13:05:40'!
 testPoint
 	| lib oldClass newClass |
 	Smalltalk at: #PointCodeModelExperiment ifPresent: [ :leftover | leftover removeFromSystemUnlogged ].
@@ -1082,7 +1086,7 @@ testPoint
 	self assert: (newClass x: 99 y: 86) y = 86.
 	newClass removeFromSystemUnlogged.! !
 
-!DclTest methodsFor: 'tests 01' stamp: 'jmv 10/24/2023 10:17:34'!
+!DclTest methodsFor: 'tests 01' stamp: 'jmv 24/Oct/2023 10:17:34'!
 test01NewClass
 	"The library includes only a single class.
 	Test creation of a simple class with a few instance variables and methods that access them"
@@ -1124,7 +1128,7 @@ test01NewClass
 
 	installedFromLibrary removeFromSystemUnlogged.! !
 
-!DclTest methodsFor: 'tests 02' stamp: 'jmv 10/24/2023 12:28:42'!
+!DclTest methodsFor: 'tests 02' stamp: 'jmv 24/Oct/2023 12:28:42'!
 test02ExistingClassSameShape
 	"The library includes only a single class.
 	The class already exist before loading the library, and with the same shape.
@@ -1184,7 +1188,7 @@ test02ExistingClassSameShape
 	"Cleanup"
 	Smalltalk at: #DclExample02 ifPresent: [ :leftover | leftover removeFromSystemUnlogged ].! !
 
-!DclTest methodsFor: 'tests 03' stamp: 'jmv 10/25/2023 10:48:09'!
+!DclTest methodsFor: 'tests 03' stamp: 'jmv 25/Oct/2023 10:48:09'!
 test03AExistingClassNewClassIVars
 	"The existing class and its definition in the library differ in classInstanceVariables
 	Installation should fail."
@@ -1215,7 +1219,7 @@ test03AExistingClassNewClassIVars
 
 	Smalltalk at: #DclExample03 ifPresent: [ :leftover | leftover removeFromSystemUnlogged ].! !
 
-!DclTest methodsFor: 'tests 03' stamp: 'jmv 8/11/2023 10:24:59'!
+!DclTest methodsFor: 'tests 03' stamp: 'jmv 11/Aug/2023 10:24:59'!
 test03AExistingClassNewIVarsExistingInstances
 	"The library adds an instance variable to a class that has existing instances.
 	Installation should fail."
@@ -1249,7 +1253,7 @@ test03AExistingClassNewIVarsExistingInstances
 
 	Smalltalk at: #DclExample03 ifPresent: [ :leftover | leftover removeFromSystemUnlogged ].! !
 
-!DclTest methodsFor: 'tests 03' stamp: 'jmv 8/11/2023 12:38:09'!
+!DclTest methodsFor: 'tests 03' stamp: 'jmv 11/Aug/2023 12:38:09'!
 test03BExistingClassNewIVarsShouldMerge
 	"The library adds an instance variable to a class.
 	Installation should succeed.
@@ -1296,7 +1300,7 @@ test03BExistingClassNewIVarsShouldMerge
 	Smalltalk at: #DclExample03Subclass ifPresent: [ :leftover | leftover removeFromSystemUnlogged ].
 	Smalltalk at: #DclExample03 ifPresent: [ :leftover | leftover removeFromSystemUnlogged ].! !
 
-!DclTest methodsFor: 'tests 03' stamp: 'jmv 8/11/2023 12:40:53'!
+!DclTest methodsFor: 'tests 03' stamp: 'jmv 11/Aug/2023 12:40:53'!
 test03CExistingClassNewIVarsShouldConvertExistingMethods
 	"The library adds an instance variable to a class.
 	Installation should succeed.
@@ -1389,7 +1393,7 @@ test03CExistingClassNewIVarsShouldConvertExistingMethods
 	Smalltalk at: #DclExample03Subclass ifPresent: [ :leftover | leftover removeFromSystemUnlogged ].
 	Smalltalk at: #DclExample03 ifPresent: [ :leftover | leftover removeFromSystemUnlogged ].! !
 
-!DclTest methodsFor: 'tests 03' stamp: 'jmv 8/11/2023 10:25:13'!
+!DclTest methodsFor: 'tests 03' stamp: 'jmv 11/Aug/2023 10:25:13'!
 test03DExistingClassOldIvarMissingShouldKeepShape
 	"The library is unaware of one of the instance variables in the existing class.
 	Installation should succeed.
@@ -1438,7 +1442,7 @@ test03DExistingClassOldIvarMissingShouldKeepShape
 	Smalltalk at: #DclExample03Subclass ifPresent: [ :leftover | leftover removeFromSystemUnlogged ].
 	Smalltalk at: #DclExample03 ifPresent: [ :leftover | leftover removeFromSystemUnlogged ].! !
 
-!DclTest methodsFor: 'tests 03' stamp: 'jmv 8/11/2023 10:39:36'!
+!DclTest methodsFor: 'tests 03' stamp: 'jmv 11/Aug/2023 10:39:36'!
 test03EExistingClassOldIvarMissingShouldConvertNewMethods
 	"The library is unaware of one of the instance variables in the existing class.
 	Installation should succeed.
@@ -1499,7 +1503,7 @@ test03EExistingClassOldIvarMissingShouldConvertNewMethods
 	Smalltalk at: #DclExample03Subclass ifPresent: [ :leftover | leftover removeFromSystemUnlogged ].
 	Smalltalk at: #DclExample03 ifPresent: [ :leftover | leftover removeFromSystemUnlogged ].! !
 
-!DclTest methodsFor: 'tests 03' stamp: 'jmv 8/11/2023 10:25:23'!
+!DclTest methodsFor: 'tests 03' stamp: 'jmv 11/Aug/2023 10:25:23'!
 test03FExistingClassReorderedIVarsShouldConvertNewMethods
 	"The library adds an instance variable to a class.
 	Installation should succeed.
@@ -1539,7 +1543,7 @@ test03FExistingClassReorderedIVarsShouldConvertNewMethods
 
 	Smalltalk at: #DclExample03 ifPresent: [ :leftover | leftover removeFromSystemUnlogged ].! !
 
-!DclTest methodsFor: 'tests 04' stamp: 'jmv 8/11/2023 10:25:35'!
+!DclTest methodsFor: 'tests 04' stamp: 'jmv 11/Aug/2023 10:25:35'!
 test04AExistingClassNewIVarsAlreadyInSuper
 	"The library includes an instance variable that is already defined in a superclass in the image.
 	Installation should fail."
@@ -1569,7 +1573,7 @@ test04AExistingClassNewIVarsAlreadyInSuper
 
 	Smalltalk at: #DclExample04 ifPresent: [ :leftover | leftover removeFromSystemUnlogged ].! !
 
-!DclTest methodsFor: 'tests 04' stamp: 'jmv 8/11/2023 10:26:24'!
+!DclTest methodsFor: 'tests 04' stamp: 'jmv 11/Aug/2023 10:26:24'!
 test04BExistingClassNewIVarsAlreadyInSub
 	"The library includes an instance variable that is already defined in a subclass in the image.
 	Installation should fail."
@@ -1603,7 +1607,7 @@ test04BExistingClassNewIVarsAlreadyInSub
 	Smalltalk at: #DclExample04Sub ifPresent: [ :leftover | leftover removeFromSystemUnlogged ].
 	Smalltalk at: #DclExample04 ifPresent: [ :leftover | leftover removeFromSystemUnlogged ].! !
 
-!DclTest methodsFor: 'tests 05' stamp: 'jmv 8/11/2023 10:26:20'!
+!DclTest methodsFor: 'tests 05' stamp: 'jmv 11/Aug/2023 10:26:20'!
 test05ADifferentSuperclass
 	"Existing class in different hierarchy.
 	Installation should fail."
@@ -1628,7 +1632,7 @@ test05ADifferentSuperclass
 
 	Smalltalk at: #DclExample05 ifPresent: [ :leftover | leftover removeFromSystemUnlogged ].! !
 
-!DclTest methodsFor: 'tests 05' stamp: 'jmv 8/11/2023 10:25:59'!
+!DclTest methodsFor: 'tests 05' stamp: 'jmv 11/Aug/2023 10:25:59'!
 test05BDifferentSuperclass
 	"Existing class in different hierarchy.
 	Installation should fail."
@@ -1653,7 +1657,7 @@ test05BDifferentSuperclass
 
 	Smalltalk at: #DclExample05 ifPresent: [ :leftover | leftover removeFromSystemUnlogged ].! !
 
-!DclTest methodsFor: 'tests 05' stamp: 'jmv 8/11/2023 10:26:04'!
+!DclTest methodsFor: 'tests 05' stamp: 'jmv 11/Aug/2023 10:26:04'!
 test05CDifferentSuperclass
 	"Existing class in different hierarchy.
 	Installation should fail."
@@ -1680,7 +1684,7 @@ test05CDifferentSuperclass
 	Smalltalk at: #DclExample05 ifPresent: [ :leftover | leftover removeFromSystemUnlogged ].
 	Smalltalk at: #DclExample05Super ifPresent: [ :leftover | leftover removeFromSystemUnlogged ].! !
 
-!DclTest methodsFor: 'tests 05' stamp: 'jmv 8/11/2023 10:26:08'!
+!DclTest methodsFor: 'tests 05' stamp: 'jmv 11/Aug/2023 10:26:08'!
 test05DDifferentSuperclass
 	"Existing class in different hierarchy.
 	Installation should fail."
@@ -1707,7 +1711,7 @@ test05DDifferentSuperclass
 	Smalltalk at: #DclExample05 ifPresent: [ :leftover | leftover removeFromSystemUnlogged ].
 	Smalltalk at: #DclExample05Super ifPresent: [ :leftover | leftover removeFromSystemUnlogged ].! !
 
-!DclTest methodsFor: 'tests 05' stamp: 'jmv 8/11/2023 10:26:13'!
+!DclTest methodsFor: 'tests 05' stamp: 'jmv 11/Aug/2023 10:26:13'!
 test05EDifferentSuperclass
 	"Existing class in different hierarchy.
 	Installation should fail."
@@ -1733,7 +1737,7 @@ test05EDifferentSuperclass
 
 	Smalltalk at: #DclExample05 ifPresent: [ :leftover | leftover removeFromSystemUnlogged ].! !
 
-!DclTest methodsFor: 'tests 05' stamp: 'jmv 8/11/2023 16:36:03'!
+!DclTest methodsFor: 'tests 05' stamp: 'jmv 11/Aug/2023 16:36:03'!
 test05FDifferentType
 	"Existing class is different type.
 	Installation should fail."
@@ -1797,7 +1801,7 @@ test05FDifferentType
 
 	Smalltalk at: #DclExample05 ifPresent: [ :leftover | leftover removeFromSystemUnlogged ].! !
 
-!DclTest methodsFor: 'tests 05' stamp: 'jmv 8/11/2023 16:36:15'!
+!DclTest methodsFor: 'tests 05' stamp: 'jmv 11/Aug/2023 16:36:15'!
 test05GDifferentType
 	"Existing class is different type.
 	Installation should fail."
@@ -1861,7 +1865,7 @@ test05GDifferentType
 
 	Smalltalk at: #DclExample05 ifPresent: [ :leftover | leftover removeFromSystemUnlogged ].! !
 
-!DclTest methodsFor: 'tests 05' stamp: 'jmv 8/11/2023 16:36:21'!
+!DclTest methodsFor: 'tests 05' stamp: 'jmv 11/Aug/2023 16:36:21'!
 test05HDifferentType
 	"Existing class is different type.
 	Installation should fail."
@@ -1925,7 +1929,7 @@ test05HDifferentType
 
 	Smalltalk at: #DclExample05 ifPresent: [ :leftover | leftover removeFromSystemUnlogged ].! !
 
-!DclTest methodsFor: 'tests 05' stamp: 'jmv 8/11/2023 16:36:26'!
+!DclTest methodsFor: 'tests 05' stamp: 'jmv 11/Aug/2023 16:36:26'!
 test05IDifferentType
 	"Existing class is different type.
 	Installation should fail."
@@ -1989,7 +1993,7 @@ test05IDifferentType
 
 	Smalltalk at: #DclExample05 ifPresent: [ :leftover | leftover removeFromSystemUnlogged ].! !
 
-!DclTest methodsFor: 'tests 05' stamp: 'jmv 8/11/2023 16:36:31'!
+!DclTest methodsFor: 'tests 05' stamp: 'jmv 11/Aug/2023 16:36:31'!
 test05JDifferentType
 	"Existing class is different type.
 	Installation should fail."
@@ -2053,7 +2057,7 @@ test05JDifferentType
 
 	Smalltalk at: #DclExample05 ifPresent: [ :leftover | leftover removeFromSystemUnlogged ].! !
 
-!DclTest methodsFor: 'tests 05' stamp: 'jmv 8/11/2023 16:36:37'!
+!DclTest methodsFor: 'tests 05' stamp: 'jmv 11/Aug/2023 16:36:37'!
 test05KDifferentType
 	"Existing class is different type.
 	Installation should fail."
@@ -2117,7 +2121,7 @@ test05KDifferentType
 
 	Smalltalk at: #DclExample05 ifPresent: [ :leftover | leftover removeFromSystemUnlogged ].! !
 
-!DclTest methodsFor: 'tests 05' stamp: 'jmv 8/11/2023 16:36:55'!
+!DclTest methodsFor: 'tests 05' stamp: 'jmv 11/Aug/2023 16:36:55'!
 test05LDifferentType
 	"Existing class is different type.
 	Installation should fail."
@@ -2181,7 +2185,7 @@ test05LDifferentType
 
 	Smalltalk at: #DclExample05 ifPresent: [ :leftover | leftover removeFromSystemUnlogged ].! !
 
-!DclTest methodsFor: 'tests 06' stamp: 'jmv 8/14/2023 15:48:32'!
+!DclTest methodsFor: 'tests 06' stamp: 'jmv 14/Aug/2023 15:48:32'!
 test06MissingGlobal
 	"Verify that unknown variables are created as Globals (not as Undeclared), with a nil value."
 
@@ -2228,7 +2232,7 @@ test06MissingGlobal
 	Smalltalk removeKey: #DclExample06Global ifAbsent: nil.
 	Smalltalk cleanOutUndeclared.! !
 
-!DclTest methodsFor: 'tests 06' stamp: 'jmv 8/11/2023 12:34:16'!
+!DclTest methodsFor: 'tests 06' stamp: 'jmv 11/Aug/2023 12:34:16'!
 test06NewClassVar
 	| sourceForExisting existing sourceForLibrary lib anInstance installedFromLibrary |
 
@@ -2298,7 +2302,7 @@ test06NewClassVar
 
 	Smalltalk at: #DclExample06 ifPresent: [ :leftover | leftover removeFromSystemUnlogged ].! !
 
-!DclTest methodsFor: 'tests 07' stamp: 'jmv 7/30/2025 12:38:34'!
+!DclTest methodsFor: 'tests 07' stamp: 'jmv 30/Jul/2025 12:38:34'!
 test07CExistingClassNewIVarsShouldConvertExistingMethods
 	"The library adds an instance variable to a class.
 	Installation should succeed.
@@ -2392,7 +2396,7 @@ test07CExistingClassNewIVarsShouldConvertExistingMethods
 	Smalltalk at: #DclExample07Subclass ifPresent: [ :leftover | leftover removeFromSystemUnlogged ].
 	Smalltalk at: #DclExample07 ifPresent: [ :leftover | leftover removeFromSystemUnlogged ].! !
 
-!DclTest methodsFor: 'tests 07' stamp: 'jmv 7/30/2025 12:43:28'!
+!DclTest methodsFor: 'tests 07' stamp: 'jmv 30/Jul/2025 12:43:28'!
 test07EExistingClassOldIvarMissingShouldConvertNewMethods
 	"The library is unaware of one of the instance variables in the existing class.
 	Installation should succeed.
@@ -2454,7 +2458,7 @@ test07EExistingClassOldIvarMissingShouldConvertNewMethods
 	Smalltalk at: #DclExample07Subclass ifPresent: [ :leftover | leftover removeFromSystemUnlogged ].
 	Smalltalk at: #DclExample07 ifPresent: [ :leftover | leftover removeFromSystemUnlogged ].! !
 
-!DclTest methodsFor: 'tests 08' stamp: 'jmv 7/31/2025 13:05:04'!
+!DclTest methodsFor: 'tests 08' stamp: 'jmv 31/Jul/2025 13:05:04'!
 test08CExistingClassNewIVarsShouldConvertExistingMethods
 	"The library adds an instance variable to a class.
 	Installation should succeed.
@@ -2550,7 +2554,7 @@ test08CExistingClassNewIVarsShouldConvertExistingMethods
 	Smalltalk at: #DclExample08Subclass ifPresent: [ :leftover | leftover removeFromSystemUnlogged ].
 	Smalltalk at: #DclExample08 ifPresent: [ :leftover | leftover removeFromSystemUnlogged ].! !
 
-!DclTest methodsFor: 'tests 08' stamp: 'jmv 7/31/2025 12:59:47'!
+!DclTest methodsFor: 'tests 08' stamp: 'jmv 31/Jul/2025 12:59:47'!
 test08EExistingClassOldIvarMissingShouldConvertNewMethods
 	"The library is unaware of one of the instance variables in the existing class.
 	Installation should succeed.
@@ -2610,7 +2614,7 @@ test08EExistingClassOldIvarMissingShouldConvertNewMethods
 	Smalltalk at: #DclExample08Subclass ifPresent: [ :leftover | leftover removeFromSystemUnlogged ].
 	Smalltalk at: #DclExample08 ifPresent: [ :leftover | leftover removeFromSystemUnlogged ].! !
 
-!DclTest methodsFor: 'tests 09' stamp: 'jmv 9/23/2025 17:51:25'!
+!DclTest methodsFor: 'tests 09' stamp: 'jmv 23/Sep/2025 17:51:25'!
 test09CExistingClassNewIVarsShouldConvertExistingMethods
 	"The library adds an instance variable to a class.
 	Installation should succeed.
@@ -2713,7 +2717,7 @@ test09CExistingClassNewIVarsShouldConvertExistingMethods
 	Smalltalk at: #DclExample09Subclass ifPresent: [ :leftover | leftover removeFromSystemUnlogged ].
 	Smalltalk at: #DclExample09 ifPresent: [ :leftover | leftover removeFromSystemUnlogged ].! !
 
-!DclTest methodsFor: 'tests 09' stamp: 'jmv 9/23/2025 17:51:57'!
+!DclTest methodsFor: 'tests 09' stamp: 'jmv 23/Sep/2025 17:51:57'!
 test09EExistingClassOldIvarMissingShouldConvertNewMethods
 	"The library is unaware of one of the instance variables in the existing class.
 	Installation should succeed.
@@ -2780,16 +2784,16 @@ test09EExistingClassOldIvarMissingShouldConvertNewMethods
 	Smalltalk at: #DclExample09Subclass ifPresent: [ :leftover | leftover removeFromSystemUnlogged ].
 	Smalltalk at: #DclExample09 ifPresent: [ :leftover | leftover removeFromSystemUnlogged ].! !
 
-!DclTest methodsFor: 'setUp/tearDown' stamp: 'jmv 8/9/2023 16:09:45'!
+!DclTest methodsFor: 'setUp/tearDown' stamp: 'jmv 9/Aug/2023 16:09:45'!
 setUp
 	Smalltalk at: #LogCompilerUse put: true.
 	Smalltalk at: #CompilerWasUsed put: false.! !
 
-!DclTest methodsFor: 'setUp/tearDown' stamp: 'jmv 8/8/2023 10:46:31'!
+!DclTest methodsFor: 'setUp/tearDown' stamp: 'jmv 8/Aug/2023 10:46:31'!
 tearDown
 	LogCompilerUse := false! !
 
-!DclTest methodsFor: 'failing' stamp: 'jmv 7/31/2025 14:58:59'!
+!DclTest methodsFor: 'failing' stamp: 'jmv 31/Jul/2025 14:58:59'!
 expectedFailures
 	"Answer an array o selectors that are expected to fail.
 	Usually this is done for tests that document incorrect behavior for which there is not yet a proper fix available."
@@ -2798,13 +2802,13 @@ expectedFailures
 		ifTrue: [#()]
 		ifFalse: [#(test08EExistingClassOldIvarMissingShouldConvertNewMethods)]! !
 
-!DclTest class methodsFor: 'class initialization' stamp: 'jmv 10/19/2023 15:37:34'!
+!DclTest class methodsFor: 'class initialization' stamp: 'jmv 19/Oct/2023 15:37:34'!
 initialize
 
 	Smalltalk at: #LogCompilerUse put: false.
 	Smalltalk at: #CompilerWasUsed put: false.! !
 
-!InstvarRemappingTest methodsFor: 'tests' stamp: 'jmv 8/1/2025 10:38:50'!
+!InstvarRemappingTest methodsFor: 'tests' stamp: 'jmv 1/Jun/2026 18:14:52'!
 testInstVarRemapping01
 	"
 	Excercise remapping. Stay in the low (1 byte) area.
@@ -2814,9 +2818,7 @@ testInstVarRemapping01
 	cls := Smalltalk at: #LargeClassIvarR01.
 	method := cls >> #test03AccessHighVariables.
 	self assert: method decompile decompileString = 'test03AccessHighVariables
-	1 > 0
-		ifTrue: [ a255 := 99 ]
-		ifFalse: [ a255 := 98 ].
+	1 > 0 ifTrue: [ a255 := 99 ] ifFalse: [ a255 := 98 ].
 	a256 := ''a1''.
 	a257 := Float pi.
 	a258 := #[11 22 33 44].
@@ -2830,9 +2832,7 @@ testInstVarRemapping01
 	EncoderForSistaV1 remapInstVarAccessesIn: method asPer: {255->234} asDictionary doIt: true.
 
 	self assert: method decompile decompileString = 'test03AccessHighVariables
-	1 > 0
-		ifTrue: [ a234 := 99 ]
-		ifFalse: [ a234 := 98 ].
+	1 > 0 ifTrue: [ a234 := 99 ] ifFalse: [ a234 := 98 ].
 	a256 := ''a1''.
 	a257 := Float pi.
 	a258 := #[11 22 33 44].
@@ -2844,7 +2844,7 @@ testInstVarRemapping01
 	cls addSelectorSilently: method selector withMethod: method.
 	cls new test03AccessHighVariables.! !
 
-!InstvarRemappingTest methodsFor: 'tests' stamp: 'jmv 8/1/2025 10:39:04'!
+!InstvarRemappingTest methodsFor: 'tests' stamp: 'jmv 1/Jun/2026 18:14:29'!
 testInstVarRemapping02
 	"
 	Excercise remapping. Stay in the 2 byte area.
@@ -2854,9 +2854,7 @@ testInstVarRemapping02
 	cls := Smalltalk at: #LargeClassIvarR01.
 	method := cls >> #test03AccessHighVariables.
 	self assert: method decompile decompileString = 'test03AccessHighVariables
-	1 > 0
-		ifTrue: [ a255 := 99 ]
-		ifFalse: [ a255 := 98 ].
+	1 > 0 ifTrue: [ a255 := 99 ] ifFalse: [ a255 := 98 ].
 	a256 := ''a1''.
 	a257 := Float pi.
 	a258 := #[11 22 33 44].
@@ -2870,9 +2868,7 @@ testInstVarRemapping02
 	EncoderForSistaV1 remapInstVarAccessesIn: method asPer: {258->262} asDictionary doIt: true.
 
 	self assert: method decompile decompileString = 'test03AccessHighVariables
-	1 > 0
-		ifTrue: [ a255 := 99 ]
-		ifFalse: [ a255 := 98 ].
+	1 > 0 ifTrue: [ a255 := 99 ] ifFalse: [ a255 := 98 ].
 	a256 := ''a1''.
 	a257 := Float pi.
 	a262 := #[11 22 33 44].
@@ -2884,7 +2880,7 @@ testInstVarRemapping02
 	cls addSelectorSilently: method selector withMethod: method.
 	cls new test03AccessHighVariables.! !
 
-!InstvarRemappingTest methodsFor: 'tests' stamp: 'jmv 8/1/2025 10:40:02'!
+!InstvarRemappingTest methodsFor: 'tests' stamp: 'jmv 1/Jun/2026 18:16:14'!
 testInstVarRemapping03
 	"
 	Excercise remapping. Cross the 256 ivar barrier.
@@ -2894,9 +2890,7 @@ testInstVarRemapping03
 	cls := Smalltalk at: #LargeClassIvarR01.
 	method := cls >> #test03AccessHighVariables.
 	self assert: method decompile decompileString = 'test03AccessHighVariables
-	1 > 0
-		ifTrue: [ a255 := 99 ]
-		ifFalse: [ a255 := 98 ].
+	1 > 0 ifTrue: [ a255 := 99 ] ifFalse: [ a255 := 98 ].
 	a256 := ''a1''.
 	a257 := Float pi.
 	a258 := #[11 22 33 44].
@@ -2915,9 +2909,7 @@ testInstVarRemapping03
 	EncoderForSistaV1 remapInstVarAccessesIn: method asPer: {255->262} asDictionary doIt: true.
 
 	self assert: method decompile decompileString = 'test03AccessHighVariables
-	1 > 0
-		ifTrue: [ a262 := 99 ]
-		ifFalse: [ a262 := 98 ].
+	1 > 0 ifTrue: [ a262 := 99 ] ifFalse: [ a262 := 98 ].
 	a256 := ''a1''.
 	a257 := Float pi.
 	a258 := #[11 22 33 44].
@@ -2929,9 +2921,7 @@ testInstVarRemapping03
 	EncoderForSistaV1 remapInstVarAccessesIn: method asPer: {262->255} asDictionary doIt: true.
 
 	self assert: method decompile decompileString = 'test03AccessHighVariables
-	1 > 0
-		ifTrue: [ a255 := 99 ]
-		ifFalse: [ a255 := 98 ].
+	1 > 0 ifTrue: [ a255 := 99 ] ifFalse: [ a255 := 98 ].
 	a256 := ''a1''.
 	a257 := Float pi.
 	a258 := #[11 22 33 44].
@@ -2943,7 +2933,7 @@ testInstVarRemapping03
 	cls addSelectorSilently: method selector withMethod: method.
 	cls new test03AccessHighVariables.! !
 
-!InstvarRemappingTest methodsFor: 'tests' stamp: 'jmv 8/1/2025 10:40:07'!
+!InstvarRemappingTest methodsFor: 'tests' stamp: 'jmv 1/Jun/2026 18:16:21'!
 testInstVarRemapping04
 	"
 	Excercise remapping. Cross the 256 ivar barrier.
@@ -2953,9 +2943,7 @@ testInstVarRemapping04
 	cls := Smalltalk at: #LargeClassIvarR01.
 	method := cls >> #test03AccessHighVariables.
 	self assert: method decompile decompileString = 'test03AccessHighVariables
-	1 > 0
-		ifTrue: [ a255 := 99 ]
-		ifFalse: [ a255 := 98 ].
+	1 > 0 ifTrue: [ a255 := 99 ] ifFalse: [ a255 := 98 ].
 	a256 := ''a1''.
 	a257 := Float pi.
 	a258 := #[11 22 33 44].
@@ -2974,9 +2962,7 @@ testInstVarRemapping04
 	EncoderForSistaV1 remapInstVarAccessesIn: method asPer: {255->262} asDictionary doIt: true.
 
 	self assert: method decompile decompileString = 'test03AccessHighVariables
-	1 > 0
-		ifTrue: [ a262 := 99 ]
-		ifFalse: [ a262 := 98 ].
+	1 > 0 ifTrue: [ a262 := 99 ] ifFalse: [ a262 := 98 ].
 	a256 := ''a1''.
 	a257 := Float pi.
 	a258 := #[11 22 33 44].
@@ -2988,9 +2974,7 @@ testInstVarRemapping04
 	EncoderForSistaV1 remapInstVarAccessesIn: method asPer: {262->6} asDictionary doIt: true.
 
 	self assert: method decompile decompileString = 'test03AccessHighVariables
-	1 > 0
-		ifTrue: [ a6 := 99 ]
-		ifFalse: [ a6 := 98 ].
+	1 > 0 ifTrue: [ a6 := 99 ] ifFalse: [ a6 := 98 ].
 	a256 := ''a1''.
 	a257 := Float pi.
 	a258 := #[11 22 33 44].
@@ -3002,7 +2986,7 @@ testInstVarRemapping04
 	cls addSelectorSilently: method selector withMethod: method.
 	cls new test03AccessHighVariables.! !
 
-!InstvarRemappingTest methodsFor: 'tests' stamp: 'jmv 8/1/2025 10:40:18'!
+!InstvarRemappingTest methodsFor: 'tests' stamp: 'jmv 1/Jun/2026 18:15:37'!
 testInstVarRemapping05
 	"
 	Excercise remapping. Go from short form to full 1 byte.
@@ -3012,9 +2996,7 @@ testInstVarRemapping05
 	cls := Smalltalk at: #LargeClassIvarR01.
 	method := cls >> #test01AccessLowVariables.
 	self assert: method decompile decompileString = 'test01AccessLowVariables
-	1 > 0
-		ifTrue: [ a5 := 99 ]
-		ifFalse: [ a5 := 98 ].
+	1 > 0 ifTrue: [ a5 := 99 ] ifFalse: [ a5 := 98 ].
 	a6 := ''a1''.
 	a7 := Float pi.
 	a8 := #[11 22 33 44].
@@ -3028,9 +3010,7 @@ testInstVarRemapping05
 	EncoderForSistaV1 remapInstVarAccessesIn: method asPer: {8->234} asDictionary doIt: true.
 
 	self assert: method decompile decompileString = 'test01AccessLowVariables
-	1 > 0
-		ifTrue: [ a5 := 99 ]
-		ifFalse: [ a5 := 98 ].
+	1 > 0 ifTrue: [ a5 := 99 ] ifFalse: [ a5 := 98 ].
 	a6 := ''a1''.
 	a7 := Float pi.
 	a234 := #[11 22 33 44].
@@ -3042,7 +3022,7 @@ testInstVarRemapping05
 	cls addSelectorSilently: method selector withMethod: method.
 	cls new test01AccessLowVariables.! !
 
-!InstvarRemappingTest methodsFor: 'tests' stamp: 'jmv 8/1/2025 10:40:23'!
+!InstvarRemappingTest methodsFor: 'tests' stamp: 'jmv 1/Jun/2026 18:15:51'!
 testInstVarRemapping06
 	"
 	Excercise remapping. Go from short form to over 256.
@@ -3052,9 +3032,7 @@ testInstVarRemapping06
 	cls := Smalltalk at: #LargeClassIvarR01.
 	method := cls >> #test01AccessLowVariables.
 	self assert: method decompile decompileString = 'test01AccessLowVariables
-	1 > 0
-		ifTrue: [ a5 := 99 ]
-		ifFalse: [ a5 := 98 ].
+	1 > 0 ifTrue: [ a5 := 99 ] ifFalse: [ a5 := 98 ].
 	a6 := ''a1''.
 	a7 := Float pi.
 	a8 := #[11 22 33 44].
@@ -3072,9 +3050,7 @@ testInstVarRemapping06
 	EncoderForSistaV1 remapInstVarAccessesIn: method asPer: {8->261} asDictionary doIt: true.
 	
 	self assert: method decompile decompileString = 'test01AccessLowVariables
-	1 > 0
-		ifTrue: [ a5 := 99 ]
-		ifFalse: [ a5 := 98 ].
+	1 > 0 ifTrue: [ a5 := 99 ] ifFalse: [ a5 := 98 ].
 	a6 := ''a1''.
 	a7 := Float pi.
 	a261 := #[11 22 33 44].
@@ -3086,7 +3062,7 @@ testInstVarRemapping06
 	cls addSelectorSilently: method selector withMethod: method.
 	cls new test01AccessLowVariables.! !
 
-!InstvarRemappingTest methodsFor: 'tests' stamp: 'jmv 8/1/2025 10:41:26'!
+!InstvarRemappingTest methodsFor: 'tests' stamp: 'jmv 1/Aug/2025 10:41:26'!
 testLongInstVarAcessConversion01
 	"
 	InstvarRemappingTest new setUp testLongInstVarAcessConversion01
@@ -3103,7 +3079,7 @@ testLongInstVarAcessConversion01
 	cls addSelectorSilently: converted selector withMethod: converted.
 	cls new test01AccessLowVariables.! !
 
-!InstvarRemappingTest methodsFor: 'tests' stamp: 'jmv 8/1/2025 10:42:24'!
+!InstvarRemappingTest methodsFor: 'tests' stamp: 'jmv 1/Aug/2025 10:42:24'!
 testLongInstVarAcessConversion02
 	"
 	InstvarRemappingTest new setUp testLongInstVarAcessConversion02
@@ -3120,7 +3096,7 @@ testLongInstVarAcessConversion02
 	cls addSelectorSilently: converted selector withMethod: converted.
 	cls new test02AccessMidVariables.! !
 
-!InstvarRemappingTest methodsFor: 'tests' stamp: 'jmv 8/1/2025 10:42:35'!
+!InstvarRemappingTest methodsFor: 'tests' stamp: 'jmv 1/Aug/2025 10:42:35'!
 testLongInstVarAcessConversion03
 	"
 	InstvarRemappingTest new setUp testLongInstVarAcessConversion03
@@ -3137,7 +3113,7 @@ testLongInstVarAcessConversion03
 	cls addSelectorSilently: converted selector withMethod: converted.
 	cls new test03AccessHighVariables.! !
 
-!InstvarRemappingTest methodsFor: 'tests' stamp: 'jmv 8/1/2025 10:42:55'!
+!InstvarRemappingTest methodsFor: 'tests' stamp: 'jmv 1/Aug/2025 10:42:55'!
 testLongInstVarAcessConversion04
 	"
 	InstvarRemappingTest new setUp testLongInstVarAcessConversion04
@@ -3154,7 +3130,7 @@ testLongInstVarAcessConversion04
 	cls addSelectorSilently: converted selector withMethod: converted.
 	cls new test04LongJumps.! !
 
-!InstvarRemappingTest methodsFor: 'setUp/tearDown' stamp: 'jmv 8/1/2025 10:56:38'!
+!InstvarRemappingTest methodsFor: 'setUp/tearDown' stamp: 'jmv 1/Aug/2025 10:56:38'!
 setUp
 	"Only for Sista!!
 	Also see #expectedFailures"
@@ -3170,14 +3146,14 @@ setUp
 				compile: self m03SourceCode notifying: nil;
 				compile: self m04SourceCode notifying: nil ].! !
 
-!InstvarRemappingTest methodsFor: 'setUp/tearDown' stamp: 'jmv 8/1/2025 09:41:48'!
+!InstvarRemappingTest methodsFor: 'setUp/tearDown' stamp: 'jmv 1/Aug/2025 09:41:48'!
 tearDown
 	"
 	InstvarRemappingTest new setUp test01
 	"
 	Smalltalk at: #LargeClassIvarR01 ifPresent: [ :leftover | leftover removeFromSystemUnlogged ].! !
 
-!InstvarRemappingTest methodsFor: 'subject code' stamp: 'jmv 8/1/2025 09:56:49'!
+!InstvarRemappingTest methodsFor: 'subject code' stamp: 'jmv 1/Aug/2025 09:56:49'!
 classDeclarationString
 ^ 'Object subclass: #LargeClassIvarR01
   	instanceVariableNames: ''a1 a2 a3 a4 a5 a6 a7 a8 a9 a10 a11 a12 a13 a14 a15 a16 a17 a18 a19 a20 a21 a22 a23 a24 a25 a26 a27 a28 a29 a30 a31 a32 a33 a34 a35 a36 a37 a38 a39 a40 a41 a42 a43 a44 a45 a46 a47 a48 a49 a50 a51 a52 a53 a54 a55 a56 a57 a58 a59 a60 a61 a62 a63 a64 a65 a66 a67 a68 a69 a70 a71 a72 a73 a74 a75 a76 a77 a78 a79 a80 a81 a82 a83 a84 a85 a86 a87 a88 a89 a90 a91 a92 a93 a94 a95 a96 a97 a98 a99 a100 a101 a102 a103 a104 a105 a106 a107 a108 a109 a110 a111 a112 a113 a114 a115 a116 a117 a118 a119 a120 a121 a122 a123 a124 a125 a126 a127 a128 a129 a130 a131 a132 a133 a134 a135 a136 a137 a138 a139 a140 a141 a142 a143 a144 a145 a146 a147 a148 a149 a150 a151 a152 a153 a154 a155 a156 a157 a158 a159 a160 a161 a162 a163 a164 a165 a166 a167 a168 a169 a170 a171 a172 a173 a174 a175 a176 a177 a178 a179 a180 a181 a182 a183 a184 a185 a186 a187 a188 a189 a190 a191 a192 a193 a194 a195 a196 a197 a198 a199 a200 a201 a202 a203 a204 a205 a206 a207 a208 a209 a210 a211 a212 a213 a214 a215 a216 a217 a218 a219 a220 a221 a222 a223 a224 a225 a226 a227 a228 a229 a230 a231 a232 a233 a234 a235 a236 a237 a238 a239 a240 a241 a242 a243 a244 a245 a246 a247 a248 a249 a250 a251 a252 a253 a254 a255 a256 a257 a258 a259 a260 a261 a262''
@@ -3185,7 +3161,7 @@ classDeclarationString
   	poolDictionaries: ''''
   	category: ''TestDynamicCuisLibraries-Transient'''! !
 
-!InstvarRemappingTest methodsFor: 'subject code' stamp: 'jmv 8/1/2025 09:39:56'!
+!InstvarRemappingTest methodsFor: 'subject code' stamp: 'jmv 1/Aug/2025 09:39:56'!
 m01SourceCode
 	^ 'test01AccessLowVariables
  
@@ -3203,7 +3179,7 @@ m01SourceCode
  	self assert: a7 = Float pi.
  	self assert: a8 = #[11 22 33 44].'! !
 
-!InstvarRemappingTest methodsFor: 'subject code' stamp: 'jmv 8/1/2025 09:38:20'!
+!InstvarRemappingTest methodsFor: 'subject code' stamp: 'jmv 1/Aug/2025 09:38:20'!
 m02SourceCode
 	^ 'test02AccessMidVariables
  
@@ -3229,7 +3205,7 @@ m02SourceCode
  	self assert: a247 = Float pi.
  	self assert: a248 = #[11 22 33 44].'! !
 
-!InstvarRemappingTest methodsFor: 'subject code' stamp: 'jmv 8/1/2025 10:38:29'!
+!InstvarRemappingTest methodsFor: 'subject code' stamp: 'jmv 1/Aug/2025 10:38:29'!
 m03SourceCode
 	^ 'test03AccessHighVariables
  	1 > 0
@@ -3243,7 +3219,7 @@ m03SourceCode
  	self assert: a257 = Float pi.
  	self assert: a258 = #[11 22 33 44].'! !
 
-!InstvarRemappingTest methodsFor: 'subject code' stamp: 'jmv 8/1/2025 09:38:29'!
+!InstvarRemappingTest methodsFor: 'subject code' stamp: 'jmv 1/Aug/2025 09:38:29'!
 m04SourceCode
 	^ 'test04LongJumps
  	1 > 0
@@ -3267,7 +3243,7 @@ m04SourceCode
  	self assert: a257 = Float pi.
  	self assert: a258 = #[11 22 33 44].'! !
 
-!InstvarRemappingTest methodsFor: 'bytecode code' stamp: 'jmv 8/1/2025 10:24:50'!
+!InstvarRemappingTest methodsFor: 'bytecode code' stamp: 'jmv 1/Aug/2025 10:24:50'!
 m01Bytecode
 	^
 '73 <51> pushConstant: 1
@@ -3323,7 +3299,7 @@ m01Bytecode
 '.
 ! !
 
-!InstvarRemappingTest methodsFor: 'bytecode code' stamp: 'jmv 8/1/2025 10:25:17'!
+!InstvarRemappingTest methodsFor: 'bytecode code' stamp: 'jmv 1/Aug/2025 10:25:17'!
 m01BytecodeLongIvarAcessAndJumps
 	^
 '73 <51> pushConstant: 1
@@ -3378,7 +3354,7 @@ m01BytecodeLongIvarAcessAndJumps
 151 <58> returnSelf
 '.! !
 
-!InstvarRemappingTest methodsFor: 'bytecode code' stamp: 'jmv 8/1/2025 10:25:52'!
+!InstvarRemappingTest methodsFor: 'bytecode code' stamp: 'jmv 1/Aug/2025 10:25:52'!
 m02Bytecode
 	^
 '73 <20> pushConstant: ''a1''
@@ -3461,7 +3437,7 @@ m02Bytecode
 '.
 ! !
 
-!InstvarRemappingTest methodsFor: 'bytecode code' stamp: 'jmv 8/1/2025 10:26:14'!
+!InstvarRemappingTest methodsFor: 'bytecode code' stamp: 'jmv 1/Aug/2025 10:26:14'!
 m02BytecodeLongIvarAcessAndJumps
 	^
 '73 <20> pushConstant: ''a1''
@@ -3543,7 +3519,7 @@ m02BytecodeLongIvarAcessAndJumps
 211 <58> returnSelf
 '.! !
 
-!InstvarRemappingTest methodsFor: 'bytecode code' stamp: 'jmv 8/1/2025 10:26:46'!
+!InstvarRemappingTest methodsFor: 'bytecode code' stamp: 'jmv 1/Aug/2025 10:26:46'!
 m03Bytecode
 	^
 '73 <51> pushConstant: 1
@@ -3592,7 +3568,7 @@ m03Bytecode
 '.
 ! !
 
-!InstvarRemappingTest methodsFor: 'bytecode code' stamp: 'jmv 8/1/2025 10:27:05'!
+!InstvarRemappingTest methodsFor: 'bytecode code' stamp: 'jmv 1/Aug/2025 10:27:05'!
 m03BytecodeLongIvarAcessAndJumps
 	^
 '73 <51> pushConstant: 1
@@ -3640,7 +3616,7 @@ m03BytecodeLongIvarAcessAndJumps
 151 <58> returnSelf
 '.! !
 
-!InstvarRemappingTest methodsFor: 'bytecode code' stamp: 'jmv 8/1/2025 10:29:06'!
+!InstvarRemappingTest methodsFor: 'bytecode code' stamp: 'jmv 1/Aug/2025 10:29:06'!
 m04Bytecode
 	^
 '89 <51> pushConstant: 1
@@ -3940,7 +3916,7 @@ m04Bytecode
 469 <58> returnSelf
 '! !
 
-!InstvarRemappingTest methodsFor: 'bytecode code' stamp: 'jmv 8/1/2025 10:29:35'!
+!InstvarRemappingTest methodsFor: 'bytecode code' stamp: 'jmv 1/Aug/2025 10:29:35'!
 m04BytecodeLongIvarAcessAndJumps
 	^
 '89 <51> pushConstant: 1
@@ -4240,7 +4216,7 @@ m04BytecodeLongIvarAcessAndJumps
 482 <58> returnSelf
 '! !
 
-!InstvarRemappingTest methodsFor: 'failing' stamp: 'jmv 8/1/2025 10:56:35'!
+!InstvarRemappingTest methodsFor: 'failing' stamp: 'jmv 1/Aug/2025 10:56:35'!
 expectedFailures
 	"Answer an array o selectors that are expected to fail.
 	Usually this is done for tests that document incorrect behavior for which there is not yet a proper fix available."
@@ -4251,7 +4227,7 @@ expectedFailures
 		ifTrue: [#()]
 		ifFalse: [#(testInstVarRemapping01 testInstVarRemapping02 testInstVarRemapping03 testInstVarRemapping04 testInstVarRemapping05 testInstVarRemapping06 testLongInstVarAcessConversion01 testLongInstVarAcessConversion02 testLongInstVarAcessConversion03 testLongInstVarAcessConversion04)]! !
 
-!Compiler class methodsFor: '*TestDynamicCuisLibraries-monitorCompilerUsage' stamp: 'jmv 8/8/2023 10:59:40'!
+!Compiler class methodsFor: '*TestDynamicCuisLibraries-monitorCompilerUsage' stamp: 'jmv 8/Aug/2023 10:59:40'!
 new
 	LogCompilerUse == true ifTrue: [
 		LogCompilerUse := false.
@@ -4260,7 +4236,7 @@ new
 		thisContext printStack: 15 ].
 	^ super new parser: self parserClass new.! !
 
-!Scanner class methodsFor: '*TestDynamicCuisLibraries-monitorCompilerUsage' stamp: 'jmv 8/8/2023 10:59:43'!
+!Scanner class methodsFor: '*TestDynamicCuisLibraries-monitorCompilerUsage' stamp: 'jmv 8/Aug/2023 10:59:43'!
 new
 	LogCompilerUse == true ifTrue: [
 		LogCompilerUse := false.
@@ -4269,7 +4245,7 @@ new
 		thisContext printStack: 10 ].
 	^self basicNew initScanner! !
 
-!ParseNode class methodsFor: '*TestDynamicCuisLibraries-monitorCompilerUsage' stamp: 'jmv 8/8/2023 10:59:45'!
+!ParseNode class methodsFor: '*TestDynamicCuisLibraries-monitorCompilerUsage' stamp: 'jmv 8/Aug/2023 10:59:45'!
 new
 	LogCompilerUse == true ifTrue: [
 		LogCompilerUse := false.
@@ -4281,7 +4257,7 @@ new
 		VariableNode initClassCachedState ].
 	^super new! !
 
-!MessageNode class methodsFor: '*TestDynamicCuisLibraries-monitorCompilerUsage' stamp: 'jmv 8/8/2023 10:59:48'!
+!MessageNode class methodsFor: '*TestDynamicCuisLibraries-monitorCompilerUsage' stamp: 'jmv 8/Aug/2023 10:59:48'!
 new
 	LogCompilerUse == true ifTrue: [
 		LogCompilerUse := false.
@@ -4291,7 +4267,7 @@ new
 	MacroSelectors ifNil: [ self initClassCachedState ].
 	^super new! !
 
-!UnhandledError methodsFor: '*TestDynamicCuisLibraries-monitorCompilerUsage' stamp: 'jmv 8/8/2023 10:55:48'!
+!UnhandledError methodsFor: '*TestDynamicCuisLibraries-monitorCompilerUsage' stamp: 'jmv 8/Aug/2023 10:55:48'!
 devDefaultAction
 
 	LogCompilerUse := false.

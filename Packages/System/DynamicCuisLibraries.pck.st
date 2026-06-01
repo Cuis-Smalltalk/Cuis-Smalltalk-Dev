@@ -1,6 +1,6 @@
-'From Cuis7.7 [latest update: #7963] on 22 May 2026 at 4:12:32 pm'!
+'From Cuis7.9 [latest update: #7980] on 1 June 2026 at 5:47:20 pm'!
 'Description '!
-!provides: 'DynamicCuisLibraries' 1 32!
+!provides: 'DynamicCuisLibraries' 1 33!
 SystemOrganization addCategory: #'DynamicCuisLibraries-Code Model'!
 SystemOrganization addCategory: #'DynamicCuisLibraries-Dynamic Libraries'!
 SystemOrganization addCategory: #DynamicCuisLibraries!
@@ -1120,7 +1120,7 @@ remapMethodSpecInstVarAccesses: doIt
 			result ifFalse: [ ^false ]]].
 	^true! !
 
-!DynamicCuisLibrary methodsFor: 'installing' stamp: 'jmv 23/Sep/2025 18:00:00'!
+!DynamicCuisLibrary methodsFor: 'installing' library: #MinimalKernel09CodeLibraryLoad stamp: 'jmv 23/Sep/2025 18:00:00'!
 updateAffectedClassesFormat: doIt
 	"Update the format field of affected classes.
 	These are any existing class whose shape is modified (new instance variables are added by the corresponding ClassSpec)
