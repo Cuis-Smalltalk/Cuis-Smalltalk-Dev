@@ -1,6 +1,6 @@
-'From Cuis7.7 [latest update: #7945] on 17 May 2026 at 8:13:06 pm'!
+'From Cuis7.9 [latest update: #7982] on 1 June 2026 at 7:41:11 pm'!
 'Description Rename extentions tests'!
-!provides: 'BaseImageTests' 1 483!
+!provides: 'BaseImageTests' 1 484!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Compiler'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Objects'!
@@ -6470,7 +6470,7 @@ test6
 
 	self assert: prettyPrinted equals: source! !
 
-!PrettyPrintingTest methodsFor: 'testing' stamp: 'jmv 11/May/2026 11:56:58'!
+!PrettyPrintingTest methodsFor: 'testing' stamp: 'jmv 1/Jun/2026 19:41:01'!
 test7
 	"
 	self new test7
@@ -6479,7 +6479,7 @@ test7
 
 	source := 
 'sample7: x
-	x with: [ self print ]  do: [ self print ].'.
+	x with: [ self print ] do: [ self print ].'.
 
 	prettyPrinted := Compiler format: source in: PrettyPrintingTest notifying: nil.
 
