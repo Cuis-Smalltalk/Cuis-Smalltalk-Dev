@@ -1,8 +1,0 @@
-'From Cuis7.8 [latest update: #7977] on 29 May 2026 at 3:20:41 pm'!
-
-
-----SNAPSHOT----(29 May 2026 15:20:41) Cuis7.8.image priorSource: 0!
-
-Preferences at: #saveReleaseOptionsInWorldMenu put: true!
-
-----QUIT----(29 May 2026 15:21:46) Cuis7.9-7977.image priorSource: 68!
