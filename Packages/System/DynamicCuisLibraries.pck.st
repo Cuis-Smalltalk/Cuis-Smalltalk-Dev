@@ -1,6 +1,6 @@
-'From Cuis7.9 [latest update: #7980] on 1 June 2026 at 5:47:20 pm'!
+'From Cuis7.9 [latest update: #7982] on 3 June 2026 at 11:54:03 am'!
 'Description '!
-!provides: 'DynamicCuisLibraries' 1 33!
+!provides: 'DynamicCuisLibraries' 1 34!
 SystemOrganization addCategory: #'DynamicCuisLibraries-Code Model'!
 SystemOrganization addCategory: #'DynamicCuisLibraries-Dynamic Libraries'!
 SystemOrganization addCategory: #DynamicCuisLibraries!
@@ -236,7 +236,7 @@ printOn: stream
 
 	stream nextPut: $<; nextPutAll: self name; nextPutAll: ' Spec'; nextPut: $>! !
 
-!ClassSpec methodsFor: 'testing' library: #MinimalKernel09CodeLibraryLoad stamp: 'jmv 9/May/2025 15:29:44'!
+!ClassSpec methodsFor: 'testing' library: #MinimalKernel09CodeLibraryLoad stamp: 'jmv 2/Jun/2026 17:42:30'!
 canBeInstalled
 	"Answer false if we can't be installed in the running system.
 	Note: it is assumed that installation will happen in hierarchy order, starting from ProtoObject.
@@ -279,7 +279,7 @@ canBeInstalled
 	existing ifNotNil: [
 		"We're modifying the shape of the existing class, fail if there are (sub)instances"
 		existing withAllSubclassesDo: [ :cls |
-			cls someInstance ifNotNil: [ ^false ]].
+			cls instanceCount > 0 ifTrue: [ ^false ]].
 		"Also fail if some subclass already includes any variable we want to add."
 		addedInstanceVariables do: [ :v |
 			existing allSubclassesDo: [ :cls |
@@ -327,7 +327,7 @@ equalsExisting
 	(existing sharedPools hasEqualElements: poolDictionaryNames) ifFalse: [ ^false ].
 	^true! !
 
-!ClassSpec methodsFor: 'ematerialization' library: #MinimalKernel09CodeLibraryLoad stamp: 'jmv 6/Sep/2023 17:49:38'!
+!ClassSpec methodsFor: 'materialization' library: #MinimalKernel09CodeLibraryLoad stamp: 'jmv 6/Sep/2023 17:49:38'!
 allInstVarCountAfterInstall
 	"In the actual Class. How it will look after installing us.
 	Including inherited from superclasses"
@@ -337,7 +337,7 @@ allInstVarCountAfterInstall
 		ifNil: [ 0 ].
 	^instVarCountAfterInstall + inherited! !
 
-!ClassSpec methodsFor: 'ematerialization' library: #MinimalKernel09CodeLibraryLoad stamp: 'jmv 6/Sep/2023 17:49:41'!
+!ClassSpec methodsFor: 'materialization' library: #MinimalKernel09CodeLibraryLoad stamp: 'jmv 6/Sep/2023 17:49:41'!
 allInstVarCountBeforeInstall
 	"In the actual Class. Before installing us.
 	Including inherited from superclasses"
@@ -347,26 +347,26 @@ allInstVarCountBeforeInstall
 		ifNil: [ 0 ].
 	^instVarCountBeforeInstall + inherited! !
 
-!ClassSpec methodsFor: 'ematerialization' library: #MinimalKernel09CodeLibraryLoad stamp: 'jmv 6/Sep/2023 17:49:44'!
+!ClassSpec methodsFor: 'materialization' library: #MinimalKernel09CodeLibraryLoad stamp: 'jmv 6/Sep/2023 17:49:44'!
 instVarCountAfterInstall
 	"In the actual Class. How it will look after installing us."
 
 	^instVarCountAfterInstall! !
 
-!ClassSpec methodsFor: 'ematerialization' library: #MinimalKernel09CodeLibraryLoad stamp: 'jmv 28/Apr/2025 09:34:41'!
+!ClassSpec methodsFor: 'materialization' library: #MinimalKernel09CodeLibraryLoad stamp: 'jmv 28/Apr/2025 09:34:41'!
 instVarCountBeforeInstall
 	"In the existing actual Class. Before installing us."
 
 	^instVarCountBeforeInstall! !
 
-!ClassSpec methodsFor: 'ematerialization' library: #MinimalKernel09CodeLibraryLoad stamp: 'jmv 10/Aug/2023 16:14:14'!
+!ClassSpec methodsFor: 'materialization' library: #MinimalKernel09CodeLibraryLoad stamp: 'jmv 10/Aug/2023 16:14:14'!
 materializeAndInstall
 	
 	^self doesExist
 		ifFalse: [ self materializeNewClass ]
 		ifTrue: [ self mergeInto: (Smalltalk at: name) ].! !
 
-!ClassSpec methodsFor: 'ematerialization' library: #MinimalKernel09CodeLibraryLoad stamp: 'jmv 12/May/2025 12:15:11'!
+!ClassSpec methodsFor: 'materialization' library: #MinimalKernel09CodeLibraryLoad stamp: 'jmv 12/May/2025 12:15:11'!
 materializeNewClass
 	"Only for new classes	"
 
@@ -405,7 +405,7 @@ materializeNewClass
 	"
 	^newClass! !
 
-!ClassSpec methodsFor: 'ematerialization' library: #MinimalKernel09CodeLibraryLoad stamp: 'jmv 14/Sep/2023 10:13:02'!
+!ClassSpec methodsFor: 'materialization' library: #MinimalKernel09CodeLibraryLoad stamp: 'jmv 14/Sep/2023 10:13:02'!
 mergeInto: existingClass
 	"Ensure our instance variables, class variables, class instance variables and sharedPools are 
 	included in existingClass. Add them as needed."
@@ -470,7 +470,7 @@ mergeInto: existingClass
 	builder update: existingClass to: newClass.
 	^newClass! !
 
-!ClassSpec methodsFor: 'ematerialization' library: #MinimalKernel09CodeLibraryLoad stamp: 'jmv 9/May/2025 15:36:37'!
+!ClassSpec methodsFor: 'materialization' library: #MinimalKernel09CodeLibraryLoad stamp: 'jmv 9/May/2025 15:36:37'!
 preInstall
 	"Prepare classInstVarCountBeforeInstall, classInstVarCountAfterInstall, methodSpecsInstVarIndexMap
 	These will be needed for remapping instance variable accesses both from existing CompiledMethods
