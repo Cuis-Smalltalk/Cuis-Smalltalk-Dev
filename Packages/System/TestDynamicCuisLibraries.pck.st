@@ -1,6 +1,6 @@
-'From Cuis7.9 [latest update: #7981] on 1 June 2026 at 6:25:28 pm'!
+'From Cuis7.9 [latest update: #7987] on 8 June 2026 at 5:10:22 pm'!
 'Description '!
-!provides: 'TestDynamicCuisLibraries' 1 21!
+!provides: 'TestDynamicCuisLibraries' 1 22!
 !requires: 'DynamicCuisLibraries' 1 22 nil!
 SystemOrganization addCategory: #TestDynamicCuisLibraries!
 SystemOrganization addCategory: #'TestDynamicCuisLibraries-Tests'!
@@ -1086,7 +1086,7 @@ testPoint
 	self assert: (newClass x: 99 y: 86) y = 86.
 	newClass removeFromSystemUnlogged.! !
 
-!DclTest methodsFor: 'tests 01' stamp: 'jmv 24/Oct/2023 10:17:34'!
+!DclTest methodsFor: 'tests 01' stamp: 'jmv 8/Jun/2026 16:56:50'!
 test01NewClass
 	"The library includes only a single class.
 	Test creation of a simple class with a few instance variables and methods that access them"
@@ -1125,10 +1125,11 @@ test01NewClass
 	self assert: installedFromLibrary processor equals: Processor.
 	installedFromLibrary setClassIVars.
 	self assert: installedFromLibrary combinedCIvars equals: 57.
+	Smalltalk garbageCollect.
 
 	installedFromLibrary removeFromSystemUnlogged.! !
 
-!DclTest methodsFor: 'tests 02' stamp: 'jmv 24/Oct/2023 12:28:42'!
+!DclTest methodsFor: 'tests 02' stamp: 'jmv 8/Jun/2026 16:56:56'!
 test02ExistingClassSameShape
 	"The library includes only a single class.
 	The class already exist before loading the library, and with the same shape.
@@ -1151,6 +1152,7 @@ test02ExistingClassSameShape
 	self assert: existing processor equals: nil.
 	existing setClassIVars.
 	self assert: existing combinedCIvars equals: 7.
+	Smalltalk garbageCollect.
 
 	"Create library"
 	sourceForLibrary := Noclash_DclExample02.
@@ -1184,6 +1186,7 @@ test02ExistingClassSameShape
 	self assert: installedFromLibrary class instVarNames equals: sourceForLibrary class instVarNames.
 	installedFromLibrary setClassIVars.
 	self assert: installedFromLibrary combinedCIvars equals: 57.
+	Smalltalk garbageCollect.
 
 	"Cleanup"
 	Smalltalk at: #DclExample02 ifPresent: [ :leftover | leftover removeFromSystemUnlogged ].! !
@@ -1253,7 +1256,7 @@ test03AExistingClassNewIVarsExistingInstances
 
 	Smalltalk at: #DclExample03 ifPresent: [ :leftover | leftover removeFromSystemUnlogged ].! !
 
-!DclTest methodsFor: 'tests 03' stamp: 'jmv 11/Aug/2023 12:38:09'!
+!DclTest methodsFor: 'tests 03' stamp: 'jmv 8/Jun/2026 16:46:43'!
 test03BExistingClassNewIVarsShouldMerge
 	"The library adds an instance variable to a class.
 	Installation should succeed.
@@ -1280,6 +1283,7 @@ test03BExistingClassNewIVarsShouldMerge
 	self assert: existingSubclass new b equals: 9.
 	self assert: existingSubclass new d equals: 4.
 	self assert: existingSubclass new combined equals: 794 + 79.
+	Smalltalk garbageCollect.
 
 	"Create library"
 	sourceForLibrary := NoclashABC_DclExample03.
@@ -1300,7 +1304,7 @@ test03BExistingClassNewIVarsShouldMerge
 	Smalltalk at: #DclExample03Subclass ifPresent: [ :leftover | leftover removeFromSystemUnlogged ].
 	Smalltalk at: #DclExample03 ifPresent: [ :leftover | leftover removeFromSystemUnlogged ].! !
 
-!DclTest methodsFor: 'tests 03' stamp: 'jmv 11/Aug/2023 12:40:53'!
+!DclTest methodsFor: 'tests 03' stamp: 'jmv 8/Jun/2026 16:58:25'!
 test03CExistingClassNewIVarsShouldConvertExistingMethods
 	"The library adds an instance variable to a class.
 	Installation should succeed.
@@ -1331,6 +1335,7 @@ test03CExistingClassNewIVarsShouldConvertExistingMethods
 	self assert: existingSubclass new d equals: 4.
 	self assert: existingSubclass new combined equals: 794 + 79.
 	self assert: existingSubclass new xk47 equals: 'xk47'.
+	Smalltalk garbageCollect.
 
 	"Create library"
 	sourceForLibrary := NoclashABC_DclExample03.
@@ -1389,11 +1394,12 @@ test03CExistingClassNewIVarsShouldConvertExistingMethods
 	self assert: installedSubclass new maxVal equals: SmallInteger maxVal.
 	self assert: installedSubclass new someLiteral equals: sourceForLibrary new someLiteral.
 	self assert: installedSubclass new xk47 equals: 'xk47'.
+	Smalltalk garbageCollect.
 
 	Smalltalk at: #DclExample03Subclass ifPresent: [ :leftover | leftover removeFromSystemUnlogged ].
 	Smalltalk at: #DclExample03 ifPresent: [ :leftover | leftover removeFromSystemUnlogged ].! !
 
-!DclTest methodsFor: 'tests 03' stamp: 'jmv 11/Aug/2023 10:25:13'!
+!DclTest methodsFor: 'tests 03' stamp: 'jmv 8/Jun/2026 16:48:41'!
 test03DExistingClassOldIvarMissingShouldKeepShape
 	"The library is unaware of one of the instance variables in the existing class.
 	Installation should succeed.
@@ -1424,6 +1430,7 @@ test03DExistingClassOldIvarMissingShouldKeepShape
 	self assert: existingSubclass new c equals: 3.
 	self assert: existingSubclass new d equals: 4.
 	self assert: existingSubclass new combined equals: 1234 + 123.
+	Smalltalk garbageCollect.
 
 	"Create library. Class we are installed misses one instance variable."
 	sourceForLibrarySubclass := NoclashABD_DclExample03Subclass.
@@ -1442,7 +1449,7 @@ test03DExistingClassOldIvarMissingShouldKeepShape
 	Smalltalk at: #DclExample03Subclass ifPresent: [ :leftover | leftover removeFromSystemUnlogged ].
 	Smalltalk at: #DclExample03 ifPresent: [ :leftover | leftover removeFromSystemUnlogged ].! !
 
-!DclTest methodsFor: 'tests 03' stamp: 'jmv 11/Aug/2023 10:39:36'!
+!DclTest methodsFor: 'tests 03' stamp: 'jmv 8/Jun/2026 16:58:47'!
 test03EExistingClassOldIvarMissingShouldConvertNewMethods
 	"The library is unaware of one of the instance variables in the existing class.
 	Installation should succeed.
@@ -1474,6 +1481,7 @@ test03EExistingClassOldIvarMissingShouldConvertNewMethods
 	self assert: existingSubclass new c equals: 3.
 	self assert: existingSubclass new d equals: 4.
 	self assert: existingSubclass new combined equals: 1234 + 123.
+	Smalltalk garbageCollect.
 
 	"Create library. Class we are installed misses one instance variable (in the superclass actually).
 	Neither class shape should be modified."
@@ -1499,11 +1507,12 @@ test03EExistingClassOldIvarMissingShouldConvertNewMethods
 	self assert: installedSubclass new c equals: 3.
 	self assert: installedSubclass new d equals: 4.
 	self assert: installedSubclass new combined equals: 124 + 123.
+	Smalltalk garbageCollect.
 
 	Smalltalk at: #DclExample03Subclass ifPresent: [ :leftover | leftover removeFromSystemUnlogged ].
 	Smalltalk at: #DclExample03 ifPresent: [ :leftover | leftover removeFromSystemUnlogged ].! !
 
-!DclTest methodsFor: 'tests 03' stamp: 'jmv 11/Aug/2023 10:25:23'!
+!DclTest methodsFor: 'tests 03' stamp: 'jmv 8/Jun/2026 16:58:52'!
 test03FExistingClassReorderedIVarsShouldConvertNewMethods
 	"The library adds an instance variable to a class.
 	Installation should succeed.
@@ -1540,6 +1549,7 @@ test03FExistingClassReorderedIVarsShouldConvertNewMethods
 	self assert: installedFromLibrary new initialize2 b equals: 2.
 	self assert: installedFromLibrary new initialize2 c equals: 3.
 	self assert: installedFromLibrary new initialize2 combined equals: 123.
+	Smalltalk garbageCollect.
 
 	Smalltalk at: #DclExample03 ifPresent: [ :leftover | leftover removeFromSystemUnlogged ].! !
 
@@ -2185,7 +2195,7 @@ test05LDifferentType
 
 	Smalltalk at: #DclExample05 ifPresent: [ :leftover | leftover removeFromSystemUnlogged ].! !
 
-!DclTest methodsFor: 'tests 06' stamp: 'jmv 14/Aug/2023 15:48:32'!
+!DclTest methodsFor: 'tests 06' stamp: 'jmv 8/Jun/2026 17:00:40'!
 test06MissingGlobal
 	"Verify that unknown variables are created as Globals (not as Undeclared), with a nil value."
 
@@ -2224,9 +2234,10 @@ test06MissingGlobal
 
 	installedFromLibrary := Smalltalk at: #DclExample06.
 	self assert: (Smalltalk includesKey: #DclExample06Global) description: 'Global should have been created automatically on method materialization'.
-	self assert: installedFromLibrary new a1 equals: nil.	
+	self assert: installedFromLibrary new a1 equals: nil.
 	Smalltalk at: #DclExample06Global put: 1234.56.
-	self assert: installedFromLibrary new a1 equals: 1234.56.	
+	self assert: installedFromLibrary new a1 equals: 1234.56.
+	Smalltalk garbageCollect.
 
 	Smalltalk at: #DclExample06 ifPresent: [ :leftover | leftover removeFromSystemUnlogged ].
 	Smalltalk removeKey: #DclExample06Global ifAbsent: nil.
@@ -2302,7 +2313,7 @@ test06NewClassVar
 
 	Smalltalk at: #DclExample06 ifPresent: [ :leftover | leftover removeFromSystemUnlogged ].! !
 
-!DclTest methodsFor: 'tests 07' stamp: 'jmv 30/Jul/2025 12:38:34'!
+!DclTest methodsFor: 'tests 07' stamp: 'jmv 8/Jun/2026 16:55:34'!
 test07CExistingClassNewIVarsShouldConvertExistingMethods
 	"The library adds an instance variable to a class.
 	Installation should succeed.
@@ -2334,6 +2345,7 @@ test07CExistingClassNewIVarsShouldConvertExistingMethods
 	self assert: existingSubclass new d equals: 4.
 	self assert: existingSubclass new combined equals: 794 + 79.
 	self assert: existingSubclass new xk47 equals: 'xk47'.
+	Smalltalk garbageCollect.
 
 	"Create library"
 	sourceForLibrary := NoclashABC_DclExample07.
@@ -2392,11 +2404,12 @@ test07CExistingClassNewIVarsShouldConvertExistingMethods
 	self assert: installedSubclass new maxVal equals: SmallInteger maxVal.
 	self assert: installedSubclass new someLiteral equals: sourceForLibrary new someLiteral.
 	self assert: installedSubclass new xk47 equals: 'xk47'.
+	Smalltalk garbageCollect.
 
 	Smalltalk at: #DclExample07Subclass ifPresent: [ :leftover | leftover removeFromSystemUnlogged ].
 	Smalltalk at: #DclExample07 ifPresent: [ :leftover | leftover removeFromSystemUnlogged ].! !
 
-!DclTest methodsFor: 'tests 07' stamp: 'jmv 30/Jul/2025 12:43:28'!
+!DclTest methodsFor: 'tests 07' stamp: 'jmv 8/Jun/2026 16:55:46'!
 test07EExistingClassOldIvarMissingShouldConvertNewMethods
 	"The library is unaware of one of the instance variables in the existing class.
 	Installation should succeed.
@@ -2429,6 +2442,7 @@ test07EExistingClassOldIvarMissingShouldConvertNewMethods
 	self assert: existingSubclass new c equals: 3.
 	self assert: existingSubclass new d equals: 4.
 	self assert: existingSubclass new combined equals: 1234 + 123.
+	Smalltalk garbageCollect.
 
 	"Create library. Class we are installed misses one instance variable (in the superclass actually).
 	Neither class shape should be modified."
@@ -2454,11 +2468,12 @@ test07EExistingClassOldIvarMissingShouldConvertNewMethods
 	self assert: installedSubclass new c equals: 3.
 	self assert: installedSubclass new d equals: 4.
 	self assert: installedSubclass new combined equals: 124 + 123.
+	Smalltalk garbageCollect.
 
 	Smalltalk at: #DclExample07Subclass ifPresent: [ :leftover | leftover removeFromSystemUnlogged ].
 	Smalltalk at: #DclExample07 ifPresent: [ :leftover | leftover removeFromSystemUnlogged ].! !
 
-!DclTest methodsFor: 'tests 08' stamp: 'jmv 31/Jul/2025 13:05:04'!
+!DclTest methodsFor: 'tests 08' stamp: 'jmv 8/Jun/2026 16:55:58'!
 test08CExistingClassNewIVarsShouldConvertExistingMethods
 	"The library adds an instance variable to a class.
 	Installation should succeed.
@@ -2491,6 +2506,7 @@ test08CExistingClassNewIVarsShouldConvertExistingMethods
 	self assert: existingSubclass new d equals: 4.
 	self assert: existingSubclass new combined equals: 794 + 79.
 	self assert: existingSubclass new xk47 equals: 'xk47'.
+	Smalltalk garbageCollect.
 
 	"Create library"
 	sourceForLibrary := NoclashABC_DclExample08.
@@ -2550,11 +2566,12 @@ test08CExistingClassNewIVarsShouldConvertExistingMethods
 	self assert: installedSubclass new maxVal equals: SmallInteger maxVal.
 	self assert: installedSubclass new someLiteral equals: sourceForLibrary new someLiteral.
 	self assert: installedSubclass new xk47 equals: 'xk47'.
+	Smalltalk garbageCollect.
 
 	Smalltalk at: #DclExample08Subclass ifPresent: [ :leftover | leftover removeFromSystemUnlogged ].
 	Smalltalk at: #DclExample08 ifPresent: [ :leftover | leftover removeFromSystemUnlogged ].! !
 
-!DclTest methodsFor: 'tests 08' stamp: 'jmv 31/Jul/2025 12:59:47'!
+!DclTest methodsFor: 'tests 08' stamp: 'jmv 8/Jun/2026 16:56:06'!
 test08EExistingClassOldIvarMissingShouldConvertNewMethods
 	"The library is unaware of one of the instance variables in the existing class.
 	Installation should succeed.
@@ -2586,6 +2603,7 @@ test08EExistingClassOldIvarMissingShouldConvertNewMethods
 	self assert: existingSubclass new c equals: 3.
 	self assert: existingSubclass new d equals: 4.
 	self assert: existingSubclass new combined equals: 1234 + 123.
+	Smalltalk garbageCollect.
 
 	"Create library. Class we are installed misses one instance variable (in the superclass actually).
 	Neither class shape should be modified."
@@ -2610,11 +2628,12 @@ test08EExistingClassOldIvarMissingShouldConvertNewMethods
 	self assert: installedSubclass new c equals: 3.
 	self assert: installedSubclass new d equals: 4.
 	self assert: installedSubclass new combined equals: 124 + 123.
+	Smalltalk garbageCollect.
 
 	Smalltalk at: #DclExample08Subclass ifPresent: [ :leftover | leftover removeFromSystemUnlogged ].
 	Smalltalk at: #DclExample08 ifPresent: [ :leftover | leftover removeFromSystemUnlogged ].! !
 
-!DclTest methodsFor: 'tests 09' stamp: 'jmv 23/Sep/2025 17:51:25'!
+!DclTest methodsFor: 'tests 09' stamp: 'jmv 8/Jun/2026 16:56:17'!
 test09CExistingClassNewIVarsShouldConvertExistingMethods
 	"The library adds an instance variable to a class.
 	Installation should succeed.
@@ -2647,6 +2666,7 @@ test09CExistingClassNewIVarsShouldConvertExistingMethods
 	self assert: existingSubclass new d equals: 4.
 	self assert: existingSubclass new combined equals: 794 + 79.
 	self assert: existingSubclass new xk47 equals: 'xk47'.
+	Smalltalk garbageCollect.
 
 	"Create library"
 	sourceForLibrary := NoclashABC_DclExample09.
@@ -2713,11 +2733,12 @@ test09CExistingClassNewIVarsShouldConvertExistingMethods
 	self assert: installedSubclass new maxVal equals: SmallInteger maxVal.
 	self assert: installedSubclass new someLiteral equals: sourceForLibrary new someLiteral.
 	self assert: installedSubclass new xk47 equals: 'xk47'.
+	Smalltalk garbageCollect.
 
 	Smalltalk at: #DclExample09Subclass ifPresent: [ :leftover | leftover removeFromSystemUnlogged ].
 	Smalltalk at: #DclExample09 ifPresent: [ :leftover | leftover removeFromSystemUnlogged ].! !
 
-!DclTest methodsFor: 'tests 09' stamp: 'jmv 23/Sep/2025 17:51:57'!
+!DclTest methodsFor: 'tests 09' stamp: 'jmv 8/Jun/2026 16:56:25'!
 test09EExistingClassOldIvarMissingShouldConvertNewMethods
 	"The library is unaware of one of the instance variables in the existing class.
 	Installation should succeed.
@@ -2749,6 +2770,7 @@ test09EExistingClassOldIvarMissingShouldConvertNewMethods
 	self assert: existingSubclass new c equals: 3.
 	self assert: existingSubclass new d equals: 4.
 	self assert: existingSubclass new combined equals: 1234 + 123.
+	Smalltalk garbageCollect.
 
 	"Create library. Class we are installed misses one instance variable (in the superclass actually).
 	Neither class shape should be modified."
@@ -2780,6 +2802,7 @@ test09EExistingClassOldIvarMissingShouldConvertNewMethods
 	self assert: (installedSubclass new instVarNamed: 'c') equals: 3.
 	self assert: (installedSubclass new instVarNamed: 'd') equals: 4.
 	self assert: installedSubclass new combined equals: 124 + 123.
+	Smalltalk garbageCollect.
 
 	Smalltalk at: #DclExample09Subclass ifPresent: [ :leftover | leftover removeFromSystemUnlogged ].
 	Smalltalk at: #DclExample09 ifPresent: [ :leftover | leftover removeFromSystemUnlogged ].! !
