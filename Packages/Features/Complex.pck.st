@@ -1,6 +1,6 @@
-'From Cuis7.7 [latest update: #7779] on 23 December 2025 at 4:38:47 pm'!
+'From Cuis7.9 [latest update: #7994] on 9 June 2026 at 5:28:47 pm'!
 'Description '!
-!provides: 'Complex' 1 9!
+!provides: 'Complex' 1 10!
 SystemOrganization addCategory: #Complex!
 
 
@@ -778,6 +778,12 @@ squaredNorm
 	"Answer the square of receiver norm."
 
 	^self squared! !
+
+!Float methodsFor: '*Complex' stamp: 'jmv 9/Jun/2026 17:18:28'!
+imaginary
+	^self isNaN
+		ifTrue: [ Float nan ]
+		ifFalse: [ 0.0 ]! !
 
 !BoxedFloat64 methodsFor: '*Complex' stamp: 'jmv 28/Feb/2023 11:43:51'!
 arg
