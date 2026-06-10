@@ -1,6 +1,6 @@
-'From Cuis7.7 [latest update: #7963] on 22 May 2026 at 4:12:35 pm'!
+'From Cuis7.9 [latest update: #7995] on 10 June 2026 at 3:29:37 pm'!
 'Description '!
-!provides: 'Bootstrap' 1 46!
+!provides: 'Bootstrap' 1 47!
 !requires: 'DynamicCuisLibraries' 1 22 nil!
 SystemOrganization addCategory: #'Bootstrap-Smalltalk Image Builders'!
 SystemOrganization addCategory: #'Bootstrap-Foreign Objects'!
@@ -3308,7 +3308,7 @@ maxIdentityHash
 
 	^16r3FFFFF! !
 
-!SpurImageBuilder methodsFor: 'image file saving' stamp: 'jmv 22/Aug/2023 15:43:51'!
+!SpurImageBuilder methodsFor: 'image file saving' stamp: 'jmv 10/Jun/2026 15:29:11'!
 saveImageTo: aFileEntry
 
 	| ba nextForeignObject p |
@@ -3341,7 +3341,7 @@ saveImageTo: aFileEntry
 			byteStream position: p.
 		]
 		estimatedSize: nextFreeAddressOfImage.
-	aFileEntry forceWriteStreamDo: [ :strm | strm binary; nextPutAll: ba ]! !
+	aFileEntry forceWriteStreamDo: [ :strm | strm nextPutAll: ba ].! !
 
 !SpurImageBuilder methodsFor: 'image file saving' stamp: 'jmv 22/Aug/2023 12:19:28'!
 write: aForeignObject on: byteStream

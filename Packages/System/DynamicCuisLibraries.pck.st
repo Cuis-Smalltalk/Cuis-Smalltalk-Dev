@@ -1,6 +1,6 @@
-'From Cuis7.9 [latest update: #7982] on 3 June 2026 at 11:54:03 am'!
+'From Cuis7.9 [latest update: #7995] on 10 June 2026 at 3:29:35 pm'!
 'Description '!
-!provides: 'DynamicCuisLibraries' 1 34!
+!provides: 'DynamicCuisLibraries' 1 35!
 SystemOrganization addCategory: #'DynamicCuisLibraries-Code Model'!
 SystemOrganization addCategory: #'DynamicCuisLibraries-Dynamic Libraries'!
 SystemOrganization addCategory: #DynamicCuisLibraries!
@@ -979,7 +979,7 @@ classes: classesOrNames classSelectors: classSideSelectors instanceSelectors: in
 		].
 	]! !
 
-!DynamicCuisLibrary methodsFor: 'file io' stamp: 'jmv 2/Nov/2023 10:39:15'!
+!DynamicCuisLibrary methodsFor: 'file io' stamp: 'jmv 9/Jun/2026 15:07:44'!
 writeOnFile: fileEntry
 	"
 	Feature require: 'TestDynamicCuisLibraries'.
@@ -993,7 +993,6 @@ writeOnFile: fileEntry
 	lib writeOnFile: 'DclExample03.dcl' asFileEntry
 	"
 	fileEntry forceWriteStreamDo: [ :fileStream |
-		fileStream binary.
 		(ReferenceStream on: fileStream) nextPut: self ].! !
 
 !DynamicCuisLibrary methodsFor: 'installing' library: #MinimalKernel09CodeLibraryLoad stamp: 'jmv 23/Sep/2025 17:58:19'!
