@@ -1,6 +1,6 @@
-'From Cuis7.7 [latest update: #7779] on 23 December 2025 at 4:38:57 pm'!
+'From Cuis7.9 [latest update: #7998] on 15 June 2026 at 10:53:35 am'!
 'Description '!
-!provides: 'Gettext' 1 31!
+!provides: 'Gettext' 1 32!
 !requires: 'Locales' 1 12 nil!
 SystemOrganization addCategory: #Gettext!
 
@@ -500,24 +500,23 @@ loadStringPointers: strm offset: tableOffset
 	tupple at: 2 put:  lenTable.
 	^tupple! !
 
-!MOFile methodsFor: 'private' stamp: 'hlsf 27/Oct/2023 22:35:57'!
+!MOFile methodsFor: 'private' stamp: 'jmv 15/Jun/2026 10:53:00'!
 loadStrings: strm pointers: table
-"We convert string encoding at load time.
-Currently, we do not take care to set the leadingChar for a languageEnvironment"
+	"We convert string encoding at load time.
+	Currently, we do not take care to set the leadingChar for a languageEnvironment."
 	| offsetTable lenTable strings |
-	strm useCharacters.
-	offsetTable :=  table first.
+	offsetTable := table first.
 	lenTable := table second.
 	strings := Array new: nStrings.
-	1 to: nStrings do: [:index | |  rawStr start byteLength endPos|
-		start := offsetTable at: index.
-		byteLength := lenTable at: index.
-		endPos := start + byteLength.
-		rawStr :=  (String new: byteLength) writeStream.
-		strm position:  start.
-		[strm position < endPos] whileTrue: [rawStr nextPut: strm next].
-		strings at: index put: (UnicodeString fromUtf8Bytes: rawStr contents asByteArray	)].
-	^strings.! !
+	1
+		to: nStrings
+		do: [ :index | | start byteLength bytes |
+			start := offsetTable at: index.
+			byteLength := lenTable at: index.
+			strm position: start.
+			bytes := strm next: byteLength.
+			strings at: index put: (UnicodeString fromUtf8Bytes: bytes) ].
+	^ strings.! !
 
 !MOFile class methodsFor: 'class initialization' stamp: ''!
 initialize
