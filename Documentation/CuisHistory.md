@@ -38,24 +38,26 @@ http://www.jvuletich.org/Morphic3/Smalltalks2007/Smalltalks2007.html
 
 ## 2008-04-05 - Numbered Updates to the Cuis image
 An stream of numbered updates debuts, with update #001. Since this moment, the total number of updates per year shows sustained development activity, with an outstanding year in 2015, and significant increase in progress since 2018:
-2008: 105 .
-2009: 281 . 
-2010: 357 .
-2011: 448 .
-2012: 337 .
-2013: 390 .
-2014: 222 .
-2015: 724 .
-2016: 156 .
-2017: 224 .
-2018: 320 .
-2019: 437 .
-2020: 509 .
-2021: 522 .
-2022: 578 .
-2023: 546 .
-2024: 805 .
-2025: 821 .
+| Year | Number of Updates |
+| :--- | :--- |
+| 2008 | 105 |
+| 2009 | 281 |
+| 2010 | 357 |
+| 2011 | 448 |
+| 2012 | 337 |
+| 2013 | 390 |
+| 2014 | 222 |
+| 2015 | 724 |
+| 2016 | 156 |
+| 2017 | 224 |
+| 2018 | 320 |
+| 2019 | 437 |
+| 2020 | 509 |
+| 2021 | 522 |
+| 2022 | 578 |
+| 2023 | 546 |
+| 2024 | 805 |
+| 2025 | 821 |
 
 ## 2009-03-27 - Cuis 1.0 ##
 [Ann] Cuis: A new Squeak distribution
