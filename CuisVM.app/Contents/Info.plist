@@ -352,9 +352,9 @@
 	<key>CFBundleExecutable</key>
 	<string>Squeak</string>
 	<key>CFBundleGetInfoString</key>
-	<string>Squeak 7.0, Cog Spur VM 7.0-202603271636-64bit</string>
+	<string>Squeak 7.0, Cog Spur VM 7.0-202606091739-64bit</string>
 	<key>CFBundleShortVersionString</key>
-	<string>7.20260327.1636</string>
+	<string>7.20260609.1739</string>
 	<key>CFBundleIconFile</key>
 	<string>Squeak.icns</string>
 	<key>CFBundleIdentifier</key>
@@ -368,7 +368,7 @@
 	<key>CFBundleSignature</key>
 	<string>FAST</string>
 	<key>CFBundleVersion</key>
-	<string>7.20260327.1636</string>
+	<string>7.20260609.1739</string>
 	<key>LSBackgroundOnly</key>
 	<false/>
 	<key>LSMinimumSystemVersion</key>
