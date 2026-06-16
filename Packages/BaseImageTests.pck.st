@@ -1,6 +1,6 @@
-'From Cuis7.9 [latest update: #7982] on 1 June 2026 at 7:41:11 pm'!
+'From Cuis7.9 [latest update: #7998] on 16 June 2026 at 9:43:16 am'!
 'Description Rename extentions tests'!
-!provides: 'BaseImageTests' 1 484!
+!provides: 'BaseImageTests' 1 485!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Compiler'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Objects'!
@@ -11334,10 +11334,14 @@ testInfinity2
   	"All infinities are signed. Negative infinity is not equal to Infinity"
 ! !
 
-!FloatTest methodsFor: 'tests - infinity behavior' stamp: 'jmv 21/May/2020 22:51:06'!
+!FloatTest methodsFor: 'tests - infinity behavior' stamp: 'jmv 16/Jun/2026 09:42:39'!
 testInfinityTruncated
+	"
 	self assert: Float infinity truncated isInfinite.
-	self assert: Float negativeInfinity truncated isInfinite.! !
+	self assert: Float negativeInfinity truncated isInfinite.
+	"
+	self should: [ Float infinity truncated ] raise: Error.
+	self should: [ Float negativeInfinity truncated ] raise: Error.! !
 
 !FloatTest methodsFor: 'tests - NaN behavior' stamp: 'sd 5/Jun/2005 08:31:00'!
 testNaN1
@@ -11480,9 +11484,12 @@ testNaNPropagationUnary
 		c := [ Float nan perform: sel ] on: UnhandledError do: [ #error ].
 		self assert: (c isNumber not or: [c isNaN]) ].! !
 
-!FloatTest methodsFor: 'tests - NaN behavior' stamp: 'jmv 21/May/2020 22:51:38'!
+!FloatTest methodsFor: 'tests - NaN behavior' stamp: 'jmv 16/Jun/2026 09:43:01'!
 testNaNTruncated
-	self assert: Float nan truncated isNaN.! !
+	"
+	self assert: Float nan truncated isNaN.
+	"
+	self should: [ Float nan truncated ] raise: Error.! !
 
 !FloatTest methodsFor: 'tests - NaN behavior' stamp: 'nice 14/Mar/2008 23:42:00'!
 testNaNisLiteral
