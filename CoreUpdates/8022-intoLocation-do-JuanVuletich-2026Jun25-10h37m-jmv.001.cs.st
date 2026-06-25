@@ -13,18 +13,11 @@ intoLocation: aLocation do: aBlock
 	self geometryTransformation: previous.! !
 
 
-!VectorCanvas methodsFor: 'accessing' stamp: 'jmv 25/Jun/2026, 1:35:13 pm (UTC)'!
-geometryTransformation: aGeometryTransformation
-	"Note: Usually, transformations are handled by the framework as we traverse the Morphs tree."
-
-	super geometryTransformation: aGeometryTransformation.
-	attachedCanvas geometryTransformation: aGeometryTransformation.! !
-
-
 !HybridCanvas methodsFor: 'accessing' stamp: 'jmv 25/Jun/2026, 1:35:16 pm (UTC)'!
 geometryTransformation: aGeometryTransformation
 	"Note: Usually, transformations are handled by the framework as we traverse the Morphs tree."
 
+	super geometryTransformation: aGeometryTransformation.
 	vectorCanvas geometryTransformation: aGeometryTransformation.! !
 
 
