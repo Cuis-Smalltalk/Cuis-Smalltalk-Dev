@@ -18,7 +18,7 @@ buildMorphicWindow
 	"
 	| names fileNames namesPane fileNamesPane 
 	upperRow  description summary labelBackground |
-	labelBackground := Color gray alpha: 0.2.
+	labelBackground := Color gray alpha: 0.1.
 	
 	names := PluggableListMorph
 		withModel: model 
@@ -75,7 +75,7 @@ buildMorphicWindow
 
 	| changeSetList classList changeSetListPane classListPane
 	  messageList upperPanes labelBackground |
-	labelBackground := Color gray alpha: 0.2.
+	labelBackground := Color gray alpha: 0.1.
 	model myChangeSet ifNil: [
 		"Or whatever was last changed, or is top of list, or whatever"
 		model myChangeSet: ChangeSet changeSetForBaseSystem ].
