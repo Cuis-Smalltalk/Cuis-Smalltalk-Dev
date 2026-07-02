@@ -1,6 +1,6 @@
-'From Cuis7.9 [latest update: #8037] on 30 June 2026 at 2:47:47 pm'!
+'From Cuis7.9 [latest update: #8045] on 2 July 2026 at 3:18:49 pm'!
 'Description Rename extentions tests'!
-!provides: 'BaseImageTests' 1 486!
+!provides: 'BaseImageTests' 1 487!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Compiler'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Objects'!
@@ -25675,11 +25675,13 @@ scanChangesFromFile
 	^ changeList changeList.
 ! !
 
-!ChangesTest methodsFor: 'user changes' stamp: 'jmv 30/Jun/2026, 6:36:56 pm (UTC)'!
+!ChangesTest methodsFor: 'user changes' stamp: 'jmv 2/Jul/2026, 7:18:42 pm (UTC)'!
 userChangesForTestsFile
 
 	^DirectoryEntry userChangesDirectory // 
-	((FileIOAccessor default baseNameFor: Smalltalk imageName pathAndLocalName second), '-', Utilities authorInitials, self userChangesForTestsFileExtension).! !
+	((FileIOAccessor default baseNameFor: Smalltalk imageName pathAndLocalName second),
+	(Utilities authorInitialsPerSe ifNotNil: [ :ai | '-', ai] ifNil: ['']),
+	self userChangesForTestsFileExtension).! !
 
 !ChangesTest methodsFor: 'user changes' stamp: 'HAW 1/Nov/2019, 9:08:04 pm (UTC)'!
 userChangesForTestsFileExtension
