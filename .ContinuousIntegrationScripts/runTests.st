@@ -1,7 +1,7 @@
 |suite result exitCode|
 
-Utilities classPool at: #AuthorName put: 'TravisCI'.
-Utilities classPool at: #AuthorInitials put: 'TCI'.
+Preferences name: #authorInitials category: #programming value: 'TCI'.
+Preferences name: #authorName category: #programming value: 'TravisCI'.
 
 CodePackageFile installPackage: DirectoryEntry currentDirectory // 'Packages/BaseImageTests.pck.st'.
 
