@@ -11,9 +11,9 @@ at: symbolName ifPresent: aBlock ifAbsent: absentBlock
 setAuthorInitials: aStringInitials name: aStringName
 	"Set author name and initials programatically."
 
-	Preferences name: #authorInitials category: #programming value: aStringName.
+	Preferences name: #authorInitials category: #programming value: aStringInitials.
 	Preferences saveToDisk: #authorInitials.
-	Preferences name: #authorName category: #programming value: aStringInitials.
+	Preferences name: #authorName category: #programming value: aStringName.
 	Preferences saveToDisk: #authorName.! !
 
 
