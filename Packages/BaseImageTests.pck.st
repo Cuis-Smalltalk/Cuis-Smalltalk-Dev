@@ -1,6 +1,6 @@
-'From Cuis7.9 [latest update: #8045] on 2 July 2026 at 3:18:49 pm'!
+'From Cuis7.9 [latest update: #8055] on 4 July 2026 at 6:21:25 pm'!
 'Description Rename extentions tests'!
-!provides: 'BaseImageTests' 1 487!
+!provides: 'BaseImageTests' 1 488!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Compiler'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Objects'!
@@ -1390,7 +1390,7 @@ CommonScopeNodeFinderTest class
 
 !classDefinition: #ExtractMethodFinderTest category: #'BaseImageTests-Tools-Refactoring'!
 DynamicallyCodeCreationTest subclass: #ExtractMethodFinderTest
-	instanceVariableNames: 'classToRefactor'
+	instanceVariableNames: 'classToRefactor sourceMethod finder'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BaseImageTests-Tools-Refactoring'!
@@ -1406,6 +1406,16 @@ DynamicallyCodeCreationTest subclass: #ExtractToTemporaryFinderTest
 	category: 'BaseImageTests-Tools-Refactoring'!
 !classDefinition: 'ExtractToTemporaryFinderTest class' category: #'BaseImageTests-Tools-Refactoring'!
 ExtractToTemporaryFinderTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #ParameterizableNodesFinderTest category: #'BaseImageTests-Tools-Refactoring'!
+DynamicallyCodeCreationTest subclass: #ParameterizableNodesFinderTest
+	instanceVariableNames: 'finder classToRefactor methodNode'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-Tools-Refactoring'!
+!classDefinition: 'ParameterizableNodesFinderTest class' category: #'BaseImageTests-Tools-Refactoring'!
+ParameterizableNodesFinderTest class
 	instanceVariableNames: ''!
 
 !classDefinition: #RefactoringTest category: #'BaseImageTests-Tools-Refactoring'!
@@ -26299,483 +26309,421 @@ test026_WhenThereIsANodeToFindInTheMethodNode_ReturnsItAsTheScope
 	
 	self assertFinderFoundMethodNodeScope ! !
 
-!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 1/Dec/2025, 8:56:00 pm (UTC)'!
+!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'JEC 14/Apr/2026, 9:21:41 pm (UTC)'!
 test01FindsSelectionOnSourceMethod
 
-	| sourceMethodName finder methodsToExtractFrom sourceMethod |
-	
-	sourceMethodName := classToRefactor compile: 'm1 10'.
-	
-	sourceMethod := (classToRefactor >> sourceMethodName) asMethodReference.
-	finder := ExtractMethodReplacementsFinder ofCodeIn: (4 to: 5) asSourceCodeInterval at: sourceMethod to: (Message selector: #m2). 
-	finder value.
+	| replacements |
+
+	self 
+		compile: 'm1 10' 
+		andFind: (4 to: 5).
 	
 	self assert: finder hasOneReplacement.
-	methodsToExtractFrom := finder replacements.
+	replacements := finder replacements.
 	
-	self assert: 1 equals: methodsToExtractFrom size.
-	self assert: (4 to: 5) equals: methodsToExtractFrom first asSourceCodeInterval.
-	self assert: sourceMethod equals: methodsToExtractFrom first methodToExtractFrom.! !
+	self assert: 1 equals: replacements size.
+	self 
+		assertAnyReplacementOf: replacements 
+		isOfSourceMethodAndHasInterval: (4 to: 5).! !
 
-!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 1/Dec/2025, 8:56:00 pm (UTC)'!
+!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'JEC 14/Apr/2026, 9:22:04 pm (UTC)'!
 test02FindsRepetitionsAfterSelection
 
-	| sourceMethodName finder methodsToExtractFrom sourceMethod replacement |
+	| replacements |
 	
-	sourceMethodName := classToRefactor compile: 'm1 10. 10'.
+	self 
+		compile: 'm1 10. 10' 
+		andFind: (4 to: 5).
 	
-	sourceMethod := (classToRefactor >> sourceMethodName) asMethodReference.
-	finder := ExtractMethodReplacementsFinder ofCodeIn: (4 to: 5) asSourceCodeInterval at: sourceMethod to: (Message selector: #m2). 
-	finder value.
+	replacements := finder replacements.
 	
-	methodsToExtractFrom := finder replacements.
-	
-	self assert: 2 equals: methodsToExtractFrom size.
-	replacement := methodsToExtractFrom first.
-	self assert: (4 to: 5) equals: replacement asSourceCodeInterval.
-	self assert: (replacement isOf: sourceMethod).
-	
-	replacement := methodsToExtractFrom second.
-	self assert: (8 to: 9) equals: replacement asSourceCodeInterval.
-	self assert: (replacement isOf: sourceMethod).! !
+	self assert: 2 equals: replacements size.
+	self 
+		assertAnyReplacementOf: replacements 
+		isOfSourceMethodAndHasInterval: (4 to: 5).
+	self 
+		assertAnyReplacementOf: replacements 
+		isOfSourceMethodAndHasInterval: (8 to: 9)! !
 
-!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 1/Dec/2025, 8:56:00 pm (UTC)'!
+!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'JEC 14/Apr/2026, 9:28:01 pm (UTC)'!
 test03FindsRepetitionsBeforeSelection
 
-	| sourceMethodName finder methodsToExtractFrom sourceMethod replacement |
+	| replacements |
 	
-	sourceMethodName := classToRefactor compile: 'm1 10. 10'.
+	self 
+		compile: 'm1 10. 10' 
+		andFind: (8 to: 9).
 	
-	sourceMethod := (classToRefactor >> sourceMethodName) asMethodReference.
-	finder := ExtractMethodReplacementsFinder ofCodeIn: (8 to: 9) asSourceCodeInterval at: sourceMethod to: (Message selector: #m2). 
-	finder value.
+	replacements := finder replacements.
 	
-	methodsToExtractFrom := finder replacements.
-	
-	self assert: 2 equals: methodsToExtractFrom size.
-	replacement := methodsToExtractFrom first.
-	self assert: (4 to: 5) equals: replacement asSourceCodeInterval.
-	self assert: (replacement isOf: sourceMethod).
-	
-	replacement := methodsToExtractFrom second.
-	self assert: (8 to: 9) equals: replacement asSourceCodeInterval.
-	self assert: (replacement isOf: sourceMethod).
-	! !
+	self assert: 2 equals: replacements size.
+	self 
+		assertAnyReplacementOf: replacements 
+		isOfSourceMethodAndHasInterval: (4 to: 5).
+	self 
+		assertAnyReplacementOf: replacements 
+		isOfSourceMethodAndHasInterval: (8 to: 9).! !
 
-!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 1/Dec/2025, 8:56:00 pm (UTC)'!
+!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'JEC 14/Apr/2026, 9:28:12 pm (UTC)'!
 test04DoesNotIncludeComments
 
-	| sourceMethodName finder methodsToExtractFrom sourceMethod replacement |
+	| replacements |
 	
-	sourceMethodName := classToRefactor compile: 'm1 10. "10"'.
+	self 
+		compile: 'm1 10. "10"' 
+		andFind: (4 to: 5).
 	
-	sourceMethod := (classToRefactor >> sourceMethodName) asMethodReference.
-	finder := ExtractMethodReplacementsFinder ofCodeIn: (4 to: 5) asSourceCodeInterval at: sourceMethod to: (Message selector: #m2). 
-	finder value.
+	replacements := finder replacements.
 	
-	methodsToExtractFrom := finder replacements.
-	
-	self assert: 1 equals: methodsToExtractFrom size.
-	replacement := methodsToExtractFrom first.
-	self assert: (4 to: 5) equals: replacement asSourceCodeInterval.
-	self assert: (replacement isOf: sourceMethod).
-	
-	! !
+	self assert: 1 equals: replacements size.
+	self 
+		assertAnyReplacementOf: replacements 
+		isOfSourceMethodAndHasInterval: (4 to: 5).! !
 
-!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 1/Dec/2025, 8:56:00 pm (UTC)'!
+!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'JEC 14/Apr/2026, 9:28:17 pm (UTC)'!
 test05DoesNotIncludeNotExtractableSourceCode
 
-	| sourceMethodName finder methodsToExtractFrom sourceMethod replacement |
+	| replacements |
 	
-	sourceMethodName := classToRefactor compile: 'm1 10. 100'.
+	self 
+		compile: 'm1 10. 100' 
+		andFind: (4 to: 5).
 	
-	sourceMethod := (classToRefactor >> sourceMethodName) asMethodReference.
-	finder := ExtractMethodReplacementsFinder ofCodeIn: (4 to: 5) asSourceCodeInterval at: sourceMethod to: (Message selector: #m2). 
-	finder value.
+	replacements := finder replacements.
 	
-	methodsToExtractFrom := finder replacements.
-	
-	self assert: 1 equals: methodsToExtractFrom size.
-	replacement := methodsToExtractFrom first.
-	self assert: (4 to: 5) equals: replacement asSourceCodeInterval.
-	self assert: (replacement isOf: sourceMethod).! !
+	self assert: 1 equals: replacements size.
+	self 
+		assertAnyReplacementOf: replacements 
+		isOfSourceMethodAndHasInterval: (4 to: 5).! !
 
-!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 1/Dec/2025, 8:56:00 pm (UTC)'!
+!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'JEC 14/Apr/2026, 9:28:34 pm (UTC)'!
 test06FindsRepetitionsInOtherClassMethods
 
-	| sourceMethodName finder methodsToExtractFrom sourceMethod replacement |
+	| replacements |	
+
+	classToRefactor compile: 'm1b 100+10'.	
+	self 
+		compile: 'm1 10' 
+		andFind: (4 to: 5).
 	
-	sourceMethodName := classToRefactor compile: 'm1 10'.
-	classToRefactor compile: 'm1b 100+10'.
+	replacements := finder replacements.
 	
-	sourceMethod := (classToRefactor >> sourceMethodName) asMethodReference.
-	finder := ExtractMethodReplacementsFinder ofCodeIn: (4 to: 5) asSourceCodeInterval at: sourceMethod to: (Message selector: #m2). 
-	finder value.
-	
-	methodsToExtractFrom := finder replacements.
-	
-	self assert: 2 equals: methodsToExtractFrom size.
-	replacement := methodsToExtractFrom detect: [ :aReplacement | aReplacement isOf: sourceMethod ].
-	self assert: (4 to: 5) equals: replacement asSourceCodeInterval.
-	
-	replacement := methodsToExtractFrom detect: [ :aReplacement | aReplacement isOf: (classToRefactor >> #m1b) asMethodReference ].
-	self assert: (9 to: 10) equals: replacement asSourceCodeInterval.
-	
+	self assert: 2 equals: replacements size.
+	self 
+		assertAnyReplacementOf: replacements 
+		hasInterval: (9 to: 10)
+		andIsOf: (classToRefactor >> #m1b) asMethodReference.
+	self 
+		assertAnyReplacementOf: replacements 
+		isOfSourceMethodAndHasInterval: (4 to: 5).
+
 	! !
 
-!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 1/Dec/2025, 8:56:00 pm (UTC)'!
+!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'JEC 14/Apr/2026, 9:28:57 pm (UTC)'!
 test07FindsRepetitionsInSubclassesMethods
 
-	| sourceMethodName finder methodsToExtractFrom sourceMethod replacement subclassToRefactor |
+	| replacements subclassToRefactor |
 	
-	sourceMethodName := classToRefactor compile: 'm1 10. 10'.
 	classToRefactor compile: 'm1b 100+10'.
 	subclassToRefactor := self createClassNamed: self subclassToRefactorName subclassOf: classToRefactor.
 	subclassToRefactor compile: 'm3 10'.
+	self 
+		compile: 'm1 10. 10' 
+		andFind: (4 to: 5).
 	
-	sourceMethod := (classToRefactor >> sourceMethodName) asMethodReference.
-	finder := ExtractMethodReplacementsFinder ofCodeIn: (4 to: 5) asSourceCodeInterval at: sourceMethod to: (Message selector: #m2). 
-	finder value.
+	replacements := finder replacements.
 	
-	methodsToExtractFrom := finder replacements.
-	
-	self assert: 4 equals: methodsToExtractFrom size.
-	replacement := (methodsToExtractFrom select: [ :aReplacement | aReplacement isOf: sourceMethod ]) first.
-	self assert: (4 to: 5) equals: replacement asSourceCodeInterval.
-	
-	replacement := (methodsToExtractFrom select: [ :aReplacement | aReplacement isOf: sourceMethod ]) second.
-	self assert: (8 to: 9) equals: replacement asSourceCodeInterval.
-	
-	replacement := methodsToExtractFrom detect: [ :aReplacement | aReplacement isOf: (classToRefactor >> #m1b) asMethodReference ].
-	self assert: (9 to: 10) equals: replacement asSourceCodeInterval.
-	
-	replacement := methodsToExtractFrom detect: [ :aReplacement | aReplacement isOf: (subclassToRefactor >> #m3) asMethodReference ].
-	self assert: (4 to: 5) equals: replacement asSourceCodeInterval.
-	self assert:(replacement isOf: (subclassToRefactor >> #m3) asMethodReference)
-	! !
+	self assert: 4 equals: replacements size.
+	self 
+		assertAnyReplacementOf: replacements 
+		hasInterval: (9 to: 10)
+		andIsOf: (classToRefactor >> #m1b) asMethodReference.
+	self 
+		assertAnyReplacementOf: replacements 
+		isOfSourceMethodAndHasInterval: (4 to: 5).
+	self 
+		assertAnyReplacementOf: replacements 
+		isOfSourceMethodAndHasInterval: (8 to: 9).
+	self 
+		assertAnyReplacementOf: replacements 
+		hasInterval: (4 to: 5)
+		andIsOf: (subclassToRefactor >> #m3) asMethodReference.! !
 
-!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 1/Dec/2025, 8:56:00 pm (UTC)'!
+!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'JEC 14/Apr/2026, 9:29:21 pm (UTC)'!
 test08FindsRepetitionsWithMultipleSelection
 
-	| sourceMethodName finder methodsToExtractFrom sourceMethod replacement |
-	
-	sourceMethodName := classToRefactor compile: 'm1 10 factorial. 10 factorial. true ifTrue: [ 10 factorial. 10 factorial]'.
-	
-	sourceMethod := (classToRefactor >> sourceMethodName) asMethodReference.
-	finder := ExtractMethodReplacementsFinder ofCodeIn: (4 to: 29) asSourceCodeInterval at: sourceMethod to: (Message selector: #m2). 
-	finder value.
-	
-	methodsToExtractFrom := finder replacements.
-	
-	self assert: 2 equals: methodsToExtractFrom size.
-	replacement := methodsToExtractFrom first.
-	self assert: (47 to: 72) equals: replacement asSourceCodeInterval.
-	self assert: (replacement isOf: sourceMethod).
-	
-	replacement := methodsToExtractFrom second.
-	self assert: (4 to: 29) equals: replacement asSourceCodeInterval.
-	self assert: (replacement isOf: sourceMethod).
-	! !
+	| replacements |
 
-!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 1/Dec/2025, 8:56:00 pm (UTC)'!
+	self 
+		compile: 'm1 10 factorial. 10 factorial. true ifTrue: [ 10 factorial. 10 factorial]' 
+		andFind: (4 to: 29).
+	
+	replacements := finder replacements.
+	
+	self assert: 2 equals: replacements size.
+	self 
+		assertAnyReplacementOf: replacements 
+		isOfSourceMethodAndHasInterval: (4 to: 29).
+	self 
+		assertAnyReplacementOf: replacements 
+		isOfSourceMethodAndHasInterval: (47 to: 72).! !
+
+!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'JEC 14/Apr/2026, 9:29:40 pm (UTC)'!
 test09FindsRepetitionsWithCascade
 
-	| sourceMethodName finder methodsToExtractFrom sourceMethod replacement |
+	| replacements |
 	
-	sourceMethodName := classToRefactor compile: 'm1 self m1; m2. self m1; m2'.
+	self 
+		compile: 'm1 self m1; m2. self m1; m2' 
+		andFind: (4 to: 14).
 	
-	sourceMethod := (classToRefactor >> sourceMethodName) asMethodReference.
-	finder := ExtractMethodReplacementsFinder ofCodeIn: (4 to: 14) asSourceCodeInterval at: sourceMethod to: (Message selector: #m2). 
-	finder value.
+	replacements := finder replacements.
 	
-	methodsToExtractFrom := finder replacements.
-	
-	self assert: 2 equals: methodsToExtractFrom size.
-	replacement := methodsToExtractFrom first.
-	self assert: (4 to: 14) equals: replacement asSourceCodeInterval.
-	self assert: (replacement isOf: sourceMethod).
-	
-	replacement := methodsToExtractFrom second.
-	self assert: (17 to: 27) equals: replacement asSourceCodeInterval.
-	self assert: (replacement isOf: sourceMethod).
-	! !
+	self assert: 2 equals: replacements size.
+	self 
+		assertAnyReplacementOf: replacements 
+		isOfSourceMethodAndHasInterval: (4 to: 14).
+	self 
+		assertAnyReplacementOf: replacements 
+		isOfSourceMethodAndHasInterval: (17 to: 27).! !
 
-!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 1/Dec/2025, 8:56:00 pm (UTC)'!
+!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'JEC 14/Apr/2026, 9:30:02 pm (UTC)'!
 test10FindsRepetitionsWithBrace
 
-	| sourceMethodName finder methodsToExtractFrom sourceMethod replacement |
+	| replacements |
 	
-	sourceMethodName := classToRefactor compile: 'm1 {1 . 2 }. {1 . 2 }'.
+	self 
+		compile: 'm1 {1 . 2 }. {1 . 2 }' 
+		andFind: (4 to: 11).
 	
-	sourceMethod := (classToRefactor >> sourceMethodName) asMethodReference.
-	finder := ExtractMethodReplacementsFinder ofCodeIn: (4 to: 11) asSourceCodeInterval at: sourceMethod to: (Message selector: #m2). 
-	finder value.
+	replacements := finder replacements.
 	
-	methodsToExtractFrom := finder replacements.
-	
-	self assert: 2 equals: methodsToExtractFrom size.
-	replacement := methodsToExtractFrom first.
-	self assert: (4 to: 11) equals: replacement asSourceCodeInterval.
-	self assert: (replacement isOf: sourceMethod).
-	
-	replacement := methodsToExtractFrom second.
-	self assert: (14 to: 21) equals: replacement asSourceCodeInterval.
-	self assert: (replacement isOf: sourceMethod).
+	self assert: 2 equals: replacements size.
+	self 
+		assertAnyReplacementOf: replacements 
+		isOfSourceMethodAndHasInterval: (4 to: 11).
+	self 
+		assertAnyReplacementOf: replacements 
+		isOfSourceMethodAndHasInterval: (14 to: 21)
 	! !
 
-!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 1/Dec/2025, 8:56:00 pm (UTC)'!
+!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'JEC 14/Apr/2026, 9:30:22 pm (UTC)'!
 test11FindsRepetitionsWithMoreThanTwoStatementsSelection
 
-	| sourceMethodName finder methodsToExtractFrom sourceMethod replacement |
+	| replacements |
 	
-	sourceMethodName := classToRefactor compile: 'm1 10 factorial. 15 factorial. 20 factorial. true ifTrue: [ 10 factorial. 15 factorial. 20 factorial]'.
+	self 
+		compile: 'm1 10 factorial. 15 factorial. 20 factorial. true ifTrue: [ 10 factorial. 15 factorial. 20 factorial]' 
+		andFind: (4 to: 43).
 	
-	sourceMethod := (classToRefactor >> sourceMethodName) asMethodReference.
-	finder := ExtractMethodReplacementsFinder ofCodeIn: (4 to: 43) asSourceCodeInterval at: sourceMethod to: (Message selector: #m2). 
-	finder value.
+	replacements := finder replacements.
 	
-	methodsToExtractFrom := finder replacements.
-	
-	self assert: 2 equals: methodsToExtractFrom size.
-	replacement := methodsToExtractFrom first.
-	self assert: (61 to: 100) equals: replacement asSourceCodeInterval.
-	self assert: (replacement isOf: sourceMethod).
-	
-	replacement := methodsToExtractFrom second.
-	self assert: (4 to: 43) equals: replacement asSourceCodeInterval.
-	self assert: (replacement isOf: sourceMethod).
-	! !
+	self assert: 2 equals: replacements size.
+	self 
+		assertAnyReplacementOf: replacements 
+		isOfSourceMethodAndHasInterval: (4 to: 43).
+	self 
+		assertAnyReplacementOf: replacements 
+		isOfSourceMethodAndHasInterval: (61 to: 100).	! !
 
-!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 1/Dec/2025, 8:56:00 pm (UTC)'!
+!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'JEC 14/Apr/2026, 9:32:06 pm (UTC)'!
 test12FindsRepetitionsOfOneMessageSend
 
-	| sourceMethodName finder methodsToExtractFrom sourceMethod replacement |
+	| replacements |
 	
-	sourceMethodName := classToRefactor compile: 'm1 10 factorial. 10   factorial'.
+	self 
+		compile: 'm1 10 factorial. 10   factorial' 
+		andFind: (4 to: 15).
 	
-	sourceMethod := (classToRefactor >> sourceMethodName) asMethodReference.
-	finder := ExtractMethodReplacementsFinder ofCodeIn: (4 to: 15) asSourceCodeInterval at: sourceMethod to: (Message selector: #m2). 
-	finder value.
+	replacements := finder replacements.
 	
-	methodsToExtractFrom := finder replacements.
-	
-	self assert: 2 equals: methodsToExtractFrom size.
-	replacement := methodsToExtractFrom first.
-	self assert: (4 to: 15) equals: replacement asSourceCodeInterval.
-	self assert: (replacement isOf: sourceMethod).
-	
-	replacement := methodsToExtractFrom second.
-	self assert: (18 to: 31) equals: replacement asSourceCodeInterval.
-	self assert: (replacement isOf: sourceMethod).
-	! !
+	self assert: 2 equals: replacements size.
+	self 
+		assertAnyReplacementOf: replacements 
+		isOfSourceMethodAndHasInterval: (4 to: 15).
+	self 
+		assertAnyReplacementOf: replacements 
+		isOfSourceMethodAndHasInterval: (18 to: 31)! !
 
-!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 1/Dec/2025, 8:56:00 pm (UTC)'!
+!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'JEC 14/Apr/2026, 9:32:19 pm (UTC)'!
 test13FindsRepetitionsOfLiteral
 
-	| sourceMethodName finder methodsToExtractFrom sourceMethod replacement |
+	| replacements |
 	
-	sourceMethodName := classToRefactor compile: 'm1 10. 10 + 5'.
+	self 
+		compile: 'm1 10. 10 + 5' 
+		andFind: (4 to: 5).
 	
-	sourceMethod := (classToRefactor >> sourceMethodName) asMethodReference.
-	finder := ExtractMethodReplacementsFinder ofCodeIn: (4 to: 5) asSourceCodeInterval at: sourceMethod to: (Message selector: #m2). 
-	finder value.
+	replacements := finder replacements.
 	
-	methodsToExtractFrom := finder replacements.
-	
-	self assert: 2 equals: methodsToExtractFrom size.
-	replacement := methodsToExtractFrom first.
-	self assert: (4 to: 5) equals: replacement asSourceCodeInterval.
-	self assert: (replacement isOf: sourceMethod).
-	
-	replacement := methodsToExtractFrom second.
-	self assert: (8 to: 9) equals: replacement asSourceCodeInterval.
-	self assert: (replacement isOf: sourceMethod).
-	! !
+	self assert: 2 equals: replacements size.
+	self 
+		assertAnyReplacementOf: replacements 
+		isOfSourceMethodAndHasInterval: (4 to: 5).
+	self 
+		assertAnyReplacementOf: replacements 
+		isOfSourceMethodAndHasInterval: (8 to: 9)! !
 
-!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 1/Dec/2025, 8:56:00 pm (UTC)'!
+!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'JEC 14/Apr/2026, 9:32:33 pm (UTC)'!
 test14FindsRepetitionsOfLiteralVariable
 
-	| sourceMethodName finder methodsToExtractFrom sourceMethod replacement |
+	| replacements |
 	
-	sourceMethodName := classToRefactor compile: 'm1 Array. Array new'.
+	self 
+		compile: 'm1 Array. Array new' 
+		andFind: (4 to: 8).
 	
-	sourceMethod := (classToRefactor >> sourceMethodName) asMethodReference.
-	finder := ExtractMethodReplacementsFinder ofCodeIn: (4 to: 8) asSourceCodeInterval at: sourceMethod to: (Message selector: #m2). 
-	finder value.
+	replacements := finder replacements.
 	
-	methodsToExtractFrom := finder replacements.
-	
-	self assert: 2 equals: methodsToExtractFrom size.
-	replacement := methodsToExtractFrom first.
-	self assert: (4 to: 8) equals: replacement asSourceCodeInterval.
-	self assert: (replacement isOf: sourceMethod).
-	
-	replacement := methodsToExtractFrom second.
-	self assert: (11 to: 15) equals: replacement asSourceCodeInterval.
-	self assert: (replacement isOf: sourceMethod).
-	! !
+	self assert: 2 equals: replacements size.
+	self 
+		assertAnyReplacementOf: replacements 
+		isOfSourceMethodAndHasInterval: (4 to: 8).
+	self 
+		assertAnyReplacementOf: replacements 
+		isOfSourceMethodAndHasInterval: (11 to: 15)! !
 
-!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 1/Dec/2025, 8:56:00 pm (UTC)'!
+!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'JEC 14/Apr/2026, 9:32:52 pm (UTC)'!
 test15FindsRepetitionsOfInstanceVariable
 
-	| sourceMethodName finder methodsToExtractFrom sourceMethod replacement |
+	| replacements |
 	
 	classToRefactor addInstVarName: 'iv1'.
-	sourceMethodName := classToRefactor compile: 'm1 iv1. iv1 + 2'.
+	self 
+		compile: 'm1 iv1. iv1 + 2' 
+		andFind: (4 to: 6).
 	
-	sourceMethod := (classToRefactor >> sourceMethodName) asMethodReference.
-	finder := ExtractMethodReplacementsFinder ofCodeIn: (4 to: 6) asSourceCodeInterval at: sourceMethod to: (Message selector: #m2). 
-	finder value.
+	replacements := finder replacements.
 	
-	methodsToExtractFrom := finder replacements.
-	
-	self assert: 2 equals: methodsToExtractFrom size.
-	replacement := methodsToExtractFrom first.
-	self assert: (4 to: 6) equals: replacement asSourceCodeInterval.
-	self assert: (replacement isOf: sourceMethod).
-	
-	replacement := methodsToExtractFrom second.
-	self assert: (9 to: 11) equals: replacement asSourceCodeInterval.
-	self assert: (replacement isOf: sourceMethod).
-	! !
+	self assert: 2 equals: replacements size.
+	self 
+		assertAnyReplacementOf: replacements 
+		isOfSourceMethodAndHasInterval: (4 to: 6).
+	self 
+		assertAnyReplacementOf: replacements 
+		isOfSourceMethodAndHasInterval: (9 to: 11)! !
 
-!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 1/Dec/2025, 8:56:00 pm (UTC)'!
+!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'JEC 14/Apr/2026, 9:33:12 pm (UTC)'!
 test16FindsRepetitionsOfParameter
 
-	| sourceMethodName finder methodsToExtractFrom sourceMethod replacement |
+	| replacements |
 	
-	sourceMethodName := classToRefactor compile: 'm1: p p+1. p+1'.
+	self 
+		compile: 'm1: p p+1. p+1' 
+		andFind: (7 to: 9).
 	
-	sourceMethod := (classToRefactor >> sourceMethodName) asMethodReference.
-	finder := ExtractMethodReplacementsFinder ofCodeIn: (7 to: 9) asSourceCodeInterval at: sourceMethod to: (Message selector: #m2). 
-	finder value.
+	replacements := finder replacements.
 	
-	methodsToExtractFrom := finder replacements.
-	
-	self assert: 2 equals: methodsToExtractFrom size.
-	replacement := methodsToExtractFrom first.
-	self assert: (7 to: 9) equals: replacement asSourceCodeInterval.
-	self assert: (replacement isOf: sourceMethod).
-	
-	replacement := methodsToExtractFrom second.
-	self assert: (12 to: 14) equals: replacement asSourceCodeInterval.
-	self assert: (replacement isOf: sourceMethod).
-	! !
+	self assert: 2 equals: replacements size.
+	self 
+		assertAnyReplacementOf: replacements 
+		isOfSourceMethodAndHasInterval: (7 to: 9).
+	self 
+		assertAnyReplacementOf: replacements 
+		isOfSourceMethodAndHasInterval: (12 to: 14)! !
 
-!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 1/Dec/2025, 8:56:00 pm (UTC)'!
+!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'JEC 14/Apr/2026, 9:33:30 pm (UTC)'!
 test17KeepsOriginalSelection
 
-	| sourceMethodName finder methodsToExtractFrom sourceMethod replacement |
+	| replacements |
 	
-	sourceMethodName := classToRefactor compile: 'm1 1 factorial. 1 factorial. 1 factorial. 1 factorial. 1 factorial'.
+	self 
+		compile: 'm1 1 factorial. 1 factorial. 1 factorial. 1 factorial. 1 factorial' 
+		andFind: (17 to: 40).
 	
-	sourceMethod := (classToRefactor >> sourceMethodName) asMethodReference.
-	finder := ExtractMethodReplacementsFinder ofCodeIn: (17 to: 40) asSourceCodeInterval at: sourceMethod to: (Message selector: #m2). 
-	finder value.
+	replacements := finder replacements.
 	
-	methodsToExtractFrom := finder replacements.
-	
-	self assert: 2 equals: methodsToExtractFrom size.
-	replacement := methodsToExtractFrom first.
-	self assert: (17 to: 40) equals: replacement asSourceCodeInterval.
-	self assert: (replacement isOf: sourceMethod).
-	
-	replacement := methodsToExtractFrom second.
-	self assert: (43 to: 66) equals: replacement asSourceCodeInterval.
-	self assert: (replacement isOf: sourceMethod).
-	! !
+	self assert: 2 equals: replacements size.
+	self 
+		assertAnyReplacementOf: replacements 
+		isOfSourceMethodAndHasInterval: (17 to: 40).
+	self 
+		assertAnyReplacementOf: replacements 
+		isOfSourceMethodAndHasInterval: (43 to: 66)! !
 
-!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 1/Dec/2025, 8:56:00 pm (UTC)'!
+!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'JEC 14/Apr/2026, 9:33:46 pm (UTC)'!
 test18FindsMultipleLiteralNodes
 
-	| sourceMethodName finder methodsToExtractFrom sourceMethod replacement |
+	| replacements |
 	
-	sourceMethodName := classToRefactor compile: 'm1 1. 1. 1. 1. 1'.
+	self 
+		compile: 'm1 1. 1. 1. 1. 1' 
+		andFind: (4 to: 7).
 	
-	sourceMethod := (classToRefactor >> sourceMethodName) asMethodReference.
-	finder := ExtractMethodReplacementsFinder ofCodeIn: (4 to: 7) asSourceCodeInterval at: sourceMethod to: (Message selector: #m2). 
-	finder value.
+	replacements := finder replacements.
 	
-	methodsToExtractFrom := finder replacements.
-	
-	self assert: 2 equals: methodsToExtractFrom size.
-	replacement := methodsToExtractFrom first.
-	self assert: (4 to: 7) equals: replacement asSourceCodeInterval.
-	self assert: (replacement isOf: sourceMethod).
-	
-	replacement := methodsToExtractFrom second.
-	self assert: (10 to: 13) equals: replacement asSourceCodeInterval.
-	self assert: (replacement isOf: sourceMethod).
-	! !
+	self assert: 2 equals: replacements size.
+	self 
+		assertAnyReplacementOf: replacements 
+		isOfSourceMethodAndHasInterval: (4 to: 7).
+	self 
+		assertAnyReplacementOf: replacements 
+		isOfSourceMethodAndHasInterval: (10 to: 13)! !
 
-!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 1/Dec/2025, 8:56:00 pm (UTC)'!
+!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'JEC 14/Apr/2026, 9:17:55 pm (UTC)'!
 test19FindsBlockNodesWithTemporaries
 
-	| sourceMethodName finder methodsToExtractFrom sourceMethod |
+	| replacements |
 	
-	sourceMethodName := classToRefactor compile: 'm1 true and: [ | t1 | false ]'.
 	classToRefactor compile: 'm2 true and: [ | t1 | false ]'.
 	
-	sourceMethod := (classToRefactor >> sourceMethodName) asMethodReference.
-	finder := ExtractMethodReplacementsFinder ofCodeIn: (16 to: 27) asSourceCodeInterval at: sourceMethod to: (Message selector: #m3). 
-	finder value.
+	self 
+		compile: 'm1 true and: [ | t1 | false ]' 
+		andFind: (16 to: 27)
+		to: (Message selector: #m3).
 	
-	methodsToExtractFrom := finder replacements.
+	replacements := finder replacements.
 	
-	self assert: 2 equals: methodsToExtractFrom size.
-	self assert: ((methodsToExtractFrom collect: [ :aReplacement | aReplacement methodToExtractFrom selector ]) includesAllOf: #(m1 m2)).
-	self assert: (16 to: 27) equals: methodsToExtractFrom first asSourceCodeInterval.
-	self assert: (16 to: 27) equals: methodsToExtractFrom second asSourceCodeInterval.
-	! !
+	self assert: 2 equals: replacements size.
+	self
+		assertAnyReplacementOf: replacements 
+		isOfSourceMethodAndHasInterval: (16 to: 27). 
+	self
+		assertAnyReplacementOf: replacements 
+		hasInterval: (16 to: 27)
+		andIsOf: (classToRefactor >> #m2) asMethodReference! !
 
-!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 1/Dec/2025, 8:56:00 pm (UTC)'!
+!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'JEC 14/Apr/2026, 9:34:03 pm (UTC)'!
 test20FindsTemporary
 
-	| sourceMethodName finder methodsToExtractFrom sourceMethod replacement |
+	| replacements |
 	
-	sourceMethodName := classToRefactor compile: 'm1 | t1 | t1. t1'.
+	self 
+		compile: 'm1 | t1 | t1. t1' 
+		andFind: (11 to: 12).
 	
-	sourceMethod := (classToRefactor >> sourceMethodName) asMethodReference.
-	finder := ExtractMethodReplacementsFinder ofCodeIn: (11 to: 12) asSourceCodeInterval at: sourceMethod to: (Message selector: #m2). 
-	finder value.
+	replacements := finder replacements.
 	
-	methodsToExtractFrom := finder replacements.
-	
-	self assert: 2 equals: methodsToExtractFrom size.
-	replacement := methodsToExtractFrom first.
-	self assert: (11 to: 12) equals: replacement asSourceCodeInterval.
-	self assert: (replacement isOf: sourceMethod).
-	
-	replacement := methodsToExtractFrom second.
-	self assert: (15 to: 16) equals: replacement asSourceCodeInterval.
-	self assert: (replacement isOf: sourceMethod).
-	! !
+	self assert: 2 equals: replacements size.
+	self 
+		assertAnyReplacementOf: replacements 
+		isOfSourceMethodAndHasInterval: (11 to: 12).
+	self 
+		assertAnyReplacementOf: replacements 
+		isOfSourceMethodAndHasInterval: (15 to: 16)! !
 
-!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 1/Dec/2025, 8:56:00 pm (UTC)'!
+!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'JEC 14/Apr/2026, 9:34:15 pm (UTC)'!
 test21FindsTemporaryWhenSelectingDefinition
 
-	| sourceMethodName finder methodsToExtractFrom sourceMethod replacement |
-	
-	sourceMethodName := classToRefactor compile: 'm1 | t1 | t1'.
-	
-	sourceMethod := (classToRefactor >> sourceMethodName) asMethodReference.
-	finder := ExtractMethodReplacementsFinder ofCodeIn: (4 to: 12) asSourceCodeInterval at: sourceMethod to: (Message selector: #m2). 
-	finder value.
-	
-	methodsToExtractFrom := finder replacements.
-	
-	self assert: 1 equals: methodsToExtractFrom size.
-	replacement := methodsToExtractFrom first.
-	self assert: (4 to: 12) equals: replacement asSourceCodeInterval.
-	self assert: (replacement isOf: sourceMethod).
-	! !
+	| replacements |
 
-!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 1/Dec/2025, 8:56:00 pm (UTC)'!
+	self 
+		compile: 'm1 | t1 | t1' 
+		andFind: (4 to: 12).
+	
+	replacements := finder replacements.
+	
+	self assert: 1 equals: replacements size.
+	self 
+		assertAnyReplacementOf: replacements 
+		isOfSourceMethodAndHasInterval: (4 to: 12).! !
+
+!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'JEC 14/Apr/2026, 9:34:35 pm (UTC)'!
 test22_1_FindsTemporaryWhenSelectingDefinitionInInnerClosure
 
-	| sourceMethodName finder methodsToExtractFrom sourceMethod replacement |
+	| sourceCode replacements |
 	
-	sourceMethodName := classToRefactor compile: 'boundsUsing: aBlock 
+	sourceCode := 'boundsUsing: aBlock 
 	
 	^self isSingleSelection 
 		ifTrue: [ aBlock value: #selected first ]
@@ -26789,177 +26737,145 @@ test22_1_FindsTemporaryWhenSelectingDefinitionInInnerClosure
 			allPoints ].
 	
 	Rectangle encompassing: points ]'.
-	
-	sourceMethod := (classToRefactor >> sourceMethodName) asMethodReference.
-	finder := ExtractMethodReplacementsFinder ofCodeIn: (107 to: 370) asSourceCodeInterval at: sourceMethod to: (Message selector: #m2:). 
-	finder value.
-	
-	methodsToExtractFrom := finder replacements.
-	
-	self assert: 1 equals: methodsToExtractFrom size.
-	replacement := methodsToExtractFrom first.
-	self assert: (107 to: 370) equals: replacement asSourceCodeInterval.
-	self assert: (replacement isOf: sourceMethod).
-	! !
 
-!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 1/Dec/2025, 8:56:00 pm (UTC)'!
+	self compile: sourceCode andFind: (107 to: 370).
+	
+	replacements := finder replacements.
+	
+	self assert: 1 equals: replacements size.
+	self 
+		assertAnyReplacementOf: replacements 
+		isOfSourceMethodAndHasInterval: (107 to: 370)! !
+
+!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'JEC 14/Apr/2026, 9:34:50 pm (UTC)'!
 test22FindsTemporaryWhenSelectingDefinitionInInnerClosure
 
-	| sourceMethodName finder methodsToExtractFrom sourceMethod replacement |
+	| replacements |
 	
-	sourceMethodName := classToRefactor compile: 'm1 | t1 | true and: [ |t2| t1 ]. t1'.
+	self 
+		compile: 'm1 | t1 | true and: [ |t2| t1 ]. t1' 
+		andFind: (23 to: 29).
 	
-	sourceMethod := (classToRefactor >> sourceMethodName) asMethodReference.
-	finder := ExtractMethodReplacementsFinder ofCodeIn: (23 to: 29) asSourceCodeInterval at: sourceMethod to: (Message selector: #m2). 
-	finder value.
+	replacements := finder replacements.
 	
-	methodsToExtractFrom := finder replacements.
-	
-	self assert: 1 equals: methodsToExtractFrom size.
-	replacement := methodsToExtractFrom first.
-	self assert: (23 to: 29) equals: replacement asSourceCodeInterval.
-	self assert: (replacement isOf: sourceMethod).
-	! !
+	self assert: 1 equals: replacements size.
+	self 
+		assertAnyReplacementOf: replacements 
+		isOfSourceMethodAndHasInterval: (23 to: 29).! !
 
-!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 1/Dec/2025, 8:56:00 pm (UTC)'!
+!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'JEC 14/Apr/2026, 9:35:07 pm (UTC)'!
 test23WhenExtractingAllLiteralsUsesStringComparison
 
-	| sourceMethodName finder methodsToExtractFrom sourceMethod replacement |
-	
-	sourceMethodName := classToRefactor compile: 'm1 1+2. 2+1.'.
-	
-	sourceMethod := (classToRefactor >> sourceMethodName) asMethodReference.
-	finder := ExtractMethodReplacementsFinder ofCodeIn: (4 to: 4) asSourceCodeInterval at: sourceMethod to: (Message selector: #m2). 
-	finder value.
-	
-	methodsToExtractFrom := finder replacements.
-	
-	self assert: 2 equals: methodsToExtractFrom size.
-	replacement := methodsToExtractFrom first.
-	self assert: (4 to: 4) equals: replacement asSourceCodeInterval.
-	self assert: (replacement isOf: sourceMethod).
-	
-	replacement := methodsToExtractFrom second.
-	self assert: (11 to: 11) equals: replacement asSourceCodeInterval.
-	self assert: (replacement isOf: sourceMethod).
-! !
+	| replacements |
 
-!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 1/Dec/2025, 8:56:00 pm (UTC)'!
+	self 
+		compile: 'm1 1+2. 2+1.' 
+		andFind: (4 to: 4).
+	
+	replacements := finder replacements.
+	
+	self assert: 2 equals: replacements size.
+	self 
+		assertAnyReplacementOf: replacements 
+		isOfSourceMethodAndHasInterval: (4 to: 4).
+	self 
+		assertAnyReplacementOf: replacements 
+		isOfSourceMethodAndHasInterval: (11 to: 11)! !
+
+!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'JEC 14/Mar/2026, 5:20:26 pm (UTC)'!
 test24NotWorkingCase
 
-	| sourceMethodName finder methodsToExtractFrom sourceMethod replacement |
+	| replacements |
 	
 	self shouldFail: [
-		sourceMethodName := classToRefactor compile: 'm1 1+2. 2+1'.
+		self 
+			compile: 'm1 1+2. 2+1' 
+			andFind: (4 to: 4).
 		
-		sourceMethod := (classToRefactor >> sourceMethodName) asMethodReference.
-		finder := ExtractMethodReplacementsFinder ofCodeIn: (4 to: 4) asSourceCodeInterval at: sourceMethod to: (Message selector: #m2). 
-		finder value.
+		replacements := finder replacements.
 		
-		methodsToExtractFrom := finder replacements.
-		
-		self assert: 2 equals: methodsToExtractFrom size.
-		replacement := methodsToExtractFrom first.
-		self assert: (4 to: 4) equals: replacement asSourceCodeInterval.
-		self assert: (replacement isOf: sourceMethod).
-		
-		replacement := methodsToExtractFrom second.
-		self assert: (11 to: 11) equals: replacement asSourceCodeInterval.
-		self assert: (replacement isOf: sourceMethod).]
-! !
+		self assert: 2 equals: replacements size.
+		self
+			assertSourceMethodReplacement: replacements first 
+			hasInterval: (4 to: 4).
+		self
+			assertSourceMethodReplacement: replacements first 
+			hasInterval: (11 to: 11) ]! !
 
-!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 1/Dec/2025, 8:56:00 pm (UTC)'!
+!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'JEC 14/Mar/2026, 5:20:53 pm (UTC)'!
 test25NotWorkingCase
 
-	| sourceMethodName finder methodsToExtractFrom sourceMethod replacement |
+	| replacements |
 	
 	self shouldFail: [
-		sourceMethodName := classToRefactor compile: 'm1 1. 1. 1. 1.'.
+		self 
+			compile: 'm1 1. 1. 1. 1.' 
+			andFind: (7 to: 10).
 		
-		sourceMethod := (classToRefactor >> sourceMethodName) asMethodReference.
-		finder := ExtractMethodReplacementsFinder ofCodeIn: (7 to: 10) asSourceCodeInterval at: sourceMethod to: (Message selector: #m2). 
-		finder value.
+		replacements := finder replacements.
 		
-		methodsToExtractFrom := finder replacements.
-		
-		self assert: 1 equals: methodsToExtractFrom size.
-		replacement := methodsToExtractFrom first.
-		self assert: (7 to: 10) equals: replacement asSourceCodeInterval.
-		self assert: (replacement isOf: sourceMethod).
-	]
+		self assert: 1 equals: replacements size.
+		self
+			assertSourceMethodReplacement: replacements first 
+			hasInterval: (7 to: 10) ]
 ! !
 
-!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 1/Dec/2025, 8:56:00 pm (UTC)'!
+!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'JEC 14/Apr/2026, 9:35:27 pm (UTC)'!
 test26FindsInsideParentesis
 
-	| sourceMethodName finder sourceMethod intervalToExtract newMessage methodsToExtractFrom replacement |
+	| replacements |
 
-	sourceMethodName := classToRefactor compile: 'm1 (self m1)'.
+	self 
+		compile: 'm1 (self m1)' 
+		andFind: (5 to: 11).
 	
-	sourceMethod := (classToRefactor >> sourceMethodName) asMethodReference.
-	intervalToExtract := (5 to: 11) asSourceCodeInterval.
-	newMessage := Message selector: #m2.
-	finder := ExtractMethodReplacementsFinder ofCodeIn: intervalToExtract at: sourceMethod to: newMessage. 
-	finder value.
-	
-	methodsToExtractFrom := finder replacements.
+	replacements := finder replacements.
 		
-	self assert: 1 equals: methodsToExtractFrom size.
-	replacement := methodsToExtractFrom first.
-	self assert: (5 to: 11) equals: replacement asSourceCodeInterval.
-	self assert: (replacement isOf: sourceMethod).
-! !
+	self assert: 1 equals: replacements size.
+	self 
+		assertAnyReplacementOf: replacements 
+		isOfSourceMethodAndHasInterval: (5 to: 11)! !
 
-!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 1/Dec/2025, 8:56:00 pm (UTC)'!
+!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'JEC 14/Apr/2026, 9:35:35 pm (UTC)'!
 test27FindsWithMoreThanOneStatementAndFirstWithParentesis
 
-	| sourceMethodName finder sourceMethod intervalToExtract newMessage methodsToExtractFrom replacement |
+	| replacements |
 
-	sourceMethodName := classToRefactor compile: 'm1 (self m1). self m1'.
+	self 
+		compile: 'm1 (self m1). self m1' 
+		andFind: (4 to: 21).
 	
-	sourceMethod := (classToRefactor >> sourceMethodName) asMethodReference.
-	intervalToExtract := (4 to: 21) asSourceCodeInterval.
-	newMessage := Message selector: #m2.
-	finder := ExtractMethodReplacementsFinder ofCodeIn: intervalToExtract at: sourceMethod to: newMessage. 
-	finder value.
-	
-	methodsToExtractFrom := finder replacements.
+	replacements := finder replacements.
 		
-	self assert: 1 equals: methodsToExtractFrom size.
-	replacement := methodsToExtractFrom first.
-	self assert: (4 to: 21) equals: replacement asSourceCodeInterval.
-	self assert: (replacement isOf: sourceMethod).
+	self assert: 1 equals: replacements size.
+	self 
+		assertAnyReplacementOf: replacements 
+		isOfSourceMethodAndHasInterval: (4 to: 21).
 ! !
 
-!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 1/Dec/2025, 8:56:00 pm (UTC)'!
+!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'JEC 14/Apr/2026, 9:35:57 pm (UTC)'!
 test28FindsRepeatedBlocks
 
-	| sourceMethodName finder sourceMethod intervalToExtract newMessage methodsToExtractFrom replacement |
+	| replacements |
 
-	sourceMethodName := classToRefactor compile: 'm1 [self m1]. [self m1]'.
+	self 
+		compile: 'm1 [self m1]. [self m1]' 
+		andFind: (4 to: 12).
 	
-	sourceMethod := (classToRefactor >> sourceMethodName) asMethodReference.
-	intervalToExtract := (4 to: 12) asSourceCodeInterval.
-	newMessage := Message selector: #m2.
-	finder := ExtractMethodReplacementsFinder ofCodeIn: intervalToExtract at: sourceMethod to: newMessage. 
-	finder value.
-	
-	methodsToExtractFrom := finder replacements.
+	replacements := finder replacements.
 		
-	self assert: 2 equals: methodsToExtractFrom size.
-	replacement := methodsToExtractFrom first.
-	self assert: (4 to: 12) equals: replacement asSourceCodeInterval.
-	self assert: (replacement isOf: sourceMethod).
+	self assert: 2 equals: replacements size.
+	self 
+		assertAnyReplacementOf: replacements 
+		isOfSourceMethodAndHasInterval: (4 to: 12).
+	self 
+		assertAnyReplacementOf: replacements 
+		isOfSourceMethodAndHasInterval: (15 to: 23)! !
 
-	replacement := methodsToExtractFrom second.
-	self assert: (15 to: 23) equals: replacement asSourceCodeInterval.
-	self assert: (replacement isOf: sourceMethod).
-! !
-
-!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 21/Sep/2025, 8:33:34 pm (UTC)'!
+!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'JEC 14/Mar/2026, 4:47:04 pm (UTC)'!
 test29DoesNotFailWithUnnecesaryDot
 
-	| sourceMethodName finder sourceMethod intervalToExtract newMessage |
+	| sourceMethodName intervalToExtract newMessage |
 
 	sourceMethodName := classToRefactor compile: 'm1. self m2'.
 	
@@ -26972,10 +26888,10 @@ test29DoesNotFailWithUnnecesaryDot
 		shouldnt: [ finder value ] 
 		raise: Error! !
 
-!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 1/Dec/2025, 10:11:39 pm (UTC)'!
+!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'JEC 14/Mar/2026, 4:47:04 pm (UTC)'!
 test30DoesNotFailWhenLookingForABlockEquivalentToAMethod
 
-	| sourceMethodName finder sourceMethod intervalToExtract newMessage |
+	| sourceMethodName intervalToExtract newMessage |
 
 	sourceMethodName := classToRefactor compile: 'm1. [10 factorial]'.
 	classToRefactor compile: 'm2. 10 factorial'.
@@ -26988,6 +26904,824 @@ test30DoesNotFailWhenLookingForABlockEquivalentToAMethod
 	self 
 		shouldnt: [ finder value ] 
 		raise: Error! !
+
+!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'JEC 14/Apr/2026, 9:36:05 pm (UTC)'!
+test31FindsReturningNodes
+
+	| replacements |
+	
+	self 
+		compile: 'm1 ^ 1' 
+		andFind: (4 to: 6).
+	
+	replacements := finder replacements.
+	
+	self assert: 1 equals: replacements size.
+	self 
+		assertAnyReplacementOf: replacements 
+		isOfSourceMethodAndHasInterval: (4 to: 6).! !
+
+!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'JEC 14/Apr/2026, 9:36:23 pm (UTC)'!
+test32FindsRepeatedReturningNodes
+
+	| replacements |
+	
+	self 
+		compile: 'm1 [ ^ 1 ]. [ ^ 1 ]' 
+		andFind: (6 to: 8).
+	
+	replacements := finder replacements.
+	
+	self assert: 2 equals: replacements size.
+	self 
+		assertAnyReplacementOf: replacements 
+		isOfSourceMethodAndHasInterval: (6 to: 8).
+	self 
+		assertAnyReplacementOf: replacements 
+		isOfSourceMethodAndHasInterval: (15 to: 17).! !
+
+!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'JEC 14/Apr/2026, 9:36:43 pm (UTC)'!
+test33FindRepetitionsInAPartiallyExtractedCascadeCode
+
+	| replacements |
+	
+	self 
+		compile: 'm1 self value; value; value. self value; value; value.' 
+		andFind: (4 to: 20).
+	
+	replacements := finder replacements.
+	
+	self assert: 2 equals: replacements size.
+	self 
+		assertAnyReplacementOf: replacements 
+		isOfSourceMethodAndHasInterval: (4 to: 20).
+	self 
+		assertAnyReplacementOf: replacements 
+		isOfSourceMethodAndHasInterval: (30 to: 46)! !
+
+!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'JEC 14/Apr/2026, 9:36:52 pm (UTC)'!
+test34_FindsParameterizableReplacements
+
+	| paramReplacements |
+	
+	self 
+		compile: 'm1 self foo: 10. self foo: self' 
+		andFind: (4 to: 15).
+	
+	paramReplacements := finder parameterizableReplacements.
+	
+	self assert: 1 equals: paramReplacements size.
+	self 
+		assertAnyParamReplacementOf: paramReplacements 
+		hasInterval: (18 to: 31) 
+		hasParamsIntervals: { 28 to: 31 } 
+		andIsOf: sourceMethod! !
+
+!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'JEC 14/Apr/2026, 9:37:09 pm (UTC)'!
+test35_CanMakeParameterizedReplacementsToBeReplacements
+
+	| replacements |
+	
+	self 
+		compile: 'm1 self foo: 10. self foo: self' 
+		andFind: (4 to: 15).
+	
+	self acceptParamReplacementsTo: (Message selector: #m2:).
+	
+	replacements := finder replacements.
+	self assert: 2 equals: replacements size.
+
+	self 
+		assertAnyReplacementOf: replacements 
+		hasInterval: (18 to: 31)
+		isOf: sourceMethod
+		andHasEqualParamsInOrder: { 'self' }
+		withIntervals: { 28 to: 31 }.
+	
+	self 
+		assertAnyReplacementOf: replacements 
+		hasInterval: (4 to: 15)
+		isOf: sourceMethod
+		andHasEqualParamsInOrder: { '10' }
+		withIntervals: { 14 to: 15 }.! !
+
+!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'JEC 14/Apr/2026, 9:37:29 pm (UTC)'!
+test36_WhenHavingReplacementsAlongWithParameterizedReplacements_ConvertsAllParameterizedToReplacements
+
+	| replacements |
+	
+	self 
+		compile: 'm1 self foo: 10. self foo: self. self foo: 10' 
+		andFind: (4 to: 15).
+	
+	self acceptParamReplacementsTo: (Message selector: #m2:).
+	
+	replacements := finder replacements.
+	self assert: 3 equals: replacements size.
+		
+	self 
+		assertAnyReplacementOf: replacements 
+		hasInterval: (18 to: 31) 
+		isOf: sourceMethod
+		andHasEqualParamsInOrder: { 'self' }
+		withIntervals: { 28 to: 31 }.
+	
+	self 
+		assertAnyReplacementOf: replacements 
+		hasInterval: (4 to: 15) 
+		isOf: sourceMethod
+		andHasEqualParamsInOrder: { '10' }
+		withIntervals: { 14 to: 15 }.
+		
+	self 
+		assertAnyReplacementOf: replacements 
+		hasInterval: (34 to: 45)
+		isOf: sourceMethod
+		andHasEqualParamsInOrder: { '10' }
+		withIntervals: { 44 to: 45 }.! !
+
+!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'JEC 14/Apr/2026, 9:37:45 pm (UTC)'!
+test37_WhenExtractingMultipleLines_AndHaveParamReplacementsWithSameParamArgument_ConvertsAllToReplacements
+
+	| sourceCode replacements |
+	
+	sourceCode := 'm1 
+		self foo: 10. 
+		self foo: 10.
+		 
+		self foo: 10.
+		self foo: 20.
+		
+		self foo: 10.
+		self foo: ''b''.'.
+	self compile: sourceCode andFind: (7 to: 35).
+	
+	self acceptParamReplacementsTo: (Message selector: #k1:).
+	
+	replacements := finder replacements.
+	self assert: 3 equals: replacements size.
+	self 
+		assertAnyReplacementOf: replacements 
+		hasInterval: (44 to: 71) 
+		isOf: sourceMethod
+		andHasEqualParamsInOrder: { '20' }
+		withIntervals: { 70 to: 71 }.
+	
+	self 
+		assertAnyReplacementOf: replacements 
+		hasInterval: (79 to: 107)
+		isOf: sourceMethod
+		andHasEqualParamsInOrder: { '''b''' }
+		withIntervals: { 105 to: 107 }.
+		
+	self 
+		assertAnyReplacementOf: replacements 
+		hasInterval: (7 to: 35) 
+		isOf: sourceMethod
+		andHasEqualParamsInOrder: { '10' }
+		withIntervals: { 34 to: 35 }.! !
+
+!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'JEC 14/Apr/2026, 9:37:57 pm (UTC)'!
+test38_WhenExtractingMultipleLines_AndParamReplacementsHaveDifferentParamArguments_ConvertsAllToReplacements
+
+	| sourceCode replacements |
+	
+	sourceCode := 'm1 
+		self foo: 10. 
+		self foo: 10.
+		 
+		self foo: 10.
+		self foo: 20.
+		
+		self foo: ''a''.
+		self foo: 10.'.
+	self compile: sourceCode andFind: (7 to: 35).
+	
+	self acceptParamReplacementsTo: (Message selector: #k1:k2:).
+	
+	replacements := finder replacements.
+	self assert: 3 equals: replacements size.
+	self 
+		assertAnyReplacementOf: replacements 
+		hasInterval: (44 to: 71) 
+		isOf: sourceMethod
+		andHasEqualParamsInOrder: { '10' . '20' }
+		withIntervals: { 54 to: 55 . 70 to: 71 }.
+	
+	self 
+		assertAnyReplacementOf: replacements 
+		hasInterval: (79 to: 107)
+		isOf: sourceMethod
+		andHasEqualParamsInOrder: { '''a''' . '10' }
+		withIntervals: { 89 to: 91 . 106 to: 107 }.
+		
+	self 
+		assertAnyReplacementOf: replacements 
+		hasInterval: (7 to: 35) 
+		isOf: sourceMethod
+		andHasEqualParamsInOrder: { '10' . '10' }
+		withIntervals: { 17 to: 18 . 34 to: 35 }.! !
+
+!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'JEC 14/Apr/2026, 9:38:10 pm (UTC)'!
+test39_WhenExtractingMultipleLines_AndParamReplacementsHaveAllDifferentParamArguments_ConvertsAllToReplacements
+
+	| replacements sourceCode |
+	
+	sourceCode := 'm1 
+		self foo: 10. 
+		self foo: 10.
+		 
+		self foo: 30.
+		self foo: 20.
+		
+		self foo: ''a''.
+		self foo: ''b''.'.
+	self compile: sourceCode andFind: (7 to: 35).
+	
+	self acceptParamReplacementsTo: (Message selector: #k1:k2:).
+	
+	replacements := finder replacements.
+	self assert: 3 equals: replacements size.
+	self 
+		assertAnyReplacementOf: replacements 
+		hasInterval: (44 to: 71) 
+		isOf: sourceMethod
+		andHasEqualParamsInOrder: { '30' . '20' }
+		withIntervals: { 54 to: 55 . 70 to: 71 }.
+	
+	self 
+		assertAnyReplacementOf: replacements 
+		hasInterval: (79 to: 108)
+		isOf: sourceMethod
+		andHasEqualParamsInOrder: { '''a''' .  '''b''' }
+		withIntervals: { 89 to: 91 . 106 to: 108 }.
+		
+	self 
+		assertAnyReplacementOf: replacements 
+		hasInterval: (7 to: 35) 
+		isOf: sourceMethod
+		andHasEqualParamsInOrder: { '10' . '10' }
+		withIntervals: { 17 to: 18 . 34 to: 35 }.! !
+
+!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'JEC 14/Apr/2026, 9:38:22 pm (UTC)'!
+test40_WhenExtractingMultipleLines_AndOnlyOneParamReplacementsHaveAllDifferentParamArguments_ConvertsAllToReplacements
+
+	| sourceCode replacements |
+	
+	sourceCode := 'm1 
+		self foo: 10. 
+		self foo: 10.
+		 
+		self foo: ''a''.
+		self foo: ''b''.
+		
+		self foo: 10.
+		self foo: 10.'.
+	self compile: sourceCode andFind: (7 to: 35).
+	
+	self acceptParamReplacementsTo: (Message selector: #k1:k2:).
+	
+	replacements := finder replacements.
+	self assert: 3 equals: replacements size.
+	self 
+		assertAnyReplacementOf: replacements 
+		hasInterval: (44 to: 73) 
+		isOf: sourceMethod
+		andHasEqualParamsInOrder: { '''a''' .  '''b''' }
+		withIntervals: { 54 to: 56 . 71 to: 73 }.
+		
+	self 
+		assertAnyReplacementOf: replacements 
+		hasInterval: (7 to: 35) 
+		isOf: sourceMethod
+		andHasEqualParamsInOrder: { '10' . '10' }
+		withIntervals: { 17 to: 18 . 34 to: 35 }.
+	
+	self 
+		assertAnyReplacementOf: replacements 
+		hasInterval: (81 to: 108)
+		isOf: sourceMethod
+		andHasEqualParamsInOrder: { '10' . '10' }
+		withIntervals: { 91 to: 92 . 107 to: 108 }.! !
+
+!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'JEC 14/Apr/2026, 9:38:31 pm (UTC)'!
+test41_CannotFindRecursiveMethodsAsParameterizable
+
+	| paramReplacements |
+	
+	self 
+		compile: 'm1 self foo: (self foo: 1). self foo: 2' 
+		andFind: (29 to: 39).
+	
+	paramReplacements := finder parameterizableReplacements.
+	
+	self assert: paramReplacements size equals: 1.
+	
+	self 
+		assertAnyParamReplacementOf: paramReplacements
+		hasInterval: (4 to: 26)
+		hasParamsIntervals: { 14 to: 26 }
+		andIsOf: sourceMethod! !
+
+!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'JEC 14/Apr/2026, 9:38:38 pm (UTC)'!
+test42_CannotFindArgumentsOfExtractedCodeAsParameterizable
+
+	| paramReplacements |
+	
+	self 
+		compile: 'm1 self foo: (self foo: 1). self foo: 2' 
+		andFind: (4 to: 26).
+	
+	paramReplacements := finder parameterizableReplacements.
+	
+	self assert: 1 equals: paramReplacements size.
+	
+	self 
+		assertAnyParamReplacementOf: paramReplacements
+		hasInterval: (29 to: 39)
+		hasParamsIntervals: { 38 to: 39 } 
+		andIsOf: sourceMethod! !
+
+!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'JEC 14/Apr/2026, 9:38:47 pm (UTC)'!
+test43_CannotFindRecursiveCodeOfExtractedCodeAsParameterizable
+
+	| paramReplacements |
+
+	self 
+		compile: 'm1 self foo: (self foo: 1). self foo: 2' 
+		andFind: (15 to: 25).
+	
+	paramReplacements := finder parameterizableReplacements.
+	
+	self assert: 1 equals: paramReplacements size.
+
+	self 
+		assertAnyParamReplacementOf: paramReplacements
+		hasInterval: (29 to: 39)
+		hasParamsIntervals: { 38 to: 39 }
+		andIsOf: sourceMethod! !
+
+!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'JEC 15/Apr/2026, 3:41:15 pm (UTC)'!
+test44_CanExtractMethodWithATempVarAsParameterizableCode
+
+	| replacements sourceCode |
+	
+	sourceCode := 'm1 
+		| a |
+		a := 10.
+		self kk: a kk: [ ^ 1 ].
+		self kk: 1 kk: 2.
+		^ a'.
+	self 
+		compile: sourceCode 
+		andFind: (26 to: 47)
+		to: (Message selector: #m2: arguments: #('a')).
+	
+	self acceptParamReplacementsTo: (Message selector: #k1:k2:).
+	
+	replacements := finder replacements.
+	self assert: 2 equals: replacements size.
+	self 
+		assertAnyReplacementOf: replacements 
+		hasInterval: (52 to: 67) 
+		isOf: sourceMethod
+		andHasEqualParamsInOrder: { '1' . '2' }
+		withIntervals: { 61 to: 61 . 67 to: 67 }.
+		
+	self 
+		assertAnyReplacementOf: replacements 
+		hasInterval: (26 to: 47) 
+		isOf: sourceMethod
+		andHasEqualParamsInOrder: { 'a' .  '[ ^ 1 ]' }
+		withIntervals: { 35 to: 35 . 41 to: 47 }.! !
+
+!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'JEC 15/Apr/2026, 3:41:07 pm (UTC)'!
+test45_CanExtractMethodWithATempVarAsParameterizableCodeInDifferentOrder
+
+	| replacements sourceCode |
+	
+	sourceCode := 'm1 
+		| a |
+		a := 10.
+		self kk: [ ^ 1 ] kk: a.
+		self kk: 1 kk: 2.
+		^ a'.
+	self 
+		compile: sourceCode 
+		andFind: (26 to: 47)
+		to: (Message selector: #m2: arguments: #('a')).
+	
+	self acceptParamReplacementsTo: (Message selector: #k1:k2:).
+	
+	replacements := finder replacements.
+	self assert: 2 equals: replacements size.
+	self 
+		assertAnyReplacementOf: replacements 
+		hasInterval: (52 to: 67) 
+		isOf: sourceMethod
+		andHasEqualParamsInOrder: { '1' . '2' }
+		withIntervals: { 61 to: 61 . 67 to: 67 }.
+		
+	self 
+		assertAnyReplacementOf: replacements 
+		hasInterval: (26 to: 47) 
+		isOf: sourceMethod
+		andHasEqualParamsInOrder: { '[ ^ 1 ]' . 'a' }
+		withIntervals: { 35 to: 41 . 47 to: 47 }.! !
+
+!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'JEC 15/Apr/2026, 3:41:22 pm (UTC)'!
+test46_CanExtractMethodWithParameterizableCode_HavingParameterizableTempVarNotFoundByTheFinder
+	
+	"This case is when extracting a piece of code with a tempVar that is not taken as a parameteriazable code 
+	by the finder but it must be parameterized (the way it worked)"
+
+	| sourceCode replacements |
+	
+	sourceCode := 'm1 
+		| a |
+		a := 10.
+		self kk: a kk: [ ^ 1 ].
+		self kk: a kk: 2.
+		^ a'.
+	self 
+		compile: sourceCode 
+		andFind: (26 to: 47)
+		to: (Message selector: #m2: arguments: #('a')).
+	
+	self 
+		acceptParamReplacementsWithNodesToParameterized: {self tempVariableNodeNamed: 'a'}
+		to: (Message selector: #k1:k2:).
+	
+	"Pay attention to the param intervals, the only interval here is for the parameterizable node found and not
+	the variable"
+	replacements := finder replacements.
+	self assert: 2 equals: replacements size.
+	self 
+		assertAnyReplacementOf: replacements 
+		hasInterval: (52 to: 67) 
+		isOf: sourceMethod
+		andHasEqualParamsInOrder: { 'a' . '2' }
+		withIntervals: { 67 to: 67 }.
+		
+	self 
+		assertAnyReplacementOf: replacements 
+		hasInterval: (26 to: 47) 
+		isOf: sourceMethod
+		andHasEqualParamsInOrder: { 'a' . '[ ^ 1 ]' }
+		withIntervals: { 41 to: 47 }.! !
+
+!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'JEC 15/Apr/2026, 3:41:27 pm (UTC)'!
+test47_WhenAParameterizableTempVarFoundOutsideTheFinder_TheReplacementKeepsTheOrderOrTheParameterizableCode
+
+	| sourceCode replacements |
+	
+	sourceCode := 'm1 
+		| a |
+		a := 10.
+		self kk: [ ^ 1 ] kk: a.
+		self kk: 2 kk: a.
+		^ a'.
+	self 
+		compile: sourceCode 
+		andFind: (26 to: 47)
+		to: (Message selector: #m2: arguments: #('a')).
+	
+	self 
+		acceptParamReplacementsWithNodesToParameterized: {self tempVariableNodeNamed: 'a'}
+		to: (Message selector: #k1:k2:).
+	
+	"Pay attention to the param intervals, the only interval here is for the parameterizable node found and not
+	the variable"
+	replacements := finder replacements.
+	self assert: 2 equals: replacements size.
+	self 
+		assertAnyReplacementOf: replacements 
+		hasInterval: (52 to: 67) 
+		isOf: sourceMethod
+		andHasEqualParamsInOrder: { '2' . 'a' }
+		withIntervals: { 61 to: 61 }.
+	self 
+		assertAnyReplacementOf: replacements 
+		hasInterval: (26 to: 47) 
+		isOf: sourceMethod
+		andHasEqualParamsInOrder: { '[ ^ 1 ]' . 'a' }
+		withIntervals: { 35 to: 41 }.! !
+
+!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'JEC 27/Mar/2026, 12:46:49 am (UTC)'!
+test48_CannotExtractMethodWithParameterizableCode_WhenATempVarIsParameterizableMultipleTimes
+	
+	self should: [
+		| sourceCode |
+	
+		sourceCode := 'm1 
+			| a |
+			a := 10.
+			self qq: a qq: 5 qq: 10.
+			self qq: 1 qq: a qq: a.
+			^ a'.
+		self 
+			compile: sourceCode 
+			andFind: (26 to: 51)
+			to: (Message selector: #m2: arguments: #('a')).
+		
+		self 
+			acceptParamReplacementsWithNodesToParameterized: {self tempVariableNodeNamed: 'a'}
+			to: (Message selector: #k1:k2:k3:) ]
+		raise: Error
+		withMessageText: ExtractMethodReplacementsFinder cannotApplyTheRefactoringDueToDuplicateTempVarErrorMessage.
+	
+	self deny: (classToRefactor includesSelector: #m2).
+	self deny: (classToRefactor includesSelector: #k1:k2:k3:).! !
+
+!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'JEC 15/Apr/2026, 3:48:34 pm (UTC)'!
+test49_FindsParameterizableCodeInOtherClassMethods
+
+	| replacements |	
+
+	classToRefactor compile: 'm1b self foo: 1 foo: 1'.	
+	self 
+		compile: 'm1 self foo: 1 foo: 9' 
+		andFind: (4 to: 21).
+	
+	self acceptParamReplacementsTo: (Message selector: #m2:).
+	
+	replacements := finder replacements.
+	self assert: replacements size equals: 2.
+	self 
+		assertAnyReplacementOf: replacements 
+		hasInterval: (5 to: 22) 
+		isOf: (classToRefactor >> #m1b) asMethodReference
+		andHasEqualParamsInOrder: { ' 1' }
+		withIntervals: { 21 to: 22 }.
+		
+	self 
+		assertAnyReplacementOf: replacements 
+		hasInterval: (4 to: 21) 
+		isOf: sourceMethod
+		andHasEqualParamsInOrder: { ' 9' }
+		withIntervals: { 20 to: 21 }.! !
+
+!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'JEC 15/Apr/2026, 3:48:42 pm (UTC)'!
+test50_FindsParameterizableCodeInSubclassesMethods
+
+	| replacements subclassToRefactor |
+	classToRefactor compile: 'm1b self foo: 1 foo: 1'.
+	subclassToRefactor := self createClassNamed: self subclassToRefactorName subclassOf: classToRefactor.
+	subclassToRefactor compile: 'm3 self foo: 1 foo: 5'.
+	self 
+		compile: 'm1 self foo: 1 foo: 9' 
+		andFind: (4 to: 21).
+	
+	self acceptParamReplacementsTo: (Message selector: #m2:).
+	
+	replacements := finder replacements.
+	self assert: replacements size equals: 3.
+	self 
+		assertAnyReplacementOf: replacements 
+		hasInterval: (5 to: 22) 
+		isOf: (classToRefactor >> #m1b) asMethodReference
+		andHasEqualParamsInOrder: { ' 1' }
+		withIntervals: { 21 to: 22 }.
+	
+	self 
+		assertAnyReplacementOf: replacements 
+		hasInterval: (4 to: 21) 
+		isOf: (subclassToRefactor >> #m3) asMethodReference
+		andHasEqualParamsInOrder: { ' 5' }
+		withIntervals: { 20 to: 21 }.
+		
+	self 
+		assertAnyReplacementOf: replacements 
+		hasInterval: (4 to: 21) 
+		isOf: sourceMethod
+		andHasEqualParamsInOrder: { ' 9' }
+		withIntervals: { 20 to: 21 }.! !
+
+!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'JEC 14/Apr/2026, 9:40:22 pm (UTC)'!
+test51_WhenFindingParameterizableCode_AvoidsReplacementsIntervals
+
+	"When extracting the first foo:10 foo:10, founds the second foo:10... as a replacement. 
+	Then, the ParameterizableNodesReplacement will find as a parameterizable code foo:10 . foo: 'a'. 
+	But, as foo:10 was part of the second replacement and, because of that was never added as a 
+	parameterizableReplacement and showing no parameterizable code. Making it a weird behaviour."
+
+	| sourceCode replacements paramReplacements |
+	
+	sourceCode := 'm1 
+		self foo: 10. 
+		self foo: 10. 
+		
+		self foo: 10. 
+		self foo: 10.
+		
+		self foo: ''a''.
+		self foo: ''b''.'.
+	self compile: sourceCode andFind: (7 to: 35).
+	
+	replacements := finder replacements.
+	self assert: 2 equals: replacements size.
+	self 
+		assertAnyReplacementOf: replacements 
+		isOfSourceMethodAndHasInterval: (7 to: 35).
+	self 
+		assertAnyReplacementOf: replacements 
+		isOfSourceMethodAndHasInterval: (44 to: 72).
+		
+	paramReplacements := finder parameterizableReplacements.
+	self assert: 1 equals: paramReplacements size.
+	self 
+		assertAnyParamReplacementOf: paramReplacements 
+		hasInterval: (80 to: 109) 
+		hasParamsIntervals: { 90 to: 92 . 107 to: 109 } 
+		andIsOf: sourceMethod! !
+
+!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'JEC 14/Apr/2026, 9:18:30 pm (UTC)'!
+test52_CanFindReplacementsInTwoEqualMethodsWithDifferentSelectors
+
+	"This was an edge case. Up to now, both CompileMethod of these methods are equal because #= 
+	is not comparing the selector, bringing a weird behaviour in the ExtractMethod (not finding the 
+	not extracted method as replacement)"
+
+	| sourceCode replacements |
+	
+	sourceCode := '
+
+	self foo: 90.
+	self foo: 22.
+	self foo: 90.
+	self foo: 90.'.
+	
+	classToRefactor compile: #m11 , sourceCode.	
+	self 
+		compile: #m1 , sourceCode 
+		andFind: (6 to: 32).
+
+	replacements := finder replacements.
+	self assert: 2 equals: replacements size.
+	self 
+		assertAnyReplacementOf: replacements 
+		isOfSourceMethodAndHasInterval:(6 to: 32).
+	self
+		assertAnyReplacementOf: replacements 
+		hasInterval: (7 to: 33)
+		andIsOf: (classToRefactor >> #m11) asMethodReference.! !
+
+!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'JEC 14/Apr/2026, 9:20:49 pm (UTC)'!
+test53_CanFindParameterizableReplacementsInTwoEqualMethodsWithDifferentSelectors
+
+	"This was an edge case. Up to now, both CompileMethod of these methods are equal because #= 
+	is not comparing the selector, bringing a weird behaviour in the ExtractMethod (not finding the 
+	not extracted method as replacement)"
+
+	| sourceCode paramReplacements |
+	
+	sourceCode := '
+
+	self foo: 90.
+	self foo: 22.
+	self foo: 90.
+	self foo: 90.'.
+	
+	classToRefactor compile: #m11 , sourceCode.	
+	self 
+		compile: #m1 , sourceCode 
+		andFind: (6 to: 32).
+
+	paramReplacements := finder parameterizableReplacements.
+	self assert: paramReplacements size equals: 2.
+	self 
+		assertAnyParamReplacementOf: paramReplacements 
+		hasInterval: (36 to: 62) 
+		hasParamsIntervals: { 61 to: 62 } 
+		andIsOf: sourceMethod.
+	self 
+		assertAnyParamReplacementOf: paramReplacements 
+		hasInterval: (37 to: 63) 
+		hasParamsIntervals: { 62 to: 63 } 
+		andIsOf: (classToRefactor>>#m11) methodReference.
+	! !
+
+!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'JEC 14/Apr/2026, 9:40:48 pm (UTC)'!
+test54_CanFindParameterizableReplacementsOfMultipleWhenReceiversAreEquivalent
+	
+	| sourceCode paramReplacements |
+	
+	classToRefactor addInstVarName: 'instVarCollection'.
+	sourceCode := 'm1
+	| a b c d aCollection |
+	aCollection := OrderedCollection new.
+	a := aCollection inject: 0 into: [:acc :each | acc + each].
+	b := instVarCollection inject: 1 into: [:acc :each | acc * each].
+	c := self inject: 1 into: [:acc :each | acc ** each].
+	d := undeclaredVar inject: 1 into: [:acc :each | acc - each].
+	^ a + b + c + d'.
+	
+	self 
+		compile: sourceCode 
+		andFind: (74 to: 126)
+		to: (Message selector: #k1:k2:k3: arguments: #('aCollection' 'a' 'b')).
+
+	paramReplacements := finder parameterizableReplacements.
+	self assert: paramReplacements size equals: 3.
+	self 
+		assertAnyParamReplacementOf: paramReplacements 
+		hasInterval: (135 to: 193) 
+		hasParamsIntervals: { 135 to: 151 . 161 to: 161 . 169 to: 193 }  
+		andIsOf: sourceMethod.
+	self 
+		assertAnyParamReplacementOf: paramReplacements 
+		hasInterval: (202 to: 248) 
+		hasParamsIntervals: { 202 to: 205 . 215 to: 215 . 223 to: 248 } 
+		andIsOf: sourceMethod.
+	self 
+		assertAnyParamReplacementOf: paramReplacements 
+		hasInterval: (257 to: 311) 
+		hasParamsIntervals: { 257 to: 269 . 279 to: 279 . 287 to: 311 } 
+		andIsOf: sourceMethod! !
+
+!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'JEC 15/Apr/2026, 3:42:44 pm (UTC)'!
+test55_CanAcceptParameterizableReplacementWithEquivalentReceivers
+
+	| sourceCode replacements |
+	
+	classToRefactor addInstVarName: 'instVarCollection'.
+	sourceCode := 'm1
+	| a b c d aCollection |
+	aCollection := OrderedCollection new.
+	a := aCollection inject: 0 into: [:acc :each | acc + each].
+	b := instVarCollection inject: 1 into: [:acc :each | acc * each].
+	c := self inject: 1 into: [:acc :each | acc ** each].
+	d := undeclaredVar inject: 1 into: [:acc :each | acc - each].
+	^ a + b + c + d'.
+	
+	self 
+		compile: sourceCode 
+		andFind: (74 to: 126)
+		to: (Message selector: #k1:k2:k3: arguments: #('aCollection' 'a' 'b')).
+		
+	self acceptParamReplacementsTo: (Message selector: #k1:k2:k3: arguments: #('aCollection' 'a' 'b')).
+
+	replacements := finder replacements.
+	self assert: replacements size equals: 4.
+	self 
+		assertAnyReplacementOf: replacements 
+		hasInterval: (135 to: 193) 
+		isOf: sourceMethod 
+		andHasEqualParamsInOrder: { 'instVarCollection' . '1' . '[:acc :each | acc * each]' }
+		withIntervals: { 135 to: 151 . 161 to: 161 . 169 to: 193 }.
+	self 
+		assertAnyReplacementOf: replacements 
+		hasInterval: (202 to: 248) 
+		isOf: sourceMethod 
+		andHasEqualParamsInOrder: { 'self' . '1' . '[:acc :each | acc ** each]' }
+		withIntervals: { 202 to: 205 . 215 to: 215 . 223 to: 248 }.
+	self 
+		assertAnyReplacementOf: replacements 
+		hasInterval: (257 to: 311) 
+		isOf: sourceMethod 
+		andHasEqualParamsInOrder: { 'undeclaredVar' . '1' . '[:acc :each | acc - each]' }
+		withIntervals: { 257 to: 269 . 279 to: 279 . 287 to: 311 }.
+	self 
+		assertAnyReplacementOf: replacements 
+		hasInterval: (74 to: 126) 
+		isOf: sourceMethod 
+		andHasEqualParamsInOrder: { 'aCollection' . '0' . '[:acc :each | acc + each]' }
+		withIntervals: { 74 to: 84 . 94 to: 94 . 102 to: 126 }.! !
+
+!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'JEC 9/Apr/2026, 1:01:00 am (UTC)'!
+test56_CannotFindParameterizableReplacementWhenParametersHaveReturns
+
+	| sourceCode |
+	
+	sourceCode := 'findValidInSelfOr: aCollection
+	self do: [:elem | elem isValid ifTrue: [^each]].
+	aCollection do: [:group | group isValid ifTrue: [^each]].
+	^self notFound'.
+	
+	self 
+		compile: sourceCode 
+		andFind: (33 to: 79)
+		to: (Message selector: #k1:k2: arguments: #('a' 'b')).
+
+	self deny: finder hasFoundParameterizableReplacements.! !
+
+!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'JEC 9/Apr/2026, 1:02:22 am (UTC)'!
+test57_CannotFindParameterizableReplacementWhenParametersHaveAssignments
+
+	| sourceCode |
+	
+	sourceCode := 'findValidInSelfOr: aCollection
+	| valid |
+	self do: [:elem | elem isValid ifTrue: [ valid := each ]].
+	aCollection do: [:group | group isValid ifTrue: [ valid := each ]].
+	^valid'.
+	
+	self 
+		compile: sourceCode 
+		andFind: (44 to: 100)
+		to: (Message selector: #k1:k2: arguments: #('a' 'b')).
+
+	self deny: finder hasFoundParameterizableReplacements.! !
 
 !ExtractMethodFinderTest methodsFor: 'setup/teardown' stamp: 'HAW 2/Sep/2021, 10:02:12 pm (UTC)'!
 setUp
@@ -27011,6 +27745,87 @@ assert: expected equals: actual
 	and also used by Squeak."
 
 	super assert: actual equals: expected! !
+
+!ExtractMethodFinderTest methodsFor: 'assertions' stamp: 'JEC 14/Apr/2026, 9:20:28 pm (UTC)'!
+assertAnyParamReplacementOf: paramReplacements hasInterval: anInterval hasParamsIntervals: aCollectionOfParamIntervals andIsOf: aSourceMethod
+
+	self assert: (paramReplacements anySatisfy: [ :paramReplacement |
+		(paramReplacement isIntervalToExtract: anInterval)
+			and: [ (paramReplacement hasParameterizableIntervalsInOrder: aCollectionOfParamIntervals) 
+			and: [ paramReplacement isOf: aSourceMethod ] ] ])! !
+
+!ExtractMethodFinderTest methodsFor: 'assertions' stamp: 'JEC 14/Apr/2026, 9:15:56 pm (UTC)'!
+assertAnyReplacementOf: replacements hasInterval: anExpectedInterval andIsOf: aSourceMethod 
+
+	self 
+		assertAnyReplacementOf: replacements 
+		hasInterval: anExpectedInterval 
+		isOf: aSourceMethod 
+		andHasEqualParamsInOrder: #()
+		withIntervals: #()! !
+
+!ExtractMethodFinderTest methodsFor: 'assertions' stamp: 'JEC 14/Apr/2026, 9:14:34 pm (UTC)'!
+assertAnyReplacementOf: replacements 
+	hasInterval: anExpectedInterval 
+	isOf: aSourceMethod 
+	andHasEqualParamsInOrder: aCollectionOfParams
+	withIntervals: aCollectionOfParamIntervals
+
+	self assert: (replacements anySatisfy: [ :replacement |
+		replacement asSourceCodeInterval = anExpectedInterval
+			and: [ (replacement isOf: aSourceMethod)
+			and: [ (replacement hasEqualParams: aCollectionOfParams)
+			and: [ replacement areParameterizableNodesIntervals: aCollectionOfParamIntervals ] ] ] ])! !
+
+!ExtractMethodFinderTest methodsFor: 'assertions' stamp: 'JEC 14/Apr/2026, 9:17:10 pm (UTC)'!
+assertAnyReplacementOf: replacements isOfSourceMethodAndHasInterval: expectedInterval
+
+	self 
+		assertAnyReplacementOf: replacements 
+		hasInterval: expectedInterval
+		andIsOf: sourceMethod! !
+
+!ExtractMethodFinderTest methodsFor: 'excercising' stamp: 'JEC 14/Mar/2026, 7:02:07 pm (UTC)'!
+acceptParamReplacementsTo: aMessage
+
+	self acceptParamReplacementsWithNodesToParameterized: #() to: aMessage! !
+
+!ExtractMethodFinderTest methodsFor: 'excercising' stamp: 'JEC 14/Mar/2026, 4:46:28 pm (UTC)'!
+acceptParamReplacementsWithNodesToParameterized: nodesToBeParameterized to: aMessage
+
+	finder 
+		useParameterizedToChangeReplacements;
+		acceptParamReplacementsWithNodesToParameterized: nodesToBeParameterized
+			to: aMessage.! !
+
+!ExtractMethodFinderTest methodsFor: 'excercising' stamp: 'JEC 14/Mar/2026, 3:52:34 pm (UTC)'!
+compile: aSourceCode andFind: anInterval
+
+	self 
+		compile: aSourceCode
+		andFind: anInterval
+		to: (Message selector: #m2)! !
+
+!ExtractMethodFinderTest methodsFor: 'excercising' stamp: 'JEC 14/Mar/2026, 4:47:04 pm (UTC)'!
+compile: aSourceCode andFind: anInterval to: aMessage
+
+	| sourceMethodName |
+	
+	sourceMethodName := classToRefactor compile: aSourceCode.
+	
+	sourceMethod := (classToRefactor >> sourceMethodName) asMethodReference.
+	
+	finder := ExtractMethodReplacementsFinder 
+		ofCodeIn: anInterval asSourceCodeInterval 
+		at: sourceMethod 
+		to: aMessage. 
+
+	finder value.! !
+
+!ExtractMethodFinderTest methodsFor: 'excercising' stamp: 'JEC 14/Mar/2026, 10:33:53 pm (UTC)'!
+tempVariableNodeNamed: aName
+
+	^ (TempVariableNode named: aName) key: aName! !
 
 !ExtractToTemporaryFinderTest methodsFor: 'assertions' stamp: 'JEC 17/Jan/2026, 12:22:24 am (UTC)'!
 assertFinderIsEmpty
@@ -27161,6 +27976,753 @@ test010_CanFindAValidPieceOfCode
 	methodsToExtractFrom := finder replacements.
 	self assert: 1 equals: methodsToExtractFrom size.
 	self assert: (4 to: 5) equals: methodsToExtractFrom first asSourceCodeInterval.! !
+
+!ParameterizableNodesFinderTest methodsFor: 'assertions' stamp: 'JEC 24/Mar/2026, 4:25:49 pm (UTC)'!
+assert: parameterizableNodes areEquivalentToAll: expectedNodes parameterizing: nodesForParameterization
+
+	parameterizableNodes first
+		with: expectedNodes 
+		do: [ :parameterizableNode :expectedNode | 
+			self assert: (parameterizableNode equivalentTo: expectedNode key) ].
+	
+	expectedNodes do: [ :expectedNode | 
+		| expectedNodesIncluded |
+		
+		"If there are multiple nodes, the code interval in the parameterizableNodes is the union of all node intervals"
+		expectedNodesIncluded := (expectedNode value includesAllOf: parameterizableNodes second)
+			or: (parameterizableNodes second includesAllOf: expectedNode value).
+
+		self assert: expectedNodesIncluded ].
+	
+	self assert: parameterizableNodes third size equals: nodesForParameterization size.
+	
+	parameterizableNodes third 
+		with: nodesForParameterization 
+		do: [ :foundParamNode :expectedParamNode |
+			self assert: (foundParamNode key equivalentTo: expectedParamNode key).
+			
+			"Some nodes have a difference of an space in their range, because of the space"
+			self assert: (foundParamNode value includesAllOf: expectedParamNode value) ]! !
+
+!ParameterizableNodesFinderTest methodsFor: 'assertions' stamp: 'JEC 24/Mar/2026, 4:25:28 pm (UTC)'!
+assert: parameterizableNode isEquivalentTo: expectedNodes parameterizing: nodeForParameterization
+	
+	self 
+		assert: parameterizableNode 
+		areEquivalentToAll: { expectedNodes } 
+		parameterizing: nodeForParameterization! !
+
+!ParameterizableNodesFinderTest methodsFor: 'assertions' stamp: 'JEC 27/Jan/2026, 9:42:29 pm (UTC)'!
+assertHasOneParameterizableNode: parameterizableNodes
+
+	^ self assert: parameterizableNodes size equals: 1! !
+
+!ParameterizableNodesFinderTest methodsFor: 'tests' stamp: 'JEC 15/Mar/2026, 10:42:54 pm (UTC)'!
+test001_CannotFindAsParameterizableTheCodeUsedToStartTheSearch
+
+	| nodeToFind |
+
+	self compile: 'm1 self foo: 1.'.
+	nodeToFind := self parseNodeAt: 9.
+	
+	self findParameterizableNodesInSameMethodFromAll: { nodeToFind }.
+	
+	self deny: finder hasFoundParameterizableReplacements! !
+
+!ParameterizableNodesFinderTest methodsFor: 'tests' stamp: 'JEC 15/Mar/2026, 10:47:35 pm (UTC)'!
+test002_CannotFindParameterizableNodesWithEquivalentMessageNodes
+
+	| nodeToFind |
+
+	self compile: 'm1 self foo: 1. self foo: 1'.
+	nodeToFind := self parseNodeAt: 9.
+	
+	self findParameterizableNodesInSameMethodFromAll: { nodeToFind }.
+	
+	self deny: finder hasFoundParameterizableReplacements! !
+
+!ParameterizableNodesFinderTest methodsFor: 'tests' stamp: 'JEC 24/Mar/2026, 4:26:16 pm (UTC)'!
+test003_CanFindParameterizableNodesFromMessageNodesWithOneKeyword
+
+	| nodeToFind expectedNode parameterizableNodes nodesForParameterization |
+
+	self compile: 'm1 self foo: 1. self foo: 2'.
+	nodeToFind := self parseNodeAt: 9.
+	expectedNode := self parseNodeAt: 22.
+	nodesForParameterization := { self parseNodeAt: 27 }.
+	
+	self findParameterizableNodesInSameMethodFromAll: { nodeToFind }.
+	
+	parameterizableNodes := finder parameterizableNodes.
+	self assertHasOneParameterizableNode: parameterizableNodes.
+	self 
+		assert: parameterizableNodes first 
+		isEquivalentTo: expectedNode 
+		parameterizing: nodesForParameterization.! !
+
+!ParameterizableNodesFinderTest methodsFor: 'tests' stamp: 'JEC 24/Mar/2026, 4:26:35 pm (UTC)'!
+test004_CanFindParameterizableNodesFromParameterizableNodes
+
+	| nodeToFind expectedNode parameterizableNodes nodeForParameterization anotherNodeForParameterization |
+
+	self compile: 'm1 self foo: (self foo: 1). self foo: 2'.
+	nodeToFind := self parseNodeAt: 34.
+	expectedNode := self parseNodeAt: 9.
+	nodeForParameterization := self parseNodeAt: 20.
+	anotherNodeForParameterization := self parseNodeAt: 25.
+	
+	self findParameterizableNodesInSameMethodFromAll: { nodeToFind }.
+	
+	parameterizableNodes := finder parameterizableNodes.
+	self assert: parameterizableNodes size equals: 2.
+	self 
+		assert: parameterizableNodes first 
+		isEquivalentTo: expectedNode 
+		parameterizing: { nodeForParameterization }.
+	
+	self 
+		assert: parameterizableNodes second 
+		isEquivalentTo: nodeForParameterization
+		parameterizing: { anotherNodeForParameterization }.! !
+
+!ParameterizableNodesFinderTest methodsFor: 'tests' stamp: 'JEC 24/Mar/2026, 4:26:40 pm (UTC)'!
+test005_CanRecursivelyFindParameterizableNodes
+
+	| nodeToFind expectedNode parameterizableNodes nodesForParameterization |
+
+	self compile: 'm1 self bar: (self foo: 1). self foo: 2'.
+	nodeToFind := self parseNodeAt: 34.
+	expectedNode := self parseNodeAt: 20.
+	nodesForParameterization := { self parseNodeAt: 25 }.
+	
+	self findParameterizableNodesInSameMethodFromAll: { nodeToFind }.
+	
+	parameterizableNodes := finder parameterizableNodes.
+	self assertHasOneParameterizableNode: parameterizableNodes.
+	self 
+		assert: parameterizableNodes first 
+		isEquivalentTo: expectedNode 
+		parameterizing: nodesForParameterization! !
+
+!ParameterizableNodesFinderTest methodsFor: 'tests' stamp: 'JEC 24/Mar/2026, 4:26:45 pm (UTC)'!
+test006_MethodNodesWithMultipleKeywordsCanBeFoundAsParameterizable
+
+	| nodeToFind expectedNode parameterizableNodes nodesForParameterization |
+
+	self compile: 'm1 self foo: (self f: 10) bar: 10. self foo: 2 bar: 10'.
+	nodeToFind := self parseNodeAt: 41.
+	expectedNode := self parseNodeAt: 9.
+	nodesForParameterization := { self parseNodeAt: 20 }.
+	
+	self findParameterizableNodesInSameMethodFromAll: { nodeToFind }.
+	
+	parameterizableNodes := finder parameterizableNodes.
+	self assertHasOneParameterizableNode: parameterizableNodes.
+	self 
+		assert: parameterizableNodes first 
+		isEquivalentTo: expectedNode 
+		parameterizing: nodesForParameterization! !
+
+!ParameterizableNodesFinderTest methodsFor: 'tests' stamp: 'JEC 24/Mar/2026, 4:26:49 pm (UTC)'!
+test007_MethodNodesWithMultipleKeywordsCanBeFoundAsParameterizable
+
+	| nodeToFind expectedNode parameterizableNodes nodesForParameterization |
+
+	self compile: 'm1 self foo: 2 bar: 10. self foo: 2 bar: (self f: 10)'.
+	nodeToFind := self parseNodeAt: 30.
+	expectedNode := self parseNodeAt: 9.
+	nodesForParameterization := { self parseNodeAt: 21 }.
+	
+	self findParameterizableNodesInSameMethodFromAll: { nodeToFind }.
+	
+	parameterizableNodes := finder parameterizableNodes.
+	self assertHasOneParameterizableNode: parameterizableNodes.
+	self 
+		assert: parameterizableNodes first 
+		isEquivalentTo: expectedNode 
+		parameterizing: nodesForParameterization! !
+
+!ParameterizableNodesFinderTest methodsFor: 'tests' stamp: 'JEC 15/Mar/2026, 10:55:48 pm (UTC)'!
+test008_CannotFindParameterizableNodesFromEquivalentAssignmentNodes
+
+	| nodeToFind |
+
+	self compile: 'm1 | a b | a := self foo: 10. b := self foo: 10'.
+	nodeToFind := self parseNodeAt: 33.
+	
+	self findParameterizableNodesInSameMethodFromAll: { nodeToFind }.
+	
+	self deny: finder hasFoundParameterizableReplacements! !
+
+!ParameterizableNodesFinderTest methodsFor: 'tests' stamp: 'JEC 24/Mar/2026, 4:26:56 pm (UTC)'!
+test009_AssignmentNodesAreFoundAsParameterizableWhenTheyHaveParameterizableMethodNodes
+
+	| nodeToFind expectedNode parameterizableNodes nodesForParameterization |
+
+	self compile: 'm1 | a b | a := self foo: 10. b := self foo: 20'.
+	nodeToFind := self parseNodeAt: 33.
+	expectedNode := self parseNodeAt: 14.
+	nodesForParameterization := { self parseNodeAt: 27 }.
+	
+	self findParameterizableNodesInSameMethodFromAll: { nodeToFind }.
+	
+	parameterizableNodes := finder parameterizableNodes.
+	self assertHasOneParameterizableNode: parameterizableNodes.
+	self 
+		assert: parameterizableNodes first 
+		isEquivalentTo: expectedNode 
+		parameterizing: nodesForParameterization! !
+
+!ParameterizableNodesFinderTest methodsFor: 'tests' stamp: 'JEC 15/Mar/2026, 10:58:46 pm (UTC)'!
+test010_CannotFindParameterizableNodesFromLiteralNodes
+
+	| nodeToFind |
+
+	self compile: 'm1 10. 20'.
+	nodeToFind := self parseNodeAt: 4.
+	
+	self findParameterizableNodesInSameMethodFromAll: { nodeToFind }.
+	
+	self deny: finder hasFoundParameterizableReplacements! !
+
+!ParameterizableNodesFinderTest methodsFor: 'tests' stamp: 'JEC 15/Apr/2026, 12:16:00 am (UTC)'!
+test011_CannotFindParameterizableNodesFromAVariableNode
+
+	| nodeToFind |
+
+	self compile: 'm1 | a b | a. b'.
+	nodeToFind := self parseNodeAt: 12.
+	
+	self findParameterizableNodesInSameMethodFromAll: { nodeToFind }.
+	
+	self deny: finder hasFoundParameterizableReplacements! !
+
+!ParameterizableNodesFinderTest methodsFor: 'tests' stamp: 'JEC 15/Mar/2026, 10:59:30 pm (UTC)'!
+test012_CannotFindParameterizablesNodesFromArgumentsOfBinaryMessages
+
+	| nodeToFind |
+
+	self compile: 'm1 1 + 1 . 1 + 2'.
+	nodeToFind := self parseNodeAt: 6.
+	
+	self findParameterizableNodesInSameMethodFromAll: { nodeToFind }.
+	
+	self deny: finder hasFoundParameterizableReplacements! !
+
+!ParameterizableNodesFinderTest methodsFor: 'tests' stamp: 'JEC 15/Mar/2026, 11:00:21 pm (UTC)'!
+test013_CannotFindTheReceiverOfABinaryMessageAsParameterizable
+
+	| nodeToFind expectedNode nodesForParameterization |
+
+	self compile: 'm1 2 + 1 . self foo + 1'.
+	nodeToFind := self parseNodeAt: 17.
+	expectedNode := self parseNodeAt: 6.
+	nodesForParameterization := { self parseNodeAt: 4 }.
+	
+	self findParameterizableNodesInSameMethodFromAll: { nodeToFind }.
+	
+	self deny: finder hasFoundParameterizableReplacements! !
+
+!ParameterizableNodesFinderTest methodsFor: 'tests' stamp: 'JEC 15/Mar/2026, 11:08:09 pm (UTC)'!
+test015_CannotFindParameterizableNodesWhenThereAreMultipleEquivalentCodePieces
+
+	"This is an edge case that was throwing an unexpected exception"
+
+	| nodesToFind |
+
+	self compile: 'm1 10 factorial. 10 factorial. true ifTrue: [ 10 factorial. 10 factorial ]'.
+	nodesToFind := self parseNodesAtAll: { 7 . 21 }.
+	
+	self findParameterizableNodesInSameMethodFromAll: nodesToFind.
+	
+	self deny: finder hasFoundParameterizableReplacements! !
+
+!ParameterizableNodesFinderTest methodsFor: 'tests' stamp: 'JEC 24/Mar/2026, 4:27:06 pm (UTC)'!
+test016_CanFindAParameterizableNodeWhenIsRepeatedInTheCode
+
+	| nodeToFind expectedNode nodesForParameterization parameterizableNodes |
+
+	self compile: 'm1 self foo: 10. self foo: self'.
+	nodeToFind := self parseNodeAt: 9.
+	expectedNode := self parseNodeAt: 23.
+	nodesForParameterization := { self parseNodeAt: 28 }.
+	
+	self findParameterizableNodesInSameMethodFromAll: { nodeToFind }.
+	
+	parameterizableNodes := finder parameterizableNodes.
+	self assertHasOneParameterizableNode: parameterizableNodes.
+	self 
+		assert: parameterizableNodes first 
+		isEquivalentTo: expectedNode 
+		parameterizing: nodesForParameterization! !
+
+!ParameterizableNodesFinderTest methodsFor: 'tests' stamp: 'JEC 24/Mar/2026, 4:27:34 pm (UTC)'!
+test017_CanFindAListOfConsecutiveParameterizableNodes_WhenHavingARepeatedArgument
+
+	| nodesToFind expectedNodes nodesForParameterization parameterizableNodes |
+
+	self compile: 'm1 self foo: 1. self foo: 2. self foo: 1. self foo: 1'.
+	nodesToFind := self parseNodesAtAll: { 9 . 22 }.
+	expectedNodes := self parseNodesAtAll: { 35 . 48 }.
+	nodesForParameterization := { self parseNodeAt: 53 }.
+	
+	self findParameterizableNodesInSameMethodFromAll: nodesToFind.
+
+	parameterizableNodes := finder parameterizableNodes.
+	self assertHasOneParameterizableNode: parameterizableNodes.
+	self 
+		assert: parameterizableNodes first 
+		areEquivalentToAll: expectedNodes 
+		parameterizing: nodesForParameterization! !
+
+!ParameterizableNodesFinderTest methodsFor: 'tests' stamp: 'JEC 29/Mar/2026, 11:44:29 pm (UTC)'!
+test018_CanFindParameterizableNodesInADifferentMethodThanTheOneThatWasBeingExtracted
+
+	| nodesToFind expectedNodes nodesForParameterization parameterizableNodes |
+
+	self compile: 'm1 self foo: 1. self foo: 2. self foo: 1. self foo: 1'.
+	nodesToFind := self parseNodesAtAll: { 9 . 22 }.
+	expectedNodes := self parseNodesAtAll: { 22 . 35 }.
+	nodesForParameterization := self parseNodesAtAll: { 27 . 40 }.
+	
+	self findParameterizableNodesNotInSameMethodFromAll: nodesToFind.
+	
+	parameterizableNodes := finder parameterizableNodes.
+	self assertHasOneParameterizableNode: parameterizableNodes.
+	self 
+		assert: parameterizableNodes first 
+		areEquivalentToAll: expectedNodes 
+		parameterizing: nodesForParameterization! !
+
+!ParameterizableNodesFinderTest methodsFor: 'tests' stamp: 'JEC 30/Mar/2026, 2:40:47 am (UTC)'!
+test019_WhenSearchingMultipleParameterizableNodes_WillKeepTheFirstThatCanBeParameterizable
+
+	"This tests shows that extracting the first
+	self foo: 10.
+	self foo: 10.
+	will find as parameterizable
+	self foo: 10.
+	self foo: 'a'.
+	This is an expected behaviour because the NodeFinder does not have more information about what to extract"
+
+	| nodesToFind expectedNodes nodesForParameterization parameterizableNodes |
+
+	self compile: 'm1 
+		self foo: 10. 
+		self foo: 10. 
+		
+		self foo: 10. 
+		self foo: 10.
+		
+		self foo: ''a''.
+		self foo: ''b''.'.
+	nodesToFind := self parseNodesAtAll: { 12 . 29 }.
+	expectedNodes := self parseNodesAtAll: { 66 . 85 }.
+	nodesForParameterization := { self parseNodeAt: 90 }.
+	
+	self findParameterizableNodesInSameMethodFromAll: nodesToFind.
+	
+	parameterizableNodes := finder parameterizableNodes.
+	self assertHasOneParameterizableNode: parameterizableNodes.
+	self 
+		assert: parameterizableNodes first 
+		areEquivalentToAll: expectedNodes 
+		parameterizing: nodesForParameterization! !
+
+!ParameterizableNodesFinderTest methodsFor: 'tests' stamp: 'JEC 30/Mar/2026, 2:40:54 am (UTC)'!
+test020_WhenSearchingMultipleParameterizableNodes_WithRejectedIntervals_SkipsThemAndContinuesSearching
+
+	| nodesToFind expectedNodes nodesForParameterization parameterizableNodes |
+
+	self compile: 'm1 
+		self foo: 10. 
+		self foo: 10. 
+		
+		self foo: 10. 
+		self foo: 10.
+		
+		self foo: ''a''.
+		self foo: ''b''.'.
+	nodesToFind := self parseNodesAtAll: { 12 . 29 }.
+	expectedNodes := self parseNodesAtAll: { 85 . 102 }.
+	nodesForParameterization := { self parseNodeAt: 90 . self parseNodeAt: 107 }.
+	
+	self 
+		findParameterizableNodesInSameMethodFromAll: nodesToFind
+		rejectingIntervals: { 44 to: 72 }.
+	
+	parameterizableNodes := finder parameterizableNodes.
+	self assertHasOneParameterizableNode: parameterizableNodes.
+	self 
+		assert: parameterizableNodes first 
+		areEquivalentToAll: expectedNodes 
+		parameterizing: nodesForParameterization! !
+
+!ParameterizableNodesFinderTest methodsFor: 'tests' stamp: 'JEC 30/Mar/2026, 12:19:29 am (UTC)'!
+test021_CanHaveMultipleRejectedIntervals
+
+	| nodesToFind |
+
+	self compile: 'm1 
+		self foo: 10. 
+		self foo: 10. 
+		
+		self foo: 10. 
+		self foo: 10.
+		
+		self foo: ''a''.
+		self foo: ''b''.'.
+	nodesToFind := self parseNodesAtAll: { 12 . 29 }.
+	
+	self 
+		findParameterizableNodesInSameMethodFromAll: nodesToFind
+		rejectingIntervals: { 44 to: 72 . 80 to: 92 }.
+	
+	self deny: finder hasFoundParameterizableReplacements! !
+
+!ParameterizableNodesFinderTest methodsFor: 'tests' stamp: 'JEC 30/Mar/2026, 12:59:27 am (UTC)'!
+test022_CanHaveMultipleParameterizableNodes
+
+	| nodesToFind parameterizableNodes |
+
+	self compile: 'm1 
+		self foo: 10. 
+		self foo: 10. 
+		
+		self foo: 2. 
+		self foo: 3.
+		
+		self foo: ''a''.
+		self foo: ''b''.'.
+	nodesToFind := self parseNodesAtAll: { 12 . 29 }.
+	
+	self findParameterizableNodesInSameMethodFromAll: nodesToFind.
+	
+	parameterizableNodes := finder parameterizableNodes.
+	self assert: parameterizableNodes size equals: 2.
+	self 
+		assert: parameterizableNodes first 
+		areEquivalentToAll: (self parseNodesAtAll: { 49 . 65 }) 
+		parameterizing: { self parseNodeAt: 54 . self parseNodeAt: 70 }.
+	self 
+		assert: parameterizableNodes second 
+		areEquivalentToAll: (self parseNodesAtAll: { 83 . 100 }) 
+		parameterizing: { self parseNodeAt: 89 . self parseNodeAt: 105 }.! !
+
+!ParameterizableNodesFinderTest methodsFor: 'tests' stamp: 'JEC 30/Mar/2026, 2:41:44 am (UTC)'!
+test023_CanFindParameterizableCode_WhenSearchingWithRejectedIntervals
+
+	| parameterizableNodes |
+
+	self compile: 'm1 self foo: (self foo: 1). self foo: 2'.
+	
+	self 
+		findParameterizableNodesInSameMethodFromAll: { self parseNodeAt: 9 }
+		rejectingIntervals: { 4 to: 26 }.
+	
+	parameterizableNodes := finder parameterizableNodes.
+	self assert: parameterizableNodes size equals: 1.
+	self 
+		assert: parameterizableNodes first 
+		areEquivalentToAll: { self parseNodeAt: 34 }
+		parameterizing: { self parseNodeAt: 39 }! !
+
+!ParameterizableNodesFinderTest methodsFor: 'tests' stamp: 'JEC 7/Apr/2026, 8:16:38 pm (UTC)'!
+test024_WhenTheReceiverIsATempVarCanBeParameterizable
+
+	| parameterizableNodes |
+
+	self 
+		compile: 'm1: aCollection
+	| total product |
+	total := aCollection inject: 0 into: [:acc :each | acc + each].
+	product := aCollection inject: 1 into: [:acc :each | acc * each].
+	^total printString , '' - '' , product printString'
+		withSelector: #m1:.
+	
+	self findParameterizableNodesInSameMethodFromAll: { self parseNodeAt: 58 }.
+	
+	parameterizableNodes := finder parameterizableNodes.
+	self assert: parameterizableNodes size equals: 1.
+	self 
+		assert: parameterizableNodes first 
+		areEquivalentToAll: { self parseNodeAt: 125 }
+		parameterizing: { self parseNodeAt: 113 . self parseNodeAt: 133 . self parseNodeAt: 141 }! !
+
+!ParameterizableNodesFinderTest methodsFor: 'tests' stamp: 'JEC 7/Apr/2026, 8:17:15 pm (UTC)'!
+test025_WhenReceiversAreInstVars_WontBeParameterized
+
+	| parameterizableNodes |
+
+	classToRefactor addInstVarName: 'instVarCollection'.
+	self compile: 'm1
+	| total product |
+	total := instVarCollection inject: 0 into: [:acc :each | acc + each].
+	product := instVarCollection inject: 1 into: [:acc :each | acc * each].
+	^total printString , '' - '' , product printString'.
+	
+	self findParameterizableNodesInSameMethodFromAll: { self parseNodeAt: 51 }.
+	
+	parameterizableNodes := finder parameterizableNodes.
+	self assert: parameterizableNodes size equals: 1.
+	self 
+		assert: parameterizableNodes first 
+		areEquivalentToAll: { self parseNodeAt: 124 }
+		parameterizing: { self parseNodeAt: 132 . self parseNodeAt: 140 }! !
+
+!ParameterizableNodesFinderTest methodsFor: 'tests' stamp: 'JEC 7/Apr/2026, 8:18:17 pm (UTC)'!
+test026_WhenOneReceiverIsATempVarAndOthersAreDifferentKindOfVariables_AllWillBeParameterized
+
+	| parameterizableNodes |
+
+	classToRefactor addInstVarName: 'instVarCollection'.
+	self compile: 'm1
+	| a b c d aCollection |
+	aCollection := OrderedCollection new.
+	a := aCollection inject: 0 into: [:acc :each | acc + each].
+	b := instVarCollection inject: 1 into: [:acc :each | acc * each].
+	c := self inject: 1 into: [:acc :each | acc ** each].
+	d := undeclaredVar inject: 1 into: [:acc :each | acc - each].
+	^ a + b + c + d'.
+	
+	self findParameterizableNodesInSameMethodFromAll: { self parseNodeAt: 86 }.
+	
+	parameterizableNodes := finder parameterizableNodes.
+	self assert: parameterizableNodes size equals: 3.
+	self 
+		assert: parameterizableNodes first 
+		areEquivalentToAll: { self parseNodeAt: 153 }
+		parameterizing: { self parseNodeAt: 135 . self parseNodeAt: 161 . self parseNodeAt: 169 }.
+	self 
+		assert: parameterizableNodes second 
+		areEquivalentToAll: { self parseNodeAt: 207 }
+		parameterizing: { self parseNodeAt: 202 . self parseNodeAt: 215 . self parseNodeAt: 223 }.
+	self 
+		assert: parameterizableNodes third 
+		areEquivalentToAll: { self parseNodeAt: 271 }
+		parameterizing: { self parseNodeAt: 257 . self parseNodeAt: 279 . self parseNodeAt: 287 }! !
+
+!ParameterizableNodesFinderTest methodsFor: 'tests' stamp: 'JEC 7/Apr/2026, 8:19:10 pm (UTC)'!
+test027_WhenOneReceiversArePseudoVariablesAndInstVars_WontBeParameterized
+
+	| parameterizableNodes |
+
+	classToRefactor addInstVarName: 'instVarCollection'.
+	self compile: 'm1
+	| a b |
+	a := self inject: 0 into: [:acc :each | acc + each].
+	b := instVarCollection inject: 1 into: [:acc :each | acc * each].
+	^a + b'.
+	
+	self findParameterizableNodesInSameMethodFromAll: { self parseNodeAt: 24 }.
+	
+	parameterizableNodes := finder parameterizableNodes.
+	self assert: parameterizableNodes size equals: 1.
+	self 
+		assert: parameterizableNodes first 
+		areEquivalentToAll: { self parseNodeAt: 91 }
+		parameterizing: { self parseNodeAt: 99 . self parseNodeAt: 107 }! !
+
+!ParameterizableNodesFinderTest methodsFor: 'tests' stamp: 'JEC 7/Apr/2026, 8:20:24 pm (UTC)'!
+test028_WhenReceiversAreNonVariablesOrLiterals_TheyWontBeFoundAsParameterizable
+
+	self compile: 'm1
+	| a b c aCollection |
+	aCollection := OrderedCollection new.
+	a := aCollection inject: 0 into: [:acc :each | acc + each].
+	b := (OrderedCollection new add: 10; yourself) inject: 1 into: [:acc :each | acc * each].
+	c := #() inject: 1 into: [:acc :each | acc - each].
+	^a + b + c'.
+	
+	self findParameterizableNodesInSameMethodFromAll: { self parseNodeAt: 84 }.
+	
+	self deny: finder hasFoundParameterizableReplacements.! !
+
+!ParameterizableNodesFinderTest methodsFor: 'tests' stamp: 'JEC 7/Apr/2026, 8:21:39 pm (UTC)'!
+test029_WhenFindingMultiplesPiecesOfCode_AndReceiversAreNotEquivalents_TheyWontBeFoundAsParameterizable
+
+	classToRefactor addInstVarName: 'instVarCollection'.
+	self compile: 'm1
+	| a b c d aCollection |
+	aCollection := OrderedCollection new.
+	a := aCollection inject: 0 into: [:acc :each | acc + each].
+	b := instVarCollection inject: 1 into: [:acc :each | acc * each].
+	c := self inject: 1 into: [:acc :each | acc ^ each].
+	d := undefinedVar inject: 1 into: [:acc :each | acc - each].
+	^ a + b + c + d'.
+	
+	self findParameterizableNodesInSameMethodFromAll: { self parseNodeAt: 71 . self parseNodeAt: 132 }.
+	
+	self deny: finder hasFoundParameterizableReplacements.! !
+
+!ParameterizableNodesFinderTest methodsFor: 'tests' stamp: 'JEC 7/Apr/2026, 8:30:02 pm (UTC)'!
+test030_WhenFindingMultiplesPiecesOfCode_WhenReceiversAreEquivalentsCanBeFoundAsParameterizable
+
+	| parameterizableNodes |
+
+	classToRefactor addInstVarName: 'instVarCollection'.
+	self compile: 'm1
+	| a b c d aCollection |
+	aCollection := OrderedCollection new.
+	a := aCollection inject: 0 into: [:acc :each | acc + each].
+	b := instVarCollection inject: 1 into: [:acc :each | acc * each].
+	c := aCollection inject: 1 into: [:acc :each | acc ^ each].
+	d := instVarCollection inject: 1 into: [:acc :each | acc - each].
+	^ a + b + c + d'.
+	
+	self findParameterizableNodesInSameMethodFromAll: { self parseNodeAt: 71 . self parseNodeAt: 132 }.
+	
+	parameterizableNodes := finder parameterizableNodes.
+	self assert: parameterizableNodes size equals: 1.
+	self 
+		assert: parameterizableNodes first 
+		areEquivalentToAll: { self parseNodeAt: 199 . self parseNodeAt: 260 }
+		parameterizing: { self parseNodeAt: 202 . 
+			self parseNodeAt: 222 . 
+			self parseNodeAt: 230 . 
+			self parseNodeAt: 297 }! !
+
+!ParameterizableNodesFinderTest methodsFor: 'tests' stamp: 'JEC 15/Apr/2026, 12:09:40 am (UTC)'!
+test031_CannotFindAsParameterizableSameUniaryMessages
+
+	| nodeToFind |
+
+	self compile: 'm1 self foo. self foo'.
+	nodeToFind := self parseNodeAt: 9.
+	
+	self findParameterizableNodesInSameMethodFromAll: { nodeToFind }.
+	
+	self deny: finder hasFoundParameterizableReplacements! !
+
+!ParameterizableNodesFinderTest methodsFor: 'tests' stamp: 'JEC 15/Apr/2026, 12:09:45 am (UTC)'!
+test032_CannotFindAsParameterizableUniaryMessages
+
+	| nodeToFind |
+
+	self compile: 'm1 self foo. self bar'.
+	nodeToFind := self parseNodeAt: 9.
+	
+	self findParameterizableNodesInSameMethodFromAll: { nodeToFind }.
+	
+	self deny: finder hasFoundParameterizableReplacements! !
+
+!ParameterizableNodesFinderTest methodsFor: 'tests' stamp: 'JEC 15/Apr/2026, 12:09:12 am (UTC)'!
+test033_CannotFindParameterizableCodeWhenABinaryMessageIsTheReceiver
+
+	| nodeToFind |
+
+	self compile: 'm1 
+	| a b |
+	a:= 1.
+	b := 1.
+	(a + b) inject: 0 into: [:acc :each | acc + each].
+	(a + b) inject: 1 into: [:acc :each | acc + each].'.
+	nodeToFind := self parseNodeAt: 40.
+	
+	self findParameterizableNodesInSameMethodFromAll: { nodeToFind }.
+	
+	self deny: finder hasFoundParameterizableReplacements! !
+
+!ParameterizableNodesFinderTest methodsFor: 'tests' stamp: 'JEC 15/Apr/2026, 12:09:08 am (UTC)'!
+test034_CannotFindParameterizableCodeFromACascadeCode
+
+	| nodeToFind |
+
+	self compile: 'm1 
+	| aCollection |
+	aCollection := OrderedCollection new.
+	aCollection
+		add: 1;
+		add: 2.
+	aCollection
+		add: 3;
+		add: 2.'.
+	nodeToFind := self parseNodeAt: 82.
+	
+	self findParameterizableNodesInSameMethodFromAll: { nodeToFind }.
+	
+	self deny: finder hasFoundParameterizableReplacements! !
+
+!ParameterizableNodesFinderTest methodsFor: 'exercising' stamp: 'JEC 6/Apr/2026, 4:12:03 pm (UTC)'!
+compile: aSourceCode
+
+	self compile: aSourceCode withSelector: #m1! !
+
+!ParameterizableNodesFinderTest methodsFor: 'exercising' stamp: 'JEC 6/Apr/2026, 4:11:46 pm (UTC)'!
+compile: aSourceCode withSelector: aSelector
+
+	classToRefactor compile: aSourceCode.
+	methodNode := (classToRefactor>>aSelector) methodNode.! !
+
+!ParameterizableNodesFinderTest methodsFor: 'exercising' stamp: 'JEC 29/Mar/2026, 11:51:59 pm (UTC)'!
+findParameterizableNodesFromAll: nodesToLookFor withSelection: aSelection rejectingIntervals: rejectingIntervals
+
+	finder := ParameterizableNodesFinder 
+		for: (nodesToLookFor collect: [ :node | node key ])
+		in: methodNode 
+		keepingSelection: aSelection
+		rejectingIntervals: rejectingIntervals.
+	methodNode accept: finder.! !
+
+!ParameterizableNodesFinderTest methodsFor: 'exercising' stamp: 'JEC 29/Mar/2026, 11:50:39 pm (UTC)'!
+findParameterizableNodesInSameMethodFromAll: nodesToLookFor
+
+	self 
+		findParameterizableNodesInSameMethodFromAll: nodesToLookFor 
+		rejectingIntervals: #() ! !
+
+!ParameterizableNodesFinderTest methodsFor: 'exercising' stamp: 'JEC 29/Mar/2026, 11:50:14 pm (UTC)'!
+findParameterizableNodesInSameMethodFromAll: nodesToLookFor rejectingIntervals: rejectingIntervals 
+
+	"The only way to know if is looking for parameterizable nodes in the method that the code is being extracted is
+	having a selection interval"
+
+	| aSelectionToKeep |
+	 
+	aSelectionToKeep := nodesToLookFor first value first to: nodesToLookFor last value last.
+
+	self 
+		findParameterizableNodesFromAll: nodesToLookFor 
+		withSelection: aSelectionToKeep
+		rejectingIntervals: rejectingIntervals.! !
+
+!ParameterizableNodesFinderTest methodsFor: 'exercising' stamp: 'JEC 29/Mar/2026, 11:55:58 pm (UTC)'!
+findParameterizableNodesNotInSameMethodFromAll: nodesToLookFor
+
+	"The only way to know if is looking for parameterizable nodes in the method that the code is being extracted is
+	having a selection interval"
+
+	self 
+		findParameterizableNodesFromAll: nodesToLookFor 
+		withSelection: NodesFinder noSelection
+		rejectingIntervals: #()! !
+
+!ParameterizableNodesFinderTest methodsFor: 'exercising' stamp: 'JEC 15/Mar/2026, 11:28:17 pm (UTC)'!
+parseNodeAt: aPosition 
+
+	| nodesAtPosition |
+
+	nodesAtPosition := methodNode 
+		parseNodesPathAt: aPosition 
+		ifAbsent: [ self shouldNotHappen ].
+	
+	^ nodesAtPosition first! !
+
+!ParameterizableNodesFinderTest methodsFor: 'exercising' stamp: 'JEC 15/Mar/2026, 11:07:02 pm (UTC)'!
+parseNodesAtAll: aCollectionOfPositions 
+
+	^ aCollectionOfPositions collect: [ :aPosition | self parseNodeAt: aPosition ]! !
+
+!ParameterizableNodesFinderTest methodsFor: 'setup/teardown' stamp: 'JEC 27/Jan/2026, 9:41:02 pm (UTC)'!
+classToRefactorName
+	
+	^#ClassToExtractMethod! !
+
+!ParameterizableNodesFinderTest methodsFor: 'setup/teardown' stamp: 'JEC 27/Jan/2026, 9:41:13 pm (UTC)'!
+setUp
+
+	super setUp.
+	classToRefactor := self createClassNamed: self classToRefactorName! !
 
 !RefactoringTest methodsFor: 'assertions' stamp: 'jmv 31/Jul/2023, 3:39:13 pm (UTC)'!
 assert: expected equals: actual
@@ -29480,23 +31042,60 @@ assertClassHasDefined: aSelector withBody: newSourceCode inCategory: aCategory
 	self assertClassHasDefined: aSelector withBody: newSourceCode.
 	self assert: aCategory equals: (classToRefactor >> aSelector) category! !
 
-!ExtractMethodTest methodsFor: 'assertions' stamp: 'HAW 18/Jul/2023, 9:13:27 pm (UTC)'!
-assertExtracting: codeToExtract from: originalCode named: newMessage defines: newCode andUpdates: updatedCode
+!ExtractMethodTest methodsFor: 'assertions' stamp: 'JEC 14/Apr/2026, 7:31:34 pm (UTC)'!
+assertExtract: codeToExtract 
+	from: extractingSourceCode
+	to: newMessage
+	withReplacements: sourceCodesToReplace
+	definesNewMethodNamed: newMethodSelector
+	withBody: newMethodCode
+	andUpdateMethodsTo: updatedSourceCodes
 
-	| originalSelector category |
+	| category compiledSelectors replacements |
+	
 	category := #category.
-	originalSelector := classToRefactor compile: originalCode classified: category.
+	
+	compiledSelectors :=self 
+		compileAll: ({ extractingSourceCode } , sourceCodesToReplace) 
+		classified: category.
+		
+	replacements := compiledSelectors withIndexCollect: [ :selector :index |
+		| interval |
+		
+		interval := index = 1
+			ifTrue: [ self intervalOf: codeToExtract locatedIn: extractingSourceCode ]
+			ifFalse: [ self intervalOf: codeToExtract locatedIn: (sourceCodesToReplace at: index -1) ].
+			
+		ExtractMethodReplacement 
+			fromInterval: interval 
+			of: classToRefactor >> selector  
+			to: newMessage ].
 
 	(ExtractMethod
-		fromInterval: (self intervalOf: codeToExtract locatedIn: originalCode)
-		of: classToRefactor >> originalSelector
-		to: newMessage
-		categorizedAs: category
-		withArgumentNames: Dictionary new) apply.
+		newDefinition: (ExtractMethodNewMethod 
+			fromInterval: (self intervalOf: codeToExtract locatedIn: extractingSourceCode) 
+			of: classToRefactor >>  (compiledSelectors first)
+			to: newMessage 
+			categorizedAs: category
+			withArgumentNames: Dictionary new) 
+		replacements: replacements) apply.
+
+	self assertClassHasDefined: newMethodSelector withBody: newMethodCode inCategory: category.
+	
+	updatedSourceCodes with: compiledSelectors do: [ :updatedSourceCode :selector | 
+		self assertClassHasDefined: selector withBody: updatedSourceCode inCategory: category ]! !
+
+!ExtractMethodTest methodsFor: 'assertions' stamp: 'JEC 14/Apr/2026, 4:28:43 pm (UTC)'!
+assertExtracting: codeToExtract from: originalCode named: newMessage defines: newCode andUpdates: updatedCode
 
 	self
-		assertClassHasDefined: originalSelector withBody: updatedCode inCategory: category;
-		assertClassHasDefined: newMessage selector withBody: newCode inCategory: category! !
+		assertExtract: codeToExtract 
+		from: originalCode
+		to: newMessage
+		withReplacements: #()
+		definesNewMethodNamed: newMessage selector
+		withBody: newCode
+		andUpdateMethodsTo: { updatedCode }! !
 
 !ExtractMethodTest methodsFor: 'assertions' stamp: 'pau 17/Jul/2023, 10:25:23 pm (UTC)'!
 assertExtracting: codeToExtract from: originalCode named: newMessage defines: newMethodCodeWithRenamedArg andUpdates: updatedCode withRenamedArguments: renamedArgs
@@ -29515,6 +31114,35 @@ assertExtracting: codeToExtract from: originalCode named: newMessage defines: ne
 	self
 		assertClassHasDefined: originalSelector withBody: updatedCode inCategory: category;
 		assertClassHasDefined: newMessage selector withBody: newMethodCodeWithRenamedArg inCategory: category! !
+
+!ExtractMethodTest methodsFor: 'assertions' stamp: 'JEC 14/Apr/2026, 10:50:01 pm (UTC)'!
+assertWrongArgumentCountWhenParameterizableNodesDeterminedBy: aBlock
+
+	| codeToExtract codeToBeParameterized originalCode intervalToExtract methodToExtractCodeFrom newMessage parameterizableNodes |
+	codeToExtract := 'self foo: 1. self foo: 2.'.
+	codeToBeParameterized := 'self foo: 3. self foo: 4'.
+	originalCode := 'm1 ', codeToBeParameterized , '. ' , codeToExtract.
+	methodToExtractCodeFrom := self compileMethod: originalCode.
+	intervalToExtract := self intervalOf: codeToExtract locatedIn: originalCode.
+	newMessage := Message selector: #m2A:m2B: arguments: #( 'a' 'b' ).
+
+	parameterizableNodes := aBlock value: methodToExtractCodeFrom.
+
+	self
+		should: [
+			(ExtractMethod
+				newDefinition: (self newMethodDefinitionFrom: intervalToExtract of: methodToExtractCodeFrom to: newMessage withParameterizableNodes: parameterizableNodes)
+				replacements: (Array
+					with: (ExtractMethodReplacement
+							fromInterval: (self intervalOf: codeToBeParameterized locatedIn: originalCode)
+							of: methodToExtractCodeFrom
+							to: (Message selector: #m2A:m2B: arguments: #( '3' '4' )))
+					with: (ExtractMethodReplacement
+							fromInterval: intervalToExtract
+							of: methodToExtractCodeFrom
+							to: (Message selector: #m2A:m2B: arguments: #( '1' '2' ))))) apply]
+		raise: self refactoringError
+		withMessageText: ExtractMethodNewMethod wrongNumberOfArgumentsGivenErrorMessage! !
 
 !ExtractMethodTest methodsFor: 'assertions' stamp: 'jmv 26/Mar/2024, 4:55:29 pm (UTC)'!
 creationWithMessage: aMessage onInterval: anIntervalToExtract ofMethod: methodToExtractCodeFrom failsWith: aRefactoringExceptionMessageEvaluationBlock errorCondition: anExceptionHandlingCondition
@@ -29623,15 +31251,55 @@ classToRefactorName
 
 	^ #ClassToExtractMethod! !
 
+!ExtractMethodTest methodsFor: 'method and source code helpers' stamp: 'JEC 14/Apr/2026, 7:13:23 pm (UTC)'!
+compileAll: sourceCodesToCompile classified: category
+
+	^ sourceCodesToCompile 
+		collect: [ :sourceCode | classToRefactor compile: sourceCode classified: category ]! !
+
+!ExtractMethodTest methodsFor: 'method and source code helpers' stamp: 'JEC 14/Apr/2026, 10:49:48 pm (UTC)'!
+compileMethod: originalCode
+
+	| originalSelector |
+	originalSelector := classToRefactor compile: originalCode classified: #category.
+	^ (classToRefactor >> originalSelector) asMethodReference! !
+
 !ExtractMethodTest methodsFor: 'method and source code helpers' stamp: 'RNG 13/May/2019, 3:21:30 am (UTC)'!
 compileMethodToExtractCodeFrom
 
 	classToRefactor compile: self sourceCodeOfMethodToExtractCodeFrom! !
 
+!ExtractMethodTest methodsFor: 'method and source code helpers' stamp: 'JEC 11/Feb/2026, 10:48:06 pm (UTC)'!
+findNodeOf: aCodeToFindNode in: methodNode
+
+	| from codeInterval parseNodesAtFirst |
+
+	from := methodNode sourceText 
+		findString: aCodeToFindNode 
+		startingAt: methodNode selectorLastPosition + 1.
+	codeInterval := from to: from + aCodeToFindNode size - 1.
+	
+	parseNodesAtFirst := methodNode 
+		parseNodesPathAt: codeInterval first 
+		ifAbsent: [ self shouldNotHappen ].
+	
+	^ parseNodesAtFirst detect: [ :parseNode | parseNode value = codeInterval ].! !
+
 !ExtractMethodTest methodsFor: 'method and source code helpers' stamp: 'RNG 13/May/2019, 3:22:01 am (UTC)'!
 methodToExtractCodeFrom
 
 	^ classToRefactor >> self selectorOfMethodToExtractCodeFrom! !
+
+!ExtractMethodTest methodsFor: 'method and source code helpers' stamp: 'JEC 14/Apr/2026, 10:47:21 pm (UTC)'!
+newMethodDefinitionFrom: anInterval of: aMethod to: aMessage withParameterizableNodes: nodes
+
+	^ ExtractMethodNewMethod
+		fromInterval: anInterval
+		of: aMethod
+		to: aMessage
+		categorizedAs: #category
+		withArgumentNames: Dictionary new
+		withParameterizableNodes: nodes! !
 
 !ExtractMethodTest methodsFor: 'method and source code helpers' stamp: 'RNG 13/May/2019, 3:25:05 am (UTC)'!
 selectorOfMethodToExtractCodeFrom
@@ -29653,12 +31321,40 @@ sourceCodeOfMethodToExtractCodeFrom
 	localVar := #($x $y $z) size and: [ (9) * 3 ].
 	^ localVar + ((4))'! !
 
-!ExtractMethodTest methodsFor: 'refactoring helpers' stamp: 'RNG 9/May/2020, 1:06:17 am (UTC)'!
+!ExtractMethodTest methodsFor: 'refactoring helpers' stamp: 'JEC 30/Dec/2025, 12:24:50 am (UTC)'!
+addInsVarAndSubclassify: aNewInstVar
+
+	classToRefactor addInstVarName: aNewInstVar.
+	classToRefactor := self 
+		createClassNamed: ('SubclassOf' , classToRefactor name) asSymbol 
+		subclassOf: classToRefactor.! !
+
+!ExtractMethodTest methodsFor: 'refactoring helpers' stamp: 'JEC 30/Dec/2025, 12:23:23 am (UTC)'!
+compileAndSubclassify: aCode
+
+	classToRefactor compile: aCode.
+	classToRefactor := self 
+		createClassNamed: ('SubclassOf' , classToRefactor name) asSymbol 
+		subclassOf: classToRefactor.! !
+
+!ExtractMethodTest methodsFor: 'refactoring helpers' stamp: 'JEC 12/Feb/2026, 2:10:49 am (UTC)'!
 intervalOf: aPieceOfSourceCode locatedIn: sourceCode
 
+	^ self intervalOf: aPieceOfSourceCode locatedIn: sourceCode startingAt: 1! !
+
+!ExtractMethodTest methodsFor: 'refactoring helpers' stamp: 'JEC 12/Feb/2026, 2:11:03 am (UTC)'!
+intervalOf: aPieceOfSourceCode locatedIn: sourceCode startingAt: aPosition
+
 	| interval |
-	interval _ sourceCode intervalOfSubCollection: aPieceOfSourceCode.
+	interval := sourceCode intervalOfSubCollection: aPieceOfSourceCode startingAt: aPosition.
 	^ (interval first to: interval last - 1) asSourceCodeInterval! !
+
+!ExtractMethodTest methodsFor: 'refactoring helpers' stamp: 'JEC 27/Mar/2026, 12:42:50 am (UTC)'!
+parseNodeAt: aPosition in: aMethodNode
+
+	^ aMethodNode 
+		parseNodeIncluding: aPosition 
+		ifAbsent: [ self shouldNotHappen ] ! !
 
 !ExtractMethodTest methodsFor: 'set up' stamp: 'HAW 28/Aug/2021, 9:39:00 pm (UTC)'!
 setUp
@@ -29667,8 +31363,314 @@ setUp
 	classToRefactor _ self createClassNamed: self classToRefactorName.
 	! !
 
-!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'RNG 13/Jan/2020, 1:08:55 am (UTC)'!
-test09ExtractingALiteralCreatesANewMethodAndChangesExistingCodeToCallThatNewMethod
+!ExtractMethodTest methodsFor: 'tests - parameterizable code' stamp: 'JEC 14/Apr/2026, 7:36:45 pm (UTC)'!
+test151_CanExtractMethodWithSingleParameterizedCode
+
+	| codeToExtract newMethodCode originalCode updatedCode intervalToExtract methodToExtractCodeFrom originalSelector parameterizableNodes newMessage category |
+
+	category := #category.
+	codeToExtract := 'self foo: 1.'.
+ 	originalCode := 'm1 self foo: 1. self foo: 2. self foo: 1'.
+	newMethodCode := 'm2: a
+
+	^ self foo: a'.
+	updatedCode := 'm1 self m2: 1. self m2: 2. self m2: 1'.
+
+	originalSelector := classToRefactor compile: originalCode classified: category .
+	intervalToExtract := self intervalOf: codeToExtract locatedIn: originalCode.
+	methodToExtractCodeFrom := (classToRefactor >> originalSelector) asMethodReference.
+	
+	parameterizableNodes := #( '1' ) collect: [ :codeString |
+		self findNodeOf: codeString in: methodToExtractCodeFrom methodNode ].
+	
+	newMessage := Message selector: #m2: arguments: #( 'a' ).
+	
+	(ExtractMethod 
+		newDefinition:
+			(ExtractMethodNewMethod 
+				fromInterval: intervalToExtract
+				of: methodToExtractCodeFrom
+				to: newMessage
+				categorizedAs: category
+				withArgumentNames: Dictionary new
+				withParameterizableNodes: parameterizableNodes)  
+		replacements: 
+			(Array 
+				with: (ExtractMethodReplacement 
+						fromInterval: (
+							self intervalOf: 'self foo: 1' locatedIn: originalCode startingAt: intervalToExtract last)
+						of: methodToExtractCodeFrom 
+						to: (Message selector: #m2: arguments: #( '1' )))
+				with: (ExtractMethodReplacement 
+						fromInterval: (
+							self intervalOf: 'self foo: 2' locatedIn: originalCode startingAt: intervalToExtract last)
+						of: methodToExtractCodeFrom 
+						to: (Message selector: #m2: arguments: #( '2' )))
+				with: (ExtractMethodReplacement 
+						fromInterval: intervalToExtract 
+						of: methodToExtractCodeFrom 
+						to: (Message selector: #m2: arguments: #( '1' ))) )) apply.
+
+	self
+		assertClassHasDefined: methodToExtractCodeFrom selector withBody: updatedCode inCategory: category;
+		assertClassHasDefined: newMessage selector withBody: newMethodCode inCategory: category! !
+
+!ExtractMethodTest methodsFor: 'tests - parameterizable code' stamp: 'JEC 14/Apr/2026, 7:37:13 pm (UTC)'!
+test152_CanExtractMethodWithMultipleParameterizedNodes
+
+	| newMethodCode originalCode updatedCode intervalToExtract methodToExtractCodeFrom originalSelector parameterizableNodes newMessage methodNode category |
+
+	category := #category.
+ 	originalCode := 'm1
+		self bb: 10. 
+		self bb: 10.
+		 
+		self bb: 10.
+		self bb: 10.
+		
+		self bb: ''a''.
+		self bb: ''b''.'.
+	newMethodCode := 'm2: a m2: b
+
+	self bb: a.
+		self bb: b'.
+	updatedCode := 'm1
+		self bb: 10. 
+		self bb: 10.
+		 
+		self m2: 10 m2: 10.
+		
+		self m2: ''a'' m2: ''b''.'.
+
+	originalSelector := classToRefactor compile: originalCode classified: category .
+	intervalToExtract := (41 to: 66) asSourceCodeInterval.
+	methodToExtractCodeFrom := (classToRefactor >> originalSelector) asMethodReference.
+	methodNode := methodToExtractCodeFrom methodNode.
+	
+	parameterizableNodes := OrderedCollection new.
+	parameterizableNodes add: (self parseNodeAt: 50 in: methodNode).
+	parameterizableNodes add: (self parseNodeAt: 65 in: methodNode).
+	
+	newMessage := Message selector: #m2:m2: arguments: #('a' 'b').
+	
+	(ExtractMethod 
+		newDefinition:
+			(ExtractMethodNewMethod 
+				fromInterval: intervalToExtract
+				of: methodToExtractCodeFrom
+				to: newMessage
+				categorizedAs: category
+				withArgumentNames: Dictionary new
+				withParameterizableNodes: parameterizableNodes)  
+		replacements: 
+			(Array 
+				with: (ExtractMethodReplacement 
+						fromInterval: intervalToExtract
+						of: methodToExtractCodeFrom 
+						to: (Message selector: #m2:m2: arguments: #( '10' '10' ))
+						withParameterizableNodes: parameterizableNodes)
+				with: (ExtractMethodReplacement 
+						fromInterval: (74 to: 101) asSourceCodeInterval
+						of: methodToExtractCodeFrom 
+						to: (Message selector: #m2:m2: arguments: { '''a''' .  '''b''' } )) )) apply.
+
+	self
+		assertClassHasDefined: methodToExtractCodeFrom selector withBody: updatedCode inCategory: category;
+		assertClassHasDefined: newMessage selector withBody: newMethodCode inCategory: category! !
+
+!ExtractMethodTest methodsFor: 'tests - parameterizable code' stamp: 'JEC 14/Apr/2026, 10:47:58 pm (UTC)'!
+test153_CannotExtractMethodWithParameterizedCodeWhenHavingNoneParameterizableNodes
+
+	self assertWrongArgumentCountWhenParameterizableNodesDeterminedBy: [ :method | #() ]! !
+
+!ExtractMethodTest methodsFor: 'tests - parameterizable code' stamp: 'JEC 14/Apr/2026, 10:51:27 pm (UTC)'!
+test154_CannotExtractMethodWithParameterizedCodeWhenNotHavingAllTheParameterizableNodes
+
+	self assertWrongArgumentCountWhenParameterizableNodesDeterminedBy: [ :method |
+		#( '1' ) collect: [ :codeString | self findNodeOf: codeString in: method methodNode ] ]! !
+
+!ExtractMethodTest methodsFor: 'tests - parameterizable code' stamp: 'JEC 14/Apr/2026, 10:52:16 pm (UTC)'!
+test155_CannotExtractMethodWithParameterizedCodeWhenHavingMoreParameterizableNodes
+
+	self assertWrongArgumentCountWhenParameterizableNodesDeterminedBy: [ :method | 
+		#( '1' '2' '1' ) collect: [ :codeString | self findNodeOf: codeString in: method methodNode ] ]! !
+
+!ExtractMethodTest methodsFor: 'tests - parameterizable code' stamp: 'JEC 14/Apr/2026, 10:53:07 pm (UTC)'!
+test156_CannotExtractMethodWithParameterizedCodeWhenHavingNonParameterizableNodesAsIfTheyAre
+
+	self assertWrongArgumentCountWhenParameterizableNodesDeterminedBy: [ :method | 
+		#( '3' '4' ) collect: [ :codeString | self findNodeOf: codeString in: method methodNode ] ]! !
+
+!ExtractMethodTest methodsFor: 'tests - parameterizable code' stamp: 'JEC 14/Apr/2026, 10:53:46 pm (UTC)'!
+test157_CannotExtractMethodWithParameterizedCodeWhenParameterizableNodesAreNotInTheIntervalToExtract
+
+	self assertWrongArgumentCountWhenParameterizableNodesDeterminedBy: [ :method |
+		#( '1' '2' ) collect: [ :codeString |
+			| node |
+			node := self findNodeOf: codeString in: method methodNode.
+			node key -> (1 to: 1) ] ]! !
+
+!ExtractMethodTest methodsFor: 'tests - parameterizable code' stamp: 'JEC 14/Apr/2026, 7:39:24 pm (UTC)'!
+test158_CanExtractMethodWithAReturnNodeInParameterizedCode
+
+	| codeToExtract newMethodCode originalCode updatedCode intervalToExtract methodToExtractCodeFrom originalSelector parameterizableNodes newMessage category |
+
+	category := #category.
+	codeToExtract := 'self foo: [ ^ 1 ].'.
+ 	originalCode := 'm1 ' , codeToExtract , ' self foo: 2.'.
+	newMethodCode := 'm2: a
+
+	^ self foo: a'.
+	updatedCode := 'm1 self m2: [ ^ 1 ]. self m2: 2.'.
+
+	originalSelector := classToRefactor compile: originalCode classified: category .
+	intervalToExtract := self intervalOf: codeToExtract locatedIn: originalCode.
+	methodToExtractCodeFrom := (classToRefactor >> originalSelector) asMethodReference.
+	
+	parameterizableNodes := #( '[ ^ 1 ]' ) collect: [ :codeString |
+		self findNodeOf: codeString in: methodToExtractCodeFrom methodNode ].
+	
+	newMessage := Message selector: #m2: arguments: #( 'a' ).
+	
+	(ExtractMethod 
+		newDefinition:
+			(ExtractMethodNewMethod 
+				fromInterval: intervalToExtract
+				of: methodToExtractCodeFrom
+				to: newMessage
+				categorizedAs: category
+				withArgumentNames: Dictionary new
+				withParameterizableNodes: parameterizableNodes)  
+		replacements: 
+			(Array 
+				with: (ExtractMethodReplacement 
+						fromInterval: (self intervalOf: codeToExtract locatedIn: originalCode)
+						of: methodToExtractCodeFrom 
+						to: (Message selector: #m2: arguments: #( '[ ^ 1 ]' ))
+						withParameterizableNodes: parameterizableNodes)
+				with: (ExtractMethodReplacement 
+						fromInterval: (self intervalOf: 'self foo: 2' locatedIn: originalCode)
+						of: methodToExtractCodeFrom 
+						to: (Message selector: #m2: arguments: #( '2' ))) )) apply.
+
+	self
+		assertClassHasDefined: methodToExtractCodeFrom selector withBody: updatedCode inCategory: category;
+		assertClassHasDefined: newMessage selector withBody: newMethodCode inCategory: category! !
+
+!ExtractMethodTest methodsFor: 'tests - parameterizable code' stamp: 'JEC 14/Apr/2026, 8:47:34 pm (UTC)'!
+test159_CanExtractMethodWithMultipleAssignmentsAndParameterizableCode
+
+	| codeToExtract newMethodCode originalCode updatedCode intervalToExtract methodToExtractCodeFrom originalSelector parameterizableNodes newMessage category |
+
+	category := #category.
+	codeToExtract := 'a := aCollection inject: 0 into: [:acc :each | acc + each].
+	b := instVarCollection inject: 1 into: [:acc :each | acc * each].'.
+ 	originalCode := 'm1
+	| a b c d aCollection |
+	aCollection := OrderedCollection new.
+	' , codeToExtract , '
+	c := aCollection inject: 1 into: [:acc :each | acc ^ each].
+	d := instVarCollection inject: 1 into: [:acc :each | acc - each].
+	^ a + b + c + d'.
+	newMethodCode := 'k1: aCollection k2: aRenameMe1 k3: aRenameMe2 k4: aRenameMe3 assigningWith: anAssignmentBlock
+
+	| a b |
+	a := aCollection inject: aRenameMe1 into: aRenameMe2.
+	b := instVarCollection inject: 1 into: aRenameMe3.
+	^ anAssignmentBlock value: a value: b'.
+	updatedCode := 'm1
+	| a b c d aCollection |
+	aCollection := OrderedCollection new.
+	self k1: aCollection k2: 0 k3: [:acc :each | acc + each] k4: [:acc :each | acc * each] assigningWith: [ :newA :newB | a := newA. b := newB. ].
+	self k1: aCollection k2: 1 k3: [:acc :each | acc ^ each] k4: [:acc :each | acc - each] assigningWith: [ :newC :newD | c := newC. d := newD. ].
+	^ a + b + c + d'.
+
+	originalSelector := classToRefactor compile: originalCode classified: category .
+	intervalToExtract := self intervalOf: codeToExtract locatedIn: originalCode.
+	methodToExtractCodeFrom := (classToRefactor >> originalSelector) asMethodReference.
+	
+	parameterizableNodes := #( '0' '[:acc :each | acc + each]' '[:acc :each | acc * each]' ) asOrderedCollection
+		collect: [ :codeString | self findNodeOf: codeString in: methodToExtractCodeFrom methodNode ].
+	
+	parameterizableNodes addFirst: (self parseNodeAt: 74 in: methodToExtractCodeFrom methodNode) .
+	
+	newMessage := Message selector: #k1:k2:k3:k4: arguments: #( 'aCollection' 'aRenameMe1' 'aRenameMe2' 'aRenameMe3' ).
+	
+	(ExtractMethod 
+		newDefinition:
+			(ExtractMethodNewMethod 
+				fromInterval: intervalToExtract
+				of: methodToExtractCodeFrom
+				to: newMessage
+				categorizedAs: category
+				withArgumentNames: Dictionary new
+				withParameterizableNodes: parameterizableNodes)  
+		replacements: 
+			(Array 
+				with: (ExtractMethodReplacement 
+						fromInterval: (self intervalOf: codeToExtract locatedIn: originalCode)
+						of: methodToExtractCodeFrom 
+						to: (Message selector: #k1:k2:k3:k4: arguments: #( 'aCollection' '0' '[:acc :each | acc + each]' '[:acc :each | acc * each]' ))
+						withParameterizableNodes: parameterizableNodes)
+				with: (ExtractMethodReplacement 
+						fromInterval: (self intervalOf: 'c := aCollection inject: 1 into: [:acc :each | acc ^ each].
+	d := instVarCollection inject: 1 into: [:acc :each | acc - each].' locatedIn: originalCode)
+						of: methodToExtractCodeFrom 
+						to: (Message selector: #k1:k2:k3:k4: arguments: #( 'aCollection' '1' '[:acc :each | acc ^ each]' '[:acc :each | acc - each]' ))) )) apply.
+
+	self
+		assertClassHasDefined: methodToExtractCodeFrom selector withBody: updatedCode inCategory: category;
+		assertClassHasDefined: #k1:k2:k3:k4:assigningWith: withBody: newMethodCode inCategory: category! !
+
+!ExtractMethodTest methodsFor: 'tests - parameterizable code' stamp: 'JEC 31/May/2026, 7:53:22 pm (UTC)'!
+test160_CanExtractMethodWithParameterizableNodeThatIncludesTempVarsDefinedOutside
+
+	| codeToExtract newMethodCode originalCode updatedCode intervalToExtract methodToExtractCodeFrom originalSelector parameterizableNodes newMessage category |
+
+	category := #category.
+	codeToExtract := 'self foo: [ self baz: var ].'.
+ 	originalCode := 'm1 | var | var := 10. ' , codeToExtract , ' self foo: 2.'.
+	newMethodCode := 'm2: a
+
+	^ self foo: a'.
+	updatedCode := 'm1 | var | var := 10. self m2: [ self baz: var ]. self m2: 2.'.
+
+	originalSelector := classToRefactor compile: originalCode classified: category .
+	intervalToExtract := self intervalOf: codeToExtract locatedIn: originalCode.
+	methodToExtractCodeFrom := (classToRefactor >> originalSelector) asMethodReference.
+	
+	parameterizableNodes := #( '[ self baz: var ]' ) collect: [ :codeString |
+		self findNodeOf: codeString in: methodToExtractCodeFrom methodNode ].
+	
+	newMessage := Message selector: #m2: arguments: #( 'a' ).
+	
+	(ExtractMethod 
+		newDefinition:
+			(ExtractMethodNewMethod 
+				fromInterval: intervalToExtract
+				of: methodToExtractCodeFrom
+				to: newMessage
+				categorizedAs: category
+				withArgumentNames: Dictionary new
+				withParameterizableNodes: parameterizableNodes)  
+		replacements: 
+			(Array 
+				with: (ExtractMethodReplacement 
+						fromInterval: (self intervalOf: codeToExtract locatedIn: originalCode)
+						of: methodToExtractCodeFrom 
+						to: (Message selector: #m2: arguments: #( '[ self baz: var ]' ))
+						withParameterizableNodes: parameterizableNodes)
+				with: (ExtractMethodReplacement 
+						fromInterval: (self intervalOf: 'self foo: 2' locatedIn: originalCode)
+						of: methodToExtractCodeFrom 
+						to: (Message selector: #m2: arguments: #( '2' ))) )) apply.
+
+	self
+		assertClassHasDefined: methodToExtractCodeFrom selector withBody: updatedCode inCategory: category;
+		assertClassHasDefined: newMessage selector withBody: newMethodCode inCategory: category! !
+
+!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'JEC 13/Apr/2026, 1:47:55 pm (UTC)'!
+test009_ExtractingALiteralCreatesANewMethodAndChangesExistingCodeToCallThatNewMethod
 
 	| codeToExtract newMethodCode originalCode updatedCode |
 	codeToExtract _ '4'.
@@ -29682,8 +31684,8 @@ test09ExtractingALiteralCreatesANewMethodAndChangesExistingCodeToCallThatNewMeth
 		assertExtracting: codeToExtract from: originalCode named: (Message selector: #m2)
 		defines: newMethodCode andUpdates: updatedCode! !
 
-!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'RNG 13/Jan/2020, 1:08:55 am (UTC)'!
-test15ExtractingAListOfStatementsCreatesANewMethodWithoutReturn
+!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'JEC 13/Apr/2026, 1:49:14 pm (UTC)'!
+test015_ExtractingAListOfStatementsCreatesANewMethodWithoutReturn
 
 	| codeToExtract newMethodCode originalCode updatedCode |
 	codeToExtract _ 'self m3.
@@ -29698,8 +31700,8 @@ test15ExtractingAListOfStatementsCreatesANewMethodWithoutReturn
 		assertExtracting: codeToExtract from: originalCode named: (Message selector: #m2)
 		defines: newMethodCode andUpdates: updatedCode! !
 
-!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'RNG 13/Jan/2020, 1:08:55 am (UTC)'!
-test17AStringContainingTheReturnCharacterCanBeExtracted
+!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'JEC 13/Apr/2026, 1:49:18 pm (UTC)'!
+test017_AStringContainingTheReturnCharacterCanBeExtracted
 	"this is to make sure the return is found using AST logic, not by text"
 
 	| codeToExtract newMethodCode originalCode updatedCode |
@@ -29714,8 +31716,8 @@ test17AStringContainingTheReturnCharacterCanBeExtracted
 		assertExtracting: codeToExtract from: originalCode named: (Message selector: #m2)
 		defines: newMethodCode andUpdates: updatedCode! !
 
-!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'RNG 13/Jan/2020, 1:08:55 am (UTC)'!
-test18ExtractingAListOfStatementsIncludingDotsRemovesThemAndContinuesWithMethodExtraction
+!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'JEC 13/Apr/2026, 1:49:22 pm (UTC)'!
+test018_ExtractingAListOfStatementsIncludingDotsRemovesThemAndContinuesWithMethodExtraction
 
 	| codeToExtract newMethodCode originalCode updatedCode |
 	codeToExtract _ '
@@ -29735,8 +31737,8 @@ test18ExtractingAListOfStatementsIncludingDotsRemovesThemAndContinuesWithMethodE
 		assertExtracting: codeToExtract from: originalCode named: (Message selector: #m2)
 		defines: newMethodCode andUpdates: updatedCode! !
 
-!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'RNG 13/Jan/2020, 1:08:55 am (UTC)'!
-test19ASelectionContainingAdditionalParenthesesAtTheBeginningAndOrEndCanBeExtracted
+!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'JEC 13/Apr/2026, 1:49:27 pm (UTC)'!
+test019_ASelectionContainingAdditionalParenthesesAtTheBeginningAndOrEndCanBeExtracted
 
 	| codeToExtract newMethodCode originalCode updatedCode |
 	codeToExtract _ '((42))'.
@@ -29750,8 +31752,8 @@ test19ASelectionContainingAdditionalParenthesesAtTheBeginningAndOrEndCanBeExtrac
 		assertExtracting: codeToExtract from: originalCode named: (Message selector: #m2)
 		defines: newMethodCode andUpdates: updatedCode! !
 
-!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'RNG 13/Jan/2020, 1:08:55 am (UTC)'!
-test20ASelectionContainingALocalVariableIsParameterizedOnTheExtractedMessage
+!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'JEC 13/Apr/2026, 1:49:31 pm (UTC)'!
+test020_ASelectionContainingALocalVariableIsParameterizedOnTheExtractedMessage
 
 	| codeToExtract newMethodCode originalCode updatedCode |
 	codeToExtract _ 'local + 3'.
@@ -29765,8 +31767,8 @@ test20ASelectionContainingALocalVariableIsParameterizedOnTheExtractedMessage
 		assertExtracting: codeToExtract from: originalCode named: (Message selector: #m2: arguments: #('local'))
 		defines: newMethodCode andUpdates: updatedCode! !
 
-!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'RNG 13/Jan/2020, 1:08:55 am (UTC)'!
-test21ASelectionContainingAdditionalParenthesesOnOneSideCanBeExtractedAndItIsNotTrimmed
+!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'JEC 13/Apr/2026, 1:49:36 pm (UTC)'!
+test021_ASelectionContainingAdditionalParenthesesOnOneSideCanBeExtractedAndItIsNotTrimmed
 
 	| codeToExtract newMethodCode originalCode updatedCode |
 	codeToExtract _ '(9) * 3'.
@@ -29780,8 +31782,8 @@ test21ASelectionContainingAdditionalParenthesesOnOneSideCanBeExtractedAndItIsNot
 		assertExtracting: codeToExtract from: originalCode named: (Message selector: #m2)
 		defines: newMethodCode andUpdates: updatedCode! !
 
-!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'RNG 13/Jan/2020, 1:08:55 am (UTC)'!
-test22ItIsPossibleToExtractTheLastExpressionOfAMethod
+!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'JEC 13/Apr/2026, 1:49:42 pm (UTC)'!
+test022_ItIsPossibleToExtractTheLastExpressionOfAMethod
 
 	| codeToExtract newMethodCode originalCode updatedCode |
 	codeToExtract _ 'localVar + ((4))'.
@@ -29795,8 +31797,8 @@ test22ItIsPossibleToExtractTheLastExpressionOfAMethod
 		assertExtracting: codeToExtract from: originalCode named: (Message selector: #m2: arguments: #('localVar'))
 		defines: newMethodCode andUpdates: updatedCode! !
 
-!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'RNG 13/Jan/2020, 1:08:55 am (UTC)'!
-test26ItIsPossibleToExtractAnEntireBlockIncludingALocalAssignment
+!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'JEC 13/Apr/2026, 1:49:46 pm (UTC)'!
+test026_ItIsPossibleToExtractAnEntireBlockIncludingALocalAssignment
 
 	| codeToExtract newMethodCode originalCode updatedCode |
 	codeToExtract _ '[ |something| something _ 3 ]'.
@@ -29810,8 +31812,8 @@ test26ItIsPossibleToExtractAnEntireBlockIncludingALocalAssignment
 		assertExtracting: codeToExtract from: originalCode named: (Message selector: #m2)
 		defines: newMethodCode andUpdates: updatedCode! !
 
-!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'RNG 13/Jan/2020, 1:08:55 am (UTC)'!
-test27ItIsPossibleToExtractExpressionsWithOptimizedSelectors
+!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'JEC 13/Apr/2026, 1:49:50 pm (UTC)'!
+test027_ItIsPossibleToExtractExpressionsWithOptimizedSelectors
 
 	| codeToExtract newMethodCode originalCode updatedCode |
 	codeToExtract _ '2 ifNil: [ #boo ] ifNotNil: [ #yay ]'.
@@ -29825,8 +31827,8 @@ test27ItIsPossibleToExtractExpressionsWithOptimizedSelectors
 		assertExtracting: codeToExtract from: originalCode named: (Message selector: #m2)
 		defines: newMethodCode andUpdates: updatedCode! !
 
-!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'RNG 13/Jan/2020, 1:08:55 am (UTC)'!
-test29ExtractingABinaryExpressionToAKeywordMessageIntroducesParenthesesToNotBreakOriginalPrecedence
+!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'JEC 13/Apr/2026, 1:49:05 pm (UTC)'!
+test029_ExtractingABinaryExpressionToAKeywordMessageIntroducesParenthesesToNotBreakOriginalPrecedence
 
 	| codeToExtract newMethodCode originalCode updatedCode |
 	codeToExtract _ '2 + arg'.
@@ -29840,8 +31842,8 @@ test29ExtractingABinaryExpressionToAKeywordMessageIntroducesParenthesesToNotBrea
 		assertExtracting: codeToExtract from: originalCode named: (Message selector: #m2: arguments: #('arg'))
 		defines: newMethodCode andUpdates: updatedCode! !
 
-!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'RNG 13/Jan/2020, 1:11:36 am (UTC)'!
-test30ItIsPossibleToExtractAQuotedExpression
+!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'JEC 13/Apr/2026, 1:50:05 pm (UTC)'!
+test030_ItIsPossibleToExtractAQuotedExpression
 
 	| codeToExtract newMethodCode originalCode updatedCode |
 	codeToExtract _ '`3 + 4`'.
@@ -29855,8 +31857,8 @@ test30ItIsPossibleToExtractAQuotedExpression
 		assertExtracting: codeToExtract from: originalCode named: (Message selector: #m2)
 		defines: newMethodCode andUpdates: updatedCode! !
 
-!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'HAW 30/Mar/2020, 8:16:37 pm (UTC)'!
-test31ItIsPossibleToExtractExpressionsWithOptimizedSelectorsWhereTheReceiverIsNotASimpleLiteral
+!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'JEC 13/Apr/2026, 1:50:11 pm (UTC)'!
+test031_ItIsPossibleToExtractExpressionsWithOptimizedSelectorsWhereTheReceiverIsNotASimpleLiteral
 
 	| codeToExtract newMethodCode originalCode updatedCode |
 	codeToExtract _ '2 factorial ifNotNil: [ #boo ]'.
@@ -29870,8 +31872,8 @@ test31ItIsPossibleToExtractExpressionsWithOptimizedSelectorsWhereTheReceiverIsNo
 		assertExtracting: codeToExtract from: originalCode named: (Message selector: #m2)
 		defines: newMethodCode andUpdates: updatedCode! !
 
-!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'RNG 6/Apr/2020, 3:19:13 am (UTC)'!
-test32ItIsPossibleToExtractATemporaryDeclarationOfABlockIfItIsNotUsedOutsideOfSelectionInterval
+!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'JEC 13/Apr/2026, 1:50:27 pm (UTC)'!
+test032_ItIsPossibleToExtractATemporaryDeclarationOfABlockIfItIsNotUsedOutsideOfSelectionInterval
 
 	| codeToExtract newMethodCode originalCode updatedCode |
 	codeToExtract _ '| a | a _ 3 factorial'.
@@ -29885,8 +31887,8 @@ test32ItIsPossibleToExtractATemporaryDeclarationOfABlockIfItIsNotUsedOutsideOfSe
 		assertExtracting: codeToExtract from: originalCode named: (Message selector: #m2)
 		defines: newMethodCode andUpdates: updatedCode! !
 
-!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'RNG 6/Apr/2020, 3:19:23 am (UTC)'!
-test33ItIsPossibleToExtractATemporaryDeclarationIfItIsNotUsedOutsideOfSelectionInterval
+!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'JEC 13/Apr/2026, 1:49:55 pm (UTC)'!
+test033_ItIsPossibleToExtractATemporaryDeclarationIfItIsNotUsedOutsideOfSelectionInterval
 
 	| codeToExtract newMethodCode originalCode updatedCode |
 	codeToExtract _ '| a | a _ 3 factorial'.
@@ -29900,8 +31902,8 @@ test33ItIsPossibleToExtractATemporaryDeclarationIfItIsNotUsedOutsideOfSelectionI
 		assertExtracting: codeToExtract from: originalCode named: (Message selector: #m2)
 		defines: newMethodCode andUpdates: updatedCode! !
 
-!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'RNG 15/Apr/2020, 12:52:00 am (UTC)'!
-test36ItIsPossibleToExtractACascadeExpression
+!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'JEC 13/Apr/2026, 1:49:59 pm (UTC)'!
+test036_ItIsPossibleToExtractACascadeExpression
 
 	| codeToExtract newMethodCode originalCode updatedCode |
 	codeToExtract _ '(3 + 2) factorial; yourself'.
@@ -29915,8 +31917,8 @@ test36ItIsPossibleToExtractACascadeExpression
 		assertExtracting: codeToExtract from: originalCode named: (Message selector: #m2)
 		defines: newMethodCode andUpdates: updatedCode! !
 
-!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'RNG 25/Apr/2020, 12:32:48 am (UTC)'!
-test37ItIsPossibleATempDeclarationAlongWithABlock
+!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'JEC 13/Apr/2026, 1:50:17 pm (UTC)'!
+test037_ItIsPossibleATempDeclarationAlongWithABlock
 
 	| codeToExtract newMethodCode originalCode updatedCode |
 	codeToExtract _ '| temp | []'.
@@ -29930,8 +31932,8 @@ test37ItIsPossibleATempDeclarationAlongWithABlock
 		assertExtracting: codeToExtract from: originalCode named: (Message selector: #m2)
 		defines: newMethodCode andUpdates: updatedCode! !
 
-!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'RNG 5/May/2020, 12:08:01 am (UTC)'!
-test38ItIsPossibleToExtractCodeThatContainsMultipleParenthesisWithSpacesBetweenThem
+!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'JEC 13/Apr/2026, 1:50:21 pm (UTC)'!
+test038_ItIsPossibleToExtractCodeThatContainsMultipleParenthesisWithSpacesBetweenThem
 
 	| codeToExtract newMethodCode originalCode updatedCode |
 	codeToExtract _ '(  (3 + 4))'.
@@ -29945,8 +31947,8 @@ test38ItIsPossibleToExtractCodeThatContainsMultipleParenthesisWithSpacesBetweenT
 		assertExtracting: codeToExtract from: originalCode named: (Message selector: #m2)
 		defines: newMethodCode andUpdates: updatedCode! !
 
-!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'HAW 22/Sep/2021, 7:01:48 pm (UTC)'!
-test44CanExtractManyStatementsInsideABlock
+!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'JEC 13/Apr/2026, 1:50:32 pm (UTC)'!
+test044_CanExtractManyStatementsInsideABlock
 
 	| codeToExtract newMethodCode originalCode updatedCode |
 	
@@ -29963,8 +31965,8 @@ test44CanExtractManyStatementsInsideABlock
 		assertExtracting: codeToExtract from: originalCode named: (Message selector: #m2)
 		defines: newMethodCode andUpdates: updatedCode! !
 
-!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'HAW 18/Oct/2021, 10:42:26 pm (UTC)'!
-test45CanExtractCodeWithMoreThanOneBlockAndABlockAtTheEndInsideAnotherBlock
+!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'JEC 13/Apr/2026, 1:50:37 pm (UTC)'!
+test045_CanExtractCodeWithMoreThanOneBlockAndABlockAtTheEndInsideAnotherBlock
 
 	| codeToExtract newMethodCode originalCode updatedCode |
 	
@@ -29983,8 +31985,8 @@ test45CanExtractCodeWithMoreThanOneBlockAndABlockAtTheEndInsideAnotherBlock
 		assertExtracting: codeToExtract from: originalCode named: (Message selector: #m4)
 		defines: newMethodCode andUpdates: updatedCode! !
 
-!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'HAW 19/Jul/2023, 4:29:27 pm (UTC)'!
-test46CanModifyArgumentsNamesInExtractedMethod
+!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'JEC 13/Apr/2026, 1:50:41 pm (UTC)'!
+test046_CanModifyArgumentsNamesInExtractedMethod
 
 	| codeToExtract newMethodCodeWithRenamedArg originalCode updatedCode newMessage |
 	
@@ -30008,8 +32010,8 @@ test46CanModifyArgumentsNamesInExtractedMethod
 		withRenamedArguments: (Dictionary with:'arg'->'argModified' ). 
 	! !
 
-!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'HAW 19/Jul/2023, 4:32:51 pm (UTC)'!
-test47OnlyModifiedArgumentsNamesAreModifiedInExtractedMethod
+!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'JEC 13/Apr/2026, 1:50:53 pm (UTC)'!
+test047_OnlyModifiedArgumentsNamesAreModifiedInExtractedMethod
 
 	| codeToExtract newMethodCodeWithRenamedArg originalCode updatedCode newMessage |
 	
@@ -30033,8 +32035,8 @@ test47OnlyModifiedArgumentsNamesAreModifiedInExtractedMethod
 	
 ! !
 
-!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'HAW 25/Jul/2023, 9:39:33 pm (UTC)'!
-test49CanExtractFromOptimizedMessageSends
+!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'JEC 13/Apr/2026, 1:50:49 pm (UTC)'!
+test049_CanExtractFromOptimizedMessageSends
 
 	| codeToExtract newMethodCodeWithRenamedArg originalCode updatedCode newMessage |
 	
@@ -30055,22 +32057,22 @@ test49CanExtractFromOptimizedMessageSends
 	
 ! !
 
-!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'RNG 12/Jul/2020, 11:13:15 pm (UTC)'!
-test01NewSelectorShouldNotBeEmpty
+!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'JEC 13/Apr/2026, 1:46:22 pm (UTC)'!
+test001_NewSelectorShouldNotBeEmpty
 
 	self
 		tryingToExtractWithSelectorNamed: #''
 		failsWith: [ NewSelectorPrecondition newSelectorCanNotBeEmptyErrorMessage ]! !
 
-!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'RNG 12/Jul/2020, 11:13:15 pm (UTC)'!
-test02NewSelectorShouldNotContainSeparators
+!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'JEC 13/Apr/2026, 1:46:26 pm (UTC)'!
+test002_NewSelectorShouldNotContainSeparators
 
 	self
 		tryingToExtractWithSelectorNamed: #'my selector'
 		failsWith: [ NewSelectorPrecondition newSelectorCanNotContainSeparatorsErrorMessage ]! !
 
-!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'HAW 28/Aug/2021, 9:40:41 pm (UTC)'!
-test03ExtractingToSelectorAlreadyDefinedInTheClassRaisesAWarning
+!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'JEC 13/Apr/2026, 1:46:30 pm (UTC)'!
+test003_ExtractingToSelectorAlreadyDefinedInTheClassRaisesAWarning
 
 	self compileMethodToExtractCodeFrom.
 	self
@@ -30080,78 +32082,70 @@ test03ExtractingToSelectorAlreadyDefinedInTheClassRaisesAWarning
 				warningMessageFor: self selectorOfMethodToExtractCodeFrom
 				isAlreadyDefinedIn: classToRefactor ]! !
 
-!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'RNG 12/Jul/2020, 11:13:15 pm (UTC)'!
-test04NewSelectorShouldNotStartWithANumber
+!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'JEC 13/Apr/2026, 1:46:38 pm (UTC)'!
+test004_NewSelectorShouldNotStartWithANumber
 
 	self
 		tryingToExtractWithSelectorNamed: #'2selector'
 		failsWith: [ NewSelectorPrecondition invalidStartingCharacterOfNewSelectorErrorMessage ]! !
 
-!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'RNG 12/Jul/2020, 11:13:15 pm (UTC)'!
-test05NewUnarySelectorShouldNotStartWithASymbol
+!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'JEC 13/Apr/2026, 1:46:55 pm (UTC)'!
+test005_NewUnarySelectorShouldNotStartWithASymbol
 
 	self
 		tryingToExtractWithSelectorNamed: #-
 		failsWith: [ NewSelectorPrecondition invalidStartingCharacterOfNewSelectorErrorMessage ]! !
 
-!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'HAW 5/Sep/2021, 1:25:24 am (UTC)'!
-test06IntervalToExtractIsNotBeforeMethodSourceCodeBoundaries
+!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'JEC 13/Apr/2026, 1:47:16 pm (UTC)'!
+test006_IntervalToExtractIsNotBeforeMethodSourceCodeBoundaries
 
 	self compileMethodToExtractCodeFrom.
 	self
 		tryingToExtractOnInterval: (-1 to: 2) asSourceCodeInterval
 		failsWith: [ ExtractMethodNewMethod outOfBoundsSelectionErrorMessage ]! !
 
-!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'HAW 5/Sep/2021, 1:25:40 am (UTC)'!
-test07IntervalToExtractIsNotAfterMethodSourceCodeBoundaries
+!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'JEC 13/Apr/2026, 1:47:38 pm (UTC)'!
+test007_IntervalToExtractIsNotAfterMethodSourceCodeBoundaries
 
 	self compileMethodToExtractCodeFrom.
 	self
 		tryingToExtractOnInterval: (1 to: self sourceCodeOfMethodToExtractCodeFrom size + 2) asSourceCodeInterval
 		failsWith: [ ExtractMethodNewMethod outOfBoundsSelectionErrorMessage ]! !
 
-!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'RNG 25/May/2020, 1:51:01 am (UTC)'!
-test08IntervalToExtractShouldNotContainAReturnExpression
-
-	self
-		tryingToExtract: '^ localVar + ((4))'
-		from: 'm1 ^ localVar + ((4))'
-		failsWith: [ SourceCodeOfMethodToBeExtractedPrecondition errorMessageForSourceCodeIncludingAReturnStatement ]! !
-
-!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'RNG 25/May/2020, 4:48:14 am (UTC)'!
-test10IntervalToExtractDoesNotContainsPartOfTheOriginalSelector
+!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'JEC 13/Apr/2026, 1:48:09 pm (UTC)'!
+test010_IntervalToExtractDoesNotContainsPartOfTheOriginalSelector
 
 	self
 		tryingToExtract: 'm1 ^ 8'
 		from: 'm1 ^ 8'
 		failsWith: [ SourceCodeOfMethodToBeExtractedPrecondition errorMessageForSourceCodeContainingInvalidExpression ]! !
 
-!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'RNG 25/May/2020, 2:55:57 am (UTC)'!
-test11IntervalToExtractDoesNotContainsPartOfLocalVariablesDefinition
+!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'JEC 13/Apr/2026, 1:48:21 pm (UTC)'!
+test011_IntervalToExtractDoesNotContainsPartOfLocalVariablesDefinition
 
 	self
 		tryingToExtract: '| localVar |'
 		from: 'm1 | localVar | ^ localVar + 3'
 		failsWith: [ SourceCodeOfMethodToBeExtractedPrecondition errorMessageForExtractingTemporaryVariablesDefinition ]! !
 
-!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'RNG 25/May/2020, 4:48:14 am (UTC)'!
-test12IntervalToExtractDoesNotContainsPartOfPragmasDefinition
+!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'JEC 13/Apr/2026, 1:48:36 pm (UTC)'!
+test012_IntervalToExtractDoesNotContainsPartOfPragmasDefinition
 
 	self
 		tryingToExtract: '<annoyingPragma>'
 		from: 'm1 <annoyingPragma>'
 		failsWith: [ SourceCodeOfMethodToBeExtractedPrecondition errorMessageForSourceCodeContainingInvalidExpression ]! !
 
-!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'RNG 25/May/2020, 4:48:14 am (UTC)'!
-test13IntervalToExtractShouldBeAValidSmalltalkExpression
+!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'JEC 13/Apr/2026, 1:51:03 pm (UTC)'!
+test013_IntervalToExtractShouldBeAValidSmalltalkExpression
 
 	self
 		tryingToExtract: '+ ((4))'
 		from: 'm1 ^ 3 + ((4))'
 		failsWith: [ SourceCodeOfMethodToBeExtractedPrecondition errorMessageForSourceCodeContainingInvalidExpression ]! !
 
-!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'HAW 28/Aug/2021, 9:41:13 pm (UTC)'!
-test14ItIsNotPossibleToExtractTheLeftSideOfAnAssignment
+!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'JEC 13/Apr/2026, 1:51:26 pm (UTC)'!
+test014_ItIsNotPossibleToExtractTheLeftSideOfAnAssignment
 
 	| firstOccurrence secondOccurrence intervalToExtract |
 	
@@ -30165,47 +32159,39 @@ test14ItIsNotPossibleToExtractTheLeftSideOfAnAssignment
 		tryingToExtractOnInterval: intervalToExtract asSourceCodeInterval
 		failsWith: [ SourceCodeOfMethodToBeExtractedPrecondition errorMessageForExtractingLeftSideOfAssignment ]! !
 
-!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'RNG 25/May/2020, 4:48:13 am (UTC)'!
-test16CanNotExtractPartOfALiteral
+!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'JEC 13/Apr/2026, 1:51:07 pm (UTC)'!
+test016_CanNotExtractPartOfALiteral
 
 	self
 		tryingToExtract: 'true'
 		from: 'm1 ^ ''hey true'''
 		failsWith: [ SourceCodeOfMethodToBeExtractedPrecondition errorMessageForSourceCodeContainingInvalidExpression ]! !
 
-!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'HAW 5/Sep/2021, 1:26:00 am (UTC)'!
-test23CanNotExtractWithAnInvalidInterval
+!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'JEC 13/Apr/2026, 1:51:10 pm (UTC)'!
+test023_CanNotExtractWithAnInvalidInterval
 
 	self compileMethodToExtractCodeFrom.
 	self
 		tryingToExtractOnInterval: (10 to: 9) asSourceCodeInterval
 		failsWith: [ ExtractMethodNewMethod noSelectionErrorMessage ]! !
 
-!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'RNG 25/May/2020, 4:26:46 am (UTC)'!
-test24ItIsNotPossibleToExtractAnIntervalIncludingATemporaryAssignmentExpression
-
-	self
-		tryingToExtract: 'localVar _ 8'
-		from: 'm1 | localVar | localVar _ 8'
-		failsWith: [ SourceCodeOfMethodToBeExtractedPrecondition errorMessageForExtractedTemporaryAssignmentWithoutItsDeclaration ]! !
-
-!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'RNG 12/Jul/2020, 11:13:15 pm (UTC)'!
-test25NewUnarySelectorShouldNotContainInvalidCharacters
+!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'JEC 13/Apr/2026, 1:51:15 pm (UTC)'!
+test025_NewUnarySelectorShouldNotContainInvalidCharacters
 
 	self
 		tryingToExtractWithSelectorNamed: 'hola)' asSymbol
 		failsWith: [ NewSelectorPrecondition invalidCharacterInsideNewSelectorErrorMessage ]! !
 
-!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'RNG 25/May/2020, 4:30:44 am (UTC)'!
-test28ItIsNotPossibleToExtractALocalVariableInsideOfItsDeclaration
+!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'JEC 13/Apr/2026, 1:51:39 pm (UTC)'!
+test028_ItIsNotPossibleToExtractALocalVariableInsideOfItsDeclaration
 
 	self
 		tryingToExtract: 'localVar'
 		from: 'm1 | localVar | ^ #foo'
 		failsWith: [ SourceCodeOfMethodToBeExtractedPrecondition errorMessageForExtractingTemporaryVariablesDefinition ]! !
 
-!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'HAW 5/Sep/2021, 1:26:21 am (UTC)'!
-test34TryingToExtractAMethodWithLessArgumentsThanNeededFails
+!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'JEC 13/Apr/2026, 1:51:19 pm (UTC)'!
+test034_TryingToExtractAMethodWithLessArgumentsThanNeededFails
 
 	self
 		tryingToExtract: 'localVar1 + localVar2 + 2'
@@ -30213,8 +32199,8 @@ test34TryingToExtractAMethodWithLessArgumentsThanNeededFails
 		using: (Message selector: #m1: arguments: #('localVar1'))
 		failsWith: [ ExtractMethodNewMethod wrongNumberOfArgumentsGivenErrorMessage ]! !
 
-!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'HAW 5/Sep/2021, 1:26:39 am (UTC)'!
-test35TryingToExtractAMethodWithMoreArgumentsThanNeededFails
+!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'JEC 13/Apr/2026, 1:51:56 pm (UTC)'!
+test035_TryingToExtractAMethodWithMoreArgumentsThanNeededFails
 
 	self
 		tryingToExtract: 'localVar1 + localVar2 + 2'
@@ -30222,8 +32208,8 @@ test35TryingToExtractAMethodWithMoreArgumentsThanNeededFails
 		using: (Message selector: #m1:m2:m3: arguments: #('localVar1' 'localVar2' 'localVar3'))
 		failsWith: [ ExtractMethodNewMethod wrongNumberOfArgumentsGivenErrorMessage ]! !
 
-!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'RNG 12/Jul/2020, 11:13:15 pm (UTC)'!
-test39TryingToExtractToAMethodThatExistsInASuperclassRaisesAWarning
+!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'JEC 13/Apr/2026, 1:51:34 pm (UTC)'!
+test039_TryingToExtractToAMethodThatExistsInASuperclassRaisesAWarning
 
 	self
 		tryingToExtract: '42'
@@ -30231,16 +32217,16 @@ test39TryingToExtractToAMethodThatExistsInASuperclassRaisesAWarning
 		using: (Message selector: #yourself)
 		raisesWarning: [ NewSelectorPrecondition warningMessageFor: #yourself isAlreadyDefinedIn: Object ]! !
 
-!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'RNG 25/May/2020, 4:37:19 am (UTC)'!
-test40CanNotExtractTemporaryAssignmentWithDeclarationIfTheVariableIsUsedOutsideOfSelectionInterval
+!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'JEC 13/Apr/2026, 1:51:30 pm (UTC)'!
+test040_CanNotExtractTemporaryAssignmentWithDeclarationIfTheVariableIsUsedOutsideOfSelectionInterval
 
 	self
 		tryingToExtract: '|var| var _ 42.'
 		from: 'm1 |var| var _ 42. ^ var'
 		failsWith: [ SourceCodeOfMethodToBeExtractedPrecondition errorMessageForTemporaryAssignmentWithUsagesOutsideOfSelectionInterval ]! !
 
-!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'RNG 12/Jul/2020, 7:35:08 pm (UTC)'!
-test41CannotExtractPartOfMethodSignature
+!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'JEC 13/Apr/2026, 1:51:44 pm (UTC)'!
+test041_CannotExtractPartOfMethodSignature
 
 	self
 		tryingToExtract: 'arg'
@@ -30248,8 +32234,8 @@ test41CannotExtractPartOfMethodSignature
 		using: (Message selector: #m2: arguments: #('arg'))
 		failsWith: [ SourceCodeOfMethodToBeExtractedPrecondition errorMessageForExtractingPartOfMethodSignature ]! !
 
-!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'HAW 19/Jul/2023, 4:07:09 pm (UTC)'!
-test48NewSelectorMustBeUnaryWhenNoArguments
+!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'JEC 13/Apr/2026, 1:51:52 pm (UTC)'!
+test048_NewSelectorMustBeUnaryWhenNoArguments
 
 	self
 		tryingToExtract: '10'
@@ -30257,8 +32243,8 @@ test48NewSelectorMustBeUnaryWhenNoArguments
 		using: (Message selector: #m2: arguments: #())
 		failsWith: [ ExtractMethodNewMethod wrongNumberOfArgumentsGivenErrorMessage ]! !
 
-!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'HAW 2/Nov/2024, 2:07:45 pm (UTC)'!
-test53NotWorkingCase_IncompleteCascadeMessage
+!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'JEC 13/Apr/2026, 1:48:51 pm (UTC)'!
+test053_NotWorkingCase_IncompleteCascadeMessage
 
 	self shouldFail: [
 		self
@@ -30267,8 +32253,8 @@ test53NotWorkingCase_IncompleteCascadeMessage
 			failsWith: [ SourceCodeOfMethodToBeExtractedPrecondition errorMessageForSourceCodeContainingInvalidExpression ]
 	]! !
 
-!ExtractMethodTest methodsFor: 'tests - many repetitions' stamp: 'HAW 18/Jul/2023, 9:13:57 pm (UTC)'!
-test42ExtractsManyRepetitionsOnSameMethod
+!ExtractMethodTest methodsFor: 'tests - many repetitions' stamp: 'JEC 13/Apr/2026, 1:45:51 pm (UTC)'!
+test042_ExtractsManyRepetitionsOnSameMethod
 
 	| sourceMethodName finder sourceMethod extractMethod intervalToExtract newMessage |
 	
@@ -30298,8 +32284,8 @@ test42ExtractsManyRepetitionsOnSameMethod
 	self assert: 'm1 self m2. self m2' equals: (classToRefactor >> #m1) sourceCode.
 	! !
 
-!ExtractMethodTest methodsFor: 'tests - many repetitions' stamp: 'HAW 18/Jul/2023, 9:14:14 pm (UTC)'!
-test43ExtractsRepetitionsOnMoreThanOneMethod
+!ExtractMethodTest methodsFor: 'tests - many repetitions' stamp: 'JEC 13/Apr/2026, 1:45:56 pm (UTC)'!
+test043_ExtractsRepetitionsOnMoreThanOneMethod
 
 	| sourceMethodName finder sourceMethod extractMethod intervalToExtract newMessage |
 	
@@ -30327,8 +32313,8 @@ test43ExtractsRepetitionsOnMoreThanOneMethod
 	self assert: 'm1b 100+self m2' equals: (classToRefactor >> #m1b) sourceCode.
 	! !
 
-!ExtractMethodTest methodsFor: 'tests - many repetitions' stamp: 'MEGL 9/Oct/2024, 4:11:26 am (UTC)'!
-test50ExtractsManyRepetitionsWithMultipleStatementsOnSameMethod
+!ExtractMethodTest methodsFor: 'tests - many repetitions' stamp: 'JEC 13/Apr/2026, 1:46:01 pm (UTC)'!
+test050_ExtractsManyRepetitionsWithMultipleStatementsOnSameMethod
 
 	| sourceMethodName finder sourceMethod extractMethod intervalToExtract newMessage |
 	
@@ -30358,8 +32344,8 @@ test50ExtractsManyRepetitionsWithMultipleStatementsOnSameMethod
 	self assert: 'm1 self m2. true ifTrue: [ self m2]' equals: (classToRefactor >> #m1) sourceCode.
 	! !
 
-!ExtractMethodTest methodsFor: 'tests - many repetitions' stamp: 'MEGL 9/Oct/2024, 2:41:54 pm (UTC)'!
-test51ExtractsManyRepetitionsWithMoreThanTwoStatementsOnSameMethod
+!ExtractMethodTest methodsFor: 'tests - many repetitions' stamp: 'JEC 13/Apr/2026, 1:46:06 pm (UTC)'!
+test051_ExtractsManyRepetitionsWithMoreThanTwoStatementsOnSameMethod
 
 	| sourceMethodName finder sourceMethod extractMethod intervalToExtract newMessage |
 	
@@ -30388,6 +32374,2189 @@ test51ExtractsManyRepetitionsWithMoreThanTwoStatementsOnSameMethod
 	10 factorial. 15 factorial. 20 factorial' equals: (classToRefactor >> #m2) sourceCode.
 	self assert: 'm1 self m2. true ifTrue: [ self m2]' equals: (classToRefactor >> #m1) sourceCode.
 	! !
+
+!ExtractMethodTest methodsFor: 'tests - temporary assignment' stamp: 'JEC 14/Apr/2026, 4:26:43 pm (UTC)'!
+test054_WhenExtractingATemporaryVariableAssignment_RemovesTheDeclarationIfItIsNotUsed
+
+	| codeToExtract newMethodCode originalCode updatedCode |
+	
+	codeToExtract := 'a := 3'.
+	originalCode := 'm1 | a | ' , codeToExtract.
+	newMethodCode := 'm2
+
+	| a |
+	^ ', codeToExtract.
+	updatedCode := 'm1 self m2'.
+
+	self
+		assertExtract: codeToExtract 
+		from: originalCode
+		to: (Message selector: #m2)
+		withReplacements: #()
+		definesNewMethodNamed: #m2
+		withBody: newMethodCode
+		andUpdateMethodsTo: { updatedCode }! !
+
+!ExtractMethodTest methodsFor: 'tests - temporary assignment' stamp: 'JEC 14/Apr/2026, 4:26:31 pm (UTC)'!
+test055_WhenExtractingATemporaryVariableAssignment_DontRemoveAnyOtherDeclaration
+
+	| codeToExtract newMethodCode originalCode updatedCode |
+	
+	codeToExtract := 'a := 3.'.
+	originalCode := 'm1 | a b | ' , codeToExtract , ' ^ b := 1'.
+	newMethodCode := 'm2
+
+	| a |
+	^ a := 3'.
+	updatedCode := 'm1 | b | self m2. ^ b := 1'.
+
+	self
+		assertExtract: codeToExtract 
+		from: originalCode
+		to: (Message selector: #m2)
+		withReplacements: #()
+		definesNewMethodNamed: #m2
+		withBody: newMethodCode
+		andUpdateMethodsTo: { updatedCode }! !
+
+!ExtractMethodTest methodsFor: 'tests - temporary assignment' stamp: 'JEC 14/Apr/2026, 4:26:22 pm (UTC)'!
+test056_WhenExtractingATempVarAssignment_AndTheVarIsWrittenAfterTheExtractedCode_AssignsTheReturnedValueToTheTemporary
+
+	| codeToExtract newMethodCode originalCode updatedCode |
+	
+	codeToExtract := 'a := 3.'.
+	originalCode := 'm1 | a | ' , codeToExtract, ' a := 4'.
+	newMethodCode := 'm2
+
+	| a |
+	', codeToExtract ,'
+	^ a'.
+	updatedCode := 'm1 | a | a := self m2. a := 4'.
+
+	self
+		assertExtract: codeToExtract 
+		from: originalCode
+		to: (Message selector: #m2)
+		withReplacements: #()
+		definesNewMethodNamed: #m2
+		withBody: newMethodCode
+		andUpdateMethodsTo: { updatedCode }! !
+
+!ExtractMethodTest methodsFor: 'tests - temporary assignment' stamp: 'JEC 14/Apr/2026, 4:26:14 pm (UTC)'!
+test057_WhenExtractingATempVarAssignment_AndTheVarIsReadAfterTheExtractedCode_AssignsTheReturnedValueToTheTemporary
+
+	| codeToExtract newMethodCode originalCode updatedCode |
+	
+	codeToExtract := 'a := 3.'.
+	originalCode := 'm1 | a | ' , codeToExtract, ' a + 4'.
+	newMethodCode := 'm2
+
+	| a |
+	', codeToExtract, '
+	^ a'.
+	updatedCode := 'm1 | a | a := self m2. a + 4'.
+
+	self
+		assertExtract: codeToExtract 
+		from: originalCode
+		to: (Message selector: #m2)
+		withReplacements: #()
+		definesNewMethodNamed: #m2
+		withBody: newMethodCode
+		andUpdateMethodsTo: { updatedCode }! !
+
+!ExtractMethodTest methodsFor: 'tests - temporary assignment' stamp: 'JEC 14/Apr/2026, 4:26:05 pm (UTC)'!
+test058_WhenExtractingATempVarAssignment_AndTheVarIsUsedAsAnArgumentAfterTheExtractedCode_AssignsTheReturnedValueToTheTemporary
+
+	| codeToExtract newMethodCode originalCode updatedCode |
+	
+	codeToExtract := 'a := 3.'.
+	originalCode := 'm1 | a | ' , codeToExtract, ' 4 + a'.
+	newMethodCode := 'm2
+
+	| a |
+	', codeToExtract, '
+	^ a'.
+	updatedCode := 'm1 | a | a := self m2. 4 + a'.
+
+	self
+		assertExtract: codeToExtract 
+		from: originalCode
+		to: (Message selector: #m2)
+		withReplacements: #()
+		definesNewMethodNamed: #m2
+		withBody: newMethodCode
+		andUpdateMethodsTo: { updatedCode }! !
+
+!ExtractMethodTest methodsFor: 'tests - temporary assignment' stamp: 'JEC 14/Apr/2026, 4:25:54 pm (UTC)'!
+test059_WhenExtractingATempVarAssignment_AndTheVarIsReturnedAfterTheExtractedCode_AssignsTheReturnedValueToTheTemporary
+
+	| codeToExtract newMethodCode originalCode updatedCode |
+	
+	codeToExtract := 'a := 3.'.
+	originalCode := 'm1 | a | ' , codeToExtract, ' ^ a'.
+	newMethodCode := 'm2
+
+	| a |
+	', codeToExtract, '
+	^ a'.
+	updatedCode := 'm1 | a | a := self m2. ^ a'.
+
+	self
+		assertExtract: codeToExtract 
+		from: originalCode
+		to: (Message selector: #m2)
+		withReplacements: #()
+		definesNewMethodNamed: #m2
+		withBody: newMethodCode
+		andUpdateMethodsTo: { updatedCode }! !
+
+!ExtractMethodTest methodsFor: 'tests - temporary assignment' stamp: 'JEC 14/Apr/2026, 4:25:43 pm (UTC)'!
+test060_WhenExtractingATempVarAssignment_AndTheVarIsReadAfterTheExtractedCode_AssignsTheReturnedValueToTheTemporary
+
+	"This is an edge case"
+
+	| codeToExtract newMethodCode originalCode updatedCode |
+	
+	codeToExtract := 'a := 3.'.
+	originalCode := 'm1 | a | ' , codeToExtract, ' a'.
+	newMethodCode := 'm2
+
+	| a |
+	', codeToExtract, '
+	^ a'.
+	updatedCode := 'm1 | a | a := self m2. a'.
+
+	self
+		assertExtract: codeToExtract 
+		from: originalCode
+		to: (Message selector: #m2)
+		withReplacements: #()
+		definesNewMethodNamed: #m2
+		withBody: newMethodCode
+		andUpdateMethodsTo: { updatedCode }! !
+
+!ExtractMethodTest methodsFor: 'tests - temporary assignment' stamp: 'JEC 14/Apr/2026, 4:25:31 pm (UTC)'!
+test061_WhenExtractingATempVarAssignment_AndTheVarIsReadInTheExtractedCode_TheNewMethodReturnsTheVariable
+
+	| codeToExtract newMethodCode originalCode updatedCode |
+	
+	codeToExtract := 'a := 1. self foo: a.'.
+	originalCode := 'm1 | a | ' , codeToExtract, ' ^ a'.
+	newMethodCode := 'm2
+
+	| a |
+	', codeToExtract, '
+	^ a'.
+	updatedCode := 'm1 | a | a := self m2. ^ a'.
+
+	self
+		assertExtract: codeToExtract 
+		from: originalCode
+		to: (Message selector: #m2)
+		withReplacements: #()
+		definesNewMethodNamed: #m2
+		withBody: newMethodCode
+		andUpdateMethodsTo: { updatedCode }! !
+
+!ExtractMethodTest methodsFor: 'tests - temporary assignment' stamp: 'JEC 14/Apr/2026, 4:25:23 pm (UTC)'!
+test062_CanExtractATempVarAssignmentThatTheVarAtTheBeginingAndEndOfTheExtractedCode
+
+	"
+	This is a bugfix in SourceCodeOfMethodToBeExtractedPrecondition>>isLeftSideOfAssignment
+	Precisely in SourceCodeOfMethodToBeExtractedPrecondition>>startAndEndParseNodesAreTheSame.
+	It only checked that the nodes were the same but not the intervals.
+	"
+
+	| codeToExtract newMethodCode originalCode updatedCode |
+	
+	codeToExtract := 'a := 1. self foo: a.'.
+	originalCode := 'm1 | a | ' , codeToExtract, ' a'.
+	newMethodCode := 'm2
+
+	| a |
+	', codeToExtract, '
+	^ a'.
+	updatedCode := 'm1 | a | a := self m2. a'.
+
+	self
+		assertExtract: codeToExtract 
+		from: originalCode
+		to: (Message selector: #m2)
+		withReplacements: #()
+		definesNewMethodNamed: #m2
+		withBody: newMethodCode
+		andUpdateMethodsTo: { updatedCode }! !
+
+!ExtractMethodTest methodsFor: 'tests - temporary assignment' stamp: 'JEC 14/Apr/2026, 4:25:03 pm (UTC)'!
+test063_WhenExtractingMultipleTempVar_OneIsAssignedAndTheOtherIsRead_TheOneAssignedIsReturned
+
+	| codeToExtract newMethodCode originalCode updatedCode |
+	
+	codeToExtract := 'b := a + 2'.
+	originalCode := 'm1 | a b | a := 1. ' , codeToExtract.
+	newMethodCode := 'm2: a
+
+	| b |
+	^ ', codeToExtract.
+	updatedCode := 'm1 | a | a := 1. self m2: a'.
+
+	self
+		assertExtract: codeToExtract 
+		from: originalCode
+		to: (Message selector: #m2: arguments: #('a'))
+		withReplacements: #()
+		definesNewMethodNamed: #m2:
+		withBody: newMethodCode
+		andUpdateMethodsTo: { updatedCode }! !
+
+!ExtractMethodTest methodsFor: 'tests - temporary assignment' stamp: 'JEC 14/Apr/2026, 4:24:56 pm (UTC)'!
+test064_WhenExtractingATempVarAssignment_AndTheExtractedCodeReadsTheTempVarBeforeTheAssignment_DeclaresANewTempVarForTheAssignmentAndReturnsIt
+
+	| codeToExtract newMethodCode originalCode updatedCode |
+	
+	codeToExtract := 'a := a + 2'.
+	originalCode := 'm1 | a | a := 1. ' , codeToExtract.
+	newMethodCode := 'm2: a
+
+	| newA |
+	newA := a + 2.
+	^ newA'.
+	updatedCode := 'm1 | a | a := 1. a := self m2: a'.
+
+	self
+		assertExtract: codeToExtract 
+		from: originalCode
+		to: (Message selector: #m2: arguments: #('a'))
+		withReplacements: #()
+		definesNewMethodNamed: #m2:
+		withBody: newMethodCode
+		andUpdateMethodsTo: { updatedCode }! !
+
+!ExtractMethodTest methodsFor: 'tests - temporary assignment' stamp: 'JEC 14/Apr/2026, 4:24:50 pm (UTC)'!
+test065_WhenExtractingATempVarAssignment_AndTheExtractedCodeReadsTheTempVarBeforeTheAssignment_DeclaresANewTempVarForTheAssignmentAndReturnsIt
+
+	| codeToExtract newMethodCode originalCode updatedCode |
+	
+	codeToExtract := 'self foo: a. a := a + 2'.
+	originalCode := 'm1 | a | a := 1. ' , codeToExtract.
+	newMethodCode := 'm2: a
+
+	| newA |
+	self foo: a. newA := a + 2.
+	^ newA'.
+	updatedCode := 'm1 | a | a := 1. a := self m2: a'.
+
+	self
+		assertExtract: codeToExtract 
+		from: originalCode
+		to: (Message selector: #m2: arguments: #('a'))
+		withReplacements: #()
+		definesNewMethodNamed: #m2:
+		withBody: newMethodCode
+		andUpdateMethodsTo: { updatedCode }! !
+
+!ExtractMethodTest methodsFor: 'tests - temporary assignment' stamp: 'JEC 14/Apr/2026, 4:24:44 pm (UTC)'!
+test066_WhenExtractingATempVarAssignment_AndTheExtractedCodeReadsTheTempVarAfterTheAssignment_DeclaresANewTempVarForTheAssignmentAndUsesItAfterThat
+
+	| codeToExtract newMethodCode originalCode updatedCode |
+	
+	codeToExtract := 'a := a + 2. self foo: a'.
+	originalCode := 'm1 | a | a := 1. ' , codeToExtract.
+	newMethodCode := 'm2: a
+
+	| newA |
+	newA := a + 2. self foo: newA.
+	^ newA'.
+	updatedCode := 'm1 | a | a := 1. a := self m2: a'.
+
+	self
+		assertExtract: codeToExtract 
+		from: originalCode
+		to: (Message selector: #m2: arguments: #('a'))
+		withReplacements: #()
+		definesNewMethodNamed: #m2:
+		withBody: newMethodCode
+		andUpdateMethodsTo: { updatedCode }! !
+
+!ExtractMethodTest methodsFor: 'tests - temporary assignment' stamp: 'JEC 14/Apr/2026, 4:24:37 pm (UTC)'!
+test067_WhenExtractingATempVarAssignment_WithMultipleAssignments_DeclaresANewTempVarForTheFirstAssignmentAndUsesItAfterThat
+
+	| codeToExtract newMethodCode originalCode updatedCode |
+
+	codeToExtract := 'a := a + 2. self foo: a. a := a + 1'.
+	originalCode := 'm1 | a | a := 1. ' , codeToExtract.
+	newMethodCode := 'm2: a
+
+	| newA |
+	newA := a + 2. self foo: newA. newA := newA + 1.
+	^ newA'.
+	updatedCode := 'm1 | a | a := 1. a := self m2: a'.
+
+	self
+		assertExtract: codeToExtract 
+		from: originalCode
+		to: (Message selector: #m2: arguments: #('a'))
+		withReplacements: #()
+		definesNewMethodNamed: #m2:
+		withBody: newMethodCode
+		andUpdateMethodsTo: { updatedCode }! !
+
+!ExtractMethodTest methodsFor: 'tests - temporary assignment' stamp: 'JEC 14/Apr/2026, 4:24:31 pm (UTC)'!
+test068_WhenExtractingATempVarAssignment_WithSameMultipleAssignments_DeclaresANewTempVarForTheFirstAssignmentAndUsesItAfterThat
+
+	| codeToExtract newMethodCode originalCode updatedCode |
+
+	codeToExtract := 'a := a + 2. self foo: a. a := a + 2'.
+	originalCode := 'm1 | a | a := 1. ' , codeToExtract.
+	newMethodCode := 'm2: a
+
+	| newA |
+	newA := a + 2. self foo: newA. newA := newA + 2.
+	^ newA'.
+	updatedCode := 'm1 | a | a := 1. a := self m2: a'.
+
+	self
+		assertExtract: codeToExtract 
+		from: originalCode
+		to: (Message selector: #m2: arguments: #('a'))
+		withReplacements: #()
+		definesNewMethodNamed: #m2:
+		withBody: newMethodCode
+		andUpdateMethodsTo: { updatedCode }! !
+
+!ExtractMethodTest methodsFor: 'tests - temporary assignment' stamp: 'JEC 14/Apr/2026, 4:23:42 pm (UTC)'!
+test069_CanExtractMultipleTemporaryVariableAssignmentsAlongWithReadsOfSameVariable
+
+	| codeToExtract newMethodCode originalCode updatedCode |
+
+	codeToExtract := 'self foo: a. a := a + 2. self bar: a. a := 5'.
+	originalCode := 'm1 | a | a := 1. ' , codeToExtract.
+	newMethodCode := 'm2: a
+
+	| newA |
+	self foo: a. newA := a + 2. self bar: newA. newA := 5.
+	^ newA'.
+	updatedCode := 'm1 | a | a := 1. a := self m2: a'.
+
+	self
+		assertExtract: codeToExtract 
+		from: originalCode
+		to: (Message selector: #m2: arguments: #('a'))
+		withReplacements: #()
+		definesNewMethodNamed: #m2:
+		withBody: newMethodCode
+		andUpdateMethodsTo: { updatedCode }! !
+
+!ExtractMethodTest methodsFor: 'tests - temporary assignment' stamp: 'JEC 14/Apr/2026, 4:23:20 pm (UTC)'!
+test070_CanExtractTemporaryVariableAssignmentsOfMultipleVariables
+
+	| codeToExtract newMethodCode originalCode updatedCode |
+
+	codeToExtract := 'a := 1. b := 1'.
+	originalCode := 'm1 | a b | ' , codeToExtract.
+	newMethodCode := 'm2
+
+	| a b |
+	', codeToExtract.
+	updatedCode := 'm1 self m2'.
+
+	self
+		assertExtract: codeToExtract 
+		from: originalCode
+		to: (Message selector: #m2)
+		withReplacements: #()
+		definesNewMethodNamed: #m2
+		withBody: newMethodCode
+		andUpdateMethodsTo: { updatedCode }! !
+
+!ExtractMethodTest methodsFor: 'tests - temporary assignment' stamp: 'JEC 14/Apr/2026, 4:23:06 pm (UTC)'!
+test071_WhenExtractingMultipleTempVarsAssignments_AndOnlyOneIsUsedBeforeExtractedCode_IsReturnedAndAssigned
+
+	| codeToExtract newMethodCode originalCode updatedCode |
+	
+	codeToExtract := 'a := 1. b := 1'.
+	originalCode := 'm1 | a b | a := 2. ' , codeToExtract.
+	newMethodCode := 'm2
+
+	| a b |
+	a := 1. b := 1.
+	^ a'.
+	updatedCode := 'm1 | a | a := 2. a := self m2'.
+
+	self
+		assertExtract: codeToExtract 
+		from: originalCode
+		to: (Message selector: #m2)
+		withReplacements: #()
+		definesNewMethodNamed: #m2
+		withBody: newMethodCode
+		andUpdateMethodsTo: { updatedCode }! !
+
+!ExtractMethodTest methodsFor: 'tests - temporary assignment' stamp: 'JEC 14/Apr/2026, 4:22:55 pm (UTC)'!
+test072_WhenExtractingMultipleTempVarsAssignments_AndAllAreUsedBeforeExtractedCode_AllAreAssignedInABlock
+
+	| codeToExtract newMethodCode originalCode updatedCode |
+
+	codeToExtract := 'a := 1. b := 1'.
+	originalCode := 'm1 | a b | a := 2. b := 2. ' , codeToExtract.
+	newMethodCode := 'm2AssigningWith: anAssignmentBlock
+
+	| a b |
+	a := 1. b := 1.
+	^ anAssignmentBlock value: a value: b'.
+	updatedCode := 'm1 | a b | a := 2. b := 2. self m2AssigningWith: [ :newA :newB | a := newA. b := newB. ]'.
+
+	self
+		assertExtract: codeToExtract 
+		from: originalCode
+		to: (Message selector: #m2)
+		withReplacements: #()
+		definesNewMethodNamed: #m2AssigningWith:
+		withBody: newMethodCode
+		andUpdateMethodsTo: { updatedCode }! !
+
+!ExtractMethodTest methodsFor: 'tests - temporary assignment' stamp: 'JEC 14/Apr/2026, 4:22:38 pm (UTC)'!
+test073_WhenExtractingMultipleTempVarsAssignments_AndOnlyOneIsReadInExtractedCode_UsesANewTempVar
+
+	| codeToExtract newMethodCode originalCode updatedCode |
+
+	codeToExtract := 'self foo: a. a := 1. b := 1.'.
+	originalCode := 'm1 | a b | a := 1. ' , codeToExtract.
+	newMethodCode := 'm2: a
+
+	| newA b |
+	self foo: a. newA := 1. b := 1.
+	^ newA'.
+	updatedCode := 'm1 | a | a := 1. a := self m2: a.'.
+
+	self
+		assertExtract: codeToExtract 
+		from: originalCode
+		to: (Message selector: #m2: arguments: #('a'))
+		withReplacements: #()
+		definesNewMethodNamed: #m2:
+		withBody: newMethodCode
+		andUpdateMethodsTo: { updatedCode }! !
+
+!ExtractMethodTest methodsFor: 'tests - temporary assignment' stamp: 'JEC 14/Apr/2026, 4:22:14 pm (UTC)'!
+test074_WhenExtractingMultipleTempVarsAssignments_AndAllAreReadInExtractedCode_UsesNewTempVars
+
+	| codeToExtract newMethodCode originalCode updatedCode |
+
+	codeToExtract := 'self foo: a. self bar: b. a := 1. b := 1.'.
+	originalCode := 'm1 | a b | a := 1. b := 2. ' , codeToExtract.
+	newMethodCode := 'm2A: a m2B: b assigningWith: anAssignmentBlock
+
+	| newA newB |
+	self foo: a. self bar: b. newA := 1. newB := 1.
+	^ anAssignmentBlock value: newA value: newB'.
+	updatedCode := 'm1 | a b | a := 1. b := 2. self m2A: a m2B: b assigningWith: [ :newA :newB | a := newA. b := newB. ].'.
+
+	self
+		assertExtract: codeToExtract 
+		from: originalCode
+		to: (Message selector: #m2A:m2B: arguments: #('a' 'b'))
+		withReplacements: #()
+		definesNewMethodNamed: #m2A:m2B:assigningWith:
+		withBody: newMethodCode
+		andUpdateMethodsTo: { updatedCode }! !
+
+!ExtractMethodTest methodsFor: 'tests - temporary assignment' stamp: 'JEC 14/Apr/2026, 4:21:26 pm (UTC)'!
+test075_CanExtractTemporaryVariableAssignmentsFromABlock
+
+	| codeToExtract newMethodCode originalCode updatedCode |
+
+	codeToExtract := 'a := 1'.
+	originalCode := 'm1 [ | a |' , codeToExtract, ' ]'.
+	newMethodCode := 'm2
+
+	| a |
+	^ a := 1'.
+	updatedCode := 'm1 [ self m2 ]'.
+
+	self
+		assertExtract: codeToExtract 
+		from: originalCode
+		to: (Message selector: #m2)
+		withReplacements: #()
+		definesNewMethodNamed: #m2
+		withBody: newMethodCode
+		andUpdateMethodsTo: { updatedCode }! !
+
+!ExtractMethodTest methodsFor: 'tests - temporary assignment' stamp: 'JEC 14/Apr/2026, 4:21:05 pm (UTC)'!
+test076_CanExtractMultipleTemporaryVariablesAssignments_WhenTheDeclarationIsInDifferentOrdenThanAssignation
+
+	| codeToExtract newMethodCode originalCode updatedCode |
+
+	codeToExtract := 'a := 1. b := 2'.
+	originalCode := 'm1 [ | b a | ' , codeToExtract, ' ]'.
+	newMethodCode := 'm2
+
+	| b a |
+	a := 1. b := 2'.
+	updatedCode := 'm1 [ self m2 ]'.
+
+	self
+		assertExtract: codeToExtract 
+		from: originalCode
+		to: (Message selector: #m2)
+		withReplacements: #()
+		definesNewMethodNamed: #m2
+		withBody: newMethodCode
+		andUpdateMethodsTo: { updatedCode }! !
+
+!ExtractMethodTest methodsFor: 'tests - temporary assignment' stamp: 'JEC 14/Apr/2026, 4:20:47 pm (UTC)'!
+test077_WhenTheNewTempVarExistsAsAnInstVar_CreatesANewOneWithANumber
+
+	| codeToExtract newMethodCode originalCode updatedCode |
+	
+	classToRefactor addInstVarName: 'newA'.
+	codeToExtract := 'a := a + 2'.
+	originalCode := 'm1 | a | a := 1. ' , codeToExtract.
+	newMethodCode := 'm2: a
+
+	| newA1 |
+	newA1 := a + 2.
+	^ newA1'.
+	updatedCode := 'm1 | a | a := 1. a := self m2: a'.
+
+	self
+		assertExtract: codeToExtract 
+		from: originalCode
+		to: (Message selector: #m2: arguments: #('a'))
+		withReplacements: #()
+		definesNewMethodNamed: #m2:
+		withBody: newMethodCode
+		andUpdateMethodsTo: { updatedCode }! !
+
+!ExtractMethodTest methodsFor: 'tests - temporary assignment' stamp: 'JEC 14/Apr/2026, 4:20:38 pm (UTC)'!
+test078_WhenTheNewTempVarExistsAsAnInstVar_AndTheAnotherNewOneAlso_CreatesANewOneWithAConsecutiveNumber
+
+	| codeToExtract newMethodCode originalCode updatedCode |
+	
+	classToRefactor addInstVarName: 'newA'.
+	classToRefactor addInstVarName: 'newA1'.
+	codeToExtract := 'a := a + 2'.
+	originalCode := 'm1 | a | a := 1. ' , codeToExtract.
+	newMethodCode := 'm2: a
+
+	| newA2 |
+	newA2 := a + 2.
+	^ newA2'.
+	updatedCode := 'm1 | a | a := 1. a := self m2: a'.
+
+	self
+		assertExtract: codeToExtract 
+		from: originalCode
+		to: (Message selector: #m2: arguments: #('a'))
+		withReplacements: #()
+		definesNewMethodNamed: #m2:
+		withBody: newMethodCode
+		andUpdateMethodsTo: { updatedCode }! !
+
+!ExtractMethodTest methodsFor: 'tests - temporary assignment' stamp: 'JEC 14/Apr/2026, 4:20:29 pm (UTC)'!
+test079_WhenTheNewTempVarExistsAsAnInstVarInASuperclass_CreatesANewOneWithANumber
+
+	| codeToExtract newMethodCode originalCode updatedCode |
+	
+	self addInsVarAndSubclassify: 'newA'.
+	codeToExtract := 'a := a + 2'.
+	originalCode := 'm1 | a | a := 1. ' , codeToExtract.
+	newMethodCode := 'm2: a
+
+	| newA1 |
+	newA1 := a + 2.
+	^ newA1'.
+	updatedCode := 'm1 | a | a := 1. a := self m2: a'.
+
+	self
+		assertExtract: codeToExtract 
+		from: originalCode
+		to: (Message selector: #m2: arguments: #('a'))
+		withReplacements: #()
+		definesNewMethodNamed: #m2:
+		withBody: newMethodCode
+		andUpdateMethodsTo: { updatedCode }! !
+
+!ExtractMethodTest methodsFor: 'tests - temporary assignment' stamp: 'JEC 14/Apr/2026, 4:20:20 pm (UTC)'!
+test080_WhenTheNewTempVarExistsAsATempVarInTheMethod_CreatesANewOneWithANumber
+
+	| codeToExtract newMethodCode originalCode updatedCode |
+	
+	codeToExtract := ' a := a + 2. b := a + 2'.
+	originalCode := 'm1 | a newA b | a := 1. b := 2.' , codeToExtract.
+	newMethodCode := 'm2: a assigningWith: anAssignmentBlock
+
+	| newA1 b |
+	newA1 := a + 2. b := newA1 + 2.
+	^ anAssignmentBlock value: newA1 value: b'.
+	updatedCode := 'm1 | a newA b | a := 1. b := 2. self m2: a assigningWith: [ :newA1 :newB | a := newA1. b := newB. ]'.
+
+	self
+		assertExtract: codeToExtract 
+		from: originalCode
+		to: (Message selector: #m2: arguments: #('a'))
+		withReplacements: #()
+		definesNewMethodNamed: #m2:assigningWith:
+		withBody: newMethodCode
+		andUpdateMethodsTo: { updatedCode }! !
+
+!ExtractMethodTest methodsFor: 'tests - temporary assignment' stamp: 'JEC 14/Apr/2026, 4:20:10 pm (UTC)'!
+test081_WhenTheNewTempVarExistsAsATempVarInTheMethod_AndTheAnotherNewOneAlso_CreatesANewOneWithAConsecutiveNumber
+
+	| codeToExtract newMethodCode originalCode updatedCode |
+	
+	codeToExtract := ' a := a + 2. b := a + 2'.
+	originalCode := 'm1 | a newA b newA1 | a := 1. b := 2.' , codeToExtract.
+	newMethodCode := 'm2: a assigningWith: anAssignmentBlock
+
+	| newA2 b |
+	newA2 := a + 2. b := newA2 + 2.
+	^ anAssignmentBlock value: newA2 value: b'.
+	updatedCode := 'm1 | a newA b newA1 | a := 1. b := 2. self m2: a assigningWith: [ :newA2 :newB | a := newA2. b := newB. ]'.
+
+	self
+		assertExtract: codeToExtract 
+		from: originalCode
+		to: (Message selector: #m2: arguments: #('a'))
+		withReplacements: #()
+		definesNewMethodNamed: #m2:assigningWith:
+		withBody: newMethodCode
+		andUpdateMethodsTo: { updatedCode }! !
+
+!ExtractMethodTest methodsFor: 'tests - temporary assignment' stamp: 'JEC 14/Apr/2026, 4:19:58 pm (UTC)'!
+test082_WhenTheNewTempVarExistsAsATempVarInTheMethod_AndTheAnotherNewOneAsAnInstVar_CreatesANewOneWithAConsecutiveNumber
+
+	| codeToExtract newMethodCode originalCode updatedCode |
+	
+	classToRefactor addInstVarName: 'newA1'.
+	codeToExtract := ' a := a + 2. b := a + 2'.
+	originalCode := 'm1 | a newA b | a := 1. b := 2.' , codeToExtract.
+	newMethodCode := 'm2: a assigningWith: anAssignmentBlock
+
+	| newA2 b |
+	newA2 := a + 2. b := newA2 + 2.
+	^ anAssignmentBlock value: newA2 value: b'.
+	updatedCode := 'm1 | a newA b | a := 1. b := 2. self m2: a assigningWith: [ :newA2 :newB | a := newA2. b := newB. ]'.
+
+	self
+		assertExtract: codeToExtract 
+		from: originalCode
+		to: (Message selector: #m2: arguments: #('a'))
+		withReplacements: #()
+		definesNewMethodNamed: #m2:assigningWith:
+		withBody: newMethodCode
+		andUpdateMethodsTo: { updatedCode }! !
+
+!ExtractMethodTest methodsFor: 'tests - temporary assignment' stamp: 'JEC 14/Apr/2026, 4:19:29 pm (UTC)'!
+test083_WhenTheNewMethodWithAssignmentBlockExistsInClass_CreatesANewOneWithANumber
+
+	| codeToExtract newMethodCode originalCode updatedCode |
+	
+	classToRefactor compile: 'm2AssigningWith: arg'.
+	codeToExtract := 'a := 2. b := 2'.
+	originalCode := 'm1 | a b | a := 1. b := 1. ' , codeToExtract.
+	newMethodCode := 'm2AssigningWith1: anAssignmentBlock
+
+	| a b |
+	a := 2. b := 2.
+	^ anAssignmentBlock value: a value: b'.
+	updatedCode := 'm1 | a b | a := 1. b := 1. self m2AssigningWith1: [ :newA :newB | a := newA. b := newB. ]'.
+
+	self
+		assertExtract: codeToExtract 
+		from: originalCode
+		to: (Message selector: #m2)
+		withReplacements: #()
+		definesNewMethodNamed: #m2AssigningWith1:
+		withBody: newMethodCode
+		andUpdateMethodsTo: { updatedCode }! !
+
+!ExtractMethodTest methodsFor: 'tests - temporary assignment' stamp: 'JEC 14/Apr/2026, 4:19:16 pm (UTC)'!
+test084_WhenTheNewMethodWithAssignmentBlockExistsInClass_AndTheAnotherNewOneAlsoExists_CreatesANewOneWithAConsecutiveNumber
+
+	| codeToExtract newMethodCode originalCode updatedCode |
+	
+	classToRefactor compile: 'm2AssigningWith: arg'.
+	classToRefactor compile: 'm2AssigningWith1: arg'.
+	codeToExtract := 'a := 2. b := 2'.
+	originalCode := 'm1 | a b | a := 1. b := 1. ' , codeToExtract.
+	newMethodCode := 'm2AssigningWith2: anAssignmentBlock
+
+	| a b |
+	a := 2. b := 2.
+	^ anAssignmentBlock value: a value: b'.
+	updatedCode := 'm1 | a b | a := 1. b := 1. self m2AssigningWith2: [ :newA :newB | a := newA. b := newB. ]'.
+
+	self
+		assertExtract: codeToExtract 
+		from: originalCode
+		to: (Message selector: #m2)
+		withReplacements: #()
+		definesNewMethodNamed: #m2AssigningWith2:
+		withBody: newMethodCode
+		andUpdateMethodsTo: { updatedCode }! !
+
+!ExtractMethodTest methodsFor: 'tests - temporary assignment' stamp: 'JEC 14/Apr/2026, 4:18:56 pm (UTC)'!
+test085_WhenTheNewMethodWithAssignmentBlockExistsInClass_WithAnotherParameters_CreatesANewOneWithANumber
+
+	| codeToExtract newMethodCode originalCode updatedCode |
+	
+	classToRefactor compile: 'm2: arg1 assigningWith: arg2'.
+	codeToExtract := 'a := a + 2. b := 2'.
+	originalCode := 'm1 | a b | a := 1. b := 1. ' , codeToExtract.
+	newMethodCode := 'm2: a assigningWith1: anAssignmentBlock
+
+	| newA b |
+	newA := a + 2. b := 2.
+	^ anAssignmentBlock value: newA value: b'.
+	updatedCode := 'm1 | a b | a := 1. b := 1. self m2: a assigningWith1: [ :newA :newB | a := newA. b := newB. ]'.
+
+	self
+		assertExtract: codeToExtract 
+		from: originalCode
+		to: (Message selector: #m2: arguments: #('a'))
+		withReplacements: #()
+		definesNewMethodNamed: #m2:assigningWith1:
+		withBody: newMethodCode
+		andUpdateMethodsTo: { updatedCode }! !
+
+!ExtractMethodTest methodsFor: 'tests - temporary assignment' stamp: 'JEC 14/Apr/2026, 4:18:49 pm (UTC)'!
+test086_WhenTheNewMethodWithAssignmentBlockExistsInASuperclass_CreatesANewOneWithANumber
+
+	| codeToExtract newMethodCode originalCode updatedCode |
+	
+	self compileAndSubclassify: 'm2: arg1 assigningWith: arg2'. 
+	codeToExtract := 'a := a + 2. b := 2'.
+	originalCode := 'm1 | a b | a := 1. b := 1. ' , codeToExtract.
+	newMethodCode := 'm2: a assigningWith1: anAssignmentBlock
+
+	| newA b |
+	newA := a + 2. b := 2.
+	^ anAssignmentBlock value: newA value: b'.
+	updatedCode := 'm1 | a b | a := 1. b := 1. self m2: a assigningWith1: [ :newA :newB | a := newA. b := newB. ]'.
+
+	self
+		assertExtract: codeToExtract 
+		from: originalCode
+		to: (Message selector: #m2: arguments: #('a'))
+		withReplacements: #()
+		definesNewMethodNamed: #m2:assigningWith1:
+		withBody: newMethodCode
+		andUpdateMethodsTo: { updatedCode }! !
+
+!ExtractMethodTest methodsFor: 'tests - temporary assignment' stamp: 'JEC 14/Apr/2026, 4:18:40 pm (UTC)'!
+test087_WhenTheNewBlockTempVarParameterExistsAsAnInstVar_CreatesANewOneWithANumber
+
+	| codeToExtract newMethodCode originalCode updatedCode |
+	
+	classToRefactor addInstVarName: 'anAssignmentBlock'.
+	codeToExtract := 'a := a + 2. b := 2'.
+	originalCode := 'm1 | a b | a := 1. b := 1. ' , codeToExtract.
+	newMethodCode := 'm2: a assigningWith: anAssignmentBlock1
+
+	| newA b |
+	newA := a + 2. b := 2.
+	^ anAssignmentBlock1 value: newA value: b'.
+	updatedCode := 'm1 | a b | a := 1. b := 1. self m2: a assigningWith: [ :newA :newB | a := newA. b := newB. ]'.
+
+	self
+		assertExtract: codeToExtract 
+		from: originalCode
+		to: (Message selector: #m2: arguments: #('a'))
+		withReplacements: #()
+		definesNewMethodNamed: #m2:assigningWith:
+		withBody: newMethodCode
+		andUpdateMethodsTo: { updatedCode }! !
+
+!ExtractMethodTest methodsFor: 'tests - temporary assignment' stamp: 'JEC 14/Apr/2026, 4:18:29 pm (UTC)'!
+test088_WhenTheNewBlockTempVarParameterExistsAsAnInstVar_AndAlsoNextOne_CreatesANewOneWithTheFollowingNumber
+
+	| codeToExtract newMethodCode originalCode updatedCode |
+	
+	classToRefactor addInstVarName: 'anAssignmentBlock'.
+	classToRefactor addInstVarName: 'anAssignmentBlock1'.
+	codeToExtract := 'a := a + 2. b := 2'.
+	originalCode := 'm1 | a b | a := 1. b := 1. ' , codeToExtract.
+	newMethodCode := 'm2: a assigningWith: anAssignmentBlock2
+
+	| newA b |
+	newA := a + 2. b := 2.
+	^ anAssignmentBlock2 value: newA value: b'.
+	updatedCode := 'm1 | a b | a := 1. b := 1. self m2: a assigningWith: [ :newA :newB | a := newA. b := newB. ]'.
+
+	self
+		assertExtract: codeToExtract 
+		from: originalCode
+		to: (Message selector: #m2: arguments: #('a'))
+		withReplacements: #()
+		definesNewMethodNamed: #m2:assigningWith:
+		withBody: newMethodCode
+		andUpdateMethodsTo: { updatedCode }! !
+
+!ExtractMethodTest methodsFor: 'tests - temporary assignment' stamp: 'JEC 14/Apr/2026, 4:18:10 pm (UTC)'!
+test089_WhenTheNewBlockTempVarParameterExistsAsAnInstVarInHierarchy_CreatesANewOneWithANumber
+
+	| codeToExtract newMethodCode originalCode updatedCode |
+	
+	self addInsVarAndSubclassify: 'anAssignmentBlock'.
+	codeToExtract := 'a := a + 2. b := 2'.
+	originalCode := 'm1 | a b | a := 1. b := 1. ' , codeToExtract.
+	newMethodCode := 'm2: a assigningWith: anAssignmentBlock1
+
+	| newA b |
+	newA := a + 2. b := 2.
+	^ anAssignmentBlock1 value: newA value: b'.
+	updatedCode := 'm1 | a b | a := 1. b := 1. self m2: a assigningWith: [ :newA :newB | a := newA. b := newB. ]'.
+
+	self
+		assertExtract: codeToExtract 
+		from: originalCode
+		to: (Message selector: #m2: arguments: #('a'))
+		withReplacements: #()
+		definesNewMethodNamed: #m2:assigningWith:
+		withBody: newMethodCode
+		andUpdateMethodsTo: { updatedCode }! !
+
+!ExtractMethodTest methodsFor: 'tests - temporary assignment' stamp: 'JEC 14/Apr/2026, 4:17:37 pm (UTC)'!
+test090_WhenTheAssignmentBlockParameterNameExistsInTheExtractedTempVars_CreatesItWithANumber
+
+	| codeToExtract newMethodCode originalCode updatedCode |
+	
+	codeToExtract := 'b := anAssignmentBlock := [ anAssignmentBlock value + b ].'.
+	originalCode := 'm1 | anAssignmentBlock b | anAssignmentBlock := [ 0 ]. b := 1. ' , codeToExtract.
+	newMethodCode := 'm2A: anAssignmentBlock m2B: b assigningWith: anAssignmentBlock1
+
+	| newAnAssignmentBlock newB |
+	newB := newAnAssignmentBlock := [ anAssignmentBlock value + b ].
+	^ anAssignmentBlock1 value: newAnAssignmentBlock value: newB'.
+	updatedCode := 'm1 | anAssignmentBlock b | anAssignmentBlock := [ 0 ]. b := 1. self m2A: anAssignmentBlock m2B: b assigningWith: [ :newAnAssignmentBlock :newB | anAssignmentBlock := newAnAssignmentBlock. b := newB. ].'.
+
+	self
+		assertExtract: codeToExtract 
+		from: originalCode
+		to: (Message selector: #m2A:m2B: arguments: #('anAssignmentBlock' 'b'))
+		withReplacements: #()
+		definesNewMethodNamed: #m2A:m2B:assigningWith:
+		withBody: newMethodCode
+		andUpdateMethodsTo: { updatedCode }! !
+
+!ExtractMethodTest methodsFor: 'tests - temporary assignment' stamp: 'JEC 14/Apr/2026, 4:17:00 pm (UTC)'!
+test128_CanExtractAnAssignmentWithAPartiallyCascadeCode
+
+	| codeToExtract newMethodCode originalCode updatedCode |
+	
+	codeToExtract := 'a := self value; value'.
+	originalCode := 'm1 | a | ' , codeToExtract, '; value'.
+	newMethodCode := 'm2
+
+	| a |
+	', codeToExtract, '.
+	^ a'.
+	updatedCode := 'm1 | a | a := self m2; value'.
+
+	self
+		assertExtract: codeToExtract 
+		from: originalCode
+		to: (Message selector: #m2)
+		withReplacements: #()
+		definesNewMethodNamed: #m2
+		withBody: newMethodCode
+		andUpdateMethodsTo: { updatedCode }! !
+
+!ExtractMethodTest methodsFor: 'tests - temporary assignment' stamp: 'JEC 14/Apr/2026, 4:16:40 pm (UTC)'!
+test129_CanExtractMultipleAssignmentsButReturningOnlyOne
+
+	| codeToExtract newMethodCode originalCode updatedCode |
+	
+	codeToExtract := 'taxAmount := baseAmount * taxRate.
+	finalAmount := baseAmount + taxAmount.'.
+	originalCode := 'process: anInvoice
+	
+	| baseAmount taxRate taxAmount finalAmount |
+	
+	baseAmount := anInvoice amount.
+	taxRate := 0.21.
+	',
+	codeToExtract
+	,'
+	^finalAmount'.
+	newMethodCode := 'k1: baseAmount k2: taxRate
+
+	| taxAmount finalAmount |
+	', codeToExtract, '
+	^ finalAmount'.
+	updatedCode := 'process: anInvoice
+	
+	| baseAmount taxRate finalAmount |
+	
+	baseAmount := anInvoice amount.
+	taxRate := 0.21.
+	finalAmount := self k1: baseAmount k2: taxRate.
+	^finalAmount'.
+
+	self
+		assertExtract: codeToExtract 
+		from: originalCode
+		to: (Message selector: #k1:k2: arguments: #('baseAmount' 'taxRate'))
+		withReplacements: #()
+		definesNewMethodNamed: #k1:k2:
+		withBody: newMethodCode
+		andUpdateMethodsTo: { updatedCode }! !
+
+!ExtractMethodTest methodsFor: 'tests - temporary assignment' stamp: 'JEC 14/Apr/2026, 4:15:36 pm (UTC)'!
+test134_WhenTwoAlmostIdenticalMethodsExist_ExtractingOneWithReturn_ReplacingOneWithout_BothGetReplacedWithAssignmentBlock
+
+	| codeToExtract newMethodCode updatedCodeMA updatedCodeMB mACode mBCode |
+	
+	codeToExtract := 'a := 1. b := 2.'.
+	mACode := 'mWithReturn | a b | ' , codeToExtract , ' ^ a + b' .
+	mBCode := 'mWithoutReturn | a b | ' , codeToExtract , ' self foo: a. self bar: b'.
+	newMethodCode := 'n1AssigningWith: anAssignmentBlock
+
+	| a b |
+	a := 1. b := 2.
+	^ anAssignmentBlock value: a value: b'.
+	updatedCodeMA    := 'mWithReturn | a b | self n1AssigningWith: [ :newA :newB | a := newA. b := newB. ]. ^ a + b'.
+	
+	updatedCodeMB := 'mWithoutReturn | a b | self n1AssigningWith: [ :newA :newB | a := newA. b := newB. ]. self foo: a. self bar: b'.
+	
+	self
+		assertExtract: codeToExtract 
+		from: mACode
+		to: (Message selector: #n1)
+		withReplacements: { mBCode }
+		definesNewMethodNamed: #n1AssigningWith:
+		withBody: newMethodCode
+		andUpdateMethodsTo: { updatedCodeMA . updatedCodeMB }! !
+
+!ExtractMethodTest methodsFor: 'tests - temporary assignment' stamp: 'JEC 14/Apr/2026, 4:14:57 pm (UTC)'!
+test135_WhenTwoAlmostIdenticalMethodsExist_ExtractingOneWithoutReturn_ReplacingOneWith_BothGetReplacedWithAssignmentBlock
+
+	| codeToExtract newMethodCode updatedCodeMA updatedCodeMB mACode mBCode |
+	
+	codeToExtract := 'a := 1. b := 2.'.
+	mACode := 'mWithReturn | a b | ' , codeToExtract , ' ^ a + b' .
+	mBCode := 'mWithoutReturn | a b | ' , codeToExtract , ' self foo: a. self bar: b'.
+	newMethodCode := 'n1AssigningWith: anAssignmentBlock
+
+	| a b |
+	a := 1. b := 2.
+	^ anAssignmentBlock value: a value: b'.
+	
+	updatedCodeMA    := 'mWithReturn | a b | self n1AssigningWith: [ :newA :newB | a := newA. b := newB. ]. ^ a + b'.
+	
+	updatedCodeMB := 'mWithoutReturn | a b | self n1AssigningWith: [ :newA :newB | a := newA. b := newB. ]. self foo: a. self bar: b'.
+	
+	self
+		assertExtract: codeToExtract 
+		from: mACode
+		to: (Message selector: #n1)
+		withReplacements: { mBCode }
+		definesNewMethodNamed: #n1AssigningWith:
+		withBody: newMethodCode
+		andUpdateMethodsTo: { updatedCodeMA . updatedCodeMB }! !
+
+!ExtractMethodTest methodsFor: 'tests - temporary assignment' stamp: 'JEC 14/Apr/2026, 4:10:52 pm (UTC)'!
+test136_WhenTwoAlmostIdenticalMethodsExist_ExtractingOneWithReturn_ReplacingOneWithout_BothGetReplacedWithAssignmentBlock
+
+	"The difference between this one and the 134 is that the method without returns does not have an usage 
+	of its tempvars"
+
+	| codeToExtract newMethodCode updatedCodeMA updatedCodeMB mACode mBCode |
+	
+	codeToExtract := 'a := 1. b := 2.'.
+	mACode := 'mWithReturn | a b | ' , codeToExtract , ' ^ a + b' .
+	mBCode := 'mWithoutReturn | a b | ' , codeToExtract.
+	newMethodCode := 'n1AssigningWith: anAssignmentBlock
+
+	| a b |
+	a := 1. b := 2.
+	^ anAssignmentBlock value: a value: b'.
+	
+	updatedCodeMA    := 'mWithReturn | a b | self n1AssigningWith: [ :newA :newB | a := newA. b := newB. ]. ^ a + b'.
+	
+	updatedCodeMB := 'mWithoutReturn self n1AssigningWith: [ :newA :newB | ].'.
+	
+	self
+		assertExtract: codeToExtract 
+		from: mACode
+		to: (Message selector: #n1)
+		withReplacements: { mBCode }
+		definesNewMethodNamed: #n1AssigningWith:
+		withBody: newMethodCode
+		andUpdateMethodsTo: { updatedCodeMA . updatedCodeMB }! !
+
+!ExtractMethodTest methodsFor: 'tests - temporary assignment' stamp: 'JEC 14/Apr/2026, 4:08:32 pm (UTC)'!
+test137_WhenTwoAlmostIdenticalMethodsExist_ExtractingOneWithoutReturn_ReplacingOneWith_BothGetReplacedWithAssignmentBlock
+
+	"The difference between this one and the 135 is that the method without returns does not have an usage 
+	of its tempvars"
+
+	| codeToExtract newMethodCode updatedCodeMA updatedCodeMB mACode mBCode |
+	
+	codeToExtract := 'a := 1. b := 2.'.
+	mACode := 'mWithReturn | a b | ' , codeToExtract , ' ^ a + b' .
+	mBCode := 'mWithoutReturn | a b | ' , codeToExtract .
+	newMethodCode := 'n1AssigningWith: anAssignmentBlock
+
+	| a b |
+	a := 1. b := 2.
+	^ anAssignmentBlock value: a value: b'.
+	
+	updatedCodeMA    := 'mWithReturn | a b | self n1AssigningWith: [ :newA :newB | a := newA. b := newB. ]. ^ a + b'.
+	
+	updatedCodeMB := 'mWithoutReturn self n1AssigningWith: [ :newA :newB | ].'.
+	
+	self
+		assertExtract: codeToExtract 
+		from: mACode
+		to: (Message selector: #n1)
+		withReplacements: { mBCode }
+		definesNewMethodNamed: #n1AssigningWith:
+		withBody: newMethodCode
+		andUpdateMethodsTo: { updatedCodeMA . updatedCodeMB }! !
+
+!ExtractMethodTest methodsFor: 'tests - temporary assignment' stamp: 'JEC 14/Apr/2026, 4:08:38 pm (UTC)'!
+test138_WhenTwoAlmostIdenticalMethodsExist_ExtractingOneWithSingleReturn_ReplacingOneWithMultipleReturn_BothGetReplacedWithAssignmentBlock
+
+	| codeToExtract newMethodCode updatedCodeMA updatedCodeMB mACode mBCode |
+	
+	codeToExtract := 'a := 1. b := 2.'.
+	mACode := 'mWithSingleReturn | a b | ' , codeToExtract , ' ^ a' .
+	mBCode := 'mWithMultipleReturn | a b | ' , codeToExtract , ' ^ a + b'.
+	newMethodCode := 'n1AssigningWith: anAssignmentBlock
+
+	| a b |
+	a := 1. b := 2.
+	^ anAssignmentBlock value: a value: b'.
+	
+	updatedCodeMA    := 'mWithSingleReturn | a | self n1AssigningWith: [ :newA :newB | a := newA. ]. ^ a'.
+	
+	updatedCodeMB := 'mWithMultipleReturn | a b | self n1AssigningWith: [ :newA :newB | a := newA. b := newB. ]. ^ a + b'.
+	
+	self
+		assertExtract: codeToExtract 
+		from: mACode
+		to: (Message selector: #n1)
+		withReplacements: { mBCode }
+		definesNewMethodNamed: #n1AssigningWith:
+		withBody: newMethodCode
+		andUpdateMethodsTo: { updatedCodeMA . updatedCodeMB }! !
+
+!ExtractMethodTest methodsFor: 'tests - temporary assignment' stamp: 'JEC 14/Apr/2026, 4:06:47 pm (UTC)'!
+test139_WhenTwoAlmostIdenticalMethodsExist_ExtractingOneWithMultipleReturn_ReplacingOneWithSingleReturn_BothGetReplacedWithAssignmentBlock
+
+	| codeToExtract newMethodCode updatedCodeMA updatedCodeMB mACode mBCode |
+	
+	codeToExtract := 'a := 1. b := 2.'.
+	mACode := 'mWithSingleReturn | a b | ' , codeToExtract , ' ^ a' .
+	mBCode := 'mWithMultipleReturn | a b | ' , codeToExtract , ' ^ a + b'.
+	newMethodCode := 'n1AssigningWith: anAssignmentBlock
+
+	| a b |
+	a := 1. b := 2.
+	^ anAssignmentBlock value: a value: b'.
+	
+	updatedCodeMA    := 'mWithSingleReturn | a | self n1AssigningWith: [ :newA :newB | a := newA. ]. ^ a'.
+	
+	updatedCodeMB := 'mWithMultipleReturn | a b | self n1AssigningWith: [ :newA :newB | a := newA. b := newB. ]. ^ a + b'.
+	
+	self
+		assertExtract: codeToExtract 
+		from: mACode
+		to: (Message selector: #n1)
+		withReplacements: { mBCode }
+		definesNewMethodNamed: #n1AssigningWith:
+		withBody: newMethodCode
+		andUpdateMethodsTo: { updatedCodeMA . updatedCodeMB }! !
+
+!ExtractMethodTest methodsFor: 'tests - temporary assignment' stamp: 'JEC 14/Apr/2026, 4:05:48 pm (UTC)'!
+test140_WhenMultipleAlmostIdenticalMethodsExistWithMutlipleTemporaryVariables_ExtractingOne_AllGetReplacedWithAssignmentBlock
+
+	| codeToExtract newMethodCode updatedCodeMA updatedCodeMB mACode mBCode mCCode updatedCodeMC |
+	
+	codeToExtract := 'a := 1. b := 2.'.
+	mACode := 'mWithSingleReturn | a b | ' , codeToExtract , ' ^ a' .
+	mBCode := 'mWithMultipleReturn | a b | ' , codeToExtract , ' ^ a + b'.
+	mCCode := 'mWithNeither | a b | ' , codeToExtract.
+	newMethodCode := 'n1AssigningWith: anAssignmentBlock
+
+	| a b |
+	a := 1. b := 2.
+	^ anAssignmentBlock value: a value: b'.
+	
+	updatedCodeMA    := 'mWithSingleReturn | a | self n1AssigningWith: [ :newA :newB | a := newA. ]. ^ a'.
+	
+	updatedCodeMB := 'mWithMultipleReturn | a b | self n1AssigningWith: [ :newA :newB | a := newA. b := newB. ]. ^ a + b'.
+	
+	updatedCodeMC := 'mWithNeither self n1AssigningWith: [ :newA :newB | ].'.
+	
+	self
+		assertExtract: codeToExtract 
+		from: mACode
+		to: (Message selector: #n1)
+		withReplacements: { mBCode . mCCode }
+		definesNewMethodNamed: #n1AssigningWith:
+		withBody: newMethodCode
+		andUpdateMethodsTo: { updatedCodeMA . updatedCodeMB . updatedCodeMC }! !
+
+!ExtractMethodTest methodsFor: 'tests - temporary assignment' stamp: 'JEC 14/Apr/2026, 4:02:52 pm (UTC)'!
+test141_WhenTwoAlmostIdenticalMethodsExist_NoneUsesTemporariesAfterExtractedCode_NoneGetReplacedWithAssignmentBlock
+
+	| codeToExtract newMethodCode updatedCodeMA updatedCodeMB mACode mBCode |
+	
+	codeToExtract := 'a := 1. b := 2.'.
+	mACode := 'mA | a b | ' , codeToExtract.
+	mBCode := 'mB | a b | ' , codeToExtract.
+	newMethodCode := 'n1
+
+	| a b |
+	a := 1. b := 2'.
+	updatedCodeMA    := 'mA self n1.'.
+	updatedCodeMB := 'mB self n1.'.
+	
+	self
+		assertExtract: codeToExtract 
+		from: mACode
+		to: (Message selector: #n1)
+		withReplacements: { mBCode }
+		definesNewMethodNamed: #n1
+		withBody: newMethodCode
+		andUpdateMethodsTo: { updatedCodeMA . updatedCodeMB }! !
+
+!ExtractMethodTest methodsFor: 'tests - temporary assignment' stamp: 'JEC 14/Apr/2026, 4:01:52 pm (UTC)'!
+test142_WhenTwoAlmostIdenticalMethodsExist_TheyUsesDifferentTempVarsAfterExtractedCode_BothGetReplacedWithAssignmentBlock
+
+	| codeToExtract newMethodCode updatedCodeMA updatedCodeMB mACode mBCode |
+	
+	codeToExtract := 'a := 1. b := 2.'.
+	mACode := 'mA | a b | ' , codeToExtract, ' ^ a'.
+	mBCode := 'mB | a b | ' , codeToExtract, ' ^ b'.
+	newMethodCode := 'n1AssigningWith: anAssignmentBlock
+
+	| a b |
+	a := 1. b := 2.
+	^ anAssignmentBlock value: a value: b'.
+	
+	updatedCodeMA    := 'mA | a | self n1AssigningWith: [ :newA :newB | a := newA. ]. ^ a'.
+	
+	updatedCodeMB := 'mB | b | self n1AssigningWith: [ :newA :newB | b := newB. ]. ^ b'.
+	
+	self
+		assertExtract: codeToExtract 
+		from: mACode
+		to: (Message selector: #n1)
+		withReplacements: { mBCode }
+		definesNewMethodNamed: #n1AssigningWith:
+		withBody: newMethodCode
+		andUpdateMethodsTo: { updatedCodeMA . updatedCodeMB }! !
+
+!ExtractMethodTest methodsFor: 'tests - return' stamp: 'JEC 14/Apr/2026, 4:00:48 pm (UTC)'!
+test091_CanExtractAReturn
+
+	| codeToExtract newMethodCode originalCode updatedCode |
+	
+	codeToExtract := '^ 3'.
+	originalCode := 'm1 ' , codeToExtract.
+	newMethodCode := 'm2
+
+	' , codeToExtract .
+	updatedCode := 'm1 ^ self m2'.
+
+	self
+		assertExtract: codeToExtract 
+		from: originalCode
+		to: (Message selector: #m2)
+		withReplacements: #()
+		definesNewMethodNamed: #m2
+		withBody: newMethodCode
+		andUpdateMethodsTo: { updatedCode }! !
+
+!ExtractMethodTest methodsFor: 'tests - return' stamp: 'JEC 14/Apr/2026, 4:00:40 pm (UTC)'!
+test092_CanExtractAPieceOfCodeWithAnUnnestedReturn
+
+	| codeToExtract newMethodCode originalCode updatedCode |
+	
+	codeToExtract := 'self value. ^ 3'.
+	originalCode := 'm1 ' , codeToExtract.
+	newMethodCode := 'm2
+
+	' , codeToExtract .
+	updatedCode := 'm1 ^ self m2'.
+
+	self
+		assertExtract: codeToExtract 
+		from: originalCode
+		to: (Message selector: #m2)
+		withReplacements: #()
+		definesNewMethodNamed: #m2
+		withBody: newMethodCode
+		andUpdateMethodsTo: { updatedCode }! !
+
+!ExtractMethodTest methodsFor: 'tests - return' stamp: 'JEC 14/Apr/2026, 4:00:30 pm (UTC)'!
+test093_CanExtractANestedReturn
+
+	| codeToExtract newMethodCode originalCode updatedCode |
+	
+	codeToExtract := '[ ^ 3 ]'.
+	originalCode := 'm1 ' , codeToExtract.
+	newMethodCode := 'm2ReturningWith: aReturningBlock
+
+	[ ^ aReturningBlock value: 3 ]'.
+	updatedCode := 'm1 self m2ReturningWith: [ :res | ^ res ]'.
+
+	self
+		assertExtract: codeToExtract 
+		from: originalCode
+		to: (Message selector: #m2)
+		withReplacements: #()
+		definesNewMethodNamed: #m2ReturningWith:
+		withBody: newMethodCode
+		andUpdateMethodsTo: { updatedCode }! !
+
+!ExtractMethodTest methodsFor: 'tests - return' stamp: 'JEC 14/Apr/2026, 4:00:25 pm (UTC)'!
+test094_WhenThereAreNestedAndUnnestedReturnsInTheExtractedCode_IsUsingTheReturnBlock
+
+	| codeToExtract newMethodCode originalCode updatedCode |
+	
+	codeToExtract := '[ ^ 1 ]. ^ 2'.
+	originalCode := 'm1 ' , codeToExtract.
+	newMethodCode := 'm2ReturningWith: aReturningBlock
+
+	[ ^ aReturningBlock value: 1 ]. ^ 2'.
+	updatedCode := 'm1 ^ self m2ReturningWith: [ :res | ^ res ]'.
+
+	self
+		assertExtract: codeToExtract 
+		from: originalCode
+		to: (Message selector: #m2)
+		withReplacements: #()
+		definesNewMethodNamed: #m2ReturningWith:
+		withBody: newMethodCode
+		andUpdateMethodsTo: { updatedCode }! !
+
+!ExtractMethodTest methodsFor: 'tests - return' stamp: 'JEC 14/Apr/2026, 4:00:17 pm (UTC)'!
+test095_CanExtractTheSameReturnExpresionFromNestedAndUnnestedCode
+
+	| codeToExtract newMethodCode originalCode updatedCode |
+	
+	codeToExtract := '[ ^ 1 ]. ^ 1'.
+	originalCode := 'm1 ' , codeToExtract.
+	newMethodCode := 'm2ReturningWith: aReturningBlock
+
+	[ ^ aReturningBlock value: 1 ]. ^ 1'.
+	updatedCode := 'm1 ^ self m2ReturningWith: [ :res | ^ res ]'.
+
+	self
+		assertExtract: codeToExtract 
+		from: originalCode
+		to: (Message selector: #m2)
+		withReplacements: #()
+		definesNewMethodNamed: #m2ReturningWith:
+		withBody: newMethodCode
+		andUpdateMethodsTo: { updatedCode }! !
+
+!ExtractMethodTest methodsFor: 'tests - return' stamp: 'JEC 14/Apr/2026, 4:00:11 pm (UTC)'!
+test096_CanExtractReturnInsideFromABlock
+
+	| codeToExtract newMethodCode originalCode updatedCode |
+
+	codeToExtract := '^ 1'.
+	originalCode := 'm1 [ ' , codeToExtract , ' ]'.
+	newMethodCode := 'm2
+
+	^ 1'.
+	updatedCode := 'm1 [ ^ self m2 ]'.
+
+	self
+		assertExtract: codeToExtract 
+		from: originalCode
+		to: (Message selector: #m2)
+		withReplacements: #()
+		definesNewMethodNamed: #m2
+		withBody: newMethodCode
+		andUpdateMethodsTo: { updatedCode }! !
+
+!ExtractMethodTest methodsFor: 'tests - return' stamp: 'JEC 14/Apr/2026, 4:00:04 pm (UTC)'!
+test097_CanExtractAPieceOfCodeWithAnUnnestedReturnInsideABlock
+
+	| codeToExtract newMethodCode originalCode updatedCode |
+
+	codeToExtract := '[ ^ 1 ]. ^ 1'.
+	originalCode := 'm1 [ ' , codeToExtract , ' ]'.
+	newMethodCode := 'm2ReturningWith: aReturningBlock
+
+	[ ^ aReturningBlock value: 1 ]. ^ 1'.
+	updatedCode := 'm1 [ ^ self m2ReturningWith: [ :res | ^ res ] ]'.
+
+	self
+		assertExtract: codeToExtract 
+		from: originalCode
+		to: (Message selector: #m2)
+		withReplacements: #()
+		definesNewMethodNamed: #m2ReturningWith:
+		withBody: newMethodCode
+		andUpdateMethodsTo: { updatedCode }! !
+
+!ExtractMethodTest methodsFor: 'tests - return' stamp: 'JEC 14/Apr/2026, 3:58:28 pm (UTC)'!
+test098_CanExtractAReturnOfAKeywordMessageSend
+
+	| codeToExtract newMethodCode originalCode updatedCode |
+
+	codeToExtract := '^ self add: 1 to: 2'.
+	originalCode := 'm1 ' , codeToExtract.
+	newMethodCode := 'm2
+
+	^ self add: 1 to: 2'.
+	updatedCode := 'm1 ^ self m2'.
+
+	self
+		assertExtract: codeToExtract 
+		from: originalCode
+		to: (Message selector: #m2)
+		withReplacements: #()
+		definesNewMethodNamed: #m2
+		withBody: newMethodCode
+		andUpdateMethodsTo: { updatedCode }! !
+
+!ExtractMethodTest methodsFor: 'tests - return' stamp: 'JEC 14/Apr/2026, 3:58:18 pm (UTC)'!
+test099_CanExtractAReturnOfAKeywordMessageSendInANestedBlock
+
+	| codeToExtract newMethodCode originalCode updatedCode |
+
+	codeToExtract := '[ ^ self add: 1 to: 2 ]. ^ self add: 1 to: 2'.
+	originalCode := 'm1 ' , codeToExtract.
+	newMethodCode := 'm2ReturningWith: aReturningBlock
+
+	[ ^ aReturningBlock value: (self add: 1 to: 2) ]. ^ self add: 1 to: 2'.
+	updatedCode := 'm1 ^ self m2ReturningWith: [ :res | ^ res ]'.
+
+	self
+		assertExtract: codeToExtract 
+		from: originalCode
+		to: (Message selector: #m2)
+		withReplacements: #()
+		definesNewMethodNamed: #m2ReturningWith:
+		withBody: newMethodCode
+		andUpdateMethodsTo: { updatedCode }! !
+
+!ExtractMethodTest methodsFor: 'tests - return' stamp: 'JEC 14/Apr/2026, 3:58:11 pm (UTC)'!
+test100_CanExtractANestedReturnOfBlock
+
+	| codeToExtract newMethodCode originalCode updatedCode |
+
+	codeToExtract := '[ ^ [ self add: 1 to: 2 ] ]'.
+	originalCode := 'm1 ' , codeToExtract.
+	newMethodCode := 'm2ReturningWith: aReturningBlock
+
+	[ ^ aReturningBlock value: [ self add: 1 to: 2. ] ]'.
+	updatedCode := 'm1 self m2ReturningWith: [ :res | ^ res ]'.
+
+	self
+		assertExtract: codeToExtract 
+		from: originalCode
+		to: (Message selector: #m2)
+		withReplacements: #()
+		definesNewMethodNamed: #m2ReturningWith:
+		withBody: newMethodCode
+		andUpdateMethodsTo: { updatedCode }! !
+
+!ExtractMethodTest methodsFor: 'tests - return' stamp: 'JEC 14/Apr/2026, 3:58:05 pm (UTC)'!
+test101_CanExtractANestedReturnOfArray
+
+	| codeToExtract newMethodCode originalCode updatedCode |
+
+	codeToExtract := '[ ^ { self add: 1 to: 2 } ]'.
+	originalCode := 'm1 ' , codeToExtract.
+	newMethodCode := 'm2ReturningWith: aReturningBlock
+
+	[ ^ aReturningBlock value: { self add: 1 to: 2 } ]'.
+	updatedCode := 'm1 self m2ReturningWith: [ :res | ^ res ]'.
+
+	self
+		assertExtract: codeToExtract 
+		from: originalCode
+		to: (Message selector: #m2)
+		withReplacements: #()
+		definesNewMethodNamed: #m2ReturningWith:
+		withBody: newMethodCode
+		andUpdateMethodsTo: { updatedCode }! !
+
+!ExtractMethodTest methodsFor: 'tests - return' stamp: 'JEC 14/Apr/2026, 3:57:41 pm (UTC)'!
+test102_CanExtractAnUnnestedReturnWithArguments
+
+	| codeToExtract newMethodCode originalCode updatedCode |
+
+	codeToExtract := 'self value: a. self foo: b. ^ a + b'.
+	originalCode := 'm1 | a b | a := 1. b := 2. ' , codeToExtract.
+	newMethodCode := 'm2A: a m2B: b
+
+	self value: a. self foo: b. ^ a + b'.
+	updatedCode := 'm1 | a b | a := 1. b := 2. ^ self m2A: a m2B: b'.
+
+	self
+		assertExtract: codeToExtract 
+		from: originalCode
+		to: (Message selector: #m2A:m2B: arguments: #('a' 'b'))
+		withReplacements: #()
+		definesNewMethodNamed: #m2A:m2B:
+		withBody: newMethodCode
+		andUpdateMethodsTo: { updatedCode }! !
+
+!ExtractMethodTest methodsFor: 'tests - return' stamp: 'JEC 14/Apr/2026, 3:57:31 pm (UTC)'!
+test103_CanExtractANestedReturnWithArguments
+
+	| codeToExtract newMethodCode originalCode updatedCode |
+
+	codeToExtract := 'self value: a. self foo: b. [ ^ a + b ]'.
+	originalCode := 'm1 | a b | a := 1. b := 2. ' , codeToExtract.
+	newMethodCode := 'm2A: a m2B: b returningWith: aReturningBlock
+
+	self value: a. self foo: b. [ ^ aReturningBlock value: (a + b) ]'.
+	updatedCode := 'm1 | a b | a := 1. b := 2. self m2A: a m2B: b returningWith: [ :res | ^ res ]'.
+
+	self
+		assertExtract: codeToExtract 
+		from: originalCode
+		to: (Message selector: #m2A:m2B: arguments: #('a' 'b'))
+		withReplacements: #()
+		definesNewMethodNamed: #m2A:m2B:returningWith:
+		withBody: newMethodCode
+		andUpdateMethodsTo: { updatedCode }! !
+
+!ExtractMethodTest methodsFor: 'tests - return' stamp: 'JEC 14/Apr/2026, 3:57:04 pm (UTC)'!
+test104_CanExtractANestedReturnOfAVariable
+
+	| codeToExtract newMethodCode originalCode updatedCode |
+
+	codeToExtract := 'self foo: a. [ ^ a ]'.
+	originalCode := 'm1 | a | a := 1. ' , codeToExtract.
+	newMethodCode := 'm2: a returningWith: aReturningBlock
+
+	self foo: a. [ ^ aReturningBlock value: a ]'.
+	updatedCode := 'm1 | a | a := 1. self m2: a returningWith: [ :res | ^ res ]'.
+
+	self
+		assertExtract: codeToExtract 
+		from: originalCode
+		to: (Message selector: #m2: arguments: #('a'))
+		withReplacements: #()
+		definesNewMethodNamed: #m2:returningWith:
+		withBody: newMethodCode
+		andUpdateMethodsTo: { updatedCode }! !
+
+!ExtractMethodTest methodsFor: 'tests - return' stamp: 'JEC 14/Apr/2026, 3:56:40 pm (UTC)'!
+test105_WhenTheNewParameterExistsAsAnInstVar_CreatesANewOneWithANumber
+
+	| codeToExtract newMethodCode originalCode updatedCode |
+
+	classToRefactor addInstVarName: 'aReturningBlock'.
+	codeToExtract := '[ ^ 2 ]'.
+	originalCode := 'm1 ' , codeToExtract.
+	newMethodCode := 'm2ReturningWith: aReturningBlock1
+
+	[ ^ aReturningBlock1 value: 2 ]'.
+	updatedCode := 'm1 self m2ReturningWith: [ :res | ^ res ]'.
+
+	self
+		assertExtract: codeToExtract 
+		from: originalCode
+		to: (Message selector: #m2)
+		withReplacements: #()
+		definesNewMethodNamed: #m2ReturningWith:
+		withBody: newMethodCode
+		andUpdateMethodsTo: { updatedCode }! !
+
+!ExtractMethodTest methodsFor: 'tests - return' stamp: 'JEC 14/Apr/2026, 3:56:13 pm (UTC)'!
+test106_WhenTheNextNewParameterExistsAsAnInstVar_CreatesANewOneWithTheNextNumber
+
+	| codeToExtract newMethodCode originalCode updatedCode |
+
+	classToRefactor addInstVarName: 'aReturningBlock'.
+	classToRefactor addInstVarName: 'aReturningBlock1'.
+	codeToExtract := '[ ^ 2 ]'.
+	originalCode := 'm1 ' , codeToExtract.
+	newMethodCode := 'm2ReturningWith: aReturningBlock2
+
+	[ ^ aReturningBlock2 value: 2 ]'.
+	updatedCode := 'm1 self m2ReturningWith: [ :res | ^ res ]'.
+
+	self
+		assertExtract: codeToExtract 
+		from: originalCode
+		to: (Message selector: #m2)
+		withReplacements: #()
+		definesNewMethodNamed: #m2ReturningWith:
+		withBody: newMethodCode
+		andUpdateMethodsTo: { updatedCode }! !
+
+!ExtractMethodTest methodsFor: 'tests - return' stamp: 'JEC 14/Apr/2026, 3:55:56 pm (UTC)'!
+test107_WhenTheNewInstVarInReturningBlockExistsAsInstVarInHierarchy_CreatesANewOneWithANumber
+
+	| codeToExtract newMethodCode originalCode updatedCode |
+
+	self addInsVarAndSubclassify: 'aReturningBlock'.
+	codeToExtract := '[ ^ 2 ]'.
+	originalCode := 'm1 ' , codeToExtract.
+	newMethodCode := 'm2ReturningWith: aReturningBlock1
+
+	[ ^ aReturningBlock1 value: 2 ]'.
+	updatedCode := 'm1 self m2ReturningWith: [ :res | ^ res ]'.
+
+	self
+		assertExtract: codeToExtract 
+		from: originalCode
+		to: (Message selector: #m2)
+		withReplacements: #()
+		definesNewMethodNamed: #m2ReturningWith:
+		withBody: newMethodCode
+		andUpdateMethodsTo: { updatedCode }! !
+
+!ExtractMethodTest methodsFor: 'tests - return' stamp: 'JEC 14/Apr/2026, 3:55:48 pm (UTC)'!
+test108_WhenTheNewTempVarInReturningBlockExistsInMethod_CreatesANewOneWithANumber
+
+	| codeToExtract newMethodCode originalCode updatedCode |
+
+	codeToExtract := '[ ^ 2 ]'.
+	originalCode := 'm1 | res | ' , codeToExtract.
+	newMethodCode := 'm2ReturningWith: aReturningBlock
+
+	[ ^ aReturningBlock value: 2 ]'.
+	updatedCode := 'm1 | res | self m2ReturningWith: [ :res1 | ^ res1 ]'.
+
+	self
+		assertExtract: codeToExtract 
+		from: originalCode
+		to: (Message selector: #m2)
+		withReplacements: #()
+		definesNewMethodNamed: #m2ReturningWith:
+		withBody: newMethodCode
+		andUpdateMethodsTo: { updatedCode }! !
+
+!ExtractMethodTest methodsFor: 'tests - return' stamp: 'JEC 14/Apr/2026, 3:55:40 pm (UTC)'!
+test109_WhenTheNewTempVarInReturningBlockExistsInMethod_AndAlsoTheNextOne_CreatesANewOneWithTheFollowingNumber
+
+	| codeToExtract newMethodCode originalCode updatedCode |
+
+	codeToExtract := '[ ^ 2 ]'.
+	originalCode := 'm1 | res res1 | ' , codeToExtract.
+	newMethodCode := 'm2ReturningWith: aReturningBlock
+
+	[ ^ aReturningBlock value: 2 ]'.
+	updatedCode := 'm1 | res res1 | self m2ReturningWith: [ :res2 | ^ res2 ]'.
+
+	self
+		assertExtract: codeToExtract 
+		from: originalCode
+		to: (Message selector: #m2)
+		withReplacements: #()
+		definesNewMethodNamed: #m2ReturningWith:
+		withBody: newMethodCode
+		andUpdateMethodsTo: { updatedCode }! !
+
+!ExtractMethodTest methodsFor: 'tests - return' stamp: 'JEC 14/Apr/2026, 3:55:31 pm (UTC)'!
+test110_WhenTheNewInstVarInReturningBlockExistsAsInstVar_CreatesANewOneWithANumber
+
+	| codeToExtract newMethodCode originalCode updatedCode |
+
+	classToRefactor addInstVarName: 'res'.
+	codeToExtract := '[ ^ 2 ]'.
+	originalCode := 'm1 ' , codeToExtract.
+	newMethodCode := 'm2ReturningWith: aReturningBlock
+
+	[ ^ aReturningBlock value: 2 ]'.
+	updatedCode := 'm1 self m2ReturningWith: [ :res1 | ^ res1 ]'.
+
+	self
+		assertExtract: codeToExtract 
+		from: originalCode
+		to: (Message selector: #m2)
+		withReplacements: #()
+		definesNewMethodNamed: #m2ReturningWith:
+		withBody: newMethodCode
+		andUpdateMethodsTo: { updatedCode }! !
+
+!ExtractMethodTest methodsFor: 'tests - return' stamp: 'JEC 14/Apr/2026, 3:55:13 pm (UTC)'!
+test111_WhenTheNewTempVarInReturningBlockExistsAsInstVarInHierarchy_CreatesANewOneWithANumber
+
+	| codeToExtract newMethodCode originalCode updatedCode |
+
+	self addInsVarAndSubclassify: 'res'.
+	codeToExtract := '[ ^ 2 ]'.
+	originalCode := 'm1 ' , codeToExtract.
+	newMethodCode := 'm2ReturningWith: aReturningBlock
+
+	[ ^ aReturningBlock value: 2 ]'.
+	updatedCode := 'm1 self m2ReturningWith: [ :res1 | ^ res1 ]'.
+
+	self
+		assertExtract: codeToExtract 
+		from: originalCode
+		to: (Message selector: #m2)
+		withReplacements: #()
+		definesNewMethodNamed: #m2ReturningWith:
+		withBody: newMethodCode
+		andUpdateMethodsTo: { updatedCode }! !
+
+!ExtractMethodTest methodsFor: 'tests - return' stamp: 'JEC 14/Apr/2026, 3:55:03 pm (UTC)'!
+test112_WhenTheNewMethodNameWithReturningBlockExists_CreatesItWithANumber
+
+	| codeToExtract newMethodCode originalCode updatedCode |
+
+	classToRefactor compile: 'm2ReturningWith: arg'.
+	codeToExtract := '[ ^ 2 ]'.
+	originalCode := 'm1 ' , codeToExtract.
+	newMethodCode := 'm2ReturningWith1: aReturningBlock
+
+	[ ^ aReturningBlock value: 2 ]'.
+	updatedCode := 'm1 self m2ReturningWith1: [ :res | ^ res ]'.
+
+	self
+		assertExtract: codeToExtract 
+		from: originalCode
+		to: (Message selector: #m2)
+		withReplacements: #()
+		definesNewMethodNamed: #m2ReturningWith1:
+		withBody: newMethodCode
+		andUpdateMethodsTo: { updatedCode }! !
+
+!ExtractMethodTest methodsFor: 'tests - return' stamp: 'JEC 14/Apr/2026, 3:54:56 pm (UTC)'!
+test113_WhenTheNewMethodNameWithReturningBlockExists_AndAlsoTheNextOne_CreatesANewOneWithTheFollowingNumber
+
+	| codeToExtract newMethodCode originalCode updatedCode |
+
+	classToRefactor compile: 'm2ReturningWith: arg'.
+	classToRefactor compile: 'm2ReturningWith1: arg'.
+	codeToExtract := '[ ^ 2 ]'.
+	originalCode := 'm1 ' , codeToExtract.
+	newMethodCode := 'm2ReturningWith2: aReturningBlock
+
+	[ ^ aReturningBlock value: 2 ]'.
+	updatedCode := 'm1 self m2ReturningWith2: [ :res | ^ res ]'.
+
+	self
+		assertExtract: codeToExtract 
+		from: originalCode
+		to: (Message selector: #m2)
+		withReplacements: #()
+		definesNewMethodNamed: #m2ReturningWith2:
+		withBody: newMethodCode
+		andUpdateMethodsTo: { updatedCode }! !
+
+!ExtractMethodTest methodsFor: 'tests - return' stamp: 'JEC 14/Apr/2026, 3:54:47 pm (UTC)'!
+test114_WhenTheNewMethodNameWithReturningBlockExistsInHierarchy_CreatesItWithANumber
+
+	| codeToExtract newMethodCode originalCode updatedCode |
+
+	self compileAndSubclassify: 'm2ReturningWith: arg'. 
+	codeToExtract := '[ ^ 2 ]'.
+	originalCode := 'm1 ' , codeToExtract.
+	newMethodCode := 'm2ReturningWith1: aReturningBlock
+
+	[ ^ aReturningBlock value: 2 ]'.
+	updatedCode := 'm1 self m2ReturningWith1: [ :res | ^ res ]'.
+
+	self
+		assertExtract: codeToExtract 
+		from: originalCode
+		to: (Message selector: #m2)
+		withReplacements: #()
+		definesNewMethodNamed: #m2ReturningWith1:
+		withBody: newMethodCode
+		andUpdateMethodsTo: { updatedCode }! !
+
+!ExtractMethodTest methodsFor: 'tests - return' stamp: 'JEC 14/Apr/2026, 3:54:16 pm (UTC)'!
+test115_WhenTheNewMethodNameWithParametersAndReturningBlockExists_CreatesItWithANumber
+
+	| codeToExtract newMethodCode originalCode updatedCode |
+
+	classToRefactor compile: 'm2A: a m2B: b returningWith: arg'.
+	codeToExtract := 'self foo: a. self bar: b. [ ^ a ]'.
+	originalCode := 'm1 | a b | a := 1. b := 2. ' , codeToExtract.
+	newMethodCode := 'm2A: a m2B: b returningWith1: aReturningBlock
+
+	self foo: a. self bar: b. [ ^ aReturningBlock value: a ]'.
+	updatedCode := 'm1 | a b | a := 1. b := 2. self m2A: a m2B: b returningWith1: [ :res | ^ res ]'.
+
+	self
+		assertExtract: codeToExtract 
+		from: originalCode
+		to: (Message selector: #m2A:m2B: arguments: #('a' 'b'))
+		withReplacements: #()
+		definesNewMethodNamed: #m2A:m2B:returningWith1:
+		withBody: newMethodCode
+		andUpdateMethodsTo: { updatedCode }! !
+
+!ExtractMethodTest methodsFor: 'tests - return' stamp: 'JEC 14/Apr/2026, 3:53:41 pm (UTC)'!
+test116_WhenTheReturningBlockParameterNameExistsInTheExtractedTempVars_CreatesItWithANumber
+
+	| codeToExtract newMethodCode originalCode updatedCode |
+
+	codeToExtract := 'self foo: aReturningBlock. [ ^ a ]'.
+	originalCode := 'm1 | aReturningBlock | aReturningBlock := []. ' , codeToExtract.
+	newMethodCode := 'm2: aReturningBlock returningWith: aReturningBlock1
+
+	self foo: aReturningBlock. [ ^ aReturningBlock1 value: a ]'.
+	updatedCode := 'm1 | aReturningBlock | aReturningBlock := []. self m2: aReturningBlock returningWith: [ :res | ^ res ]'.
+	
+	self
+		assertExtract: codeToExtract 
+		from: originalCode
+		to: (Message selector: #m2: arguments: #('aReturningBlock'))
+		withReplacements: #()
+		definesNewMethodNamed: #m2:returningWith:
+		withBody: newMethodCode
+		andUpdateMethodsTo: { updatedCode }! !
+
+!ExtractMethodTest methodsFor: 'tests - return' stamp: 'JEC 14/Apr/2026, 3:52:43 pm (UTC)'!
+test117_CanExtractAnAssignmentAndANestedReturn
+
+	| codeToExtract newMethodCode originalCode updatedCode |
+	
+	codeToExtract := 'a := 3. ^ 1'.
+	originalCode := 'm1 | a |' , codeToExtract.
+	newMethodCode := 'm2
+
+	| a |
+	' , codeToExtract .
+	updatedCode := 'm1 ^ self m2'.
+
+	self
+		assertExtract: codeToExtract 
+		from: originalCode
+		to: (Message selector: #m2)
+		withReplacements: #()
+		definesNewMethodNamed: #m2
+		withBody: newMethodCode
+		andUpdateMethodsTo: { updatedCode }! !
+
+!ExtractMethodTest methodsFor: 'tests - return' stamp: 'JEC 14/Apr/2026, 3:52:31 pm (UTC)'!
+test118_CanExtractAReturningAssignmentToATempVar
+
+	| codeToExtract newMethodCode originalCode updatedCode |
+	
+	codeToExtract := '^ a := 3'.
+	originalCode := 'm1 | a |' , codeToExtract.
+	newMethodCode := 'm2
+
+	| a |
+	' , codeToExtract .
+	updatedCode := 'm1 ^ self m2'.
+
+	self
+		assertExtract: codeToExtract 
+		from: originalCode
+		to: (Message selector: #m2)
+		withReplacements: #()
+		definesNewMethodNamed: #m2
+		withBody: newMethodCode
+		andUpdateMethodsTo: { updatedCode }! !
+
+!ExtractMethodTest methodsFor: 'tests - return' stamp: 'JEC 14/Apr/2026, 3:52:23 pm (UTC)'!
+test119_WhenExtractingMultipleTempVarsAssignmentsAndAnUnnestedReturn_DoNotAddAssignmentBlock
+
+	| codeToExtract newMethodCode originalCode updatedCode |
+	
+	codeToExtract := 'a := 3. b := 1. ^ a + b'.
+	originalCode := 'm1 | a b |' , codeToExtract.
+	newMethodCode := 'm2
+
+	| a b |
+	' , codeToExtract .
+	updatedCode := 'm1 ^ self m2'.
+
+	self
+		assertExtract: codeToExtract 
+		from: originalCode
+		to: (Message selector: #m2)
+		withReplacements: #()
+		definesNewMethodNamed: #m2
+		withBody: newMethodCode
+		andUpdateMethodsTo: { updatedCode }! !
+
+!ExtractMethodTest methodsFor: 'tests - return' stamp: 'JEC 14/Apr/2026, 3:51:58 pm (UTC)'!
+test120_WhenExtractingMultipleTempVarsUsedOutsideExtractedCodeAndAnUnnestedReturn_WillUseAssignmentBlockAndReturningBlock
+
+	| codeToExtract newMethodCode originalCode updatedCode |
+	
+	codeToExtract := 'a := 3. b := 1. [ ^ a + b ].'.
+	originalCode := 'm1 | a b | ' , codeToExtract, ' self foo: a. self bar: b'.
+	newMethodCode := 'm2AssigningWith: anAssignmentBlock returningWith: aReturningBlock
+
+	| a b |
+	a := 3. b := 1. [ ^ aReturningBlock value: (a + b) ].
+	^ anAssignmentBlock value: a value: b' .
+	updatedCode := 'm1 | a b | self m2AssigningWith: [ :newA :newB | a := newA. b := newB. ] returningWith: [ :res | ^ res ]. self foo: a. self bar: b'.
+	
+	self
+		assertExtract: codeToExtract 
+		from: originalCode
+		to: (Message selector: #m2)
+		withReplacements: #()
+		definesNewMethodNamed: #m2AssigningWith:returningWith:
+		withBody: newMethodCode
+		andUpdateMethodsTo: { updatedCode }! !
+
+!ExtractMethodTest methodsFor: 'tests - return' stamp: 'JEC 14/Apr/2026, 3:51:33 pm (UTC)'!
+test121_CanExtractAnAssignmentAndAnUnnestedReturn
+
+	| codeToExtract newMethodCode originalCode updatedCode |
+	
+	codeToExtract := 'a := 3. [ ^ a ]'.
+	originalCode := 'm1 | a |' , codeToExtract.
+	newMethodCode := 'm2ReturningWith: aReturningBlock
+
+	| a |
+	a := 3. [ ^ aReturningBlock value: a ]'.
+	updatedCode := 'm1 self m2ReturningWith: [ :res | ^ res ]'.
+
+	self
+		assertExtract: codeToExtract 
+		from: originalCode
+		to: (Message selector: #m2)
+		withReplacements: #()
+		definesNewMethodNamed: #m2ReturningWith:
+		withBody: newMethodCode
+		andUpdateMethodsTo: { updatedCode }! !
+
+!ExtractMethodTest methodsFor: 'tests - return' stamp: 'JEC 14/Apr/2026, 3:50:52 pm (UTC)'!
+test122_WhenExtractingMultipleVariablesUsedAsParametersAndANestedReturn_DoNotUseAssignmentNorReturningBlocks
+
+	| codeToExtract newMethodCode originalCode updatedCode |
+	
+	codeToExtract := 'a := a + b + 1. b := a + 1. self foo: b. self bar: a. ^ a + b'.
+	originalCode := 'm1 | a b | a := 1. b := 2. ' , codeToExtract.
+	newMethodCode := 'm2A: a m2B: b
+
+	| newA newB |
+	newA := a + b + 1. newB := newA + 1. self foo: newB. self bar: newA. ^ newA + newB'.
+	updatedCode := 'm1 | a b | a := 1. b := 2. ^ self m2A: a m2B: b'.
+
+	self
+		assertExtract: codeToExtract 
+		from: originalCode
+		to: (Message selector: #m2A:m2B: arguments: #('a' 'b'))
+		withReplacements: #()
+		definesNewMethodNamed: #m2A:m2B:
+		withBody: newMethodCode
+		andUpdateMethodsTo: { updatedCode }! !
+
+!ExtractMethodTest methodsFor: 'tests - return' stamp: 'JEC 14/Apr/2026, 3:48:43 pm (UTC)'!
+test123_CanReturnANestedRenamedTempVar
+
+	| codeToExtract newMethodCode originalCode updatedCode |
+	
+	codeToExtract := 'a := a + 1. [ ^ a ]'.
+	originalCode := 'm1 | a | a := 1. ' , codeToExtract.
+	newMethodCode := 'm2: a returningWith: aReturningBlock
+
+	| newA |
+	newA := a + 1. [ ^ aReturningBlock value: newA ].
+	^ newA'.
+	updatedCode := 'm1 | a | a := 1. a := self m2: a returningWith: [ :res | ^ res ]'.
+
+	self
+		assertExtract: codeToExtract 
+		from: originalCode
+		to: (Message selector: #m2: arguments: #('a'))
+		withReplacements: #()
+		definesNewMethodNamed: #m2:returningWith:
+		withBody: newMethodCode
+		andUpdateMethodsTo: { updatedCode }
+	! !
+
+!ExtractMethodTest methodsFor: 'tests - return' stamp: 'JEC 14/Apr/2026, 3:47:53 pm (UTC)'!
+test124_CanReturnMultipleNestedRenamedTempVars
+
+	| codeToExtract newMethodCode originalCode updatedCode |
+	
+	codeToExtract := 'a := a + b + 1. b := a + 1. self foo: b. self bar: a. [ ^ a + b ]'.
+	originalCode := 'm1 | a b | a := 1. b := 2. ' , codeToExtract.
+	newMethodCode := 'm2A: a m2B: b assigningWith: anAssignmentBlock returningWith: aReturningBlock
+
+	| newA newB |
+	newA := a + b + 1. newB := newA + 1. self foo: newB. self bar: newA. [ ^ aReturningBlock value: (newA + newB) ].
+	^ anAssignmentBlock value: newA value: newB'.
+	updatedCode := 'm1 | a b | a := 1. b := 2. self m2A: a m2B: b assigningWith: [ :newA :newB | a := newA. b := newB. ] returningWith: [ :res | ^ res ]'.
+
+	self
+		assertExtract: codeToExtract 
+		from: originalCode
+		to: (Message selector: #m2A:m2B: arguments: #('a' 'b'))
+		withReplacements: #()
+		definesNewMethodNamed: #m2A:m2B:assigningWith:returningWith:
+		withBody: newMethodCode
+		andUpdateMethodsTo: { updatedCode }! !
+
+!ExtractMethodTest methodsFor: 'tests - return' stamp: 'JEC 14/Apr/2026, 3:47:19 pm (UTC)'!
+test125_WhenExtractingAnUnnestedReturningTempVariableCode_DoesNotAssignItInTheExtractedMethod
+
+	| codeToExtract newMethodCode originalCode updatedCode |
+	
+	codeToExtract := 'a := a + b + 1. [ ^ a + b + 1 ]. ^ b'.
+	originalCode := 'm1 | a b | a := 1. b := 2. ' , codeToExtract.
+	newMethodCode := 'm2A: a m2B: b returningWith: aReturningBlock
+
+	| newA |
+	newA := a + b + 1. [ ^ aReturningBlock value: (newA + b + 1) ]. ^ b'.
+	updatedCode := 'm1 | a b | a := 1. b := 2. ^ self m2A: a m2B: b returningWith: [ :res | ^ res ]'.
+
+	self
+		assertExtract: codeToExtract 
+		from: originalCode
+		to: (Message selector: #m2A:m2B: arguments: #('a' 'b'))
+		withReplacements: #()
+		definesNewMethodNamed: #m2A:m2B:returningWith:
+		withBody: newMethodCode
+		andUpdateMethodsTo: { updatedCode }! !
+
+!ExtractMethodTest methodsFor: 'tests - return' stamp: 'JEC 14/Apr/2026, 3:46:38 pm (UTC)'!
+test126_CanExtractBlocksWithTempVarsDefinedAndReturnedInThem
+
+	| codeToExtract newMethodCode originalCode updatedCode |
+	
+	codeToExtract := '[ :res | ^ res ]'.
+	originalCode := 'm1 ' , codeToExtract.
+	newMethodCode := 'm2ReturningWith: aReturningBlock
+
+	[ :res | ^ aReturningBlock value: res ]'.
+	updatedCode := 'm1 self m2ReturningWith: [ :res1 | ^ res1 ]'.
+
+	self
+		assertExtract: codeToExtract 
+		from: originalCode
+		to: (Message selector: #m2)
+		withReplacements: #()
+		definesNewMethodNamed: #m2ReturningWith:
+		withBody: newMethodCode
+		andUpdateMethodsTo: { updatedCode }! !
+
+!ExtractMethodTest methodsFor: 'tests - return' stamp: 'JEC 14/Apr/2026, 3:46:30 pm (UTC)'!
+test127_CanExtractADefinitionAssignationAndReturningOfATempVar
+
+	| codeToExtract newMethodCode originalCode updatedCode |
+	
+	codeToExtract := '| a | a := 1. ^ a'.
+	originalCode := 'm1 ' , codeToExtract.
+	newMethodCode := 'm2
+
+	', codeToExtract.
+	updatedCode := 'm1 ^ self m2'.
+
+	self
+		assertExtract: codeToExtract 
+		from: originalCode
+		to: (Message selector: #m2)
+		withReplacements: #()
+		definesNewMethodNamed: #m2
+		withBody: newMethodCode
+		andUpdateMethodsTo: { updatedCode }! !
+
+!ExtractMethodTest methodsFor: 'tests - return' stamp: 'JEC 14/Apr/2026, 3:46:19 pm (UTC)'!
+test143_CanExtractMultipleAssignmentWithNestedReturnOfASingleVariable_AndThatReturningVarIsUsedAfterExtractedCode
+
+	| codeToExtract newMethodCode originalCode updatedCode |
+	
+	codeToExtract := 'a := 3. b := 1. [ ^ a ].'.
+	originalCode := 'm1 | a b | ', codeToExtract ,' self foo: a'.
+	newMethodCode := 'm2ReturningWith: aReturningBlock
+
+	| a b |
+	a := 3. b := 1. [ ^ aReturningBlock value: a ].
+	^ a'.
+	updatedCode := 'm1 | a | a := self m2ReturningWith: [ :res | ^ res ]. self foo: a'.
+
+	self
+		assertExtract: codeToExtract 
+		from: originalCode
+		to: (Message selector: #m2)
+		withReplacements: #()
+		definesNewMethodNamed: #m2ReturningWith:
+		withBody: newMethodCode
+		andUpdateMethodsTo: { updatedCode }! !
+
+!ExtractMethodTest methodsFor: 'tests - return' stamp: 'JEC 14/Apr/2026, 3:46:07 pm (UTC)'!
+test144_CanExtractMultipleAssignmentWithNestedReturnOfMultipleVariables
+
+	| codeToExtract newMethodCode originalCode updatedCode |
+	
+	codeToExtract := 'a := 3. b := 1. [ ^ a + b ].'.
+	originalCode := 'm1 | a b | ', codeToExtract.
+	newMethodCode := 'm2ReturningWith: aReturningBlock
+
+	| a b |
+	a := 3. b := 1. [ ^ aReturningBlock value: (a + b) ]'.
+	updatedCode := 'm1 self m2ReturningWith: [ :res | ^ res ].'.
+
+	self
+		assertExtract: codeToExtract 
+		from: originalCode
+		to: (Message selector: #m2)
+		withReplacements: #()
+		definesNewMethodNamed: #m2ReturningWith:
+		withBody: newMethodCode
+		andUpdateMethodsTo: { updatedCode }! !
+
+!ExtractMethodTest methodsFor: 'tests - return' stamp: 'JEC 14/Apr/2026, 3:45:18 pm (UTC)'!
+test145_CanExtractMultipleAssignmentWithNestedReturnOfMultipleVariables_TheReturnedVarIsUsedAfterExtractedCode
+
+	| codeToExtract newMethodCode originalCode updatedCode |
+	
+	codeToExtract := 'a := a + 2. b := 3. [ ^ a ].'.
+	originalCode := 'm1 | a b | a := 1. ', codeToExtract , ' self foo: a'.
+	newMethodCode := 'm2: a returningWith: aReturningBlock
+
+	| newA b |
+	newA := a + 2. b := 3. [ ^ aReturningBlock value: newA ].
+	^ newA'.
+	updatedCode := 'm1 | a | a := 1. a := self m2: a returningWith: [ :res | ^ res ]. self foo: a'.
+
+	self
+		assertExtract: codeToExtract 
+		from: originalCode
+		to: (Message selector: #m2: arguments: #('a'))
+		withReplacements: #()
+		definesNewMethodNamed: #m2:returningWith:
+		withBody: newMethodCode
+		andUpdateMethodsTo: { updatedCode }! !
+
+!ExtractMethodTest methodsFor: 'tests - return' stamp: 'JEC 14/Apr/2026, 3:44:09 pm (UTC)'!
+test146_WhenTwoAlmostIdenticalMethodsExist_CanExtractMultipleAssignmentsWithNestedReturnWithoutUsingThemAfterExtractedCode
+
+	| codeToExtract newMethodCode updatedCodeMA updatedCodeMB mACode mBCode |
+	
+	codeToExtract := 'a := 3. b := 1. [ ^ a + b ].'.
+	mACode := 'mA | a b | ' , codeToExtract.
+	mBCode := 'mB | a b | ' , codeToExtract.
+	newMethodCode := 'n1ReturningWith: aReturningBlock
+
+	| a b |
+	a := 3. b := 1. [ ^ aReturningBlock value: (a + b) ]'.
+	updatedCodeMA    := 'mA self n1ReturningWith: [ :res | ^ res ].'.
+	updatedCodeMB := 'mB self n1ReturningWith: [ :res | ^ res ].'.
+	
+	self
+		assertExtract: codeToExtract 
+		from: mACode
+		to: (Message selector: #n1)
+		withReplacements: { mBCode }
+		definesNewMethodNamed: #n1ReturningWith:
+		withBody: newMethodCode
+		andUpdateMethodsTo: { updatedCodeMA . updatedCodeMB }! !
+
+!ExtractMethodTest methodsFor: 'tests - return' stamp: 'JEC 14/Apr/2026, 3:43:27 pm (UTC)'!
+test147_WhenTwoAlmostIdenticalMethodsExist_CanExtractMultipleAssignmentsWithNestedReturnWithUsingThemAfterExtractedCode
+
+	| codeToExtract newMethodCode updatedCodeMA updatedCodeMB mACode mBCode |
+	
+	codeToExtract := 'a := 3. b := 1. [ ^ a + b ].'.
+	mACode := 'mA | a b | ' , codeToExtract , ' self foo: a. self bar: b'.
+	mBCode := 'mB | a b | ' , codeToExtract , ' self baz: a andAlso: b'.
+	newMethodCode := 'n1AssigningWith: anAssignmentBlock returningWith: aReturningBlock
+
+	| a b |
+	a := 3. b := 1. [ ^ aReturningBlock value: (a + b) ].
+	^ anAssignmentBlock value: a value: b'.
+	
+	updatedCodeMA    := 'mA | a b | self n1AssigningWith: [ :newA :newB | a := newA. b := newB. ] returningWith: [ :res | ^ res ]. self foo: a. self bar: b'.
+	
+	updatedCodeMB := 'mB | a b | self n1AssigningWith: [ :newA :newB | a := newA. b := newB. ] returningWith: [ :res | ^ res ]. self baz: a andAlso: b'.
+	
+	self
+		assertExtract: codeToExtract 
+		from: mACode
+		to: (Message selector: #n1)
+		withReplacements: { mBCode }
+		definesNewMethodNamed: #n1AssigningWith:returningWith:
+		withBody: newMethodCode
+		andUpdateMethodsTo: { updatedCodeMA . updatedCodeMB }! !
+
+!ExtractMethodTest methodsFor: 'tests - return' stamp: 'JEC 14/Apr/2026, 3:42:43 pm (UTC)'!
+test148_WhenTwoAlmostIdenticalMethodsExist_CanExtractMultipleAssignmentsWithNestedReturnWithOneMethodUsingTheTempVarsAndTheOtherNot
+
+	| codeToExtract newMethodCode updatedCodeMA updatedCodeMB mACode mBCode |
+	
+	codeToExtract := 'a := 3. b := 1. [ ^ a + b ].'.
+	mACode := 'mA | a b | ' , codeToExtract , ' self foo: a. self bar: b'.
+	mBCode := 'mB | a b | ' , codeToExtract.
+	newMethodCode := 'n1AssigningWith: anAssignmentBlock returningWith: aReturningBlock
+
+	| a b |
+	a := 3. b := 1. [ ^ aReturningBlock value: (a + b) ].
+	^ anAssignmentBlock value: a value: b'.
+	
+	updatedCodeMA    := 'mA | a b | self n1AssigningWith: [ :newA :newB | a := newA. b := newB. ] returningWith: [ :res | ^ res ]. self foo: a. self bar: b'.
+	
+	updatedCodeMB := 'mB self n1AssigningWith: [ :newA :newB | ] returningWith: [ :res | ^ res ].'.
+	
+	self
+		assertExtract: codeToExtract 
+		from: mACode
+		to: (Message selector: #n1)
+		withReplacements: { mBCode }
+		definesNewMethodNamed: #n1AssigningWith:returningWith:
+		withBody: newMethodCode
+		andUpdateMethodsTo: { updatedCodeMA . updatedCodeMB }! !
+
+!ExtractMethodTest methodsFor: 'tests - return' stamp: 'JEC 14/Apr/2026, 3:42:17 pm (UTC)'!
+test149_WhenTwoAlmostIdenticalMethodsExist_CanExtractMultipleAssignmentsWithNestedReturnWithOneMethodUsingTheTempVarsAndTheOtherJustOne
+
+	| codeToExtract newMethodCode updatedCodeMA updatedCodeMB mACode mBCode |
+	
+	codeToExtract := 'a := 3. b := 1. [ ^ a + b ].'.
+	mACode := 'mA | a b | ' , codeToExtract , ' self foo: a. self bar: b'.
+	mBCode := 'mB | a b | ' , codeToExtract , ' self foo: a'.
+	newMethodCode := 'n1AssigningWith: anAssignmentBlock returningWith: aReturningBlock
+
+	| a b |
+	a := 3. b := 1. [ ^ aReturningBlock value: (a + b) ].
+	^ anAssignmentBlock value: a value: b'.
+	
+	updatedCodeMA    := 'mA | a b | self n1AssigningWith: [ :newA :newB | a := newA. b := newB. ] returningWith: [ :res | ^ res ]. self foo: a. self bar: b'.
+	
+	updatedCodeMB := 'mB | a | self n1AssigningWith: [ :newA :newB | a := newA. ] returningWith: [ :res | ^ res ]. self foo: a'.
+	
+	self
+		assertExtract: codeToExtract 
+		from: mACode
+		to: (Message selector: #n1)
+		withReplacements: { mBCode }
+		definesNewMethodNamed: #n1AssigningWith:returningWith:
+		withBody: newMethodCode
+		andUpdateMethodsTo: { updatedCodeMA . updatedCodeMB }! !
+
+!ExtractMethodTest methodsFor: 'tests - return' stamp: 'JEC 14/Apr/2026, 3:16:20 pm (UTC)'!
+test150_WhenMultipleAlmostIdenticalMethodsExistWithMutlipleTemporaryVariablesAndNestedReturn_ExtractingOne_AllGetReplacedWithAssignmentBlock
+
+	| codeToExtract newMethodCode updatedCodeMA updatedCodeMB mACode mBCode mCCode updatedCodeMC |
+	
+	codeToExtract := 'a := 3. b := 1. [ ^ a + b ].'.
+	mACode := 'mA | a b | ' , codeToExtract , ' self foo: a. self bar: b'.
+	mBCode := 'mB | a b | ' , codeToExtract , ' self foo: a'.
+	mCCode := 'mC | a b | ' , codeToExtract.
+	
+	newMethodCode := 'n1AssigningWith: anAssignmentBlock returningWith: aReturningBlock
+
+	| a b |
+	a := 3. b := 1. [ ^ aReturningBlock value: (a + b) ].
+	^ anAssignmentBlock value: a value: b'.
+	
+	updatedCodeMA    := 'mA | a b | self n1AssigningWith: [ :newA :newB | a := newA. b := newB. ] returningWith: [ :res | ^ res ]. self foo: a. self bar: b'.
+	
+	updatedCodeMB := 'mB | a | self n1AssigningWith: [ :newA :newB | a := newA. ] returningWith: [ :res | ^ res ]. self foo: a'.
+	
+	updatedCodeMC := 'mC self n1AssigningWith: [ :newA :newB | ] returningWith: [ :res | ^ res ].'.
+	
+	self
+		assertExtract: codeToExtract 
+		from: mACode
+		to: (Message selector: #n1)
+		withReplacements: { mBCode . mCCode }
+		definesNewMethodNamed: #n1AssigningWith:returningWith:
+		withBody: newMethodCode
+		andUpdateMethodsTo: { updatedCodeMA . updatedCodeMB . updatedCodeMC }! !
 
 !ExtractToTemporaryTest methodsFor: 'assertions' stamp: 'jmv 26/Apr/2023, 7:10:28 pm (UTC)'!
 assertExtracting: codeToExtract from: sourceCodeOfMethodToRefactor toVariableNamed: newVariable updatesTo: sourceCodeAfterRefactoring
