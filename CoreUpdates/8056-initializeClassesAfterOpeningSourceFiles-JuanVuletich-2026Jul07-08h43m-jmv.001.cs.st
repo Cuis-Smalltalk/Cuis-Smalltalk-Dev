@@ -1,6 +1,6 @@
-'From Cuis7.9 [latest update: #8055] on 7 July 2026 at 8:26:28 am'!
+'From Cuis7.9 [latest update: #8055] on 7 July 2026 at 8:53:08 am'!
 
-!SystemDictionary methodsFor: 'snapshot and quit' stamp: 'jmv 7/Jul/2026, 12:25:46 pm (UTC)'!
+!SystemDictionary methodsFor: 'snapshot and quit' stamp: 'jmv 7/Jul/2026, 12:52:37 pm (UTC)'!
 snapshot: save andQuit: quit embedded: embeddedFlag clearAllClassState: clearAllStateFlag
 	"This is the main method for image save and / or quit.
 	See senders."
@@ -93,10 +93,13 @@ snapshot: save andQuit: quit embedded: embeddedFlag clearAllClassState: clearAll
 		"Keep current #userBaseDirectory unless a real startup"
 		DirectoryEntry setUserBaseDirectory: userBaseDirectory ].
 
+	"Here, startup begins!! (isARealStartup might be nil)"
+	self logStartupDebugAid: 'To #initClassCachedState'.
+	self allClassesDo: [ :cls | cls initClassCachedState ].
+	"Some command line arguments need to be processed before starting the UI"
 	isARealStartup == true ifTrue: [
-		"Some command line arguments need to be processed before starting the UI"
 		self processCommandLineArguments: true ].
-	"If starting from absolute scratch, this would be a good time to recreate Global names"
+	"Recreate Global names"
 	self at: #Sensor put: nil.
 	self at: #SourceFiles put: (Array new: 2).
 	isARealStartup == true
@@ -105,9 +108,6 @@ snapshot: save andQuit: quit embedded: embeddedFlag clearAllClassState: clearAll
 			self readAndApplyUserPrefs ].
 	self logStartupDebugAid: 'To #openSourceFiles'.
 	self openSourceFiles.
-	"Here, startup begins!! (isARealStartup might be nil)"
-	self logStartupDebugAid: 'To #initClassCachedState'.
-	self allClassesDo: [ :cls | cls initClassCachedState ].
 	self logStartupDebugAid: 'To #doStartUp:'.
 	self doStartUp: isARealStartup == true.
 	self logStartupDebugAid: 'To #spawnNewMorphicProcessFor: ', guiRootObject printString.
