@@ -1,6 +1,6 @@
-'From Cuis7.5 [latest update: #7764] on 16 December 2025 at 11:53:15 am'!
+'From Cuis7.9 [latest update: #8062] on 14 July 2026 at 10:28:00 am'!
 'Description FFI (Foreign Function Interface) provides access to foreign functions in external libraries, provided they use the platform''s Application Binary Interface (ABI), which is essentially the C calling convention for the platform. FFI supports callbacks, allowing one to pass callbacks that invoke Smalltalk blocks when called from foreign code. FFI provides support for defining classes that correspond to C struct types, with named fields, etc. See Tests-FFI for examples.'!
-!provides: 'FFI' 1 59!
+!provides: 'FFI' 1 60!
 !requires: 'WeakDictionaries' 1 1 nil!
 !requires: 'Alien-Core' 1 0 nil!
 SystemOrganization addCategory: #'FFI-Pools'!
@@ -373,14 +373,14 @@ form destroySurface.
 !ExternalAddress commentStamp: '<historical>' prior: 0!
 An ExternalAddress is an opaque handle to objects outside Smalltalk memory (e.g., a pointer).!
 
-!FFIConstants class methodsFor: 'pool initialization' stamp: 'ar 18/May/2003 18:54:00'!
+!FFIConstants class methodsFor: 'pool initialization' stamp: 'ar 18/May/2003, 9:54:00 pm (UTC)'!
 initialize
 	"FFIConstants initialize"
 	self initializeTypeConstants.
 	self initializeErrorConstants.
 	self initializeCallingConventions.! !
 
-!FFIConstants class methodsFor: 'pool initialization' stamp: 'eem 7/Dec/2025 14:39:08'!
+!FFIConstants class methodsFor: 'pool initialization' stamp: 'eem 7/Dec/2025, 5:39:08 pm (UTC)'!
 initializeCallingConventions
 	"These constants map onto the flags inst var of an ExternalFunction.
 	 The first eight bits define the calling convention.  Attribute flags
@@ -391,7 +391,7 @@ initializeCallingConventions
 	FFICallTypeApi := 1.
 	FFICallFlagExternalFunctionHasErrorReaper := 256! !
 
-!FFIConstants class methodsFor: 'pool initialization' stamp: 'eem 7/Dec/2025 14:42:10'!
+!FFIConstants class methodsFor: 'pool initialization' stamp: 'eem 7/Dec/2025, 5:42:10 pm (UTC)'!
 initializeErrorConstants
 	"FFIConstants initializeErrorConstants"
 
@@ -441,7 +441,7 @@ initializeErrorConstants
 	"Error reaper incorrect for some reason"
 	FFIErrorBadErrorReaper := 20! !
 
-!FFIConstants class methodsFor: 'pool initialization' stamp: 'eem 25/Nov/2024 13:33:41'!
+!FFIConstants class methodsFor: 'pool initialization' stamp: 'eem 25/Nov/2024, 4:33:41 pm (UTC)'!
 initializeTypeConstants
 	"type void"
 	FFITypeVoid := 0.
@@ -480,47 +480,47 @@ initializeTypeConstants
 	"argument qualifier flags"
 	FFIFlagVariadic := 16r80000000 "if set, argument is variadic (follows a '...' punctuator)"! !
 
-!ExternalObject methodsFor: 'private' stamp: 'ar 16/Nov/1999 20:25:00'!
+!ExternalObject methodsFor: 'private' stamp: 'ar 16/Nov/1999, 11:25:00 pm (UTC)'!
 getHandle
 	"Private. Return the handle used to represent the external entitiy."
 	^handle! !
 
-!ExternalObject methodsFor: 'private' stamp: 'ar 16/Nov/1999 20:26:00'!
+!ExternalObject methodsFor: 'private' stamp: 'ar 16/Nov/1999, 11:26:00 pm (UTC)'!
 setHandle: anObject
 	"Private. Set the handle used to represent the external entity."
 	handle := anObject! !
 
-!ExternalObject methodsFor: 'testing' stamp: 'jcg 4/Jun/2010 02:40:00'!
+!ExternalObject methodsFor: 'testing' stamp: 'jcg 4/Jun/2010, 5:40:00 am (UTC)'!
 isExternalAddress
 	"Return true if the receiver describes the address of an object in the outside world"
 	^false! !
 
-!ExternalObject methodsFor: 'testing' stamp: 'jfr 18/Oct/2024 11:58:01'!
+!ExternalObject methodsFor: 'testing' stamp: 'jfr 18/Oct/2024, 2:58:01 pm (UTC)'!
 isInExternalMemory
 	"Answer true if the handle is an external address"
 
 	^handle is: #ExternalAddress! !
 
-!ExternalObject methodsFor: 'testing' stamp: 'ar 16/Nov/2006 15:36:00'!
+!ExternalObject methodsFor: 'testing' stamp: 'ar 16/Nov/2006, 6:36:00 pm (UTC)'!
 isNull
 	"Answer true if the receiver currently is a NULL pointer"
 	^handle == nil or:[handle isNull]! !
 
-!ExternalObject methodsFor: 'converting' stamp: 'jfr 18/Oct/2024 13:28:51'!
+!ExternalObject methodsFor: 'converting' stamp: 'jfr 18/Oct/2024, 4:28:51 pm (UTC)'!
 moveToExternalMemory
 	"Move the receiver to OS Memory and set the address as the new handle"
 
 	self isInExternalMemory not
 		ifTrue:[handle := handle copyToExternalMemory].! !
 
-!ExternalObject methodsFor: 'converting' stamp: 'jfr 18/Oct/2024 13:35:12'!
+!ExternalObject methodsFor: 'converting' stamp: 'jfr 18/Oct/2024, 4:35:12 pm (UTC)'!
 moveToSmalltalkMemory
 	"Move the data to a ByteArray and set it as the new handle.
 	NOTE: The length of the data may be known by subclasses"
 
 	^self subclassResponsibility ! !
 
-!ExternalObject methodsFor: 'converting' stamp: 'jfr 18/Oct/2024 13:31:52'!
+!ExternalObject methodsFor: 'converting' stamp: 'jfr 18/Oct/2024, 4:31:52 pm (UTC)'!
 moveToSmalltalkMemory: length
 	"Move the data to a ByteArray and set it as the new handle.
 	NOTE: The length of the data is not known so it must be specified"
@@ -528,7 +528,7 @@ moveToSmalltalkMemory: length
 	self isInExternalMemory
 		ifTrue:[handle := handle bytesAt: 1 length: length].! !
 
-!ExternalObject class methodsFor: 'system startup' stamp: 'ar 28/Nov/1999 23:37:00'!
+!ExternalObject class methodsFor: 'system startup' stamp: 'ar 29/Nov/1999, 2:37:00 am (UTC)'!
 install
 	"Notify all instances of the receiver that we're coming up on a new platform.
 	Note: The default implementation does nothing since the general external
@@ -536,58 +536,58 @@ install
 	implement this method so that the appropriate action for existing instances can
 	be taken."! !
 
-!ExternalObject class methodsFor: 'system startup' stamp: 'ar 28/Nov/1999 23:36:00'!
+!ExternalObject class methodsFor: 'system startup' stamp: 'ar 29/Nov/1999, 2:36:00 am (UTC)'!
 installSubclasses
 	"Notify all the subclasses of ExternalObject that we are starting up on a new platform."
 	self withAllSubclassesDo:[:cls| cls install].! !
 
-!ExternalObject class methodsFor: 'system startup' stamp: 'ar 28/Nov/1999 23:36:00'!
+!ExternalObject class methodsFor: 'system startup' stamp: 'ar 29/Nov/1999, 2:36:00 am (UTC)'!
 startUp: resuming
 	"The system is coming up. If it is on a new platform, clear out the existing handles."
 	ExternalAddress startUp: resuming. "Make sure handles are invalid"
 	resuming ifTrue:[self installSubclasses].
 ! !
 
-!ExternalObject class methodsFor: 'class initialization' stamp: 'ar 19/Nov/1999 22:37:00'!
+!ExternalObject class methodsFor: 'class initialization' stamp: 'ar 20/Nov/1999, 1:37:00 am (UTC)'!
 initialize
 	"ExternalObject initialize"
 "	Smalltalk addToStartUpList: self after: ShortRunArray."
 	Smalltalk addToStartUpList: self.! !
 
-!ExternalObject class methodsFor: 'conversion' stamp: 'jmv 10/Jan/2024 08:47:45'!
+!ExternalObject class methodsFor: 'conversion' stamp: 'jmv 10/Jan/2024, 11:47:45 am (UTC)'!
 adaptStrings: anArray
 	^anArray collect: [ :each |
 		each isString
 			ifTrue: [each asUtf8BytesOrByteString]
 			ifFalse: [each]]! !
 
-!ExternalFunction methodsFor: 'accessing' stamp: 'ar 19/Nov/1999 19:13:00'!
+!ExternalFunction methodsFor: 'accessing' stamp: 'ar 19/Nov/1999, 10:13:00 pm (UTC)'!
 argTypes
 	^argTypes! !
 
-!ExternalFunction methodsFor: 'accessing' stamp: 'eem 28/Oct/2009 17:03:00'!
+!ExternalFunction methodsFor: 'accessing' stamp: 'eem 28/Oct/2009, 8:03:00 pm (UTC)'!
 errorCodeName
 	^nil! !
 
-!ExternalFunction methodsFor: 'accessing' stamp: 'ar 19/Nov/1999 19:13:00'!
+!ExternalFunction methodsFor: 'accessing' stamp: 'ar 19/Nov/1999, 10:13:00 pm (UTC)'!
 flags
 	^flags! !
 
-!ExternalFunction methodsFor: 'accessing' stamp: 'ar 17/Nov/1999 19:55:00'!
+!ExternalFunction methodsFor: 'accessing' stamp: 'ar 17/Nov/1999, 10:55:00 pm (UTC)'!
 module
 	^nil! !
 
-!ExternalFunction methodsFor: 'accessing' stamp: 'ar 17/Nov/1999 17:06:00'!
+!ExternalFunction methodsFor: 'accessing' stamp: 'ar 17/Nov/1999, 8:06:00 pm (UTC)'!
 name
 	^nil! !
 
-!ExternalFunction methodsFor: 'printing' stamp: 'ar 19/Nov/1999 16:35:00'!
+!ExternalFunction methodsFor: 'printing' stamp: 'ar 19/Nov/1999, 7:35:00 pm (UTC)'!
 callingConventionString
 	(flags allMask: FFICallTypeApi) 
 		ifTrue:[^'apicall']
 		ifFalse:[^'cdecl']! !
 
-!ExternalFunction methodsFor: 'printing' stamp: 'eem 7/Dec/2025 14:26:03'!
+!ExternalFunction methodsFor: 'printing' stamp: 'eem 7/Dec/2025, 5:26:03 pm (UTC)'!
 printOn: aStream
 	aStream
 		nextPut:$<;
@@ -609,74 +609,74 @@ printOn: aStream
 	].
 	aStream nextPut:$>! !
 
-!ExternalFunction methodsFor: 'initialization' stamp: 'ar 29/Nov/1999 00:35:00'!
+!ExternalFunction methodsFor: 'initialization' stamp: 'ar 29/Nov/1999, 3:35:00 am (UTC)'!
 initialize
 	"Initialize the receiver"
 	handle := ExternalAddress new.! !
 
-!ExternalFunction methodsFor: 'invoking' stamp: 'ar 19/Nov/1999 21:54:00'!
+!ExternalFunction methodsFor: 'invoking' stamp: 'ar 20/Nov/1999, 12:54:00 am (UTC)'!
 invoke
 	^self invokeWithArguments: #()! !
 
-!ExternalFunction methodsFor: 'invoking' stamp: 'ar 19/Nov/1999 21:53:00'!
+!ExternalFunction methodsFor: 'invoking' stamp: 'ar 20/Nov/1999, 12:53:00 am (UTC)'!
 invokeWith: arg1
 	^self invokeWithArguments: (Array with: arg1)! !
 
-!ExternalFunction methodsFor: 'invoking' stamp: 'ar 19/Nov/1999 21:53:00'!
+!ExternalFunction methodsFor: 'invoking' stamp: 'ar 20/Nov/1999, 12:53:00 am (UTC)'!
 invokeWith: arg1 with: arg2
 	^self invokeWithArguments: (Array with: arg1 with: arg2)! !
 
-!ExternalFunction methodsFor: 'invoking' stamp: 'ar 19/Nov/1999 21:53:00'!
+!ExternalFunction methodsFor: 'invoking' stamp: 'ar 20/Nov/1999, 12:53:00 am (UTC)'!
 invokeWith: arg1 with: arg2 with: arg3
 	^self invokeWithArguments: (Array with: arg1 with: arg2 with: arg3)! !
 
-!ExternalFunction methodsFor: 'invoking' stamp: 'ar 19/Nov/1999 19:08:00'!
+!ExternalFunction methodsFor: 'invoking' stamp: 'ar 19/Nov/1999, 10:08:00 pm (UTC)'!
 invokeWith: arg1 with: arg2 with: arg3 with: arg4
 	^self invokeWithArguments: (Array with: arg1 with: arg2 with: arg3 with: arg4)! !
 
-!ExternalFunction methodsFor: 'invoking' stamp: 'ar 19/Nov/1999 21:53:00'!
+!ExternalFunction methodsFor: 'invoking' stamp: 'ar 20/Nov/1999, 12:53:00 am (UTC)'!
 invokeWith: arg1 with: arg2 with: arg3 with: arg4 with: arg5
 	^self invokeWithArguments: (Array with: arg1 with: arg2 with: arg3 with: arg4 with: arg5)! !
 
-!ExternalFunction methodsFor: 'invoking' stamp: 'ar 19/Nov/1999 21:54:00'!
+!ExternalFunction methodsFor: 'invoking' stamp: 'ar 20/Nov/1999, 12:54:00 am (UTC)'!
 invokeWith: arg1 with: arg2 with: arg3 with: arg4 with: arg5 with: arg6
 	^self invokeWithArguments: (Array with: arg1 with: arg2 with: arg3 with: arg4 with: arg5 with: arg6)! !
 
-!ExternalFunction methodsFor: 'invoking' stamp: 'jmv 10/Jan/2024 08:47:51'!
+!ExternalFunction methodsFor: 'invoking' stamp: 'jmv 10/Jan/2024, 11:47:51 am (UTC)'!
 invokeWithArguments: argArray
 	"Manually invoke the receiver, representing an external function."
 	^self primInvokeWithArguments: (ExternalObject adaptStrings: argArray)! !
 
-!ExternalFunction methodsFor: 'invoking' stamp: 'jmv 6/Jan/2023 10:15:29'!
+!ExternalFunction methodsFor: 'invoking' stamp: 'jmv 6/Jan/2023, 1:15:29 pm (UTC)'!
 primInvokeWithArguments: argArray
 	"Manually invoke the receiver, representing an external function."
 	<primitive: 'primitiveCalloutWithArgs' module: 'SqueakFFIPrims' error: ec>
 	^self externalCallFailed! !
 
-!ExternalFunction methodsFor: 'invoking' stamp: 'jmv 6/Jan/2023 10:15:38'!
+!ExternalFunction methodsFor: 'invoking' stamp: 'jmv 6/Jan/2023, 1:15:38 pm (UTC)'!
 primTryInvokeWithArguments: argArray
 	"Sent from the debugger to simulate an FFI call."
 	<primitive: 'primitiveCalloutWithArgs' module: 'SqueakFFIPrims' error: ec>
 	
 	^thisContext class primitiveFailTokenFor: ec! !
 
-!ExternalFunction methodsFor: 'invoking' stamp: 'jmv 10/Jan/2024 08:47:55'!
+!ExternalFunction methodsFor: 'invoking' stamp: 'jmv 10/Jan/2024, 11:47:55 am (UTC)'!
 tryInvokeWithArguments: argArray
 	"Sent from the debugger to simulate an FFI call."
 	^self primTryInvokeWithArguments: (ExternalObject adaptStrings: argArray)! !
 
-!ExternalFunction class methodsFor: 'compiler support' stamp: 'ar 2/Dec/1999 16:20:00'!
+!ExternalFunction class methodsFor: 'compiler support' stamp: 'ar 2/Dec/1999, 7:20:00 pm (UTC)'!
 atomicTypeNamed: aString
 	^ExternalType atomicTypeNamed: aString! !
 
-!ExternalFunction class methodsFor: 'compiler support' stamp: 'ar 17/Nov/1999 19:58:00'!
+!ExternalFunction class methodsFor: 'compiler support' stamp: 'ar 17/Nov/1999, 10:58:00 pm (UTC)'!
 callingConventionFor: aString
 	"Return the constant describing the calling convention for the given string specification or nil if unknown."
 	aString = 'cdecl:' ifTrue:[^self callTypeCDecl].
 	aString = 'apicall:' ifTrue:[^self callTypeAPI].
 	^nil! !
 
-!ExternalFunction class methodsFor: 'compiler support' stamp: 'eem 21/Nov/2025 11:57:00'!
+!ExternalFunction class methodsFor: 'compiler support' stamp: 'eem 21/Nov/2025, 2:57:00 pm (UTC)'!
 callingConventionModifierFor: aString
 	"Answer the constant describing the calling convention modifier for the given string specification or nil if unknown.
 	 Used to be the now obsolete
@@ -685,43 +685,43 @@ callingConventionModifierFor: aString
 	 Simply answer nil for backwards compatibility."
 	^nil! !
 
-!ExternalFunction class methodsFor: 'compiler support' stamp: 'ar 2/Dec/1999 16:49:00'!
+!ExternalFunction class methodsFor: 'compiler support' stamp: 'ar 2/Dec/1999, 7:49:00 pm (UTC)'!
 forceTypeNamed: aString
 	^ExternalType forceTypeNamed: aString! !
 
-!ExternalFunction class methodsFor: 'compiler support' stamp: 'ar 2/Dec/1999 16:30:00'!
+!ExternalFunction class methodsFor: 'compiler support' stamp: 'ar 2/Dec/1999, 7:30:00 pm (UTC)'!
 isValidType: anObject
 	^anObject isBehavior and:[anObject includesBehavior: ExternalStructure]! !
 
-!ExternalFunction class methodsFor: 'compiler support' stamp: 'eem 8/Dec/2024 10:29:51'!
+!ExternalFunction class methodsFor: 'compiler support' stamp: 'eem 8/Dec/2024, 1:29:51 pm (UTC)'!
 punctuatorNamed: aSymbol
 	^ExternalTypePunctuator new token: aSymbol! !
 
-!ExternalFunction class methodsFor: 'compiler support' stamp: 'ar 2/Dec/1999 16:21:00'!
+!ExternalFunction class methodsFor: 'compiler support' stamp: 'ar 2/Dec/1999, 7:21:00 pm (UTC)'!
 structTypeNamed: aString
 	^ExternalType structTypeNamed: aString! !
 
-!ExternalFunction class methodsFor: 'constants' stamp: 'ar 19/Nov/1999 16:36:00'!
+!ExternalFunction class methodsFor: 'constants' stamp: 'ar 19/Nov/1999, 7:36:00 pm (UTC)'!
 callTypeAPI
 	^FFICallTypeApi! !
 
-!ExternalFunction class methodsFor: 'constants' stamp: 'ar 19/Nov/1999 16:36:00'!
+!ExternalFunction class methodsFor: 'constants' stamp: 'ar 19/Nov/1999, 7:36:00 pm (UTC)'!
 callTypeCDecl
 	^FFICallTypeCDecl! !
 
-!ExternalFunction class methodsFor: 'error handling' stamp: 'ar 19/Nov/1999 14:17:00'!
+!ExternalFunction class methodsFor: 'error handling' stamp: 'ar 19/Nov/1999, 5:17:00 pm (UTC)'!
 errorMessageFor: code
 	"Return the error message for the given error code from the foreign function interface"
 	^FFIErrorMessages at: code ifAbsent:['Call to external function failed'].! !
 
-!ExternalFunction class methodsFor: 'error handling' stamp: 'ar 19/Nov/1999 19:09:00'!
+!ExternalFunction class methodsFor: 'error handling' stamp: 'ar 19/Nov/1999, 10:09:00 pm (UTC)'!
 externalCallFailed
 	"Raise an error after a failed call to an external function"
 	| errCode |
 	errCode := self getLastError. "this allows us to look at the actual error code"
 	^self error: (self errorMessageFor: errCode).! !
 
-!ExternalFunction class methodsFor: 'error handling' stamp: 'eem 19/Nov/2009 10:47:00'!
+!ExternalFunction class methodsFor: 'error handling' stamp: 'eem 19/Nov/2009, 1:47:00 pm (UTC)'!
 externalCallFailedWith: primErrorCode
 	"Raise an error after a failed call to an external function.
 	 The primFailCode could be any of:
@@ -735,14 +735,14 @@ externalCallFailedWith: primErrorCode
 								ifTrue: ['Call to external function failed']
 								ifFalse: [primErrorCode]])! !
 
-!ExternalFunction class methodsFor: 'error handling' stamp: 'ar 28/Nov/1999 18:37:00'!
+!ExternalFunction class methodsFor: 'error handling' stamp: 'ar 28/Nov/1999, 9:37:00 pm (UTC)'!
 getLastError
 	"Return the last error from an external call.
 	Only valid immediately after the external call failed."
 	<primitive: 'primitiveFFIGetLastError' module:'SqueakFFIPrims'>
 	^-1! !
 
-!ExternalFunction class methodsFor: 'class initialization' stamp: 'ar 9/Mar/2010 21:45:00'!
+!ExternalFunction class methodsFor: 'class initialization' stamp: 'ar 10/Mar/2010, 12:45:00 am (UTC)'!
 initialize
 	"ExternalFunction initialize"
 	FFIConstants initialize. "ensure proper initialization"
@@ -751,7 +751,7 @@ initialize
 		ifFalse:[Smalltalk recreateSpecialObjectsArray].
 ! !
 
-!ExternalFunction class methodsFor: 'class initialization' stamp: 'eem 5/Nov/2009 10:24:00'!
+!ExternalFunction class methodsFor: 'class initialization' stamp: 'eem 5/Nov/2009, 1:24:00 pm (UTC)'!
 initializeErrorMessages
 	"ExternalFunction initializeErrorMessages"
 	FFIErrorMessages := Dictionary new.
@@ -779,33 +779,33 @@ initializeErrorMessages
 		at: FFIErrorCallFrameTooBig put: 'Call requires more than 16k of stack space';
 	yourself! !
 
-!ExternalFunction class methodsFor: 'class initialization' stamp: 'ar 9/Mar/2010 21:45:00'!
+!ExternalFunction class methodsFor: 'class initialization' stamp: 'ar 10/Mar/2010, 12:45:00 am (UTC)'!
 unload
 	"Clean out the splObj array"
 	Smalltalk specialObjectsArray from: 44 to: 48 put: nil.
 ! !
 
-!ExternalLibraryFunction methodsFor: 'accessing' stamp: 'eem 28/Oct/2009 17:07:00'!
+!ExternalLibraryFunction methodsFor: 'accessing' stamp: 'eem 28/Oct/2009, 8:07:00 pm (UTC)'!
 errorCodeName
 	^errorCodeName! !
 
-!ExternalLibraryFunction methodsFor: 'accessing' stamp: 'jmv 6/Jan/2023 13:42:46'!
+!ExternalLibraryFunction methodsFor: 'accessing' stamp: 'jmv 6/Jan/2023, 4:42:46 pm (UTC)'!
 module
 	^(module is: #ByteArray)
 		ifTrue: [UnicodeString fromUtf8Bytes: module]
 		ifFalse: [module] ! !
 
-!ExternalLibraryFunction methodsFor: 'accessing' stamp: 'jmv 6/Jan/2023 13:42:54'!
+!ExternalLibraryFunction methodsFor: 'accessing' stamp: 'jmv 6/Jan/2023, 4:42:54 pm (UTC)'!
 name
 	^(name is: #ByteArray)
 		ifTrue: [UnicodeString fromUtf8Bytes: name]
 		ifFalse: [name] ! !
 
-!ExternalLibraryFunction methodsFor: 'accessing' stamp: 'eem 28/Oct/2009 17:07:00'!
+!ExternalLibraryFunction methodsFor: 'accessing' stamp: 'eem 28/Oct/2009, 8:07:00 pm (UTC)'!
 setErrorCodeName: aString
 	errorCodeName := aString! !
 
-!ExternalLibraryFunction methodsFor: 'accessing' stamp: 'eem 28/Nov/2025 13:23:00'!
+!ExternalLibraryFunction methodsFor: 'accessing' stamp: 'eem 28/Nov/2025, 4:23:00 pm (UTC)'!
 setErrorReaper: anExternalLibraryFunctionOrNamedExternalDatumOrNil
 	"Set or clear the errorreaper"
 	errorReaper := anExternalLibraryFunctionOrNamedExternalDatumOrNil.
@@ -813,12 +813,12 @@ setErrorReaper: anExternalLibraryFunctionOrNamedExternalDatumOrNil
 				ifNil: [flags bitClear: FFICallFlagExternalFunctionHasErrorReaper]
 				ifNotNil: [flags bitOr: FFICallFlagExternalFunctionHasErrorReaper]! !
 
-!ExternalLibraryFunction methodsFor: 'accessing' stamp: 'jmv 6/Jan/2023 13:45:11'!
+!ExternalLibraryFunction methodsFor: 'accessing' stamp: 'jmv 6/Jan/2023, 4:45:11 pm (UTC)'!
 setModule: aString
 	"Private. Hack the module"
 	module := aString asUtf8BytesOrByteString! !
 
-!ExternalLibraryFunction methodsFor: 'comparing' stamp: 'jmv 6/Jan/2023 13:44:27'!
+!ExternalLibraryFunction methodsFor: 'comparing' stamp: 'jmv 6/Jan/2023, 4:44:27 pm (UTC)'!
 analogousCodeTo: anObject
 	^(anObject isKindOf: ExternalLibraryFunction)
 	and: [flags = anObject flags
@@ -827,7 +827,7 @@ analogousCodeTo: anObject
 	and: [self module = anObject module
 	and: [errorCodeName = anObject errorCodeName]]]]]! !
 
-!ExternalLibraryFunction methodsFor: 'private' stamp: 'jmv 6/Jan/2023 10:35:50'!
+!ExternalLibraryFunction methodsFor: 'private' stamp: 'jmv 6/Jan/2023, 1:35:50 pm (UTC)'!
 name: aName module: aModule flags: anInteger argTypes: argTypeArray
 
 	name := aName asUtf8BytesOrByteString.
@@ -835,7 +835,7 @@ name: aName module: aModule flags: anInteger argTypes: argTypeArray
 	flags := anInteger.
 	argTypes := argTypeArray.! !
 
-!ExternalLibraryFunction class methodsFor: 'instance creation' stamp: 'ar 17/Nov/1999 14:52:00'!
+!ExternalLibraryFunction class methodsFor: 'instance creation' stamp: 'ar 17/Nov/1999, 5:52:00 pm (UTC)'!
 name: aName module: aModule callType: callType returnType: retType argumentTypes: argTypes
 	^self new
 		name: aName
@@ -843,17 +843,17 @@ name: aName module: aModule callType: callType returnType: retType argumentTypes
 		flags: callType
 		argTypes: (Array with: retType), argTypes! !
 
-!ExternalLibrary methodsFor: 'accessing' stamp: 'ar 17/Nov/1999 19:35:00'!
+!ExternalLibrary methodsFor: 'accessing' stamp: 'ar 17/Nov/1999, 10:35:00 pm (UTC)'!
 handle
 	^handle! !
 
-!ExternalLibrary methodsFor: 'accessing' stamp: 'jmv 6/Jan/2023 13:43:15'!
+!ExternalLibrary methodsFor: 'accessing' stamp: 'jmv 6/Jan/2023, 4:43:15 pm (UTC)'!
 name
 	^(name is: #ByteArray)
 		ifTrue: [UnicodeString fromUtf8Bytes: name]
 		ifFalse: [name] ! !
 
-!ExternalLibrary methodsFor: 'initialization' stamp: 'ar 8/Dec/1999 21:49:00'!
+!ExternalLibrary methodsFor: 'initialization' stamp: 'ar 9/Dec/1999, 12:49:00 am (UTC)'!
 forceLoading
 	"Primitive. Force loading the given library.
 	The primitive will fail if the library is not available
@@ -861,22 +861,22 @@ forceLoading
 	<primitive: 'primitiveForceLoad' module:'SqueakFFIPrims'>
 	^self externalCallFailed "The primitive will set the error code"! !
 
-!ExternalLibrary methodsFor: 'initialization' stamp: 'jmv 6/Jan/2023 10:39:08'!
+!ExternalLibrary methodsFor: 'initialization' stamp: 'jmv 6/Jan/2023, 1:39:08 pm (UTC)'!
 initialize
 	"Initialize the receiver"
 	name := self class moduleName asUtf8BytesOrByteString.
 	handle := ExternalAddress new.! !
 
-!ExternalLibrary class methodsFor: 'accessing' stamp: 'ar 17/Nov/1999 19:33:00'!
+!ExternalLibrary class methodsFor: 'accessing' stamp: 'ar 17/Nov/1999, 10:33:00 pm (UTC)'!
 moduleName
 	"Return the name of the module for this library"
 	^nil! !
 
-!ExternalStructure methodsFor: 'printing' stamp: 'eem 1/May/2018 15:18:00'!
+!ExternalStructure methodsFor: 'printing' stamp: 'eem 1/May/2018, 6:18:00 pm (UTC)'!
 compositeName
 	^self class compositeName! !
 
-!ExternalStructure methodsFor: 'printing' stamp: 'jmv 31/Aug/2018 12:14:52'!
+!ExternalStructure methodsFor: 'printing' stamp: 'jmv 31/Aug/2018, 3:14:52 pm (UTC)'!
 longPrintOn: aStream 
 	"Append to the argument, aStream, the names and values of all the record's variables."
 	| fields |
@@ -890,24 +890,24 @@ longPrintOn: aStream
 			(self perform: field first) printOn: aStream.
 			aStream newLine]].! !
 
-!ExternalStructure methodsFor: 'release' stamp: 'ar 28/Nov/1999 23:21:00'!
+!ExternalStructure methodsFor: 'release' stamp: 'ar 29/Nov/1999, 2:21:00 am (UTC)'!
 free
 	"Free the handle pointed to by the receiver"
 	(handle ~~ nil and:[handle isExternalAddress]) ifTrue:[handle free].
 	handle := nil.! !
 
-!ExternalStructure methodsFor: 'converting' stamp: 'jfr 18/Oct/2024 13:33:20'!
+!ExternalStructure methodsFor: 'converting' stamp: 'jfr 18/Oct/2024, 4:33:20 pm (UTC)'!
 moveToSmalltalkMemory
 	"Move the data to a ByteArray and set it as the new handle"
 
 	^self moveToSmalltalkMemory: self class byteSize! !
 
-!ExternalStructure class methodsFor: 'class management' stamp: 'ar 22/Nov/1999 10:10:00'!
+!ExternalStructure class methodsFor: 'class management' stamp: 'ar 22/Nov/1999, 1:10:00 pm (UTC)'!
 doneCompiling
 	"I have been recompiled. Update any types that reference me."
 	ExternalType noticeModificationOf: self.! !
 
-!ExternalStructure class methodsFor: 'class management' stamp: 'jmv 13/Mar/2012 12:34:00'!
+!ExternalStructure class methodsFor: 'class management' stamp: 'jmv 13/Mar/2012, 3:34:00 pm (UTC)'!
 fileOutInitializerOn: aFileStream
 
 	super fileOutInitializerOn: aFileStream.
@@ -916,7 +916,7 @@ fileOutInitializerOn: aFileStream
 	aFileStream nextChunkPut: self name , ' compileFields'.
 	aFileStream newLine.! !
 
-!ExternalStructure class methodsFor: 'class management' stamp: 'jmv 13/Mar/2012 12:34:00'!
+!ExternalStructure class methodsFor: 'class management' stamp: 'jmv 13/Mar/2012, 3:34:00 pm (UTC)'!
 fileOutOn: aFileStream moveSource: moveSource toFile: fileIndex initializing: aBool
 
 	super fileOutOn: aFileStream
@@ -929,7 +929,7 @@ fileOutOn: aFileStream moveSource: moveSource toFile: fileIndex initializing: aB
 		aFileStream nextChunkPut: self name , ' compileFields'.
 		aFileStream newLine]! !
 
-!ExternalStructure class methodsFor: 'class management' stamp: 'sma 16/Jun/2000 22:12:00'!
+!ExternalStructure class methodsFor: 'class management' stamp: 'sma 17/Jun/2000, 1:12:00 am (UTC)'!
 obsolete
 	"The receiver is becoming obsolete. 
 	NOTE: You if you remove the whole class category at once, you cannot
@@ -938,19 +938,19 @@ obsolete
 	Smalltalk at: #ExternalType ifPresent: [:class | class noticeRemovalOf: self].
 	^ super obsolete! !
 
-!ExternalStructure class methodsFor: 'class management' stamp: 'ar 22/Nov/1999 04:12:00'!
+!ExternalStructure class methodsFor: 'class management' stamp: 'ar 22/Nov/1999, 7:12:00 am (UTC)'!
 rename: aString
 	| oldName |
 	oldName := name.
 	super rename: aString.
 	oldName = name ifFalse:[ExternalType noticeRenamingOf: self from: oldName to: name].! !
 
-!ExternalStructure class methodsFor: 'field definition' stamp: 'ar 2/Dec/1999 14:31:00'!
+!ExternalStructure class methodsFor: 'field definition' stamp: 'ar 2/Dec/1999, 5:31:00 pm (UTC)'!
 byteSize
 	"Return the size in bytes of this structure."
 	^self compiledSpec first bitAnd: FFIStructSizeMask! !
 
-!ExternalStructure class methodsFor: 'field definition' stamp: 'nice 16/Apr/2018 09:25:00'!
+!ExternalStructure class methodsFor: 'field definition' stamp: 'jmv 13/Jul/2026, 6:34:51 pm (UTC)'!
 checkFieldLayoutChange
 	"Recompile the spec and field accessors if the layout changed.
 	Answer true if the layout changed.
@@ -960,14 +960,16 @@ checkFieldLayoutChange
 	
 	| newCompiledSpec oldCompiledSpec |
 	oldCompiledSpec := compiledSpec.
-	newCompiledSpec := self compileFields: self fields withAccessors: #never.
+	Utilities setAuthorInitials: 'ffi' name: 'FFI Auto Generated' while: [
+		newCompiledSpec := self compileFields: self fields withAccessors: #never ].
 	oldCompiledSpec = newCompiledSpec ifTrue: [^false].
 	"only regenerate the automatically generated fields: the others are under user responsibility"
-	compiledSpec := self compileFields: self fields withAccessors: #generated.
+	Utilities setAuthorInitials: 'ffi' name: 'FFI Auto Generated' while: [
+		compiledSpec := self compileFields: self fields withAccessors: #generated ].
 	ExternalType noticeModificationOf: self.
 	^true! !
 
-!ExternalStructure class methodsFor: 'field definition' stamp: 'nice 13/Apr/2018 14:44:00'!
+!ExternalStructure class methodsFor: 'field definition' stamp: 'nice 13/Apr/2018, 5:44:00 pm (UTC)'!
 compileAlias: spec withAccessors: aSymbol
 	"Define all the fields in the receiver.
 	Return the newly compiled spec."
@@ -993,28 +995,30 @@ compileAlias: spec withAccessors: aSymbol
 		ifFalse:[externalType compiledSpec].
 	^newCompiledSpec! !
 
-!ExternalStructure class methodsFor: 'field definition' stamp: 'ar 2/Dec/1999 15:35:00'!
+!ExternalStructure class methodsFor: 'field definition' stamp: 'ar 2/Dec/1999, 6:35:00 pm (UTC)'!
 compileAllFields
 	"ExternalStructure compileAllFields"
 	self withAllSubclassesDo:[:cls|
 		cls compileFields.
 	].! !
 
-!ExternalStructure class methodsFor: 'field definition' stamp: 'ar 2/Dec/1999 14:28:00'!
+!ExternalStructure class methodsFor: 'field definition' stamp: 'ar 2/Dec/1999, 5:28:00 pm (UTC)'!
 compileFields
 	"Compile the field definition of the receiver.
 	Return the newly compiled spec."
 	^self compileFields: self fields! !
 
-!ExternalStructure class methodsFor: 'field definition' stamp: 'nice 13/Apr/2018 14:31:00'!
+!ExternalStructure class methodsFor: 'field definition' stamp: 'jmv 13/Jul/2026, 6:36:29 pm (UTC)'!
 compileFields: fieldSpec
 	"Compile the field definition of the receiver.
 	Return the newly compiled spec."
-	compiledSpec := self compileFields: fieldSpec withAccessors: #never.
+
+	Utilities setAuthorInitials: 'ffi' name: 'FFI Auto Generated' while: [
+		compiledSpec := self compileFields: fieldSpec withAccessors: #never ].
 	ExternalType noticeModificationOf: self.
 	^compiledSpec! !
 
-!ExternalStructure class methodsFor: 'field definition' stamp: 'nice 13/Apr/2018 14:36:00'!
+!ExternalStructure class methodsFor: 'field definition' stamp: 'nice 13/Apr/2018, 5:36:00 pm (UTC)'!
 compileFields: specArray withAccessors: aSymbol 
 	"Compile a type specification for the FFI machinery.
 	Return the newly compiled spec.
@@ -1067,12 +1071,12 @@ compileFields: specArray withAccessors: aSymbol
 	newCompiledSpec at: 1 put: (byteOffset - 1 bitOr: FFIFlagStructure).
 	^ newCompiledSpec! !
 
-!ExternalStructure class methodsFor: 'field definition' stamp: 'ar 2/Dec/1999 14:28:00'!
+!ExternalStructure class methodsFor: 'field definition' stamp: 'ar 2/Dec/1999, 5:28:00 pm (UTC)'!
 compiledSpec
 	"Return the compiled spec of the receiver"
 	^compiledSpec ifNil:[self compileFields].! !
 
-!ExternalStructure class methodsFor: 'field definition' stamp: 'jmv 8/Dec/2023 10:37:39'!
+!ExternalStructure class methodsFor: 'field definition' stamp: 'jmv 8/Dec/2023, 1:37:39 pm (UTC)'!
 defineAliasAccessorsFor: fieldName type: type
 	"Define read/write accessors for the given field"
 	| code refClass argName |
@@ -1110,7 +1114,7 @@ defineAliasAccessorsFor: fieldName type: type
 					type isPointerType ifTrue:[s nextPutAll:' asByteArrayWithPointer']]].
 	self compile: code classified: 'accessing' withStamp: nil notifying: nil.! !
 
-!ExternalStructure class methodsFor: 'field definition' stamp: 'jmv 31/Aug/2018 12:13:06'!
+!ExternalStructure class methodsFor: 'field definition' stamp: 'jmv 31/Aug/2018, 3:13:06 pm (UTC)'!
 defineFieldAccessorsFor: fieldName startingAt: byteOffset type: type
 	"Define read/write accessors for the given field"
 	| comment |
@@ -1123,24 +1127,26 @@ defineFieldAccessorsFor: fieldName startingAt: byteOffset type: type
 	self maybeCompileAccessor: fieldName,': anObject', comment, (type writeFieldAt: byteOffset with: 'anObject')
 		withSelector: (fieldName, ':') asSymbol! !
 
-!ExternalStructure class methodsFor: 'field definition' stamp: 'ar 2/Dec/1999 14:37:00'!
+!ExternalStructure class methodsFor: 'field definition' stamp: 'ar 2/Dec/1999, 5:37:00 pm (UTC)'!
 defineFields
 	"Define all the fields in the receiver"
 	self defineFields: self fields.! !
 
-!ExternalStructure class methodsFor: 'field definition' stamp: 'nice 13/Apr/2018 14:30:00'!
+!ExternalStructure class methodsFor: 'field definition' stamp: 'jmv 13/Jul/2026, 6:36:37 pm (UTC)'!
 defineFields: fieldSpec
 	"Define all the fields in the receiver"
-	compiledSpec := self compileFields: fieldSpec withAccessors: #always.
+
+	Utilities setAuthorInitials: 'ffi' name: 'FFI Auto Generated' while: [
+		compiledSpec := self compileFields: fieldSpec withAccessors: #always ].
 	ExternalType noticeModificationOf: self.
 	^compiledSpec! !
 
-!ExternalStructure class methodsFor: 'field definition' stamp: 'ar 29/Nov/1999 00:28:00'!
+!ExternalStructure class methodsFor: 'field definition' stamp: 'ar 29/Nov/1999, 3:28:00 am (UTC)'!
 fields
 	"Return the fields defining the receiver"
 	^#()! !
 
-!ExternalStructure class methodsFor: 'field definition' stamp: 'nice 13/Apr/2018 21:23:00'!
+!ExternalStructure class methodsFor: 'field definition' stamp: 'nice 14/Apr/2018, 12:23:00 am (UTC)'!
 shouldGenerate: fieldname policy: aSymbol 
 	"Answer true if the field accessors must be compiled.
 	Do so according to the following rules:
@@ -1157,7 +1163,7 @@ shouldGenerate: fieldname policy: aSymbol
 						anySatisfy: [:p | p keyword = #generated]]].
 	self error: 'unknow generation policy'! !
 
-!ExternalStructure class methodsFor: 'field definition' stamp: 'nice 13/Apr/2018 14:53:00'!
+!ExternalStructure class methodsFor: 'field definition' stamp: 'nice 13/Apr/2018, 5:53:00 pm (UTC)'!
 sortStructs: structureClasses into: sortedClasses 
 	"Sort the structure definitions so as to obtain a correct initialization order."
 	
@@ -1174,7 +1180,7 @@ sortStructs: structureClasses into: sortedClasses
 	add the corresponding class to the initialization list"
 	sortedClasses add: (structureClasses remove: structClass)] repeat! !
 
-!ExternalStructure class methodsFor: 'field definition' stamp: 'jmv 31/Aug/2018 12:20:47'!
+!ExternalStructure class methodsFor: 'field definition' stamp: 'jmv 31/Aug/2018, 3:20:47 pm (UTC)'!
 typeNamesFromWhichIDepend
 	"Answer the set of type names of my fields (including pointer stars)"
 	| f |
@@ -1182,38 +1188,38 @@ typeNamesFromWhichIDepend
 	f first isArray ifFalse: [^Set with: f second].
 	^(f collect: [:e | e second]) as: Set! !
 
-!ExternalStructure class methodsFor: 'instance creation' stamp: 'ar 1/Dec/1999 15:58:00'!
+!ExternalStructure class methodsFor: 'instance creation' stamp: 'ar 1/Dec/1999, 6:58:00 pm (UTC)'!
 externalNew
 	"Create an instance of the receiver on the external heap"
 	^self fromHandle: (ExternalAddress allocate: self byteSize)! !
 
-!ExternalStructure class methodsFor: 'instance creation' stamp: 'ar 29/Nov/1999 00:36:00'!
+!ExternalStructure class methodsFor: 'instance creation' stamp: 'ar 29/Nov/1999, 3:36:00 am (UTC)'!
 fromHandle: aHandle
 	^self basicNew setHandle: aHandle! !
 
-!ExternalStructure class methodsFor: 'instance creation' stamp: 'ar 1/Dec/1999 15:58:00'!
+!ExternalStructure class methodsFor: 'instance creation' stamp: 'ar 1/Dec/1999, 6:58:00 pm (UTC)'!
 new
 	^self fromHandle: (ByteArray new: self byteSize)! !
 
-!ExternalStructure class methodsFor: 'converting' stamp: 'eem 1/May/2018 15:17:00'!
+!ExternalStructure class methodsFor: 'converting' stamp: 'eem 1/May/2018, 6:17:00 pm (UTC)'!
 compositeName
 	^'struct'! !
 
-!ExternalStructure class methodsFor: 'converting' stamp: 'ar 2/Dec/1999 16:55:00'!
+!ExternalStructure class methodsFor: 'converting' stamp: 'ar 2/Dec/1999, 7:55:00 pm (UTC)'!
 externalType
 	"Return an external type describing the receiver as a structure"
 	^ExternalType structTypeNamed: self name! !
 
-!ExternalStructure class methodsFor: 'converting' stamp: 'eem 16/Feb/2016 10:32:00'!
+!ExternalStructure class methodsFor: 'converting' stamp: 'eem 16/Feb/2016, 1:32:00 pm (UTC)'!
 typedef
 	^self externalType typedef! !
 
-!ExternalStructure class methodsFor: 'class initialization' stamp: 'jmv 13/Jan/2016 10:22:00'!
+!ExternalStructure class methodsFor: 'class initialization' stamp: 'jmv 13/Jan/2016, 1:22:00 pm (UTC)'!
 initialize
 	ExternalType initialize.
 	self compileFields! !
 
-!ExternalStructure class methodsFor: 'compiling' stamp: 'jmv 16/Apr/2017 20:53:30'!
+!ExternalStructure class methodsFor: 'compiling' stamp: 'jmv 16/Apr/2017, 11:53:30 pm (UTC)'!
 maybeCompileAccessor: aString withSelector: selector
 
 	(self compiledMethodAt: selector ifAbsent: []) ifNotNil: [ :existingMethod |
@@ -1221,14 +1227,14 @@ maybeCompileAccessor: aString withSelector: selector
 			^self]].
 	self compile: aString classified: #accessing withStamp: nil notifying: nil! !
 
-!ExternalStructure class methodsFor: 'accessing' stamp: 'eem 16/Feb/2016 12:42:00'!
+!ExternalStructure class methodsFor: 'accessing' stamp: 'eem 16/Feb/2016, 3:42:00 pm (UTC)'!
 pointerSize
 	"Answer the size of pointers for this class.  By default answer nil.
 	 Subclasses that contain pointers must define the size of a pointer if the code is to operate on 64-bit and 32-bit platforms.
 	 Currently we have no way of converting a type between 32- and 64- bit versions beyond recompiling it."
 	^nil! !
 
-!ExternalStructure class methodsFor: 'system startup' stamp: 'nice 13/Apr/2018 12:36:00'!
+!ExternalStructure class methodsFor: 'system startup' stamp: 'nice 13/Apr/2018, 3:36:00 pm (UTC)'!
 install
 	"Resuming the image on another architecture may require a re-compilation of structure layout."
 	| newPlatform |
@@ -1238,7 +1244,7 @@ install
 			[self recompileStructures.
 			PreviousPlatform := newPlatform]! !
 
-!ExternalStructure class methodsFor: 'system startup' stamp: 'jmv 6/Feb/2024 10:19:42'!
+!ExternalStructure class methodsFor: 'system startup' stamp: 'jmv 6/Feb/2024, 1:19:42 pm (UTC)'!
 recompileStructures
 	"Check and update the layout of all subclasses for host machine dependency.
 	Arrange to check the inner nested structures first."
@@ -1250,7 +1256,7 @@ recompileStructures
 	self sortStructs: unsorted into: sorted.
 	sorted do: [:e | e checkFieldLayoutChange]! !
 
-!ExternalData methodsFor: 'conversion' stamp: 'jmv 10/Jan/2024 08:50:08'!
+!ExternalData methodsFor: 'conversion' stamp: 'jmv 10/Jan/2024, 11:50:08 am (UTC)'!
 fromCString
 	"Assume that the receiver represents a C string and convert it to a Smalltalk string. hg 2/25/2000 14:18"
 
@@ -1263,7 +1269,7 @@ fromCString
 		index := index + 1].
 	^stream contents! !
 
-!ExternalData methodsFor: 'conversion' stamp: 'eem 4/Jun/2024 15:32:23'!
+!ExternalData methodsFor: 'conversion' stamp: 'eem 4/Jun/2024, 6:32:23 pm (UTC)'!
 fromCStringAsByteArray
 	"Assume that the receiver represents a C string and convert it to a Smalltalk ByteArray"
 
@@ -1276,7 +1282,7 @@ fromCStringAsByteArray
 		index := index + 1].
 	^stream contents! !
 
-!ExternalData methodsFor: 'conversion' stamp: 'jmv 10/Jan/2024 08:49:54'!
+!ExternalData methodsFor: 'conversion' stamp: 'jmv 10/Jan/2024, 11:49:54 am (UTC)'!
 fromCStrings
 	"Assume that the receiver represents a set of C strings and is teerminated by a empty string and convert it to a Smalltalk ordered collection of strings"
 
@@ -1297,40 +1303,40 @@ fromCStrings
 	] whileFalse.
 	^strings! !
 
-!ExternalData methodsFor: 'private' stamp: 'ar 21/Nov/1999 14:23:00'!
+!ExternalData methodsFor: 'private' stamp: 'ar 21/Nov/1999, 5:23:00 pm (UTC)'!
 setHandle: aHandle type: aType
 	handle := aHandle.
 	type := aType.! !
 
-!ExternalData class methodsFor: 'class initialization' stamp: 'ar 14/Aug/2006 23:18:00'!
+!ExternalData class methodsFor: 'class initialization' stamp: 'ar 15/Aug/2006, 2:18:00 am (UTC)'!
 compileFields
 	"Ensure proper initialization of ExternalType when first loading"
 	ExternalType initialize.
 	^super compileFields! !
 
-!ExternalData class methodsFor: 'class initialization' stamp: 'jmv 21/Aug/2013 17:38:00'!
+!ExternalData class methodsFor: 'class initialization' stamp: 'jmv 21/Aug/2013, 8:38:00 pm (UTC)'!
 initialize
 	self compileFields! !
 
-!ExternalData class methodsFor: 'field definition' stamp: 'ar 27/Jan/2000 01:23:00'!
+!ExternalData class methodsFor: 'field definition' stamp: 'ar 27/Jan/2000, 4:23:00 am (UTC)'!
 fields
 	"ExternalData defineFields"
 	"Note: The definition is for completeness only.
 	ExternalData is treated specially by the VM."
 	^#(nil 'void*')! !
 
-!ExternalData class methodsFor: 'instance creation' stamp: 'ar 2/Dec/1999 14:57:00'!
+!ExternalData class methodsFor: 'instance creation' stamp: 'ar 2/Dec/1999, 5:57:00 pm (UTC)'!
 fromHandle: aHandle type: aType
 	"Create a pointer to the given type"
 	"ExternalData fromHandle: ExternalAddress new type: ExternalType float"
 	^self basicNew setHandle: aHandle type: aType! !
 
-!ExternalData class methodsFor: 'instance creation' stamp: 'ar 22/Nov/1999 04:28:00'!
+!ExternalData class methodsFor: 'instance creation' stamp: 'ar 22/Nov/1999, 7:28:00 am (UTC)'!
 new
 	"You better not..."
 	^self shouldNotImplement! !
 
-!ExternalUnion class methodsFor: 'field definition' stamp: 'nice 13/Apr/2018 20:21:00'!
+!ExternalUnion class methodsFor: 'field definition' stamp: 'nice 13/Apr/2018, 11:21:00 pm (UTC)'!
 compileFields: specArray withAccessors: aSymbol 
 	"Compile a type specification for the FFI machinery.
 	Return the newly compiled spec.
@@ -1381,23 +1387,23 @@ compileFields: specArray withAccessors: aSymbol
 	newCompiledSpec at: 1 put: (maxByteSize bitOr: FFIFlagStructure).
 	^ newCompiledSpec! !
 
-!ExternalUnion class methodsFor: 'converting' stamp: 'eem 1/May/2018 15:18:00'!
+!ExternalUnion class methodsFor: 'converting' stamp: 'eem 1/May/2018, 6:18:00 pm (UTC)'!
 compositeName
 	^'union'! !
 
-!ExternalVariable methodsFor: 'accessing' stamp: 'eem 28/Nov/2025 13:24:00'!
+!ExternalVariable methodsFor: 'accessing' stamp: 'eem 28/Nov/2025, 4:24:00 pm (UTC)'!
 module
 	^module! !
 
-!ExternalVariable methodsFor: 'accessing' stamp: 'eem 28/Nov/2025 13:24:00'!
+!ExternalVariable methodsFor: 'accessing' stamp: 'eem 28/Nov/2025, 4:24:00 pm (UTC)'!
 name
 	^name! !
 
-!ExternalVariable methodsFor: 'accessing' stamp: 'eem 28/Nov/2025 13:24:00'!
+!ExternalVariable methodsFor: 'accessing' stamp: 'eem 28/Nov/2025, 4:24:00 pm (UTC)'!
 type
 	^type! !
 
-!ExternalVariable methodsFor: 'instance initialization' stamp: 'eem 5/Dec/2025 16:02:00'!
+!ExternalVariable methodsFor: 'instance initialization' stamp: 'eem 5/Dec/2025, 7:02:00 pm (UTC)'!
 name: aName module: aModule type: aType
 
 	handle := ExternalAddress new.
@@ -1405,14 +1411,14 @@ name: aName module: aModule type: aType
 	module := aModule.
 	type := aType.! !
 
-!ExternalVariable class methodsFor: 'instance creation' stamp: 'eem 28/Nov/2025 13:21:00'!
+!ExternalVariable class methodsFor: 'instance creation' stamp: 'eem 28/Nov/2025, 4:21:00 pm (UTC)'!
 name: aName module: aModule type: aType
 	^self new
 		name: aName
 		module: aModule
 		type: aType! !
 
-!ExternalType methodsFor: 'printing' stamp: 'jmv 14/Nov/2023 12:23:33'!
+!ExternalType methodsFor: 'printing' stamp: 'jmv 14/Nov/2023, 3:23:33 pm (UTC)'!
 printAtomicType: spec on: aStream
 	self assert: (spec anyMask: FFIFlagAtomic).
 	aStream nextPutAll: (#(	'void' 'unsigned char' 'unsigned char' 'signed char'
@@ -1426,14 +1432,14 @@ printAtomicType: spec on: aStream
 	(spec anyMask: FFIFlagPointer) ifTrue:
 		[aStream nextPut: $*]! !
 
-!ExternalType methodsFor: 'printing' stamp: 'ar 2/Dec/1999 17:02:00'!
+!ExternalType methodsFor: 'printing' stamp: 'ar 2/Dec/1999, 8:02:00 pm (UTC)'!
 printOn: aStream
 	referentClass == nil
 		ifTrue:[aStream nextPutAll: (AtomicTypeNames at: self atomicType)]
 		ifFalse:[aStream nextPutAll: referentClass name].
 	self isPointerType ifTrue:[aStream nextPut: $*].! !
 
-!ExternalType methodsFor: 'printing' stamp: 'jmv 31/Aug/2018 14:35:20'!
+!ExternalType methodsFor: 'printing' stamp: 'jmv 31/Aug/2018, 5:35:20 pm (UTC)'!
 printStructureFieldStartingAt: initialSpecIndex withName: name inClass: structureClass on: aStream indent: indent
 	"Print the structure's field starting at initialSpecIndex and answer the index in compiledSpec of the subsequent type."
 	| spec subStructureClassBinding |
@@ -1479,7 +1485,7 @@ self halt.
 	aStream nextPutAll: subStructureClassBinding value name; nextPutAll: ' *'; nextPutAll: name.
 	^initialSpecIndex + 1! !
 
-!ExternalType methodsFor: 'printing' stamp: 'jmv 31/Aug/2018 12:48:49'!
+!ExternalType methodsFor: 'printing' stamp: 'jmv 31/Aug/2018, 3:48:49 pm (UTC)'!
 printTypedefOn: s
 	s nextPutAll: 'typedef '.
 	(referentClass notNil
@@ -1505,32 +1511,32 @@ printTypedefOn: s
 			[self printAtomicType: compiledSpec first on: s].
 	s nextPutAll: (referentClass ifNotNil: [referentClass name] ifNil: ['foo'])! !
 
-!ExternalType methodsFor: 'printing' stamp: 'nice 21/May/2006 21:40:00'!
+!ExternalType methodsFor: 'printing' stamp: 'nice 22/May/2006, 12:40:00 am (UTC)'!
 storeOn: aStream
 	referentClass == nil
 		ifTrue:[aStream nextPutAll: ExternalType name; space; nextPutAll: (AtomicTypeNames at: self atomicType)]
 		ifFalse:[aStream nextPut: $(; nextPutAll: ExternalType name; space; nextPutAll: #structTypeNamed:; space;  store: referentClass name; nextPut: $)].
 	self isPointerType ifTrue: [aStream space; nextPutAll: #asPointer].! !
 
-!ExternalType methodsFor: 'printing' stamp: 'eem 16/Feb/2016 10:05:00'!
+!ExternalType methodsFor: 'printing' stamp: 'eem 16/Feb/2016, 1:05:00 pm (UTC)'!
 typedef
 	^String streamContents: [:s| self printTypedefOn: s]! !
 
-!ExternalType methodsFor: 'converting' stamp: 'ar 2/Dec/1999 16:41:00'!
+!ExternalType methodsFor: 'converting' stamp: 'ar 2/Dec/1999, 7:41:00 pm (UTC)'!
 asNonPointerType
 	"convert the receiver into a non pointer type"
 	self isPointerType
 		ifTrue:[^referencedType]
 		ifFalse:[^self]! !
 
-!ExternalType methodsFor: 'converting' stamp: 'ar 2/Dec/1999 16:40:00'!
+!ExternalType methodsFor: 'converting' stamp: 'ar 2/Dec/1999, 7:40:00 pm (UTC)'!
 asPointerType
 	"convert the receiver into a pointer type"
 	self isPointerType
 		ifTrue:[^self]
 		ifFalse:[^referencedType]! !
 
-!ExternalType methodsFor: 'converting' stamp: 'eem 16/Feb/2016 12:57:00'!
+!ExternalType methodsFor: 'converting' stamp: 'eem 16/Feb/2016, 3:57:00 pm (UTC)'!
 asPointerType: aPointerSize
 	"convert the receiver into a pointer type"
 	| type |
@@ -1540,35 +1546,35 @@ asPointerType: aPointerSize
 		ifFalse:
 			[type copy pointerSize: aPointerSize; yourself]! !
 
-!ExternalType methodsFor: 'accessing' stamp: 'ar 2/Dec/1999 14:15:00'!
+!ExternalType methodsFor: 'accessing' stamp: 'ar 2/Dec/1999, 5:15:00 pm (UTC)'!
 atomicType
 	^(self headerWord bitAnd: FFIAtomicTypeMask) >> FFIAtomicTypeShift! !
 
-!ExternalType methodsFor: 'accessing' stamp: 'ar 2/Dec/1999 14:11:00'!
+!ExternalType methodsFor: 'accessing' stamp: 'ar 2/Dec/1999, 5:11:00 pm (UTC)'!
 byteSize
 	"Return the size in bytes of this type"
 	^self headerWord bitAnd: FFIStructSizeMask! !
 
-!ExternalType methodsFor: 'accessing' stamp: 'ar 2/Dec/1999 14:29:00'!
+!ExternalType methodsFor: 'accessing' stamp: 'ar 2/Dec/1999, 5:29:00 pm (UTC)'!
 compiledSpec
 	"Return the compiled spec of the receiver"
 	^compiledSpec! !
 
-!ExternalType methodsFor: 'accessing' stamp: 'eem 16/Feb/2016 12:43:00'!
+!ExternalType methodsFor: 'accessing' stamp: 'eem 16/Feb/2016, 3:43:00 pm (UTC)'!
 pointerSize
 	"Answer the pointer size of the receiver, if specified."
 	^pointerSize! !
 
-!ExternalType methodsFor: 'accessing' stamp: 'ar 2/Dec/1999 14:11:00'!
+!ExternalType methodsFor: 'accessing' stamp: 'ar 2/Dec/1999, 5:11:00 pm (UTC)'!
 referentClass
 	"Return the class specifying the receiver"
 	^referentClass! !
 
-!ExternalType methodsFor: 'private' stamp: 'ar 2/Dec/1999 15:19:00'!
+!ExternalType methodsFor: 'private' stamp: 'ar 2/Dec/1999, 6:19:00 pm (UTC)'!
 compiledSpec: aWordArray
 	compiledSpec := aWordArray.! !
 
-!ExternalType methodsFor: 'private' stamp: 'ar 2/Dec/1999 20:34:00'!
+!ExternalType methodsFor: 'private' stamp: 'ar 2/Dec/1999, 11:34:00 pm (UTC)'!
 embeddedSpecWithSize: typeSize
 	"Return a compiled spec for embedding in a new compiled spec."
 	| spec header |
@@ -1580,16 +1586,16 @@ embeddedSpecWithSize: typeSize
 		ifTrue:[spec := spec copyWith: self class structureSpec].
 	^spec! !
 
-!ExternalType methodsFor: 'private' stamp: 'ar 27/Jan/2000 00:22:00'!
+!ExternalType methodsFor: 'private' stamp: 'ar 27/Jan/2000, 3:22:00 am (UTC)'!
 externalTypeName
 	^'ExternalType ', (AtomicTypeNames at: self atomicType), ' asPointerType'! !
 
-!ExternalType methodsFor: 'private' stamp: 'ar 2/Dec/1999 14:11:00'!
+!ExternalType methodsFor: 'private' stamp: 'ar 2/Dec/1999, 5:11:00 pm (UTC)'!
 headerWord
 	"Return the compiled header word"
 	^compiledSpec at: 1! !
 
-!ExternalType methodsFor: 'private' stamp: 'ar 2/Dec/1999 20:30:00'!
+!ExternalType methodsFor: 'private' stamp: 'ar 2/Dec/1999, 11:30:00 pm (UTC)'!
 newReferentClass: aClass
 	"The class I'm referencing has changed. Update my spec."
 	referentClass := aClass.
@@ -1602,7 +1608,7 @@ newReferentClass: aClass
 		compiledSpec := referentClass compiledSpec.
 	].! !
 
-!ExternalType methodsFor: 'private' stamp: 'eem 16/Feb/2016 13:02:00'!
+!ExternalType methodsFor: 'private' stamp: 'eem 16/Feb/2016, 4:02:00 pm (UTC)'!
 pointerSize: anInteger
 	| spec |
 	pointerSize := anInteger.
@@ -1611,7 +1617,7 @@ pointerSize: anInteger
 		[compiledSpec := compiledSpec shallowCopy.
 		 compiledSpec at: 1 put: (spec bitClear: FFIStructSizeMask) + anInteger]! !
 
-!ExternalType methodsFor: 'private' stamp: 'eem 4/Jun/2024 16:10:09'!
+!ExternalType methodsFor: 'private' stamp: 'eem 4/Jun/2024, 7:10:09 pm (UTC)'!
 readFieldAt: byteOffset
 	"Answer a string defining the accessor to an entity of the receiver type starting at the given byte offset. 
 	 Private. Used for field definition only."
@@ -1654,11 +1660,11 @@ readFieldAt: byteOffset
 				print: self byteSize;
 				nextPut: $)]]]! !
 
-!ExternalType methodsFor: 'private' stamp: 'ar 2/Dec/1999 16:41:00'!
+!ExternalType methodsFor: 'private' stamp: 'ar 2/Dec/1999, 7:41:00 pm (UTC)'!
 setReferencedType: aType
 	referencedType := aType! !
 
-!ExternalType methodsFor: 'private' stamp: 'eem 4/Jun/2024 16:11:01'!
+!ExternalType methodsFor: 'private' stamp: 'eem 4/Jun/2024, 7:11:01 pm (UTC)'!
 writeFieldAt: byteOffset with: valueName
 	"Answer a string defining the accessor to an entity of the receiver type starting at the given byte offset. 
 	 Private. Used for field definition only."
@@ -1695,50 +1701,50 @@ writeFieldAt: byteOffset with: valueName
 							nextPutAll:' length: ';
 							print: self byteSize]]]! !
 
-!ExternalType methodsFor: 'testing' stamp: 'ar 2/Dec/1999 20:27:00'!
+!ExternalType methodsFor: 'testing' stamp: 'ar 2/Dec/1999, 11:27:00 pm (UTC)'!
 isAtomic
 	"Return true if the receiver describes a built-in type"
 	^self headerWord anyMask: FFIFlagAtomic! !
 
-!ExternalType methodsFor: 'testing' stamp: 'jmv 14/Nov/2023 12:09:34'!
+!ExternalType methodsFor: 'testing' stamp: 'jmv 14/Nov/2023, 3:09:34 pm (UTC)'!
 isIntegerType
 	"Return true if the receiver is a built-in integer type"
 	| type |
 	type := self atomicType.
 	^type > FFITypeBool and:[type <= FFITypeInt64]! !
 
-!ExternalType methodsFor: 'testing' stamp: 'ar 27/Jan/2000 00:29:00'!
+!ExternalType methodsFor: 'testing' stamp: 'ar 27/Jan/2000, 3:29:00 am (UTC)'!
 isPointerType
 	"Return true if the receiver represents a pointer type"
 	^self isStructureType not and:[self headerWord anyMask: FFIFlagPointer]! !
 
-!ExternalType methodsFor: 'testing' stamp: 'eem 21/Nov/2024 18:10:00'!
+!ExternalType methodsFor: 'testing' stamp: 'eem 21/Nov/2024, 9:10:00 pm (UTC)'!
 isPunctuator
 	^false! !
 
-!ExternalType methodsFor: 'testing' stamp: 'ar 2/Dec/1999 14:15:00'!
+!ExternalType methodsFor: 'testing' stamp: 'ar 2/Dec/1999, 5:15:00 pm (UTC)'!
 isSigned
 	"Return true if the receiver is a signed type.
 	Note: Only useful for integer types."
 	^self atomicType anyMask: 1! !
 
-!ExternalType methodsFor: 'testing' stamp: 'ar 2/Dec/1999 14:15:00'!
+!ExternalType methodsFor: 'testing' stamp: 'ar 2/Dec/1999, 5:15:00 pm (UTC)'!
 isStructureType
 	"Return true if the receiver represents a structure type"
 	^self headerWord anyMask: FFIFlagStructure! !
 
-!ExternalType methodsFor: 'testing' stamp: 'ar 18/Nov/1999 18:28:00'!
+!ExternalType methodsFor: 'testing' stamp: 'ar 18/Nov/1999, 9:28:00 pm (UTC)'!
 isUnsigned
 	"Return true if the receiver is an unsigned type.
 	Note: Only useful for integer types."
 	^self isSigned not! !
 
-!ExternalType methodsFor: 'testing' stamp: 'ar 2/Dec/1999 14:16:00'!
+!ExternalType methodsFor: 'testing' stamp: 'ar 2/Dec/1999, 5:16:00 pm (UTC)'!
 isVoid
 	"Return true if the receiver describes a plain 'void' type"
 	^self isAtomic and:[self atomicType = 0]! !
 
-!ExternalType class methodsFor: 'private' stamp: 'jmv 14/Nov/2023 11:47:11'!
+!ExternalType class methodsFor: 'private' stamp: 'jmv 14/Nov/2023, 2:47:11 pm (UTC)'!
 atomicTypeNamed: aString
 	| n oldTypeNames newTypeNames |
 	n := aString.
@@ -1754,11 +1760,11 @@ atomicTypeNamed: aString
 		n := (newTypeNames at: (oldTypeNames indexOf: n asSymbol)) asString ].
 	^AtomicTypes at: n ifAbsent:[nil]! !
 
-!ExternalType class methodsFor: 'private' stamp: 'ar 2/Dec/1999 16:50:00'!
+!ExternalType class methodsFor: 'private' stamp: 'ar 2/Dec/1999, 7:50:00 pm (UTC)'!
 forceTypeNamed: aString
 	^self newTypeNamed: aString force: true! !
 
-!ExternalType class methodsFor: 'private' stamp: 'ar 26/Jan/2000 21:41:00'!
+!ExternalType class methodsFor: 'private' stamp: 'ar 27/Jan/2000, 12:41:00 am (UTC)'!
 newTypeNamed: aString force: aBool
 	| sym type referentClass pointerType |
 	sym := aString asSymbol.
@@ -1780,153 +1786,153 @@ newTypeNamed: aString force: aBool
 	StructTypes at: sym put: type.
 	^type! !
 
-!ExternalType class methodsFor: 'private' stamp: 'jmv 20/Dec/2016 11:41:12'!
+!ExternalType class methodsFor: 'private' stamp: 'jmv 20/Dec/2016, 2:41:12 pm (UTC)'!
 pointerSpec
 	^(Smalltalk wordSize bitOr: FFIFlagPointer)! !
 
-!ExternalType class methodsFor: 'private' stamp: 'ar 2/Dec/1999 16:48:00'!
+!ExternalType class methodsFor: 'private' stamp: 'ar 2/Dec/1999, 7:48:00 pm (UTC)'!
 structTypeNamed: aSymbol
 	aSymbol == nil ifTrue:[^nil].
 	^self newTypeNamed: aSymbol force: false! !
 
-!ExternalType class methodsFor: 'private' stamp: 'ar 2/Dec/1999 20:34:00'!
+!ExternalType class methodsFor: 'private' stamp: 'ar 2/Dec/1999, 11:34:00 pm (UTC)'!
 structureSpec
 	^FFIFlagStructure! !
 
-!ExternalType class methodsFor: 'type constants' stamp: 'ar 2/Dec/1999 16:56:00'!
+!ExternalType class methodsFor: 'type constants' stamp: 'ar 2/Dec/1999, 7:56:00 pm (UTC)'!
 bool
 	^AtomicTypes at: 'bool'! !
 
-!ExternalType class methodsFor: 'type constants' stamp: 'ar 20/Nov/1999 17:29:00'!
+!ExternalType class methodsFor: 'type constants' stamp: 'ar 20/Nov/1999, 8:29:00 pm (UTC)'!
 char
 	"char defaults to unsigned char"
 	^self unsignedChar! !
 
-!ExternalType class methodsFor: 'type constants' stamp: 'ar 2/Dec/1999 16:56:00'!
+!ExternalType class methodsFor: 'type constants' stamp: 'ar 2/Dec/1999, 7:56:00 pm (UTC)'!
 double
 	^AtomicTypes at: 'double'! !
 
-!ExternalType class methodsFor: 'type constants' stamp: 'ar 2/Dec/1999 16:57:00'!
+!ExternalType class methodsFor: 'type constants' stamp: 'ar 2/Dec/1999, 7:57:00 pm (UTC)'!
 float
 	^AtomicTypes at: 'float'! !
 
-!ExternalType class methodsFor: 'type constants' stamp: 'jmv 14/Nov/2023 10:28:56'!
+!ExternalType class methodsFor: 'type constants' stamp: 'jmv 14/Nov/2023, 1:28:56 pm (UTC)'!
 int16
 	^AtomicTypes at: 'int16'! !
 
-!ExternalType class methodsFor: 'type constants' stamp: 'jmv 14/Nov/2023 10:12:11'!
+!ExternalType class methodsFor: 'type constants' stamp: 'jmv 14/Nov/2023, 1:12:11 pm (UTC)'!
 int32
 	^AtomicTypes at: 'int32'! !
 
-!ExternalType class methodsFor: 'type constants' stamp: 'fgz 23/Dec/2023 02:47:25'!
+!ExternalType class methodsFor: 'type constants' stamp: 'fgz 23/Dec/2023, 5:47:25 am (UTC)'!
 int3264
 	"32 or 64 bits, depending on the platform"
 	^Smalltalk wordSize = 8
 		ifTrue: [ self int64 ]
 		ifFalse: [ self int32 ].! !
 
-!ExternalType class methodsFor: 'type constants' stamp: 'jmv 14/Nov/2023 09:42:40'!
+!ExternalType class methodsFor: 'type constants' stamp: 'jmv 14/Nov/2023, 12:42:40 pm (UTC)'!
 int64
 	^AtomicTypes at: 'int64'! !
 
-!ExternalType class methodsFor: 'type constants' stamp: 'jmv 14/Nov/2023 10:44:03'!
+!ExternalType class methodsFor: 'type constants' stamp: 'jmv 14/Nov/2023, 1:44:03 pm (UTC)'!
 int8
 	^AtomicTypes at: 'int8'! !
 
-!ExternalType class methodsFor: 'type constants' stamp: 'ar 28/Nov/1999 23:43:00'!
+!ExternalType class methodsFor: 'type constants' stamp: 'ar 29/Nov/1999, 2:43:00 am (UTC)'!
 schar
 	^self signedChar! !
 
-!ExternalType class methodsFor: 'type constants' stamp: 'ar 2/Dec/1999 16:57:00'!
+!ExternalType class methodsFor: 'type constants' stamp: 'ar 2/Dec/1999, 7:57:00 pm (UTC)'!
 signedChar
 	^AtomicTypes at: 'schar'! !
 
-!ExternalType class methodsFor: 'type constants' stamp: 'ar 2/Dec/1999 16:57:00'!
+!ExternalType class methodsFor: 'type constants' stamp: 'ar 2/Dec/1999, 7:57:00 pm (UTC)'!
 string
 	^(AtomicTypes at: 'char') asPointerType! !
 
-!ExternalType class methodsFor: 'type constants' stamp: 'jmv 14/Nov/2023 10:28:40'!
+!ExternalType class methodsFor: 'type constants' stamp: 'jmv 14/Nov/2023, 1:28:40 pm (UTC)'!
 uint16
 	^AtomicTypes at: 'uint16'! !
 
-!ExternalType class methodsFor: 'type constants' stamp: 'jmv 14/Nov/2023 10:00:26'!
+!ExternalType class methodsFor: 'type constants' stamp: 'jmv 14/Nov/2023, 1:00:26 pm (UTC)'!
 uint32
 	^AtomicTypes at: 'uint32'! !
 
-!ExternalType class methodsFor: 'type constants' stamp: 'jmv 14/Nov/2023 09:32:13'!
+!ExternalType class methodsFor: 'type constants' stamp: 'jmv 14/Nov/2023, 12:32:13 pm (UTC)'!
 uint64
 	^AtomicTypes at: 'uint64'! !
 
-!ExternalType class methodsFor: 'type constants' stamp: 'jmv 14/Nov/2023 10:50:11'!
+!ExternalType class methodsFor: 'type constants' stamp: 'jmv 14/Nov/2023, 1:50:11 pm (UTC)'!
 uint8
 	^AtomicTypes at: 'uint8'! !
 
-!ExternalType class methodsFor: 'type constants' stamp: 'ar 2/Dec/1999 16:58:00'!
+!ExternalType class methodsFor: 'type constants' stamp: 'ar 2/Dec/1999, 7:58:00 pm (UTC)'!
 unsignedChar
 	^AtomicTypes at: 'char'! !
 
-!ExternalType class methodsFor: 'type constants' stamp: 'ar 2/Dec/1999 16:58:00'!
+!ExternalType class methodsFor: 'type constants' stamp: 'ar 2/Dec/1999, 7:58:00 pm (UTC)'!
 void
 	^AtomicTypes at: 'void'! !
 
-!ExternalType class methodsFor: 'old type constants' stamp: 'jmv 14/Nov/2023 16:33:04'!
+!ExternalType class methodsFor: 'old type constants' stamp: 'jmv 14/Nov/2023, 7:33:04 pm (UTC)'!
 byte
 	"byte defaults to unsigned byte"
 	^self uint8! !
 
-!ExternalType class methodsFor: 'old type constants' stamp: 'jmv 14/Nov/2023 16:33:29'!
+!ExternalType class methodsFor: 'old type constants' stamp: 'jmv 14/Nov/2023, 7:33:29 pm (UTC)'!
 long
 	^self int32! !
 
-!ExternalType class methodsFor: 'old type constants' stamp: 'jmv 14/Nov/2023 16:33:50'!
+!ExternalType class methodsFor: 'old type constants' stamp: 'jmv 14/Nov/2023, 7:33:50 pm (UTC)'!
 sbyte
 	^self int8! !
 
-!ExternalType class methodsFor: 'old type constants' stamp: 'jmv 14/Nov/2023 16:34:10'!
+!ExternalType class methodsFor: 'old type constants' stamp: 'jmv 14/Nov/2023, 7:34:10 pm (UTC)'!
 short
 	^self int16! !
 
-!ExternalType class methodsFor: 'old type constants' stamp: 'jmv 14/Nov/2023 16:34:36'!
+!ExternalType class methodsFor: 'old type constants' stamp: 'jmv 14/Nov/2023, 7:34:36 pm (UTC)'!
 signedByte
 	^self int8! !
 
-!ExternalType class methodsFor: 'old type constants' stamp: 'jmv 14/Nov/2023 16:34:54'!
+!ExternalType class methodsFor: 'old type constants' stamp: 'jmv 14/Nov/2023, 7:34:54 pm (UTC)'!
 signedLong
 	^self int32! !
 
-!ExternalType class methodsFor: 'old type constants' stamp: 'jmv 14/Nov/2023 16:35:03'!
+!ExternalType class methodsFor: 'old type constants' stamp: 'jmv 14/Nov/2023, 7:35:03 pm (UTC)'!
 signedLongLong
 	^self int64! !
 
-!ExternalType class methodsFor: 'old type constants' stamp: 'jmv 14/Nov/2023 16:35:49'!
+!ExternalType class methodsFor: 'old type constants' stamp: 'jmv 14/Nov/2023, 7:35:49 pm (UTC)'!
 signedShort
 	^self int16! !
 
-!ExternalType class methodsFor: 'old type constants' stamp: 'jmv 14/Nov/2023 16:36:04'!
+!ExternalType class methodsFor: 'old type constants' stamp: 'jmv 14/Nov/2023, 7:36:04 pm (UTC)'!
 ulong
 	^self uint32! !
 
-!ExternalType class methodsFor: 'old type constants' stamp: 'jmv 14/Nov/2023 16:36:15'!
+!ExternalType class methodsFor: 'old type constants' stamp: 'jmv 14/Nov/2023, 7:36:15 pm (UTC)'!
 unsignedByte
 	^self uint8! !
 
-!ExternalType class methodsFor: 'old type constants' stamp: 'jmv 14/Nov/2023 16:36:27'!
+!ExternalType class methodsFor: 'old type constants' stamp: 'jmv 14/Nov/2023, 7:36:27 pm (UTC)'!
 unsignedLong
 	^self uint32! !
 
-!ExternalType class methodsFor: 'old type constants' stamp: 'jmv 14/Nov/2023 16:36:38'!
+!ExternalType class methodsFor: 'old type constants' stamp: 'jmv 14/Nov/2023, 7:36:38 pm (UTC)'!
 unsignedLongLong
 	^self uint64! !
 
-!ExternalType class methodsFor: 'old type constants' stamp: 'jmv 14/Nov/2023 16:36:44'!
+!ExternalType class methodsFor: 'old type constants' stamp: 'jmv 14/Nov/2023, 7:36:44 pm (UTC)'!
 unsignedShort
 	^self uint16! !
 
-!ExternalType class methodsFor: 'old type constants' stamp: 'jmv 14/Nov/2023 16:36:53'!
+!ExternalType class methodsFor: 'old type constants' stamp: 'jmv 14/Nov/2023, 7:36:53 pm (UTC)'!
 ushort
 	^self uint16! !
 
-!ExternalType class methodsFor: 'housekeeping' stamp: 'ar 2/Dec/1999 18:00:00'!
+!ExternalType class methodsFor: 'housekeeping' stamp: 'ar 2/Dec/1999, 9:00:00 pm (UTC)'!
 cleanupUnusedTypes
 	"ExternalType cleanupUnusedTypes"
 	| value |
@@ -1934,7 +1940,7 @@ cleanupUnusedTypes
 		value := StructTypes at: key.
 		value == nil ifTrue:[StructTypes removeKey: key ifAbsent:[]]].! !
 
-!ExternalType class methodsFor: 'housekeeping' stamp: 'ar 2/Dec/1999 17:58:00'!
+!ExternalType class methodsFor: 'housekeeping' stamp: 'ar 2/Dec/1999, 8:58:00 pm (UTC)'!
 noticeModificationOf: aClass
 	"A subclass of ExternalStructure has been redefined.
 	Clean out any obsolete references to its type."
@@ -1947,7 +1953,7 @@ noticeModificationOf: aClass
 			type asPointerType newReferentClass: cls].
 	].! !
 
-!ExternalType class methodsFor: 'housekeeping' stamp: 'ar 2/Dec/1999 17:59:00'!
+!ExternalType class methodsFor: 'housekeeping' stamp: 'ar 2/Dec/1999, 8:59:00 pm (UTC)'!
 noticeRemovalOf: aClass
 	"A subclass of ExternalStructure is being removed.
 	Clean out any obsolete references to its type."
@@ -1958,7 +1964,7 @@ noticeRemovalOf: aClass
 		type asPointerType newReferentClass: nil].
 ! !
 
-!ExternalType class methodsFor: 'housekeeping' stamp: 'ar 2/Dec/1999 16:14:00'!
+!ExternalType class methodsFor: 'housekeeping' stamp: 'ar 2/Dec/1999, 7:14:00 pm (UTC)'!
 noticeRenamingOf: aClass from: oldName to: newName
 	"An ExternalStructure has been renamed from oldName to newName.
 	Keep our type names in sync."
@@ -1967,7 +1973,7 @@ noticeRenamingOf: aClass from: oldName to: newName
 	type == nil ifFalse:[StructTypes at: newName put: type].
 	StructTypes removeKey: oldName ifAbsent:[].! !
 
-!ExternalType class methodsFor: 'class initialization' stamp: 'jmv 14/Nov/2023 09:36:44'!
+!ExternalType class methodsFor: 'class initialization' stamp: 'jmv 14/Nov/2023, 12:36:44 pm (UTC)'!
 initialize
 	"
 	AtomicTypes := nil.
@@ -1976,7 +1982,7 @@ initialize
 	self initializeFFIConstants.
 	self initializeDefaultTypes.! !
 
-!ExternalType class methodsFor: 'class initialization' stamp: 'jmv 14/Nov/2023 10:43:47'!
+!ExternalType class methodsFor: 'class initialization' stamp: 'jmv 14/Nov/2023, 1:43:47 pm (UTC)'!
 initializeAtomicTypes
 	"ExternalType initialize"
 	| atomicType byteSize type typeName |
@@ -2009,7 +2015,7 @@ initializeAtomicTypes
 		type asPointerType compiledSpec: compiled.
 	].! !
 
-!ExternalType class methodsFor: 'class initialization' stamp: 'ar 2/Dec/1999 17:01:00'!
+!ExternalType class methodsFor: 'class initialization' stamp: 'ar 2/Dec/1999, 8:01:00 pm (UTC)'!
 initializeDefaultTypes
 	"ExternalType initialize"
 	| type pointerType |
@@ -2029,7 +2035,7 @@ initializeDefaultTypes
 	self initializeStructureTypes.
 	"AtomicTypes := nil"! !
 
-!ExternalType class methodsFor: 'class initialization' stamp: 'eem 5/Jun/2024 10:26:31'!
+!ExternalType class methodsFor: 'class initialization' stamp: 'eem 5/Jun/2024, 1:26:31 pm (UTC)'!
 initializeFFIConstants
 	"ExternalType initialize"
 	FFIConstants initialize. "ensure proper initialization"
@@ -2069,7 +2075,7 @@ initializeFFIConstants
 		at: FFITypeDoubleFloat put: #doubleAt:;
 	yourself! !
 
-!ExternalType class methodsFor: 'class initialization' stamp: 'ar 22/Mar/2007 20:14:00'!
+!ExternalType class methodsFor: 'class initialization' stamp: 'ar 22/Mar/2007, 11:14:00 pm (UTC)'!
 initializeStructureTypes
 	"ExternalType initialize"
 	| referentClass pointerType |
@@ -2088,12 +2094,12 @@ initializeStructureTypes
 		pointerType newReferentClass: referentClass.
 	].! !
 
-!ExternalType class methodsFor: 'instance creation' stamp: 'ar 26/Jan/2000 14:58:00'!
+!ExternalType class methodsFor: 'instance creation' stamp: 'ar 26/Jan/2000, 5:58:00 pm (UTC)'!
 new
 	"Use either the type constants or #externalType for creating external types"
 	^self shouldNotImplement! !
 
-!ExternalType class methodsFor: 'query' stamp: 'eem 7/Jun/2024 14:34:35'!
+!ExternalType class methodsFor: 'query' stamp: 'eem 7/Jun/2024, 5:34:35 pm (UTC)'!
 primitiveAlignmentOf: atomicTypeCode
 	"Answer the platform C compiler's alignment in a structure of an element of the
 	 C type corresponding to atomicTypeCode, where atomicTypeCode is in the range
@@ -2103,7 +2109,7 @@ primitiveAlignmentOf: atomicTypeCode
 
 	"(FFITypeUint8 to: FFITypeDoubleFloat), {FFIFlagStructure} collect: [:n| self primitiveAlignmentOf: n]"! !
 
-!ExternalType class methodsFor: 'query' stamp: 'eem 7/Jun/2024 14:35:18'!
+!ExternalType class methodsFor: 'query' stamp: 'eem 7/Jun/2024, 5:35:18 pm (UTC)'!
 primitiveCDataModel
 	"Answer the name for the platform C compiler's data model, ILP32, LP64, et al."
 	<primitive: #primitiveCDataModel module: #SqueakFFIPrims error: ec>
@@ -2111,7 +2117,7 @@ primitiveCDataModel
 
 	"self primitiveCDataModel"! !
 
-!ExternalType class methodsFor: 'query' stamp: 'eem 7/Jun/2024 14:35:38'!
+!ExternalType class methodsFor: 'query' stamp: 'eem 7/Jun/2024, 5:35:38 pm (UTC)'!
 primitiveSizesInto: aByteArrayOfSizeNine
 	"Answer the platform C compiler's sizes for char, short, int, long, long long, wchar_t, float, double, void *."
 	<primitive: #primitiveCDataModel module: #SqueakFFIPrims error: ec>
@@ -2121,37 +2127,37 @@ primitiveSizesInto: aByteArrayOfSizeNine
 		with: (self primitiveSizesInto: (ByteArray new: 9))
 		collect: [:n :s| {n. s}]) flatten"! !
 
-!ExternalTypePunctuator methodsFor: 'testing' stamp: 'eem 21/Nov/2024 18:15:00'!
+!ExternalTypePunctuator methodsFor: 'testing' stamp: 'eem 21/Nov/2024, 9:15:00 pm (UTC)'!
 isPointerType
 	^false! !
 
-!ExternalTypePunctuator methodsFor: 'testing' stamp: 'eem 21/Nov/2024 18:11:00'!
+!ExternalTypePunctuator methodsFor: 'testing' stamp: 'eem 21/Nov/2024, 9:11:00 pm (UTC)'!
 isPunctuator
 	^true! !
 
-!ExternalTypePunctuator methodsFor: 'testing' stamp: 'eem 21/Nov/2024 18:15:00'!
+!ExternalTypePunctuator methodsFor: 'testing' stamp: 'eem 21/Nov/2024, 9:15:00 pm (UTC)'!
 isVoid
 	^false! !
 
-!ExternalTypePunctuator methodsFor: 'accessing' stamp: 'eem 21/Nov/2024 18:10:00'!
+!ExternalTypePunctuator methodsFor: 'accessing' stamp: 'eem 21/Nov/2024, 9:10:00 pm (UTC)'!
 token
 
 	^ token! !
 
-!ExternalTypePunctuator methodsFor: 'accessing' stamp: 'eem 22/Nov/2024 10:21:00'!
+!ExternalTypePunctuator methodsFor: 'accessing' stamp: 'eem 22/Nov/2024, 1:21:00 pm (UTC)'!
 token: anObject
 
 	token := anObject.
 	token == #'...' ifTrue:
 		[compiledSpec := WordArray with: FFIFlagVariadic]! !
 
-!ExternalTypePunctuator methodsFor: 'printing' stamp: 'eem 25/Nov/2024 13:24:11'!
+!ExternalTypePunctuator methodsFor: 'printing' stamp: 'eem 25/Nov/2024, 4:24:11 pm (UTC)'!
 printOn: aStream
 	token isSymbol ifFalse:
 		[^super printOn: aStream].
 	aStream nextPutAll: token! !
 
-!ExternalForm methodsFor: 'initialization' stamp: 'jmv 4/May/2016 12:43:00'!
+!ExternalForm methodsFor: 'initialization' stamp: 'jmv 4/May/2016, 3:43:00 pm (UTC)'!
 allocateSpace
 	"Convenient way to allocate space for the pixels.  This isn't done by default, because it is common to use a pointer obtained from elsewhere."
 	| addr |
@@ -2159,7 +2165,7 @@ allocateSpace
 	addr := ExternalAddress gcallocate: width*height * depth abs // 8. "area times bytes/pixel"
 	self setManualSurfacePointer: addr.! !
 
-!ExternalForm methodsFor: 'initialization' stamp: 'jcg 29/Jan/2010 01:29:00'!
+!ExternalForm methodsFor: 'initialization' stamp: 'jcg 29/Jan/2010, 4:29:00 am (UTC)'!
 destroySurface
 	"Users must call this explicitly when this object is no longer needed; otherwise, resource-leakage will occur in the SurfacePlugin"
 	bits ifNotNil: [:surfaceID |
@@ -2167,13 +2173,13 @@ destroySurface
 		self primDestroyManualSurface: surfaceID
 	].! !
 
-!ExternalForm methodsFor: 'initialization' stamp: 'jcg 4/Jun/2010 02:04:00'!
+!ExternalForm methodsFor: 'initialization' stamp: 'jcg 4/Jun/2010, 5:04:00 am (UTC)'!
 initialize
 	super initialize.
 	pointer := nil.
 	! !
 
-!ExternalForm methodsFor: 'initialization' stamp: 'jmv 4/May/2016 12:47:00'!
+!ExternalForm methodsFor: 'initialization' stamp: 'jmv 4/May/2016, 3:47:00 pm (UTC)'!
 setExtent: extent depth: bitsPerPixel
 	bits ifNotNil: [self error: 'bits are already set'].
 	(#(8 16 32) includes: bitsPerPixel abs)
@@ -2190,12 +2196,12 @@ setExtent: extent depth: bitsPerPixel
 		depth: bitsPerPixel abs
 		isMSB: bitsPerPixel > 0.! !
 
-!ExternalForm methodsFor: 'initialization' stamp: 'jcg 29/Jan/2010 01:31:00'!
+!ExternalForm methodsFor: 'initialization' stamp: 'jcg 29/Jan/2010, 4:31:00 am (UTC)'!
 setExtent: extent depth: bitsPerPixel bits: aPointer
 	self setExtent: extent depth: bitsPerPixel.
 	self setManualSurfacePointer: aPointer.! !
 
-!ExternalForm methodsFor: 'initialization' stamp: 'jmv 7/May/2023 10:42:41'!
+!ExternalForm methodsFor: 'initialization' stamp: 'jmv 7/May/2023, 1:42:41 pm (UTC)'!
 setManualSurfacePointer: newPointer "ExternalStructure, ExternalAddress, or nil"
 	"Set the memory-location of the image data.  It is OK to set a NULL pointer; in this case, any attempt to BitBlt to or from the form will result in a primitive-failure."
 	| integer |
@@ -2217,49 +2223,49 @@ setManualSurfacePointer: newPointer "ExternalStructure, ExternalAddress, or nil"
 		otherwise: [ self error ].
 	self primManualSurface: bits setPointer: integer! !
 
-!ExternalForm methodsFor: 'accessing' stamp: 'jcg 16/Feb/2010 00:01:00'!
+!ExternalForm methodsFor: 'accessing' stamp: 'jcg 16/Feb/2010, 3:01:00 am (UTC)'!
 pointer
 	^pointer! !
 
-!ExternalForm methodsFor: 'primitives' stamp: 'jcg 30/Jan/2010 02:52:00'!
+!ExternalForm methodsFor: 'primitives' stamp: 'jcg 30/Jan/2010, 5:52:00 am (UTC)'!
 primCreateManualSurfaceWidth: aWidth height: aHeight rowPitch: rowPitch depth: aDepth isMSB: isMSB
 	<primitive: 'primitiveCreateManualSurface' module: 'SqueakFFIPrims'>
 	self primitiveFailed
 ! !
 
-!ExternalForm methodsFor: 'primitives' stamp: 'jcg 30/Jan/2010 02:52:00'!
+!ExternalForm methodsFor: 'primitives' stamp: 'jcg 30/Jan/2010, 5:52:00 am (UTC)'!
 primDestroyManualSurface: surfaceID
 	<primitive: 'primitiveDestroyManualSurface' module: 'SqueakFFIPrims'>
 	self primitiveFailed
 ! !
 
-!ExternalForm methodsFor: 'primitives' stamp: 'jcg 30/Jan/2010 02:52:00'!
+!ExternalForm methodsFor: 'primitives' stamp: 'jcg 30/Jan/2010, 5:52:00 am (UTC)'!
 primManualSurface: surfaceID setPointer: aPointer
 	"The 'surfaceID' is a handle returned by #primitiveCreateManualSurface from SurfacePlugin. The pointer is a 32-bit unsigned integer that SurfacePlugin casts to a void*."
 	<primitive: 'primitiveSetManualSurfacePointer' module: 'SqueakFFIPrims'>
 	self primitiveFailed
 ! !
 
-!ExternalAddress methodsFor: 'printing' stamp: 'jmv 9/Jan/2014 21:37:00'!
+!ExternalAddress methodsFor: 'printing' stamp: 'jmv 10/Jan/2014, 12:37:00 am (UTC)'!
 printOn: aStream
 	"print this as a hex address ('@ 16rFFFFFFFF') to distinguish it from ByteArrays"
 
 	aStream nextPutAll: '@ '; nextPutAll: self asInteger hex8! !
 
-!ExternalAddress methodsFor: 'arithmetic' stamp: 'eem 4/Jun/2024 15:30:57'!
+!ExternalAddress methodsFor: 'arithmetic' stamp: 'eem 4/Jun/2024, 6:30:57 pm (UTC)'!
 + offset
 	"Answer an address that is offset by the given number of bytes."
 
 	^ExternalAddress fromInteger: self asInteger + offset! !
 
-!ExternalAddress methodsFor: 'private' stamp: 'jmv 8/Dec/2023 10:11:33'!
+!ExternalAddress methodsFor: 'private' stamp: 'jmv 8/Dec/2023, 1:11:33 pm (UTC)'!
 asByteArrayPointer
 	"Only kept for compatibility.
 	Prefer #asByteArrayWithPointer"
 
 	^self asByteArrayWithPointer! !
 
-!ExternalAddress methodsFor: 'private' stamp: 'jmv 8/Dec/2023 10:11:06'!
+!ExternalAddress methodsFor: 'private' stamp: 'jmv 8/Dec/2023, 1:11:06 pm (UTC)'!
 asByteArrayWithPointer
 	"Answer a ByteArray containing a copy of the pointer in the receiver.
 	Useful when we specifically need an instance of ByteArray and not an instance of ExternalAddress.
@@ -2273,7 +2279,7 @@ asByteArrayWithPointer
 	^(ByteArray basicNew: (sz := self size))
 		replaceFrom: 1 to: sz with: self startingAt: 1.! !
 
-!ExternalAddress methodsFor: 'private' stamp: 'jmv 8/Dec/2023 10:12:23'!
+!ExternalAddress methodsFor: 'private' stamp: 'jmv 8/Dec/2023, 1:12:23 pm (UTC)'!
 asExternalAddress
 	"Answer an instance of ExternalAddress, with my contents, assuming they form a pointer.
 	See inheritance.
@@ -2281,7 +2287,7 @@ asExternalAddress
 
 	^self! !
 
-!ExternalAddress methodsFor: 'converting' stamp: 'eem 7/Jun/2024 14:19:34'!
+!ExternalAddress methodsFor: 'converting' stamp: 'eem 7/Jun/2024, 5:19:34 pm (UTC)'!
 asInteger
 	"Convert address to integer.
 	 Convert to a ByteArray in order to access the pointer bytes instead of the bytes pointed to!!
@@ -2293,19 +2299,19 @@ asInteger
 	ByteArray adoptInstance: clone.
 	^clone integerAt: 1 size: self size signed: false! !
 
-!ExternalAddress methodsFor: 'initialize-release' stamp: 'ar 22/Nov/1999 04:25:00'!
+!ExternalAddress methodsFor: 'initialize-release' stamp: 'ar 22/Nov/1999, 7:25:00 am (UTC)'!
 beNull
 	"Make the receiver a NULL pointer"
 	self atAllPut: 0.! !
 
-!ExternalAddress methodsFor: 'initialize-release' stamp: 'EstebanLorenzano 10/Mar/2016 16:39:00'!
+!ExternalAddress methodsFor: 'initialize-release' stamp: 'EstebanLorenzano 10/Mar/2016, 7:39:00 pm (UTC)'!
 finalize
 	"I am an executor (a copy) of an ExternalAddress that was just garbage collected.
 	I must finalize. my mission is to free memory"
 	self isNull ifTrue: [^self].
 	self free! !
 
-!ExternalAddress methodsFor: 'initialize-release' stamp: 'jmv 10/Sep/2024 17:53:33'!
+!ExternalAddress methodsFor: 'initialize-release' stamp: 'jmv 10/Sep/2024, 8:53:33 pm (UTC)'!
 free
 	self isNull ifFalse: [
 		self primFree.
@@ -2314,7 +2320,7 @@ free
 			To avoid the double free hazzard, ensure I'm not finalized."
 			self class finalizationRegistry remove: self ifAbsent: nil ]].! !
 
-!ExternalAddress methodsFor: 'initialize-release' stamp: 'jmv 10/Sep/2024 17:07:38'!
+!ExternalAddress methodsFor: 'initialize-release' stamp: 'jmv 10/Sep/2024, 8:07:38 pm (UTC)'!
 primFree
 	"Primitive. Free the object pointed to on the external heap.
 	Dangerous - may break your system if the receiver hasn't been
@@ -2322,21 +2328,21 @@ primFree
 	<primitive: #primitiveFFIFree module: #SqueakFFIPrims>
 	^self primitiveFailed! !
 
-!ExternalAddress methodsFor: 'testing' stamp: 'jfr 16/Oct/2024 10:10:04'!
+!ExternalAddress methodsFor: 'testing' stamp: 'jfr 16/Oct/2024, 1:10:04 pm (UTC)'!
 is: aSymbol
 	^#ExternalAddress = aSymbol or: [ super is: aSymbol ]! !
 
-!ExternalAddress methodsFor: 'testing' stamp: 'ar 16/Nov/2006 15:35:00'!
+!ExternalAddress methodsFor: 'testing' stamp: 'ar 16/Nov/2006, 6:35:00 pm (UTC)'!
 isNull
 	"Answer true if I am a null pointer"
 	1 to: self size do:[:i| (self at: i) = 0 ifFalse:[^false]].
 	^true! !
 
-!ExternalAddress class methodsFor: 'class initialization' stamp: 'eem 20/Feb/2016 17:29:00'!
+!ExternalAddress class methodsFor: 'class initialization' stamp: 'eem 20/Feb/2016, 8:29:00 pm (UTC)'!
 initialize
 	wordSize := Smalltalk wordSize! !
 
-!ExternalAddress class methodsFor: 'class initialization' stamp: 'eem 22/Feb/2016 15:30:00'!
+!ExternalAddress class methodsFor: 'class initialization' stamp: 'eem 22/Feb/2016, 6:30:00 pm (UTC)'!
 startUp: resuming
 	"If starting the image afresh all external addresses should be zero.
 	 In addition, if the word size has changed then external addresses shoiuld be resized.
@@ -2351,13 +2357,13 @@ startUp: resuming
 			ifFalse:
 				[instances do: [:addr| addr beNull]]]! !
 
-!ExternalAddress class methodsFor: 'instance creation' stamp: 'eem 2/Jun/2024 17:39:05'!
+!ExternalAddress class methodsFor: 'instance creation' stamp: 'eem 2/Jun/2024, 8:39:05 pm (UTC)'!
 allocate: byteSize
 	"Primitive. Allocate an object on the external heap."
 	<primitive: #primitiveFFIAllocate module: #SqueakFFIPrims error: ec>
 	^self primitiveFailed! !
 
-!ExternalAddress class methodsFor: 'instance creation' stamp: 'eem 7/Jun/2024 13:48:31'!
+!ExternalAddress class methodsFor: 'instance creation' stamp: 'eem 7/Jun/2024, 4:48:31 pm (UTC)'!
 fromInteger: address
 	"Create an instance. address must be a non-negative integer.
 	 Use a ByteArray to be able to send #integerAt:put:size:signed: and have it operate
@@ -2374,7 +2380,7 @@ fromInteger: address
 	ExternalAddress adoptInstance: pointerBytes.
 	^pointerBytes! !
 
-!ExternalAddress class methodsFor: 'instance creation' stamp: 'nice 19/May/2006 03:24:00'!
+!ExternalAddress class methodsFor: 'instance creation' stamp: 'nice 19/May/2006, 6:24:00 am (UTC)'!
 gcallocate: byteSize
 	"Primitive. Allocate an object on the external heap.
 	The external memory will be freed when i am garbage collected.
@@ -2385,39 +2391,39 @@ gcallocate: byteSize
 	self finalizationRegistry add: externalAddress.
 	^externalAddress! !
 
-!ExternalAddress class methodsFor: 'instance creation' stamp: 'eem 2/Jun/2024 17:38:48'!
+!ExternalAddress class methodsFor: 'instance creation' stamp: 'eem 2/Jun/2024, 8:38:48 pm (UTC)'!
 loadSymbol: moduleSymbol module: module 
 	<primitive: #primitiveLoadSymbolFromModule module: #SqueakFFIPrims error: ec>
 	^ self primitiveFailed! !
 
-!ExternalAddress class methodsFor: 'instance creation' stamp: 'eem 22/Feb/2016 15:42:00'!
+!ExternalAddress class methodsFor: 'instance creation' stamp: 'eem 22/Feb/2016, 6:42:00 pm (UTC)'!
 new: n
 	"Only create ExternalAddresses of the right size."
 	^n = wordSize
 		ifTrue: [super new: n]
 		ifFalse: [self shouldNotImplement]! !
 
-!ExternalAddress class methodsFor: 'instance creation' stamp: 'jmv 29/Sep/2019 12:54:29'!
+!ExternalAddress class methodsFor: 'instance creation' stamp: 'jmv 29/Sep/2019, 3:54:29 pm (UTC)'!
 numElements
 	"External addresses are either four or eight bytes long."
 	^ wordSize! !
 
-!ExternalAddress class methodsFor: 'accessing' stamp: 'eem 16/Feb/2016 12:34:00'!
+!ExternalAddress class methodsFor: 'accessing' stamp: 'eem 16/Feb/2016, 3:34:00 pm (UTC)'!
 wordSize
 	^wordSize! !
 
-!Object methodsFor: '*FFI-Kernel' stamp: 'ar 14/Aug/2006 23:02:00'!
+!Object methodsFor: '*FFI-Kernel' stamp: 'ar 15/Aug/2006, 2:02:00 am (UTC)'!
 externalCallFailed
 	"Raise an error after a failed call to an external function"
 	| errCode |
 	errCode := ExternalFunction getLastError. "this allows us to look at the actual error code"
 	^self error: (ExternalFunction errorMessageFor: errCode).! !
 
-!Encoder methodsFor: '*FFI-Kernel-accessing' stamp: 'eem 25/Nov/2025 12:20:00'!
+!Encoder methodsFor: '*FFI-Kernel-accessing' stamp: 'eem 25/Nov/2025, 3:20:00 pm (UTC)'!
 firstLiteral
 	^literalStream originalContents first! !
 
-!SequenceableCollection methodsFor: '*FFI-Kernel' stamp: 'jmv 7/May/2023 10:42:19'!
+!SequenceableCollection methodsFor: '*FFI-Kernel' stamp: 'jmv 7/May/2023, 1:42:19 pm (UTC)'!
 asMachineWordArray
 	"Answer an IntegerArray or Bytearray with the elements are the elements of the receiver stored as machine words,
 	suitable for FFI."
@@ -2430,7 +2436,7 @@ asMachineWordArray
 		answer uint64At: i-1*Smalltalk wordSize+1 put: (self at: i) bigEndian: Smalltalk isBigEndian ].
 	^answer! !
 
-!ByteArray methodsFor: '*FFI-Kernel' stamp: 'jmv 8/Dec/2023 10:12:16'!
+!ByteArray methodsFor: '*FFI-Kernel' stamp: 'jmv 8/Dec/2023, 1:12:16 pm (UTC)'!
 asExternalAddress
 	"Answer an instance of ExternalAddress, with my contents, assuming they form a pointer.
 	See inheritance.
@@ -2438,14 +2444,14 @@ asExternalAddress
 
 	^ self pointerAt: 1.! !
 
-!ByteArray methodsFor: '*FFI-Kernel' stamp: 'jmv 8/Dec/2023 10:39:12'!
+!ByteArray methodsFor: '*FFI-Kernel' stamp: 'jmv 8/Dec/2023, 1:39:12 pm (UTC)'!
 asExternalPointer
 	"Compatibility.
 	Used for generated FFI code."
 
 	^self asExternalAddress! !
 
-!ByteArray methodsFor: '*FFI-Kernel' stamp: 'jfr 20/Nov/2024 14:44:24'!
+!ByteArray methodsFor: '*FFI-Kernel' stamp: 'jfr 20/Nov/2024, 5:44:24 pm (UTC)'!
 asNullTerminated
 	"Answer the receiver with a null as the last character"
 
@@ -2453,14 +2459,14 @@ asNullTerminated
 		ifTrue:[^self].
 	^self copyWith: 0! !
 
-!ByteArray methodsFor: '*FFI-Kernel' stamp: 'eem 4/Jun/2024 14:11:14'!
+!ByteArray methodsFor: '*FFI-Kernel' stamp: 'eem 4/Jun/2024, 5:11:14 pm (UTC)'!
 booleanAt: byteOffset
 	"Booleans are just integers in C word"
 	"If a regular ByteArray, byteOffset is the start position in self.
 	If an ExternalAddress, take us as a pointer. byteOffset is applied to the pointer. Access memory at pointer+offset."
 	^(self integerAt: byteOffset size: 1 signed: false) ~= 0! !
 
-!ByteArray methodsFor: '*FFI-Kernel' stamp: 'eem 4/Jun/2024 14:41:34'!
+!ByteArray methodsFor: '*FFI-Kernel' stamp: 'eem 4/Jun/2024, 5:41:34 pm (UTC)'!
 booleanAt: byteOffset put: value
 	"Booleans are just integers in C word"
 	"If a regular ByteArray, byteOffset is the start position in self.
@@ -2468,7 +2474,7 @@ booleanAt: byteOffset put: value
 	self integerAt: byteOffset put: (value ifTrue:[1] ifFalse:[0]) size: 1 signed: false.
 	^value! !
 
-!ByteArray methodsFor: '*FFI-Kernel' stamp: 'jmv 11/Sep/2024 11:33:38'!
+!ByteArray methodsFor: '*FFI-Kernel' stamp: 'jmv 11/Sep/2024, 2:33:38 pm (UTC)'!
 bytesAt: byteOffset length: length
 	"Answer a ByteArray of the given length starting at the indicated byte offset."
 	"If a regular ByteArray, byteOffset is the start position in self.
@@ -2477,7 +2483,7 @@ bytesAt: byteOffset length: length
 
 	^self bytesAt: byteOffset maxLength: length stopAtNullByte: false! !
 
-!ByteArray methodsFor: '*FFI-Kernel' stamp: 'jmv 16/Dec/2025 11:24:31'!
+!ByteArray methodsFor: '*FFI-Kernel' stamp: 'jmv 16/Dec/2025, 2:24:31 pm (UTC)'!
 bytesAt: byteOffset maxLength: lengthInBytes stopAtNullByte: aBoolean
 	"Answer a ByteArray of the given length starting at the indicated byte offset.
 	Stop at the first null byte if aBoolean, and don't include it in the result."
@@ -2497,7 +2503,7 @@ bytesAt: byteOffset maxLength: lengthInBytes stopAtNullByte: aBoolean
 			byteIndex := byteIndex + 1.
 			byteCount := byteCount + 1 ]].! !
 
-!ByteArray methodsFor: '*FFI-Kernel' stamp: 'jfr 19/Oct/2024 16:52:22'!
+!ByteArray methodsFor: '*FFI-Kernel' stamp: 'jfr 19/Oct/2024, 7:52:22 pm (UTC)'!
 bytesAt: byteOffset maxLength: lengthInBytes stopAtNullWord: aBoolean
 	"Answer a ByteArray of the given length starting at the indicated byte offset.
 	lengthInBytes is assumed to be even.
@@ -2518,7 +2524,7 @@ bytesAt: byteOffset maxLength: lengthInBytes stopAtNullWord: aBoolean
 				ifTrue: [ mayContinue := false ]
 				ifFalse: [ strm nextPut: byte1; nextPut: byte2 ]]].! !
 
-!ByteArray methodsFor: '*FFI-Kernel' stamp: 'jfr 18/Oct/2024 12:44:01'!
+!ByteArray methodsFor: '*FFI-Kernel' stamp: 'jfr 18/Oct/2024, 3:44:01 pm (UTC)'!
 copyToExternalMemory
 	"Copy the receiver into external memory and answer the pointer"
 
@@ -2530,7 +2536,7 @@ copyToExternalMemory
 	self withIndexDo: [:aByte :i | addr uint8At: i put: aByte].
 	^addr! !
 
-!ByteArray methodsFor: '*FFI-Kernel' stamp: 'eem 2/Jun/2024 17:15:23'!
+!ByteArray methodsFor: '*FFI-Kernel' stamp: 'eem 2/Jun/2024, 8:15:23 pm (UTC)'!
 doubleAt: byteOffset
 	"Primitive. Return a float value from the receiver.
 	- FAILS IF the receiver has not enough bytes for an IEEE 754 (64 bits) floating point number.
@@ -2539,7 +2545,7 @@ doubleAt: byteOffset
 	<primitive: #primitiveFFIDoubleAt module: #SqueakFFIPrims error: ec>
 	^ self primitiveFailed! !
 
-!ByteArray methodsFor: '*FFI-Kernel' stamp: 'eem 2/Jun/2024 17:15:30'!
+!ByteArray methodsFor: '*FFI-Kernel' stamp: 'eem 2/Jun/2024, 8:15:30 pm (UTC)'!
 doubleAt: byteOffset put: value
 	"Primitive. Store the given value as IEEE 754 (64 bits) floating point number.
 	- FAILS IF the receiver has not enough bytes for that representation.
@@ -2548,7 +2554,7 @@ doubleAt: byteOffset put: value
 	<primitive: #primitiveFFIDoubleAtPut module: #SqueakFFIPrims error: ec>
 	^ self primitiveFailed! !
 
-!ByteArray methodsFor: '*FFI-Kernel' stamp: 'eem 2/Jun/2024 17:23:55'!
+!ByteArray methodsFor: '*FFI-Kernel' stamp: 'eem 2/Jun/2024, 8:23:55 pm (UTC)'!
 floatAt: byteOffset
 	"Primitive. Return a float value from the receiver.
 	- FAILS IF the receiver has not enough bytes for an IEEE 754 (32 bits) floating point number.
@@ -2557,7 +2563,7 @@ floatAt: byteOffset
 	<primitive: #primitiveFFIFloatAt module: #SqueakFFIPrims error: ec>
 	^ self primitiveFailed! !
 
-!ByteArray methodsFor: '*FFI-Kernel' stamp: 'eem 2/Jun/2024 17:24:25'!
+!ByteArray methodsFor: '*FFI-Kernel' stamp: 'eem 2/Jun/2024, 8:24:25 pm (UTC)'!
 floatAt: byteOffset put: value
 	"Primitive. Store the given value as IEEE 754 (32 bits) floating point number.
 	- FAILS IF the receiver has not enough bytes for that representation.
@@ -2566,69 +2572,69 @@ floatAt: byteOffset put: value
 	<primitive: #primitiveFFIFloatAtPut module: #SqueakFFIPrims error: ec>
 	^ self primitiveFailed! !
 
-!ByteArray methodsFor: '*FFI-Kernel' stamp: 'eem 2/Jun/2024 17:30:00'!
+!ByteArray methodsFor: '*FFI-Kernel' stamp: 'eem 2/Jun/2024, 8:30:00 pm (UTC)'!
 int16At: byteOffset
 	"Answer the signed 16-bit integer at byte offset, in platform native order."
 	<primitive: #primitiveSignedInt16At module: #SqueakFFIPrims error: ec>
 	^self integerAt: byteOffset size: 2 signed: true! !
 
-!ByteArray methodsFor: '*FFI-Kernel' stamp: 'eem 2/Jun/2024 17:35:00'!
+!ByteArray methodsFor: '*FFI-Kernel' stamp: 'eem 2/Jun/2024, 8:35:00 pm (UTC)'!
 int16At: byteOffset put: value
 	"Store the signed 16-bit integer at byte offset, in platform native order."
 	<primitive: #primitiveSignedInt16AtPut module: #SqueakFFIPrims error: ec>
 	^self integerAt: byteOffset put: value size: 2 signed: true! !
 
-!ByteArray methodsFor: '*FFI-Kernel' stamp: 'eem 2/Jun/2024 17:30:00'!
+!ByteArray methodsFor: '*FFI-Kernel' stamp: 'eem 2/Jun/2024, 8:30:00 pm (UTC)'!
 int32At: byteOffset
 	"Answer the signed 32-bit integer at byte offset, in platform native order."
 	<primitive: #primitiveSignedInt32At module: #SqueakFFIPrims error: ec>
 	^self integerAt: byteOffset size: 4 signed: true! !
 
-!ByteArray methodsFor: '*FFI-Kernel' stamp: 'eem 2/Jun/2024 17:35:00'!
+!ByteArray methodsFor: '*FFI-Kernel' stamp: 'eem 2/Jun/2024, 8:35:00 pm (UTC)'!
 int32At: byteOffset put: value
 	"Store the signed 32-bit integer at byte offset, in platform native order."
 	<primitive: #primitiveSignedInt32AtPut module: #SqueakFFIPrims error: ec>
 	^self integerAt: byteOffset put: value size: 4 signed: true! !
 
-!ByteArray methodsFor: '*FFI-Kernel' stamp: 'eem 2/Jun/2024 17:30:00'!
+!ByteArray methodsFor: '*FFI-Kernel' stamp: 'eem 2/Jun/2024, 8:30:00 pm (UTC)'!
 int64At: byteOffset
 	"Answer the signed 64-bit integer at byte offset, in platform native order."
 	<primitive: #primitiveSignedInt64At module: #SqueakFFIPrims error: ec>
 	^self integerAt: byteOffset size: 8 signed: true! !
 
-!ByteArray methodsFor: '*FFI-Kernel' stamp: 'eem 2/Jun/2024 17:35:00'!
+!ByteArray methodsFor: '*FFI-Kernel' stamp: 'eem 2/Jun/2024, 8:35:00 pm (UTC)'!
 int64At: byteOffset put: value
 	"Store the signed 64-bit integer at byte offset, in platform native order."
 	<primitive: #primitiveSignedInt64AtPut module: #SqueakFFIPrims error: ec>
 	^self integerAt: byteOffset put: value size: 8 signed: true! !
 
-!ByteArray methodsFor: '*FFI-Kernel' stamp: 'eem 2/Jun/2024 17:30:00'!
+!ByteArray methodsFor: '*FFI-Kernel' stamp: 'eem 2/Jun/2024, 8:30:00 pm (UTC)'!
 int8At: byteOffset
 	"Answer the signed 8-bit integer at byte offset."
 	<primitive: #primitiveSignedInt8At module: #SqueakFFIPrims error: ec>
 	^self integerAt: byteOffset size: 1 signed: true! !
 
-!ByteArray methodsFor: '*FFI-Kernel' stamp: 'eem 2/Jun/2024 17:35:00'!
+!ByteArray methodsFor: '*FFI-Kernel' stamp: 'eem 2/Jun/2024, 8:35:00 pm (UTC)'!
 int8At: byteOffset put: value
 	"Store the signed 8-bit integer at byte offset."
 	<primitive: #primitiveSignedInt8AtPut module: #SqueakFFIPrims error: ec>
 	^self integerAt: byteOffset put: value size: 1 signed: true! !
 
-!ByteArray methodsFor: '*FFI-Kernel-platform' stamp: 'fgz 28/Jun/2024 15:38:01'!
+!ByteArray methodsFor: '*FFI-Kernel-platform' stamp: 'fgz 28/Jun/2024, 6:38:01 pm (UTC)'!
 integerAt: byteOffset
 	"32 or 64 bits, depending on the platform"
 	^Smalltalk wordSize = 8
 		ifTrue: [ self int64At: byteOffset ]
 		ifFalse: [ self int32At: byteOffset ]! !
 
-!ByteArray methodsFor: '*FFI-Kernel-platform' stamp: 'fgz 28/Jun/2024 15:54:31'!
+!ByteArray methodsFor: '*FFI-Kernel-platform' stamp: 'fgz 28/Jun/2024, 6:54:31 pm (UTC)'!
 integerAt: byteOffset put: value
 	"32 or 64 bits, depending on the platform"
 	^Smalltalk wordSize = 8
 		ifTrue: [ self int64At: byteOffset put: value ]
 		ifFalse: [ self int32At: byteOffset put: value ]! !
 
-!ByteArray methodsFor: '*FFI-Kernel' stamp: 'eem 2/Jun/2024 17:37:10'!
+!ByteArray methodsFor: '*FFI-Kernel' stamp: 'eem 2/Jun/2024, 8:37:10 pm (UTC)'!
 integerAt: byteOffset put: value size: nBytes signed: aBoolean
 	"Primitive. Store the given value as integer of nBytes size in the receiver.
 	- BYTE ORDER is platform native order.
@@ -2637,7 +2643,7 @@ integerAt: byteOffset put: value size: nBytes signed: aBoolean
 	<primitive: #primitiveFFIIntegerAtPut module: #SqueakFFIPrims error: ec>
 	^ self primitiveFailed! !
 
-!ByteArray methodsFor: '*FFI-Kernel' stamp: 'eem 2/Jun/2024 17:37:40'!
+!ByteArray methodsFor: '*FFI-Kernel' stamp: 'eem 2/Jun/2024, 8:37:40 pm (UTC)'!
 integerAt: byteOffset size: nBytes signed: aBoolean
 	"Primitive. Return an integer of nBytes size from the receiver.
 	- BYTE ORDER is platform native order.
@@ -2646,23 +2652,23 @@ integerAt: byteOffset size: nBytes signed: aBoolean
 	<primitive: #primitiveFFIIntegerAt module: #SqueakFFIPrims error: ec>
 	^ self primitiveFailed! !
 
-!ByteArray methodsFor: '*FFI-Kernel' stamp: 'jcg 4/Jun/2010 02:40:00'!
+!ByteArray methodsFor: '*FFI-Kernel' stamp: 'jcg 4/Jun/2010, 5:40:00 am (UTC)'!
 isExternalAddress
 	"Return true if the receiver describes the address of an object in the outside world"
 	^true! !
 
-!ByteArray methodsFor: '*FFI-Kernel' stamp: 'ar 16/Nov/2006 15:35:00'!
+!ByteArray methodsFor: '*FFI-Kernel' stamp: 'ar 16/Nov/2006, 6:35:00 pm (UTC)'!
 isNull
 	"Answer false since only external addresses can be null"
 	^false! !
 
-!ByteArray methodsFor: '*FFI-Kernel' stamp: 'jfr 20/Nov/2024 14:44:15'!
+!ByteArray methodsFor: '*FFI-Kernel' stamp: 'jfr 20/Nov/2024, 5:44:15 pm (UTC)'!
 isNullTerminated
 	"Answer true if the receiver is null terminated"
 	
 	^(self size > 0) and:[self last = 0] ! !
 
-!ByteArray methodsFor: '*FFI-Kernel-oldTypeNames' stamp: 'eem 4/Jun/2024 14:28:00'!
+!ByteArray methodsFor: '*FFI-Kernel-oldTypeNames' stamp: 'eem 4/Jun/2024, 5:28:00 pm (UTC)'!
 longPointerAt: byteOffset
 	"Answer an 8-byte pointer object stored at the given byte address"
 	"If a regular ByteArray, byteOffset is the start position in self.
@@ -2670,7 +2676,7 @@ longPointerAt: byteOffset
 
 	^ExternalAddress fromInteger: (self uint64At: byteOffset)! !
 
-!ByteArray methodsFor: '*FFI-Kernel-oldTypeNames' stamp: 'eem 4/Jun/2024 14:28:00'!
+!ByteArray methodsFor: '*FFI-Kernel-oldTypeNames' stamp: 'eem 4/Jun/2024, 5:28:00 pm (UTC)'!
 longPointerAt: byteOffset put: value
 	"Store an 8-byte pointer object at the given byte address"
 	"If a regular ByteArray, byteOffset is the start position in self.
@@ -2679,7 +2685,7 @@ longPointerAt: byteOffset put: value
 	self uint64At: byteOffset put: value asInteger.
 	^value! !
 
-!ByteArray methodsFor: '*FFI-Kernel' stamp: 'eem 4/Jun/2024 15:40:53'!
+!ByteArray methodsFor: '*FFI-Kernel' stamp: 'eem 4/Jun/2024, 6:40:53 pm (UTC)'!
 pointer32At: byteOffset
 	"Answer a 4-byte pointer object stored at the given byte address"
 	"If a regular ByteArray, byteOffset is the start position in self.
@@ -2687,7 +2693,7 @@ pointer32At: byteOffset
 
 	^ExternalAddress fromInteger: (self uint32At: byteOffset)! !
 
-!ByteArray methodsFor: '*FFI-Kernel' stamp: 'eem 4/Jun/2024 15:41:25'!
+!ByteArray methodsFor: '*FFI-Kernel' stamp: 'eem 4/Jun/2024, 6:41:25 pm (UTC)'!
 pointer32At: byteOffset put: value
 	"Store a 4-byte pointer object at the given byte address"
 	"If a regular ByteArray, byteOffset is the start position in self.
@@ -2696,7 +2702,7 @@ pointer32At: byteOffset put: value
 	self uint32At: byteOffset put: value asInteger.
 	^value! !
 
-!ByteArray methodsFor: '*FFI-Kernel' stamp: 'eem 4/Jun/2024 15:42:01'!
+!ByteArray methodsFor: '*FFI-Kernel' stamp: 'eem 4/Jun/2024, 6:42:01 pm (UTC)'!
 pointer64At: byteOffset
 	"Answer an 8-byte pointer object stored at the given byte address"
 	"If a regular ByteArray, byteOffset is the start position in self.
@@ -2704,7 +2710,7 @@ pointer64At: byteOffset
 
 	^ExternalAddress fromInteger: (self uint64At: byteOffset)! !
 
-!ByteArray methodsFor: '*FFI-Kernel' stamp: 'eem 4/Jun/2024 15:42:19'!
+!ByteArray methodsFor: '*FFI-Kernel' stamp: 'eem 4/Jun/2024, 6:42:19 pm (UTC)'!
 pointer64At: byteOffset put: value
 	"Store an 8-byte pointer object at the given byte address"
 	"If a regular ByteArray, byteOffset is the start position in self.
@@ -2713,7 +2719,7 @@ pointer64At: byteOffset put: value
 	self uint64At: byteOffset put: value asInteger.
 	^value! !
 
-!ByteArray methodsFor: '*FFI-Kernel' stamp: 'eem 4/Jun/2024 15:17:31'!
+!ByteArray methodsFor: '*FFI-Kernel' stamp: 'eem 4/Jun/2024, 6:17:31 pm (UTC)'!
 pointerAt: byteOffset
 	"Answer a pointer object stored at the given byte address"
 	"If a regular ByteArray, byteOffset is the start position in self.
@@ -2722,13 +2728,13 @@ pointerAt: byteOffset
 										ifTrue: [self uint64At: byteOffset]
 										ifFalse: [self uint32At: byteOffset])! !
 
-!ByteArray methodsFor: '*FFI-Kernel' stamp: 'eem 2/Jun/2024 17:30:00'!
+!ByteArray methodsFor: '*FFI-Kernel' stamp: 'eem 2/Jun/2024, 8:30:00 pm (UTC)'!
 pointerAt: byteOffset length: length
 	"Answer a pointer of the given length starting at the indicated byte offset."
 
 	^ ExternalAddress fromInteger: (self integerAt: byteOffset size: length signed: false)! !
 
-!ByteArray methodsFor: '*FFI-Kernel' stamp: 'jfr 19/Oct/2024 09:24:33'!
+!ByteArray methodsFor: '*FFI-Kernel' stamp: 'jfr 19/Oct/2024, 12:24:33 pm (UTC)'!
 pointerAt: byteOffset put: value
 	"Store a pointer object at the given byte address"
 	"If a regular ByteArray, byteOffset is the start position in self.
@@ -2738,14 +2744,14 @@ pointerAt: byteOffset put: value
 		ifFalse: [self uint32At: byteOffset put: value asInteger].
 	^value! !
 
-!ByteArray methodsFor: '*FFI-Kernel' stamp: 'eem 2/Jun/2024 17:35:00'!
+!ByteArray methodsFor: '*FFI-Kernel' stamp: 'eem 2/Jun/2024, 8:35:00 pm (UTC)'!
 pointerAt: byteOffset put: externalAddress length: length
 	"Store a pointer of the given length starting at the indicated byte offset."
 
 	self integerAt: byteOffset put: externalAddress asInteger size: length signed: false.
 	^ externalAddress! !
 
-!ByteArray methodsFor: '*FFI-Kernel-oldTypeNames' stamp: 'eem 4/Jun/2024 14:28:00'!
+!ByteArray methodsFor: '*FFI-Kernel-oldTypeNames' stamp: 'eem 4/Jun/2024, 5:28:00 pm (UTC)'!
 shortPointerAt: byteOffset
 	"Answer a 4-byte pointer object stored at the given byte address"
 	"If a regular ByteArray, byteOffset is the start position in self.
@@ -2753,7 +2759,7 @@ shortPointerAt: byteOffset
 
 	^ExternalAddress fromInteger: (self uint32At: byteOffset)! !
 
-!ByteArray methodsFor: '*FFI-Kernel-oldTypeNames' stamp: 'eem 4/Jun/2024 14:28:00'!
+!ByteArray methodsFor: '*FFI-Kernel-oldTypeNames' stamp: 'eem 4/Jun/2024, 5:28:00 pm (UTC)'!
 shortPointerAt: byteOffset put: value
 	"Store a 4-byte pointer object at the given byte address"
 	"If a regular ByteArray, byteOffset is the start position in self.
@@ -2762,7 +2768,7 @@ shortPointerAt: byteOffset put: value
 	self uint32At: byteOffset put: value asInteger.
 	^value! !
 
-!ByteArray methodsFor: '*FFI-Kernel-oldTypeNames' stamp: 'eem 4/Jun/2024 14:28:00'!
+!ByteArray methodsFor: '*FFI-Kernel-oldTypeNames' stamp: 'eem 4/Jun/2024, 5:28:00 pm (UTC)'!
 signedByteAt: byteOffset
 	"Answer an 8bit signed integer starting at the given byte offset"
 	"If a regular ByteArray, byteOffset is the start position in self.
@@ -2770,7 +2776,7 @@ signedByteAt: byteOffset
 
 	^self int8At: byteOffset! !
 
-!ByteArray methodsFor: '*FFI-Kernel-oldTypeNames' stamp: 'eem 4/Jun/2024 14:28:00'!
+!ByteArray methodsFor: '*FFI-Kernel-oldTypeNames' stamp: 'eem 4/Jun/2024, 5:28:00 pm (UTC)'!
 signedByteAt: byteOffset put: value
 	"Store an 8bit signed integer starting at the given byte offset"
 	"If a regular ByteArray, byteOffset is the start position in self.
@@ -2778,7 +2784,7 @@ signedByteAt: byteOffset put: value
 
 	^self int8At: byteOffset put: value! !
 
-!ByteArray methodsFor: '*FFI-Kernel-oldTypeNames' stamp: 'eem 4/Jun/2024 14:28:00'!
+!ByteArray methodsFor: '*FFI-Kernel-oldTypeNames' stamp: 'eem 4/Jun/2024, 5:28:00 pm (UTC)'!
 signedCharAt: byteOffset
 	"If a regular ByteArray, byteOffset is the start position in self.
 	If an ExternalAddress, take us as a pointer. byteOffset is applied to the pointer.
@@ -2790,7 +2796,7 @@ signedCharAt: byteOffset
 
 	^ Character codePoint: (self uint8At: byteOffset)! !
 
-!ByteArray methodsFor: '*FFI-Kernel-oldTypeNames' stamp: 'eem 4/Jun/2024 14:28:00'!
+!ByteArray methodsFor: '*FFI-Kernel-oldTypeNames' stamp: 'eem 4/Jun/2024, 5:28:00 pm (UTC)'!
 signedCharAt: byteOffset put: aCharacter
 	"If a regular ByteArray, byteOffset is the start position in self.
 	If an ExternalAddress, take us as a pointer. byteOffset is applied to the pointer.
@@ -2802,7 +2808,7 @@ signedCharAt: byteOffset put: aCharacter
 
 	^self uint8At: byteOffset put: aCharacter codePoint! !
 
-!ByteArray methodsFor: '*FFI-Kernel-oldTypeNames' stamp: 'eem 4/Jun/2024 14:28:00'!
+!ByteArray methodsFor: '*FFI-Kernel-oldTypeNames' stamp: 'eem 4/Jun/2024, 5:28:00 pm (UTC)'!
 signedLongAt: byteOffset
 	"Answer a 32bit signed integer starting at the given byte offset"
 	"If a regular ByteArray, byteOffset is the start position in self.
@@ -2810,7 +2816,7 @@ signedLongAt: byteOffset
 
 	^self int32At: byteOffset! !
 
-!ByteArray methodsFor: '*FFI-Kernel-oldTypeNames' stamp: 'eem 4/Jun/2024 14:28:00'!
+!ByteArray methodsFor: '*FFI-Kernel-oldTypeNames' stamp: 'eem 4/Jun/2024, 5:28:00 pm (UTC)'!
 signedLongAt: byteOffset put: value
 	"Store a 32bit signed integer starting at the given byte offset"
 	"If a regular ByteArray, byteOffset is the start position in self.
@@ -2818,21 +2824,21 @@ signedLongAt: byteOffset put: value
 
 	^self int32At: byteOffset put: value! !
 
-!ByteArray methodsFor: '*FFI-Kernel-oldTypeNames' stamp: 'eem 4/Jun/2024 14:28:00'!
+!ByteArray methodsFor: '*FFI-Kernel-oldTypeNames' stamp: 'eem 4/Jun/2024, 5:28:00 pm (UTC)'!
 signedLongLongAt: byteOffset
 	"If a regular ByteArray, byteOffset is the start position in self.
 	If an ExternalAddress, take us as a pointer. byteOffset is applied to the pointer. Access memory at pointer+offset."
 
 	^self int64At: byteOffset! !
 
-!ByteArray methodsFor: '*FFI-Kernel-oldTypeNames' stamp: 'eem 4/Jun/2024 14:28:00'!
+!ByteArray methodsFor: '*FFI-Kernel-oldTypeNames' stamp: 'eem 4/Jun/2024, 5:28:00 pm (UTC)'!
 signedLongLongAt: byteOffset put: value
 	"If a regular ByteArray, byteOffset is the start position in self.
 	If an ExternalAddress, take us as a pointer. byteOffset is applied to the pointer. Access memory at pointer+offset."
 
 	^self int64At: byteOffset put: value! !
 
-!ByteArray methodsFor: '*FFI-Kernel-oldTypeNames' stamp: 'eem 4/Jun/2024 14:28:00'!
+!ByteArray methodsFor: '*FFI-Kernel-oldTypeNames' stamp: 'eem 4/Jun/2024, 5:28:00 pm (UTC)'!
 signedShortAt: byteOffset
 	"Answer a 16bit signed integer starting at the given byte offset"
 	"If a regular ByteArray, byteOffset is the start position in self.
@@ -2840,7 +2846,7 @@ signedShortAt: byteOffset
 
 	^self int16At: byteOffset! !
 
-!ByteArray methodsFor: '*FFI-Kernel-oldTypeNames' stamp: 'eem 4/Jun/2024 14:28:00'!
+!ByteArray methodsFor: '*FFI-Kernel-oldTypeNames' stamp: 'eem 4/Jun/2024, 5:28:00 pm (UTC)'!
 signedShortAt: byteOffset put: value
 	"Store a 16bit signed integer starting at the given byte offset"
 	"If a regular ByteArray, byteOffset is the start position in self.
@@ -2848,14 +2854,14 @@ signedShortAt: byteOffset put: value
 
 	^self int16At: byteOffset put: value! !
 
-!ByteArray methodsFor: '*FFI-Kernel' stamp: 'jmv 8/Dec/2023 10:19:34'!
+!ByteArray methodsFor: '*FFI-Kernel' stamp: 'jmv 8/Dec/2023, 1:19:34 pm (UTC)'!
 structAt: byteOffset length: length
 	"Return a structure of the given length starting at the indicated byte offset."
 	"If a regular ByteArray, byteOffset is the start position in self.
 	If an ExternalAddress, take us as a pointer. byteOffset is applied to the pointer. Access memory at pointer+offset."
 	^self bytesAt: byteOffset length: length! !
 
-!ByteArray methodsFor: '*FFI-Kernel' stamp: 'eem 4/Jun/2024 15:26:49'!
+!ByteArray methodsFor: '*FFI-Kernel' stamp: 'eem 4/Jun/2024, 6:26:49 pm (UTC)'!
 structAt: byteOffset put: value length: length
 	"Store a structure of the given length starting at the indicated byte offset."
 	"If a regular ByteArray, byteOffset is the start position in self.
@@ -2882,69 +2888,69 @@ structAt: byteOffset put: value length: length
 		[self uint8At: byteOffset + start - 1 put: (value uint8At: start)].
 	^value! !
 
-!ByteArray methodsFor: '*FFI-Kernel' stamp: 'eem 2/Jun/2024 17:30:00'!
+!ByteArray methodsFor: '*FFI-Kernel' stamp: 'eem 2/Jun/2024, 8:30:00 pm (UTC)'!
 uint16At: byteOffset
 	"Answer the signed 16-bit integer at byte offset, in platform native order."
 	<primitive: #primitiveUnsignedInt16At module: #SqueakFFIPrims error: ec>
 	^self integerAt: byteOffset size: 2 signed: false! !
 
-!ByteArray methodsFor: '*FFI-Kernel' stamp: 'eem 2/Jun/2024 17:35:00'!
+!ByteArray methodsFor: '*FFI-Kernel' stamp: 'eem 2/Jun/2024, 8:35:00 pm (UTC)'!
 uint16At: byteOffset put: value
 	"Store the unsigned 16-bit integer at byte offset, in platform native order."
 	<primitive: #primitiveUnsignedInt16AtPut module: #SqueakFFIPrims error: ec>
 	^self integerAt: byteOffset put: value size: 2 signed: false! !
 
-!ByteArray methodsFor: '*FFI-Kernel' stamp: 'eem 2/Jun/2024 17:30:00'!
+!ByteArray methodsFor: '*FFI-Kernel' stamp: 'eem 2/Jun/2024, 8:30:00 pm (UTC)'!
 uint32At: byteOffset
 	"Answer the signed 32-bit integer at byte offset, in platform native order."
 	<primitive: #primitiveUnsignedInt32At module: #SqueakFFIPrims error: ec>
 	^self integerAt: byteOffset size: 4 signed: false! !
 
-!ByteArray methodsFor: '*FFI-Kernel' stamp: 'eem 2/Jun/2024 17:35:00'!
+!ByteArray methodsFor: '*FFI-Kernel' stamp: 'eem 2/Jun/2024, 8:35:00 pm (UTC)'!
 uint32At: byteOffset put: value
 	"Store the unsigned 32-bit integer at byte offset, in platform native order."
 	<primitive: #primitiveUnsignedInt32AtPut module: #SqueakFFIPrims error: ec>
 	^self integerAt: byteOffset put: value size: 4 signed: false! !
 
-!ByteArray methodsFor: '*FFI-Kernel' stamp: 'eem 2/Jun/2024 17:30:00'!
+!ByteArray methodsFor: '*FFI-Kernel' stamp: 'eem 2/Jun/2024, 8:30:00 pm (UTC)'!
 uint64At: byteOffset
 	"Answer the signed 64-bit integer at byte offset, in platform native order."
 	<primitive: #primitiveUnsignedInt64At module: #SqueakFFIPrims error: ec>
 	^self integerAt: byteOffset size: 8 signed: false! !
 
-!ByteArray methodsFor: '*FFI-Kernel' stamp: 'eem 2/Jun/2024 17:35:00'!
+!ByteArray methodsFor: '*FFI-Kernel' stamp: 'eem 2/Jun/2024, 8:35:00 pm (UTC)'!
 uint64At: byteOffset put: value
 	"Store the unsigned 64-bit integer at byte offset, in platform native order."
 	<primitive: #primitiveUnsignedInt64AtPut module: #SqueakFFIPrims error: ec>
 	^self integerAt: byteOffset put: value size: 8 signed: false! !
 
-!ByteArray methodsFor: '*FFI-Kernel' stamp: 'eem 2/Jun/2024 17:30:00'!
+!ByteArray methodsFor: '*FFI-Kernel' stamp: 'eem 2/Jun/2024, 8:30:00 pm (UTC)'!
 uint8At: byteOffset
 	"Answer the unsigned 8-bit integer at byte offset. Same as #byteAt: and #at:."
 	<primitive: #primitiveUnsignedInt8At module: #SqueakFFIPrims error: ec>
 	^self integerAt: byteOffset size: 1 signed: false! !
 
-!ByteArray methodsFor: '*FFI-Kernel' stamp: 'eem 2/Jun/2024 17:35:00'!
+!ByteArray methodsFor: '*FFI-Kernel' stamp: 'eem 2/Jun/2024, 8:35:00 pm (UTC)'!
 uint8At: byteOffset put: value
 	"Store the unsigned 8-bit integer at byte offset. Same as #byteAt:put: and #at:put:."
 	<primitive: #primitiveUnsignedInt8AtPut module: #SqueakFFIPrims error: ec>
 	^self integerAt: byteOffset put: value size: 1 signed: false! !
 
-!ByteArray methodsFor: '*FFI-Kernel-platform' stamp: 'fgz 28/Jun/2024 15:56:48'!
+!ByteArray methodsFor: '*FFI-Kernel-platform' stamp: 'fgz 28/Jun/2024, 6:56:48 pm (UTC)'!
 uintegerAt: byteOffset
 	"32 or 64 bits, depending on the platform"
 	^Smalltalk wordSize = 8
 		ifTrue: [ self uint64At: byteOffset ]
 		ifFalse: [ self uint32At: byteOffset ]! !
 
-!ByteArray methodsFor: '*FFI-Kernel-platform' stamp: 'fgz 28/Jun/2024 15:57:43'!
+!ByteArray methodsFor: '*FFI-Kernel-platform' stamp: 'fgz 28/Jun/2024, 6:57:43 pm (UTC)'!
 uintegerAt: byteOffset put: value
 	"32 or 64 bits, depending on the platform"
 	^Smalltalk wordSize = 8
 		ifTrue: [ self uint64At: byteOffset put: value ]
 		ifFalse: [ self uint32At: byteOffset put: value ]! !
 
-!ByteArray methodsFor: '*FFI-Kernel-oldTypeNames' stamp: 'eem 4/Jun/2024 14:28:00'!
+!ByteArray methodsFor: '*FFI-Kernel-oldTypeNames' stamp: 'eem 4/Jun/2024, 5:28:00 pm (UTC)'!
 unsignedByteAt: byteOffset
 	"Answer an 8bit unsigned integer starting at the given byte offset"
 	"If a regular ByteArray, byteOffset is the start position in self.
@@ -2952,7 +2958,7 @@ unsignedByteAt: byteOffset
 
 	^self uint8At: byteOffset! !
 
-!ByteArray methodsFor: '*FFI-Kernel-oldTypeNames' stamp: 'eem 4/Jun/2024 14:28:00'!
+!ByteArray methodsFor: '*FFI-Kernel-oldTypeNames' stamp: 'eem 4/Jun/2024, 5:28:00 pm (UTC)'!
 unsignedByteAt: byteOffset put: value
 	"Store an 8bit unsigned integer starting at the given byte offset"
 	"If a regular ByteArray, byteOffset is the start position in self.
@@ -2960,7 +2966,7 @@ unsignedByteAt: byteOffset put: value
 
 	^self uint8At: byteOffset put: value! !
 
-!ByteArray methodsFor: '*FFI-Kernel-oldTypeNames' stamp: 'eem 4/Jun/2024 14:28:00'!
+!ByteArray methodsFor: '*FFI-Kernel-oldTypeNames' stamp: 'eem 4/Jun/2024, 5:28:00 pm (UTC)'!
 unsignedCharAt: byteOffset
 	"If a regular ByteArray, byteOffset is the start position in self.
 	If an ExternalAddress, take us as a pointer. byteOffset is applied to the pointer.
@@ -2971,7 +2977,7 @@ unsignedCharAt: byteOffset
 
 	^ Character codePoint: (self uint8At: byteOffset)! !
 
-!ByteArray methodsFor: '*FFI-Kernel-oldTypeNames' stamp: 'eem 4/Jun/2024 14:28:00'!
+!ByteArray methodsFor: '*FFI-Kernel-oldTypeNames' stamp: 'eem 4/Jun/2024, 5:28:00 pm (UTC)'!
 unsignedCharAt: byteOffset put: aCharacter
 	"If a regular ByteArray, byteOffset is the start position in self.
 	If an ExternalAddress, take us as a pointer. byteOffset is applied to the pointer.
@@ -2982,7 +2988,7 @@ unsignedCharAt: byteOffset put: aCharacter
 
 	^self uint8At: byteOffset put: aCharacter codePoint! !
 
-!ByteArray methodsFor: '*FFI-Kernel-oldTypeNames' stamp: 'eem 4/Jun/2024 14:28:00'!
+!ByteArray methodsFor: '*FFI-Kernel-oldTypeNames' stamp: 'eem 4/Jun/2024, 5:28:00 pm (UTC)'!
 unsignedLongAt: byteOffset
 	"Answer a 32bit unsigned integer starting at the given byte offset"
 	"If a regular ByteArray, byteOffset is the start position in self.
@@ -2990,7 +2996,7 @@ unsignedLongAt: byteOffset
 
 	^self uint32At: byteOffset! !
 
-!ByteArray methodsFor: '*FFI-Kernel-oldTypeNames' stamp: 'eem 4/Jun/2024 14:28:00'!
+!ByteArray methodsFor: '*FFI-Kernel-oldTypeNames' stamp: 'eem 4/Jun/2024, 5:28:00 pm (UTC)'!
 unsignedLongAt: byteOffset put: value
 	"Store a 32bit signed integer starting at the given byte offset"
 	"If a regular ByteArray, byteOffset is the start position in self.
@@ -2998,7 +3004,7 @@ unsignedLongAt: byteOffset put: value
 
 	^self uint32At: byteOffset put: value! !
 
-!ByteArray methodsFor: '*FFI-Kernel-oldTypeNames' stamp: 'eem 4/Jun/2024 14:28:00'!
+!ByteArray methodsFor: '*FFI-Kernel-oldTypeNames' stamp: 'eem 4/Jun/2024, 5:28:00 pm (UTC)'!
 unsignedLongLongAt: byteOffset
 	"Answer a 64-bit integer in Smalltalk order (little-endian)."
 	"If a regular ByteArray, byteOffset is the start position in self.
@@ -3006,7 +3012,7 @@ unsignedLongLongAt: byteOffset
 
 	^self uint64At: byteOffset! !
 
-!ByteArray methodsFor: '*FFI-Kernel-oldTypeNames' stamp: 'eem 4/Jun/2024 14:28:00'!
+!ByteArray methodsFor: '*FFI-Kernel-oldTypeNames' stamp: 'eem 4/Jun/2024, 5:28:00 pm (UTC)'!
 unsignedLongLongAt: byteOffset put: value
 	"I store 64-bit integers in Smalltalk (little-endian) order."
 	"If a regular ByteArray, byteOffset is the start position in self.
@@ -3014,7 +3020,7 @@ unsignedLongLongAt: byteOffset put: value
 
 	^self uint64At: byteOffset put: value! !
 
-!ByteArray methodsFor: '*FFI-Kernel-oldTypeNames' stamp: 'eem 4/Jun/2024 14:28:00'!
+!ByteArray methodsFor: '*FFI-Kernel-oldTypeNames' stamp: 'eem 4/Jun/2024, 5:28:00 pm (UTC)'!
 unsignedShortAt: byteOffset
 	"Answer a 16bit unsigned integer starting at the given byte offset"
 	"If a regular ByteArray, byteOffset is the start position in self.
@@ -3022,7 +3028,7 @@ unsignedShortAt: byteOffset
 
 	^self uint16At: byteOffset! !
 
-!ByteArray methodsFor: '*FFI-Kernel-oldTypeNames' stamp: 'eem 4/Jun/2024 14:28:00'!
+!ByteArray methodsFor: '*FFI-Kernel-oldTypeNames' stamp: 'eem 4/Jun/2024, 5:28:00 pm (UTC)'!
 unsignedShortAt: byteOffset put: value
 	"Store a 16bit unsigned integer starting at the given byte offset"
 	"If a regular ByteArray, byteOffset is the start position in self.
@@ -3030,7 +3036,7 @@ unsignedShortAt: byteOffset put: value
 
 	^self uint16At: byteOffset put: value! !
 
-!ByteArray methodsFor: '*FFI-Kernel' stamp: 'jmv 11/Sep/2024 11:34:36'!
+!ByteArray methodsFor: '*FFI-Kernel' stamp: 'jmv 11/Sep/2024, 2:34:36 pm (UTC)'!
 utf16StringAt: byteOffset length: lengthInBytes
 	"Return a UnicodeString using the given byte length starting at the indicated byte offset.
 	Assume bytes are UTF-16 encoded, and in this platform endianess."
@@ -3040,7 +3046,7 @@ utf16StringAt: byteOffset length: lengthInBytes
 
 	^ self utf16StringAt: byteOffset maxLength: lengthInBytes stopAtNull: false! !
 
-!ByteArray methodsFor: '*FFI-Kernel' stamp: 'jmv 11/Sep/2024 11:36:46'!
+!ByteArray methodsFor: '*FFI-Kernel' stamp: 'jmv 11/Sep/2024, 2:36:46 pm (UTC)'!
 utf16StringAt: byteOffset maxLength: lengthInBytes stopAtNull: aBoolean
 	"Return a UnicodeString using the given byte length starting at the indicated byte offset.
 	Stop at the first null 16 bit word if aBoolean, and don't include it in the result.
@@ -3055,7 +3061,7 @@ utf16StringAt: byteOffset maxLength: lengthInBytes stopAtNull: aBoolean
 	utf8Bytes := UnicodeString utf8FromUtf16Bytes: utf16Bytes bigEndianHint: Smalltalk isBigEndian.
 	^UnicodeString fromUtf8Bytes: utf8Bytes.! !
 
-!ByteArray methodsFor: '*FFI-Kernel' stamp: 'jmv 11/Sep/2024 11:34:53'!
+!ByteArray methodsFor: '*FFI-Kernel' stamp: 'jmv 11/Sep/2024, 2:34:53 pm (UTC)'!
 utf8StringAt: byteOffset length: lengthInBytes
 	"Return a UnicodeString using the given byte length starting at the indicated byte offset.
 	Assume bytes are UTF-8 encoded."
@@ -3065,7 +3071,7 @@ utf8StringAt: byteOffset length: lengthInBytes
 
 	^ self utf8StringAt: byteOffset maxLength: lengthInBytes stopAtNull: false! !
 
-!ByteArray methodsFor: '*FFI-Kernel' stamp: 'jmv 11/Sep/2024 11:36:29'!
+!ByteArray methodsFor: '*FFI-Kernel' stamp: 'jmv 11/Sep/2024, 2:36:29 pm (UTC)'!
 utf8StringAt: byteOffset maxLength: lengthInBytes stopAtNull: aBoolean
 	"Return a UnicodeString using the given byte length starting at the indicated byte offset.
 	Stop at the first null byte if aBoolean, and don't include it in the result.
@@ -3078,17 +3084,17 @@ utf8StringAt: byteOffset maxLength: lengthInBytes stopAtNull: aBoolean
 	bytes := self bytesAt: byteOffset maxLength: lengthInBytes stopAtNullByte: aBoolean.
 	^UnicodeString fromUtf8Bytes: bytes.! !
 
-!ByteArray methodsFor: '*FFI-Kernel' stamp: 'ar 29/Nov/1999 00:16:00'!
+!ByteArray methodsFor: '*FFI-Kernel' stamp: 'ar 29/Nov/1999, 3:16:00 am (UTC)'!
 voidAt: byteOffset
 	"no accessors for void"
 	^self shouldNotImplement! !
 
-!ByteArray methodsFor: '*FFI-Kernel' stamp: 'ar 29/Nov/1999 00:16:00'!
+!ByteArray methodsFor: '*FFI-Kernel' stamp: 'ar 29/Nov/1999, 3:16:00 am (UTC)'!
 voidAt: byteOffset put: value
 	"no accessors for void"
 	^self shouldNotImplement! !
 
-!CharacterSequence methodsFor: '*FFI-Kernel' stamp: 'jfr 20/Nov/2024 14:22:50'!
+!CharacterSequence methodsFor: '*FFI-Kernel' stamp: 'jfr 20/Nov/2024, 5:22:50 pm (UTC)'!
 asNullTerminated
 	"Answer the receiver with a null as the last character"
 
@@ -3096,13 +3102,13 @@ asNullTerminated
 		ifTrue:[^self].
 	^self copyWith: Character null! !
 
-!CharacterSequence methodsFor: '*FFI-Kernel' stamp: 'jfr 19/Oct/2024 17:45:15'!
+!CharacterSequence methodsFor: '*FFI-Kernel' stamp: 'jfr 19/Oct/2024, 8:45:15 pm (UTC)'!
 asUtf16BytesLENoBOM
 	"Answer the receiver as UTF16 bytes in little endian with no BOM"
 
 	^UnicodeString utf16BytesFromUtf8: self asUtf8Bytes bigEndian: false includeBOM: false! !
 
-!CharacterSequence methodsFor: '*FFI-Kernel' stamp: 'jfr 20/Nov/2024 14:25:26'!
+!CharacterSequence methodsFor: '*FFI-Kernel' stamp: 'jfr 20/Nov/2024, 5:25:26 pm (UTC)'!
 isNullTerminated
 	"Answer true if the receiver is null terminated"
 	
