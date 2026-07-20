@@ -10,7 +10,7 @@ This procedure bundles together the VMs for various platforms (MacOSx64, MacOSAR
 
 4) Inside Cuis.app / Contents create folders Windows-x86_64, Windows-arm64, Linux-x86_64 and Linux-arm64
 
-5) Fill them with the contents of of the zip files for the VM for each platform.
+5) Fill them with the contents of the zip files for the VM for each platform.
 
 6) In each of the Windows folders, do:
 chmod +x *

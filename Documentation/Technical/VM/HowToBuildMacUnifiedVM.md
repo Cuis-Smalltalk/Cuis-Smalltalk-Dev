@@ -17,7 +17,7 @@ This procedure builds a Mac VM that includes both the Apple Silicon and Intel bi
 7) Create folder Unified
 
 8) Run ./unify.sh
-If you get a message such as "You have not agreed to the Xcode and Apple SDKs license...." you may need to `sudo xcodebuild -license`, then "agree" or whatever Apple comes up next.
+If you get a message such as "You have not agreed to the Xcode and Apple SDKs license...." you may need to `sudo xcodebuild -license`, then "agree" or whatever Apple comes up with next.
 
 Done. Unified/Squeak.app is our Unified VM. Its Contents folder is about 7.2Mb.
 (Thanks Cristián Pérez for this recipe)
