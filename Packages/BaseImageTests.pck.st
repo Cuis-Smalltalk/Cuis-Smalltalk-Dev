@@ -1,6 +1,6 @@
-'From Cuis7.9 [latest update: #8072] on 20 July 2026 at 10:15:15 am'!
+'From Cuis7.9 [latest update: #8072] on 20 July 2026 at 10:21:42 am'!
 'Description Rename extentions tests'!
-!provides: 'BaseImageTests' 1 489!
+!provides: 'BaseImageTests' 1 490!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Compiler'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Objects'!
@@ -3560,11 +3560,10 @@ testUnsigned
         self should: [u16 at: 1 put:  -1] raise: Error. "wrong sign"
         self should: [u16 at: 1 put:  (16rFFFF + 1)] raise: Error. "too big"! !
 
-!Float32ArrayTest methodsFor: 'expected failures' stamp: 'jmv 20/Jul/2026, 12:38:42 pm (UTC)'!
+!Float32ArrayTest methodsFor: 'expected failures' stamp: 'jmv 20/Jul/2026, 1:21:34 pm (UTC)'!
 expectedFailures
-	Smalltalk platformName = 'Mac OS' ifTrue: [
-		^#(testSum2) ].
-	^#().! !
+
+	^#(testSum2).! !
 
 !Float32ArrayTest methodsFor: 'Tests' stamp: 'jmv 20/Jul/2026, 11:42:23 am (UTC)'!
 testIsType
