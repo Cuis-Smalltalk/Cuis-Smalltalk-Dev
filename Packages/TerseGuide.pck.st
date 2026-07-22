@@ -1,6 +1,6 @@
-'From Cuis7.7 [latest update: #7779] on 23 December 2025 at 4:32:30 pm'!
+'From Cuis7.9 [latest update: #8076] on 22 July 2026 at 4:00:13 pm'!
 'Description Add ability to dynamically add topic pages from other sources.'!
-!provides: 'TerseGuide' 1 151!
+!provides: 'TerseGuide' 1 152!
 SystemOrganization addCategory: #TerseGuide!
 
 
@@ -67,14 +67,14 @@ I represent a topic that can be added to the TerseGuide. Subclasses of me should
             { #code -> '2 even' . #category -> 'Common functions' . #description -> 'check if a number is even' } as: Dictionary.
         }!
 
-!TerseGuideHelp methodsFor: 'topics' stamp: 'RNG 15/Jul/2018 01:31:53'!
+!TerseGuideHelp methodsFor: 'topics' stamp: 'RNG 15/Jul/2018, 4:31:53 am (UTC)'!
 addAdditionalTopicsTo: topicsList
 	
 	self class additionalTopics do: [ :each |
 		topicsList at: each title put: each
 	].! !
 
-!TerseGuideHelp methodsFor: 'topics' stamp: 'jmv 6/May/2020 11:10:35'!
+!TerseGuideHelp methodsFor: 'topics' stamp: 'jmv 6/May/2020, 2:10:35 pm (UTC)'!
 coreTopics
 	
 	^ `Dictionary new
@@ -130,7 +130,7 @@ coreTopics
 	at: 'Custom Browsers' put: #customBrowsers;
 	yourself`! !
 
-!TerseGuideHelp methodsFor: 'topics' stamp: 'RNG 15/Jul/2018 01:31:23'!
+!TerseGuideHelp methodsFor: 'topics' stamp: 'RNG 15/Jul/2018, 4:31:23 am (UTC)'!
 terseTopics
 	"Translate a list item to a class method selector"
 	|allTopics|
@@ -138,14 +138,14 @@ terseTopics
 	self addAdditionalTopicsTo: allTopics.
 	^ allTopics! !
 
-!TerseGuideHelp methodsFor: 'initialization' stamp: 'dhn 17/May/2016 16:50:00'!
+!TerseGuideHelp methodsFor: 'initialization' stamp: 'dhn 17/May/2016, 7:50:00 pm (UTC)'!
 initialize
 	super initialize.
 	topics _ self terseTopics.
 	topicList _ self class pages.
 ! !
 
-!TerseGuideHelp methodsFor: 'user interface support' stamp: 'dhn 15/Jun/2016 18:29:00'!
+!TerseGuideHelp methodsFor: 'user interface support' stamp: 'dhn 15/Jun/2016, 9:29:00 pm (UTC)'!
 selectedTopic: aTopic
 	"Set the value of selectedTopic and set the contents of the text pane"
 	
@@ -153,16 +153,16 @@ selectedTopic: aTopic
 	textPane model actualContents: self updateTopicText.
 	self triggerEvent: #topicListIndex! !
 
-!TerseGuideHelp methodsFor: 'user interface support' stamp: 'dhn 26/Feb/2015 07:59:00'!
+!TerseGuideHelp methodsFor: 'user interface support' stamp: 'dhn 26/Feb/2015, 10:59:00 am (UTC)'!
 topicList
 	^ topicList! !
 
-!TerseGuideHelp methodsFor: 'user interface support' stamp: 'dhn 26/Feb/2015 08:42:00'!
+!TerseGuideHelp methodsFor: 'user interface support' stamp: 'dhn 26/Feb/2015, 11:42:00 am (UTC)'!
 topicListIndex
 	topicList ifNil: [ ^ topicListIndex _ 0 ].
 	^ topicList indexOf: selectedTopic! !
 
-!TerseGuideHelp methodsFor: 'user interface support' stamp: 'dhn 18/Oct/2015 20:20:00'!
+!TerseGuideHelp methodsFor: 'user interface support' stamp: 'dhn 18/Oct/2015, 11:20:00 pm (UTC)'!
 topicListIndex: index
 	"Set the vakue of topicListIndex and set the value of selectedTopic"
 	
@@ -170,7 +170,7 @@ topicListIndex: index
 	self selectedTopic: 
 		(topicList at: index ifAbsent: nil)! !
 
-!TerseGuideHelp methodsFor: 'user interface support' stamp: 'RNG 15/Jul/2018 01:45:10'!
+!TerseGuideHelp methodsFor: 'user interface support' stamp: 'RNG 15/Jul/2018, 4:45:10 am (UTC)'!
 updateTopicText
 	"Answer the text of the selected topic and change the window label accordingly"
 	| topic topicTitle |
@@ -181,26 +181,26 @@ updateTopicText
 	window setLabel: ('Terse Guide to ', topicTitle).
 	^ topic isSymbol ifTrue: [ self class perform: topic ] ifFalse: [ topic script ]! !
 
-!TerseGuideHelp methodsFor: 'accessing' stamp: 'dhn 18/Oct/2015 20:01:00'!
+!TerseGuideHelp methodsFor: 'accessing' stamp: 'dhn 18/Oct/2015, 11:01:00 pm (UTC)'!
 textPane: anObject
 	"Set the value of textPane"
 	
 	textPane _ anObject! !
 
-!TerseGuideHelp methodsFor: 'accessing' stamp: 'dhn 27/Feb/2015 21:07:00'!
+!TerseGuideHelp methodsFor: 'accessing' stamp: 'dhn 28/Feb/2015, 12:07:00 am (UTC)'!
 window: anObject
 	"Set the value of window"
 
 	window _ anObject! !
 
-!TerseGuideHelp methodsFor: 'testing' stamp: 'jmv 29/May/2020 16:30:16'!
+!TerseGuideHelp methodsFor: 'testing' stamp: 'jmv 29/May/2020, 7:30:16 pm (UTC)'!
 styleByParagraphs
 	"Answer true if each paragraph should be styled independent of the others.
 	We want to allow mutil-paragraph comments, and we are careful for our contents to be valid Smalltalk."
 
 	^false! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 6/Oct/2018 13:18:04'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 6/Oct/2018, 4:18:04 pm (UTC)'!
 anObject
 	"Object"
 	^
@@ -345,7 +345,7 @@ y ~~ #foo.
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 6/Oct/2018 13:43:44'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 6/Oct/2018, 4:43:44 pm (UTC)'!
 arithmetic
 	"Arithmetic Expressions"
 	^
@@ -407,7 +407,7 @@ y _ 100 atRandom.						"random integer on the interval (1,receiver)"
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 6/Oct/2018 14:04:52'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 6/Oct/2018, 5:04:52 pm (UTC)'!
 array
 	"Arrays"
 	^
@@ -458,7 +458,7 @@ y _ x asSet.									"convert to set collection"
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 11/May/2020 17:09:56'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 11/May/2020, 8:09:56 pm (UTC)'!
 assignment
 	"Assignment"
 	^
@@ -480,7 +480,7 @@ y _ x veryDeepCopy.				"complete tree copy using a dictionary"
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 7/Jun/2015 12:37:00'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 7/Jun/2015, 3:37:00 pm (UTC)'!
 association
 	"Associations"
 	^
@@ -491,7 +491,7 @@ y _ x value.
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 6/Oct/2018 14:11:33'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 6/Oct/2018, 5:11:33 pm (UTC)'!
 bag
 	"Bags"
 	^
@@ -530,7 +530,7 @@ y _ x asSet.										"convert to set collection"
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 5/Sep/2015 20:34:00'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 5/Sep/2015, 11:34:00 pm (UTC)'!
 bitwise
 	"Bitwise Manipulation"
 	^
@@ -549,7 +549,7 @@ b _ 16rFF noMask: 16r0F.			"test if all bits set in mask are clear in receiver"
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 6/Oct/2018 14:17:04'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 6/Oct/2018, 5:17:04 pm (UTC)'!
 block
 	"Blocks"
 	^
@@ -572,7 +572,7 @@ fac value: 5.											"closure variable scoped to its block"
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 6/Oct/2018 14:19:28'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 6/Oct/2018, 5:19:28 pm (UTC)'!
 boolean
 	"Booleans"
 	^
@@ -614,7 +614,7 @@ b _ $A isLowercase.					"test if lower case character"
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 19/Feb/2016 20:44:00'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 19/Feb/2016, 11:44:00 pm (UTC)'!
 canvas
 	"Canvas"
 	^
@@ -631,7 +631,7 @@ x _ Form extent: 200@100 depth: 32.	"Answer a form with color depth 32"
 y _ x getCanvas.							"convert form to canvas (a BitBltCanvas)"
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 6/Oct/2018 14:20:26'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 6/Oct/2018, 5:20:26 pm (UTC)'!
 character
 	"Character"
 	^
@@ -653,7 +653,7 @@ b _ $A <= $B.								"comparison"
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 9/Mar/2019 11:52:37'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 9/Mar/2019, 2:52:37 pm (UTC)'!
 coding
 	"Code Patterns"
 	^
@@ -686,7 +686,7 @@ DependencyExamples unrelatedViews. 				"another decoupled example"
 DependencyExamples coupledView. 					"a coupled example"
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 6/Oct/2018 14:38:36'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 6/Oct/2018, 5:38:36 pm (UTC)'!
 colors
 	"Colors"
 	^
@@ -711,7 +711,7 @@ Feature require: #''Color-Edit-Panel''. "Color Editor feature and its dependenci
 select ColorEditorPanel"
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 6/Oct/2018 16:27:14'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 6/Oct/2018, 7:27:14 pm (UTC)'!
 conditionalStatement
 	"Conditional Statements"
 	^
@@ -747,7 +747,7 @@ result _ (switch at: $B) value.
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'jmv 29/Jan/2024 15:44:16'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'jmv 29/Jan/2024, 6:44:16 pm (UTC)'!
 conversion
 	"Conversion"
 	^
@@ -763,7 +763,7 @@ x _ 15 storeStringBase: 16.
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'RNG 13/Dec/2019 13:07:13'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'RNG 13/Dec/2019, 4:07:13 pm (UTC)'!
 customBrowsers
 	"Custom Browsers"
 	^
@@ -773,7 +773,7 @@ Smalltalk
 	name: ''Testing methods''
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 6/Oct/2018 16:38:28'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 6/Oct/2018, 7:38:28 pm (UTC)'!
 date
 	"Date"
 	^
@@ -846,7 +846,7 @@ y _ x isLeapYear.
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 12/Apr/2019 14:50:40'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 12/Apr/2019, 5:50:40 pm (UTC)'!
 debugging
 	"Debugging"
 	^
@@ -883,7 +883,7 @@ self flag: #someSymbol  "a reminder comment"
 "Then, to retrieve all such messages, browse senders of #someSymbol using Cmd-n or the SmalltalkEditor menu."
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 6/Oct/2018 16:52:18'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 6/Oct/2018, 7:52:18 pm (UTC)'!
 dictionary
 	"Dictionary"
 	^
@@ -958,7 +958,7 @@ Smalltalk removeKey: #CuisGlobal ifAbsent: [].  "remove entry from Smalltalk dic
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 24/Feb/2015 14:38:00'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 24/Feb/2015, 5:38:00 pm (UTC)'!
 dynamic
 	"Dynamic Message Calling/Compiling"
 	^
@@ -998,7 +998,7 @@ result _ (Message
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 7/Dec/2015 15:50:00'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 7/Dec/2015, 6:50:00 pm (UTC)'!
 exceptions
 	"Exceptions"
 	^
@@ -1016,7 +1016,7 @@ x _  1. y _ 0.
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 23/Feb/2016 12:15:00'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 23/Feb/2016, 3:15:00 pm (UTC)'!
 feature
 	"Features"
 	^
@@ -1070,7 +1070,7 @@ Feature require: #''Graphics-Files-Additional''.
 Feature require: #''Core-Packages''. 		"load all core Cuis Packages"
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 6/Oct/2018 16:59:23'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 6/Oct/2018, 7:59:23 pm (UTC)'!
 fileMan
 	"File Operations"
 	^
@@ -1153,7 +1153,7 @@ DirectoryEntry vmDirectory.							"answer the VM directory"
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'KenD 28/Nov/2022 13:50:54'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'KenD 28/Nov/2022, 4:50:54 pm (UTC)'!
 font
 	"Fonts"
 	^
@@ -1178,7 +1178,7 @@ To use any TrueTypeFont, just open the FileList, select any .ttf file, and click
 "
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'jmv 12/Sep/2024 12:21:12'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'jmv 12/Sep/2024, 3:21:12 pm (UTC)'!
 form
 	"Forms"
 	^
@@ -1221,7 +1221,7 @@ y _ x magnifyBy: 1.5.
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'jmv 6/Feb/2024 10:29:40'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'jmv 6/Feb/2024, 1:29:40 pm (UTC)'!
 heap
 	"Heap"
 	^
@@ -1234,7 +1234,7 @@ x sortBlock: sort.						"Specify how to sort the heap"
 x _ Heap withAll: #(11 32 19 21) sortBlock: sort.	"Create a new heap sorted according to a sortBlock"
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 11/May/2020 17:59:02'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 11/May/2020, 8:59:02 pm (UTC)'!
 internalStream
 	"Internal  Streams"
 	^
@@ -1286,7 +1286,7 @@ x _ String streamContents: [:string |	"a more compact way"
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 6/Oct/2018 17:07:36'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 6/Oct/2018, 8:07:36 pm (UTC)'!
 interval
 	"Intervals"
 	^
@@ -1319,7 +1319,7 @@ y _ x asSet.										"convert to set collection"
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 11/May/2020 20:36:28'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 11/May/2020, 11:36:28 pm (UTC)'!
 introduction
 	"Using Terse Guide"
 	^
@@ -1340,7 +1340,7 @@ You can narrow the scope of protocol browsing by selecting a class in the upper 
 "
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 6/Oct/2018 17:12:40'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 6/Oct/2018, 8:12:40 pm (UTC)'!
 iterationStatement
 	"Iterations"
 	^
@@ -1366,7 +1366,7 @@ y.
 y.
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'jmv 12/Sep/2024 16:07:21'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'jmv 12/Sep/2024, 7:07:21 pm (UTC)'!
 layoutMorph
 	"Layout Morph"
 	^
@@ -1406,7 +1406,7 @@ myLayout beColumn.
 "Submorphs may also have a LayoutSpec to specify proportion and offAxis placement"
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'jmv 12/Sep/2024 12:21:27'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'jmv 12/Sep/2024, 3:21:27 pm (UTC)'!
 layoutSpec
 	"Layout Specification"
 	^
@@ -1438,7 +1438,7 @@ layout color: Color green lighter lighter.
 layout addHalo.
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'jmv 6/May/2020 11:14:41'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'jmv 22/Jul/2026, 6:59:20 pm (UTC)'!
 literals
 	"Literals"
 	^
@@ -1454,26 +1454,27 @@ x _ 2e-2.									"Fraction literal"
 x _ 2.0e-2.									"Float literal"
 x _ 7/8.										"Fraction literal"
 x _ 16r0F.									"SmallInteger literal".
-x _ 16rFFFFFFFF.							"LargePositiveInteger literal".
-x _ 16rFFFFFFFF negated.				"LargeNegativeInteger literal".
+x _ 16rFFFFFFFF.								"LargePositiveInteger literal".
+x _ 16rFFFFFFFF negated.						"LargeNegativeInteger literal".
 x _ -1.										"negative SmallInteger literal"
-x _ ''Hello''.								"String literal"
-x _ ''I''''m here''.							"single quote escape"
+x _ ''Hello''.									"String literal"
+x _ ''¿Querés agüita?''.						"UnicodeString literal"
+x _ ''I''''m here''.								"single quote escape"
 x _ $A.										"Character literal"
 x _ $ .										"Character literal (space)"
 x _ #aSymbol.								"Symbol literal"
-x _ #(3 2 1).								"Array literal"
-x _ #(''abc'' 2 $a).						"mixing of types allowed (all literal)"
-x _ #[3 2 1 0].							"ByteArray literal"
-x _ #[1.0 3.141592 6.02e23].			"Float64Array literal"
+x _ #(3 2 1).									"Array literal"
+x _ #(''abc'' 2 $a).							"mixing of types allowed (all literal)"
+x _ #[3 2 1 0].								"ByteArray literal"
+x _ #[1.0 3.141592 6.02e23].					"Float32Array literal"
 
-x _ {''Hello'' size. Float pi. 1.0 arcTan }.    "Warning: NOT a literal. Created on each run"
-x _ `{''Hello'' size. Float pi. 1.0 arcTan }`.  "Backtick syntax. Anything can be a literal!!"
-x _ `{ 1. 3. 5. 7. 11. 13. 17} asSet`.          "A literal Set"
+x _ {''Hello'' size. Float pi. 1.0 arcTan }.    		"Warning: NOT a literal. Created on each run"
+x _ `{''Hello'' size. Float pi. 1.0 arcTan }`.  		"Backtick syntax. Anything can be a literal!!"
+x _ `{ 1. 3. 5. 7. 11. 13. 17} asSet`.          		"A literal Set"
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 6/Oct/2018 17:49:15'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 6/Oct/2018, 8:49:15 pm (UTC)'!
 metaclass
 	"Class / Metaclass"
 	^
@@ -1509,7 +1510,7 @@ Object withAllSubclasses size.		"get total number of class entries"
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'jmv 12/Sep/2024 12:21:33'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'jmv 12/Sep/2024, 3:21:33 pm (UTC)'!
 methodCall
 	"Method Calls"
 	^
@@ -1559,7 +1560,7 @@ ColoredBoxMorph new
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'jmv 12/Sep/2024 12:03:00'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'jmv 12/Sep/2024, 3:03:00 pm (UTC)'!
 misc
 	"Miscellaneous"
 	^
@@ -1568,7 +1569,7 @@ Smalltalk condenseChanges.					"compress the change file"
 x _ StringRequestMorph request: ''Prompt Me''.		"prompt user for input"
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'jmv 12/Sep/2024 12:02:55'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'jmv 12/Sep/2024, 3:02:55 pm (UTC)'!
 morph
 	"Morphs"
 	^
@@ -1605,7 +1606,7 @@ y _ Morph initializedInstance openInHand.
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 6/Oct/2018 17:56:38'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 6/Oct/2018, 8:56:38 pm (UTC)'!
 orderedCollection
 	"Ordered Collections"
 	^
@@ -1652,7 +1653,7 @@ y _ x asSet.										"convert to set collection"
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 6/Oct/2018 17:57:06'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 6/Oct/2018, 8:57:06 pm (UTC)'!
 point
 	"Point"
 	^
@@ -1681,7 +1682,7 @@ x _ 20@5 dotProduct: 10@2.					"sum of product (x1*x2 + y1*y2)"
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'jmv 12/Sep/2024 12:04:44'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'jmv 12/Sep/2024, 3:04:44 pm (UTC)'!
 popUpMenu
 	"PopUpMenu"
 	^
@@ -1710,7 +1711,7 @@ x _ (PopUpMenu labels: (String streamContents: [:s | 1 to: 100 do: [:i | s print
 		lines: (5 to: 100 by: 5)) startUpWithCaption: ''Long Menu Example''.		
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 1/Mar/2015 12:58:00'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 1/Mar/2015, 3:58:00 pm (UTC)'!
 primitive
 	"Primitive"
 	^
@@ -1769,7 +1770,7 @@ primitive
 	primitives, see the ''Primitive Methods'' part of the chapter on the formal 
 	specification of the interpreter in the Smalltalk book."'! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 6/Oct/2018 17:58:02'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 6/Oct/2018, 8:58:02 pm (UTC)'!
 rectangle
 	"Rectangle"
 	^
@@ -1826,7 +1827,7 @@ x _ Rectangle originFromUser: 400@300.
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 6/Oct/2018 17:59:42'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 6/Oct/2018, 8:59:42 pm (UTC)'!
 set
 	"Sets"
 	^
@@ -1859,7 +1860,7 @@ y _ x asSet.										"convert to set collection"
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 6/Oct/2018 18:03:26'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 6/Oct/2018, 9:03:26 pm (UTC)'!
 sortedCollection
 	"Sorted Collections"
 	^
@@ -1906,7 +1907,7 @@ y _ x asSet.										"convert to set collection"
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 6/Oct/2018 18:05:11'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 6/Oct/2018, 9:05:11 pm (UTC)'!
 string
 	"Strings"
 	^
@@ -1948,7 +1949,7 @@ y _ ''world'' shuffled.						"randomly shuffle string"
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 6/Oct/2018 18:06:34'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 6/Oct/2018, 9:06:34 pm (UTC)'!
 symbol
 	"Symbols"
 	^
@@ -1973,7 +1974,7 @@ y _ x asSet.								"convert symbol to set collection"
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 11/May/2020 17:05:02'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 11/May/2020, 8:05:02 pm (UTC)'!
 syntax
 	"Syntax Notes"
 	^
@@ -2019,7 +2020,7 @@ syntax
 BrowserWindow fullOnClass: Parser class selector: #chainExamplesDoubleColon.
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 6/Oct/2018 18:07:25'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 6/Oct/2018, 9:07:25 pm (UTC)'!
 time
 	"Time"
 	^
@@ -2052,7 +2053,7 @@ w _ Time localMillisecondClock.	"milliseconds since the Smalltalk epoch"
 "The Smalltalk epoch began at 00:00 on the morning of January 1, 1901, in the local host time zone."
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 6/Oct/2018 18:08:36'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 6/Oct/2018, 9:08:36 pm (UTC)'!
 transcript
 	"Transcript"
 	^
@@ -2071,7 +2072,7 @@ Transcript endEntry.					"flush the output buffer"
 "NOTE: from the pop-up menu, you can open a snapshot of the transcript in a workspace window."
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 23/Feb/2016 12:21:00'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 23/Feb/2016, 3:21:00 pm (UTC)'!
 trie
 	"Trie"
 	^
@@ -2094,7 +2095,7 @@ t explore.
 '
 ! !
 
-!TerseGuideHelp class methodsFor: 'displaying' stamp: 'dhn 14/Nov/2015 13:08:00'!
+!TerseGuideHelp class methodsFor: 'displaying' stamp: 'dhn 14/Nov/2015, 4:08:00 pm (UTC)'!
 display: aSelector    
 	"Open a Workspace on the text in aSelector"    
 	| window |
@@ -2103,18 +2104,18 @@ display: aSelector
 	window 	actualContents: (self perform: aSelector).    
 	window	openLabel: ('Terse Guide to ', (self class firstPrecodeCommentFor: aSelector))! !
 
-!TerseGuideHelp class methodsFor: 'accessing' stamp: 'RNG 15/Jul/2018 01:33:41'!
+!TerseGuideHelp class methodsFor: 'accessing' stamp: 'RNG 15/Jul/2018, 4:33:41 am (UTC)'!
 additionalTopicTitles
 
 	^ (self additionalTopics collect: [ :topic | topic title ]) asArray! !
 
-!TerseGuideHelp class methodsFor: 'accessing' stamp: 'RNG 15/Jul/2018 01:34:27'!
+!TerseGuideHelp class methodsFor: 'accessing' stamp: 'RNG 15/Jul/2018, 4:34:27 am (UTC)'!
 additionalTopics
 	"Topics that can be dynamically added by creating subclasses of TerseGuideTopic"
 
 	^ TerseGuideTopic allSubclasses collect: [ :topicClass | topicClass new ]! !
 
-!TerseGuideHelp class methodsFor: 'accessing' stamp: 'jmv 6/May/2020 11:11:26'!
+!TerseGuideHelp class methodsFor: 'accessing' stamp: 'jmv 6/May/2020, 2:11:26 pm (UTC)'!
 pages
 	"Answer the topics, in order, for the window list pane"
 	^ #(
@@ -2170,7 +2171,7 @@ pages
 		'Custom Browsers'
 	) , self additionalTopicTitles! !
 
-!TerseGuideWindow methodsFor: 'initialization' stamp: 'jmv 17/May/2024 18:03:24'!
+!TerseGuideWindow methodsFor: 'initialization' stamp: 'jmv 17/May/2024, 9:03:24 pm (UTC)'!
 buildMorphicWindow
 	"Define the window layout for Terse Guide"
 	| row |
@@ -2195,13 +2196,13 @@ buildMorphicWindow
 		addMorph: row.
 	self setLabel: 'Terse Guide'! !
 
-!TerseGuideWindow methodsFor: 'accessing' stamp: 'dhn 17/May/2016 21:21:00'!
+!TerseGuideWindow methodsFor: 'accessing' stamp: 'dhn 18/May/2016, 12:21:00 am (UTC)'!
 textModelM
 	"Answer the value of textModelM"
 
 	^ textModelM! !
 
-!TerseGuideWindow class methodsFor: 'instance creation' stamp: 'dhn 17/May/2016 21:21:00'!
+!TerseGuideWindow class methodsFor: 'instance creation' stamp: 'dhn 18/May/2016, 12:21:00 am (UTC)'!
 openTerseGuide
 "
 	TerseGuideWindow openTerseGuide.
@@ -2215,12 +2216,12 @@ openTerseGuide
 		contents: '';
 		window: window! !
 
-!TerseGuideTopic methodsFor: 'accessing' stamp: 'RNG 15/Jul/2018 01:02:39'!
+!TerseGuideTopic methodsFor: 'accessing' stamp: 'RNG 15/Jul/2018, 4:02:39 am (UTC)'!
 examples
 
 	^ #()! !
 
-!TerseGuideTopic methodsFor: 'accessing' stamp: 'RNG 15/Jul/2018 01:37:27'!
+!TerseGuideTopic methodsFor: 'accessing' stamp: 'RNG 15/Jul/2018, 4:37:27 am (UTC)'!
 script
 
 	^ String streamContents: [ :stream |
@@ -2229,12 +2230,12 @@ script
 		]
 	]! !
 
-!TerseGuideTopic methodsFor: 'accessing' stamp: 'RNG 15/Jul/2018 01:02:32'!
+!TerseGuideTopic methodsFor: 'accessing' stamp: 'RNG 15/Jul/2018, 4:02:32 am (UTC)'!
 title
 
 	self subclassResponsibility! !
 
-!TerseGuideTopic methodsFor: 'private - script building' stamp: 'RNG 15/Jul/2018 01:38:22'!
+!TerseGuideTopic methodsFor: 'private - script building' stamp: 'RNG 15/Jul/2018, 4:38:22 am (UTC)'!
 append: example toScript: stream
 
 	stream
@@ -2243,7 +2244,7 @@ append: example toScript: stream
 		nextPutAll: (self commentFor: example);
 		newLine! !
 
-!TerseGuideTopic methodsFor: 'private - script building' stamp: 'RNG 15/Jul/2018 01:38:32'!
+!TerseGuideTopic methodsFor: 'private - script building' stamp: 'RNG 15/Jul/2018, 4:38:32 am (UTC)'!
 commentFor: example
 
 	^ '"' , (example at: #category) , ' - ' , (example at: #description) , '"'! !
