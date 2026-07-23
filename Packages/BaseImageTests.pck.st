@@ -1,6 +1,6 @@
-'From Cuis7.9 [latest update: #8072] on 20 July 2026 at 10:21:42 am'!
+'From Cuis7.9 [latest update: #8084] on 23 July 2026 at 4:32:50 pm'!
 'Description Rename extentions tests'!
-!provides: 'BaseImageTests' 1 490!
+!provides: 'BaseImageTests' 1 491!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Compiler'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Objects'!
@@ -9230,7 +9230,7 @@ test17propertiesReturnsTheAlreadySetAdditionalMethodStateWhenHasProperties
 	self assert: properties selector equals: thisContext selector.
 	! !
 
-!CompiledMethodTest methodsFor: 'tests - properties' stamp: 'HAW 3/Jan/2019, 11:17:28 am (UTC)'!
+!CompiledMethodTest methodsFor: 'tests - properties' stamp: 'jmv 23/Jul/2026, 7:32:00 pm (UTC)'!
 test18propertyKeysAndValuesDoIteratesOverProperties
 
 	| propertyName thisMethod properties |
@@ -9240,12 +9240,12 @@ test18propertyKeysAndValuesDoIteratesOverProperties
 	thisMethod propertyValueAt: propertyName put: true.
 	
 	properties := OrderedCollection new.
-	thisMethod propertyKeysAndValuesDo: [ :key :value | properties add: key -> value ].
+	thisMethod properties propertyKeysAndValuesDo: [ :key :value | properties add: key -> value ].
 	
 	self assert: properties size equals: 1.
 	self assert: properties first equals: propertyName -> true! !
 
-!CompiledMethodTest methodsFor: 'tests - properties' stamp: 'HAW 3/Jan/2019, 11:20:11 am (UTC)'!
+!CompiledMethodTest methodsFor: 'tests - properties' stamp: 'jmv 23/Jul/2026, 7:32:11 pm (UTC)'!
 test19propertyKeysAndValuesDoDoesNotEvaluateBlockWhenMethodHasNoProperties
 
 	| thisMethod |
@@ -9253,7 +9253,7 @@ test19propertyKeysAndValuesDoDoesNotEvaluateBlockWhenMethodHasNoProperties
 	thisMethod := self class>>thisContext selector.
 	thisMethod removeProperties.
 	
-	thisMethod propertyKeysAndValuesDo: [ :key :value | self fail ]! !
+	thisMethod properties propertyKeysAndValuesDo: [ :key :value | self fail ]! !
 
 !CompiledMethodTest methodsFor: 'tests - properties' stamp: 'HAW 3/Jan/2019, 8:58:44 pm (UTC)'!
 test20propertyValueAtReturnsPropertyValueWhenSetted
@@ -9565,7 +9565,7 @@ testFindLiteralsInBytecode
 						ifTrue: [self assert: (simpleMethod hasLiteral: anyLiteral)]
 						ifFalse: [self deny: (simpleMethod hasLiteral: anyLiteral)]]]]]! !
 
-!LiteralRefLocatorTest methodsFor: 'tests' stamp: 'eem 24/Jan/2025, 4:32:47 pm (UTC)'!
+!LiteralRefLocatorTest methodsFor: 'tests' stamp: 'jmv 23/Jul/2026, 1:30:06 pm (UTC)'!
 testThoroughFindLiteralsInBytecode
 	"Create a method referencing integers, characters, special selectors and nil, true & false.
 	 Compile it and check that the objects are found."
@@ -9583,7 +9583,7 @@ testThoroughFindLiteralsInBytecode
 							generate.
 
 			"Check our problematic case first."
-			 self assert: (method hasLiteral: problem).
+			 self assert: (method hasLiteral: problem key).
 			 "The selector of a method should never be found (unless it occurs as a literal or in a pragma)"
 			 self deny: (method hasLiteral: method selector).
 
