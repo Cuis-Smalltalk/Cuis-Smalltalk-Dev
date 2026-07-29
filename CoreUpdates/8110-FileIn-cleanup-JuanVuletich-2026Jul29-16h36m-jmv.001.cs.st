@@ -15,3 +15,14 @@ fileIn
 
 !methodRemoval: UniFileStream #fileIn stamp: 'jmv 29/Jul/2026, 7:38:16 pm (UTC)'!
 UniFileStream removeSelector: #fileIn!
+
+!methodRemoval: PositionableStream #compileNextChunkWhenStartsWithExclamationMark stamp: 'jmv 29/Jul/2026, 7:50:52 pm (UTC)'!
+PositionableStream removeSelector: #compileNextChunkWhenStartsWithExclamationMark!
+!methodRemoval: PositionableStream #compileNextChunkHandlingExceptions stamp: 'jmv 29/Jul/2026, 7:50:52 pm (UTC)'!
+PositionableStream removeSelector: #compileNextChunkHandlingExceptions!
+!methodRemoval: PositionableStream #compileNextChunk stamp: 'jmv 29/Jul/2026, 7:50:52 pm (UTC)'!
+PositionableStream removeSelector: #compileNextChunk!
+!methodRemoval: PositionableStream #evaluate:printingErrorWith: stamp: 'jmv 29/Jul/2026, 7:50:52 pm (UTC)'!
+PositionableStream removeSelector: #evaluate:printingErrorWith:!
+!methodRemoval: PositionableStream #compileNextChunkWhenDoesNotStartWithExclamationMark stamp: 'jmv 29/Jul/2026, 7:50:52 pm (UTC)'!
+PositionableStream removeSelector: #compileNextChunkWhenDoesNotStartWithExclamationMark!
