@@ -1,32 +1,32 @@
-'From Cuis7.9 [latest update: #8111] on 29 July 2026 at 7:22:54 pm'!
+'From Cuis7.9 [latest update: #8113] on 30 July 2026 at 2:14:56 pm'!
 'Description Initial version'!
-!provides: 'StreamExtentionsTests' 1 0!
-!requires: 'StreamExtentions' 1 1 nil!
-SystemOrganization addCategory: 'StreamExtentionsTests'!
+!provides: 'StreamExtensionsTests' 1 0!
+!requires: 'StreamExtensions' 1 0 nil!
+SystemOrganization addCategory: 'StreamExtensionsTests'!
 
 
-!classDefinition: #TranscriptExtentionsTest category: 'StreamExtentionsTests'!
-TestCase subclass: #TranscriptExtentionsTest
+!classDefinition: #TranscriptExtensionsTest category: 'StreamExtensionsTests'!
+TestCase subclass: #TranscriptExtensionsTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
-	category: 'StreamExtentionsTests'!
-!classDefinition: 'TranscriptExtentionsTest class' category: 'StreamExtentionsTests'!
-TranscriptExtentionsTest class
+	category: 'StreamExtensionsTests'!
+!classDefinition: 'TranscriptExtensionsTest class' category: 'StreamExtensionsTests'!
+TranscriptExtensionsTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #WriteStreamExtentionsTest category: 'StreamExtentionsTests'!
-TestCase subclass: #WriteStreamExtentionsTest
+!classDefinition: #WriteStreamExtensionsTest category: 'StreamExtensionsTests'!
+TestCase subclass: #WriteStreamExtensionsTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
-	category: 'StreamExtentionsTests'!
-!classDefinition: 'WriteStreamExtentionsTest class' category: 'StreamExtentionsTests'!
-WriteStreamExtentionsTest class
+	category: 'StreamExtensionsTests'!
+!classDefinition: 'WriteStreamExtensionsTest class' category: 'StreamExtensionsTests'!
+WriteStreamExtensionsTest class
 	instanceVariableNames: ''!
 
 
-!TranscriptExtentionsTest commentStamp: '<historical>' prior: 0!
+!TranscriptExtensionsTest commentStamp: '<historical>' prior: 0!
 Tests cases for Stream messages: 
 
 nextPutAll: when:
@@ -36,7 +36,7 @@ print: when:.
 Made at Cuis Sprint #1
 !
 
-!WriteStreamExtentionsTest commentStamp: '<historical>' prior: 0!
+!WriteStreamExtensionsTest commentStamp: '<historical>' prior: 0!
 Tests cases for Stream messages: 
 
 nextPutAll: when:
@@ -46,7 +46,7 @@ print: when:.
 Made at Cuis Sprint #1
 !
 
-!TranscriptExtentionsTest methodsFor: 'assertions' stamp: 'jmv 1/Mar/2025, 8:19:12 pm (UTC)'!
+!TranscriptExtensionsTest methodsFor: 'assertions' stamp: 'jmv 1/Mar/2025, 8:19:12 pm (UTC)'!
 assertTranscriptContentsAdded: expectedAddedString after: aBlock
 	
 	| transcriptContentsBeforeBlockEvaluation |
@@ -55,7 +55,7 @@ assertTranscriptContentsAdded: expectedAddedString after: aBlock
 	aBlock value.
 	self assert: Transcript contents equals: transcriptContentsBeforeBlockEvaluation, expectedAddedString.! !
 
-!TranscriptExtentionsTest methodsFor: 'assertions' stamp: 'jmv 1/Mar/2025, 8:19:06 pm (UTC)'!
+!TranscriptExtensionsTest methodsFor: 'assertions' stamp: 'jmv 1/Mar/2025, 8:19:06 pm (UTC)'!
 assertTranscriptContentsAdded2: expectedAddedString after: aBlock
 	
 	| transcriptContentsBeforeBlockEvaluation |
@@ -65,83 +65,83 @@ assertTranscriptContentsAdded2: expectedAddedString after: aBlock
 	{transcriptContentsBeforeBlockEvaluation. expectedAddedString.Transcript contents} inspect.
 	self assert: Transcript contents equals: transcriptContentsBeforeBlockEvaluation, expectedAddedString.! !
 
-!TranscriptExtentionsTest methodsFor: 'assertions' stamp: 'HAW 20/Mar/2019, 10:15:48 am (UTC)'!
+!TranscriptExtensionsTest methodsFor: 'assertions' stamp: 'HAW 20/Mar/2019, 10:15:48 am (UTC)'!
 assertTranscriptContentsDoesNotChangeAfter: aBlock
 	
 	self assertTranscriptContentsAdded: '' after: aBlock! !
 
-!TranscriptExtentionsTest methodsFor: 'tests' stamp: 'HAW 29/Jul/2026, 10:16:27 pm (UTC)'!
+!TranscriptExtensionsTest methodsFor: 'tests' stamp: 'HAW 29/Jul/2026, 10:16:27 pm (UTC)'!
 testNewLineWhenConditionIsFalseDoesNotPutANewLineInStream
 
 	self assertTranscriptContentsDoesNotChangeAfter: [ Transcript newLineIf: false ]
 	! !
 
-!TranscriptExtentionsTest methodsFor: 'tests' stamp: 'HAW 29/Jul/2026, 10:16:27 pm (UTC)'!
+!TranscriptExtensionsTest methodsFor: 'tests' stamp: 'HAW 29/Jul/2026, 10:16:27 pm (UTC)'!
 testNewLineWhenConditionIsTruePutsANewLineInStream
 
 	self assertTranscriptContentsAdded: String newLineString, '.' after: [ Transcript newLineIf: true; nextPut: $. ]! !
 
-!TranscriptExtentionsTest methodsFor: 'tests' stamp: 'HAW 29/Jul/2026, 10:16:37 pm (UTC)'!
+!TranscriptExtensionsTest methodsFor: 'tests' stamp: 'HAW 29/Jul/2026, 10:16:37 pm (UTC)'!
 testNextPutAllWhenConditionIsFalseDoesNotPutCollectionInStream
 
 	self assertTranscriptContentsDoesNotChangeAfter: [ Transcript nextPutAll: 'other' if: false ]
 	! !
 
-!TranscriptExtentionsTest methodsFor: 'tests' stamp: 'HAW 29/Jul/2026, 10:16:37 pm (UTC)'!
+!TranscriptExtensionsTest methodsFor: 'tests' stamp: 'HAW 29/Jul/2026, 10:16:37 pm (UTC)'!
 testNextPutAllWhenConditionIsTruePutsCollectionInStream
 
 	self assertTranscriptContentsAdded: 'other' after: [ Transcript nextPutAll: 'other' if: true ]
 	
 	! !
 
-!TranscriptExtentionsTest methodsFor: 'tests' stamp: 'HAW 29/Jul/2026, 10:16:48 pm (UTC)'!
+!TranscriptExtensionsTest methodsFor: 'tests' stamp: 'HAW 29/Jul/2026, 10:16:48 pm (UTC)'!
 testNextPutWhenConditionIsFalseDoesNotPutObjectInStream
 
 	self assertTranscriptContentsDoesNotChangeAfter: [ Transcript nextPut: $t if: false ]
 ! !
 
-!TranscriptExtentionsTest methodsFor: 'tests' stamp: 'HAW 29/Jul/2026, 10:16:48 pm (UTC)'!
+!TranscriptExtensionsTest methodsFor: 'tests' stamp: 'HAW 29/Jul/2026, 10:16:48 pm (UTC)'!
 testNextPutWhenConditionIsTruePutsObjectInStream
 
 	self assertTranscriptContentsAdded: 't' after: [ Transcript nextPut: $t if: true ]
 	
 	! !
 
-!TranscriptExtentionsTest methodsFor: 'tests' stamp: 'HAW 29/Jul/2026, 10:16:58 pm (UTC)'!
+!TranscriptExtensionsTest methodsFor: 'tests' stamp: 'HAW 29/Jul/2026, 10:16:58 pm (UTC)'!
 testPrintWhenConditionIsFalseDoesNotPrintObjectInStream
 
 	self assertTranscriptContentsDoesNotChangeAfter: [ Transcript print: Object if: false ]
 ! !
 
-!TranscriptExtentionsTest methodsFor: 'tests' stamp: 'HAW 29/Jul/2026, 10:16:58 pm (UTC)'!
+!TranscriptExtensionsTest methodsFor: 'tests' stamp: 'HAW 29/Jul/2026, 10:16:58 pm (UTC)'!
 testPrintWhenConditionIsTruePrintsObjectInStream
 
 	self assertTranscriptContentsAdded: Object printString after: [ Transcript print: Object if: true ]
 	! !
 
-!TranscriptExtentionsTest methodsFor: 'tests' stamp: 'HAW 29/Jul/2026, 10:17:26 pm (UTC)'!
+!TranscriptExtensionsTest methodsFor: 'tests' stamp: 'HAW 29/Jul/2026, 10:17:26 pm (UTC)'!
 testSpaceWhenConditionIsFalseDoesNotPutASpaceInStream
 
 	self assertTranscriptContentsDoesNotChangeAfter: [ Transcript spaceIf: false ]
 	! !
 
-!TranscriptExtentionsTest methodsFor: 'tests' stamp: 'HAW 29/Jul/2026, 10:17:26 pm (UTC)'!
+!TranscriptExtensionsTest methodsFor: 'tests' stamp: 'HAW 29/Jul/2026, 10:17:26 pm (UTC)'!
 testSpaceWhenConditionIsTruePutsASpaceInStream
 
 	self assertTranscriptContentsAdded: ' ' after: [ Transcript spaceIf: true ]
 	! !
 
-!TranscriptExtentionsTest methodsFor: 'tests' stamp: 'HAW 29/Jul/2026, 10:17:45 pm (UTC)'!
+!TranscriptExtensionsTest methodsFor: 'tests' stamp: 'HAW 29/Jul/2026, 10:17:45 pm (UTC)'!
 testTabWhenConditionIsFalseDoesNotPutATabInStream
 
 	self assertTranscriptContentsDoesNotChangeAfter: [ Transcript tabIf: false ]! !
 
-!TranscriptExtentionsTest methodsFor: 'tests' stamp: 'HAW 29/Jul/2026, 10:17:45 pm (UTC)'!
+!TranscriptExtensionsTest methodsFor: 'tests' stamp: 'HAW 29/Jul/2026, 10:17:45 pm (UTC)'!
 testTabWhenConditionIsTruePutsATabInStream
 
 	self assertTranscriptContentsAdded: Character tab asString after: [ Transcript tabIf: true ]! !
 
-!WriteStreamExtentionsTest methodsFor: 'tests' stamp: 'HAW 29/Jul/2026, 10:16:09 pm (UTC)'!
+!WriteStreamExtensionsTest methodsFor: 'tests' stamp: 'HAW 29/Jul/2026, 10:16:09 pm (UTC)'!
 testNewLineTabWhenConditionIsFalseDoesNotPutANewLineTabInStream
 
 	| stream |
@@ -152,7 +152,7 @@ testNewLineTabWhenConditionIsFalseDoesNotPutANewLineTabInStream
 	self assert: stream contents isEmpty
 	! !
 
-!WriteStreamExtentionsTest methodsFor: 'tests' stamp: 'HAW 29/Jul/2026, 10:16:09 pm (UTC)'!
+!WriteStreamExtensionsTest methodsFor: 'tests' stamp: 'HAW 29/Jul/2026, 10:16:09 pm (UTC)'!
 testNewLineTabWhenConditionIsTruePutsANewLineTabInStream
 
 	| stream |
@@ -162,7 +162,7 @@ testNewLineTabWhenConditionIsTruePutsANewLineTabInStream
 	
 	self assert: stream contents equals: (String streamContents: [ :s | s newLineTab: 2 ]).! !
 
-!WriteStreamExtentionsTest methodsFor: 'tests' stamp: 'HAW 29/Jul/2026, 10:16:27 pm (UTC)'!
+!WriteStreamExtensionsTest methodsFor: 'tests' stamp: 'HAW 29/Jul/2026, 10:16:27 pm (UTC)'!
 testNewLineWhenConditionIsFalseDoesNotPutANewLineInStream
 
 	| stream |
@@ -173,7 +173,7 @@ testNewLineWhenConditionIsFalseDoesNotPutANewLineInStream
 	self assert: stream contents isEmpty
 	! !
 
-!WriteStreamExtentionsTest methodsFor: 'tests' stamp: 'HAW 29/Jul/2026, 10:16:27 pm (UTC)'!
+!WriteStreamExtensionsTest methodsFor: 'tests' stamp: 'HAW 29/Jul/2026, 10:16:27 pm (UTC)'!
 testNewLineWhenConditionIsTruePutsANewLineInStream
 
 	| stream |
@@ -183,7 +183,7 @@ testNewLineWhenConditionIsTruePutsANewLineInStream
 	
 	self assert: stream contents equals: Character newLineCharacter asString.! !
 
-!WriteStreamExtentionsTest methodsFor: 'tests' stamp: 'HAW 29/Jul/2026, 10:16:37 pm (UTC)'!
+!WriteStreamExtensionsTest methodsFor: 'tests' stamp: 'HAW 29/Jul/2026, 10:16:37 pm (UTC)'!
 testNextPutAllWhenConditionIsFalseDoesNotPutCollectionInStream
 
 	| stream |
@@ -194,7 +194,7 @@ testNextPutAllWhenConditionIsFalseDoesNotPutCollectionInStream
 	self assert: stream contents isEmpty
 	! !
 
-!WriteStreamExtentionsTest methodsFor: 'tests' stamp: 'HAW 29/Jul/2026, 10:16:37 pm (UTC)'!
+!WriteStreamExtensionsTest methodsFor: 'tests' stamp: 'HAW 29/Jul/2026, 10:16:37 pm (UTC)'!
 testNextPutAllWhenConditionIsTruePutsCollectionInStream
 
 	| stream |
@@ -204,7 +204,7 @@ testNextPutAllWhenConditionIsTruePutsCollectionInStream
 	
 	self assert: stream contents equals: 'other'.! !
 
-!WriteStreamExtentionsTest methodsFor: 'tests' stamp: 'HAW 29/Jul/2026, 10:16:48 pm (UTC)'!
+!WriteStreamExtensionsTest methodsFor: 'tests' stamp: 'HAW 29/Jul/2026, 10:16:48 pm (UTC)'!
 testNextPutWhenConditionIsFalseDoesNotPutObjectInStream
 
 	| stream |
@@ -216,7 +216,7 @@ testNextPutWhenConditionIsFalseDoesNotPutObjectInStream
 	
 	! !
 
-!WriteStreamExtentionsTest methodsFor: 'tests' stamp: 'HAW 29/Jul/2026, 10:16:48 pm (UTC)'!
+!WriteStreamExtensionsTest methodsFor: 'tests' stamp: 'HAW 29/Jul/2026, 10:16:48 pm (UTC)'!
 testNextPutWhenConditionIsTruePutsObjectInStream
 
 	| stream |
@@ -226,7 +226,7 @@ testNextPutWhenConditionIsTruePutsObjectInStream
 	
 	self assert: stream contents equals: 't'.! !
 
-!WriteStreamExtentionsTest methodsFor: 'tests' stamp: 'HAW 29/Jul/2026, 10:16:58 pm (UTC)'!
+!WriteStreamExtensionsTest methodsFor: 'tests' stamp: 'HAW 29/Jul/2026, 10:16:58 pm (UTC)'!
 testPrintWhenConditionIsFalseDoesNotPrintObjectInStream
 
 	| stream |
@@ -238,7 +238,7 @@ testPrintWhenConditionIsFalseDoesNotPrintObjectInStream
 	
 	! !
 
-!WriteStreamExtentionsTest methodsFor: 'tests' stamp: 'HAW 29/Jul/2026, 10:16:58 pm (UTC)'!
+!WriteStreamExtensionsTest methodsFor: 'tests' stamp: 'HAW 29/Jul/2026, 10:16:58 pm (UTC)'!
 testPrintWhenConditionIsTruePrintsObjectInStream
 
 	| stream |
@@ -248,7 +248,7 @@ testPrintWhenConditionIsTruePrintsObjectInStream
 	
 	self assert: stream contents equals: Object printString.! !
 
-!WriteStreamExtentionsTest methodsFor: 'tests' stamp: 'HAW 29/Jul/2026, 10:17:15 pm (UTC)'!
+!WriteStreamExtensionsTest methodsFor: 'tests' stamp: 'HAW 29/Jul/2026, 10:17:15 pm (UTC)'!
 testSpaceManyTimesWhenConditionIsFalseDoesNotPutASpaceInStream
 
 	| stream |
@@ -259,7 +259,7 @@ testSpaceManyTimesWhenConditionIsFalseDoesNotPutASpaceInStream
 	self assert: stream contents isEmpty
 	! !
 
-!WriteStreamExtentionsTest methodsFor: 'tests' stamp: 'HAW 29/Jul/2026, 10:17:15 pm (UTC)'!
+!WriteStreamExtensionsTest methodsFor: 'tests' stamp: 'HAW 29/Jul/2026, 10:17:15 pm (UTC)'!
 testSpaceManyTimesWhenConditionIsTruePutSpacesInStream
 
 	| stream |
@@ -269,7 +269,7 @@ testSpaceManyTimesWhenConditionIsTruePutSpacesInStream
 	
 	self assert: stream contents equals: '  '.! !
 
-!WriteStreamExtentionsTest methodsFor: 'tests' stamp: 'HAW 29/Jul/2026, 10:17:26 pm (UTC)'!
+!WriteStreamExtensionsTest methodsFor: 'tests' stamp: 'HAW 29/Jul/2026, 10:17:26 pm (UTC)'!
 testSpaceWhenConditionIsFalseDoesNotPutASpaceInStream
 
 	| stream |
@@ -280,7 +280,7 @@ testSpaceWhenConditionIsFalseDoesNotPutASpaceInStream
 	self assert: stream contents isEmpty
 	! !
 
-!WriteStreamExtentionsTest methodsFor: 'tests' stamp: 'HAW 29/Jul/2026, 10:17:26 pm (UTC)'!
+!WriteStreamExtensionsTest methodsFor: 'tests' stamp: 'HAW 29/Jul/2026, 10:17:26 pm (UTC)'!
 testSpaceWhenConditionIsTruePutsASpaceInStream
 
 	| stream |
@@ -290,7 +290,7 @@ testSpaceWhenConditionIsTruePutsASpaceInStream
 	
 	self assert: stream contents equals: ' '.! !
 
-!WriteStreamExtentionsTest methodsFor: 'tests' stamp: 'HAW 29/Jul/2026, 10:17:36 pm (UTC)'!
+!WriteStreamExtensionsTest methodsFor: 'tests' stamp: 'HAW 29/Jul/2026, 10:17:36 pm (UTC)'!
 testTabManyTimesWhenConditionIsFalseDoesNotPutATabInStream
 
 	| stream |
@@ -301,7 +301,7 @@ testTabManyTimesWhenConditionIsFalseDoesNotPutATabInStream
 	self assert: stream contents isEmpty
 	! !
 
-!WriteStreamExtentionsTest methodsFor: 'tests' stamp: 'HAW 29/Jul/2026, 10:17:36 pm (UTC)'!
+!WriteStreamExtensionsTest methodsFor: 'tests' stamp: 'HAW 29/Jul/2026, 10:17:36 pm (UTC)'!
 testTabManyTimesWhenConditionIsTruePutsTabsInStream
 
 	| stream |
@@ -311,7 +311,7 @@ testTabManyTimesWhenConditionIsTruePutsTabsInStream
 	
 	self assert: stream contents equals: (String streamContents: [ :s | s tab: 2 ]).! !
 
-!WriteStreamExtentionsTest methodsFor: 'tests' stamp: 'HAW 29/Jul/2026, 10:17:45 pm (UTC)'!
+!WriteStreamExtensionsTest methodsFor: 'tests' stamp: 'HAW 29/Jul/2026, 10:17:45 pm (UTC)'!
 testTabWhenConditionIsFalseDoesNotPutATabInStream
 
 	| stream |
@@ -322,7 +322,7 @@ testTabWhenConditionIsFalseDoesNotPutATabInStream
 	self assert: stream contents isEmpty
 	! !
 
-!WriteStreamExtentionsTest methodsFor: 'tests' stamp: 'HAW 29/Jul/2026, 10:17:45 pm (UTC)'!
+!WriteStreamExtensionsTest methodsFor: 'tests' stamp: 'HAW 29/Jul/2026, 10:17:45 pm (UTC)'!
 testTabWhenConditionIsTruePutsATabInStream
 
 	| stream |
