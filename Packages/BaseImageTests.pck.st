@@ -1,6 +1,6 @@
-'From Cuis7.9 [latest update: #8108] on 29 July 2026 at 3:43:08 pm'!
+'From Cuis7.9 [latest update: #8121] on 3 August 2026 at 11:03:36 am'!
 'Description Rename extentions tests'!
-!provides: 'BaseImageTests' 1 492!
+!provides: 'BaseImageTests' 1 493!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Compiler'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Objects'!
@@ -27495,6 +27495,22 @@ test57_CannotFindParameterizableReplacementWhenParametersHaveAssignments
 		andFind: (44 to: 100)
 		to: (Message selector: #k1:k2: arguments: #('a' 'b')).
 
+	self deny: finder hasFoundParameterizableReplacements.! !
+
+!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'JEC 28/Jul/2026, 12:06:05 am (UTC)'!
+test58_DoesNotLookForNodesThatAreNotInTheCompleteSourceRanges
+
+	"This test ensures that replacing #notOptimizedMethodNode with #methodNode causes a failure"
+	
+	self 
+		shouldnt: [
+			self 
+				compile: 'm1 
+	self foo ifNil: [ ^1 ] ifNotNil: [ ^2 ]' 
+				andFind: (6 to: 9).
+	] 
+		raise: Error. 
+	
 	self deny: finder hasFoundParameterizableReplacements.! !
 
 !ExtractMethodFinderTest methodsFor: 'setup/teardown' stamp: 'HAW 2/Sep/2021, 10:02:12 pm (UTC)'!
