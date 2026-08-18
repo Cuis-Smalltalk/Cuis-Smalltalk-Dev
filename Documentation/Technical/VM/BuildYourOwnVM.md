@@ -1,11 +1,9 @@
 
 ### Build your own VM ###
 
-If you are comfortable using Linux tools (gcc,make,ld), you can
-build the OpenSmalltalk VM yourself.
+If you are comfortable using Linux tools (gcc,make,ld), you can build the OpenSmalltalk VM yourself.
 
-This may be helpful to obtain a VM for a platform which is supported,
-but not part of the official release builds.  For example, Linux on Aarch64/arm64 or RiscV64.
+This may be helpful to obtain a VM for a platform which is supported, but not part of the official release builds.  For example, Linux on RiscV64.
 
 The process is basically:
 ```git clone --depth 1 https://github.com/OpenSmalltalk/opensmalltalk-vm
