@@ -1,6 +1,6 @@
-'From Cuis7.9 [latest update: #8145] on 24 August 2026 at 11:16:45 am'!
+'From Cuis7.9 [latest update: #8161] on 8 September 2026 at 8:41:11 pm'!
 'Description '!
-!provides: 'CompilerTests' 1 0!
+!provides: 'CompilerTests' 1 1!
 !requires: 'DynamicallyCodeCreatingTestSupport' 1 0 nil!
 SystemOrganization addCategory: #CompilerTests!
 
@@ -2029,48 +2029,52 @@ testItReferencesSelfWhenTheVariableNameIsSelf
 
 	self assert: variableNode referencesSelf! !
 
-!ParserTest methodsFor: 'test' stamp: 'jmv 4/Jul/2022, 2:21:47 pm (UTC)'!
+!ParserTest methodsFor: 'test' stamp: 'jmv 8/Sep/2026, 11:39:46 pm (UTC)'!
 testMulticharBinarySelectors
 	| result expression |
 	self assert: (Compiler evaluate: '3+4') = 7.
 
-	expression _ '1@-2'.
+	expression := '1@-2'.
 	Preferences
 		withTemporaryValue: #st80
 		of: #atMinusDigitMeaning
-		do: [ result _ Compiler evaluate: expression].
+		do: [ result := Compiler evaluate: expression].
 	self assert: result x = 1.
 	self assert: result y = 2 negated.
+
 	Preferences
 		withTemporaryValue: #disabled
 		of: #atMinusDigitMeaning
-		do: [ result _ Compiler evaluate: expression].
-	self assert: result = nil.
+		do: [ result := [Compiler evaluate: expression] on: SyntaxErrorNotification do: [#se]].
+	self assert: result = #se.
+
 	Preferences
 		withTemporaryValue: #ansiSmalltalk
 		of: #atMinusDigitMeaning
-		do: [ result _ [Compiler evaluate: expression] on: MessageNotUnderstood do: [#dnu]].
+		do: [ result := [Compiler evaluate: expression] on: MessageNotUnderstood do: [#dnu]].
 	self assert: result = #dnu.
 
-	expression _ '1@-2.'.
-
+	expression := '1@-2.'.
 	Preferences
 		withTemporaryValue: #st80
 		of: #atMinusDigitMeaning
-		do: [ result _ [Compiler evaluate: expression] on: MessageNotUnderstood do: [#dnu]].
+		do: [ result := [Compiler evaluate: expression] on: MessageNotUnderstood do: [#dnu]].
 	self assert: result isPoint.
 	self assert: result x = 1.
 	self assert: result y = 2 negated.
+
 	Preferences
 		withTemporaryValue: #disabled
 		of: #atMinusDigitMeaning
-		do: [ result _ [Compiler evaluate: expression] on: MessageNotUnderstood do: [#dnu]].
-	self assert: result = nil.
+		do: [ result := [Compiler evaluate: expression] on: SyntaxErrorNotification do: [#se]].
+	self assert: result = #se.
+
 	Preferences
 		withTemporaryValue: #ansiSmalltalk
 		of: #atMinusDigitMeaning
-		do: [ result _ [Compiler evaluate: expression] on: MessageNotUnderstood do: [#dnu]].
-	self assert: result = #dnu.! !
+		do: [ result := [Compiler evaluate: expression] on: MessageNotUnderstood do: [#dnu]].
+	self assert: result = #dnu.
+! !
 
 !ParserTest methodsFor: 'test' stamp: 'HAW 20/Sep/2025, 10:00:18 pm (UTC)'!
 testOptimizedNodesWithNilDoNotFailsWhenAskForEquivalentTo
