@@ -1,6 +1,6 @@
-'From Cuis7.9 [latest update: #8156] on 3 September 2026 at 6:15:15 pm'!
+'From Cuis7.9 [latest update: #8166] on 11 September 2026 at 12:14:33 pm'!
 'Description '!
-!provides: 'RefactoringTests' 1 6!
+!provides: 'RefactoringTests' 1 7!
 !requires: 'DynamicallyCodeCreatingTestSupport' 1 0 nil!
 !requires: '__Refactoring_TestData__' 1 0 nil!
 SystemOrganization addCategory: #RefactoringTests!
@@ -10208,7 +10208,7 @@ self m3.
 t := y1. ^20'.
 	self assert: expectedNewSourceCode equals: (implementorAndSenderClass >> methodWithUsageSelector) sourceCode! !
 
-!InlineMethodTest methodsFor: 'tests - successful' stamp: 'FB 12/Jun/2022, 11:27:55 pm (UTC)'!
+!InlineMethodTest methodsFor: 'tests - successful' stamp: 'HAW 10/Sep/2026, 7:59:13 pm (UTC)'!
 test08InlineMethodDeclaresVariablesInClosestScope
 
 	| implementorAndSenderClass methodToInlineSource methodToInlineSelector 
@@ -10235,10 +10235,10 @@ test08InlineMethodDeclaresVariablesInClosestScope
 	expectedNewSourceCode := methodWithUsageSelector,' | t y | t := [| y1 z |
 	y1 := 10.
 self m3.
-y1.]. ^20'.
+y1]. ^20'.
 	self assert: expectedNewSourceCode equals: (implementorAndSenderClass >> methodWithUsageSelector) sourceCode! !
 
-!InlineMethodTest methodsFor: 'tests - successful' stamp: 'FB 12/Jun/2022, 11:27:59 pm (UTC)'!
+!InlineMethodTest methodsFor: 'tests - successful' stamp: 'HAW 10/Sep/2026, 7:59:19 pm (UTC)'!
 test09InlineMethodReturnedInFullClosureKeepsTheReturnSymbol
 
 	| implementorAndSenderClass methodToInlineSource methodToInlineSelector 
@@ -10264,10 +10264,10 @@ test09InlineMethodReturnedInFullClosureKeepsTheReturnSymbol
 	
 	expectedNewSourceCode := methodWithUsageSelector,' | t y | t := [| y1 z |
 	y1 := 10.
-^y1.]. ^20'.
+^y1]. ^20'.
 	self assert: expectedNewSourceCode equals: (implementorAndSenderClass >> methodWithUsageSelector) sourceCode! !
 
-!InlineMethodTest methodsFor: 'tests - successful' stamp: 'FB 21/May/2022, 7:33:15 pm (UTC)'!
+!InlineMethodTest methodsFor: 'tests - successful' stamp: 'HAW 10/Sep/2026, 7:59:24 pm (UTC)'!
 test10InlineMethodOfAnotherClass
 
 	| methodToInlineSource methodToInlineSelector nodeToInline methodWithUsageSelector methodWithUsageSource
@@ -10293,10 +10293,10 @@ test10InlineMethodOfAnotherClass
 	refactoring apply.
 	
 	expectedNewSourceCode := methodWithUsageSelector,' | t y y1 z | y1 := 10.
-^y1.'.
+^y1'.
 	self assert: expectedNewSourceCode equals: (senderClass >> methodWithUsageSelector) sourceCode! !
 
-!InlineMethodTest methodsFor: 'tests - successful' stamp: 'FB 21/May/2022, 10:00:21 pm (UTC)'!
+!InlineMethodTest methodsFor: 'tests - successful' stamp: 'HAW 10/Sep/2026, 7:59:29 pm (UTC)'!
 test11InlineClassMethodOfAnotherClass
 
 	| methodToInlineSource methodToInlineSelector nodeToInline methodWithUsageSelector methodWithUsageSource
@@ -10323,7 +10323,7 @@ test11InlineClassMethodOfAnotherClass
 	
 	expectedNewSourceCode := methodWithUsageSelector,' | t y y1 z | y1 := 10.
 ',  implementorClass name, ' m3.
-^y1.'.
+^y1'.
 	self assert: expectedNewSourceCode equals: (senderClass >> methodWithUsageSelector) sourceCode! !
 
 !InlineMethodTest methodsFor: 'tests - successful' stamp: 'FB 5/Nov/2021, 2:06:01 am (UTC)'!
@@ -10418,7 +10418,7 @@ test17InlineMethodWithASingleReturnLineWhenLiteralResultIsNotAssigned
 	expectedNewSourceCode := methodWithUsagesSelector,' 1. ^20'.
 	self assert: expectedNewSourceCode equals: (senderClass >> methodWithUsagesSelector) sourceCode.! !
 
-!InlineMethodTest methodsFor: 'tests - successful' stamp: 'FB 12/Jun/2022, 11:28:03 pm (UTC)'!
+!InlineMethodTest methodsFor: 'tests - successful' stamp: 'HAW 10/Sep/2026, 7:59:34 pm (UTC)'!
 test18InlineMethodUsedInLastStatementOfClosure
 
 	| methodToInlineSource methodToInlineSelector nodeToInline methodWithUsagesSelector methodWithUsagesSource
@@ -10446,10 +10446,10 @@ test18InlineMethodUsedInLastStatementOfClosure
 	expectedNewSourceCode := methodWithUsagesSelector,' | b | b := [| x y |
 	x := 1.
 y := 2.
-1 + (x + y).]. ^b value'.
+1 + (x + y)]. ^b value'.
 	self assert: expectedNewSourceCode equals: (senderClass >> methodWithUsagesSelector) sourceCode.! !
 
-!InlineMethodTest methodsFor: 'tests - successful' stamp: 'FB 2/Sep/2022, 10:31:08 pm (UTC)'!
+!InlineMethodTest methodsFor: 'tests - successful' stamp: 'HAW 10/Sep/2026, 7:59:40 pm (UTC)'!
 test19InlineMethodIndentation
 
 	| methodToInlineSource methodToInlineSelector nodeToInline methodWithUsagesSelector methodWithUsagesSource
@@ -10486,7 +10486,7 @@ test19InlineMethodIndentation
 			| x y |
 	x := 1.
 			y := 2.
-			1 + (x + y).
+			1 + (x + y)
 		].
 		^b value'.
 	self assert: expectedNewSourceCode equals: (senderClass >> methodWithUsagesSelector) sourceCode.! !
@@ -10612,7 +10612,7 @@ test23InlineMethodFromSameClassAccessingPrivateVariables
 ^y.'.
 	self assert: expectedNewSourceCode equals: (implementorAndSenderClass >> methodWithUsageSelector) sourceCode.! !
 
-!InlineMethodTest methodsFor: 'tests - successful' stamp: 'FB 21/May/2022, 9:35:15 pm (UTC)'!
+!InlineMethodTest methodsFor: 'tests - successful' stamp: 'HAW 10/Sep/2026, 7:59:45 pm (UTC)'!
 test27InlineMethodFromAnotherClassReferencingSelfWhenReceiverIsAVariable
 
 	| methodToInlineSource methodToInlineSelector nodeToInline methodWithUsageSelector methodWithUsageSource
@@ -10639,7 +10639,7 @@ test27InlineMethodFromAnotherClassReferencingSelfWhenReceiverIsAVariable
 	
 	expectedNewSourceCode := methodWithUsageSelector, ' | t y | t := ', implementorClass name, ' new . y := 10.
 t m3.
-^y.'.
+^y'.
 	self assert: expectedNewSourceCode equals: (senderClass >> methodWithUsageSelector) sourceCode.! !
 
 !InlineMethodTest methodsFor: 'tests - successful' stamp: 'FB 5/Jul/2022, 12:02:04 am (UTC)'!
@@ -10807,6 +10807,105 @@ test33InlineMethodReturningMessageNodeDoesNotAddParenthesesWhenNotNeeded
 	refactoring apply.
 	
 	expectedNewSourceCode := methodWithUsagesSelector,' | res | res := 5 + 10. ^res'.
+	self assert: expectedNewSourceCode equals: (senderClass >> methodWithUsagesSelector) sourceCode.! !
+
+!InlineMethodTest methodsFor: 'tests - successful' stamp: 'HAW 10/Sep/2026, 7:56:45 pm (UTC)'!
+test34InlineMethodAsLastStatementOfClosureDoesNotLeaveADot
+
+	| methodToInlineSource methodToInlineSelector nodeToInline methodWithUsagesSelector methodWithUsagesSource
+	 implementorClass senderClass expectedNewSourceCode refactoring |
+
+	implementorClass  := self createClassNamed: self implementorClass.
+	senderClass  := self createClassNamed: self senderClass.
+	methodToInlineSelector := 'm1' asSymbol.
+	methodToInlineSource := methodToInlineSelector, ' self doSomething.'.
+	implementorClass compile: methodToInlineSource.
+
+	methodWithUsagesSelector := 'm2' asSymbol.
+	methodWithUsagesSource := methodWithUsagesSelector, ' | b | b := [self m1 ]. ^b value'.
+	senderClass compile: methodWithUsagesSource.
+
+	nodeToInline := self messageNodeReferenceOf: senderClass inMethod: methodWithUsagesSelector atIndex: 21.
+
+	refactoring := InlineMethod
+		from: implementorClass >> methodToInlineSelector
+		intoSendersAndUsages: (Array with: nodeToInline)
+		removeMethod: true.
+
+	refactoring apply.
+
+	expectedNewSourceCode := methodWithUsagesSelector,' | b | b := [self doSomething ]. ^b value'.
+	self assert: expectedNewSourceCode equals: (senderClass >> methodWithUsagesSelector) sourceCode.! !
+
+!InlineMethodTest methodsFor: 'tests - successful' stamp: 'HAW 10/Sep/2026, 7:56:50 pm (UTC)'!
+test35InlineMethodAsLastStatementOfMethodDoesNotLeaveADot
+
+	| methodToInlineSource methodToInlineSelector nodeToInline methodWithUsagesSelector methodWithUsagesSource
+	 implementorClass senderClass expectedNewSourceCode refactoring |
+
+	implementorClass  := self createClassNamed: self implementorClass.
+	senderClass  := self createClassNamed: self senderClass.
+	methodToInlineSelector := 'm1' asSymbol.
+	methodToInlineSource := methodToInlineSelector, ' ^self doSomething.'.
+	implementorClass compile: methodToInlineSource.
+
+	methodWithUsagesSelector := 'm2' asSymbol.
+	methodWithUsagesSource := methodWithUsagesSelector, ' ^self m1'.
+	senderClass compile: methodWithUsagesSource.
+
+	nodeToInline := self messageNodeReferenceOf: senderClass inMethod: methodWithUsagesSelector atIndex: 10.
+
+	refactoring := InlineMethod
+		from: implementorClass >> methodToInlineSelector
+		intoSendersAndUsages: (Array with: nodeToInline)
+		removeMethod: true.
+
+	refactoring apply.
+
+	expectedNewSourceCode := methodWithUsagesSelector,' ^self doSomething'.
+	self assert: expectedNewSourceCode equals: (senderClass >> methodWithUsagesSelector) sourceCode.! !
+
+!InlineMethodTest methodsFor: 'tests - successful' stamp: 'HAW 10/Sep/2026, 9:04:39 pm (UTC)'!
+test36InlineMethodKeepsTheLayoutOfAMethodBody
+
+	| methodToInlineSource methodToInlineSelector nodeToInline methodWithUsagesSelector methodWithUsagesSource
+	 implementorClass senderClass expectedNewSourceCode refactoring |
+
+	implementorClass  := self createClassNamed: self implementorClass.
+	senderClass  := self createClassNamed: self senderClass.
+	methodToInlineSelector := 'm1' asSymbol.
+	methodToInlineSource := methodToInlineSelector, '
+
+	| x y |
+
+	x := 1.
+	y := 2.
+
+	^x + y'.
+	implementorClass compile: methodToInlineSource.
+
+	methodWithUsagesSelector := 'm2' asSymbol.
+	methodWithUsagesSource := methodWithUsagesSelector, '
+
+	^self m1'.
+	senderClass compile: methodWithUsagesSource.
+
+	nodeToInline := self messageNodeReferenceOf: senderClass inMethod: methodWithUsagesSelector atIndex: 12.
+
+	refactoring := InlineMethod
+		from: implementorClass >> methodToInlineSelector
+		intoSendersAndUsages: (Array with: nodeToInline)
+		removeMethod: true.
+
+	refactoring apply.
+
+	expectedNewSourceCode := methodWithUsagesSelector, '
+
+	| x y |
+
+	x := 1.
+	y := 2.
+	^x + y'.
 	self assert: expectedNewSourceCode equals: (senderClass >> methodWithUsagesSelector) sourceCode.! !
 
 !InlineMethodTest methodsFor: 'class factory' stamp: 'FB 22/Nov/2021, 9:09:44 pm (UTC)'!
@@ -13045,7 +13144,7 @@ test07FirstParameterIsRemovedCorrectly
 	self assert: (classToRefactor canUnderstand: keywordToKeep asSymbol).
 	self assert: (classToRefactor sourceCodeAt: keywordToKeep asSymbol) equals: (keywordToKeep, parameterToKeep) ! !
 
-!RemoveParameterTest methodsFor: 'tests' stamp: 'HAW 3/Sep/2018, 10:45:48 pm (UTC)'!
+!RemoveParameterTest methodsFor: 'tests' stamp: 'HAW 10/Sep/2026, 10:19:18 pm (UTC)'!
 test08LastParameterIsRemovedCorrectly
 
 	| classToRefactor selectorToRemoveParameterFrom parameterToRemove keywordToRemove keywordToKeep parameterToKeep refactoring |
@@ -13067,7 +13166,7 @@ test08LastParameterIsRemovedCorrectly
 	refactoring apply.
 	
 	self assert: (classToRefactor canUnderstand: keywordToKeep asSymbol).
-	self assert: (classToRefactor sourceCodeAt: keywordToKeep asSymbol) equals: (keywordToKeep, parameterToKeep,' 
+	self assert: (classToRefactor sourceCodeAt: keywordToKeep asSymbol) equals: (keywordToKeep, parameterToKeep,'
 	| t1 |') ! !
 
 !RemoveParameterTest methodsFor: 'tests' stamp: 'HAW 4/Sep/2018, 6:34:22 pm (UTC)'!
@@ -13261,6 +13360,63 @@ test16ParameterIndexMustBeInteger
 			senders: {} ]
 		failsWith: [ RemoveParameter invalidParameterIndexErrorMessage ]
 ! !
+
+!RemoveParameterTest methodsFor: 'tests' stamp: 'HAW 10/Sep/2026, 10:19:24 pm (UTC)'!
+test17LastKeywordOnItsOwnLineIsRemovedWithItsLine
+
+	| classToRefactor selectorToRemoveParameterFrom parameterToRemove keywordToRemove keywordToKeep parameterToKeep refactoring senderSelector senderMethod |
+	
+	classToRefactor := self createClassNamed: self classToRefactorName.
+	keywordToKeep := 'm1:'.
+	keywordToRemove := 'm2:'.
+	selectorToRemoveParameterFrom := (keywordToKeep, keywordToRemove) asSymbol. 
+	parameterToKeep := 'parameter1'.
+	parameterToRemove := 'parameter2'.
+	senderSelector := 'sender' asSymbol.
+	classToRefactor compile: keywordToKeep,parameterToKeep, ' ', keywordToRemove, parameterToRemove.
+	classToRefactor compile: senderSelector asString,'
+		self 
+			', keywordToKeep, ' 1 
+			', keywordToRemove, ' 2'.
+	
+	refactoring := RemoveParameter 
+			named: parameterToRemove 
+			from: classToRefactor>>selectorToRemoveParameterFrom  
+			implementors: { classToRefactor>>selectorToRemoveParameterFrom } 
+			senders: {classToRefactor>>senderSelector}.
+	refactoring apply.
+	
+	senderMethod := classToRefactor compiledMethodAt: senderSelector.
+	self assert: (senderMethod sendsSelector: keywordToKeep asSymbol).
+	self assert: senderMethod sourceCode equals: (senderSelector asString,'
+		self 
+			', keywordToKeep, ' 1')! !
+
+!RemoveParameterTest methodsFor: 'tests' stamp: 'HAW 10/Sep/2026, 10:19:29 pm (UTC)'!
+test18LastKeywordBeforeAClosingParenthesisIsRemovedWithTheSpaceBeforeIt
+
+	| classToRefactor selectorToRemoveParameterFrom parameterToRemove keywordToRemove keywordToKeep parameterToKeep refactoring senderSelector senderMethod |
+	
+	classToRefactor := self createClassNamed: self classToRefactorName.
+	keywordToKeep := 'm1:'.
+	keywordToRemove := 'm2:'.
+	selectorToRemoveParameterFrom := (keywordToKeep, keywordToRemove) asSymbol. 
+	parameterToKeep := 'parameter1'.
+	parameterToRemove := 'parameter2'.
+	senderSelector := 'sender' asSymbol.
+	classToRefactor compile: keywordToKeep,parameterToKeep, ' ', keywordToRemove, parameterToRemove.
+	classToRefactor compile: senderSelector asString,' ^(self ', keywordToKeep, ' 1 ', keywordToRemove, ' 2) yourself'.
+	
+	refactoring := RemoveParameter 
+			named: parameterToRemove 
+			from: classToRefactor>>selectorToRemoveParameterFrom  
+			implementors: { classToRefactor>>selectorToRemoveParameterFrom } 
+			senders: {classToRefactor>>senderSelector}.
+	refactoring apply.
+	
+	senderMethod := classToRefactor compiledMethodAt: senderSelector.
+	self assert: (senderMethod sendsSelector: keywordToKeep asSymbol).
+	self assert: senderMethod sourceCode equals: (senderSelector asString,' ^(self ', keywordToKeep, ' 1) yourself')! !
 
 !RemoveParameterTest methodsFor: 'class factory' stamp: 'HAW 1/Sep/2018, 4:24:23 pm (UTC)'!
 classToRefactorName
