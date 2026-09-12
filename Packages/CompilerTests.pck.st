@@ -1,6 +1,6 @@
-'From Cuis7.9 [latest update: #8161] on 8 September 2026 at 8:41:11 pm'!
+'From Cuis7.9 [latest update: #8168] on 12 September 2026 at 3:56:20 pm'!
 'Description '!
-!provides: 'CompilerTests' 1 1!
+!provides: 'CompilerTests' 1 2!
 !requires: 'DynamicallyCodeCreatingTestSupport' 1 0 nil!
 SystemOrganization addCategory: #CompilerTests!
 
@@ -2028,6 +2028,20 @@ testItReferencesSelfWhenTheVariableNameIsSelf
 	variableNode _ VariableNode named: 'self'.
 
 	self assert: variableNode referencesSelf! !
+
+!ParserTest methodsFor: 'test' stamp: 'HAW 11/Sep/2026, 6:10:03 pm (UTC)'!
+testACascadeInParenthesesRangesOverItselfAndItsParentheses
+
+	| methodNode cascadeNode range |
+
+	methodNode := self class methodNodeFor: 'm ^self a: (self b; c)'.
+	cascadeNode := methodNode block statements first expr arguments first.
+	range := (methodNode
+		completeSourceRangesOf: cascadeNode
+		ifAbsent: [ self fail ]) anyOne.
+
+	self assert: range first equals: 12.
+	self assert: range last equals: 22! !
 
 !ParserTest methodsFor: 'test' stamp: 'jmv 8/Sep/2026, 11:39:46 pm (UTC)'!
 testMulticharBinarySelectors

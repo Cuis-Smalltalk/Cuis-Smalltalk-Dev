@@ -1,6 +1,6 @@
-'From Cuis7.9 [latest update: #8166] on 11 September 2026 at 12:14:33 pm'!
+'From Cuis7.9 [latest update: #8168] on 12 September 2026 at 3:56:52 pm'!
 'Description '!
-!provides: 'RefactoringTests' 1 7!
+!provides: 'RefactoringTests' 1 8!
 !requires: 'DynamicallyCodeCreatingTestSupport' 1 0 nil!
 !requires: '__Refactoring_TestData__' 1 0 nil!
 SystemOrganization addCategory: #RefactoringTests!
@@ -5862,7 +5862,7 @@ test151_CanExtractMethodWithSingleParameterizedCode
 		assertClassHasDefined: methodToExtractCodeFrom selector withBody: updatedCode inCategory: category;
 		assertClassHasDefined: newMessage selector withBody: newMethodCode inCategory: category! !
 
-!ExtractMethodTest methodsFor: 'tests - parameterizable code' stamp: 'JEC 14/Apr/2026, 7:37:13 pm (UTC)'!
+!ExtractMethodTest methodsFor: 'tests - parameterizable code' stamp: 'HAW 11/Sep/2026, 3:51:31 pm (UTC)'!
 test152_CanExtractMethodWithMultipleParameterizedNodes
 
 	| newMethodCode originalCode updatedCode intervalToExtract methodToExtractCodeFrom originalSelector parameterizableNodes newMessage methodNode category |
@@ -5880,7 +5880,7 @@ test152_CanExtractMethodWithMultipleParameterizedNodes
 	newMethodCode := 'm2: a m2: b
 
 	self bb: a.
-		self bb: b'.
+	self bb: b'.
 	updatedCode := 'm1
 		self bb: 10. 
 		self bb: 10.
@@ -6503,6 +6503,34 @@ test049_CanExtractFromOptimizedMessageSends
 		andUpdates: updatedCode 
 	
 ! !
+
+!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'HAW 11/Sep/2026, 3:50:13 pm (UTC)'!
+test161_ExtractedCodeIsIndentedAsAMethodBodyWhateverItsIndentationWas
+
+	| codeToExtract newMethodCode originalCode updatedCode |
+
+	codeToExtract _ 'OrderedCollection new
+			add: 1;
+			yourself'.
+	originalCode _ 'm1
+
+	^ Dictionary new
+		at: 1 put: (', codeToExtract, ');
+		yourself'.
+	newMethodCode _ 'm2
+
+	^ OrderedCollection new
+		add: 1;
+		yourself'.
+	updatedCode _ 'm1
+
+	^ Dictionary new
+		at: 1 put: (self m2);
+		yourself'.
+
+	self
+		assertExtracting: codeToExtract from: originalCode named: (Message selector: #m2)
+		defines: newMethodCode andUpdates: updatedCode! !
 
 !ExtractMethodTest methodsFor: 'tests - validations' stamp: 'JEC 13/Apr/2026, 1:46:22 pm (UTC)'!
 test001_NewSelectorShouldNotBeEmpty
@@ -12897,6 +12925,96 @@ test24ShouldSelectCyclicDependantSelectors
 	self assert: (dependantSelectors size = 2).
 	self assert: (dependantSelectors includes: dependantSelector).
 	self assert: (dependantSelectors includes: otherDependantSelector).! !
+
+!PushUpMethodTest methodsFor: 'tests' stamp: 'HAW 11/Sep/2026, 7:45:13 pm (UTC)'!
+test25ShouldSelectADependantSelectorSentAsTheReceiverOfAnotherMessage
+
+	| superclass classToTest dependantSelectors |
+
+	superclass := self createClassNamed: #Superclass.
+	classToTest := self createClassNamed: #ClassToTest subclassOf: superclass.
+	classToTest compile: 'newMethod ^ self dependantMethod + 1'.
+	classToTest compile: 'dependantMethod ^ 2'.
+
+	dependantSelectors := PushUpMethod
+		selectAllMessageSendsToSelfNotImplementedInSuperClassFrom: classToTest >> #newMethod.
+
+	self assert: dependantSelectors asArray equals: #(#dependantMethod)! !
+
+!PushUpMethodTest methodsFor: 'tests' stamp: 'HAW 11/Sep/2026, 7:45:13 pm (UTC)'!
+test26ShouldSelectADependantSelectorSentAsAnArgument
+
+	| superclass classToTest dependantSelectors |
+
+	superclass := self createClassNamed: #Superclass.
+	classToTest := self createClassNamed: #ClassToTest subclassOf: superclass.
+	classToTest compile: 'newMethod ^ 1 + self dependantMethod'.
+	classToTest compile: 'dependantMethod ^ 2'.
+
+	dependantSelectors := PushUpMethod
+		selectAllMessageSendsToSelfNotImplementedInSuperClassFrom: classToTest >> #newMethod.
+
+	self assert: dependantSelectors asArray equals: #(#dependantMethod)! !
+
+!PushUpMethodTest methodsFor: 'tests' stamp: 'HAW 11/Sep/2026, 7:45:13 pm (UTC)'!
+test27ShouldSelectADependantSelectorSentInACascade
+
+	| superclass classToTest dependantSelectors |
+
+	superclass := self createClassNamed: #Superclass.
+	classToTest := self createClassNamed: #ClassToTest subclassOf: superclass.
+	classToTest compile: 'newMethod ^ self dependantMethod; dependantMethod'.
+	classToTest compile: 'dependantMethod ^ 2'.
+
+	dependantSelectors := PushUpMethod
+		selectAllMessageSendsToSelfNotImplementedInSuperClassFrom: classToTest >> #newMethod.
+
+	self assert: dependantSelectors asArray equals: #(#dependantMethod)! !
+
+!PushUpMethodTest methodsFor: 'tests' stamp: 'HAW 11/Sep/2026, 7:45:13 pm (UTC)'!
+test28ShouldSelectADependantSelectorSentAsTheReceiverOfACascade
+
+	| superclass classToTest dependantSelectors |
+
+	superclass := self createClassNamed: #Superclass.
+	classToTest := self createClassNamed: #ClassToTest subclassOf: superclass.
+	classToTest compile: 'newMethod ^ self dependantMethod add: 1; yourself'.
+	classToTest compile: 'dependantMethod ^ OrderedCollection new'.
+
+	dependantSelectors := PushUpMethod
+		selectAllMessageSendsToSelfNotImplementedInSuperClassFrom: classToTest >> #newMethod.
+
+	self assert: dependantSelectors asArray equals: #(#dependantMethod)! !
+
+!PushUpMethodTest methodsFor: 'tests' stamp: 'HAW 12/Sep/2026, 2:28:49 pm (UTC)'!
+test29ShouldSelectADependantSelectorSentInAnAssignment
+
+	| superclass classToTest dependantSelectors |
+
+	superclass := self createClassNamed: #Superclass.
+	classToTest := self createClassNamed: #ClassToTest subclassOf: superclass.
+	classToTest compile: 'newMethod | value | value := self dependantMethod. ^ value'.
+	classToTest compile: 'dependantMethod ^ 2'.
+
+	dependantSelectors := PushUpMethod
+		selectAllMessageSendsToSelfNotImplementedInSuperClassFrom: classToTest >> #newMethod.
+
+	self assert: dependantSelectors asArray equals: #(#dependantMethod)! !
+
+!PushUpMethodTest methodsFor: 'tests' stamp: 'HAW 12/Sep/2026, 2:28:49 pm (UTC)'!
+test30ShouldSelectADependantSelectorSentInABrace
+
+	| superclass classToTest dependantSelectors |
+
+	superclass := self createClassNamed: #Superclass.
+	classToTest := self createClassNamed: #ClassToTest subclassOf: superclass.
+	classToTest compile: 'newMethod ^ { 1. self dependantMethod }'.
+	classToTest compile: 'dependantMethod ^ 2'.
+
+	dependantSelectors := PushUpMethod
+		selectAllMessageSendsToSelfNotImplementedInSuperClassFrom: classToTest >> #newMethod.
+
+	self assert: dependantSelectors asArray equals: #(#dependantMethod)! !
 
 !PushUpMethodTest methodsFor: 'class factory' stamp: 'MSC 12/Nov/2019, 3:48:09 pm (UTC)'!
 classToRefactorName	
