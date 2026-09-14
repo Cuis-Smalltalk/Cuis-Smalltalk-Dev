@@ -1,6 +1,6 @@
-'From Cuis7.9 [latest update: #8175] on 14 September 2026 at 10:02:29 am'!
+'From Cuis7.9 [latest update: #8176] on 14 September 2026 at 10:32:57 am'!
 'Description '!
-!provides: 'RefactoringTests' 1 13!
+!provides: 'RefactoringTests' 1 14!
 !requires: 'DynamicallyCodeCreatingTestSupport' 1 0 nil!
 !requires: '__Refactoring_TestData__' 1 0 nil!
 SystemOrganization addCategory: #RefactoringTests!
@@ -4273,27 +4273,98 @@ test35AddingParameterRetractsInsertionPointWhenAtInsertionPointIsANewLine
 	
 	! !
 
-!AddParameterTest methodsFor: 'tests' stamp: 'HAW 7/Jan/2019, 5:44:13 pm (UTC)'!
+!AddParameterTest methodsFor: 'tests' stamp: 'HAW 12/Sep/2026, 10:43:40 pm (UTC)'!
 test36ParentesisAreAddedToSendersOfUnaryMessage
 
-	self shouldFail: [ | refactoring classToRefactor oldSelector newParameter newParameterValue senderSelector |
-	
+	| refactoring classToRefactor oldSelector newParameter newParameterValue senderSelector |
+
 	oldSelector := 'm1' asSymbol.
 	newParameter := 'newParam'.
 	newParameterValue := '1'.
 	senderSelector := 'sender_m1' asSymbol.
-	
+
 	classToRefactor := self createClassNamed: self classToRefactorName.
 	classToRefactor compile: oldSelector asString.
 	classToRefactor compile: senderSelector asString, ' self ', oldSelector asString, ', self size'.
 
-	refactoring := AddParameter 
-		named: newParameter initializedWith: newParameterValue toUnarySelector: oldSelector  
+	refactoring := AddParameter
+		named: newParameter initializedWith: newParameterValue toUnarySelector: oldSelector
 		implementors: {classToRefactor>>oldSelector} senders: {classToRefactor>>senderSelector}.
 	refactoring apply.
-	
-	self assert: senderSelector asString, ' (self ', oldSelector asString, '), self size' equals: (classToRefactor>>senderSelector) sourceCode 
-	]! !
+
+	self
+		assert: (classToRefactor>>senderSelector) sourceCode
+		equals: senderSelector asString, ' (self ', oldSelector asString, ': 1), self size'! !
+
+!AddParameterTest methodsFor: 'tests' stamp: 'HAW 12/Sep/2026, 10:43:40 pm (UTC)'!
+test37ParenthesesAreAddedToASendLeftKeywordAsTheReceiverOfAUnaryMessage
+
+	| refactoring classToRefactor oldSelector newParameter newParameterValue senderSelector |
+
+	oldSelector := 'm1' asSymbol.
+	newParameter := 'newParam'.
+	newParameterValue := '1'.
+	senderSelector := 'sender_m1' asSymbol.
+
+	classToRefactor := self createClassNamed: self classToRefactorName.
+	classToRefactor compile: oldSelector asString.
+	classToRefactor compile: senderSelector asString, ' self ', oldSelector asString, ' yourself'.
+
+	refactoring := AddParameter
+		named: newParameter initializedWith: newParameterValue toUnarySelector: oldSelector
+		implementors: {classToRefactor>>oldSelector} senders: {classToRefactor>>senderSelector}.
+	refactoring apply.
+
+	self
+		assert: (classToRefactor>>senderSelector) sourceCode
+		equals: senderSelector asString, ' (self ', oldSelector asString, ': 1) yourself'! !
+
+!AddParameterTest methodsFor: 'tests' stamp: 'HAW 12/Sep/2026, 10:43:40 pm (UTC)'!
+test38ParenthesesAreAddedToASendLeftKeywordAsTheArgumentOfAKeywordMessage
+
+	| refactoring classToRefactor oldSelector newParameter newParameterValue senderSelector |
+
+	oldSelector := 'm1' asSymbol.
+	newParameter := 'newParam'.
+	newParameterValue := '1'.
+	senderSelector := 'sender_m1' asSymbol.
+
+	classToRefactor := self createClassNamed: self classToRefactorName.
+	classToRefactor compile: oldSelector asString.
+	classToRefactor compile: senderSelector asString, ' self foo: self ', oldSelector asString.
+
+	refactoring := AddParameter
+		named: newParameter initializedWith: newParameterValue toUnarySelector: oldSelector
+		implementors: {classToRefactor>>oldSelector} senders: {classToRefactor>>senderSelector}.
+	refactoring apply.
+
+	self
+		assert: (classToRefactor>>senderSelector) sourceCode
+		equals: senderSelector asString, ' self foo: (self ', oldSelector asString, ': 1)'! !
+
+!AddParameterTest methodsFor: 'tests' stamp: 'HAW 12/Sep/2026, 10:43:40 pm (UTC)'!
+test39TheParenthesesAroundASendThatStaysKeywordAreKept
+
+	| refactoring classToRefactor oldSelector newSelectorAddedKeyword newParameter newParameterValue senderSelector |
+
+	oldSelector := 'm1:' asSymbol.
+	newSelectorAddedKeyword := 'm2:' asSymbol.
+	newParameter := 'newParam'.
+	newParameterValue := '2'.
+	senderSelector := 'sender_m1' asSymbol.
+
+	classToRefactor := self createClassNamed: self classToRefactorName.
+	classToRefactor compile: (oldSelector asString, ' oldParam').
+	classToRefactor compile: senderSelector asString, ' (self ', oldSelector asString, ' 1) yourself'.
+
+	refactoring := AddParameter
+		named: newParameter initializedWith: newParameterValue using: newSelectorAddedKeyword toKeywordSelector: oldSelector
+		implementors: {classToRefactor>>oldSelector} senders: {classToRefactor>>senderSelector}.
+	refactoring apply.
+
+	self
+		assert: (classToRefactor>>senderSelector) sourceCode
+		equals: senderSelector asString, ' (self ', oldSelector asString, ' 1 m2: 2) yourself'! !
 
 !AddParameterTest methodsFor: 'class factory' stamp: 'HAW 24/Aug/2018, 9:20:56 pm (UTC)'!
 classToRefactorName
