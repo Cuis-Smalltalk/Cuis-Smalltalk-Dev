@@ -1,6 +1,6 @@
-'From Cuis7.9 [latest update: #8179] on 14 September 2026 at 10:53:41 am'!
+'From Cuis7.9 [latest update: #8181] on 14 September 2026 at 2:03:00 pm'!
 'Description '!
-!provides: 'RefactoringTests' 1 15!
+!provides: 'RefactoringTests' 1 16!
 !requires: 'DynamicallyCodeCreatingTestSupport' 1 0 nil!
 !requires: '__Refactoring_TestData__' 1 0 nil!
 SystemOrganization addCategory: #RefactoringTests!
@@ -5005,6 +5005,20 @@ test20TheIntervalMayIncludeTheParenthesesAroundTheExpression
 		in: 'm2 ^(self m1) yourself'
 		withPrecedence: ParseNode unaryPrecedence
 		gives: 'm2 ^self m1 yourself'! !
+
+!ExpressionReplacementTest methodsFor: 'tests' stamp: 'HAW 12/Sep/2026, 11:21:22 pm (UTC)'!
+test21ASecondReferenceToTheSameVariableIsAnArgumentEvenThoughItSharesTheNode
+
+	| sourceCode replacedSourceCode |
+
+	sourceCode := 'm1: t ^t + t'.
+	replacedSourceCode := (ExpressionReplacement
+		of: (12 to: 12) asSourceCodeInterval
+		in: (self methodNodeOf: sourceCode)
+		by: '5 * 6'
+		withPrecedence: ParseNode binaryPrecedence) value.
+
+	self assert: replacedSourceCode equals: 'm1: t ^t + (5 * 6)'! !
 
 !ExpressionReplacementTest methodsFor: 'assertions' stamp: 'HAW 12/Sep/2026, 10:18:42 pm (UTC)'!
 assertReparenthesizing: aPiece in: aSourceCode withPrecedence: aPrecedence gives: anExpectedSourceCode
@@ -11614,7 +11628,7 @@ test05RefactoringScopeIsBetweenAssignments
 	expectedNewSourceCode := methodToRefactorName,' | t1 | t1 := 1. t1 := 3. ^nil.'.
 	self assert: expectedNewSourceCode equals: (classToRefactor >> methodToRefactorName asSymbol) sourceCode! !
 
-!InlineTemporaryVariableTest methodsFor: 'tests - successful' stamp: 'FB 15/Feb/2021, 9:58:26 pm (UTC)'!
+!InlineTemporaryVariableTest methodsFor: 'tests - successful' stamp: 'HAW 12/Sep/2026, 11:21:22 pm (UTC)'!
 test06InlinedVariableUsagesAreReplacedWithTheVariablesValue
 
 	|classToRefactor originalSource methodToRefactorName tempVarToInline refactoring expectedNewSourceCode |
@@ -11630,7 +11644,7 @@ test06InlinedVariableUsagesAreReplacedWithTheVariablesValue
 	
 	refactoring apply.
 	
-	expectedNewSourceCode := methodToRefactorName,' self m2: self m1: 1'.
+	expectedNewSourceCode := methodToRefactorName,' self m2: (self m1: 1)'.
 	self assert: expectedNewSourceCode equals: (classToRefactor >> methodToRefactorName asSymbol) sourceCode! !
 
 !InlineTemporaryVariableTest methodsFor: 'tests - successful' stamp: 'FB 15/Feb/2021, 10:05:02 pm (UTC)'!
@@ -11785,8 +11799,8 @@ test14RefactoringAddsParenthesesWhenTempIsKeywordMessageAndReferenceIsReceiverOf
 	expectedNewSourceCode := methodToRefactorName,' ^(self m2: 5) * 2'.
 	self assert: expectedNewSourceCode equals: (classToRefactor >> methodToRefactorName asSymbol) sourceCode! !
 
-!InlineTemporaryVariableTest methodsFor: 'tests - successful' stamp: 'FB 17/Feb/2021, 1:03:38 am (UTC)'!
-test15RefactoringDoesNotAddParenthesesWhenTempIsKeywordMessageAndReferenceIsArgumentOfBinaryMessage
+!InlineTemporaryVariableTest methodsFor: 'tests - successful' stamp: 'HAW 12/Sep/2026, 11:16:56 pm (UTC)'!
+test15RefactoringAddsParenthesesWhenTempIsKeywordMessageAndReferenceIsArgumentOfBinaryMessage
 
 	|classToRefactor originalSource methodToRefactorName tempVarToInline refactoring expectedNewSourceCode |
 	
@@ -11801,10 +11815,10 @@ test15RefactoringDoesNotAddParenthesesWhenTempIsKeywordMessageAndReferenceIsArgu
 	
 	refactoring apply.
 	
-	expectedNewSourceCode := methodToRefactorName,' ^2 * self m2: 5'.
+	expectedNewSourceCode := methodToRefactorName,' ^2 * (self m2: 5)'.
 	self assert: expectedNewSourceCode equals: (classToRefactor >> methodToRefactorName asSymbol) sourceCode! !
 
-!InlineTemporaryVariableTest methodsFor: 'tests - successful' stamp: 'FB 20/Feb/2021, 8:37:35 pm (UTC)'!
+!InlineTemporaryVariableTest methodsFor: 'tests - successful' stamp: 'HAW 12/Sep/2026, 11:21:22 pm (UTC)'!
 test16RefactoringAddsParenthesesWhenTempIsKeywordAndReferenceIsPartOfMessageWhereArgumentIsAnotherReferenceToTemp
 
 	|classToRefactor originalSource methodToRefactorName tempVarToInline refactoring expectedNewSourceCode |
@@ -11820,11 +11834,11 @@ test16RefactoringAddsParenthesesWhenTempIsKeywordAndReferenceIsPartOfMessageWher
 	
 	refactoring apply.
 	
-	expectedNewSourceCode := methodToRefactorName,' ^(self m2: 5) + (self m2: 5) + 2 + (self m2: 5) + self m2: 5'.
+	expectedNewSourceCode := methodToRefactorName,' ^(self m2: 5) + (self m2: 5) + 2 + (self m2: 5) + (self m2: 5)'.
 	self assert: expectedNewSourceCode equals: (classToRefactor >> methodToRefactorName asSymbol) sourceCode! !
 
-!InlineTemporaryVariableTest methodsFor: 'tests - successful' stamp: 'FB 20/Feb/2021, 11:56:15 pm (UTC)'!
-test17RefactoringDoesNotAddParenthesesWhenBothValueAndReferenceAlreadyHaveThem
+!InlineTemporaryVariableTest methodsFor: 'tests - successful' stamp: 'HAW 12/Sep/2026, 11:16:56 pm (UTC)'!
+test17RefactoringKeepsOnlyTheParenthesesEachReferenceNeedsWhenTheValueHasThem
 
 	|classToRefactor originalSource methodToRefactorName tempVarToInline refactoring expectedNewSourceCode |
 	
@@ -11839,7 +11853,7 @@ test17RefactoringDoesNotAddParenthesesWhenBothValueAndReferenceAlreadyHaveThem
 	
 	refactoring apply.
 	
-	expectedNewSourceCode := methodToRefactorName,' ^(1 + 2) + (1 + 2)'.
+	expectedNewSourceCode := methodToRefactorName,' ^1 + 2 + (1 + 2)'.
 	self assert: expectedNewSourceCode equals: (classToRefactor >> methodToRefactorName asSymbol) sourceCode! !
 
 !InlineTemporaryVariableTest methodsFor: 'tests - successful' stamp: 'FB 10/Mar/2021, 11:03:50 pm (UTC)'!
@@ -12100,6 +12114,25 @@ test32InlineTemporaryUsedAfterBlockWhenNotReferencedByIt
 	expectedNewSourceCode := methodToRefactorName,' | b t1 | b := [ t1 := 30. 15.]. ^b2 value: 10 + 20'.
 	self assert: expectedNewSourceCode equals: (classToRefactor >> methodToRefactorName asSymbol) sourceCode
 ! !
+
+!InlineTemporaryVariableTest methodsFor: 'tests - successful' stamp: 'HAW 12/Sep/2026, 11:16:56 pm (UTC)'!
+test34RefactoringAddsParenthesesWhenTempIsCascadeAndReferenceIsReceiverOfUnaryMessage
+
+	|classToRefactor originalSource methodToRefactorName tempVarToInline refactoring expectedNewSourceCode |
+	
+	classToRefactor  := self createClassNamed: self classToRefactor.
+	tempVarToInline := 't1'.
+	methodToRefactorName := 'm1'.
+	originalSource := methodToRefactorName,' | t1 | t1 := OrderedCollection new add: 1; yourself. ^t1 size'.
+	classToRefactor compile: originalSource.
+	
+	refactoring := InlineTemporaryVariable named: tempVarToInline atUsageInterval: (11 to: 12)
+		 inMethod: classToRefactor >> methodToRefactorName asSymbol.
+	
+	refactoring apply.
+	
+	expectedNewSourceCode := methodToRefactorName,' ^(OrderedCollection new add: 1; yourself) size'.
+	self assert: expectedNewSourceCode equals: (classToRefactor >> methodToRefactorName asSymbol) sourceCode! !
 
 !InlineTemporaryVariableTest methodsFor: 'tests - validations' stamp: 'FB 29/Dec/2021, 12:02:39 am (UTC)'!
 test01VariableToInlineCanNotBeEmpty
