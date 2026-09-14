@@ -1,6 +1,6 @@
-'From Cuis7.9 [latest update: #8168] on 12 September 2026 at 3:56:20 pm'!
+'From Cuis7.9 [latest update: #8175] on 14 September 2026 at 9:34:15 am'!
 'Description '!
-!provides: 'CompilerTests' 1 2!
+!provides: 'CompilerTests' 1 3!
 !requires: 'DynamicallyCodeCreatingTestSupport' 1 0 nil!
 SystemOrganization addCategory: #CompilerTests!
 
@@ -2537,6 +2537,28 @@ test25CanExpandMultipleParentesisWithSeparatorsInTheMiddle
 	expandedInterval := originalInterval expandToMatchExpressionOn: sourceCode.
 
 	self assert: expandedInterval equals: (1 to: sourceCode size).! !
+
+!SourceCodeIntervalTest methodsFor: 'tests - expanding' stamp: 'HAW 12/Sep/2026, 4:32:38 pm (UTC)'!
+test26AnIntervalEnclosedByParenthesesCanBeExpandedOverThem
+
+	| sourceCode expandedInterval originalInterval |
+
+	sourceCode := '( (3 + 4) )'.
+	originalInterval := (4 to: 8) asSourceCodeInterval.
+	expandedInterval := originalInterval expandOverParenthesesOn: sourceCode.
+
+	self assert: expandedInterval equals: (1 to: sourceCode size)! !
+
+!SourceCodeIntervalTest methodsFor: 'tests - expanding' stamp: 'HAW 12/Sep/2026, 4:32:38 pm (UTC)'!
+test27AnIntervalEnclosedByBackticksIsNotExpandedOverParentheses
+
+	| sourceCode expandedInterval originalInterval |
+
+	sourceCode := '`(3 + 4)`'.
+	originalInterval := (3 to: 7) asSourceCodeInterval.
+	expandedInterval := originalInterval expandOverParenthesesOn: sourceCode.
+
+	self assert: expandedInterval equals: (2 to: 8)! !
 
 !SourceCodeIntervalTest methodsFor: 'tests - testing' stamp: 'jmv 31/Jul/2023, 4:21:27 pm (UTC)'!
 test12AnIntervalEndingOnDotExpandsUntilStartOfNextStatementOnSameLine

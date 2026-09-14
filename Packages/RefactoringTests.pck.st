@@ -1,6 +1,6 @@
-'From Cuis7.9 [latest update: #8174] on 14 September 2026 at 9:16:51 am'!
+'From Cuis7.9 [latest update: #8175] on 14 September 2026 at 9:34:13 am'!
 'Description '!
-!provides: 'RefactoringTests' 1 11!
+!provides: 'RefactoringTests' 1 12!
 !requires: 'DynamicallyCodeCreatingTestSupport' 1 0 nil!
 !requires: '__Refactoring_TestData__' 1 0 nil!
 SystemOrganization addCategory: #RefactoringTests!
@@ -94,6 +94,16 @@ RefactoringTest subclass: #ChangeKeywordsSelectorOrderTest
 	category: 'RefactoringTests'!
 !classDefinition: 'ChangeKeywordsSelectorOrderTest class' category: #RefactoringTests!
 ChangeKeywordsSelectorOrderTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #ExpressionReplacementTest category: #RefactoringTests!
+RefactoringTest subclass: #ExpressionReplacementTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'RefactoringTests'!
+!classDefinition: 'ExpressionReplacementTest class' category: #RefactoringTests!
+ExpressionReplacementTest class
 	instanceVariableNames: ''!
 
 !classDefinition: #ExtractAsParameterTest category: #RefactoringTests!
@@ -4695,6 +4705,192 @@ test18_CanChangeSelectorOrder_WhenHavingTheChangingCollaborationRecursively
 		assert: senderSelector, ' self m2: (self m2: 22 m1: 11) m1: (self m2: 2 m1: 1).'
 		equals: senderMethod sourceCode.! !
 
+!ExpressionReplacementTest methodsFor: 'exercising' stamp: 'HAW 12/Sep/2026, 9:03:22 pm (UTC)'!
+methodNodeOf: aSourceCode
+
+	| classToReplaceIn selector |
+
+	classToReplaceIn := self createClassNamed: #ClassToReplaceIn.
+	selector := classToReplaceIn compile: aSourceCode.
+
+	^(classToReplaceIn >> selector) notOptimizedMethodNode! !
+
+!ExpressionReplacementTest methodsFor: 'exercising' stamp: 'HAW 12/Sep/2026, 9:03:22 pm (UTC)'!
+replacing: aPiece in: aSourceCode by: anExpression withPrecedence: aPrecedence
+
+	| start |
+
+	start := aSourceCode indexOfSubCollection: aPiece startingAt: 1.
+
+	^(ExpressionReplacement
+		of: (start to: start + aPiece size - 1) asSourceCodeInterval
+		in: (self methodNodeOf: aSourceCode)
+		by: anExpression
+		withPrecedence: aPrecedence) value! !
+
+!ExpressionReplacementTest methodsFor: 'tests' stamp: 'HAW 12/Sep/2026, 9:09:02 pm (UTC)'!
+test01AUnaryExpressionReplacingAParenthesizedReceiverDropsTheParentheses
+
+	self
+		assertReplacing: '3 + 4'
+		in: 'm1 ^ (3 + 4) factorial'
+		by: 'self m2'
+		withPrecedence: ParseNode unaryPrecedence
+		gives: 'm1 ^ self m2 factorial'! !
+
+!ExpressionReplacementTest methodsFor: 'tests' stamp: 'HAW 12/Sep/2026, 9:09:02 pm (UTC)'!
+test02EveryPairOfParenthesesAroundTheReplacedExpressionIsDropped
+
+	self
+		assertReplacing: '3 + 4'
+		in: 'm1 ^ ( ( 3 + 4 ) ) factorial'
+		by: 'self m2'
+		withPrecedence: ParseNode unaryPrecedence
+		gives: 'm1 ^ self m2 factorial'! !
+
+!ExpressionReplacementTest methodsFor: 'tests' stamp: 'HAW 12/Sep/2026, 9:09:02 pm (UTC)'!
+test03AKeywordExpressionReplacingTheReceiverOfABinaryMessageIsParenthesizedOnce
+
+	self
+		assertReplacing: '2 + x'
+		in: 'm1: x ^ (2 + x) * 3'
+		by: 'self m2: x'
+		withPrecedence: ParseNode keywordPrecedence
+		gives: 'm1: x ^ (self m2: x) * 3'! !
+
+!ExpressionReplacementTest methodsFor: 'tests' stamp: 'HAW 12/Sep/2026, 9:09:02 pm (UTC)'!
+test04AKeywordExpressionReplacingTheReceiverOfAUnaryMessageIsParenthesized
+
+	self
+		assertReplacing: '3'
+		in: 'm1 ^ 3 factorial'
+		by: 'self m2: 1'
+		withPrecedence: ParseNode keywordPrecedence
+		gives: 'm1 ^ (self m2: 1) factorial'! !
+
+!ExpressionReplacementTest methodsFor: 'tests' stamp: 'HAW 12/Sep/2026, 9:09:02 pm (UTC)'!
+test05AKeywordExpressionReplacingTheReceiverOfAKeywordMessageIsParenthesized
+
+	self
+		assertReplacing: '3'
+		in: 'm1 ^ 3 max: 4'
+		by: 'self m2: 1'
+		withPrecedence: ParseNode keywordPrecedence
+		gives: 'm1 ^ (self m2: 1) max: 4'! !
+
+!ExpressionReplacementTest methodsFor: 'tests' stamp: 'HAW 12/Sep/2026, 9:09:02 pm (UTC)'!
+test06ABinaryExpressionReplacingTheReceiverOfABinaryMessageIsNotParenthesized
+
+	self
+		assertReplacing: '3 + 4'
+		in: 'm1 ^ 3 + 4 - 1'
+		by: '5 * 6'
+		withPrecedence: ParseNode binaryPrecedence
+		gives: 'm1 ^ 5 * 6 - 1'! !
+
+!ExpressionReplacementTest methodsFor: 'tests' stamp: 'HAW 12/Sep/2026, 9:09:02 pm (UTC)'!
+test07ABinaryExpressionReplacingTheReceiverOfAUnaryMessageIsParenthesized
+
+	self
+		assertReplacing: '3'
+		in: 'm1 ^ 3 factorial'
+		by: '5 * 6'
+		withPrecedence: ParseNode binaryPrecedence
+		gives: 'm1 ^ (5 * 6) factorial'! !
+
+!ExpressionReplacementTest methodsFor: 'tests' stamp: 'HAW 12/Sep/2026, 9:09:02 pm (UTC)'!
+test08AKeywordExpressionReplacingAnArgumentOfAKeywordMessageIsParenthesized
+
+	self
+		assertReplacing: '3'
+		in: 'm1 ^ 4 max: 3'
+		by: 'self m2: 1'
+		withPrecedence: ParseNode keywordPrecedence
+		gives: 'm1 ^ 4 max: (self m2: 1)'! !
+
+!ExpressionReplacementTest methodsFor: 'tests' stamp: 'HAW 12/Sep/2026, 9:09:02 pm (UTC)'!
+test09ABinaryExpressionReplacingAnArgumentOfAKeywordMessageIsNotParenthesized
+
+	self
+		assertReplacing: '3'
+		in: 'm1 ^ 4 max: 3'
+		by: '5 * 6'
+		withPrecedence: ParseNode binaryPrecedence
+		gives: 'm1 ^ 4 max: 5 * 6'! !
+
+!ExpressionReplacementTest methodsFor: 'tests' stamp: 'HAW 12/Sep/2026, 9:09:02 pm (UTC)'!
+test10ABinaryExpressionReplacingAnArgumentOfABinaryMessageIsParenthesized
+
+	self
+		assertReplacing: '4'
+		in: 'm1 ^ 3 * 4'
+		by: '5 + 6'
+		withPrecedence: ParseNode binaryPrecedence
+		gives: 'm1 ^ 3 * (5 + 6)'! !
+
+!ExpressionReplacementTest methodsFor: 'tests' stamp: 'HAW 12/Sep/2026, 9:09:02 pm (UTC)'!
+test11AUnaryExpressionReplacingAParenthesizedArgumentDropsTheParentheses
+
+	self
+		assertReplacing: '4 + 1'
+		in: 'm1 ^ 3 * (4 + 1)'
+		by: 'self m2'
+		withPrecedence: ParseNode unaryPrecedence
+		gives: 'm1 ^ 3 * self m2'! !
+
+!ExpressionReplacementTest methodsFor: 'tests' stamp: 'HAW 12/Sep/2026, 9:09:02 pm (UTC)'!
+test12AnAssignmentReplacingTheReceiverOfAMessageIsParenthesized
+
+	self
+		assertReplacing: '3'
+		in: 'm1 ^ 3 factorial'
+		by: 'x := self m2'
+		withPrecedence: ParseNode assignmentAndCascadePrecedence
+		gives: 'm1 ^ (x := self m2) factorial'! !
+
+!ExpressionReplacementTest methodsFor: 'tests' stamp: 'HAW 12/Sep/2026, 9:09:02 pm (UTC)'!
+test13AKeywordExpressionReplacingTheReceiverOfACascadeIsParenthesized
+
+	self
+		assertReplacing: '3'
+		in: 'm1 ^ 3 printString; yourself'
+		by: 'self m2: 1'
+		withPrecedence: ParseNode keywordPrecedence
+		gives: 'm1 ^ (self m2: 1) printString; yourself'! !
+
+!ExpressionReplacementTest methodsFor: 'tests' stamp: 'HAW 12/Sep/2026, 9:09:02 pm (UTC)'!
+test14AnExpressionReplacingAWholeStatementIsNotParenthesized
+
+	self
+		assertReplacing: '((42))'
+		in: 'm1 ^ ((42))'
+		by: 'x := self m2: 1'
+		withPrecedence: ParseNode assignmentAndCascadePrecedence
+		gives: 'm1 ^ x := self m2: 1'! !
+
+!ExpressionReplacementTest methodsFor: 'tests' stamp: 'HAW 12/Sep/2026, 9:09:02 pm (UTC)'!
+test15AnExpressionReplacingSeveralStatementsIsNotParenthesized
+
+	self
+		assertReplacing: '1 factorial. 2 factorial'
+		in: 'm1 true ifTrue: [ 1 factorial. 2 factorial ]'
+		by: 'self m2: 1'
+		withPrecedence: ParseNode keywordPrecedence
+		gives: 'm1 true ifTrue: [ self m2: 1 ]'! !
+
+!ExpressionReplacementTest methodsFor: 'assertions' stamp: 'HAW 12/Sep/2026, 9:09:02 pm (UTC)'!
+assertReplacing: aPiece in: aSourceCode by: anExpression withPrecedence: aPrecedence gives: anExpectedSourceCode
+
+	| replacedSourceCode |
+
+	replacedSourceCode := self
+		replacing: aPiece
+		in: aSourceCode
+		by: anExpression
+		withPrecedence: aPrecedence.
+
+	self assert: replacedSourceCode equals: anExpectedSourceCode! !
+
 !ExtractAsParameterTest methodsFor: 'assertions' stamp: 'HAW 22/Sep/2021, 8:02:51 pm (UTC)'!
 assertCanExtractAsParameter: toExtract
 
@@ -6200,7 +6396,7 @@ test018_ExtractingAListOfStatementsIncludingDotsRemovesThemAndContinuesWithMetho
 		assertExtracting: codeToExtract from: originalCode named: (Message selector: #m2)
 		defines: newMethodCode andUpdates: updatedCode! !
 
-!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'JEC 13/Apr/2026, 1:49:27 pm (UTC)'!
+!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'HAW 12/Sep/2026, 4:32:38 pm (UTC)'!
 test019_ASelectionContainingAdditionalParenthesesAtTheBeginningAndOrEndCanBeExtracted
 
 	| codeToExtract newMethodCode originalCode updatedCode |
@@ -6209,7 +6405,7 @@ test019_ASelectionContainingAdditionalParenthesesAtTheBeginningAndOrEndCanBeExtr
 	newMethodCode _ 'm2
 
 	^ 42'.
-	updatedCode _ 'm1 ^ ((self m2))'.
+	updatedCode _ 'm1 ^ self m2'.
 
 	self
 		assertExtracting: codeToExtract from: originalCode named: (Message selector: #m2)
@@ -6395,7 +6591,7 @@ test037_ItIsPossibleATempDeclarationAlongWithABlock
 		assertExtracting: codeToExtract from: originalCode named: (Message selector: #m2)
 		defines: newMethodCode andUpdates: updatedCode! !
 
-!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'JEC 13/Apr/2026, 1:50:21 pm (UTC)'!
+!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'HAW 12/Sep/2026, 4:32:38 pm (UTC)'!
 test038_ItIsPossibleToExtractCodeThatContainsMultipleParenthesisWithSpacesBetweenThem
 
 	| codeToExtract newMethodCode originalCode updatedCode |
@@ -6404,7 +6600,7 @@ test038_ItIsPossibleToExtractCodeThatContainsMultipleParenthesisWithSpacesBetwee
 	newMethodCode _ 'm2
 
 	^ 3 + 4'.
-	updatedCode _ 'm1 ^ (  (self m2))'.
+	updatedCode _ 'm1 ^ self m2'.
 
 	self
 		assertExtracting: codeToExtract from: originalCode named: (Message selector: #m2)
@@ -6520,7 +6716,7 @@ test049_CanExtractFromOptimizedMessageSends
 	
 ! !
 
-!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'HAW 11/Sep/2026, 3:50:13 pm (UTC)'!
+!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'HAW 12/Sep/2026, 4:32:38 pm (UTC)'!
 test161_ExtractedCodeIsIndentedAsAMethodBodyWhateverItsIndentationWas
 
 	| codeToExtract newMethodCode originalCode updatedCode |
@@ -6541,11 +6737,59 @@ test161_ExtractedCodeIsIndentedAsAMethodBodyWhateverItsIndentationWas
 	updatedCode _ 'm1
 
 	^ Dictionary new
-		at: 1 put: (self m2);
+		at: 1 put: self m2;
 		yourself'.
 
 	self
 		assertExtracting: codeToExtract from: originalCode named: (Message selector: #m2)
+		defines: newMethodCode andUpdates: updatedCode! !
+
+!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'HAW 12/Sep/2026, 4:32:38 pm (UTC)'!
+test162_ExtractingAnExpressionInParenthesesToAUnaryMessageRemovesTheParentheses
+
+	| codeToExtract newMethodCode originalCode updatedCode |
+
+	codeToExtract _ '3 + 4'.
+	originalCode _ 'm1 ^ (' , codeToExtract , ') factorial'.
+	newMethodCode _ 'm2
+
+	^ ' , codeToExtract.
+	updatedCode _ 'm1 ^ self m2 factorial'.
+
+	self
+		assertExtracting: codeToExtract from: originalCode named: (Message selector: #m2)
+		defines: newMethodCode andUpdates: updatedCode! !
+
+!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'HAW 12/Sep/2026, 4:32:38 pm (UTC)'!
+test163_ExtractingAnExpressionInParenthesesToAKeywordMessageKeepsOnePairOfParentheses
+
+	| codeToExtract newMethodCode originalCode updatedCode |
+
+	codeToExtract _ '2 + arg'.
+	originalCode _ 'm1: arg ^ (' , codeToExtract , ') * 3'.
+	newMethodCode _ 'm2: arg
+
+	^ ' , codeToExtract.
+	updatedCode _ 'm1: arg ^ (self m2: arg) * 3'.
+
+	self
+		assertExtracting: codeToExtract from: originalCode named: (Message selector: #m2: arguments: #('arg'))
+		defines: newMethodCode andUpdates: updatedCode! !
+
+!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'HAW 12/Sep/2026, 4:32:38 pm (UTC)'!
+test164_ExtractingAKeywordArgumentToAKeywordMessageKeepsOnePairOfParentheses
+
+	| codeToExtract newMethodCode originalCode updatedCode |
+
+	codeToExtract _ 'self bar: arg'.
+	originalCode _ 'm1: arg ^ self foo: (' , codeToExtract , ')'.
+	newMethodCode _ 'm2: arg
+
+	^ ' , codeToExtract.
+	updatedCode _ 'm1: arg ^ self foo: (self m2: arg)'.
+
+	self
+		assertExtracting: codeToExtract from: originalCode named: (Message selector: #m2: arguments: #('arg'))
 		defines: newMethodCode andUpdates: updatedCode! !
 
 !ExtractMethodTest methodsFor: 'tests - successful' stamp: 'HAW 12/Sep/2026, 6:01:45 pm (UTC)'!
@@ -6562,6 +6806,22 @@ test165_ExtractingTheReceiverOfACascadeToAKeywordMessageAddsParentheses
 
 	self
 		assertExtracting: codeToExtract from: originalCode named: (Message selector: #m2: arguments: #('arg'))
+		defines: newMethodCode andUpdates: updatedCode! !
+
+!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'HAW 12/Sep/2026, 4:32:38 pm (UTC)'!
+test167_ExtractingACascadeInParenthesesToAUnaryMessageRemovesTheParentheses
+
+	| codeToExtract newMethodCode originalCode updatedCode |
+
+	codeToExtract _ 'OrderedCollection new add: 1; yourself'.
+	originalCode _ 'm1 ^ Dictionary new at: 1 put: (' , codeToExtract , '); yourself'.
+	newMethodCode _ 'm2
+
+	^ ' , codeToExtract.
+	updatedCode _ 'm1 ^ Dictionary new at: 1 put: self m2; yourself'.
+
+	self
+		assertExtracting: codeToExtract from: originalCode named: (Message selector: #m2)
 		defines: newMethodCode andUpdates: updatedCode! !
 
 !ExtractMethodTest methodsFor: 'tests - validations' stamp: 'JEC 13/Apr/2026, 1:46:22 pm (UTC)'!
