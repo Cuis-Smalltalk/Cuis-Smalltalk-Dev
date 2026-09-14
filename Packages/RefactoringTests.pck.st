@@ -1,6 +1,6 @@
-'From Cuis7.9 [latest update: #8173] on 14 September 2026 at 9:12:46 am'!
+'From Cuis7.9 [latest update: #8174] on 14 September 2026 at 9:16:51 am'!
 'Description '!
-!provides: 'RefactoringTests' 1 10!
+!provides: 'RefactoringTests' 1 11!
 !requires: 'DynamicallyCodeCreatingTestSupport' 1 0 nil!
 !requires: '__Refactoring_TestData__' 1 0 nil!
 SystemOrganization addCategory: #RefactoringTests!
@@ -11022,6 +11022,48 @@ test38InlineMethodReturningACascadeUsedAsAReceiverAddsParentheses
 	refactoring apply.
 
 	expectedNewSourceCode := methodWithUsagesSelector, ' ^(OrderedCollection new add: 1; yourself) size'.
+	self assert: (senderClass >> methodWithUsagesSelector) sourceCode equals: expectedNewSourceCode.! !
+
+!InlineMethodTest methodsFor: 'tests - successful' stamp: 'HAW 12/Sep/2026, 6:02:42 pm (UTC)'!
+test39InlineMethodIndentsTheLinesOfTheInlinedStatementLikeTheSenderLine
+
+	| methodToInlineSource methodToInlineSelector nodeToInline methodWithUsagesSelector methodWithUsagesSource
+	 implementorClass senderClass expectedNewSourceCode refactoring |
+
+	implementorClass  := self createClassNamed: self implementorClass.
+	senderClass  := self createClassNamed: self senderClass.
+	methodToInlineSelector := 'm1' asSymbol.
+	methodToInlineSource := methodToInlineSelector, '
+
+	^OrderedCollection new
+		add: 1;
+		yourself'.
+	implementorClass compile: methodToInlineSource.
+
+	methodWithUsagesSelector := 'm2' asSymbol.
+	methodWithUsagesSource := methodWithUsagesSelector, '
+
+	Dictionary new
+		at: 1 put: (self m1);
+		yourself'.
+	senderClass compile: methodWithUsagesSource.
+
+	nodeToInline := self messageNodeReferenceOf: senderClass inMethod: methodWithUsagesSelector atIndex: 40.
+
+	refactoring := InlineMethod
+		from: implementorClass >> methodToInlineSelector
+		intoSendersAndUsages: (Array with: nodeToInline)
+		removeMethod: true.
+
+	refactoring apply.
+
+	expectedNewSourceCode := methodWithUsagesSelector, '
+
+	Dictionary new
+		at: 1 put: (OrderedCollection new
+			add: 1;
+			yourself);
+		yourself'.
 	self assert: (senderClass >> methodWithUsagesSelector) sourceCode equals: expectedNewSourceCode.! !
 
 !InlineMethodTest methodsFor: 'class factory' stamp: 'FB 22/Nov/2021, 9:09:44 pm (UTC)'!
