@@ -1,6 +1,6 @@
-'From Cuis7.9 [latest update: #8176] on 14 September 2026 at 10:32:57 am'!
+'From Cuis7.9 [latest update: #8179] on 14 September 2026 at 10:53:41 am'!
 'Description '!
-!provides: 'RefactoringTests' 1 14!
+!provides: 'RefactoringTests' 1 15!
 !requires: 'DynamicallyCodeCreatingTestSupport' 1 0 nil!
 !requires: '__Refactoring_TestData__' 1 0 nil!
 SystemOrganization addCategory: #RefactoringTests!
@@ -11199,8 +11199,8 @@ test30InlineMethodUsedInBrace
 	expectedNewSourceCode := methodWithUsagesSelector,' ^self m2: { 2. 10. 4 }'.
 	self assert: expectedNewSourceCode equals: (senderClass >> methodWithUsagesSelector) sourceCode.! !
 
-!InlineMethodTest methodsFor: 'tests - successful' stamp: 'FB 5/Jul/2022, 12:18:46 am (UTC)'!
-test31InlineMethodUsedInBraceAddingParentheses
+!InlineMethodTest methodsFor: 'tests - successful' stamp: 'HAW 12/Sep/2026, 10:54:37 pm (UTC)'!
+test31InlineMethodUsedInBraceDoesNotAddParenthesesToABinaryReceiverOfABinaryMessage
 
 	| methodToInlineSource methodToInlineSelector nodeToInline methodWithUsagesSelector methodWithUsagesSource
 	 implementorClass senderClass expectedNewSourceCode refactoring |
@@ -11224,7 +11224,7 @@ test31InlineMethodUsedInBraceAddingParentheses
 	
 	refactoring apply.
 	
-	expectedNewSourceCode := methodWithUsagesSelector,' ^self m2: { 2. (10 + 5) * 3. 4 }'.
+	expectedNewSourceCode := methodWithUsagesSelector,' ^self m2: { 2. 10 + 5 * 3. 4 }'.
 	self assert: expectedNewSourceCode equals: (senderClass >> methodWithUsagesSelector) sourceCode.! !
 
 !InlineMethodTest methodsFor: 'tests - successful' stamp: 'FB 5/Jul/2022, 12:47:48 am (UTC)'!
@@ -11478,6 +11478,62 @@ test39InlineMethodIndentsTheLinesOfTheInlinedStatementLikeTheSenderLine
 			add: 1;
 			yourself);
 		yourself'.
+	self assert: (senderClass >> methodWithUsagesSelector) sourceCode equals: expectedNewSourceCode.! !
+
+!InlineMethodTest methodsFor: 'tests - successful' stamp: 'HAW 12/Sep/2026, 10:52:27 pm (UTC)'!
+test40InlineMethodReturningAUnarySendUsedAsAReceiverDropsTheParentheses
+
+	| methodToInlineSource methodToInlineSelector nodeToInline methodWithUsagesSelector methodWithUsagesSource
+	 implementorClass senderClass expectedNewSourceCode refactoring |
+
+	implementorClass  := self createClassNamed: self implementorClass.
+	senderClass  := self createClassNamed: self senderClass.
+	methodToInlineSelector := 'm1' asSymbol.
+	methodToInlineSource := methodToInlineSelector, ' ^3 factorial'.
+	implementorClass compile: methodToInlineSource.
+
+	methodWithUsagesSelector := 'm2' asSymbol.
+	methodWithUsagesSource := methodWithUsagesSelector, ' ^(self m1) printString'.
+	senderClass compile: methodWithUsagesSource.
+
+	nodeToInline := self messageNodeReferenceOf: senderClass inMethod: methodWithUsagesSelector atIndex: 11.
+
+	refactoring := InlineMethod
+		from: implementorClass >> methodToInlineSelector
+		intoSendersAndUsages: (Array with: nodeToInline)
+		removeMethod: true.
+
+	refactoring apply.
+
+	expectedNewSourceCode := methodWithUsagesSelector, ' ^3 factorial printString'.
+	self assert: (senderClass >> methodWithUsagesSelector) sourceCode equals: expectedNewSourceCode.! !
+
+!InlineMethodTest methodsFor: 'tests - successful' stamp: 'HAW 12/Sep/2026, 10:52:27 pm (UTC)'!
+test41InlineMethodReturningABinarySendUsedAsAKeywordArgumentDoesNotAddParentheses
+
+	| methodToInlineSource methodToInlineSelector nodeToInline methodWithUsagesSelector methodWithUsagesSource
+	 implementorClass senderClass expectedNewSourceCode refactoring |
+
+	implementorClass  := self createClassNamed: self implementorClass.
+	senderClass  := self createClassNamed: self senderClass.
+	methodToInlineSelector := 'm1' asSymbol.
+	methodToInlineSource := methodToInlineSelector, ' ^3 + 4'.
+	implementorClass compile: methodToInlineSource.
+
+	methodWithUsagesSelector := 'm2' asSymbol.
+	methodWithUsagesSource := methodWithUsagesSelector, ' ^self max: self m1'.
+	senderClass compile: methodWithUsagesSource.
+
+	nodeToInline := self messageNodeReferenceOf: senderClass inMethod: methodWithUsagesSelector atIndex: 20.
+
+	refactoring := InlineMethod
+		from: implementorClass >> methodToInlineSelector
+		intoSendersAndUsages: (Array with: nodeToInline)
+		removeMethod: true.
+
+	refactoring apply.
+
+	expectedNewSourceCode := methodWithUsagesSelector, ' ^self max: 3 + 4'.
 	self assert: (senderClass >> methodWithUsagesSelector) sourceCode equals: expectedNewSourceCode.! !
 
 !InlineMethodTest methodsFor: 'class factory' stamp: 'FB 22/Nov/2021, 9:09:44 pm (UTC)'!
