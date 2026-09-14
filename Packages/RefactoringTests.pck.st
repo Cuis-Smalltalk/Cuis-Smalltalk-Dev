@@ -1,6 +1,6 @@
-'From Cuis7.9 [latest update: #8168] on 12 September 2026 at 3:56:52 pm'!
+'From Cuis7.9 [latest update: #8171] on 14 September 2026 at 9:09:00 am'!
 'Description '!
-!provides: 'RefactoringTests' 1 8!
+!provides: 'RefactoringTests' 1 9!
 !requires: 'DynamicallyCodeCreatingTestSupport' 1 0 nil!
 !requires: '__Refactoring_TestData__' 1 0 nil!
 SystemOrganization addCategory: #RefactoringTests!
@@ -2151,6 +2151,22 @@ test60_DoesNotFailsWhenNotHavingAMessage
 			to: nil ].
 	
 	! !
+
+!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 12/Sep/2026, 6:10:30 pm (UTC)'!
+test61FindsTheReceiverOfACascadeOnce
+
+	| replacements |
+
+	self
+		compile: 'm1 ^ (3 + 4) factorial; yourself'
+		andFind: (7 to: 11).
+
+	replacements := finder replacements.
+
+	self assert: replacements size equals: 1.
+	self
+		assertAnyReplacementOf: replacements
+		isOfSourceMethodAndHasInterval: (7 to: 11)! !
 
 !ExtractMethodFinderTest methodsFor: 'setup/teardown' stamp: 'HAW 2/Sep/2021, 10:02:12 pm (UTC)'!
 setUp
@@ -6530,6 +6546,22 @@ test161_ExtractedCodeIsIndentedAsAMethodBodyWhateverItsIndentationWas
 
 	self
 		assertExtracting: codeToExtract from: originalCode named: (Message selector: #m2)
+		defines: newMethodCode andUpdates: updatedCode! !
+
+!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'HAW 12/Sep/2026, 6:01:45 pm (UTC)'!
+test165_ExtractingTheReceiverOfACascadeToAKeywordMessageAddsParentheses
+
+	| codeToExtract newMethodCode originalCode updatedCode |
+
+	codeToExtract _ '2 + arg'.
+	originalCode _ 'm1: arg ^ (' , codeToExtract , ') printString; yourself'.
+	newMethodCode _ 'm2: arg
+
+	^ ' , codeToExtract.
+	updatedCode _ 'm1: arg ^ (self m2: arg) printString; yourself'.
+
+	self
+		assertExtracting: codeToExtract from: originalCode named: (Message selector: #m2: arguments: #('arg'))
 		defines: newMethodCode andUpdates: updatedCode! !
 
 !ExtractMethodTest methodsFor: 'tests - validations' stamp: 'JEC 13/Apr/2026, 1:46:22 pm (UTC)'!
