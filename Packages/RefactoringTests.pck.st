@@ -1,6 +1,6 @@
-'From Cuis7.9 [latest update: #8175] on 14 September 2026 at 9:34:13 am'!
+'From Cuis7.9 [latest update: #8175] on 14 September 2026 at 10:02:29 am'!
 'Description '!
-!provides: 'RefactoringTests' 1 12!
+!provides: 'RefactoringTests' 1 13!
 !requires: 'DynamicallyCodeCreatingTestSupport' 1 0 nil!
 !requires: '__Refactoring_TestData__' 1 0 nil!
 SystemOrganization addCategory: #RefactoringTests!
@@ -4715,6 +4715,18 @@ methodNodeOf: aSourceCode
 
 	^(classToReplaceIn >> selector) notOptimizedMethodNode! !
 
+!ExpressionReplacementTest methodsFor: 'exercising' stamp: 'HAW 12/Sep/2026, 10:18:42 pm (UTC)'!
+replacementOf: aPiece in: aSourceCode withPrecedence: aPrecedence
+
+	| start |
+
+	start := aSourceCode indexOfSubCollection: aPiece startingAt: 1.
+
+	^ExpressionReplacement
+		of: (start to: start + aPiece size - 1) asSourceCodeInterval
+		in: (self methodNodeOf: aSourceCode)
+		withPrecedence: aPrecedence! !
+
 !ExpressionReplacementTest methodsFor: 'exercising' stamp: 'HAW 12/Sep/2026, 9:03:22 pm (UTC)'!
 replacing: aPiece in: aSourceCode by: anExpression withPrecedence: aPrecedence
 
@@ -4878,6 +4890,63 @@ test15AnExpressionReplacingSeveralStatementsIsNotParenthesized
 		withPrecedence: ParseNode keywordPrecedence
 		gives: 'm1 true ifTrue: [ self m2: 1 ]'! !
 
+!ExpressionReplacementTest methodsFor: 'tests' stamp: 'HAW 12/Sep/2026, 10:18:42 pm (UTC)'!
+test16AnExpressionKeptInPlaceLosesTheParenthesesItNoLongerNeeds
+
+	self
+		assertReparenthesizing: 'self m1'
+		in: 'm2 ^(self m1) yourself'
+		withPrecedence: ParseNode unaryPrecedence
+		gives: 'm2 ^self m1 yourself'! !
+
+!ExpressionReplacementTest methodsFor: 'tests' stamp: 'HAW 12/Sep/2026, 10:18:42 pm (UTC)'!
+test17AnExpressionKeptInPlaceGainsTheParenthesesItNeeds
+
+	self
+		assertReparenthesizing: 'self m1'
+		in: 'm2 ^self m1 yourself'
+		withPrecedence: ParseNode keywordPrecedence
+		gives: 'm2 ^(self m1) yourself'! !
+
+!ExpressionReplacementTest methodsFor: 'tests' stamp: 'HAW 12/Sep/2026, 10:18:42 pm (UTC)'!
+test18TheParenthesesEditsAloneLeaveOnePairWhenTheExpressionNeedsIt
+
+	self
+		assertTheParenthesesEditsOf: 'self m1'
+		in: 'm2 ^( ( self m1 ) ) yourself'
+		withPrecedence: ParseNode keywordPrecedence
+		give: 'm2 ^(self m1) yourself'! !
+
+!ExpressionReplacementTest methodsFor: 'tests' stamp: 'HAW 12/Sep/2026, 10:18:42 pm (UTC)'!
+test19TheParenthesesEditsAloneRemoveThePairsTheExpressionDoesNotNeed
+
+	self
+		assertTheParenthesesEditsOf: 'self m1'
+		in: 'm2 ^( ( self m1 ) ) yourself'
+		withPrecedence: ParseNode unaryPrecedence
+		give: 'm2 ^self m1 yourself'! !
+
+!ExpressionReplacementTest methodsFor: 'tests' stamp: 'HAW 12/Sep/2026, 10:21:21 pm (UTC)'!
+test20TheIntervalMayIncludeTheParenthesesAroundTheExpression
+
+	self
+		assertReparenthesizing: '(self m1)'
+		in: 'm2 ^(self m1) yourself'
+		withPrecedence: ParseNode unaryPrecedence
+		gives: 'm2 ^self m1 yourself'! !
+
+!ExpressionReplacementTest methodsFor: 'assertions' stamp: 'HAW 12/Sep/2026, 10:18:42 pm (UTC)'!
+assertReparenthesizing: aPiece in: aSourceCode withPrecedence: aPrecedence gives: anExpectedSourceCode
+
+	| replacedSourceCode |
+
+	replacedSourceCode := (self
+		replacementOf: aPiece
+		in: aSourceCode
+		withPrecedence: aPrecedence) value.
+
+	self assert: replacedSourceCode equals: anExpectedSourceCode! !
+
 !ExpressionReplacementTest methodsFor: 'assertions' stamp: 'HAW 12/Sep/2026, 9:09:02 pm (UTC)'!
 assertReplacing: aPiece in: aSourceCode by: anExpression withPrecedence: aPrecedence gives: anExpectedSourceCode
 
@@ -4890,6 +4959,20 @@ assertReplacing: aPiece in: aSourceCode by: anExpression withPrecedence: aPreced
 		withPrecedence: aPrecedence.
 
 	self assert: replacedSourceCode equals: anExpectedSourceCode! !
+
+!ExpressionReplacementTest methodsFor: 'assertions' stamp: 'HAW 12/Sep/2026, 10:18:42 pm (UTC)'!
+assertTheParenthesesEditsOf: aPiece in: aSourceCode withPrecedence: aPrecedence give: anExpectedSourceCode
+
+	| replacement |
+
+	replacement := self
+		replacementOf: aPiece
+		in: aSourceCode
+		withPrecedence: aPrecedence.
+
+	self
+		assert: (aSourceCode copyReplacing: replacement parenthesesEdits)
+		equals: anExpectedSourceCode! !
 
 !ExtractAsParameterTest methodsFor: 'assertions' stamp: 'HAW 22/Sep/2021, 8:02:51 pm (UTC)'!
 assertCanExtractAsParameter: toExtract
@@ -13925,6 +14008,72 @@ test18LastKeywordBeforeAClosingParenthesisIsRemovedWithTheSpaceBeforeIt
 	senderMethod := classToRefactor compiledMethodAt: senderSelector.
 	self assert: (senderMethod sendsSelector: keywordToKeep asSymbol).
 	self assert: senderMethod sourceCode equals: (senderSelector asString,' ^(self ', keywordToKeep, ' 1) yourself')! !
+
+!RemoveParameterTest methodsFor: 'tests' stamp: 'HAW 12/Sep/2026, 10:18:42 pm (UTC)'!
+test19TheParenthesesAroundASendLeftUnaryAreRemoved
+
+	| classToRefactor selectorToRemoveParameterFrom parameterToRemove refactoring senderSelector senderMethod |
+
+	classToRefactor := self createClassNamed: self classToRefactorName.
+	selectorToRemoveParameterFrom := 'm1:' asSymbol.
+	parameterToRemove := 'parameter1'.
+	senderSelector := 'sender' asSymbol.
+	classToRefactor compile: selectorToRemoveParameterFrom, parameterToRemove.
+	classToRefactor compile: senderSelector asString, ' ^(self ', selectorToRemoveParameterFrom, ' 1) yourself'.
+
+	refactoring := RemoveParameter
+			named: parameterToRemove
+			from: classToRefactor>>selectorToRemoveParameterFrom
+			implementors: { classToRefactor>>selectorToRemoveParameterFrom }
+			senders: {classToRefactor>>senderSelector}.
+	refactoring apply.
+
+	senderMethod := classToRefactor compiledMethodAt: senderSelector.
+	self assert: senderMethod sourceCode equals: (senderSelector asString, ' ^self m1 yourself')! !
+
+!RemoveParameterTest methodsFor: 'tests' stamp: 'HAW 12/Sep/2026, 10:18:42 pm (UTC)'!
+test20TheParenthesesAroundASendLeftUnaryAsAnArgumentAreRemoved
+
+	| classToRefactor selectorToRemoveParameterFrom parameterToRemove refactoring senderSelector senderMethod |
+
+	classToRefactor := self createClassNamed: self classToRefactorName.
+	selectorToRemoveParameterFrom := 'm1:' asSymbol.
+	parameterToRemove := 'parameter1'.
+	senderSelector := 'sender' asSymbol.
+	classToRefactor compile: selectorToRemoveParameterFrom, parameterToRemove.
+	classToRefactor compile: senderSelector asString, ' ^self foo: (self ', selectorToRemoveParameterFrom, ' 1)'.
+
+	refactoring := RemoveParameter
+			named: parameterToRemove
+			from: classToRefactor>>selectorToRemoveParameterFrom
+			implementors: { classToRefactor>>selectorToRemoveParameterFrom }
+			senders: {classToRefactor>>senderSelector}.
+	refactoring apply.
+
+	senderMethod := classToRefactor compiledMethodAt: senderSelector.
+	self assert: senderMethod sourceCode equals: (senderSelector asString, ' ^self foo: self m1')! !
+
+!RemoveParameterTest methodsFor: 'tests' stamp: 'HAW 12/Sep/2026, 10:18:42 pm (UTC)'!
+test21EveryPairOfParenthesesAroundASendLeftUnaryIsRemoved
+
+	| classToRefactor selectorToRemoveParameterFrom parameterToRemove refactoring senderSelector senderMethod |
+
+	classToRefactor := self createClassNamed: self classToRefactorName.
+	selectorToRemoveParameterFrom := 'm1:' asSymbol.
+	parameterToRemove := 'parameter1'.
+	senderSelector := 'sender' asSymbol.
+	classToRefactor compile: selectorToRemoveParameterFrom, parameterToRemove.
+	classToRefactor compile: senderSelector asString, ' ^( (self ', selectorToRemoveParameterFrom, ' 1) ) yourself'.
+
+	refactoring := RemoveParameter
+			named: parameterToRemove
+			from: classToRefactor>>selectorToRemoveParameterFrom
+			implementors: { classToRefactor>>selectorToRemoveParameterFrom }
+			senders: {classToRefactor>>senderSelector}.
+	refactoring apply.
+
+	senderMethod := classToRefactor compiledMethodAt: senderSelector.
+	self assert: senderMethod sourceCode equals: (senderSelector asString, ' ^self m1 yourself')! !
 
 !RemoveParameterTest methodsFor: 'class factory' stamp: 'HAW 1/Sep/2018, 4:24:23 pm (UTC)'!
 classToRefactorName
