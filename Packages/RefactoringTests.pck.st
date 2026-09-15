@@ -1,6 +1,6 @@
-'From Cuis7.9 [latest update: #8181] on 14 September 2026 at 2:03:00 pm'!
+'From Cuis7.9 [latest update: #8183] on 15 September 2026 at 11:21:50 am'!
 'Description '!
-!provides: 'RefactoringTests' 1 16!
+!provides: 'RefactoringTests' 1 17!
 !requires: 'DynamicallyCodeCreatingTestSupport' 1 0 nil!
 !requires: '__Refactoring_TestData__' 1 0 nil!
 SystemOrganization addCategory: #RefactoringTests!
@@ -5019,6 +5019,23 @@ test21ASecondReferenceToTheSameVariableIsAnArgumentEvenThoughItSharesTheNode
 		withPrecedence: ParseNode binaryPrecedence) value.
 
 	self assert: replacedSourceCode equals: 'm1: t ^t + (5 * 6)'! !
+
+!ExpressionReplacementTest methodsFor: 'tests' stamp: 'HAW 14/Sep/2026, 6:10:01 pm (UTC)'!
+test22TheEditsInsideARemovedRangeAreDropped
+
+	| edits |
+
+	edits := ChangeSelector new withoutTheRangesToNewStringsInsideAnotherOf: {
+		(13 to: 28) -> ''.
+		(17 to: 16) -> '('.
+		(23 to: 27) -> ''.
+		(28 to: 28) -> ')'.
+		(29 to: 28) -> ')'.
+		(8 to: 7) -> '(' }.
+
+	self
+		assert: (edits collect: [ :each | each key ])
+		equals: { 13 to: 28. 29 to: 28. 8 to: 7 }! !
 
 !ExpressionReplacementTest methodsFor: 'assertions' stamp: 'HAW 12/Sep/2026, 10:18:42 pm (UTC)'!
 assertReparenthesizing: aPiece in: aSourceCode withPrecedence: aPrecedence gives: anExpectedSourceCode
@@ -14234,6 +14251,28 @@ test21EveryPairOfParenthesesAroundASendLeftUnaryIsRemoved
 
 	senderMethod := classToRefactor compiledMethodAt: senderSelector.
 	self assert: senderMethod sourceCode equals: (senderSelector asString, ' ^self m1 yourself')! !
+
+!RemoveParameterTest methodsFor: 'tests' stamp: 'HAW 14/Sep/2026, 4:18:27 pm (UTC)'!
+test22ANestedSendOfTheSameSelectorIsLeftUnaryAtBothLevels
+
+	| classToRefactor selectorToRemoveParameterFrom parameterToRemove refactoring senderSelector senderMethod |
+
+	classToRefactor := self createClassNamed: self classToRefactorName.
+	selectorToRemoveParameterFrom := 'm1:' asSymbol.
+	parameterToRemove := 'parameter1'.
+	senderSelector := 'sender' asSymbol.
+	classToRefactor compile: selectorToRemoveParameterFrom, parameterToRemove.
+	classToRefactor compile: senderSelector asString, ' self m1: (self m1: 1)'.
+
+	refactoring := RemoveParameter
+			named: parameterToRemove
+			from: classToRefactor>>selectorToRemoveParameterFrom
+			implementors: { classToRefactor>>selectorToRemoveParameterFrom }
+			senders: {classToRefactor>>senderSelector}.
+	refactoring apply.
+
+	senderMethod := classToRefactor compiledMethodAt: senderSelector.
+	self assert: senderMethod sourceCode equals: (senderSelector asString, ' self m1')! !
 
 !RemoveParameterTest methodsFor: 'class factory' stamp: 'HAW 1/Sep/2018, 4:24:23 pm (UTC)'!
 classToRefactorName
