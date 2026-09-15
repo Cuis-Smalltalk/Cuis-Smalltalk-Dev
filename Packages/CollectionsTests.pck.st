@@ -1,6 +1,6 @@
-'From Cuis7.9 [latest update: #8145] on 24 August 2026 at 11:20:52 am'!
+'From Cuis7.9 [latest update: #8183] on 15 September 2026 at 11:17:04 am'!
 'Description '!
-!provides: 'CollectionsTests' 1 0!
+!provides: 'CollectionsTests' 1 1!
 SystemOrganization addCategory: #CollectionsTests!
 SystemOrganization addCategory: #'CollectionsTests-Arrayed'!
 SystemOrganization addCategory: #'CollectionsTests-Streams'!
@@ -480,7 +480,7 @@ testAt
 	self assert: ((0 to: 2.4 by: 0.1) at: 25) = 2.4.
 	self assert: (0 to: 2.4 by: 0.1) last = 2.4.! !
 
-!IntervalTest methodsFor: 'testing' stamp: 'jmv 18/Dec/2018, 2:56:59 pm (UTC)'!
+!IntervalTest methodsFor: 'testing' stamp: 'jmv 15/Sep/2026, 1:53:25 pm (UTC)'!
 testFloatInterval
 	"
 	IntervalTest new testFloatInterval
@@ -489,6 +489,9 @@ testFloatInterval
 	self assert: (0 to: 2.4 by: 0.1) size = 25.
 	self assert: (0 to: 2.4 by: 0.1) first = 0.
 	self assert: (0 to: 2.4 by: 0.1) last = 2.4.
+	self assert: (2.4 to: 0 by: -0.1) size = 25.
+	self assert: (2.4 to: 0 by: -0.1) first = 2.4.
+	self assert: (2.4 to: 0 by: -0.1) last = 0.
 
 	2 to: 200 do: [ :n |
 		self assert: (0.0 to: 1.0 count: n) size = n.
@@ -516,6 +519,23 @@ testFloatToByDo
 		1 to: toByDo size do: [ :i |
 			self assert: (toByDo at: i) = (interval at: i) ]]! !
 
+!IntervalTest methodsFor: 'testing' stamp: 'jmv 15/Sep/2026, 1:51:16 pm (UTC)'!
+testFloatToByDo_negInc
+	"
+	IntervalTest new testFloatToByDo_negInc
+	"
+	| interval toByDo |
+
+	"See comment at #to:by:do:"
+	self shouldFail: [
+		interval := 2.4 to: 0 by: -0.1.
+		toByDo := Array streamContents: [ :strm |
+			2.4 to: 0 by: -0.1 do: [ :each |
+				strm nextPut: each ]].
+		self assert: toByDo size = interval size.
+		1 to: toByDo size do: [ :i |
+			self assert: (toByDo at: i) = (interval at: i) ]]! !
+
 !IntervalTest methodsFor: 'testing' stamp: 'jmv 27/Mar/2016, 9:18:00 pm (UTC)'!
 testIntegerInterval
 	"
@@ -527,6 +547,18 @@ testIntegerInterval
 	z _ 0.
 	(2 to: 5 by: 2) do: [ :i | z _ i ].
 	self assert: z = 4! !
+
+!IntervalTest methodsFor: 'testing' stamp: 'jmv 15/Sep/2026, 1:48:31 pm (UTC)'!
+testIntegerInterval_negInc
+	"
+	IntervalTest new testIntegerInterval_negInc
+	"
+	| z |
+	self assert: (5 to: 2 by: -2) size = 2.
+	self assert: (5 to: 2 by: -2) last = 3.
+	z := 0.
+	(5 to: 2 by: -2) do: [ :i | z := i ].
+	self assert: z = 3.! !
 
 !IntervalTest methodsFor: 'testing' stamp: 'jmv 27/Apr/2016, 6:29:00 pm (UTC)'!
 testIntegerToByDo
@@ -542,7 +574,21 @@ testIntegerToByDo
 	1 to: toByDo size do: [ :i |
 		self assert: (toByDo at: i) = (interval at: i) ]! !
 
-!IntervalTest methodsFor: 'test - includes' stamp: 'HAW 2/May/2020, 3:43:33 pm (UTC)'!
+!IntervalTest methodsFor: 'testing' stamp: 'jmv 15/Sep/2026, 1:49:03 pm (UTC)'!
+testIntegerToByDo_negInc
+	"
+	IntervalTest new testIntegerToByDo_negInc
+	"
+	| interval toByDo |
+	interval := 5 to: 2 by: -2.
+	toByDo := Array streamContents: [ :strm |
+		5 to: 2 by: -2 do: [ :each |
+			strm nextPut: each ]].
+	self assert: toByDo size = interval size.
+	1 to: toByDo size do: [ :i |
+		self assert: (toByDo at: i) = (interval at: i) ].! !
+
+!IntervalTest methodsFor: 'tests - includes' stamp: 'HAW 2/May/2020, 3:43:33 pm (UTC)'!
 testDoesNotIncludeNumbersOutsideTheInInterval
 
 	| from1To10 |
@@ -552,12 +598,12 @@ testDoesNotIncludeNumbersOutsideTheInInterval
 	self deny: (from1To10 includes: 0).
 	self deny: (from1To10 includes: 11)! !
 
-!IntervalTest methodsFor: 'test - includes' stamp: 'HAW 2/May/2020, 3:35:03 pm (UTC)'!
+!IntervalTest methodsFor: 'tests - includes' stamp: 'HAW 2/May/2020, 3:35:03 pm (UTC)'!
 testDoesNotIncludeObjectsThatAreNotNumbers
 
 	self deny: ((1 to: 10) includes: $a)! !
 
-!IntervalTest methodsFor: 'test - includes' stamp: 'HAW 2/May/2020, 3:53:40 pm (UTC)'!
+!IntervalTest methodsFor: 'tests - includes' stamp: 'HAW 2/May/2020, 3:53:40 pm (UTC)'!
 testDoesNotIncludedNumbersThatAreInRangeButNotReachedByTheStep
 
 	| from1To10By2 |
@@ -569,7 +615,7 @@ testDoesNotIncludedNumbersThatAreInRangeButNotReachedByTheStep
 	self deny: (from1To10By2 includes: 6).
 	self deny: (from1To10By2 includes: 10).! !
 
-!IntervalTest methodsFor: 'test - includes' stamp: 'HAW 2/May/2020, 3:54:48 pm (UTC)'!
+!IntervalTest methodsFor: 'tests - includes' stamp: 'HAW 2/May/2020, 3:54:48 pm (UTC)'!
 testDoesNotIncludedNumbersThatAreInRangeButNotReachedByTheStepWithReversedIntervals
 
 	| from10To1ByMinus2 |
@@ -581,7 +627,7 @@ testDoesNotIncludedNumbersThatAreInRangeButNotReachedByTheStepWithReversedInterv
 	self deny: (from10To1ByMinus2 includes: 5).
 	self deny: (from10To1ByMinus2 includes: 9).! !
 
-!IntervalTest methodsFor: 'test - includes' stamp: 'HAW 2/May/2020, 3:43:03 pm (UTC)'!
+!IntervalTest methodsFor: 'tests - includes' stamp: 'HAW 2/May/2020, 3:43:03 pm (UTC)'!
 testIncludedNumbersRespectAStepDifferentToOne
 
 	| from1To10By2 |
@@ -592,7 +638,7 @@ testIncludedNumbersRespectAStepDifferentToOne
 	self assert: (from1To10By2 includes: 5).
 	self assert: (from1To10By2 includes: 9).! !
 
-!IntervalTest methodsFor: 'test - includes' stamp: 'HAW 2/May/2020, 3:55:55 pm (UTC)'!
+!IntervalTest methodsFor: 'tests - includes' stamp: 'HAW 2/May/2020, 3:55:55 pm (UTC)'!
 testIncludedNumbersRespectNegativeSteps
 
 	| from10To1ByMinus2 |
@@ -603,7 +649,7 @@ testIncludedNumbersRespectNegativeSteps
 	self assert: (from10To1ByMinus2 includes: 6).
 	self assert: (from10To1ByMinus2 includes: 2).! !
 
-!IntervalTest methodsFor: 'test - includes' stamp: 'HAW 2/May/2020, 3:43:26 pm (UTC)'!
+!IntervalTest methodsFor: 'tests - includes' stamp: 'HAW 2/May/2020, 3:43:26 pm (UTC)'!
 testIncludesNumbersInsideTheInterval
 
 	| from1To10 |
@@ -614,7 +660,7 @@ testIncludesNumbersInsideTheInterval
 	self assert: (from1To10 includes: 5).
 	self assert: (from1To10 includes: 10).! !
 
-!IntervalTest methodsFor: 'test - includes' stamp: 'HAW 2/May/2020, 3:43:21 pm (UTC)'!
+!IntervalTest methodsFor: 'tests - includes' stamp: 'HAW 2/May/2020, 3:43:21 pm (UTC)'!
 testIncludesNumbersInsideTheIntervalEvenForReversedIntervals
 
 	| from10To1 |
@@ -625,7 +671,7 @@ testIncludesNumbersInsideTheIntervalEvenForReversedIntervals
 	self assert: (from10To1 includes: 5).
 	self assert: (from10To1 includes: 10).! !
 
-!IntervalTest methodsFor: 'test - includes' stamp: 'HAW 2/May/2020, 4:01:44 pm (UTC)'!
+!IntervalTest methodsFor: 'tests - includes' stamp: 'HAW 2/May/2020, 4:01:44 pm (UTC)'!
 testIntervalWithOneNumberAndNegativeStepBiggerThanOneIncludeOnlyThatNumber
 
 	| from1To1ByMinus2 |
@@ -636,7 +682,7 @@ testIntervalWithOneNumberAndNegativeStepBiggerThanOneIncludeOnlyThatNumber
 	self deny: (from1To1ByMinus2 includes: -1).
 	self deny: (from1To1ByMinus2 includes: 3).! !
 
-!IntervalTest methodsFor: 'test - includes' stamp: 'HAW 2/May/2020, 4:01:54 pm (UTC)'!
+!IntervalTest methodsFor: 'tests - includes' stamp: 'HAW 2/May/2020, 4:01:54 pm (UTC)'!
 testIntervalWithOneNumberAndNegativeStepIncludeOnlyThatNumber
 
 	| from1To1ByMinus1 |
@@ -647,7 +693,7 @@ testIntervalWithOneNumberAndNegativeStepIncludeOnlyThatNumber
 	self deny: (from1To1ByMinus1 includes: 0).
 	self deny: (from1To1ByMinus1 includes: 2).! !
 
-!IntervalTest methodsFor: 'test - includes' stamp: 'HAW 2/May/2020, 4:00:46 pm (UTC)'!
+!IntervalTest methodsFor: 'tests - includes' stamp: 'HAW 2/May/2020, 4:00:46 pm (UTC)'!
 testIntervalWithOneNumberAndStepBiggerThanOneIncludesOnlyTheNumber
 
 	| from1To1By2 |
@@ -658,7 +704,7 @@ testIntervalWithOneNumberAndStepBiggerThanOneIncludesOnlyTheNumber
 	self deny: (from1To1By2 includes: -1).
 	self deny: (from1To1By2 includes: 3).! !
 
-!IntervalTest methodsFor: 'test - includes' stamp: 'HAW 2/May/2020, 3:59:06 pm (UTC)'!
+!IntervalTest methodsFor: 'tests - includes' stamp: 'HAW 2/May/2020, 3:59:06 pm (UTC)'!
 testIntervalWithOneNumberIncludesOnlyTheNumber
 
 	| from1To1 |
@@ -709,35 +755,98 @@ testIncludesAllOfOtherTypeOfCollection
 
 	self assert: ((1 to: 9 by: 2) includesAllOf: {1. 3. 5. 7. 9})! !
 
-!IntervalTest methodsFor: 'test - intersectsRange' stamp: 'HAW 2/Nov/2024, 2:51:17 pm (UTC)'!
+!IntervalTest methodsFor: 'tests - includesAll' stamp: 'jmv 15/Sep/2026, 1:58:26 pm (UTC)'!
+testIncludesAllWithNegativeIncrement
+	"
+	self new testIncludesAllWithNegativeIncrement
+	"
+	self assert: ((1 to: 9 by: 2) includesAllOf: (9 to: 3 by: -2)).! !
+
+!IntervalTest methodsFor: 'tests - intersectsRange' stamp: 'HAW 2/Nov/2024, 2:51:17 pm (UTC)'!
 testDoesNotIntersectRangeWhen_FirstAfter_LastAfter
 
 	self deny: ((5 to: 10) intersectsRange: (11 to: 12))! !
 
-!IntervalTest methodsFor: 'test - intersectsRange' stamp: 'HAW 2/Nov/2024, 2:51:25 pm (UTC)'!
+!IntervalTest methodsFor: 'tests - intersectsRange' stamp: 'HAW 2/Nov/2024, 2:51:25 pm (UTC)'!
 testDoesNotIntersectRangeWhen_FirstBefore_LastBefore
 
 	self deny: ((5 to: 10) intersectsRange: (1 to: 4))! !
 
-!IntervalTest methodsFor: 'test - intersectsRange' stamp: 'HAW 2/Nov/2024, 2:51:55 pm (UTC)'!
+!IntervalTest methodsFor: 'tests - intersectsRange' stamp: 'HAW 2/Nov/2024, 2:51:55 pm (UTC)'!
 testIntersectsRangeWhen_FirstBefore_LastAfter
 
 	self assert: ((5 to: 10) intersectsRange: (4 to: 11))! !
 
-!IntervalTest methodsFor: 'test - intersectsRange' stamp: 'HAW 2/Nov/2024, 2:51:40 pm (UTC)'!
+!IntervalTest methodsFor: 'tests - intersectsRange' stamp: 'HAW 2/Nov/2024, 2:51:40 pm (UTC)'!
 testIntersectsRangeWhen_FirstBefore_LastIncluded
 
 	self assert: ((5 to: 10) intersectsRange: (1 to: 5))! !
 
-!IntervalTest methodsFor: 'test - intersectsRange' stamp: 'HAW 2/Nov/2024, 2:51:47 pm (UTC)'!
+!IntervalTest methodsFor: 'tests - intersectsRange' stamp: 'HAW 2/Nov/2024, 2:51:47 pm (UTC)'!
 testIntersectsRangeWhen_FirstIncluded_LastAfter
 
 	self assert: ((5 to: 10) intersectsRange: (5 to: 11))! !
 
-!IntervalTest methodsFor: 'test - intersectsRange' stamp: 'HAW 2/Nov/2024, 2:52:03 pm (UTC)'!
+!IntervalTest methodsFor: 'tests - intersectsRange' stamp: 'HAW 2/Nov/2024, 2:52:03 pm (UTC)'!
 testIntersectsRangeWhen_FirstIncluded_LastIncluded
 
 	self assert: ((5 to: 10) intersectsRange: (5 to: 10))! !
+
+!IntervalTest methodsFor: 'tests - intersectsRange' stamp: 'jmv 15/Sep/2026, 2:01:17 pm (UTC)'!
+testIntersectsRangeWhenEmptyIntersection
+
+	self assert: ((5 to: 11 by: 2) intersectsRange: (6 to: 10 by: 2)).! !
+
+!IntervalTest methodsFor: 'tests - intersectsRange' stamp: 'jmv 15/Sep/2026, 2:03:05 pm (UTC)'!
+testIntersectsRangeWithNegativeIncrement
+
+	self assert: ((5 to: 11 by: 2) intersectsRange: (10 to: 4 by: -2)).
+	self assert: ((5 to: 11 by: 2) intersectsRange: (12 to: 6 by: -2)).! !
+
+!IntervalTest methodsFor: 'tests - strict inclusion' stamp: 'jmv 15/Sep/2026, 1:38:07 pm (UTC)'!
+testStrictlyIncludesRange
+	"
+	self new testStrictlyIncludesRange
+	"
+	self assert: ((5 to: 10) strictlyIncludesRange: (6 to: 10)).
+	self assert: ((5 to: 10) strictlyIncludesRange: (5 to: 9)).
+	self assert: ((5 to: 10) strictlyIncludesRange: (6 to: 9)).
+	
+	self deny: ((5 to: 10) strictlyIncludesRange: (5 to: 10)).
+	self deny: ((5 to: 10) strictlyIncludesRange: (4 to: 10)).
+	self deny: ((5 to: 10) strictlyIncludesRange: (5 to: 11)).
+	self deny: ((5 to: 10) strictlyIncludesRange: (4 to: 11)).
+	
+	self assert: ((5 to: 10) strictlyIncludesRange: (6 to: 10 by: 2)).
+	self assert: ((5 to: 10) strictlyIncludesRange: (5 to: 9 by: 2)).
+	self assert: ((5 to: 10) strictlyIncludesRange: (6 to: 9 by: 2)).
+	
+	self deny: ((5 to: 9 by: 2) strictlyIncludesRange: (5 to: 9)).
+	self deny: ((5 to: 9) strictlyIncludesRange: (5 to: 9 by: 2)).
+	
+	self deny: ((5 to: 9 by: 2) strictlyIncludesRange: (6 to: 10)).
+	self assert: ((5 to: 9 by: 2) strictlyIncludesRange: (6 to: 9)).
+	
+	self deny: ((5 to: 9 by: 2) strictlyIncludesRange: (6 to: 10 by: 2)).
+	self assert: ((5 to: 9 by: 2) strictlyIncludesRange: (7 to: 9 by: 2)).
+	self assert: ((5 to: 9 by: 2) strictlyIncludesRange: (6 to: 8 by: 2)).! !
+
+!IntervalTest methodsFor: 'tests - strict inclusion' stamp: 'jmv 15/Sep/2026, 2:07:10 pm (UTC)'!
+testStrictlyIncludesRangeWithNegativeIncrement
+	"
+	self new testStrictlyIncludesRangeWithNegativeIncrement
+	"
+	self assert: ((5 to: 10) strictlyIncludesRange: (10 to: 6 by: -1)).
+	self assert: ((5 to: 10) strictlyIncludesRange: (9 to: 5 by: -1)).
+	self assert: ((5 to: 10) strictlyIncludesRange: (9 to: 6 by: -1)).
+	
+	self assert: ((10 to: 5 by: -1) strictlyIncludesRange: (6 to: 10)).
+	self assert: ((10 to: 5 by: -1) strictlyIncludesRange: (5 to: 9)).
+	self assert: ((10 to: 5 by: -1) strictlyIncludesRange: (6 to: 9)).
+	
+	self assert: ((10 to: 5 by: -1) strictlyIncludesRange: (10 to: 6 by: -1)).
+	self assert: ((10 to: 5 by: -1) strictlyIncludesRange: (9 to: 5 by: -1)).
+	self assert: ((10 to: 5 by: -1) strictlyIncludesRange: (9 to: 6 by: -1)).! !
 
 !OrderedCollectionTest methodsFor: 'tests' stamp: 'jpb 3/Aug/2019, 3:18:24 am (UTC)'!
 testIsCollection
