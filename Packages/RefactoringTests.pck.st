@@ -1,6 +1,6 @@
-'From Cuis7.9 [latest update: #8183] on 15 September 2026 at 11:21:50 am'!
+'From Cuis7.9 [latest update: #8185] on 15 September 2026 at 11:33:49 am'!
 'Description '!
-!provides: 'RefactoringTests' 1 17!
+!provides: 'RefactoringTests' 1 18!
 !requires: 'DynamicallyCodeCreatingTestSupport' 1 0 nil!
 !requires: '__Refactoring_TestData__' 1 0 nil!
 SystemOrganization addCategory: #RefactoringTests!
@@ -15783,6 +15783,46 @@ test33DoNotRenameSendersAndImplementorsWhoseCompilerClassIsDifferentToCompiler
 	self assertWasNotRenamedInClass: anotherClassSendingMessage.
 	self assertWasRenamedInClass: anotherClassSendingMessage class.
 	! !
+
+!RenameSelectorTest methodsFor: 'tests' stamp: 'HAW 15/Sep/2026, 12:11:13 am (UTC)'!
+test34RenamingABinaryToAKeywordAddsTheParenthesesTheSendNeeds
+
+	| rename |
+
+	oldSelector := '&&' asSymbol.
+	newSelector := 'abc:' asSymbol.
+	classToRefactor := self createClassNamed: self classToRefactorName.
+	classToRefactor compile: oldSelector asString, ' aParameter ^aParameter'.
+	classToRefactor compile: 'm1 ^self ', oldSelector asString, ' 1 * 2'.
+
+	rename := RenameSelector
+		from: oldSelector
+		to: newSelector
+		implementors: (Array with: classToRefactor>>oldSelector)
+		senders: (Array with: classToRefactor>>#m1).
+	rename apply.
+
+	self assert: (classToRefactor sourceCodeAt: #m1) equals: 'm1 ^(self abc: 1) * 2'! !
+
+!RenameSelectorTest methodsFor: 'tests' stamp: 'HAW 15/Sep/2026, 12:11:13 am (UTC)'!
+test35RenamingAKeywordToABinaryDropsTheParenthesesTheSendNoLongerNeeds
+
+	| rename |
+
+	oldSelector := 'abc:' asSymbol.
+	newSelector := '&&' asSymbol.
+	classToRefactor := self createClassNamed: self classToRefactorName.
+	classToRefactor compile: oldSelector asString, ' aParameter ^aParameter'.
+	classToRefactor compile: 'm1 ^(self ', oldSelector asString, ' 1) * 2'.
+
+	rename := RenameSelector
+		from: oldSelector
+		to: newSelector
+		implementors: (Array with: classToRefactor>>oldSelector)
+		senders: (Array with: classToRefactor>>#m1).
+	rename apply.
+
+	self assert: (classToRefactor sourceCodeAt: #m1) equals: 'm1 ^self && 1 * 2'! !
 
 !RenameTemporaryTest methodsFor: 'class factory' stamp: 'HAW 26/Jun/2017, 1:53:44 am (UTC)'!
 classToRefactorName
