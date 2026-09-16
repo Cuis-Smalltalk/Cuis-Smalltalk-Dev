@@ -1,6 +1,6 @@
-'From Cuis7.9 [latest update: #8189] on 16 September 2026 at 3:22:21 pm'!
+'From Cuis7.9 [latest update: #8189] on 16 September 2026 at 3:51:12 pm'!
 'Description '!
-!provides: 'KernelTests' 1 3!
+!provides: 'KernelTests' 1 4!
 SystemOrganization addCategory: #'KernelTests-Objects'!
 SystemOrganization addCategory: #'KernelTests-Classes'!
 SystemOrganization addCategory: #'KernelTests-Numbers'!
@@ -1512,14 +1512,14 @@ testCreationFirstCentury
 	"Special format: third element is four digits."
 	self assert: (Date fromString: '25/Nov/0097') yearNumber = 97.! !
 
-!DateTest methodsFor: 'test creation' stamp: 'jmv 16/Sep/2026, 6:13:21 pm (UTC)'!
+!DateTest methodsFor: 'test creation' stamp: 'jmv 16/Sep/2026, 6:46:28 pm (UTC)'!
 testCreationLater20thCentury
 
 	"Special format: third element is two digits, but greater than 31. Second element can not be a month."
-	self assert: (Date fromString: '04-15-82') yearNumber = 1982.
+	self assert: (Date readFrom: '04-15-82' readStream allow90sStyleStamps: true) yearNumber = 1982.
 	
 	"Special format: third element is two digits, but greater than 31. Second element can is a month."
-	self assert: (Date fromString: '25/Nov/97') yearNumber = 1997.! !
+	self assert: (Date readFrom: '25/Nov/97' readStream allow90sStyleStamps: true) yearNumber = 1997.! !
 
 !DateTest methodsFor: 'test creation' stamp: 'jmv 16/Sep/2026, 6:18:15 pm (UTC)'!
 testCreationNegativeYears
@@ -1559,14 +1559,14 @@ testPrintingFirstCentury
 	"Special format: third element is four digits."
 	self assert: ((Date fromString: '25/Nov/0097') printString endsWith: '0097').! !
 
-!DateTest methodsFor: 'test printing' stamp: 'jmv 16/Sep/2026, 6:13:35 pm (UTC)'!
+!DateTest methodsFor: 'test printing' stamp: 'jmv 16/Sep/2026, 6:45:59 pm (UTC)'!
 testPrintingLater20thCentury
 
 	"Special format: third element is two digits, but greater than 31. Second element can not be a month."
-	self assert: ((Date fromString: '04-15-82') printString endsWith: '1982').
+	self assert: ((Date readFrom: '04-15-82' readStream allow90sStyleStamps: true) printString endsWith: '1982').
 	
 	"Special format: third element is two digits, but greater than 31. Second element can is a month."
-	self assert: ((Date fromString: '25/Nov/97') printString endsWith: '1997').! !
+	self assert: ((Date readFrom: '25/Nov/97' readStream allow90sStyleStamps: true) printString endsWith: '1997').! !
 
 !DateTest methodsFor: 'test printing' stamp: 'jmv 16/Sep/2026, 6:20:14 pm (UTC)'!
 testPrintingNegativeYears
