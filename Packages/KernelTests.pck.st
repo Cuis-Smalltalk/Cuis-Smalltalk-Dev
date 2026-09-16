@@ -1,6 +1,6 @@
-'From Cuis7.9 [latest update: #8146] on 25 August 2026 at 10:07:10 pm'!
+'From Cuis7.9 [latest update: #8189] on 16 September 2026 at 3:22:21 pm'!
 'Description '!
-!provides: 'KernelTests' 1 2!
+!provides: 'KernelTests' 1 3!
 SystemOrganization addCategory: #'KernelTests-Objects'!
 SystemOrganization addCategory: #'KernelTests-Classes'!
 SystemOrganization addCategory: #'KernelTests-Numbers'!
@@ -1462,7 +1462,7 @@ testToByDo
 	start to: end by: step do: [ :time | last _ time ].
 	self assert: last = end! !
 
-!DateTest methodsFor: 'tests' stamp: 'jmv 5/Feb/2026, 4:15:47 pm (UTC)'!
+!DateTest methodsFor: 'test creation' stamp: 'jmv 16/Sep/2026, 6:03:53 pm (UTC)'!
 testCreation
 
 	| date |
@@ -1471,7 +1471,7 @@ testCreation
 	self assert: date monthIndex = 6.
 	self assert: date dayOfMonth = 30.
 
-	[ date := '70/12/30' asDate ] on: BackCompatibilityAlert do: [ :ex | ex resume ].
+	date := '70/12/30' asDate.
 	self assert: date yearNumber = 70.
 	self assert: date monthIndex = 12.
 	self assert: date dayOfMonth = 30.
@@ -1488,7 +1488,7 @@ testCreation
 
 	self should: ['30/12/1970' asDate] raise: Error.
 
-	[ date := '4/5/6' asDate ] on: BackCompatibilityAlert do: [ :ex | ex resume ].
+	date := '4/5/6' asDate.
 	self assert: date yearNumber = 4.
 	self assert: date monthIndex = 5.
 	self assert: date dayOfMonth = 6.
@@ -1502,6 +1502,35 @@ testCreation
 	self assert: date yearNumber = 1982.
 	self assert: date monthIndex = 4.
 	self assert: date dayOfMonth = 15.! !
+
+!DateTest methodsFor: 'test creation' stamp: 'jmv 16/Sep/2026, 6:15:55 pm (UTC)'!
+testCreationFirstCentury
+
+	"Special format: third element is four digits."
+	self assert: (Date fromString: '04-15-0082') yearNumber = 82.
+
+	"Special format: third element is four digits."
+	self assert: (Date fromString: '25/Nov/0097') yearNumber = 97.! !
+
+!DateTest methodsFor: 'test creation' stamp: 'jmv 16/Sep/2026, 6:13:21 pm (UTC)'!
+testCreationLater20thCentury
+
+	"Special format: third element is two digits, but greater than 31. Second element can not be a month."
+	self assert: (Date fromString: '04-15-82') yearNumber = 1982.
+	
+	"Special format: third element is two digits, but greater than 31. Second element can is a month."
+	self assert: (Date fromString: '25/Nov/97') yearNumber = 1997.! !
+
+!DateTest methodsFor: 'test creation' stamp: 'jmv 16/Sep/2026, 6:18:15 pm (UTC)'!
+testCreationNegativeYears
+
+	self assert: (Date fromString: '-123456 April 15') yearNumber = -123456.
+	self assert: (Date fromString: '-12345 April 15') yearNumber = -12345.
+	self assert: (Date fromString: '-1234 April 15') yearNumber = -1234.
+	self assert: (Date fromString: '-123 April 15') yearNumber = -123.
+	self assert: (Date fromString: '-12 April 15') yearNumber = -12.
+	self assert: (Date fromString: '-1 April 15') yearNumber = -1.
+! !
 
 !DateTest methodsFor: 'test operations' stamp: 'jmv 13/May/2017, 11:23:12 pm (UTC)'!
 testInvalidOperations
@@ -1520,6 +1549,46 @@ testLessDate
 testLessDuration
 
 	self assert: '13 May 2017' asDate - 3 days = '10 May 2017' asDate! !
+
+!DateTest methodsFor: 'test printing' stamp: 'jmv 16/Sep/2026, 6:16:06 pm (UTC)'!
+testPrintingFirstCentury
+
+	"Special format: third element is four digits."
+	self assert: ((Date fromString: '04-15-0082') printString endsWith: '0082').
+	
+	"Special format: third element is four digits."
+	self assert: ((Date fromString: '25/Nov/0097') printString endsWith: '0097').! !
+
+!DateTest methodsFor: 'test printing' stamp: 'jmv 16/Sep/2026, 6:13:35 pm (UTC)'!
+testPrintingLater20thCentury
+
+	"Special format: third element is two digits, but greater than 31. Second element can not be a month."
+	self assert: ((Date fromString: '04-15-82') printString endsWith: '1982').
+	
+	"Special format: third element is two digits, but greater than 31. Second element can is a month."
+	self assert: ((Date fromString: '25/Nov/97') printString endsWith: '1997').! !
+
+!DateTest methodsFor: 'test printing' stamp: 'jmv 16/Sep/2026, 6:20:14 pm (UTC)'!
+testPrintingNegativeYears
+
+	self assert: ((Date fromString: '-123456 April 15') printString endsWith: '-123456').
+	self assert: ((Date fromString: '-12345 April 15') printString endsWith: '-12345').
+	self assert: ((Date fromString: '-1234 April 15') printString endsWith: '-1234').
+	self assert: ((Date fromString: '-123 April 15') printString endsWith: '-123').
+	self assert: ((Date fromString: '-12 April 15') printString endsWith: '-12').
+	self assert: ((Date fromString: '-1 April 15') printString endsWith: '-1').
+! !
+
+!DateTest methodsFor: 'test printing' stamp: 'jmv 16/Sep/2026, 6:21:27 pm (UTC)'!
+testPrintingWideCenturies
+
+	self assert: ((Date fromString: '123456 April 15') printString endsWith: '123456').
+	self assert: ((Date fromString: '12345 April 15') printString endsWith: '12345').
+	self assert: ((Date fromString: '1234 April 15') printString endsWith: '1234').
+	self assert: ((Date fromString: '123 April 15') printString endsWith: '0123').
+	self assert: ((Date fromString: '12 April 15') printString endsWith: '0012').
+	self assert: ((Date fromString: '1 April 15') printString endsWith: '0001').
+! !
 
 !DurationTest methodsFor: 'tests' stamp: 'jmv 13/May/2017, 6:56:00 pm (UTC)'!
 testPrintString
