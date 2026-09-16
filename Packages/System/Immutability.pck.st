@@ -1,6 +1,6 @@
 'From Cuis7.7 [latest update: #7779] on 23 December 2025 at 4:34:35 pm'!
 'Description First version. See message #beImmutable and ImmutableTest'!
-!provides: 'Immutability' 1 4!
+!provides: 'Immutability' 1 5!
 SystemOrganization addCategory: #Immutability!
 
 
@@ -70,7 +70,8 @@ messageText
 	
 	^'Attempt to modify an immutable object'! !
 
-!Object methodsFor: '*Immutability' library: #MinimalKernel01 stamp: 'HAW 3/Jul/2019 19:01:30'!
+!Object methodsFor: '*Immutability' stamp: 'HAW 3/Jul/2019 19:01:30'!
+!methodProperties: {#libraryName -> #MinimalKernel01}!
 at: index put: value 
 	"Primitive. Assumes receiver is indexable. Store the argument value in 
 	the indexable element of the receiver indicated by index. Fail if the 
@@ -107,7 +108,8 @@ attemptToAssign: value withIndex: index
 	thisContext sender jump
 	"CAN'T REACH"! !
 
-!Object methodsFor: '*Immutability' library: #MinimalKernel01 stamp: 'HAW 3/Jul/2019 19:11:30'!
+!Object methodsFor: '*Immutability' stamp: 'HAW 3/Jul/2019 19:11:30'!
+!methodProperties: {#libraryName -> #MinimalKernel01}!
 basicAt: index put: value 
 	"Primitive. Assumes receiver is indexable. Store the second argument 
 	value in the indexable element of the receiver indicated by index. Fail 
@@ -156,7 +158,8 @@ beMutable
 	
 	^self beImmutable: false! !
 
-!Object methodsFor: '*Immutability' library: #MinimalKernel01 stamp: 'HAW 12/Jul/2019 13:55:35'!
+!Object methodsFor: '*Immutability' stamp: 'HAW 12/Jul/2019 13:55:35'!
+!methodProperties: {#libraryName -> #MinimalKernel01}!
 instVarAt: index put: anObject
 	"Primitive. Store a value into a fixed variable in an object. The numbering of the
 	 variables corresponds to the named instance variables, followed by the indexed
@@ -254,7 +257,8 @@ beMutable
 	array beMutable.
 	^super beMutable ! !
 
-!String methodsFor: '*Immutability' library: #MinimalKernel01 stamp: 'jmv 9/Jan/2024 16:58:30'!
+!String methodsFor: '*Immutability' stamp: 'jmv 9/Jan/2024 16:58:30'!
+!methodProperties: {#libraryName -> #MinimalKernel01}!
 at: index put: aCharacter 
 	"Primitive. Store the Character in the field of the receiver indicated by
 	the index. Fail if the index is not an Integer or is out of bounds, or if
