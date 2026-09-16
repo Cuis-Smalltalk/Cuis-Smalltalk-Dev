@@ -1,6 +1,6 @@
 'From Cuis7.9 [latest update: #8175] on 14 September 2026 at 9:34:15 am'!
 'Description '!
-!provides: 'CompilerTests' 1 3!
+!provides: 'CompilerTests' 1 4!
 !requires: 'DynamicallyCodeCreatingTestSupport' 1 0 nil!
 SystemOrganization addCategory: #CompilerTests!
 
@@ -3134,12 +3134,3 @@ testMaxLiteralsWithClassReferenceInClosure
 	and this test should be updated to reflect the improvement."
 	self should: [Compiler evaluate: stringWithOneTooManyLiterals for: nil logged: false] raise: SyntaxErrorNotification.
 ! !
-
-!PreferenceSet methodsFor: '*CompilerTests' stamp: 'jmv 16/May/2022, 12:57:42 pm (UTC)'!
-withTemporaryValue: temporaryValue of: aPreferenceName do: aBlock
-	"Allows to execute a piece of code with a temporary value of the given preference. Useful for testing purposes."
-	
-	| currentValue |
-	currentValue := self at: aPreferenceName.
-	self at: aPreferenceName put: temporaryValue.
-	[ aBlock value ] ensure: [ self at: aPreferenceName put: currentValue ]! !
