@@ -1,6 +1,6 @@
-'From Cuis7.9 [latest update: #8201] on 17 September 2026 at 2:49:22 pm'!
+'From Cuis7.9 [latest update: #8203] on 17 September 2026 at 2:52:22 pm'!
 'Description '!
-!provides: 'RefactoringTests' 1 19!
+!provides: 'RefactoringTests' 1 20!
 !requires: 'DynamicallyCodeCreatingTestSupport' 1 0 nil!
 !requires: '__Refactoring_TestData__' 1 0 nil!
 SystemOrganization addCategory: #RefactoringTests!
@@ -13523,6 +13523,23 @@ test05AnInstanceVariableOnMultipleSubclassesInDifferentLevelsShouldBeRemovedFrom
 		self deny: (subClass definesInstanceVariableNamed: instanceVariableToPushUp)
 	].! !
 
+!PushUpInstanceVariableTest methodsFor: 'tests' stamp: 'HAW 17/Sep/2026, 3:10:31 pm (UTC)'!
+test06AnInstanceVariableUsedByAMethodIsPushedUpWithoutLeavingItUndeclared
+
+	classToRefactorSuperClass := self createClassNamed: #SuperclassWithoutInstVar.
+	classToRefactor := self
+		createClassNamed: self classToRefactorName
+		subclassOf: classToRefactorSuperClass
+		instanceVariableNames: instanceVariableToPushUp.
+	classToRefactor compile: 'm1 a := 3. ^a'.
+
+	self
+		shouldnt: [ (PushUpInstanceVariable named: instanceVariableToPushUp from: classToRefactor) apply ]
+		raise: UndeclaredVariableWarning.
+
+	self assert: classToRefactor new m1 equals: 3.
+	self deny: (Undeclared includesKey: instanceVariableToPushUp asSymbol)! !
+
 !PushUpInstanceVariableTest methodsFor: 'setup' stamp: 'MSC 22/Dec/2019, 2:12:16 am (UTC)'!
 setUp
 
@@ -14106,6 +14123,26 @@ test28ShouldSelectADependantSelectorSentAsTheReceiverOfACascade
 		selectAllMessageSendsToSelfNotImplementedInSuperClassFrom: classToTest >> #newMethod.
 
 	self assert: dependantSelectors asArray equals: #(#dependantMethod)! !
+
+!PushUpMethodTest methodsFor: 'tests' stamp: 'HAW 17/Sep/2026, 3:10:31 pm (UTC)'!
+test29AMethodAccessingInstVarIsPushedUpWithoutLeavingItUndeclared
+
+	| classToRefactorSuperclass classToRefactor refactoring |
+
+	classToRefactorSuperclass := self createClassNamed: #Superclass.
+	classToRefactor := self
+		createClassNamed: self classToRefactorName
+		subclassOf: classToRefactorSuperclass
+		instanceVariableNames: 'a'.
+	classToRefactor compile: 'newMethod a := 3. ^a'.
+	refactoring := [ PushUpMethod for: classToRefactor >> #newMethod ]
+		on: RefactoringWarning
+		do: [ :warning | warning resume ].
+
+	self shouldnt: [ refactoring apply ] raise: UndeclaredVariableWarning.
+
+	self assert: classToRefactor new newMethod equals: 3.
+	self deny: (Undeclared includesKey: #a)! !
 
 !PushUpMethodTest methodsFor: 'tests' stamp: 'HAW 12/Sep/2026, 2:28:49 pm (UTC)'!
 test29ShouldSelectADependantSelectorSentInAnAssignment
