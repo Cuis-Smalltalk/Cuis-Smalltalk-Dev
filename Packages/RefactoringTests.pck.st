@@ -1,6 +1,6 @@
-'From Cuis7.9 [latest update: #8203] on 17 September 2026 at 2:52:22 pm'!
+'From Cuis7.9 [latest update: #8204] on 17 September 2026 at 2:56:40 pm'!
 'Description '!
-!provides: 'RefactoringTests' 1 20!
+!provides: 'RefactoringTests' 1 21!
 !requires: 'DynamicallyCodeCreatingTestSupport' 1 0 nil!
 !requires: '__Refactoring_TestData__' 1 0 nil!
 SystemOrganization addCategory: #RefactoringTests!
@@ -13005,6 +13005,24 @@ test03AnInstanceVariableThatIsNotAccessedOnClassToRefactorShouldBePushedDownToAl
 	classToRefactor subclassesDo: [ :subClass |
 		self assert: (subClass definesInstanceVariableNamed: instanceVariableToPushDown).
 	].! !
+
+!PushDownInstanceVariableTest methodsFor: 'tests' stamp: 'HAW 17/Sep/2026, 4:07:43 pm (UTC)'!
+test04AnInstanceVariableUsedByASubclassMethodIsPushedDownWithoutLeavingItUndeclared
+
+	| subclassUsingVariable |
+
+	classToRefactor := self
+		createClassNamed: self classToRefactorName
+		instanceVariableNames: instanceVariableToPushDown.
+	subclassUsingVariable := self createClassNamed: #SubclassUsingInstVar subclassOf: classToRefactor.
+	subclassUsingVariable compile: 'm1 a := 3. ^a'.
+
+	self
+		shouldnt: [ (PushDownInstanceVariable named: instanceVariableToPushDown from: classToRefactor) apply ]
+		raise: UndeclaredVariableWarning.
+
+	self assert: subclassUsingVariable new m1 equals: 3.
+	self deny: (Undeclared includesKey: instanceVariableToPushDown asSymbol)! !
 
 !PushDownInstanceVariableTest methodsFor: 'setup' stamp: 'MSC 22/Dec/2019, 2:01:42 am (UTC)'!
 setUp
