@@ -1,6 +1,6 @@
-'From Cuis7.9 [latest update: #8185] on 15 September 2026 at 11:33:49 am'!
+'From Cuis7.9 [latest update: #8201] on 17 September 2026 at 2:49:22 pm'!
 'Description '!
-!provides: 'RefactoringTests' 1 18!
+!provides: 'RefactoringTests' 1 19!
 !requires: 'DynamicallyCodeCreatingTestSupport' 1 0 nil!
 !requires: '__Refactoring_TestData__' 1 0 nil!
 SystemOrganization addCategory: #RefactoringTests!
@@ -12476,10 +12476,481 @@ test05ClassMethodIsMovedToInstanceMethod
 	self deny: (classToRefactor class includesSelector: selector).
 ! !
 
+!MoveToInstanceOrClassMethodTest methodsFor: 'tests' stamp: 'HAW 16/Sep/2026, 12:47:18 am (UTC)'!
+test06InstanceSendersSendMovedMethodToClass
+
+	| classToRefactor |
+
+	classToRefactor := self createClassWithMethodAndInstanceSender.
+
+	self move: classToRefactor >> #newMethod redirecting: { classToRefactor >> #sender }.
+
+	self
+		assert: (classToRefactor sourceCodeAt: #sender)
+		equals: 'sender ^self class newMethod'.
+	self assert: classToRefactor new sender equals: 1! !
+
+!MoveToInstanceOrClassMethodTest methodsFor: 'tests' stamp: 'HAW 16/Sep/2026, 12:47:18 am (UTC)'!
+test07InstanceSendersSendMovedClassMethodToInstance
+
+	| classToRefactor |
+
+	classToRefactor := self createClassWithClassMethodAndInstanceSender.
+
+	self
+		move: classToRefactor class >> #newMethod
+		redirecting: { classToRefactor >> #sender }.
+
+	self assert: (classToRefactor sourceCodeAt: #sender) equals: 'sender ^self newMethod'.
+	self assert: classToRefactor new sender equals: 1! !
+
+!MoveToInstanceOrClassMethodTest methodsFor: 'tests' stamp: 'HAW 16/Sep/2026, 12:47:18 am (UTC)'!
+test08SubclassSendersAreRedirected
+
+	| classToRefactor subclass |
+
+	classToRefactor := self createClassWithMethodAndInstanceSender.
+	subclass := self createClassNamed: self subclassToRefactorName subclassOf: classToRefactor.
+	subclass compile: 'subclassSender ^self newMethod'.
+
+	self move: classToRefactor >> #newMethod redirecting: { subclass >> #subclassSender }.
+
+	self
+		assert: (subclass sourceCodeAt: #subclassSender)
+		equals: 'subclassSender ^self class newMethod'! !
+
+!MoveToInstanceOrClassMethodTest methodsFor: 'tests' stamp: 'HAW 16/Sep/2026, 12:47:18 am (UTC)'!
+test09SendersReachingAnotherImplementorAreLeftAlone
+
+	| classToRefactor subclass |
+
+	classToRefactor := self createClassWithMethodAndInstanceSender.
+	subclass := self createClassNamed: self subclassToRefactorName subclassOf: classToRefactor.
+	subclass compile: 'newMethod ^2'.
+	subclass compile: 'subclassSender ^self newMethod'.
+
+	self move: classToRefactor >> #newMethod redirecting: { subclass >> #subclassSender }.
+
+	self
+		assert: (subclass sourceCodeAt: #subclassSender)
+		equals: 'subclassSender ^self newMethod'! !
+
+!MoveToInstanceOrClassMethodTest methodsFor: 'tests' stamp: 'HAW 16/Sep/2026, 12:47:18 am (UTC)'!
+test10SendsToOtherReceiversAreLeftAlone
+
+	| classToRefactor |
+
+	classToRefactor := self createClassWithMethodAndInstanceSender.
+	classToRefactor compile: 'otherSender ^self yourself newMethod; newMethod'.
+
+	self
+		move: classToRefactor >> #newMethod
+		redirecting: { classToRefactor >> #otherSender }.
+
+	self
+		assert: (classToRefactor sourceCodeAt: #otherSender)
+		equals: 'otherSender ^self yourself newMethod; newMethod'! !
+
+!MoveToInstanceOrClassMethodTest methodsFor: 'tests' stamp: 'HAW 16/Sep/2026, 12:47:18 am (UTC)'!
+test11RedirectedSendersAreAmongChanges
+
+	| classToRefactor changes |
+
+	classToRefactor := self createClassWithMethodAndInstanceSender.
+
+	changes := self
+		move: classToRefactor >> #newMethod
+		redirecting: { classToRefactor >> #sender }.
+
+	self assert: (changes includes: (MethodReference class: classToRefactor selector: #sender))! !
+
+!MoveToInstanceOrClassMethodTest methodsFor: 'tests' stamp: 'HAW 16/Sep/2026, 12:47:18 am (UTC)'!
+test12SendersOutOfScopeAreLeftAlone
+
+	| classToRefactor |
+
+	classToRefactor := self createClassWithMethodAndInstanceSender.
+	classToRefactor compile: 'otherSender ^self newMethod'.
+
+	self move: classToRefactor >> #newMethod redirecting: { classToRefactor >> #sender }.
+
+	self
+		assert: (classToRefactor sourceCodeAt: #otherSender)
+		equals: 'otherSender ^self newMethod'! !
+
+!MoveToInstanceOrClassMethodTest methodsFor: 'tests' stamp: 'HAW 16/Sep/2026, 12:47:18 am (UTC)'!
+test13EverySendInASenderIsRedirected
+
+	| classToRefactor |
+
+	classToRefactor := self createClassWithMethodAndInstanceSender.
+	classToRefactor compile: 'twiceSender ^self newMethod + (self newMethod)'.
+
+	self
+		move: classToRefactor >> #newMethod
+		redirecting: { classToRefactor >> #twiceSender }.
+
+	self
+		assert: (classToRefactor sourceCodeAt: #twiceSender)
+		equals: 'twiceSender ^self class newMethod + (self class newMethod)'! !
+
+!MoveToInstanceOrClassMethodTest methodsFor: 'tests' stamp: 'HAW 15/Sep/2026, 11:53:35 pm (UTC)'!
+test14SendersInTheSystemAreRedirectedByDefault
+
+	| classToRefactor |
+
+	classToRefactor := self createClassWithMethodAndInstanceSender.
+
+	(MoveToInstanceOrClassMethod for: classToRefactor >> #newMethod) apply.
+
+	self assert: (classToRefactor sourceCodeAt: #sender) equals: 'sender ^self class newMethod'! !
+
+!MoveToInstanceOrClassMethodTest methodsFor: 'tests' stamp: 'HAW 16/Sep/2026, 11:23:54 am (UTC)'!
+test15ImplementorsOnOtherSideAreLeftAlone
+
+	| classToRefactor subclass |
+
+	classToRefactor := self createClassWithMethodAndInstanceSender.
+	subclass := self createClassNamed: self subclassToRefactorName subclassOf: classToRefactor.
+	subclass class compile: 'newMethod ^2'.
+
+	self
+		move: classToRefactor >> #newMethod
+		with: { classToRefactor >> #newMethod. subclass class >> #newMethod }
+		redirecting: #().
+
+	self assert: (classToRefactor class includesSelector: #newMethod).
+	self assert: (subclass class sourceCodeAt: #newMethod) equals: 'newMethod ^2'.
+	self deny: (subclass includesSelector: #newMethod)! !
+
+!MoveToInstanceOrClassMethodTest methodsFor: 'tests' stamp: 'HAW 16/Sep/2026, 11:23:54 am (UTC)'!
+test16EveryImplementorIsMoved
+
+	| classToRefactor subclass |
+
+	classToRefactor := self createClassWithMethodAndInstanceSender.
+	subclass := self createClassNamed: self subclassToRefactorName subclassOf: classToRefactor.
+	subclass compile: 'newMethod ^2'.
+
+	self
+		move: classToRefactor >> #newMethod
+		with: { classToRefactor >> #newMethod. subclass >> #newMethod }
+		redirecting: #().
+
+	self assert: (classToRefactor class includesSelector: #newMethod).
+	self assert: (subclass class sourceCodeAt: #newMethod) equals: 'newMethod ^2'.
+	self deny: (classToRefactor includesSelector: #newMethod).
+	self deny: (subclass includesSelector: #newMethod)! !
+
+!MoveToInstanceOrClassMethodTest methodsFor: 'tests' stamp: 'HAW 16/Sep/2026, 11:23:54 am (UTC)'!
+test17LiteralClassSenderInKindOfClassSendsToSelf
+
+	| classToRefactor |
+
+	classToRefactor := self createClassWithClassMethod.
+	classToRefactor compile: self literalClassSenderSource.
+
+	self move: classToRefactor class >> #newMethod redirecting: { classToRefactor >> #sender }.
+
+	self assert: (classToRefactor sourceCodeAt: #sender) equals: 'sender ^self newMethod'.
+	self assert: classToRefactor new sender equals: 1! !
+
+!MoveToInstanceOrClassMethodTest methodsFor: 'tests' stamp: 'HAW 16/Sep/2026, 11:23:54 am (UTC)'!
+test18LiteralClassSenderElsewhereSendsToNewInstance
+
+	| classToRefactor otherClass |
+
+	classToRefactor := self createClassWithClassMethod.
+	otherClass := self createClassNamed: self otherClassName.
+	otherClass compile: self literalClassSenderSource.
+
+	self move: classToRefactor class >> #newMethod redirecting: { otherClass >> #sender }.
+
+	self
+		assert: (otherClass sourceCodeAt: #sender)
+		equals: 'sender ^' , self classToRefactorName , ' new newMethod'.
+	self assert: otherClass new sender equals: 1! !
+
+!MoveToInstanceOrClassMethodTest methodsFor: 'tests' stamp: 'HAW 16/Sep/2026, 11:23:54 am (UTC)'!
+test19LiteralClassSenderOnClassSideSendsToNewInstance
+
+	| classToRefactor |
+
+	classToRefactor := self createClassWithClassMethod.
+	classToRefactor class compile: self literalClassSenderSource.
+
+	self move: classToRefactor class >> #newMethod redirecting: { classToRefactor class >> #sender }.
+
+	self
+		assert: (classToRefactor class sourceCodeAt: #sender)
+		equals: 'sender ^' , self classToRefactorName , ' new newMethod'.
+	self assert: classToRefactor sender equals: 1! !
+
+!MoveToInstanceOrClassMethodTest methodsFor: 'tests' stamp: 'HAW 16/Sep/2026, 11:23:54 am (UTC)'!
+test20NewInstanceSenderSendsToLiteralClass
+
+	| classToRefactor otherClass |
+
+	classToRefactor := self createClassWithMethodAndInstanceSender.
+	otherClass := self createClassNamed: self otherClassName.
+	otherClass compile: 'sender ^' , self classToRefactorName , ' new newMethod'.
+
+	self move: classToRefactor >> #newMethod redirecting: { otherClass >> #sender }.
+
+	self
+		assert: (otherClass sourceCodeAt: #sender)
+		equals: 'sender ^' , self classToRefactorName , ' newMethod'.
+	self assert: otherClass new sender equals: 1! !
+
+!MoveToInstanceOrClassMethodTest methodsFor: 'tests' stamp: 'HAW 16/Sep/2026, 11:23:54 am (UTC)'!
+test21LiteralClassSenderInSubclassSendsToSelf
+
+	| classToRefactor subclass |
+
+	classToRefactor := self createClassWithClassMethod.
+	subclass := self createClassNamed: self subclassToRefactorName subclassOf: classToRefactor.
+	subclass compile: self literalClassSenderSource.
+
+	self move: classToRefactor class >> #newMethod redirecting: { subclass >> #sender }.
+
+	self assert: (subclass sourceCodeAt: #sender) equals: 'sender ^self newMethod'! !
+
+!MoveToInstanceOrClassMethodTest methodsFor: 'tests' stamp: 'HAW 16/Sep/2026, 11:23:54 am (UTC)'!
+test22CannotMoveWhenOtherSideImplementsSelector
+
+	| classToRefactor |
+
+	classToRefactor := self createClassWithClassMethod.
+	classToRefactor compile: 'newMethod ^2'.
+
+	self
+		assertCreation: [ MoveToInstanceOrClassMethod for: classToRefactor >> #newMethod ]
+		failsWith: (MoveToInstanceOrClassMethod targetAlreadyImplementsErrorMessageFor: classToRefactor >> #newMethod)! !
+
+!MoveToInstanceOrClassMethodTest methodsFor: 'tests' stamp: 'HAW 16/Sep/2026, 11:23:54 am (UTC)'!
+test23RecursiveSendInMovedMethodIsLeftAlone
+
+	| classToRefactor |
+
+	classToRefactor := self createClassNamed: self classToRefactorName.
+	classToRefactor compile: 'newMethod ^self newMethod'.
+
+	self move: classToRefactor >> #newMethod redirecting: { classToRefactor >> #newMethod }.
+
+	self assert: (classToRefactor class sourceCodeAt: #newMethod) equals: 'newMethod ^self newMethod'! !
+
+!MoveToInstanceOrClassMethodTest methodsFor: 'tests' stamp: 'HAW 16/Sep/2026, 11:23:54 am (UTC)'!
+test24CannotMoveWithoutImplementorOnSameSide
+
+	| classToRefactor subclass |
+
+	classToRefactor := self createClassWithMethodAndInstanceSender.
+	subclass := self createClassNamed: self subclassToRefactorName subclassOf: classToRefactor.
+	subclass class compile: 'newMethod ^2'.
+
+	self
+		assertCreation: [ MoveToInstanceOrClassMethod
+			for: classToRefactor >> #newMethod
+			implementors: { subclass class >> #newMethod }
+			senders: #() ]
+		failsWith: MoveToInstanceOrClassMethod noImplementorToMoveErrorMessage! !
+
+!MoveToInstanceOrClassMethodTest methodsFor: 'tests' stamp: 'HAW 16/Sep/2026, 7:19:59 pm (UTC)'!
+test25SelfClassSendInMovedBodySendsToSelf
+
+	| classToRefactor |
+
+	classToRefactor := self createClassNamed: self classToRefactorName.
+	classToRefactor class compile: 'defaultValue ^1'.
+	classToRefactor compile: 'newMethod ^self class defaultValue'.
+
+	self move: classToRefactor >> #newMethod redirecting: #().
+
+	self assert: (classToRefactor class sourceCodeAt: #newMethod) equals: 'newMethod ^self defaultValue'.
+	self assert: classToRefactor newMethod equals: 1! !
+
+!MoveToInstanceOrClassMethodTest methodsFor: 'tests' stamp: 'HAW 16/Sep/2026, 7:19:59 pm (UTC)'!
+test26SelfSendToClassMethodInMovedBodySendsToClass
+
+	| classToRefactor |
+
+	classToRefactor := self createClassNamed: self classToRefactorName.
+	classToRefactor class compile: 'defaultValue ^1'.
+	classToRefactor class compile: 'newMethod ^self defaultValue'.
+
+	self move: classToRefactor class >> #newMethod redirecting: #().
+
+	self assert: (classToRefactor sourceCodeAt: #newMethod) equals: 'newMethod ^self class defaultValue'.
+	self assert: classToRefactor new newMethod equals: 1! !
+
+!MoveToInstanceOrClassMethodTest methodsFor: 'tests' stamp: 'HAW 16/Sep/2026, 7:19:59 pm (UTC)'!
+test27SelfSendUnderstoodOnBothSidesIsKeptMovingUp
+
+	| classToRefactor |
+
+	classToRefactor := self createClassNamed: self classToRefactorName.
+	classToRefactor compile: 'newMethod ^self yourself'.
+
+	self move: classToRefactor >> #newMethod redirecting: #().
+
+	self assert: (classToRefactor class sourceCodeAt: #newMethod) equals: 'newMethod ^self yourself'! !
+
+!MoveToInstanceOrClassMethodTest methodsFor: 'tests' stamp: 'HAW 16/Sep/2026, 7:19:59 pm (UTC)'!
+test28SelfSendUnderstoodOnBothSidesIsKeptMovingDown
+
+	| classToRefactor |
+
+	classToRefactor := self createClassNamed: self classToRefactorName.
+	classToRefactor class compile: 'newMethod ^self yourself'.
+
+	self move: classToRefactor class >> #newMethod redirecting: #().
+
+	self assert: (classToRefactor sourceCodeAt: #newMethod) equals: 'newMethod ^self yourself'! !
+
+!MoveToInstanceOrClassMethodTest methodsFor: 'tests' stamp: 'HAW 16/Sep/2026, 7:19:59 pm (UTC)'!
+test29CannotMoveUpBodySendingInstanceMethodToSelf
+
+	| classToRefactor |
+
+	classToRefactor := self createClassNamed: self classToRefactorName.
+	classToRefactor compile: 'total ^1'.
+	classToRefactor compile: 'newMethod ^self total'.
+
+	self
+		assertCreation: [ MoveToInstanceOrClassMethod for: classToRefactor >> #newMethod ]
+		failsWith: (MoveToInstanceOrClassMethod
+			selfSendNotUnderstoodErrorMessageFor: classToRefactor >> #newMethod
+			sending: #total)! !
+
+!MoveToInstanceOrClassMethodTest methodsFor: 'tests' stamp: 'HAW 16/Sep/2026, 7:19:59 pm (UTC)'!
+test30SelfSendInCascadeToInstanceMethodIsRefusedMovingUp
+
+	| classToRefactor |
+
+	classToRefactor := self createClassNamed: self classToRefactorName.
+	classToRefactor compile: 'total ^1'.
+	classToRefactor compile: 'newMethod ^self yourself; total'.
+
+	self
+		assertCreation: [ MoveToInstanceOrClassMethod for: classToRefactor >> #newMethod ]
+		failsWith: (MoveToInstanceOrClassMethod
+			selfSendNotUnderstoodErrorMessageFor: classToRefactor >> #newMethod
+			sending: #total)! !
+
+!MoveToInstanceOrClassMethodTest methodsFor: 'tests' stamp: 'HAW 16/Sep/2026, 7:37:55 pm (UTC)'!
+test31SelfSendImplementedOnBothSidesSendsToClassMovingDown
+
+	| classToRefactor |
+
+	classToRefactor := self createClassNamed: self classToRefactorName.
+	classToRefactor class compile: 'm1 ^10'.
+	classToRefactor compile: 'm1 ^20'.
+	classToRefactor class compile: 'newMethod ^self m1'.
+
+	self move: classToRefactor class >> #newMethod redirecting: #().
+
+	self assert: (classToRefactor sourceCodeAt: #newMethod) equals: 'newMethod ^self class m1'.
+	self assert: classToRefactor new newMethod equals: 10! !
+
+!MoveToInstanceOrClassMethodTest methodsFor: 'tests' stamp: 'HAW 16/Sep/2026, 7:37:56 pm (UTC)'!
+test32CannotMoveUpBodySendingSelectorImplementedOnBothSidesToSelf
+
+	| classToRefactor |
+
+	classToRefactor := self createClassNamed: self classToRefactorName.
+	classToRefactor class compile: 'm1 ^10'.
+	classToRefactor compile: 'm1 ^20'.
+	classToRefactor compile: 'newMethod ^self m1'.
+
+	self
+		assertCreation: [ MoveToInstanceOrClassMethod for: classToRefactor >> #newMethod ]
+		failsWith: (MoveToInstanceOrClassMethod
+			selfSendNotUnderstoodErrorMessageFor: classToRefactor >> #newMethod
+			sending: #m1)! !
+
+!MoveToInstanceOrClassMethodTest methodsFor: 'tests' stamp: 'HAW 16/Sep/2026, 7:37:56 pm (UTC)'!
+test33SelfClassSendImplementedOnBothSidesSendsToSelfMovingUp
+
+	| classToRefactor |
+
+	classToRefactor := self createClassNamed: self classToRefactorName.
+	classToRefactor class compile: 'm1 ^10'.
+	classToRefactor compile: 'm1 ^20'.
+	classToRefactor compile: 'newMethod ^self class m1'.
+
+	self move: classToRefactor >> #newMethod redirecting: #().
+
+	self assert: (classToRefactor class sourceCodeAt: #newMethod) equals: 'newMethod ^self m1'.
+	self assert: classToRefactor newMethod equals: 10! !
+
 !MoveToInstanceOrClassMethodTest methodsFor: 'class factory' stamp: 'LMY 8/Dec/2019, 9:35:59 pm (UTC)'!
 classToRefactorName
 
 	^#ClassToMoveMethod! !
+
+!MoveToInstanceOrClassMethodTest methodsFor: 'class factory' stamp: 'HAW 16/Sep/2026, 11:23:54 am (UTC)'!
+otherClassName
+
+	^#ClassSendingMovedMethod! !
+
+!MoveToInstanceOrClassMethodTest methodsFor: 'test support' stamp: 'HAW 16/Sep/2026, 11:23:54 am (UTC)'!
+createClassWithClassMethod
+
+	| classToRefactor |
+
+	classToRefactor := self createClassNamed: self classToRefactorName.
+	classToRefactor class compile: 'newMethod ^1'.
+
+	^classToRefactor! !
+
+!MoveToInstanceOrClassMethodTest methodsFor: 'test support' stamp: 'HAW 15/Sep/2026, 11:53:35 pm (UTC)'!
+createClassWithClassMethodAndInstanceSender
+
+	| classToRefactor |
+
+	classToRefactor := self createClassNamed: self classToRefactorName.
+	classToRefactor class compile: 'newMethod ^1'.
+	classToRefactor compile: 'sender ^self class newMethod'.
+
+	^classToRefactor! !
+
+!MoveToInstanceOrClassMethodTest methodsFor: 'test support' stamp: 'HAW 15/Sep/2026, 11:53:35 pm (UTC)'!
+createClassWithMethodAndInstanceSender
+
+	| classToRefactor |
+
+	classToRefactor := self createClassNamed: self classToRefactorName.
+	classToRefactor compile: 'newMethod ^1'.
+	classToRefactor compile: 'sender ^self newMethod'.
+
+	^classToRefactor! !
+
+!MoveToInstanceOrClassMethodTest methodsFor: 'test support' stamp: 'HAW 16/Sep/2026, 11:23:54 am (UTC)'!
+literalClassSenderSource
+
+	^'sender ^' , self classToRefactorName , ' newMethod'! !
+
+!MoveToInstanceOrClassMethodTest methodsFor: 'test support' stamp: 'HAW 16/Sep/2026, 11:23:54 am (UTC)'!
+move: aMethod redirecting: someSenders
+
+	^self move: aMethod with: { aMethod } redirecting: someSenders! !
+
+!MoveToInstanceOrClassMethodTest methodsFor: 'test support' stamp: 'HAW 16/Sep/2026, 11:28:38 am (UTC)'!
+move: aMethod with: someImplementors redirecting: someSenders
+
+	| refactoring |
+
+	refactoring := MoveToInstanceOrClassMethod
+		for: aMethod
+		implementors: someImplementors
+		senders: someSenders.
+
+	^refactoring apply! !
+
+!MoveToInstanceOrClassMethodTest methodsFor: 'test support' stamp: 'HAW 15/Sep/2026, 11:53:35 pm (UTC)'!
+subclassToRefactorName
+
+	^#SubclassToMoveMethod! !
 
 !PushDownInstanceVariableTest methodsFor: 'class factory' stamp: 'MSC 21/Dec/2019, 1:49:48 pm (UTC)'!
 classToRefactorName
