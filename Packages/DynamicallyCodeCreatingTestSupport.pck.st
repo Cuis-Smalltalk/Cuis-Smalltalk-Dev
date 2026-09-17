@@ -1,6 +1,6 @@
-'From Cuis7.9 [latest update: #8146] on 25 August 2026 at 10:20:25 pm'!
+'From Cuis7.9 [latest update: #8205] on 17 September 2026 at 3:21:50 pm'!
 'Description '!
-!provides: 'DynamicallyCodeCreatingTestSupport' 1 7!
+!provides: 'DynamicallyCodeCreatingTestSupport' 1 8!
 SystemOrganization addCategory: #DynamicallyCodeCreatingTestSupport!
 
 
@@ -173,16 +173,20 @@ assertNoTestDataClassCategoryExist
 	self allClassCategoriesOfTestData do: [ :aClassCategory | self assertClassCategoryIsEmpty: aClassCategory ]
 		! !
 
-!DynamicallyCodeCreatingTest methodsFor: 'setup/teardown' stamp: 'HAW 20/Aug/2026, 9:53:33 pm (UTC)'!
+!DynamicallyCodeCreatingTest methodsFor: 'setup/teardown' stamp: 'jmv 17/Sep/2026, 6:18:02 pm (UTC)'!
 cleanUpGeneratedCode
 
-	self assertAllClassCategoriesAreExpectedToBeRemoved.
+	classCategories ifNotNil: [
 		
-	"I'm doing this instead of SystemOrganization removeSystemCategories: classCategories
-	because it is faster - Hernan"
-	SystemChangeNotifier uniqueInstance doSilently: [
-		classCategories do: [ :aCategory | 
-			(SystemOrganization classesAt: aCategory) do: [ :aClass | aClass removeFromSystem ]]]! !
+		self assertAllClassCategoriesAreExpectedToBeRemoved.
+		
+		"I'm doing this instead of SystemOrganization removeSystemCategories: classCategories
+		because it is faster - Hernan"
+		SystemChangeNotifier uniqueInstance doSilently: [
+			classCategories do: [ :aCategory | 
+				(SystemOrganization classesAt: aCategory) do: [ :aClass | aClass removeFromSystem ]]]].
+
+	Smalltalk cleanOutUndeclared.! !
 
 !DynamicallyCodeCreatingTest methodsFor: 'setup/teardown' stamp: 'HAW 20/Aug/2026, 9:51:44 pm (UTC)'!
 cleanUpInstanceVariables
@@ -191,20 +195,15 @@ cleanUpInstanceVariables
 		to: self class instSize 
 		do: [ :anInstVarIndex | self instVarAt: anInstVarIndex put: nil ]! !
 
-!DynamicallyCodeCreatingTest methodsFor: 'setup/teardown' stamp: 'jmv 26/Aug/2026, 1:12:54 am (UTC)'!
+!DynamicallyCodeCreatingTest methodsFor: 'setup/teardown' stamp: 'jmv 17/Sep/2026, 6:15:16 pm (UTC)'!
 setUp
 
 	super setUp.
-	"If the authorInitials are not set, they will be asked - Hernan"
 	UISupervisor whenUIinSafeState: [ Utilities authorInitials ].
-	self allClassCategoriesOfTestData do: [ :aClassCategory |
-		(SystemOrganization classesAt: aClassCategory) do: [ :aClass | aClass removeFromSystem ]].
-	"Because I'm using the same system to create classes and removed them with its category at tearDown, I want to be sure 
-	I will not remove something I don't have too - Hernan"
+	self cleanUpGeneratedCode.
 	setUpAssertionsPassed := false.
 	self assertCanRunTest.
 	setUpAssertionsPassed := true.
-	
 	classCategories := Set new.! !
 
 !DynamicallyCodeCreatingTest methodsFor: 'setup/teardown' stamp: 'HAW 20/Aug/2026, 9:53:17 pm (UTC)'!
