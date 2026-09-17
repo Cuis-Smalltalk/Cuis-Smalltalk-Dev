@@ -1,7 +1,7 @@
 'From Cuis7.9 [latest update: #7987] on 8 June 2026 at 5:10:22 pm'!
 'Description '!
-!provides: 'TestDynamicCuisLibraries' 1 22!
-!requires: 'DynamicCuisLibraries' 1 22 nil!
+!provides: 'TestDynamicCuisLibraries' 1 36!
+!requires: 'DynamicCuisLibraries' 1 36 nil!
 SystemOrganization addCategory: #TestDynamicCuisLibraries!
 SystemOrganization addCategory: #'TestDynamicCuisLibraries-Tests'!
 SystemOrganization addCategory: #'TestDynamicCuisLibraries-SubjectClassesBasic'!
