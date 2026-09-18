@@ -1,6 +1,6 @@
-'From Cuis7.9 [latest update: #8204] on 17 September 2026 at 2:56:40 pm'!
+'From Cuis7.9 [latest update: #8205] on 18 September 2026 at 10:46:17 am'!
 'Description '!
-!provides: 'RefactoringTests' 1 21!
+!provides: 'RefactoringTests' 1 22!
 !requires: 'DynamicallyCodeCreatingTestSupport' 1 0 nil!
 !requires: '__Refactoring_TestData__' 1 0 nil!
 SystemOrganization addCategory: #RefactoringTests!
@@ -17137,6 +17137,21 @@ test12CantExtractArgument
 	self assertCreation: [ TemporaryToInstanceVariable named: 'a' fromMethod: methodNode ]
 		failsWith: [ TemporaryToInstanceVariable inexistentTemporaryErrorDescription ].
 ! !
+
+!TemporaryToInstanceVariableTest methodsFor: 'testing' stamp: 'HAW 17/Sep/2026, 4:28:40 pm (UTC)'!
+test13ATemporaryUsedByTheMethodBecomesInstanceVariableWithoutLeavingItUndeclared
+
+	| classToRefactor methodNode |
+
+	classToRefactor := self createClassNamed: self classToRefactorName.
+	methodNode := self compileMethodNodeIn: classToRefactor named: #m1 sourceCode: 'm1 | a | a := 3. ^a'.
+
+	self
+		shouldnt: [ (TemporaryToInstanceVariable named: 'a' fromMethod: methodNode) apply ]
+		raise: UndeclaredVariableWarning.
+
+	self assert: classToRefactor new m1 equals: 3.
+	self deny: (Undeclared includesKey: #a)! !
 
 !TemporaryToInstanceVariableTest methodsFor: 'assertions' stamp: 'HAW 19/May/2019, 9:29:33 pm (UTC)'!
 assertMethodNamed: aMethodName in: aClass hasSourceEqualTo: aSourceCode
