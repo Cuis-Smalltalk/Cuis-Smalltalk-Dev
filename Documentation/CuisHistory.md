@@ -207,3 +207,11 @@ https://lists.cuis.st/mailman/archives/cuis-dev/2023-December/008269.html
 - Updates to Bootstrap
 - Various bug fixes
 - Enhancements in Usability. Performance. Robustness.
+
+## Since 2026-May-29 - included in the Cuis 7.9 Rolling Release
+- Performance improvements in Vector Graphics Plugin
+- Arbitrary Method Properties
+- Ephemeron fixes
+- Method timestamps saved in UTC time, displayed in local time
+- Fast StaticImageMorph
+- Bug Fixes
