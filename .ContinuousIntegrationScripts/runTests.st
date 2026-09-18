@@ -7,6 +7,8 @@ CodePackageFile installPackage: DirectoryEntry currentDirectory // 'Packages/Bas
 
 ChangeSet fileIn: DirectoryEntry currentDirectory // '.ContinuousIntegrationScripts/TestResultConsolePrinter.st'.
 
+SystemDictionary classPool at: #DoingStartup put: false.
+
 testSuite := TestSuite new.
 testCases := TestCase allSubclasses reject: [:testCase | testCase isAbstract].
 testCases do: [:testCase | testCase addToSuiteFromSelectors: testSuite].
