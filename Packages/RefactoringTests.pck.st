@@ -1,6 +1,6 @@
-'From Cuis7.9 [latest update: #8205] on 18 September 2026 at 10:46:17 am'!
+'From Cuis7.9 [latest update: #8209] on 21 September 2026 at 10:39:50 am'!
 'Description '!
-!provides: 'RefactoringTests' 1 22!
+!provides: 'RefactoringTests' 1 23!
 !requires: 'DynamicallyCodeCreatingTestSupport' 1 0 nil!
 !requires: '__Refactoring_TestData__' 1 0 nil!
 SystemOrganization addCategory: #RefactoringTests!
@@ -2083,11 +2083,12 @@ test55_CanAcceptParameterizableReplacementWithEquivalentReceivers
 		andHasEqualParamsInOrder: { 'aCollection' . '0' . '[:acc :each | acc + each]' }
 		withIntervals: { 72 to: 82 . 92 to: 92 . 100 to: 124 }.! !
 
-!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'JEC 9/Apr/2026, 1:01:00 am (UTC)'!
+!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 17/Sep/2026, 9:58:36 pm (UTC)'!
 test56_CannotFindParameterizableReplacementWhenParametersHaveReturns
 
 	| sourceCode |
 	
+	classToRefactor addInstVarName: 'each'.
 	sourceCode := 'findValidInSelfOr: aCollection
 	self do: [:elem | elem isValid ifTrue: [^each]].
 	aCollection do: [:group | group isValid ifTrue: [^each]].
@@ -2100,11 +2101,12 @@ test56_CannotFindParameterizableReplacementWhenParametersHaveReturns
 
 	self deny: finder hasFoundParameterizableReplacements.! !
 
-!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'JEC 9/Apr/2026, 1:02:22 am (UTC)'!
+!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 17/Sep/2026, 9:58:36 pm (UTC)'!
 test57_CannotFindParameterizableReplacementWhenParametersHaveAssignments
 
 	| sourceCode |
 	
+	classToRefactor addInstVarName: 'each'.
 	sourceCode := 'findValidInSelfOr: aCollection
 	| valid |
 	self do: [:elem | elem isValid ifTrue: [ valid := each ]].
@@ -6401,12 +6403,13 @@ test158_CanExtractMethodWithAReturnNodeInParameterizedCode
 		assertClassHasDefined: methodToExtractCodeFrom selector withBody: updatedCode inCategory: category;
 		assertClassHasDefined: newMessage selector withBody: newMethodCode inCategory: category! !
 
-!ExtractMethodTest methodsFor: 'tests - parameterizable code' stamp: 'JEC 14/Apr/2026, 8:47:34 pm (UTC)'!
+!ExtractMethodTest methodsFor: 'tests - parameterizable code' stamp: 'HAW 17/Sep/2026, 9:56:55 pm (UTC)'!
 test159_CanExtractMethodWithMultipleAssignmentsAndParameterizableCode
 
 	| codeToExtract newMethodCode originalCode updatedCode intervalToExtract methodToExtractCodeFrom originalSelector parameterizableNodes newMessage category |
 
 	category := #category.
+	classToRefactor addInstVarName: 'instVarCollection'.
 	codeToExtract := 'a := aCollection inject: 0 into: [:acc :each | acc + each].
 	b := instVarCollection inject: 1 into: [:acc :each | acc * each].'.
  	originalCode := 'm1
@@ -7008,6 +7011,23 @@ test167_ExtractingACascadeInParenthesesToAUnaryMessageRemovesTheParentheses
 	self
 		assertExtracting: codeToExtract from: originalCode named: (Message selector: #m2)
 		defines: newMethodCode andUpdates: updatedCode! !
+
+!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'HAW 17/Sep/2026, 9:54:14 pm (UTC)'!
+test168_ASelectionContainingALocalVariableIsExtractedWithoutLeavingItUndeclared
+
+	self
+		shouldnt: [
+			self
+				assertExtracting: 'local + 3'
+				from: 'm1 | local | ^ local + 3'
+				named: (Message selector: #m2: arguments: #('local'))
+				defines: 'm2: local
+
+	^ local + 3'
+				andUpdates: 'm1 | local | ^ self m2: local' ]
+		raise: UndeclaredVariableWarning.
+
+	self deny: (Undeclared includesKey: #local)! !
 
 !ExtractMethodTest methodsFor: 'tests - validations' stamp: 'JEC 13/Apr/2026, 1:46:22 pm (UTC)'!
 test001_NewSelectorShouldNotBeEmpty
@@ -9041,16 +9061,16 @@ test115_WhenTheNewMethodNameWithParametersAndReturningBlockExists_CreatesItWithA
 		withBody: newMethodCode
 		andUpdateMethodsTo: { updatedCode }! !
 
-!ExtractMethodTest methodsFor: 'tests - return' stamp: 'JEC 14/Apr/2026, 3:53:41 pm (UTC)'!
+!ExtractMethodTest methodsFor: 'tests - return' stamp: 'HAW 17/Sep/2026, 9:56:55 pm (UTC)'!
 test116_WhenTheReturningBlockParameterNameExistsInTheExtractedTempVars_CreatesItWithANumber
 
 	| codeToExtract newMethodCode originalCode updatedCode |
 
-	codeToExtract := 'self foo: aReturningBlock. [ ^ a ]'.
+	codeToExtract := 'self foo: aReturningBlock. [ ^ 3 ]'.
 	originalCode := 'm1 | aReturningBlock | aReturningBlock := []. ' , codeToExtract.
 	newMethodCode := 'm2: aReturningBlock returningWith: aReturningBlock1
 
-	self foo: aReturningBlock. [ ^ aReturningBlock1 value: a ]'.
+	self foo: aReturningBlock. [ ^ aReturningBlock1 value: 3 ]'.
 	updatedCode := 'm1 | aReturningBlock | aReturningBlock := []. self m2: aReturningBlock returningWith: [ :res | ^ res ]'.
 	
 	self
