@@ -1,6 +1,6 @@
-'From Cuis7.9 [latest update: #8209] on 21 September 2026 at 10:39:50 am'!
+'From Cuis7.9 [latest update: #8212] on 23 September 2026 at 5:03:02 pm'!
 'Description '!
-!provides: 'RefactoringTests' 1 23!
+!provides: 'RefactoringTests' 1 24!
 !requires: 'DynamicallyCodeCreatingTestSupport' 1 0 nil!
 !requires: '__Refactoring_TestData__' 1 0 nil!
 SystemOrganization addCategory: #RefactoringTests!
@@ -2179,6 +2179,47 @@ test61FindsTheReceiverOfACascadeOnce
 	self
 		assertAnyReplacementOf: replacements
 		isOfSourceMethodAndHasInterval: (7 to: 11)! !
+
+!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 22/Sep/2026, 4:15:00 pm (UTC)'!
+test62WhatDiffersInsideTheUsesOfATemporaryAssignedInThePieceIsTheParameter
+
+	| paramReplacements sourceCode |
+
+	sourceCode := 'm1 | a b | a := self foo: 1. self bar: a size. b := self foo: 2. self bar: b size'.
+	self
+		compile: sourceCode
+		andFind: ((sourceCode findString: 'a := self foo: 1') to: (sourceCode findString: 'a size') + 5).
+
+	paramReplacements := finder parameterizableReplacements.
+
+	self assert: paramReplacements size equals: 1.
+	self
+		assertAnyParamReplacementOf: paramReplacements
+		hasInterval: ((sourceCode findString: 'b := self foo: 2') to: sourceCode size)
+		hasParamsIntervals: { (sourceCode findString: '2. self bar') to: (sourceCode findString: '2. self bar') }
+		andIsOf: sourceMethod! !
+
+!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 22/Sep/2026, 4:15:01 pm (UTC)'!
+test63ABlockThatDiffersInsideIsTheParameterAsAWhole
+
+	| paramReplacements sourceCode blockStart |
+
+	sourceCode := 'm1 | a b | a := self foo: 1. self bar: (a count: [ :x | x = self k1 ]). b := self foo: 2. self bar: (b count: [ :x | x = self k2 ])'.
+	self
+		compile: sourceCode
+		andFind: ((sourceCode findString: 'a := self foo: 1') to: (sourceCode findString: 'k1 ])') + 4).
+	blockStart := sourceCode findString: '[ :x | x = self k2 ]'.
+
+	paramReplacements := finder parameterizableReplacements.
+
+	self assert: paramReplacements size equals: 1.
+	self
+		assertAnyParamReplacementOf: paramReplacements
+		hasInterval: ((sourceCode findString: 'b := self foo: 2') to: sourceCode size)
+		hasParamsIntervals: {
+			(sourceCode findString: '2. self bar') to: (sourceCode findString: '2. self bar').
+			blockStart to: blockStart + '[ :x | x = self k2 ]' size - 1 }
+		andIsOf: sourceMethod! !
 
 !ExtractMethodFinderTest methodsFor: 'setup/teardown' stamp: 'HAW 2/Sep/2021, 10:02:12 pm (UTC)'!
 setUp
