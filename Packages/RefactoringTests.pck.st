@@ -1,6 +1,6 @@
-'From Cuis7.9 [latest update: #8213] on 23 September 2026 at 5:27:32 pm'!
+'From Cuis7.9 [latest update: #8215] on 23 September 2026 at 5:31:04 pm'!
 'Description '!
-!provides: 'RefactoringTests' 1 26!
+!provides: 'RefactoringTests' 1 27!
 !requires: 'DynamicallyCodeCreatingTestSupport' 1 0 nil!
 !requires: '__Refactoring_TestData__' 1 0 nil!
 SystemOrganization addCategory: #RefactoringTests!
@@ -2247,6 +2247,43 @@ test64TheSameExpressionDifferingInSeveralPlacesIsOneParameter
 		isOf: sourceMethod
 		andHasEqualParamsInOrder: { '1' }
 		withIntervals: { 14 to: 14 . 21 to: 21 }! !
+
+!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 23/Sep/2026, 12:18:17 am (UTC)'!
+test65AReceiverThatIsATemporaryOfThePieceIsNotAParameter
+
+	| paramReplacements sourceCode |
+
+	sourceCode := 'm1 | a b | a := self foo: 1. a bar: 3. b := self foo: 2. b bar: 4'.
+	self
+		compile: sourceCode
+		andFind: ((sourceCode findString: 'a := self foo: 1') to: (sourceCode findString: 'a bar: 3') + 7).
+
+	paramReplacements := finder parameterizableReplacements.
+
+	self assert: paramReplacements size equals: 1.
+	self
+		assertAnyParamReplacementOf: paramReplacements
+		hasInterval: ((sourceCode findString: 'b := self foo: 2') to: sourceCode size)
+		hasParamsIntervals: { (sourceCode findString: '2. b bar') to: (sourceCode findString: '2. b bar') . sourceCode size - 1 to: sourceCode size }
+		andIsOf: sourceMethod! !
+
+!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 23/Sep/2026, 12:17:34 am (UTC)'!
+test66AnArgumentReadingNoTemporaryOfThePieceIsTheParameterAsAWhole
+
+	| paramReplacements sourceCode |
+
+	classToRefactor addInstVarName: 'unit'.
+	sourceCode := 'm1 self foo: 1 * unit. self foo: 2 * unit'.
+	self compile: sourceCode andFind: (4 to: 21).
+
+	paramReplacements := finder parameterizableReplacements.
+
+	self assert: paramReplacements size equals: 1.
+	self
+		assertAnyParamReplacementOf: paramReplacements
+		hasInterval: (24 to: 41)
+		hasParamsIntervals: { 34 to: 41 }
+		andIsOf: sourceMethod! !
 
 !ExtractMethodFinderTest methodsFor: 'setup/teardown' stamp: 'HAW 2/Sep/2021, 10:02:12 pm (UTC)'!
 setUp
