@@ -1,6 +1,6 @@
-'From Cuis7.9 [latest update: #8212] on 23 September 2026 at 5:03:02 pm'!
+'From Cuis7.9 [latest update: #8212] on 23 September 2026 at 5:24:45 pm'!
 'Description '!
-!provides: 'RefactoringTests' 1 24!
+!provides: 'RefactoringTests' 1 25!
 !requires: 'DynamicallyCodeCreatingTestSupport' 1 0 nil!
 !requires: '__Refactoring_TestData__' 1 0 nil!
 SystemOrganization addCategory: #RefactoringTests!
@@ -11627,6 +11627,38 @@ test41InlineMethodReturningABinarySendUsedAsAKeywordArgumentDoesNotAddParenthese
 
 	expectedNewSourceCode := methodWithUsagesSelector, ' ^self max: 3 + 4'.
 	self assert: (senderClass >> methodWithUsagesSelector) sourceCode equals: expectedNewSourceCode.! !
+
+!InlineMethodTest methodsFor: 'tests - successful' stamp: 'HAW 22/Sep/2026, 9:40:32 pm (UTC)'!
+test42InlineMethodDeclaresTheTemporariesBeforeAFirstStatementThatIsNotTheSend
+
+	| implementorClass senderClass sendReference |
+
+	implementorClass := self createClassNamed: self implementorClass.
+	senderClass := self createClassNamed: self senderClass subclassOf: implementorClass.
+	implementorClass compile: 'm1
+
+	| x |
+
+	x := 1.
+	^x'.
+	senderClass compile: 'm2
+
+	self yourself.
+	^self m1'.
+	sendReference := (InlineMethod findReferencesToSelector: #m1 in: (MethodReference class: senderClass selector: #m2)) anyOne.
+
+	(InlineMethod
+		from: implementorClass >> #m1
+		intoSendersAndUsages: (Array with: sendReference)
+		removeMethod: false) apply.
+
+	self assert: (senderClass >> #m2) sourceCode equals: 'm2
+
+	| x |
+
+	self yourself.
+	x := 1.
+	^x'! !
 
 !InlineMethodTest methodsFor: 'class factory' stamp: 'FB 22/Nov/2021, 9:09:44 pm (UTC)'!
 anotherSenderClass
