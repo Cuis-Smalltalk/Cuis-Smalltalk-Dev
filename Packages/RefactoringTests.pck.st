@@ -1,6 +1,6 @@
-'From Cuis7.9 [latest update: #8212] on 23 September 2026 at 5:24:45 pm'!
+'From Cuis7.9 [latest update: #8213] on 23 September 2026 at 5:27:32 pm'!
 'Description '!
-!provides: 'RefactoringTests' 1 25!
+!provides: 'RefactoringTests' 1 26!
 !requires: 'DynamicallyCodeCreatingTestSupport' 1 0 nil!
 !requires: '__Refactoring_TestData__' 1 0 nil!
 SystemOrganization addCategory: #RefactoringTests!
@@ -2220,6 +2220,33 @@ test63ABlockThatDiffersInsideIsTheParameterAsAWhole
 			(sourceCode findString: '2. self bar') to: (sourceCode findString: '2. self bar').
 			blockStart to: blockStart + '[ :x | x = self k2 ]' size - 1 }
 		andIsOf: sourceMethod! !
+
+!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 22/Sep/2026, 10:02:27 pm (UTC)'!
+test64TheSameExpressionDifferingInSeveralPlacesIsOneParameter
+
+	| replacements |
+
+	self
+		compile: 'm1 self foo: 1 bar: 1. self foo: 2 bar: 2'
+		andFind: (4 to: 21)
+		to: (Message selector: #m2).
+	self acceptParamReplacementsWithNodesToParameterized: #() to: (Message selector: #k1:).
+
+	replacements := finder replacements.
+
+	self assert: replacements size equals: 2.
+	self
+		assertAnyReplacementOf: replacements
+		hasInterval: (24 to: 41)
+		isOf: sourceMethod
+		andHasEqualParamsInOrder: { '2' }
+		withIntervals: { 34 to: 34 . 40 to: 41 }.
+	self
+		assertAnyReplacementOf: replacements
+		hasInterval: (4 to: 21)
+		isOf: sourceMethod
+		andHasEqualParamsInOrder: { '1' }
+		withIntervals: { 14 to: 14 . 21 to: 21 }! !
 
 !ExtractMethodFinderTest methodsFor: 'setup/teardown' stamp: 'HAW 2/Sep/2021, 10:02:12 pm (UTC)'!
 setUp
@@ -5896,6 +5923,23 @@ test03WrongNumberOfArgumentsWhenParsedArgumensAreNotTheSameAsUserEnteredArgument
 
 	self assertSignals: ExtractMethodNewMethod wrongNumberOfArgumentsGivenErrorMessage with: 'm1: a' argumentNames: {}.
 	! !
+
+!ExtractMethodApplierTest methodsFor: 'tests' stamp: 'HAW 22/Sep/2026, 10:20:12 pm (UTC)'!
+test04AsksOneParameterForTheSameExpressionDifferingInSeveralPlaces
+
+	| classToRefactor applier sourceCode |
+
+	classToRefactor := self createClassNamed: #ClassToExtractMethod.
+	sourceCode := 'm1 self foo: 1 bar: 1. self foo: 2 bar: 2'.
+	classToRefactor compile: sourceCode.
+	applier := ExtractMethodApplier new
+		initializeOn: nil
+		for: ((sourceCode findString: 'self foo: 1') to: (sourceCode findString: 'bar: 1') + 5) asSourceCodeInterval
+		of: classToRefactor >> #m1.
+	applier findReplacements.
+	(applier instVarNamed: 'finder') useParameterizedToChangeReplacements.
+
+	self assert: applier parseAndParameterizableNodesToParameterizeInOrder size equals: 1! !
 
 !ExtractMethodApplierTest methodsFor: 'assertions' stamp: 'HAW 19/Jul/2023, 2:03:49 pm (UTC)'!
 assertSignals: anErrorMessage with: userAnswer argumentNames: argumentNames  
