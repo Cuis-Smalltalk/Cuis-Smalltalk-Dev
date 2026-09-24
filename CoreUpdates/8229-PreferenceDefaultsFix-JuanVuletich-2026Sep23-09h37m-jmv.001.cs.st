@@ -1,0 +1,65 @@
+'From Cuis7.9 [latest update: #8217] on 23 September 2026 at 9:38:02 am'!
+
+!PreferenceSet class methodsFor: 'sys data' stamp: 'jmv 21/Sep/2026, 7:00:06 pm (UTC)'!
+machineSlow
+	^ #(
+		(drawKeyboardFocusIndicator false )
+		(balloonHelpEnabled false)
+		(browseWithPrettyPrint false)
+		(caseSensitiveFinds true)
+		(checkForSlips false)
+		(cmdDotEnabled true)
+		(diffsInChangeList true)
+		(diffsWithPrettyPrint false)
+		(menuKeyboardControl false)
+		(optionalButtons false)
+		(subPixelRenderFonts true)
+		(cheapWindowReframe true)
+		(syntaxHighlightingAsYouType false)
+		(tapAndHoldEmulatesButton2 false)
+		(clickGrabsMorphs true)
+		(wantsMenuIcons false )
+		(methodAnnotations #(timeStamp messageCategory packages changeSets properties) )
+		(classAnnotations  #(instanceMethodsCount classMethodsCount) )
+		(systemCategoryAnnotations #(classCount instanceMethodsCount classMethodsCount) )
+	)! !
+
+!PreferenceSet class methodsFor: 'sys data' stamp: 'jmv 21/Sep/2026, 7:00:15 pm (UTC)'!
+prefProgramming
+	^ #(
+		#(atMinusDigitMeaning st80 #(st80 ansiSmalltalk disabled) )
+		#(allowBlockArgumentAssignment false )
+		#(allowNonBooleanReceiversOfBooleanMessages false )
+		#(alternativeBrowseIt false )
+		#(browseWithPrettyPrint false )
+		#(debugHaloHandle true )
+		#(debugLogTimestamp true )
+		#(debugPreDebugger false )
+		#(debugShowDamage false )
+		#(decorateBrowserButtons true )
+		#(diffsInChangeList true )
+		#(diffsWithPrettyPrint false )
+		#(extraDebuggerButtons true )
+		#(fullPrintItInWorkspaces false )
+		#(highlightBlockNesting true )
+		#(italicsInShout true)
+		#(listClassesHierarchically true )
+		#(logDebuggerStackToFile false )
+		#(prettyPrintRectangularBlocks false )
+		#(shiftClickShowsImplementors false )
+		#(shoutInWorkspaces true )
+		#(workspacesStyleByParagraphs true )
+		#(showAnnotations true )
+		#(showLinesInHierarchyViews true )
+		#(stylingWithEmphasisInWorkspaces false )
+		#(systemCategoryAnnotations #(classCount instanceMethodsCount classMethodsCount "linesOfCode" messageSendsCount) )
+		#(classAnnotations #(instanceMethodsCount classMethodsCount "linesOfCode" messageSendsCount) )
+		#(messageCategoryAnnotations #(messagesCount messageSendsCount) )
+		#(methodAnnotations #(timeStamp "linesOfCode" messageSendsCount messageCategory implementorsCount sendersCount packages library changeSets properties) )	
+		#(syntaxHighlightingAsYouType true )
+		#(showAssignmentAsLeftArrow false )
+		#(replaceUnicodeArrowsWithSmalltalkArrows true)
+		#(useWideMinusAndCenteredAsteriskGlyphs true )
+		#(clearPackagePathsOnImageMove true)
+	)! !
+
