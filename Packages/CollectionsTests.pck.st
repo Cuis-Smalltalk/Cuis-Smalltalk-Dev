@@ -1,6 +1,6 @@
-'From Cuis7.9 [latest update: #8183] on 15 September 2026 at 11:17:04 am'!
+'From Cuis7.9 [latest update: #8218] on 24 September 2026 at 10:56:34 am'!
 'Description '!
-!provides: 'CollectionsTests' 1 1!
+!provides: 'CollectionsTests' 1 2!
 SystemOrganization addCategory: #CollectionsTests!
 SystemOrganization addCategory: #'CollectionsTests-Arrayed'!
 SystemOrganization addCategory: #'CollectionsTests-Streams'!
@@ -449,6 +449,44 @@ testSetEquality
 
 	self deny: Set new = Dictionary new! !
 
+!CollectionTest methodsFor: 'detectMax tests' stamp: 'FJG 12/Jul/2026, 3:46:23 am (UTC)'!
+testDetectMaxAnswersNilWhenTheCollectionIsEmpty
+
+	self assert: (#() detectMax: [ :each | each ]) equals: nil.! !
+
+!CollectionTest methodsFor: 'reduce tests' stamp: 'FJG 21/Sep/2026, 10:32:54 pm (UTC)'!
+testReduceRaisesErrorWhenTheCollectionIsEmpty
+
+	self should: [
+		#() reduce: [ :a :b | a + b ]
+	] raise: Error withMessageText: Collection emptyCollectionDescription! !
+
+!CollectionTest methodsFor: 'min tests' stamp: 'FJG 21/Sep/2026, 10:32:32 pm (UTC)'!
+testMinRaisesErrorWhenTheCollectionIsEmpty
+
+	self should: [
+		#() min
+	] raise: Error withMessageText: Collection emptyCollectionDescription.! !
+
+!CollectionTest methodsFor: 'anyOne tests' stamp: 'FJG 21/Sep/2026, 10:28:03 pm (UTC)'!
+testAnyOneRaisesErrorWhenTheCollectionIsEmpty
+
+	self should: [
+		Set new anyOne
+	] raise: Error withMessageText: Collection emptyCollectionDescription.! !
+
+!CollectionTest methodsFor: 'detectMin tests' stamp: 'FJG 12/Jul/2026, 3:46:24 am (UTC)'!
+testDetectMinAnswersNilWhenTheCollectionIsEmpty
+
+	self assert: (#() detectMin: [ :each | each ]) equals: nil.! !
+
+!CollectionTest methodsFor: 'max tests' stamp: 'FJG 21/Sep/2026, 10:31:57 pm (UTC)'!
+testMaxRaisesErrorWhenTheCollectionIsEmpty
+
+	self should: [
+		#() max
+	] raise: Error withMessageText: Collection emptyCollectionDescription.! !
+
 !DictionaryTest methodsFor: 'tests' stamp: 'jpb 3/Aug/2019, 3:17:49 am (UTC)'!
 testIsCollection
 	self assert: (Dictionary new is: #Collection)! !
@@ -460,6 +498,13 @@ testKeyNotFoundSignalTheRightMessage
 		should: [ Dictionary new errorKeyNotFound: 'theKey' ]
 		raise: Error
 		withMessageText: 'key: ''theKey'' not found'! !
+
+!IntervalTest methodsFor: 'testing' stamp: 'FJG 21/Sep/2026, 10:33:31 pm (UTC)'!
+testAnyOneRaisesTheEmptyCollectionErrorWhenEmpty
+
+	self should: [
+		(1 to: 0) anyOne
+	] raise: Error withMessageText: Collection emptyCollectionDescription.! !
 
 !IntervalTest methodsFor: 'testing' stamp: 'jmv 18/Dec/2018, 2:56:31 pm (UTC)'!
 testAt
@@ -1235,6 +1280,16 @@ testAntepenultimateSignalsErrorWhenCollectionIsNotBigEnough
 		should: [ #(1 2) antepenultimate ]
 		raise: Error
 		withMessageText: Collection collectionTooSmallDescription! !
+
+!ArrayTest methodsFor: 'test - accessing' stamp: 'FJG 12/Jul/2026, 3:46:24 am (UTC)'!
+testFirstIfEmptyReturnsFirstWhenExist
+
+	self assert: (#(1 2) firstIfEmpty: [ self fail ]) equals: 1.! !
+
+!ArrayTest methodsFor: 'test - accessing' stamp: 'FJG 12/Jul/2026, 3:46:24 am (UTC)'!
+testFirstIfEmptyValuesEmptyBlockWhenEmpty
+
+	self assert: (#() firstIfEmpty: [ 1 ]) equals: 1.! !
 
 !ArrayTest methodsFor: 'test - accessing' stamp: 'jmv 31/Jul/2023, 4:10:37 pm (UTC)'!
 testLastIfEmptyReturnsLastWhenExist
