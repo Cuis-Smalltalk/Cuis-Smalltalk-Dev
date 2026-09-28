@@ -81,7 +81,9 @@ When full block closures were implemented in Squeak, and support added to the VM
 New, modern look. Themes. We keep improving Cuis usability, and make the development tools look better, including more conventional looking (i.e. less colorful) Dark, Light and HighContrast UI themes.   
 
 ## 2012-04-21 - Cuis 4.0 ##
-Code Packages. In addition to the ever shrinking Kernel Image, we enable the development of code Packages that can be loaded as needed. This lets us decouple and better structure different parts of the system, and better distribute their development amongst developers. Over time, we developed over 30 packages that are distributed with Cuis, and over 20 GitHub repositories with additional packages developed and maintained by community members.   
+Code Packages. In addition to the ever shrinking Kernel Image, we enable the development of code Packages that can be loaded as needed. This lets us decouple and better structure different parts of the system, and better distribute their development amongst developers. Over time, we developed over 30 packages that are distributed with Cuis, and over 20 GitHub repositories with additional packages developed and maintained by community members.
+
+StyledTextEditor ( https://github.com/Cuis-Smalltalk/StyledTextEditor ) public release.
 
 ## 2012-05-16 - New Cuis mail list ##
 We decided that a discussion forum specific for Cuis is a good idea. Still, most people are also active members of the Squeak and/or Pharo communities. 
@@ -115,6 +117,20 @@ All this also means that we don't need to maintain forked code bases to support 
 ## 2017-01-10 - CuisUniversity is born ##
 [CuisUniversity](https://sites.google.com/view/cuis-university) is a Cuis Distribution prepared by Hernán Wilkinson with built in support for Test Driven Design, Automated Refactorings, LiveTyping and DenotativeObjects. It is used for teaching at Universidad de Buenos Aires - FCEN (School of Sciences) and FIUBA (School of Engineering), and at Universidad de Quilmes.
 
+## 2018-12-15 - Erudite
+Mariano Montone's Erudite repo https://github.com/Cuis-Smalltalk/Erudite
+
+## 2019-01-23 - Numerics, Geographic Information Systems, SVG ##
+New repos:
+https://github.com/Cuis-Smalltalk/Numerics
+https://github.com/Cuis-Smalltalk/GeographicInformationSystems
+https://github.com/Cuis-Smalltalk/SVG
+
+## 2019-01-23 - Aconcagua and Chalten ##
+Hernán Wilkinson's Aconcagua and Chalten for Cuis (Measures and Calendars) projects moved to the Cuis-Smalltalk GitHub organization.
+https://github.com/Cuis-Smalltalk/Measures
+https://github.com/Cuis-Smalltalk/Calendars
+
 ## 2019-05-10 - TrueType font support ##
 100% Smalltalk code. Top visual quality, surpassing the native font rasterizers used by MacOS, Windows and Linux. No need for FreeType or any other external library.
 
@@ -126,6 +142,9 @@ Hilaire Fermandes started the port of [Dr. Geo](https://gnu-drgeo.blogspot.com/)
 ## 2020 - The Cuis Book ##
 Hilaire Fernandes lead the creation of a book written specifically for people learning about Cuis and Smalltalk.
 Read the [online version](https://cuis-smalltalk.github.io/TheCuisBook) or download the [pdf version](https://github.com/Cuis-Smalltalk/TheCuisBook/releases/download/latestpdfbuild/TheCuisBook.pdf).
+
+## 2020 - The Cuis Book ##
+Cuis Website at https://cuis.st/ . https://github.com/Cuis-Smalltalk/Cuis-Website
 
 ## 2020 - Vector Graphics and SVG ##
 While the redesign of Morphic had always been done in the Cuis image, the experiments with VectorGraphics were done separatedly. Now, the implementation of the VectorGraphics Morphic Canvas and Engine matured, and they were added as optional packages to the main Cuis Smalltalk repo.
@@ -145,6 +164,8 @@ The hierarchy of fundamentel Morph classes was reorganized. As this could affect
 Unicode support in Text Editors, Files and Smalltalk selectors and variables. Now, after selecting 'Preferences / Use Unicode text', the full range of Unicode characters can be used anywhere, and files are saved in Utf-8 format, including Smalltalk code.
 
 https://lists.cuis.st/mailman/archives/cuis-dev/2022-May/005654.html
+
+New https://github.com/Cuis-Smalltalk/Cuis-Smalltalk-UI repo.
 
 ## 2022-10-28 - Unicode enabled by default ##
 All code files are UTF-8. All Strings and code in the image can hold Unicode. All text is rasterized by our Vector Graphics engine from TrueType font definitions.
