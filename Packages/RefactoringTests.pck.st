@@ -1,6 +1,6 @@
-'From Cuis7.9 [latest update: #8247] on 30 September 2026 at 3:39:22 pm'!
+'From Cuis7.9 [latest update: #8247] on 30 September 2026 at 3:41:23 pm'!
 'Description '!
-!provides: 'RefactoringTests' 1 28!
+!provides: 'RefactoringTests' 1 29!
 !requires: 'DynamicallyCodeCreatingTestSupport' 1 0 nil!
 !requires: '__Refactoring_TestData__' 1 0 nil!
 SystemOrganization addCategory: #RefactoringTests!
@@ -2180,8 +2180,8 @@ test61FindsTheReceiverOfACascadeOnce
 		assertAnyReplacementOf: replacements
 		isOfSourceMethodAndHasInterval: (7 to: 11)! !
 
-!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 22/Sep/2026, 4:15:00 pm (UTC)'!
-test62WhatDiffersInsideTheUsesOfATemporaryAssignedInThePieceIsTheParameter
+!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 26/Sep/2026, 2:46:51 pm (UTC)'!
+test62WhatDiffersInsideTheUsesOfATemporaryAssignedInCodeToExtractIsTheParameter
 
 	| paramReplacements sourceCode |
 
@@ -2248,8 +2248,8 @@ test64TheSameExpressionDifferingInSeveralPlacesIsOneParameter
 		andHasEqualParamsInOrder: { '1' }
 		withIntervals: { 14 to: 14 . 21 to: 21 }! !
 
-!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 23/Sep/2026, 12:18:17 am (UTC)'!
-test65AReceiverThatIsATemporaryOfThePieceIsNotAParameter
+!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 26/Sep/2026, 2:46:51 pm (UTC)'!
+test65AReceiverThatIsATemporaryOfCodeToExtractIsNotAParameter
 
 	| paramReplacements sourceCode |
 
@@ -2267,8 +2267,8 @@ test65AReceiverThatIsATemporaryOfThePieceIsNotAParameter
 		hasParamsIntervals: { (sourceCode findString: '2. b bar') to: (sourceCode findString: '2. b bar') . sourceCode size - 1 to: sourceCode size }
 		andIsOf: sourceMethod! !
 
-!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 23/Sep/2026, 12:17:34 am (UTC)'!
-test66AnArgumentReadingNoTemporaryOfThePieceIsTheParameterAsAWhole
+!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 26/Sep/2026, 2:46:51 pm (UTC)'!
+test66AnArgumentReadingNoTemporaryOfCodeToExtractIsTheParameterAsAWhole
 
 	| paramReplacements sourceCode |
 
