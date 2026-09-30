@@ -1,6 +1,6 @@
-'From Cuis7.9 [latest update: #8247] on 30 September 2026 at 3:41:23 pm'!
+'From Cuis7.9 [latest update: #8247] on 30 September 2026 at 3:47:13 pm'!
 'Description '!
-!provides: 'RefactoringTests' 1 29!
+!provides: 'RefactoringTests' 1 30!
 !requires: 'DynamicallyCodeCreatingTestSupport' 1 0 nil!
 !requires: '__Refactoring_TestData__' 1 0 nil!
 SystemOrganization addCategory: #RefactoringTests!
@@ -664,10 +664,10 @@ test021_CanFindTheScopeOfVariableNode
 	
 	self assertFinderFoundMethodNodeScope ! !
 
-!CommonScopeNodeFinderTest methodsFor: 'tests' stamp: 'JEC 16/Jan/2026, 11:56:53 am (UTC)'!
+!CommonScopeNodeFinderTest methodsFor: 'tests' stamp: 'HAW 29/Sep/2026, 12:40:55 pm (UTC)'!
 test022_CanFindTheScopeOfLiteralVariableNode
 
-	self compile: 'm1 undeclared'.
+	self compile: 'm1 Undeclared'.
 	
 	self useFinderToFindScopeForAll: { self parseNodeAt: 4 }.
 	
@@ -3132,11 +3132,11 @@ test028_WhenReceiversAreNonVariablesOrLiterals_TheyWontBeFoundAsParameterizable
 	
 	self deny: finder hasFoundParameterizableReplacements.! !
 
-!ParameterizableNodesFinderTest methodsFor: 'tests' stamp: 'JEC 7/Apr/2026, 8:21:39 pm (UTC)'!
+!ParameterizableNodesFinderTest methodsFor: 'tests' stamp: 'HAW 29/Sep/2026, 12:44:11 pm (UTC)'!
 test029_WhenFindingMultiplesPiecesOfCode_AndReceiversAreNotEquivalents_TheyWontBeFoundAsParameterizable
 
 	classToRefactor addInstVarName: 'instVarCollection'.
-	self compile: 'm1
+	[ self compile: 'm1
 	| a b c d aCollection |
 	aCollection := OrderedCollection new.
 	a := aCollection inject: 0 into: [:acc :each | acc + each].
@@ -3147,7 +3147,8 @@ test029_WhenFindingMultiplesPiecesOfCode_AndReceiversAreNotEquivalents_TheyWontB
 	
 	self findParameterizableNodesInSameMethodFromAll: { self parseNodeAt: 71 . self parseNodeAt: 132 }.
 	
-	self deny: finder hasFoundParameterizableReplacements.! !
+	self deny: finder hasFoundParameterizableReplacements ]
+		ensure: [ Undeclared removeKey: #undefinedVar ifAbsent: [] ]! !
 
 !ParameterizableNodesFinderTest methodsFor: 'tests' stamp: 'JEC 7/Apr/2026, 8:30:02 pm (UTC)'!
 test030_WhenFindingMultiplesPiecesOfCode_WhenReceiversAreEquivalentsCanBeFoundAsParameterizable
@@ -3361,6 +3362,15 @@ assertCreation: aCreationBlock warnsWith: aStringOrBlock
 			aWarning resume ].
 
 	self assert: warningSignaled description: 'Warning was not signaled'! !
+
+!RefactoringTest methodsFor: 'assertions' stamp: 'HAW 28/Sep/2026, 10:09:29 pm (UTC)'!
+should: aBlock notLeaveUndeclared: aVariableName
+
+	Undeclared removeKey: aVariableName asSymbol ifAbsent: [].
+
+	self shouldnt: aBlock raise: UndeclaredVariableWarning.
+
+	self deny: (Undeclared includesKey: aVariableName asSymbol)! !
 
 !RefactoringTest methodsFor: 'exceptions' stamp: 'HAW 17/Aug/2018, 8:38:44 pm (UTC)'!
 canNotRefactorDueToReferencesRefactoringError
@@ -4500,6 +4510,19 @@ test39TheParenthesesAroundASendThatStaysKeywordAreKept
 	self
 		assert: (classToRefactor>>senderSelector) sourceCode
 		equals: senderSelector asString, ' (self ', oldSelector asString, ' 1 m2: 2) yourself'! !
+
+!AddParameterTest methodsFor: 'tests' stamp: 'HAW 29/Sep/2026, 12:08:33 pm (UTC)'!
+test40ANewParameterValueNamingAVariableDoesNotLeaveItUndeclared
+
+	self
+		should: [
+			AddParameter
+				named: 'newParam'
+				initializedWith: 'notDeclaredVariable'
+				toUnarySelector: thisContext selector
+				implementors: { thisContext method }
+				senders: {} ]
+		notLeaveUndeclared: 'notDeclaredVariable'! !
 
 !AddParameterTest methodsFor: 'class factory' stamp: 'HAW 24/Aug/2018, 9:20:56 pm (UTC)'!
 classToRefactorName
@@ -5888,10 +5911,11 @@ test50CanExtractReferenceToGlobal
 
 	self assertCanExtractAsParameter: 'Smalltalk'! !
 
-!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 6/Dec/2021, 4:05:01 pm (UTC)'!
+!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 29/Sep/2026, 12:44:11 pm (UTC)'!
 test51CannotExtractNotExistingGlobalReference
 
-	self assertCannotExtractInvalidNodeAsParameter: '__Smalltalk__'! !
+	[ self assertCannotExtractInvalidNodeAsParameter: '__Smalltalk__' ]
+		ensure: [ Undeclared removeKey: #__Smalltalk__ ifAbsent: [] ]! !
 
 !ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 8/Jul/2024, 1:35:25 pm (UTC)'!
 test52CanExtractReferenceToInstVar
@@ -7162,11 +7186,11 @@ test167_ExtractingACascadeInParenthesesToAUnaryMessageRemovesTheParentheses
 		assertExtracting: codeToExtract from: originalCode named: (Message selector: #m2)
 		defines: newMethodCode andUpdates: updatedCode! !
 
-!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'HAW 17/Sep/2026, 9:54:14 pm (UTC)'!
+!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'HAW 28/Sep/2026, 10:09:53 pm (UTC)'!
 test168_ASelectionContainingALocalVariableIsExtractedWithoutLeavingItUndeclared
 
 	self
-		shouldnt: [
+		should: [
 			self
 				assertExtracting: 'local + 3'
 				from: 'm1 | local | ^ local + 3'
@@ -7175,9 +7199,7 @@ test168_ASelectionContainingALocalVariableIsExtractedWithoutLeavingItUndeclared
 
 	^ local + 3'
 				andUpdates: 'm1 | local | ^ self m2: local' ]
-		raise: UndeclaredVariableWarning.
-
-	self deny: (Undeclared includesKey: #local)! !
+		notLeaveUndeclared: 'local'! !
 
 !ExtractMethodTest methodsFor: 'tests - validations' stamp: 'JEC 13/Apr/2026, 1:46:22 pm (UTC)'!
 test001_NewSelectorShouldNotBeEmpty
@@ -10229,6 +10251,19 @@ test46ChoosesClosestNodeWhenExtractingSingleCodePieceWithMultiplePossibleScopes
 
 	self assertExtracting: '10' from: sourceCode toVariableNamed: 'var' updatesTo: sourceCodeAfterRefactoring! !
 
+!ExtractToTemporaryTest methodsFor: 'tests - successful' stamp: 'HAW 29/Sep/2026, 12:08:33 pm (UTC)'!
+test47ExtractingAnExpressionThatReadsATemporaryDoesNotLeaveItUndeclared
+
+	self
+		should: [
+			self
+				assertExtracting: 'var + 50'
+				from: 'm1 | var | var := 10. ^var + 50'
+				toVariableNamed: 'anotherVar'
+				updatesTo: 'm1 | var anotherVar | var := 10. anotherVar := var + 50.
+	^anotherVar' ]
+		notLeaveUndeclared: 'var'! !
+
 !ExtractToTemporaryTest methodsFor: 'tests - validations' stamp: 'RNG 25/Feb/2020, 7:13:05 pm (UTC)'!
 test01NewVariableCanNotBeEmpty
 
@@ -10515,6 +10550,22 @@ test42AppliesPreconditionsWhenTryingToExtractMultiplePiecesOfCode
 				intervals: { (4 to: 5) asSourceCodeInterval . (8 to: 9) asSourceCodeInterval } 
 				from: (classToRefactor >> #m1) ]
 		failsWith: [ NewTemporaryPrecondition errorMessageForEmptyTemporaryVariable ]! !
+
+!InlineMethodTest methodsFor: 'refactoring helpers' stamp: 'HAW 28/Sep/2026, 5:07:44 pm (UTC)'!
+inline: aSelector in: aClass sentFrom: aSenderSelector atAll: aCollectionOfIndexes
+
+	| sends |
+
+	sends := aCollectionOfIndexes collect: [ :anIndex |
+		self
+			messageNodeReferenceOf: aClass
+			inMethod: aSenderSelector
+			atIndex: anIndex ].
+
+	^(InlineMethod
+		from: aClass >> aSelector
+		intoSendersAndUsages: sends
+		removeMethod: true) apply! !
 
 !InlineMethodTest methodsFor: 'refactoring helpers' stamp: 'FB 3/Nov/2021, 11:50:39 pm (UTC)'!
 messageNodeReferenceOf: anImplementor inMethod: aMethodName atIndex: aSourceCodeIndex
@@ -11317,7 +11368,7 @@ t m3.
 ^y'.
 	self assert: expectedNewSourceCode equals: (senderClass >> methodWithUsageSelector) sourceCode.! !
 
-!InlineMethodTest methodsFor: 'tests - successful' stamp: 'FB 5/Jul/2022, 12:02:04 am (UTC)'!
+!InlineMethodTest methodsFor: 'tests - successful' stamp: 'HAW 28/Sep/2026, 5:07:19 pm (UTC)'!
 test28InlineMethodWithReturnUsedInSenderReturningImplicitSelf
 
 	| implementorAndSenderClass methodToInlineSource methodToInlineSelector 
@@ -11341,7 +11392,7 @@ test28InlineMethodWithReturnUsedInSenderReturningImplicitSelf
 	
 	refactoring apply.
 	
-	expectedNewSourceCode := methodWithUsageSelector,'  2 asString'.
+	expectedNewSourceCode := methodWithUsageSelector,' 2 asString'.
 	self assert: expectedNewSourceCode equals: (implementorAndSenderClass >> methodWithUsageSelector) sourceCode! !
 
 !InlineMethodTest methodsFor: 'tests - successful' stamp: 'FB 29/Jun/2022, 11:27:41 pm (UTC)'!
@@ -11768,6 +11819,200 @@ test42InlineMethodDeclaresTheTemporariesBeforeAFirstStatementThatIsNotTheSend
 	self yourself.
 	x := 1.
 	^x'! !
+
+!InlineMethodTest methodsFor: 'tests - successful' stamp: 'HAW 28/Sep/2026, 5:06:27 pm (UTC)'!
+test43InlineMethodOnTwoSendsOfTheSameStatement
+
+	| implementorAndSenderClass |
+
+	implementorAndSenderClass := self createClassNamed: self implementorClass.
+	implementorAndSenderClass compile: 'm1: aCollection ^ aCollection isEmpty'.
+	implementorAndSenderClass compile: 'm2 ^(self m1: #(1)) or: [ self m1: #(2) ]'.
+
+	self inline: #m1: in: implementorAndSenderClass sentFrom: #m2 atAll: #(11 32).
+
+	self
+		assert: (implementorAndSenderClass >> #m2) sourceCode
+		equals: 'm2 ^#(1) isEmpty or: [ #(2) isEmpty ]'! !
+
+!InlineMethodTest methodsFor: 'tests - successful' stamp: 'HAW 28/Sep/2026, 5:48:49 pm (UTC)'!
+test44InlineMethodWithSeveralStatementsOnTwoSendsOfTheSameStatement
+
+	| implementorAndSenderClass |
+
+	implementorAndSenderClass := self createClassNamed: self implementorClass.
+	implementorAndSenderClass compile: 'm1 self m3. ^10'.
+	implementorAndSenderClass compile: 'm2 | t | t := self m1 + self m1. ^t'.
+
+	self inline: #m1 in: implementorAndSenderClass sentFrom: #m2 atAll: #(19 29).
+
+	self
+		assert: (implementorAndSenderClass >> #m2) sourceCode
+		equals: 'm2 | t | t := [ self m3. 10 ] value + [ self m3. 10 ] value. ^t'! !
+
+!InlineMethodTest methodsFor: 'tests - successful' stamp: 'HAW 28/Sep/2026, 7:52:33 pm (UTC)'!
+test45InlineMethodWithSeveralStatementsOnSendEvaluatedAfterAnotherSend
+
+	| implementorAndSenderClass |
+
+	implementorAndSenderClass := self createClassNamed: self implementorClass.
+	implementorAndSenderClass compile: 'm1 self m3. ^10'.
+	implementorAndSenderClass compile: 'm2 | t | t := self m4 + self m1. ^t'.
+
+	self inline: #m1 in: implementorAndSenderClass sentFrom: #m2 atAll: #(30).
+
+	self
+		assert: (implementorAndSenderClass >> #m2) sourceCode
+		equals: 'm2 | t | t := self m4 + [ self m3. 10 ] value. ^t'! !
+
+!InlineMethodTest methodsFor: 'tests - successful' stamp: 'HAW 28/Sep/2026, 7:52:33 pm (UTC)'!
+test46InlineMethodWithSeveralStatementsOnSendEvaluatedFirstInParentheses
+
+	| implementorAndSenderClass |
+
+	implementorAndSenderClass := self createClassNamed: self implementorClass.
+	implementorAndSenderClass compile: 'm1 self m3. ^10'.
+	implementorAndSenderClass compile: 'm2 | t | t := (self m1 + 1) max: self m4. ^t'.
+
+	self inline: #m1 in: implementorAndSenderClass sentFrom: #m2 atAll: #(21).
+
+	self
+		assert: (implementorAndSenderClass >> #m2) sourceCode
+		equals: 'm2 | t | self m3.
+t := (10 + 1) max: self m4. ^t'! !
+
+!InlineMethodTest methodsFor: 'tests - successful' stamp: 'HAW 28/Sep/2026, 7:53:59 pm (UTC)'!
+test47InlineMethodWithSeveralStatementsOnSendOfAReturnedExpression
+
+	| implementorAndSenderClass |
+
+	implementorAndSenderClass := self createClassNamed: self implementorClass.
+	implementorAndSenderClass compile: 'm1 self m3. ^10'.
+	implementorAndSenderClass compile: 'm2 ^self m1 + 1'.
+
+	self inline: #m1 in: implementorAndSenderClass sentFrom: #m2 atAll: #(10).
+
+	self
+		assert: (implementorAndSenderClass >> #m2) sourceCode
+		equals: 'm2 self m3.
+^10 + 1'! !
+
+!InlineMethodTest methodsFor: 'tests - successful' stamp: 'HAW 28/Sep/2026, 7:53:59 pm (UTC)'!
+test48InlineMethodWithSeveralStatementsOnSendEvaluatedAfterAVariable
+
+	| implementorAndSenderClass |
+
+	implementorAndSenderClass := self createClassNamed: self implementorClass.
+	implementorAndSenderClass compile: 'm1 self m3. ^10'.
+	implementorAndSenderClass compile: 'm2: anArgument ^anArgument + self m1'.
+
+	self inline: #m1 in: implementorAndSenderClass sentFrom: #m2: atAll: #(35).
+
+	self
+		assert: (implementorAndSenderClass >> #m2:) sourceCode
+		equals: 'm2: anArgument ^anArgument + [ self m3. 10 ] value'! !
+
+!InlineMethodTest methodsFor: 'tests - successful' stamp: 'HAW 28/Sep/2026, 7:56:34 pm (UTC)'!
+test49InlineMethodWithSeveralStatementsOnSendThatIsAnArgumentInACascade
+
+	| implementorAndSenderClass |
+
+	implementorAndSenderClass := self createClassNamed: self implementorClass.
+	implementorAndSenderClass compile: 'm1 self m3. ^10'.
+	implementorAndSenderClass compile: 'm2 ^self m4; m5: self m1'.
+
+	self inline: #m1 in: implementorAndSenderClass sentFrom: #m2 atAll: #(23).
+
+	self
+		assert: (implementorAndSenderClass >> #m2) sourceCode
+		equals: 'm2 ^self m4; m5: [ self m3. 10 ] value'! !
+
+!InlineMethodTest methodsFor: 'tests - successful' stamp: 'HAW 28/Sep/2026, 8:26:09 pm (UTC)'!
+test50InlineMethodEvaluatedInBlockDeclaresItsTemporariesInTheBlock
+
+	| implementorAndSenderClass |
+
+	implementorAndSenderClass := self createClassNamed: self implementorClass.
+	implementorAndSenderClass compile: 'm1 | x | x := self m3. ^x + 1'.
+	implementorAndSenderClass compile: 'm2 | t | t := self m4 + self m1. ^t'.
+
+	self inline: #m1 in: implementorAndSenderClass sentFrom: #m2 atAll: #(30).
+
+	self
+		assert: (implementorAndSenderClass >> #m2) sourceCode
+		equals: 'm2 | t | t := self m4 + [ | x | x := self m3. x + 1 ] value. ^t'! !
+
+!InlineMethodTest methodsFor: 'tests - successful' stamp: 'HAW 28/Sep/2026, 8:26:09 pm (UTC)'!
+test51InlineMethodEvaluatedInBlockRenamesTheTemporariesTheSenderAlreadyDeclares
+
+	| implementorAndSenderClass |
+
+	implementorAndSenderClass := self createClassNamed: self implementorClass.
+	implementorAndSenderClass compile: 'm1 | x | x := self m3. ^x + 1'.
+	implementorAndSenderClass compile: 'm2 | x | x := self m4 + self m1. ^x'.
+
+	self inline: #m1 in: implementorAndSenderClass sentFrom: #m2 atAll: #(30).
+
+	self
+		assert: (implementorAndSenderClass >> #m2) sourceCode
+		equals: 'm2 | x | x := self m4 + [ | x1 | x1 := self m3. x1 + 1 ] value. ^x'! !
+
+!InlineMethodTest methodsFor: 'tests - successful' stamp: 'HAW 28/Sep/2026, 9:40:05 pm (UTC)'!
+test52InlineMethodEvaluatedInTwoBlocksKeepsTheNameOfTheTemporariesInBoth
+
+	| implementorAndSenderClass |
+
+	implementorAndSenderClass := self createClassNamed: self implementorClass.
+	implementorAndSenderClass compile: 'm1 | x | x := self m3. ^x + 1'.
+	implementorAndSenderClass compile: 'm2 ^self m1 + self m1'.
+
+	self inline: #m1 in: implementorAndSenderClass sentFrom: #m2 atAll: #(10 20).
+
+	self
+		assert: (implementorAndSenderClass >> #m2) sourceCode
+		equals: 'm2 ^[ | x | x := self m3. x + 1 ] value + [ | x | x := self m3. x + 1 ] value'! !
+
+!InlineMethodTest methodsFor: 'tests - successful' stamp: 'HAW 28/Sep/2026, 9:40:05 pm (UTC)'!
+test53InlineMethodRenamesTheTemporariesOfTheSenderThatABlockAlreadyDeclares
+
+	| implementorAndSenderClass |
+
+	implementorAndSenderClass := self createClassNamed: self implementorClass.
+	implementorAndSenderClass compile: 'm1 | x | x := self m3. ^x + 1'.
+	implementorAndSenderClass compile: 'm2 | t u | t := self m4 + self m1. u := self m1. ^t + u'.
+
+	self inline: #m1 in: implementorAndSenderClass sentFrom: #m2 atAll: #(32 46).
+
+	self
+		assert: (implementorAndSenderClass >> #m2) sourceCode
+		equals: 'm2 | t u x1 | t := self m4 + [ | x | x := self m3. x + 1 ] value. x1 := self m3.
+u := x1 + 1. ^t + u'! !
+
+!InlineMethodTest methodsFor: 'tests - successful' stamp: 'HAW 29/Sep/2026, 1:09:18 pm (UTC)'!
+test54InlineMethodEvaluatedInBlockKeepsTheStatementsInDifferentLines
+
+	| implementorAndSenderClass |
+
+	implementorAndSenderClass := self createClassNamed: self implementorClass.
+	implementorAndSenderClass compile: 'm1
+	| x |
+	x := self m3.
+	^x + 1'.
+	implementorAndSenderClass compile: 'm2
+	| t |
+	t := self m4 + self m1.
+	^t'.
+
+	self inline: #m1 in: implementorAndSenderClass sentFrom: #m2 atAll: #(32).
+
+	self
+		assert: (implementorAndSenderClass >> #m2) sourceCode
+		equals: 'm2
+	| t |
+	t := self m4 + [ | x |
+		x := self m3.
+		x + 1 ] value.
+	^t'! !
 
 !InlineMethodTest methodsFor: 'class factory' stamp: 'FB 22/Nov/2021, 9:09:44 pm (UTC)'!
 anotherSenderClass
@@ -12314,7 +12559,7 @@ test31InlineTemporaryUsedAfterAssignmentInBlock
 	
 ! !
 
-!InlineTemporaryVariableTest methodsFor: 'tests - successful' stamp: 'FB 12/Sep/2022, 12:39:21 am (UTC)'!
+!InlineTemporaryVariableTest methodsFor: 'tests - successful' stamp: 'HAW 29/Sep/2026, 12:35:27 pm (UTC)'!
 test32InlineTemporaryUsedAfterBlockWhenNotReferencedByIt
 
 	|classToRefactor originalSource methodToRefactorName tempVarToInline refactoring expectedNewSourceCode |
@@ -12322,15 +12567,15 @@ test32InlineTemporaryUsedAfterBlockWhenNotReferencedByIt
 	classToRefactor  := self createClassNamed: self classToRefactor.
 	tempVarToInline := 't2'.
 	methodToRefactorName := 'm1'.
-	originalSource := methodToRefactorName,' | b t1 t2 | b := [ t1 := 30. 15.]. t2 := 20. ^b2 value: 10 + t2'.
+	originalSource := methodToRefactorName,' | b t1 t2 b2 | b := [ t1 := 30. 15.]. t2 := 20. ^b2 value: 10 + t2'.
 	classToRefactor compile: originalSource.
 	
-	refactoring := InlineTemporaryVariable named: tempVarToInline atUsageInterval: (40 to: 41)
+	refactoring := InlineTemporaryVariable named: tempVarToInline atUsageInterval: (42 to: 43)
 		 inMethod: classToRefactor >> methodToRefactorName asSymbol.
 	
 	refactoring apply.
 	
-	expectedNewSourceCode := methodToRefactorName,' | b t1 | b := [ t1 := 30. 15.]. ^b2 value: 10 + 20'.
+	expectedNewSourceCode := methodToRefactorName,' | b t1 b2 | b := [ t1 := 30. 15.]. ^b2 value: 10 + 20'.
 	self assert: expectedNewSourceCode equals: (classToRefactor >> methodToRefactorName asSymbol) sourceCode
 ! !
 
@@ -13208,7 +13453,7 @@ test03AnInstanceVariableThatIsNotAccessedOnClassToRefactorShouldBePushedDownToAl
 		self assert: (subClass definesInstanceVariableNamed: instanceVariableToPushDown).
 	].! !
 
-!PushDownInstanceVariableTest methodsFor: 'tests' stamp: 'HAW 17/Sep/2026, 4:07:43 pm (UTC)'!
+!PushDownInstanceVariableTest methodsFor: 'tests' stamp: 'HAW 28/Sep/2026, 10:09:29 pm (UTC)'!
 test04AnInstanceVariableUsedByASubclassMethodIsPushedDownWithoutLeavingItUndeclared
 
 	| subclassUsingVariable |
@@ -13220,11 +13465,10 @@ test04AnInstanceVariableUsedByASubclassMethodIsPushedDownWithoutLeavingItUndecla
 	subclassUsingVariable compile: 'm1 a := 3. ^a'.
 
 	self
-		shouldnt: [ (PushDownInstanceVariable named: instanceVariableToPushDown from: classToRefactor) apply ]
-		raise: UndeclaredVariableWarning.
+		should: [ (PushDownInstanceVariable named: instanceVariableToPushDown from: classToRefactor) apply ]
+		notLeaveUndeclared: instanceVariableToPushDown.
 
-	self assert: subclassUsingVariable new m1 equals: 3.
-	self deny: (Undeclared includesKey: instanceVariableToPushDown asSymbol)! !
+	self assert: subclassUsingVariable new m1 equals: 3! !
 
 !PushDownInstanceVariableTest methodsFor: 'setup' stamp: 'MSC 22/Dec/2019, 2:01:42 am (UTC)'!
 setUp
@@ -13743,7 +13987,7 @@ test05AnInstanceVariableOnMultipleSubclassesInDifferentLevelsShouldBeRemovedFrom
 		self deny: (subClass definesInstanceVariableNamed: instanceVariableToPushUp)
 	].! !
 
-!PushUpInstanceVariableTest methodsFor: 'tests' stamp: 'HAW 17/Sep/2026, 3:10:31 pm (UTC)'!
+!PushUpInstanceVariableTest methodsFor: 'tests' stamp: 'HAW 28/Sep/2026, 10:09:29 pm (UTC)'!
 test06AnInstanceVariableUsedByAMethodIsPushedUpWithoutLeavingItUndeclared
 
 	classToRefactorSuperClass := self createClassNamed: #SuperclassWithoutInstVar.
@@ -13754,11 +13998,10 @@ test06AnInstanceVariableUsedByAMethodIsPushedUpWithoutLeavingItUndeclared
 	classToRefactor compile: 'm1 a := 3. ^a'.
 
 	self
-		shouldnt: [ (PushUpInstanceVariable named: instanceVariableToPushUp from: classToRefactor) apply ]
-		raise: UndeclaredVariableWarning.
+		should: [ (PushUpInstanceVariable named: instanceVariableToPushUp from: classToRefactor) apply ]
+		notLeaveUndeclared: instanceVariableToPushUp.
 
-	self assert: classToRefactor new m1 equals: 3.
-	self deny: (Undeclared includesKey: instanceVariableToPushUp asSymbol)! !
+	self assert: classToRefactor new m1 equals: 3! !
 
 !PushUpInstanceVariableTest methodsFor: 'setup' stamp: 'MSC 22/Dec/2019, 2:12:16 am (UTC)'!
 setUp
@@ -14344,7 +14587,7 @@ test28ShouldSelectADependantSelectorSentAsTheReceiverOfACascade
 
 	self assert: dependantSelectors asArray equals: #(#dependantMethod)! !
 
-!PushUpMethodTest methodsFor: 'tests' stamp: 'HAW 17/Sep/2026, 3:10:31 pm (UTC)'!
+!PushUpMethodTest methodsFor: 'tests' stamp: 'HAW 28/Sep/2026, 10:09:29 pm (UTC)'!
 test29AMethodAccessingInstVarIsPushedUpWithoutLeavingItUndeclared
 
 	| classToRefactorSuperclass classToRefactor refactoring |
@@ -14359,10 +14602,9 @@ test29AMethodAccessingInstVarIsPushedUpWithoutLeavingItUndeclared
 		on: RefactoringWarning
 		do: [ :warning | warning resume ].
 
-	self shouldnt: [ refactoring apply ] raise: UndeclaredVariableWarning.
+	self should: [ refactoring apply ] notLeaveUndeclared: 'a'.
 
-	self assert: classToRefactor new newMethod equals: 3.
-	self deny: (Undeclared includesKey: #a)! !
+	self assert: classToRefactor new newMethod equals: 3! !
 
 !PushUpMethodTest methodsFor: 'tests' stamp: 'HAW 12/Sep/2026, 2:28:49 pm (UTC)'!
 test29ShouldSelectADependantSelectorSentInAnAssignment
@@ -17340,7 +17582,7 @@ test12CantExtractArgument
 		failsWith: [ TemporaryToInstanceVariable inexistentTemporaryErrorDescription ].
 ! !
 
-!TemporaryToInstanceVariableTest methodsFor: 'testing' stamp: 'HAW 17/Sep/2026, 4:28:40 pm (UTC)'!
+!TemporaryToInstanceVariableTest methodsFor: 'testing' stamp: 'HAW 28/Sep/2026, 10:09:53 pm (UTC)'!
 test13ATemporaryUsedByTheMethodBecomesInstanceVariableWithoutLeavingItUndeclared
 
 	| classToRefactor methodNode |
@@ -17349,11 +17591,10 @@ test13ATemporaryUsedByTheMethodBecomesInstanceVariableWithoutLeavingItUndeclared
 	methodNode := self compileMethodNodeIn: classToRefactor named: #m1 sourceCode: 'm1 | a | a := 3. ^a'.
 
 	self
-		shouldnt: [ (TemporaryToInstanceVariable named: 'a' fromMethod: methodNode) apply ]
-		raise: UndeclaredVariableWarning.
+		should: [ (TemporaryToInstanceVariable named: 'a' fromMethod: methodNode) apply ]
+		notLeaveUndeclared: 'a'.
 
-	self assert: classToRefactor new m1 equals: 3.
-	self deny: (Undeclared includesKey: #a)! !
+	self assert: classToRefactor new m1 equals: 3! !
 
 !TemporaryToInstanceVariableTest methodsFor: 'assertions' stamp: 'HAW 19/May/2019, 9:29:33 pm (UTC)'!
 assertMethodNamed: aMethodName in: aClass hasSourceEqualTo: aSourceCode
