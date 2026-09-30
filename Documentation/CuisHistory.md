@@ -235,4 +235,4 @@ https://lists.cuis.st/mailman/archives/cuis-dev/2023-December/008269.html
 - Ephemeron fixes
 - Method timestamps saved in UTC time, displayed in local time
 - Fast StaticImageMorph
-- Bug Fixes
+- Bug Fixes, Cleanup, Refactors
