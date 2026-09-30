@@ -1,6 +1,6 @@
-'From Cuis7.9 [latest update: #8215] on 23 September 2026 at 5:31:04 pm'!
+'From Cuis7.9 [latest update: #8247] on 30 September 2026 at 3:39:22 pm'!
 'Description '!
-!provides: 'RefactoringTests' 1 27!
+!provides: 'RefactoringTests' 1 28!
 !requires: 'DynamicallyCodeCreatingTestSupport' 1 0 nil!
 !requires: '__Refactoring_TestData__' 1 0 nil!
 SystemOrganization addCategory: #RefactoringTests!
@@ -2285,6 +2285,34 @@ test66AnArgumentReadingNoTemporaryOfThePieceIsTheParameterAsAWhole
 		hasParamsIntervals: { 34 to: 41 }
 		andIsOf: sourceMethod! !
 
+!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 26/Sep/2026, 12:25:03 pm (UTC)'!
+test67ReceiversThatDifferAreParameterizedWhenTheyAreVariables
+
+	| paramReplacements sourceCode |
+
+	classToRefactor addInstVarName: 'weekdays'; addInstVarName: 'monthdays'.
+	sourceCode := 'm1 ^(weekdays includes: 1) or: [ monthdays includes: 2 ]'.
+	self compile: sourceCode andFind: (6 to: 25).
+
+	paramReplacements := finder parameterizableReplacements.
+
+	self assert: paramReplacements size equals: 1.
+	self
+		assertAnyParamReplacementOf: paramReplacements
+		hasInterval: (34 to: 54)
+		hasParamsIntervals: { 34 to: 42 . 54 to: 54 }
+		andIsOf: sourceMethod! !
+
+!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 26/Sep/2026, 12:19:55 pm (UTC)'!
+test68ReceiversThatDifferAndAreNotVariablesAreNotAMatch
+
+	| sourceCode |
+
+	sourceCode := 'm1 ^(self weekdays includes: 1) or: [ self monthdays includes: 2 ]'.
+	self compile: sourceCode andFind: (6 to: 30).
+
+	self deny: finder hasFoundParameterizableReplacements! !
+
 !ExtractMethodFinderTest methodsFor: 'setup/teardown' stamp: 'HAW 2/Sep/2021, 10:02:12 pm (UTC)'!
 setUp
 
@@ -3068,8 +3096,8 @@ test026_WhenOneReceiverIsATempVarAndOthersAreDifferentKindOfVariables_AllWillBeP
 		areEquivalentToAll: { self parseNodeAt: 207 }
 		parameterizing: { self parseNodeAt: 202 . self parseNodeAt: 213 . self parseNodeAt: 221 }! !
 
-!ParameterizableNodesFinderTest methodsFor: 'tests' stamp: 'JEC 7/Apr/2026, 8:19:10 pm (UTC)'!
-test027_WhenOneReceiversArePseudoVariablesAndInstVars_WontBeParameterized
+!ParameterizableNodesFinderTest methodsFor: 'tests' stamp: 'HAW 26/Sep/2026, 12:27:41 pm (UTC)'!
+test027_WhenOneReceiverIsSelfAndTheOtherAnInstVar_BothReceiversAreParameterized
 
 	| parameterizableNodes |
 
@@ -3087,7 +3115,7 @@ test027_WhenOneReceiversArePseudoVariablesAndInstVars_WontBeParameterized
 	self 
 		assert: parameterizableNodes first 
 		areEquivalentToAll: { self parseNodeAt: 91 }
-		parameterizing: { self parseNodeAt: 99 . self parseNodeAt: 107 }! !
+		parameterizing: { self parseNodeAt: 73 . self parseNodeAt: 99 . self parseNodeAt: 107 }! !
 
 !ParameterizableNodesFinderTest methodsFor: 'tests' stamp: 'JEC 7/Apr/2026, 8:20:24 pm (UTC)'!
 test028_WhenReceiversAreNonVariablesOrLiterals_TheyWontBeFoundAsParameterizable
