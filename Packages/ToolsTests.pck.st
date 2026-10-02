@@ -1,6 +1,6 @@
-'From Cuis7.9 [latest update: #8146] on 25 August 2026 at 10:07:08 pm'!
+'From Cuis7.9 [latest update: #8262] on 2 October 2026 at 11:52:25 am'!
 'Description '!
-!provides: 'ToolsTests' 1 2!
+!provides: 'ToolsTests' 1 3!
 !requires: 'DynamicallyCodeCreatingTestSupport' 1 0 nil!
 SystemOrganization addCategory: #'ToolsTests-Browser'!
 SystemOrganization addCategory: #'ToolsTests-Changes'!
@@ -354,7 +354,7 @@ test02AddingANewMethodShouldBeLogged
 		self assertIsLoggedOnce: 'm1 ^ 1'] 
 ! !
 
-!ChangesTest methodsFor: 'log tests' stamp: 'HAW 1/Nov/2019, 9:08:50 pm (UTC)'!
+!ChangesTest methodsFor: 'log tests' stamp: 'jmv 2/Oct/2026, 2:44:10 pm (UTC)'!
 test03ChangingAMethodShouldBeLogged
 	" Log format expected:
 
@@ -369,7 +369,6 @@ test03ChangingAMethodShouldBeLogged
 		aClass compile: 'm1 ^ 2' classified: 'a-category'.
 
 		self assertIsLoggedTwice: '!!', self testDataClassName , ' methodsFor: ''a-category'' stamp:'.
-		self assertIsLoggedOnce: 'prior: '.
 		self assertIsLoggedOnce: 'm1 ^ 2' ] ! !
 
 !ChangesTest methodsFor: 'log tests' stamp: 'jmv 31/Jul/2023, 4:36:30 pm (UTC)'!

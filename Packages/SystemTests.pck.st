@@ -1,6 +1,6 @@
-'From Cuis7.9 [latest update: #8235] on 24 September 2026 at 5:13:07 pm'!
+'From Cuis7.9 [latest update: #8262] on 2 October 2026 at 11:52:00 am'!
 'Description '!
-!provides: 'SystemTests' 1 1!
+!provides: 'SystemTests' 1 2!
 !requires: 'DynamicallyCodeCreatingTestSupport' 1 0 nil!
 SystemOrganization addCategory: #'SystemTests-Support'!
 SystemOrganization addCategory: #'SystemTests-Text'!
@@ -499,120 +499,110 @@ testStream
 	self should: [file1 exists not].
 	! !
 
-!CuisSourceFileArrayTest methodsFor: 'testing' stamp: 'jmv 23/Sep/2026, 3:26:50 pm (UTC)'!
+!CuisSourceFileArrayTest methodsFor: 'testing' stamp: 'jmv 2/Oct/2026, 2:47:08 pm (UTC)'!
 testAddressRange
 	"Test source pointer to file position address translation across the full address range"
 	
-	| sf |
-	sf := CuisSourceFileArray new.
 	(16rFC000000 to: 16rFFFFFFFF by: 811) do: [:e | | i a p |
-		i := sf fileIndexFromHistoryPointer: e.
-		p := sf filePositionFromHistoryPointer: e.
-		a := sf historyPointerFromFileIndex: i andPosition: p.
+		i := CodeHistory fileIndexFromHistoryPointer: e.
+		p := CodeHistory filePositionFromHistoryPointer: e.
+		a := CodeHistory historyPointerFromFileIndex: i andPosition: p.
 		self assert: a = e].! !
 
-!CuisSourceFileArrayTest methodsFor: 'testing' stamp: 'jmv 23/Sep/2026, 3:30:41 pm (UTC)'!
+!CuisSourceFileArrayTest methodsFor: 'testing' stamp: 'jmv 2/Oct/2026, 2:47:18 pm (UTC)'!
 testChangesFileAddressRange
 	"Test file position to source pointer address translation for the changes file"
 	
-	| sf a e |
-	sf := CuisSourceFileArray new.
+	| a e |
 	(0 to: 16r1FFFFFF by: 811) do: [:ee | | a2 i p |
 		e := ee // 32 * 32.
-		a := sf historyPointerFromFileIndex: 2 andPosition: e.
-		i := sf fileIndexFromHistoryPointer: a.
+		a := CodeHistory historyPointerFromFileIndex: 2 andPosition: e.
+		i := CodeHistory fileIndexFromHistoryPointer: a.
 		self assert: i = 2.
-		p := sf filePositionFromHistoryPointer: a.
+		p := CodeHistory filePositionFromHistoryPointer: a.
 		self assert: p = e.
-		a2 := sf historyPointerFromFileIndex: 2 andPosition: p.
+		a2 := CodeHistory historyPointerFromFileIndex: 2 andPosition: p.
 		self assert: a2 = a].
 	(0 to: 16rFFFFFF by: 811) do: [:ee |
 		e := ee // 32 * 32.
-		a := sf historyPointerFromFileIndex: 2 andPosition: e.
+		a := CodeHistory historyPointerFromFileIndex: 2 andPosition: e.
 		self assert: (a between: 16rFE000000 and: 16rFEFFFFFF)].
 	(16r1000000 to: 16r1FFFFFF by: 811) do: [:ee |
 		e := ee // 32 * 32.
-		a := sf historyPointerFromFileIndex: 2 andPosition: e.
+		a := CodeHistory historyPointerFromFileIndex: 2 andPosition: e.
 		self assert: (a between: 16rFE000000 and: 16rFFFFFFFF)].
 ! !
 
-!CuisSourceFileArrayTest methodsFor: 'testing' stamp: 'jmv 23/Sep/2026, 3:28:31 pm (UTC)'!
+!CuisSourceFileArrayTest methodsFor: 'testing' stamp: 'jmv 2/Oct/2026, 2:47:45 pm (UTC)'!
 testFileIndexFromSourcePointer
 	"Test derivation of file index for sources or changes file from source pointers"
 
-	| sf |
-	sf := CuisSourceFileArray new.
 	"sources file mapping"
-	self assert: 1 = (sf fileIndexFromHistoryPointer: 16rFC000000).
-	self assert: 1 = (sf fileIndexFromHistoryPointer: 16rFC000013).
-	self assert: 1 = (sf fileIndexFromHistoryPointer: 16rFCFFFFFF).
-	self assert: 1 = (sf fileIndexFromHistoryPointer: 16rFD000000).
-	self assert: 1 = (sf fileIndexFromHistoryPointer: 16rFD000013).
-	self assert: 1 = (sf fileIndexFromHistoryPointer: 16rFDFFFFFF).
-	(16rFC000000 to: 16rFCFFFFFF by: 811) do: [:e | self assert: 1 = (sf fileIndexFromHistoryPointer: e)].
-	(16rFD000000 to: 16rFDFFFFFF by: 811) do: [:e | self assert: 1 = (sf fileIndexFromHistoryPointer: e)].
+	self assert: 1 = (CodeHistory fileIndexFromHistoryPointer: 16rFC000000).
+	self assert: 1 = (CodeHistory fileIndexFromHistoryPointer: 16rFC000013).
+	self assert: 1 = (CodeHistory fileIndexFromHistoryPointer: 16rFCFFFFFF).
+	self assert: 1 = (CodeHistory fileIndexFromHistoryPointer: 16rFD000000).
+	self assert: 1 = (CodeHistory fileIndexFromHistoryPointer: 16rFD000013).
+	self assert: 1 = (CodeHistory fileIndexFromHistoryPointer: 16rFDFFFFFF).
+	(16rFC000000 to: 16rFCFFFFFF by: 811) do: [:e | self assert: 1 = (CodeHistory fileIndexFromHistoryPointer: e)].
+	(16rFD000000 to: 16rFDFFFFFF by: 811) do: [:e | self assert: 1 = (CodeHistory fileIndexFromHistoryPointer: e)].
 	"changes file mapping"
-	self assert: 2 = (sf fileIndexFromHistoryPointer: 16rFE000000).
-	self assert: 2 = (sf fileIndexFromHistoryPointer: 16rFE000013).
-	self assert: 2 = (sf fileIndexFromHistoryPointer: 16rFEFFFFFF).
-	self assert: 2 = (sf fileIndexFromHistoryPointer: 16rFF000000).
-	self assert: 2 = (sf fileIndexFromHistoryPointer: 16rFF000013).
-	self assert: 2 = (sf fileIndexFromHistoryPointer: 16rFFFFFFFF).
-	(16rFE000000 to: 16rFEFFFFFF by: 811) do: [:e | self assert: 2 = (sf fileIndexFromHistoryPointer: e)].
-	(16rFF000000 to: 16rFFFFFFFF by: 811) do: [:e | self assert: 2 = (sf fileIndexFromHistoryPointer: e)].! !
+	self assert: 2 = (CodeHistory fileIndexFromHistoryPointer: 16rFE000000).
+	self assert: 2 = (CodeHistory fileIndexFromHistoryPointer: 16rFE000013).
+	self assert: 2 = (CodeHistory fileIndexFromHistoryPointer: 16rFEFFFFFF).
+	self assert: 2 = (CodeHistory fileIndexFromHistoryPointer: 16rFF000000).
+	self assert: 2 = (CodeHistory fileIndexFromHistoryPointer: 16rFF000013).
+	self assert: 2 = (CodeHistory fileIndexFromHistoryPointer: 16rFFFFFFFF).
+	(16rFE000000 to: 16rFEFFFFFF by: 811) do: [:e | self assert: 2 = (CodeHistory fileIndexFromHistoryPointer: e)].
+	(16rFF000000 to: 16rFFFFFFFF by: 811) do: [:e | self assert: 2 = (CodeHistory fileIndexFromHistoryPointer: e)].! !
 
-!CuisSourceFileArrayTest methodsFor: 'testing' stamp: 'jmv 23/Sep/2026, 3:29:02 pm (UTC)'!
+!CuisSourceFileArrayTest methodsFor: 'testing' stamp: 'jmv 2/Oct/2026, 2:48:20 pm (UTC)'!
 testFilePositionFromSourcePointer
 	"Test derivation of file position for sources or changes file from source pointers"
 
-	| sf |
-	sf := CuisSourceFileArray new.
 	"sources file"
-	self assert: 0 = (sf filePositionFromHistoryPointer: 16rFC000000).
+	self assert: 0 = (CodeHistory filePositionFromHistoryPointer: 16rFC000000).
 	"changes file"
-	self assert: 0 = (sf filePositionFromHistoryPointer: 16rFE000000).! !
+	self assert: 0 = (CodeHistory filePositionFromHistoryPointer: 16rFE000000).! !
 
-!CuisSourceFileArrayTest methodsFor: 'testing' stamp: 'jmv 23/Sep/2026, 3:29:29 pm (UTC)'!
+!CuisSourceFileArrayTest methodsFor: 'testing' stamp: 'jmv 2/Oct/2026, 2:48:06 pm (UTC)'!
 testSourcePointerFromFileIndexAndPosition
 	"Test valid input ranges"
 
-	| sf |
-	sf := CuisSourceFileArray new.
-	self should: [sf historyPointerFromFileIndex: 0 andPosition: 0] raise: Error.
-	self shouldnt: [sf historyPointerFromFileIndex: 1 andPosition: 0] raise: Error.
-	self shouldnt: [sf historyPointerFromFileIndex: 2 andPosition: 0] raise: Error.
-	self should: [sf historyPointerFromFileIndex: 0 andPosition: 3] raise: Error.
-	self should: [sf historyPointerFromFileIndex: 1 andPosition: -1] raise: Error.
-	self shouldnt: [sf historyPointerFromFileIndex: 1 andPosition: 16rFCFFFFFF] raise: Error.
-	self shouldnt: [sf historyPointerFromFileIndex: 1 andPosition: 16rFD000000] raise: Error.
-	self should: [sf historyPointerFromFileIndex: 3 andPosition: 0] raise: Error.
-	self should: [sf historyPointerFromFileIndex: 4 andPosition: 0] raise: Error.
+	self should: [CodeHistory historyPointerFromFileIndex: 0 andPosition: 0] raise: Error.
+	self shouldnt: [CodeHistory historyPointerFromFileIndex: 1 andPosition: 0] raise: Error.
+	self shouldnt: [CodeHistory historyPointerFromFileIndex: 2 andPosition: 0] raise: Error.
+	self should: [CodeHistory historyPointerFromFileIndex: 0 andPosition: 3] raise: Error.
+	self should: [CodeHistory historyPointerFromFileIndex: 1 andPosition: -1] raise: Error.
+	self shouldnt: [CodeHistory historyPointerFromFileIndex: 1 andPosition: 16rFCFFFFFF] raise: Error.
+	self shouldnt: [CodeHistory historyPointerFromFileIndex: 1 andPosition: 16rFD000000] raise: Error.
+	self should: [CodeHistory historyPointerFromFileIndex: 3 andPosition: 0] raise: Error.
+	self should: [CodeHistory historyPointerFromFileIndex: 4 andPosition: 0] raise: Error.
 	
-	self assert: 16rFC000000 = (sf historyPointerFromFileIndex: 1 andPosition: 0).
-	self assert: 16rFE000000 = (sf historyPointerFromFileIndex: 2 andPosition: 0).! !
+	self assert: 16rFC000000 = (CodeHistory historyPointerFromFileIndex: 1 andPosition: 0).
+	self assert: 16rFE000000 = (CodeHistory historyPointerFromFileIndex: 2 andPosition: 0).! !
 
-!CuisSourceFileArrayTest methodsFor: 'testing' stamp: 'jmv 23/Sep/2026, 3:31:00 pm (UTC)'!
+!CuisSourceFileArrayTest methodsFor: 'testing' stamp: 'jmv 2/Oct/2026, 2:47:56 pm (UTC)'!
 testSourcesFileAddressRange
 	"Test file position to source pointer address translation for the sources file"
 	
-	| sf a e |
-	sf := CuisSourceFileArray new.
+	| a e |
 	(0 to: 16r1FFFFFF by: 811) do: [:ee | | a2 p i |
 		e := ee // 32 * 32.
-		a := sf historyPointerFromFileIndex: 1 andPosition: e.
-		i := sf fileIndexFromHistoryPointer: a.
+		a := CodeHistory historyPointerFromFileIndex: 1 andPosition: e.
+		i := CodeHistory fileIndexFromHistoryPointer: a.
 		self assert: i = 1.
-		p := sf filePositionFromHistoryPointer: a.
+		p := CodeHistory filePositionFromHistoryPointer: a.
 		self assert: p = e.
-		a2 := sf historyPointerFromFileIndex: 1 andPosition: p.
+		a2 := CodeHistory historyPointerFromFileIndex: 1 andPosition: p.
 		self assert: a2 = a].
 	(0 to: 16rFFFFFF by: 811) do: [:ee |
 		e := ee // 32 * 32.
-		a := sf historyPointerFromFileIndex: 1 andPosition: e.
+		a := CodeHistory historyPointerFromFileIndex: 1 andPosition: e.
 		self assert: (a between: 16rFC000000 and: 16rFCFFFFFF)].
 	(16r1000000 to: 16r1FFFFFF by: 811) do: [:ee |
 		e := ee // 32 * 32.
-		a := sf historyPointerFromFileIndex: 1 andPosition: e.
+		a := CodeHistory historyPointerFromFileIndex: 1 andPosition: e.
 		self assert: (a between: 16rFC000000 and: 16rFDFFFFFF)].! !
 
 !FileStreamTest methodsFor: 'tests' stamp: 'jmv 27/Oct/2025, 3:01:22 pm (UTC)'!
