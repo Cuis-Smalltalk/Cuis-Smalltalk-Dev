@@ -1,6 +1,6 @@
-'From Cuis7.9 [latest update: #8189] on 16 September 2026 at 3:51:12 pm'!
+'From Cuis7.9 [latest update: #8265] on 5 October 2026 at 5:37:29 pm'!
 'Description '!
-!provides: 'KernelTests' 1 4!
+!provides: 'KernelTests' 1 5!
 SystemOrganization addCategory: #'KernelTests-Objects'!
 SystemOrganization addCategory: #'KernelTests-Classes'!
 SystemOrganization addCategory: #'KernelTests-Numbers'!
@@ -10000,6 +10000,29 @@ testShouldNotHappenSignalsTheRightError
 		should: [ self shouldNotHappen ]
 		raise: Error
 		withMessageText: self shouldNotHappenErrorMessage ! !
+
+!ObjectTest methodsFor: 'printing tests' stamp: 'FJG 4/Oct/2026, 5:35:41 pm (UTC)'!
+testPrintStringLimitedToAnswersTheWholePrintStringWhenItFitsExactly
+
+	| anObject fullPrintString limitedPrintString |
+	anObject := Object new.
+	fullPrintString := anObject fullPrintString.
+
+	limitedPrintString := anObject printStringLimitedTo: fullPrintString size.
+
+	self assert: limitedPrintString equals: fullPrintString.! !
+
+!ObjectTest methodsFor: 'printing tests' stamp: 'FJG 4/Oct/2026, 5:35:41 pm (UTC)'!
+testPrintStringLimitedToTruncatesAPrintStringOneCharacterOverTheLimit
+
+	| anObject fullPrintString limitedPrintString |
+	anObject := Object new.
+	fullPrintString := anObject fullPrintString.
+
+	limitedPrintString := anObject printStringLimitedTo: fullPrintString size - 1.
+
+	self assert: (limitedPrintString endsWith: '[..]').
+	self assert: limitedPrintString size equals: fullPrintString size - 1.! !
 
 !SpecialSelectorsTest methodsFor: 'testing' stamp: 'jmv 5/Jun/2017, 4:17:20 pm (UTC)'!
 testCollectionAtSymbol
