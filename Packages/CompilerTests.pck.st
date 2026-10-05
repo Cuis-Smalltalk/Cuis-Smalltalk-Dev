@@ -1,6 +1,6 @@
-'From Cuis7.9 [latest update: #8175] on 14 September 2026 at 9:34:15 am'!
+'From Cuis7.9 [latest update: #8263] on 5 October 2026 at 5:00:02 pm'!
 'Description '!
-!provides: 'CompilerTests' 1 4!
+!provides: 'CompilerTests' 1 5!
 !requires: 'DynamicallyCodeCreatingTestSupport' 1 0 nil!
 SystemOrganization addCategory: #CompilerTests!
 
@@ -2901,6 +2901,45 @@ testAddsUndeclaredVariableWithAnArgumentAndTempAlreadyInBlock
 			anUndeclaredVariable resume: anUndeclaredVariable declareBlockTempAction ].
 		
 	self assert: sourceCode equals: 'griffle [ :var1 | | foo goo | foo := 2. goo := 1.^ goo + var1 + foo ]'.! !
+
+!CompilerTest methodsFor: 'tests - exceptions' stamp: 'FJG 4/Oct/2026, 3:01:57 pm (UTC)'!
+testDeclaringAClassInstanceVariableWhileCompilingLeavesTheExistingOnesInPlace
+
+	| testClass |
+
+	testClass := self createTestClass.
+	testClass class instanceVariableNames: 'a b'.
+	sourceCode := 'setThem a := 1. b := 2. c := 3'.
+
+	[ testClass class compile: sourceCode notifying: self ]
+		on: UndeclaredVariable
+		do: [ :anUndeclaredVariable |
+			anUndeclaredVariable resume: anUndeclaredVariable declareInstanceVariableAction ].
+	testClass setThem.
+
+	self assert: (testClass instVarNamed: 'a') equals: 1.
+	self assert: (testClass instVarNamed: 'b') equals: 2.
+	self assert: (testClass instVarNamed: 'c') equals: 3.! !
+
+!CompilerTest methodsFor: 'tests - exceptions' stamp: 'FJG 4/Oct/2026, 3:01:57 pm (UTC)'!
+testDeclaringAnInstanceVariableWhileCompilingLeavesTheExistingOnesInPlace
+
+	| testClass anInstance |
+
+	testClass := self createTestClass.
+	testClass addInstVarName: 'a'; addInstVarName: 'b'.
+	sourceCode := 'setThem a := 1. b := 2. c := 3'.
+
+	[ testClass compile: sourceCode notifying: self ]
+		on: UndeclaredVariable
+		do: [ :anUndeclaredVariable |
+			anUndeclaredVariable resume: anUndeclaredVariable declareInstanceVariableAction ].
+	anInstance := testClass new.
+	anInstance setThem.
+
+	self assert: (anInstance instVarNamed: 'a') equals: 1.
+	self assert: (anInstance instVarNamed: 'b') equals: 2.
+	self assert: (anInstance instVarNamed: 'c') equals: 3.! !
 
 !CompilerTest methodsFor: 'tests - exceptions' stamp: 'jmv 31/Jul/2023, 4:32:42 pm (UTC)'!
 testDoesNotConfusesVariablesWithSameNameOfDifferentBlocksWhenRemoving
