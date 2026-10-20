@@ -1,6 +1,6 @@
 'From Cuis7.7 [latest update: #7779] on 23 December 2025 at 4:39:08 pm'!
 'Description '!
-!provides: 'Locales' 1 14!
+!provides: 'Locales' '1.14.0'!
 SystemOrganization addCategory: #Locales!
 
 

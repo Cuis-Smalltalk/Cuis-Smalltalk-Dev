@@ -1,6 +1,6 @@
 'From Cuis7.7 [latest update: #7914] on 11 May 2026 at 3:08:40 pm'!
 'Description '!
-!provides: 'Goodies' 1 12!
+!provides: 'Goodies' '1.12.0'!
 SystemOrganization addCategory: #'Goodies-AsyncFile'!
 SystemOrganization addCategory: #'Goodies-Collections'!
 SystemOrganization addCategory: #'Goodies-Tools-FileList'!

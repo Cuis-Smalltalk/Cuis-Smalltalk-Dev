@@ -1,7 +1,7 @@
 'From Cuis7.9 [latest update: #7995] on 10 June 2026 at 3:29:37 pm'!
 'Description '!
-!provides: 'Bootstrap' 1 47!
-!requires: 'DynamicCuisLibraries' 1 22 nil!
+!provides: 'Bootstrap' '1.47.0'!
+!requires: 'DynamicCuisLibraries' '1.22.0' '1.*.*'!
 SystemOrganization addCategory: #'Bootstrap-Smalltalk Image Builders'!
 SystemOrganization addCategory: #'Bootstrap-Foreign Objects'!
 

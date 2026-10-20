@@ -1,8 +1,8 @@
 'From Cuis7.7 [latest update: #7779] on 23 December 2025 at 4:40:20 pm'!
 'Description '!
-!provides: 'Tests-Complex' 1 4!
-!requires: 'BaseImageTests' 1 0 nil!
-!requires: 'Complex' 1 0 nil!
+!provides: 'Tests-Complex' '1.4.0'!
+!requires: 'BaseImageTests' '1.0.0' '1.*.*'!
+!requires: 'Complex' '1.0.0' '1.*.*'!
 SystemOrganization addCategory: #'Tests-Complex'!
 
 

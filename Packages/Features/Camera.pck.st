@@ -1,6 +1,6 @@
 'From Cuis7.9 [latest update: #8014] on 23 June 2026 at 8:26:35 pm'!
 'Description Basic Webcam support'!
-!provides: 'Camera' 1 3!
+!provides: 'Camera' '1.3.0'!
 SystemOrganization addCategory: 'Camera'!
 
 

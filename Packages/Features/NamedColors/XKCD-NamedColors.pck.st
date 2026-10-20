@@ -9,10 +9,10 @@ See Class side:
 To reset the Color name->color dictionary:
  	Color setColorNamesDict: (Color xkcdColorDictionary).
 '!
-!provides: 'XKCD-NamedColors' 1 1!
-!requires: 'Cuis-Base' 42 1788 nil!
-!requires: 'Color-Extras' 1 4 nil!
-!requires: 'Graphics-Files-Additional' 1 nil nil!
+!provides: 'XKCD-NamedColors' '1.1.0'!
+!requires: 'Cuis-Base' '7.9.8257' '7.*.*'!
+!requires: 'Color-Extras' '1.4.0' '1.*.*'!
+!requires: 'Graphics-Files-Additional' '1.0.0' '1.*.*'!
 
 
 

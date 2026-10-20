@@ -1,7 +1,7 @@
 'From Cuis6.3 [latest update: #6221] on 7 February 2024 at 5:21:36 pm'!
 'Description Various code used in Squeak which is not in Cuis.'!
-!provides: 'SqueakCompatibility' 1 45!
-!requires: 'Cuis-Base' 6 3 nil!
+!provides: 'SqueakCompatibility' '1.45.0'!
+!requires: 'Cuis-Base' '7.9.8257' '7.*.*'!
 SystemOrganization addCategory: #SqueakCompatibility!
 SystemOrganization addCategory: #'SqueakCompatibility-System-Files'!
 

@@ -1,6 +1,6 @@
 'From Cuis7.7 [latest update: #7951] on 19 May 2026 at 4:01:40 pm'!
 'Description '!
-!provides: 'ObjectProperties' 1 6!
+!provides: 'ObjectProperties' '1.6.0'!
 SystemOrganization addCategory: #ObjectProperties!
 
 

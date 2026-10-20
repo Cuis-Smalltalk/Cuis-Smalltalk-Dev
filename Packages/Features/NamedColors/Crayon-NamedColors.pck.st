@@ -1,8 +1,8 @@
 'From Cuis7.7 [latest update: #7779] on 23 December 2025 at 4:42:13 pm'!
 'Description Crayon Colors from
 	http://www.colourlovers.com/web/blog/2008/04/22/all-120-crayon-names-color-codes-and-fun-facts'!
-!provides: 'Crayon-NamedColors' 1 1!
-!requires: 'Color-Extras' 1 4 nil!
+!provides: 'Crayon-NamedColors' '1.1.0'!
+!requires: 'Color-Extras' '1.4.0' '1.*.*'!
 
 
 

@@ -1,6 +1,6 @@
 'From Cuis7.7 [latest update: #7779] on 23 December 2025 at 4:39:03 pm'!
 'Description Code was filed out from Squeak 4.5 and ported to Cuis with few changes by David Graham.'!
-!provides: 'Identities-UUID' 1 11!
+!provides: 'Identities-UUID' '1.11.0'!
 SystemOrganization addCategory: #'Identities-UUID'!
 
 

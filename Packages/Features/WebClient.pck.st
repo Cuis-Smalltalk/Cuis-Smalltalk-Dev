@@ -3,10 +3,10 @@
 	- WebClient-Core-ul.100
 	- WebClient-Help-ar.10
 	- WebClient-Tests-topa.48'!
-!provides: 'WebClient' 1 39!
-!requires: 'Network-Kernel' 1 2 nil!
-!requires: 'Identities-UUID' 1 7 nil!
-!requires: 'Cryptography-DigitalSignatures' 1 7 nil!
+!provides: 'WebClient' '1.39.0'!
+!requires: 'Network-Kernel' '1.2.0' '1.*.*'!
+!requires: 'Identities-UUID' '1.7.0' '1.*.*'!
+!requires: 'Cryptography-DigitalSignatures' '1.7.0' '1.*.*'!
 SystemOrganization addCategory: #'WebClient-Core'!
 SystemOrganization addCategory: #'WebClient-SqueakSSL-Core'!
 

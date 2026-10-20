@@ -1,7 +1,7 @@
 'From Cuis7.9 [latest update: #8200] on 17 September 2026 at 2:26:09 pm'!
 'Description '!
-!provides: 'Tests-Promise' 1 2!
-!requires: 'Promise' 1 0 nil!
+!provides: 'Tests-Promise' '1.2.0'!
+!requires: 'Promise' '1.0.0' '1.*.*'!
 SystemOrganization addCategory: #'Tests-Promise'!
 
 

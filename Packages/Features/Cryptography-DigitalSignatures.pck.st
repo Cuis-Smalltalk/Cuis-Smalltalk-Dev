@@ -5,8 +5,8 @@ For example SHA1, DSA.
 It was originally written for Squeak 4.5 and ported to Cuis with few changes by David Graham.
 
 License: MIT'!
-!provides: 'Cryptography-DigitalSignatures' 1 16!
-!requires: 'Sound' 1 3 nil!
+!provides: 'Cryptography-DigitalSignatures' '1.16.0'!
+!requires: 'Sound' '1.3.0' '1.*.*'!
 SystemOrganization addCategory: #'Cryptography-DigitalSignatures'!
 
 

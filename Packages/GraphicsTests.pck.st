@@ -1,6 +1,6 @@
 'From Cuis7.9 [latest update: #8145] on 24 August 2026 at 11:11:39 am'!
 'Description '!
-!provides: 'GraphicsTests' 1 0!
+!provides: 'GraphicsTests' '1.0.0'!
 SystemOrganization addCategory: #'GraphicsTests-Primitives'!
 SystemOrganization addCategory: #'GraphicsTests-Display Objects'!
 SystemOrganization addCategory: #'GraphicsTests-Files'!

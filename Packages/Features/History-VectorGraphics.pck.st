@@ -1,6 +1,6 @@
 'From Cuis 5.0 [latest update: #4045] on 20 February 2020 at 1:40:23 pm'!
 'Description '!
-!provides: 'History-VectorGraphics' 1 3!
+!provides: 'History-VectorGraphics' '1.3.0'!
 SystemOrganization addCategory: #'History-VectorGraphics-Kernel'!
 
 

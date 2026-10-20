@@ -1,6 +1,6 @@
 'From Cuis7.1 [latest update: #6426] on 4 June 2024 at 4:20:06 pm'!
 'Description This package implements the obsolete accessor methods for ByteArray and ExternalAddress, ffi[U]Int[8|16|32|64]At:[put:], & ExternalAddress>>clone. These have been superceded by [u]int[8|16|32|64]At:[put:].'!
-!provides: 'FFICompatibility' 1 0!
+!provides: 'FFICompatibility' '1.0.0'!
 
 
 

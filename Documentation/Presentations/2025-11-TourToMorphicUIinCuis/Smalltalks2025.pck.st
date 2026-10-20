@@ -1,8 +1,8 @@
 'From Cuis7.5 [latest update: #7687] on 4 November 2025 at 12:30:00 pm'!
 'Description '!
-!provides: 'Smalltalks2025' 1 2!
-!requires: 'Morphic-AnimatedStar' 1 0 nil!
-!requires: 'Morphic-Shapes' 1 0 nil!
+!provides: 'Smalltalks2025' '1.2.0'!
+!requires: 'Morphic-AnimatedStar' '1.0.0' '1.*.*'!
+!requires: 'Morphic-Shapes' '1.0.0' '1.*.*'!
 SystemOrganization addCategory: #Smalltalks2025!
 
 

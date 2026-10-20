@@ -1,7 +1,7 @@
 'From Cuis7.7 [latest update: #7779] on 23 December 2025 at 4:36:07 pm'!
 'Description '!
-!provides: 'Tests-ObjectProperties' 1 0!
-!requires: 'ObjectProperties' 1 0 nil!
+!provides: 'Tests-ObjectProperties' '1.0.0'!
+!requires: 'ObjectProperties' '1.0.0' '1.*.*'!
 SystemOrganization addCategory: #'Tests-ObjectProperties'!
 
 

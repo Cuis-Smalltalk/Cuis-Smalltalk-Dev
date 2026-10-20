@@ -1,7 +1,7 @@
 'From Cuis7.7 [latest update: #7779] on 23 December 2025 at 4:41:43 pm'!
 'Description '!
-!provides: 'Tests-ExtendedClipboard' 1 0!
-!requires: 'ExtendedClipboard' 1 12 nil!
+!provides: 'Tests-ExtendedClipboard' '1.0.0'!
+!requires: 'ExtendedClipboard' '1.12.0' '1.*.*'!
 SystemOrganization addCategory: #'Tests-ExtendedClipboard'!
 
 

@@ -1,7 +1,7 @@
-'From Cuis7.9 [latest update: #8262] on 2 October 2026 at 11:52:00 am'!
+'From Cuis7.9 [latest update: #8276] on 20 October 2026 at 1:45:11 pm'!
 'Description '!
-!provides: 'SystemTests' 1 2!
-!requires: 'DynamicallyCodeCreatingTestSupport' 1 0 nil!
+!provides: 'SystemTests' '1.3.0'!
+!requires: 'DynamicallyCodeCreatingTestSupport' '1.0.0' '1.*.*'!
 SystemOrganization addCategory: #'SystemTests-Support'!
 SystemOrganization addCategory: #'SystemTests-Text'!
 SystemOrganization addCategory: #'SystemTests-FileMan'!
@@ -87,6 +87,16 @@ TestCase subclass: #IniFileTest
 	category: 'SystemTests-Support'!
 !classDefinition: 'IniFileTest class' category: #'SystemTests-Support'!
 IniFileTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #SemanticVersionTest category: #'SystemTests-Support'!
+TestCase subclass: #SemanticVersionTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'SystemTests-Support'!
+!classDefinition: 'SemanticVersionTest class' category: #'SystemTests-Support'!
+SemanticVersionTest class
 	instanceVariableNames: ''!
 
 !classDefinition: #SystemConsistencyTest category: #'SystemTests-Support'!
@@ -1284,6 +1294,152 @@ testWriteSingleSection
 	foo := (IniFile readFrom: written readStream) sectionNamed: 'foo'.
 	self assert: (foo at: 'key1') = 'val1'.
 	self assert: (foo at: 'key2') = 'val2'.! !
+
+!SemanticVersionTest methodsFor: 'tests - building' stamp: 'CAP 18/Oct/2026, 12:32:09 am (UTC)'!
+testRejectsANumberAfterAWildcard
+
+	#('*.2.3' '1.*.3' '*.*.3' '*.2.*') do: [ :example |
+		self
+			should: [ SemanticVersion fromString: example ]
+			raise: Error
+			withMessageText: 'Invalid semantic version: ', example ]! !
+
+!SemanticVersionTest methodsFor: 'tests - building' stamp: 'CAP 18/Oct/2026, 12:32:05 am (UTC)'!
+testRejectsAWrongNumberOfComponents
+
+	#('' '1' '1.2' '1.2.3.4') do: [ :example |
+		self
+			should: [ SemanticVersion fromString: example ]
+			raise: Error
+			withMessageText: 'Invalid semantic version: ', example ]! !
+
+!SemanticVersionTest methodsFor: 'tests - building' stamp: 'CAP 18/Oct/2026, 12:32:14 am (UTC)'!
+testRejectsEmptyComponents
+
+	#('.2.3' '1..3' '1.2.') do: [ :example |
+		self
+			should: [ SemanticVersion fromString: example ]
+			raise: Error
+			withMessageText: 'Invalid semantic version: ', example ]! !
+
+!SemanticVersionTest methodsFor: 'tests - building' stamp: 'CAP 18/Oct/2026, 12:32:18 am (UTC)'!
+testRejectsLeadingZeroes
+
+	#('01.2.3' '1.02.3' '1.2.03' '00.0.0') do: [ :example |
+		self
+			should: [ SemanticVersion fromString: example ]
+			raise: Error
+			withMessageText: 'Invalid semantic version: ', example ]! !
+
+!SemanticVersionTest methodsFor: 'tests - building' stamp: 'CAP 18/Oct/2026, 12:39:03 am (UTC)'!
+testRejectsNonNumericComponents
+
+	#('a.2.3' '1.b.3' '1.2.c' 'v1.2.3' '1.2.3-beta' '1.2.-3' '1.2.+3' '1.2. 3') do: [ :example |
+		self
+			should: [ SemanticVersion fromString: example ]
+			raise: Error
+			withMessageText: 'Invalid semantic version: ', example ]! !
+
+!SemanticVersionTest methodsFor: 'tests - comparing' stamp: 'CAP 17/Oct/2026, 11:56:37 pm (UTC)'!
+testASetKeepsASingleCopyOfEqualVersions
+
+	| versions |
+
+	versions := Set with: (SemanticVersion fromString: '1.2.3') with: (SemanticVersion fromString: '1.2.3').
+	self assert: versions size equals: 1! !
+
+!SemanticVersionTest methodsFor: 'tests - comparing' stamp: 'CAP 18/Oct/2026, 12:55:23 am (UTC)'!
+testAnInfiniteComponentIsAboveAnyNumberInItsPosition
+
+	| anyPatch anyMinor anyMajor |
+
+	anyPatch := SemanticVersion fromString: '3.4.*'.
+	self assert: anyPatch > (SemanticVersion fromString: '3.4.0').
+	self assert: anyPatch > (SemanticVersion fromString: '3.4.999').
+	self assert: (SemanticVersion fromString: '3.5.0') > anyPatch.
+	
+	anyMinor := SemanticVersion fromString: '3.*.*'.
+	self assert: anyMinor > (SemanticVersion fromString: '3.0.0').
+	self assert: anyMinor > (SemanticVersion fromString: '3.999.999').
+	self assert: (SemanticVersion fromString: '4.0.0') > anyMinor.
+	
+	anyMajor := SemanticVersion infinity.
+	self assert: anyMajor > (SemanticVersion fromString: '0.0.0').
+	self assert: anyMajor > (SemanticVersion fromString: '999.999.999').
+	self assert: anyMajor > anyMinor! !
+
+!SemanticVersionTest methodsFor: 'tests - comparing' stamp: 'CAP 18/Oct/2026, 12:56:29 am (UTC)'!
+testIsOrderedByMajorThenMinorThenPatch
+
+	| byPatch byMinor byMajor |
+
+	byPatch := { SemanticVersion fromString: '1.2.4'. SemanticVersion fromString: '1.2.3' }.
+	byMinor := { SemanticVersion fromString: '1.3.0'. SemanticVersion fromString: '1.2.9' }.
+	byMajor := { SemanticVersion fromString: '2.0.0'. SemanticVersion fromString: '1.9.9' }.
+	{ byPatch. byMinor. byMajor } do: [ :pair |
+		self assert: pair first > pair last.
+		self deny: pair last > pair first ]! !
+
+!SemanticVersionTest methodsFor: 'tests - comparing' stamp: 'CAP 18/Oct/2026, 12:55:23 am (UTC)'!
+testIsOrderedNumericallyNotLexically
+
+	self assert: (SemanticVersion fromString: '10.0.0') > (SemanticVersion fromString: '9.0.0').
+	self assert: (SemanticVersion fromString: '1.10.0') > (SemanticVersion fromString: '1.9.0').
+	self assert: (SemanticVersion fromString: '1.2.10') > (SemanticVersion fromString: '1.2.9')! !
+
+!SemanticVersionTest methodsFor: 'tests - comparing' stamp: 'CAP 17/Oct/2026, 11:48:06 pm (UTC)'!
+testVersionsWithAnyDifferentComponentAreNotEqual
+
+	| aVersion |
+
+	aVersion := SemanticVersion fromString: '1.2.3'.
+	self deny: aVersion = (SemanticVersion fromString: '2.2.3').
+	self deny: aVersion = (SemanticVersion fromString: '1.3.3').
+	self deny: aVersion = (SemanticVersion fromString: '1.2.4').
+	self deny: aVersion = (SemanticVersion fromString: '1.2.*')! !
+
+!SemanticVersionTest methodsFor: 'tests - comparing' stamp: 'CAP 18/Oct/2026, 12:35:34 am (UTC)'!
+testVersionsWithTheSameComponentsAreEqual
+
+	self assert: (SemanticVersion fromString: '1.2.3') equals: (SemanticVersion fromString: '1.2.3')! !
+
+!SemanticVersionTest methodsFor: 'tests - converting' stamp: 'CAP 18/Oct/2026, 10:39:20 pm (UTC)'!
+testAnyMinorIsTheLastVersionOfTheSameMajor
+
+	self assert: (SemanticVersion fromString: '1.2.3') anyMinor equals: (SemanticVersion fromString: '1.*.*')! !
+
+!SemanticVersionTest methodsFor: 'tests - converting' stamp: 'CAP 18/Oct/2026, 10:39:25 pm (UTC)'!
+testAnyPatchIsTheLastVersionOfTheSameMinor
+
+	self assert: (SemanticVersion fromString: '1.2.3') anyPatch equals: (SemanticVersion fromString: '1.2.*')! !
+
+!SemanticVersionTest methodsFor: 'tests - converting' stamp: 'CAP 17/Oct/2026, 11:56:37 pm (UTC)'!
+testNextMajorStartsTheFollowingMajorFromScratch
+
+	self assert: (SemanticVersion fromString: '1.2.3') nextMajor equals: (SemanticVersion fromString: '2.0.0').
+	self assert: (SemanticVersion fromString: '1.*.*') nextMajor equals: (SemanticVersion fromString: '2.0.0')! !
+
+!SemanticVersionTest methodsFor: 'tests - queries' stamp: 'CAP 18/Oct/2026, 12:21:51 am (UTC)'!
+testKnowsWhetherItHasWildcards
+
+	self deny: (SemanticVersion fromString: '1.2.3') hasWildcards.
+	self assert: (SemanticVersion fromString: '1.2.*') hasWildcards.
+	self assert: (SemanticVersion fromString: '1.*.*') hasWildcards.
+	self assert: SemanticVersion infinity hasWildcards! !
+
+!SemanticVersionTest methodsFor: 'tests - printing' stamp: 'CAP 18/Oct/2026, 12:34:51 am (UTC)'!
+testPrintsAnInfiniteComponentAsAWildcard
+
+	self assert: (SemanticVersion fromString: '1.2.*') printString equals: '1.2.*'.
+	self assert: (SemanticVersion fromString: '1.*.*') printString equals: '1.*.*'.
+	self assert: SemanticVersion infinity printString equals: '*.*.*'! !
+
+!SemanticVersionTest methodsFor: 'tests - printing' stamp: 'CAP 18/Oct/2026, 12:59:50 am (UTC)'!
+testPrintsItsComponentsSeparatedByDots
+
+	self assert: (SemanticVersion fromString: '1.2.3') printString equals: '1.2.3'.
+	self assert: (SemanticVersion fromString: '10.20.300') printString equals: '10.20.300'.
+	self assert: SemanticVersion zero printString equals: '0.0.0'! !
 
 !SystemConsistencyTest methodsFor: 'testing' stamp: 'jmv 7/May/2012, 1:35:00 pm (UTC)'!
 testMethodsWithUnboundGlobals

@@ -1,50 +1,50 @@
 'From Cuis7.7 [latest update: #7902] on 3 May 2026 at 9:19:55 pm'!
 'Description Load all packages included with Cuis and all packages in the Cuis GitGub organization'!
-!provides: 'AllPackages' 1 4!
-!requires: 'CorePackages' 1 0 nil!
-!requires: 'OpenCL' 1 0 nil!
-!requires: 'Amqp' 1 0 nil!
-!requires: 'Chalten' 1 0 nil!
-!requires: 'Code-Patterns' 1 0 nil!
-!requires: 'TrafficLight' 1 0 nil!
-!requires: 'Erudite' 1 0 nil!
-!requires: 'EruditeToolsExtensions' 1 0 nil!
-!requires: 'MorphicBook' 1 0 nil!
-!requires: 'PetitParserBinding' 1 0 nil!
-!requires: 'PetitParserTutorial' 1 0 nil!
-!requires: 'Firmata' 1 0 nil!
-!requires: 'AnagramAid' 1 0 nil!
-!requires: 'Construction' 1 0 nil!
-!requires: 'Game' 1 0 nil!
-!requires: 'Life' 1 0 nil!
-!requires: 'SecretSanta' 1 0 nil!
-!requires: 'Morphic-Games-Solitaire' 1 0 nil!
-!requires: 'Cartography' 1 0 nil!
-!requires: 'GeographicDatasets' 1 0 nil!
-!requires: 'TensorFlow-Examples' 1 0 nil!
-!requires: 'TensorFlow-Kernel' 1 0 nil!
-!requires: 'Aconcagua' 1 0 nil!
-!requires: 'Avatar' 1 0 nil!
-!requires: 'BouncingAtoms' 1 0 nil!
-!requires: 'Pen' 1 0 nil!
-!requires: 'ImageProcessing' 1 0 nil!
-!requires: 'LinearAlgebra' 1 0 nil!
-!requires: 'Math3D' 1 0 nil!
-!requires: 'NumericalMethods' 1 0 nil!
-!requires: 'ProbabilityDistributions' 1 0 nil!
-!requires: 'SignalProcessing' 1 0 nil!
-!requires: 'Statistics' 1 0 nil!
-!requires: 'OSProcess' 1 0 nil!
-!requires: 'PetitParser' 1 0 nil!
-!requires: 'PetitTests' 1 0 nil!
-!requires: 'PetitTutorial' 1 0 nil!
-!requires: 'RTFClipboardTests' 1 0 nil!
-!requires: 'RTFExporting' 1 0 nil!
-!requires: 'RTFImporting' 1 0 nil!
-!requires: 'RTFTests' 1 0 nil!
-!requires: 'StyledText' 1 0 nil!
-!requires: 'StyledTextInstaller' 1 0 nil!
-!requires: 'StyledTextNotebook' 1 0 nil!
-!requires: 'StyledTextWiki' 1 0 nil!
-!requires: 'UI-Components' 1 0 nil!
-!requires: 'UI-Tools' 1 0 nil!
+!provides: 'AllPackages' '1.4.0'!
+!requires: 'CorePackages' '1.0.0' '1.*.*'!
+!requires: 'OpenCL' '1.0.0' '1.*.*'!
+!requires: 'Amqp' '1.0.0' '1.*.*'!
+!requires: 'Chalten' '1.0.0' '1.*.*'!
+!requires: 'Code-Patterns' '1.0.0' '1.*.*'!
+!requires: 'TrafficLight' '1.0.0' '1.*.*'!
+!requires: 'Erudite' '1.0.0' '1.*.*'!
+!requires: 'EruditeToolsExtensions' '1.0.0' '1.*.*'!
+!requires: 'MorphicBook' '1.0.0' '1.*.*'!
+!requires: 'PetitParserBinding' '1.0.0' '1.*.*'!
+!requires: 'PetitParserTutorial' '1.0.0' '1.*.*'!
+!requires: 'Firmata' '1.0.0' '1.*.*'!
+!requires: 'AnagramAid' '1.0.0' '1.*.*'!
+!requires: 'Construction' '1.0.0' '1.*.*'!
+!requires: 'Game' '1.0.0' '1.*.*'!
+!requires: 'Life' '1.0.0' '1.*.*'!
+!requires: 'SecretSanta' '1.0.0' '1.*.*'!
+!requires: 'Morphic-Games-Solitaire' '1.0.0' '1.*.*'!
+!requires: 'Cartography' '1.0.0' '1.*.*'!
+!requires: 'GeographicDatasets' '1.0.0' '1.*.*'!
+!requires: 'TensorFlow-Examples' '1.0.0' '1.*.*'!
+!requires: 'TensorFlow-Kernel' '1.0.0' '1.*.*'!
+!requires: 'Aconcagua' '1.0.0' '1.*.*'!
+!requires: 'Avatar' '1.0.0' '1.*.*'!
+!requires: 'BouncingAtoms' '1.0.0' '1.*.*'!
+!requires: 'Pen' '1.0.0' '1.*.*'!
+!requires: 'ImageProcessing' '1.0.0' '1.*.*'!
+!requires: 'LinearAlgebra' '1.0.0' '1.*.*'!
+!requires: 'Math3D' '1.0.0' '1.*.*'!
+!requires: 'NumericalMethods' '1.0.0' '1.*.*'!
+!requires: 'ProbabilityDistributions' '1.0.0' '1.*.*'!
+!requires: 'SignalProcessing' '1.0.0' '1.*.*'!
+!requires: 'Statistics' '1.0.0' '1.*.*'!
+!requires: 'OSProcess' '1.0.0' '1.*.*'!
+!requires: 'PetitParser' '1.0.0' '1.*.*'!
+!requires: 'PetitTests' '1.0.0' '1.*.*'!
+!requires: 'PetitTutorial' '1.0.0' '1.*.*'!
+!requires: 'RTFClipboardTests' '1.0.0' '1.*.*'!
+!requires: 'RTFExporting' '1.0.0' '1.*.*'!
+!requires: 'RTFImporting' '1.0.0' '1.*.*'!
+!requires: 'RTFTests' '1.0.0' '1.*.*'!
+!requires: 'StyledText' '1.0.0' '1.*.*'!
+!requires: 'StyledTextInstaller' '1.0.0' '1.*.*'!
+!requires: 'StyledTextNotebook' '1.0.0' '1.*.*'!
+!requires: 'StyledTextWiki' '1.0.0' '1.*.*'!
+!requires: 'UI-Components' '1.0.0' '1.*.*'!
+!requires: 'UI-Tools' '1.0.0' '1.*.*'!

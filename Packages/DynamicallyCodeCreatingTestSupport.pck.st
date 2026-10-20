@@ -1,6 +1,6 @@
 'From Cuis7.9 [latest update: #8205] on 17 September 2026 at 3:21:50 pm'!
 'Description '!
-!provides: 'DynamicallyCodeCreatingTestSupport' 1 8!
+!provides: 'DynamicallyCodeCreatingTestSupport' '1.8.0'!
 SystemOrganization addCategory: #DynamicallyCodeCreatingTestSupport!
 
 

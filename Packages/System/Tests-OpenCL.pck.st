@@ -1,7 +1,7 @@
 'From Cuis 5.0 [latest update: #4415] on 22 October 2020 at 9:20:00 pm'!
 'Description '!
-!provides: 'Tests-OpenCL' 1 1!
-!requires: 'OpenCL' 1 50 nil!
+!provides: 'Tests-OpenCL' '1.1.0'!
+!requires: 'OpenCL' '1.50.0' '1.*.*'!
 SystemOrganization addCategory: 'Tests-OpenCL'!
 
 

@@ -1,6 +1,6 @@
 'From Cuis7.9 [latest update: #8200] on 17 September 2026 at 2:23:56 pm'!
 'Description '!
-!provides: 'DynamicCuisLibraries' 1 37!
+!provides: 'DynamicCuisLibraries' '1.37.0'!
 SystemOrganization addCategory: #'DynamicCuisLibraries-Code Model'!
 SystemOrganization addCategory: #'DynamicCuisLibraries-Dynamic Libraries'!
 SystemOrganization addCategory: #DynamicCuisLibraries!

@@ -1,6 +1,6 @@
 'From Cuis7.9 [latest update: #8265] on 5 October 2026 at 5:37:29 pm'!
 'Description '!
-!provides: 'KernelTests' 1 5!
+!provides: 'KernelTests' '1.5.0'!
 SystemOrganization addCategory: #'KernelTests-Objects'!
 SystemOrganization addCategory: #'KernelTests-Classes'!
 SystemOrganization addCategory: #'KernelTests-Numbers'!

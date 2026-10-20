@@ -1,7 +1,7 @@
 'From Cuis7.3 [latest update: #6989] on 17 January 2025 at 10:10:56 am'!
 'Description '!
-!provides: 'OpenCL' 1 54!
-!requires: 'FFI' 1 nil nil!
+!provides: 'OpenCL' '1.54.0'!
+!requires: 'FFI' '1.0.0' '1.*.*'!
 SystemOrganization addCategory: #'OpenCL-Constants'!
 SystemOrganization addCategory: #OpenCL!
 SystemOrganization addCategory: #'OpenCL-Examples'!

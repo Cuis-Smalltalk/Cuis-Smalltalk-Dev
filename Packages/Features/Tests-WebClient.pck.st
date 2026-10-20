@@ -1,7 +1,7 @@
 'From Cuis7.9 [latest update: #8149] on 29 August 2026 at 6:52:31 pm'!
 'Description '!
-!provides: 'Tests-WebClient' 1 5!
-!requires: 'WebClient' 1 19 nil!
+!provides: 'Tests-WebClient' '1.5.0'!
+!requires: 'WebClient' '1.19.0' '1.*.*'!
 SystemOrganization addCategory: #'Tests-WebClient'!
 
 

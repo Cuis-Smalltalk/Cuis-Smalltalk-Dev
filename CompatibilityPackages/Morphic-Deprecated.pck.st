@@ -1,6 +1,6 @@
 'From Cuis7.1 [latest update: #6669] on 2 September 2024 at 8:20:42 pm'!
 'Description '!
-!provides: 'Morphic-Deprecated' 1 6!
+!provides: 'Morphic-Deprecated' '1.6.0'!
 SystemOrganization addCategory: #'Morphic-Deprecated'!
 
 

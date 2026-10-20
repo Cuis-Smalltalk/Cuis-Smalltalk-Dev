@@ -1,6 +1,6 @@
 'From Cuis7.7 [latest update: #7779] on 23 December 2025 at 4:40:50 pm'!
 'Description '!
-!provides: 'YAXO' 1 28!
+!provides: 'YAXO' '1.28.0'!
 SystemOrganization addCategory: #YAXO!
 
 

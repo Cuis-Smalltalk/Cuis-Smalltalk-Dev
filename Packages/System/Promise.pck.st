@@ -1,6 +1,6 @@
 'From Cuis7.7 [latest update: #7779] on 23 December 2025 at 4:35:26 pm'!
 'Description '!
-!provides: 'Promise' 1 1!
+!provides: 'Promise' '1.1.0'!
 SystemOrganization addCategory: #Promise!
 
 
