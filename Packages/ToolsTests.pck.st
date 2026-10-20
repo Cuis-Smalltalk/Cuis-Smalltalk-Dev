@@ -1,7 +1,7 @@
 'From Cuis7.9 [latest update: #8262] on 2 October 2026 at 11:52:25 am'!
 'Description '!
-!provides: 'ToolsTests' 1 3!
-!requires: 'DynamicallyCodeCreatingTestSupport' 1 0 nil!
+!provides: 'ToolsTests' '1.3.0'!
+!requires: 'DynamicallyCodeCreatingTestSupport' '1.0.0' '1.*.*'!
 SystemOrganization addCategory: #'ToolsTests-Browser'!
 SystemOrganization addCategory: #'ToolsTests-Changes'!
 SystemOrganization addCategory: #'ToolsTests-Syntax Highlighting'!

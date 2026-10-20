@@ -1,7 +1,7 @@
 'From Cuis7.7 [latest update: #7779] on 23 December 2025 at 4:40:17 pm'!
 'Description '!
-!provides: 'Tests-Color-Extras' 1 1!
-!requires: 'Color-Extras' 1 7 nil!
+!provides: 'Tests-Color-Extras' '1.1.0'!
+!requires: 'Color-Extras' '1.7.0' '1.*.*'!
 SystemOrganization addCategory: #'Tests-Color-Extras'!
 
 

@@ -1,6 +1,6 @@
 'From Cuis7.9 [latest update: #8145] on 24 August 2026 at 11:12:19 am'!
 'Description '!
-!provides: 'MorphicTests' 1 0!
+!provides: 'MorphicTests' '1.0.0'!
 SystemOrganization addCategory: #MorphicTests!
 
 

@@ -1,7 +1,7 @@
 'From Cuis7.7 [latest update: #7779] on 23 December 2025 at 4:35:47 pm'!
 'Description '!
-!provides: 'Tests-Immutability' 1 1!
-!requires: 'Immutability' 1 2 nil!
+!provides: 'Tests-Immutability' '1.1.0'!
+!requires: 'Immutability' '1.2.0' '1.*.*'!
 SystemOrganization addCategory: #'Tests-Immutability'!
 
 

@@ -1,7 +1,7 @@
 'From Cuis7.7 [latest update: #7779] on 23 December 2025 at 4:39:01 pm'!
 'Description '!
-!provides: 'Graphics-Files-Additional' 1 30!
-!requires: 'Compression' 1 nil nil!
+!provides: 'Graphics-Files-Additional' '1.30.0'!
+!requires: 'Compression' '1.0.0' '1.*.*'!
 SystemOrganization addCategory: #'Graphics-Files-Additional'!
 
 

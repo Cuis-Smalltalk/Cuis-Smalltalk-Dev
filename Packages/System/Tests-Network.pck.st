@@ -1,8 +1,8 @@
 'From Cuis7.7 [latest update: #7779] on 23 December 2025 at 4:35:58 pm'!
 'Description '!
-!provides: 'Tests-Network' 1 1!
-!requires: 'Network-Kernel' 1 10 nil!
-!requires: 'Identities-UUID' 1 10 nil!
+!provides: 'Tests-Network' '1.1.0'!
+!requires: 'Network-Kernel' '1.10.0' '1.*.*'!
+!requires: 'Identities-UUID' '1.10.0' '1.*.*'!
 SystemOrganization addCategory: #'Tests-Network'!
 SystemOrganization addCategory: #'Tests-Network-Kernel'!
 

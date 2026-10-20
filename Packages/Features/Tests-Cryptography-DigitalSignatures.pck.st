@@ -1,7 +1,7 @@
 'From Cuis7.7 [latest update: #7779] on 23 December 2025 at 4:40:26 pm'!
 'Description '!
-!provides: 'Tests-Cryptography-DigitalSignatures' 1 0!
-!requires: 'Cryptography-DigitalSignatures' 1 14 nil!
+!provides: 'Tests-Cryptography-DigitalSignatures' '1.0.0'!
+!requires: 'Cryptography-DigitalSignatures' '1.14.0' '1.*.*'!
 SystemOrganization addCategory: #'Tests-Cryptography-DigitalSignatures'!
 
 

@@ -1,7 +1,7 @@
 'From Cuis7.7 [latest update: #7779] on 23 December 2025 at 4:39:11 pm'!
 'Description '!
-!provides: 'SUnitJsonReports' 1 1!
-!requires: 'JSON' 1 nil nil!
+!provides: 'SUnitJsonReports' '1.1.0'!
+!requires: 'JSON' '1.0.0' '1.*.*'!
 
 
 

@@ -1,8 +1,8 @@
 'From Cuis7.9 [latest update: #8062] on 14 July 2026 at 10:28:00 am'!
 'Description FFI (Foreign Function Interface) provides access to foreign functions in external libraries, provided they use the platform''s Application Binary Interface (ABI), which is essentially the C calling convention for the platform. FFI supports callbacks, allowing one to pass callbacks that invoke Smalltalk blocks when called from foreign code. FFI provides support for defining classes that correspond to C struct types, with named fields, etc. See Tests-FFI for examples.'!
-!provides: 'FFI' 1 60!
-!requires: 'WeakDictionaries' 1 1 nil!
-!requires: 'Alien-Core' 1 0 nil!
+!provides: 'FFI' '1.60.0'!
+!requires: 'WeakDictionaries' '1.1.0' '1.*.*'!
+!requires: 'Alien-Core' '1.0.0' '1.*.*'!
 SystemOrganization addCategory: #'FFI-Pools'!
 SystemOrganization addCategory: #'FFI-Kernel'!
 

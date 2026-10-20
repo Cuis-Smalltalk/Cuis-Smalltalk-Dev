@@ -1,6 +1,6 @@
 'From Cuis7.9 [latest update: #8218] on 24 September 2026 at 10:56:34 am'!
 'Description '!
-!provides: 'CollectionsTests' 1 2!
+!provides: 'CollectionsTests' '1.2.0'!
 SystemOrganization addCategory: #CollectionsTests!
 SystemOrganization addCategory: #'CollectionsTests-Arrayed'!
 SystemOrganization addCategory: #'CollectionsTests-Streams'!

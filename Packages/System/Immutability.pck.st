@@ -1,6 +1,6 @@
 'From Cuis7.7 [latest update: #7779] on 23 December 2025 at 4:34:35 pm'!
 'Description First version. See message #beImmutable and ImmutableTest'!
-!provides: 'Immutability' 1 5!
+!provides: 'Immutability' '1.5.0'!
 SystemOrganization addCategory: #Immutability!
 
 

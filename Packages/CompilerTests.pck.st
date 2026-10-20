@@ -1,7 +1,7 @@
 'From Cuis7.9 [latest update: #8263] on 5 October 2026 at 5:00:02 pm'!
 'Description '!
-!provides: 'CompilerTests' 1 5!
-!requires: 'DynamicallyCodeCreatingTestSupport' 1 0 nil!
+!provides: 'CompilerTests' '1.5.0'!
+!requires: 'DynamicallyCodeCreatingTestSupport' '1.0.0' '1.*.*'!
 SystemOrganization addCategory: #CompilerTests!
 
 

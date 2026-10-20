@@ -1,6 +1,6 @@
 'From Cuis7.7 [latest update: #7779] on 23 December 2025 at 4:38:44 pm'!
 'Description '!
-!provides: 'Color-Extras' 1 9!
+!provides: 'Color-Extras' '1.9.0'!
 SystemOrganization addCategory: #'Color-Extras'!
 
 

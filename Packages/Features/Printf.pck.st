@@ -1,6 +1,6 @@
 'From Cuis6.3 [latest update: #6200] on 29 January 2024 at 3:42:27 pm'!
 'Description '!
-!provides: 'Printf' 1 41!
+!provides: 'Printf' '1.41.0'!
 SystemOrganization addCategory: #Printf!
 
 

@@ -1,7 +1,7 @@
 'From Cuis7.7 [latest update: #7779] on 23 December 2025 at 4:40:30 pm'!
 'Description '!
-!provides: 'Tests-Identities-UUID' 1 1!
-!requires: 'Identities-UUID' 1 8 nil!
+!provides: 'Tests-Identities-UUID' '1.1.0'!
+!requires: 'Identities-UUID' '1.8.0' '1.*.*'!
 SystemOrganization addCategory: #'Tests-Identities-UUID'!
 
 

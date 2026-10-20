@@ -1,6 +1,6 @@
 'From Cuis7.7 [latest update: #7779] on 23 December 2025 at 4:36:26 pm'!
 'Description '!
-!provides: 'MultiBrowserWindow' 1 7!
+!provides: 'MultiBrowserWindow' '1.7.0'!
 SystemOrganization addCategory: #MultiBrowserWindow!
 
 

@@ -1,6 +1,6 @@
 'From Cuis 5.0 [latest update: #3948] on 7 November 2019 at 5:55:14 pm'!
 'Description '!
-!provides: 'PerformanceImprovements' 1 2!
+!provides: 'PerformanceImprovements' '1.2.0'!
 
 
 

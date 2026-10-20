@@ -1,7 +1,7 @@
 'From Cuis7.7 [latest update: #7779] on 23 December 2025 at 4:40:24 pm'!
 'Description '!
-!provides: 'Tests-Compression' 1 2!
-!requires: 'Compression' 1 22 nil!
+!provides: 'Tests-Compression' '1.2.0'!
+!requires: 'Compression' '1.22.0' '1.*.*'!
 SystemOrganization addCategory: #'Tests-Compression'!
 
 

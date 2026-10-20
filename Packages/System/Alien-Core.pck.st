@@ -1,7 +1,7 @@
 'From Cuis7.7 [latest update: #7959] on 21 May 2026 at 5:18:57 pm'!
 'Description Alien provides the infrastructure for FFI Callbacks, implementing the Callback hierarchy and marshalling methods within it.'!
-!provides: 'Alien-Core' 1 4!
-!requires: 'WeakDictionaries' 1 1 nil!
+!provides: 'Alien-Core' '1.4.0'!
+!requires: 'WeakDictionaries' '1.1.0' '1.*.*'!
 SystemOrganization addCategory: #'Alien-Core'!
 
 

@@ -1,8 +1,8 @@
 'From Cuis7.9 [latest update: #8247] on 30 September 2026 at 3:47:13 pm'!
 'Description '!
-!provides: 'RefactoringTests' 1 30!
-!requires: 'DynamicallyCodeCreatingTestSupport' 1 0 nil!
-!requires: '__Refactoring_TestData__' 1 0 nil!
+!provides: 'RefactoringTests' '1.30.0'!
+!requires: 'DynamicallyCodeCreatingTestSupport' '1.0.0' '1.*.*'!
+!requires: '__Refactoring_TestData__' '1.0.0' '1.*.*'!
 SystemOrganization addCategory: #RefactoringTests!
 
 

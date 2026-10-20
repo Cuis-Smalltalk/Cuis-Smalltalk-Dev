@@ -1,8 +1,8 @@
 'From Cuis7.7 [latest update: #7779] on 23 December 2025 at 4:34:07 pm'!
 'Description '!
-!provides: 'ExtendedClipboard' 1 18!
-!requires: 'FFI' 1 nil nil!
-!requires: 'Graphics-Files-Additional' 1 nil nil!
+!provides: 'ExtendedClipboard' '1.18.0'!
+!requires: 'FFI' '1.0.0' '1.*.*'!
+!requires: 'Graphics-Files-Additional' '1.0.0' '1.*.*'!
 SystemOrganization addCategory: #ExtendedClipboard!
 SystemOrganization addCategory: #'ExtendedClipboard-Win32'!
 

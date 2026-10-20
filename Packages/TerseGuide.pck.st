@@ -1,6 +1,6 @@
 'From Cuis7.9 [latest update: #8076] on 22 July 2026 at 4:00:13 pm'!
 'Description Add ability to dynamically add topic pages from other sources.'!
-!provides: 'TerseGuide' 1 152!
+!provides: 'TerseGuide' '1.152.0'!
 SystemOrganization addCategory: #TerseGuide!
 
 

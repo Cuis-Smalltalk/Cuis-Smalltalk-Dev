@@ -1,7 +1,7 @@
 'From Cuis7.7 [latest update: #7779] on 23 December 2025 at 4:40:41 pm'!
 'Description '!
-!provides: 'Tests-YAXO' 1 4!
-!requires: 'YAXO' 1 15 nil!
+!provides: 'Tests-YAXO' '1.4.0'!
+!requires: 'YAXO' '1.15.0' '1.*.*'!
 SystemOrganization addCategory: #'Tests-YAXO'!
 
 

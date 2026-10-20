@@ -1,6 +1,6 @@
 'From Cuis7.7 [latest update: #7779] on 23 December 2025 at 4:34:53 pm'!
 'Description '!
-!provides: 'Network-Kernel' 1 12!
+!provides: 'Network-Kernel' '1.12.0'!
 SystemOrganization addCategory: #'Network-Kernel'!
 
 

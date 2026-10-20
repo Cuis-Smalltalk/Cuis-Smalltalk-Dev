@@ -1,7 +1,7 @@
 'From Cuis7.9 [latest update: #7998] on 15 June 2026 at 10:53:35 am'!
 'Description '!
-!provides: 'Gettext' 1 32!
-!requires: 'Locales' 1 12 nil!
+!provides: 'Gettext' '1.32.0'!
+!requires: 'Locales' '1.12.0' '1.*.*'!
 SystemOrganization addCategory: #Gettext!
 
 

@@ -1,6 +1,6 @@
 'From Cuis7.7 [latest update: #7829] on 5 February 2026 at 4:21:17 pm'!
 'Description '!
-!provides: 'WeakDictionaries' 1 1!
+!provides: 'WeakDictionaries' '1.1.0'!
 SystemOrganization addCategory: #WeakDictionaries!
 
 

@@ -1,6 +1,6 @@
 'From Cuis7.7 [latest update: #7779] on 23 December 2025 at 4:31:49 pm'!
 'Description Theme customizer'!
-!provides: 'Theme-Themes' 1 20!
+!provides: 'Theme-Themes' '1.20.0'!
 SystemOrganization addCategory: #'Theme-Themes'!
 
 

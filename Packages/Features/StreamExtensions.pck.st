@@ -1,6 +1,6 @@
 'From Cuis7.9 [latest update: #8113] on 30 July 2026 at 2:15:00 pm'!
 'Description '!
-!provides: 'StreamExtensions' 1 0!
+!provides: 'StreamExtensions' '1.0.0'!
 
 
 

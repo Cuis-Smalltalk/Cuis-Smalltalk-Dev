@@ -1,8 +1,8 @@
 'From Cuis7.9 [latest update: #9996] on 21 August 2026 at 5:21:33 pm'!
 'Description Version 1.36 of VectorEnginePlugin.pck.st is equivalent to VectorEnginePlugin-jmv.26.mcz at squeaksource.com/VectorEnginePlugin.html
 '!
-!provides: 'VectorEnginePlugin' 1 37!
-!requires: 'VMMaker' 1 7 nil!
+!provides: 'VectorEnginePlugin' '1.37.0'!
+!requires: 'VMMaker' '1.7.0' '1.*.*'!
 SystemOrganization addCategory: #VectorEnginePlugin!
 
 

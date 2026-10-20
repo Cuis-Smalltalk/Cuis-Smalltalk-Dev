@@ -1,7 +1,7 @@
 'From Cuis7.9 [latest update: #8113] on 30 July 2026 at 2:14:56 pm'!
 'Description Initial version'!
-!provides: 'StreamExtensionsTests' 1 0!
-!requires: 'StreamExtensions' 1 0 nil!
+!provides: 'StreamExtensionsTests' '1.0.0'!
+!requires: 'StreamExtensions' '1.0.0' '1.*.*'!
 SystemOrganization addCategory: 'StreamExtensionsTests'!
 
 

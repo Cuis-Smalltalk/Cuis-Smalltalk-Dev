@@ -1,6 +1,6 @@
 'From Cuis7.9 [latest update: #8200] on 17 September 2026 at 2:25:31 pm'!
 'Description '!
-!provides: 'Compression' 1 46!
+!provides: 'Compression' '1.46.0'!
 SystemOrganization addCategory: #'Compression-System'!
 SystemOrganization addCategory: #'Compression-Archives'!
 

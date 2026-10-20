@@ -1,8 +1,8 @@
 'From Cuis7.7 [latest update: #7779] on 23 December 2025 at 4:40:34 pm'!
 'Description '!
-!provides: 'Tests-Locales' 1 2!
-!requires: 'Locales' 1 12 nil!
-!requires: 'Gettext' 1 30 nil!
+!provides: 'Tests-Locales' '1.2.0'!
+!requires: 'Locales' '1.12.0' '1.*.*'!
+!requires: 'Gettext' '1.30.0' '1.*.*'!
 SystemOrganization addCategory: #'Tests-Locales'!
 
 
