@@ -1,6 +1,6 @@
 'From Cuis7.9 [latest update: #8076] on 22 July 2026 at 4:00:13 pm'!
 'Description Add ability to dynamically add topic pages from other sources.'!
-!provides: 'TerseGuide' '1.152.0'!
+!provides: 'TerseGuide' '1.153.0'!
 SystemOrganization addCategory: #TerseGuide!
 
 
@@ -278,9 +278,6 @@ x isKindOf: Set. 	"Answer whether the argument is a superclass or class of the r
 
 y isMemberOf: Symbol. 
 	"Answer whether the receiver is an instance of the argument class"
-
-y longPrintString.
-	"Answer a String whose characters are a description of the receiver."
 
 nil notify: ''this is a notice''. 
 	"Create and schedule a Notifier with the argument as the message in 
