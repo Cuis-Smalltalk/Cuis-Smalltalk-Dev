@@ -1,6 +1,6 @@
-'From Cuis7.9 [latest update: #8262] on 2 October 2026 at 11:52:25 am'!
+'From Cuis7.9 [latest update: #8299] on 28 October 2026 at 12:06:17 pm'!
 'Description '!
-!provides: 'ToolsTests' '1.3.0'!
+!provides: 'ToolsTests' '1.3.1'!
 !requires: 'DynamicallyCodeCreatingTestSupport' '1.0.0' '1.*.*'!
 SystemOrganization addCategory: #'ToolsTests-Browser'!
 SystemOrganization addCategory: #'ToolsTests-Changes'!
@@ -1006,7 +1006,7 @@ test053_AutocompletesEntriesFor_patternBinary_doestNotAutocompleteMethodOfSameCl
 
 	self assert: completer entries size equals: 0! !
 
-!SmalltalkCompleterTest methodsFor: 'test objects' stamp: 'jmv 29/Apr/2026, 5:38:01 pm (UTC)'!
+!SmalltalkCompleterTest methodsFor: 'test objects' stamp: 'jmv 28/Oct/2026, 3:05:51 pm (UTC)'!
 createCompleterForBrowsing: sourceCode 
 	
 	| browser model |
@@ -1014,7 +1014,8 @@ createCompleterForBrowsing: sourceCode
 	browser setSelectedSystemCategoryTreeItem: (SystemCategoryWrapper with: classToBrowse category name: classToBrowse category model: browser).
 	browser classListIndex: (browser classList indexOf: classToBrowse).
 	
-	model := (PluggableTextModel on: browser) actualContents: sourceCode.
+	model := PluggableTextModel on: browser.
+	model actualContents: sourceCode.
 	browser editSelection: #newMessage.
 
 	^ self createCompleterWith: model.! !
