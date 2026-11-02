@@ -1,6 +1,6 @@
 #!/bin/bash
 
-repositories="CodeExamples Calendars Measures Cuis-Smalltalk-UI Numerics GeographicInformationSystems SVG AnimatedGIF Parsers Cuis-Smalltalk-Regex Cuis-Smalltalk-Tools DatabaseSupport OSProcess AMQP firmata Machine-Learning Cairo Morphic EnhancedText Games Erudite StyledTextEditor VMMaker Cuis-Website Cuis-Smalltalk.github.io Cuis-Smalltalk-Historical"
+repositories="Cuis-Smalltalk-Dev GUIDesigner Cuis-Smalltalk-Tools SVG Calendars Measures Cuis-Smalltalk-UI Numerics CodeExamples AnimatedGIF Cuis-Smalltalk-Regex Parsers OSProcess DatabaseSupport GeographicInformationSystems Morphic Games Erudite StyledTextEditor VMMaker"
 
 echo -e "Pulling \e[7m =====Cuis-Smalltalk-Dev===== \e[0m"
 git pull
