@@ -1,6 +1,6 @@
-'From Cuis7.9 [latest update: #7995] on 10 June 2026 at 3:29:37 pm'!
+'From Cuis7.9 [latest update: #8308] on 2 November 2026 at 1:19:02 pm'!
 'Description '!
-!provides: 'Bootstrap' '1.47.0'!
+!provides: 'Bootstrap' '1.48.0'!
 !requires: 'DynamicCuisLibraries' '1.22.0' '1.*.*'!
 SystemOrganization addCategory: #'Bootstrap-Smalltalk Image Builders'!
 SystemOrganization addCategory: #'Bootstrap-Foreign Objects'!
@@ -442,48 +442,48 @@ My instances can build new image files, in the V3 (a.k.a. pre-Spur) image format
 
 The V3 image format is no longer used for Cuis. This class is not currently being developed and could be removed in the future.!
 
-!ForeignObject methodsFor: 'accessing' stamp: 'jmv 26/Jun/2023 10:53:29'!
+!ForeignObject methodsFor: 'accessing' stamp: 'jmv 26/Jun/2023, 1:53:29 pm (UTC)'!
 foreignIdentityHashFor: anImageBuilder
 	"IdentityHash to be used in the newly created image."
 
 	^self subclassResponsibility! !
 
-!ForeignObject methodsFor: 'accessing' stamp: 'jmv 26/Jun/2023 10:53:58'!
+!ForeignObject methodsFor: 'accessing' stamp: 'jmv 26/Jun/2023, 1:53:58 pm (UTC)'!
 foreignOopFor: anImageBuilder
 	"Oop (Object Pointer) to be used in the newly created image."
 
 	^self subclassResponsibility! !
 
-!ForeignObject methodsFor: 'accessing' stamp: 'jmv 22/May/2023 15:27:05'!
+!ForeignObject methodsFor: 'accessing' stamp: 'jmv 22/May/2023, 6:27:05 pm (UTC)'!
 nameOfClassToInstantiate: aSymbol
 	nameOfClassToInstantiate := aSymbol! !
 
-!ForeignObject methodsFor: 'accessing' stamp: 'jmv 16/May/2023 11:00:05'!
+!ForeignObject methodsFor: 'accessing' stamp: 'jmv 16/May/2023, 2:00:05 pm (UTC)'!
 representedObject
 
 	^representedObject! !
 
-!ForeignObject methodsFor: 'accessing' stamp: 'jmv 19/May/2023 17:37:58'!
+!ForeignObject methodsFor: 'accessing' stamp: 'jmv 19/May/2023, 8:37:58 pm (UTC)'!
 slotCount
 	"Answer the number of slots used by our representedObject"
 
 	^self subclassResponsibility! !
 
-!ForeignObject methodsFor: 'accessing' stamp: 'jmv 1/Aug/2023 15:09:26'!
+!ForeignObject methodsFor: 'accessing' stamp: 'jmv 1/Aug/2023, 6:09:26 pm (UTC)'!
 slotCountFor: anImageBuilder
 	"Answer the number of slots used by our representedObject.
 	Redefined where #slotCount is meaningless without anImageBuilder."
 
 	^self slotCount! !
 
-!ForeignObject methodsFor: 'accessing' stamp: 'jmv 19/May/2023 18:26:21'!
+!ForeignObject methodsFor: 'accessing' stamp: 'jmv 19/May/2023, 9:26:21 pm (UTC)'!
 slotWidth
 	"Answer the size of each slot, in bytes, used by our representedObject.
 	If our slots are oops, and therefore word size, answer nil."
 
 	^self subclassResponsibility! !
 
-!ForeignObject methodsFor: 'accessing' stamp: 'jmv 26/Jun/2023 10:55:24'!
+!ForeignObject methodsFor: 'accessing' stamp: 'jmv 26/Jun/2023, 1:55:24 pm (UTC)'!
 spurClassIndexFor: aSpurImageBuilder
 	"Use argument if appropriate to fetch a ClassForeignObject for us.
 	Answer its #foreignIdentityHash.
@@ -491,29 +491,29 @@ spurClassIndexFor: aSpurImageBuilder
 
 	^(aSpurImageBuilder findClassNamed: nameOfClassToInstantiate) foreignIdentityHashFor: aSpurImageBuilder! !
 
-!ForeignObject methodsFor: 'accessing' stamp: 'jmv 22/May/2023 16:08:49'!
+!ForeignObject methodsFor: 'accessing' stamp: 'jmv 22/May/2023, 7:08:49 pm (UTC)'!
 spurObjectFormat
 	"Answer the format 5 bit field for Object Header in Spur."
 
 	^self subclassResponsibility! !
 
-!ForeignObject methodsFor: 'accessing' stamp: 'jmv 1/Aug/2023 15:48:31'!
+!ForeignObject methodsFor: 'accessing' stamp: 'jmv 1/Aug/2023, 6:48:31 pm (UTC)'!
 spurObjectFormatFor: aSpurImageBuilder
 	"Answer the format 5 bit field for Object Header in Spur."
 
 	^self spurObjectFormat! !
 
-!ForeignObject methodsFor: 'serialization' stamp: 'jmv 17/Aug/2023 15:34:10'!
+!ForeignObject methodsFor: 'serialization' stamp: 'jmv 17/Aug/2023, 6:34:10 pm (UTC)'!
 writeSlotsOn: byteStream forSpur: anImageBuilder
 
 	self subclassResponsibility.! !
 
-!ForeignObject methodsFor: 'testing' stamp: 'jmv 22/Jun/2023 15:54:13'!
+!ForeignObject methodsFor: 'testing' stamp: 'jmv 22/Jun/2023, 6:54:13 pm (UTC)'!
 is: aSymbol
 
 	^ aSymbol == #ForeignObject or: [ super is: aSymbol ]! !
 
-!ForeignObject methodsFor: 'services' stamp: 'jmv 29/Jun/2023 16:47:12'!
+!ForeignObject methodsFor: 'services' stamp: 'jmv 29/Jun/2023, 7:47:12 pm (UTC)'!
 referencedObjectsDo: aBlock
 	"Evaluate aBlock for each object our representedObject points to.
 	To be redefined in classes whose representedObject actually holds OOP slots, like Arrays or object with instance variables.
@@ -521,7 +521,7 @@ referencedObjectsDo: aBlock
 
 	self halt: 'think what to do!!'! !
 
-!ForeignObject methodsFor: 'printing' stamp: 'jmv 17/Jul/2023 11:58:18'!
+!ForeignObject methodsFor: 'printing' stamp: 'jmv 17/Jul/2023, 2:58:18 pm (UTC)'!
 printOn: aStream
 	aStream
 		nextPutAll: self class name withArticle;
@@ -529,17 +529,17 @@ printOn: aStream
 		nextPutAll: '. Object: '.
 	self printRepresentedObjectOn: aStream.! !
 
-!ForeignObject methodsFor: 'printing' stamp: 'jmv 14/Jul/2023 09:16:13'!
+!ForeignObject methodsFor: 'printing' stamp: 'jmv 14/Jul/2023, 12:16:13 pm (UTC)'!
 printRepresentedObjectOn: aStream
 	aStream nextPutAll: representedObject shortPrintString! !
 
-!ForeignObject class methodsFor: 'subclass selection' stamp: 'jmv 15/May/2023 16:40:31'!
+!ForeignObject class methodsFor: 'subclass selection' stamp: 'jmv 15/May/2023, 7:40:31 pm (UTC)'!
 canRepresent: anObject
 	"Subclasses should answer true for objects they can represent."
 
 	^false! !
 
-!ForeignObject class methodsFor: 'subclass selection' stamp: 'jmv 23/Jun/2023 17:19:33'!
+!ForeignObject class methodsFor: 'subclass selection' stamp: 'jmv 23/Jun/2023, 8:19:33 pm (UTC)'!
 subclassFor: anObject
 	"Find a subclass that can handle it.
 	Note: Errors for Characters, Integers and Floats. Senders beware."
@@ -548,37 +548,37 @@ subclassFor: anObject
 		(subclass canRepresent: anObject) ifTrue: [ ^subclass ]].
 	self error: 'None found'! !
 
-!ForeignObject class methodsFor: 'testing' stamp: 'jmv 23/Jun/2023 17:33:57'!
+!ForeignObject class methodsFor: 'testing' stamp: 'jmv 23/Jun/2023, 8:33:57 pm (UTC)'!
 instancesAreForImmediateObjects
 	"Answer true if our instances represent objects that will not be allocated in a new image,
 	because they will be immediate, and fully encoded in their OOP."
 
 	self subclassResponsibility! !
 
-!AllocatedForeignObject methodsFor: 'accessing' stamp: 'jmv 26/Jun/2023 10:53:33'!
+!AllocatedForeignObject methodsFor: 'accessing' stamp: 'jmv 26/Jun/2023, 1:53:33 pm (UTC)'!
 foreignIdentityHashFor: anImageBuilder
 	"IdentityHash to be used in the newly created image."
 
 	^identityHash! !
 
-!AllocatedForeignObject methodsFor: 'accessing' stamp: 'jmv 19/May/2023 17:52:38'!
+!AllocatedForeignObject methodsFor: 'accessing' stamp: 'jmv 19/May/2023, 8:52:38 pm (UTC)'!
 foreignOop: aNumber
 	oop := aNumber! !
 
-!AllocatedForeignObject methodsFor: 'accessing' stamp: 'jmv 26/Jun/2023 10:54:01'!
+!AllocatedForeignObject methodsFor: 'accessing' stamp: 'jmv 26/Jun/2023, 1:54:01 pm (UTC)'!
 foreignOopFor: anImageBuilder
 
 	^oop! !
 
-!AllocatedForeignObject methodsFor: 'accessing' stamp: 'jmv 16/May/2023 09:24:25'!
+!AllocatedForeignObject methodsFor: 'accessing' stamp: 'jmv 16/May/2023, 12:24:25 pm (UTC)'!
 nextInList
 	^nextInList! !
 
-!AllocatedForeignObject methodsFor: 'accessing' stamp: 'jmv 16/May/2023 09:24:30'!
+!AllocatedForeignObject methodsFor: 'accessing' stamp: 'jmv 16/May/2023, 12:24:30 pm (UTC)'!
 nextInList: aForeignObject
 	nextInList := aForeignObject! !
 
-!AllocatedForeignObject methodsFor: 'accessing' stamp: 'jmv 23/Jun/2023 17:58:20'!
+!AllocatedForeignObject methodsFor: 'accessing' stamp: 'jmv 23/Jun/2023, 8:58:20 pm (UTC)'!
 representedObject: aLocalObject oop: newOop identityHash: newIdentityHash
 
 	representedObject := aLocalObject.
@@ -587,39 +587,39 @@ representedObject: aLocalObject oop: newOop identityHash: newIdentityHash
 	identityHash := newIdentityHash.
 	nextInList := nil.! !
 
-!AllocatedForeignObject class methodsFor: 'instance creation' stamp: 'jmv 23/Jun/2023 15:11:55'!
+!AllocatedForeignObject class methodsFor: 'instance creation' stamp: 'jmv 23/Jun/2023, 6:11:55 pm (UTC)'!
 newFor: aLocalObject oop: newOop identityHash: newIdentityHash
 	"Answer an instance of the correct subclass."
 
 	^self new representedObject: aLocalObject oop: newOop identityHash: newIdentityHash! !
 
-!AllocatedForeignObject class methodsFor: 'testing' stamp: 'jmv 23/Jun/2023 17:34:09'!
+!AllocatedForeignObject class methodsFor: 'testing' stamp: 'jmv 23/Jun/2023, 8:34:09 pm (UTC)'!
 instancesAreForImmediateObjects
 	"Answer true if our instances represent objects that will not be allocated in a new image,
 	because they will be immediate, and fully encoded in their OOP."
 
 	^false! !
 
-!BoxedFloat64ForeignObject methodsFor: 'accessing' stamp: 'jmv 18/Jul/2023 12:48:50'!
+!BoxedFloat64ForeignObject methodsFor: 'accessing' stamp: 'jmv 18/Jul/2023, 3:48:50 pm (UTC)'!
 slotCount
 	"Answer the number of slots used by our representedObject"
 
 	^2! !
 
-!BoxedFloat64ForeignObject methodsFor: 'accessing' stamp: 'jmv 18/Jul/2023 12:48:02'!
+!BoxedFloat64ForeignObject methodsFor: 'accessing' stamp: 'jmv 18/Jul/2023, 3:48:02 pm (UTC)'!
 slotWidth
 	"Answer the size of each slot, in bytes, used by our representedObject.
 	Our slots are int32 or uint32."
 
 	^4! !
 
-!BoxedFloat64ForeignObject methodsFor: 'accessing' stamp: 'jmv 1/Aug/2023 15:49:07'!
+!BoxedFloat64ForeignObject methodsFor: 'accessing' stamp: 'jmv 1/Aug/2023, 6:49:07 pm (UTC)'!
 spurObjectFormat
 	"Answer the format 5 bit field for Object Header in Spur."
 
 	^10! !
 
-!BoxedFloat64ForeignObject methodsFor: 'serialization' stamp: 'jmv 17/Aug/2023 15:47:16'!
+!BoxedFloat64ForeignObject methodsFor: 'serialization' stamp: 'jmv 17/Aug/2023, 6:47:16 pm (UTC)'!
 writeSlotsOn: byteStream forSpur: anImageBuilder
 
 	"Actual data
@@ -627,57 +627,57 @@ writeSlotsOn: byteStream forSpur: anImageBuilder
 	anImageBuilder on: byteStream nextUint32Put: (representedObject basicAt: 2).
 	anImageBuilder on: byteStream nextUint32Put: (representedObject basicAt: 1).! !
 
-!BoxedFloat64ForeignObject methodsFor: 'services' stamp: 'jmv 18/Jul/2023 12:50:40'!
+!BoxedFloat64ForeignObject methodsFor: 'services' stamp: 'jmv 18/Jul/2023, 3:50:40 pm (UTC)'!
 referencedObjectsDo: aBlock
 	"Evaluate aBlock for each object our representedObject points to.
 	We don't reference any other objects."! !
 
-!ClassForeignObject methodsFor: 'accessing' stamp: 'jmv 2/Jun/2023 14:56:13'!
+!ClassForeignObject methodsFor: 'accessing' stamp: 'jmv 2/Jun/2023, 5:56:13 pm (UTC)'!
 addMethod: aMethodForeignObject
 	methodForeignObjects add: aMethodForeignObject ! !
 
-!ClassForeignObject methodsFor: 'accessing' stamp: 'jmv 26/Jun/2023 15:25:57'!
+!ClassForeignObject methodsFor: 'accessing' stamp: 'jmv 26/Jun/2023, 6:25:57 pm (UTC)'!
 addSubclass: aClassForeignObject
 	subclassForeignObjects add: aClassForeignObject ! !
 
-!ClassForeignObject methodsFor: 'accessing' stamp: 'jmv 26/Jun/2023 14:52:10'!
+!ClassForeignObject methodsFor: 'accessing' stamp: 'jmv 26/Jun/2023, 5:52:10 pm (UTC)'!
 classPoolForeignObject: aForeignObject
 	classPoolForeignObject := aForeignObject! !
 
-!ClassForeignObject methodsFor: 'accessing' stamp: 'jmv 26/Jun/2023 14:50:21'!
+!ClassForeignObject methodsFor: 'accessing' stamp: 'jmv 26/Jun/2023, 5:50:21 pm (UTC)'!
 instanceVariablesForeignObject: aForeignObject
 	instanceVariablesForeignObject := aForeignObject! !
 
-!ClassForeignObject methodsFor: 'accessing' stamp: 'jmv 2/Jun/2023 15:33:51'!
+!ClassForeignObject methodsFor: 'accessing' stamp: 'jmv 2/Jun/2023, 6:33:51 pm (UTC)'!
 metaclassForeignObject
 	^metaclassForeignObject! !
 
-!ClassForeignObject methodsFor: 'accessing' stamp: 'jmv 16/May/2023 15:11:46'!
+!ClassForeignObject methodsFor: 'accessing' stamp: 'jmv 16/May/2023, 6:11:46 pm (UTC)'!
 metaclassForeignObject: aMetaclassForeignObject
 	metaclassForeignObject := aMetaclassForeignObject! !
 
-!ClassForeignObject methodsFor: 'accessing' stamp: 'jmv 16/May/2023 15:33:52'!
+!ClassForeignObject methodsFor: 'accessing' stamp: 'jmv 16/May/2023, 6:33:52 pm (UTC)'!
 methodDictForeignObject: aMethodDictionaryForeignObject
 	methodDictForeignObject := aMethodDictionaryForeignObject! !
 
-!ClassForeignObject methodsFor: 'accessing' stamp: 'jmv 5/Jun/2023 15:39:49'!
+!ClassForeignObject methodsFor: 'accessing' stamp: 'jmv 5/Jun/2023, 6:39:49 pm (UTC)'!
 methodForeignObjects
 	^methodForeignObjects! !
 
-!ClassForeignObject methodsFor: 'accessing' stamp: 'jmv 26/Jun/2023 14:51:51'!
+!ClassForeignObject methodsFor: 'accessing' stamp: 'jmv 26/Jun/2023, 5:51:51 pm (UTC)'!
 nameForeignObject: aForeignObject
 	nameForeignObject := aForeignObject! !
 
-!ClassForeignObject methodsFor: 'accessing' stamp: 'jmv 23/Jun/2023 18:15:31'!
+!ClassForeignObject methodsFor: 'accessing' stamp: 'jmv 23/Jun/2023, 9:15:31 pm (UTC)'!
 representedObject: aLocalObject oop: newOop identityHash: newIdentityHash
 	super representedObject: aLocalObject oop: newOop identityHash: newIdentityHash.
 	nameOfClassToInstantiate := aLocalObject name, ' class'.! !
 
-!ClassForeignObject methodsFor: 'accessing' stamp: 'jmv 26/Jun/2023 14:52:51'!
+!ClassForeignObject methodsFor: 'accessing' stamp: 'jmv 26/Jun/2023, 5:52:51 pm (UTC)'!
 sharedPoolsForeignObject: aForeignObject
 	sharedPoolsForeignObject := aForeignObject! !
 
-!ClassForeignObject methodsFor: 'accessing' stamp: 'jmv 25/Aug/2023 14:28:44'!
+!ClassForeignObject methodsFor: 'accessing' stamp: 'jmv 25/Aug/2023, 5:28:44 pm (UTC)'!
 slotCount
 	"Answer the number of slots used by our representedObject"
 
@@ -686,41 +686,41 @@ slotCount
 	Class allInstVarNames size = 9"
 	^ 9 + representedObject totalClassInstVarCountInSpec! !
 
-!ClassForeignObject methodsFor: 'accessing' stamp: 'jmv 20/May/2023 13:55:03'!
+!ClassForeignObject methodsFor: 'accessing' stamp: 'jmv 20/May/2023, 4:55:03 pm (UTC)'!
 slotWidth
 	"Answer the size of each slot, in bytes, used by our representedObject.
 	Answer nil. Our slots are oops."
 
 	^nil! !
 
-!ClassForeignObject methodsFor: 'accessing' stamp: 'jmv 26/Jun/2023 10:55:34'!
+!ClassForeignObject methodsFor: 'accessing' stamp: 'jmv 26/Jun/2023, 1:55:34 pm (UTC)'!
 spurClassIndexFor: aSpurImageBuilder
 	"We already know the foreign object for our metaclass"
 
 	^metaclassForeignObject foreignIdentityHashFor: aSpurImageBuilder! !
 
-!ClassForeignObject methodsFor: 'accessing' stamp: 'jmv 22/May/2023 16:11:44'!
+!ClassForeignObject methodsFor: 'accessing' stamp: 'jmv 22/May/2023, 7:11:44 pm (UTC)'!
 spurObjectFormat
 	"Answer the format 5 bit field for Object Header in Spur."
 
 	^1! !
 
-!ClassForeignObject methodsFor: 'accessing' stamp: 'jmv 26/Jun/2023 15:48:37'!
+!ClassForeignObject methodsFor: 'accessing' stamp: 'jmv 26/Jun/2023, 6:48:37 pm (UTC)'!
 subclassForeignObjects
 	^subclassForeignObjects! !
 
-!ClassForeignObject methodsFor: 'accessing' stamp: 'jmv 26/Jun/2023 14:51:32'!
+!ClassForeignObject methodsFor: 'accessing' stamp: 'jmv 26/Jun/2023, 5:51:32 pm (UTC)'!
 subclassesForeignObject: aForeignObject
 	subclassesForeignObject := aForeignObject! !
 
-!ClassForeignObject methodsFor: 'initialization' stamp: 'jmv 26/Jun/2023 15:25:03'!
+!ClassForeignObject methodsFor: 'initialization' stamp: 'jmv 26/Jun/2023, 6:25:03 pm (UTC)'!
 initialize
 
 	super initialize.
 	methodForeignObjects := OrderedCollection new.
 	subclassForeignObjects := OrderedCollection new.! !
 
-!ClassForeignObject methodsFor: 'serialization' stamp: 'jmv 25/Aug/2023 14:55:35'!
+!ClassForeignObject methodsFor: 'serialization' stamp: 'jmv 25/Aug/2023, 5:55:35 pm (UTC)'!
 writeSlotsOn: byteStream forSpur: anImageBuilder
 
 	| superclassForeignObject format |
@@ -761,7 +761,7 @@ self assert: (Smalltalk at: representedObject name) format = format.
 	representedObject classInstVarNames size timesRepeat: [
 		anImageBuilder on: byteStream nexWordPut: ((anImageBuilder findForeignObjectFor: nil) foreignOopFor: anImageBuilder) ].! !
 
-!ClassForeignObject methodsFor: 'services' stamp: 'jmv 6/Jul/2023 09:58:57'!
+!ClassForeignObject methodsFor: 'services' stamp: 'jmv 6/Jul/2023, 12:58:57 pm (UTC)'!
 localBindingOf: varNameSymbol for: anImageBuilder
 	"Answer the foreign object for the Association that holds class var named as the argument.
 	Answer nil if no such class variable.
@@ -781,28 +781,28 @@ localBindingOf: varNameSymbol for: anImageBuilder
 		(anImageBuilder findForeignObjectFor: superclassSpec)
 			localBindingOf: varNameSymbol for: anImageBuilder ]! !
 
-!ClassForeignObject methodsFor: 'printing' stamp: 'jmv 14/Jul/2023 09:20:06'!
+!ClassForeignObject methodsFor: 'printing' stamp: 'jmv 14/Jul/2023, 12:20:06 pm (UTC)'!
 printRepresentedObjectOn: aStream
 	aStream nextPutAll: representedObject name.! !
 
-!CompiledMethodForeignObject methodsFor: 'accessing' stamp: 'jmv 2/Jun/2023 15:27:28'!
+!CompiledMethodForeignObject methodsFor: 'accessing' stamp: 'jmv 2/Jun/2023, 6:27:28 pm (UTC)'!
 methodClassForeignObject: aForeignObject
 	"Argument is either a ClassForeignObject or a MetaclassForeignObject"
 	methodClassForeignObject := aForeignObject.! !
 
-!CompiledMethodForeignObject methodsFor: 'accessing' stamp: 'jmv 23/Jun/2023 18:18:07'!
+!CompiledMethodForeignObject methodsFor: 'accessing' stamp: 'jmv 23/Jun/2023, 9:18:07 pm (UTC)'!
 representedObject: aLocalObject oop: newOop identityHash: newIdentityHash
 	super representedObject: aLocalObject oop: newOop identityHash: newIdentityHash.
 	nameOfClassToInstantiate := #CompiledMethod! !
 
-!CompiledMethodForeignObject methodsFor: 'accessing' stamp: 'jmv 1/Aug/2023 15:06:33'!
+!CompiledMethodForeignObject methodsFor: 'accessing' stamp: 'jmv 1/Aug/2023, 6:06:33 pm (UTC)'!
 slotCount
 	"Our number of slots depends also on the image format and builder.
 	see #slotCountFor:
 	"
 	self shouldNotImplement! !
 
-!CompiledMethodForeignObject methodsFor: 'accessing' stamp: 'jmv 17/Aug/2023 16:02:26'!
+!CompiledMethodForeignObject methodsFor: 'accessing' stamp: 'jmv 17/Aug/2023, 7:02:26 pm (UTC)'!
 slotCountFor: anImageBuilder
 	"Answer the number of slots used by our representedObject.
 	Total number of bytes required by this CompiledMethod.
@@ -810,14 +810,14 @@ slotCountFor: anImageBuilder
 
 	^self usedBytesFor: anImageBuilder.! !
 
-!CompiledMethodForeignObject methodsFor: 'accessing' stamp: 'jmv 2/Jun/2023 15:41:25'!
+!CompiledMethodForeignObject methodsFor: 'accessing' stamp: 'jmv 2/Jun/2023, 6:41:25 pm (UTC)'!
 slotWidth
 	"Answer the size of each slot, in bytes, used by our representedObject.
 	Our slots are int8 or uint8."
 
 	^1! !
 
-!CompiledMethodForeignObject methodsFor: 'accessing' stamp: 'jmv 17/Aug/2023 16:02:46'!
+!CompiledMethodForeignObject methodsFor: 'accessing' stamp: 'jmv 17/Aug/2023, 7:02:46 pm (UTC)'!
 spurObjectFormatFor: aSpurImageBuilder
 	"Answer the format 5 bit field for Object Header in Spur.
 	Use  or 3 2 low bits of size. Answer in #(24 25 26 27) for Spur32 and in #(24 25 26 27 28 29 30 31) for Spur64."
@@ -828,7 +828,7 @@ spurObjectFormatFor: aSpurImageBuilder
 	oddBits := ((usedBytes / bytesPerWord) ceiling * bytesPerWord) - usedBytes.
 	^24 bitOr: oddBits! !
 
-!CompiledMethodForeignObject methodsFor: 'accessing' stamp: 'jmv 17/Aug/2023 16:02:13'!
+!CompiledMethodForeignObject methodsFor: 'accessing' stamp: 'jmv 17/Aug/2023, 7:02:13 pm (UTC)'!
 usedBytesFor: anImageBuilder
 	"Answer the number of bytes used by our representedObject.
 	Total number of bytes required by this CompiledMethod.
@@ -838,7 +838,7 @@ usedBytesFor: anImageBuilder
 		+ representedObject bytecodes size
 		+ 4.! !
 
-!CompiledMethodForeignObject methodsFor: 'serialization' stamp: 'jmv 20/Sep/2023 16:04:50'!
+!CompiledMethodForeignObject methodsFor: 'serialization' stamp: 'jmv 20/Sep/2023, 7:04:50 pm (UTC)'!
 writeSlotsOn: byteStream forSpur: anImageBuilder
 
 	| classBinding methodSelectorForeignObject |
@@ -919,37 +919,37 @@ writeSlotsOn: byteStream forSpur: anImageBuilder
 	Just zeros unless we add source code."
 	byteStream nextPutAll: #(0 0 0 0).! !
 
-!CompiledMethodForeignObject methodsFor: 'compatibility' stamp: 'jmv 13/Jul/2023 15:42:38'!
+!CompiledMethodForeignObject methodsFor: 'compatibility' stamp: 'jmv 13/Jul/2023, 6:42:38 pm (UTC)'!
 flushCache
 	"Needed to enable adding us to MethodDictionaries"! !
 
-!CompiledMethodForeignObject methodsFor: 'printing' stamp: 'jmv 14/Jul/2023 09:18:55'!
+!CompiledMethodForeignObject methodsFor: 'printing' stamp: 'jmv 14/Jul/2023, 12:18:55 pm (UTC)'!
 printRepresentedObjectOn: aStream
 	aStream nextPutAll: representedObject classSpec name.
 	representedObject isClassSide ifTrue: [
 		aStream nextPutAll: ' class' ].
 	aStream nextPutAll: '>>#'; nextPutAll: representedObject selector.! !
 
-!CompiledMethodForeignObject class methodsFor: 'subclass selection' stamp: 'jmv 7/Jun/2023 17:35:37'!
+!CompiledMethodForeignObject class methodsFor: 'subclass selection' stamp: 'jmv 7/Jun/2023, 8:35:37 pm (UTC)'!
 canRepresent: anObject
 	"We can represent instances of 	MethodSpec."
 
 	^anObject class == MethodSpec! !
 
-!Indexed16BitForeignObject methodsFor: 'accessing' stamp: 'jmv 22/May/2023 16:35:32'!
+!Indexed16BitForeignObject methodsFor: 'accessing' stamp: 'jmv 22/May/2023, 7:35:32 pm (UTC)'!
 slotCount
 	"Answer the number of slots used by our representedObject"
 
 	^representedObject basicSize! !
 
-!Indexed16BitForeignObject methodsFor: 'accessing' stamp: 'jmv 23/May/2023 09:49:48'!
+!Indexed16BitForeignObject methodsFor: 'accessing' stamp: 'jmv 23/May/2023, 12:49:48 pm (UTC)'!
 slotWidth
 	"Answer the size of each slot, in bytes, used by our representedObject.
 	Our slots are int16 or uint16."
 
 	^2! !
 
-!Indexed16BitForeignObject methodsFor: 'accessing' stamp: 'jmv 1/Aug/2023 15:38:26'!
+!Indexed16BitForeignObject methodsFor: 'accessing' stamp: 'jmv 1/Aug/2023, 6:38:26 pm (UTC)'!
 spurObjectFormatFor: aSpurImageBuilder
 	"Answer the format 5 bit field for Object Header in Spur.
 	Use 1 or 2 low bits of size. Answer in #(12 13) for Spur32 and in #(12 13 14 15) for Spur64."
@@ -960,38 +960,38 @@ spurObjectFormatFor: aSpurImageBuilder
 	oddBits := ((slotCount / slotsPerWord) ceiling * slotsPerWord) - slotCount.
 	^12 bitOr: oddBits! !
 
-!Indexed16BitForeignObject methodsFor: 'serialization' stamp: 'jmv 17/Aug/2023 17:15:17'!
+!Indexed16BitForeignObject methodsFor: 'serialization' stamp: 'jmv 17/Aug/2023, 8:15:17 pm (UTC)'!
 writeSlotsOn: byteStream forSpur: anImageBuilder
 
 	"Actual data"
 	1 to: self slotCount do: [ :i |
 		anImageBuilder on: byteStream nextUint16Put: (representedObject basicAt: i) ].! !
 
-!Indexed16BitForeignObject methodsFor: 'services' stamp: 'jmv 29/Jun/2023 16:45:38'!
+!Indexed16BitForeignObject methodsFor: 'services' stamp: 'jmv 29/Jun/2023, 7:45:38 pm (UTC)'!
 referencedObjectsDo: aBlock
 	"Evaluate aBlock for each object our representedObject points to.
 	We don't reference any other objects."! !
 
-!Indexed16BitForeignObject class methodsFor: 'subclass selection' stamp: 'jmv 9/Jan/2024 14:25:32'!
+!Indexed16BitForeignObject class methodsFor: 'subclass selection' stamp: 'jmv 9/Jan/2024, 5:25:32 pm (UTC)'!
 canRepresent: anObject
 	"We can work with indexable objects with 16 bit numeric slots."
 
 	^anObject class instSpec = 11! !
 
-!Indexed32BitForeignObject methodsFor: 'accessing' stamp: 'jmv 22/May/2023 16:35:36'!
+!Indexed32BitForeignObject methodsFor: 'accessing' stamp: 'jmv 22/May/2023, 7:35:36 pm (UTC)'!
 slotCount
 	"Answer the number of slots used by our representedObject"
 
 	^representedObject basicSize! !
 
-!Indexed32BitForeignObject methodsFor: 'accessing' stamp: 'jmv 23/May/2023 09:49:52'!
+!Indexed32BitForeignObject methodsFor: 'accessing' stamp: 'jmv 23/May/2023, 12:49:52 pm (UTC)'!
 slotWidth
 	"Answer the size of each slot, in bytes, used by our representedObject.
 	Our slots are int32 or uint32."
 
 	^4! !
 
-!Indexed32BitForeignObject methodsFor: 'accessing' stamp: 'jmv 1/Aug/2023 15:39:30'!
+!Indexed32BitForeignObject methodsFor: 'accessing' stamp: 'jmv 1/Aug/2023, 6:39:30 pm (UTC)'!
 spurObjectFormatFor: aSpurImageBuilder
 	"Answer the format 5 bit field for Object Header in Spur.
 	Use 0 or 1 low bits of size. Answer is 10 for Spur32 and in #(10 11) for Spur64."
@@ -1002,19 +1002,19 @@ spurObjectFormatFor: aSpurImageBuilder
 	oddBits := ((slotCount / slotsPerWord) ceiling * slotsPerWord) - slotCount.
 	^10 bitOr: oddBits! !
 
-!Indexed32BitForeignObject methodsFor: 'serialization' stamp: 'jmv 17/Aug/2023 17:15:39'!
+!Indexed32BitForeignObject methodsFor: 'serialization' stamp: 'jmv 17/Aug/2023, 8:15:39 pm (UTC)'!
 writeSlotsOn: byteStream forSpur: anImageBuilder
 
 	"Actual data"
 	1 to: self slotCount do: [ :i |
 		anImageBuilder on: byteStream nextUint32Put: (representedObject basicAt: i) ].! !
 
-!Indexed32BitForeignObject methodsFor: 'services' stamp: 'jmv 29/Jun/2023 16:45:45'!
+!Indexed32BitForeignObject methodsFor: 'services' stamp: 'jmv 29/Jun/2023, 7:45:45 pm (UTC)'!
 referencedObjectsDo: aBlock
 	"Evaluate aBlock for each object our representedObject points to.
 	We don't reference any other objects."! !
 
-!Indexed32BitForeignObject class methodsFor: 'subclass selection' stamp: 'jmv 9/Jan/2024 14:25:37'!
+!Indexed32BitForeignObject class methodsFor: 'subclass selection' stamp: 'jmv 9/Jan/2024, 5:25:37 pm (UTC)'!
 canRepresent: anObject
 	"We can work with indexable objects with 32 bit numeric slots, like WordArray, Bitmap, Float32Array, etc.
 	Also for BoxedFloats, but they are handled in a special way. See #foreignObjectClassFor:"
@@ -1022,57 +1022,57 @@ canRepresent: anObject
 	anObject isFloat ifTrue: [ ^false ].
 	^anObject class instSpec = 10! !
 
-!Indexed64BitForeignObject methodsFor: 'accessing' stamp: 'jmv 22/May/2023 16:35:40'!
+!Indexed64BitForeignObject methodsFor: 'accessing' stamp: 'jmv 22/May/2023, 7:35:40 pm (UTC)'!
 slotCount
 	"Answer the number of slots used by our representedObject"
 
 	^representedObject basicSize! !
 
-!Indexed64BitForeignObject methodsFor: 'accessing' stamp: 'jmv 23/May/2023 09:49:56'!
+!Indexed64BitForeignObject methodsFor: 'accessing' stamp: 'jmv 23/May/2023, 12:49:56 pm (UTC)'!
 slotWidth
 	"Answer the size of each slot, in bytes, used by our representedObject.
 	Our slots are int64 or uint64."
 
 	^8! !
 
-!Indexed64BitForeignObject methodsFor: 'accessing' stamp: 'jmv 22/May/2023 16:24:43'!
+!Indexed64BitForeignObject methodsFor: 'accessing' stamp: 'jmv 22/May/2023, 7:24:43 pm (UTC)'!
 spurObjectFormat
 	"Answer the format 5 bit field for Object Header in Spur."
 
 	^9! !
 
-!Indexed64BitForeignObject methodsFor: 'serialization' stamp: 'jmv 17/Aug/2023 17:15:55'!
+!Indexed64BitForeignObject methodsFor: 'serialization' stamp: 'jmv 17/Aug/2023, 8:15:55 pm (UTC)'!
 writeSlotsOn: byteStream forSpur: anImageBuilder
 
 	"Actual data"
 	1 to: self slotCount do: [ :i |
 		anImageBuilder on: byteStream nextUint64Put: (representedObject basicAt: i) ].! !
 
-!Indexed64BitForeignObject methodsFor: 'services' stamp: 'jmv 29/Jun/2023 16:45:51'!
+!Indexed64BitForeignObject methodsFor: 'services' stamp: 'jmv 29/Jun/2023, 7:45:51 pm (UTC)'!
 referencedObjectsDo: aBlock
 	"Evaluate aBlock for each object our representedObject points to.
 	We don't reference any other objects."! !
 
-!Indexed64BitForeignObject class methodsFor: 'subclass selection' stamp: 'jmv 9/Jan/2024 14:25:41'!
+!Indexed64BitForeignObject class methodsFor: 'subclass selection' stamp: 'jmv 9/Jan/2024, 5:25:41 pm (UTC)'!
 canRepresent: anObject
 	"We can work with indexable objects with 64 bit numeric slots."
 
 	^anObject class instSpec = 9! !
 
-!Indexed8BitForeignObject methodsFor: 'accessing' stamp: 'jmv 22/May/2023 12:05:33'!
+!Indexed8BitForeignObject methodsFor: 'accessing' stamp: 'jmv 22/May/2023, 3:05:33 pm (UTC)'!
 slotCount
 	"Answer the number of slots used by our representedObject"
 
 	^representedObject basicSize! !
 
-!Indexed8BitForeignObject methodsFor: 'accessing' stamp: 'jmv 23/May/2023 09:50:01'!
+!Indexed8BitForeignObject methodsFor: 'accessing' stamp: 'jmv 23/May/2023, 12:50:01 pm (UTC)'!
 slotWidth
 	"Answer the size of each slot, in bytes, used by our representedObject.
 	Our slots are int8 or uint8."
 
 	^1! !
 
-!Indexed8BitForeignObject methodsFor: 'accessing' stamp: 'jmv 1/Aug/2023 15:38:43'!
+!Indexed8BitForeignObject methodsFor: 'accessing' stamp: 'jmv 1/Aug/2023, 6:38:43 pm (UTC)'!
 spurObjectFormatFor: aSpurImageBuilder
 	"Answer the format 5 bit field for Object Header in Spur.
 	Use 2 or 3 low bits of size. Answer in #(16 17 18 19) for Spur32 and in #(16 17 18 19 20 21 22 23) for Spur64."
@@ -1083,7 +1083,7 @@ spurObjectFormatFor: aSpurImageBuilder
 	oddBits := ((slotCount / slotsPerWord) ceiling * slotsPerWord) - slotCount.
 	^16 bitOr: oddBits! !
 
-!Indexed8BitForeignObject methodsFor: 'comparing' stamp: 'jmv 17/Aug/2023 17:30:37'!
+!Indexed8BitForeignObject methodsFor: 'comparing' stamp: 'jmv 17/Aug/2023, 8:30:37 pm (UTC)'!
 identityHash
 	"MethodDictionaries are created using the ForeignObjects as keys. See #addMethodDictionaryFor:
 	When MethodDictionaries are later serialized, keys (so far, instances of this class) will be replaced by
@@ -1092,50 +1092,50 @@ identityHash
 
 	^identityHash! !
 
-!Indexed8BitForeignObject methodsFor: 'serialization' stamp: 'jmv 17/Aug/2023 17:16:10'!
+!Indexed8BitForeignObject methodsFor: 'serialization' stamp: 'jmv 17/Aug/2023, 8:16:10 pm (UTC)'!
 writeSlotsOn: byteStream forSpur: anImageBuilder
 
 	"Actual data"
 	1 to: self slotCount do: [ :i |
 		byteStream nextPut: (representedObject basicAt: i) ].! !
 
-!Indexed8BitForeignObject methodsFor: 'services' stamp: 'jmv 29/Jun/2023 16:45:58'!
+!Indexed8BitForeignObject methodsFor: 'services' stamp: 'jmv 29/Jun/2023, 7:45:58 pm (UTC)'!
 referencedObjectsDo: aBlock
 	"Evaluate aBlock for each object our representedObject points to.
 	We don't reference any other objects."! !
 
-!Indexed8BitForeignObject methodsFor: 'printing' stamp: 'jmv 14/Jul/2023 09:21:36'!
+!Indexed8BitForeignObject methodsFor: 'printing' stamp: 'jmv 14/Jul/2023, 12:21:36 pm (UTC)'!
 printRepresentedObjectOn: aStream
 	representedObject isString ifFalse: [
 		^super printRepresentedObjectOn: aStream ].
 	aStream nextPutAll: representedObject printString.! !
 
-!Indexed8BitForeignObject class methodsFor: 'subclass selection' stamp: 'jmv 9/Jan/2024 14:25:45'!
+!Indexed8BitForeignObject class methodsFor: 'subclass selection' stamp: 'jmv 9/Jan/2024, 5:25:45 pm (UTC)'!
 canRepresent: anObject
 	"We can work with ByteArray and the like."
 
 	^anObject class instSpec = 16! !
 
-!IndexedOopsForeignObject methodsFor: 'accessing' stamp: 'jmv 20/May/2023 09:26:22'!
+!IndexedOopsForeignObject methodsFor: 'accessing' stamp: 'jmv 20/May/2023, 12:26:22 pm (UTC)'!
 slotCount
 	"Answer the number of slots used by our representedObject"
 
 	^representedObject basicSize! !
 
-!IndexedOopsForeignObject methodsFor: 'accessing' stamp: 'jmv 19/May/2023 18:32:29'!
+!IndexedOopsForeignObject methodsFor: 'accessing' stamp: 'jmv 19/May/2023, 9:32:29 pm (UTC)'!
 slotWidth
 	"Answer the size of each slot, in bytes, used by our representedObject.
 	Answer nil. Our slots are oops."
 
 	^nil! !
 
-!IndexedOopsForeignObject methodsFor: 'accessing' stamp: 'jmv 22/May/2023 16:12:11'!
+!IndexedOopsForeignObject methodsFor: 'accessing' stamp: 'jmv 22/May/2023, 7:12:11 pm (UTC)'!
 spurObjectFormat
 	"Answer the format 5 bit field for Object Header in Spur."
 
 	^2! !
 
-!IndexedOopsForeignObject methodsFor: 'serialization' stamp: 'jmv 17/Aug/2023 17:16:44'!
+!IndexedOopsForeignObject methodsFor: 'serialization' stamp: 'jmv 17/Aug/2023, 8:16:44 pm (UTC)'!
 writeSlotsOn: byteStream forSpur: anImageBuilder
 
 	representedObject do: [ :each | | fo |
@@ -1144,7 +1144,7 @@ writeSlotsOn: byteStream forSpur: anImageBuilder
 			ifFalse: [ anImageBuilder findForeignObjectFor: each ].
 		anImageBuilder on: byteStream nexWordPut: (fo foreignOopFor: anImageBuilder) ].! !
 
-!IndexedOopsForeignObject methodsFor: 'services' stamp: 'jmv 29/Jun/2023 16:50:55'!
+!IndexedOopsForeignObject methodsFor: 'services' stamp: 'jmv 29/Jun/2023, 7:50:55 pm (UTC)'!
 referencedObjectsDo: aBlock
 	"Evaluate aBlock for each object our representedObject points to.
 	To be redefined in classes whose representedObject actually holds OOP slots, like Arrays or object with instance variables."
@@ -1152,35 +1152,35 @@ referencedObjectsDo: aBlock
 	representedObject do: [ :each |
 		aBlock value: each ].! !
 
-!IndexedOopsForeignObject methodsFor: 'printing' stamp: 'jmv 14/Jul/2023 17:02:17'!
+!IndexedOopsForeignObject methodsFor: 'printing' stamp: 'jmv 14/Jul/2023, 8:02:17 pm (UTC)'!
 printRepresentedObjectOn: aStream! !
 
-!IndexedOopsForeignObject class methodsFor: 'subclass selection' stamp: 'jmv 9/Jan/2024 14:25:48'!
+!IndexedOopsForeignObject class methodsFor: 'subclass selection' stamp: 'jmv 9/Jan/2024, 5:25:48 pm (UTC)'!
 canRepresent: anObject
 	"We can work with Array and the like."
 
 	^anObject class instSpec = 2! !
 
-!IvarsAndIndexedOopsForeignObject methodsFor: 'accessing' stamp: 'jmv 22/May/2023 16:43:38'!
+!IvarsAndIndexedOopsForeignObject methodsFor: 'accessing' stamp: 'jmv 22/May/2023, 7:43:38 pm (UTC)'!
 slotCount
 	"Answer the number of slots used by our representedObject"
 
 	^representedObject basicSize + representedObject class instSize! !
 
-!IvarsAndIndexedOopsForeignObject methodsFor: 'accessing' stamp: 'jmv 22/May/2023 16:43:34'!
+!IvarsAndIndexedOopsForeignObject methodsFor: 'accessing' stamp: 'jmv 22/May/2023, 7:43:34 pm (UTC)'!
 slotWidth
 	"Answer the size of each slot, in bytes, used by our representedObject.
 	Answer nil. Our slots are oops."
 
 	^nil! !
 
-!IvarsAndIndexedOopsForeignObject methodsFor: 'accessing' stamp: 'jmv 22/May/2023 16:12:40'!
+!IvarsAndIndexedOopsForeignObject methodsFor: 'accessing' stamp: 'jmv 22/May/2023, 7:12:40 pm (UTC)'!
 spurObjectFormat
 	"Answer the format 5 bit field for Object Header in Spur."
 
 	^3! !
 
-!IvarsAndIndexedOopsForeignObject methodsFor: 'serialization' stamp: 'jmv 17/Aug/2023 17:16:58'!
+!IvarsAndIndexedOopsForeignObject methodsFor: 'serialization' stamp: 'jmv 17/Aug/2023, 8:16:58 pm (UTC)'!
 writeSlotsOn: byteStream forSpur: anImageBuilder
 
 	1 to: self slotCount do: [ :i | | each fo |
@@ -1190,7 +1190,7 @@ writeSlotsOn: byteStream forSpur: anImageBuilder
 			ifFalse: [ anImageBuilder findForeignObjectFor: each ].
 		anImageBuilder on: byteStream nexWordPut: (fo foreignOopFor: anImageBuilder) ].! !
 
-!IvarsAndIndexedOopsForeignObject class methodsFor: 'subclass selection' stamp: 'jmv 9/Jan/2024 14:25:53'!
+!IvarsAndIndexedOopsForeignObject class methodsFor: 'subclass selection' stamp: 'jmv 9/Jan/2024, 5:25:53 pm (UTC)'!
 canRepresent: anObject
 	"We can work classes that are indexable and also include instance variables,
 		like BlockClosure and AdditionalMethodState.
@@ -1200,26 +1200,26 @@ canRepresent: anObject
 	anObject class == MethodContext ifTrue: [ ^false ].
 	^anObject class instSpec = 3! !
 
-!IvarsForeignObject methodsFor: 'accessing' stamp: 'jmv 22/May/2023 15:38:42'!
+!IvarsForeignObject methodsFor: 'accessing' stamp: 'jmv 22/May/2023, 6:38:42 pm (UTC)'!
 slotCount
 	"Answer the number of slots used by our representedObject"
 
 	^representedObject class instSize! !
 
-!IvarsForeignObject methodsFor: 'accessing' stamp: 'jmv 22/May/2023 12:12:41'!
+!IvarsForeignObject methodsFor: 'accessing' stamp: 'jmv 22/May/2023, 3:12:41 pm (UTC)'!
 slotWidth
 	"Answer the size of each slot, in bytes, used by our representedObject.
 	Answer nil. Our slots are oops."
 
 	^nil! !
 
-!IvarsForeignObject methodsFor: 'accessing' stamp: 'jmv 22/May/2023 16:12:50'!
+!IvarsForeignObject methodsFor: 'accessing' stamp: 'jmv 22/May/2023, 7:12:50 pm (UTC)'!
 spurObjectFormat
 	"Answer the format 5 bit field for Object Header in Spur."
 
 	^1! !
 
-!IvarsForeignObject methodsFor: 'serialization' stamp: 'jmv 17/Aug/2023 17:17:11'!
+!IvarsForeignObject methodsFor: 'serialization' stamp: 'jmv 17/Aug/2023, 8:17:11 pm (UTC)'!
 writeSlotsOn: byteStream forSpur: anImageBuilder
 
 	1 to: self slotCount do: [ :i | | each fo |
@@ -1229,7 +1229,7 @@ writeSlotsOn: byteStream forSpur: anImageBuilder
 			ifFalse: [ anImageBuilder findForeignObjectFor: each ].
 		anImageBuilder on: byteStream nexWordPut: (fo foreignOopFor: anImageBuilder) ].! !
 
-!IvarsForeignObject methodsFor: 'services' stamp: 'jmv 29/Jun/2023 16:50:14'!
+!IvarsForeignObject methodsFor: 'services' stamp: 'jmv 29/Jun/2023, 7:50:14 pm (UTC)'!
 referencedObjectsDo: aBlock
 	"Evaluate aBlock for each object our representedObject points to.
 	To be redefined in classes whose representedObject actually holds OOP slots, like Arrays or object with instance variables."
@@ -1237,10 +1237,10 @@ referencedObjectsDo: aBlock
 	1 to: self slotCount do: [ :i |
 		aBlock value: (representedObject instVarAt: i) ].! !
 
-!IvarsForeignObject methodsFor: 'printing' stamp: 'jmv 14/Jul/2023 17:01:51'!
+!IvarsForeignObject methodsFor: 'printing' stamp: 'jmv 14/Jul/2023, 8:01:51 pm (UTC)'!
 printRepresentedObjectOn: aStream! !
 
-!IvarsForeignObject class methodsFor: 'subclass selection' stamp: 'jmv 9/Jan/2024 14:25:57'!
+!IvarsForeignObject class methodsFor: 'subclass selection' stamp: 'jmv 9/Jan/2024, 5:25:57 pm (UTC)'!
 canRepresent: anObject
 	"We can work with regular classes with instance variables, like Point and OrderedCollection.
 	We don't work with classes or metaclasses."
@@ -1249,20 +1249,20 @@ canRepresent: anObject
 	(anObject is: #CodeElementSpec) ifTrue: [ ^false ].
 	^anObject class instSpec = 1! !
 
-!LargeIntegerForeignObject methodsFor: 'accessing' stamp: 'jmv 14/Aug/2023 17:41:17'!
+!LargeIntegerForeignObject methodsFor: 'accessing' stamp: 'jmv 14/Aug/2023, 8:41:17 pm (UTC)'!
 slotCount
 	"Answer the number of slots used by our representedObject"
 
 	^representedObject basicSize! !
 
-!LargeIntegerForeignObject methodsFor: 'accessing' stamp: 'jmv 14/Aug/2023 17:40:49'!
+!LargeIntegerForeignObject methodsFor: 'accessing' stamp: 'jmv 14/Aug/2023, 8:40:49 pm (UTC)'!
 slotWidth
 	"Answer the size of each slot, in bytes, used by our representedObject.
 	Our slots are int8 or uint8."
 
 	^1! !
 
-!LargeIntegerForeignObject methodsFor: 'accessing' stamp: 'jmv 14/Aug/2023 17:47:29'!
+!LargeIntegerForeignObject methodsFor: 'accessing' stamp: 'jmv 14/Aug/2023, 8:47:29 pm (UTC)'!
 spurObjectFormatFor: aSpurImageBuilder
 	"Answer the format 5 bit field for Object Header in Spur.
 	Use 2 or 3 low bits of size. Answer in #(16 17 18 19) for Spur32 and in #(16 17 18 19 20 21 22 23) for Spur64."
@@ -1273,40 +1273,40 @@ spurObjectFormatFor: aSpurImageBuilder
 	oddBits := ((slotCount / slotsPerWord) ceiling * slotsPerWord) - slotCount.
 	^16 bitOr: oddBits! !
 
-!LargeIntegerForeignObject methodsFor: 'serialization' stamp: 'jmv 17/Aug/2023 17:17:25'!
+!LargeIntegerForeignObject methodsFor: 'serialization' stamp: 'jmv 17/Aug/2023, 8:17:25 pm (UTC)'!
 writeSlotsOn: byteStream forSpur: anImageBuilder
 
 	"Actual data"
 	1 to: self slotCount do: [ :i |
 		byteStream nextPut: (representedObject basicAt: i) ].! !
 
-!LargeIntegerForeignObject methodsFor: 'services' stamp: 'jmv 14/Aug/2023 17:50:07'!
+!LargeIntegerForeignObject methodsFor: 'services' stamp: 'jmv 14/Aug/2023, 8:50:07 pm (UTC)'!
 referencedObjectsDo: aBlock
 	"Evaluate aBlock for each object our representedObject points to.
 	We don't reference any other objects."! !
 
-!MetaclassForeignObject methodsFor: 'accessing' stamp: 'jmv 2/Jun/2023 14:56:15'!
+!MetaclassForeignObject methodsFor: 'accessing' stamp: 'jmv 2/Jun/2023, 5:56:15 pm (UTC)'!
 addMethod: aMethodForeignObject
 	methodForeignObjects add: aMethodForeignObject ! !
 
-!MetaclassForeignObject methodsFor: 'accessing' stamp: 'jmv 26/Jun/2023 15:37:07'!
+!MetaclassForeignObject methodsFor: 'accessing' stamp: 'jmv 26/Jun/2023, 6:37:07 pm (UTC)'!
 instanceVariablesForeignObject: aForeignObject
 	instanceVariablesForeignObject := aForeignObject! !
 
-!MetaclassForeignObject methodsFor: 'accessing' stamp: 'jmv 16/May/2023 15:33:58'!
+!MetaclassForeignObject methodsFor: 'accessing' stamp: 'jmv 16/May/2023, 6:33:58 pm (UTC)'!
 methodDictForeignObject: aMethodDictionaryForeignObject
 	methodDictForeignObject := aMethodDictionaryForeignObject! !
 
-!MetaclassForeignObject methodsFor: 'accessing' stamp: 'jmv 7/Jun/2023 17:59:22'!
+!MetaclassForeignObject methodsFor: 'accessing' stamp: 'jmv 7/Jun/2023, 8:59:22 pm (UTC)'!
 methodForeignObjects
 	^methodForeignObjects! !
 
-!MetaclassForeignObject methodsFor: 'accessing' stamp: 'jmv 23/Jun/2023 18:15:38'!
+!MetaclassForeignObject methodsFor: 'accessing' stamp: 'jmv 23/Jun/2023, 9:15:38 pm (UTC)'!
 representedObject: aLocalObject oop: newOop identityHash: newIdentityHash
 	super representedObject: aLocalObject oop: newOop identityHash: newIdentityHash.
 	nameOfClassToInstantiate := #Metaclass! !
 
-!MetaclassForeignObject methodsFor: 'accessing' stamp: 'jmv 23/May/2023 09:53:53'!
+!MetaclassForeignObject methodsFor: 'accessing' stamp: 'jmv 23/May/2023, 12:53:53 pm (UTC)'!
 slotCount
 	"Answer the number of slots used by our representedObject"
 
@@ -1315,34 +1315,34 @@ slotCount
 	Metaclass allInstVarNames size = 6"
 	^ 6! !
 
-!MetaclassForeignObject methodsFor: 'accessing' stamp: 'jmv 20/May/2023 13:59:57'!
+!MetaclassForeignObject methodsFor: 'accessing' stamp: 'jmv 20/May/2023, 4:59:57 pm (UTC)'!
 slotWidth
 	"Answer the size of each slot, in bytes, used by our representedObject.
 	Answer nil. Our slots are oops."
 
 	^nil! !
 
-!MetaclassForeignObject methodsFor: 'accessing' stamp: 'jmv 22/May/2023 16:13:04'!
+!MetaclassForeignObject methodsFor: 'accessing' stamp: 'jmv 22/May/2023, 7:13:04 pm (UTC)'!
 spurObjectFormat
 	"Answer the format 5 bit field for Object Header in Spur."
 
 	^1! !
 
-!MetaclassForeignObject methodsFor: 'accessing' stamp: 'jmv 12/Jul/2023 12:39:03'!
+!MetaclassForeignObject methodsFor: 'accessing' stamp: 'jmv 12/Jul/2023, 3:39:03 pm (UTC)'!
 thisClassForeignObject
 	^thisClassForeignObject! !
 
-!MetaclassForeignObject methodsFor: 'accessing' stamp: 'jmv 16/May/2023 15:11:23'!
+!MetaclassForeignObject methodsFor: 'accessing' stamp: 'jmv 16/May/2023, 6:11:23 pm (UTC)'!
 thisClassForeignObject: aClassForeignObject
 	thisClassForeignObject := aClassForeignObject! !
 
-!MetaclassForeignObject methodsFor: 'initialization' stamp: 'jmv 2/Jun/2023 14:55:32'!
+!MetaclassForeignObject methodsFor: 'initialization' stamp: 'jmv 2/Jun/2023, 5:55:32 pm (UTC)'!
 initialize
 
 	super initialize.
 	methodForeignObjects := OrderedCollection new.! !
 
-!MetaclassForeignObject methodsFor: 'serialization' stamp: 'jmv 17/Aug/2023 17:18:32'!
+!MetaclassForeignObject methodsFor: 'serialization' stamp: 'jmv 17/Aug/2023, 8:18:32 pm (UTC)'!
 writeSlotsOn: byteStream forSpur: anImageBuilder
 
 	| superclassForeignObject format |
@@ -1371,36 +1371,36 @@ self assert: (Smalltalk at: representedObject name) class format = format.
 	"thisClass oop"
 	anImageBuilder on: byteStream nexWordPut: (thisClassForeignObject foreignOopFor: anImageBuilder).! !
 
-!MetaclassForeignObject methodsFor: 'services' stamp: 'jmv 6/Jul/2023 10:12:08'!
+!MetaclassForeignObject methodsFor: 'services' stamp: 'jmv 6/Jul/2023, 1:12:08 pm (UTC)'!
 localBindingOf: varNameSymbol for: anImageBuilder
 
 	^thisClassForeignObject localBindingOf: varNameSymbol for: anImageBuilder! !
 
-!MetaclassForeignObject methodsFor: 'printing' stamp: 'jmv 14/Jul/2023 09:20:14'!
+!MetaclassForeignObject methodsFor: 'printing' stamp: 'jmv 14/Jul/2023, 12:20:14 pm (UTC)'!
 printRepresentedObjectOn: aStream
 	aStream nextPutAll: representedObject name.
 	aStream nextPutAll: ' class'.! !
 
-!MethodContextForeignObject methodsFor: 'accessing' stamp: 'jmv 17/Aug/2023 16:08:24'!
+!MethodContextForeignObject methodsFor: 'accessing' stamp: 'jmv 17/Aug/2023, 7:08:24 pm (UTC)'!
 slotCount
 	"Answer the number of slots used by our representedObject"
 
 	^self contextFrameSize + representedObject class instSize! !
 
-!MethodContextForeignObject methodsFor: 'accessing' stamp: 'jmv 11/Jul/2023 19:02:29'!
+!MethodContextForeignObject methodsFor: 'accessing' stamp: 'jmv 11/Jul/2023, 10:02:29 pm (UTC)'!
 slotWidth
 	"Answer the size of each slot, in bytes, used by our representedObject.
 	Answer nil. Our slots are oops."
 
 	^nil! !
 
-!MethodContextForeignObject methodsFor: 'accessing' stamp: 'jmv 11/Jul/2023 19:02:33'!
+!MethodContextForeignObject methodsFor: 'accessing' stamp: 'jmv 11/Jul/2023, 10:02:33 pm (UTC)'!
 spurObjectFormat
 	"Answer the format 5 bit field for Object Header in Spur."
 
 	^3! !
 
-!MethodContextForeignObject methodsFor: 'serialization' stamp: 'jmv 18/Aug/2023 14:50:36'!
+!MethodContextForeignObject methodsFor: 'serialization' stamp: 'jmv 18/Aug/2023, 5:50:36 pm (UTC)'!
 writeSlotsOn: byteStream forSpur: anImageBuilder
 
 	| nilForeignObject |
@@ -1423,7 +1423,7 @@ writeSlotsOn: byteStream forSpur: anImageBuilder
 	self contextFrameSize - representedObject basicSize timesRepeat: [
 		anImageBuilder on: byteStream nexWordPut: nilForeignObject ].! !
 
-!MethodContextForeignObject methodsFor: 'private' stamp: 'jmv 13/Jul/2023 16:20:35'!
+!MethodContextForeignObject methodsFor: 'private' stamp: 'jmv 13/Jul/2023, 7:20:35 pm (UTC)'!
 contextFrameSize
 	"Valid in mother image. We'd need to get correct value for any seed image."
 
@@ -1431,38 +1431,38 @@ contextFrameSize
 		ifNotNil: [ :method | method frameSize]
 		ifNil: [CompiledMethod fullFrameSize]! !
 
-!MethodContextForeignObject methodsFor: 'compatibility' stamp: 'jmv 14/Sep/2023 15:44:03'!
+!MethodContextForeignObject methodsFor: 'compatibility' stamp: 'jmv 14/Sep/2023, 6:44:03 pm (UTC)'!
 isDone
 	"This is done so our Process instance is not taken for runnable processes.
 	See #isTerminated	"
 	^true! !
 
-!MethodContextForeignObject class methodsFor: 'subclass selection' stamp: 'jmv 9/Jan/2024 14:26:01'!
+!MethodContextForeignObject class methodsFor: 'subclass selection' stamp: 'jmv 9/Jan/2024, 5:26:01 pm (UTC)'!
 canRepresent: anObject
 
 	anObject class == MethodContext ifTrue: [ ^true ].
 	^false! !
 
-!MethodDictionaryForeignObject methodsFor: 'accessing' stamp: 'jmv 22/May/2023 16:43:10'!
+!MethodDictionaryForeignObject methodsFor: 'accessing' stamp: 'jmv 22/May/2023, 7:43:10 pm (UTC)'!
 slotCount
 	"Answer the number of slots used by our representedObject"
 
 	^representedObject basicSize + representedObject class instSize! !
 
-!MethodDictionaryForeignObject methodsFor: 'accessing' stamp: 'jmv 22/May/2023 16:38:03'!
+!MethodDictionaryForeignObject methodsFor: 'accessing' stamp: 'jmv 22/May/2023, 7:38:03 pm (UTC)'!
 slotWidth
 	"Answer the size of each slot, in bytes, used by our representedObject.
 	Answer nil. Our slots are oops."
 
 	^nil! !
 
-!MethodDictionaryForeignObject methodsFor: 'accessing' stamp: 'jmv 22/May/2023 16:13:31'!
+!MethodDictionaryForeignObject methodsFor: 'accessing' stamp: 'jmv 22/May/2023, 7:13:31 pm (UTC)'!
 spurObjectFormat
 	"Answer the format 5 bit field for Object Header in Spur."
 
 	^3! !
 
-!MethodDictionaryForeignObject methodsFor: 'serialization' stamp: 'jmv 17/Aug/2023 17:17:33'!
+!MethodDictionaryForeignObject methodsFor: 'serialization' stamp: 'jmv 17/Aug/2023, 8:17:33 pm (UTC)'!
 writeSlotsOn: byteStream forSpur: anImageBuilder
 
 	1 to: self slotCount do: [ :i | | each fo |
@@ -1472,108 +1472,108 @@ writeSlotsOn: byteStream forSpur: anImageBuilder
 			ifFalse: [ anImageBuilder findForeignObjectFor: each ].
 		anImageBuilder on: byteStream nexWordPut: (fo foreignOopFor: anImageBuilder) ].! !
 
-!MethodDictionaryForeignObject methodsFor: 'printing' stamp: 'jmv 14/Jul/2023 17:01:46'!
+!MethodDictionaryForeignObject methodsFor: 'printing' stamp: 'jmv 14/Jul/2023, 8:01:46 pm (UTC)'!
 printRepresentedObjectOn: aStream! !
 
-!MethodDictionaryForeignObject class methodsFor: 'subclass selection' stamp: 'jmv 7/Jun/2023 17:35:10'!
+!MethodDictionaryForeignObject class methodsFor: 'subclass selection' stamp: 'jmv 7/Jun/2023, 8:35:10 pm (UTC)'!
 canRepresent: anObject
 	"We can represent instances of 	MethodDictionary."
 
 	^anObject class == MethodDictionary! !
 
-!Spur32FreeListsForeignObject methodsFor: 'accessing' stamp: 'jmv 19/May/2023 18:04:15'!
+!Spur32FreeListsForeignObject methodsFor: 'accessing' stamp: 'jmv 19/May/2023, 9:04:15 pm (UTC)'!
 slotCount
 	"Answer the number of slots used by our representedObject"
 
 	^32! !
 
-!Spur32FreeListsForeignObject methodsFor: 'accessing' stamp: 'jmv 23/May/2023 09:56:35'!
+!Spur32FreeListsForeignObject methodsFor: 'accessing' stamp: 'jmv 23/May/2023, 12:56:35 pm (UTC)'!
 slotWidth
 	"Answer the size of each slot, in bytes, used by our representedObject.
 	Our slots are 32 bit integers, handled only by the VM to store private raw pointers."
 
 	^4! !
 
-!Spur32FreeListsForeignObject methodsFor: 'accessing' stamp: 'jmv 1/Jun/2023 16:34:27'!
+!Spur32FreeListsForeignObject methodsFor: 'accessing' stamp: 'jmv 1/Jun/2023, 7:34:27 pm (UTC)'!
 spurClassIndexFor: aSpurImageBuilder
 	"Not a regular Smalltalk object.
 	See class comment."
 
 	^ 18! !
 
-!Spur32FreeListsForeignObject methodsFor: 'accessing' stamp: 'jmv 22/May/2023 16:21:37'!
+!Spur32FreeListsForeignObject methodsFor: 'accessing' stamp: 'jmv 22/May/2023, 7:21:37 pm (UTC)'!
 spurObjectFormat
 	"Answer the format 5 bit field for Object Header in Spur.
 	Our size is fixed and even, we don't need to worry about the padding low bit and format 11."
 
 	^10! !
 
-!Spur32FreeListsForeignObject methodsFor: 'serialization' stamp: 'jmv 15/Aug/2023 18:36:59'!
+!Spur32FreeListsForeignObject methodsFor: 'serialization' stamp: 'jmv 15/Aug/2023, 9:36:59 pm (UTC)'!
 writeSlotsOn: byteStream forSpur: anImageBuilder
 	"Just a bunch of zeros. It is up to the VM to use this as desired."
 
 	byteStream nextPutAll: (ByteArray new: self slotCount * self slotWidth).! !
 
-!Spur64FreeListsForeignObject methodsFor: 'accessing' stamp: 'jmv 17/Aug/2023 16:07:34'!
+!Spur64FreeListsForeignObject methodsFor: 'accessing' stamp: 'jmv 17/Aug/2023, 7:07:34 pm (UTC)'!
 slotCount
 	"Answer the number of slots used by our representedObject"
 
 	^64! !
 
-!Spur64FreeListsForeignObject methodsFor: 'accessing' stamp: 'jmv 23/May/2023 09:56:31'!
+!Spur64FreeListsForeignObject methodsFor: 'accessing' stamp: 'jmv 23/May/2023, 12:56:31 pm (UTC)'!
 slotWidth
 	"Answer the size of each slot, in bytes, used by our representedObject.
 	Our slots are 64 bit integers, handled only by the VM to store private raw pointers."
 
 	^8! !
 
-!Spur64FreeListsForeignObject methodsFor: 'accessing' stamp: 'jmv 1/Jun/2023 16:34:34'!
+!Spur64FreeListsForeignObject methodsFor: 'accessing' stamp: 'jmv 1/Jun/2023, 7:34:34 pm (UTC)'!
 spurClassIndexFor: aSpurImageBuilder
 	"Not a regular Smalltalk object.
 	See class comment."
 
 	^ 19! !
 
-!Spur64FreeListsForeignObject methodsFor: 'accessing' stamp: 'jmv 22/May/2023 16:21:48'!
+!Spur64FreeListsForeignObject methodsFor: 'accessing' stamp: 'jmv 22/May/2023, 7:21:48 pm (UTC)'!
 spurObjectFormat
 	"Answer the format 5 bit field for Object Header in Spur."
 
 	^9! !
 
-!Spur64FreeListsForeignObject methodsFor: 'serialization' stamp: 'jmv 15/Aug/2023 18:37:03'!
+!Spur64FreeListsForeignObject methodsFor: 'serialization' stamp: 'jmv 15/Aug/2023, 9:37:03 pm (UTC)'!
 writeSlotsOn: byteStream forSpur: anImageBuilder
 	"Just a bunch of zeros. It is up to the VM to use this as desired."
 
 	byteStream nextPutAll: (ByteArray new: self slotCount * self slotWidth).! !
 
-!SpurPseudoArrayForeignObject methodsFor: 'accessing' stamp: 'jmv 17/Aug/2023 16:08:00'!
+!SpurPseudoArrayForeignObject methodsFor: 'accessing' stamp: 'jmv 17/Aug/2023, 7:08:00 pm (UTC)'!
 slotCount
 	"Answer the number of slots used by our representedObject.
 	In the new image, we'll be a special object with an special class pointer"
 
 	^representedObject basicSize! !
 
-!SpurPseudoArrayForeignObject methodsFor: 'accessing' stamp: 'jmv 20/May/2023 09:26:58'!
+!SpurPseudoArrayForeignObject methodsFor: 'accessing' stamp: 'jmv 20/May/2023, 12:26:58 pm (UTC)'!
 slotWidth
 	"Answer the size of each slot, in bytes, used by our representedObject.
 	Answer nil. Our slots are oops."
 
 	^nil! !
 
-!SpurPseudoArrayForeignObject methodsFor: 'accessing' stamp: 'jmv 1/Jun/2023 16:35:01'!
+!SpurPseudoArrayForeignObject methodsFor: 'accessing' stamp: 'jmv 1/Jun/2023, 7:35:01 pm (UTC)'!
 spurClassIndexFor: aSpurImageBuilder
 	"Not a regular Smalltalk object.
 	See class comment."
 
 	^ 16! !
 
-!SpurPseudoArrayForeignObject methodsFor: 'accessing' stamp: 'jmv 23/May/2023 09:55:23'!
+!SpurPseudoArrayForeignObject methodsFor: 'accessing' stamp: 'jmv 23/May/2023, 12:55:23 pm (UTC)'!
 spurObjectFormat
 	"Answer the format 5 bit field for Object Header in Spur."
 
 	^2! !
 
-!SpurPseudoArrayForeignObject methodsFor: 'serialization' stamp: 'jmv 17/Aug/2023 15:43:45'!
+!SpurPseudoArrayForeignObject methodsFor: 'serialization' stamp: 'jmv 17/Aug/2023, 6:43:45 pm (UTC)'!
 writeSlotsOn: byteStream forSpur: anImageBuilder
 
 	representedObject do: [ :pageOrClassOrMetaclassForeignObjectOrNil | | fo |
@@ -1581,118 +1581,118 @@ writeSlotsOn: byteStream forSpur: anImageBuilder
 			ifNil: [ anImageBuilder findForeignObjectFor: nil ].
 		anImageBuilder on: byteStream nexWordPut: (fo foreignOopFor: anImageBuilder) ].! !
 
-!SpurPseudoArrayForeignObject methodsFor: 'printing' stamp: 'jmv 14/Jul/2023 17:02:01'!
+!SpurPseudoArrayForeignObject methodsFor: 'printing' stamp: 'jmv 14/Jul/2023, 8:02:01 pm (UTC)'!
 printRepresentedObjectOn: aStream! !
 
-!WeakIndexedOopsForeignObject methodsFor: 'accessing' stamp: 'jmv 17/Aug/2023 16:08:14'!
+!WeakIndexedOopsForeignObject methodsFor: 'accessing' stamp: 'jmv 17/Aug/2023, 7:08:14 pm (UTC)'!
 slotCount
 	"Answer the number of slots used by our representedObject"
 
 	^representedObject basicSize! !
 
-!WeakIndexedOopsForeignObject methodsFor: 'accessing' stamp: 'jmv 22/May/2023 16:37:10'!
+!WeakIndexedOopsForeignObject methodsFor: 'accessing' stamp: 'jmv 22/May/2023, 7:37:10 pm (UTC)'!
 slotWidth
 	"Answer the size of each slot, in bytes, used by our representedObject.
 	Answer nil. Our slots are oops."
 
 	^nil! !
 
-!WeakIndexedOopsForeignObject methodsFor: 'accessing' stamp: 'jmv 22/May/2023 16:22:52'!
+!WeakIndexedOopsForeignObject methodsFor: 'accessing' stamp: 'jmv 22/May/2023, 7:22:52 pm (UTC)'!
 spurObjectFormat
 	"Answer the format 5 bit field for Object Header in Spur."
 
 	^4! !
 
-!WeakIndexedOopsForeignObject class methodsFor: 'subclass selection' stamp: 'jmv 9/Jan/2024 14:26:05'!
+!WeakIndexedOopsForeignObject class methodsFor: 'subclass selection' stamp: 'jmv 9/Jan/2024, 5:26:05 pm (UTC)'!
 canRepresent: anObject
 	"We can work classes that are indexable and that reference weakely, like WeakArray."
 
 	^anObject class instSpec = 4! !
 
-!WeakIvarsForeignObject methodsFor: 'accessing' stamp: 'jmv 22/May/2023 16:36:58'!
+!WeakIvarsForeignObject methodsFor: 'accessing' stamp: 'jmv 22/May/2023, 7:36:58 pm (UTC)'!
 slotCount
 	"Answer the number of slots used by our representedObject"
 
 	^representedObject class instSize! !
 
-!WeakIvarsForeignObject methodsFor: 'accessing' stamp: 'jmv 22/May/2023 16:37:05'!
+!WeakIvarsForeignObject methodsFor: 'accessing' stamp: 'jmv 22/May/2023, 7:37:05 pm (UTC)'!
 slotWidth
 	"Answer the size of each slot, in bytes, used by our representedObject.
 	Answer nil. Our slots are oops."
 
 	^nil! !
 
-!WeakIvarsForeignObject methodsFor: 'accessing' stamp: 'jmv 22/May/2023 16:23:09'!
+!WeakIvarsForeignObject methodsFor: 'accessing' stamp: 'jmv 22/May/2023, 7:23:09 pm (UTC)'!
 spurObjectFormat
 	"Answer the format 5 bit field for Object Header in Spur."
 
 	^5! !
 
-!WeakIvarsForeignObject class methodsFor: 'subclass selection' stamp: 'jmv 9/Jan/2024 14:26:09'!
+!WeakIvarsForeignObject class methodsFor: 'subclass selection' stamp: 'jmv 9/Jan/2024, 5:26:09 pm (UTC)'!
 canRepresent: anObject
 	"We can work classes that have ivars and that reference weakely, like Ephemeron."
 
 	^anObject class instSpec = 5! !
 
-!ZeroSizeForeignObject methodsFor: 'accessing' stamp: 'jmv 19/May/2023 17:38:29'!
+!ZeroSizeForeignObject methodsFor: 'accessing' stamp: 'jmv 19/May/2023, 8:38:29 pm (UTC)'!
 slotCount
 	"Answer the number of slots used by our representedObject"
 
 	^0! !
 
-!ZeroSizeForeignObject methodsFor: 'accessing' stamp: 'jmv 19/May/2023 18:25:56'!
+!ZeroSizeForeignObject methodsFor: 'accessing' stamp: 'jmv 19/May/2023, 9:25:56 pm (UTC)'!
 slotWidth
 	"Answer the size of each slot, in bytes, used by our representedObject
 	It is irrelevant, our #slotCount is zero."
 
 	^nil! !
 
-!ZeroSizeForeignObject methodsFor: 'accessing' stamp: 'jmv 22/May/2023 16:23:29'!
+!ZeroSizeForeignObject methodsFor: 'accessing' stamp: 'jmv 22/May/2023, 7:23:29 pm (UTC)'!
 spurObjectFormat
 	"Answer the format 5 bit field for Object Header in Spur."
 
 	^0! !
 
-!ZeroSizeForeignObject methodsFor: 'serialization' stamp: 'jmv 17/Aug/2023 17:18:10'!
+!ZeroSizeForeignObject methodsFor: 'serialization' stamp: 'jmv 17/Aug/2023, 8:18:10 pm (UTC)'!
 writeSlotsOn: byteStream forSpur: anImageBuilder! !
 
-!ZeroSizeForeignObject class methodsFor: 'subclass selection' stamp: 'jmv 9/Jan/2024 14:26:13'!
+!ZeroSizeForeignObject class methodsFor: 'subclass selection' stamp: 'jmv 9/Jan/2024, 5:26:13 pm (UTC)'!
 canRepresent: anObject
 	"We can work with nil, false, true and regular objects with no instance variables."
 
 	^anObject class instSpec = 0! !
 
-!ImmediateForeignObject methodsFor: 'accessing' stamp: 'jmv 26/Jun/2023 11:08:19'!
+!ImmediateForeignObject methodsFor: 'accessing' stamp: 'jmv 26/Jun/2023, 2:08:19 pm (UTC)'!
 foreignOopFor: anImageBuilder
 	"Oop (Object Pointer) to be used in the newly created image.
 	Ask to Builder for it!!"
 
 	^self subclassResponsibility! !
 
-!ImmediateForeignObject methodsFor: 'accessing' stamp: 'jmv 23/Jun/2023 18:08:28'!
+!ImmediateForeignObject methodsFor: 'accessing' stamp: 'jmv 23/Jun/2023, 9:08:28 pm (UTC)'!
 representedObject: aLocalObject
 
 	self subclassResponsibility! !
 
-!ImmediateForeignObject methodsFor: 'services' stamp: 'jmv 29/Jun/2023 16:46:14'!
+!ImmediateForeignObject methodsFor: 'services' stamp: 'jmv 29/Jun/2023, 7:46:14 pm (UTC)'!
 referencedObjectsDo: aBlock
 	"Evaluate aBlock for each object our representedObject points to.
 	We don't reference any other objects."! !
 
-!ImmediateForeignObject class methodsFor: 'instance creation' stamp: 'jmv 23/Jun/2023 17:38:23'!
+!ImmediateForeignObject class methodsFor: 'instance creation' stamp: 'jmv 23/Jun/2023, 8:38:23 pm (UTC)'!
 newFor: aLocalObject
 	"Answer an instance of the correct subclass."
 
 	^self new representedObject: aLocalObject! !
 
-!ImmediateForeignObject class methodsFor: 'testing' stamp: 'jmv 23/Jun/2023 17:34:20'!
+!ImmediateForeignObject class methodsFor: 'testing' stamp: 'jmv 23/Jun/2023, 8:34:20 pm (UTC)'!
 instancesAreForImmediateObjects
 	"Answer true if our instances represent objects that will not be allocated in a new image,
 	because they will be immediate, and fully encoded in their OOP."
 
 	^true! !
 
-!ImmediateCharacterForeignObject methodsFor: 'accessing' stamp: 'jmv 15/Aug/2023 18:29:43'!
+!ImmediateCharacterForeignObject methodsFor: 'accessing' stamp: 'jmv 15/Aug/2023, 9:29:43 pm (UTC)'!
 foreignIdentityHashFor: anImageBuilder
 	"IdentityHash to be used in the newly created image.
 	Depends, as a minimum, on the image format. Perhaps the builder can know.
@@ -1700,25 +1700,25 @@ foreignIdentityHashFor: anImageBuilder
 
 	^self error: 'must implement?'! !
 
-!ImmediateCharacterForeignObject methodsFor: 'accessing' stamp: 'jmv 17/Aug/2023 14:37:45'!
+!ImmediateCharacterForeignObject methodsFor: 'accessing' stamp: 'jmv 17/Aug/2023, 5:37:45 pm (UTC)'!
 foreignOopFor: anImageBuilder
 	"The oop is computed by the builder, based on our represented object"
 
 	^anImageBuilder foreignOopOfImmediateCharacter: representedObject.! !
 
-!ImmediateCharacterForeignObject methodsFor: 'accessing' stamp: 'jmv 15/Aug/2023 18:29:43'!
+!ImmediateCharacterForeignObject methodsFor: 'accessing' stamp: 'jmv 15/Aug/2023, 9:29:43 pm (UTC)'!
 representedObject: aLocalObject
 
 	representedObject := aLocalObject.
 	nameOfClassToInstantiate := #Character.! !
 
-!ImmediateCharacterForeignObject class methodsFor: 'subclass selection' stamp: 'jmv 15/Aug/2023 18:29:43'!
+!ImmediateCharacterForeignObject class methodsFor: 'subclass selection' stamp: 'jmv 15/Aug/2023, 9:29:43 pm (UTC)'!
 canRepresent: anObject
 	"Characters are handled in a special way. See #foreignObjectClassFor:"
 
 	^super canRepresent: anObject! !
 
-!SmallFloat64ForeignObject methodsFor: 'accessing' stamp: 'jmv 26/Jun/2023 10:53:38'!
+!SmallFloat64ForeignObject methodsFor: 'accessing' stamp: 'jmv 26/Jun/2023, 1:53:38 pm (UTC)'!
 foreignIdentityHashFor: anImageBuilder
 	"IdentityHash to be used in the newly created image.
 	Depends, as a minimum, on the image format. Perhaps the builder can know.
@@ -1726,50 +1726,50 @@ foreignIdentityHashFor: anImageBuilder
 
 	^self error: 'must implement?'! !
 
-!SmallFloat64ForeignObject methodsFor: 'accessing' stamp: 'jmv 30/Jun/2023 18:13:47'!
+!SmallFloat64ForeignObject methodsFor: 'accessing' stamp: 'jmv 30/Jun/2023, 9:13:47 pm (UTC)'!
 foreignOopFor: anImageBuilder
 	"The oop is computed by the builder, based on our represented object"
 
 	^anImageBuilder foreignOopOfSmallFloat64: representedObject.! !
 
-!SmallFloat64ForeignObject methodsFor: 'accessing' stamp: 'jmv 23/Jun/2023 18:07:59'!
+!SmallFloat64ForeignObject methodsFor: 'accessing' stamp: 'jmv 23/Jun/2023, 9:07:59 pm (UTC)'!
 representedObject: aLocalObject
 
 	representedObject := aLocalObject.
 	nameOfClassToInstantiate := #SmallFloat64.! !
 
-!SmallFloat64ForeignObject class methodsFor: 'subclass selection' stamp: 'jmv 23/Jun/2023 17:08:04'!
+!SmallFloat64ForeignObject class methodsFor: 'subclass selection' stamp: 'jmv 23/Jun/2023, 8:08:04 pm (UTC)'!
 canRepresent: anObject
 	"Floats are handled in a special way. See #foreignObjectClassFor:"
 
 	^super canRepresent: anObject! !
 
-!SmallIntegerForeignObject methodsFor: 'accessing' stamp: 'jmv 26/Jun/2023 11:06:01'!
+!SmallIntegerForeignObject methodsFor: 'accessing' stamp: 'jmv 26/Jun/2023, 2:06:01 pm (UTC)'!
 foreignIdentityHashFor: anImageBuilder
 	"IdentityHash to be used in the newly created image.
 	SmallIntegers are always (?) their own identityHash."
 
 	^representedObject! !
 
-!SmallIntegerForeignObject methodsFor: 'accessing' stamp: 'jmv 29/Jun/2023 16:28:57'!
+!SmallIntegerForeignObject methodsFor: 'accessing' stamp: 'jmv 29/Jun/2023, 7:28:57 pm (UTC)'!
 foreignOopFor: anImageBuilder
 	"The oop is computed by the builder, based on our represented object"
 
 	^anImageBuilder foreignOopOfSmallInteger: representedObject.! !
 
-!SmallIntegerForeignObject methodsFor: 'accessing' stamp: 'jmv 23/Jun/2023 18:08:11'!
+!SmallIntegerForeignObject methodsFor: 'accessing' stamp: 'jmv 23/Jun/2023, 9:08:11 pm (UTC)'!
 representedObject: aLocalObject
 
 	representedObject := aLocalObject.
 	nameOfClassToInstantiate := #SmallInteger.! !
 
-!SmallIntegerForeignObject class methodsFor: 'subclass selection' stamp: 'jmv 23/Jun/2023 17:18:46'!
+!SmallIntegerForeignObject class methodsFor: 'subclass selection' stamp: 'jmv 23/Jun/2023, 8:18:46 pm (UTC)'!
 canRepresent: anObject
 	"Integers are handled in a special way. See #foreignObjectClassFor:"
 
 	^super canRepresent: anObject! !
 
-!ImageBuilder methodsFor: 'initialization' stamp: 'jmv 28/Apr/2025 10:04:36'!
+!ImageBuilder methodsFor: 'initialization' stamp: 'jmv 28/Apr/2025, 1:04:36 pm (UTC)'!
 initialize
 	isBigEndian := false. "default"
 	classes := OrderedDictionary new.
@@ -1780,7 +1780,7 @@ initialize
 	globalVariables  := OrderedCollection new.
 	symbols := OrderedCollection new.! !
 
-!ImageBuilder methodsFor: 'image building' stamp: 'jmv 18/Apr/2024 14:09:49'!
+!ImageBuilder methodsFor: 'image building' stamp: 'jmv 18/Apr/2024, 5:09:49 pm (UTC)'!
 addFundamentalClasses
 	"Some classes that are needed for any Cuis image:
 	- nil, false and true are always present and need their class
@@ -1812,7 +1812,7 @@ addFundamentalClasses
 		classForeignObject := self addClassAndMetaclassSpec: classSpec classIndexOrNil: nil.
 		self map: classSpec toForeignObject: classForeignObject ].! !
 
-!ImageBuilder methodsFor: 'image building' stamp: 'jmv 18/Apr/2024 14:10:20'!
+!ImageBuilder methodsFor: 'image building' stamp: 'jmv 18/Apr/2024, 5:10:20 pm (UTC)'!
 addFundamentalObjectsAndClasses
 	"
 	Objects and classes added here are absolutely required for building
@@ -1847,7 +1847,7 @@ addFundamentalObjectsAndClasses
 	"After adding classes, we can fill the contents of the SpecialObjects array"
 	self fillSpecialObjectsArray.! !
 
-!ImageBuilder methodsFor: 'image building' stamp: 'jmv 17/Jul/2023 12:52:26'!
+!ImageBuilder methodsFor: 'image building' stamp: 'jmv 17/Jul/2023, 3:52:26 pm (UTC)'!
 addMethodDictionariesAndStuff
 	"Fix Class hierarchies, build MethodDictionaries.
 	Build the Smalltalk SystemDictionary."
@@ -1874,7 +1874,7 @@ addMethodDictionariesAndStuff
 	"Now that we have all the required globals at ivar 'globalVariables', fill the contents of the Smalltalk object."
 	self fillSmalltalkDictionary.! !
 
-!ImageBuilder methodsFor: 'image building' stamp: 'jmv 29/Aug/2025 11:11:14'!
+!ImageBuilder methodsFor: 'image building' stamp: 'jmv 29/Aug/2025, 2:11:14 pm (UTC)'!
 addMethodsIn: libraryName
 
 	"Add required methods."
@@ -1886,7 +1886,7 @@ addMethodsIn: libraryName
 			(cm propertyValueAt: #libraryName) == libraryName ifTrue: [
 				self addExistingMethod: cm ]]].! !
 
-!ImageBuilder methodsFor: 'image building' stamp: 'jmv 17/Jul/2023 12:39:29'!
+!ImageBuilder methodsFor: 'image building' stamp: 'jmv 17/Jul/2023, 3:39:29 pm (UTC)'!
 addSpecialObjectsArray
 	"Create a SpecialObjectsArray for our new image. See #recreateSpecialObjectsArray.
 	Add a ForeignObject for it to our foreign object list and dicitonary.
@@ -1896,11 +1896,11 @@ addSpecialObjectsArray
 	specialObjectsArray := Array new: 60.
 	specialObjectsArrayForeignObject := self createForeignObjectFor: specialObjectsArray.! !
 
-!ImageBuilder methodsFor: 'image building' stamp: 'jmv 17/Jul/2023 12:36:17'!
+!ImageBuilder methodsFor: 'image building' stamp: 'jmv 17/Jul/2023, 3:36:17 pm (UTC)'!
 addSpurHiddenObjectsIfRequired
 	"NOP here. Only for Spur."! !
 
-!ImageBuilder methodsFor: 'image building' stamp: 'jmv 18/Apr/2024 14:26:23'!
+!ImageBuilder methodsFor: 'image building' stamp: 'jmv 18/Apr/2024, 5:26:23 pm (UTC)'!
 addVmKnownClasses
 "
 Copied and adapted from the Spur implementation, that requires specific identityHash for these classe.
@@ -1937,7 +1937,7 @@ This implementation hasn't yet been tested!!
 		classForeignObject := self addClassAndMetaclassSpec: classSpec classIndexOrNil: nil.
 		self map: classSpec toForeignObject: classForeignObject ].! !
 
-!ImageBuilder methodsFor: 'image building' stamp: 'jmv 30/Apr/2025 11:17:00'!
+!ImageBuilder methodsFor: 'image building' stamp: 'jmv 30/Apr/2025, 2:17:00 pm (UTC)'!
 addWithAllMethods: classNames
 	"Note: Superclasses are included if not already, but their methods are not added.
 	If super implementation or inherited behavior is needed, this won't suffice."
@@ -1953,7 +1953,7 @@ addWithAllMethods: classNames
 			cls methodsDo: [ :compiledMethod |
 				self addExistingMethod: compiledMethod ]].! !
 
-!ImageBuilder methodsFor: 'image building' stamp: 'jmv 22/May/2026 16:05:15'!
+!ImageBuilder methodsFor: 'image building' stamp: 'jmv 22/May/2026, 7:05:15 pm (UTC)'!
 createAndAddWarningMethodsForMissing
 	"Create special methods to warn about improper execution of inherited methods when proper method was not included."
 
@@ -2009,7 +2009,7 @@ createAndAddWarningMethodsForMissing
 									self createWarningMethodFor: missingSelector in: classSpec isClassMethod: classSideFlag inheritedFrom: inheritedFromString ]]
 					]]]]].! !
 
-!ImageBuilder methodsFor: 'image building' stamp: 'jmv 22/May/2026 13:59:20'!
+!ImageBuilder methodsFor: 'image building' stamp: 'jmv 22/May/2026, 4:59:20 pm (UTC)'!
 createWarningMethodFor: missingSelector in: classSpec isClassMethod: classSideFlag inheritedFrom: desc
 	"Made by playing with a method with this source code:
 		hack3
@@ -2049,7 +2049,7 @@ createWarningMethodFor: missingSelector in: classSpec isClassMethod: classSideFl
 	self addMethodSpec: fallbackMethodSpec.
 	methods add: fallbackMethodSpec.! !
 
-!ImageBuilder methodsFor: 'image building' stamp: 'jmv 17/Jul/2023 12:49:27'!
+!ImageBuilder methodsFor: 'image building' stamp: 'jmv 17/Jul/2023, 3:49:27 pm (UTC)'!
 fillSpecialObjectsArray
 	"Please see implementation for Spur.
 	Also see #recreateSpecialObjectsArray.
@@ -2057,12 +2057,12 @@ fillSpecialObjectsArray
 
 	"Maybe after implementing for all subclasses, move a refactored version up here."! !
 
-!ImageBuilder methodsFor: 'image building' stamp: 'jmv 28/Apr/2025 10:10:24'!
+!ImageBuilder methodsFor: 'image building' stamp: 'jmv 28/Apr/2025, 1:10:24 pm (UTC)'!
 includeDisplayAndSensor
 	"Some images may need them, but minimal headless images won't."
 	^false! !
 
-!ImageBuilder methodsFor: 'image building' stamp: 'jmv 19/Sep/2023 13:58:34'!
+!ImageBuilder methodsFor: 'image building' stamp: 'jmv 19/Sep/2023, 4:58:34 pm (UTC)'!
 includedDefinition: missingSelector in: classSpec isClassMethod: classSideFlag all: includedSelectorsByClass
 	"missingSelector is defined for classSpec but wasn't included.
 	Answer the inherited version that would be run instead, if any."
@@ -2083,7 +2083,7 @@ includedDefinition: missingSelector in: classSpec isClassMethod: classSideFlag a
 
 	^nil! !
 
-!ImageBuilder methodsFor: 'image building' stamp: 'jmv 19/Sep/2023 12:50:21'!
+!ImageBuilder methodsFor: 'image building' stamp: 'jmv 19/Sep/2023, 3:50:21 pm (UTC)'!
 includedDefinition: missingSelector start: classSpec isClassMethod: classSideFlag all: includedSelectorsByClass
 	"Find the closest included definition of missingSelector.
 	Start search at classSpec and go upwards in the hierarchy,"
@@ -2096,7 +2096,7 @@ includedDefinition: missingSelector start: classSpec isClassMethod: classSideFla
 					^superclassSpec ]]].
 	^nil! !
 
-!ImageBuilder methodsFor: 'image building examples' stamp: 'jmv 13/May/2025 10:13:41'!
+!ImageBuilder methodsFor: 'image building examples' stamp: 'jmv 13/May/2025, 1:13:41 pm (UTC)'!
 addExample07LoadDynamicLibraryMethods
 
 	{
@@ -2109,9 +2109,10 @@ addExample07LoadDynamicLibraryMethods
 	} do: [ :compiledMethod |
 		self addExistingMethod: compiledMethod ].! !
 
-!ImageBuilder methodsFor: 'image building examples' stamp: 'jmv 29/Aug/2025 11:12:40'!
+!ImageBuilder methodsFor: 'image building examples' stamp: 'jmv 2/Nov/2026, 2:54:20 pm (UTC)'!
 buildExample01Stdout
 	"
+	Transcript clear.
 	Spur64ImageBuilder new
 		buildExample01Stdout;
 		saveImageTo: 'Example01Stdout.image' asFileEntry.
@@ -2144,9 +2145,10 @@ buildExample01Stdout
 	"Creating the start process requires CompiledMethods to be there"
 	self addStartProcess.! !
 
-!ImageBuilder methodsFor: 'image building examples' stamp: 'jmv 29/Aug/2025 11:12:46'!
+!ImageBuilder methodsFor: 'image building examples' stamp: 'jmv 2/Nov/2026, 2:54:17 pm (UTC)'!
 buildExample02DoesNotUnderstand
 	"
+	Transcript clear.
 	Spur64ImageBuilder new
 		buildExample02DoesNotUnderstand;
 		saveImageTo: 'Example02DoesNotUnderstand.image' asFileEntry.
@@ -2179,9 +2181,10 @@ buildExample02DoesNotUnderstand
 	"Creating the start process requires CompiledMethods to be there"
 	self addStartProcess.! !
 
-!ImageBuilder methodsFor: 'image building examples' stamp: 'jmv 29/Aug/2025 11:12:51'!
+!ImageBuilder methodsFor: 'image building examples' stamp: 'jmv 2/Nov/2026, 2:54:14 pm (UTC)'!
 buildExample03Float
 	"
+	Transcript clear.
 	Spur64ImageBuilder new
 		buildExample03Float;
 		saveImageTo: 'Example03Float.image' asFileEntry.
@@ -2215,9 +2218,10 @@ buildExample03Float
 	"Creating the start process requires CompiledMethods to be there"
 	self addStartProcess.! !
 
-!ImageBuilder methodsFor: 'image building examples' stamp: 'jmv 29/Aug/2025 11:21:53'!
+!ImageBuilder methodsFor: 'image building examples' stamp: 'jmv 2/Nov/2026, 2:54:07 pm (UTC)'!
 buildExample04SymbolExperiments
 	"
+	Transcript clear.
 	Spur64ImageBuilder new
 		buildExample04SymbolExperiments;
 		saveImageTo: 'Example04SymbolExperiments.image' asFileEntry.
@@ -2251,9 +2255,10 @@ buildExample04SymbolExperiments
 	"Creating the start process requires CompiledMethods to be there"
 	self addStartProcess.! !
 
-!ImageBuilder methodsFor: 'image building examples' stamp: 'jmv 29/Aug/2025 11:22:44'!
+!ImageBuilder methodsFor: 'image building examples' stamp: 'jmv 2/Nov/2026, 2:54:04 pm (UTC)'!
 buildExample05FileExperiments
 	"
+	Transcript clear.
 	Spur64ImageBuilder new
 		buildExample05FileExperiments;
 		saveImageTo: 'Example05FileExperiments.image' asFileEntry.
@@ -2288,9 +2293,10 @@ buildExample05FileExperiments
 	"Creating the start process requires CompiledMethods to be there"
 	self addStartProcess.! !
 
-!ImageBuilder methodsFor: 'image building examples' stamp: 'jmv 29/Aug/2025 11:16:18'!
+!ImageBuilder methodsFor: 'image building examples' stamp: 'jmv 2/Nov/2026, 2:17:40 pm (UTC)'!
 buildExample06LoadDynamicLibrary
 	"
+	Transcript clear.
 	Spur64ImageBuilder new
 		buildExample06LoadDynamicLibrary;
 		saveImageTo: 'Example06LoadDynamicLibrary.image' asFileEntry.
@@ -2339,9 +2345,10 @@ buildExample06LoadDynamicLibrary
 	"Creating the start process requires CompiledMethods to be there"
 	self addStartProcess.! !
 
-!ImageBuilder methodsFor: 'image building examples' stamp: 'jmv 29/Aug/2025 11:16:28'!
+!ImageBuilder methodsFor: 'image building examples' stamp: 'jmv 2/Nov/2026, 2:16:48 pm (UTC)'!
 buildExample07LoadDynamicLibrary
 	"
+	Transcript clear.
 	Spur64ImageBuilder new
 		buildExample07LoadDynamicLibrary;
 		saveImageTo: 'Example07LoadDynamicLibrary.image' asFileEntry.
@@ -2381,7 +2388,7 @@ buildExample07LoadDynamicLibrary
 	"Creating the start process requires CompiledMethods to be there"
 	self addStartProcess.! !
 
-!ImageBuilder methodsFor: 'foreign objects' stamp: 'jmv 8/May/2025 14:51:17'!
+!ImageBuilder methodsFor: 'foreign objects' stamp: 'jmv 8/May/2025, 5:51:17 pm (UTC)'!
 addExistingMethod: aCompiledMethod
 
 	| methodSpec methodForeignObject |
@@ -2394,7 +2401,7 @@ addExistingMethod: aCompiledMethod
 	methods add: methodSpec.
 	^methodForeignObject! !
 
-!ImageBuilder methodsFor: 'foreign objects' stamp: 'jmv 29/Jun/2023 16:56:41'!
+!ImageBuilder methodsFor: 'foreign objects' stamp: 'jmv 29/Jun/2023, 7:56:41 pm (UTC)'!
 addGlobalNamed: aSymbol value: anObject
 	"The key aSymbol is added to the foreignObjectsMap.
 	The value is not, as it should be referenced through the key, or through the association, as a global binding.
@@ -2423,7 +2430,7 @@ addGlobalNamed: aSymbol value: anObject
 
 	^{ globalBindingAssociationForeignObject. valueForeignObject }! !
 
-!ImageBuilder methodsFor: 'foreign objects' stamp: 'jmv 2/Aug/2023 09:59:25'!
+!ImageBuilder methodsFor: 'foreign objects' stamp: 'jmv 2/Aug/2023, 12:59:25 pm (UTC)'!
 addMethodSpec: aMethodSpec
 
 	| methodForeignObject classOrMetaclassForeignObject |
@@ -2448,7 +2455,7 @@ addMethodSpec: aMethodSpec
 
 	^methodForeignObject! !
 
-!ImageBuilder methodsFor: 'foreign objects' stamp: 'jmv 23/Jun/2023 17:59:36'!
+!ImageBuilder methodsFor: 'foreign objects' stamp: 'jmv 23/Jun/2023, 8:59:36 pm (UTC)'!
 addSpecial: anObject hash: identityHash nameOfClassToInstantiate: nameOfClassToInstantiate
 	"For special objects nil true, false"
 
@@ -2459,7 +2466,7 @@ addSpecial: anObject hash: identityHash nameOfClassToInstantiate: nameOfClassToI
 	self map: anObject toForeignObject: foreignObject.
 	^foreignObject! !
 
-!ImageBuilder methodsFor: 'foreign objects' stamp: 'jmv 12/Jul/2023 11:34:06'!
+!ImageBuilder methodsFor: 'foreign objects' stamp: 'jmv 12/Jul/2023, 2:34:06 pm (UTC)'!
 createForeignObjectFor: anObject
 	"anObject will be included in the new image
 	Create and answer an instance of aForeignObjectClass for it.
@@ -2484,7 +2491,7 @@ createForeignObjectFor: anObject
 		ifFalse: [ self createForeignObjectFor: possiblyConvertedObject hash: self newObjectHash class: foClass ].
 	^foreignObject! !
 
-!ImageBuilder methodsFor: 'foreign objects' stamp: 'jmv 23/Jun/2023 15:46:02'!
+!ImageBuilder methodsFor: 'foreign objects' stamp: 'jmv 23/Jun/2023, 6:46:02 pm (UTC)'!
 createForeignObjectFor: anObject hash: identityHash class: aForeignObjectClass
 	"anObject will be included in the new image
 	Create and answer an instance of aForeignObjectClass for it.
@@ -2497,13 +2504,13 @@ createForeignObjectFor: anObject hash: identityHash class: aForeignObjectClass
 
 	self subclassResponsibility! !
 
-!ImageBuilder methodsFor: 'foreign objects' stamp: 'jmv 23/Jun/2023 15:37:44'!
+!ImageBuilder methodsFor: 'foreign objects' stamp: 'jmv 23/Jun/2023, 6:37:44 pm (UTC)'!
 findClassNamed: aSymbol
 	"Answer the foreign object that represents the class that will be named as the argument."
 
 	^foreignObjectsMap at: (classes at: aSymbol)! !
 
-!ImageBuilder methodsFor: 'foreign objects' stamp: 'jmv 26/Jun/2023 17:16:35'!
+!ImageBuilder methodsFor: 'foreign objects' stamp: 'jmv 26/Jun/2023, 8:16:35 pm (UTC)'!
 findForeignObjectFor: anObjectToInclude
 	"anObjectToInclude must already be mapped,
 	except for immediates. We can create them on the fly."
@@ -2518,7 +2525,7 @@ findForeignObjectFor: anObjectToInclude
 
 	^self error: 'Object not allocated (No ForeignObject found for it)'.! !
 
-!ImageBuilder methodsFor: 'foreign objects' stamp: 'jmv 6/Jul/2023 09:45:10'!
+!ImageBuilder methodsFor: 'foreign objects' stamp: 'jmv 6/Jul/2023, 12:45:10 pm (UTC)'!
 findGlobalBindingNamed: aSymbol
 	"Answer the foreign object for the Association that holds global named as the argument.
 	Answer nil if no such global"
@@ -2531,7 +2538,7 @@ findGlobalBindingNamed: aSymbol
 						= aSymbol ] ]
 			ifNone: nil! !
 
-!ImageBuilder methodsFor: 'foreign objects' stamp: 'jmv 23/Jun/2023 15:50:24'!
+!ImageBuilder methodsFor: 'foreign objects' stamp: 'jmv 23/Jun/2023, 6:50:24 pm (UTC)'!
 findOrAdd: anObjectToInclude
 	"anObjectToInclude will be included in the new image.
 	Create and add a ForeignObject if needed.
@@ -2544,7 +2551,7 @@ Por ejemplo, las refs a globales deberian entrar por nombre. Si aca empezamos a 
 		self map: anObjectToInclude toForeignObject: fo.
 		fo ]! !
 
-!ImageBuilder methodsFor: 'foreign objects' stamp: 'jmv 26/Jun/2023 15:39:49'!
+!ImageBuilder methodsFor: 'foreign objects' stamp: 'jmv 26/Jun/2023, 6:39:49 pm (UTC)'!
 findOrAddClassSpec: classSpec
 	"Ensure argument is added, but don't add it twice"
 
@@ -2555,7 +2562,7 @@ findOrAddClassSpec: classSpec
 	self map: classSpec toForeignObject: classForeignObject.
 	^classForeignObject.! !
 
-!ImageBuilder methodsFor: 'foreign objects' stamp: 'jmv 29/Jun/2023 17:04:36'!
+!ImageBuilder methodsFor: 'foreign objects' stamp: 'jmv 29/Jun/2023, 8:04:36 pm (UTC)'!
 findOrAddLiteral: aLiteral
 	"aLiteral can be a String or Symbol. Also an Array of them.
 	Additionally, aLiteral may be any object that answers true to #isLiteral
@@ -2591,14 +2598,14 @@ findOrAddLiteral: aLiteral
 
 	^newForeignObject! !
 
-!ImageBuilder methodsFor: 'foreign objects' stamp: 'jmv 23/Jun/2023 17:03:49'!
+!ImageBuilder methodsFor: 'foreign objects' stamp: 'jmv 23/Jun/2023, 8:03:49 pm (UTC)'!
 foreignObjectClassFor: anObject
 	"Answer the correct ForeignObject subclass to represent anObject.
 	Redefined in subclasses for some specific cases."
 
 	^ForeignObject subclassFor: anObject.! !
 
-!ImageBuilder methodsFor: 'foreign objects' stamp: 'jmv 23/Jun/2023 15:50:18'!
+!ImageBuilder methodsFor: 'foreign objects' stamp: 'jmv 23/Jun/2023, 6:50:18 pm (UTC)'!
 map: localObject toForeignObject: foreignObject
 	"Any reference to localObject will be converted to a reference to the object to be materialized by foreignObject."
 
@@ -2606,7 +2613,7 @@ map: localObject toForeignObject: foreignObject
 		self error: 'Object to map to ForeignObjects added twice!!' ].
 	foreignObjectsMap at: localObject put: foreignObject! !
 
-!ImageBuilder methodsFor: 'globals' stamp: 'jmv 14/Jul/2023 10:53:26'!
+!ImageBuilder methodsFor: 'globals' stamp: 'jmv 14/Jul/2023, 1:53:26 pm (UTC)'!
 addDisplay
 	"This assumes the shape of DisplayScreen and included ivars will not change..."
 
@@ -2620,7 +2627,7 @@ addDisplay
 	bitmapFO := self createForeignObjectFor: bitmap.
 	self map: bitmap toForeignObject: bitmapFO.! !
 
-!ImageBuilder methodsFor: 'globals' stamp: 'jmv 18/Sep/2023 15:38:49'!
+!ImageBuilder methodsFor: 'globals' stamp: 'jmv 18/Sep/2023, 6:38:49 pm (UTC)'!
 addProcessor
 	"This assumes the shape of ProcessorScheduler, Process, and included ivars will not change...
 	When bootstrapping from files, or from a separate hierarchy,
@@ -2631,7 +2638,7 @@ addProcessor
 	foreignObjectsForBindingAndValue := self addGlobalNamed: #Processor value: processor.
 	processorBindingForeignObject := foreignObjectsForBindingAndValue first.! !
 
-!ImageBuilder methodsFor: 'globals' stamp: 'jmv 23/May/2023 14:47:59'!
+!ImageBuilder methodsFor: 'globals' stamp: 'jmv 23/May/2023, 5:47:59 pm (UTC)'!
 addSensor
 	"The actual instance will be created on startup.
 	See EventSensor class >> #install
@@ -2639,7 +2646,7 @@ addSensor
 
 	self addGlobalNamed: #Sensor value: nil.! !
 
-!ImageBuilder methodsFor: 'globals' stamp: 'jmv 1/Jun/2023 15:03:14'!
+!ImageBuilder methodsFor: 'globals' stamp: 'jmv 1/Jun/2023, 6:03:14 pm (UTC)'!
 addSmalltalk
 	"This assumes the shape of SystemDictionary will not change..."
 
@@ -2648,7 +2655,7 @@ addSmalltalk
 	foreignObjectsForBindingAndValue := self addGlobalNamed: #Smalltalk value: smalltalkObject.
 	smalltalkForeignObject := foreignObjectsForBindingAndValue second.! !
 
-!ImageBuilder methodsFor: 'globals' stamp: 'jmv 15/Sep/2023 11:06:26'!
+!ImageBuilder methodsFor: 'globals' stamp: 'jmv 15/Sep/2023, 2:06:26 pm (UTC)'!
 addStartProcess
 	"This assumes the shape of ProcessorScheduler, Process, and included ivars will not change...
 	When bootstrapping from files, or from a separate hierarchy,
@@ -2683,7 +2690,7 @@ addStartProcess
 		instVarNamed: 'activeProcess'
 		put: (self createForeignObjectFor: startProcess).! !
 
-!ImageBuilder methodsFor: 'globals' stamp: 'jmv 18/Sep/2023 15:44:08'!
+!ImageBuilder methodsFor: 'globals' stamp: 'jmv 18/Sep/2023, 6:44:08 pm (UTC)'!
 addUndeclared
 	"This assumes the shape of Dictionary will not change..."
 
@@ -2695,7 +2702,7 @@ addUndeclared
 	undeclaredDictionary instVarNamed: 'array' put: dictArrayForeignObject.
 	self addGlobalNamed: #Undeclared value: undeclaredDictionary.! !
 
-!ImageBuilder methodsFor: 'smalltalk dictionary' stamp: 'jmv 26/Jun/2023 18:01:46'!
+!ImageBuilder methodsFor: 'smalltalk dictionary' stamp: 'jmv 26/Jun/2023, 9:01:46 pm (UTC)'!
 fillSmalltalkDictionary
 	"Create thre contents of the Smalltalk SystemDictionary for the new image.
 	Do it here, by 'remote control'. Assumes the structure of SystemDictionary is same as in this image,
@@ -2727,7 +2734,7 @@ fillSmalltalkDictionary
 	smalltalkArrayForeignObject := self createForeignObjectFor: smalltalkArray.
 	smalltalkObject instVarNamed: 'array' put: smalltalkArrayForeignObject.! !
 
-!ImageBuilder methodsFor: 'smalltalk dictionary' stamp: 'jmv 24/May/2023 09:44:06'!
+!ImageBuilder methodsFor: 'smalltalk dictionary' stamp: 'jmv 24/May/2023, 12:44:06 pm (UTC)'!
 systemDictionaryArray: array add: anAssociationForeignObject
 	"Essentially copied from Dictionary >> #add:
 	Assumes SystemDictionary will be pretty much the same in the generated image.
@@ -2740,7 +2747,7 @@ systemDictionaryArray: array add: anAssociationForeignObject
 	(array at: index) ifNotNil: [ self error: 'Duplicated global!!' ].
 	array at: index put: anAssociationForeignObject.! !
 
-!ImageBuilder methodsFor: 'smalltalk dictionary' stamp: 'jmv 23/Jun/2023 15:15:45'!
+!ImageBuilder methodsFor: 'smalltalk dictionary' stamp: 'jmv 23/Jun/2023, 6:15:45 pm (UTC)'!
 systemDictionaryArray: array at: keyForeignObject put: classForeignObject
 	"Essentially copied from Dictionary >> #at:put:
 	Assumes SystemDictionary will be pretty much the same in the generated image.
@@ -2754,7 +2761,7 @@ systemDictionaryArray: array at: keyForeignObject put: classForeignObject
 	globalBindingAssociationForeignObject := self createForeignObjectFor: globalBindingAssociation.
 	array at: index put: globalBindingAssociationForeignObject.! !
 
-!ImageBuilder methodsFor: 'smalltalk dictionary' stamp: 'jmv 6/Jul/2023 13:10:36'!
+!ImageBuilder methodsFor: 'smalltalk dictionary' stamp: 'jmv 6/Jul/2023, 4:10:36 pm (UTC)'!
 systemDictionaryArray: array scanFor: keyForeignObject
 	"Essentially copied from IdentityDictionary >> #scanFor:
 	Assumes SystemDictionary will be pretty much the same in the generated image."
@@ -2777,69 +2784,69 @@ systemDictionaryArray: array scanFor: keyForeignObject
 
 	self error: 'There is no free space in the newly created Smalltalk dictionary!!'.! !
 
-!ImageBuilder methodsFor: 'services' stamp: 'jmv 15/May/2023 12:10:14'!
+!ImageBuilder methodsFor: 'services' stamp: 'jmv 15/May/2023, 3:10:14 pm (UTC)'!
 newObjectHash
 	^self subclassResponsibility! !
 
-!ImageBuilder methodsFor: 'services' stamp: 'jmv 17/Aug/2023 15:42:14'!
+!ImageBuilder methodsFor: 'services' stamp: 'jmv 17/Aug/2023, 6:42:14 pm (UTC)'!
 on: aStream nexWordPut: aNumber
 	"Write #wordSize bytes. Use 'isBigEndian' endianess."
 	self subclassResponsibility! !
 
-!ImageBuilder methodsFor: 'services' stamp: 'jmv 17/Aug/2023 15:53:45'!
+!ImageBuilder methodsFor: 'services' stamp: 'jmv 17/Aug/2023, 6:53:45 pm (UTC)'!
 on: aStream nextUint16Put: aNumber
 	"Write 2 bytes. Use 'isBigEndian' endianess."
 
 	aStream nextUint16Put: aNumber bigEndian: isBigEndian.! !
 
-!ImageBuilder methodsFor: 'services' stamp: 'jmv 17/Aug/2023 15:53:51'!
+!ImageBuilder methodsFor: 'services' stamp: 'jmv 17/Aug/2023, 6:53:51 pm (UTC)'!
 on: aStream nextUint32Put: aNumber
 	"Write 4 bytes. Use 'isBigEndian' endianess."
 
 	aStream nextUint32Put: aNumber bigEndian: isBigEndian.! !
 
-!ImageBuilder methodsFor: 'services' stamp: 'jmv 17/Aug/2023 15:53:57'!
+!ImageBuilder methodsFor: 'services' stamp: 'jmv 17/Aug/2023, 6:53:57 pm (UTC)'!
 on: aStream nextUint64Put: aNumber
 	"Write 8 bytes. Use 'isBigEndian' endianess."
 
 	aStream nextUint64Put: aNumber bigEndian: isBigEndian.! !
 
-!ImageBuilder methodsFor: 'format constants' stamp: 'jmv 10/May/2023 12:04:59'!
+!ImageBuilder methodsFor: 'format constants' stamp: 'jmv 10/May/2023, 3:04:59 pm (UTC)'!
 imageFormat
 	"Answer the number that identifies this image format"
 	self subclassResponsibility ! !
 
-!ImageBuilder methodsFor: 'format constants' stamp: 'jmv 10/May/2023 12:24:06'!
+!ImageBuilder methodsFor: 'format constants' stamp: 'jmv 10/May/2023, 3:24:06 pm (UTC)'!
 imageHeaderSize
 	"In Bytes"
 	self subclassResponsibility ! !
 
-!ImageBuilder methodsFor: 'format constants' stamp: 'jmv 23/May/2023 16:29:37'!
+!ImageBuilder methodsFor: 'format constants' stamp: 'jmv 23/May/2023, 7:29:37 pm (UTC)'!
 maxIdentityHash
 	"Answer the maximum identityHash value supported by the VM."
 
 	self subclassResponsibility ! !
 
-!ImageBuilder methodsFor: 'format constants' stamp: 'jmv 10/May/2023 12:26:29'!
+!ImageBuilder methodsFor: 'format constants' stamp: 'jmv 10/May/2023, 3:26:29 pm (UTC)'!
 wordSize
 	"Also size of an oop.
 	In Bytes"
 	self subclassResponsibility ! !
 
-!ImageBuilder methodsFor: 'image file saving' stamp: 'jmv 18/Apr/2024 14:45:42'!
+!ImageBuilder methodsFor: 'image file saving' stamp: 'jmv 18/Apr/2024, 5:45:42 pm (UTC)'!
 writeImageFileHeaderOn: aStream byteSize: imageByteSizeIncludingHeader
 	"Write an appropriate image file header.
 	Intended to be called after saving the heap to the file, and setting #position: to zero."
 
 	self subclassResponsibility! !
 
-!SpurImageBuilder methodsFor: 'initialization' stamp: 'jmv 15/May/2023 16:25:30'!
+!SpurImageBuilder methodsFor: 'initialization' stamp: 'jmv 15/May/2023, 7:25:30 pm (UTC)'!
 initialize
 	super initialize.
 	lastHash := 1.
 	lastClassIndex := 1023. "First regular class will have index 1024, and will be stored in the second page of the class table."! !
 
-!SpurImageBuilder methodsFor: 'image building' stamp: 'jmv 17/Jul/2023 12:36:45'!
+!SpurImageBuilder methodsFor: 'image building' stamp: 'jmv 17/Jul/2023, 3:36:45 pm (UTC)'!
 addSpurHiddenObjectsIfRequired
 
 	"Create and add a SpurFreeListsForeignObject, to properly allocate the FreeLists object needed in Spur images."
@@ -2848,7 +2855,7 @@ addSpurHiddenObjectsIfRequired
 	"Class Table and Hidden Roots. First page of the Class Table."
 	self addClassTable.! !
 
-!SpurImageBuilder methodsFor: 'image building' stamp: 'jmv 18/Apr/2024 14:26:12'!
+!SpurImageBuilder methodsFor: 'image building' stamp: 'jmv 18/Apr/2024, 5:26:12 pm (UTC)'!
 addVmKnownClasses
 	"Some classes are known by the VM.
 	- They have specific classIndex and identityHash
@@ -2887,7 +2894,7 @@ addVmKnownClasses
 		classForeignObject := self addClassAndMetaclassSpec: classSpec classIndexOrNil: specialHash.
 		self map: classSpec toForeignObject: classForeignObject ].! !
 
-!SpurImageBuilder methodsFor: 'image building' stamp: 'jmv 18/Apr/2024 14:57:25'!
+!SpurImageBuilder methodsFor: 'image building' stamp: 'jmv 18/Apr/2024, 5:57:25 pm (UTC)'!
 fillSpecialObjectsArray
 	"Create a SpecialObjectsArray for our new image. See #recreateSpecialObjectsArray.
 	Add a ForeignObject for it to our foreign object list and dicitonary.
@@ -3010,7 +3017,7 @@ fillSpecialObjectsArray
 	"60 reserved for Sista class trap message"
 	specialObjectsArray at: 60 put: (self findOrAddLiteral: #classTrapFor:).! !
 
-!SpurImageBuilder methodsFor: 'foreign objects' stamp: 'jmv 14/Aug/2023 16:37:15'!
+!SpurImageBuilder methodsFor: 'foreign objects' stamp: 'jmv 14/Aug/2023, 7:37:15 pm (UTC)'!
 addClassAndMetaclassSpec: aClassSpec classIndexOrNil: classIndexOrNil
 	"Add ForeignObjects both for class and metaclass to the list.
 	But only add the one for the class to the foreignObjects dictionary, because they share the spec.
@@ -3033,7 +3040,7 @@ The #addMethod: or whatever protocol must check that we haven't given oop and si
 	^classForeignObject
 ! !
 
-!SpurImageBuilder methodsFor: 'foreign objects' stamp: 'jmv 14/Aug/2023 16:37:20'!
+!SpurImageBuilder methodsFor: 'foreign objects' stamp: 'jmv 14/Aug/2023, 7:37:20 pm (UTC)'!
 addClassFor: aClassSpec classIndexOrNil: classIndexOrNil
 
 	| classForeignObject classPool classPoolForeignObject classPoolArray classPoolArrayForeignObject |
@@ -3073,7 +3080,7 @@ addClassFor: aClassSpec classIndexOrNil: classIndexOrNil
 
 	^classForeignObject! !
 
-!SpurImageBuilder methodsFor: 'foreign objects' stamp: 'jmv 14/Aug/2023 16:37:10'!
+!SpurImageBuilder methodsFor: 'foreign objects' stamp: 'jmv 14/Aug/2023, 7:37:10 pm (UTC)'!
 addClassSpec: aClassSpec class: aForeignObjectClass classIndexOrNil: classIndexOrNil
 	"Both for class and metaclass:
 		aForeignObjectClass may be ClassForeignObject or MetaclassForeignObject"
@@ -3092,7 +3099,7 @@ addClassSpec: aClassSpec class: aForeignObjectClass classIndexOrNil: classIndexO
 	page at: pageIdx put: behaviorForeignObject.
 	^behaviorForeignObject! !
 
-!SpurImageBuilder methodsFor: 'foreign objects' stamp: 'jmv 28/Apr/2025 10:25:28'!
+!SpurImageBuilder methodsFor: 'foreign objects' stamp: 'jmv 28/Apr/2025, 1:25:28 pm (UTC)'!
 addClassTable
 	"Add the ForeignObjects for:
 		ClassTable+HiddenRoots
@@ -3117,11 +3124,11 @@ addClassTable
 	firstPageOfClassTable := Array new: 1024.
 	classTableRoots at: 2 put: (self createForeignObjectFor: firstPageOfClassTable hash: 0 class: SpurPseudoArrayForeignObject).! !
 
-!SpurImageBuilder methodsFor: 'foreign objects' stamp: 'jmv 20/May/2023 10:23:43'!
+!SpurImageBuilder methodsFor: 'foreign objects' stamp: 'jmv 20/May/2023, 1:23:43 pm (UTC)'!
 addFreeLists
 	self subclassResponsibility! !
 
-!SpurImageBuilder methodsFor: 'foreign objects' stamp: 'jmv 14/Aug/2023 16:45:49'!
+!SpurImageBuilder methodsFor: 'foreign objects' stamp: 'jmv 14/Aug/2023, 7:45:49 pm (UTC)'!
 addMetaclassFor: aClassSpec
 
 	| metaclassForeignObject |
@@ -3129,7 +3136,7 @@ addMetaclassFor: aClassSpec
 	metaclassForeignObject instanceVariablesForeignObject: (self findOrAddLiteral: aClassSpec classInstVarNames).
 	^metaclassForeignObject! !
 
-!SpurImageBuilder methodsFor: 'foreign objects' stamp: 'jmv 6/Feb/2024 10:14:02'!
+!SpurImageBuilder methodsFor: 'foreign objects' stamp: 'jmv 6/Feb/2024, 1:14:02 pm (UTC)'!
 addMethodDictionaryFor: aClassOrMetaclassForeignObject
 	"Create a ForeignObject for a new MethodDictionary to be created.
 	Also create required ForeignObjects for its parts, i.e. the 'array' instance variable.
@@ -3159,7 +3166,7 @@ addMethodDictionaryFor: aClassOrMetaclassForeignObject
 
 	^methodDictionaryForeignObject.! !
 
-!SpurImageBuilder methodsFor: 'foreign objects' stamp: 'jmv 17/Aug/2023 16:56:47'!
+!SpurImageBuilder methodsFor: 'foreign objects' stamp: 'jmv 17/Aug/2023, 7:56:47 pm (UTC)'!
 createForeignObjectFor: anObject hash: identityHash class: aForeignObjectClass
 	"anObject will be included in the new image
 	Create and answer an instance of aForeignObjectClass for it.
@@ -3197,14 +3204,14 @@ createForeignObjectFor: anObject hash: identityHash class: aForeignObjectClass
 	lastForeignObject := fo.
 	^fo! !
 
-!SpurImageBuilder methodsFor: 'services' stamp: 'jmv 15/May/2023 16:26:26'!
+!SpurImageBuilder methodsFor: 'services' stamp: 'jmv 15/May/2023, 7:26:26 pm (UTC)'!
 newClassIndex
 	"Answer the next class index to be used."
 
 	lastClassIndex := lastClassIndex + 1.
 	^lastClassIndex! !
 
-!SpurImageBuilder methodsFor: 'services' stamp: 'jmv 28/Apr/2025 10:24:45'!
+!SpurImageBuilder methodsFor: 'services' stamp: 'jmv 28/Apr/2025, 1:24:45 pm (UTC)'!
 newObjectHash
 	"Use a Marsagalia/Brent xor & shift linear feedback shift register; see https://en.wikipedia.org/wiki/Xorshift.
 	 This cycles through all possible 22 bit states (except 0) in 2^22 - 1 iterations. It is a significant improvement
@@ -3219,7 +3226,7 @@ newObjectHash
 	lastHash := lastHash bitXor: (lastHash bitShift: -3).
 	^lastHash! !
 
-!SpurImageBuilder methodsFor: 'serialization' stamp: 'jmv 17/Aug/2023 16:30:54'!
+!SpurImageBuilder methodsFor: 'serialization' stamp: 'jmv 17/Aug/2023, 7:30:54 pm (UTC)'!
 headerBytesFor: aForeignObject
 	"Answer the total size in memory and in the generated image.
 	Include header bytes, any padding, etc."
@@ -3250,7 +3257,7 @@ headerBytesFor: aForeignObject
 			].
 	^answer.! !
 
-!SpurImageBuilder methodsFor: 'serialization' stamp: 'jmv 17/Aug/2023 16:49:47'!
+!SpurImageBuilder methodsFor: 'serialization' stamp: 'jmv 17/Aug/2023, 7:49:47 pm (UTC)'!
 sizeFieldFor: aForeignObject
 	"Answer the size field for the object header.
 	This is, the number of oop sized slots."
@@ -3266,7 +3273,7 @@ sizeFieldFor: aForeignObject
 	slotsPerWord := self wordSize / aForeignObject slotWidth.
 	^ (aForeignObject slotCountFor: self) + slotsPerWord-1 // slotsPerWord! !
 
-!SpurImageBuilder methodsFor: 'serialization' stamp: 'jmv 17/Aug/2023 17:13:33'!
+!SpurImageBuilder methodsFor: 'serialization' stamp: 'jmv 17/Aug/2023, 8:13:33 pm (UTC)'!
 sizeInBytesOfBody: aForeignObject
 	"Answer the byte size of argument, in memory and in the generated image.
 	Include any padding."
@@ -3287,7 +3294,7 @@ sizeInBytesOfBody: aForeignObject
 
 	^byteCount.! !
 
-!SpurImageBuilder methodsFor: 'serialization' stamp: 'jmv 17/Aug/2023 16:55:15'!
+!SpurImageBuilder methodsFor: 'serialization' stamp: 'jmv 17/Aug/2023, 7:55:15 pm (UTC)'!
 sizeInBytesOfHeader: aForeignObject
 	"Answer the size of the header for argument, in memory and in the generated image."
 
@@ -3297,18 +3304,18 @@ sizeInBytesOfHeader: aForeignObject
 	"Regular header is 8 bytes."
 	^8! !
 
-!SpurImageBuilder methodsFor: 'format constants' stamp: 'jmv 22/Aug/2023 13:34:39'!
+!SpurImageBuilder methodsFor: 'format constants' stamp: 'jmv 22/Aug/2023, 4:34:39 pm (UTC)'!
 lastBridge
 	self subclassResponsibility! !
 
-!SpurImageBuilder methodsFor: 'format constants' stamp: 'jmv 23/May/2023 16:30:25'!
+!SpurImageBuilder methodsFor: 'format constants' stamp: 'jmv 23/May/2023, 7:30:25 pm (UTC)'!
 maxIdentityHash
 	"Answer the maximum identityHash value supported by the VM.
 	22 bits in Spur"
 
 	^16r3FFFFF! !
 
-!SpurImageBuilder methodsFor: 'image file saving' stamp: 'jmv 10/Jun/2026 15:29:11'!
+!SpurImageBuilder methodsFor: 'image file saving' stamp: 'jmv 10/Jun/2026, 6:29:11 pm (UTC)'!
 saveImageTo: aFileEntry
 
 	| ba nextForeignObject p |
@@ -3343,7 +3350,7 @@ saveImageTo: aFileEntry
 		estimatedSize: nextFreeAddressOfImage.
 	aFileEntry forceWriteStreamDo: [ :strm | strm nextPutAll: ba ].! !
 
-!SpurImageBuilder methodsFor: 'image file saving' stamp: 'jmv 22/Aug/2023 12:19:28'!
+!SpurImageBuilder methodsFor: 'image file saving' stamp: 'jmv 22/Aug/2023, 3:19:28 pm (UTC)'!
 write: aForeignObject on: byteStream
 
 	| headerBytes |
@@ -3367,7 +3374,7 @@ write: aForeignObject on: byteStream
 	Note: This matches #sizeInBytesOfBody:"
 	[(byteStream position \\ 8) = 0] whileFalse: [byteStream nextPut: 0].! !
 
-!SpurImageBuilder methodsFor: 'image file saving' stamp: 'jmv 28/Apr/2025 10:50:15'!
+!SpurImageBuilder methodsFor: 'image file saving' stamp: 'jmv 28/Apr/2025, 1:50:15 pm (UTC)'!
 writeImageFileHeaderOn: aStream byteSize: imageByteSizeIncludingHeader
 	"Write an appropriate image file header.
 	Intended to be called after saving the heap to the file, and setting #position: to zero.
@@ -3443,7 +3450,7 @@ readImageFromFile:HeapSize:StartingAt:
 	self on: aStream nexWordPut: firstSegmentByteSize.
 	self on: aStream nexWordPut: bytesLeftInOldSpace.! !
 
-!Spur32ImageBuilder methodsFor: 'foreign objects' stamp: 'jmv 23/Jun/2023 15:17:33'!
+!Spur32ImageBuilder methodsFor: 'foreign objects' stamp: 'jmv 23/Jun/2023, 6:17:33 pm (UTC)'!
 addFreeLists
 	"
 	x-x-x-x-x-x-
@@ -3454,7 +3461,7 @@ addFreeLists
 
 	self createForeignObjectFor: nil hash: 0 class: Spur32FreeListsForeignObject.! !
 
-!Spur32ImageBuilder methodsFor: 'foreign objects' stamp: 'jmv 15/Aug/2023 18:29:55'!
+!Spur32ImageBuilder methodsFor: 'foreign objects' stamp: 'jmv 15/Aug/2023, 9:29:55 pm (UTC)'!
 foreignObjectClassFor: anObject
 	"Answer the correct ForeignObject subclass to represent anObject.
 	"
@@ -3471,7 +3478,7 @@ foreignObjectClassFor: anObject
 		
 	^super foreignObjectClassFor: anObject! !
 
-!Spur32ImageBuilder methodsFor: 'services' stamp: 'jmv 31/Jan/2024 09:30:37'!
+!Spur32ImageBuilder methodsFor: 'services' stamp: 'jmv 31/Jan/2024, 12:30:37 pm (UTC)'!
 foreignOopOfImmediateCharacter: aCharacter
 
 	| numericValue |
@@ -3479,7 +3486,7 @@ foreignOopOfImmediateCharacter: aCharacter
 	numericValue := aCharacter codePoint.
 	^(numericValue << 2) + 2.! !
 
-!Spur32ImageBuilder methodsFor: 'services' stamp: 'jmv 29/Jun/2023 16:27:03'!
+!Spur32ImageBuilder methodsFor: 'services' stamp: 'jmv 29/Jun/2023, 7:27:03 pm (UTC)'!
 foreignOopOfSmallInteger: aNumber
 
 	"Check that aNumber can actually be encoded as a SmallInteger for us."
@@ -3489,23 +3496,23 @@ foreignOopOfSmallInteger: aNumber
 		ifTrue: [((16r80000000 + aNumber) << 1) + 1]
 		ifFalse: [(aNumber << 1) + 1]! !
 
-!Spur32ImageBuilder methodsFor: 'services' stamp: 'jmv 17/Aug/2023 15:46:24'!
+!Spur32ImageBuilder methodsFor: 'services' stamp: 'jmv 17/Aug/2023, 6:46:24 pm (UTC)'!
 on: aStream nexWordPut: aNumber
 	"Write #wordSize bytes. Use 'isBigEndian' endianess."
 
 	self on: aStream nextUint32Put: aNumber.! !
 
-!Spur32ImageBuilder methodsFor: 'format constants' stamp: 'jmv 10/May/2023 12:06:56'!
+!Spur32ImageBuilder methodsFor: 'format constants' stamp: 'jmv 10/May/2023, 3:06:56 pm (UTC)'!
 imageFormat
 	"Answer the number that identifies this image format"
 	^6521! !
 
-!Spur32ImageBuilder methodsFor: 'format constants' stamp: 'jmv 10/May/2023 12:23:08'!
+!Spur32ImageBuilder methodsFor: 'format constants' stamp: 'jmv 10/May/2023, 3:23:08 pm (UTC)'!
 imageHeaderSize
 	"In Bytes"
 	^64! !
 
-!Spur32ImageBuilder methodsFor: 'format constants' stamp: 'jmv 22/Aug/2023 13:36:20'!
+!Spur32ImageBuilder methodsFor: 'format constants' stamp: 'jmv 22/Aug/2023, 4:36:20 pm (UTC)'!
 lastBridge	
 	"Memory segment last bridge (See VMMaker - SpurMemoryManager class comment)
 	See VMMaker - #initSegmentBridgeWithBytes:at:
@@ -3518,13 +3525,13 @@ lastBridge
 
 	^16r8000004A000003! !
 
-!Spur32ImageBuilder methodsFor: 'format constants' stamp: 'jmv 10/May/2023 12:26:31'!
+!Spur32ImageBuilder methodsFor: 'format constants' stamp: 'jmv 10/May/2023, 3:26:31 pm (UTC)'!
 wordSize
 	"Also size of an oop.
 	In Bytes"
 	^4! !
 
-!Spur64ImageBuilder methodsFor: 'foreign objects' stamp: 'jmv 23/Jun/2023 15:17:41'!
+!Spur64ImageBuilder methodsFor: 'foreign objects' stamp: 'jmv 23/Jun/2023, 6:17:41 pm (UTC)'!
 addFreeLists
 	"
 	x-x-x-x-x-x-
@@ -3535,7 +3542,7 @@ addFreeLists
 
 	self createForeignObjectFor: nil hash: 0 class: Spur64FreeListsForeignObject.! !
 
-!Spur64ImageBuilder methodsFor: 'foreign objects' stamp: 'jmv 15/Aug/2023 18:29:59'!
+!Spur64ImageBuilder methodsFor: 'foreign objects' stamp: 'jmv 15/Aug/2023, 9:29:59 pm (UTC)'!
 foreignObjectClassFor: anObject
 	"Answer the correct ForeignObject subclass to represent anObject.
 	"
@@ -3558,7 +3565,7 @@ foreignObjectClassFor: anObject
 		
 	^super foreignObjectClassFor: anObject! !
 
-!Spur64ImageBuilder methodsFor: 'services' stamp: 'jmv 31/Jan/2024 09:30:42'!
+!Spur64ImageBuilder methodsFor: 'services' stamp: 'jmv 31/Jan/2024, 12:30:42 pm (UTC)'!
 foreignOopOfImmediateCharacter: aCharacter
 
 	| numericValue |
@@ -3566,7 +3573,7 @@ foreignOopOfImmediateCharacter: aCharacter
 	numericValue := aCharacter codePoint.
 	^(numericValue << 3) + 2.! !
 
-!Spur64ImageBuilder methodsFor: 'services' stamp: 'jmv 19/Jul/2023 15:57:10'!
+!Spur64ImageBuilder methodsFor: 'services' stamp: 'jmv 19/Jul/2023, 6:57:10 pm (UTC)'!
 foreignOopOfSmallFloat64: aFloat
 
 	"Check that aNumber can actually be encoded as a SmalFloat64 for us."
@@ -3583,7 +3590,7 @@ foreignOopOfSmallFloat64: aFloat
 			+ ((exponentBits8 bitAnd: 16rFF) << 56) ].
 	^answer! !
 
-!Spur64ImageBuilder methodsFor: 'services' stamp: 'jmv 4/Jul/2023 20:01:31'!
+!Spur64ImageBuilder methodsFor: 'services' stamp: 'jmv 4/Jul/2023, 11:01:31 pm (UTC)'!
 foreignOopOfSmallInteger: aNumber
 
 	"Check that aNumber can actually be encoded as a SmallInteger for us."
@@ -3593,23 +3600,23 @@ foreignOopOfSmallInteger: aNumber
 		ifTrue: [((16r2000000000000000 + aNumber) << 3) + 1]
 		ifFalse: [(aNumber << 3) + 1]! !
 
-!Spur64ImageBuilder methodsFor: 'services' stamp: 'jmv 17/Aug/2023 15:46:36'!
+!Spur64ImageBuilder methodsFor: 'services' stamp: 'jmv 17/Aug/2023, 6:46:36 pm (UTC)'!
 on: aStream nexWordPut: aNumber
 	"Write #wordSize bytes. Use 'isBigEndian' endianess."
 
 	self on: aStream nextUint64Put: aNumber.! !
 
-!Spur64ImageBuilder methodsFor: 'format constants' stamp: 'jmv 10/May/2023 12:07:13'!
+!Spur64ImageBuilder methodsFor: 'format constants' stamp: 'jmv 10/May/2023, 3:07:13 pm (UTC)'!
 imageFormat
 	"Answer the number that identifies this image format"
 	^68021! !
 
-!Spur64ImageBuilder methodsFor: 'format constants' stamp: 'jmv 10/May/2023 12:23:13'!
+!Spur64ImageBuilder methodsFor: 'format constants' stamp: 'jmv 10/May/2023, 3:23:13 pm (UTC)'!
 imageHeaderSize
 	"In Bytes"
 	^128! !
 
-!Spur64ImageBuilder methodsFor: 'format constants' stamp: 'jmv 22/Aug/2023 13:34:28'!
+!Spur64ImageBuilder methodsFor: 'format constants' stamp: 'jmv 22/Aug/2023, 4:34:28 pm (UTC)'!
 lastBridge	
 	"Memory segment last bridge (See VMMaker - SpurMemoryManager class comment)
 	See VMMaker - #initSegmentBridgeWithBytes:at:
@@ -3622,18 +3629,18 @@ lastBridge
 
 	^16r80000049000003! !
 
-!Spur64ImageBuilder methodsFor: 'format constants' stamp: 'jmv 10/May/2023 12:26:34'!
+!Spur64ImageBuilder methodsFor: 'format constants' stamp: 'jmv 10/May/2023, 3:26:34 pm (UTC)'!
 wordSize
 	"Also size of an oop.
 	In Bytes"
 	^8! !
 
-!V3ImageBuilder methodsFor: 'initialization' stamp: 'jmv 15/May/2023 11:53:32'!
+!V3ImageBuilder methodsFor: 'initialization' stamp: 'jmv 15/May/2023, 2:53:32 pm (UTC)'!
 initialize
 	super initialize.
 	lastHash := 999.! !
 
-!V3ImageBuilder methodsFor: 'image building' stamp: 'jmv 17/Jul/2023 12:48:14'!
+!V3ImageBuilder methodsFor: 'image building' stamp: 'jmv 17/Jul/2023, 3:48:14 pm (UTC)'!
 fillSpecialObjectsArray
 	"Please see implementation for Spur.
 	Also see #recreateSpecialObjectsArray.
@@ -3641,7 +3648,7 @@ fillSpecialObjectsArray
 
 	self error: 'Must implement'! !
 
-!V3ImageBuilder methodsFor: 'services' stamp: 'jmv 15/May/2023 12:03:55'!
+!V3ImageBuilder methodsFor: 'services' stamp: 'jmv 15/May/2023, 3:03:55 pm (UTC)'!
 newObjectHash
 	"Answer a new 16-bit pseudo-random number for use as an identity hash.
 	Essentially copied from VMMaker ObjectMemory>>#newObjectHash, answer lower 12 bits"
@@ -3649,53 +3656,63 @@ newObjectHash
 	lastHash := 13849 + (27181 * lastHash) bitAnd: 65535.
 	^ lastHash bitAnd: 16rFFF! !
 
-!V3ImageBuilder methodsFor: 'services' stamp: 'jmv 17/Aug/2023 15:46:44'!
+!V3ImageBuilder methodsFor: 'services' stamp: 'jmv 17/Aug/2023, 6:46:44 pm (UTC)'!
 on: aStream nexWordPut: aNumber
 	"Write #wordSize bytes. Use 'isBigEndian' endianess."
 
 	self on: aStream nextUint32Put: aNumber.! !
 
-!V3ImageBuilder methodsFor: 'format constants' stamp: 'jmv 10/May/2023 14:15:21'!
+!V3ImageBuilder methodsFor: 'format constants' stamp: 'jmv 10/May/2023, 5:15:21 pm (UTC)'!
 imageFormat
 	"Answer the number that identifies this image format"
 	^6505! !
 
-!V3ImageBuilder methodsFor: 'format constants' stamp: 'jmv 10/May/2023 14:15:25'!
+!V3ImageBuilder methodsFor: 'format constants' stamp: 'jmv 10/May/2023, 5:15:25 pm (UTC)'!
 imageHeaderSize
 	"In Bytes"
 	^64! !
 
-!V3ImageBuilder methodsFor: 'format constants' stamp: 'jmv 23/May/2023 16:30:45'!
+!V3ImageBuilder methodsFor: 'format constants' stamp: 'jmv 23/May/2023, 7:30:45 pm (UTC)'!
 maxIdentityHash
 	"Answer the maximum identityHash value supported by the VM.
 	12 bits in V3 images"
 
 	^16rFFF! !
 
-!V3ImageBuilder methodsFor: 'format constants' stamp: 'jmv 10/May/2023 14:15:29'!
+!V3ImageBuilder methodsFor: 'format constants' stamp: 'jmv 10/May/2023, 5:15:29 pm (UTC)'!
 wordSize
 	"Also size of an oop.
 	In Bytes"
 	^4! !
 
-!Behavior methodsFor: '*Bootstrap-newImageOverrides' stamp: 'jmv 11/Sep/2023 11:13:25'!
+!Behavior methodsFor: '*Bootstrap-newImageOverrides' stamp: 'jmv 11/Sep/2023, 2:13:25 pm (UTC)'!
 noclash01_allInstances
 	"Answer all instances of the receiver."
 	<primitive: 177>! !
 
-!SystemDictionary methodsFor: '*Bootstrap-examples' stamp: 'jmv 6/May/2025 13:13:03'!
+!SystemDictionary methodsFor: '*Bootstrap-examples' stamp: 'jmv 2/Nov/2026, 3:51:24 pm (UTC)'!
 bootstrappedExample01Stdout
 	"A simple demo to be run in a bootstrapped Cuis image, with a minimal class library"
 
 	StdIOWriteStream stdout
 		nextPutAll: 'Hello, World!!'; newLine;
 		nextPutAll: 'This is Bootstrapped Cuis!!'; newLine;
-		nextPutAll: '3 + 4 is ', (3 + 4) printString; newLine;
-		flush.
+		nextPutAll: '3 + 4 is ', (3 + 4) printString; newLine.
+	StdIOWriteStream stdout
+		nextPutAll: 'Max SmallInteger is ', SmallInteger maxVal printString;
+		nextPutAll: ' '.
+	SmallInteger maxVal printOn: StdIOWriteStream stdout.
+	StdIOWriteStream stdout newLine.
+	StdIOWriteStream stdout
+		nextPutAll: 'Min SmallInteger is ', SmallInteger minVal printString;
+		nextPutAll: ' '.
+	SmallInteger minVal printOn: StdIOWriteStream stdout.
+	StdIOWriteStream stdout newLine.
+	StdIOWriteStream stdout flush.
 
 	self quitPrimitive: 42.! !
 
-!SystemDictionary methodsFor: '*Bootstrap-examples' stamp: 'jmv 18/Jul/2023 11:54:15'!
+!SystemDictionary methodsFor: '*Bootstrap-examples' stamp: 'jmv 18/Jul/2023, 2:54:15 pm (UTC)'!
 bootstrappedExample02DoesNotUnderstand
 	"A simple demo to be run in a bootstrapped Cuis image, with a minimal class library"
 
@@ -3710,7 +3727,7 @@ bootstrappedExample02DoesNotUnderstand
 
 	self quitPrimitive: 42.! !
 
-!SystemDictionary methodsFor: '*Bootstrap-examples' stamp: 'jmv 28/Apr/2025 10:58:05'!
+!SystemDictionary methodsFor: '*Bootstrap-examples' stamp: 'jmv 28/Apr/2025, 1:58:05 pm (UTC)'!
 bootstrappedExample03Float
 	"A simple demo to be run in a bootstrapped Cuis image, with a minimal class library"
 	StdIOWriteStream stdout
@@ -3727,7 +3744,7 @@ bootstrappedExample03Float
 
 	self quitPrimitive: 42.! !
 
-!SystemDictionary methodsFor: '*Bootstrap-examples' stamp: 'jmv 29/Aug/2025 11:22:01'!
+!SystemDictionary methodsFor: '*Bootstrap-examples' stamp: 'jmv 29/Aug/2025, 2:22:01 pm (UTC)'!
 bootstrappedExample04SymbolExperiments
 	"A simple demo to be run in a bootstrapped Cuis image, with a minimal class library"
 
@@ -3795,7 +3812,7 @@ bootstrappedExample04SymbolExperiments
 
 	self quitPrimitive: 42.! !
 
-!SystemDictionary methodsFor: '*Bootstrap-examples' stamp: 'jmv 22/May/2026 15:51:43'!
+!SystemDictionary methodsFor: '*Bootstrap-examples' stamp: 'jmv 22/May/2026, 6:51:43 pm (UTC)'!
 bootstrappedExample05FileExperiments
 	"A simple demo to be run in a bootstrapped Cuis image, with a minimal class library"
 
@@ -3849,7 +3866,7 @@ bootstrappedExample05FileExperiments
 
 	self quitPrimitive: 42.! !
 
-!SystemDictionary methodsFor: '*Bootstrap-examples' stamp: 'jmv 14/Sep/2023 10:26:15'!
+!SystemDictionary methodsFor: '*Bootstrap-examples' stamp: 'jmv 14/Sep/2023, 1:26:15 pm (UTC)'!
 bootstrappedExample06LoadDynamicLibrary
 	"A simple demo to be run in a bootstrapped Cuis image, with a minimal class library"
 
@@ -3888,7 +3905,7 @@ bootstrappedExample06LoadDynamicLibrary
 
 	self quitPrimitive: 42.! !
 
-!SystemDictionary methodsFor: '*Bootstrap-examples' stamp: 'jmv 20/Sep/2023 17:21:38'!
+!SystemDictionary methodsFor: '*Bootstrap-examples' stamp: 'jmv 20/Sep/2023, 8:21:38 pm (UTC)'!
 bootstrappedExample07LoadDynamicLibrary
 	"A simple demo to be run in a bootstrapped Cuis image, with a minimal class library"
 
