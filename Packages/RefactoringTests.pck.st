@@ -1,6 +1,6 @@
-'From Cuis7.9 [latest update: #8247] on 30 September 2026 at 3:47:13 pm'!
+'From Cuis7.9 [latest update: #8311] on 3 November 2026 at 7:02:53 pm'!
 'Description '!
-!provides: 'RefactoringTests' '1.30.0'!
+!provides: 'RefactoringTests' '1.31.0'!
 !requires: 'DynamicallyCodeCreatingTestSupport' '1.0.0' '1.*.*'!
 !requires: '__Refactoring_TestData__' '1.0.0' '1.*.*'!
 SystemOrganization addCategory: #RefactoringTests!
@@ -3295,7 +3295,7 @@ findParameterizableNodesInSameMethodFromAll: nodesToLookFor rejectingIntervals: 
 		withSelection: aSelectionToKeep
 		rejectingIntervals: rejectingIntervals.! !
 
-!ParameterizableNodesFinderTest methodsFor: 'exercising' stamp: 'JEC 29/Mar/2026, 11:55:58 pm (UTC)'!
+!ParameterizableNodesFinderTest methodsFor: 'exercising' stamp: 'jmv 3/Nov/2026, 10:02:39 pm (UTC)'!
 findParameterizableNodesNotInSameMethodFromAll: nodesToLookFor
 
 	"The only way to know if is looking for parameterizable nodes in the method that the code is being extracted is
@@ -3303,7 +3303,7 @@ findParameterizableNodesNotInSameMethodFromAll: nodesToLookFor
 
 	self 
 		findParameterizableNodesFromAll: nodesToLookFor 
-		withSelection: NodesFinder noSelection
+		withSelection: (0 to: 0)
 		rejectingIntervals: #()! !
 
 !ParameterizableNodesFinderTest methodsFor: 'exercising' stamp: 'JEC 15/Mar/2026, 11:28:17 pm (UTC)'!
