@@ -1,6 +1,6 @@
-'From Cuis7.9 [latest update: #8200] on 17 September 2026 at 2:23:56 pm'!
+'From Cuis7.9 [latest update: #8311] on 3 November 2026 at 5:34:01 pm'!
 'Description '!
-!provides: 'DynamicCuisLibraries' '1.37.0'!
+!provides: 'DynamicCuisLibraries' '1.38.0'!
 SystemOrganization addCategory: #'DynamicCuisLibraries-Code Model'!
 SystemOrganization addCategory: #'DynamicCuisLibraries-Dynamic Libraries'!
 SystemOrganization addCategory: #DynamicCuisLibraries!
@@ -838,7 +838,7 @@ for: aCompiledMethod addClassesTo: anOrderedDictionaryOfClasses
 		pragmas: (self pragmaSpecsFor: aCompiledMethod)
 		bytecodes: aCompiledMethod bytecodes.! !
 
-!MethodSpec class methodsFor: 'instance creation' stamp: 'jmv 31/Jan/2024, 12:17:10 pm (UTC)'!
+!MethodSpec class methodsFor: 'instance creation' stamp: 'jmv 3/Nov/2026, 8:33:31 pm (UTC)'!
 literalSpecsFor: aCompiledMethod
 	"Answer an Array with the regular literals. I.e. not including the last two, #penultimateLiteral and the #methodClassAssociation.
 	Convert variable bindings (shared Associations in globals, class pool or shared pools) into LiteralVariableSpec"
@@ -858,10 +858,13 @@ literalSpecsFor: aCompiledMethod
 				ExternalCallLiteralTargetFunctionIndex
 			(Apparently -1 means failure, most likely named primitive not found)"
 			lit := {lit first. lit second. 0. 0} ].
-		(lit isVariableBinding and: [(aCompiledMethod methodClass bindingOf: lit key) == lit]) ifTrue: [
-			lit := LiteralVariableSpec variableName: lit key ].
-		(MethodSpec classesAssumedToExist includes: lit class name) ifFalse: [
-			"self halt:" ('What to do with ', lit class printString) print ].
+		(lit isVariableBinding and: [(aCompiledMethod methodClass bindingOf: lit key) == lit])
+			ifTrue: [
+				lit := LiteralVariableSpec variableName: lit key ]
+			ifFalse: [
+				(MethodSpec classesAssumedToExist includes: lit class name) ifFalse: [
+					"self halt: lit class name."
+					('What to do with ', lit class printString) print ]].
 		answer at: i put: lit ].
 	^answer
 	
@@ -890,85 +893,38 @@ pragmaSpecsFor: aCompiledMethod
 	ps size = 0 ifTrue: [ ^nil ].
 	^aCompiledMethod pragmas collect: [ :p | Array with: p keyword withAll: p arguments ]! !
 
-!MethodSpec class methodsFor: 'services' stamp: 'jmv 31/Jan/2024, 12:17:32 pm (UTC)'!
+!MethodSpec class methodsFor: 'services' stamp: 'jmv 3/Nov/2026, 8:31:59 pm (UTC)'!
 classesAssumedToExist
+	"From ImageBuilder >> #addVmKnownClasses, #addFundamentalClasses, #addCommonLiteralClasses
+	In general, these are the classes any library can assume will exist."
 	"
 	MethodSpec classesAssumedToExist collect: [ :clsName | Smalltalk at: clsName ]
 	"
-	^#(
-	ProtoObject
-		Object
-			UndefinedObject
-			Boolean
-				True
-				False
-			Magnitude
-				DateAndTime
-				Duration
-				LookupKey
-					Association
-				Number
-					Float
-						BoxedFloat64
-						SmallFloat64
-					Fraction
-					Integer
-						LargePositiveInteger
-							LargeNegativeInteger
-						SmallInteger
-			Character
-			Collection
-				Set
-					Dictionary
-						IdentityDictionary
-							SystemDictionary
-						MethodDictionary
-				WeakSet
-				SequenceableCollection
-					ArrayedCollection
-						Array
-						ByteArray
-							CompiledMethod
-						FloatArray
-							Float32Array
-							Float64Array
-					CharacterSequence
-						String
-							Symbol
-						UnicodeString
-							UnicodeSymbol
-					LinkedList
-						Semaphore
-					OrderedCollection
-			Behavior
-				ClassDescription
-					Class
-					Metaclass
-			BlockClosure
-			Link
-				Process
-				ProcessorScheduler
-			Stream
-				DataStream
-					ReferenceStream
-				PositionableStream
-					ReadStream
-					WriteStream
-						ReadWriteStream
-							UniFileStream
-				StdIOReadStream
-				StdIOWriteStream
-			UniStreamReadAdaptor
-				ByteStringReadAdaptor
-				BytesReadAdaptor
-				UnicodeReadAdaptor
-			FileSystemEntry
-				DirectoryEntry
-				FileEntry
-			FileIOAccessor
-			ClassSpec
-			MethodSpec
-			LiteralVariableSpec
+	^#(#UndefinedObject 
+		#ProtoObject #Object
+			#Character
+			#Boolean #False #True 
+			#Magnitude #Number #Integer #SmallInteger #LargeNegativeInteger #LargePositiveInteger
+			#Float #SmallFloat64 #BoxedFloat64
+			#Collection
+				#SequenceableCollection #CharacterSequence #String #Symbol
+				#ArrayedCollection #ByteArray #Array
+				#LinkedList #Semaphore
+				#Set #Dictionary #IdentityDictionary #SystemDictionary
+			#LookupKey #Association
+			#InstructionStream #ContextPart #MethodContext
+			#ProcessorScheduler #Link #Process
+			#Behavior #ClassDescription #Class #Metaclass
+			#MethodDictionary
+			#CompiledMethod #AdditionalMethodState #Pragma
+			#SharedQueue
+			#Message
+			#BlockClosure
+			#Point
+			#UnicodeString
+			#Float32Array
+			#Color
+			#TranslucentColor
 		)! !
 
 !DynamicCuisLibrary methodsFor: 'creation' stamp: 'jmv 25/Apr/2023, 1:50:23 pm (UTC)'!

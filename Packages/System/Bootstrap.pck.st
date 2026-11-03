@@ -1,6 +1,6 @@
-'From Cuis7.9 [latest update: #8310] on 3 November 2026 at 10:44:12 am'!
+'From Cuis7.9 [latest update: #8311] on 3 November 2026 at 5:33:55 pm'!
 'Description '!
-!provides: 'Bootstrap' '1.49.0'!
+!provides: 'Bootstrap' '1.50.0'!
 !requires: 'DynamicCuisLibraries' '1.22.0' '1.*.*'!
 SystemOrganization addCategory: #'Bootstrap-Smalltalk Image Builders'!
 SystemOrganization addCategory: #'Bootstrap-Foreign Objects'!
@@ -1780,6 +1780,28 @@ initialize
 	globalVariables  := OrderedCollection new.
 	symbols := OrderedCollection new.! !
 
+!ImageBuilder methodsFor: 'image building' stamp: 'jmv 3/Nov/2026, 8:20:40 pm (UTC)'!
+addCommonLiteralClasses
+	"Some classes that are commonly used for Literals in methods:
+	Add ForeignObjects both for class and metaclass to the list.
+	But only add the one for the class to the foreignObjects dictionary, because they share the spec."
+	"This first implementation uses the fact that these classes already exist in the image we are running.
+	It would be better to build them from scratch, using alternative class protocol in ClassSpec,
+	most likely by compiling a source code file."
+
+	| commonLiteralClassNames |
+	commonLiteralClassNames :=
+		#(	"Regular literals"
+			#UnicodeString
+			#Float32Array),
+		#(	"Used as `backtick` literals"
+			#Color
+			#TranslucentColor).
+	commonLiteralClassNames do: [ :className | | classSpec classForeignObject |
+		classSpec := ClassSpec for: (Smalltalk at: className) addClassesTo: classes.	
+		classForeignObject := self addClassAndMetaclassSpec: classSpec classIndexOrNil: nil.
+		self map: classSpec toForeignObject: classForeignObject ].! !
+
 !ImageBuilder methodsFor: 'image building' stamp: 'jmv 18/Apr/2024, 5:09:49 pm (UTC)'!
 addFundamentalClasses
 	"Some classes that are needed for any Cuis image:
@@ -1812,7 +1834,7 @@ addFundamentalClasses
 		classForeignObject := self addClassAndMetaclassSpec: classSpec classIndexOrNil: nil.
 		self map: classSpec toForeignObject: classForeignObject ].! !
 
-!ImageBuilder methodsFor: 'image building' stamp: 'jmv 18/Apr/2024, 5:10:20 pm (UTC)'!
+!ImageBuilder methodsFor: 'image building' stamp: 'jmv 3/Nov/2026, 8:18:52 pm (UTC)'!
 addFundamentalObjectsAndClasses
 	"
 	Objects and classes added here are absolutely required for building
@@ -1834,6 +1856,9 @@ addFundamentalObjectsAndClasses
 	self addVmKnownClasses.
 	"Add other classes absolutely required by the VM, and their superclasses."
 	self addFundamentalClasses.
+	"These are not absolutely required, but commonly used for method literals,
+	and generally are #classesAssumedToExist"
+	self addCommonLiteralClasses.
 
 	"Create basic globals"
 	"Smalltalk globals inspect"
@@ -1953,7 +1978,7 @@ addWithAllMethods: classNames
 			cls methodsDo: [ :compiledMethod |
 				self addExistingMethod: compiledMethod ]].! !
 
-!ImageBuilder methodsFor: 'image building' stamp: 'jmv 3/Nov/2026, 1:35:10 pm (UTC)'!
+!ImageBuilder methodsFor: 'image building' stamp: 'jmv 3/Nov/2026, 6:37:54 pm (UTC)'!
 createAndAddWarningMethodsForMissing
 	"Create special methods to warn about improper execution of inherited methods when proper method was not included."
 
@@ -2008,7 +2033,7 @@ createAndAddWarningMethodsForMissing
 	classes do: [ :classSpec |
 		{true. false} do: [ :classSideFlag |
 			| includedSelectors existingClass |
-			includedSelectors := includedSelectorsByClass at: {classSpec. classSideFlag} ifAbsent: [`Set new`].
+			includedSelectors := includedSelectorsByClass at: {classSpec. classSideFlag} ifAbsent: [#()].
 			existingClass := Smalltalk at: classSpec name.
 			classSideFlag ifTrue: [
 				existingClass := existingClass class ].
