@@ -1,6 +1,6 @@
-'From Cuis7.9 [latest update: #8308] on 2 November 2026 at 1:19:02 pm'!
+'From Cuis7.9 [latest update: #8310] on 3 November 2026 at 10:44:12 am'!
 'Description '!
-!provides: 'Bootstrap' '1.48.0'!
+!provides: 'Bootstrap' '1.49.0'!
 !requires: 'DynamicCuisLibraries' '1.22.0' '1.*.*'!
 SystemOrganization addCategory: #'Bootstrap-Smalltalk Image Builders'!
 SystemOrganization addCategory: #'Bootstrap-Foreign Objects'!
@@ -1953,36 +1953,52 @@ addWithAllMethods: classNames
 			cls methodsDo: [ :compiledMethod |
 				self addExistingMethod: compiledMethod ]].! !
 
-!ImageBuilder methodsFor: 'image building' stamp: 'jmv 22/May/2026, 7:05:15 pm (UTC)'!
+!ImageBuilder methodsFor: 'image building' stamp: 'jmv 3/Nov/2026, 1:35:10 pm (UTC)'!
 createAndAddWarningMethodsForMissing
 	"Create special methods to warn about improper execution of inherited methods when proper method was not included."
 
 	| includedSelectorsByClass excluded |
+	"These excluded methods are no appropriate for a minimal system, and the inherited behavior is acceptable.
+	Do not report them as warnings"
 	excluded := #(
-		#(nil 							printOn: 				ProtoObject)
+		"#MinimalKernel01"
 		#(Object 						error: 					ProtoObject)
 		#(Object 						doesNotUnderstand: 	ProtoObject)
 		#(Object 						become: 				ProtoObject)
+		#(Object 						printString 				ProtoObject)
+		#('Character class' 				initialize 				ProtoObject)
+		#(AdditionalMethodState 		at: 						Object)
+		#(MethodContext 				instVarAt:put: 			Object)
+		#(Object 						printOn: 				ProtoObject)
+		#(Point 						printOn: 				ProtoObject)
+		#(AdditionalMethodState 		printOn: 				ProtoObject)
+		#(Message 						printOn: 				ProtoObject)
+		#(Collection 					printOn: 				ProtoObject)
+		#(ByteArray 					printOn: 				ProtoObject)
+		#(Array 						printOn: 				ProtoObject)
+		#(Semaphore 					printOn: 				ProtoObject)
+		#(Stream 						printOn: 				ProtoObject)
+		#(Point 						= 						Object)
+		#(Point 						hash 					Object)
+		#(CompiledMethod 			= 						ByteArray)
+		#(CompiledMethod 			hash 					ByteArray)
+		#(Message 						= 						Object)
+		#(Message 						hash 					Object)
+		#(CharacterSequence 			writeStream 			SequenceableCollection)
 		#('Symbol class' 					initialize 				ProtoObject) 	"Included in library MinimalKernel02Symbol"
 		#(SystemDictionary 			at:put: 					Object) 			"Included in library MinimalKernel04HashedCollections"
 		#(Behavior 						postCopy 				Object)  		"Included in library MinimalKernel05ClassAndMethodCreation"
 		#(Class 						copy 					Object)  		"Included in library MinimalKernel05ClassAndMethodCreation"
 		#(Metaclass 					postCopy 				Object)  		"Included in library MinimalKernel05ClassAndMethodCreation"
 		#(Metaclass 					new 					Behavior)  		"Included in library MinimalKernel05ClassAndMethodCreation"
-		#(Message 						= 						Object)
-		#(Message 						hash 					Object)
-		#(Point 						= 						Object)
-		#(Point 						hash 					Object)
-		#(AdditionalMethodState 		at: 						Object)
-		#(AdditionalMethodState 		at:put: 					Object)
+		#(CompiledMethod 			postCopy 				Object)
+		"#MinimalKernel09CodeLibraryLoad"
+		#('CompiledMethod class' 		initialize 				ProtoObject)
+		#(ClassSpec 					printOn: 				ProtoObject)
+		#(MethodSpec 					printOn: 				ProtoObject)
+		#(LiteralVariableSpec 			printOn: 				ProtoObject)
 		#(MethodSpec 					at: 						Object)
 		#(MethodSpec 					at:put: 					Object)
-		#(CompiledMethod 			= 						ByteArray)
-		#(CompiledMethod 			hash 					ByteArray)
-		#(MethodContext 				instVarAt:put: 			Object)
-		#('CompiledMethod class' 		initialize 				ProtoObject)
-		#('Character class' 				initialize 				ProtoObject)
-		#(CharacterSequence 			writeStream 			SequenceableCollection)
 		).
 	includedSelectorsByClass := Dictionary new.
 	methods do: [ :methodSpec |
@@ -2669,7 +2685,7 @@ addStartProcess
 		method: startUpMethod
 		arguments: emptyArray.
 
-	"Set program counter. Quire like doing:
+	"Set program counter. Quite like doing:
 	methodContext pc: startUpMethod initialPC,
 	(as already done during MethodContext creation above)
 	but we need do it for the target image word size, not the running image word size!!"
