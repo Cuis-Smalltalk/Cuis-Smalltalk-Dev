@@ -1,0 +1,1160 @@
+'From Cuis7.9 [latest update: #8311] on 3 November 2026 at 5:34:01 pm'!
+'Description '!
+!provides: 'SmalltalkLibraries' '1.0.0'!
+SystemOrganization addCategory: #'SmalltalkLibraries-Code Model'!
+SystemOrganization addCategory: #'SmalltalkLibraries-Dynamic Libraries'!
+SystemOrganization addCategory: #SmalltalkLibraries!
+
+
+!classDefinition: #BasicFileServices category: #SmalltalkLibraries!
+Object subclass: #BasicFileServices
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'SmalltalkLibraries'!
+!classDefinition: 'BasicFileServices class' category: #SmalltalkLibraries!
+BasicFileServices class
+	instanceVariableNames: ''!
+
+!classDefinition: #CodeElementSpec category: #'SmalltalkLibraries-Code Model'!
+Object subclass: #CodeElementSpec
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'SmalltalkLibraries-Code Model'!
+!classDefinition: 'CodeElementSpec class' category: #'SmalltalkLibraries-Code Model'!
+CodeElementSpec class
+	instanceVariableNames: ''!
+
+!classDefinition: #ClassSpec category: #'SmalltalkLibraries-Code Model'!
+CodeElementSpec subclass: #ClassSpec
+	instanceVariableNames: 'name superclass type instVarNames classVarNames poolDictionaryNames classInstVarNames instVarCountBeforeInstall instVarCountAfterInstall methodSpecsInstVarIndexMap'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'SmalltalkLibraries-Code Model'!
+!classDefinition: 'ClassSpec class' category: #'SmalltalkLibraries-Code Model'!
+ClassSpec class
+	instanceVariableNames: ''!
+
+!classDefinition: #LiteralVariableSpec category: #'SmalltalkLibraries-Code Model'!
+CodeElementSpec subclass: #LiteralVariableSpec
+	instanceVariableNames: 'variableName'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'SmalltalkLibraries-Code Model'!
+!classDefinition: 'LiteralVariableSpec class' category: #'SmalltalkLibraries-Code Model'!
+LiteralVariableSpec class
+	instanceVariableNames: ''!
+
+!classDefinition: #MethodSpec category: #'SmalltalkLibraries-Code Model'!
+CodeElementSpec subclass: #MethodSpec
+	instanceVariableNames: 'classSpec isClassSide selector headerSignFlag header literals pragmas bytecodes'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'SmalltalkLibraries-Code Model'!
+!classDefinition: 'MethodSpec class' category: #'SmalltalkLibraries-Code Model'!
+MethodSpec class
+	instanceVariableNames: ''!
+
+!classDefinition: #SmalltalkLibrary category: #'SmalltalkLibraries-Dynamic Libraries'!
+Object subclass: #SmalltalkLibrary
+	instanceVariableNames: 'classSpecs methodSpecs'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'SmalltalkLibraries-Dynamic Libraries'!
+!classDefinition: 'SmalltalkLibrary class' category: #'SmalltalkLibraries-Dynamic Libraries'!
+SmalltalkLibrary class
+	instanceVariableNames: ''!
+
+
+!BasicFileServices commentStamp: '<historical>' prior: 0!
+This class is only meant to be used by for loading SmalltalkLibraries. Main reaso is that MinimalImages, don't have the full System-File System and System-Files categories.
+
+ This class can't replace any kind of Stream, and can only deal with the whole contents of files at once.!
+
+!CodeElementSpec commentStamp: '<historical>' prior: 0!
+CodeElementSpec is an abstract class that groups classes that represent Smalltalk code. See subclasses for details.!
+
+!ClassSpec commentStamp: '<historical>' prior: 0!
+A ClassSpec describes a class definition. It includes enough detail for a real class to be created from it. But it is not a class:
+- It can not create instances. You need a real class for that.
+- It is not a global. It is not in the Smalltalk dictionary. It can not name clash.
+- There may be several ClassSpecs for different versions of a class in memory.
+- It is a regular object. Doesn't include any detail specific to Cuis ObjectMemory or VM (Spur). Doesn't refer to globals.
+- It is easy to serialize and deserialize. Nothing special to take care of.
+
+Note: Does not include any MethodSpec.!
+
+!LiteralVariableSpec commentStamp: '<historical>' prior: 0!
+A LiteralVariableSpec represent a Class variable, SharedPool variable or Global variable.
+It is stored in MethodSpec literals, instead of the original Association or ReadOnlyVariableBinding, that could refer to any Global or other object we'd rather not refer to from ClassSpec / MethodSpec.!
+
+!MethodSpec commentStamp: '<historical>' prior: 0!
+A MethodSpec describes a CompiledMethod. It includes enough detail for a real CompiledMethod to be created from it. But it is not a CompiledMethod:
+- It can't be run. Can't be added to a class.
+- There can be several MethodSpecs for different versions of a method in memory.
+- It is a regular object. Doesn't include any detail specific to Cuis ObjectMemory or VM (Spur). Doesn't refer to globals.
+- It is easy to serialize and deserialize. Nothing special to take care of.!
+
+!SmalltalkLibrary commentStamp: '<historical>' prior: 0!
+A SmalltalkLibrary defines a set of classes and methods that can be loaded into a running Cuis image. Its parts, instances of ClassSpec and MethodSpec are not actual Classes and CompiledMethods, but regular objects. Actual Classes and CompiledMethods are created from them at load time.!
+
+!BasicFileServices class methodsFor: 'services' stamp: 'jmv 14/Sep/2023, 1:47:07 pm (UTC)'!
+!methodProperties: {#libraryName -> #MinimalKernel08BasicFileServices}!
+binaryContentsOf: fileName
+	"
+	Answer a ByteArray with the complete contents of a file.
+	Name must be ASCII. It is just a file name. No path.
+	BasicFileServices binaryContentsOf: 'comoVamos.txt'
+	"
+	| fileID size bytes count |
+	fileID := self primOpen: fileName writable: false.
+	size := self primSize: fileID.
+	bytes := ByteArray new: size.
+	count := self primRead: fileID into: bytes startingAt: 1 count: size.
+	count ifNil: [
+		"Alternatively, answer nil."
+		^ self error: 'Could not read file: ', fileName ].
+	count < size ifTrue: [ bytes := bytes copyFrom: 1 to: count ].
+	self primClose: fileID.
+	^bytes! !
+
+!BasicFileServices class methodsFor: 'primitives' stamp: 'jmv 4/Sep/2023, 11:29:31 am (UTC)'!
+!methodProperties: {#libraryName -> #MinimalKernel08BasicFileServices}!
+primClose: id
+	<primitive: 'primitiveFileClose' module: 'FilePlugin'>
+	^nil! !
+
+!BasicFileServices class methodsFor: 'primitives' stamp: 'jmv 4/Sep/2023, 11:29:25 am (UTC)'!
+!methodProperties: {#libraryName -> #MinimalKernel08BasicFileServices}!
+primOpen: fileNameAsUtf8Bytes writable: writableFlag
+	<primitive: 'primitiveFileOpen' module: 'FilePlugin'>
+	^ nil
+! !
+
+!BasicFileServices class methodsFor: 'primitives' stamp: 'jmv 4/Sep/2023, 11:29:19 am (UTC)'!
+!methodProperties: {#libraryName -> #MinimalKernel08BasicFileServices}!
+primRead: id into: byteArray startingAt: startIndex count: count
+	<primitive: 'primitiveFileRead' module: 'FilePlugin'>
+	^nil! !
+
+!BasicFileServices class methodsFor: 'primitives' stamp: 'jmv 4/Sep/2023, 11:29:13 am (UTC)'!
+!methodProperties: {#libraryName -> #MinimalKernel08BasicFileServices}!
+primSize: id
+	<primitive: 'primitiveFileSize' module: 'FilePlugin'>
+	^0
+! !
+
+!BasicFileServices class methodsFor: 'primitives' stamp: 'jmv 4/Sep/2023, 11:29:31 am (UTC)'!
+!methodProperties: {#libraryName -> #MinimalKernel08BasicFileServices}!
+primWorkingDirectory
+	<primitive: 'primitiveGetWorkingDirectory' module: 'FilePlugin' error: ec>
+	^nil! !
+
+!CodeElementSpec methodsFor: 'testing' stamp: 'jmv 16/May/2023, 5:51:44 pm (UTC)'!
+is: aSymbol
+	^aSymbol == #CodeElementSpec or: [ super is: aSymbol]! !
+
+!ClassSpec methodsFor: 'accessing' stamp: 'jmv 6/Sep/2023, 8:49:25 pm (UTC)'!
+!methodProperties: {#libraryName -> #MinimalKernel09CodeLibraryLoad}!
+allInstVarCountInSpec
+	"In this Spec object. Unrelated to actual Class.
+	Including inherited from superclasses"
+	| inherited |
+	inherited := superclass
+		ifNotNil: [ superclass allInstVarCountInSpec ]
+		ifNil: [ 0 ].
+	^instVarNames size + inherited! !
+
+!ClassSpec methodsFor: 'accessing' stamp: 'jmv 20/May/2023, 4:53:54 pm (UTC)'!
+classInstVarNames
+	^classInstVarNames! !
+
+!ClassSpec methodsFor: 'accessing' stamp: 'jmv 30/Jun/2023, 6:09:56 pm (UTC)'!
+classVarNames
+	^classVarNames! !
+
+!ClassSpec methodsFor: 'accessing' stamp: 'fz 24/May/2023, 11:48:53 pm (UTC)'!
+instVarNames
+	^instVarNames! !
+
+!ClassSpec methodsFor: 'accessing' stamp: 'jmv 6/Sep/2023, 8:49:30 pm (UTC)'!
+!methodProperties: {#libraryName -> #MinimalKernel09CodeLibraryLoad}!
+methodSpecsInstVarIndexMap
+	"To be used during materialization and installing"
+	^methodSpecsInstVarIndexMap! !
+
+!ClassSpec methodsFor: 'accessing' stamp: 'jmv 17/Apr/2023, 6:12:32 pm (UTC)'!
+!methodProperties: {#libraryName -> #MinimalKernel09CodeLibraryLoad}!
+name
+	^name! !
+
+!ClassSpec methodsFor: 'accessing' stamp: 'jmv 17/Apr/2023, 2:44:53 pm (UTC)'!
+name: aSymbol
+
+	name := aSymbol.! !
+
+!ClassSpec methodsFor: 'accessing' stamp: 'jmv 23/Jun/2023, 2:04:06 pm (UTC)'!
+superclass
+	^superclass! !
+
+!ClassSpec methodsFor: 'accessing' stamp: 'jmv 6/Sep/2023, 8:49:34 pm (UTC)'!
+totalClassInstVarCountInSpec
+	"Including inherited from superclasses"
+	| inherited |
+	inherited := superclass
+		ifNotNil: [ superclass totalClassInstVarCountInSpec ]
+		ifNil: [ 0 ].
+	^classInstVarNames size + inherited! !
+
+!ClassSpec methodsFor: 'accessing' stamp: 'jmv 1/Aug/2023, 6:54:10 pm (UTC)'!
+typeOfClass
+	^type! !
+
+!ClassSpec methodsFor: 'enumerating' stamp: 'jmv 3/Aug/2023, 9:53:12 pm (UTC)'!
+!methodProperties: {#libraryName -> #MinimalKernel09CodeLibraryLoad}!
+allSuperclassesDo: aBlock 
+	"Evaluate the argument, aBlock, for each of the receiver's superclasses."
+
+	superclass ifNotNil: [
+		aBlock value: superclass.
+		superclass allSuperclassesDo: aBlock]! !
+
+!ClassSpec methodsFor: 'enumerating' stamp: 'jmv 19/Sep/2023, 3:37:29 pm (UTC)'!
+withAllSuperclassesDo: aBlock 
+	"Evaluate the argument, aBlock, for each of the receiver's superclasses."
+	aBlock value: self.
+	superclass
+		ifNotNil: [superclass withAllSuperclassesDo: aBlock]! !
+
+!ClassSpec methodsFor: 'private' stamp: 'jmv 20/May/2023, 4:52:05 pm (UTC)'!
+classInstVarNames: iVarNameCollection
+	classInstVarNames := iVarNameCollection! !
+
+!ClassSpec methodsFor: 'private' stamp: 'jmv 12/Sep/2023, 6:57:36 pm (UTC)'!
+name: aSymbol superclass: aClassSpec type: classTypeSymbol instVarNames: iVarNameCollection classVarNames: cVarNameCollection
+
+	name := aSymbol.
+	superclass := aClassSpec.
+	type := classTypeSymbol.
+	instVarNames := iVarNameCollection.
+	classVarNames := cVarNameCollection.
+	poolDictionaryNames := #().! !
+
+!ClassSpec methodsFor: 'printing' stamp: 'fz 12/May/2023, 4:43:14 pm (UTC)'!
+printOn: stream
+
+	stream nextPut: $<; nextPutAll: self name; nextPutAll: ' Spec'; nextPut: $>! !
+
+!ClassSpec methodsFor: 'testing' stamp: 'jmv 2/Jun/2026, 8:42:30 pm (UTC)'!
+!methodProperties: {#libraryName -> #MinimalKernel09CodeLibraryLoad}!
+canBeInstalled
+	"Answer false if we can't be installed in the running system.
+	Note: it is assumed that installation will happen in hierarchy order, starting from ProtoObject.
+
+	(ClassSpec for: Morph addClassesTo: OrderedDictionary new) doesExist.
+	(ClassSpec for: Morph addClassesTo: OrderedDictionary new) equalsExisting.
+	(ClassSpec for: Morph addClassesTo: OrderedDictionary new) canBeInstalled.
+	"
+
+	| existing existingSuperclass addedInstanceVariables |
+	existing := nil.
+	self doesExist ifTrue: [
+		"We already exist in the system. Our superclass must match existing superclass."
+		existing := Smalltalk at: name.
+		existingSuperclass := existing superclass.
+
+		"If either we are sublcass of nil or existing is (but not both), it means we can't be installed"
+		existingSuperclass isNil = superclass isNil ifFalse: [ ^false ].
+
+		"Not subclass of nil. Superclass must match by name."
+		existingSuperclass notNil ifTrue: [
+			existingSuperclass name = superclass name ifFalse: [ ^false ]].
+
+		"We don't allow turning a regular class (ivars) into an array, or any other such changes."
+		existing typeOfClass = type ifFalse: [ ^false ].
+
+		"We don't adjust existing class methods for differences in class ivars.
+		We don't migrate or become: classes.
+		So, class ivars must be the same as in existing class."
+		(existing class allClassInstVarNames hasEqualElements: classInstVarNames) ifFalse: [ ^false ]].
+
+	"If no new instance variables are added, shape will not change.
+	Also, we'd be not requiring migration of any instances."
+	addedInstanceVariables := existing
+		ifNil: [ instVarNames ]
+		ifNotNil: [ instVarNames reject: [ :v | existing definesInstanceVariableNamed: v ]].
+	addedInstanceVariables size = 0 ifTrue: [ ^true ].
+
+	"So we are adding instance variables, either to a new or existing class."
+	existing ifNotNil: [
+		"We're modifying the shape of the existing class, fail if there are (sub)instances"
+		existing withAllSubclassesDo: [ :cls |
+			cls instanceCount > 0 ifTrue: [ ^false ]].
+		"Also fail if some subclass already includes any variable we want to add."
+		addedInstanceVariables do: [ :v |
+			existing allSubclassesDo: [ :cls |
+				(cls definesInstanceVariableNamed: v) ifTrue: [ ^false ]]]].
+
+	"If we try to add an instance variable that is already defined in an existing superclass, we can't be installed."
+	self allSuperclassesDo: [ :clsSpec |
+		Smalltalk at: clsSpec name ifPresent: [ :cls |
+			addedInstanceVariables do: [ :v |
+				(cls definesInstanceVariableNamed: v) ifTrue: [ ^false ]]]].
+
+	"It looks like there are no problems then."
+	^true! !
+
+!ClassSpec methodsFor: 'testing' stamp: 'jmv 3/Aug/2023, 4:48:20 pm (UTC)'!
+!methodProperties: {#libraryName -> #MinimalKernel09CodeLibraryLoad}!
+doesExist
+	^(Smalltalk at: name ifAbsent: nil) isBehavior! !
+
+!ClassSpec methodsFor: 'testing' stamp: 'jmv 23/Sep/2025, 3:50:24 pm (UTC)'!
+!methodProperties: {#libraryName -> #MinimalKernel09CodeLibraryLoad}!
+equalsExisting
+	"
+	(ClassSpec for: Morph addClassesTo: OrderedDictionary new) equalsExisting
+	"
+	"
+	| allClasses |
+	allClasses := OrderedDictionary new.
+	Smalltalk allClassesDo: [ :each | 
+		self assert: (ClassSpec for: each addClassesTo: allClasses) equalsExisting ].
+	allClasses
+	" 
+	| existing existingClassPool |
+	superclass notNil ifTrue: [
+		superclass equalsExisting ifFalse: [ ^false ]].
+	self doesExist ifFalse: [ ^false ].
+	existing := Smalltalk at: name ifAbsent: [ ^false ].
+	existing isBehavior ifFalse: [ ^false ].  "Must be a class!!"
+	existing isMeta ifTrue: [ ^false ].          "We only represent the instance side"
+	existing name = name ifFalse: [ ^false ].
+	existing typeOfClass = type ifFalse: [ ^false ].
+	(existing instVarNames hasEqualElements: instVarNames) ifFalse: [ ^false ].
+	existingClassPool := existing classPool.
+	existingClassPool size = classVarNames size ifFalse: [ ^false ].
+	classVarNames do: [ :cVarName |
+		(existingClassPool includesKey: cVarName) ifFalse: [ ^false ]].
+	(existing sharedPools hasEqualElements: poolDictionaryNames) ifFalse: [ ^false ].
+	^true! !
+
+!ClassSpec methodsFor: 'materialization' stamp: 'jmv 6/Sep/2023, 8:49:38 pm (UTC)'!
+!methodProperties: {#libraryName -> #MinimalKernel09CodeLibraryLoad}!
+allInstVarCountAfterInstall
+	"In the actual Class. How it will look after installing us.
+	Including inherited from superclasses"
+	| inherited |
+	inherited := superclass
+		ifNotNil: [ superclass allInstVarCountAfterInstall ]
+		ifNil: [ 0 ].
+	^instVarCountAfterInstall + inherited! !
+
+!ClassSpec methodsFor: 'materialization' stamp: 'jmv 6/Sep/2023, 8:49:41 pm (UTC)'!
+!methodProperties: {#libraryName -> #MinimalKernel09CodeLibraryLoad}!
+allInstVarCountBeforeInstall
+	"In the actual Class. Before installing us.
+	Including inherited from superclasses"
+	| inherited |
+	inherited := superclass
+		ifNotNil: [ superclass allInstVarCountBeforeInstall ]
+		ifNil: [ 0 ].
+	^instVarCountBeforeInstall + inherited! !
+
+!ClassSpec methodsFor: 'materialization' stamp: 'jmv 6/Sep/2023, 8:49:44 pm (UTC)'!
+!methodProperties: {#libraryName -> #MinimalKernel09CodeLibraryLoad}!
+instVarCountAfterInstall
+	"In the actual Class. How it will look after installing us."
+
+	^instVarCountAfterInstall! !
+
+!ClassSpec methodsFor: 'materialization' stamp: 'jmv 28/Apr/2025, 12:34:41 pm (UTC)'!
+!methodProperties: {#libraryName -> #MinimalKernel09CodeLibraryLoad}!
+instVarCountBeforeInstall
+	"In the existing actual Class. Before installing us."
+
+	^instVarCountBeforeInstall! !
+
+!ClassSpec methodsFor: 'materialization' stamp: 'jmv 10/Aug/2023, 7:14:14 pm (UTC)'!
+!methodProperties: {#libraryName -> #MinimalKernel09CodeLibraryLoad}!
+materializeAndInstall
+	
+	^self doesExist
+		ifFalse: [ self materializeNewClass ]
+		ifTrue: [ self mergeInto: (Smalltalk at: name) ].! !
+
+!ClassSpec methodsFor: 'materialization' stamp: 'jmv 12/May/2025, 3:15:11 pm (UTC)'!
+!methodProperties: {#libraryName -> #MinimalKernel09CodeLibraryLoad}!
+materializeNewClass
+	"Only for new classes	"
+
+	| newClass metaclass newMeta builder category |
+	builder := ClassBuilder new.
+	newClass := builder
+		newSubclassOf: (superclass ifNotNil: [ Smalltalk at: superclass name ])
+		type: type
+		instanceVariables: instVarNames
+		from: nil.
+	newClass setName: name.
+
+	newClass declareClassVariables: classVarNames.
+
+	poolDictionaryNames ifNotNil: [
+		poolDictionaryNames do: [ :poolName | | pool |
+			pool := Smalltalk at: poolName asSymbol ifAbsentPut: [ Dictionary new ].
+			newClass addSharedPool: pool ]].
+
+	classInstVarNames size = 0 ifFalse: [
+		metaclass := newClass class.
+		newMeta := builder
+			newSubclassOf: metaclass superclass 
+			type: metaclass typeOfClass
+			instanceVariables: classInstVarNames
+			from: metaclass.
+		builder mutate: metaclass to: newMeta ].
+
+	"... classify ..."
+	(Smalltalk includesKey: #SystemOrganization) ifTrue: [
+		category := nil.
+		Smalltalk organization classify: newClass name under: category ].
+	Smalltalk at: newClass name put: newClass.
+	"ver si falta algo de
+	name:subclassOf:type:instanceVariableNames:classVariableNames:poolDictionaries:category:unsafe:
+	"
+	^newClass! !
+
+!ClassSpec methodsFor: 'materialization' stamp: 'jmv 14/Sep/2023, 1:13:02 pm (UTC)'!
+!methodProperties: {#libraryName -> #MinimalKernel09CodeLibraryLoad}!
+mergeInto: existingClass
+	"Ensure our instance variables, class variables, class instance variables and sharedPools are 
+	included in existingClass. Add them as needed."
+
+	| existingIvarNames newIvarNames existingClassVarNames newClassVarNames
+	existingClassInstanceVarNames newClassInstanceVarNames classInstanceVarNames
+	existingSharedPools newSharedPools
+	newClass metaclass newMeta builder |
+
+	existingIvarNames := existingClass instVarNames.
+	newIvarNames := instVarNames reject: [ :any | existingIvarNames includes: any ].
+
+	existingClassVarNames := existingClass classPool keys.
+	newClassVarNames := classVarNames reject: [ :any | existingClassVarNames includes: any ].
+
+	existingSharedPools := existingClass sharedPools asIdentitySet.
+	newSharedPools := #(). "Could create it with #streamContents:...."
+	poolDictionaryNames do: [ :poolName | | pool |
+		pool := Smalltalk at: poolName asSymbol ifAbsentPut: [ Dictionary new ].
+		(existingSharedPools includes: pool) ifFalse: [
+			newSharedPools := newSharedPools copyWith: pool ]].
+
+	existingClassInstanceVarNames := existingClass class instVarNames.
+	newClassInstanceVarNames := classInstVarNames reject: [ :any | existingClassInstanceVarNames includes: any ].
+
+	"If existingClass is already OK, do nothing."
+	(newIvarNames isEmpty and: [ newClassVarNames isEmpty and:
+			[ newSharedPools isEmpty and: [ newClassInstanceVarNames isEmpty ]]]) ifTrue: [
+		^existingClass ].
+
+	builder := ClassBuilder new.
+	newClass := builder
+		newSubclassOf: existingClass superclass
+		type: type
+		instanceVariables: existingIvarNames, newIvarNames
+		from: nil.
+	newClass setName: existingClass name.
+	newClass declareClassVariables: existingClassVarNames, newClassVarNames.
+
+	newSharedPools do: [ :pool |
+		newClass addSharedPool: pool ].
+
+	classInstanceVarNames := existingClassInstanceVarNames, newClassInstanceVarNames.
+	classInstanceVarNames notEmpty ifTrue: [
+		metaclass := newClass class.
+		newMeta := builder
+			newSubclassOf: metaclass superclass 
+			type: metaclass typeOfClass
+			instanceVariables: classInstanceVarNames
+			from: metaclass.
+		builder update: metaclass to: newMeta ].
+
+	existingClass selectorsAndMethodsDo: [ :selector :method |
+		newClass addSelectorSilently: selector withMethod: method ].
+	existingClass methodDict removeAll.
+	existingClass class selectorsAndMethodsDo: [ :selector :method |
+		newClass class addSelectorSilently: selector withMethod: method ].
+	existingClass class methodDict removeAll.
+	
+	existingClass hasSubclasses ifTrue: [
+		newClass instVarNamed: 'subclasses' put: existingClass subclasses ].
+	builder update: existingClass to: newClass.
+	^newClass! !
+
+!ClassSpec methodsFor: 'materialization' stamp: 'jmv 9/May/2025, 6:36:37 pm (UTC)'!
+!methodProperties: {#libraryName -> #MinimalKernel09CodeLibraryLoad}!
+preInstall
+	"Prepare classInstVarCountBeforeInstall, classInstVarCountAfterInstall, methodSpecsInstVarIndexMap
+	These will be needed for remapping instance variable accesses both from existing CompiledMethods
+	and our own MethodSpecs.
+	Note: we assume we #canBeInstalled.
+	Note: This method is assumed to be called in hierarchy order, especially that our superclassSpec
+		instVarCountBeforeInstall and instVarCountAfterInstall have already been set."
+
+	| existingInstVarNames specIvarsOffset afterInstallIvarsOffset |
+
+	methodSpecsInstVarIndexMap := nil.
+	"For new classes, nothing to do. No existing class, no existing subclasses.
+	Therefore, no existing methods in class or subclasses.
+	Additionally any MethodSpec is already OK, no ivar remapping needed."
+	self doesExist ifFalse: [
+		instVarCountBeforeInstall := nil.
+		instVarCountAfterInstall := instVarNames size.
+		^self ].
+
+	"We already exist in the system."
+	existingInstVarNames := (Smalltalk at: name) instVarNames.
+	instVarCountBeforeInstall := existingInstVarNames size.
+	instVarCountAfterInstall := instVarCountBeforeInstall. "to be incremented below"
+
+	specIvarsOffset := 0.
+	afterInstallIvarsOffset := 0.
+	superclass notNil ifTrue: [
+		specIvarsOffset := superclass allInstVarCountInSpec.
+		afterInstallIvarsOffset := superclass allInstVarCountAfterInstall ].
+
+	"Asking for equality is faster than repeated #indexOf:
+	No new instance variables in any superclass and
+	no changes in instance variables in us, means no remapping needed."
+	(specIvarsOffset = afterInstallIvarsOffset and: [
+		existingInstVarNames hasEqualElements: instVarNames ]) ifTrue: [
+			^self ].
+
+	"Build ivar remapping dictionary. Update classInstVarCountAfterInstall."
+	superclass notNil ifTrue: [
+		superclass methodSpecsInstVarIndexMap ifNotNil: [ :superclassMap |
+			methodSpecsInstVarIndexMap := superclassMap copy ]].
+	methodSpecsInstVarIndexMap isNil ifTrue: [
+		methodSpecsInstVarIndexMap := Dictionary new ].
+	instVarNames withIndexDo: [ :eachVar :j | | specIvarIndex afterInstallIvarsIndex |
+		specIvarIndex := specIvarsOffset + j.
+		afterInstallIvarsIndex := afterInstallIvarsOffset +
+			(existingInstVarNames indexOf: eachVar
+				ifAbsent: [ instVarCountAfterInstall := instVarCountAfterInstall + 1 ]).
+		afterInstallIvarsIndex = specIvarIndex ifFalse: [
+			methodSpecsInstVarIndexMap add: specIvarIndex -> afterInstallIvarsIndex ]].! !
+
+!ClassSpec class methodsFor: 'instance creation' stamp: 'jmv 2/Aug/2023, 2:03:59 pm (UTC)'!
+for: aClass addClassesTo: anOrderedDictionaryOfClasses
+	"aClass is a regular class that exists in the system
+	anOrderedDictionaryOfClasses will end having all required ClassSpecs, in a proper hierarchy order."
+	"
+	| sortedClassSpecs |
+	sortedClassSpecs := OrderedDictionary new.
+	ClassSpec for: SystemWindow addClassesTo: sortedClassSpecs.
+	ClassSpec for: Morph addClassesTo: sortedClassSpecs.
+	sortedClassSpecs
+	"
+	| className answer |
+	className := aClass name.
+	"Remove prefixes such as 'Noclash_', 'Noclash003_', NoclashMySpecialName_', etc "
+	(className beginsWith: 'Noclash') ifTrue: [
+		className := (className copyFrom: (className indexOf: $_ )+1 to: className size) asSymbol ].
+	anOrderedDictionaryOfClasses at: className ifPresent: [ :existing |
+		^existing ].
+	answer := self basicNew
+		name: className
+		superclass: (aClass superclass ifNotNil: [ :sc | self for: sc addClassesTo: anOrderedDictionaryOfClasses ])
+		type: aClass typeOfClass
+		instVarNames: aClass instVarNames
+		classVarNames: aClass classVarNames asArray.
+	answer classInstVarNames: aClass class instVarNames.
+	
+	"Or implement!!"
+	self assert: aClass sharedPools isEmpty.
+	
+	anOrderedDictionaryOfClasses at: className put: answer.
+	^answer! !
+
+!LiteralVariableSpec methodsFor: 'private' stamp: 'jmv 20/Apr/2023, 5:17:08 pm (UTC)'!
+variableName: aSymbol
+	variableName := aSymbol! !
+
+!LiteralVariableSpec methodsFor: 'printing' stamp: 'fz 12/May/2023, 8:25:52 pm (UTC)'!
+printOn: stream
+
+	stream nextPut: $[; nextPutAll: variableName class name ; nextPut: $ ; nextPutAll: 'literal spec -> '; nextPutAll: variableName; nextPut: $]! !
+
+!LiteralVariableSpec methodsFor: 'accessing' stamp: 'jmv 20/Apr/2023, 7:28:40 pm (UTC)'!
+!methodProperties: {#libraryName -> #MinimalKernel09CodeLibraryLoad}!
+variableName
+	^variableName! !
+
+!LiteralVariableSpec methodsFor: 'testing' stamp: 'jmv 16/May/2023, 5:51:47 pm (UTC)'!
+!methodProperties: {#libraryName -> #MinimalKernel09CodeLibraryLoad}!
+is: aSymbol
+	^aSymbol == #LiteralVariableSpec or: [ super is: aSymbol]! !
+
+!LiteralVariableSpec class methodsFor: 'instance creation' stamp: 'jmv 20/Apr/2023, 5:17:08 pm (UTC)'!
+variableName: aSymbol
+	^self basicNew variableName: aSymbol! !
+
+!MethodSpec methodsFor: 'accessing' stamp: 'jmv 30/Jun/2023, 8:41:22 pm (UTC)'!
+bytecodes
+	^bytecodes! !
+
+!MethodSpec methodsFor: 'accessing' stamp: 'jmv 29/Jul/2025, 7:28:16 pm (UTC)'!
+bytecodes: aByteArray
+	bytecodes := aByteArray! !
+
+!MethodSpec methodsFor: 'accessing' stamp: 'fz 21/Jun/2023, 10:57:43 pm (UTC)'!
+!methodProperties: {#libraryName -> #MinimalKernel09CodeLibraryLoad}!
+classSpec
+	^classSpec! !
+
+!MethodSpec methodsFor: 'accessing' stamp: 'jmv 17/Sep/2025, 12:30:42 pm (UTC)'!
+!methodProperties: {#libraryName -> #MinimalKernel09CodeLibraryLoad}!
+encoderClass
+	"Answer the encoder class that encoded the bytecodes in this method.
+	 The sign flag bit is used by the VM to select a bytecode set.  This formulation
+	 may seem odd but this has to be fast, so no property probe unless needed.
+	The fact that a positive header means byecodes are in the V3PlusClosures set,
+	and negative header means bytecodes in the SistaV1 set is hardcoded in the
+	OpenSmalltalk VMs as of August 2025."
+	
+	^ headerSignFlag
+		ifFalse: 
+			[EncoderForV3PlusClosures]
+		ifTrue:
+			[EncoderForSistaV1]! !
+
+!MethodSpec methodsFor: 'accessing' stamp: 'jmv 17/Sep/2025, 12:48:04 pm (UTC)'!
+!methodProperties: {#libraryName -> #MinimalKernel09CodeLibraryLoad}!
+header
+	| answer |
+	answer := header.
+	headerSignFlag ifTrue: [
+		answer := answer + SmallInteger minVal ].
+	^answer! !
+
+!MethodSpec methodsFor: 'accessing' stamp: 'fz 23/Jun/2023, 4:09:41 pm (UTC)'!
+isClassSide
+	^isClassSide! !
+
+!MethodSpec methodsFor: 'accessing' stamp: 'jmv 31/Aug/2023, 6:15:25 pm (UTC)'!
+!methodProperties: {#libraryName -> #MinimalKernel09CodeLibraryLoad}!
+literals
+	"Regular literals.
+	CompiledMethods have two special last literals, that are not included here.
+	They hold #selector, maybe Pragmas or method properties (Associations),
+	and #methodClass binding."
+
+	^literals ifNil: [ #() ]! !
+
+!MethodSpec methodsFor: 'accessing' stamp: 'jmv 22/Sep/2025, 9:34:45 pm (UTC)'!
+noPrimitive
+	"Take down the primitive flag if present."
+	
+	header := header bitAt: 17 put: 0.! !
+
+!MethodSpec methodsFor: 'accessing' stamp: 'jmv 31/Aug/2023, 6:18:27 pm (UTC)'!
+!methodProperties: {#libraryName -> #MinimalKernel09CodeLibraryLoad}!
+pragmaSpecs
+	^pragmas ifNil: [ #() ]! !
+
+!MethodSpec methodsFor: 'accessing' stamp: 'fz 22/Jun/2023, 1:23:04 am (UTC)'!
+selector
+	^selector! !
+
+!MethodSpec methodsFor: 'accessing' stamp: 'jmv 1/Aug/2023, 7:32:08 pm (UTC)'!
+selector: aSymbol
+	selector := aSymbol.! !
+
+!MethodSpec methodsFor: 'accessing' stamp: 'jmv 2/Jun/2023, 7:00:26 pm (UTC)'!
+spurNumLiterals
+	"Answer the number of literals used by the receiver.
+	See #numLiterals"
+
+	^ header bitAnd: 16r7FFF! !
+
+!MethodSpec methodsFor: 'copying' stamp: 'jmv 22/Sep/2025, 9:36:21 pm (UTC)'!
+copyWithBytecodes: newBytecodes
+	"Assume that newBytecodes are regular bytecodes,
+	meaning the answer will not include a primitive call.
+	The new bytecodes are in the same bytecode set as the current ones.
+	Remove the primitive bit from the header if present. Answer will not be a primitive call."
+	
+	| answer |
+	answer := self copy.
+	answer noPrimitive.
+	answer bytecodes: newBytecodes.
+	^answer! !
+
+!MethodSpec methodsFor: 'private' stamp: 'fgz 5/Sep/2023, 6:00:07 pm (UTC)'!
+at: index
+	"Compatibility with CompiledMethod"
+	^bytecodes at: index! !
+
+!MethodSpec methodsFor: 'private' stamp: 'fgz 5/Sep/2023, 6:00:16 pm (UTC)'!
+at: index put: value
+	"Compatibility with CompiledMethod"
+	^bytecodes at: index put: value! !
+
+!MethodSpec methodsFor: 'private' stamp: 'jmv 17/Sep/2025, 12:26:54 pm (UTC)'!
+classSpec: aClassSpec isClassSide: aBoolean selector: aSymbol headerSignFlag: anotherBoolean header: aNumber literals: arrayOfLiterals pragmas: arrayOfPragmas bytecodes: aByteArray
+
+	classSpec := aClassSpec.
+	isClassSide := aBoolean.
+	selector := aSymbol.
+	headerSignFlag := anotherBoolean.
+	header := aNumber.
+	literals := arrayOfLiterals.
+	pragmas := arrayOfPragmas.
+	bytecodes := aByteArray.! !
+
+!MethodSpec methodsFor: 'printing' stamp: 'jmv 17/Jul/2023, 4:53:02 pm (UTC)'!
+printOn: aStream
+
+	aStream
+		nextPutAll: 'MethodSpec:';
+		nextPutAll: classSpec name;
+		nextPutAll: (isClassSide ifTrue: [ ' class'] ifFalse: ['']);
+		nextPutAll: '>>';
+		print: selector! !
+
+!MethodSpec methodsFor: 'compatibility with CompiledMethod' stamp: 'jmv 23/Aug/2023, 5:48:38 pm (UTC)'!
+endPC
+	"Compatibility with CompiledMethod"
+	^bytecodes size! !
+
+!MethodSpec methodsFor: 'compatibility with CompiledMethod' stamp: 'jmv 26/Aug/2023, 8:39:26 pm (UTC)'!
+flushCache
+	"NOP here"! !
+
+!MethodSpec methodsFor: 'compatibility with CompiledMethod' stamp: 'jmv 6/Sep/2023, 7:55:16 pm (UTC)'!
+initialPC
+	"Compatibility with CompiledMethod"
+	^1! !
+
+!MethodSpec methodsFor: 'compatibility with CompiledMethod' stamp: 'jmv 6/Sep/2023, 8:50:13 pm (UTC)'!
+isReturnField
+	"Answer whether the receiver is a quick return of an instance variable."
+	^ self primitive between: 264 and: 519! !
+
+!MethodSpec methodsFor: 'compatibility with CompiledMethod' stamp: 'jmv 5/Aug/2025, 8:06:38 pm (UTC)'!
+primitive
+	"Answer the primitive index associated with the receiver.
+	Zero indicates that this is not a primitive method."
+
+	^(header anyMask: 65536) "Is the hasPrimitive? flag set?"
+		ifTrue: [(self at: 2) + ((self at: 3) bitShift: 8)]
+		ifFalse: [0].! !
+
+!MethodSpec methodsFor: 'compatibility with CompiledMethod' stamp: 'jmv 6/Sep/2023, 8:02:08 pm (UTC)'!
+returnField
+	"Answer the index of the instance variable returned by a quick return 
+	method."
+	| prim |
+	prim := self primitive.
+	prim < 264
+		ifTrue: [self error: 'only meaningful for quick-return']
+		ifFalse: [^ prim - 264]! !
+
+!MethodSpec methodsFor: 'materialization' stamp: 'jmv 10/Aug/2023, 6:41:49 pm (UTC)'!
+!methodProperties: {#libraryName -> #MinimalKernel09CodeLibraryLoad}!
+materializeAndInstall
+	| theClass method |
+	theClass := Smalltalk at: classSpec name.
+	isClassSide ifTrue: [ theClass := theClass class ].
+	method := self materializeIn: theClass.
+	theClass addSelectorSilently: selector withMethod: method.
+	^method! !
+
+!MethodSpec methodsFor: 'materialization' stamp: 'jmv 16/Sep/2026, 10:45:42 pm (UTC)'!
+!methodProperties: {#libraryName -> #MinimalKernel09CodeLibraryLoad}!
+materializeIn: aClass
+"
+Currently:
+	methodTrailer is zeros (No source code pointer)
+	Pragmas are supported. Any other method property is not.
+classSpec isClassSide selector 
+header literals pragmas bytecodes
+"
+	| bytesCount method j |
+	bytesCount := bytecodes size.
+	method := CompiledMethod
+		createMethod: bytesCount trailer: #(0 0 0 0) header: self header.
+	1 to: self literals size do: [ :i | | lit varName |
+		lit := literals at: i.
+		(lit is: #LiteralVariableSpec) ifTrue: [
+			varName := lit variableName.
+			lit := aClass bindingOf: varName.
+			"Create as global if needed."
+			lit isNil ifTrue: [
+				Smalltalk at: varName put: nil.
+				lit := Smalltalk bindingOf: varName]].
+		method literalAt: i put: lit].
+	method penultimateLiteral: selector.
+	self pragmaSpecs do: [ :pragmaData |
+		method addPragmaOrProperty: (Pragma
+			for: method
+			selector: pragmaData first 
+			arguments: (pragmaData copyFrom: 2 to: pragmaData size)) ].
+	method methodClass: aClass.
+	j := 1.
+	method initialPC to: method endPC do: [ :i |
+		method at: i put: (bytecodes at: j).
+		j := j + 1 ].
+	^method! !
+
+!MethodSpec class methodsFor: 'instance creation' stamp: 'jmv 16/Sep/2026, 10:43:59 pm (UTC)'!
+for: aCompiledMethod addClassesTo: anOrderedDictionaryOfClasses
+	"aCompiledMethod is a regular method that exists in the system
+	"
+	"
+	| methods sortedClassSpecs |
+	methods := OrderedCollection new.
+	sortedClassSpecs := OrderedDictionary new.
+	methods add: (MethodSpec for: AdditionalMethodState >> #selector addClassesTo: sortedClassSpecs).
+	methods add: (MethodSpec for: Object>>#copyFrom: addClassesTo: sortedClassSpecs).
+	methods add: (MethodSpec for: Object class >> #howToModifyPrimitives addClassesTo: sortedClassSpecs).
+	{methods. sortedClassSpecs}
+	"
+
+	| selector itsClass |
+	"Note: We are currently ignoring any non pragma, non #libraryName property"
+	aCompiledMethod properties propertiesAsArray do: [ :assoc | self assert: assoc key = #libraryName ].
+	selector := aCompiledMethod selector.
+	"Remove prefixes such as 'noclash_', 'noclash003_', noclashMySpecialName_', etc "
+	(selector beginsWith: 'noclash') ifTrue: [
+		selector := (selector copyFrom: (selector indexOf: $_ )+1 to: selector size) asSymbol ].
+	itsClass := aCompiledMethod methodClass.
+	^self basicNew
+		classSpec: (ClassSpec for: itsClass theNonMetaClass addClassesTo: anOrderedDictionaryOfClasses)
+		isClassSide: itsClass isMeta
+		selector: selector
+		headerSignFlag: aCompiledMethod signFlag
+		header: aCompiledMethod headerWithoutSignFlag
+		literals: (self literalSpecsFor: aCompiledMethod)
+		pragmas: (self pragmaSpecsFor: aCompiledMethod)
+		bytecodes: aCompiledMethod bytecodes.! !
+
+!MethodSpec class methodsFor: 'instance creation' stamp: 'jmv 3/Nov/2026, 8:33:31 pm (UTC)'!
+literalSpecsFor: aCompiledMethod
+	"Answer an Array with the regular literals. I.e. not including the last two, #penultimateLiteral and the #methodClassAssociation.
+	Convert variable bindings (shared Associations in globals, class pool or shared pools) into LiteralVariableSpec"
+
+	| answer s |
+	s := aCompiledMethod numLiterals-2.
+	s = 0 ifTrue: [ ^nil ].
+	answer := Array new: s.
+	1 to: answer size do: [ :i | | lit |
+		lit := aCompiledMethod literalAt: i.
+		(aCompiledMethod isNamedPrimitive and: [i=1]) ifTrue: [
+			"The VM stores information about named primitive runs in the last two entries.
+			Clear them.
+			See #isLinkedNamedPrimitive.
+			For additional details, In VMMaker package check references to 
+				ExternalCallLiteralFlagsIndex
+				ExternalCallLiteralTargetFunctionIndex
+			(Apparently -1 means failure, most likely named primitive not found)"
+			lit := {lit first. lit second. 0. 0} ].
+		(lit isVariableBinding and: [(aCompiledMethod methodClass bindingOf: lit key) == lit])
+			ifTrue: [
+				lit := LiteralVariableSpec variableName: lit key ]
+			ifFalse: [
+				(MethodSpec classesAssumedToExist includes: lit class name) ifFalse: [
+					"self halt: lit class name."
+					('What to do with ', lit class printString) print ]].
+		answer at: i put: lit ].
+	^answer
+	
+	"
+	preguntar isLiteral
+	Cualquier imagen minima debera incluir todas las clases que #isLiteral
+	Lo que no sea isLiteral o un binding que anda, sera un StreamedLiteralSpec o LiteralObjectSpec o LiteralButNotLiteralObjectSpec...
+	O no soportarlo. No sabemos que les puede pasar a esos bichos. si la clase va a estar del otro lado, etc...
+	"
+"
+Posibles candidatas. O fallar.
+SHRange
+CursorWithMask
+Color
+TranslucentColor
+TextBackgroundColor
+Text + RunArray, NotRunArray, atributos... mhhhhhh
+"! !
+
+!MethodSpec class methodsFor: 'instance creation' stamp: 'jmv 31/Aug/2023, 6:20:30 pm (UTC)'!
+pragmaSpecsFor: aCompiledMethod
+	"Answer an Array with the information of Pragmas."
+
+	| ps |
+	ps := aCompiledMethod pragmas.
+	ps size = 0 ifTrue: [ ^nil ].
+	^aCompiledMethod pragmas collect: [ :p | Array with: p keyword withAll: p arguments ]! !
+
+!MethodSpec class methodsFor: 'services' stamp: 'jmv 3/Nov/2026, 8:31:59 pm (UTC)'!
+classesAssumedToExist
+	"From ImageBuilder >> #addVmKnownClasses, #addFundamentalClasses, #addCommonLiteralClasses
+	In general, these are the classes any library can assume will exist."
+	"
+	MethodSpec classesAssumedToExist collect: [ :clsName | Smalltalk at: clsName ]
+	"
+	^#(#UndefinedObject 
+		#ProtoObject #Object
+			#Character
+			#Boolean #False #True 
+			#Magnitude #Number #Integer #SmallInteger #LargeNegativeInteger #LargePositiveInteger
+			#Float #SmallFloat64 #BoxedFloat64
+			#Collection
+				#SequenceableCollection #CharacterSequence #String #Symbol
+				#ArrayedCollection #ByteArray #Array
+				#LinkedList #Semaphore
+				#Set #Dictionary #IdentityDictionary #SystemDictionary
+			#LookupKey #Association
+			#InstructionStream #ContextPart #MethodContext
+			#ProcessorScheduler #Link #Process
+			#Behavior #ClassDescription #Class #Metaclass
+			#MethodDictionary
+			#CompiledMethod #AdditionalMethodState #Pragma
+			#SharedQueue
+			#Message
+			#BlockClosure
+			#Point
+			#UnicodeString
+			#Float32Array
+			#Color
+			#TranslucentColor
+		)! !
+
+!SmalltalkLibrary methodsFor: 'creation' stamp: 'jmv 25/Apr/2023, 1:50:23 pm (UTC)'!
+buildClassesAndMethods: aBlock
+
+	| classSpecOrderedDictionary methodSpecOrderedCollection |
+	classSpecs := nil.
+	methodSpecs := nil.
+	classSpecOrderedDictionary := OrderedDictionary new.
+	methodSpecOrderedCollection := OrderedCollection new.
+	aBlock value: classSpecOrderedDictionary value: methodSpecOrderedCollection.
+	classSpecs := classSpecOrderedDictionary values.
+	methodSpecs := methodSpecOrderedCollection asArray.! !
+
+!SmalltalkLibrary methodsFor: 'creation from image' stamp: 'jmv 25/Apr/2023, 5:41:28 pm (UTC)'!
+classes: classesOrNames classSelectors: classSideSelectors instanceSelectors: instanceSideSelectors
+	"
+	classesOrNames is an Array
+	classSideSelectors and instanceSideSelectors are Arrays with same size of classesOrNames.
+		Each element is an Array.
+	"
+	self buildClassesAndMethods: [ :classSpecODict :methodSpecOC |
+		classesOrNames with: classSideSelectors with: instanceSideSelectors
+					do: [ :classOrName :classSelectors :instanceSelectors | | eachClass |
+			eachClass := classOrName isSymbol
+				ifTrue: [ Smalltalk at: classOrName ]
+				ifFalse: [classOrName ].
+			ClassSpec for: eachClass addClassesTo: classSpecODict.
+			classSelectors do: [ :selector |
+				methodSpecOC add: (MethodSpec
+					for: (eachClass class compiledMethodAt: selector)
+					addClassesTo: classSpecODict) ].
+			instanceSelectors do: [ :selector |
+				methodSpecOC add: (MethodSpec
+					for: (eachClass compiledMethodAt: selector)
+					addClassesTo: classSpecODict) ].
+		].
+	]! !
+
+!SmalltalkLibrary methodsFor: 'file io' stamp: 'jmv 9/Jun/2026, 6:07:44 pm (UTC)'!
+writeOnFile: fileEntry
+	"
+	Feature require: 'TestSmalltalkLibraries'.
+	""
+	| sourceForLibrary lib |
+	sourceForLibrary := NoclashABC_SLibExample03.
+	lib := SmalltalkLibrary
+		withClasses: { sourceForLibrary }
+		classSelectors: { sourceForLibrary class selectors }
+		instanceSelectors: { sourceForLibrary selectors }.
+	lib writeOnFile: 'SLibExample03.SLib' asFileEntry
+	"
+	fileEntry forceWriteStreamDo: [ :fileStream |
+		(ReferenceStream on: fileStream) nextPut: self ].! !
+
+!SmalltalkLibrary methodsFor: 'installing' stamp: 'jmv 23/Sep/2025, 8:58:19 pm (UTC)'!
+!methodProperties: {#libraryName -> #MinimalKernel09CodeLibraryLoad}!
+canBeInstalled
+	classSpecs do: [ :each | each canBeInstalled ifFalse: [ ^false ]].
+
+	"Prepare for possible later validation and conversion of MethodSpecs and existing CompiledMethods"
+	classSpecs do: [ :classSpec | classSpec preInstall ].
+
+	"Check that all affected classes can be updated"
+	(self updateAffectedClassesFormat: false)
+		ifFalse: [ ^false ].
+	
+	"Possible difference between class shapes when the library was built and the shape
+	they will have after library install. Check that methods in the library can be corrected for them."
+	(self remapMethodSpecInstVarAccesses: false)
+		ifFalse: [ ^false ].
+
+	"Possible difference between class shapes in the running image, before and after installing.
+	Check that existing methods in the image that would be affected can be corrected for this."
+	(self remapExistingMethodsInstVarAccesses: false)
+		ifFalse: [ ^false ].
+
+	^true! !
+
+!SmalltalkLibrary methodsFor: 'installing' stamp: 'jmv 23/Sep/2025, 8:57:24 pm (UTC)'!
+!methodProperties: {#libraryName -> #MinimalKernel09CodeLibraryLoad}!
+installLibrary
+	"Install classes. Merge into existing classes if appropriate.
+	Note: It is absolutely crucial to have called #canBeInstalled before,
+	and have received a positive answer."
+	
+	classSpecs do: [ :classSpec |
+		classSpec equalsExisting ifFalse: [
+			classSpec materializeAndInstall ]].
+	
+	self updateAffectedClassesFormat: true.
+
+	"Convert existing methods to new class shapes if needed.
+	(ClassSpecs are allowed to add new instance variables to existing classes).
+	Failure during this phase is catastrophic."
+	self remapExistingMethodsInstVarAccesses: true.
+
+	"Convert method specs to the final shape classes will have.
+	(Maybe different because of instance variables in the actual classes that
+	are reordered or missing in ClassSpecs)"
+	self remapMethodSpecInstVarAccesses: true.
+
+	"Install methods"
+	methodSpecs do: [ :methodSpec |
+		methodSpec materializeAndInstall ].! !
+
+!SmalltalkLibrary methodsFor: 'installing' stamp: 'jmv 31/Jul/2025, 1:06:32 pm (UTC)'!
+!methodProperties: {#libraryName -> #MinimalKernel09CodeLibraryLoad}!
+remapExistingMethodsInstVarAccesses: doIt
+	"Convert existing methods to new class shapes if needed.
+	(ClassSpecs are allowed to add new instance variables to existing classes)
+	For this, displace instance variable accesses in our methodSpecs to match the final shape of classes.
+	
+	If doIt is false:
+		- Validate if remapping is possible and answer a boolean.
+		- If some CompiledMethod can not be remapped without first expanding it to use
+		    long instance variable bytecodes, then DO the conversion now and install and keep only
+		    the converted CompiledMethod. (The new CompiledMethod has identical behavior, though.)
+		- Don't raise any errors.
+		- Don't modify system behavior in any way
+		
+	If doIt is true:
+		- Assume a previous call with doIt=false has validated that the remap is possible.
+		- Assume that previous call has already replaced CompiledMethods with long instance
+		    variable bytecodes if needed.
+		- Go ahead and update CompiledMethods with the remapping and raise an error if problem arises.
+	
+	Warning: Failure during actual conversion (doIt = true) results an inconsistent system where
+		potentially many CompiledMethods will access the wrong instance variables.
+		It is extremely dangerous to continue.
+	The only safe thing to do is to EXIT THE IMAGE. It is advisable to log some debugging info before."
+
+	classSpecs do: [ :classSpec | | previousIvarCount delta |
+		previousIvarCount := classSpec instVarCountBeforeInstall.
+		previousIvarCount notNil ifTrue: [
+			delta := classSpec instVarCountAfterInstall - previousIvarCount.
+			delta > 0 ifTrue: [
+				(Smalltalk at: classSpec name) allSubclassesDo: [ :modifiedShapeClass |
+					modifiedShapeClass selectors do: [ :selector | | compiledMethod result |
+						compiledMethod := modifiedShapeClass compiledMethodAt: selector.
+						result := compiledMethod encoderClass displaceInstVarAccessesIn: compiledMethod  starting: previousIvarCount+1 by: delta doIt: doIt.
+						result ifFalse: [
+							doIt ifFalse: [
+								compiledMethod := compiledMethod encoderClass withLongInstVarAccessBytecodes: compiledMethod.
+								compiledMethod isNil ifTrue: [ ^false ].
+								modifiedShapeClass addSelectorSilently: selector withMethod: compiledMethod.
+								result := compiledMethod encoderClass displaceInstVarAccessesIn: compiledMethod  starting: previousIvarCount+1 by: delta doIt: doIt ]].
+						result ifFalse: [ ^false ]]]]]].
+	doIt ifTrue: [ Smalltalk voidCogVMState ].
+	^true.! !
+
+!SmalltalkLibrary methodsFor: 'installing' stamp: 'jmv 31/Jul/2025, 12:44:41 pm (UTC)'!
+!methodProperties: {#libraryName -> #MinimalKernel09CodeLibraryLoad}!
+remapMethodSpecInstVarAccesses: doIt
+	"Remap all instance variable accesses in our methodSpecs to match the final shape of classes.
+	
+	If doIt is false:
+		- Validate if remapping is possible and answer a boolean.
+		- If some methodSpec can not be remapped without first expanding it to use
+		    long instance variable bytecodes, then DO the conversion now and keep only
+		    the converted methodSpec.
+		- Don't raise any errors.
+		
+	If doIt is true:
+		- Assume a previous call with doIt=false has validated that the remap is possible.
+		- Assume that previous call has already replaced MethodSpecs with long instance
+		    variable bytecodes if needed.
+		- Go ahead and update MethodSpecs with the remapping and raise an error if problem arises."
+
+	1 to: methodSpecs size do: [ :i | | methodSpec result |
+		methodSpec := methodSpecs at: i.
+		methodSpec classSpec methodSpecsInstVarIndexMap ifNotNil: [ :map |
+			
+			result := methodSpec encoderClass remapInstVarAccessesIn: methodSpec asPer: map doIt: doIt.
+			result ifFalse: [
+				doIt ifFalse: [
+					methodSpec := methodSpec encoderClass withLongInstVarAccessBytecodes: methodSpec.
+					methodSpec isNil ifTrue: [ ^false ].
+					methodSpecs at: i put: methodSpec.
+					result := methodSpec encoderClass remapInstVarAccessesIn: methodSpec asPer: map doIt: doIt ]].
+			result ifFalse: [ ^false ]]].
+	^true! !
+
+!SmalltalkLibrary methodsFor: 'installing' stamp: 'jmv 23/Sep/2025, 9:00:00 pm (UTC)'!
+!methodProperties: {#libraryName -> #MinimalKernel09CodeLibraryLoad}!
+updateAffectedClassesFormat: doIt
+	"Update the format field of affected classes.
+	These are any existing class whose shape is modified (new instance variables are added by the corresponding ClassSpec)
+	AND all their subclasses."
+	
+	"Warning: Failure during conversion results an inconsistent system where the format field of many classes is invalid.
+		It is very dangerous to continue.
+	The only safe thing to do is to EXIT THE IMAGE. It is advisable to log some debugging info before."
+
+	| format oldInstVarCount newInstVarCount |
+	classSpecs do: [ :classSpec | | previousIvarCount delta |
+		previousIvarCount := classSpec instVarCountBeforeInstall.
+		previousIvarCount notNil ifTrue: [
+			delta := classSpec instVarCountAfterInstall - previousIvarCount.
+			delta > 0 ifTrue: [
+				(Smalltalk at: classSpec name) withAllSubclassesDo: [ :modifiedShapeClass |
+					oldInstVarCount := modifiedShapeClass instSize.
+					newInstVarCount := oldInstVarCount + delta.
+					newInstVarCount > 16rFFFF ifTrue: [ ^false ].
+					doIt ifTrue: [
+						format := (modifiedShapeClass format bitAnd: 16r1F0000) + newInstVarCount.
+						modifiedShapeClass setFormat: format ]]]]].
+	^true.! !
+
+!SmalltalkLibrary class methodsFor: 'instance creation' stamp: 'jmv 24/Apr/2023, 5:27:42 pm (UTC)'!
+withClasses: arrayOfClasses classSelectors: arrayOfClassSelectors instanceSelectors: arrayOfInstanceSelectors
+	"
+	SmalltalkLibrary
+		withClasses: #( Point )
+		classSelectors: #( #(x:y:) )
+		instanceSelectors: #( #( initializePvtX:y: x y #printOn:) ).
+	"
+	^ self new
+		classes: arrayOfClasses
+		classSelectors: arrayOfClassSelectors
+		instanceSelectors: arrayOfInstanceSelectors! !
+
+!SmalltalkLibrary class methodsFor: 'file io' stamp: 'jmv 4/Sep/2023, 3:15:41 pm (UTC)'!
+!methodProperties: {#libraryName -> #MinimalKernel09CodeLibraryLoad}!
+readFromFileNamed: fileName
+	"
+	(SmalltalkLibrary readFromFileNamed: 'SLibExample03.SLib')
+		canBeInstalled
+	"
+	"que pasa si el file no existe?"
+	| bytes |
+	bytes := BasicFileServices binaryContentsOf: fileName.
+	^(ReferenceStream on: bytes readStream) next! !

@@ -1,7 +1,7 @@
 'From Cuis7.9 [latest update: #8311] on 3 November 2026 at 5:33:55 pm'!
 'Description '!
-!provides: 'Bootstrap' '1.50.0'!
-!requires: 'DynamicCuisLibraries' '1.22.0' '1.*.*'!
+!provides: 'Bootstrap' '1.51.0'!
+!requires: 'SmalltalkLibraries' '1.0.0' '1.*.*'!
 SystemOrganization addCategory: #'Bootstrap-Smalltalk Image Builders'!
 SystemOrganization addCategory: #'Bootstrap-Foreign Objects'!
 
@@ -2348,15 +2348,15 @@ buildExample06LoadDynamicLibrary
 		saveImageTo: 'Example06LoadDynamicLibrary32.image' asFileEntry.
 	"
 	"
-	Feature require: 'TestDynamicCuisLibraries'.
+	Feature require: 'TestSmalltalkLibraries'.
 	""
 	| sourceForLibrary lib |
-	sourceForLibrary := NoclashABC_DclExample03.
-	lib := DynamicCuisLibrary
+	sourceForLibrary := NoclashABC_SLibExample03.
+	lib := SmalltalkLibrary
 		withClasses: { sourceForLibrary }
 		classSelectors: { sourceForLibrary class selectors }
 		instanceSelectors: { sourceForLibrary selectors }.
-	lib writeOnFile: 'DclExample03.dcl' asFileEntry
+	lib writeOnFile: 'SLibExample03.SLib' asFileEntry
 	"
 	| startUpMethodForeignObject |
 
@@ -3918,17 +3918,17 @@ bootstrappedExample06LoadDynamicLibrary
 	StdIOWriteStream stdout
 		nextPutAll: 'Hello, World!!'; newLine;
 		nextPutAll: 'This is Bootstrapped Cuis!!'; newLine;
-		nextPutAll: 'Lets try some dcl'; newLine; newLine;
+		nextPutAll: 'Lets try some SLib'; newLine; newLine;
 		flush.
 
-	className := #DclExample03.
+	className := #SLibExample03.
 	StdIOWriteStream stdout
 		nextPutAll: 'Do we include the library? ';
 		nextPutAll: ((Smalltalk includesKey: className) ifTrue: ['yes'] ifFalse: ['no']); newLine;
 		nextPutAll: 'Lets load it'; newLine;
 		flush.
 
-	(DynamicCuisLibrary readFromFileNamed: 'DclExample03.dcl')
+	(SmalltalkLibrary readFromFileNamed: 'SLibExample03.SLib')
 		canBeInstalled;
 		installLibrary.
 
@@ -3939,7 +3939,7 @@ bootstrappedExample06LoadDynamicLibrary
 
 	StdIOWriteStream stdout
 		nextPutAll: 'Lets instantiate and compute stuff: ';
-		nextPutAll: ((Smalltalk at: #DclExample03) new combined) printString;
+		nextPutAll: ((Smalltalk at: #SLibExample03) new combined) printString;
 		newLine;
 		nextPutAll: 'Thats all, Folks!!'; newLine;
 		flush.
@@ -3957,7 +3957,7 @@ bootstrappedExample07LoadDynamicLibrary
 	StdIOWriteStream stdout
 		nextPutAll: 'Hello, World!!'; newLine;
 		nextPutAll: 'This is Bootstrapped Cuis!!'; newLine;
-		nextPutAll: 'Lets try some dcl'; newLine; newLine;
+		nextPutAll: 'Lets try some SLib'; newLine; newLine;
 		flush.
 
 	StdIOWriteStream stdout
@@ -3966,7 +3966,7 @@ bootstrappedExample07LoadDynamicLibrary
 		nextPutAll: 'Lets load it'; newLine;
 		flush.
 
-	t1 := [l := DynamicCuisLibrary readFromFileNamed: 'DclExample07MorphXX.dcl'] timeToRun.
+	t1 := [l := SmalltalkLibrary readFromFileNamed: 'SLibExample07MorphXX.SLib'] timeToRun.
 	t2 := [l canBeInstalled] timeToRun.
 	t3 := [l installLibrary] timeToRun.
 
@@ -3980,7 +3980,7 @@ bootstrappedExample07LoadDynamicLibrary
 		newLine;
 		flush.
 
-	t4 := [l := DynamicCuisLibrary readFromFileNamed: 'DclExample07MorphXX10.dcl'] timeToRun.
+	t4 := [l := SmalltalkLibrary readFromFileNamed: 'SLibExample07MorphXX10.SLib'] timeToRun.
 	t5 := [l canBeInstalled] timeToRun.
 	t6 := [l installLibrary] timeToRun.
 
