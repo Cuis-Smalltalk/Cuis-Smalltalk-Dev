@@ -1,6 +1,6 @@
-'From Cuis7.9 [latest update: #8276] on 20 October 2026 at 1:45:11 pm'!
+'From Cuis7.9 [latest update: #8339] on 7 November 2026 at 10:14:02 am'!
 'Description '!
-!provides: 'SystemTests' '1.3.0'!
+!provides: 'SystemTests' '1.4.0'!
 !requires: 'DynamicallyCodeCreatingTestSupport' '1.0.0' '1.*.*'!
 SystemOrganization addCategory: #'SystemTests-Support'!
 SystemOrganization addCategory: #'SystemTests-Text'!
@@ -160,19 +160,19 @@ TrieUnicodeTest class
 	instanceVariableNames: ''!
 
 
-!FileManTest commentStamp: 'jmv 5/31/2016 10:49' prior: 0!
+!FileManTest commentStamp: 'jmv 5/31/2016 10:49'!
 FileManTest suite run!
 
-!CuisSourceFileArrayTest commentStamp: 'pb 1/24/2016 20:00' prior: 0!
+!CuisSourceFileArrayTest commentStamp: 'pb 1/24/2016 20:00'!
 This test documents the source pointer address conversion methods for CuisSourceFileArray.
 
 See class comment there. 
 !
 
-!SystemConsistencyTest commentStamp: '<historical>' prior: 0!
+!SystemConsistencyTest commentStamp: '<historical>'!
 General system - wide image health tests.!
 
-!TranscriptTest commentStamp: '<historical>' prior: 0!
+!TranscriptTest commentStamp: '<historical>'!
 Tests cases for Stream messages: 
 
 nextPutAll: when:
@@ -207,12 +207,12 @@ testRenameSystemCategoryAlsoRenameClassExtensions
 		SystemOrganization removeSystemCategory: oldCategoryName ].
 ! !
 
-!FileIOAccessorTest methodsFor: 'testing' stamp: 'jmv 15/Mar/2024, 8:53:35 pm (UTC)'!
+!FileIOAccessorTest methodsFor: 'testing' stamp: 'jmv 7/Nov/2026, 1:13:47 pm (UTC)'!
 testDirectoryExists
 	"FileIOAccessorTest debug: #testDirectoryExists"
 	| subDirString dirString |
 	subDirString := 99999 atRandom asString.
-	dirString := DirectoryEntry userBaseDirectory pathName, FileIOAccessor default slash, subDirString.
+	dirString := DirectoryEntry userBaseDirectory pathName, FileIOAccessor default slashCharacter asString, subDirString.
 
 	FileIOAccessor default createDirectory: dirString.
 
