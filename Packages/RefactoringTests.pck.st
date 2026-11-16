@@ -1,6 +1,6 @@
-'From Cuis7.9 [latest update: #8311] on 3 November 2026 at 7:02:53 pm'!
+'From Cuis7.9 [latest update: #8369] on 16 November 2026 at 1:03:31 pm'!
 'Description '!
-!provides: 'RefactoringTests' '1.31.0'!
+!provides: 'RefactoringTests' '1.32.0'!
 !requires: 'DynamicallyCodeCreatingTestSupport' '1.0.0' '1.*.*'!
 !requires: '__Refactoring_TestData__' '1.0.0' '1.*.*'!
 SystemOrganization addCategory: #RefactoringTests!
@@ -13836,7 +13836,7 @@ test07AMethodInClassToRefactorShouldBeReplacedBySubclassResponsibility
  
  	self subclassResponsibility' ! !
 
-!PushDownMethodToSubclassesTest methodsFor: 'tests' stamp: 'HAW 29/May/2023, 7:57:59 pm (UTC)'!
+!PushDownMethodToSubclassesTest methodsFor: 'tests' stamp: 'jmv 16/Nov/2026, 4:02:39 pm (UTC)'!
 test08AMethodInClassToRefactorExistsInSubClassesShouldNotOverrideTheExistingSubClassesMethodIfEquivalent
 
 	| classToRefactor classToRefactorSubclass newVariable subclassMethodContent push |
@@ -13855,9 +13855,9 @@ test08AMethodInClassToRefactorExistsInSubClassesShouldNotOverrideTheExistingSubC
 	push apply.
 
 	self assert: (classToRefactorSubclass includesSelector: self selectorToPushDown).
-	self assert: subclassMethodContent equals: (classToRefactorSubclass >> self selectorToPushDown) getSource.
+	self assert: subclassMethodContent equals: (classToRefactorSubclass >> self selectorToPushDown) sourceOrDecompiled.
 	self assert: (classToRefactor includesSelector: self selectorToPushDown).
-	self deny: (subclassMethodContent = (classToRefactor >> self selectorToPushDown) getSource).! !
+	self deny: (subclassMethodContent = (classToRefactor >> self selectorToPushDown) sourceOrDecompiled).! !
 
 !PushDownMethodToSubclassesTest methodsFor: 'tests' stamp: 'HAW 29/May/2023, 6:58:20 pm (UTC)'!
 test09CannotPushDownMethodWithoutSubclasses
