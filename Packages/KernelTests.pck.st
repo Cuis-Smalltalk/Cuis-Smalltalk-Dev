@@ -1,6 +1,6 @@
-'From Cuis7.9 [latest update: #8288] on 26 October 2026 at 3:48:48 pm'!
+'From Cuis7.9 [latest update: #8377] on 17 November 2026 at 10:49:07 am'!
 'Description '!
-!provides: 'KernelTests' '1.6.0'!
+!provides: 'KernelTests' '1.7.0'!
 SystemOrganization addCategory: #'KernelTests-Objects'!
 SystemOrganization addCategory: #'KernelTests-Classes'!
 SystemOrganization addCategory: #'KernelTests-Numbers'!
@@ -645,28 +645,28 @@ UnicodeTest class
 	instanceVariableNames: ''!
 
 
-!BecomeTestExperiment commentStamp: '<historical>' prior: 0!
+!BecomeTestExperiment commentStamp: '<historical>'!
 To be used by BecomeTest!
 
-!EphemeronIdentityDictionaryTest commentStamp: '' prior: 0!
+!EphemeronIdentityDictionaryTest commentStamp: ''!
 SUnit tests for weak identity key dictionaries!
 
-!FloatTest commentStamp: 'fbs 3/8/2004 22:13' prior: 0!
+!FloatTest commentStamp: 'fbs 3/8/2004 22:13'!
 I provide a test suite for Float values. Examine my tests to see how Floats should behave, and see how to use them.!
 
-!SmallIntegerTest commentStamp: 'fbs 3/8/2004 22:13' prior: 0!
+!SmallIntegerTest commentStamp: 'fbs 3/8/2004 22:13'!
 I provide a test suite for SmallInteger values. Examine my tests to see how SmallIntegers should behave, and see how to use them.!
 
-!BecomeTest commentStamp: '<historical>' prior: 0!
+!BecomeTest commentStamp: '<historical>'!
 Tests that common uses of #become: and related methods don't crash the system when some method could resume execution on a 'becomed' instance.!
 
-!SpecialSelectorsTest commentStamp: '<historical>' prior: 0!
+!SpecialSelectorsTest commentStamp: '<historical>'!
 Tests for proper behavior of Special Selectors, for example #@!
 
-!ProcessTest commentStamp: 'ul 8/16/2011 11:35' prior: 0!
+!ProcessTest commentStamp: 'ul 8/16/2011 11:35'!
 I hold test cases for generic Process-related behaviour.!
 
-!SemaphoreTest commentStamp: 'tlk 5/5/2006 13:32' prior: 0!
+!SemaphoreTest commentStamp: 'tlk 5/5/2006 13:32'!
 A SemaphoreTest is sunit test for simple and multiEx semaphores
 
 Instance Variables none; does not have common test fixture accross all tests (because its testing differenct sorts of semaphores (could refactor into muliple testcases if there were more test conditions.
@@ -2023,41 +2023,6 @@ createCategorizer
 
 	^ ClassOrganizer empty! !
 
-!ClassTest methodsFor: 'definition tests' stamp: 'HAW 24/Oct/2019, 1:34:44 pm (UTC)'!
-testDefinitionReplacingCategoryWithReplacesTheCategoryWithTheGivenOne
-
-	| classDefinition newCategory newCategoryDefinition |
-	
-	newCategory := 'NewCategory'.
-	newCategoryDefinition := 'category: ''', newCategory, ''''.
-	classDefinition := self class definitionReplacingCategoryWith: newCategory.
-	
-	self assert: (classDefinition includesSubString: newCategoryDefinition).
-	self deny: (classDefinition includesSubString: self class category)
-		
-
-! !
-
-!ClassTest methodsFor: 'definition tests' stamp: 'HAW 24/Oct/2019, 1:42:54 pm (UTC)'!
-testDefinitionReplacingCategoryWithWorksWhenCategoryIsNil
-
-	| classDefinition newCategory newCategoryDefinition currentCategory |
-	
-	newCategory := 'NewCategory'.
-	newCategoryDefinition := 'category: ''', newCategory, ''''.
-	currentCategory := self class category.
-	[SystemOrganization removeElement: self class name.
-	classDefinition := self class definitionReplacingCategoryWith: newCategory.
-	
-	self assert: (classDefinition includesSubString: newCategoryDefinition).
-	self deny: (classDefinition includesSubString: self class category asString) ] 
-		ensure: [
-			SystemOrganization classify: self class name under: currentCategory ].
-
-		
-
-! !
-
 !MetaclassTest methodsFor: 'tests' stamp: 'HAW 17/Jul/2023, 4:32:33 pm (UTC)'!
 testHasSubclassesReturnsThisClassHasSubclasses
 
@@ -2930,6 +2895,7 @@ valueWithinNonLocalReturn
 ! !
 
 !CompiledMethodTest methodsFor: 'tests - properties' stamp: 'HAW 3/Jan/2019, 11:03:52 am (UTC)'!
+!methodProperties: {#testProperty -> true}!
 test01withPropertiesDoIfSelectorEvaluatesFirstBlockWhenMethodHasProperties
 
 	| thisMethod propertyName methodProperties |
@@ -2987,6 +2953,7 @@ test04withPropertiesDoIfSelectorEvaluatesSecondBlockWhenMethodHasNoProperties
 	self assert: methodSelector equals: thisContext selector! !
 
 !CompiledMethodTest methodsFor: 'tests - properties' stamp: 'HAW 3/Jan/2019, 11:05:40 am (UTC)'!
+!methodProperties: {#testProperty -> true}!
 test05hasLiteralSuchThatTravelsListeralsWhenMethodHasProperties
 
 	| thisMethod |
@@ -3021,6 +2988,7 @@ test0701withPropertiesDoReturnsNilIfMethodHasNoProperties
 	self assert: (thisMethod withPropertiesDo: [ :properties | self fail ]) isNil! !
 
 !CompiledMethodTest methodsFor: 'tests - properties' stamp: 'HAW 3/Jan/2019, 11:07:21 am (UTC)'!
+!methodProperties: {#testProperty -> true}!
 test07withPropertiesDoEvaluatesBlockOnlyWhenMethodHasProperties
 
 	| thisMethod propertyName methodProperties |
@@ -3035,6 +3003,7 @@ test07withPropertiesDoEvaluatesBlockOnlyWhenMethodHasProperties
 	self assert: (methodProperties at: propertyName)! !
 
 !CompiledMethodTest methodsFor: 'tests - properties' stamp: 'jmv 7/Jul/2025, 9:22:31 pm (UTC)'!
+!methodProperties: {#testProperty -> true}!
 test08hasLiteralReturnTrueWhenMethodHasPropertiesAndHasLiteral
 
 	| thisMethod |
@@ -3047,6 +3016,7 @@ test08hasLiteralReturnTrueWhenMethodHasPropertiesAndHasLiteral
 	! !
 
 !CompiledMethodTest methodsFor: 'tests - properties' stamp: 'jmv 7/Jul/2025, 9:22:44 pm (UTC)'!
+!methodProperties: {#testProperty -> true}!
 test09hasLiteralReturnFalseWhenMethodHasPropertiesAndHasNoLiteral
 
 	| thisMethod |
@@ -3141,6 +3111,7 @@ test16propertiesReturnsAnNewAdditionalMethodStateWhenNoPropertiesHasBeenSet
 	self deny: properties == thisMethod properties ! !
 
 !CompiledMethodTest methodsFor: 'tests - properties' stamp: 'HAW 3/Jan/2019, 11:14:35 am (UTC)'!
+!methodProperties: {#testProperty -> true}!
 test17propertiesReturnsTheAlreadySetAdditionalMethodStateWhenHasProperties
 
 	| propertyName thisMethod properties |
@@ -3155,6 +3126,7 @@ test17propertiesReturnsTheAlreadySetAdditionalMethodStateWhenHasProperties
 	! !
 
 !CompiledMethodTest methodsFor: 'tests - properties' stamp: 'jmv 23/Jul/2026, 7:32:00 pm (UTC)'!
+!methodProperties: {#testProperty -> true}!
 test18propertyKeysAndValuesDoIteratesOverProperties
 
 	| propertyName thisMethod properties |
@@ -3180,6 +3152,7 @@ test19propertyKeysAndValuesDoDoesNotEvaluateBlockWhenMethodHasNoProperties
 	thisMethod properties propertyKeysAndValuesDo: [ :key :value | self fail ]! !
 
 !CompiledMethodTest methodsFor: 'tests - properties' stamp: 'HAW 3/Jan/2019, 8:58:44 pm (UTC)'!
+!methodProperties: {#testProperty -> 1}!
 test20propertyValueAtReturnsPropertyValueWhenSetted
 
 	| propertyName propertyValue thisMethod |
@@ -3192,6 +3165,7 @@ test20propertyValueAtReturnsPropertyValueWhenSetted
 	self assert: (thisMethod propertyValueAt: propertyName) equals: propertyValue ! !
 
 !CompiledMethodTest methodsFor: 'tests - properties' stamp: 'HAW 3/Jan/2019, 8:56:20 pm (UTC)'!
+!methodProperties: {#testProperty -> 1}!
 test21propertyValueAtReturnsNilWhenPropertyIsNotFound
 
 	| thisMethod |
@@ -3212,6 +3186,7 @@ test22propertyValueAtReturnsNilWhenMethodHasNoProperties
 	self assert: (thisMethod propertyValueAt: #testProperty) isNil! !
 
 !CompiledMethodTest methodsFor: 'tests - properties' stamp: 'HAW 3/Jan/2019, 8:58:18 pm (UTC)'!
+!methodProperties: {#testProperty -> 1}!
 test23propertyValueAtIfAbsetReturnsPropertyValueWhenFound
 
 	| propertyName propertyValue thisMethod |
@@ -3224,6 +3199,7 @@ test23propertyValueAtIfAbsetReturnsPropertyValueWhenFound
 	self assert: (thisMethod propertyValueAt: propertyName ifAbsent: [ self fail ]) equals: propertyValue ! !
 
 !CompiledMethodTest methodsFor: 'tests - properties' stamp: 'HAW 3/Jan/2019, 8:59:33 pm (UTC)'!
+!methodProperties: {#testProperty -> 1}!
 test24propertyValueAtIfAbsetEvaluatesIfAbsentBlockWhenNotFound
 
 	| propertyName propertyValue thisMethod |
@@ -3246,6 +3222,7 @@ test25propertyValueAtIfAbsetEvaluatesIfAbsentBlockWhenMethodHasNoProperties
 	self assert: (thisMethod propertyValueAt: #testProperty ifAbsent: [ 1 ]) equals: 1! !
 
 !CompiledMethodTest methodsFor: 'tests - properties' stamp: 'HAW 7/Jan/2019, 7:44:05 pm (UTC)'!
+!methodProperties: {#testProperty -> 1}!
 test26propertyValueAtPutCreatesPropertiesWithNewOne
 
 	| thisMethod testProperty propertyValue |
@@ -3260,6 +3237,7 @@ test26propertyValueAtPutCreatesPropertiesWithNewOne
 	self assert: (thisMethod propertyValueAt: testProperty) equals: 1! !
 
 !CompiledMethodTest methodsFor: 'tests - properties' stamp: 'HAW 7/Jan/2019, 7:44:40 pm (UTC)'!
+!methodProperties: {#testProperty -> 2}!
 test27propertyValueAtPutReplacesPropertyIfAlreadyExisted
 
 	| thisMethod testProperty propertyValue |
@@ -3273,6 +3251,8 @@ test27propertyValueAtPutReplacesPropertyIfAlreadyExisted
 	self assert: (thisMethod propertyValueAt: testProperty) equals: 2! !
 
 !CompiledMethodTest methodsFor: 'tests - properties' stamp: 'HAW 7/Jan/2019, 7:45:06 pm (UTC)'!
+!methodProperties: {#testProperty1 -> 1.
+	#testProperty2 -> 2}!
 test28propertyValueAtPutAddsNewPropertyIfPropertiesExisted
 
 	| thisMethod testProperty1 testProperty2 propertyValue |
@@ -3298,6 +3278,7 @@ test29selectorReturnsMethodSelectorWhenNoProperties
 	self assert: thisMethod selector equals: thisContext selector! !
 
 !CompiledMethodTest methodsFor: 'tests - properties' stamp: 'HAW 7/Jan/2019, 7:48:40 pm (UTC)'!
+!methodProperties: {#testProperty -> 1}!
 test30selectorReturnsMethodSelectorWhenHasProperties
 
 	| thisMethod |
@@ -3320,6 +3301,7 @@ test31SettingSelectorWhenHasNoProperties
 	self assert: thisMethod selector equals: #test ] ensure: [ thisMethod selector: currentSelector ]! !
 
 !CompiledMethodTest methodsFor: 'tests - properties' stamp: 'HAW 7/Jan/2019, 7:54:47 pm (UTC)'!
+!methodProperties: {#testProperty -> 1}!
 test32SettingSelectorWhenHasProperties
 
 	| currentSelector thisMethod |
