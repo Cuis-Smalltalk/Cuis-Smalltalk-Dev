@@ -1,6 +1,6 @@
-'From Cuis7.9 [latest update: #8384] on 18 November 2026 at 10:12:39 am'!
+'From Cuis7.9 [latest update: #8386] on 18 November 2026 at 10:56:17 am'!
 'Description '!
-!provides: 'RefactoringTests' '1.33.0'!
+!provides: 'RefactoringTests' '1.34.0'!
 !requires: 'DynamicallyCodeCreatingTestSupport' '1.0.0' '1.*.*'!
 !requires: '__Refactoring_TestData__' '1.0.0' '1.*.*'!
 SystemOrganization addCategory: #RefactoringTests!
@@ -9963,7 +9963,7 @@ test24WhenExtractingAnEntireStatementItOnlyGeneratesTheVariableAssignment
 
 	self assertExtracting: 'self run' from: sourceCode toVariableNamed: 'action' updatesTo: sourceCodeAfterRefactoring! !
 
-!ExtractToTemporaryTest methodsFor: 'tests - successful' stamp: 'HAW 21/Jul/2023, 8:56:47 pm (UTC)'!
+!ExtractToTemporaryTest methodsFor: 'tests - successful' stamp: 'HAW 11/Nov/2026, 5:11:47 pm (UTC)'!
 test26ExtractsCorrectlyWithParentesisInsideParentesis
 
 	| sourceCode sourceCodeAfterRefactoring |
@@ -9971,7 +9971,7 @@ test26ExtractsCorrectlyWithParentesisInsideParentesis
 	sourceCode := 'm1 ^((self m2) + (self m3)) m1.'.
 	sourceCodeAfterRefactoring := 'm1 | action |
 	action := (self m2) + (self m3).
-	^(action) m1.'.
+	^action m1.'.
 
 	self assertExtracting: '((self m2) + (self m3))' from: sourceCode toVariableNamed: 'action' updatesTo: sourceCodeAfterRefactoring! !
 
@@ -10315,6 +10315,36 @@ test47ExtractingAnExpressionThatReadsATemporaryDoesNotLeaveItUndeclared
 				updatesTo: 'm1 | var anotherVar | var := 10. anotherVar := var + 50.
 	^anotherVar' ]
 		notLeaveUndeclared: 'var'! !
+
+!ExtractToTemporaryTest methodsFor: 'tests - successful' stamp: 'HAW 11/Nov/2026, 5:11:09 pm (UTC)'!
+test48ExtractingAParenthesizedExpressionLeavesTheVariableWithoutParentheses
+
+	self
+		assertExtracting: '10 gcd: 20'
+		from: 'm1
+
+	self assertIsDigit: (10 gcd: 20)'
+		toVariableNamed: 'divisor'
+		updatesTo: 'm1
+
+	| divisor |
+	divisor := 10 gcd: 20.
+	self assertIsDigit: divisor'! !
+
+!ExtractToTemporaryTest methodsFor: 'tests - successful' stamp: 'HAW 11/Nov/2026, 5:11:09 pm (UTC)'!
+test49ExtractingEveryParenthesizedOccurrenceLeavesTheVariableWithoutParentheses
+
+	self
+		assertExtractingAll: '10 gcd: 20'
+		from: 'm1
+
+	^(10 gcd: 20) + (10 gcd: 20)'
+		toVariableNamed: 'divisor'
+		updatesTo: 'm1
+
+	| divisor |
+	divisor := 10 gcd: 20.
+	^divisor + divisor'! !
 
 !ExtractToTemporaryTest methodsFor: 'tests - validations' stamp: 'RNG 25/Feb/2020, 7:13:05 pm (UTC)'!
 test01NewVariableCanNotBeEmpty
