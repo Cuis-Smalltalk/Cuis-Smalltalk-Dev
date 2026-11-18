@@ -1,6 +1,6 @@
-'From Cuis7.9 [latest update: #8369] on 16 November 2026 at 1:03:31 pm'!
+'From Cuis7.9 [latest update: #8384] on 18 November 2026 at 10:12:39 am'!
 'Description '!
-!provides: 'RefactoringTests' '1.32.0'!
+!provides: 'RefactoringTests' '1.33.0'!
 !requires: 'DynamicallyCodeCreatingTestSupport' '1.0.0' '1.*.*'!
 !requires: '__Refactoring_TestData__' '1.0.0' '1.*.*'!
 SystemOrganization addCategory: #RefactoringTests!
@@ -2312,6 +2312,38 @@ test68ReceiversThatDifferAndAreNotVariablesAreNotAMatch
 	self compile: sourceCode andFind: (6 to: 30).
 
 	self deny: finder hasFoundParameterizableReplacements! !
+
+!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 17/Nov/2026, 6:05:31 pm (UTC)'!
+test69ATemporaryReadInsideAnArgumentThatDoesNotDifferIsAParameter
+
+	| replacements sourceCode firstDifference secondDifference temporary |
+
+	sourceCode := 'm1 | a | a := 10. self foo: a bar baz: 1. self foo: a bar baz: 2. ^a'.
+	firstDifference := (sourceCode findString: 'baz: 1') + 5.
+	secondDifference := (sourceCode findString: 'baz: 2') + 5.
+	temporary := self tempVariableNodeNamed: 'a'.
+	self
+		compile: sourceCode
+		andFind: ((sourceCode findString: 'self foo: a bar baz: 1') to: firstDifference).
+	self
+		acceptParamReplacementsWithNodesToParameterized: { temporary }
+		to: (Message selector: #k1:k2:).
+
+	replacements := finder replacements.
+
+	self assert: replacements size equals: 2.
+	self
+		assertAnyReplacementOf: replacements
+		hasInterval: ((sourceCode findString: 'self foo: a bar baz: 1') to: firstDifference)
+		isOf: sourceMethod
+		andHasEqualParamsInOrder: { 'a' . '1' }
+		withIntervals: { firstDifference to: firstDifference }.
+	self
+		assertAnyReplacementOf: replacements
+		hasInterval: ((sourceCode findString: 'self foo: a bar baz: 2') to: secondDifference)
+		isOf: sourceMethod
+		andHasEqualParamsInOrder: { 'a' . '2' }
+		withIntervals: { secondDifference to: secondDifference }! !
 
 !ExtractMethodFinderTest methodsFor: 'setup/teardown' stamp: 'HAW 2/Sep/2021, 10:02:12 pm (UTC)'!
 setUp
@@ -6029,6 +6061,26 @@ test04AsksOneParameterForTheSameExpressionDifferingInSeveralPlaces
 	(applier instVarNamed: 'finder') useParameterizedToChangeReplacements.
 
 	self assert: applier parseAndParameterizableNodesToParameterizeInOrder size equals: 1! !
+
+!ExtractMethodApplierTest methodsFor: 'tests' stamp: 'HAW 17/Nov/2026, 6:05:31 pm (UTC)'!
+test05AsksOneParameterForTheTemporaryReadInsideAnArgumentThatDoesNotDiffer
+
+	| classToRefactor applier sourceCode start |
+
+	classToRefactor := self createClassNamed: #ClassToExtractMethod.
+	sourceCode := 'm1 | a | a := 10. self foo: a bar baz: 1. self foo: a bar baz: 2'.
+	classToRefactor compile: sourceCode.
+	start := sourceCode findString: 'self foo: a bar baz: 1'.
+	applier := ExtractMethodApplier new
+		initializeOn: nil
+		for: (start to: start + 'self foo: a bar baz: 1' size - 1) asSourceCodeInterval
+		of: classToRefactor >> #m1.
+	applier findReplacements.
+	(applier instVarNamed: 'finder') useParameterizedToChangeReplacements.
+
+	self
+		assert: applier parseAndParameterizableNodesToParameterizeInOrder size
+		equals: 2! !
 
 !ExtractMethodApplierTest methodsFor: 'assertions' stamp: 'HAW 19/Jul/2023, 2:03:49 pm (UTC)'!
 assertSignals: anErrorMessage with: userAnswer argumentNames: argumentNames  
