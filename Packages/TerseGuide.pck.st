@@ -1,6 +1,6 @@
-'From Cuis7.9 [latest update: #8076] on 22 July 2026 at 4:00:13 pm'!
+'From Cuis7.9 [latest update: #8385] on 18 November 2026 at 10:47:13 am'!
 'Description Add ability to dynamically add topic pages from other sources.'!
-!provides: 'TerseGuide' '1.153.0'!
+!provides: 'TerseGuide' '1.154.0'!
 SystemOrganization addCategory: #TerseGuide!
 
 
@@ -35,7 +35,7 @@ TerseGuideTopic class
 	instanceVariableNames: ''!
 
 
-!TerseGuideHelp commentStamp: 'dhn 3/7/2015 13:20' prior: 0!
+!TerseGuideHelp commentStamp: 'dhn 3/7/2015 13:20'!
 TerseGuideHelp is adapted from the Squeak terse guide by Chris Rathman (http://www.angelfire.com/tx4/cus/notes/smalltalk.html), maintained on the swiki at http://wiki.squeak.org/squeak/5699. Copyrights and credit for the original document belong to Chris Rathman.
 
 Examples of use include:
@@ -49,13 +49,13 @@ TerseGuideHelp also serves as the model for TerseGuideWindow, which can be opene
 TerseGuideWindow openTerseGuide
 !
 
-!TerseGuideWindow commentStamp: 'dhn 3/5/2016 21:50' prior: 0!
+!TerseGuideWindow commentStamp: 'dhn 3/5/2016 21:50'!
 Show a terse guide to Cuis in a system window. The window has a text pane with a list pane beside it. The text pane is a kind of Workspace which has the behavior that statements in it can be Done (Cmd-d) or Printed (Cmd-p) in order to observe their effect.
 
 TerseGuideWindow openTerseGuide
 !
 
-!TerseGuideTopic commentStamp: '<historical>' prior: 0!
+!TerseGuideTopic commentStamp: '<historical>'!
 I represent a topic that can be added to the TerseGuide. Subclasses of me should implement #title and #examples. For instance:
 
 >>title
@@ -650,7 +650,7 @@ b _ $A <= $B.								"comparison"
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 9/Mar/2019, 2:52:37 pm (UTC)'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'jmv 18/Nov/2026, 1:46:49 pm (UTC)'!
 coding
 	"Code Patterns"
 	^
@@ -661,23 +661,22 @@ The coupled style employs the ''dependency mechanism'' and requires the model to
 
 The decoupled style employs the ''observer pattern'' which ensures that the model can remain unaffected by changes to the view or by additional views. The primary methods of the observer pattern are #triggerEvent: and #when:send:to: . This is the preferred style for Cuis, although both styles can be found in the base.
 "
-| b n |
 
 "To examine the patterns, in the parent directory which contains Cuis-Smalltalk-Dev* do the following:
 	''git clone https://github.com/Cuis-Smalltalk/CodeExamples''
 	
-then, do the following:	
-"
-Feature require: #''Code-Patterns''.				"load the package"
+then, do the following:"
+
+"Load the package"
+Feature require: #''Code-Patterns''.
 
 "To browse the examples, do (Cmd-d) these statements..."
-
-b _ BrowserWindow openBrowser.					"open a browser"
-n _ b model systemCategoryList findFirst: [:a | a = #''Code-Patterns''].  "index to the above package"
-b model systemCategoryListIndex: n.				"go to the system category"
+package := CodePackage installedPackages at: ''Code-Patterns''.
+browser := SinglePackageBrowser new.
+browser package: package.
+BrowserWindow open: browser label: browser labelString.
 
 "The following statements execute the examples..."
-
 DependencyExamples relatedViews. 				"a decoupled example"
 DependencyExamples unrelatedViews. 				"another decoupled example"
 DependencyExamples coupledView. 					"a coupled example"
