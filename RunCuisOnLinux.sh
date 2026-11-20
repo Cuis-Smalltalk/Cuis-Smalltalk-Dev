@@ -66,6 +66,7 @@ while [[ -n "$1" ]] ; do
 done
 while [[ -n "$1" ]]; do
     case "$1" in
+	 --) ;;
          *.image) IMAGE="$1";;
 	 *) STARGS+=("$1");;
     esac
