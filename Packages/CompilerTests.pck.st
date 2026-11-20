@@ -1,6 +1,6 @@
-'From Cuis7.9 [latest update: #8263] on 5 October 2026 at 5:00:02 pm'!
+'From Cuis7.9 [latest update: #8390] on 20 November 2026 at 1:34:51 pm'!
 'Description '!
-!provides: 'CompilerTests' '1.5.0'!
+!provides: 'CompilerTests' '1.6.0'!
 !requires: 'DynamicallyCodeCreatingTestSupport' '1.0.0' '1.*.*'!
 SystemOrganization addCategory: #CompilerTests!
 
@@ -206,7 +206,7 @@ CompilerTest class
 	instanceVariableNames: ''!
 
 
-!DecompilerTests commentStamp: 'sd 9/26/2004 13:24' prior: 0!
+!DecompilerTests commentStamp: 'sd 9/26/2004 13:24'!
 Apparently the decompiler does not really work totally.
 Here are a bunch of methods that can help improving the decompiler:
 	- blockingClasses return class for which it is impossible to decompile methods 
@@ -214,7 +214,7 @@ Here are a bunch of methods that can help improving the decompiler:
 	- decompilerDiscrepancies are the results of running decompileTestHelper..as you see the pattern 	
 	is quite present.!
 
-!DecompilerTestFailuresCollector commentStamp: 'eem 1/16/2025 18:40:11' prior: 0!
+!DecompilerTestFailuresCollector commentStamp: 'eem 1/16/2025 18:40:11'!
 (| dtfc |
 dtfc := DecompilerTestFailuresCollector new.
 (dtfc class superclass organization listAtCategoryNamed: #tests) do:
@@ -2106,6 +2106,30 @@ testOptimizedNodesWithNilDoNotFailsWhenAskForEquivalentTo
 		raise: Error
 	! !
 
+!ParserTest methodsFor: 'test' stamp: 'HAW 17/Nov/2026, 10:22:49 pm (UTC)'!
+testRangesAreOkWhenReturningANumberOfSeveralCharactersWithoutSpaceAfterThat
+
+	| methodNode number |
+
+	methodNode := self class methodNodeFor: 'm1 ^07'.
+	number := methodNode block statements first expr.
+
+	self
+		assert: (methodNode rangeForNode: number ifAbsent: [ #() ]) asArray
+		equals: { 5 to: 6 }! !
+
+!ParserTest methodsFor: 'test' stamp: 'HAW 17/Nov/2026, 10:22:49 pm (UTC)'!
+testRangesAreOkWhenReturningANumberWithoutSpaceAfterThat
+
+	| methodNode number |
+
+	methodNode := self class methodNodeFor: 'm1 ^7'.
+	number := methodNode block statements first expr.
+
+	self
+		assert: (methodNode rangeForNode: number ifAbsent: [ #() ]) asArray
+		equals: { 5 to: 5 }! !
+
 !ParserTest methodsFor: 'test' stamp: 'jmv 31/Jul/2023, 4:17:49 pm (UTC)'!
 testRangesAreOkWhenReturningAVariableWithoutSpaceAfterThat
 
@@ -2124,6 +2148,16 @@ testRangesAreOkWhenReturningAVariableWithoutSpaceAfterThat
 	
 	
 	! !
+
+!ParserTest methodsFor: 'test' stamp: 'HAW 19/Nov/2026, 6:49:06 pm (UTC)'!
+testRangesAreOkWhenSendingAUnaryMessageOfOneCharacterWithoutSpaceAfterThat
+
+	| methodNode send |
+
+	methodNode := self class methodNodeFor: 'm1 ^self x'.
+	send := methodNode block statements first expr.
+
+	self assert: send keywordRanges asArray equals: { 10 to: 10 }! !
 
 !ParserTest methodsFor: 'temporary variables tests' stamp: 'RNG 13/Mar/2020, 4:39:16 am (UTC)'!
 testItGeneratesATempDeclarationNodeForEachTempInABlock

@@ -1,6 +1,6 @@
-'From Cuis7.9 [latest update: #8386] on 18 November 2026 at 10:56:17 am'!
+'From Cuis7.9 [latest update: #8390] on 20 November 2026 at 1:35:01 pm'!
 'Description '!
-!provides: 'RefactoringTests' '1.34.0'!
+!provides: 'RefactoringTests' '1.35.0'!
 !requires: 'DynamicallyCodeCreatingTestSupport' '1.0.0' '1.*.*'!
 !requires: '__Refactoring_TestData__' '1.0.0' '1.*.*'!
 SystemOrganization addCategory: #RefactoringTests!
@@ -1631,7 +1631,7 @@ test41_CannotFindRecursiveMethodsAsParameterizable
 		hasParamsIntervals: { 14 to: 26 }
 		andIsOf: sourceMethod! !
 
-!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'JEC 14/Apr/2026, 9:38:38 pm (UTC)'!
+!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 17/Nov/2026, 9:53:07 pm (UTC)'!
 test42_CannotFindArgumentsOfExtractedCodeAsParameterizable
 
 	| paramReplacements |
@@ -1647,10 +1647,10 @@ test42_CannotFindArgumentsOfExtractedCodeAsParameterizable
 	self 
 		assertAnyParamReplacementOf: paramReplacements
 		hasInterval: (29 to: 39)
-		hasParamsIntervals: { 38 to: 39 } 
+		hasParamsIntervals: { 39 to: 39 } 
 		andIsOf: sourceMethod! !
 
-!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'JEC 14/Apr/2026, 9:38:47 pm (UTC)'!
+!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 17/Nov/2026, 9:53:07 pm (UTC)'!
 test43_CannotFindRecursiveCodeOfExtractedCodeAsParameterizable
 
 	| paramReplacements |
@@ -1666,7 +1666,7 @@ test43_CannotFindRecursiveCodeOfExtractedCodeAsParameterizable
 	self 
 		assertAnyParamReplacementOf: paramReplacements
 		hasInterval: (29 to: 39)
-		hasParamsIntervals: { 38 to: 39 }
+		hasParamsIntervals: { 39 to: 39 }
 		andIsOf: sourceMethod! !
 
 !ExtractMethodFinderTest methodsFor: 'tests' stamp: 'JEC 15/Apr/2026, 3:41:15 pm (UTC)'!
@@ -1841,7 +1841,7 @@ test48_CannotExtractMethodWithParameterizableCode_WhenATempVarIsParameterizableM
 	self deny: (classToRefactor includesSelector: #m2).
 	self deny: (classToRefactor includesSelector: #k1:k2:k3:).! !
 
-!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'JEC 15/Apr/2026, 3:48:34 pm (UTC)'!
+!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 17/Nov/2026, 9:53:07 pm (UTC)'!
 test49_FindsParameterizableCodeInOtherClassMethods
 
 	| replacements |	
@@ -1859,17 +1859,17 @@ test49_FindsParameterizableCodeInOtherClassMethods
 		assertAnyReplacementOf: replacements 
 		hasInterval: (5 to: 22) 
 		isOf: (classToRefactor >> #m1b) asMethodReference
-		andHasEqualParamsInOrder: { ' 1' }
-		withIntervals: { 21 to: 22 }.
+		andHasEqualParamsInOrder: { '1' }
+		withIntervals: { 22 to: 22 }.
 		
 	self 
 		assertAnyReplacementOf: replacements 
 		hasInterval: (4 to: 21) 
 		isOf: sourceMethod
-		andHasEqualParamsInOrder: { ' 9' }
-		withIntervals: { 20 to: 21 }.! !
+		andHasEqualParamsInOrder: { '9' }
+		withIntervals: { 21 to: 21 }.! !
 
-!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'JEC 15/Apr/2026, 3:48:42 pm (UTC)'!
+!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 17/Nov/2026, 9:53:07 pm (UTC)'!
 test50_FindsParameterizableCodeInSubclassesMethods
 
 	| replacements subclassToRefactor |
@@ -1888,22 +1888,22 @@ test50_FindsParameterizableCodeInSubclassesMethods
 		assertAnyReplacementOf: replacements 
 		hasInterval: (5 to: 22) 
 		isOf: (classToRefactor >> #m1b) asMethodReference
-		andHasEqualParamsInOrder: { ' 1' }
-		withIntervals: { 21 to: 22 }.
+		andHasEqualParamsInOrder: { '1' }
+		withIntervals: { 22 to: 22 }.
 	
 	self 
 		assertAnyReplacementOf: replacements 
 		hasInterval: (4 to: 21) 
 		isOf: (subclassToRefactor >> #m3) asMethodReference
-		andHasEqualParamsInOrder: { ' 5' }
-		withIntervals: { 20 to: 21 }.
+		andHasEqualParamsInOrder: { '5' }
+		withIntervals: { 21 to: 21 }.
 		
 	self 
 		assertAnyReplacementOf: replacements 
 		hasInterval: (4 to: 21) 
 		isOf: sourceMethod
-		andHasEqualParamsInOrder: { ' 9' }
-		withIntervals: { 20 to: 21 }.! !
+		andHasEqualParamsInOrder: { '9' }
+		withIntervals: { 21 to: 21 }.! !
 
 !ExtractMethodFinderTest methodsFor: 'tests' stamp: 'JEC 14/Apr/2026, 9:40:22 pm (UTC)'!
 test51_WhenFindingParameterizableCode_AvoidsReplacementsIntervals
@@ -2221,7 +2221,7 @@ test63ABlockThatDiffersInsideIsTheParameterAsAWhole
 			blockStart to: blockStart + '[ :x | x = self k2 ]' size - 1 }
 		andIsOf: sourceMethod! !
 
-!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 22/Sep/2026, 10:02:27 pm (UTC)'!
+!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 17/Nov/2026, 9:53:07 pm (UTC)'!
 test64TheSameExpressionDifferingInSeveralPlacesIsOneParameter
 
 	| replacements |
@@ -2240,7 +2240,7 @@ test64TheSameExpressionDifferingInSeveralPlacesIsOneParameter
 		hasInterval: (24 to: 41)
 		isOf: sourceMethod
 		andHasEqualParamsInOrder: { '2' }
-		withIntervals: { 34 to: 34 . 40 to: 41 }.
+		withIntervals: { 34 to: 34 . 41 to: 41 }.
 	self
 		assertAnyReplacementOf: replacements
 		hasInterval: (4 to: 21)
@@ -2248,7 +2248,7 @@ test64TheSameExpressionDifferingInSeveralPlacesIsOneParameter
 		andHasEqualParamsInOrder: { '1' }
 		withIntervals: { 14 to: 14 . 21 to: 21 }! !
 
-!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 26/Sep/2026, 2:46:51 pm (UTC)'!
+!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 17/Nov/2026, 9:53:07 pm (UTC)'!
 test65AReceiverThatIsATemporaryOfCodeToExtractIsNotAParameter
 
 	| paramReplacements sourceCode |
@@ -2264,7 +2264,7 @@ test65AReceiverThatIsATemporaryOfCodeToExtractIsNotAParameter
 	self
 		assertAnyParamReplacementOf: paramReplacements
 		hasInterval: ((sourceCode findString: 'b := self foo: 2') to: sourceCode size)
-		hasParamsIntervals: { (sourceCode findString: '2. b bar') to: (sourceCode findString: '2. b bar') . sourceCode size - 1 to: sourceCode size }
+		hasParamsIntervals: { (sourceCode findString: '2. b bar') to: (sourceCode findString: '2. b bar') . sourceCode size to: sourceCode size }
 		andIsOf: sourceMethod! !
 
 !ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 26/Sep/2026, 2:46:51 pm (UTC)'!
@@ -16875,6 +16875,26 @@ test35RenamingAKeywordToABinaryDropsTheParenthesesTheSendNoLongerNeeds
 	rename apply.
 
 	self assert: (classToRefactor sourceCodeAt: #m1) equals: 'm1 ^self && 1 * 2'! !
+
+!RenameSelectorTest methodsFor: 'tests' stamp: 'HAW 19/Nov/2026, 6:49:06 pm (UTC)'!
+test36RenamingAUnaryOfOneCharacterThatEndsTheSenderKeepsTheSpaceBeforeIt
+
+	| rename |
+
+	oldSelector := 'x' asSymbol.
+	newSelector := 'abc' asSymbol.
+	classToRefactor := self createClassNamed: self classToRefactorName.
+	classToRefactor compile: 'x ^1'.
+	classToRefactor compile: 'm1 ^self x'.
+
+	rename := RenameSelector
+		from: oldSelector
+		to: newSelector
+		implementors: (Array with: classToRefactor>>oldSelector)
+		senders: (Array with: classToRefactor>>#m1).
+	rename apply.
+
+	self assert: (classToRefactor sourceCodeAt: #m1) equals: 'm1 ^self abc'! !
 
 !RenameTemporaryTest methodsFor: 'class factory' stamp: 'HAW 26/Jun/2017, 1:53:44 am (UTC)'!
 classToRefactorName
